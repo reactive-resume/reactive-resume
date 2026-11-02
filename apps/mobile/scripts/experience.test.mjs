@@ -76,7 +76,7 @@ const mocks = {
 	react,
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", Platform: { OS: "android" } },
 	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
-	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
 	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
 	"@/routes": { routes },
 	"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
@@ -860,8 +860,12 @@ let finishSave;
 let matchedPosting = null;
 const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 	"@reactive-resume/utils/timezone": timeParser,
+	"@reactive-resume/schema/applications/posting-source": load(
+		"../../../packages/schema/src/applications/posting-source.ts",
+		{ "@reactive-resume/utils/timezone": timeParser },
+	),
 	"@reactive-resume/import/job-posting": { readPastedPostingHeader: () => null },
-	"@/features/application-detail/hooks": { useUserTime: () => ({ timeZone: "UTC" }) },
+	"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => ({ timeZone: "UTC" }) },
 	react: { ...react, useEffect: () => {} },
 	"@orpc/client": { ORPCError: class extends Error {} },
 	"@tanstack/react-query": {
@@ -1584,7 +1588,8 @@ const discovered = ["Platform engineer", "Reliability engineer"].map((role, inde
 	matches: [],
 	unknowns: ["salary", "office"],
 	trackedApplicationId: null,
-	firstSeenAt: new Date(),
+	// The list sorts newest first; wall-clock milliseconds must not reverse this serial-write fixture.
+	firstSeenAt: new Date(Date.UTC(2026, 10, 2 - index, 12)),
 	lastSeenAt: new Date(),
 	discoverySource: null,
 }));

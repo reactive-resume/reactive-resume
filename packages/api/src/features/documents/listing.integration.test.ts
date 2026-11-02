@@ -204,12 +204,13 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 		}
 	});
 
-	it("keeps 19.5k live and 19.5k Trash rows bounded, complete and stable across every page", async () => {
-		const { documentsRouter } = await import("./router");
-		const large = createRouterClient(documentsRouter, {
-			context: { user: { id: "large" }, resHeaders: new Headers() } as never,
-		});
-		for (const trashed of [false, true]) {
+	it.each([false, true])(
+		"keeps 19.5k rows bounded, complete and stable across every page (trashed=%s)",
+		async (trashed) => {
+			const { documentsRouter } = await import("./router");
+			const large = createRouterClient(documentsRouter, {
+				context: { user: { id: "large" }, resHeaders: new Headers() } as never,
+			});
 			const seen = new Set<string>();
 			for (let offset = 0; offset < 19500; offset += 100) {
 				const page = await large.list({ trashed, limit: 100, offset });
@@ -228,6 +229,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 			expect((await large.page({ trashed, offset: 19500 })).items).toEqual([]);
 			const tag = trashed ? "tag-29999" : "tag-9999";
 			expect((await large.page({ trashed, q: tag })).tags).toContain(tag);
-		}
-	}, 30_000);
+		},
+		30_000,
+	);
 });

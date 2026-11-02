@@ -125,6 +125,27 @@ If search fails or finds nothing useful, change your keywords or paste a posting
 
 ## What gets read from a posting
 
+After a successful link read, **Saved description** shows a relative read time and the host retained by the reader,
+such as **Read 3 minutes ago from jobs.example.test**. The time updates while the review is open. It says when the app
+read the page, not when the employer last updated it; the employer may have changed or closed the posting since.
+**View posting** keeps that receipt after saving, even if you later edit the application's link. Older saved postings
+without a retained host show the generic posting-page label; missing or invalid read times never become a claimed read.
+Pasted descriptions remain labeled **Pasted description**.
+
+<Frame caption="A fictional posting read, reviewed before saving. The receipt names the retained source host and elapsed time.">
+  <img
+    src="/images/guides/career/posting-read-review.png"
+    alt="Save a job review for Lumen Workshop showing Read 3 minutes ago from jobs.example.test and a warning that the employer may have changed the posting"
+  />
+</Frame>
+
+<Frame caption="The retained read receipt stays with the saved description. Editing the job's link does not relabel its source.">
+  <img
+    src="/images/guides/career/posting-read-saved.png"
+    alt="Saved fictional Lumen Workshop posting showing its edited link and the original jobs.example.test read receipt"
+  />
+</Frame>
+
 **Read posting** uses structured page details without AI. The app first confirms that your server supports reading without AI. If that check fails, it sends no parse request: retry, update your server, or enter the details manually. Optional **Read with AI** remains a separate choice and uses your selected [AI connection](/guides/using-ai), disclosed beside the button:
 
 | You paste    | Without an AI provider                                                                | With optional Read with AI                                      |
