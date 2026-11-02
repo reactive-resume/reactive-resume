@@ -60,36 +60,42 @@ type ModelSheetProps = {
 	onChoose: (id: string) => void;
 };
 
-/** The connections this conversation can switch to, and Connect another… in Settings. */
+/**
+ * The connections this conversation can switch to, and Connect another…, set up in a sheet over the assistant so the
+ * conversation and the message being typed stay as they are (web assistant-panel).
+ */
 export function ModelSheet({ open, onClose, providers, currentId, onChoose }: ModelSheetProps) {
-	const router = useRouter();
 	const { t } = useLingui();
 	const { colors } = useTheme();
+	const [setup, setSetup] = useState(false);
 	return (
-		<Sheet open={open} onClose={onClose} title={t`Model`}>
-			{providers.map((item) => (
+		<>
+			<Sheet open={open} onClose={onClose} title={t`Model`}>
+				{providers.map((item) => (
+					<ListRow
+						key={item.id}
+						title={item.label}
+						subtitle={item.model}
+						selected={item.id === currentId}
+						trailing={item.id === currentId ? <Icon name="check" color={colors.accentText} /> : null}
+						onPress={() => {
+							onChoose(item.id);
+							onClose();
+						}}
+					/>
+				))}
 				<ListRow
-					key={item.id}
-					title={item.label}
-					subtitle={item.model}
-					selected={item.id === currentId}
-					trailing={item.id === currentId ? <Icon name="check" color={colors.accentText} /> : null}
+					title={t`Connect another…`}
+					leading="plus-circle"
+					chevron
 					onPress={() => {
-						onChoose(item.id);
 						onClose();
+						setSetup(true);
 					}}
 				/>
-			))}
-			<ListRow
-				title={t`Connect another…`}
-				leading="plus-circle"
-				chevron
-				onPress={() => {
-					onClose();
-					router.push("/settings/ai-providers");
-				}}
-			/>
-		</Sheet>
+			</Sheet>
+			<AIProviderSetupSheet open={setup} onClose={() => setSetup(false)} />
+		</>
 	);
 }
 

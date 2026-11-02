@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# история} few {# истории} many {# ист
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# пункт для проверки.} other {# пунктов для проверки.} few {# пункта для проверки.} many {# пунктов для проверки.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Веб-адрес записан без https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Около 90 секунд вслух"
@@ -1058,6 +1069,10 @@ msgstr "Принять все"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Активный"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Добавлять"
 
@@ -1310,8 +1326,8 @@ msgid "Add offer"
 msgstr "Добавить предложение о работе"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr "Добавьте условия предложения вручную, включая принятые предложения, или воспользуйтесь необязательным извлечением с помощью ИИ в разделе «Сообщения». Закрытие предложения как принятого не сохраняет условия."
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "Добавьте условия предложений вручную, в том числе для принятых предложений, или вставьте письмо с предложением на вкладке «Сообщения» отклика и выберите «Прочитать за меня», чтобы использовать ИИ. Закрытие отклика как принятого не сохраняет условия."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3544,6 +3560,10 @@ msgstr "Не удалось напечатать. Попробуйте еще р
 msgid "Couldn't propose these edits: {0}"
 msgstr "Не удалось предложить эти изменения: {0}."
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Не удалось связаться с вашим провайдером AI. Попробуйте еще раз или проверьте его ключ в настройках AI."
@@ -3617,6 +3637,10 @@ msgstr "Не удалось сохранить изменение. Элемен�
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Не удалось сохранить изменение. Попробуйте еще раз."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Не удалось разблокировать резюме. Попробуйте еще раз."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Не удалось разблокировать это резюме. Попробуйте еще раз."
 
@@ -4627,6 +4651,19 @@ msgstr "Редактировать"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "Редактировать {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "Скрытые разделы сохраняют свое содержи
 msgid "Hidden terms are back"
 msgstr "Скрытые условия вернулись"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Скрыть {title} со страницы"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "Заблокировано"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Заблокированные документы пропущены. Сначала разблокируйте их."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "Нормальный"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Норвежский"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8884,6 +8942,10 @@ msgstr "Индикатор прогресса"
 msgid "Projects"
 msgstr "Проекты"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Предлагаемые изменения"
@@ -8951,6 +9013,10 @@ msgstr "Издатель"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Разместите обычный адрес электронной почты в начале первой страницы. Именно по нему большинство систем вас идентифицирует."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9273,6 +9339,14 @@ msgstr "Отрепетировать вслух"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Отклонять"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10780,6 +10854,11 @@ msgstr "короче"
 msgid "Show"
 msgstr "Показывать"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Показывать «Сделано с помощью Reactive Resume»"
@@ -10797,6 +10876,11 @@ msgstr "Показать {title} на странице"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Показать все"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10822,6 +10906,10 @@ msgstr "Показать детали"
 msgid "Show DNS records"
 msgstr "Показать DNS-записи"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Показать заголовок"
@@ -10841,6 +10929,10 @@ msgstr "Показывать в поисковых системах"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Показать ключ"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12160,10 +12252,6 @@ msgstr "Этот документ"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Этот документ заблокирован. Разблокируйте его, прежде чем сохранять изменения здесь, или сохраните и то, и другое."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Этот документ заблокирован. Разблокируйте его, чтобы получать предложения."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Этот документ заблокирован. Вы по-прежнему можете скачивать и давать названия версиям. Разблокируйте для редактирования или восстановления."
@@ -12640,6 +12728,10 @@ msgstr "Попробовать снова с этим"
 msgid "Try again, or restart the app."
 msgstr "Попробуйте еще раз или перезапустите приложение."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Попробуйте другой поиск или очистите фильтры."
@@ -12763,6 +12855,11 @@ msgstr "Подчеркнуть ссылки"
 msgid "Undo"
 msgstr "Отменить"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12772,6 +12869,7 @@ msgstr "Неизвестно"
 msgid "Unlink"
 msgstr "Отсоединить"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12786,6 +12884,7 @@ msgstr "Разблокировать редактирование"
 msgid "Unlock it first, then try again."
 msgstr "Сначала разблокируйте его, а затем повторите попытку."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Разблокировка…"
@@ -12973,10 +13072,6 @@ msgstr "Использовать данные из резюме"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Использовать для всех заявок"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13336,6 +13431,10 @@ msgstr "Что видит человек"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Над чем вы работаете?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

@@ -6,9 +6,11 @@ import type {
 	RequirementCoverage,
 	UnsupportedClaim,
 } from "@reactive-resume/resume/proposals";
+import type { WordDiffSegment } from "@reactive-resume/resume/word-diff";
 import type { FactCategory } from "@reactive-resume/schema/career";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
@@ -18,6 +20,7 @@ import { memo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-native";
 import { agentKnowledgeUsed } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { additionParts, blockText, needsConfirmation, proposalText } from "@reactive-resume/resume/proposals";
+import { wordDiff } from "@reactive-resume/resume/word-diff";
 import { webSources } from "./chat";
 import { handToAssistant } from "./handoff";
 import { AssistantMarkdown } from "./markdown";
@@ -41,6 +44,8 @@ export type ProposalHandlers = {
 	locked: boolean;
 	onAccept: (message: UIMessage, part: ToolPart, proposals: readonly Proposal[]) => void;
 	onReject: (message: UIMessage, part: ToolPart, proposals: readonly Proposal[]) => void;
+	/** Undo on a rejected edit: it's undecided again. */
+	onRestore: (message: UIMessage, part: ToolPart, proposals: readonly Proposal[]) => void;
 	/** Saves a pending edit's new wording; the card shows it only after this resolves. */
 	onEdit: (message: UIMessage, part: ToolPart, proposal: Proposal, text: string) => Promise<void>;
 	/** True when these edits tailor to a job and this resume isn't that job's copy (or that isn't known yet). */
@@ -75,26 +80,14 @@ export const MessageView = memo(function MessageView({
 	remember,
 }: MessageViewProps) {
 	const { t } = useLingui();
-	const { colors, radius, space } = useTheme();
+	const { colors, space } = useTheme();
 
 	if (message.role === "user") {
 		const text = message.parts.flatMap((part) => (part.type === "text" ? [part.text] : [])).join("\n");
 		const files = message.parts.flatMap((part) => (part.type === "file" ? [part] : []));
 		return (
 			<View style={{ alignItems: "flex-end", gap: space.s1, marginStart: space.s8 }}>
-				{text ? (
-					<View
-						style={{
-							paddingHorizontal: space.s3,
-							paddingVertical: space.s2,
-							backgroundColor: colors.sunken,
-							borderRadius: radius.rLg,
-							borderBottomEndRadius: radius.rSm,
-						}}
-					>
-						<Text selectable>{text}</Text>
-					</View>
-				) : null}
+				{text ? <UserText text={text} /> : null}
 				{files.map((file) => (
 					<FileChip key={file.url} name={file.filename ?? t`Attachment`} />
 				))}
@@ -326,7 +319,15 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 				</Status>
 			);
 		case "tool-ask_user_question":
-			return <QuestionCard part={part} readOnly={readOnly || !answerable} busy={streaming} onAnswer={onAnswer} />;
+			return (
+				<QuestionCard
+					part={part}
+					readOnly={readOnly || !answerable}
+					passed={!answerable}
+					busy={streaming}
+					onAnswer={onAnswer}
+				/>
+			);
 		case "tool-propose_edits": {
 			if (part.state === "output-error")
 				return (
@@ -357,6 +358,7 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 							locked={proposals.locked || forJobCopy}
 							onAccept={(chosen) => proposals.onAccept(message, part, chosen)}
 							onReject={(chosen) => proposals.onReject(message, part, chosen)}
+							onRestore={(chosen) => proposals.onRestore(message, part, chosen)}
 							onEdit={(proposal, text) => proposals.onEdit(message, part, proposal, text)}
 							requirements={requirements}
 							factText={proposals.factText}
@@ -413,13 +415,62 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 	}
 }
 
+// About 12 lines of the bubble; longer messages (a pasted posting) fold so the thread stays scannable (web).
+const LONG_MESSAGE = 900;
+
+/** A message the user sent: long pastes show their start, with Show all. */
+function UserText({ text }: { text: string }) {
+	const { colors, radius, space } = useTheme();
+	const [open, setOpen] = useState(false);
+	const long = text.length > LONG_MESSAGE || text.split("\n").length > 12;
+	return (
+		<>
+			<View
+				style={{
+					paddingHorizontal: space.s3,
+					paddingVertical: space.s2,
+					backgroundColor: colors.sunken,
+					borderRadius: radius.rLg,
+					borderBottomEndRadius: radius.rSm,
+				}}
+			>
+				<Text selectable {...(long && !open ? { numberOfLines: 12 } : {})}>
+					{text}
+				</Text>
+			</View>
+			{long ? (
+				<Pressable
+					accessibilityRole="button"
+					accessibilityState={{ expanded: open }}
+					onPress={() => setOpen((value) => !value)}
+					hitSlop={12}
+				>
+					<Text variant="caption" color="ink2" style={{ textDecorationLine: "underline" }}>
+						{open ? <Trans>Show less</Trans> : <Trans>Show all ({formatCharacters(text.length)} characters)</Trans>}
+					</Text>
+				</Pressable>
+			) : null}
+		</>
+	);
+}
+
+const formatCharacters = (count: number) => {
+	try {
+		return new Intl.NumberFormat(i18n.locale, { notation: "compact", maximumFractionDigits: 1 }).format(count);
+	} catch {
+		return String(count);
+	}
+};
+
 type QuestionCardProps = Pick<MessageViewProps, "readOnly" | "onAnswer"> & {
 	part: ToolPart;
 	busy?: boolean;
+	/** The conversation moved on without an answer: the question is retired, not waiting. */
+	passed?: boolean;
 };
 
 /** The assistant asks before writing anything the document doesn't say: an info-soft card with its choices. */
-function QuestionCard({ part, readOnly, busy = false, onAnswer }: QuestionCardProps) {
+function QuestionCard({ part, readOnly, busy = false, passed = false, onAnswer }: QuestionCardProps) {
 	const { t } = useLingui();
 	const { colors, radius, size, space, type } = useTheme();
 	const [other, setOther] = useState("");
@@ -463,6 +514,10 @@ function QuestionCard({ part, readOnly, busy = false, onAnswer }: QuestionCardPr
 			) : part.state === "output-error" ? (
 				<Text variant="callout" color="infoText">
 					<Trans>This question couldn't be asked. Send a new message to continue.</Trans>
+				</Text>
+			) : passed && part.state === "input-available" ? (
+				<Text variant="callout" color="infoText">
+					<Trans>Not answered. The conversation went on below.</Trans>
 				</Text>
 			) : !canAnswer ? null : !onAnswer ? (
 				<Text variant="callout" color="infoText">
@@ -527,6 +582,7 @@ type ChangeSetProps = {
 	locked: boolean;
 	onAccept: (proposals: readonly Proposal[]) => void;
 	onReject: (proposals: readonly Proposal[]) => void;
+	onRestore: (proposals: readonly Proposal[]) => void;
 	onEdit: (proposal: Proposal, text: string) => Promise<void>;
 	requirements: readonly RequirementCoverage[];
 	factText: FactText;
@@ -541,6 +597,7 @@ function ChangeSet({
 	locked,
 	onAccept,
 	onReject,
+	onRestore,
 	onEdit,
 	requirements,
 	factText,
@@ -556,6 +613,10 @@ function ChangeSet({
 		if (allowed.length > 0) onAccept(allowed);
 	};
 	const pending = proposals.filter((proposal, index) => acceptable(proposal, index));
+	// Reject all clears every undecided edit at once; wording being edited stays open (web proposal-list).
+	const rejectable = proposals.filter((proposal, index) => states[index] === "pending" && !drafting.has(proposal.id));
+	// Decided edits fold to one line; Show opens one again.
+	const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set());
 	// Edits that add a detail are accepted one by one, after the user checks them (web proposal-list).
 	const checked = pending.filter((proposal) => !needsConfirmation(proposal));
 	const toConfirm = pending.length - checked.length;
@@ -583,6 +644,9 @@ function ChangeSet({
 				<Text variant="label" accessibilityRole="header" style={{ flex: 1 }}>
 					{title ? `${title} · ${count}` : count}
 				</Text>
+				{rejectable.length > 1 ? (
+					<Button size="sm" variant="secondary" label={t`Reject all`} onPress={() => onReject(rejectable)} />
+				) : null}
 				{checked.length > 1 ? (
 					<Button
 						size="sm"
@@ -602,70 +666,208 @@ function ChangeSet({
 				</Text>
 			) : null}
 			{requirements.length > 0 ? <Coverage requirements={requirements} factText={factText} /> : null}
-			{proposals.map((proposal, index) => (
-				<View
-					key={proposal.id}
-					style={{
-						gap: space.s2,
-						padding: space.s3,
-						borderTopWidth: index === 0 ? 0 : 1,
-						borderColor: colors.line,
-					}}
-				>
-					<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
-						<View
-							style={{
-								minWidth: 20,
-								minHeight: 20,
-								borderRadius: radius.rLg,
-								alignItems: "center",
-								justifyContent: "center",
-								backgroundColor: colors.accent,
-							}}
-						>
-							<Text variant="micro" color="onAccent">
-								{index + 1}
+			{proposals.map((proposal, index) => {
+				const state = states[index] ?? "pending";
+				const settled = state === "accepted" || state === "rejected";
+				const open = expanded.has(proposal.id);
+				const toggle = () =>
+					setExpanded((current) => {
+						const next = new Set(current);
+						if (next.has(proposal.id)) next.delete(proposal.id);
+						else next.add(proposal.id);
+						return next;
+					});
+				if (settled && !open)
+					return (
+						<SettledRow
+							key={proposal.id}
+							number={index + 1}
+							proposal={proposal}
+							state={state}
+							first={index === 0}
+							onShow={toggle}
+							onRestore={() => onRestore([proposal])}
+						/>
+					);
+				const diff = additionParts(proposal) || proposal.snapshot ? null : proposalDiff(proposal);
+				return (
+					<View
+						key={proposal.id}
+						style={{
+							gap: space.s2,
+							padding: space.s3,
+							borderTopWidth: index === 0 ? 0 : 1,
+							borderColor: colors.line,
+						}}
+					>
+						<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
+							<View
+								style={{
+									minWidth: 20,
+									minHeight: 20,
+									borderRadius: radius.rLg,
+									alignItems: "center",
+									justifyContent: "center",
+									backgroundColor: colors.accent,
+								}}
+							>
+								<Text variant="micro" color="onAccent">
+									{index + 1}
+								</Text>
+							</View>
+							<Text
+								variant="caption"
+								color="ink3"
+								numberOfLines={2}
+								accessibilityLabel={t`Edit ${index + 1}: ${proposal.location}`}
+								style={{ flex: 1 }}
+							>
+								{proposal.location}
 							</Text>
+							{settled ? (
+								<Pressable
+									accessibilityRole="button"
+									accessibilityState={{ expanded: true }}
+									onPress={toggle}
+									hitSlop={12}
+								>
+									<Text variant="caption" color="ink3" style={{ textDecorationLine: "underline" }}>
+										<Trans context="Fold an edit card">Hide</Trans>
+									</Text>
+								</Pressable>
+							) : null}
 						</View>
-						<Text
-							variant="caption"
-							color="ink3"
-							numberOfLines={1}
-							accessibilityLabel={t`Edit ${index + 1}: ${proposal.location}`}
-							style={{ flex: 1 }}
-						>
-							{proposal.location}
-						</Text>
+						{additionParts(proposal) ? (
+							<Text variant="callout" color="ink3">
+								<Trans>Adds after: {additionParts(proposal)?.anchor}</Trans>
+							</Text>
+						) : diff ? (
+							// Only the changed words are marked, so a one-word fix in a long passage shows at a glance.
+							<Text variant="callout" color="ink3">
+								{diff.map((segment, part) =>
+									segment.kind === "added" ? null : (
+										<Text
+											key={part}
+											variant="callout"
+											color={segment.kind === "removed" ? "ink2" : "ink3"}
+											style={segment.kind === "removed" ? { textDecorationLine: "line-through" } : undefined}
+										>
+											{segment.text}
+										</Text>
+									),
+								)}
+							</Text>
+						) : proposal.before ? (
+							<Text variant="callout" color="ink3" style={{ textDecorationLine: "line-through" }}>
+								{proposalText(proposal, "before")}
+							</Text>
+						) : null}
+						<ProposalBody
+							proposal={proposal}
+							state={state}
+							diff={diff}
+							locked={locked}
+							factText={factText}
+							onAccept={() => accept([proposal])}
+							onReject={() => onReject([proposal])}
+							onRestore={() => onRestore([proposal])}
+							// A structural change is reviewed as a whole: its wording can't be rewritten here.
+							onEdit={proposal.snapshot ? undefined : (text) => onEdit(proposal, text)}
+							onDrafting={(open) =>
+								setDrafting((current) => {
+									const next = new Set(current);
+									if (open) next.add(proposal.id);
+									else next.delete(proposal.id);
+									return next;
+								})
+							}
+						/>
 					</View>
-					{additionParts(proposal) ? (
-						<Text variant="callout" color="ink3">
-							<Trans>Adds after: {additionParts(proposal)?.anchor}</Trans>
-						</Text>
-					) : proposal.before ? (
-						<Text variant="callout" color="ink3" style={{ textDecorationLine: "line-through" }}>
-							{proposalText(proposal, "before")}
-						</Text>
-					) : null}
-					<ProposalBody
-						proposal={proposal}
-						state={states[index] ?? "pending"}
-						locked={locked}
-						factText={factText}
-						onAccept={() => accept([proposal])}
-						onReject={() => onReject([proposal])}
-						// A structural change is reviewed as a whole: its wording can't be rewritten here.
-						onEdit={proposal.snapshot ? undefined : (text) => onEdit(proposal, text)}
-						onDrafting={(open) =>
-							setDrafting((current) => {
-								const next = new Set(current);
-								if (open) next.add(proposal.id);
-								else next.delete(proposal.id);
-								return next;
-							})
-						}
-					/>
-				</View>
-			))}
+				);
+			})}
+		</View>
+	);
+}
+
+/** Old and new text word by word, or null for a rewrite (shown whole). */
+const proposalDiff = (proposal: Proposal) =>
+	proposal.before ? wordDiff(proposalText(proposal, "before"), proposalText(proposal, "after")) : null;
+
+type SettledRowProps = {
+	number: number;
+	proposal: Proposal;
+	state: "accepted" | "rejected";
+	first: boolean;
+	onShow: () => void;
+	onRestore: () => void;
+};
+
+/** A decided edit on one line: number, where it landed, what happened, Undo for a rejection, and Show. */
+function SettledRow({ number, proposal, state, first, onShow, onRestore }: SettledRowProps) {
+	const { t } = useLingui();
+	const { colors, radius, space } = useTheme();
+	return (
+		<View
+			style={{
+				flexDirection: "row",
+				alignItems: "center",
+				gap: space.s2,
+				paddingHorizontal: space.s3,
+				paddingVertical: space.s2,
+				borderTopWidth: first ? 0 : 1,
+				borderColor: colors.line,
+			}}
+		>
+			<View
+				style={{
+					minWidth: 20,
+					minHeight: 20,
+					borderRadius: radius.rLg,
+					alignItems: "center",
+					justifyContent: "center",
+					backgroundColor: colors.sunken,
+				}}
+			>
+				<Text variant="micro" color="ink3">
+					{number}
+				</Text>
+			</View>
+			<Text
+				variant="caption"
+				color="ink3"
+				numberOfLines={1}
+				accessibilityLabel={t`Edit ${number}: ${proposal.location}`}
+				style={{ flex: 1 }}
+			>
+				{proposal.location}
+			</Text>
+			{state === "accepted" ? (
+				<Text variant="caption" color="accentText">
+					<Trans context="A proposed change has been applied">Applied</Trans>
+				</Text>
+			) : (
+				<Text variant="caption" color="ink3">
+					{proposal.superseded ? <Trans>Replaced by a newer suggestion</Trans> : <Trans>Rejected</Trans>}
+				</Text>
+			)}
+			{state === "rejected" && !proposal.superseded ? (
+				<Pressable accessibilityRole="button" onPress={onRestore} hitSlop={12}>
+					<Text variant="caption" color="ink2" style={{ textDecorationLine: "underline" }}>
+						<Trans context="Reconsider a rejected edit">Undo</Trans>
+					</Text>
+				</Pressable>
+			) : null}
+			<Pressable
+				accessibilityRole="button"
+				accessibilityState={{ expanded: false }}
+				accessibilityLabel={t`Show edit ${number}`}
+				onPress={onShow}
+				hitSlop={12}
+			>
+				<Text variant="caption" color="ink3" style={{ textDecorationLine: "underline" }}>
+					<Trans context="Open a folded edit card">Show</Trans>
+				</Text>
+			</Pressable>
 		</View>
 	);
 }
@@ -676,10 +878,13 @@ const addedText = ({ before, after }: Pick<Proposal, "before" | "after">) =>
 type ProposalBodyProps = {
 	proposal: Proposal;
 	state: ProposalState;
+	/** The new text word by word, when the edit is a small change. */
+	diff: readonly WordDiffSegment[] | null;
 	locked: boolean;
 	factText: FactText;
 	onAccept: () => void;
 	onReject: () => void;
+	onRestore: () => void;
 	onEdit: ((text: string) => Promise<void>) | undefined;
 	/** The wording opened for editing (true) or closed: saved or cancelled (false). */
 	onDrafting: (open: boolean) => void;
@@ -689,10 +894,12 @@ type ProposalBodyProps = {
 function ProposalBody({
 	proposal,
 	state,
+	diff,
 	locked,
 	factText,
 	onAccept,
 	onReject,
+	onRestore,
 	onEdit,
 	onDrafting,
 }: ProposalBodyProps) {
@@ -718,7 +925,21 @@ function ProposalBody({
 
 	return (
 		<>
-			{draft === null ? (
+			{draft === null && diff ? (
+				<Text variant="callout">
+					{diff.map((segment, part) =>
+						segment.kind === "removed" ? null : (
+							<Text
+								key={part}
+								variant="callout"
+								style={segment.kind === "added" ? { backgroundColor: colors.accentSoft } : undefined}
+							>
+								{segment.text}
+							</Text>
+						),
+					)}
+				</Text>
+			) : draft === null ? (
 				<Text
 					variant="callout"
 					style={{
@@ -810,6 +1031,7 @@ function ProposalBody({
 					locked={locked}
 					onAccept={onAccept}
 					onReject={onReject}
+					onRestore={onRestore}
 					onEdit={onEdit ? () => setDraft(addedText(proposal)) : undefined}
 				/>
 			)}
@@ -998,10 +1220,11 @@ type ProposalOutcomeProps = {
 	locked: boolean;
 	onAccept: () => void;
 	onReject: () => void;
+	onRestore: () => void;
 	onEdit: (() => void) | undefined;
 };
 
-function ProposalOutcome({ state, superseded, locked, onAccept, onReject, onEdit }: ProposalOutcomeProps) {
+function ProposalOutcome({ state, superseded, locked, onAccept, onReject, onRestore, onEdit }: ProposalOutcomeProps) {
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
 	if (state === "pending")
@@ -1022,15 +1245,24 @@ function ProposalOutcome({ state, superseded, locked, onAccept, onReject, onEdit
 			</View>
 		);
 	return (
-		<Text variant="caption" color={state === "stale" ? "warnText" : "ink3"} style={{ minHeight: 28 }}>
-			{state === "stale" ? (
-				<Trans>Out of date: the text has changed since.</Trans>
-			) : superseded ? (
-				<Trans>Replaced by a newer suggestion</Trans>
-			) : (
-				<Trans>Rejected</Trans>
-			)}
-		</Text>
+		<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2, minHeight: 28 }}>
+			<Text variant="caption" color={state === "stale" ? "warnText" : "ink3"}>
+				{state === "stale" ? (
+					<Trans>Out of date: the text has changed since.</Trans>
+				) : superseded ? (
+					<Trans>Replaced by a newer suggestion</Trans>
+				) : (
+					<Trans>Rejected</Trans>
+				)}
+			</Text>
+			{state === "rejected" && !superseded ? (
+				<Pressable accessibilityRole="button" onPress={onRestore} hitSlop={12}>
+					<Text variant="caption" color="ink2" style={{ textDecorationLine: "underline" }}>
+						<Trans context="Reconsider a rejected edit">Undo</Trans>
+					</Text>
+				</Pressable>
+			) : null}
+		</View>
 	);
 }
 

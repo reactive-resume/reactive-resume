@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# hikaye} other {# hikaye}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {İncelenecek # şey.} other {İncelenecek # şey.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Bir web adresi https:// olmadan yazılmış."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Sesli söylendiğinde yaklaşık 90 saniye"
@@ -1058,6 +1069,10 @@ msgstr "Tümünü kabul et"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Aktif"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Ekle"
 
@@ -1310,8 +1326,8 @@ msgid "Add offer"
 msgstr "İş teklifi ekle"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr "Kabul edilen teklifler dahil, teklif koşullarını elle ekleyin veya Mesajlar bölümündeki isteğe bağlı yapay zekâ çıkarma özelliğini kullanın. Kabul edildi olarak kapatmak koşulları kaydetmez."
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "Kabul edilen teklifler de dahil olmak üzere teklif koşullarını elle ekleyin veya teklif e-postasını başvurunun «Mesajlar» sekmesine yapıştırıp AI kullanmak için «Benim için oku» seçeneğini seçin. Başvuruyu kabul edilmiş olarak kapatmak koşulları kaydetmez."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3544,6 +3560,10 @@ msgstr "Yazdırılamadı. Tekrar deneyin."
 msgid "Couldn't propose these edits: {0}"
 msgstr "Bu düzenlemeler önerilemedi: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "AI sağlayıcınıza ulaşılamadı. Tekrar deneyin veya AI ayarlarında anahtarını kontrol edin."
@@ -3617,6 +3637,10 @@ msgstr "Bu değişiklik kaydedilemedi. Öğe geri yüklendi; tekrar deneyin."
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Bu değişiklik kaydedilemedi. Tekrar deneyin."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Özgeçmişin kilidi açılamadı. Tekrar deneyin."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Bu özgeçmişin kilidi açılamadı. Tekrar deneyin."
 
@@ -4627,6 +4651,19 @@ msgstr "Düzenlemek"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "{0}'ı düzenleyin: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "Gizli bölümler içeriklerini korur ancak yazdırılmaz veya paylaşıl
 msgid "Hidden terms are back"
 msgstr "Gizli terimler geri döndü"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "{title}'yu sayfadan gizle"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "Kilitli"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Kilitli belgeler atlandı. Önce bunların kilidini açın."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "Normal"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norveççe"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8884,6 +8942,10 @@ msgstr "İlerleme çubuğu"
 msgid "Projects"
 msgstr "Projeler"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Önerilen değişiklikler"
@@ -8951,6 +9013,10 @@ msgstr "Yayınlayıcı"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Sade bir e-posta adresini ilk sayfanın üst kısmına yerleştirin. Çoğu sistem sizi bununla kaydeder."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9273,6 +9339,14 @@ msgstr "Sesli prova yap"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Reddetmek"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10780,6 +10854,11 @@ msgstr "Daha kısa"
 msgid "Show"
 msgstr "Göstermek"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ile yapıldı” yazısını göster"
@@ -10797,6 +10876,11 @@ msgstr "{title}'yu sayfada göster"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Tümünü göster"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10822,6 +10906,10 @@ msgstr "Ayrıntıları göster"
 msgid "Show DNS records"
 msgstr "DNS kayıtlarını göster"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Başlığı göster"
@@ -10841,6 +10929,10 @@ msgstr "Arama motorlarında göster"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Anahtarı göster"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12160,10 +12252,6 @@ msgstr "Bu belge"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Bu belge kilitli. Düzenlemelerinizi burada saklamadan önce kilidini açın veya her ikisini de saklayın."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Bu belge kilitli. Öneri almak için kilidini açın."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Bu belge kilitli. Sürümleri hâlâ indirebilir ve adlandırabilirsiniz. Düzenlemek veya geri yüklemek için kilidi açın."
@@ -12640,6 +12728,10 @@ msgstr "Bununla tekrar dene"
 msgid "Try again, or restart the app."
 msgstr "Tekrar deneyin veya uygulamayı yeniden başlatın."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Başka bir arama yapmayı deneyin veya filtrelerinizi temizleyin."
@@ -12763,6 +12855,11 @@ msgstr "Bağlantıların altını çizin"
 msgid "Undo"
 msgstr "Geri al"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12772,6 +12869,7 @@ msgstr "Bilinmiyor"
 msgid "Unlink"
 msgstr "Bağlantıyı kaldır"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12786,6 +12884,7 @@ msgstr "Düzenlemenin kilidini açın"
 msgid "Unlock it first, then try again."
 msgstr "Önce kilidini açın, sonra tekrar deneyin."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Kilit açılıyor…"
@@ -12973,10 +13072,6 @@ msgstr "Özgeçmişteki ayrıntıları kullan"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Tüm başvurularda kullan"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13336,6 +13431,10 @@ msgstr "Bir kişinin gördüğü"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Ne üzerinde çalışıyorsunuz?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

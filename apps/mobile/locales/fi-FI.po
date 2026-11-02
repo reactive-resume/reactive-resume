@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# tarina} other {# tarinaa}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# tarkistettava asia.} other {# tarkistettavaa asiaa.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Verkko-osoite on kirjoitettu ilman https://-etuliitettä."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Noin 90 sekuntia ääneen puhuttuna"
@@ -1058,6 +1069,10 @@ msgstr "Hyväksy kaikki"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Aktiivinen"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Lisää"
 
@@ -1310,8 +1326,8 @@ msgid "Add offer"
 msgstr "Lisää työtarjous"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "Lisää tarjousten ehdot käsin myös hyväksytyille tarjouksille, tai liitä tarjousviesti hakemuksen Viestit-välilehdelle ja valitse Lue se minulle, jos haluat käyttää tekoälyä. Hakemuksen sulkeminen hyväksyttynä ei tallenna ehtoja."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3544,6 +3560,10 @@ msgstr "Ei voitu tulostaa. Yritä uudelleen."
 msgid "Couldn't propose these edits: {0}"
 msgstr "Näitä muokkauksia ei voitu ehdottaa: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Ei saatu yhteyttä tekoälypalveluntarjoajaasi. Yritä uudelleen tai tarkista sen avain AI-asetuksista."
@@ -3617,6 +3637,10 @@ msgstr "Muutosta ei voitu tallentaa. Kohde on palautettu; yritä uudelleen."
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Muutosta ei voitu tallentaa. Yritä uudelleen."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Ansioluettelon lukitusta ei voitu avata. Yritä uudelleen."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Tätä ansioluetteloa ei voitu avata. Yritä uudelleen."
 
@@ -4627,6 +4651,19 @@ msgstr "Muokata"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "Muokkaa {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "Piilotetut osiot säilyttävät sisältönsä, mutta niitä ei tulosteta
 msgid "Hidden terms are back"
 msgstr "Piilotetut termit ovat palanneet"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Piilota {title} sivulta"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "Lukittu"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Lukitut asiakirjat ohitettiin. Avaa ne ensin."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "Normaali"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "norja"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8884,6 +8942,10 @@ msgstr "Edistymispalkki"
 msgid "Projects"
 msgstr "Projektit"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Ehdotetut muutokset"
@@ -8951,6 +9013,10 @@ msgstr "Julkaisija"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Sijoita tavallinen sähköpostiosoite lähelle ensimmäisen sivun alkua. Sen mukaan useimmat järjestelmät luokittelevat sinut."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9273,6 +9339,14 @@ msgstr "Harjoittele ääneen"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Hylätä"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10780,6 +10854,11 @@ msgstr "Lyhyempi"
 msgid "Show"
 msgstr "Näytä"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Näytä ”Tehty Reactive Resumella”"
@@ -10797,6 +10876,11 @@ msgstr "Näytä sivulla {title}"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Näytä kaikki"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10822,6 +10906,10 @@ msgstr "Näytä tiedot"
 msgid "Show DNS records"
 msgstr "Näytä DNS-tietueet"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Näytä otsikko"
@@ -10841,6 +10929,10 @@ msgstr "Näytä hakukoneissa"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Näytä avain"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12160,10 +12252,6 @@ msgstr "Tämä asiakirja"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Tämä asiakirja on lukittu. Avaa se, ennen kuin pidät muokkaukset täällä, tai säilytä molemmat."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Tämä asiakirja on lukittu. Avaa se saadaksesi ehdotuksia."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Tämä asiakirja on lukittu. Voit silti ladata ja nimetä versioita. Avaa lukitus muokataksesi tai palauttaaksesi."
@@ -12640,6 +12728,10 @@ msgstr "Yritä uudelleen tällä"
 msgid "Try again, or restart the app."
 msgstr "Yritä uudelleen tai käynnistä sovellus uudelleen."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Kokeile toista hakua tai tyhjennä suodattimet."
@@ -12763,6 +12855,11 @@ msgstr "Alleviivaa linkit"
 msgid "Undo"
 msgstr "Kumoa"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12772,6 +12869,7 @@ msgstr "Tuntematon"
 msgid "Unlink"
 msgstr "Poista linkitys"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12786,6 +12884,7 @@ msgstr "Avaa muokkaus"
 msgid "Unlock it first, then try again."
 msgstr "Avaa lukitus ensin ja yritä uudelleen."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Avataan…"
@@ -12973,10 +13072,6 @@ msgstr "Käytä ansioluettelon tietoja"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Käytä kaikissa hakemuksissa"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13336,6 +13431,10 @@ msgstr "Mitä ihminen näkee"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Mitä työstät?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

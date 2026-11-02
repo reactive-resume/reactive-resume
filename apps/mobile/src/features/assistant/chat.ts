@@ -2,6 +2,7 @@
 import type { MessageContext } from "./transport";
 import type { AgentMessagesApi } from "./transport";
 import type { RouterOutput } from "@/api/client";
+import type { TranscriptLabels } from "@reactive-resume/ai/tools/transcript";
 import type { useQueryClient } from "@tanstack/react-query";
 import type { FileUIPart, UIMessage } from "ai";
 import { Chat, useChat } from "@ai-sdk/react";
@@ -10,6 +11,7 @@ import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { useLayoutEffect, useMemo, useRef } from "react";
+import { transcriptOf as sharedTranscriptOf } from "@reactive-resume/ai/tools/transcript";
 import { resumeAgentStream, sendAgentMessage } from "./transport";
 import { orpc, streamClient } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
@@ -75,22 +77,29 @@ export function webSources(message: UIMessage): WebSource[] {
 	return [...sources.values()];
 }
 
-type TranscriptLabels = { user: string; assistant: string; sources: string };
+type TranscriptNames = { user: string; assistant: string; sources: string };
 
-/** The conversation as plain text, speaker by speaker, for Copy transcript. Tool steps are left out. */
-export function transcriptOf(messages: readonly UIMessage[], labels: TranscriptLabels) {
-	return messages
-		.flatMap((message) => {
-			const sources = webSources(message)
-				.map((source) => `${source.title}: ${source.url}`)
-				.join("\n");
-			const content = [textOf(message), ...(sources ? [`${labels.sources}:\n${sources}`] : [])]
-				.filter(Boolean)
-				.join("\n\n");
-			return content ? [`${message.role === "user" ? labels.user : labels.assistant}: ${content}`] : [];
-		})
-		.join("\n\n");
+/** Copy transcript's wording in the reader's language: speakers, edits with their outcome, and question answers. */
+export function transcriptLabels(names: TranscriptNames): TranscriptLabels {
+	const statusLabel = { pending: t`proposed`, accepted: t`accepted`, rejected: t`rejected` };
+	return {
+		...names,
+		edit: ({ number, location, before, after, status }) => {
+			const outcome = statusLabel[status];
+			return before.trim()
+				? t`Edit ${number} · ${location}: "${before}" → "${after}" (${outcome})`
+				: t`Edit ${number} · ${location}: added "${after}" (${outcome})`;
+		},
+		question: (question, answer) => (answer === null ? t`Q: ${question}` : `${t`Q: ${question}`}\n${t`A: ${answer}`}`),
+	};
 }
+
+/** The conversation as plain text for Copy transcript (shared with the web app); `statusOf` gives edits' latest decisions. */
+export const transcriptOf = (
+	messages: readonly UIMessage[],
+	names: TranscriptNames,
+	statusOf?: (id: string) => "pending" | "accepted" | "rejected" | undefined,
+) => sharedTranscriptOf(messages, transcriptLabels(names), statusOf);
 
 /** Conversations for the signed-in server, newest first. */
 export function useThreads() {

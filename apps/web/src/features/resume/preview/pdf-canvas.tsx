@@ -209,11 +209,12 @@ export function PdfCanvasPage({
 					</figcaption>
 				) : null)}
 
-			<div style={scaledPageSize} className={cn("relative aspect-page overflow-hidden rounded-md", className)}>
+			{/* Not clipped: overlays may reach past the page edge (Check's margin markers); the canvas rounds itself. */}
+			<div style={scaledPageSize} className={cn("relative aspect-page rounded-md", className)}>
 				<canvas
 					ref={canvasRef}
 					aria-label={t`Resume page ${pageNumber} of ${totalPages}`}
-					className="block size-full"
+					className="block size-full rounded-[inherit]"
 				/>
 				{overlay}
 			</div>

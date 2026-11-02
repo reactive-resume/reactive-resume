@@ -152,7 +152,8 @@ test("unavailable conversation keeps history and pending edits until an approved
 	).toBeOK();
 	const count = stub.requests.length;
 	await page.reload();
-	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	// The open conversation is in the URL, so a reload brings the assistant back on it.
+	await expect(page.getByRole("region", { name: "Assistant" })).toBeVisible();
 	await expect(edits).toBeVisible();
 	await expect(page.getByText("This conversation's AI connection is unavailable.", { exact: false })).toBeVisible();
 	const unchanged = await page.request.get(`/api/openapi/agent/threads/${thread?.id}`);

@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# கதை} other {# கதைகள்}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# உருப்படியை மதிப்பாய்வு செய்யவும்.} other {# உருப்படிகளை மதிப்பாய்வு செய்யவும்.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "ஒரு இணைய முகவரி https:// இல்லாமல
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "பேசும்போது சுமார் 90 விநாடிகள்"
@@ -1058,6 +1069,10 @@ msgstr "அனைத்தையும் ஏற்றுக்கொள்"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "செயலில்"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "சேர்"
 
@@ -1310,8 +1326,8 @@ msgid "Add offer"
 msgstr "வேலைவாய்ப்புச் சலுகையைச் சேர்"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr "ஏற்றுக்கொண்ட சலுகைகள் உட்பட சலுகையின் நிபந்தனைகளை கைமுறையாகச் சேர்க்கவும் அல்லது செய்திகளில் விருப்பமான AI பிரித்தெடுத்தலைப் பயன்படுத்தவும். ஏற்றுக்கொண்டதாக மூடுவது நிபந்தனைகளைப் பதிவு செய்யாது."
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "ஏற்றுக்கொண்ட வேலைவாய்ப்புகள் உட்பட அவற்றின் நிபந்தனைகளை நீங்களே சேர்க்கலாம். அல்லது விண்ணப்பத்தின் «செய்திகள்» தாவலில் வேலைவாய்ப்பு மின்னஞ்சலை ஒட்டி, AI பயன்படுத்த «எனக்காகப் படி» என்பதைத் தேர்ந்தெடுக்கலாம். விண்ணப்பத்தை ஏற்றுக்கொண்டதாக மூடுவது நிபந்தனைகளைப் பதிவு செய்யாது."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3544,6 +3560,10 @@ msgstr "அச்சிட முடியவில்லை. மீண்டு
 msgid "Couldn't propose these edits: {0}"
 msgstr "இந்தத் திருத்தங்களை முன்மொழிய முடியவில்லை: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "உங்கள் AI வழங்குநரை அணுக முடியவில்லை. மீண்டும் முயற்சிக்கவும் அல்லது AI அமைப்புகளில் அதன் விசையைச் சரிபார்க்கவும்."
@@ -3617,6 +3637,10 @@ msgstr "அந்த மாற்றத்தைச் சேமிக்க ம
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "அந்த மாற்றத்தைச் சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "ரெஸ்யூமைத் திறக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "இந்த ரெஸ்யூமை திறக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
@@ -4627,6 +4651,19 @@ msgstr "திருத்து"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "திருத்து {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "மறைக்கப்பட்ட பிரிவுகள் அவ�
 msgid "Hidden terms are back"
 msgstr "மறைக்கப்பட்ட விதிமுறைகள் மீண்டும் வந்துள்ளன"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "பக்கத்திலிருந்து {title} ஐ மறை"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "பூட்டப்பட்டது"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "பூட்டிய ஆவணங்கள் தவிர்க்கப்பட்டன. முதலில் அவற்றைத் திறக்கவும்."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "இயல்பானது"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "நார்வேஜியன்"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8884,6 +8942,10 @@ msgstr "முன்னேற்றப் பட்டை"
 msgid "Projects"
 msgstr "திட்டங்கள்"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "முன்மொழியப்பட்ட மாற்றங்கள்"
@@ -8951,6 +9013,10 @@ msgstr "பதிப்பாளர்"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "முதல் பக்கத்தின் மேற்பகுதிக்கு அருகில் ஒரு எளிய மின்னஞ்சல் முகவரியை வைக்கவும். பெரும்பாலான அமைப்புகள் இதன் கீழேயே உங்களைப் பதிவு செய்கின்றன."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9273,6 +9339,14 @@ msgstr "சத்தமாக ஒத்திகை பார்"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "நிராகரிக்கவும்"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10780,6 +10854,11 @@ msgstr "குட்டையானது"
 msgid "Show"
 msgstr "காட்டு"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume மூலம் உருவாக்கப்பட்டது” என்பதைக் காட்டு"
@@ -10797,6 +10876,11 @@ msgstr "பக்கத்தில் {title} ஐக் காட்டு"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "அனைத்தையும் காட்டு"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10822,6 +10906,10 @@ msgstr "விவரங்களைக் காட்டு"
 msgid "Show DNS records"
 msgstr "DNS பதிவுகளைக் காட்டு"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "தலைப்பைக் காட்டு"
@@ -10841,6 +10929,10 @@ msgstr "தேடுபொறிகளில் காட்டு"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "விசையைக் காட்டு"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12160,10 +12252,6 @@ msgstr "இந்த ஆவணம்"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "இந்த ஆவணம் பூட்டப்பட்டுள்ளது. உங்கள் திருத்தங்களை இங்கே வைத்திருப்பதற்கு முன் அதைத் திறக்கவும் அல்லது இரண்டையும் வைத்திருக்கவும்."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "இந்த ஆவணம் பூட்டப்பட்டுள்ளது. பரிந்துரைகளைப் பெற அதைத் திறக்கவும்."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "இந்த ஆவணம் பூட்டப்பட்டுள்ளது. நீங்கள் இன்னும் பதிப்புகளைப் பதிவிறக்கி பெயரிடலாம். திருத்த அல்லது மீட்டமைக்க திறக்கவும்."
@@ -12640,6 +12728,10 @@ msgstr "இதைக் கொண்டு மீண்டும் முயற
 msgid "Try again, or restart the app."
 msgstr "மீண்டும் முயற்சிக்கவும், அல்லது பயன்பாட்டை மறுதொடக்கம் செய்யவும்."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "வேறொரு தேடலை முயற்சிக்கவும் அல்லது உங்கள் வடிப்பான்களை அழிக்கவும்."
@@ -12763,6 +12855,11 @@ msgstr "இணைப்புகளை அடிக்கோடிடவும�
 msgid "Undo"
 msgstr "செயல்தவிர்"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12772,6 +12869,7 @@ msgstr "தெரியவில்லை"
 msgid "Unlink"
 msgstr "இணைப்பை நீக்கவும்"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12786,6 +12884,7 @@ msgstr "எடிட்டிங் திறக்கும்"
 msgid "Unlock it first, then try again."
 msgstr "முதலில் அதைத் திறக்கவும், பிறகு மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "திறக்கிறது…"
@@ -12973,10 +13072,6 @@ msgstr "ரெஸ்யூமிலிருந்து விவரங்க�
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "எல்லா விண்ணப்பங்களுக்கும் பயன்படுத்து"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13336,6 +13431,10 @@ msgstr "ஒரு நபர் என்ன பார்க்கிறார்
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "நீங்கள் எதில் வேலை செய்கிறீர்கள்?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

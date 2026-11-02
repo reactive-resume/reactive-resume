@@ -171,4 +171,32 @@ describe("assistant web tools", () => {
 		expect(instructions).toContain("isn't the copy made for this job");
 		expect(instructions).toContain("Knowledge isn't shared");
 	});
+
+	it("reads a locked document and answers, but offers no edit tool", () => {
+		const signal = new AbortController().signal;
+		const handlers = {
+			readDocument: vi.fn(),
+			readAttachment: vi.fn(),
+			proposeEdits: vi.fn(),
+			searchWeb: vi.fn(),
+			readPage: vi.fn(),
+		};
+		const locked = buildAgentTools({ document: "resume", canEdit: false, externalSearch: false, signal, handlers });
+		expect(locked).toHaveProperty("read_resume");
+		expect(locked).not.toHaveProperty("propose_edits");
+		expect(buildAgentTools({ document: "resume", externalSearch: false, signal, handlers })).toHaveProperty(
+			"propose_edits",
+		);
+
+		const options = {
+			document: { kind: "resume" as const, name: "Sent" },
+			posting: null,
+			searchTool: null,
+			canReadPage: false,
+		};
+		expect(buildAgentInstructions({ ...options, locked: true })).toContain("The document is locked");
+		const unlocked = buildAgentInstructions(options);
+		expect(unlocked).not.toContain("The document is locked");
+		expect(unlocked).not.toContain("{{LOCKED}}");
+	});
 });

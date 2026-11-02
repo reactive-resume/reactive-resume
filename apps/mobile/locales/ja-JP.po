@@ -281,6 +281,13 @@ msgstr "{0, plural, other {#件のストーリー}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {確認が必要な項目#件。} other {確認が必要な項目#件。}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "ウェブアドレスに https:// が付いていません。"
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "話すと約90秒"
@@ -1058,6 +1069,10 @@ msgstr "すべてを受け入れる"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "アクティブ"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "追加"
 
@@ -1310,8 +1326,8 @@ msgid "Add offer"
 msgstr "オファーを追加"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "承諾済みのオファーも含め、条件を手動で追加できます。AIを使う場合は、応募の「メッセージ」タブにオファーのメールを貼り付け、「代わりに読む」を選んでください。応募を承諾済みとして終了しても、条件は記録されません。"
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3544,6 +3560,10 @@ msgstr "印刷できませんでした。もう一度やり直してください
 msgid "Couldn't propose these edits: {0}"
 msgstr "これらの編集を提案できませんでした: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "AI プロバイダーに接続できませんでした。もう一度試すか、AI 設定でキーを確認してください。"
@@ -3617,6 +3637,10 @@ msgstr "その変更を保存できませんでした。項目は元に戻され
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "その変更を保存できませんでした。もう一度やり直してください。"
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "レジュメのロックを解除できませんでした。もう一度お試しください。"
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "このレジュメのロックを解除できませんでした。もう一度やり直してください。"
 
@@ -4627,6 +4651,19 @@ msgstr "編集"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "{0} を編集: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "非表示セクションにはコンテンツが保持されますが、
 msgid "Hidden terms are back"
 msgstr "隠された用語が戻ってきました"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "{title} をページから非表示にする"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "ロックされています"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Locked documents were skipped.まずロックを解除してください。"
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "普通"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "ノルウェー語"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8884,6 +8942,10 @@ msgstr "プログレスバー"
 msgid "Projects"
 msgstr "プロジェクト"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "変更の提案"
@@ -8951,6 +9013,10 @@ msgstr "出版社"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "1ページ目の上部近くに、プレーンなメールアドレスを記載してください。多くのシステムがこれをもとに応募者を管理します。"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9273,6 +9339,14 @@ msgstr "声に出してリハーサル"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "拒否する"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10780,6 +10854,11 @@ msgstr "短い"
 msgid "Show"
 msgstr "見せる"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "「Reactive Resume で作成」を表示"
@@ -10797,6 +10876,11 @@ msgstr "ページに{title}を表示"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "すべて表示"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10822,6 +10906,10 @@ msgstr "詳細を表示"
 msgid "Show DNS records"
 msgstr "DNS レコードを表示"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "見出しを表示"
@@ -10841,6 +10929,10 @@ msgstr "検索エンジンに表示"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "キーを表示"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12160,10 +12252,6 @@ msgstr "この文書"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "この文書はロックされています。編集内容をここに保存する前にロックを解除するか、両方を保存してください。"
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "この文書はロックされています。ロックを解除すると提案が表示されます。"
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "この文書はロックされています。引き続き、バージョンをダウンロードして名前を付けることができます。編集または復元するにはロックを解除します。"
@@ -12640,6 +12728,10 @@ msgstr "これでもう一度試す"
 msgid "Try again, or restart the app."
 msgstr "もう一度お試しいただくか、アプリを再起動してください。"
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "別の検索を試すか、フィルターをクリアしてください。"
@@ -12763,6 +12855,11 @@ msgstr "リンクに下線を引く"
 msgid "Undo"
 msgstr "元に戻す"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12772,6 +12869,7 @@ msgstr "不明"
 msgid "Unlink"
 msgstr "リンクを解除する"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12786,6 +12884,7 @@ msgstr "編集のロックを解除する"
 msgid "Unlock it first, then try again."
 msgstr "まずロックを解除してから、もう一度試してください。"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "ロックを解除中…"
@@ -12973,10 +13072,6 @@ msgstr "レジュメの詳細を使用"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "すべての応募で使用"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13336,6 +13431,10 @@ msgstr "人が見る内容"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "何に取り組んでいますか？"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

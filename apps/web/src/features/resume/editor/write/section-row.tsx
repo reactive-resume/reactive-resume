@@ -105,7 +105,7 @@ export function SectionRow({ section, locked, dragGroup, onMove, children }: Sec
 				isDragging && "z-10 bg-raised shadow-e2",
 			)}
 		>
-			<div className="group/row flex h-11 items-center gap-0.5 rounded-lg pe-1 hover:bg-hover">
+			<div className="group/row @container flex h-11 items-center gap-0.5 rounded-lg pe-1 hover:bg-hover">
 				<button
 					type="button"
 					aria-label={t`Reorder ${title}`}
@@ -134,8 +134,14 @@ export function SectionRow({ section, locked, dragGroup, onMove, children }: Sec
 				</button>
 
 				{proposed > 0 && (
+					// In a narrow column the badge is just the number, so the section's name stays readable.
 					<Badge variant="accent" className="shrink-0">
-						<Plural value={proposed} one="# proposed" other="# proposed" />
+						<span aria-hidden="true" className="@[18rem]:hidden">
+							{proposed}
+						</span>
+						<span className="sr-only @[18rem]:not-sr-only">
+							<Plural value={proposed} one="# proposed" other="# proposed" />
+						</span>
 					</Badge>
 				)}
 				{toCheck > 0 && (

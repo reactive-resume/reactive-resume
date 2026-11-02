@@ -281,6 +281,13 @@ msgstr "{0, plural, one {סיפור אחד} two {שני סיפורים} other {#
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# פריט לבדיקה.} other {# פריטים לבדיקה.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "כתובת אינטרנט כתובה בלי https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "כ-90 שניות בדיבור"
@@ -1058,6 +1069,10 @@ msgstr "קבל הכל"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "פָּעִיל"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "הוספה"
 
@@ -1310,8 +1326,8 @@ msgid "Add offer"
 msgstr "הוספת הצעת עבודה"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "אפשר להזין ידנית את תנאי ההצעה, כולל הצעות שהתקבלו, או להדביק את הודעת ההצעה בלשונית „הודעות” של מועמדות ולבחור „קרא בשבילי” כדי להשתמש ב-AI. סגירת מועמדות ככזו שהתקבלה אינה שומרת את התנאים."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3544,6 +3560,10 @@ msgstr "לא ניתן להדפיס. נסה שוב."
 msgid "Couldn't propose these edits: {0}"
 msgstr "לא ניתן להציע את העריכות הבאות: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "לא ניתן היה להגיע לספק ה-AI שלך. נסה שוב או בדוק את המפתח שלו בהגדרות AI."
@@ -3617,6 +3637,10 @@ msgstr "לא ניתן היה לשמור את השינוי. הפריט שוחזר
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "לא ניתן היה לשמור את השינוי הזה. נסה שוב."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "לא ניתן היה לבטל את נעילת קורות החיים. נסה שוב."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "לא ניתן היה לבטל את נעילת קורות החיים. נסה שוב."
 
@@ -4627,6 +4651,19 @@ msgstr "לַעֲרוֹך"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "ערוך {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "קטעים מוסתרים שומרים על התוכן שלהם אך א�
 msgid "Hidden terms are back"
 msgstr "מונחים נסתרים חזרו"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "הסתר את {title} מהדף"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "נעול"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "דולג על מסמכים נעולים. בטל את נעילתם תחילה."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "נוֹרמָלִי"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "נורווגית"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8884,6 +8942,10 @@ msgstr "פס התקדמות"
 msgid "Projects"
 msgstr "פרויקטים"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "שינויים מוצעים"
@@ -8951,6 +9013,10 @@ msgstr "מוציא לאור"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "מקם כתובת דוא״ל פשוטה ליד ראש העמוד הראשון. זה מה שרוב המערכות מתייגות אותך לפיו."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9273,6 +9339,14 @@ msgstr "חזור בקול"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "לִדחוֹת"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10780,6 +10854,11 @@ msgstr "קצר יותר"
 msgid "Show"
 msgstr "לְהַצִיג"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "הצגת “נוצר באמצעות Reactive Resume”"
@@ -10797,6 +10876,11 @@ msgstr "הצג את {title} בעמוד"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "הצג הכל"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10822,6 +10906,10 @@ msgstr "הצג פרטים"
 msgid "Show DNS records"
 msgstr "הצגת רשומות DNS"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "הצג כותרת"
@@ -10841,6 +10929,10 @@ msgstr "הצגה במנועי חיפוש"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "הצג מפתח"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12160,10 +12252,6 @@ msgstr "המסמך הזה"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "מסמך זה נעול. בטל את הנעילה לפני שתשמור את העריכות שלך כאן, או השאר את שניהם."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "מסמך זה נעול. בטל את הנעילה כדי לקבל הצעות."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "מסמך זה נעול. אתה עדיין יכול להוריד ולתת שם גרסאות. בטל את הנעילה כדי לערוך או לשחזר."
@@ -12640,6 +12728,10 @@ msgstr "נסה שוב עם זה"
 msgid "Try again, or restart the app."
 msgstr "נסה שוב, או הפעל מחדש את האפליקציה."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "נסה חיפוש נוסף או נקה את המסננים שלך."
@@ -12763,6 +12855,11 @@ msgstr "קו תחתון של קישורים"
 msgid "Undo"
 msgstr "לְבַטֵל"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12772,6 +12869,7 @@ msgstr "לא ידוע"
 msgid "Unlink"
 msgstr "בטל את הקישור"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12786,6 +12884,7 @@ msgstr "בטל נעילת עריכה"
 msgid "Unlock it first, then try again."
 msgstr "תחילה בטל את הנעילה ולאחר מכן נסה שוב."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "מבטל נעילה…"
@@ -12973,10 +13072,6 @@ msgstr "שימוש בפרטים מקורות החיים"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "השתמש לכל המועמדויות"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13336,6 +13431,10 @@ msgstr "מה אדם רואה"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "על מה אתה עובד?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

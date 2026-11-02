@@ -92,7 +92,7 @@ export function OffersScreen() {
 				<EmptyState
 					variant="card"
 					title={t`No offers to compare yet`}
-					message={t`Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms.`}
+					message={t`Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms.`}
 				/>
 			) : null}
 			{offers.length ? (
@@ -143,7 +143,7 @@ export function OffersScreen() {
 									<EmptyState
 										variant="card"
 										title={t`Save another offer to compare`}
-										message={t`Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms.`}
+										message={t`Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms.`}
 									/>
 								)}
 							</View>
