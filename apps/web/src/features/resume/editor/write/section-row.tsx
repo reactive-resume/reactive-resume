@@ -32,7 +32,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { pendingProposals } from "../proposals/proposals";
 import { useEditorStore } from "../store";
 import { addEntryTo } from "./actions";
-import { countEntriesToCheck, getEntries, getSectionObject } from "./model";
+import { countEntriesToCheck, getEntries, getSectionObject, isDraftEntry } from "./model";
 import { IconPicker } from "@/components/input/icon-picker";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { undoToast } from "@/features/resume/builder/undo-toast";
@@ -66,6 +66,12 @@ export function SectionRow({ section, locked, dragGroup, onMove, children }: Sec
 	const title = useSectionTitle(section);
 	const hidden = useCurrentBuilderResumeSelector((resume) => getSectionObject(resume.data, section)?.hidden ?? false);
 	const count = useCurrentBuilderResumeSelector((resume) => getEntries(resume.data, section).length);
+	// Every entry hidden or still a draft: the section is "shown" but prints nothing.
+	const printsNothing = useCurrentBuilderResumeSelector((resume) => {
+		if (section.kind === "summary") return false;
+		const entries = getEntries(resume.data, section);
+		return entries.length > 0 && entries.every((entry) => entry.hidden || isDraftEntry(section.type, entry));
+	});
 	// Dates read from text that wasn't exact ask for a look (they print as typed until then).
 	const toCheck = useCurrentBuilderResumeSelector((resume) => countEntriesToCheck(getEntries(resume.data, section)));
 	const proposed = useProposedCount(section.id);
@@ -143,6 +149,11 @@ export function SectionRow({ section, locked, dragGroup, onMove, children }: Sec
 							<Plural value={proposed} one="# proposed" other="# proposed" />
 						</span>
 					</Badge>
+				)}
+				{printsNothing && !hidden && (
+					<span className="max-@[16rem]:sr-only shrink-0 truncate text-xs text-ink-3">
+						<Trans>Not on the page</Trans>
+					</span>
 				)}
 				{toCheck > 0 && (
 					<Badge variant="warn" className="shrink-0">
@@ -244,9 +255,11 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 	const rename = async () => {
 		const next = await prompt(t`Rename section`, {
 			description: t`Leave it empty to use the original title.`,
-			defaultValue: settings.title,
+			// The title as shown, also for a built-in section that keeps its default name.
+			defaultValue: title,
+			confirmText: t`Rename`,
 		});
-		if (next === null || next === settings.title) return;
+		if (next === null || next === settings.title || next === title) return;
 		edit((target) => {
 			target.title = next;
 		});

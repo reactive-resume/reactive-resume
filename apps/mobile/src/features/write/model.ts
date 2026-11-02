@@ -14,6 +14,7 @@ import type { ResumeDates } from "@reactive-resume/schema/resume/dates";
 import type { WritableDraft } from "immer";
 import { createEntry } from "@reactive-resume/resume/entries";
 import { moveItem as moveResumeItem } from "@reactive-resume/resume/move-item";
+import { nextFreeSectionTitle } from "@reactive-resume/resume/section-title";
 import { sectionTypeSchema } from "@reactive-resume/schema/resume/data";
 import { hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
 import { generateId, stripHtml } from "@reactive-resume/utils/string";
@@ -319,7 +320,22 @@ export function addBuiltinSection(draft: WritableDraft<ResumeData>, type: "summa
 	return entry.id;
 }
 
-export function addCustomSection(draft: WritableDraft<ResumeData>, type: CustomSectionType, title: string) {
+/** Every title the outline shows: custom sections' own, built-ins' own, and a built-in's default name (`base`) for
+ * the type being added when that section has entries under its default name. */
+function shownTitles(draft: WritableDraft<ResumeData>, type: CustomSectionType, base: string) {
+	const titles = draft.customSections.map((section) => section.title);
+	for (const [key, section] of Object.entries(draft.sections)) {
+		if (section.title.trim()) titles.push(section.title);
+		else if (key === type && section.items.length > 0) titles.push(base);
+	}
+	if (draft.summary.title.trim()) titles.push(draft.summary.title);
+	else if (type === "summary" && draft.summary.content.trim()) titles.push(base);
+	return titles;
+}
+
+export function addCustomSection(draft: WritableDraft<ResumeData>, type: CustomSectionType, base: string) {
+	// A second "Projects" would be indistinguishable in the outline: it is "Projects 2".
+	const title = nextFreeSectionTitle(base, shownTitles(draft, type, base));
 	const entry = createEntry(type);
 	const section = makeCustomSection(generateId(), type, title, entry as SectionItem);
 	draft.customSections.push(section as WritableDraft<CustomSection>);

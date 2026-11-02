@@ -229,7 +229,7 @@ export function DatesField({
 						label={t`Present`}
 						value={dates.present}
 						disabled={disabled}
-						onValueChange={(present) => onChange(editDates(dates, { present, end: present ? null : dates.end }))}
+						onValueChange={(present) => onChange(editDates(dates, { present, end: dates.end }))}
 					/>
 					<Text>{t`Present`}</Text>
 				</View>
@@ -261,7 +261,7 @@ export function DatesField({
 				</Note>
 			) : isReversed(dates) ? (
 				<Note icon="warning" tone="warnText">
-					{t`The end is before the start.`}
+					{t`The end date is before the start date. Check both dates.`}
 				</Note>
 			) : null}
 		</View>

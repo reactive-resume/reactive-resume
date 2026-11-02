@@ -14,6 +14,7 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { openEntry } from "./actions";
 import {
@@ -146,17 +147,37 @@ export function AddSectionMenu() {
 }
 
 // Projects are how someone without a job yet shows their work (Check suggests them when Experience is empty).
-const SUGGESTED: ("summary" | SectionType)[] = ["experience", "education", "projects", "skills", "summary"];
+export const SUGGESTED_SECTIONS: readonly ("summary" | SectionType)[] = [
+	"experience",
+	"education",
+	"projects",
+	"skills",
+	"summary",
+];
 
-/** A blank resume: the first sections to add, as + chips, and an offer to import instead. */
-export function StartSuggestions({ onImport }: { onImport: () => void }) {
+export const isSuggestedSection = (id: string): id is "summary" | SectionType =>
+	(SUGGESTED_SECTIONS as readonly string[]).includes(id);
+
+type StartSuggestionsProps = {
+	/** The suggested sections the resume doesn't have yet. */
+	suggestions: readonly ("summary" | SectionType)[];
+	/** On a blank resume: offer to import one instead. */
+	onImport?: () => void;
+};
+
+/** The first sections to add, as + chips, until each is used; on a blank resume, an offer to import instead. */
+export function StartSuggestions({ suggestions, onImport }: StartSuggestionsProps) {
 	return (
-		<div className="grid gap-3 rounded-xl border border-dashed border-line p-4">
+		<div className={cn("grid gap-3 rounded-xl border border-dashed border-line p-4", !onImport && "mt-2 gap-2 p-3")}>
 			<p className="text-sm text-ink-2">
-				<Trans>Start with the sections most resumes have.</Trans>
+				{onImport ? (
+					<Trans>Start with the sections most resumes have.</Trans>
+				) : (
+					<Trans>Sections most resumes also have:</Trans>
+				)}
 			</p>
 			<div className="flex flex-wrap gap-2">
-				{SUGGESTED.map((type) => (
+				{suggestions.map((type) => (
 					<button
 						key={type}
 						type="button"
@@ -168,18 +189,20 @@ export function StartSuggestions({ onImport }: { onImport: () => void }) {
 					</button>
 				))}
 			</div>
-			<p className="text-xs text-ink-3">
-				<Trans>
-					Have a resume already?{" "}
-					<button
-						type="button"
-						onClick={onImport}
-						className="font-medium text-accent-text underline underline-offset-2"
-					>
-						Import it
-					</button>
-				</Trans>
-			</p>
+			{onImport && (
+				<p className="text-xs text-ink-3">
+					<Trans>
+						Have a resume already?{" "}
+						<button
+							type="button"
+							onClick={onImport}
+							className="font-medium text-accent-text underline underline-offset-2"
+						>
+							Import it
+						</button>
+					</Trans>
+				</p>
+			)}
 		</div>
 	);
 }

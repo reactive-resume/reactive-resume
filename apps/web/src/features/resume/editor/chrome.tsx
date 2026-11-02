@@ -12,7 +12,7 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
+import { FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { useResumeStore } from "@/features/resume/builder/draft";
@@ -56,13 +56,16 @@ function useCanvasWidth() {
 	return [ref, width] as const;
 }
 
-/** The canvas ref, the fit scale for the page format, and the scale the page is drawn at (zoom, or fit). */
-export function usePageScale(format: keyof typeof PAGE_WIDTH) {
+/**
+ * The canvas ref, the fit scale for the page format, and the scale the page is drawn at (zoom, or fit). `covered` is
+ * the canvas width something lies over (a sheet), which fit leaves out.
+ */
+export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
 	const zoom = useEditorStore((state) => state.zoom);
 	const isPhone = useBreakpoint() === "mobile";
 	const [canvasRef, canvasWidth] = useCanvasWidth();
 	const gutter = isPhone ? CANVAS_GUTTER.narrow : CANVAS_GUTTER.wide;
-	const fitScale = canvasWidth > 0 ? Math.min(ZOOM_MAX, (canvasWidth - gutter) / PAGE_WIDTH[format]) : 1;
+	const fitScale = canvasWidth > 0 ? Math.min(FIT_MAX, (canvasWidth - gutter - covered) / PAGE_WIDTH[format]) : 1;
 	const pageScale = zoom === "fit" ? Math.max(0.25, fitScale) : zoom;
 
 	return { canvasRef, fitScale, pageScale };

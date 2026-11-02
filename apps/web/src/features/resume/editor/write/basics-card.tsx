@@ -81,7 +81,7 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 				<CollapsibleContent>
 					<fieldset
 						disabled={locked}
-						className="m-0 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2.5 border-0 border-t border-line px-3 pt-3 pb-3.5"
+						className="m-0 grid min-w-0 grid-cols-2 items-start gap-x-3 gap-y-2.5 border-0 border-t border-line px-3 pt-3 pb-3.5"
 					>
 						<PhotoRow locked={locked} />
 						<TextField
@@ -93,14 +93,16 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 							{...text("name")}
 						/>
 						<TextField label={<Trans>Headline</Trans>} wide {...text("headline")} />
+						{/* Addresses run long: Email and Phone get full rows, also in a narrow panel. */}
 						<TextField
 							label={<Trans>Email</Trans>}
+							wide
 							type="email"
 							autoComplete="email"
 							validate={validateEmail}
 							{...text("email")}
 						/>
-						<TextField label={<Trans>Phone</Trans>} type="tel" autoComplete="tel" {...text("phone")} />
+						<TextField label={<Trans>Phone</Trans>} wide type="tel" autoComplete="tel" {...text("phone")} />
 						<TextField label={<Trans>Location</Trans>} wide {...text("location")} />
 						<WebsiteField
 							label={<Trans>Website</Trans>}

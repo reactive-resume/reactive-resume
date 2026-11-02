@@ -4,8 +4,9 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { formatShortcut } from "@reactive-resume/ui/components/kbd";
 import { useEditorStore } from "../store";
-import { AddSectionMenu, StartSuggestions } from "./add-section";
+import { AddSectionMenu, isSuggestedSection, StartSuggestions, SUGGESTED_SECTIONS } from "./add-section";
 import { BasicsCard } from "./basics-card";
 import { getOutlineRows, summarizeContent } from "./model";
 import { Outline } from "./outline";
@@ -25,8 +26,20 @@ export function WritePanel() {
 	const dateFormat = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.dateFormat ?? null);
 	const page = { locale, dateFormat: dateFormat ?? undefined };
 	const added = useEditorStore((state) => state.addedSections);
-	const isEmpty = useCurrentBuilderResumeSelector((resume) => getOutlineRows(resume.data, new Set(added)).length === 0);
+	// The section ids in the outline, joined so the selector returns a stable value.
+	const inUse = useCurrentBuilderResumeSelector((resume) =>
+		getOutlineRows(resume.data, new Set(added))
+			.map((row) => row.id)
+			.join(" "),
+	);
+	const rows = inUse ? inUse.split(" ") : [];
+	const isEmpty = rows.length === 0;
+	// While the resume is still being started (only suggested sections so far), the rest of the starter chips stay.
+	const remaining = rows.every((id) => isSuggestedSection(id))
+		? SUGGESTED_SECTIONS.filter((id) => !rows.includes(id))
+		: [];
 	const openDialog = useDialogStore((state) => state.openDialog);
+	const reorderKeys = formatShortcut("⌥↑↓");
 
 	return (
 		<div className="grid gap-4 p-4">
@@ -40,18 +53,21 @@ export function WritePanel() {
 				<p className="mb-1.5 flex items-baseline justify-between px-1 text-xs font-semibold text-ink-3">
 					<Trans>Sections · print order</Trans>
 					{!locked && (
-						<span className="font-normal tracking-normal normal-case">
+						<span className="font-normal tracking-normal normal-case pointer-coarse:hidden">
 							<bdi dir="ltr">
-								<Trans>drag · ⌥↑↓</Trans>
+								<Trans>drag · {reorderKeys}</Trans>
 							</bdi>
 						</span>
 					)}
 				</p>
 
 				{isEmpty && !locked ? (
-					<StartSuggestions onImport={() => openDialog("document.new", undefined)} />
+					<StartSuggestions suggestions={remaining} onImport={() => openDialog("document.new", undefined)} />
 				) : (
-					<Outline locked={locked} page={page} />
+					<>
+						<Outline locked={locked} page={page} />
+						{!locked && remaining.length > 0 && <StartSuggestions suggestions={remaining} />}
+					</>
 				)}
 
 				{!locked && <AddSectionMenu />}
@@ -109,8 +125,8 @@ function ImportedNote() {
 	);
 }
 
-/** Locked resumes read as they print; Unlock is one click and reversible. */
-function LockedNote() {
+/** Locked resumes read as they print; Unlock is one click and reversible. Write and Design both show it. */
+export function LockedNote() {
 	const { unlock, isPending } = useUnlockResume();
 
 	return (

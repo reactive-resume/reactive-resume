@@ -424,6 +424,13 @@ msgstr "{0, plural, one {Je gekozen lettertype kan {list} niet weergeven. Het wo
 msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{0} · {providerLabel}. Stuurt deze sollicitatie en uw Kennis; uw aanbieder kan kosten rekenen."
 
+#. Mode tab tooltip: the mode, then the key that opens it
+#. placeholder {0}: labels[mode]
+#. placeholder {1}: index + 1
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{0} · key {1}"
+msgstr ""
+
 #. placeholder {0}: current.name
 #. placeholder {0}: letter.name
 #: src/features/letters/store.ts
@@ -1035,9 +1042,20 @@ msgstr "{title} verwijderd"
 msgid "{title} is on · next {0}"
 msgstr "{title} staat aan · volgende {0}"
 
+#. placeholder {0}: rows.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title} moved to position {position} of {0}"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "{title} paused"
 msgstr "{title} gepauzeerd"
+
+#. placeholder {0}: to + 1
+#. placeholder {1}: entryIds.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title}, entry {0} of {1}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{toCheck, plural, one {# field needs a look.} other {# fields need a look.}}"
@@ -1767,6 +1785,7 @@ msgstr "Trefwoord toevoegen"
 msgid "Add language"
 msgstr "Taal toevoegen"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
@@ -2336,8 +2355,8 @@ msgid "Any font, in Advanced"
 msgstr "Elk lettertype, in Geavanceerd"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Anyone who opens the public URL will need this password."
-msgstr "Iedereen die de openbare URL opent, heeft dit wachtwoord nodig."
+msgid "Anyone who opens the public link needs this password."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
@@ -3282,18 +3301,9 @@ msgstr "Wijzig uw wachtwoord"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "CV direct gewijzigd (een eerder gesprek)"
 
-#: src/dialogs/resume/index.tsx
-msgid "Changed your mind? Rename your resume to something more descriptive."
-msgstr "Van gedachten veranderd? Hernoem uw cv naar iets beschrijvenders."
-
 #: src/features/homepage/footer.tsx
 msgid "Changelog"
 msgstr "Changelog"
-
-#: src/features/resume/editor/design/style-groups.tsx
-#: src/features/resume/editor/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "Wijzigt alleen sectietitels en datumwoorden, niet uw inhoud."
 
 #. placeholder {0}: versionLabel(earlier)
 #: src/features/career/offers.tsx
@@ -3520,6 +3530,10 @@ msgstr ""
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "Kies een PDF-bestand."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
@@ -3870,8 +3884,8 @@ msgid "Complete {0} before saving."
 msgstr "Vul {0} in voordat je opslaat."
 
 #: src/features/resume/share/download-tab.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "Volledige gegevensback-up. Importeert terug naar Reactive Resume- of JSON Resume-tools."
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
@@ -4781,6 +4795,10 @@ msgstr "Kan de vacature niet opslaan. Probeer het opnieuw."
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't save the provider. Try again."
 msgstr "Kan de provider niet opslaan. Probeer het opnieuw."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't save the QR code as PNG. Try SVG instead."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't save the story. Try again."
@@ -5872,10 +5890,6 @@ msgstr "Voorbeeld-PDF downloaden"
 msgid "Download them"
 msgstr "Download ze"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "Downloadtotalen kunnen herhaalde klikken omvatten."
-
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
@@ -5968,8 +5982,8 @@ msgid "Drafting…"
 msgstr "Opstellen…"
 
 #: src/features/resume/editor/write/write-panel.tsx
-msgid "drag · ⌥↑↓"
-msgstr "sleep · ⌥↑↓"
+msgid "drag · {reorderKeys}"
+msgstr "sleep · {reorderKeys}"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
@@ -6039,6 +6053,10 @@ msgstr "Elke eis in de vacature wordt getoetst aan de feiten en verhalen in uw K
 #: src/features/assistant/conversation.tsx
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "Elke verzending begint opnieuw met dit bericht en geselecteerde bestanden. De eerdere gespreksgeschiedenis blijft hier staan."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -6158,6 +6176,7 @@ msgstr ""
 msgid "Edit question"
 msgstr "Vraag bewerken"
 
+#: src/dialogs/resume/index.tsx
 #: src/features/career/workspace/preparation.tsx
 msgid "Edit resume"
 msgstr ""
@@ -7115,10 +7134,6 @@ msgstr "Volledige naam"
 msgid "Full width"
 msgstr "Volledige breedte"
 
-#: src/dialogs/resume/index.tsx
-msgid "Generate a random name"
-msgstr "Genereer een willekeurige naam"
-
 #: src/features/settings/account/backup-codes.tsx
 msgid "Generate new codes"
 msgstr ""
@@ -7233,6 +7248,11 @@ msgstr "Ga naar Reactive Resume"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
 msgstr "Ga naar…"
+
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/address-field.tsx
+msgid "Goes live at {0} when you publish."
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Good luck out there. Reactive Resume stays free because people chip in."
@@ -7584,6 +7604,7 @@ msgid "Icon…"
 msgstr "Pictogram…"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Icons in contact line"
 msgstr "Pictogrammen in contactlijn"
 
@@ -8195,9 +8216,15 @@ msgstr "Bewaar de mijne"
 msgid "Keep my codes"
 msgstr ""
 
+#. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr "Blijf op één pagina"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -8234,11 +8261,6 @@ msgstr "Houd ze op ongeveer twee regels, zodat een snelle lezer ze afmaakt."
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
 msgstr "Beperk je tot twee of drie families. Elk extra lettertype is weer een kans dat er een verkeerd wordt weergegeven."
-
-#. Layout editor toggle that prevents a section from splitting across pages
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Keep together"
-msgstr "Blijf bij elkaar"
 
 #: src/features/settings/account/profile.tsx
 msgid "Keep username"
@@ -10206,6 +10228,10 @@ msgstr ""
 msgid "Not now"
 msgstr "Niet nu"
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Not on the page"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/career/offers.tsx
@@ -10587,6 +10613,10 @@ msgstr ""
 msgid "Only the text to read aloud is sent to this speech model."
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Only you can see this address. Publish it in Share."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Alleen jij ziet deze"
@@ -10653,6 +10683,10 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
+msgstr ""
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Open Share"
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -11716,8 +11750,8 @@ msgstr "Publiceer de webpagina om weergaven en downloads te tellen. Tellingen zi
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "Publiceer dit cv om het te openen via je korte link en eigen domein."
 
-#: src/features/resume/share/address-field.tsx
-msgid "Publish to choose an address."
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
@@ -12460,6 +12494,8 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/account/security.tsx
 msgid "Rename"
 msgstr "Hernoemen"
@@ -13015,14 +13051,6 @@ msgstr "Roemeens"
 msgid "Roomy"
 msgstr "Ruim"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation"
-msgstr "Rotatie"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "Rotatie wordt niet ondersteund door PDF-rendering."
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Row {row}, {0}: “{value}” is invalid."
@@ -13184,6 +13212,10 @@ msgstr ""
 msgid "Save job, create and open"
 msgstr ""
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Save link"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Save message without AI"
 msgstr ""
@@ -13195,6 +13227,10 @@ msgstr "Naam opslaan"
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
 msgstr "Aanbod opslaan"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Save PNG"
+msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
@@ -13216,6 +13252,10 @@ msgstr "Planning opslaan"
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
 msgstr "Verhaal opslaan"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Save SVG"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -13600,6 +13640,10 @@ msgstr "Secties · printvolgorde"
 msgid "Sections found"
 msgstr ""
 
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Sections most resumes also have:"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Sections use headings systems recognize, and work experience shows."
 msgstr "Secties gebruiken kopjes die systemen herkennen, en werkervaring blijkt."
@@ -13904,6 +13948,11 @@ msgstr "Stel uw authenticator-app in"
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -13996,6 +14045,10 @@ msgstr "Kort en direct. Prima als de vacature om beknoptheid vraagt."
 #: src/features/assistant/assistant-panel.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "Kort en beleefd, voor de recruiter"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
@@ -14093,10 +14146,6 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Kop weergeven"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Show icons"
-msgstr "Pictogrammen weergeven"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
@@ -14271,8 +14320,8 @@ msgid "Signing up..."
 msgstr "Bezig met registreren..."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "since last view"
-msgstr "sinds de laatste keer bekeken"
+msgid "since last counted view"
+msgstr ""
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -14624,13 +14673,10 @@ msgstr "Begin met degene die je hebt en koppel de sollicitatie."
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
 msgstr "Begin vanaf nul of importeer wat u hebt. Het duurt een paar minuten en u kunt er altijd op terugkomen."
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Start on a new page"
-msgstr "Begin op een nieuwe pagina"
-
 #. Layout editor toggle that forces a section to begin on a new page
+#: src/features/resume/editor/write/section-row.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Start on new page"
+msgid "Start on a new page"
 msgstr "Begin op een nieuwe pagina"
 
 #: src/features/ats-checker/messages.ts
@@ -14901,10 +14947,6 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "Swap"
 msgstr "Omwisselen"
-
-#: src/features/resume/editor/page-overlay.tsx
-msgid "Swap rows"
-msgstr "Rijen verwisselen"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Swap rows: lead with company"
@@ -15426,8 +15468,8 @@ msgid "the employer's message"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
-msgid "The end is before the start."
-msgstr "Het einde ligt vóór het begin."
+msgid "The end date is before the start date. Check both dates."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "The exported PDF"
@@ -16427,6 +16469,10 @@ msgstr "Tweestapsverificatie inschakelen"
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Deze planning aanzetten"
@@ -16631,6 +16677,7 @@ msgid "Until then, Interview prep has your plan, your opening and the questions 
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Zonder titel"
@@ -16679,10 +16726,6 @@ msgstr ""
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Update resume"
-msgstr "Cv bijwerken"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
@@ -16770,6 +16813,10 @@ msgstr "Gebruik maximaal 64 tekens."
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "Gebruik een donkerdere tint"
+
+#: src/features/resume/editor/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a plain international form, such as +1 555 010 1234."
@@ -18050,8 +18097,8 @@ msgid "Your email address isn't verified with the provider. Verify it there, the
 msgstr "Uw e-mailadres is niet geverifieerd bij de provider. Verifieer het daar en probeer het opnieuw."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "Je e-mailadres, telefoonnummer, locatie en andere koptekstgegevens, en de telefoonnummers van referenties, worden weggelaten uit de webpagina, de bijbehorende PDF en zoekresultaten."
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -18261,6 +18308,24 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "Je korte link en eigen domein melden dat dit cv niet gedeeld wordt totdat je het opnieuw publiceert."
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."

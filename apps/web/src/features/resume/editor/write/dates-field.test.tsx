@@ -124,6 +124,7 @@ describe("expected end date", () => {
 	it("drops Expected when the entry becomes ongoing", () => {
 		const onChange = mount({ start: "2023-09", end: "2027-05", present: false, expected: true }, true);
 		fireEvent.click(screen.getByRole("switch", { name: "Present" }));
-		expect(onChange).toHaveBeenLastCalledWith({ start: "2023-09", end: null, present: true });
+		// The end date stays while Present hides it, so switching Present back off restores it.
+		expect(onChange).toHaveBeenLastCalledWith({ start: "2023-09", end: "2027-05", present: true });
 	});
 });

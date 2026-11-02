@@ -55,7 +55,7 @@ function PageSectionForm() {
 
 	const pageSwitchFields = [
 		{ name: "hideLinkUnderline" as const, label: <Trans>Underline links</Trans> },
-		{ name: "hideIcons" as const, label: <Trans>Show icons</Trans> },
+		{ name: "hideIcons" as const, label: <Trans>Icons in contact line</Trans> },
 		{ name: "hideSectionIcons" as const, label: <Trans>Show section icons</Trans> },
 	];
 

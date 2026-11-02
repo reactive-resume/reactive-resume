@@ -18,7 +18,12 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { formatVersionMoment, formatVersionTime, getVersionDetail, getVersionTitle } from "./format";
-import { savePendingChanges, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
+import {
+	savePendingChanges,
+	useCurrentResume,
+	useResumeStore,
+	withOwnServerWrite,
+} from "@/features/resume/builder/draft";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useConfirm, usePrompt } from "@/hooks/use-confirm";
 import { getResumeErrorMessage } from "@/libs/error-message";
@@ -74,7 +79,9 @@ function useResumeHistory(): HistorySource {
 		restore: async (versionId) => {
 			if (!(await savePendingChanges(resume.id)))
 				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
-			const restored = await orpc.resume.restoreVersion.call({ resumeId: resume.id, versionId, proposalSafety: "v1" });
+			const restored = await withOwnServerWrite(resume.id, () =>
+				orpc.resume.restoreVersion.call({ resumeId: resume.id, versionId, proposalSafety: "v1" }),
+			);
 			useResumeStore.getState().replaceResumeFromServer(restored as Resume);
 			queryClient.setQueryData(orpc.resume.getById.queryKey({ input: { id: resume.id } }), {
 				...restored,
@@ -279,7 +286,9 @@ function NamedVersionMenu({ version, source }: { version: HistoryVersion; source
 	const failed = (error: unknown) => toast.add({ type: "error", description: source.errorMessage(error) });
 
 	const rename = async () => {
-		const name = (await prompt(t`Rename version`, { defaultValue: version.name ?? "" }))?.trim();
+		const name = (
+			await prompt(t`Rename version`, { defaultValue: version.name ?? "", confirmText: t`Rename` })
+		)?.trim();
 		if (!name || name === version.name) return;
 		await source.rename(version.id, name).catch(failed);
 	};
@@ -288,6 +297,7 @@ function NamedVersionMenu({ version, source }: { version: HistoryVersion; source
 		const confirmed = await confirm(t`Delete “${title}”?`, {
 			description: t`Named versions are kept until you delete them. This can't be undone.`,
 			confirmText: t`Delete version`,
+			variant: "danger",
 		});
 		if (!confirmed) return;
 		try {

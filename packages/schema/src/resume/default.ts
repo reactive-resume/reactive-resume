@@ -59,7 +59,8 @@ export const defaultResumeData: ResumeData = {
 			pages: [
 				{
 					fullWidth: false,
-					main: ["profiles", "summary", "education", "experience", "projects", "volunteer", "references"],
+					// Summary leads, with Profiles beside it near the contact details, then Experience before Education.
+					main: ["summary", "profiles", "experience", "education", "projects", "volunteer", "references"],
 					sidebar: ["skills", "certifications", "awards", "languages", "interests", "publications"],
 				},
 			],

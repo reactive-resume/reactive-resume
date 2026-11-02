@@ -196,7 +196,8 @@ export function DatesField({
 							checked={dates.present}
 							onCheckedChange={(present) => {
 								const { expected: _expected, ...rest } = current;
-								onChange({ ...rest, present, end: present ? null : dates.end });
+								// The end date stays while Present hides it, so switching back off restores it.
+								onChange({ ...rest, present, end: dates.end });
 							}}
 						/>
 						<Trans>Present</Trans>
@@ -239,7 +240,7 @@ export function DatesField({
 				) : reversed ? (
 					<p className="flex items-start gap-1 text-xs leading-4 text-warn-text">
 						<Icon name="warning" size={16} className="shrink-0" />
-						<Trans>The end is before the start.</Trans>
+						<Trans>The end date is before the start date. Check both dates.</Trans>
 					</p>
 				) : null}
 			</div>

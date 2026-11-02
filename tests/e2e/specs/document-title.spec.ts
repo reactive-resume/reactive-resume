@@ -21,7 +21,7 @@ test("builder rename stays inline and tags persist without changing the resume b
 	await page.getByRole("menuitem", { name: "Rename…", exact: true }).click();
 	const name = page.getByRole("textbox", { name: "Name", exact: true });
 	await expect(name).toBeVisible();
-	await expect(page.getByRole("dialog", { name: "Update resume", exact: true })).toHaveCount(0);
+	await expect(page.getByRole("dialog", { name: "Edit resume", exact: true })).toHaveCount(0);
 	await name.fill("Cancelled name");
 	await name.press("Escape");
 	await expect(page).toHaveTitle("Fictional Cedar resume | Reactive Resume");

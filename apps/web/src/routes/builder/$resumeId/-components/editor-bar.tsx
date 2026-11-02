@@ -97,8 +97,18 @@ function ModeTabs() {
 
 	return (
 		<TabsList aria-label={t`Editor mode`} className="h-9" data-mode-switch="">
-			{(Object.keys(MODE_ICONS) as EditorMode[]).map((mode) => (
-				<TabsTrigger key={mode} value={mode} className="px-4">
+			{(Object.keys(MODE_ICONS) as EditorMode[]).map((mode, index) => (
+				// Keys 1–4 switch modes (outside text fields): said on hover and to assistive tech.
+				<TabsTrigger
+					key={mode}
+					value={mode}
+					className="px-4"
+					aria-keyshortcuts={String(index + 1)}
+					title={t({
+						comment: "Mode tab tooltip: the mode, then the key that opens it",
+						message: `${labels[mode]} · key ${index + 1}`,
+					})}
+				>
 					<Icon name={MODE_ICONS[mode]} size={18} />
 					{labels[mode]}
 					{mode === "check" && <CheckBadge count={issueCount} />}
