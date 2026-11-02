@@ -145,3 +145,16 @@ it("numbers a new letter while untitled ones exist, so the library can tell them
 	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledOnce());
 	expect(api.createLetter.mock.calls[0]?.[0]).toMatchObject({ name: "Untitled letter 3" });
 });
+
+it("keeps lookup failure recovery available on New and retries without creating a document", async () => {
+	mount();
+	await screen.findByRole("alert");
+	expect(screen.getByText("Couldn't load AI connections. Your saved connections haven't changed.")).toBeVisible();
+	api.providers.mockResolvedValue([]);
+	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+	await vi.waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+	expect(screen.getByRole("button", { name: /Import a resume/ })).toBeEnabled();
+	expect(screen.getByRole("button", { name: /Start blank/ })).toBeEnabled();
+	expect(api.importResume).not.toHaveBeenCalled();
+	expect(api.createLetter).not.toHaveBeenCalled();
+});
