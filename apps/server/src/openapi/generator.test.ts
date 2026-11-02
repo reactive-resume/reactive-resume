@@ -72,7 +72,9 @@ describe("generateOpenApiSpec", () => {
 	it("documents guaranteed profile response fields without adding request defaults", async () => {
 		const spec = await generateSpec();
 		for (const method of ["get", "put", "patch"] as const) {
-			expect(spec.paths?.["/career/profile"]?.[method]?.responses?.["200"]).toMatchObject({
+			const response = spec.paths?.["/career/profile"]?.[method]?.responses?.["200"];
+			expect(response).toHaveProperty("content.application/json.schema.properties.searchRegions");
+			expect(response).toMatchObject({
 				content: {
 					"application/json": {
 						schema: {
@@ -91,9 +93,12 @@ describe("generateOpenApiSpec", () => {
 			});
 		}
 		const view = spec as GeneratedSpecView;
+		for (const method of ["put", "patch"]) {
+			const request = getRequestSchema(view, "/career/profile", method);
+			expect(request).toHaveProperty("properties.searchRegions");
+			expect(request).not.toHaveProperty("required");
+		}
 		const input = getRequestSchema(view, "/career/profile", "patch");
-		expect(input).not.toHaveProperty("required");
-		expect(getRequestSchema(view, "/career/profile", "put")).not.toHaveProperty("required");
 		for (const field of ["targetRoles", "locations"]) {
 			expect(input).toHaveProperty(
 				`properties.${field}.items.description`,
