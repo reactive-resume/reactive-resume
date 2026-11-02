@@ -1,5 +1,6 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
-import type { StorageService } from "@reactive-resume/api/features/storage";
+import type { StorageReadOptions, StorageService } from "@reactive-resume/api/features/storage";
+import { readStorageBody } from "@reactive-resume/api/features/storage";
 
 /** Keep the bucket private. Public upload routes and authenticated attachment reads own access control. */
 export class R2StorageService implements StorageService {
@@ -30,11 +31,17 @@ export class R2StorageService implements StorageService {
 		await this.bucket.put(this.path(input.key), input.data, { httpMetadata: { contentType: input.contentType } });
 	}
 
-	async read(key: string) {
+	async read(key: string, options?: StorageReadOptions) {
+		options?.signal?.throwIfAborted();
+		// R2 get has no AbortSignal: one pending lookup finishes before cancellation stops body reading.
 		const object = await this.bucket.get(this.path(key));
 		if (!object) return null;
+		// Cloudflare's stream declarations differ from DOM/Node; its body uses the same standard reader protocol.
+		const data = options
+			? await readStorageBody(object.body as unknown as ReadableStream<Uint8Array>, options, object.size)
+			: new Uint8Array(await object.arrayBuffer());
 		return {
-			data: new Uint8Array(await object.arrayBuffer()),
+			data,
 			size: object.size,
 			etag: object.httpEtag,
 			lastModified: object.uploaded,

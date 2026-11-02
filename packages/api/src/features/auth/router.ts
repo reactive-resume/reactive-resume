@@ -9,6 +9,7 @@ import { applicationProfileRecordSchema } from "@reactive-resume/schema/applicat
 import { applicationPipelineSchema } from "@reactive-resume/schema/applications/lanes";
 import { careerProfileDataSchema, careerWorkspaceSchema, discoverySourceSchema } from "@reactive-resume/schema/career";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
+import { accountBackupLimits, accountUploadSkipReasons } from "@reactive-resume/utils/account-zip";
 import { localeSchema } from "@reactive-resume/utils/locale";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { protectedProcedure, publicProcedure } from "../../context";
@@ -297,13 +298,23 @@ export const authRouter = {
 			operationId: "exportAccountData",
 			summary: "Export user account data",
 			description:
-				"Returns a JSON-serializable export of the authenticated user's profile, documents, applications, career knowledge, preparation, schedules, coaching conversations and feedback links with their comments. Images remain URL references; coaching attachments include storage references. Secrets such as password hashes, tokens, and API keys are never included. Requires authentication.",
+				"Returns the authenticated user's profile, documents and version histories, applications, Career records and feedback. Set includeUploads to include bounded base64 bytes for files referenced by exported records, with explicit omissions; external URLs are not fetched. Secrets such as password hashes, tokens and API keys are never included.",
 			successDescription: "The user's exported account data.",
 		})
-		.input(z.object({}).optional())
+		.input(z.object({ includeUploads: z.union([z.boolean(), z.literal("")]).optional() }).optional())
 		.output(
 			z.object({
 				exportedAt: z.string(),
+				uploads: z
+					.object({
+						files: z
+							.array(
+								z.object({ key: z.string(), base64: z.string().max(Math.ceil(accountBackupLimits.fileBytes / 3) * 4) }),
+							)
+							.max(accountBackupLimits.files),
+						skipped: z.array(z.object({ key: z.string(), reason: z.enum(accountUploadSkipReasons) })),
+					})
+					.optional(),
 				applicationProfile: applicationProfileRecordSchema.nullable().optional(),
 				user: createSelectSchema(schema.user).pick({
 					id: true,
@@ -374,7 +385,16 @@ export const authRouter = {
 					.optional(),
 			}),
 		)
-		.handler(({ context }) => authService.exportData({ userId: context.user.id })),
+		.handler(({ context, input, signal }) => {
+			const bindings = [context.reqHeaders.get("x-account-id"), context.rpcItemAccountId];
+			if (bindings.some((id) => id && id !== context.user.id))
+				throw new ORPCError("CONFLICT", { message: "This export belongs to another account. Reload and try again." });
+			return authService.exportData({
+				userId: context.user.id,
+				includeUploads: input?.includeUploads === true,
+				signal,
+			});
+		}),
 
 	deleteAccount: protectedProcedure
 		.route({

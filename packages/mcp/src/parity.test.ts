@@ -229,10 +229,13 @@ it("embeds actual resume JSON in prompts and propagates inaccessible-document er
 	);
 });
 
-it("keeps private application profiles out of MCP tools and account export results", async () => {
+it("keeps private profiles and derived upload bytes out of MCP exports", async () => {
 	const { tools } = await client.listTools();
 	expect(tools.some((tool) => /application_profile/.test(tool.name))).toBe(false);
 	expect(tools.find((tool) => tool.name === "api_auth_export_data")?.description).toContain("Settings → Profile");
+	expect(tools.find((tool) => tool.name === "api_auth_export_data")?.inputSchema.properties).not.toHaveProperty(
+		"includeUploads",
+	);
 	calls.auth.exportData.mockResolvedValueOnce({
 		exportedAt: "2030-01-01T00:00:00Z",
 		user: {},
@@ -241,12 +244,22 @@ it("keeps private application profiles out of MCP tools and account export resul
 		applications: [],
 		career: {},
 		applicationProfile: { data: { email: "PRIVATE-PROFILE@example.test" } },
+		uploads: {
+			files: [{ key: "uploads/owner/pictures/PRIVATE-PROFILE.png", base64: "PRIVATE-PROFILE-BYTES" }],
+			skipped: [],
+		},
 	});
 	const result = await client.callTool({ name: "api_auth_export_data", arguments: {} });
 	expect(result.isError).not.toBe(true);
 	expect(result.structuredContent).toMatchObject({ resumes: [], applications: [] });
 	expect(JSON.stringify(result)).not.toContain("PRIVATE-PROFILE");
 	expect(result.structuredContent).not.toHaveProperty("applicationProfile");
+	expect(result.structuredContent).not.toHaveProperty("uploads");
+	expect(calls.auth.exportData).toHaveBeenLastCalledWith({ includeUploads: false });
+	calls.auth.exportData.mockClear();
+	const denied = await client.callTool({ name: "api_auth_export_data", arguments: { includeUploads: true } });
+	expect(denied.isError).toBe(true);
+	expect(calls.auth.exportData).not.toHaveBeenCalled();
 });
 
 it("exposes explicit discovery context consent and blocks delegated read-only AI/triage", async () => {

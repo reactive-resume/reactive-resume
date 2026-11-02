@@ -2569,6 +2569,7 @@ msgstr "ಸಾಫ್ಟ್‌ವೇರ್ ನಿಮ್ಮ ರೆಸ್ಯೂಮ�
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
 #: src/features/search/search-screen.tsx
+#: src/features/settings/export.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
@@ -4713,6 +4714,10 @@ msgstr "ಈ ಕೆಲಸಕ್ಕಾಗಿ ದಾಖಲೆಗಳು"
 #: src/features/documents/library.tsx
 msgid "Documents you move here stay for 30 days."
 msgstr "ನೀವು ಇಲ್ಲಿಗೆ ಸರಿಸುವ ದಾಖಲೆಗಳು 30 ದಿನಗಳವರೆಗೆ ಇರುತ್ತವೆ."
+
+#: src/features/settings/export.tsx
+msgid "Documents, version history and uploaded files in one zip. Check the file manifest for omissions."
+msgstr "ದಾಖಲೆಗಳು, ಆವೃತ್ತಿ ಇತಿಹಾಸ ಮತ್ತು ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೈಲ್‌ಗಳು ಒಂದೇ zip ನಲ್ಲಿ. ಬಿಟ್ಟಿರುವ ಫೈಲ್‌ಗಳಿಗಾಗಿ ಫೈಲ್ ಪಟ್ಟಿಯನ್ನು ಪರಿಶೀಲಿಸಿ."
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Does this offer meet what I want?"
@@ -11958,6 +11963,10 @@ msgstr "ಕೆಲವು ಪಠ್ಯ ಪುಟದ ಹೊರಗೆ ಬೀಳು�
 msgid "Some text is rotated."
 msgstr "ಕೆಲವು ಪಠ್ಯ ತಿರುಗಿಸಲ್ಪಟ್ಟಿದೆ."
 
+#: src/features/settings/export.tsx
+msgid "Some uploaded files were skipped. Check upload-manifest.json in the archive."
+msgstr "ಕೆಲವು ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೈಲ್‌ಗಳನ್ನು ಬಿಡಲಾಗಿದೆ. ಆರ್ಕೈವ್‌ನಲ್ಲಿರುವ upload-manifest.json ಪರಿಶೀಲಿಸಿ."
+
 #: src/features/documents/library.tsx
 msgid "Sort"
 msgstr "ವಿಂಗಡಿಸಿ"
@@ -13016,6 +13025,10 @@ msgstr "ಯೋಚಿಸುತ್ತಿದೆ..."
 msgid "Third-party software notices. Tap a dependency to read its license."
 msgstr "ಮೂರನೇ ವ್ಯಕ್ತಿಯ ಸಾಫ್ಟ್‌ವೇರ್ ಸೂಚನೆಗಳು. ಅದರ ಪರವಾನಗಿಯನ್ನು ಓದಲು ಡಿಪೆಂಡೆನ್ಸಿಯನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ."
 
+#: src/features/settings/export.tsx
+msgid "This account is too large for one archive. Individual exports omit other account records."
+msgstr "ಈ ಖಾತೆಯು ಒಂದೇ ಆರ್ಕೈವ್‌ಗೆ ತುಂಬಾ ದೊಡ್ಡದಾಗಿದೆ. ಪ್ರತ್ಯೇಕ ರಫ್ತುಗಳು ಖಾತೆಯ ಇತರ ದಾಖಲೆಗಳನ್ನು ಒಳಗೊಂಡಿರುವುದಿಲ್ಲ."
+
 #: src/features/workspace/answer-library.tsx
 msgid "This application"
 msgstr ""
@@ -13310,6 +13323,10 @@ msgstr "ಈ ಪರದೆ ಕಾರ್ಯನಿರ್ವಹಿಸುವುದನ�
 #: src/api/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
+
+#: src/features/settings/export.tsx
+msgid "This server exports file references only. Update it to include uploaded files."
+msgstr "ಈ ಸರ್ವರ್ ಫೈಲ್ ಉಲ್ಲೇಖಗಳನ್ನು ಮಾತ್ರ ರಫ್ತು ಮಾಡುತ್ತದೆ. ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೈಲ್‌ಗಳನ್ನು ಸೇರಿಸಲು ಅದನ್ನು ನವೀಕರಿಸಿ."
 
 #: src/auth/messages.ts
 msgid "This server is too old for the app. Ask your administrator to update it."
@@ -14953,10 +14970,6 @@ msgstr "ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಅಸಾ
 #: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "ನಿಮ್ಮ ಆದ್ಯತೆಗಳು"
-
-#: src/features/settings/export.tsx
-msgid "Your profile, documents, applications and Career data as JSON. Images and attachments remain references."
-msgstr "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್, ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳು, ಅರ್ಜಿಗಳು ಮತ್ತು ವೃತ್ತಿಜೀವನ ಡೇಟಾ JSON. ಚಿತ್ರಗಳು ಮತ್ತು ಲಗತ್ತುಗಳು ಉಲ್ಲೇಖಗಳಾಗಿ ಉಳಿದಿವೆ."
 
 #: src/features/assistant/provider.tsx
 msgid "your provider"

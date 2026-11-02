@@ -252,16 +252,24 @@ test("mobile export cleanup removes account/profile and workspace exports, prese
 });
 
 test("native account export stays bound to its account through fetch and file writing", async () => {
-	for (const switchDuring of ["fetch", "write", null]) {
+	for (const switchDuring of ["fetch", "write", "write-cleanup", "unmount", null]) {
 		let scope = "account-A";
 		let mutation;
 		let writes = 0;
 		let deletes = 0;
 		let shares = 0;
-		const react = { createElement: () => null };
+		let unmount;
+		const react = {
+			createElement: () => null,
+			useRef: () => ({ current: null }),
+			useEffect: (effect) => {
+				unmount = effect();
+			},
+		};
 		const { ExportDataRow } = load(
 			new URL("../src/features/settings/export.tsx", import.meta.url),
 			{
+				react: react,
 				"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
 				"@tanstack/react-query": {
 					useMutation: (options) => {
@@ -272,9 +280,14 @@ test("native account export stays bound to its account through fetch and file wr
 				"expo-file-system": {
 					Paths: { cache: {} },
 					File: class {
+						exists = true;
 						async write() {
 							writes++;
 							if (switchDuring === "write") scope = "account-B";
+							if (switchDuring === "write-cleanup") {
+								scope = "account-B";
+								this.exists = false;
+							}
 						}
 						delete() {
 							deletes++;
@@ -286,14 +299,23 @@ test("native account export stays bound to its account through fetch and file wr
 					shareAsync: async () => shares++,
 				},
 				"./export-cache": { clearAccountExportCache() {} },
-				"@reactive-resume/utils/account-zip": { buildAccountZip: () => new Uint8Array([80, 75]) },
+				"@reactive-resume/utils/account-zip": {
+					buildAccountZip: () => new Uint8Array([80, 75]),
+					AccountExportLimitError: class extends Error {},
+				},
 				"@/auth/session": { getAccountScope: () => scope },
 				"@/api/client": {
 					client: {
 						auth: {
 							exportData: async (_input, options) => {
-								assert.deepEqual(options, { context: { scope: "account-A" } });
+								assert.deepEqual(_input, { includeUploads: true });
+								assert.deepEqual(options.context, { scope: "account-A" });
+								assert.ok(options.signal instanceof AbortSignal);
 								if (switchDuring === "fetch") scope = "account-B";
+								if (switchDuring === "unmount") {
+									unmount?.();
+									assert.ok(options.signal.aborted);
+								}
 								return { applicationProfile: { email: "private@example.test" } };
 							},
 						},
@@ -305,7 +327,7 @@ test("native account export stays bound to its account through fetch and file wr
 		);
 		ExportDataRow();
 		await mutation();
-		assert.equal(writes, switchDuring === "fetch" ? 0 : 1);
+		assert.equal(writes, switchDuring === "fetch" || switchDuring === "unmount" ? 0 : 1);
 		assert.equal(deletes, switchDuring === "write" ? 1 : 0);
 		assert.equal(shares, switchDuring === null ? 1 : 0);
 	}

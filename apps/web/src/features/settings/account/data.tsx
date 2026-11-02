@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -16,9 +16,10 @@ import {
 import { Button } from "@reactive-resume/ui/components/button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { buildAccountZip } from "@reactive-resume/utils/account-zip";
+import { AccountExportLimitError, buildAccountZip } from "@reactive-resume/utils/account-zip";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { SettingsRow, SettingsSection } from "../section";
+import { getAccountGeneration, getAccountId } from "@/libs/auth/account-scope";
 import { clearAccountData } from "@/libs/auth/clear-account-data";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
@@ -30,17 +31,48 @@ type DataSectionProps = { openDeletion?: boolean };
 
 export function DataSection({ openDeletion = false }: DataSectionProps) {
 	const [deleting, setDeleting] = useState(openDeletion);
+	const exportRequest = useRef<AbortController | null>(null);
+	useEffect(() => () => exportRequest.current?.abort(), []);
 
 	const exportAll = useMutation({
 		mutationFn: async () => {
-			const zip = buildAccountZip(await client.auth.exportData());
-			const date = new Date().toISOString().slice(0, 10);
-			downloadWithAnchor(new Blob([zip as BlobPart], { type: "application/zip" }), `reactive-resume-${date}.zip`);
+			const accountId = getAccountId();
+			if (!accountId) return;
+			const generation = getAccountGeneration();
+			const request = new AbortController();
+			exportRequest.current = request;
+			try {
+				const data = await client.auth.exportData(
+					{ includeUploads: true },
+					{ signal: request.signal, context: { accountId } },
+				);
+				if (request.signal.aborted || generation !== getAccountGeneration() || data.user.id !== accountId) return;
+				const zip = buildAccountZip(data);
+				const date = new Date().toISOString().slice(0, 10);
+				downloadWithAnchor(new Blob([zip as BlobPart], { type: "application/zip" }), `reactive-resume-${date}.zip`);
+				if (!data.uploads)
+					toast.add({
+						type: "warning",
+						description: t`This server exports file references only. Update it to include uploaded files.`,
+					});
+				else if (data.uploads.skipped.length)
+					toast.add({
+						type: "warning",
+						description: t`Some uploaded files were skipped. Check upload-manifest.json in the archive.`,
+					});
+			} catch (error) {
+				if (!request.signal.aborted) throw error;
+			} finally {
+				if (exportRequest.current === request) exportRequest.current = null;
+			}
 		},
 		onError: (error) =>
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(error, t`Couldn't export your data. Try again.`),
+				description:
+					error instanceof AccountExportLimitError
+						? t`This account is too large for one archive. Individual exports omit other account records.`
+						: getReadableErrorMessage(error, t`Couldn't export your data. Try again.`),
 			}),
 	});
 
@@ -48,8 +80,17 @@ export function DataSection({ openDeletion = false }: DataSectionProps) {
 		<SettingsSection title={<Trans>Your data</Trans>}>
 			<SettingsRow
 				title={<Trans>Export everything</Trans>}
-				description={<Trans>Documents, applications and Career data as JSON, in one zip</Trans>}
+				description={
+					<Trans>
+						Documents, version history and uploaded files in one zip. Check the file manifest for omissions.
+					</Trans>
+				}
 			>
+				{exportAll.isPending && (
+					<Button size="sm" variant="ghost" onClick={() => exportRequest.current?.abort()}>
+						<Trans>Cancel</Trans>
+					</Button>
+				)}
 				<Button size="sm" variant="secondary" loading={exportAll.isPending} onClick={() => exportAll.mutate()}>
 					<Trans>Export</Trans>
 				</Button>

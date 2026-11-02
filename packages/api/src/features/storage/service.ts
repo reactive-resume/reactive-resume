@@ -1,3 +1,4 @@
+import type { StorageReadOptions } from "./read";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import { dirname, extname, join, relative } from "node:path";
@@ -15,6 +16,7 @@ import { env } from "@reactive-resume/env/server";
 import { getLocalDataDirectory } from "@reactive-resume/utils/monorepo.node";
 import { lockUser } from "../documents/ownership";
 import { BlobStorageService } from "./blob";
+import { readStorageBody } from "./read";
 
 interface StorageWriteInput {
 	key: string;
@@ -34,7 +36,7 @@ interface StorageReadResult {
 export interface StorageService {
 	list(prefix: string): Promise<string[]>;
 	write(input: StorageWriteInput): Promise<void>;
-	read(key: string): Promise<StorageReadResult | null>;
+	read(key: string, options?: StorageReadOptions): Promise<StorageReadResult | null>;
 	delete(key: string): Promise<boolean>;
 	healthcheck(): Promise<StorageHealthResult>;
 }
@@ -208,18 +210,26 @@ class LocalStorageService implements StorageService {
 		await fs.writeFile(fullPath, data, isPrivate ? { mode: 0o600 } : undefined);
 	}
 
-	async read(key: string): Promise<StorageReadResult | null> {
+	async read(key: string, options?: StorageReadOptions): Promise<StorageReadResult | null> {
 		const fullPath = this.resolvePath(key);
 		try {
-			const [arrayBuffer, stats] = await Promise.all([fs.readFile(fullPath), fs.stat(fullPath)]);
-
-			return {
-				data: arrayBuffer,
-				size: stats.size,
-				etag: `"${stats.size}-${stats.mtime.getTime()}"`,
-				lastModified: stats.mtime,
-				contentType: inferContentType(key),
-			};
+			options?.signal?.throwIfAborted();
+			const file = await fs.open(fullPath, "r");
+			try {
+				const stats = await file.stat();
+				const data = options
+					? await readStorageBody(file.readableWebStream(), options, stats.size)
+					: await file.readFile();
+				return {
+					data,
+					size: data.byteLength,
+					etag: `"${stats.size}-${stats.mtime.getTime()}"`,
+					lastModified: stats.mtime,
+					contentType: inferContentType(key),
+				};
+			} finally {
+				await file.close();
+			}
 		} catch (error: unknown) {
 			if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") {
 				return null;
@@ -325,13 +335,16 @@ class S3StorageService implements StorageService {
 		await this.client.send(command);
 	}
 
-	async read(key: string): Promise<StorageReadResult | null> {
+	async read(key: string, options?: StorageReadOptions): Promise<StorageReadResult | null> {
 		try {
+			options?.signal?.throwIfAborted();
 			const command = new GetObjectCommand({ Bucket: this.bucket, Key: key });
-			const response = await this.client.send(command);
+			const response = await this.client.send(command, options?.signal ? { abortSignal: options.signal } : {});
 			if (!response.Body) return null;
 
-			const arrayBuffer = await response.Body.transformToByteArray();
+			const arrayBuffer = options
+				? await readStorageBody(response.Body.transformToWebStream(), options, response.ContentLength)
+				: await response.Body.transformToByteArray();
 
 			return {
 				data: arrayBuffer,
@@ -340,7 +353,9 @@ class S3StorageService implements StorageService {
 				...(response.ETag !== undefined ? { etag: response.ETag } : {}),
 				...(response.LastModified !== undefined ? { lastModified: response.LastModified } : {}),
 			};
-		} catch {
+		} catch (error) {
+			// Bounded callers must distinguish omissions from cancellation and oversized bodies.
+			if (options) throw error;
 			return null;
 		}
 	}

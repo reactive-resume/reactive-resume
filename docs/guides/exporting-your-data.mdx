@@ -1,6 +1,6 @@
 ---
 title: "Exporting your data"
-description: "Download everything in your Reactive Resume account, including resumes, cover letters and job applications, as JSON files in a single zip archive."
+description: "Download your account records, document history and referenced uploaded files in one zip archive, with a manifest listing any omitted files."
 ---
 
 You can download a copy of everything you have stored in Reactive Resume in one step. Use it as a backup, to keep a record before [deleting your account](/guides/deleting-your-account), or to take your data elsewhere.
@@ -14,6 +14,7 @@ You can download a copy of everything you have stored in Reactive Resume in one 
 
   <Step title="Select Export">
     Next to **Export everything**, select **Export**. Your browser downloads a file named `reactive-resume-` followed by today's date, for example `reactive-resume-2026-09-30.zip`.
+    While the archive is preparing, **Cancel** stops the export.
   </Step>
 </Steps>
 
@@ -34,17 +35,32 @@ You can download a copy of everything you have stored in Reactive Resume in one 
 | `application-stages.json`  | Your application stages: names, colors, order, what each counts as, and removed stages that earlier history still names.                                  |
 | `resumes/`                 | One JSON file per resume, including those in the trash. Each holds the resume's name, public address, tags, sharing settings and the full resume content. |
 | `document-versions.json`   | Saved resume and letter histories, including named employer-form packet versions. These are records, not automatic history imports.                       |
+| `versions/resumes/`        | One JSON history record per saved resume version, grouped by document ID. The snapshot stays in its original form.                                        |
+| `versions/letters/`        | One JSON history record per saved letter version, grouped by document ID.                                                                                 |
 | `letters/`                 | One JSON file per cover letter.                                                                                                                           |
 | `career.json`              | Your Career data: preferences, facts, stories, answers, saved results, schedules, notifications, roles and coach conversations (details below).           |
 | `ai-content-reports.json`  | AI replies you reported.                                                                                                                                  |
+| `feedback.json`            | Your feedback links, document snapshots, comments and events.                                                                                             |
+| `uploads/`                 | Stored photo and attachment bytes referenced by exported records, including document history and live conversation attachments, within the limits below.  |
+| `upload-manifest.json`     | Included storage paths and byte counts, export limits, and the path and reason for each skipped file.                                                     |
 
 In `applications.json`, `appliedAt` is filled in even for a job you only saved: it starts as the date you saved it. To tell whether you applied, read `status` and `submittedAt`, which is set the first time a job reaches a sent stage.
 
-`career.json` contains your preferences, facts and their source/correction history, stories, reviewed reusable answers with scope, source and evidence revision references, workspace answers and checklist state, saved results, schedules, notifications, discovered roles, voice transcripts, and career conversations with attachment metadata. It does not include raw voice recordings or the attachments' binary files.
+`career.json` contains your preferences, facts and their source/correction history, stories, reviewed reusable answers with scope, source and evidence revision references, workspace answers and checklist state, saved results, schedules, notifications, discovered roles, voice transcripts, and career conversations with attachment metadata. Referenced live attachment files are saved separately under `uploads/`. Raw voice recordings are not retained or exported.
 
 Each resume and letter file is named after the document plus a unique ID, so two documents with the same name don't overwrite each other.
 
-The archive doesn't include your password, passkeys, two-step verification codes, API keys or AI provider keys. Uploaded images, such as resume photos, are listed by their address rather than included as files.
+The archive doesn't include your password, passkeys, two-step verification codes, API keys or AI provider keys. Document JSON keeps its original image addresses; `upload-manifest.json` maps included stored files to their paths inside the archive. External image addresses remain references: the export never downloads files from another website. Unreferenced files and deleted conversation attachments are excluded, including bytes left behind by a failed cleanup.
+
+## Check file coverage before deleting an account
+
+The export reads at most **500 referenced stored files**, including failed attempts. Each file can be up to **8 MiB**, with **16 MiB of uploaded bytes** in total. The complete archive can contain up to **64 MiB before compression** and **50,000 entries**, including document and history records. These limits keep preparation bounded on web, native and self-hosted servers.
+
+Files that are missing, unreadable, too large, outside your account, from an external storage address, or beyond the read or byte budget appear in `upload-manifest.json` with a reason. Stale conversation file references are marked `not-live-attachment` and never read. If files were skipped, the app also shows a warning after the download or share. An archive that exceeds its overall size or entry limit fails visibly rather than downloading a partial set of records. Individual document exports contain only that resume or letter; they omit applications, Career data, feedback and AI content reports. Keep copies of all records you need before deleting your account. If the complete archive fails, do not treat individual exports as a full account backup.
+
+Open the manifest before deleting your account. Keep any skipped files separately. Included file bytes and version records remain readable after account deletion; remote addresses may stop working. Restoring an individual document does not automatically upload the archived photos or attachments again: select those files manually where needed.
+
+An older server can still export the original JSON archive. If the app warns that the server exports file references only, update the server before relying on the archive to keep uploaded files.
 
 <Tip>
   To restore a resume or letter, extract the archive and import its individual JSON file from `resumes/` or `letters/`.
@@ -53,7 +69,7 @@ The archive doesn't include your password, passkeys, two-step verification codes
   as **JSON** from **Download & history** → **Download**. See [Importing resumes](/guides/importing-resumes).
 </Tip>
 
-On native mobile, **Export everything** shares the same zip, with the same files, so you can extract it and import individual resumes and letters the same way. **Export saved profile** under **Profile → Manage profile** shares only that record. Private profile exports do not import into a resume. These files contain personal information; choose their destination deliberately. Temporary mobile export files are removed on the next export, profile deletion, app startup, sign-out or session expiry. Signing into another account also clears them. Copies saved by a share recipient remain outside the app. MCP account export excludes the private application profile; use Settings → Profile to export it.
+On native mobile, **Export everything** shares the same zip, with the same files, so you can extract it and import individual resumes and letters the same way. **Export saved profile** under **Profile → Manage profile** shares only that record. Private profile exports do not import into a resume. These files contain personal information; choose their destination deliberately. Temporary mobile export files are removed on the next export, profile deletion, app startup, sign-out or session expiry. Signing into another account also clears them. Copies saved by a share recipient remain outside the app. MCP account export keeps file references only and excludes the private application profile and uploaded bytes. Use Settings → Account → Export everything for the full archive, or Settings → Profile for the private profile.
 
 ## Related guides
 
