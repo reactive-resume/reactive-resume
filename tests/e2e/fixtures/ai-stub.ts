@@ -209,6 +209,8 @@ function reply(request: ChatRequest, response: ServerResponse) {
 
 	let result: {
 		data?: {
+			pageLocale?: string;
+			translationFields?: Array<{ id: string; text: string }>;
 			passages?: Array<{ id: string; sectionId?: string; text: string }>;
 			entryTemplates?: Record<string, Record<string, unknown>>;
 		};
@@ -220,6 +222,31 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	}
 	const passage =
 		lastToolName === readTool ? result.data?.passages?.find((item) => item.text && item.text !== "(empty)") : undefined;
+	if (lastToolName === readTool && said.includes("language copy") && result.data?.translationFields) {
+		const translations: Record<string, string> = {
+			"Product designer": "Produktdesignerin",
+			"Build accessible tools.": "Barrierefreie Werkzeuge entwickeln.",
+			Research: "Forschung",
+			Advanced: "Fortgeschritten",
+			Interviews: "Interviews",
+			"Work permit": "Arbeitserlaubnis",
+		};
+		return streamToolCall(response, "propose_edits", {
+			title: "Review German translation",
+			changes: [
+				{
+					kind: "translation",
+					locale: result.data.pageLocale,
+					why: "Check the translation before accepting.",
+					fields: result.data.translationFields.map(({ id, text }) => ({
+						id,
+						before: text,
+						text: translations[text] ?? text,
+					})),
+				},
+			],
+		});
+	}
 	if (passage && said.includes("structural"))
 		return streamToolCall(response, "propose_edits", {
 			title: "Add reviewed certification section",

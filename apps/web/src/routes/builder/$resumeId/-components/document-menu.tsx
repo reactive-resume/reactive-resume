@@ -26,6 +26,7 @@ import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
 import { DocumentDetails } from "./document-details";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
+import { TranslateResume } from "@/features/assistant/translate-resume";
 import { InlineNameInput } from "@/features/documents/inline-name-input";
 import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { savePendingChanges, saveResumeMetadata } from "@/features/resume/builder/draft";
@@ -38,7 +39,7 @@ import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
-type DocumentDialog = "rename" | "tags" | "notes" | "details" | null;
+type DocumentDialog = "rename" | "tags" | "notes" | "details" | "translate" | null;
 
 /**
  * The document name in the editor bar opens the document menu: rename, duplicate, lock, notes,
@@ -84,6 +85,7 @@ export function DocumentMenu() {
 				</DropdownMenu>
 			)}
 			<SaveStatus />
+			{dialog === "translate" && <TranslateResume resumeId={id} onClose={() => setDialog(null)} />}
 			{dialog === "tags" && (
 				<BuilderTagsDialog
 					key={id}
@@ -244,6 +246,10 @@ function DocumentMenuItems({ onOpenDialog, onHelp }: DocumentMenuItemsProps) {
 				<Trans>Duplicate</Trans>
 			</DropdownMenuItem>
 			{/* The library card's job copy, from inside the editor: a copy of this resume linked to a job. */}
+			<DropdownMenuItem onClick={() => onOpenDialog("translate")}>
+				<Icon name="translate" />
+				<Trans>Translate into…</Trans>
+			</DropdownMenuItem>
 			<DropdownMenuItem
 				onClick={async () => {
 					// The copy is made from the saved resume: save what's on screen first, as History does.

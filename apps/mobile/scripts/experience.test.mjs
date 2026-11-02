@@ -2563,6 +2563,7 @@ state = {
 };
 const menuStore = Object.assign(() => state, { getState: () => state });
 const { DocumentMenu: BuilderDocumentMenu } = load("features/document-menu/index.tsx", {
+	"@/features/assistant/translate-resume": { TranslateResume: "TranslateResume" },
 	react: { ...react, useEffect() {} },
 	"react-native-enriched-html": { EnrichedTextInput: "EnrichedTextInput" },
 	"@reactive-resume/resume/sharing": {},

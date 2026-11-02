@@ -1,4 +1,5 @@
 import type { Page } from "@playwright/test";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { approveLocalStubOperations } from "../fixtures/ai-consent";
 import { startAiStub } from "../fixtures/ai-stub";
 import { createSampleResumeFromDashboard } from "../fixtures/resume";
@@ -48,6 +49,68 @@ async function send(page: Page, text: string) {
 		await expect(composer).toHaveValue("", { timeout: 1_000 });
 	}).toPass({ timeout: 20_000 });
 }
+
+test("language copy keeps the source and waits for Send and review before saving translated text", async ({
+	authPage: page,
+}, testInfo) => {
+	test.setTimeout(90_000);
+	const data = structuredClone(defaultResumeData);
+	data.basics.name = "Priya Raman";
+	data.basics.headline = "Product designer";
+	data.basics.website = { url: "https://example.test/portfolio", label: "Portfolio" };
+	data.summary.content = "<p>Build accessible tools.</p>";
+	data.metadata.notes = "PRIVATE_TRANSLATION_NOTE";
+	const imported = await page.request.post("/api/openapi/resumes/import", { data: { data } });
+	await expect(imported).toBeOK();
+	const sourceId = (await imported.json()) as string;
+	await page.goto(`/builder/${sourceId}`);
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	await connectStub(page);
+	const source = JSON.parse(await resumeJson(page, sourceId));
+	const calls = stub.requests.length;
+	// Assistant discovery opens the same copy picker as the document menu; cancel creates/sends nothing.
+	await page.getByRole("button", { name: "Translate into…", exact: true }).click();
+	const dialog = page.getByRole("dialog", { name: "Translate into…" });
+	await expect(dialog.getByLabel("Language")).toHaveValue("de-DE");
+	await dialog.getByRole("button", { name: "Close", exact: true }).click();
+	expect(stub.requests).toHaveLength(calls);
+	await page.getByRole("button", { name: "Close the assistant" }).click();
+	await page.getByRole("button", { name: /Document menu:/ }).click();
+	await page.getByRole("menuitem", { name: "Translate into…" }).click();
+	await dialog.screenshot({ path: testInfo.outputPath("language-copy.png") });
+	await dialog.getByRole("button", { name: "Create language copy" }).click();
+	await expect(page).not.toHaveURL(new RegExp(`/builder/${sourceId}$`));
+	await expect(page.getByLabel("Message the assistant")).toHaveValue(/language copy into de-DE/);
+	const copyId = resumeIdOf(page);
+	expect(copyId).not.toBe(sourceId);
+	const copy = JSON.parse(await resumeJson(page, copyId));
+	expect(copy.data.metadata.page.locale).toBe("de-DE");
+	expect(copy.data.basics.headline).toBe("Product designer");
+	expect(copy.isPublic).toBe(false);
+	expect(stub.requests).toHaveLength(calls);
+	await page.getByRole("button", { name: "Send", exact: true }).last().click();
+	const edits = page.getByRole("list", { name: "Proposed edits" });
+	await expect(edits).toBeVisible({ timeout: 20_000 });
+	await testInfo.attach("translation-provider-transport.json", {
+		body: Buffer.from(JSON.stringify(stub.requests.slice(calls), null, 2)),
+		contentType: "application/json",
+	});
+	await expect(edits).toContainText("Produktdesignerin");
+	expect(JSON.parse(await resumeJson(page, copyId)).data.basics.headline).toBe("Product designer");
+	expect(JSON.stringify(stub.requests.slice(calls))).not.toContain("PRIVATE_TRANSLATION_NOTE");
+	await edits.getByRole("button", { name: "Accept", exact: true }).click();
+	await expect(edits.getByText("Applied", { exact: true })).toBeVisible();
+	await expect
+		.poll(async () => JSON.parse(await resumeJson(page, copyId)).data.basics.headline)
+		.toBe("Produktdesignerin");
+	await page.reload();
+	const saved = JSON.parse(await resumeJson(page, copyId));
+	expect(saved.data.summary.content).toBe("<p>Barrierefreie Werkzeuge entwickeln.</p>");
+	expect(saved.data.basics.website).toEqual(data.basics.website);
+	expect(saved.data.metadata.notes).toBe("PRIVATE_TRANSLATION_NOTE");
+	expect(JSON.parse(await resumeJson(page, sourceId))).toEqual(source);
+	await expect(page.getByText("Review German translation · 1 of 1 applied", { exact: true })).toBeVisible();
+});
 
 test("history keeps the original opening message beneath its task title without more AI calls", async ({
 	authPage: page,

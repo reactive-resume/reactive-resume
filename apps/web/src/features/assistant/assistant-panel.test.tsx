@@ -116,7 +116,8 @@ it("states resume scope before sending and routes Open Write to this resume", ()
 			<AssistantPanel document={document} onClose={onClose} />
 		</I18nProvider>,
 	);
-	expect(screen.getByText(/I can't translate a whole resume/)).toBeDefined();
+	expect(screen.getByText(/Some fields still need Write/)).toBeDefined();
+	expect(screen.getByRole("button", { name: "Translate into…" })).toBeDefined();
 	fireEvent.click(screen.getByRole("button", { name: "Open Write" }));
 	expect(onClose).toHaveBeenCalledOnce();
 	expect(mocks.navigate).toHaveBeenCalledWith({

@@ -20,6 +20,7 @@ import { ChatWelcome, ModelMenu } from "./chat-chrome";
 import { ConnectionNotice } from "./connection-notice";
 import { Composer, Conversation } from "./conversation";
 import { ProviderSetup, SetUpAi } from "./provider-setup";
+import { TranslateResume } from "./translate-resume";
 import { useResumeStore } from "@/features/resume/builder/draft";
 import { useUnlockResume } from "@/features/resume/builder/use-unlock-resume";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -58,6 +59,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const draft = useEditorStore((state) => state.assistantDraft);
 	const [view, setView] = useState<"thread" | "history">("thread");
 	const [connecting, setConnecting] = useState(false);
+	const [translating, setTranslating] = useState(false);
 	const [providerId, setProviderId] = useState<string | null>(null);
 	const [modelMenuOpen, setModelMenuOpen] = useState(false);
 	const [starting, setStarting] = useState(false);
@@ -201,10 +203,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 			{document.kind === "resume" && (
 				<div className="grid gap-2 border-b border-line p-4 text-xs text-ink-2">
 					<p>
-						<Trans>
-							I can edit your summary, bullets and text fields, and add entries and sections. Review each set before
-							accepting it together. Some fields still need Write. I can't translate a whole resume.
-						</Trans>
+						<Trans>Review each set before accepting it together. Some fields still need Write.</Trans>
 					</p>
 					<Button
 						size="sm"
@@ -221,7 +220,13 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 					>
 						<Trans>Open Write</Trans>
 					</Button>
+					<Button size="sm" variant="link" onClick={() => setTranslating(true)}>
+						<Trans>Translate into…</Trans>
+					</Button>
 				</div>
+			)}
+			{translating && document.kind === "resume" && (
+				<TranslateResume resumeId={document.id} onClose={() => setTranslating(false)} />
 			)}
 			{threadId && !provider && (
 				<Notice>

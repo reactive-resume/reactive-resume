@@ -38,6 +38,7 @@ import { coverLetterService } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
 import { assertResumeChangeProse } from "./prose";
 import { entryReview } from "./review";
+import { proposeTranslation, translationView } from "./translation";
 
 /** The one document a conversation is about. */
 export type AssistantDocument = { kind: "resume" | "letter"; id: string };
@@ -129,6 +130,7 @@ export async function loadDocument(userId: string, document: AssistantDocument):
 			view: {
 				resume: buildMarkdown(resume.data),
 				structure: getVisibleResumeStructure(resume.data),
+				...translationView(resume.data, resume.data.metadata.page.locale),
 				entryTemplates: Object.fromEntries(resumeEntryTypeSchema.options.map((type) => [type, createEntry(type)])),
 			},
 		};
@@ -544,6 +546,11 @@ function resolveResumeEdits(
 ): ProposeEditsOutput {
 	const original = document.resume;
 	if (!original) throw new Error("Open a resume to propose these changes.");
+	const translation = input.changes.find((change) => change.kind === "translation");
+	if (translation) {
+		if (input.changes.length !== 1) throw new Error("Review a translation separately from other resume changes.");
+		return { ...proposeTranslation(original, translation, input.title), tailoredFor: null };
+	}
 	const { cite, reviewOf } = reviewer(document, review);
 	let next = structuredClone(original);
 	const before: string[] = [];
@@ -556,6 +563,7 @@ function resolveResumeEdits(
 	const textPassages = new Map<string, string>();
 	const textOnly = input.changes.every((change) => change.kind === "text");
 	for (const [index, change] of input.changes.entries()) {
+		if (change.kind === "translation") continue;
 		const id = change.kind === "text" ? change.passageId : `change_${index + 1}`;
 		try {
 			assertResumeChangeProse(change);

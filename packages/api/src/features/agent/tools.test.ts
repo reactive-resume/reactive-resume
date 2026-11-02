@@ -126,15 +126,17 @@ describe("assistant web tools", () => {
 		).toContain("Use `search_web`");
 	});
 
-	it("explains partial translation and unsupported fields before suggesting resume edits", () => {
+	it("routes language requests to a separate copy and requires complete reviewed translations", () => {
 		const instructions = buildAgentInstructions({
 			document: { kind: "resume", name: "Resume" },
 			posting: null,
 			searchTool: null,
 			canReadPage: true,
 		});
-		expect(instructions).toContain("Whole-resume translation is NOT supported");
-		expect(instructions).toContain("never claim the whole resume is translated");
+		expect(instructions).toContain("Translate into…");
+		expect(instructions).toContain("leaving the original untouched");
+		expect(instructions).toContain("EVERY field");
+		expect(instructions).toContain("Never claim completion before review/acceptance");
 		expect(instructions).toContain("For mixed requests, propose each supported change");
 		expect(instructions).toContain("route to Write");
 		expect(instructions).not.toContain("{{EDIT_SCOPE}}");

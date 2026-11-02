@@ -1073,9 +1073,10 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 		expect(await stored()).toMatchObject({ after: "<p>My wording</p>" });
 	});
 	/** A structural change (one snapshot) proposed on a fresh resume, stored as the assistant stores it. */
-	async function structuralOn(tailoredFor: string | null = null, large = false) {
+	async function structuralOn(tailoredFor: string | null = null, large = false, translation = false) {
 		const id = `structural-${randomUUID()}`;
 		const data = structuredClone(defaultResumeData);
+		if (translation) data.metadata.page.locale = "de-DE";
 		data.summary.content = "<p>Anchor</p>";
 		if (large) data.summary.content = Array.from({ length: 12 }, (_, i) => `<p>Original paragraph ${i}.</p>`).join("");
 		data.sections.projects.items = [
@@ -1085,29 +1086,49 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 		await fixture.db?.insert(tables.resume).values({ id, userId, name: "Structural", slug: id, data });
 		const { resolveDocumentEdits } = await import("./document");
 		const loaded = await loadDocument(userId, { kind: "resume", id });
-		const output = resolveDocumentEdits(loaded, {
-			title: "Headline",
-			changes: [
-				{
-					kind: "field",
-					target: { sectionId: "basics", field: "headline" },
-					before: "",
-					value: "Design lead",
-					why: "Asked for.",
-				},
-				...(large
-					? loaded.passages
-							.filter((passage) => passage.target.sectionId === "summary")
-							.map((passage, index) => ({
-								kind: "text" as const,
-								sectionId: "summary",
-								passageId: passage.id,
-								text: `Revised paragraph ${index}. ${"Designed accessible interfaces. ".repeat(60)}`,
-								why: "Requested rewrite.",
-							}))
-					: []),
-			],
-		});
+		const { translationFields } = await import("./translation");
+		const output = resolveDocumentEdits(
+			loaded,
+			translation
+				? {
+						title: "German translation",
+						changes: [
+							{
+								kind: "translation",
+								locale: "de-DE",
+								why: "Review German wording",
+								fields: translationFields(loaded.resume ?? data).map(({ id, text }) => ({
+									id,
+									before: text,
+									text: text === "Anchor" ? "Anker" : text,
+								})),
+							},
+						],
+					}
+				: {
+						title: "Headline",
+						changes: [
+							{
+								kind: "field",
+								target: { sectionId: "basics", field: "headline" },
+								before: "",
+								value: "Design lead",
+								why: "Asked for.",
+							},
+							...(large
+								? loaded.passages
+										.filter((passage) => passage.target.sectionId === "summary")
+										.map((passage, index) => ({
+											kind: "text" as const,
+											sectionId: "summary",
+											passageId: passage.id,
+											text: `Revised paragraph ${index}. ${"Designed accessible interfaces. ".repeat(60)}`,
+											why: "Requested rewrite.",
+										}))
+								: []),
+						],
+					},
+		);
 		const edit = output.edits[0];
 		if (!edit?.snapshot) throw new Error("Expected a structural change.");
 		const { id: threadId } = await agent.threads.start({ userId, resumeId: id });
@@ -1149,6 +1170,22 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 		};
 		return { id, edit: { ...edit, source: "assistant" as const }, read, save, status, accepted, threadId, message };
 	}
+
+	it("refuses language-drift saves with current and legacy translation receipts, rolling back content and decisions", async () => {
+		const translation = await structuralOn(null, false, true);
+		const original = await translation.read();
+		const next = await translation.accepted();
+		next.metadata.page.locale = "fr-FR";
+		for (const receipt of [appliedApplications([translation.edit]), { [translation.edit.id]: true }]) {
+			await expect(translation.save(next, receipt)).rejects.toMatchObject({ code: "RESUME_VERSION_CONFLICT" });
+			expect((await translation.read()).data).toEqual(original.data);
+			expect(await translation.status()).toBe("pending");
+		}
+		next.metadata.page.locale = "de-DE";
+		await translation.save(next, appliedApplications([translation.edit]));
+		expect((await translation.read()).data.summary.content).toBe("<p>Anker</p>");
+		expect(await translation.status()).toBe("accepted");
+	});
 
 	it("binds a structural change's receipt to its reviewed version through refinement and Undo/Redo, and holds older apps to the exact snapshot", async () => {
 		// Current app: applied, refined before the first save, undone, then redone at the refined checkpoint.

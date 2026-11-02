@@ -10,6 +10,7 @@ import { isValidSlug, MAX_SLUG_LENGTH, normalizeSlug } from "@reactive-resume/re
 import { isolate } from "@reactive-resume/utils/string";
 import { client } from "@/api/client";
 import { resumeFieldFocus, useResumeStore } from "@/draft";
+import { TranslateResume } from "@/features/assistant/translate-resume";
 import { useNewDocuments } from "@/features/documents/new-documents";
 import { useDocumentOperations } from "@/features/documents/queries";
 import { flushResume } from "@/features/share/document";
@@ -36,6 +37,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 	const resume = draft.document?.id === id ? draft.document : null;
 	const operations = useDocumentOperations();
 	const [panel, setPanel] = useState<"menu" | "rename" | "duplicate" | "tags" | "notes" | "details" | null>(null);
+	const [translating, setTranslating] = useState(false);
 	const [name, setName] = useState("");
 	const [tags, setTags] = useState<string[]>([]);
 	const [slug, setSlug] = useState("");
@@ -79,6 +81,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 	};
 	return (
 		<>
+			{translating && <TranslateResume resumeId={id} onClose={() => setTranslating(false)} />}
 			{!inChrome && (
 				<IconButton
 					ref={menuTrigger}
@@ -127,6 +130,15 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 									}
 								/>
 								{/* The library's job copy, from inside the editor (web's builder menu has it too). */}
+								<ListRow
+									title={t`Translate into…`}
+									leading="translate"
+									disabled={operations.busy || printing}
+									onPress={() => {
+										setPanel(null);
+										setTranslating(true);
+									}}
+								/>
 								<ListRow
 									title={t`Copy for a job…`}
 									leading="briefcase"
