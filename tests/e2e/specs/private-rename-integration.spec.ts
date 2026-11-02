@@ -142,7 +142,7 @@ for (const entry of ["library", "builder"] as const)
 async function renameInBuilder(page: Page, name: string) {
 	await page.getByRole("button", { name: /^Document menu:/ }).click();
 	await page.getByRole("menuitem", { name: "Rename…", exact: true }).click();
-	const dialog = page.getByRole("dialog", { name: "Update resume", exact: true });
+	const dialog = page.getByRole("dialog", { name: "Edit resume", exact: true });
 	await dialog.getByRole("textbox", { name: "Name", exact: true }).fill(name);
 	await dialog.getByRole("button", { name: "Save changes", exact: true }).click();
 	await expect(dialog).not.toBeVisible();

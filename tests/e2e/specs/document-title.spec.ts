@@ -5,7 +5,7 @@ async function rename(page: Page, kind: "resume" | "letter", name: string) {
 	await page.getByRole("button", { name: /^Document menu:/ }).click();
 	await page.getByRole("menuitem", { name: "Rename…", exact: true }).click();
 	if (kind === "resume") {
-		const dialog = page.getByRole("dialog", { name: "Update resume", exact: true });
+		const dialog = page.getByRole("dialog", { name: "Edit resume", exact: true });
 		await dialog.getByRole("textbox", { name: "Name", exact: true }).fill(name);
 		await dialog.getByRole("button", { name: "Save changes", exact: true }).click();
 	} else {
@@ -47,7 +47,7 @@ for (const kind of ["resume", "letter"] as const) {
 		expect(await page.title()).toBe("Renamed document | Reactive Resume");
 		await page.unroute(updateUrl);
 		if (kind === "resume") {
-			const dialog = page.getByRole("dialog", { name: "Update resume", exact: true });
+			const dialog = page.getByRole("dialog", { name: "Edit resume", exact: true });
 			await dialog.getByRole("textbox", { name: "Name", exact: true }).fill("Renamed again");
 			await dialog.getByRole("button", { name: "Save changes", exact: true }).click();
 		} else {
@@ -111,7 +111,7 @@ test("resume metadata timeout cancels the request and releases stream updates an
 		await rename(page, "resume", "Server accepted rename");
 		await serverCommitted;
 		await cancelled;
-		const dialog = page.getByRole("dialog", { name: "Update resume", exact: true });
+		const dialog = page.getByRole("dialog", { name: "Edit resume", exact: true });
 		await expect(dialog.getByRole("button", { name: "Save changes", exact: true })).toBeEnabled();
 		await expect(page).toHaveTitle("Server accepted rename | Reactive Resume");
 		await page.unroute(updateUrl);

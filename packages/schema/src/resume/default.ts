@@ -59,10 +59,9 @@ export const defaultResumeData: ResumeData = {
 			pages: [
 				{
 					fullWidth: false,
-					// Summary and Experience lead; Profiles sit with the contact details at the sidebar's top (after the main
-					// sections on a one-column template).
-					main: ["summary", "experience", "education", "projects", "volunteer", "references"],
-					sidebar: ["profiles", "skills", "certifications", "awards", "languages", "interests", "publications"],
+					// Summary leads, with Profiles beside it near the contact details, then Experience before Education.
+					main: ["summary", "profiles", "experience", "education", "projects", "volunteer", "references"],
+					sidebar: ["skills", "certifications", "awards", "languages", "interests", "publications"],
 				},
 			],
 		},

@@ -2,9 +2,9 @@ import { describe, expect, it } from "vite-plus/test";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { compareResumeRecovery } from "./compare-resume";
 
-const SYNTHETIC_SOURCE_HASH = "d33eebab5cb1a4bdc275f82d352baff7322e8ff0ad91325ac0215b99206468c2";
-const RECOVERED_COPY_HASH = "928b1f98adecd78faf795a4bf87a9675f278c12b50efe85146d16c2d640fa845";
-const CURRENT_COPY_HASH = "e2f09ccb37179fb6d744b815197ecd07f10f87789a5b31ed5100d465e6f2832b";
+const SYNTHETIC_SOURCE_HASH = "0600d56212904d5aa7179f8dfb520383cb2cb50494a95f5e1cd410d6d7793ea0";
+const RECOVERED_COPY_HASH = "25ec4affb3dfd85d50f01a0a2749790e1588091e58b4d900051824863f787420";
+const CURRENT_COPY_HASH = "1c5639bbd2d78fd5ca1b3eadd9e5f507b856b9cc65f0ea120f22434b4c988518";
 
 type RecoveryRequest = {
 	caseId: unknown;
