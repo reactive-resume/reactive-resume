@@ -50,6 +50,21 @@ If the test fails, the dialog explains the cause and recovery in your language. 
 | **Name**     | A label you'll recognize, such as "Work OpenAI". Under **Advanced** for named providers. If you leave it empty, the provider's name is used.                  |
 | **Base URL** | The address requests go to. Under **Advanced** for named providers; required and visible for OpenAI-compatible services. Changing it needs the API key again. |
 
+### Choosing a model
+
+Use **Choose model**, the arrow beside **Model**, to see the built-in choices even when a model is already selected. **Recommended** offers suggestions for everyday work and a **More capable** alternative. **All models** holds the additional built-in choices. On the web, typing filters the list; on mobile, the picker has a search field.
+
+OpenAI starts with `gpt-6-luna`, a fast, lower-cost model for everyday work. Defaults are starting suggestions for new connections. Saved models stay as you set them until you change them.
+
+<Frame caption="Choose a built-in model or enter your own model ID">
+  <img
+    src="/images/guides/using-ai/model-choices.webp"
+    alt="OpenAI model picker with Recommended and All models groups"
+  />
+</Frame>
+
+The built-in list is curated for text and tool use. Your endpoint and plan decide which models are available. You can enter any model ID your endpoint supports, including a private or custom model. Some providers have no built-in suggestions; their model field remains editable. Check tool-calling support with your provider when choosing a custom model for the assistant.
+
 ### Supported providers
 
 Suggestions favor fast, cost-efficient models for everyday AI tasks. They apply when adding a provider; saved models stay as selected. You can enter another model available to your account.

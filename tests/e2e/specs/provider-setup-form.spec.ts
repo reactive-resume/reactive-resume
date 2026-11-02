@@ -1,6 +1,43 @@
 import { startAiStub } from "../fixtures/ai-stub";
 import { expect, test } from "../fixtures/test";
 
+test("model choices stay available with a default and preserve custom IDs", async ({ authPage: page }, info) => {
+	await page.setViewportSize({ width: 1280, height: 1000 });
+	const catalogRequests: string[] = [];
+	page.on("request", (request) => {
+		if (new URL(request.url()).hostname === "models.dev") catalogRequests.push(request.url());
+	});
+	await page.goto("/dashboard/settings/ai");
+	await page.getByRole("button", { name: /^Add AI provider/ }).click();
+	const dialog = page.getByRole("dialog", { name: "Add provider" });
+	const model = dialog.getByRole("combobox", { name: "Model", exact: true });
+	await expect(model).toHaveValue("gpt-6-luna");
+	await expect(dialog.getByText("Fast, lower-cost default for everyday work.", { exact: false })).toBeVisible();
+	await dialog.getByRole("button", { name: "Choose model", exact: true }).click();
+	await expect(page.getByRole("group", { name: "Recommended", exact: true })).toBeVisible();
+	await expect(page.getByRole("option", { name: /GPT-4\.1/ })).toBeVisible();
+	await page.screenshot({
+		path: info.outputPath("model-choices.png"),
+		animations: "disabled",
+		fullPage: true,
+	});
+	await page.getByRole("option", { name: /GPT-6 Astra.*More capable/ }).click();
+	await expect(model).toHaveValue("gpt-6-astra");
+	await dialog.getByRole("button", { name: "Choose model", exact: true }).click();
+	await expect(page.getByRole("option", { name: /GPT-6 Luna/ })).toBeVisible();
+	await model.fill("terra");
+	await expect(page.getByRole("option", { name: /GPT-6.1 Terra/ })).toBeVisible();
+	await expect(page.getByRole("option", { name: /GPT-6 Luna/ })).toHaveCount(0);
+	await model.press("ArrowDown");
+	await model.press("Enter");
+	await expect(model).toHaveValue("gpt-6.1-terra");
+	await model.fill("fictional-private-model");
+	await expect(dialog.getByRole("button", { name: "Save and test", exact: true })).toBeVisible();
+	await model.blur();
+	await expect(model).toHaveValue("fictional-private-model");
+	expect(catalogRequests).toEqual([]);
+});
+
 test("changing provider clears the previous provider's draft key", async ({ authPage: page }) => {
 	await page.goto("/dashboard/settings/ai");
 	await page.getByRole("button", { name: /^Add AI provider/ }).click();
@@ -57,6 +94,8 @@ test("compatible setup rejects invalid URLs inline before sending and saves one 
 		const dialog = page.getByRole("dialog", { name: "Add provider" });
 		await dialog.getByRole("combobox", { name: "Provider", exact: true }).click();
 		await page.getByRole("option", { name: "OpenAI-compatible", exact: true }).click();
+		await expect(dialog.getByRole("button", { name: "Choose model", exact: true })).toHaveCount(0);
+		await expect(dialog.getByText("No built-in suggestions for this provider.")).toBeVisible();
 		const url = dialog.getByLabel("Base URL (required)");
 		await expect(url).toBeVisible();
 		await dialog.getByLabel("API key", { exact: true }).fill("stub-key");
@@ -128,7 +167,9 @@ test("editing a custom first-party endpoint shows its address and requires a fre
 		expect(first.requests).toHaveLength(0);
 		expect(second.requests.length).toBeGreaterThan(0);
 		const providers = await page.request.get("/api/openapi/ai-providers");
-		expect(await providers.json()).toMatchObject([{ id: original.id, baseURL: second.baseURL, testStatus: "success" }]);
+		expect(await providers.json()).toMatchObject([
+			{ id: original.id, model: "stub", baseURL: second.baseURL, testStatus: "success" },
+		]);
 	} finally {
 		await Promise.all([first.close(), second.close()]);
 	}
