@@ -92,7 +92,7 @@ describe("getResumeErrorMessage", () => {
 
 	it("falls back to generic message for unmapped orpc error", () => {
 		const error = new ORPCError("UNKNOWN_ERROR");
-		expect(getResumeErrorMessage(error)).toBe("Something went wrong. Please try again.");
+		expect(getResumeErrorMessage(error)).toBe("Couldn't save your changes. Try again.");
 	});
 });
 

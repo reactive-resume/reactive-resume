@@ -586,12 +586,8 @@ function FirstRun({ onFile, trashCount }: FirstRunProps) {
 				}
 				secondary={
 					<>
-						<Button
-							variant="link"
-							disabled={creating}
-							className="text-ink-2 underline underline-offset-2 hover:text-ink pointer-coarse:min-h-11"
-							onClick={() => void startBlank()}
-						>
+						{/* A peer of importing, not a footnote: many people start from nothing. */}
+						<Button variant="secondary" disabled={creating} onClick={() => void startBlank()}>
 							<Trans>Start blank</Trans>
 						</Button>
 						<Button

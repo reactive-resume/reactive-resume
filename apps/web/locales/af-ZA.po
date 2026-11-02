@@ -640,6 +640,10 @@ msgstr "{authored, plural, =1 {Pas op een bladsy: {details}} other {Pas op # bla
 msgid "{base} (copy)"
 msgstr "{base} (kopie)"
 
+#: src/features/settings/account/sessions.tsx
+msgid "{browser} on {system}"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr "{characters, plural, one {# karakter} other {# karakters}}"
@@ -882,6 +886,10 @@ msgstr "{minutes} min"
 #: src/features/applications/components/calendar-view.tsx
 msgid "{monthCount, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthCount, plural, =0 {Geen onderhoude nie} one {# onderhoud} other {# onderhoude}}"
+
+#: src/features/settings/account/sessions.tsx
+msgid "{name} · this device"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
@@ -1393,6 +1401,10 @@ msgstr "Oor hierdie toepassing"
 msgid "About 90 seconds when spoken"
 msgstr "Omtrent 90 sekondes as jy dit sê"
 
+#: src/features/settings/root.tsx
+msgid "About Reactive Resume"
+msgstr ""
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Accent"
 msgstr "Aksent"
@@ -1622,6 +1634,10 @@ msgstr "Voeg 'n merker by"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Add a tag and press Enter…"
 msgstr "Voeg ’n merker by en druk Enter…"
+
+#: src/features/documents/document-actions.tsx
+msgid "Add a tag…"
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Add AI provider"
@@ -2845,7 +2861,12 @@ msgstr "Agtergrondkleur"
 msgid "Backup code"
 msgstr "Rugsteun kode"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Backup codes"
+msgstr ""
+
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Backup codes copied"
 msgstr "Rugsteunkodes gekopieer"
 
@@ -3677,6 +3698,7 @@ msgstr "Kliënt-ID"
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/resume/stylesheet/editor.tsx
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/ai/providers.tsx
@@ -4146,6 +4168,7 @@ msgstr "Kopieer antwoorde"
 
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Copy codes"
 msgstr "Kopieer kodes"
 
@@ -4449,10 +4472,6 @@ msgstr "Kon nie invoer nie"
 msgid "Couldn't import the file. Try again from Documents."
 msgstr "Kon nie die lêer invoer nie. Probeer weer vanaf Dokumente."
 
-#: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't import the file. Try again, or start blank."
-msgstr "Kon nie die lêer invoer nie. Probeer weer, of begin leeg."
-
 #: src/features/auth/pages/error.tsx
 msgid "Couldn't link that provider account. Try again."
 msgstr "Kon nie daardie verskafferrekening koppel nie. Probeer weer."
@@ -4533,6 +4552,10 @@ msgstr ""
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't lock the document. Try again."
 msgstr "Kon nie die dokument sluit nie. Probeer weer."
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Couldn't make new codes. Try again."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't make this provider the default. Try again."
@@ -4761,6 +4784,7 @@ msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Kon nie jou veranderinge stoor nie. Probeer weer voor jy voortgaan."
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/libs/error-message.ts
 msgid "Couldn't save your changes. Try again."
 msgstr "Kon nie jou veranderinge stoor nie. Probeer weer."
 
@@ -4827,6 +4851,10 @@ msgstr "Kon nie die voorskou wys nie."
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
 msgstr "Kon nie aanmeld nie. Probeer weer."
+
+#: src/features/settings/account/sessions.tsx
+msgid "Couldn't sign out of that device. Try again."
+msgstr ""
 
 #. Fallback toast when signing out fails
 #: src/features/settings/account/page.tsx
@@ -5571,6 +5599,11 @@ msgstr "Ander geldeenheid, nie vergelyk nie"
 msgid "Different pay period, not compared"
 msgstr "Ander betaalperiode, nie vergelyk nie"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Digit {position} of {total}"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Discard"
 msgstr "Gooi weg"
@@ -5629,7 +5662,7 @@ msgstr ""
 msgid "Do not share a resume"
 msgstr ""
 
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Docs"
 msgstr "Dokumentasie"
 
@@ -5696,11 +5729,12 @@ msgstr ""
 
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Donate"
 msgstr "Skenk"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
 msgstr "Klaar"
@@ -5745,6 +5779,7 @@ msgstr ""
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Download codes"
 msgstr "Laai kodes af"
 
@@ -5896,7 +5931,7 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Sleep om te herposisioneer en gebruik die skuifbalk om te zoem voor jy oplaai."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume, JSON Resume or a LinkedIn export (.zip). Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -6334,6 +6369,10 @@ msgstr "Voer jou besonderhede hieronder in. As jy 'n CV kies, vervang dit hierdi
 #: src/features/auth/pages/register.tsx
 msgid "Enter your name."
 msgstr "Voer jou naam in."
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Enter your password to replace your backup codes. Codes you saved before stop working."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enter your password to set up two-step verification. Once it's on, you need a code from your authenticator app every time you sign in."
@@ -7010,6 +7049,10 @@ msgstr "Volle breedte"
 msgid "Generate a random name"
 msgstr "Genereer 'n ewekansige naam"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Generate new codes"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -7218,10 +7261,6 @@ msgstr "terug gehoor"
 #: src/libs/locale.ts
 msgid "Hebrew"
 msgstr "Hebreeus"
-
-#: src/features/settings/root.tsx
-msgid "Help & docs"
-msgstr "Hulp en dokumente"
 
 #: src/features/career/workspace/coach-starters.ts
 msgid "Help me prepare for a first call"
@@ -8064,6 +8103,10 @@ msgstr "Hou dit onder 2.5 MB, gewoonlik deur beelde te verwyder of te verklein."
 msgid "Keep mine"
 msgstr "Hou myne"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Keep my codes"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr "Hou op een bladsy"
@@ -8071,6 +8114,10 @@ msgstr "Hou op een bladsy"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "Hou private notas oor hierdie CV hier. Niemand anders kan dit sien nie."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Keep provider"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep resume content as real text rather than as pictures of text."
@@ -8231,6 +8278,10 @@ msgstr "Taal"
 #: src/libs/resume/section.tsx
 msgid "Languages"
 msgstr "Tale"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Last active {active}"
+msgstr ""
 
 #. placeholder {0}: monthYear(new Date(password.updatedAt))
 #: src/features/settings/account/security.tsx
@@ -8807,6 +8858,10 @@ msgstr ""
 msgid "Locked. I can answer questions; unlock to get edits."
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+msgid "Locked. Unlock it to rename, tag or move it to Trash."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Gesluit. Ontsluit om te wysig."
@@ -8867,6 +8922,10 @@ msgstr "Hoofnavigasie"
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
+msgstr ""
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Make a new set if you've used them up or lost them. The old ones stop working."
 msgstr ""
 
 #: src/features/homepage/design.tsx
@@ -9484,6 +9543,10 @@ msgstr "Nuwe API sleutel"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New application"
 msgstr "Nuwe aansoek"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "New backup codes"
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
@@ -10832,6 +10895,7 @@ msgstr ""
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/account/security.tsx
 msgid "Password"
 msgstr "Wagwoord"
@@ -11683,6 +11747,7 @@ msgstr "Re: Senior Produkontwerper"
 msgid "Reactive Resume - Go to homepage"
 msgstr "Reactive Resume - Gaan na tuisblad"
 
+#: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
 msgstr "Reactive Resume {__APP_VERSION__} · MIT"
@@ -12374,7 +12439,7 @@ msgstr ""
 
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "Rapporteer ’n fout"
 
@@ -12912,6 +12977,10 @@ msgid "Same you. Less starting over."
 msgstr "Dieselfde jy. Minder van voor af begin."
 
 #: src/features/documents/use-start-document.ts
+msgid "Sample resume"
+msgstr ""
+
+#: src/features/documents/use-start-document.ts
 msgid "Sample resume added. Delete it anytime."
 msgstr "Voorbeeld CV bygevoeg. Vee dit enige tyd uit."
 
@@ -13045,6 +13114,10 @@ msgstr ""
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Bewaar hierdie aanbodvoorwaardes om te vergelyk"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Save these somewhere safe. Each works once, and they won't be shown again."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save this resume's changes before copying it."
@@ -13667,6 +13740,7 @@ msgid "Set the document language when exporting."
 msgstr "Stel die dokumenttaal wanneer jy uitvoer."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Set up AI"
 msgstr "KI opstel"
 
@@ -13996,9 +14070,14 @@ msgstr "Meld aan met jou vingerafdruk, gesig of toestel-PIN"
 
 #. User menu action to sign out of current account
 #: src/features/settings/account/page.tsx
+#: src/features/settings/account/sessions.tsx
 #: src/features/user/dropdown-menu.tsx
 msgid "Sign out"
 msgstr "Meld af"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Sign out of {name}"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Sign out of all other devices"
@@ -14025,6 +14104,10 @@ msgstr "Afsluiting"
 #: src/features/auth/pages/consent.tsx
 msgid "Signed in as {email}"
 msgstr "Aangemeld as {email}"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Signed out of that device."
+msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
@@ -14198,10 +14281,6 @@ msgstr "Sommige teks is gedraai."
 msgid "Someone asked to change your {appName} email from {previousEmail} to {newEmail}."
 msgstr ""
 
-#: src/libs/error-message.ts
-msgid "Something went wrong. Please try again."
-msgstr "Iets het verkeerd geloop. Probeer weer."
-
 #: src/features/documents/documents-page.tsx
 msgid "Sort"
 msgstr "Sorteer"
@@ -14214,7 +14293,7 @@ msgstr "Sorteer volgens datum"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/facts.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Source"
 msgstr "Bron"
 
@@ -15033,6 +15112,11 @@ msgstr "Daardie lêer is te groot om na te gaan. PDFs tot 25 MB werk."
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "Daardie wagwoord is nie korrek nie. Gaan dit by die CV-eienaar na en probeer weer."
 
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
+msgid "That password isn't right. Try again or reset it."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to another account. Use a different provider account."
 msgstr "Daardie verskafferrekening is reeds aan 'n ander rekening gekoppel. Gebruik 'n ander verskafferrekening."
@@ -15678,6 +15762,10 @@ msgstr "Hierdie is 'n XFA-vorm, so meeste sagteware lees slegs die leë omhulsel
 msgid "This is not a common resume page size."
 msgstr "Hierdie is nie 'n algemene CV-bladsygrootte nie."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "This JSON isn't a Reactive Resume or JSON Resume file."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Hierdie brief en \"{resumeName}\" as twee PDFs, vernoem om te pas."
@@ -16042,7 +16130,7 @@ msgstr "Transkribeer met {model}…"
 msgid "Transcript copied"
 msgstr "Transkripsie gekopieer"
 
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "Vertaal"
 
@@ -16331,6 +16419,10 @@ msgstr "University of Porto"
 msgid "Unknown"
 msgstr "Onbekend"
 
+#: src/features/settings/account/sessions.tsx
+msgid "Unknown device"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Unlink"
 msgstr "Ontkoppel"
@@ -16353,10 +16445,6 @@ msgstr "Ontsluit"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Unlock editing"
 msgstr "Ontsluit redigering"
-
-#: src/features/documents/document-actions.tsx
-msgid "Unlock it first"
-msgstr "Ontsluit dit eers"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "unnamed key"
