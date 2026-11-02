@@ -332,6 +332,7 @@ export function ChatView(props: ChatViewProps) {
 											message={message}
 											disabled={readOnly || busy || index !== messages.length - 1}
 											facts={knowledge.all}
+											stories={knowledge.allStories}
 											storyEditor={storyEditor}
 											onDecision={(decision) => {
 												void addToolApprovalResponse(decision);

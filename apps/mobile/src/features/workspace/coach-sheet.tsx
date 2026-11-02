@@ -204,6 +204,7 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 						privacy={privacy}
 						remember={{ applicationId: application.id }}
 						facts={facts.data ?? []}
+						stories={stories.data ?? []}
 						storyEditor={({ story, onChange, onSaved, onClose }) => (
 							<StoryEditor
 								story={null}

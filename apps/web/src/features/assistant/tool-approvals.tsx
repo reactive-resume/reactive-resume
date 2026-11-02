@@ -10,6 +10,8 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 
 type ApprovalFact = { id: string; text: string; status: string };
+/** A saved story a proposal may update: its parts show as "Was" where they change. */
+type ApprovalStory = { id: string; data: Omit<CareerStoryData, "applicationId"> };
 
 type StoryEditorArgs = {
 	approvalId: string;
@@ -27,15 +29,29 @@ type ToolApprovalsProps = {
 	disabled: boolean;
 	/** The user's facts, to show which ones a proposed story rests on. */
 	facts?: readonly ApprovalFact[];
+	/** The user's stories, so a proposed update shows what it changes. */
+	stories?: readonly ApprovalStory[];
 	/** The story editor, opened in place by Edit first. Without it, a proposal can only be saved as is or skipped. */
 	storyEditor?: StoryEditorRender;
 	onDecision: (decision: { id: string; approved: boolean }) => void;
 };
 
-export function ToolApprovals({ message, disabled, facts = [], storyEditor, onDecision }: ToolApprovalsProps) {
+export function ToolApprovals({
+	message,
+	disabled,
+	facts = [],
+	stories = [],
+	storyEditor,
+	onDecision,
+}: ToolApprovalsProps) {
 	const [editing, setEditing] = useState<string | null>(null);
-	return agentApprovalRequests(message).map((request) =>
-		request.kind === "story" && editing === request.id && storyEditor && !disabled ? (
+	return agentApprovalRequests(message).map((request) => {
+		// An update names a saved story; the card then reads as a change to it, and Edit first (which saves a new
+		// story) is left out.
+		const previous =
+			request.kind === "story" && request.story.id ? stories.find((story) => story.id === request.story.id) : undefined;
+		const updating = request.kind === "story" && request.story.id !== undefined;
+		return request.kind === "story" && editing === request.id && storyEditor && !disabled && !updating ? (
 			<div key={request.id} className="my-3 rounded-lg border border-line bg-raised p-4">
 				{storyEditor({
 					approvalId: request.id,
@@ -52,6 +68,12 @@ export function ToolApprovals({ message, disabled, facts = [], storyEditor, onDe
 				<p className="text-sm font-medium">
 					{request.kind === "search" ? (
 						<Trans>Send this exact query to your web search provider?</Trans>
+					) : updating ? (
+						previous ? (
+							<Trans>Update “{previous.data.title}” in Knowledge?</Trans>
+						) : (
+							<Trans>Update this story in Knowledge?</Trans>
+						)
 					) : (
 						<Trans>Save this story to Knowledge?</Trans>
 					)}
@@ -59,13 +81,19 @@ export function ToolApprovals({ message, disabled, facts = [], storyEditor, onDe
 				{request.kind === "search" ? (
 					<p className="text-sm wrap-anywhere whitespace-pre-wrap">{request.text}</p>
 				) : (
-					<StoryProposal story={request.story} facts={facts} />
+					<StoryProposal story={request.story} facts={facts} previous={previous?.data} />
 				)}
 				<div className="flex flex-wrap gap-2">
 					<Button size="sm" disabled={disabled} onClick={() => onDecision({ id: request.id, approved: true })}>
-						{request.kind === "search" ? <Trans>Search the web</Trans> : <Trans>Save story</Trans>}
+						{request.kind === "search" ? (
+							<Trans>Search the web</Trans>
+						) : updating ? (
+							<Trans>Update story</Trans>
+						) : (
+							<Trans>Save story</Trans>
+						)}
 					</Button>
-					{request.kind === "story" && storyEditor && (
+					{request.kind === "story" && storyEditor && !updating && (
 						<Button size="sm" variant="secondary" disabled={disabled} onClick={() => setEditing(request.id)}>
 							<Trans>Edit first</Trans>
 						</Button>
@@ -80,20 +108,25 @@ export function ToolApprovals({ message, disabled, facts = [], storyEditor, onDe
 					</Button>
 				</div>
 			</div>
-		),
-	);
+		);
+	});
 }
 
-type StoryProposalProps = { story: Omit<CareerStoryData, "applicationId">; facts: readonly ApprovalFact[] };
+type StoryProposalProps = {
+	story: Omit<CareerStoryData, "applicationId">;
+	facts: readonly ApprovalFact[];
+	/** The saved story an update replaces: each changed part shows what it was. */
+	previous?: Omit<CareerStoryData, "applicationId"> | undefined;
+};
 
 /** The proposed story part by part, as the reader shows a saved one, with the facts it claims to rest on. */
-function StoryProposal({ story, facts }: StoryProposalProps) {
+function StoryProposal({ story, facts, previous }: StoryProposalProps) {
 	const parts = [
-		{ letter: "S", label: t`Situation`, text: story.situation },
-		{ letter: "T", label: t`Task`, text: story.task },
-		{ letter: "A", label: t`Action`, text: story.action },
-		{ letter: "R", label: t`Result`, text: story.result },
-		{ letter: "R", label: t`Reflection`, text: story.reflection },
+		{ letter: "S", label: t`Situation`, text: story.situation, was: previous?.situation },
+		{ letter: "T", label: t`Task`, text: story.task, was: previous?.task },
+		{ letter: "A", label: t`Action`, text: story.action, was: previous?.action },
+		{ letter: "R", label: t`Result`, text: story.result, was: previous?.result },
+		{ letter: "R", label: t`Reflection`, text: story.reflection, was: previous?.reflection },
 	];
 	return (
 		<div className="grid gap-3">
@@ -125,6 +158,11 @@ function StoryProposal({ story, facts }: StoryProposalProps) {
 									</span>
 								)}
 							</dd>
+							{part.was !== undefined && part.was.trim() !== part.text.trim() && (
+								<dd className="text-xs leading-[18px] wrap-anywhere whitespace-pre-line text-ink-3">
+									<Trans>Was: {part.was.trim() || t`blank`}</Trans>
+								</dd>
+							)}
 						</div>
 					</div>
 				))}

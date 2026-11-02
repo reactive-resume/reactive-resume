@@ -64,6 +64,7 @@ function useCoachKnowledge() {
 	);
 	return {
 		all: facts.data ?? [],
+		allStories: stories.data ?? [],
 		isPending: facts.isPending || stories.isPending,
 		isError: facts.isError || stories.isError,
 		retry: () => {
@@ -236,6 +237,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 					privacy={privacyFor}
 					remember={{ applicationId: null }}
 					facts={knowledge.all}
+					stories={knowledge.allStories}
 					storyEditor={({ story, onChange, onSaved, onClose }) => (
 						<StoryEditor
 							story={null}

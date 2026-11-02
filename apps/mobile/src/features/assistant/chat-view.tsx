@@ -9,6 +9,7 @@ import type { SavedThread } from "./recovery";
 import type { IconName } from "@/ui";
 import type { LegendListRef } from "@legendapp/list/react-native";
 import type { Proposal } from "@reactive-resume/resume/proposals";
+import type { CareerStoryData } from "@reactive-resume/schema/career";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import { LegendList } from "@legendapp/list/react-native";
@@ -67,6 +68,8 @@ export type ChatViewProps = {
 	remember?: { applicationId: string | null } | undefined;
 	/** The user's facts, to show which ones a proposed story rests on. */
 	facts?: readonly { id: string; text: string; status: string }[] | undefined;
+	/** The user's stories, so a proposed update shows what it changes. */
+	stories?: readonly { id: string; data: Omit<CareerStoryData, "applicationId"> }[] | undefined;
 	/** The story editor a proposal's Edit first opens, in the conversation's scope. */
 	storyEditor?: StoryEditorRender | undefined;
 	/** Text the message box starts with, handed over from another screen; the user still taps Send. */
@@ -750,6 +753,7 @@ function Conversation(props: ConversationProps) {
 							<ToolApprovals
 								message={message}
 								facts={props.facts ?? []}
+								stories={props.stories}
 								applicationId={props.remember?.applicationId ?? null}
 								storyEditor={props.storyEditor}
 								disabled={readOnly || busy || index !== messages.length - 1}
