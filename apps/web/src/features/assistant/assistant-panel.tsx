@@ -488,6 +488,16 @@ function suggestionsFor(document: AssistantDocument, prepare: boolean, overflow?
 	if (document.kind === "letter")
 		return [
 			...tailor,
+			// After a draft was accepted, the one way back to a fresh draft: proposals for the whole letter.
+			...(document.posting
+				? [
+						{
+							icon: "sparkle" as const,
+							label: t`Redraft from the posting`,
+							hint: t`A new version of the whole letter, as edits to accept`,
+						},
+					]
+				: []),
 			{ icon: "lightning", label: t`Make the opening stronger`, hint: t`Leads with why you fit` },
 			{ icon: "arrows-in-line-vertical", label: t`Make it shorter`, hint: t`Keeps the most specific parts` },
 			{ icon: "text-align-left", label: t`Make it more specific`, hint: t`Uses facts from your resume` },
