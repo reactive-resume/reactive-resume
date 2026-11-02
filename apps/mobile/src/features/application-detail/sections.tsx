@@ -876,7 +876,14 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 						: t`Moved to ${getLaneHistoryLabel(lanes.lanes, entry)}`,
 				}
 			: entry.type === "note"
-				? { dot: colors.ink3, text: entry.text }
+				? {
+						dot: colors.ink3,
+						text: entry.followedUp
+							? entry.text === "Followed up"
+								? t`Followed up`
+								: `${t`Followed up`} · ${entry.text}`
+							: entry.text,
+					}
 				: {
 						dot: colors.accent,
 						text: [t`${interviewTypeLabel(entry.kind)} interview`, entry.location].filter(Boolean).join(" · "),
@@ -924,7 +931,7 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 							subtitle={
 								entry.type === "stage" && entry.dateUnknown
 									? t`Not recorded`
-									: entry.type === "interview"
+									: entry.type === "interview" || (entry.type === "note" && entry.followedUp)
 										? when(entry.at)
 										: utcDay(entry.at)
 							}

@@ -1,4 +1,5 @@
 import type { ApplicationStatus, ApplicationTimelineEntry, InterviewTimelineEntry } from "./data";
+import { latestStageEntryId } from "./data";
 import { followUpInstant } from "./follow-up";
 
 const DAY_MS = 86_400_000;
@@ -91,26 +92,43 @@ export function getNextStep(
 	if (application.status === "saved") return { kind: "not-applied" };
 
 	const days = daysInStage(application, now);
+	const since = applicationStageSince(application)?.getTime();
+	const stageEntryId = latestStageEntryId(
+		application.activity.filter((entry) => entry.type === "stage" && entry.canonicalTransition !== false),
+	);
+	// Write order identifies a visit even when its display date is backdated.
+	const visit = application.activity.find((entry) => entry.id === stageEntryId);
+	const visitSince = visit?.type === "stage" ? (visit.dateUnknown ? undefined : new Date(visit.at).getTime()) : since;
+	const contacted = application.activity.reduce((latest, entry) => {
+		if (entry.type !== "note" || entry.followedUp?.stageEntryId !== stageEntryId) return latest;
+		const at = new Date(entry.at).getTime();
+		// Whole-day stage dates use noon UTC; contact earlier that day still has its exact instant.
+		return at <= now.getTime() &&
+			(visitSince === undefined || Math.floor(at / DAY_MS) >= Math.floor(visitSince / DAY_MS))
+			? Math.max(latest, at)
+			: latest;
+	}, -Infinity);
+	const replySince = Number.isFinite(contacted) ? contacted : (visitSince ?? -Infinity);
+	const quietDays = Number.isFinite(replySince) ? daysBetween(new Date(replySince), now) : null;
 	// Going quiet after a screen is as common as after applying: both get the same nudge.
 	if (
 		(application.status === "applied" || application.status === "screening") &&
-		days !== null &&
-		days >= FOLLOW_UP_AFTER_DAYS
+		quietDays !== null &&
+		quietDays >= FOLLOW_UP_AFTER_DAYS
 	)
-		return { kind: "no-reply", days };
+		return { kind: "no-reply", days: quietDays };
 	if (application.status === "interview") {
-		const since = applicationStageSince(application)?.getTime();
 		// Interviews of this stage, by when they ended (one that began before the stage still counts if it ended after).
 		const ended =
-			since === undefined
+			visitSince === undefined
 				? []
 				: application.activity
 						.filter((entry): entry is InterviewTimelineEntry => entry.type === "interview")
 						.map((entry) => new Date(entry.at).getTime() + entry.durationMinutes * 60_000)
-						.filter((end) => end >= since);
+						.filter((end) => end >= visitSince);
 		if (ended.length === 0) return { kind: "no-interview", days };
 		// No word since the last interview ended, counted from then.
-		const quiet = daysBetween(new Date(Math.max(...ended)), now);
+		const quiet = daysBetween(new Date(Math.max(...ended, contacted)), now);
 		return quiet >= FOLLOW_UP_AFTER_DAYS
 			? { kind: "no-reply", days: quiet, after: "interview" }
 			: { kind: "interview-feedback", days };

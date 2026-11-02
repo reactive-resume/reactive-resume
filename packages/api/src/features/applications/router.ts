@@ -17,6 +17,7 @@ export const applicationsRouter = {
 	attachDocument: crudRouter.attachDocument,
 	removeDocument: crudRouter.removeDocument,
 	addNote: crudRouter.addNote,
+	logFollowUp: crudRouter.logFollowUp,
 	addInterview: crudRouter.addInterview,
 	updateInterview: crudRouter.updateInterview,
 	updateTimelineEntry: crudRouter.updateTimelineEntry,

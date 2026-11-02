@@ -115,7 +115,7 @@ type DetailProps = {
 function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 	const { i18n } = useLingui();
 	const confirm = useConfirm();
-	const { moveTo, close, remove } = useApplicationActions();
+	const { moveTo, close, remove, logFollowUp } = useApplicationActions();
 	const { lanes, active } = useApplicationLanes();
 	const [interview, setInterview] = useState<{ open: boolean; entry: InterviewTimelineEntry | null }>({
 		open: false,
@@ -308,6 +308,15 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 						application={application}
 						onScheduleInterview={(entry) => setInterview({ open: true, entry })}
 					/>
+					{!closed && application.status !== "saved" && (
+						<Button
+							variant="secondary"
+							disabled={logFollowUp.isPending}
+							onClick={() => logFollowUp.mutate({ id: application.id })}
+						>
+							<Trans>Followed up</Trans>
+						</Button>
+					)}
 					<SentDocuments application={application} disabled={remove.isPending} />
 					<Facts application={application} locale={i18n.locale} />
 					<Tags application={application} />

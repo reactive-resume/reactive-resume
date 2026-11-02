@@ -132,11 +132,9 @@ beforeEach(() => {
 	fixture.query.mockImplementation(async ({ text }: { text: string }, params) => ({
 		rows: text.includes("count(")
 			? [[fixture.total]]
-			: text.includes("jsonb_path_query_array")
-				? fixture.rows
-				: fixture.fullRowsActive
-					? fixture.fullRows.filter((values) => params.includes(values[0]))
-					: fixture.rows,
+			: fixture.fullRowsActive && text.includes('"job_description"')
+				? fixture.fullRows.filter((values) => params.includes(values[0]))
+				: fixture.rows,
 	}));
 });
 
@@ -156,7 +154,6 @@ describe("application list summary", () => {
 		expect(resHeaders.get("X-Offset")).toBe("2");
 
 		const page = queries().find((query) => !query.sql.includes("count("));
-		expect(page?.sql).toContain("jsonb_path_query_array");
 		expect(page?.sql).not.toContain('"job_description"');
 		expect(page?.sql).not.toContain('"notes"');
 		expect(page?.params).toEqual(["owner", "closed", ["engineering"], 1, 2]);

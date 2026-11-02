@@ -109,7 +109,7 @@ function atFromDateString(date: string, existing?: Date | string): Date {
 	return parsed;
 }
 
-function noteEntry(text: string, date?: string): ApplicationTimelineEntry {
+function noteEntry(text: string, date?: string): Extract<ApplicationTimelineEntry, { type: "note" }> {
 	return { id: generateId(), type: "note", text, at: date ? atFromDateString(date) : new Date() };
 }
 
@@ -524,9 +524,10 @@ const applicationSummarySelect = {
 	followUpNote: schema.application.followUpNote,
 	followUpDateOnly: schema.application.followUpDateOnly,
 	contacts: schema.application.contacts,
-	activity: sql<
-		ApplicationTimelineEntry[]
-	>`jsonb_path_query_array(${schema.application.activity}, '$[*] ? (@.type == "stage" || @.type == "interview")')`,
+	activity: sql<ApplicationTimelineEntry[]>`(select coalesce(jsonb_agg(case when entry->>'type' = 'note'
+		then entry || '{"text":"Followed up"}'::jsonb else entry end), '[]'::jsonb)
+		from jsonb_path_query(${schema.application.activity},
+		'$[*] ? (@.type == "stage" || @.type == "interview" || (@.type == "note" && exists(@.followedUp)))') as entry)`,
 	appliedAt: schema.application.appliedAt,
 	createdAt: schema.application.createdAt,
 	updatedAt: schema.application.updatedAt,
@@ -1049,6 +1050,34 @@ export const applicationService = {
 		return stripUserId(updated);
 	},
 
+	/** Records contact within the locked current visit, preserving stage dates and authored reminders. */
+	logFollowUp: (input: { id: string; userId: string }) =>
+		db.transaction(async (tx) => {
+			const [existing] = await tx
+				.select()
+				.from(schema.application)
+				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.for("update");
+			if (!existing) throw new ORPCError("NOT_FOUND");
+			if (existing.status === "saved" || existing.status === "closed")
+				throw new ORPCError("BAD_REQUEST", { message: "Follow-ups can only be logged for open, sent applications." });
+			const event: ApplicationTimelineEntry = {
+				...noteEntry("Followed up"),
+				followedUp: {
+					stageEntryId: latestStageEntryId(
+						existing.activity.filter((entry) => entry.type === "stage" && entry.canonicalTransition !== false),
+					),
+				},
+			};
+			const [updated] = await tx
+				.update(schema.application)
+				.set({ activity: sql`${schema.application.activity} || ${JSON.stringify([event])}::jsonb` })
+				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.returning();
+			if (!updated) throw new ORPCError("NOT_FOUND");
+			return stripUserId(updated);
+		}),
+
 	addInterview: async (input: InterviewDetails & { id: string; userId: string; at: string }) => {
 		const { id, userId, at, ...details } = input;
 		const event = interviewEntry(at, details);
@@ -1154,7 +1183,7 @@ export const applicationService = {
 				.set({
 					activity,
 					appliedAt: existing.activity.some(
-						(entry) => entry.id === input.entryId && entry.type === "stage" && entry.canonicalTransition === false,
+						(entry) => entry.id === input.entryId && (entry.type !== "stage" || entry.canonicalTransition === false),
 					)
 						? existing.appliedAt
 						: appliedAtFromTimeline(activity, existing.appliedAt),
@@ -1192,7 +1221,7 @@ export const applicationService = {
 				.set({
 					activity,
 					appliedAt: existing.activity.some(
-						(entry) => entry.id === input.entryId && entry.type === "stage" && entry.canonicalTransition === false,
+						(entry) => entry.id === input.entryId && (entry.type !== "stage" || entry.canonicalTransition === false),
 					)
 						? existing.appliedAt
 						: appliedAtFromTimeline(activity, existing.appliedAt),

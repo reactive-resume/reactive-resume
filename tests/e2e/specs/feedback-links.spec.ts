@@ -33,7 +33,7 @@ test("a reviewer reads the shared version, comments, and loses access once the l
 		await review.getByLabel("Your name").fill("Ana");
 		await review.getByLabel("Comment", { exact: true }).fill("Lead with the migration project.");
 		await review.getByRole("button", { name: "Send comment" }).click();
-		await expect(review.getByText("Lead with the migration project.")).toBeVisible();
+		await expect(review.getByRole("listitem").filter({ hasText: "Lead with the migration project." })).toBeVisible();
 
 		// The owner sees the comment; it never changes the resume.
 		const detail = await (await page.request.get(`/api/openapi/feedback-links/${link.id}`)).json();
