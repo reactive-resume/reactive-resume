@@ -64,8 +64,14 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 		setCodes(data.backupCodes);
 	};
 
+	// While new codes are being made, the old ones may already be gone: the dialog stays until it can show them.
+	const close = (next: boolean) => {
+		if (!next && pending) return;
+		onOpenChange(next);
+	};
+
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange} onOpenChangeComplete={(next) => !next && reset()}>
+		<Dialog open={open} onOpenChange={close} onOpenChangeComplete={(next) => !next && reset()}>
 			<DialogContent closeLabel={t`Close`}>
 				<DialogHeader>
 					<DialogTitle>
@@ -116,7 +122,7 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 							</Button>
 						</div>
 						<DialogFooter>
-							<Button onClick={() => onOpenChange(false)}>
+							<Button onClick={() => close(false)}>
 								<Trans>Done</Trans>
 							</Button>
 						</DialogFooter>
@@ -151,7 +157,7 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 							)}
 						</div>
 						<DialogFooter>
-							<Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
+							<Button type="button" variant="secondary" disabled={pending} onClick={() => close(false)}>
 								<Trans>Keep my codes</Trans>
 							</Button>
 							<Button type="submit" disabled={!password} loading={pending}>
