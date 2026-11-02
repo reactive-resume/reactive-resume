@@ -33,13 +33,17 @@ export function settleRequestId(key: string) {
  * @param name - The name to generate initials from.
  * @returns The initials.
  */
+// Scripts whose letters join to the next one: two initials side by side would read as a word ("لح").
+const JOINING_SCRIPT = /[\p{Script=Arabic}\p{Script=Syriac}\p{Script=Nko}\p{Script=Mongolian}\p{Script=Adlam}]/u;
+
 export function getInitials(name: string) {
-	return name
+	const letters = name
 		.split(" ")
-		.map((n) => n[0])
-		.slice(0, 2)
-		.join("")
-		.toUpperCase();
+		.filter(Boolean)
+		.map((part) => [...part][0] ?? "")
+		.slice(0, 2);
+	// A zero-width non-joiner keeps joining initials apart, as two letters.
+	return letters.join(letters.some((letter) => JOINING_SCRIPT.test(letter)) ? "\u200c" : "").toUpperCase();
 }
 
 /**

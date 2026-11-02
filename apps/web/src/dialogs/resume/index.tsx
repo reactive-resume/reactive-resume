@@ -93,7 +93,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 	useFormBlocker(form);
 
 	return (
-		<DialogContent>
+		<DialogContent closeLabel={t`Close`}>
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
 					<Icon name="pencil-simple" size={16} />

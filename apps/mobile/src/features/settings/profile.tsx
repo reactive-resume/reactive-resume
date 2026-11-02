@@ -52,7 +52,7 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 		touched && invalid
 			? field === "name"
 				? t`Enter a name, up to 64 characters.`
-				: t`Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores.`
+				: t`Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores.`
 			: mutation.isError
 				? "code" in mutation.error && mutation.error.code === "USERNAME_IS_ALREADY_TAKEN"
 					? t`This username is already taken.`
@@ -72,6 +72,7 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 				editable={!mutation.isPending}
 				autoCapitalize={field === "username" ? "none" : "words"}
 				autoCorrect={field !== "username"}
+				ltr={field === "username"}
 				textContentType={field === "name" ? "name" : "username"}
 				returnKeyType="done"
 				error={error}

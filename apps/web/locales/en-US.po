@@ -3180,6 +3180,7 @@ msgid "Changelog"
 msgstr "Changelog"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Changes section titles and date words only, not your content."
 
@@ -3200,6 +3201,7 @@ msgstr "Changing the key, model or address pauses scheduled AI work. Re-enable e
 msgid "Changing your password…"
 msgstr "Changing your password…"
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
@@ -3551,19 +3553,39 @@ msgstr "Client ID"
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/dialogs/auth/set-password.tsx
+#: src/dialogs/resume/index.tsx
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/board.tsx
+#: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/detail/close-dialog.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+#: src/features/applications/components/export-applications-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/assistant/provider-setup.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/career/workspace/prepare.tsx
+#: src/features/command-palette/content.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/editor/check/check-panel.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
+#: src/features/resume/stylesheet/editor.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Close"
 msgstr "Close"
 
@@ -6615,10 +6637,6 @@ msgstr "For LibreOffice and other open-source editors. Layout is simplified."
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "For portals or recruiters who ask for Word. Layout is simplified."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr "For security, only use links from emails sent by Reactive Resume."
@@ -7747,11 +7765,6 @@ msgstr "Jobs"
 msgid "John Doe"
 msgstr "John Doe"
 
-#. Example username placeholder on registration form
-#: src/features/auth/pages/register.tsx
-msgid "john.doe"
-msgstr "john.doe"
-
 #: src/features/homepage/footer.tsx
 msgid "Join Discord"
 msgstr "Join Discord"
@@ -7901,8 +7914,8 @@ msgid "Key stored encrypted"
 msgstr "Key stored encrypted"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Keys act as you and can read and edit your documents."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Keys act as you with the access you choose. New keys start read-only."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8157,10 +8170,6 @@ msgstr "Length in minutes"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -9934,6 +9943,10 @@ msgstr "Nothing was heard. Try again, or type your answer."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Notice period"
 msgstr "Notice period"
+
+#: src/routes/__root.tsx
+msgid "Notifications"
+msgstr "Notifications"
 
 #: src/features/career/coach-thread.tsx
 #: src/features/career/coach.tsx
@@ -12228,6 +12241,11 @@ msgstr "Resume file"
 msgid "Resume for a new letter"
 msgstr "Resume for a new letter"
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Resume language"
+msgstr "Resume language"
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
 msgid "Resume options"
@@ -12874,6 +12892,7 @@ msgstr "Schedules"
 msgid "School"
 msgstr "School"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/stages.ts
 msgid "Screening"
@@ -13562,6 +13581,10 @@ msgstr "Sidebars are often read last, or mixed into the main column."
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "Sign in"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Sign in from your AI client, or use an API key."
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -14625,8 +14648,8 @@ msgid "The account changed. Try again."
 msgstr "The account changed. Try again."
 
 #: src/libs/error-message.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "The address must contain only lowercase letters and numbers, separated by single dashes."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 
 #: src/libs/error-message.ts
 msgid "The AI provider couldn't finish this reply. Try again, or change the connection."
@@ -16022,8 +16045,8 @@ msgid "Use {url}"
 msgstr "Use {url}"
 
 #: src/features/settings/account/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
 
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
@@ -16114,8 +16137,8 @@ msgid "Use in coaching: {excerpt}"
 msgstr "Use in coaching: {excerpt}"
 
 #: src/features/resume/share/address-field.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "Use lowercase letters, numbers and single dashes."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr "Use Latin letters a–z, numbers and single dashes."
 
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Use my timezone"
@@ -16126,8 +16149,8 @@ msgid "Use one column"
 msgstr "Use one column"
 
 #: src/features/auth/pages/register.tsx
-msgid "Use only lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "Use only lowercase letters, numbers, dots, hyphens and underscores."
+msgid "Use only Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "Use only Latin letters a–z, numbers, dots, hyphens and underscores."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use plain headings such as \"Experience\", \"Education\" and \"Skills\"."
@@ -17515,11 +17538,3 @@ msgstr "Zoom out"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Keys act as you with the access you choose. New keys start read-only."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Sign in from your AI client, or use an API key."

@@ -117,7 +117,8 @@ function SavedField({
 				{label}
 			</label>
 			{prefix ? (
-				<InputGroup>
+				// A web address (host/username) reads left to right in every language.
+				<InputGroup dir="ltr">
 					<InputGroupAddon>
 						<InputGroupText>{prefix}</InputGroupText>
 					</InputGroupAddon>
@@ -237,7 +238,7 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 					validate={(value) =>
 						usernameSchema.safeParse(value).success
 							? null
-							: t`Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores.`
+							: t`Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores.`
 					}
 					confirm={confirmUsername}
 					save={(username) => updateUser({ username, displayUsername: username })}

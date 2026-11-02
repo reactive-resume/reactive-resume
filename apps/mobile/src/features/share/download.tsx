@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import { View } from "react-native";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
 import { composeCoverLetter, createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
+import { getDefaultFileName } from "@reactive-resume/utils/file";
 import { flushResume } from "./document";
 import { exportDirectory, exportFile, printResume, shareExport } from "./files";
 import { letterWords } from "./letter";
@@ -30,7 +31,8 @@ export function DownloadTab({ resume, offline }: DownloadProps) {
 	);
 	const [withLetter, setWithLetter] = useState(false);
 	const [format, setFormat] = useState<ExportFormat>("pdf");
-	const [name, setName] = useState(safeFileName(t`${resume.data.basics.name || resume.name}-Resume`));
+	// Named like web's download, in the resume's own language: "Layla-Haddad-Lebenslauf".
+	const [name, setName] = useState(safeFileName(getDefaultFileName(resume)));
 	const [busy, setBusy] = useState(false);
 	const [exportReady, setExportReady] = useState(false);
 	const active = useRef(false);

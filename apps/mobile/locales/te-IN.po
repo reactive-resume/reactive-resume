@@ -543,12 +543,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-రెజ్యూమ్"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -2503,6 +2497,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "మార్పులను సేవ్ చేయడం సాధ్యపడలేదు. కొనసాగడానికి ముందు మళ్ళీ ప్రయత్నించండి."
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "విభాగం శీర్షికలు మరియు తేదీ పదాలను మాత్రమే మారుస్తుంది, మీ కంటెంట్ కాదు."
 
@@ -2519,6 +2514,7 @@ msgstr "“{name}”కి చేసిన మార్పులు మరొక
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "తనిఖీ"
@@ -3879,10 +3875,6 @@ msgstr "కొత్త రిజ్యూమ్ సృష్టించండ�
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "ముందుగా రెజ్యూమేని సృష్టించండి, ఆపై దాని గురించి అడగండి."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "మీ బ్రౌజర్‌లోని ఖాతా సెట్టింగ్‌ల నుండి API కీని సృష్టించండి. కీలు మీ వలె పని చేస్తాయి మరియు మీ పత్రాలను చదవగలవు మరియు సవరించగలవు."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -6076,10 +6068,6 @@ msgstr "అలాగే ఉంచారు"
 msgid "Key stored encrypted"
 msgstr "గుప్తీకరించిన కీ నిల్వ చేయబడింది"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "కీలు మీ తరఫున పనిచేస్తాయి, మీ పత్రాలను యాక్సెస్ చేయగలవు. బ్రౌజర్‌లోని ఖాతా సెట్టింగులలో కొత్త కీలు సృష్టించవచ్చు."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "కీవర్డ్ లేఅవుట్"
@@ -6295,10 +6283,6 @@ msgstr "తక్కువ"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "48 గంటల కంటే తక్కువ సమయం మిగిలి ఉంది."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "API కీని ఉపయోగించి Claude లేదా Cursor వంటి AI క్లయింట్‌లు మీ రెజ్యూమ్‌లను చదవడానికి మరియు సవరించడానికి అనుమతించండి."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7250,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "కొత్త పత్రం"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "కొత్త కీలకు మొదట చదవడానికి మాత్రమే అనుమతి ఉంటుంది. మీ బ్రౌజర్‌లో ఖాతా సెట్టింగ్‌ల నుండి కీలను సృష్టించండి."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9635,6 +9624,11 @@ msgstr "రెజ్యూమే ఫైల్"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10248,6 +10242,7 @@ msgstr "షెడ్యూల్‌లు"
 msgid "School"
 msgstr "పాఠశాల"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -10871,6 +10866,10 @@ msgstr "ఈ రెజ్యూమ్‌ని తనిఖీ చేయడం �
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "పనిని కొనసాగించడానికి మళ్లీ సైన్ ఇన్ చేయండి. మీరు చేసిన సవరణలు ఈ పరికరంలో ఉంచబడతాయి మరియు మీరు సైన్ ఇన్ చేసిన తర్వాత సమకాలీకరించబడతాయి."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "మీ AI క్లయింట్ నుండి సైన్ ఇన్ చేయండి లేదా API కీని ఉపయోగించండి."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -11658,8 +11657,8 @@ msgid "The account changed. Try again."
 msgstr "ఖాతా మారింది. మళ్లీ ప్రయత్నించండి."
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "చిరునామాలో లాటిన్ చిన్న అక్షరాలు మరియు సంఖ్యలు మాత్రమే ఉండాలి, సింగిల్ డాష్‌లతో వేరు చేయబడాలి."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12831,8 +12830,8 @@ msgid "Use {url}"
 msgstr "{url}ని ఉపయోగించండి"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "3 నుండి 64 చిన్న అక్షరాలు, సంఖ్యలు, చుక్కలు, హైఫన్‌లు మరియు అండర్‌స్కోర్‌లను ఉపయోగించండి."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -12916,8 +12915,8 @@ msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "చిన్న అక్షరాలు, సంఖ్యలు మరియు సింగిల్ డాష్‌లను ఉపయోగించండి."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"
@@ -13958,12 +13957,3 @@ msgstr "జూమ్ అవుట్ చేయండి"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "జులు"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "కొత్త కీలకు మొదట చదవడానికి మాత్రమే అనుమతి ఉంటుంది. మీ బ్రౌజర్‌లో ఖాతా సెట్టింగ్‌ల నుండి కీలను సృష్టించండి."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "మీ AI క్లయింట్ నుండి సైన్ ఇన్ చేయండి లేదా API కీని ఉపయోగించండి."

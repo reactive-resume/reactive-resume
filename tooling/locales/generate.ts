@@ -16,6 +16,12 @@ const presentOutput = new URL("../../packages/schema/src/resume/present-labels.j
 await writeFile(presentOutput, `${JSON.stringify(presentLabels, null, "\t")}\n`);
 console.log(`Updated "Present" for ${Object.keys(presentLabels).length} locales.`);
 
+// The words a downloaded file is named with ("Lebenslauf", "Anschreiben"), in the document's language.
+const fileNameWords = await generateMessageCatalog(catalogs, ["Resume", "Cover letter"]);
+const fileNameOutput = new URL("../../packages/utils/src/file-name-words.json", import.meta.url);
+await writeFile(fileNameOutput, `${JSON.stringify(fileNameWords, null, "\t")}\n`);
+console.log(`Updated file name words for ${Object.keys(fileNameWords).length} locales.`);
+
 const webPage = await generateMessageCatalog(catalogs, WEB_PAGE_SOURCE_MESSAGES);
 // English needs no catalog: the page falls back to its source strings.
 delete webPage["en-US"];

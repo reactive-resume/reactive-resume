@@ -72,7 +72,7 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 		if (!slug) return t`Add an address.`;
 		if (!changed) return t`Live at ${url.replace(/^https?:\/\//, "")}`;
 		if (slug.length > MAX_SLUG_LENGTH) return t`Use at most 64 characters.`;
-		if (!wellFormed) return t`Use lowercase letters, numbers and single dashes.`;
+		if (!wellFormed) return t`Use Latin letters a–z, numbers and single dashes.`;
 		if (result?.status === "available")
 			return t`Saving ${new URL(url).host}/${username}/${slug}… Copy is available after saving.`;
 		return t`Checking… Copy is available after saving.`;
@@ -101,6 +101,7 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 						value={slug}
 						disabled={!isPublic || resume.isLocked}
 						spellCheck={false}
+						dir="ltr"
 						aria-invalid={invalid}
 						aria-describedby={`${id}-message`}
 						onChange={(event) => setSlug(normalizeSlug(event.target.value))}

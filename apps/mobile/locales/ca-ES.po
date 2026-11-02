@@ -543,12 +543,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-currículum vitae"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -2503,6 +2497,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "No s'han pogut desar els canvis. Torna-ho a intentar abans de continuar."
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Canvia només els títols de les seccions i les paraules de la data, no el contingut."
 
@@ -2519,6 +2514,7 @@ msgstr "Els canvis a «{name}» s'han desat en un altre dispositiu. Les teves mo
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "Revisió"
@@ -3879,10 +3875,6 @@ msgstr "Crea un currículum nou"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Creeu primer un currículum i després pregunteu-ne."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Creeu una clau d'API des de la configuració del compte al vostre navegador. Les claus actuen com tu i poden llegir i editar els teus documents."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -6076,10 +6068,6 @@ msgstr "Mantingut com està"
 msgid "Key stored encrypted"
 msgstr "Clau emmagatzemada encriptada"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Les claus actuen com tu i poden accedir als teus documents. Es creen claus noves a la configuració del compte del navegador."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Disposició de les paraules clau"
@@ -6295,10 +6283,6 @@ msgstr "Menys"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Queden menys de 48 hores."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Permeteu que clients d'IA com Claude o Cursor llegeixin i editin els vostres currículums vitae mitjançant una clau API."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7250,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Nou document"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Les claus noves comencen amb accés de només lectura. Crea les claus a la configuració del teu compte al navegador."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9635,6 +9624,11 @@ msgstr "Fitxer de currículum"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10248,6 +10242,7 @@ msgstr "Programacions"
 msgid "School"
 msgstr "Centre educatiu"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -10871,6 +10866,10 @@ msgstr "Torna a iniciar la sessió per continuar consultant aquest currículum v
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Torna a iniciar la sessió per continuar treballant. Les modificacions que heu fet es guarden en aquest dispositiu i se sincronitzen després d'iniciar la sessió."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Inicia la sessió des del teu client d'IA o utilitza una clau API."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -11658,8 +11657,8 @@ msgid "The account changed. Try again."
 msgstr "El compte ha canviat. Torna-ho a provar."
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "L'adreça només ha de contenir lletres minúscules i números, separats per guions senzills."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12831,8 +12830,8 @@ msgid "Use {url}"
 msgstr "Utilitzeu {url}"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "Utilitzeu de 3 a 64 lletres minúscules, números, punts, guions i guions baixos."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -12916,8 +12915,8 @@ msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "Utilitzeu lletres minúscules, números i guions senzills."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"
@@ -13958,12 +13957,3 @@ msgstr "Allunya"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulú"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Les claus noves comencen amb accés de només lectura. Crea les claus a la configuració del teu compte al navegador."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Inicia la sessió des del teu client d'IA o utilitza una clau API."

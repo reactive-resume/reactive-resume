@@ -601,7 +601,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 			)}
 
 			<Dialog open={confirming !== null} onOpenChange={(open) => !open && setConfirming(null)}>
-				<DialogContent className="sm:max-w-[440px]">
+				<DialogContent closeLabel={t`Close`} className="sm:max-w-[440px]">
 					<DialogHeader>
 						<DialogTitle>
 							<Trans>Mark as applied and move it?</Trans>

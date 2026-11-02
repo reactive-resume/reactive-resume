@@ -543,12 +543,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr ""
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -2503,6 +2497,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr ""
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr ""
 
@@ -2519,6 +2514,7 @@ msgstr ""
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr ""
@@ -3878,10 +3874,6 @@ msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
-msgstr ""
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
 msgstr ""
 
 #: src/features/documents/new-document.tsx
@@ -6076,10 +6068,6 @@ msgstr ""
 msgid "Key stored encrypted"
 msgstr ""
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr ""
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr ""
@@ -6294,10 +6282,6 @@ msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
-msgstr ""
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr ""
 
 #: src/features/documents/library.tsx
@@ -7266,6 +7250,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr ""
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "New keys start read-only. Create keys in your browser account settings."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9635,6 +9624,11 @@ msgstr ""
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10248,6 +10242,7 @@ msgstr ""
 msgid "School"
 msgstr ""
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -10871,6 +10866,10 @@ msgstr ""
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr ""
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Sign in from your AI client, or use an API key."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -11658,7 +11657,7 @@ msgid "The account changed. Try again."
 msgstr ""
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
@@ -12831,7 +12830,7 @@ msgid "Use {url}"
 msgstr ""
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
 msgstr ""
 
 #: src/features/share/web-page.tsx
@@ -12916,7 +12915,7 @@ msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
+msgid "Use Latin letters a–z, numbers and single dashes."
 msgstr ""
 
 #: src/features/career/search-regions-field.tsx
@@ -13958,12 +13957,3 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr ""
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "New keys start read-only. Create keys in your browser account settings."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Sign in from your AI client, or use an API key."

@@ -543,12 +543,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-জীবনবৃত্তান্ত"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -2503,6 +2497,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "পরিবর্তনগুলি সংরক্ষণ করা যায়নি৷ চালিয়ে যাওয়ার আগে আবার চেষ্টা করুন।"
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "শুধুমাত্র বিভাগের শিরোনাম এবং তারিখের শব্দ পরিবর্তন করে, আপনার বিষয়বস্তু নয়।"
 
@@ -2519,6 +2514,7 @@ msgstr "“{name}”-এ করা পরিবর্তন অন্য ডি�
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "পরীক্ষা"
@@ -3879,10 +3875,6 @@ msgstr "একটি নতুন জীবনবৃত্তান্ত তৈ
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "প্রথমে একটি জীবনবৃত্তান্ত তৈরি করুন, তারপর এটি সম্পর্কে জিজ্ঞাসা করুন।"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "আপনার ব্রাউজারে অ্যাকাউন্ট সেটিংস থেকে একটি API কী তৈরি করুন৷ কীগুলি আপনার মতো কাজ করে এবং আপনার নথিগুলি পড়তে এবং সম্পাদনা করতে পারে৷"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -6076,10 +6068,6 @@ msgstr "যেমন আছে তেমন রাখা হয়েছে"
 msgid "Key stored encrypted"
 msgstr "কী সংরক্ষিত এনক্রিপ্টেড"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "কীগুলি আপনার মতো কাজ করে এবং আপনার নথিগুলি অ্যাক্সেস করতে পারে। আপনার ব্রাউজার অ্যাকাউন্ট সেটিংসে নতুন কী তৈরি করা হয়েছে।"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "কীওয়ার্ড লেআউট"
@@ -6295,10 +6283,6 @@ msgstr "কম"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "৪৮ ঘণ্টারও কম বাকি।"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "একটি API কী ব্যবহার করে AI ক্লায়েন্টদের যেমন Claude বা Cursor আপনার জীবনবৃত্তান্তগুলি পড়তে এবং সম্পাদনা করতে দিন৷"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7250,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "নতুন নথি"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "নতুন কীগুলো শুরুতে শুধু পড়ার অনুমতি পায়। ব্রাউজারে আপনার অ্যাকাউন্ট সেটিংস থেকে কী তৈরি করুন।"
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9635,6 +9624,11 @@ msgstr "জীবনবৃত্তান্ত ফাইল"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10248,6 +10242,7 @@ msgstr "সময়সূচি"
 msgid "School"
 msgstr "স্কুল"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -10871,6 +10866,10 @@ msgstr "এই পরীক্ষা চালিয়ে যেতে আব�
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "কাজ চালিয়ে যেতে আবার সাইন ইন করুন। আপনার করা সম্পাদনাগুলি এই ডিভাইসে রাখা হয় এবং আপনি সাইন ইন করার পরে সিঙ্ক করেন৷"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "আপনার AI ক্লায়েন্ট থেকে সাইন ইন করুন, অথবা একটি API কী ব্যবহার করুন।"
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -11658,8 +11657,8 @@ msgid "The account changed. Try again."
 msgstr "অ্যাকাউন্ট পরিবর্তন হয়েছে। আবার চেষ্টা করুন"
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "ঠিকানায় শুধুমাত্র ছোট হাতের লাতিন অক্ষর এবং সংখ্যা থাকতে হবে, যা একক ড্যাশ দ্বারা পৃথক করা হবে।"
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12831,8 +12830,8 @@ msgid "Use {url}"
 msgstr "{url} ব্যবহার করুন"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "3 থেকে 64 ছোট হাতের অক্ষর, সংখ্যা, বিন্দু, হাইফেন এবং আন্ডারস্কোর ব্যবহার করুন।"
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -12916,8 +12915,8 @@ msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "ছোট হাতের অক্ষর, সংখ্যা এবং একক ড্যাশ ব্যবহার করুন।"
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"
@@ -13958,12 +13957,3 @@ msgstr "জুম আউট"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "জুলু"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "নতুন কীগুলো শুরুতে শুধু পড়ার অনুমতি পায়। ব্রাউজারে আপনার অ্যাকাউন্ট সেটিংস থেকে কী তৈরি করুন।"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "আপনার AI ক্লায়েন্ট থেকে সাইন ইন করুন, অথবা একটি API কী ব্যবহার করুন।"

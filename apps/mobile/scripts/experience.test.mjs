@@ -6,7 +6,11 @@ import { createRequire } from "node:module";
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
 const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
+// Lingui's t: a tagged template, or a descriptor ({ message, comment }) for strings with translator notes.
+const tag = (parts, ...values) =>
+	Array.isArray(parts)
+		? parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "")
+		: (parts?.message ?? "");
 let hooks = [];
 let cursor = 0;
 const react = {
@@ -202,7 +206,14 @@ const exportBoundary = {
 	shareExport: async (file, format) => calls.push({ shared: format, uri: file.uri }),
 	printResume: async () => calls.push("print"),
 };
+const fileNames = load("../../../packages/utils/src/file.ts", {
+	"./file-name-words.json": JSON.parse(
+		readFileSync(new URL("../../../packages/utils/src/file-name-words.json", import.meta.url), "utf8"),
+	),
+	"./slug": { slugify: (value) => value },
+});
 const { DownloadTab } = load("features/share/download.tsx", {
+	"@reactive-resume/utils/file": fileNames,
 	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
 	"expo-web-browser": { openBrowserAsync: async (url) => calls.push({ browser: url }) },
 	"@reactive-resume/resume/ats": { lintResumeForAts: () => ({ findings: [] }) },
@@ -233,7 +244,7 @@ assert.equal(control(tree, "Download & history").value, "history", "Explicit ver
 
 reset();
 tree = render(DownloadTab, { resume, offline: false });
-assert.equal(control(tree, "File name").value, "Alex Example-Resume");
+assert.equal(control(tree, "File name").value, "Alex-Example-Resume");
 const communityInvite = (view) => nodes(view).find((node) => node.props.title === "Get resume feedback on Discord");
 assert.equal(communityInvite(tree), undefined, "No community invitation before an export");
 holdExport = true;
@@ -250,7 +261,7 @@ releaseExport();
 await settle();
 holdExport = false;
 assert.equal(calls.filter((call) => call?.shared === "pdf").length, 1);
-assert.equal(calls.find((call) => call?.export).export.name, "Alex Example-Resume");
+assert.equal(calls.find((call) => call?.export).export.name, "Alex-Example-Resume");
 tree = render(DownloadTab, { resume, offline: false });
 assert.ok(communityInvite(tree), "A prepared export offers optional peer feedback");
 assert.equal(

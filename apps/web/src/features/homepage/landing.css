@@ -618,3 +618,11 @@
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2.2 0 0 0 -.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 	background-size: 220px;
 }
+
+/*
+ * Arabic, Persian, Urdu and Hebrew have no italic convention, and their fonts ship none: the browser would slant the
+ * glyphs. The accent colour still carries the emphasis.
+ */
+:where(:lang(ar), :lang(fa), :lang(ur), :lang(he), :lang(ps)) :is(.italic, em, i) {
+	font-style: normal;
+}

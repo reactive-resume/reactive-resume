@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import { slugify } from "./slug";
-import { filterOptions, isolate, toUsername, rewriteSummary } from "./string";
+import { filterOptions, getInitials, isolate, rewriteSummary, toUsername } from "./string";
 
 describe("slugify", () => {
 	it("falls back to a non-empty slug for CJK input", () => {
@@ -68,5 +68,15 @@ describe("isolate", () => {
 		expect(isolate("Lebenslauf (DE)")).toBe("\u2068Lebenslauf (DE)\u2069");
 		// The marks are invisible: a reader sees the text itself.
 		expect(isolate("Lebenslauf (DE)").replaceAll(/[\u2068\u2069]/g, "")).toBe("Lebenslauf (DE)");
+	});
+});
+
+describe("getInitials", () => {
+	it("takes the first letter of the first two names", () => {
+		expect(getInitials("ada lovelace byron")).toBe("AL");
+	});
+
+	it("keeps Arabic initials apart so they don't join into a word", () => {
+		expect(getInitials("ليلى حداد")).toBe("ل\u200cح");
 	});
 });

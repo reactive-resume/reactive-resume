@@ -15,7 +15,7 @@ describe("Sheet", () => {
 			const onOpenChange = vi.fn();
 			render(
 				<Sheet defaultOpen onOpenChange={onOpenChange}>
-					<SheetContent side={side}>
+					<SheetContent closeLabel="Close" side={side}>
 						<SheetTitle>Share resume</SheetTitle>
 						<SheetDescription>Choose how to share your resume.</SheetDescription>
 					</SheetContent>

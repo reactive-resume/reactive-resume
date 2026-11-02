@@ -543,12 +543,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-CV"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -2503,6 +2497,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Izmaiņas nevarēja saglabāt. Pirms turpināt, mēģiniet vēlreiz."
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Maina tikai sadaļu nosaukumus un datuma vārdus, nevis jūsu saturu."
 
@@ -2519,6 +2514,7 @@ msgstr "Izmaiņas “{name}” tika saglabātas citā ierīcē. Jūsu labojumi j
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "Pārbaude"
@@ -3879,10 +3875,6 @@ msgstr "Izveidot jaunu CV"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Vispirms izveidojiet CV, pēc tam jautājiet par to."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Pārlūkprogrammas konta iestatījumos izveidojiet atslēgu API. API atslēgas darbojas jūsu vārdā un var lasīt un rediģēt jūsu dokumentus."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -6076,10 +6068,6 @@ msgstr "Saglabāts kā ir"
 msgid "Key stored encrypted"
 msgstr "Atslēga saglabāta šifrēta"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "API atslēgas darbojas jūsu vārdā un var piekļūt jūsu dokumentiem. Pārlūkprogrammas konta iestatījumos izveidojiet jaunas atslēgas."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Atslēgvārdu izkārtojums"
@@ -6295,10 +6283,6 @@ msgstr "Mazāk"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Atlikušas mazāk nekā 48 stundas."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Ļaujiet AI klientiem, piemēram, Claude vai Cursor, lasīt un rediģēt jūsu CV ar API atslēgu."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7250,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Jauns dokuments"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Jaunām atslēgām sākotnēji ir tikai lasīšanas piekļuve. Izveidojiet atslēgas sava konta iestatījumos pārlūkprogrammā."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9635,6 +9624,11 @@ msgstr "CV fails"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10248,6 +10242,7 @@ msgstr "Grafiki"
 msgid "School"
 msgstr "Skola"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -10871,6 +10866,10 @@ msgstr "Pierakstieties vēlreiz, lai turpinātu pārbaudīt šo CV."
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Pierakstieties vēlreiz, lai turpinātu strādāt. Jūsu veiktie labojumi tiek saglabāti šajā ierīcē un tiek sinhronizēti pēc pierakstīšanās."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Pierakstieties no sava MI klienta vai izmantojiet API atslēgu."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -11658,8 +11657,8 @@ msgid "The account changed. Try again."
 msgstr "Konts ir mainīts. Mēģiniet vēlreiz."
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "Adresē drīkst būt tikai mazie burti un cipari, kas atdalīti ar atsevišķām defisēm."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12831,8 +12830,8 @@ msgid "Use {url}"
 msgstr "Izmantojiet {url}"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "Izmantojiet 3–64 mazos burtus, ciparus, punktus, defises un pasvītras."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -12916,8 +12915,8 @@ msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "Izmantojiet mazos burtus, ciparus un atsevišķas domuzīmes."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"
@@ -13958,12 +13957,3 @@ msgstr "Tālināt"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Jaunām atslēgām sākotnēji ir tikai lasīšanas piekļuve. Izveidojiet atslēgas sava konta iestatījumos pārlūkprogrammā."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Pierakstieties no sava MI klienta vai izmantojiet API atslēgu."

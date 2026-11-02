@@ -543,12 +543,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-ประวัติย่อ"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -2503,6 +2497,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "ไม่สามารถบันทึกการเปลี่ยนแปลงได้ ลองอีกครั้งก่อนดำเนินการต่อ"
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "เปลี่ยนชื่อส่วนและคำวันที่เท่านั้น ไม่ใช่เนื้อหาของคุณ"
 
@@ -2519,6 +2514,7 @@ msgstr "การเปลี่ยนแปลงใน “{name}” ได้�
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "ตรวจสอบ"
@@ -3879,10 +3875,6 @@ msgstr "สร้างเรซูเม่ใหม่"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "สร้างเรซูเม่ก่อนแล้วจึงถามเกี่ยวกับเรซูเม่"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "สร้างคีย์ API จากการตั้งค่าบัญชีในเบราว์เซอร์ของคุณ คีย์จะทำหน้าที่เป็นคุณและสามารถอ่านและแก้ไขเอกสารของคุณได้"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -6076,10 +6068,6 @@ msgstr "เก็บไว้เหมือนเดิม"
 msgid "Key stored encrypted"
 msgstr "คีย์ที่เก็บไว้มีการเข้ารหัส"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "คีย์ทำหน้าที่เป็นคุณและสามารถเข้าถึงเอกสารของคุณได้ รหัสใหม่จะถูกสร้างขึ้นในการตั้งค่าบัญชีเบราว์เซอร์ของคุณ"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "เค้าโครงคำหลัก"
@@ -6295,10 +6283,6 @@ msgstr "น้อยลง"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "เหลือเวลาไม่ถึง 48 ชั่วโมง"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "ให้ไคลเอ็นต์ AI เช่น Claude หรือ Cursor อ่านและแก้ไข ประวัติย่อ ของคุณ โดยใช้คีย์ API"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7250,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "เอกสารใหม่"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "คีย์ใหม่จะเริ่มต้นด้วยสิทธิ์อ่านอย่างเดียว สร้างคีย์ในการตั้งค่าบัญชีผ่านเบราว์เซอร์ของคุณ"
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9635,6 +9624,11 @@ msgstr "ไฟล์เรซูเม่"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10248,6 +10242,7 @@ msgstr "กำหนดการ"
 msgid "School"
 msgstr "โรงเรียน"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -10871,6 +10866,10 @@ msgstr "ลงชื่อเข้าใช้อีกครั้งเพื
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "ลงชื่อเข้าใช้อีกครั้งเพื่อทำงานต่อ การแก้ไขที่คุณทำจะถูกเก็บไว้ในอุปกรณ์นี้และซิงค์หลังจากที่คุณลงชื่อเข้าใช้"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "ลงชื่อเข้าใช้จากไคลเอนต์ AI ของคุณ หรือใช้คีย์ API"
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -11658,8 +11657,8 @@ msgid "The account changed. Try again."
 msgstr "บัญชีมีการเปลี่ยนแปลง ลองอีกครั้ง"
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "ที่อยู่ต้องประกอบด้วยตัวอักษรละตินพิมพ์เล็กและตัวเลขเท่านั้น คั่นด้วยขีดกลางเดี่ยว"
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12831,8 +12830,8 @@ msgid "Use {url}"
 msgstr "ใช้ {url}"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "ใช้ตัวอักษรพิมพ์เล็ก ตัวเลข จุด ขีดกลาง และขีดล่างตั้งแต่ 3 ถึง 64 ตัว"
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -12916,8 +12915,8 @@ msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "ใช้ตัวอักษรพิมพ์เล็ก ตัวเลข และขีดกลางเดี่ยว"
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"
@@ -13958,12 +13957,3 @@ msgstr "ซูมออก"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ซูลู"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "คีย์ใหม่จะเริ่มต้นด้วยสิทธิ์อ่านอย่างเดียว สร้างคีย์ในการตั้งค่าบัญชีผ่านเบราว์เซอร์ของคุณ"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "ลงชื่อเข้าใช้จากไคลเอนต์ AI ของคุณ หรือใช้คีย์ API"

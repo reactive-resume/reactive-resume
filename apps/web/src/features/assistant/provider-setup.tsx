@@ -218,7 +218,7 @@ export function SetUpAi() {
 				<Trans>Set up AI</Trans>
 			</Button>
 			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogContent className="max-h-[85svh] overflow-y-auto">
+				<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto">
 					<DialogHeader>
 						<DialogTitle>
 							<Trans>Set up AI</Trans>

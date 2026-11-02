@@ -50,7 +50,7 @@ export function DocumentMenu() {
 			<SaveStatus />
 
 			<Dialog open={dialog === "notes"} onOpenChange={(open) => !open && setDialog(null)}>
-				<DialogContent className="sm:max-w-[560px]">
+				<DialogContent closeLabel={t`Close`} className="sm:max-w-[560px]">
 					<DialogHeader>
 						<DialogTitle>
 							<Trans>Notes</Trans>
@@ -61,7 +61,7 @@ export function DocumentMenu() {
 			</Dialog>
 
 			<Dialog open={dialog === "details"} onOpenChange={(open) => !open && setDialog(null)}>
-				<DialogContent className="sm:max-w-[440px]">
+				<DialogContent closeLabel={t`Close`} className="sm:max-w-[440px]">
 					<DocumentDetails />
 				</DialogContent>
 			</Dialog>

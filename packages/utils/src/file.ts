@@ -1,3 +1,4 @@
+import fileNameWords from "./file-name-words.json";
 import { slugify } from "./slug";
 
 export function generateFilename(prefix: string, extension?: string) {
@@ -10,8 +11,19 @@ export type FileNameTarget = "resume" | "cover-letter";
 export type FileNameSource = {
 	name: string;
 	slug?: string | null;
-	data: { basics: { name: string } };
+	data: { basics: { name: string }; metadata?: { page?: { locale?: string } } };
 };
+
+const words: Record<string, Record<string, string>> = fileNameWords;
+
+/** "Resume" or "Cover letter" in the document's own language, as a recruiter reading the file name would expect. */
+function documentWords(target: FileNameTarget, locale: string | undefined) {
+	const source = target === "cover-letter" ? "Cover letter" : "Resume";
+	const english = target === "cover-letter" ? ["Cover", "Letter"] : ["Resume"];
+	const translated = locale ? words[locale]?.[source] : undefined;
+	if (!translated || translated === source) return english;
+	return sanitizeFileName(translated).split(/\s+/).filter(Boolean);
+}
 
 // Control characters can break headers, and the rest are rejected by Windows and macOS.
 // oxlint-disable-next-line no-control-regex -- matching the control ranges is the point.
@@ -27,16 +39,16 @@ export const sanitizeFileName = (value: string) =>
  * document it falls back to the document's name.
  */
 export function getDefaultFileName(source: FileNameSource, target: FileNameTarget = "resume") {
-	const words = (text: string) => sanitizeFileName(text).split(/\s+/).filter(Boolean);
-	const person = words(source.data.basics.name);
-	const suffix = target === "cover-letter" ? ["Cover", "Letter"] : ["Resume"];
+	const split = (text: string) => sanitizeFileName(text).split(/\s+/).filter(Boolean);
+	const person = split(source.data.basics.name);
+	const suffix = documentWords(target, source.data.metadata?.page?.locale);
 	if (person.length > 0) return [...person, ...suffix].join("-");
-	const name = words(source.name);
+	const name = split(source.name);
 	const fallback = [
-		...(name.length > 0 ? name : words(source.slug ?? "")),
+		...(name.length > 0 ? name : split(source.slug ?? "")),
 		...(target === "cover-letter" ? suffix : []),
 	];
-	return fallback.join("-") || "Resume";
+	return fallback.join("-") || suffix.join("-");
 }
 
 export function downloadWithAnchor(blob: Blob, filename: string) {

@@ -73,7 +73,7 @@ describe("AddressField", () => {
 
 	it.each([
 		["", "Add an address."],
-		["invalid_slug!", "Use lowercase letters, numbers and single dashes."],
+		["invalid_slug!", "Use Latin letters a–z, numbers and single dashes."],
 		["a".repeat(65), "Use at most 64 characters."],
 	])("explains invalid edited address %s", (value, message) => {
 		const input = renderAddress();

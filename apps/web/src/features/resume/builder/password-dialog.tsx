@@ -60,7 +60,7 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 				if (!open && !submitting.current) onClose();
 			}}
 		>
-			<DialogContent showCloseButton={!isPending} className="sm:max-w-md">
+			<DialogContent closeLabel={t`Close`} showCloseButton={!isPending} className="sm:max-w-md">
 				<DialogHeader>
 					<DialogTitle>
 						<Trans>Protect your resume with a password</Trans>

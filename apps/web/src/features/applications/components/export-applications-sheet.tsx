@@ -37,7 +37,7 @@ export function ExportApplicationsSheet({ open, onOpenChange, applications, filt
 
 	return (
 		<Sheet open={open} onOpenChange={onOpenChange}>
-			<SheetContent side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
+			<SheetContent closeLabel={t`Close`} side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
 				<SheetHeader>
 					<SheetTitle>
 						<Trans>Export applications</Trans>

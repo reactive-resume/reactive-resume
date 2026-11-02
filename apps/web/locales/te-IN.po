@@ -3183,6 +3183,7 @@ msgid "Changelog"
 msgstr "చేంజ్‌లాగ్"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "విభాగం శీర్షికలు మరియు తేదీ పదాలను మాత్రమే మారుస్తుంది, మీ కంటెంట్ కాదు."
 
@@ -3203,6 +3204,7 @@ msgstr ""
 msgid "Changing your password…"
 msgstr "మీ పాస్‌వర్డ్‌ను మారుస్తోంది…"
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
@@ -3554,19 +3556,39 @@ msgstr "క్లయింట్ ID"
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/dialogs/auth/set-password.tsx
+#: src/dialogs/resume/index.tsx
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/board.tsx
+#: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/detail/close-dialog.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+#: src/features/applications/components/export-applications-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/assistant/provider-setup.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/career/workspace/prepare.tsx
+#: src/features/command-palette/content.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/editor/check/check-panel.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
+#: src/features/resume/stylesheet/editor.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Close"
 msgstr "మూసివేయి"
 
@@ -6618,10 +6640,6 @@ msgstr "LibreOffice మరియు ఇతర ఓపెన్ సోర్స్
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Word కోసం అడిగే పోర్టల్‌లు లేదా రిక్రూటర్‌ల కోసం. లేఅవుట్ సరళీకృతం చేయబడింది."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "స్క్రిప్ట్‌లు, పొడిగింపులు మరియు MCP క్లయింట్‌ల కోసం. కీలు మీ వలె పని చేస్తాయి మరియు మీ పత్రాలను చదవగలవు మరియు సవరించగలవు."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -7750,11 +7768,6 @@ msgstr "ఉద్యోగాలు"
 msgid "John Doe"
 msgstr "జాన్ డో"
 
-#. Example username placeholder on registration form
-#: src/features/auth/pages/register.tsx
-msgid "john.doe"
-msgstr "జాన్.డో"
-
 #: src/features/homepage/footer.tsx
 msgid "Join Discord"
 msgstr "Discordలో చేరండి"
@@ -7904,8 +7917,8 @@ msgid "Key stored encrypted"
 msgstr "గుప్తీకరించిన కీ నిల్వ చేయబడింది"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "కీలు మీ వలె పని చేస్తాయి మరియు మీ పత్రాలను చదవగలవు మరియు సవరించగలవు."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "మీరు ఎంచుకున్న యాక్సెస్ అనుమతులతో కీలు మీ తరఫున పనిచేస్తాయి. కొత్త కీలకు మొదట చదవడానికి మాత్రమే అనుమతి ఉంటుంది."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8160,10 +8173,6 @@ msgstr "నిమిషాల్లో వ్యవధి"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "పొడవు లోపం కాదు, మరియు సార్వత్రిక ఒక-పేజీ నియమం లేదు. తమ స్థానాన్ని సంపాదించే పేజీలను ఉంచండి."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Claude లేదా Cursor వంటి AI క్లయింట్‌లు పైన ఉన్న API కీని ఉపయోగించి మీ రెజ్యూమ్‌లను చదవడానికి మరియు సవరించడానికి అనుమతించండి."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -9937,6 +9946,10 @@ msgstr "ఏమీ వినిపించలేదు. మళ్లీ ప్�
 #: src/features/career/knowledge/preferences.tsx
 msgid "Notice period"
 msgstr "నోటీసు వ్యవధి"
+
+#: src/routes/__root.tsx
+msgid "Notifications"
+msgstr ""
 
 #: src/features/career/coach-thread.tsx
 #: src/features/career/coach.tsx
@@ -12231,6 +12244,11 @@ msgstr "రెజ్యూమే ఫైల్"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Resume language"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
 msgid "Resume options"
@@ -12877,6 +12895,7 @@ msgstr "షెడ్యూల్‌లు"
 msgid "School"
 msgstr "పాఠశాల"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/stages.ts
 msgid "Screening"
@@ -13565,6 +13584,10 @@ msgstr "సైడ్‌బార్లు తరచుగా చివరిగ�
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "సైన్ ఇన్ చేయండి"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "మీ AI క్లయింట్ నుండి సైన్ ఇన్ చేయండి లేదా API కీని ఉపయోగించండి."
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -14628,8 +14651,8 @@ msgid "The account changed. Try again."
 msgstr ""
 
 #: src/libs/error-message.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "చిరునామాలో లాటిన్ చిన్న అక్షరాలు మరియు సంఖ్యలు మాత్రమే ఉండాలి, సింగిల్ డాష్‌లతో వేరు చేయబడాలి."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr ""
 
 #: src/libs/error-message.ts
 msgid "The AI provider couldn't finish this reply. Try again, or change the connection."
@@ -16025,8 +16048,8 @@ msgid "Use {url}"
 msgstr "{url}ని ఉపయోగించండి"
 
 #: src/features/settings/account/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "3 నుండి 64 చిన్న అక్షరాలు, సంఖ్యలు, చుక్కలు, హైఫన్‌లు మరియు అండర్‌స్కోర్‌లను ఉపయోగించండి."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
@@ -16117,8 +16140,8 @@ msgid "Use in coaching: {excerpt}"
 msgstr "కోచింగ్‌లో ఉపయోగించు: {excerpt}"
 
 #: src/features/resume/share/address-field.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "చిన్న అక్షరాలు, సంఖ్యలు మరియు సింగిల్ డాష్‌లను ఉపయోగించండి."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr ""
 
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Use my timezone"
@@ -16129,8 +16152,8 @@ msgid "Use one column"
 msgstr "ఒక నిలువు వరుసను ఉపయోగించండి"
 
 #: src/features/auth/pages/register.tsx
-msgid "Use only lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "చిన్న అక్షరాలు, సంఖ్యలు, చుక్కలు, హైఫన్‌లు మరియు అండర్‌స్కోర్‌లను మాత్రమే ఉపయోగించండి."
+msgid "Use only Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use plain headings such as \"Experience\", \"Education\" and \"Skills\"."
@@ -17518,11 +17541,3 @@ msgstr "జూమ్ అవుట్ చేయండి"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "జులు"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "మీరు ఎంచుకున్న యాక్సెస్ అనుమతులతో కీలు మీ తరఫున పనిచేస్తాయి. కొత్త కీలకు మొదట చదవడానికి మాత్రమే అనుమతి ఉంటుంది."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "మీ AI క్లయింట్ నుండి సైన్ ఇన్ చేయండి లేదా API కీని ఉపయోగించండి."

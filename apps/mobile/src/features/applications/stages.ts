@@ -27,7 +27,10 @@ export const getStageLabel = (status: ApplicationStatus) =>
 	({
 		saved: t`Saved`,
 		applied: t`Applied`,
-		screening: t`Screening`,
+		screening: t({
+			comment: "Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.",
+			message: "Screening",
+		}),
 		interview: t`Interview`,
 		offer: t`Offer`,
 		closed: t`Closed`,

@@ -543,12 +543,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-Автобиография"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -2503,6 +2497,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Промените не можаха да бъдат запазени. Опитайте отново, преди да продължите."
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Променя само заглавията на секциите и думите за дата, но не и вашето съдържание."
 
@@ -2519,6 +2514,7 @@ msgstr "Промените в “{name}” бяха запазени на дру
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "Проверка"
@@ -3879,10 +3875,6 @@ msgstr "Създаване на нова автобиография"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Първо създайте автобиография, а след това попитайте за нея."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Създайте ключ API от настройките на акаунта във вашия браузър. Ключовете действат като вас и могат да четат и редактират вашите документи."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -6076,10 +6068,6 @@ msgstr "Запазено както е"
 msgid "Key stored encrypted"
 msgstr "Ключът се съхранява криптиран"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Ключовете действат като вас и имат достъп до вашите документи. Новите ключове се създават в настройките на вашия акаунт в браузъра."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Оформление на ключови думи"
@@ -6295,10 +6283,6 @@ msgstr "По-малко"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Остават по-малко от 48 часа."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Позволете на AI клиенти като Claude или Cursor да четат и редактират вашите автобиографии, като използват API ключ."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7250,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Нов документ"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Новите ключове започват с достъп само за четене. Създавайте ключове в настройките на акаунта си в браузъра."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9635,6 +9624,11 @@ msgstr "Файл с автобиография"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10248,6 +10242,7 @@ msgstr "Графици"
 msgid "School"
 msgstr "Училище"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -10871,6 +10866,10 @@ msgstr "Влезте отново, за да продължите да пров�
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Влезте отново, за да продължите да работите. Направените от вас редакции се съхраняват на това устройство и се синхронизират, след като влезете."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Влезте от своя AI клиент или използвайте API ключ."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -11658,8 +11657,8 @@ msgid "The account changed. Try again."
 msgstr "Сметката е променена. Опитайте отново."
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "Адресът трябва да съдържа само малки латински букви и цифри, разделени с единични тирета."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12831,8 +12830,8 @@ msgid "Use {url}"
 msgstr "Използвайте {url}"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "Използвайте от 3 до 64 малки букви, цифри, точки, тирета и долни черти."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -12916,8 +12915,8 @@ msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "Използвайте малки букви, цифри и единични тирета."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"
@@ -13958,12 +13957,3 @@ msgstr "Намаляване"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Зулуски"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Новите ключове започват с достъп само за четене. Създавайте ключове в настройките на акаунта си в браузъра."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Влезте от своя AI клиент или използвайте API ключ."

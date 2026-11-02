@@ -543,12 +543,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-سيرة-ذاتية"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -2503,6 +2497,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "لا يمكن حفظ التغييرات. أعد المحاولة قبل المتابعة."
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "يغير عناوين الأقسام وكلمات التاريخ فقط، وليس المحتوى الخاص بك."
 
@@ -2519,6 +2514,7 @@ msgstr "تم حفظ التغييرات التي تم إجراؤها على «{na
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "فحص"
@@ -3879,10 +3875,6 @@ msgstr "إنشاء سيرة ذاتية جديدة"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "أنشئ سيرة ذاتية أولاً، ثم اسأل عنها."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "قم بإنشاء مفتاح API في إعدادات حساب المتصفح الخاص بك. تعمل مفاتيح API نيابة عنك ويمكنها قراءة مستنداتك وتحريرها."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -6076,10 +6068,6 @@ msgstr "أبقى كما هو"
 msgid "Key stored encrypted"
 msgstr "المفتاح المخزن مشفر"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "تعمل مفاتيح API نيابة عنك ويمكنها الوصول إلى مستنداتك. قم بإنشاء مفاتيح جديدة في إعدادات حساب المتصفح الخاص بك."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "تخطيط الكلمات الرئيسية"
@@ -6295,10 +6283,6 @@ msgstr "أقل"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "متبقي أقل من 48 ساعة."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "اسمح لعملاء AI مثل Claude أو Cursor بقراءة وتحرير سيرتك الذاتية، باستخدام مفتاح API."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7250,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "وثيقة جديدة"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "تبدأ المفاتيح الجديدة بصلاحية القراءة فقط. أنشئ المفاتيح من إعدادات حسابك في المتصفح."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -8345,7 +8334,7 @@ msgstr "قم بلصق رابط إعلان الوظيفة أو نصه، ثم قم
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
-msgstr "الصق رابط الوظيفة. سنقوم بحفظ إعلان الوظيفة حتى يتمكن Check والمساعد وخطابك من استخدامه."
+msgstr "الصق رابط الوظيفة. سنقوم بحفظ إعلان الوظيفة حتى يتمكن الفحص والمساعد وخطابك من استخدامه."
 
 #: src/features/check/job-match.tsx
 msgid "Paste a job posting"
@@ -9635,6 +9624,11 @@ msgstr "ملف السيرة الذاتية"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10248,11 +10242,12 @@ msgstr "الجداول"
 msgid "School"
 msgstr "المدرسة"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
 msgid "Screening"
-msgstr "الفحص"
+msgstr "الفرز الأولي"
 
 #: src/features/career/today.tsx
 msgid "Screening interview"
@@ -10871,6 +10866,10 @@ msgstr "قم بتسجيل الدخول مرة أخرى لمواصلة التحق
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "قم بتسجيل الدخول مرة أخرى لمواصلة العمل. يتم حفظ التعديلات التي أجريتها على هذا الجهاز وتتم مزامنتها بعد تسجيل الدخول."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "سجّل الدخول من تطبيق الذكاء الاصطناعي، أو استخدم مفتاح API."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -11658,8 +11657,8 @@ msgid "The account changed. Try again."
 msgstr "الحساب تغير. حاول ثانية."
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "يجب أن يحتوي العنوان على أحرف صغيرة وأرقام فقط، مفصولة بشرطات مفردة."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12831,8 +12830,8 @@ msgid "Use {url}"
 msgstr "استخدم {url}"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "استخدم من 3 إلى 64 حرفًا صغيرًا وأرقامًا ونقاطًا وواصلات وشرطات سفلية."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -12916,8 +12915,8 @@ msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "استخدم الحروف الصغيرة والأرقام والشرطات المفردة."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"
@@ -13106,7 +13105,7 @@ msgstr "تم إرسال الإصدار {date}"
 #. placeholder {0}: application.sentCheckScore
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
-msgstr "تم إرسال الإصدار {date} · تحقق من {0}"
+msgstr "تم إرسال الإصدار {date} · فحص: {0}"
 
 #. placeholder {0}: document.versionId
 #: src/features/workspace/application-packet.tsx
@@ -13958,12 +13957,3 @@ msgstr "تصغير"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "الزولو"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "تبدأ المفاتيح الجديدة بصلاحية القراءة فقط. أنشئ المفاتيح من إعدادات حسابك في المتصفح."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "سجّل الدخول من تطبيق الذكاء الاصطناعي، أو استخدم مفتاح API."
