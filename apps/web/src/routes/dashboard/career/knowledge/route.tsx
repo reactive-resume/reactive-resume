@@ -6,6 +6,7 @@ import { createFileRoute, Link, Outlet, useMatchRoute } from "@tanstack/react-ro
 import { m } from "motion/react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
+import { useRemoving } from "@/features/career/removing";
 import { D2, EASE } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { getPageTitle } from "@/libs/seo";
@@ -31,6 +32,7 @@ function KnowledgeLayout() {
 	const matchRoute = useMatchRoute();
 	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: null, all: true } }));
 	const stories = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: null } }));
+	const removing = useRemoving((state) => state.ids);
 	const sections: Section[] = [
 		{
 			to: "/dashboard/career/knowledge/facts",
@@ -44,7 +46,8 @@ function KnowledgeLayout() {
 			match: "/dashboard/career/knowledge/stories",
 			icon: "book-open",
 			label: t`Stories`,
-			count: stories.data?.length,
+			// Stories being deleted (Undo still offered) are already gone from the list: leave them out here too.
+			count: stories.data?.filter((story) => !removing.has(story.id)).length,
 		},
 		{
 			to: "/dashboard/career/knowledge/preferences",

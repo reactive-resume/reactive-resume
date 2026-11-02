@@ -17,6 +17,7 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { useSavedItems } from "../hooks";
 import { formatMoney } from "../offer-compare";
+import { useRemoving } from "../removing";
 import { CollapseRow, FilterChip, tabLabel, useCareerTime, withUndo } from "../shared";
 import { orpc } from "@/libs/orpc/client";
 
@@ -48,7 +49,8 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 	const saved = useSavedItems(application.id);
 	const remove = useMutation(orpc.career.deleteSavedItem.mutationOptions());
 	const [filter, setFilter] = useState<SavedItemKind | null>(null);
-	const [hidden, setHidden] = useState<string[]>([]);
+	const removing = useRemoving((state) => state.ids);
+	const { add: hide, drop: unhide } = useRemoving.getState();
 	const [expanded, setExpanded] = useState<string | null>(null);
 
 	if (saved.isPending)
@@ -59,7 +61,7 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 			</div>
 		);
 
-	const items = (saved.data ?? []).filter((item) => !hidden.includes(item.id));
+	const items = (saved.data ?? []).filter((item) => !removing.has(item.id));
 	const present = KINDS.filter(({ kind }) => items.some((item) => item.data.kind === kind));
 	const shown = items.filter((item) => filter === null || item.data.kind === filter);
 
@@ -77,15 +79,16 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 
 	const onDelete = (item: SavedItem) => {
 		if (filter === item.data.kind && shown.length === 1) setFilter(null);
-		setHidden((ids) => [...ids, item.id]);
+		hide(item.id);
 		withUndo({
 			description: t`Deleted from Library`,
-			onUndo: () => setHidden((ids) => ids.filter((id) => id !== item.id)),
+			onUndo: () => unhide(item.id),
 			commit: () =>
 				remove
 					.mutateAsync({ id: item.id })
 					.then(() => queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() }))
-					.catch(() => setHidden((ids) => ids.filter((id) => id !== item.id))),
+					.catch(() => undefined)
+					.finally(() => unhide(item.id)),
 		});
 	};
 
