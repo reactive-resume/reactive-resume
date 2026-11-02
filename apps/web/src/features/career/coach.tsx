@@ -36,7 +36,6 @@ import {
 	copyToClipboard,
 	deleteConversation,
 	MemoryNote,
-	ModelChip,
 	titleFor,
 	useCoachKnowledge,
 	useConversationDate,
@@ -48,6 +47,7 @@ import { ContextChip, Eyebrow, PrivacyLine } from "./shared";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { transcriptOf } from "@/features/assistant/chat";
+import { ChatWelcome, ModelMenu } from "@/features/assistant/chat-chrome";
 import { ConnectionNotice } from "@/features/assistant/connection-notice";
 import { ProviderSetup, SetUpAi } from "@/features/assistant/provider-setup";
 import { WebAccessAttention } from "@/features/settings/ai/web-access";
@@ -334,9 +334,10 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 			<Icon name="sparkle" size={20} className="shrink-0 text-accent-text" />
 			<h2 className="me-auto min-w-0 truncate text-sm font-semibold">{titleFor(summary)}</h2>
 			{(usable.length > 0 || summary) && (
-				<ModelChip
+				<ModelMenu
 					open={modelMenuOpen}
 					onOpenChange={setModelMenuOpen}
+					onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
 					providers={usable}
 					current={provider}
 					label={label}
@@ -543,32 +544,23 @@ function EmptyState({ disabled, offers, onPick }: EmptyStateProps) {
 	const accountStarters = useStarters();
 	const starters = offers > 0 ? offerStarters(offers) : accountStarters;
 	return (
-		<div className="grid gap-6 pt-[clamp(0px,6vh,48px)]">
-			<div className="grid gap-3">
-				<h3 className="font-display text-[30px] leading-9">
-					<Trans>What are you working on?</Trans>
-				</h3>
-				<p className="text-[15px] leading-[23px] text-ink-2">
-					<Trans>
-						Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on
-						below, and each shows what was sent with it.
-					</Trans>
-				</p>
-			</div>
-			<div className="grid gap-2.5 sm:grid-cols-3">
-				{starters.map((starter) => (
-					<button
-						key={starter.text}
-						type="button"
-						disabled={disabled}
-						onClick={() => onPick(starter.text)}
-						className="flex min-h-[112px] flex-col items-start gap-3 rounded-xl border border-line bg-raised p-3.5 text-start text-sm leading-5 shadow-e1 transition-[box-shadow,scale] duration-quick ease-enter hover:shadow-e2 enabled:active:scale-[0.98] disabled:opacity-60"
-					>
-						<Icon name={starter.icon} size={22} className="text-accent-text" />
-						{starter.text}
-					</button>
-				))}
-			</div>
+		<div className="pt-[clamp(0px,6vh,48px)]">
+			<ChatWelcome
+				description={
+					<>
+						<Trans>
+							Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched
+							on below, and each shows what was sent with it.
+						</Trans>
+					</>
+				}
+				starters={starters.map((starter) => ({
+					icon: starter.icon,
+					label: starter.text,
+					disabled,
+					onPick: () => onPick(starter.text),
+				}))}
+			/>
 		</div>
 	);
 }

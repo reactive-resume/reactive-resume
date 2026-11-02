@@ -12,6 +12,7 @@ import { getAccountScope, useSession } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { useThreads } from "@/features/assistant/chat";
 import { ChatView, ContextChip, type ChatHistory } from "@/features/assistant/chat-view";
+import { ChatWelcome } from "@/features/assistant/chat-welcome";
 import {
 	ConnectionNotice,
 	ModelButton,
@@ -25,7 +26,7 @@ import {
 import { usableStories } from "@/features/assistant/sent";
 import { useDeleteThread, useThreadTime, useThreadTitle } from "@/features/assistant/threads";
 import { StoryEditor } from "@/features/career/stories";
-import { Banner, Button, IconButton, ListRow, Sheet, Text, showToast, useTheme } from "@/ui";
+import { Banner, IconButton, ListRow, Sheet, Text, showToast, useTheme } from "@/ui";
 
 type CoachSheetProps = { application: Application; tab: WorkspaceTab; open: boolean; onClose: () => void };
 
@@ -121,7 +122,7 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 			>
 				<View style={{ flex: 1 }}>
 					<Text variant="callout" color="ink3">{t`${company} · ${tabName}`}</Text>
-					<ModelButton label={provider?.model ?? label} onPress={() => setModelOpen(true)} />
+					<ModelButton current={provider} label={label} onPress={() => setModelOpen(true)} />
 				</View>
 				<IconButton
 					icon="clock-counter-clockwise"
@@ -259,15 +260,15 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 						assistantName={t`Coach`}
 						onSwitchModel={() => setModelOpen(true)}
 						empty={(send) => (
-							<View style={{ gap: space.s3 }}>
-								<Text color="ink2">{t`Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the ${tabName} tab.`}</Text>
-								{/* A first question for where the application stands; each sends at once (web coach-sheet). */}
-								<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
-									{coachStarters(application.status).map((starter) => (
-										<Button key={starter} size="sm" variant="secondary" label={starter} onPress={() => send(starter)} />
-									))}
-								</View>
-							</View>
+							<ChatWelcome
+								description={t`Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the ${tabName} tab.`}
+								starters={coachStarters(application.status).map((starter) => ({
+									icon: "chat-text",
+									label: starter,
+									disabled: !provider,
+									onPick: () => send(starter),
+								}))}
+							/>
 						)}
 					/>
 				)}

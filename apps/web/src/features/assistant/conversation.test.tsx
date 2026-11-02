@@ -75,6 +75,41 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
+it("keeps composition and newlines local, submits Enter, and offers Stop while streaming", () => {
+	const send = vi.fn();
+	const stop = vi.fn();
+	const composer = (streaming: boolean) => (
+		<I18nProvider i18n={i18n}>
+			<Composer
+				document={document}
+				context={{ document: false, posting: false }}
+				onContextChange={() => {}}
+				providerLabel="Local"
+				streaming={streaming}
+				disabled={false}
+				threadId={null}
+				onSend={send}
+				onStop={stop}
+			/>
+		</I18nProvider>
+	);
+	const view = render(composer(false));
+	const input = screen.getByRole("textbox", { name: "Message the assistant" });
+	expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
+	fireEvent.change(input, { target: { value: "Keep this draft" } });
+	for (const options of [{ shiftKey: true }, { isComposing: true }, { keyCode: 229 }])
+		fireEvent.keyDown(input, { key: "Enter", ...options });
+	expect(send).not.toHaveBeenCalled();
+	expect(input).toHaveValue("Keep this draft");
+	fireEvent.keyDown(input, { key: "Enter" });
+	expect(send).toHaveBeenCalledWith("Keep this draft", []);
+	view.rerender(composer(true));
+	fireEvent.keyDown(input, { key: "Enter" });
+	expect(send).toHaveBeenCalledTimes(1);
+	fireEvent.click(screen.getByRole("button", { name: "Stop" }));
+	expect(stop).toHaveBeenCalledOnce();
+});
+
 it("uploads a file in the initial composer before sending its first message", async () => {
 	const ensureThread = vi.fn(async () => "draft-thread");
 	const send = vi.fn();
