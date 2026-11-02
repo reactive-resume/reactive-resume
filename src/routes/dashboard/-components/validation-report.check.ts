@@ -2,7 +2,7 @@
 // node --import tsx --test <this file>
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { formatReportDate, printLayout, sectionReportRows, summaryRows } from "./validation-report";
+import { branchLabel, formatReportDate, printLayout, sectionReportRows, summaryRows } from "./validation-report";
 
 const student = (name: string, roll: string, reviewStatus: string | null, extra = {}) => ({
 	engLabsId: roll,
@@ -133,6 +133,14 @@ test("the roster splits into two columns of equal height, not equal count", () =
 		"faculty",
 	);
 	assert.ok(printLayout(long).fontPt < 9, "wrapped names step the type down sooner");
+});
+
+test("the branch label drops the batch year the title already carries", () => {
+	assert.equal(branchLabel("Automobile Engineering 2024"), "Automobile Engineering");
+	assert.equal(branchLabel("Information Technology 2025"), "Information Technology");
+	// A year inside the name is not a suffix and stays put.
+	assert.equal(branchLabel("Class of 2024 Engineering"), "Class of 2024 Engineering");
+	assert.equal(branchLabel(null), "—");
 });
 
 test("dates print in the college's day-month-year form", () => {

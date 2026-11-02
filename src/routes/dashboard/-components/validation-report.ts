@@ -133,6 +133,18 @@ const pct = (part: number, whole: number) => (whole > 0 ? `${((part / whole) * 1
  * RESUME_EDITED history accumulates. A zero would read as "nobody fixed anything", which is a
  * claim the data cannot yet support; the college's own sheet leaves most of this column blank too.
  */
+/**
+ * The branch label as the department writes it: "Automobile Engineering", not
+ * "Automobile Engineering 2024".
+ *
+ * The batch is already named in the report title, and the branch column is the one cell allowed to
+ * wrap — every extra line it takes is a line every row pays for, which is what pushes a full batch
+ * of thirty sections onto a second page.
+ */
+export function branchLabel(parentName: string | null | undefined): string {
+	return (parentName ?? "—").replace(/\s+\d{4}$/, "").trim() || "—";
+}
+
 export function summaryRows(
 	sections: { id: string; name: string; parentName?: string | null; unitType: string }[],
 	students: ReportStudent[],
@@ -152,13 +164,13 @@ export function summaryRows(
 
 	const countByBranch = new Map<string, number>();
 	for (const section of classes) {
-		const branch = section.parentName ?? "—";
+		const branch = branchLabel(section.parentName);
 		countByBranch.set(branch, (countByBranch.get(branch) ?? 0) + 1);
 	}
 
 	let seenBranch: string | null = null;
 	const rows = classes.map((section, index) => {
-		const branch = section.parentName ?? "—";
+		const branch = branchLabel(section.parentName);
 		const inSection = studentsBySection.get(section.id) ?? [];
 		const validated = inSection.filter((s) => isValidated(reportResume(s), scope)).length;
 		const modified = modifiedBySection?.get(section.id) ?? null;
