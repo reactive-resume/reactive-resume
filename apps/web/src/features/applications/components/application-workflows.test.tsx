@@ -148,7 +148,7 @@ it("removes hidden closed applications from bulk selection before deleting visib
 	view.rerender(<ApplicationList applications={rows} showClosed={false} selectedId={null} onOpen={vi.fn()} />);
 	expect(screen.queryByRole("checkbox", { name: "Select Engineer at Closed Co" })).toBeNull();
 	expect(screen.getByText("1 selected")).toBeTruthy();
-	fireEvent.click(screen.getByRole("button", { name: "Delete…" }));
+	fireEvent.click(screen.getByRole("button", { name: "Delete permanently…" }));
 	await waitFor(() => expect(api.bulkDelete.mock.calls[0]?.[0]).toEqual({ ids: ["open"] }));
 });
 
