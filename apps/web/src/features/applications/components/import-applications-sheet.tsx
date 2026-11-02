@@ -83,6 +83,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	const [overrides, setOverrides] = useState<Record<number, CsvField | null>>({});
 	const [laneChoices, setLaneChoices] = useState<Record<string, string>>({});
 	const [needsStageRefresh, setNeedsStageRefresh] = useState(false);
+	const [reading, setReading] = useState(false);
 	const fileRef = useRef<HTMLInputElement>(null);
 
 	const table = text.trim() ? parseCsv(text) : null;
@@ -181,6 +182,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 			toast.add({ type: "error", description: t`Import failed. Check the CSV and try again.` });
 		},
 	});
+	const working = reading || importMutation.isPending;
 
 	const downloadSkipped = () => {
 		if (!result || result.skippedRows.length === 0) return;
@@ -192,7 +194,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 		<Sheet
 			open={open}
 			onOpenChange={(next) => {
-				if (!importMutation.isPending) onOpenChange(next);
+				if (!working) onOpenChange(next);
 			}}
 			// After an import, the rows clear once the sheet has slid away; closing without importing keeps them.
 			onOpenChangeComplete={(next) => {
@@ -219,39 +221,38 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 						<Button
 							size="sm"
 							variant="secondary"
-							disabled={importMutation.isPending}
+							disabled={working}
+							aria-busy={reading}
 							onClick={() => fileRef.current?.click()}
 						>
 							<Icon name="file-arrow-up" size={16} />
 							<Trans>Upload .csv</Trans>
 						</Button>
-						<Button
-							size="sm"
-							variant="ghost"
-							disabled={importMutation.isPending}
-							onClick={() => changeText(CSV_SAMPLE)}
-						>
+						<Button size="sm" variant="ghost" disabled={working} onClick={() => changeText(CSV_SAMPLE)}>
 							<Trans>Use sample</Trans>
 						</Button>
 						<input
 							ref={fileRef}
 							type="file"
-							disabled={importMutation.isPending}
+							disabled={working}
 							accept=".csv,text/csv"
 							className="hidden"
-							onChange={(event) =>
-								void event.target.files?.[0]
-									?.text()
-									.then((value) => {
-										changeText(value);
-									})
+							onChange={(event) => {
+								const file = event.target.files?.[0];
+								if (!file || working) return;
+								event.target.value = "";
+								setReading(true);
+								void file
+									.text()
+									.then(changeText)
 									.catch(() =>
 										toast.add({
 											type: "error",
 											description: t`Couldn't read that file. Choose a .csv file and try again.`,
 										}),
 									)
-							}
+									.finally(() => setReading(false));
+							}}
 						/>
 					</div>
 
@@ -260,12 +261,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 							<p>
 								<Trans>Load your stages before importing named stages. Your CSV data is kept.</Trans>
 							</p>
-							<Button
-								size="sm"
-								variant="secondary"
-								disabled={importMutation.isPending}
-								onClick={() => void refreshStages()}
-							>
+							<Button size="sm" variant="secondary" disabled={working} onClick={() => void refreshStages()}>
 								<Trans>Retry</Trans>
 							</Button>
 						</div>
@@ -285,7 +281,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 										<span className="truncate font-mono text-xs">{header || t`(no header)`}</span>
 										<Icon name="arrow-right" size={16} className="text-ink-3" />
 										<NativeSelect
-											disabled={importMutation.isPending}
+											disabled={working}
 											aria-label={t`Column ${header} goes to`}
 											value={mapping[index] ?? ""}
 											onChange={(event) =>
@@ -331,7 +327,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 													</span>
 													<Icon name="arrow-right" size={16} className="text-ink-3" />
 													<NativeSelect
-														disabled={importMutation.isPending}
+														disabled={working}
 														aria-label={t`Stage ${lane.label} goes to`}
 														value={choiceFor(lane)}
 														onChange={(event) =>
@@ -450,7 +446,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 							id="import-csv-text"
 							value={text}
 							rows={text ? 4 : 6}
-							disabled={importMutation.isPending}
+							disabled={working}
 							placeholder="Company,Role,Stage,…"
 							className="font-mono text-xs"
 							onChange={(event) => {
@@ -461,7 +457,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 				</div>
 
 				<SheetFooter className="flex-row justify-end gap-2">
-					<Button variant="secondary" disabled={importMutation.isPending} onClick={() => onOpenChange(false)}>
+					<Button variant="secondary" disabled={working} onClick={() => onOpenChange(false)}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button
@@ -470,11 +466,12 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 							(result?.invalidValues.length ?? 0) > 0 ||
 							unmatched > 0 ||
 							stagesUnresolved ||
-							importMutation.isPending
+							working
 						}
 						onClick={() => {
 							// The file imports whole or not at all: values that can't be read are fixed first.
-							if (!result?.invalidValues.length && unmatched === 0 && !stagesUnresolved) importMutation.mutate();
+							if (!working && !result?.invalidValues.length && unmatched === 0 && !stagesUnresolved)
+								importMutation.mutate();
 						}}
 					>
 						<Plural value={importable.length} one="Import # application" other="Import # applications" />

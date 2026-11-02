@@ -267,11 +267,47 @@ for (const failure of ["none", "second-create", "import", "lost-create-response"
 			).toBeVisible();
 			await expect(sheet.getByRole("button", { name: "Import 0 applications", exact: true })).toBeDisabled();
 			await sheet.screenshot({ path: info.outputPath("csv-validation.png") });
-			await sheet.locator('input[type="file"]').setInputFiles({
-				name: "fictional-applications.csv",
-				mimeType: "text/csv",
-				buffer: Buffer.from(csv),
-			});
+			await sheet.getByRole("button", { name: "Use sample", exact: true }).click();
+			await expect(sheet.getByRole("button", { name: "Import 1 application", exact: true })).toBeEnabled();
+			for (const failRead of [true, false]) {
+				await page.evaluate((failRead) => {
+					const original = File.prototype.text;
+					let release!: () => void;
+					const held = new Promise<void>((resolve) => {
+						release = resolve;
+					});
+					window.addEventListener(
+						"release-csv-read",
+						() => {
+							File.prototype.text = original;
+							release();
+						},
+						{ once: true },
+					);
+					File.prototype.text = async function () {
+						await held;
+						if (failRead) throw new Error("File read failed");
+						return original.call(this);
+					};
+				}, failRead);
+				try {
+					await sheet.locator('input[type="file"]').setInputFiles({
+						name: "fictional-applications.csv",
+						mimeType: "text/csv",
+						buffer: Buffer.from(csv),
+					});
+					await expect(sheet.getByRole("button", { name: "Import 1 application", exact: true })).toBeDisabled();
+					await expect(sheet.getByRole("button", { name: "Upload .csv", exact: true })).toBeDisabled();
+					await expect(sheet.getByLabel("CSV data", { exact: true })).toBeDisabled();
+					await expect(sheet.locator('input[type="file"]')).toHaveValue("");
+				} finally {
+					await page.evaluate(() => window.dispatchEvent(new Event("release-csv-read")));
+				}
+				if (failRead) {
+					await expect(page.getByText("Couldn't read that file. Choose a .csv file and try again.")).toBeVisible();
+					await expect(sheet.getByRole("button", { name: "Import 1 application", exact: true })).toBeEnabled();
+				}
+			}
 			await expect(sheet.getByText("2 applications ready to import", { exact: true })).toBeVisible();
 			await sheet.screenshot({ path: info.outputPath("csv-review.png") });
 			const columns = sheet.getByRole("region", { name: "Columns", exact: true });
