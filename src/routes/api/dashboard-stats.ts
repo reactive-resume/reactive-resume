@@ -26,7 +26,7 @@ import {
 	getUnitSchemaTypes,
 } from "@/integrations/eng-labs";
 import type { EngLabsLearnerProfile } from "@/integrations/eng-labs/types";
-import { getSubmissionStatusByResumeIds } from "@/integrations/orpc/router/dashboard";
+import { getSubmissionDatesByResumeIds } from "@/integrations/orpc/router/dashboard";
 import { env } from "@/utils/env";
 
 // ── Helper functions (same as dashboard.ts oRPC procedure) ──
@@ -287,10 +287,10 @@ async function handler({ request }: { request: Request }) {
 		const resumeIds = resumes.map((r) => r.id);
 
 		// 6. Get resume feedback data
-		const [commentCounts, latestScores, submissionStatus] = await Promise.all([
+		const [commentCounts, latestScores, submissionDates] = await Promise.all([
 			getCommentCountsByResumeIds(resumeIds),
 			getLatestEvaluationsByResumeIds(resumeIds),
-			getSubmissionStatusByResumeIds(resumeIds),
+			getSubmissionDatesByResumeIds(resumeIds),
 		]);
 
 		// 7. Build per-student resume data
@@ -318,7 +318,7 @@ async function handler({ request }: { request: Request }) {
 				resumes: userResumes.map((r) => {
 					const score = latestScores.get(r.id) ?? null;
 					const comments = commentCounts.get(r.id) ?? 0;
-					const isSubmitted = submissionStatus.get(r.id) ?? false;
+					const isSubmitted = submissionDates.has(r.id);
 					let status: string = "not_reviewed";
 					if (score !== null) status = "evaluated";
 					else if (isSubmitted) status = "submitted";

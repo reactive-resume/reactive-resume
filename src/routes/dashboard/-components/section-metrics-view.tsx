@@ -5,9 +5,11 @@ import {
 	BuildingsIcon,
 	ChartBarIcon,
 	CheckCircleIcon,
+	FileTextIcon,
 	FunnelSimpleIcon,
 	ListChecksIcon,
 	MagnifyingGlassIcon,
+	PrinterIcon,
 	TrayIcon,
 	UsersIcon,
 	WarningIcon,
@@ -40,6 +42,8 @@ import { SectionIntelligence } from "./section-intelligence";
 import { StudentDetailPanel } from "./student-detail-panel";
 import type { StudentWithResumes } from "./student-resume-table";
 import { StudentResumeTable } from "./student-resume-table";
+import { sectionReportRows, summaryRows } from "./validation-report";
+import { SectionValidationSheet, SummaryValidationSheet } from "./validation-report-sheet";
 
 export type DashboardTab = "overview" | "inbox" | "sections" | "students" | "checklists";
 
@@ -63,6 +67,8 @@ export function SectionMetricsView({
 	const navigate = useNavigate() as any;
 	const activeTab = initialTab;
 	const [filter, setFilter] = useState<OrgUnitFilterValue>(initialFilter);
+	// Which validation report is open, if any.
+	const [reportOpen, setReportOpen] = useState<"section" | "summary" | null>(null);
 	const queryClient = useQueryClient();
 
 	useEffect(() => {
@@ -473,12 +479,23 @@ export function SectionMetricsView({
 						});
 					}}
 					onStudentClick={(student) => setSelectedStudent(student)}
+					onOpenReport={() => setReportOpen("section")}
 				/>
 			)}
 
 			{/* ══════════════════ SECTIONS TAB (grid) ══════════════════ */}
 			{activeTab === "sections" && !sectionId && (
 				<div className="space-y-6">
+					<div className="flex justify-end">
+						<button
+							type="button"
+							onClick={() => setReportOpen("summary")}
+							className="flex items-center gap-1.5 rounded-xl bg-card px-3.5 py-2 font-semibold text-foreground text-sm shadow-sm ring-1 ring-border transition-all hover:bg-primary/5 hover:text-primary active:scale-[0.98]"
+						>
+							<FileTextIcon weight="duotone" className="size-4" />
+							{t`CV Validation Status — all sections`}
+						</button>
+					</div>
 					{/* Package filter + search */}
 					<div className="rounded-2xl border border-border bg-card p-4 text-card-foreground shadow-sm">
 						<div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -786,6 +803,44 @@ export function SectionMetricsView({
 				<ChecklistsTab tenantId={tenantId} onCreateNew={() => setShowChecklistCreator(true)} />
 			)}
 
+			{/* The section's own sheet reads the students already on screen; the summary reads every
+			    section the current package filter leaves in view. */}
+			{reportOpen === "section" && activeSection && (
+				<SectionValidationSheet
+					sectionName={activeSection.name}
+					branch={(activeSection as { parentName?: string | null }).parentName ?? activeSection.name}
+					rows={sectionReportRows(
+						filteredStudents.filter((s) => s.sectionId === sectionId),
+						scope === "faculty" ? "faculty" : "po",
+					)}
+					scope={scope === "faculty" ? "faculty" : "po"}
+					onClose={() => setReportOpen(null)}
+				/>
+			)}
+
+			{reportOpen === "summary" &&
+				(() => {
+					const { rows, totals } = summaryRows(
+						sectionsTabDisplayRows,
+						filteredStudents,
+						scope === "faculty" ? "faculty" : "po",
+					);
+					const packageName =
+						sectionsTabPackageOptions.find((o) => o.value === filter.packageId)?.label ?? t`All packages`;
+					return (
+						<SummaryValidationSheet
+							title={
+								scope === "faculty"
+									? t`Status of CV validation — ${packageName}`
+									: t`Status of CV validation — ${packageName} (Placement Officer)`
+							}
+							rows={rows}
+							totals={totals}
+							onClose={() => setReportOpen(null)}
+						/>
+					);
+				})()}
+
 			{selectedStudent && (
 				<StudentDetailPanel
 					student={{
@@ -851,6 +906,7 @@ type SectionStudentsPageProps = {
 		id: string;
 		name: string;
 		unitType: string;
+		parentName?: string | null;
 		stats: {
 			totalStudents: number;
 			totalResumes: number;
@@ -862,9 +918,18 @@ type SectionStudentsPageProps = {
 	onBack: () => void;
 	onReview: (resumeId: string, engLabsStudentId: string) => void;
 	onStudentClick: (student: StudentWithResumes) => void;
+	/** Opens the printable CV Validation Status sheet for this section. */
+	onOpenReport?: () => void;
 };
 
-function SectionStudentsPage({ section, students, onBack, onReview, onStudentClick }: SectionStudentsPageProps) {
+function SectionStudentsPage({
+	section,
+	students,
+	onBack,
+	onReview,
+	onStudentClick,
+	onOpenReport,
+}: SectionStudentsPageProps) {
 	if (!section) {
 		return (
 			<div className="space-y-6">
@@ -892,6 +957,27 @@ function SectionStudentsPage({ section, students, onBack, onReview, onStudentCli
 	return (
 		<div className="space-y-6">
 			{/* Breadcrumb / back */}
+			{onOpenReport && (
+				<div className="flex flex-wrap gap-2">
+					<button
+						type="button"
+						onClick={onOpenReport}
+						className="flex items-center gap-1.5 rounded-xl bg-card px-3.5 py-2 font-semibold text-foreground text-sm shadow-sm ring-1 ring-border transition-all hover:bg-primary/5 hover:text-primary active:scale-[0.98]"
+					>
+						<FileTextIcon weight="duotone" className="size-4" />
+						{t`View Resume Validation Status`}
+					</button>
+					<button
+						type="button"
+						onClick={onOpenReport}
+						className="flex items-center gap-1.5 rounded-xl bg-card px-3.5 py-2 font-semibold text-foreground text-sm shadow-sm ring-1 ring-border transition-all hover:bg-primary/5 hover:text-primary active:scale-[0.98]"
+					>
+						<PrinterIcon weight="duotone" className="size-4" />
+						{t`Print Resume Validation Status`}
+					</button>
+				</div>
+			)}
+
 			<button
 				type="button"
 				onClick={onBack}
