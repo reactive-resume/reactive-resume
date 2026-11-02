@@ -358,7 +358,9 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 					{!compatible && urlField}
 				</View>
 			)}
-			{explanation && !(urlTouched && problem === "baseURL") && <Text color="ink3">{explanation}</Text>}
+			{explanation && !(urlTouched && problem === "baseURL" && (compatible || advanced)) && (
+				<Text color="ink3">{explanation}</Text>
+			)}
 			{current && (
 				<>
 					<Text>{t`Use this provider`}</Text>

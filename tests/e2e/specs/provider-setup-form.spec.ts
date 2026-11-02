@@ -28,6 +28,13 @@ test("first-party provider setup keeps optional fields in Advanced and links to 
 	await dialog.screenshot({ path: info.outputPath("add-provider-dialog.png") });
 	await dialog.getByRole("button", { name: "Advanced", exact: true }).click();
 	await dialog.getByLabel("Name", { exact: true }).fill("Fictional custom connection");
+	await dialog.getByLabel("Base URL", { exact: true }).fill("gateway.example.test/v1");
+	await dialog.getByLabel("Base URL", { exact: true }).blur();
+	await dialog.getByRole("button", { name: "Advanced", exact: true }).click();
+	await expect(dialog.getByLabel("Base URL", { exact: true })).toBeHidden();
+	await expect(dialog.getByText("Enter an http:// or https:// base URL.")).toBeVisible();
+	await expect(dialog.getByRole("button", { name: "Save and test", exact: true })).toBeDisabled();
+	await dialog.getByRole("button", { name: "Advanced", exact: true }).click();
 	await dialog.getByLabel("Base URL", { exact: true }).fill("https://gateway.example.test/v1");
 	await dialog.getByRole("button", { name: "Advanced", exact: true }).click();
 	await dialog.getByRole("button", { name: "Advanced", exact: true }).click();

@@ -175,7 +175,7 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 					</CollapsibleContent>
 				</Collapsible>
 			)}
-			{explanation && !urlError && (
+			{explanation && !(urlError && (compatible || advanced)) && (
 				<p role="status" className="text-xs text-ink-3">
 					{explanation}
 				</p>
