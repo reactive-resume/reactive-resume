@@ -26,7 +26,7 @@ import { useUserTime } from "@/features/application-detail/hooks";
 import { CloseSheet, MarkAppliedSheet } from "@/features/application-detail/sheets";
 import { applicationError } from "@/features/applications/error";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
-import { getLaneLabel, laneInput, resolveLane, visibleLanes } from "@/features/applications/lanes";
+import { getLaneLabel, laneInput, resolveLane, undoLaneInput, visibleLanes } from "@/features/applications/lanes";
 import { filterApplications } from "@/features/applications/list";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { useApplicationMutations, useApplications } from "@/features/applications/queries";
@@ -157,7 +157,7 @@ function Board() {
 				onSuccess: () => {
 					const from = resolveLane(laneQuery.lanes, application);
 					stageMoved(application, lane, undefined, () =>
-						update.mutate({ id: application.id, ...laneInput(from, laneQuery.supported) }),
+						update.mutate({ id: application.id, ...undoLaneInput(from, application, laneQuery.supported) }),
 					);
 				},
 				onError: (error) => {

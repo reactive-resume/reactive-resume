@@ -90,11 +90,6 @@ msgstr "(valgfrit)"
 msgid "{0, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr ""
 
-#. placeholder {0}: step.days
-#: src/features/applications/next-step.ts
-msgid "{0, plural, =0 {Since today} one {For # day} other {For # days}}"
-msgstr "{0, plural, one {For # dag} other {For # dage}}"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -338,6 +333,11 @@ msgstr "{0, plural, one {Slet # ansøgning} other {Slet # ansøgninger}}"
 #: src/features/documents/trash-page.tsx
 msgid "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
+
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {For # day} other {For # days}}"
+msgstr "{0, plural, one {For # dag} other {For # dage}}"
 
 #. placeholder {0}: parsed.requirements.length
 #: src/features/applications/components/add-application-dialog.tsx
@@ -4107,6 +4107,12 @@ msgstr "Kontaktrolle"
 #. placeholder {0}: primary.name
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
+msgstr ""
+
+#. placeholder {0}: primary.name
+#. placeholder {1}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0} and {1} more"
 msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -14408,6 +14414,10 @@ msgstr "Tilmeld dig..."
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "Since today"
 msgstr ""
 
 #: src/dialogs/resume/template/data.ts

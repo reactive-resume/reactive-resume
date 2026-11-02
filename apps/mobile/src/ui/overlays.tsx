@@ -530,9 +530,9 @@ export function ConfirmDialog({
 
 export type ToastOptions = {
 	message: string;
-	/** For example Undo. Pressing it dismisses the toast. */
+	/** For example "Schedule it". Pressing it dismisses the toast. */
 	action?: { label: string; onPress: () => void } | undefined;
-	/** Shorthand for an "Undo" action. */
+	/** An "Undo" control, shown after `action` when both are set. Pressing it dismisses the toast. */
 	undo?: (() => void) | undefined;
 	/** Milliseconds on screen. Defaults to 4000; toasts with an action stay 6000. Doubled for screen readers. */
 	duration?: number | undefined;
@@ -658,7 +658,11 @@ export function Toaster() {
 			}}
 		>
 			{active.map((item) => {
-				const action = item.action ?? (item.undo ? { label: t`Undo`, onPress: item.undo } : undefined);
+				const controls = [
+					...(item.action ? [item.action] : []),
+					...(item.undo ? [{ label: t`Undo`, onPress: item.undo }] : []),
+				];
+				const action = controls.length > 0;
 				return (
 					<Animated.View
 						key={item.id}
@@ -681,14 +685,16 @@ export function Toaster() {
 						<Text color="bg" style={{ flexShrink: 1, flexGrow: android ? 1 : 0, paddingVertical: space.s3 }}>
 							{item.message}
 						</Text>
-						{action ? (
+						{controls.map((control) => (
 							<Pressable
+								key={control.label}
 								accessibilityRole="button"
 								onPress={() => {
+									// One control per toast runs: a second tap before it re-renders does nothing.
 									if (actedToasts.has(item)) return;
 									actedToasts.add(item);
 									try {
-										action.onPress();
+										control.onPress();
 									} catch (error) {
 										actedToasts.delete(item);
 										throw error;
@@ -703,10 +709,10 @@ export function Toaster() {
 								})}
 							>
 								<Text weight={700} color="accentSoft">
-									{action.label}
+									{control.label}
 								</Text>
 							</Pressable>
-						) : null}
+						))}
 						{action && !reduced ? <ToastFuse duration={item.lifetime} /> : null}
 					</Animated.View>
 				);

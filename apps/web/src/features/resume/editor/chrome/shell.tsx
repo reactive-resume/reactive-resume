@@ -184,7 +184,8 @@ function TabletBody({ mode, panelLabel, panel, page }: BodyProps) {
 			<main id="main-content" className={cn("h-full min-w-0", drawerOpen && "ps-[380px]")}>
 				{page}
 			</main>
-			<aside aria-label={t`Editor`} className="contents">
+			{/* Inert with the closed drawer, so the landmark isn't reachable while its contents are. */}
+			<aside aria-label={t`Editor`} className="contents" inert={!drawerOpen}>
 				<TabsContent
 					key={mode}
 					value={mode}

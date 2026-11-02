@@ -76,11 +76,6 @@ msgstr "(незадължително)"
 msgid "(required)"
 msgstr "(задължително)"
 
-#. placeholder {0}: step.days
-#: src/features/applications/next-step.ts
-msgid "{0, plural, =0 {Since today} one {For # day} other {For # days}}"
-msgstr "{0, plural, one {За ден #} other {За # дни}}"
-
 #. placeholder {0}: applied.length
 #: src/features/assistant/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -344,6 +339,11 @@ msgstr "{0, plural, one {Изтриване на # кандидатура} other
 #: src/features/career/today.tsx
 msgid "{0, plural, one {Every day} other {Every # days}}"
 msgstr "{0, plural, one {Всеки ден} other {На всеки # дни}}"
+
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {For # day} other {For # days}}"
+msgstr "{0, plural, one {За ден #} other {За # дни}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -11461,6 +11461,10 @@ msgstr "Излязохте, но някои данни на това устро�
 msgid "since last counted view"
 msgstr ""
 
+#: src/features/applications/next-step.ts
+msgid "Since today"
+msgstr ""
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Situation"
@@ -13220,7 +13224,6 @@ msgstr "Подчертайте връзките"
 #: app/builder/[id]/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/interview-sheet.tsx
-#: src/features/applications/stage-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/proposals.ts
