@@ -85,10 +85,6 @@ msgstr "(शीर्षलेख नाही)"
 msgid "(optional)"
 msgstr "(ऐच्छिक)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(आवश्यक)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2098,6 +2094,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "सर्व मॉडेल"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "तुमची सर्व कागदपत्रे, नोकरीचे अर्ज, API की आणि सार्वजनिक दुवे कायमचे हटवले जातील. हे पूर्ववत केले जाऊ शकत नाही."
@@ -2982,10 +2982,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "अंगभूत वाचक"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "बल्गेरियन"
@@ -3467,6 +3463,10 @@ msgstr "रंग निवडा"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "मॉडेल निवडा"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5136,6 +5136,7 @@ msgid "Deep breath."
 msgstr "दीर्घ श्वास घ्या."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "डीफॉल्ट"
@@ -6107,6 +6108,10 @@ msgstr "या प्रदात्यासाठी API की प्रव�
 msgid "Enter an http:// or https:// base URL."
 msgstr "http:// किंवा https:// ने सुरू होणारा बेस URL प्रविष्ट करा."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "तुमच्या एंडपॉइंटला समर्थित असलेला कोणताही मॉडेल ID प्रविष्ट करा."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "तुमच्या खात्यात प्रवेश करण्यासाठी जतन केलेल्या बॅकअप कोडपैकी एक टाका."
@@ -6249,6 +6254,11 @@ msgstr "रेझ्युमेवर अभिप्राय देवाण�
 msgid "Exit focus mode"
 msgstr "फोकस मोडमधून बाहेर पडा"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6382,6 +6392,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "दैनंदिन कामासाठी जलद आणि कमी खर्चाचे डीफॉल्ट मॉडेल."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6902,6 +6916,10 @@ msgstr "प्रत्येक भूमिका आणि पात्रत
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "जतन करण्यापूर्वी कथेला शीर्षक द्या."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "कथेला शीर्षक द्या, मग परिस्थिती, कार्य आणि कृती हे भाग भरा. आधार देणारी माहिती उपलब्ध होईपर्यंत परिणाम आणि चिंतन हे भाग रिकामे ठेवा."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8932,7 +8950,7 @@ msgstr "संमिश्र"
 msgid "mixed format"
 msgstr "मिश्र स्वरूप"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "मॉडेल"
 
@@ -8951,6 +8969,10 @@ msgstr "मोनो"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "अधिक सक्षम"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9414,6 +9436,10 @@ msgstr "अद्याप नोकरीसाठी अर्ज आलेल
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "या प्रदात्यासाठी अंगभूत सूचना नाहीत."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11614,6 +11640,10 @@ msgstr "अलीकडील"
 msgid "Recipient"
 msgstr "प्राप्तकर्ता"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "शिफारस केलेली"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "पुन्हा रेकॉर्ड करा"
@@ -13708,10 +13738,6 @@ msgstr "परिस्थिती"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "परिस्थिती, कृती, परिणाम"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "परिस्थिती, कार्य आणि कृती हे भाग आवश्यक आहेत. आधार देणारी माहिती उपलब्ध होईपर्यंत परिणाम आणि चिंतन हे भाग रिकामे ठेवा."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17407,6 +17433,10 @@ msgstr "तुमची प्राधान्ये"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "तुमचा प्रदाता"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "तुमच्या API कीने केलेल्या विनंत्यांसाठी तुमचा प्रदाता तुमच्या खात्यावर शुल्क आकारू शकतो."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

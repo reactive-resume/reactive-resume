@@ -85,10 +85,6 @@ msgstr "(không có tiêu đề)"
 msgid "(optional)"
 msgstr "(không bắt buộc)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(bắt buộc)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2098,6 +2094,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "Tất cả mô hình"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Tất cả tài liệu, hồ sơ ứng tuyển, khóa API và liên kết công khai của bạn sẽ bị xóa vĩnh viễn. Không thể hoàn tác thao tác này."
@@ -2982,10 +2982,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Trình đọc tích hợp"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Tiếng Bulgaria"
@@ -3467,6 +3463,10 @@ msgstr "Chọn màu"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Chọn mô hình"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5136,6 +5136,7 @@ msgid "Deep breath."
 msgstr "Hít thở sâu."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Mặc định"
@@ -6107,6 +6108,10 @@ msgstr "Nhập khóa API cho nhà cung cấp này."
 msgid "Enter an http:// or https:// base URL."
 msgstr "Nhập URL cơ sở bắt đầu bằng http:// hoặc https://."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Nhập ID của bất kỳ mô hình nào mà điểm cuối của bạn hỗ trợ."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Nhập một trong các mã dự phòng đã lưu để truy cập tài khoản của bạn."
@@ -6249,6 +6254,11 @@ msgstr "Trao đổi góp ý về CV, đặt câu hỏi và cùng cộng đồng 
 msgid "Exit focus mode"
 msgstr "Thoát chế độ lấy nét"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6382,6 +6392,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Mô hình mặc định nhanh và tiết kiệm hơn cho công việc hằng ngày."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6902,6 +6916,10 @@ msgstr "Ghi khoảng thời gian cho mỗi vai trò và bằng cấp."
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Hãy đặt tiêu đề cho câu chuyện trước khi lưu."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Đặt tiêu đề cho câu chuyện, rồi điền Tình huống, Nhiệm vụ và Hành động. Để trống Kết quả và Suy ngẫm cho đến khi bạn có thể đưa ra bằng chứng cho các phần này."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8932,7 +8950,7 @@ msgstr "Lẫn lộn"
 msgid "mixed format"
 msgstr "định dạng hỗn hợp"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "Mô hình"
 
@@ -8951,6 +8969,10 @@ msgstr "Bệnh tăng bạch cầu đơn nhân"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Mạnh hơn"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9414,6 +9436,10 @@ msgstr "Chưa có đơn xin việc nào. Hãy thêm một cái vào đơn xin vi
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Không có đề xuất tích hợp cho nhà cung cấp này."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11614,6 +11640,10 @@ msgstr "Gần đây"
 msgid "Recipient"
 msgstr "Người nhận"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Đề xuất"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "Ghi âm lại"
@@ -13708,10 +13738,6 @@ msgstr "Tình huống"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Tình huống, hành động, kết quả"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Tình huống, Nhiệm vụ và Hành động là bắt buộc. Để trống Kết quả và Suy ngẫm cho đến khi bạn có thể đưa ra bằng chứng cho các phần này."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17407,6 +17433,10 @@ msgstr "mong muốn của bạn"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "nhà cung cấp của bạn"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Nhà cung cấp có thể tính phí vào tài khoản của bạn cho các yêu cầu được thực hiện bằng khóa API của bạn."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

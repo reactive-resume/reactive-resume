@@ -61,12 +61,13 @@ function Text({
 	);
 }
 
-function Dates({ entry, write, page, single }: FieldSetProps & { single?: boolean }) {
+function Dates({ entry, write, page, single, expectable }: FieldSetProps & { single?: boolean; expectable?: boolean }) {
 	return (
 		<DatesField
 			className="col-span-full"
 			dates={valuesOf(entry).dates ?? EMPTY_RESUME_DATES}
 			single={single}
+			expectable={expectable}
 			locale={page.locale}
 			format={page.dateFormat}
 			onChange={(dates) =>
@@ -350,7 +351,7 @@ export function EntryFields({
 					<Text {...props} field="area" label={<Trans>Area of study</Trans>} />
 					<Text {...props} field="grade" label={<Trans>Grade</Trans>} />
 					<Text {...props} field="location" label={<Trans>Location</Trans>} />
-					<Dates {...props} />
+					<Dates {...props} expectable />
 					<Link {...props} />
 					<Description {...props} />
 				</>

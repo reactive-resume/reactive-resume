@@ -7,6 +7,7 @@ import { View } from "react-native";
 import { AI_PROVIDER_KEY_URLS, getAIProviderSetupProblem } from "@reactive-resume/ai/defaults";
 import { providerDefaults, providerLabel, providerOptions } from "./catalog";
 import { aiSettingsError, providerTestError } from "./error";
+import { ProviderModel } from "./provider-model";
 import { useHasAIProvider } from "./provider-state";
 import { client, orpc } from "@/api/client";
 import { getServer } from "@/auth/session";
@@ -14,7 +15,6 @@ import {
 	Button,
 	ConfirmDialog,
 	IconButton,
-	ListRow,
 	SelectSheet,
 	Sheet,
 	Switch,
@@ -115,9 +115,6 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 		),
 	);
 	const [urlTouched, setUrlTouched] = useState(false);
-	const [modelFocused, setModelFocused] = useState(false);
-	const defaultModel = providerDefaults(provider).model;
-	const models = defaultModel ? [{ id: defaultModel, name: defaultModel }] : [];
 	const invalidate = () => queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
 	const set = (patch: Partial<typeof fields>) => setFields((previous) => ({ ...previous, ...patch }));
 	const baseline = saved ?? current;
@@ -311,30 +308,7 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 			) : (
 				<Text color="ink3">{t`Get an API key from your endpoint operator.`}</Text>
 			)}
-			<TextField
-				label={t`Model`}
-				value={fields.model}
-				onChangeText={(model) => set({ model })}
-				autoCapitalize="none"
-				autoCorrect={false}
-				editable={!pending}
-				onFocus={() => setModelFocused(true)}
-				onBlur={() => setModelFocused(false)}
-				helper={t`Built-in suggestion. You can enter any model ID supported by your endpoint.`}
-			/>
-			{modelFocused &&
-				models
-					.filter((model) => model.id.toLowerCase().includes(fields.model.toLowerCase()))
-					.slice(0, 6)
-					.map((model) => (
-						<ListRow
-							key={model.id}
-							title={model.id}
-							subtitle={model.name}
-							onPress={() => set({ model: model.id })}
-							disabled={pending}
-						/>
-					))}
+			<ProviderModel provider={provider} value={fields.model} onChange={(model) => set({ model })} disabled={pending} />
 			{compatible && urlField}
 			{!compatible && (
 				<Button

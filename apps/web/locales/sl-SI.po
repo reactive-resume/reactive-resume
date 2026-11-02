@@ -85,10 +85,6 @@ msgstr "(brez glave)"
 msgid "(optional)"
 msgstr "(neobvezno)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(obvezno)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2098,6 +2094,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "Vsi modeli"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Vsi vaši dokumenti, prijave za zaposlitev, ključi API in javne povezave bodo trajno izbrisani. Tega dejanja ni mogoče razveljaviti."
@@ -2982,10 +2982,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Vgrajen bralnik"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Bolgarščina"
@@ -3467,6 +3463,10 @@ msgstr "Izberite barvo"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Izberi model"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5136,6 +5136,7 @@ msgid "Deep breath."
 msgstr "Globoko vdihnite."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Privzeto"
@@ -6107,6 +6108,10 @@ msgstr "Vnesite ključ API za tega ponudnika."
 msgid "Enter an http:// or https:// base URL."
 msgstr "Vnesite osnovni URL, ki se začne z http:// ali https://."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Vnesite poljuben ID modela, ki ga podpira vaša končna točka."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Za dostop do računa vnesite eno od shranjenih rezervnih kod."
@@ -6249,6 +6254,11 @@ msgstr "Izmenjujte mnenja o življenjepisih, postavljajte vprašanja in skupaj s
 msgid "Exit focus mode"
 msgstr "Izhod iz načina ostrenja"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6382,6 +6392,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Hiter in cenejši privzeti model za vsakodnevno delo."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6902,6 +6916,10 @@ msgstr "Vsaki vlogi in kvalifikaciji navedite časovno obdobje."
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Preden lahko shranite, zgodbi dajte naslov."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Zgodbi dajte naslov, nato izpolnite dele »Situacija«, »Naloga« in »Dejanje«. Dela »Rezultat« in »Refleksija« pustite prazna, dokler ju ne morete podpreti z dokazi."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8932,7 +8950,7 @@ msgstr "Mešano"
 msgid "mixed format"
 msgstr "mešani format"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -8951,6 +8969,10 @@ msgstr "Mono"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Zmogljivejši"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9414,6 +9436,10 @@ msgstr "Prijav za delo še ni. Najprej jo dodajte v Prijavah."
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Za tega ponudnika ni vgrajenih predlogov."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11614,6 +11640,10 @@ msgstr "Nedavno"
 msgid "Recipient"
 msgstr "Prejemnik"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Priporočeni"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "Posnemi znova"
@@ -13708,10 +13738,6 @@ msgstr "Situacija"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Situacija, dejanje, rezultat"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Deli »Situacija«, »Naloga« in »Dejanje« so obvezni. Dela »Rezultat« in »Refleksija« pustite prazna, dokler ju ne morete podpreti z dokazi."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17407,6 +17433,10 @@ msgstr "vaše želje"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "vašega ponudnika"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Ponudnik lahko vašemu računu zaračuna zahteve, poslane z vašim ključem API."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

@@ -1639,6 +1639,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/ai/provider-model.tsx
+msgid "All models"
+msgstr "Все модели"
+
 #: src/features/check/job-match.tsx
 msgid "All posting terms are covered."
 msgstr "Все ключевые слова вакансии охвачены."
@@ -2359,10 +2363,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Встроенный ридер"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/features/settings/locale-names.ts
 msgid "Bulgarian"
 msgstr "Болгарский"
@@ -2767,6 +2767,10 @@ msgstr "Выбрать дату"
 #: src/features/settings/profile.tsx
 msgid "Choose from library"
 msgstr "Выбрать из библиотеки"
+
+#: src/features/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Выбрать модель"
 
 #: src/features/applications-board/board-screen.tsx
 msgid "Choose outcome"
@@ -4069,6 +4073,7 @@ msgid "Decrease {label}"
 msgstr "Уменьшить {label}"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/ai/provider-model.tsx
 #: src/features/write/pickers.tsx
 msgid "Default"
 msgstr "По умолчанию"
@@ -4852,6 +4857,10 @@ msgstr "Введите ключ API для этого провайдера."
 msgid "Enter an http:// or https:// base URL."
 msgstr "Введите базовый URL, начинающийся с http:// или https://."
 
+#: src/features/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Введите любой ID модели, поддерживаемой вашей конечной точкой."
+
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr "Введите условия самостоятельно. Запрос к ИИ отправляться не будет. Неизвестные суммы оставьте пустыми."
@@ -4945,6 +4954,10 @@ msgstr ""
 msgid "Exact form URL"
 msgstr ""
 
+#: src/features/write/date-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
 msgid "Experience"
@@ -5019,6 +5032,10 @@ msgstr ""
 #: src/features/settings/application-profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Быстрая и более дешёвая модель по умолчанию для повседневной работы."
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
@@ -5370,6 +5387,10 @@ msgstr "Указывайте диапазон дат для каждой дол�
 #: src/features/career/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Чтобы сохранить, дайте истории название."
+
+#: src/features/career/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Дайте истории название, затем заполните Ситуацию, Задачу и Действие. Оставьте разделы «Результат» и «Рефлексия» пустыми, пока не сможете их обосновать."
 
 #: src/features/settings/application-profile.tsx
 msgid "Given name"
@@ -6953,7 +6974,7 @@ msgstr "Лицензия MIT"
 msgid "Mixed"
 msgstr "Неоднозначно"
 
-#: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-model.tsx
 #: src/features/assistant/provider.tsx
 msgid "Model"
 msgstr "Модель"
@@ -6969,6 +6990,10 @@ msgstr ""
 #: src/features/write/pickers.tsx
 msgid "More"
 msgstr "Ещё"
+
+#: src/features/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Более мощная"
 
 #: src/features/applications/add-sheet.tsx
 msgid "More details"
@@ -7381,6 +7406,10 @@ msgstr ""
 msgid "No applications yet. Add one in Applications first."
 msgstr "Заявок пока нет. Сначала добавьте заявку в разделе «Заявки»."
 
+#: src/features/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Для этого провайдера нет встроенных рекомендаций."
+
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
 msgstr "Маркированные списки не найдены."
@@ -7499,6 +7528,7 @@ msgstr "Нет связанного заявки"
 msgid "No location"
 msgstr "Нет местоположения"
 
+#: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
 msgid "No matches"
@@ -9128,6 +9158,10 @@ msgstr "По памяти"
 msgid "Recipient"
 msgstr "Получатель"
 
+#: src/features/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Рекомендуемые"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Record again"
 msgstr "Записать снова"
@@ -10279,6 +10313,7 @@ msgstr "Предварительное собеседование"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
+#: src/features/ai/provider-model.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/design/picker.tsx
 #: src/ui/fields.tsx
@@ -10984,10 +11019,6 @@ msgstr "Ситуация"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Ситуация, действие, результат"
-
-#: src/features/career/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Ситуация, Задача и Действие обязательны. Оставьте разделы «Результат» и «Рефлексия» пустыми, пока не сможете их обосновать."
 
 #: src/features/career/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -13857,6 +13888,10 @@ msgstr "Ваш профиль, документы, заявки и данные 
 #: src/features/assistant/provider.tsx
 msgid "your provider"
 msgstr "ваш провайдер"
+
+#: src/features/ai/provider-list.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Провайдер может списывать средства с вашего аккаунта за запросы, выполненные с вашим API-ключом."
 
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"

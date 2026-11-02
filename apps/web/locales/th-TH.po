@@ -85,10 +85,6 @@ msgstr "(ไม่มีส่วนหัว)"
 msgid "(optional)"
 msgstr "(ไม่บังคับ)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(จำเป็น)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2098,6 +2094,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "โมเดลทั้งหมด"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "เอกสาร ใบสมัครงาน คีย์ API และลิงค์สาธารณะทั้งหมดของคุณจะถูกลบอย่างถาวร การดำเนินการนี้ไม่สามารถยกเลิกได้"
@@ -2982,10 +2982,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "เครื่องอ่านในตัว"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "บัลแกเรีย"
@@ -3467,6 +3463,10 @@ msgstr "เลือกสี"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "เลือกโมเดล"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5136,6 +5136,7 @@ msgid "Deep breath."
 msgstr "หายใจลึกๆ"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "ค่าเริ่มต้น"
@@ -6107,6 +6108,10 @@ msgstr "ป้อนคีย์ API สำหรับผู้ให้บร�
 msgid "Enter an http:// or https:// base URL."
 msgstr "ป้อน URL หลักที่ขึ้นต้นด้วย http:// หรือ https://"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "ป้อน ID ของโมเดลใดก็ได้ที่เอนด์พอยต์ของคุณรองรับ"
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "กรอกรหัสสำรองที่คุณบันทึกไว้เพื่อเข้าถึงบัญชีของคุณ"
@@ -6249,6 +6254,11 @@ msgstr "แลกเปลี่ยนความคิดเห็นเกี
 msgid "Exit focus mode"
 msgstr "ออกจากโหมดโฟกัส"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6382,6 +6392,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "โมเดลเริ่มต้นที่รวดเร็วและประหยัดกว่าสำหรับงานประจำวัน"
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6902,6 +6916,10 @@ msgstr "ใส่ช่วงวันที่ให้ทุกตำแหน
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "ตั้งชื่อเรื่องราวก่อนจึงจะบันทึกได้"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "ตั้งชื่อเรื่อง แล้วกรอกสถานการณ์ หน้าที่ และการกระทำ เว้นส่วนผลลัพธ์และการสะท้อนคิดไว้จนกว่าคุณจะมีข้อมูลสนับสนุน"
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8932,7 +8950,7 @@ msgstr "ปนกัน"
 msgid "mixed format"
 msgstr "รูปแบบผสม"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "โมเดล"
 
@@ -8951,6 +8969,10 @@ msgstr "โมโน"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "มีความสามารถมากกว่า"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9414,6 +9436,10 @@ msgstr "ยังไม่มีการสมัครงาน. เพิ่�
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "ไม่มีคำแนะนำในตัวสำหรับผู้ให้บริการนี้"
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11614,6 +11640,10 @@ msgstr "ล่าสุด"
 msgid "Recipient"
 msgstr "ผู้รับ"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "แนะนำ"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "บันทึกเสียงอีกครั้ง"
@@ -13708,10 +13738,6 @@ msgstr "สถานการณ์"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "สถานการณ์ การกระทำ ผลลัพธ์"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "จำเป็นต้องกรอกสถานการณ์ หน้าที่ และการกระทำ เว้นส่วนผลลัพธ์และการสะท้อนคิดไว้จนกว่าคุณจะมีข้อมูลสนับสนุน"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17407,6 +17433,10 @@ msgstr "การตั้งค่าที่ต้องการของค
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "ผู้ให้บริการของคุณ"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "ผู้ให้บริการอาจเรียกเก็บเงินจากบัญชีของคุณสำหรับคำขอที่ส่งด้วยคีย์ API ของคุณ"
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

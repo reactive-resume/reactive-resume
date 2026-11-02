@@ -65,11 +65,35 @@ type TemplateGroupProps = {
  * Template: filter chips, then thumbnails drawn from the user's own content. Hovering or focusing one (holding
  * it, on touch) previews it on the page; leaving the cards or pressing Esc restores the page; a click applies it.
  */
+// Where the pointer was at the last scroll. A pointer "entering" a card from that same spot is the card sliding under a
+// still pointer; one that has moved since entered it on purpose, whenever the scroll was.
+let pointer: { x: number; y: number } | null = null;
+let pointerAtScroll: { x: number; y: number } | null = null;
+const stillSinceScroll = (event: PointerEvent) =>
+	pointerAtScroll !== null && event.screenX === pointerAtScroll.x && event.screenY === pointerAtScroll.y;
+
 export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 	const data = useResumeData();
 	const [filter, setFilter] = useState<Filter>("all");
 	// Leaving Design (by shortcut, say) never leaves a preview on the page.
 	useEffect(() => () => useEditorStore.setState({ previewTemplate: null }), []);
+	useEffect(() => {
+		const onScroll = () => {
+			pointerAtScroll = pointer;
+		};
+		const onMove = (event: globalThis.PointerEvent) => {
+			pointer = { x: event.screenX, y: event.screenY };
+			// Moved since the scroll: later entries are the pointer's own, even back at the same spot.
+			if (pointerAtScroll && (pointerAtScroll.x !== pointer.x || pointerAtScroll.y !== pointer.y))
+				pointerAtScroll = null;
+		};
+		document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+		document.addEventListener("pointermove", onMove, { capture: true, passive: true });
+		return () => {
+			document.removeEventListener("scroll", onScroll, { capture: true });
+			document.removeEventListener("pointermove", onMove, { capture: true });
+		};
+	}, []);
 	if (!data) return null;
 
 	const current = data.metadata.template;
@@ -151,6 +175,14 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 	const { data: thumbnail } = useTemplateThumbnail(id, data, isInView);
 	const metadata = templates[id];
 	const hold = useRef<{ timer?: number; previewing: boolean }>({ previewing: false });
+	// Where the pointer was when a scroll slid the card under it: that previews only once the pointer moves. A
+	// pointer moved onto the card previews at once, even if it then stops.
+	const entered = useRef<{ x: number; y: number } | null>(null);
+	// The picker opens on the template in use, not at the top of the list.
+	const initiallySelected = useRef(selected);
+	useEffect(() => {
+		if (initiallySelected.current) ref.current?.scrollIntoView({ block: "center", inline: "center" });
+	}, []);
 
 	const endHold = () => {
 		window.clearTimeout(hold.current.timer);
@@ -163,7 +195,21 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 			type="button"
 			aria-pressed={selected}
 			onPointerEnter={(event: PointerEvent) => {
-				if (event.pointerType !== "touch") onPreview();
+				if (event.pointerType === "touch") return;
+				if (stillSinceScroll(event)) {
+					entered.current = { x: event.screenX, y: event.screenY };
+					return;
+				}
+				// Entered on purpose: nothing is left waiting to restore a preview Esc dismisses later.
+				entered.current = null;
+				onPreview();
+			}}
+			onPointerMove={(event: PointerEvent) => {
+				const from = entered.current;
+				if (event.pointerType === "touch" || !from) return;
+				if (event.screenX === from.x && event.screenY === from.y) return;
+				entered.current = null;
+				onPreview();
 			}}
 			onPointerDown={(event: PointerEvent) => {
 				if (event.pointerType !== "touch") return;

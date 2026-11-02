@@ -10,6 +10,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { providerDefaults, providerLabel } from "./catalog";
+import { ProviderModel } from "./provider-model";
 
 export type ProviderFields = AIProviderSetupFields & { label: string };
 
@@ -136,26 +137,7 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 					</p>
 				)}
 			</div>
-			<div className="grid gap-1.5">
-				<Label htmlFor={`${id}-model`}>
-					<Trans>Model</Trans>
-				</Label>
-				<Input
-					id={`${id}-model`}
-					list={`${id}-models`}
-					aria-describedby={`${id}-model-hint`}
-					value={value.model}
-					placeholder={defaults.model || "gpt-4.1"}
-					onChange={(event) => set({ model: event.target.value })}
-					{...secretInputProps}
-				/>
-				<datalist id={`${id}-models`}>
-					{defaults.model && <option value={defaults.model}>{defaults.model}</option>}
-				</datalist>
-				<p id={`${id}-model-hint`} className="text-xs leading-5 text-ink-3">
-					<Trans>Built-in suggestion. You can enter any model ID supported by your endpoint.</Trans>
-				</p>
-			</div>
+			<ProviderModel id={`${id}-model`} provider={provider} value={value.model} onChange={(model) => set({ model })} />
 			{compatible ? (
 				<>
 					{urlField}

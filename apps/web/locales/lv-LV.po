@@ -85,10 +85,6 @@ msgstr "(nav galvenes)"
 msgid "(optional)"
 msgstr "(neobligāti)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(obligāti)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2098,6 +2094,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "Visi modeļi"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Visi jūsu dokumenti, darba pieteikumi, API atslēgas un publiskās saites tiks neatgriezeniski dzēsti. Šo darbību nevar atsaukt."
@@ -2982,10 +2982,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Iebūvēts lasītājs"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Bulgāru"
@@ -3467,6 +3463,10 @@ msgstr "Izvēlieties krāsu"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Izvēlēties modeli"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5136,6 +5136,7 @@ msgid "Deep breath."
 msgstr "Dziļi ieelpojiet."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Noklusējums"
@@ -6107,6 +6108,10 @@ msgstr "Ievadiet šī pakalpojumu sniedzēja API atslēgu."
 msgid "Enter an http:// or https:// base URL."
 msgstr "Ievadiet pamata URL, kas sākas ar http:// vai https://."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Ievadiet jebkuru modeļa ID, ko atbalsta jūsu galapunkts."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Ievadiet vienu no saglabātajiem rezerves kodiem, lai piekļūtu savam kontam."
@@ -6249,6 +6254,11 @@ msgstr "Apmainieties ar atsauksmēm par CV, uzdodiet jautājumus un palīdziet k
 msgid "Exit focus mode"
 msgstr "Iziet no fokusa režīma"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6382,6 +6392,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Ātrs un lētāks noklusējuma modelis ikdienas darbam."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6902,6 +6916,10 @@ msgstr "Norādiet katram amatam un kvalifikācijai datumu diapazonu."
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Lai saglabātu, piešķiriet stāstam nosaukumu."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Piešķiriet stāstam nosaukumu, pēc tam aizpildiet sadaļas Situācija, Uzdevums un Darbība. Atstājiet sadaļas Rezultāts un Refleksija tukšas, līdz varat tās pamatot."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8932,7 +8950,7 @@ msgstr "Dažādi"
 msgid "mixed format"
 msgstr "jaukts formāts"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "Modelis"
 
@@ -8951,6 +8969,10 @@ msgstr "Mono"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Jaudīgāks"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9414,6 +9436,10 @@ msgstr "Vēl nav neviena darba pieteikuma. Vispirms pievienojiet vienu darba pie
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Šim pakalpojumu sniedzējam nav iebūvētu ieteikumu."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11614,6 +11640,10 @@ msgstr "Nesenie"
 msgid "Recipient"
 msgstr "Saņēmējs"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Ieteiktie"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "Ierakstīt vēlreiz"
@@ -13708,10 +13738,6 @@ msgstr "Situācija"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Situācija, darbība, rezultāts"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Situācija, Uzdevums un Darbība ir obligātas sadaļas. Atstājiet sadaļas Rezultāts un Refleksija tukšas, līdz varat tās pamatot."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17407,6 +17433,10 @@ msgstr "jūsu preferences"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "jūsu pakalpojumu sniedzējs"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Jūsu pakalpojumu sniedzējs var iekasēt maksu no jūsu konta par pieprasījumiem, kas veikti ar jūsu API atslēgu."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

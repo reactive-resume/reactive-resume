@@ -85,10 +85,6 @@ msgstr "(без заголовка)"
 msgid "(optional)"
 msgstr "(необов’язково)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(обов’язково)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2098,6 +2094,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "Усі моделі"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Усі ваші документи, заявки на роботу, ключі API та публічні посилання буде видалено назавжди. Цю дію неможливо скасувати."
@@ -2982,10 +2982,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Вбудований рідер"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Болгарська"
@@ -3467,6 +3463,10 @@ msgstr "Виберіть колір"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Вибрати модель"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5136,6 +5136,7 @@ msgid "Deep breath."
 msgstr "Глибокий вдих."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Типовий"
@@ -6107,6 +6108,10 @@ msgstr "Введіть ключ API для цього постачальника
 msgid "Enter an http:// or https:// base URL."
 msgstr "Введіть базову URL-адресу, що починається з http:// або https://."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Введіть будь-який ID моделі, яку підтримує ваша кінцева точка."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Введіть один зі збережених резервних кодів, щоб отримати доступ до облікового запису."
@@ -6249,6 +6254,11 @@ msgstr "Обмінюйтеся відгуками про резюме, став�
 msgid "Exit focus mode"
 msgstr "Вийти з режиму фокусування"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6382,6 +6392,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Швидка й дешевша типова модель для повсякденної роботи."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6902,6 +6916,10 @@ msgstr "Вкажіть діапазон дат для кожної посади 
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Щоб зберегти, дайте розповіді назву."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Дайте історії назву, а потім заповніть Ситуацію, Завдання та Дію. Залиште поля Результат і Рефлексія порожніми, доки не зможете їх обґрунтувати."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8932,7 +8950,7 @@ msgstr "Неоднозначно"
 msgid "mixed format"
 msgstr "змішаний формат"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "Модель"
 
@@ -8951,6 +8969,10 @@ msgstr "Мононуклеоз"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Потужніша"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9414,6 +9436,10 @@ msgstr "Заяв на роботу ще немає. Спочатку додай�
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Для цього постачальника немає вбудованих рекомендацій."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11614,6 +11640,10 @@ msgstr "Нещодавні"
 msgid "Recipient"
 msgstr "Одержувач"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Рекомендовані"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "Записати знову"
@@ -13708,10 +13738,6 @@ msgstr "Ситуація"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Ситуація, дія, результат"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Ситуація, Завдання та Дія є обов’язковими. Залиште поля Результат і Рефлексія порожніми, доки не зможете їх обґрунтувати."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17407,6 +17433,10 @@ msgstr "ваші побажання"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "вашого провайдера"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Провайдер може стягувати кошти з вашого облікового запису за запити, виконані з вашим API-ключем."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

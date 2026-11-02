@@ -85,10 +85,6 @@ msgstr "(sem cabeçalho)"
 msgid "(optional)"
 msgstr "(opcional)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(obrigatório)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2098,6 +2094,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "Todos os modelos"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Todos os seus documentos, candidaturas, chaves API e links públicos serão excluídos permanentemente. Isso não pode ser desfeito."
@@ -2982,10 +2982,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Leitor integrado"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Búlgaro"
@@ -3467,6 +3463,10 @@ msgstr "Escolha a cor"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Escolher modelo"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5136,6 +5136,7 @@ msgid "Deep breath."
 msgstr "Respire fundo."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Padrão"
@@ -6107,6 +6108,10 @@ msgstr "Insira uma chave API para este provedor."
 msgid "Enter an http:// or https:// base URL."
 msgstr "Insira uma URL base que comece com http:// ou https://."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Digite qualquer ID de modelo compatível com seu endpoint."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Digite um dos seus códigos de backup salvos para acessar sua conta."
@@ -6249,6 +6254,11 @@ msgstr "Troque feedback sobre currículos, tire dúvidas e ajude a moldar o Reac
 msgid "Exit focus mode"
 msgstr "Sair do modo de foco"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6382,6 +6392,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Modelo padrão rápido e mais econômico para o trabalho diário."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6902,6 +6916,10 @@ msgstr "Dê a cada cargo e qualificação um período de datas."
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Dê um título à história antes de salvar."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Dê um título à história e depois preencha Situação, Tarefa e Ação. Deixe Resultado e Reflexão em branco até poder fundamentá-los."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8932,7 +8950,7 @@ msgstr "Misto"
 msgid "mixed format"
 msgstr "formato misto"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "Modelo"
 
@@ -8951,6 +8969,10 @@ msgstr "Mono"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Mais capaz"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9414,6 +9436,10 @@ msgstr "Ainda não há candidaturas. Adicione uma primeiro em Candidaturas."
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Não há sugestões integradas para este provedor."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11614,6 +11640,10 @@ msgstr "Recentes"
 msgid "Recipient"
 msgstr "Destinatário"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Recomendados"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "Gravar de novo"
@@ -13708,10 +13738,6 @@ msgstr "Situação"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Situação, ação, resultado"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Situação, Tarefa e Ação são obrigatórias. Deixe Resultado e Reflexão em branco até poder fundamentá-los."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17407,6 +17433,10 @@ msgstr "suas preferências"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "seu provedor"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Seu provedor pode cobrar da sua conta pelas solicitações feitas com sua chave de API."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

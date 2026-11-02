@@ -85,10 +85,6 @@ msgstr "(sarlavha yo'q)"
 msgid "(optional)"
 msgstr "(ixtiyoriy)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(majburiy)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2098,6 +2094,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "Barcha modellar"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Barcha hujjatlaringiz, ishga arizalaringiz, API kalitlaringiz va umumiy havolalaringiz butunlay oʻchirib tashlanadi. Bu amalni bekor qilib boʻlmaydi."
@@ -2982,10 +2982,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "O'rnatilgan o'quvchi"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Bolgar tili"
@@ -3467,6 +3463,10 @@ msgstr "Rangni tanlang"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Model tanlang"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5136,6 +5136,7 @@ msgid "Deep breath."
 msgstr "Chuqur nafas oling."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Standart"
@@ -6107,6 +6108,10 @@ msgstr "Bu provayder uchun API kalitini kiriting."
 msgid "Enter an http:// or https:// base URL."
 msgstr "http:// yoki https:// bilan boshlanadigan asosiy URL kiriting."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Yakuniy nuqtangiz qo‘llab-quvvatlaydigan istalgan model ID sini kiriting."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Hisobingizga kirish uchun saqlagan zaxira kodlaringizdan birini kiriting."
@@ -6249,6 +6254,11 @@ msgstr "Rezyumelar bo‘yicha fikr almashing, savollar bering va hamjamiyat bila
 msgid "Exit focus mode"
 msgstr "Fokus rejimidan chiqish"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6382,6 +6392,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Kundalik ishlar uchun tezkor va arzonroq standart model."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6902,6 +6916,10 @@ msgstr "Har bir lavozim va malakaga sana oraligʻini bering."
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Saqlash uchun hikoyaga sarlavha bering."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Hikoyaga sarlavha bering, so‘ng Vaziyat, Vazifa va Harakat qismlarini to‘ldiring. Natija va Mulohaza qismlarini dalillar bilan asoslay olmaguningizcha bo‘sh qoldiring."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8932,7 +8950,7 @@ msgstr "Aralash"
 msgid "mixed format"
 msgstr "aralash format"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -8951,6 +8969,10 @@ msgstr "Mono"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Imkoniyati kengroq"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9414,6 +9436,10 @@ msgstr "Hozircha ishga arizalar yoʻq. Birinchi bo'lib ish arizalariga bittasini
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Bu provayder uchun o‘rnatilgan tavsiyalar yo‘q."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11614,6 +11640,10 @@ msgstr "So'nggi"
 msgid "Recipient"
 msgstr "Qabul qiluvchi"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Tavsiya etilganlar"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "Qayta yozib olish"
@@ -13708,10 +13738,6 @@ msgstr "Vaziyat"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Vaziyat, harakat, natija"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Vaziyat, Vazifa va Harakat qismlari majburiy. Natija va Mulohaza qismlarini dalillar bilan asoslay olmaguningizcha bo‘sh qoldiring."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17407,6 +17433,10 @@ msgstr "afzalliklaringiz"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "provayderingiz"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Provayderingiz API kalitingiz bilan yuborilgan so‘rovlar uchun hisobingizdan haq olishi mumkin."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"
