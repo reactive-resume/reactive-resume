@@ -553,7 +553,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 					rows={1}
 					value={draft.title}
 					maxLength={200}
-					placeholder={t`Name the story`}
+					placeholder={t`Story title`}
 					aria-label={t`Title`}
 					aria-required
 					aria-describedby={tried && missingTitle ? `${errorId}-title` : undefined}
@@ -581,7 +581,8 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 
 			<p className="text-sm text-ink-3">
 				<Trans>
-					Situation, Task and Action are required. Leave Result and Reflection blank until you can support them.
+					Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you
+					can support them.
 				</Trans>
 			</p>
 			<div className="grid">
@@ -596,7 +597,8 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 							</span>
 							<span className="grid min-w-0 gap-1.5">
 								<span id={`${errorId}-label-${part.key}`} className="text-[13px] font-semibold text-ink-2">
-									{part.label} {required ? t`(required)` : t`(optional)`}
+									{/* One rule, said once above: only the parts that may stay blank are marked. */}
+									{required ? part.label : t`${part.label} (optional)`}
 								</span>
 								<Textarea
 									rows={2}
