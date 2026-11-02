@@ -691,13 +691,12 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 					</p>
 				)}
 				{/* The coach and Practice send only backed stories: say so before saving one without a fact. */}
-				{shared.length > 0 &&
-					!draft.factIds.some((id) => shared.some((fact) => fact.id === id && fact.status === "active")) && (
-						<p role="status" className="flex items-start gap-1.5 text-[13px] text-warn-text">
-							<Icon name="warning" size={16} className="mt-px shrink-0" />
-							<Trans>Without a fact, the coach and practice can't use this story.</Trans>
-						</p>
-					)}
+				{!draft.factIds.some((id) => shared.some((fact) => fact.id === id && fact.status === "active")) && (
+					<p role="status" className="flex items-start gap-1.5 text-[13px] text-warn-text">
+						<Icon name="warning" size={16} className="mt-px shrink-0" />
+						<Trans>Without a fact, the coach and practice can't use this story.</Trans>
+					</p>
+				)}
 				{unavailable.length > 0 && (
 					<p role="status" className="flex items-start gap-1.5 text-[13px] text-warn-text">
 						<Icon name="warning" size={16} className="mt-px shrink-0" />
