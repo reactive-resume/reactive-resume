@@ -19,6 +19,16 @@ it("proposes visible career excerpts, retaining exact evidence without contact, 
 			keywords: ["Accessibility"],
 			hidden: false,
 		},
+		{
+			icon: "",
+			iconColor: "",
+			id: "hidden-skill",
+			name: "Confidential",
+			proficiency: "",
+			level: 0,
+			keywords: ["Private"],
+			hidden: true,
+		},
 	];
 	data.sections.experience.hidden = true;
 	data.sections.experience.items = sampleResumeData.sections.experience.items;

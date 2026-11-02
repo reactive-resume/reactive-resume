@@ -50,30 +50,34 @@ describe("manual offer input", () => {
 	});
 });
 
-it.each(["text", "quote"] as const)("rejects blank %s in both the runtime and published JSON Schema", (field) => {
-	const published = z.toJSONSchema(resumeFactProposalSchema);
-	const property = published.properties?.[field];
-	const pattern = typeof property === "object" && property !== null ? property.pattern : undefined;
-	if (typeof pattern !== "string") throw new Error(`Missing published non-blank rule for ${field}`);
-	const consumer = new RegExp(pattern);
-	for (const value of [" ", "\n\t", "\u00a0", "\u3000"]) {
-		expect(consumer.test(value)).toBe(false);
-		expect(
-			resumeFactProposalSchema.safeParse({
-				text: "Valid fact",
-				category: "experience",
-				quote: "Valid quote",
-				[field]: value,
-			}).success,
-		).toBe(false);
-	}
-	expect(consumer.test("  Valid excerpt  ")).toBe(true);
-	expect(
-		resumeFactProposalSchema.parse({
-			text: "Valid fact",
-			category: "experience",
-			quote: "Valid quote",
-			[field]: "  Valid excerpt  ",
-		})[field],
-	).toBe("Valid excerpt");
-});
+it.each(["text", "quote"] as const)(
+	"keeps runtime and published %s validation aligned before normalization",
+	(field) => {
+		const consumer = z.fromJSONSchema(z.toJSONSchema(resumeFactProposalSchema));
+		for (const [value, valid] of [
+			[" ", false],
+			["\n\t", false],
+			["\u00a0", false],
+			["\u3000", false],
+			["  Valid excerpt  ", true],
+			["x".repeat(2000), true],
+			[" " + "x".repeat(1998) + " ", true],
+			[" \n" + "x".repeat(2000) + "\t\u3000", false],
+			["x".repeat(2001), false],
+			["  " + "x".repeat(2001) + "  ", false],
+			["😀".repeat(2000), true],
+			[" \n" + "😀".repeat(2000) + "\t", false],
+			["😀".repeat(2001), false],
+			["  First line\nSecond line  ", true],
+		] as const) {
+			const input = { text: "Valid fact", category: "experience", quote: "Valid quote", [field]: value };
+			expect(
+				consumer.safeParse(input).success,
+				"published: " + JSON.stringify(value.slice(0, 30)) + " (length " + Array.from(value).length + ")",
+			).toBe(valid);
+			const parsed = resumeFactProposalSchema.safeParse(input);
+			expect(parsed.success, "runtime: " + JSON.stringify(value)).toBe(valid);
+			if (parsed.success) expect(parsed.data[field]).toBe(value.trim());
+		}
+	},
+);

@@ -62,15 +62,16 @@ export const careerFactInputSchema = careerScopeSchema.extend({
 	source: careerSourceSchema,
 });
 
+// Bound submitted input before normalization so runtime and published lengths agree.
+const resumeFactTextSchema = z.string().max(2000).trim().min(1).regex(/\S/);
+
 export const resumeFactProposalSchema = careerFactInputSchema.pick({ text: true, category: true }).extend({
-	text: careerFactInputSchema.shape.text.regex(/\S/).describe("Non-blank fact text. Trimmed before length validation."),
-	quote: z
-		.string()
-		.trim()
-		.min(1)
-		.max(2000)
-		.regex(/\S/)
-		.describe("Non-blank source quotation. Trimmed before length validation."),
+	text: resumeFactTextSchema.describe(
+		"Non-blank fact text. At most 2,000 characters including surrounding whitespace; trimmed before saving.",
+	),
+	quote: resumeFactTextSchema.describe(
+		"Non-blank source quotation. At most 2,000 characters including surrounding whitespace; trimmed before saving.",
+	),
 });
 export const resumeFactsReviewSchema = z.object({
 	resumeId: z.string().min(1),
