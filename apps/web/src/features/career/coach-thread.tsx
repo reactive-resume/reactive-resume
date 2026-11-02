@@ -41,7 +41,7 @@ import { client, orpc } from "@/libs/orpc/client";
 const loadChatView = () => import("./coach-chat");
 const ChatView = lazy(() => loadChatView().then((module) => ({ default: module.ChatView })));
 
-// ---- What a message shared: recorded on the user message when it's sent, shown as "Used" chips under the answer. ----
+// ---- What a message shared: recorded on the user message when it's sent, shown as "Sent" chips under the answer. ----
 
 export const usedSchema = z.object({
 	context: z.object({
@@ -161,7 +161,8 @@ export function deleteConversation(queryClient: QueryClient, id: string, hide: (
 
 // ---- The thread ----
 
-export type ChatHistory = { earlier: number; withheld: number };
+/** `attached` counts the files in the composer, which go with the message. */
+export type ChatHistory = { earlier: number; withheld: number; attached: number };
 
 export type Prompt = { text: string; attachments: ChatAttachment[]; used: Used };
 
@@ -247,7 +248,7 @@ export function CoachThread(props: CoachThreadProps) {
 				</div>
 				<Composer
 					{...props}
-					privacy={props.privacy({ earlier: 0, withheld: 0 })}
+					privacy={(attached) => props.privacy({ earlier: 0, withheld: 0, attached })}
 					streaming={starting}
 					disabled={props.disabled ?? false}
 					ensureThread={ensureThread}
@@ -338,7 +339,8 @@ function ThreadSession(props: SessionProps) {
 type Upload = ChatAttachment & { size: number };
 
 type ComposerProps = Pick<CoachThreadProps, "placeholder" | "chips" | "notice" | "draftKey" | "variant"> & {
-	privacy: ReactNode;
+	/** The privacy line, given how many files are attached. */
+	privacy: (attached: number) => ReactNode;
 	streaming: boolean;
 	disabled: boolean;
 	ensureThread: () => Promise<string>;
@@ -411,6 +413,8 @@ export function Composer(props: ComposerProps) {
 					</label>
 					<textarea
 						id={id}
+						// What people write can be in any language: its own text sets the direction.
+						dir="auto"
 						value={text}
 						disabled={props.disabled}
 						placeholder={props.placeholder}
@@ -487,7 +491,7 @@ export function Composer(props: ComposerProps) {
 						</Tooltip>
 					</div>
 				</div>
-				{props.privacy}
+				{props.privacy(attachments.length)}
 			</div>
 		</div>
 	);

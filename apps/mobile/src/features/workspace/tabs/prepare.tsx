@@ -14,6 +14,7 @@ import { firstFutureLead, PREPARE_LEADS } from "@reactive-resume/schema/career-s
 import { formatList } from "@reactive-resume/utils/locale";
 import {
 	latest,
+	useFacts,
 	useGenerate,
 	useSavedItems,
 	useSchedules,
@@ -29,6 +30,7 @@ import { orpc } from "@/api/client";
 import { useFlags } from "@/api/flags";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { interviewTypeLabel, useNow, useUserTime } from "@/features/application-detail/hooks";
+import { StoryEditor } from "@/features/career/stories";
 import { routes } from "@/routes";
 import { Banner, Button, EmptyState, ListRow, Sheet, Skeleton, Switch, Text, showToast, useTheme } from "@/ui";
 
@@ -121,6 +123,8 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 	const ticks = useTicks(application.id, `plan:${briefing.id}`);
 	const workspace = useWorkspace(application.id);
 	const [reading, setReading] = useState(false);
+	const [drafting, setDrafting] = useState<{ title: string; note: string } | null>(null);
+	const facts = useFacts(application.id, drafting !== null);
 	const provider = useHasAIProvider().defaultProvider;
 	const generate = useGenerate(application.id);
 	const againLabel = useWorking(generate.isPending, workingSteps("briefing"), t`Plan again`);
@@ -136,7 +140,8 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 			case "story":
 				return { label: t`Open story`, onPress: () => router.push(routes.career("knowledge")) };
 			case "draft-story":
-				return { label: t`Draft story`, onPress: () => router.push(routes.career("knowledge")) };
+				// The new story starts from this step: its title, and its detail as a note above the parts.
+				return { label: t`Draft story`, onPress: () => setDrafting({ title: row.title, note: row.detail }) };
 			case "practise":
 				return { label: t`Practice`, onPress: () => go("practise", { speak: true }) };
 			case "questions":
@@ -235,6 +240,9 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 			{interview && !readOnly ? <RefreshSwitch application={application} interview={interview} /> : null}
 			<StoriesToBring application={application} briefing={briefing} />
 			<BriefingSheet briefing={briefing} open={reading} onClose={() => setReading(false)} />
+			{drafting ? (
+				<StoryEditor story={null} facts={facts.data ?? []} start={drafting} onClose={() => setDrafting(null)} />
+			) : null}
 		</View>
 	);
 }

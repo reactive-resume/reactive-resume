@@ -231,11 +231,22 @@ export function TodayScreen() {
 							!applications.isPending &&
 							notes.length === 0 &&
 							attention.length === 0 ? (
-								<EmptyState
-									variant="card"
-									title={t`You're up to date`}
-									message={t`New roles, reminders and finished briefings appear here.`}
-								/>
+								queries.notifications.data?.length === 0 && applications.data?.length === 0 ? (
+									// A new account: what Career is for, and the first things to do (web today.tsx).
+									<EmptyState
+										variant="card"
+										title={t`Your job search starts here`}
+										message={t`Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here.`}
+										action={{ label: t`Set your preferences`, onPress: () => router.push(routes.career("knowledge")) }}
+										secondaryAction={{ label: t`Ask the coach`, onPress: () => router.push(routes.career("coach")) }}
+									/>
+								) : (
+									<EmptyState
+										variant="card"
+										title={t`You're up to date`}
+										message={t`New roles, reminders and finished briefings appear here.`}
+									/>
+								)
 							) : null}
 							{notes.map((row, index) => (
 								<Animated.View key={row.id} {...listItemMotion(index, firstAppearance)} layout={listLayout}>

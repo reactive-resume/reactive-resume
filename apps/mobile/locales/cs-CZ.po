@@ -215,8 +215,10 @@ msgstr "{0, plural, one {# záznam} few {# záznamy} other {# záznamů}}"
 
 #. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
+#. placeholder {0}: sent.facts.length
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# fakt} few {# fakta} many {# faktu} other {# faktů}}"
 
@@ -263,7 +265,9 @@ msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
 #. placeholder {0}: offerIds.length
+#. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, one {# uložená nabídka} few {# uložené nabídky} many {# uložené nabídky} other {# uložených nabídek}}"
 
@@ -278,7 +282,9 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {Vybráno #} other {Vybráno #}}"
 
 #. placeholder {0}: knowledge.stories.length
+#. placeholder {0}: sent.stories.length
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {# příběh} few {# příběhy} many {# příběhu} other {# příběhů}}"
 
@@ -968,6 +974,10 @@ msgid "A fact changed. Review this story."
 msgstr "Fakt se změnil. Zkontrolujte tento příběh."
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail."
 msgstr ""
 
@@ -1348,10 +1358,6 @@ msgstr "Přidat nabídku"
 msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 msgstr "Podmínky nabídek, včetně přijatých, přidejte ručně, nebo vložte e-mail s nabídkou na kartu „Zprávy“ u žádosti a pro použití AI zvolte „Přečti to za mě“. Uzavření žádosti jako přijaté podmínky neuloží."
 
-#: src/features/career/facts.tsx
-msgid "Add one above."
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "Přidejte jeden odkaz, který ukazuje vaši práci."
@@ -1447,6 +1453,10 @@ msgstr ""
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Přidejte tyto záznamy tam, kde spravujete doménu, a pak je zkontrolujte. Než se změny projeví všude, může to trvat několik hodin."
+
+#: src/features/career/facts.tsx
+msgid "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
@@ -1941,6 +1951,7 @@ msgid "Application phone"
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "shrnutí žádostí"
 
@@ -2056,8 +2067,8 @@ msgid "Ask about your next career step…"
 msgstr "Zeptejte se na další krok v kariéře…"
 
 #: src/features/assistant/coach-screen.tsx
-msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
-msgstr "Zeptejte se na své hledání nebo přineste úspěch, který chcete lépe vysvětlit. Odpovědi vycházejí z toho, co je níže zapnuté, a uvádějí, o co se opíraly."
+msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
+msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
@@ -2080,6 +2091,7 @@ msgid "Ask the assistant to work it in"
 msgstr "Požádejte asistenta, aby to zapracoval"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/today.tsx
 #: src/features/workspace/shell.tsx
 msgid "Ask the coach"
 msgstr "Zeptat se kouče"
@@ -2321,6 +2333,10 @@ msgstr "Pod vaší minimální základní mzdou."
 #: src/features/settings/locale-names.ts
 msgid "Bengali"
 msgstr "Bengálština"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "blank"
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "Board"
@@ -4446,6 +4462,10 @@ msgstr "Dokumenty pro tuto práci"
 msgid "Documents you move here stay for 30 days."
 msgstr "Dokumenty, které sem přesunete, tu zůstanou 30 dní."
 
+#: src/features/assistant/coach-screen.tsx
+msgid "Does this offer meet what I want?"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "Doména připojena"
@@ -5392,6 +5412,11 @@ msgstr "Ze Shody"
 #: src/features/assistant/assistant-screen.tsx
 msgid "From your experience entries"
 msgstr "Z vašich zkušeností"
+
+#. placeholder {0}: start.note
+#: src/features/career/stories.tsx
+msgid "From your interview plan: {0}"
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "From your timezone"
@@ -7645,6 +7670,11 @@ msgstr "Žádná propojená žádost o zaměstnání"
 msgid "No location"
 msgstr "Bez umístění"
 
+#. placeholder {0}: facts.find((fact) => fact.id === id)?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr ""
+
 #: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
@@ -7780,6 +7810,10 @@ msgstr "Žádná pracovní zkušenost se neprojevuje"
 #: src/features/ats-checker/messages.ts
 msgid "No work-experience section was found."
 msgstr "Nebyla nalezena sekce pracovních zkušeností."
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "none"
+msgstr "žádný"
 
 #: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
@@ -10453,6 +10487,10 @@ msgstr "Uložení práce. Před provedením další změny počkejte na potvrzen
 msgid "Saving…"
 msgstr "Ukládání…"
 
+#: src/features/career/today.tsx
+msgid "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -10781,6 +10819,11 @@ msgstr "Odesláno"
 msgid "Sent to {0}"
 msgstr "Odesláno na {0}"
 
+#. placeholder {0}: sent.summary
+#: src/features/assistant/messages.tsx
+msgid "Sent: {0}"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Srbština"
@@ -10840,6 +10883,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
 msgstr "Chcete-li najít role, nastavte vyhledávání na webu v Nastavení."
+
+#: src/features/career/today.tsx
+msgid "Set your preferences"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -11730,6 +11777,11 @@ msgstr "Tagy"
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 msgstr "Značky dávají softwaru explicitní pořadí čtení. Pokud to váš nástroj umožňuje, povolte je při exportu."
+
+#. placeholder {0}: previous.data.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr ""
 
 #: src/features/documents/document-sheets.tsx
 msgid "Tags…"
@@ -13047,12 +13099,25 @@ msgstr "Až 25 MB · zkontrolováno na serveru a neuloženo"
 msgid "Update"
 msgstr ""
 
+#. placeholder {0}: previous.data.title
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update “{0}” in Knowledge?"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Update posting details"
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update story"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update this story in Knowledge?"
 msgstr ""
 
 #: src/features/applications/queries.ts
@@ -13487,6 +13552,15 @@ msgstr "Čeká na vás"
 msgid "Waiting to hear back"
 msgstr "Čekání na odpověď"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "was {was}"
+msgstr ""
+
+#. placeholder {0}: part.was.trim() || t`blank`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Was: {0}"
+msgstr ""
+
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
 #: src/features/ai/web-access.tsx
@@ -13605,6 +13679,14 @@ msgstr "Co je pro vás důležité"
 msgid "What should change?"
 msgstr "Co by se mělo změnit?"
 
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding on this offer?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding?"
+msgstr ""
+
 #: src/features/workspace/coach-starters.ts
 msgid "What should I ask them?"
 msgstr ""
@@ -13633,6 +13715,10 @@ msgstr "Co vás požádali připravit"
 msgid "What to do"
 msgstr "co dělat"
 
+#: src/features/assistant/messages.tsx
+msgid "What was sent"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "What works"
 msgstr "Co funguje"
@@ -13648,6 +13734,14 @@ msgstr "Co jsi poslal"
 #: src/features/career/preferences.tsx
 msgid "What you're looking for"
 msgstr "Co hledáte"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from these offers that I should get in writing?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from this offer that I should get in writing?"
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "What's working"
@@ -13694,6 +13788,10 @@ msgstr "Kde hledáš práci"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Where your applications went"
 msgstr "Kam se vaše žádosti poděly"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Which offer fits my requirements better?"
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
@@ -14078,6 +14176,10 @@ msgstr ""
 msgid "Your headings look the same as your body text."
 msgstr "Vaše nadpisy vypadají stejně jako běžný text."
 
+#: src/features/career/today.tsx
+msgid "Your job search starts here"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"
 msgstr "vaše Znalosti"
@@ -14132,6 +14234,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "Vaše telefonní číslo je zapsáno v neobvyklém formátu."
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 #: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "vaše předvolby"
