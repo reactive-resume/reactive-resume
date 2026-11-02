@@ -221,7 +221,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 				context={{ ...context, ...(document.posting ? { applicationId: document.posting.id } : {}) }}
 				document={document}
 				connection={label}
-				privacy={disclosure(t, document, context, label)}
+				privacy={(history) => disclosure(t, document, context, label, history.earlier > 0)}
 				placeholder={t`Ask, or describe a change…`}
 				assistantName={t`Assistant`}
 				disabled={document.locked || !provider}
@@ -254,21 +254,32 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 								removeLabel={t`Don't send ${document.name}`}
 								onRemove={() => setContext({ ...context, document: false })}
 							/>
-						) : null}
-						{context.posting && document.posting ? (
+						) : (
+							// A chip that's off stays, so it can be sent again (web conversation.tsx).
 							<ContextChip
-								icon="briefcase"
-								label={t`${document.posting.company} posting`}
-								removeLabel={t`Don't send ${document.posting.company} posting`}
-								onRemove={() => setContext({ ...context, posting: false })}
+								icon="plus"
+								label={document.name}
+								pressed={false}
+								onPress={() => setContext({ ...context, document: true })}
 							/>
+						)}
+						{document.posting ? (
+							context.posting ? (
+								<ContextChip
+									icon="briefcase"
+									label={t`${document.posting.company} posting`}
+									removeLabel={t`Don't send ${document.posting.company} posting`}
+									onRemove={() => setContext({ ...context, posting: false })}
+								/>
+							) : (
+								<ContextChip
+									icon="plus"
+									label={t`${document.posting.company} posting`}
+									pressed={false}
+									onPress={() => setContext({ ...context, posting: true })}
+								/>
+							)
 						) : null}
-						<ContextChip
-							icon="brain"
-							label={t`Use Knowledge`}
-							pressed={context.memory === true}
-							onPress={() => setContext({ ...context, memory: context.memory !== true })}
-						/>
 						{needsJobCopy(document, context) && document.posting ? (
 							<Button
 								size="sm"
@@ -374,7 +385,13 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 type Translate = ReturnType<typeof useLingui>["t"];
 
 /** What a send shares, and with whom (web's disclosure line). */
-function disclosure(t: Translate, document: AssistantDocument, context: MessageContext, provider: string) {
+function disclosure(
+	t: Translate,
+	document: AssistantDocument,
+	context: MessageContext,
+	provider: string,
+	hasHistory: boolean,
+) {
 	const posting = context.posting && document.posting;
 	const sends = context.document
 		? document.kind === "letter"
@@ -387,17 +404,19 @@ function disclosure(t: Translate, document: AssistantDocument, context: MessageC
 		: posting
 			? t`Sends your message and the posting to ${provider} with your key, only when you tap send.`
 			: t`Sends your message to ${provider} with your key, only when you tap send.`;
-	const history =
-		!context.document || !context.posting
-			? t`Each send starts fresh with this message and selected files. Previous conversation history stays here.`
-			: t`Previous messages, including document details, are also sent.`;
+	// Said only once there is history to send or to leave out.
+	const history = !hasHistory
+		? ""
+		: !context.document || !context.posting
+			? ` ${t`Each send starts fresh with this message and selected files. Previous conversation history stays here.`}`
+			: ` ${t`Previous messages, including document details, are also sent.`}`;
 	const knowledge =
 		context.memory === true ? ` ${t`Knowledge facts and stories the assistant looks up are sent too.`}` : "";
 	const copy =
 		needsJobCopy(document, context) && document.posting
 			? ` ${t`Edits that use the ${document.posting.company} posting go to a copy made for that job, so this resume stays unchanged.`}`
 			: "";
-	return `${sends}${knowledge} ${history}${copy}`;
+	return `${sends}${knowledge}${history}${copy}`;
 }
 
 /** Tailoring needs the job's own copy: the server refuses edits that use the posting on a resume other jobs share. */

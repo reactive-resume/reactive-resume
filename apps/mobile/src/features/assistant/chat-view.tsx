@@ -12,6 +12,8 @@ import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import { LegendList } from "@legendapp/list/react-native";
+import { i18n } from "@lingui/core";
+import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -540,8 +542,9 @@ function Conversation(props: ConversationProps) {
 		if (documentId && document?.kind === "resume") publishProposals(documentId, proposals);
 	}, [documentId, document?.kind, proposals]);
 
+	// Rejections and their Undo are recorded here; an acceptance travels with the document save that applies it.
 	const record = (message: UIMessage, part: ToolPart, changed: readonly Proposal[], next: EditStatus) => {
-		if (!part.toolCallId || next !== "rejected") return;
+		if (!part.toolCallId || next === "accepted") return;
 		setStatuses((current) => new Map([...current, ...changed.map((proposal) => [proposal.id, next] as const)]));
 		void client.agent.messages
 			.setEditStatus(
@@ -623,6 +626,7 @@ function Conversation(props: ConversationProps) {
 						},
 						forJobCopy: (message, part) => forJobCopy(document, message, part),
 						onReject: (message, part, chosen) => recordRef.current(message, part, chosen, "rejected"),
+						onRestore: (message, part, chosen) => recordRef.current(message, part, chosen, "pending"),
 						onEdit: (message, part, proposal, text) => saveWordingRef.current(message, part, proposal, text),
 						factText,
 					}
@@ -655,7 +659,11 @@ function Conversation(props: ConversationProps) {
 	const copyTranscript = async () => {
 		try {
 			await Clipboard.setStringAsync(
-				transcriptOf(messages, { user: t`You`, assistant: props.assistantName, sources: t`Sources` }),
+				transcriptOf(
+					messages,
+					{ user: t`You`, assistant: props.assistantName, sources: t`Sources` },
+					(id) => statuses.get(id)?.status,
+				),
 			);
 			showToast({ message: t`Transcript copied` });
 		} catch {
@@ -869,6 +877,15 @@ function Composer(props: ComposerProps) {
 	// Chips removed while their upload was still running: the finished upload is deleted, not kept.
 	const removedUploads = useRef(new Set<string>());
 	const uploading = attachments.some((attachment) => attachment.busy);
+	// Attached files go with the next message: named, so the user sees exactly what leaves (web conversation.tsx).
+	const names = attachments.map((attachment) => attachment.filename);
+	const files =
+		names.length === 0
+			? ""
+			: plural(names.length, {
+					one: `Also sends ${listFormat(names)}.`,
+					other: `Also sends # files: ${listFormat(names)}.`,
+				});
 	const hasText = text.trim().length > 0;
 
 	const submit = async () => {
@@ -1077,6 +1094,7 @@ function Composer(props: ComposerProps) {
 
 			<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s1 }}>
 				{props.privacy}
+				{files ? ` ${files}` : ""}
 			</Text>
 		</View>
 	);
@@ -1151,3 +1169,12 @@ export function ContextChip({ icon, label, onRemove, removeLabel, pressed, onPre
 function forJobCopy(document: AssistantDocument, message: UIMessage, part: ToolPart) {
 	return document.kind === "resume" && !tailoringAllows(message, part.output, document.madeFor);
 }
+
+/** "a, b and c" in the reader's language. */
+const listFormat = (items: readonly string[]) => {
+	try {
+		return new Intl.ListFormat(i18n.locale, { type: "conjunction" }).format(items);
+	} catch {
+		return items.join(", ");
+	}
+};
