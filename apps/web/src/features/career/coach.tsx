@@ -282,7 +282,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 						? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
 						: chips.memory && knowledge.isPending
 							? t`Loading Knowledge before you send…`
-							: t`When you press send, ${shared} go to ${connection}.`}
+							: t`When you press send, ${shared} go to your ${connection}.`}
 				{withheld > 0 && ` ${t`Messages from before Knowledge changed aren't sent.`}`}
 				{context.web && ` ${t`Search terms go to your web search service.`}`} <MemoryNote knowledge={chips.memory} />
 			</PrivacyLine>
@@ -604,7 +604,8 @@ function ConversationRail({ threads, currentId, onNavigate, onRename, onDelete }
 					<Trans>Recent</Trans>
 				</Eyebrow>
 				<ul className="-mx-1 grid min-h-0 flex-1 content-start gap-0.5 overflow-y-auto px-1">
-					{currentId === null && (
+					{/* With no history yet, a "New conversation · Now" row would only repeat the button above. */}
+					{currentId === null && threads.length > 0 && (
 						<li aria-current="page" className="grid gap-0.5 rounded-lg bg-sunken px-2.5 py-2">
 							<span className="text-[13px] leading-[18px] font-medium">
 								<Trans>New conversation</Trans>

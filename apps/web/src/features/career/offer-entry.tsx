@@ -532,7 +532,8 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 								<option value="">{t`Unknown`}</option>
 								{[0, 1, 2, 3, 4, 5].map((days) => (
 									<option key={days} value={days}>
-										{days}
+										{/* The word Preferences uses for no office days. */}
+										{days === 0 ? t`Remote (0)` : days}
 									</option>
 								))}
 							</NativeSelect>
@@ -569,8 +570,12 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 			)}
 			{submitted && !payload.success && (
 				<p role="alert" className="text-sm text-danger-text">
-					<Icon name="warning-circle" />{" "}
-					<Trans>Choose an application and correct the highlighted fields before saving.</Trans>
+					<Icon name="warning-circle" /> {/* Only what applies: a chosen application isn't asked for again. */}
+					{applicationId ? (
+						<Trans>Correct the highlighted fields before saving.</Trans>
+					) : (
+						<Trans>Choose an application before saving.</Trans>
+					)}
 				</p>
 			)}
 			{save.isError && (

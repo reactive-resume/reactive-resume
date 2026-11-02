@@ -1,7 +1,10 @@
+import { t } from "@lingui/core/macro";
+import { ORPCError } from "@orpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
 import z from "zod";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { EditorPending } from "./-components/editor-pending";
 import { EditorShell } from "./-components/editor-shell";
 import { useBuilderResumeUpdateSubscription, useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
@@ -38,9 +41,16 @@ export const Route = createFileRoute("/builder/$resumeId")({
 		void import("./-components/page-canvas");
 		void import("@/features/resume/preview/preview.browser");
 
-		const resume = await context.queryClient.ensureQueryData(
-			orpc.resume.getById.queryOptions({ input: { id: params.resumeId } }),
-		);
+		const resume = await context.queryClient
+			.ensureQueryData(orpc.resume.getById.queryOptions({ input: { id: params.resumeId } }))
+			.catch((error: unknown) => {
+				// A stale or mistyped link: Documents, saying why, rather than an error page whose Try again can't help.
+				if (error instanceof ORPCError && error.code === "NOT_FOUND") {
+					toast.add({ type: "error", description: t`That resume isn't available. It may have been deleted.` });
+					throw redirect({ to: "/dashboard", replace: true });
+				}
+				throw error;
+			});
 
 		return { name: resume.name };
 	},

@@ -384,7 +384,7 @@ const FactRow = memo(function FactRow({ fact, onStatus, onCorrect, onShare, onFo
 				className="flex items-start gap-4 px-4 py-3.5 [contain-intrinsic-size:auto_112px] [content-visibility:auto]"
 			>
 				<div className="grid min-w-0 flex-1 gap-1.5">
-					<p className="flex flex-wrap items-center gap-2 font-mono text-xs font-medium text-ink-3">
+					<p className="flex flex-wrap items-center gap-2 text-xs font-medium text-ink-3">
 						{categoryLabel(categoryOf(fact))}
 						<span
 							className={cn(
