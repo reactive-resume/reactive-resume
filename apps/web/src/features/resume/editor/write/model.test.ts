@@ -123,3 +123,16 @@ describe("addBuiltinSection", () => {
 		expect(mainOf(data)).toEqual(["experience", "education"]);
 	});
 });
+
+describe("addBuiltinSection with a hidden section", () => {
+	it("counts a hidden Experience with entries as started", () => {
+		const data = structuredClone(defaultResumeData);
+		data.metadata.layout.pages = [{ fullWidth: false, main: ["experience", "education"], sidebar: [] }];
+		const started = produce(data, (draft) => {
+			addBuiltinSection(draft, "experience");
+			draft.sections.experience.hidden = true;
+		});
+		const next = produce(started, (draft) => void addBuiltinSection(draft, "education"));
+		expect(next.metadata.layout.pages[0]?.main).toEqual(["experience", "education"]);
+	});
+});

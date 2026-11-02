@@ -299,3 +299,20 @@ describe("expected end dates", () => {
 		);
 	});
 });
+
+describe("reading an expected end date back", () => {
+	it("keeps the date and that it's still to come", () => {
+		expect(readLegacyDates("Sep 2023 – Expected May 2027", { locale: "en-US", single: false })).toEqual({
+			start: "2023-09",
+			end: "2027-05",
+			present: false,
+			expected: true,
+		});
+	});
+
+	it("round-trips through the printed text", () => {
+		const dates = { start: "2023-09", end: "2027-05", present: false, expected: true };
+		const text = formatResumeDates(dates, { locale: "en-US" });
+		expect(readLegacyDates(text, { locale: "en-US", single: false })).toEqual(dates);
+	});
+});

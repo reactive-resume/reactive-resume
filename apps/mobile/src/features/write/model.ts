@@ -287,13 +287,14 @@ function ensurePlaced(draft: WritableDraft<ResumeData>, id: string) {
 
 /** Add section: shows and places the section and gives it one draft entry. Returns that entry's id. */
 /**
- * Experience and Education print in the order the person starts them: the first one added goes above the other while
- * that one is still empty (a student starts with Education; someone with a job, with Experience).
+ * Experience and Education print in the order the person starts them: the first one added goes above the other in the
+ * page's main column while that one has no entries yet (a student starts with Education; someone with a job, with
+ * Experience). A hidden section with entries counts as started, and layouts set across pages stay as they are.
  */
 function placeFirstStarted(draft: WritableDraft<ResumeData>, type: "summary" | SectionType) {
 	if (type !== "experience" && type !== "education") return;
 	const other = type === "experience" ? "education" : "experience";
-	const started = draft.sections[other].items.length > 0 && !draft.sections[other].hidden;
+	const started = draft.sections[other].items.length > 0;
 	if (started) return;
 	for (const page of draft.metadata.layout.pages) {
 		const at = page.main.indexOf(type);

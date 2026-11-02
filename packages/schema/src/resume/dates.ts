@@ -103,6 +103,15 @@ const isExact = (reading: EndpointReading | undefined) =>
  * Reads a legacy date text into structured dates. Exact readings (years, months by name or number, and
  * "Present") drop the text; approximate or unreadable ones keep it in `raw`, which prints verbatim and remains editable as custom text.
  */
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** The Expected label (in the locale, or English) right after a period's dash, with the space that follows it. */
+const expectedEndPattern = (locale: string) =>
+	new RegExp(
+		`(?<=[–—-]\\s*)(?:${[...new Set([getExpectedLabel(locale), "Expected"])].map(escapeRegExp).join("|")})\\s+`,
+		"iu",
+	);
+
 export function readLegacyDates(text: string, options: { locale: string; single: boolean }): ResumeDates {
 	const value = text.trim();
 	if (!value) return { ...EMPTY_RESUME_DATES };
@@ -114,13 +123,19 @@ export function readLegacyDates(text: string, options: { locale: string; single:
 		return isExact(reading) ? dates : { ...dates, raw: value };
 	}
 
-	const reading = readPeriod(value, options.locale, [getPresentLabel(options.locale)]);
+	// "Sep 2023 – Expected May 2027", as an expected end date prints: read the date, and keep that it's still to come.
+	const expected = expectedEndPattern(options.locale).exec(value);
+	const unlabeled = expected
+		? value.slice(0, expected.index) + value.slice(expected.index + expected[0].length)
+		: value;
+	const reading = readPeriod(unlabeled, options.locale, [getPresentLabel(options.locale)]);
 	if (!reading?.start) return { ...EMPTY_RESUME_DATES, raw: value };
 
 	const dates: ResumeDates = {
 		start: toYearMonth(reading.start.endpoint),
 		end: reading.end ? toYearMonth(reading.end.endpoint) : null,
 		present: reading.ongoing,
+		...(expected && reading.end && !reading.ongoing ? { expected: true } : {}),
 	};
 	return isExact(reading.start) && isExact(reading.end) ? dates : { ...dates, raw: value };
 }

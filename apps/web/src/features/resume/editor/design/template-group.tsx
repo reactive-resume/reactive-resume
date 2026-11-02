@@ -65,11 +65,23 @@ type TemplateGroupProps = {
  * Template: filter chips, then thumbnails drawn from the user's own content. Hovering or focusing one (holding
  * it, on touch) previews it on the page; leaving the cards or pressing Esc restores the page; a click applies it.
  */
+// When anything last scrolled: a pointer "entering" a card just after is the card sliding under a still pointer.
+let lastScrollAt = 0;
+const SCROLL_SETTLE_MS = 150;
+const scrolledRecently = () => performance.now() - lastScrollAt < SCROLL_SETTLE_MS;
+
 export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 	const data = useResumeData();
 	const [filter, setFilter] = useState<Filter>("all");
 	// Leaving Design (by shortcut, say) never leaves a preview on the page.
 	useEffect(() => () => useEditorStore.setState({ previewTemplate: null }), []);
+	useEffect(() => {
+		const onScroll = () => {
+			lastScrollAt = performance.now();
+		};
+		document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+		return () => document.removeEventListener("scroll", onScroll, { capture: true });
+	}, []);
 	if (!data) return null;
 
 	const current = data.metadata.template;
@@ -151,8 +163,8 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 	const { data: thumbnail } = useTemplateThumbnail(id, data, isInView);
 	const metadata = templates[id];
 	const hold = useRef<{ timer?: number; previewing: boolean }>({ previewing: false });
-	// Where the pointer was when it came onto the card. Scrolling slides cards under a still pointer, which fires
-	// enter and move events at the same spot: only a pointer that has moved previews.
+	// Where the pointer was when a scroll slid the card under it: that previews only once the pointer moves. A
+	// pointer moved onto the card previews at once, even if it then stops.
 	const entered = useRef<{ x: number; y: number } | null>(null);
 	// The picker opens on the template in use, not at the top of the list.
 	const initiallySelected = useRef(selected);
@@ -171,7 +183,9 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 			type="button"
 			aria-pressed={selected}
 			onPointerEnter={(event: PointerEvent) => {
-				if (event.pointerType !== "touch") entered.current = { x: event.screenX, y: event.screenY };
+				if (event.pointerType === "touch") return;
+				if (!scrolledRecently()) return onPreview();
+				entered.current = { x: event.screenX, y: event.screenY };
 			}}
 			onPointerMove={(event: PointerEvent) => {
 				const from = entered.current;

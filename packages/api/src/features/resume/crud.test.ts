@@ -81,7 +81,11 @@ describe("resume write route validation", () => {
 
 	it.each([false, true])("puts the account holder's name on a new resume (sample data: %s)", async (withSampleData) => {
 		const client = createRouterClient(crudRouter, {
-			context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "user-id", name: "Sam Taylor" } } as never,
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				user: { id: "user-id", name: "Sam Taylor", email: "sam@example.test" },
+			} as never,
 		});
 
 		await client.create({ name: "Outstanding Blue Whale", tags: [], withSampleData });
@@ -92,6 +96,25 @@ describe("resume write route validation", () => {
 				data: expect.objectContaining({ basics: expect.objectContaining({ name: "Sam Taylor" }) }),
 			}),
 		);
+		// A blank resume also starts with the account's email; a sample keeps its own.
+		const created = mocks.create.mock.calls.at(-1)?.[0] as { data: { basics: { email: string } } };
+		if (!withSampleData) expect(created.data.basics.email).toBe("sam@example.test");
+		else expect(created.data.basics.email).not.toBe("sam@example.test");
+	});
+
+	it("leaves a guest's placeholder address off a new resume", async () => {
+		const client = createRouterClient(crudRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				user: { id: "guest-id", name: "Guest", email: "temp-1@reactive-resume.local" },
+			} as never,
+		});
+
+		await client.create({ name: "Untitled", tags: [], withSampleData: false });
+
+		const created = mocks.create.mock.calls.at(-1)?.[0] as { data: { basics: { email: string } } };
+		expect(created.data.basics.email).toBe("");
 	});
 
 	it("allows overlong slug on update to reach the service for change-sensitive check", async () => {
