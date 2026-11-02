@@ -102,12 +102,12 @@ Each saved provider appears as a row under **AI providers**, showing its name, m
 
 <Frame caption="A connected provider after a successful test">
   <img
-    src="/images/guides/using-ai/provider-row-connected.webp"
+    src="/images/guides/using-ai/provider-row-connected.png"
     alt="Personal AI providers section with a tested fictional connection and a reminder that the provider may charge for requests made with your API key"
   />
 </Frame>
 
-Select **Test** on a row to check it again. The button changes to **Connected** with the round-trip time (for example, **Connected · 420 ms**), or to **Failed** with the provider's error message underneath. A failed test makes the connection unavailable. A passed test makes it ready unless you deliberately switched it off; **Test** preserves that choice. Turn it on in **Edit** when you want to use it again.
+Select **Test** on a row to check it again. The result appears separately: **Connected** with the round-trip time (for example, **Connected · 420 ms**), or an error explaining what to check. The button returns to **Test**, so you can run it again. A failed test makes the connection unavailable. A passed test makes it ready unless you deliberately switched it off; **Test** preserves that choice. Turn it on in **Edit** when you want to use it again.
 
 ## Edit, turn off or delete a provider
 
@@ -122,7 +122,14 @@ Select **Edit** on a provider's row.
 
 - **Change the key, model, name or base URL**, then select **Save and test**. Leave **API key** empty to keep the saved key. Changing the key, model or base URL turns the provider off until the new test passes.
 - **Turn it on or off** with **Use this provider**. Only a provider that passed its test can be turned on. A provider that is off stays saved but isn't offered anywhere in the app.
-- **Delete it** with **Delete provider**, then confirm. The provider and its stored key are removed.
+- **Delete it** with **Delete provider**, then confirm with the red **Delete provider** button. Choose **Cancel** to keep it. The provider and its stored key are removed only after confirmation.
+
+<Frame caption="Confirm before deleting a saved provider">
+  <img
+    src="/images/guides/using-ai/provider-delete-confirmation.png"
+    alt="Delete provider confirmation for Fictional working connection, with Cancel and a red Delete provider button"
+  />
+</Frame>
 
 <Warning>
   Deleting a provider can't be undone. Conversations keep their history and pending edits, but sending pauses until you
@@ -227,10 +234,10 @@ Your provider handles that data under its own terms and privacy policy. Reactive
   />
 </Frame>
 
-<Frame caption="A rejected key gives translated recovery, shown here in German.">
+<Frame caption="A rejected key keeps Test available and explains what to check.">
   <img
-    src="/images/guides/using-ai/rx98-provider-error-390-german.png"
-    alt="Fictional rejected connection at phone width, with German instructions to check its key and test again."
+    src="/images/guides/using-ai/provider-error-phone.png"
+    alt="Phone-width provider list with the default connection first and a rejected fictional key below it, with Test still available."
   />
 </Frame>
 

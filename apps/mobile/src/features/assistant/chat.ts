@@ -27,12 +27,6 @@ export const attachmentPart = (attachment: ChatAttachment): FileUIPart => ({
 	filename: attachment.filename,
 });
 
-export const textOf = (message: UIMessage) =>
-	message.parts
-		.flatMap((part) => (part.type === "text" ? [part.text] : []))
-		.join("")
-		.trim();
-
 export type WebSource = { url: string; title: string };
 
 // Hosts only: IP literals and local names are never shown as sources (web: agentWebSources).
