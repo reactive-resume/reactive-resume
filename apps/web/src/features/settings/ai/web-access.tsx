@@ -11,6 +11,7 @@ import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/comp
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { useHasUsableAiProvider } from "../integrations/hooks/use-has-usable-ai-provider";
+import { SettingsSection } from "../section";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -69,17 +70,11 @@ export function WebAccessSection() {
 	};
 
 	return (
-		<section aria-labelledby={`${id}-title`} className="overflow-hidden rounded-xl border border-line bg-surface">
-			<header className="grid gap-1 border-b border-line px-5 py-4 max-sm:px-4">
-				<h2 id={`${id}-title`} className="text-[17px] font-semibold">
-					<Trans>Web access</Trans>
-				</h2>
-				<p className="max-w-[60ch] text-[13px] leading-5 text-ink-3">
-					<Trans>Read the job links you save. Saving and preparing jobs works without a connection.</Trans>
-				</p>
-			</header>
-
-			<div className="mx-5 flex items-start gap-3 border-b border-line py-4 max-sm:mx-4">
+		<SettingsSection
+			title={<Trans>Web access</Trans>}
+			description={<Trans>Read the job links you save. Saving and preparing jobs works without a connection.</Trans>}
+		>
+			<div className="flex items-start gap-3 border-b border-line pb-4">
 				<Icon name="file-text" size={20} className="mt-0.5 shrink-0 text-ink-2" />
 				<div className="grid flex-1 gap-1">
 					<div className="flex flex-wrap items-center justify-between gap-2">
@@ -101,7 +96,7 @@ export function WebAccessSection() {
 				</div>
 			</div>
 
-			<div className="grid gap-4 px-5 py-4 max-sm:px-4">
+			<div className="grid gap-4">
 				<div className="flex items-start gap-3">
 					<Icon name="magnifying-glass" size={20} className="mt-0.5 shrink-0 text-ink-2" />
 					<div className="grid flex-1 gap-1.5">
@@ -415,7 +410,7 @@ export function WebAccessSection() {
 				)}
 			</div>
 
-			<footer className="flex items-start gap-2 border-t border-line bg-bg px-5 py-3 text-xs leading-5 text-ink-2 max-sm:px-4">
+			<footer className="flex items-start gap-2 border-t border-line pt-3 text-xs leading-5 text-ink-2">
 				<Icon name="sparkle" size={16} className="mt-0.5 shrink-0 text-ink-3" />
 				<div>
 					<span className="font-medium">
@@ -446,7 +441,7 @@ export function WebAccessSection() {
 					)}
 				</div>
 			</footer>
-		</section>
+		</SettingsSection>
 	);
 }
 

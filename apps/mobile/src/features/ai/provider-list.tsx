@@ -61,6 +61,7 @@ export function ProviderList() {
 			{!managed && (
 				<>
 					<Text color="ink3">{t`Your provider may charge your account for requests made with your API key.`}</Text>
+					<Text variant="caption" color="ink3">{t`OpenAI, Anthropic, Gemini, Ollama and more`}</Text>
 					<Button label={t`Add AI provider`} icon="plus" variant="secondary" onPress={() => setAdding(true)} />
 				</>
 			)}
@@ -140,7 +141,12 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 						/>
 						<Button label={t`Edit`} variant="ghost" disabled={pending} onPress={onEdit} />
 						{!isDefault && provider.enabled && provider.testStatus === "success" && (
-							<Button label={t`Make default`} variant="ghost" disabled={pending} onPress={() => void run("default")} />
+							<Button
+								label={t`Make default`}
+								variant="secondary"
+								disabled={pending}
+								onPress={() => void run("default")}
+							/>
 						)}
 					</View>
 					{result && (
