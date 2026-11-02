@@ -89,7 +89,7 @@ export function KeyboardShortcuts() {
 			<Text color="ink2">{t`Shortcuts available on this page. List commands require keyboard mode in the list.`}</Text>
 			{commands.map((command) => (
 				<View
-					key={command.id}
+					key={`${command.modifier ?? "primary"}:${command.input}:${!!command.shift}`}
 					style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.s3 }}
 				>
 					<Text style={{ flex: 1 }}>{command.title}</Text>

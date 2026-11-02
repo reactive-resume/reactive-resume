@@ -17,6 +17,11 @@ test("shortcut help follows the current page and the character-key off switch su
 			data: { company: "Fictional Cedar", role: "Product designer" },
 		}),
 	).toBeOK();
+	await expect(
+		await page.request.post("/api/openapi/applications", {
+			data: { company: "Fictional Orbit", role: "Platform engineer", status: "applied" },
+		}),
+	).toBeOK();
 	await page.goto("/dashboard/applications");
 	const search = page.getByRole("searchbox", { name: "Search applications", exact: true });
 	const save = page.getByRole("button", { name: "Save job", exact: true });
@@ -25,10 +30,20 @@ test("shortcut help follows the current page and the character-key off switch su
 	await page.keyboard.press("Shift+?");
 	await expect(dialog.getByText("Search applications", { exact: true })).toBeVisible();
 	await expect(dialog.getByText("Search documents", { exact: true })).toHaveCount(0);
+	for (const name of [
+		"Next application",
+		"Previous application",
+		"Open application",
+		"Toggle selection",
+		"Followed up",
+	])
+		await expect(dialog.locator("dt").filter({ hasText: new RegExp(`^${name}$`) })).toHaveCount(1);
+	await page.keyboard.press("x");
 	await page.screenshot({ path: testInfo.outputPath("keyboard-shortcuts.png"), animations: "disabled" });
 	await dialog.getByRole("switch", { name: "Single-character shortcuts" }).click();
 	await dialog.getByRole("button", { name: "Close", exact: true }).click();
 	await expect(save).toBeFocused();
+	await expect(page.getByRole("checkbox", { name: "Select Product designer at Fictional Cedar" })).not.toBeChecked();
 	await page.reload();
 	await expect(search).toBeVisible();
 	await save.focus();
