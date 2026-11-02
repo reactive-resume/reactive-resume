@@ -1892,6 +1892,7 @@ console.log("PASS native Today past note edit preserves exact seconds and change
 	reset();
 	let linkedResume;
 	const { FitTab } = load("features/workspace/tabs/fit.tsx", {
+		"@/routes": load("routes.ts"),
 		"@tanstack/react-query": {
 			useQuery: (options) =>
 				options.kind === "evidence"
@@ -1941,6 +1942,39 @@ console.log("PASS native Today past note edit preserves exact seconds and change
 	control(fitTree, "Use this resume as evidence").onPress();
 	assert.equal(linkedResume, "chosen", "Fit links only the user's explicit resume choice");
 	console.log("PASS native Fit uses filtered evidence and explicit resume selection");
+	for (const resumeId of ["linked-resume", null]) {
+		reset();
+		const tree = render(fitComponent, {
+			application: { id: "app", resumeId },
+			version: {
+				data: {
+					kind: "fit",
+					headline: "Fit",
+					summary: "Gap",
+					requirements: [
+						{ text: "Enterprise onboarding", status: "missing", evidence: "Not yet recorded", origin: "posting" },
+					],
+					checks: [],
+				},
+			},
+		});
+		const requirement = nodes(tree).find((node) => node.type?.name === "RequirementCard");
+		assert.ok(requirement);
+		control(render(requirement.type, requirement.props), "Tailor resume for this job").onPress();
+		assert.deepEqual(
+			calls.at(-1),
+			resumeId
+				? {
+						pathname: "/builder/linked-resume/check?applicationId=app",
+						params: { tab: "match" },
+					}
+				: {
+						pathname: "/new",
+						params: { step: "copy", applicationId: "app", destination: "job-match", context: "applications" },
+					},
+		);
+	}
+	console.log("PASS native Fit gaps hand off the exact job to Check or the existing copy flow");
 
 	// Exercise the shipped preparation form, including setup visibility and retry callbacks.
 	let scheduleAi;
@@ -2040,6 +2074,7 @@ console.log("PASS native custom-field Undo restores its field without reverting 
 // A job selected before its summary arrives must never become an unlinked copy.
 let copyApplications = { data: [], isFetching: true, refetch() {} };
 let newDocumentParams = { step: "copy", applicationId: "new-job" };
+let copyHasProvider = false;
 const { NewDocument } = load("features/documents/new-document.tsx", {
 	"@/routes": load("routes.ts"),
 	"./copy-for-job": {
@@ -2091,7 +2126,7 @@ const { NewDocument } = load("features/documents/new-document.tsx", {
 		orpc: { applications: { listSummary: { queryOptions: () => ({ queryKey: ["jobs"] }) } } },
 	},
 	"@/auth/session": { getServer: () => "test", useSession: () => ({ server: "test", status: "signed-in" }) },
-	"@/features/ai/providers": { useHasAIProvider: () => ({ hasAIProvider: false }) },
+	"@/features/ai/providers": { useHasAIProvider: () => ({ hasAIProvider: copyHasProvider }) },
 	"@/features/applications/add-sheet": {},
 });
 reset();
@@ -2109,6 +2144,19 @@ control(render(NewDocument), "Create copy").onPress();
 await settle();
 assert.equal(calls[0].applicationId, "new-job");
 console.log("PASS native copy waits for selected job and preserves application ID");
+
+for (const hasProvider of [false, true]) {
+	reset();
+	copyHasProvider = hasProvider;
+	newDocumentParams = { step: "copy", applicationId: "new-job", destination: "job-match" };
+	copyApplications.data[0].status = "closed";
+	control(render(NewDocument), "Create copy").onPress();
+	await settle();
+	assert.equal(calls[0].applicationId, "new-job");
+	assert.deepEqual(calls[1], { pathname: "/builder/copy/check", params: { tab: "match" } });
+}
+copyHasProvider = false;
+console.log("PASS native Fit copy opens Job match for its selected job, with or without an AI provider");
 
 reset();
 newDocumentParams = { context: "letters" };
@@ -2586,11 +2634,19 @@ let failNativeLink = true;
 let nonce = 0;
 const requestIds = load("../../../packages/utils/src/string.ts", { uuid: { v7: () => `native-request-${++nonce}` } });
 const nativeDraft = { document: { id: "base-retry" }, status: "saved", locked: false, flush: async () => {} };
+let nativeMatchApplication;
 const { JobMatch } = load("features/check/job-match.tsx", {
 	react: { ...react, useEffect() {}, useMemo: (make) => make() },
+	"expo-router": { useRouter: () => ({ ...router, setParams: (params) => calls.push({ routeParams: params }) }) },
+	"@/routes": load("routes.ts"),
 	"@reactive-resume/utils/string": requestIds,
 	"./actions": {},
-	"./model": { matchPosting: () => null },
+	"./model": {
+		matchPosting: () =>
+			nativeMatchApplication
+				? { total: 1, found: [], missing: [{ term: "typescript", label: "TypeScript", jdCount: 1, skill: true }] }
+				: null,
+	},
 	"@/api/client": {
 		client: {
 			applications: {
@@ -2610,7 +2666,7 @@ const { JobMatch } = load("features/check/job-match.tsx", {
 	"@/draft/runtime": { resume: { refresh: async () => {}, blur: async () => {} } },
 	"@/features/applications/queries": {
 		useApplications: () => ({ data: [] }),
-		useApplication: () => ({}),
+		useApplication: () => ({ data: nativeMatchApplication }),
 		useInvalidateApplications: () => () => {},
 	},
 	"@/features/documents/copy-for-job": {},
@@ -2633,6 +2689,26 @@ assert.equal(nativeCreateRequests.length, 2);
 assert.equal(nativeCreateRequests[0].newId, nativeCreateRequests[1].newId, "link retry returns the original job");
 assert.equal(control(matchView(), "Paste a job posting").value, "");
 console.log("PASS native saved-job link retries retain original ID and draft until success");
+reset();
+nativeMatchApplication = { id: "selected-job", company: "Cedar", role: "Lead", jobDescription: "TypeScript" };
+const selectedMatch = () =>
+	render(JobMatch, {
+		id: "base-retry",
+		data: { metadata: {} },
+		applicationId: "selected-job",
+		locked: false,
+		offline: false,
+	});
+assert.equal(
+	control(selectedMatch(), "Linked application").disabled,
+	true,
+	"temporary context cannot unlink the other saved job",
+);
+control(selectedMatch(), "TypeScript").onPress();
+control(selectedMatch(), "Ask the assistant to work it in").onPress();
+assert.equal(calls.at(-1).params.applicationId, "selected-job", "assistant receives the selected job too");
+assert.equal(calls.at(-1).pathname, "/builder/base-retry/assistant");
+console.log("PASS native temporary Job match context protects linkage and follows the assistant handoff");
 
 // Builder tags use the existing draft/flush owner and leave resume content intact.
 reset();
