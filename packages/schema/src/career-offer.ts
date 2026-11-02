@@ -91,3 +91,43 @@ export function offerTermKeys(terms: Pick<OfferTerms, OfferTermKey>): OfferTermK
 	};
 	return (["base", "variable", "equity", "startDate", "respondBy"] as const).filter((key) => known[key]);
 }
+
+const CURRENCY_SYMBOLS: Readonly<Record<string, string>> = {
+	"€": "EUR",
+	"£": "GBP",
+	"¥": "JPY",
+	"₹": "INR",
+	"₩": "KRW",
+	"₺": "TRY",
+	zł: "PLN",
+	US$: "USD",
+	A$: "AUD",
+	C$: "CAD",
+	$: "USD",
+};
+
+/**
+ * What the job's own salary line says, to start an offer from: its currency (an ISO code, or a symbol such as € or £)
+ * and the lower end of the range as the base, read as a whole amount ("€165,000 – €190,000", "$120k–140k"). Either is
+ * null when the line doesn't say; the person edits both before saving.
+ */
+export function offerHintFromSalary(salary: string | null | undefined): {
+	currency: string | null;
+	base: number | null;
+} {
+	const text = (salary ?? "").trim();
+	if (!text) return { currency: null, base: null };
+	const code = /\b([A-Z]{3})\b/.exec(text)?.[1] ?? null;
+	const symbol = Object.keys(CURRENCY_SYMBOLS).find((key) => text.includes(key));
+	const currency = code ?? (symbol ? (CURRENCY_SYMBOLS[symbol] ?? null) : null);
+	const first = /(\d[\d.,\s]*)(\s*[kKmM])?/.exec(text);
+	if (!first?.[1]) return { currency, base: null };
+	const digits = first[1]
+		.replace(/[\s.,](?=\d{3}\b)/g, "")
+		.replace(/[\s]/g, "")
+		.replace(",", ".");
+	const number = Number.parseFloat(digits);
+	const scale = /k/i.test(first[2] ?? "") ? 1_000 : /m/i.test(first[2] ?? "") ? 1_000_000 : 1;
+	const base = Number.isFinite(number) ? Math.round(number * scale) : null;
+	return { currency, base: base && base > 0 ? base : null };
+}

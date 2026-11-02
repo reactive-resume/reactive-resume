@@ -12,7 +12,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
-import { offerApplications, parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
+import {
+	offerApplications,
+	offerHintFromSalary,
+	parseOfferEntry,
+	previousOfferCurrency,
+} from "@reactive-resume/schema/career-offer";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -42,6 +47,8 @@ type Application = {
 	role: string;
 	status?: ApplicationStatus | undefined;
 	closedReason?: string | null;
+	/** The job's salary line, to start a new offer's currency and base from. */
+	salary?: string | null | undefined;
 };
 type OfferEntryProps = {
 	frame?: ((action: ReactNode) => ReactNode) | undefined;
@@ -241,8 +248,10 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 			: { ...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }), currency: "" },
 	);
 	const amount = (value: number | null | undefined) => (value === null || value === undefined ? "" : String(value));
+	// A new offer for a job starts from the job's own salary line: its currency, and the low end as an editable base.
+	const hint = offer ? null : offerHintFromSalary(application?.salary);
 	const [amounts, setAmounts] = useState(() => ({
-		base: amount(offer?.data.base),
+		base: amount(offer ? offer.data.base : hint?.base),
 		variable: amount(offer?.data.variable),
 		learning: amount(offer?.data.learning),
 	}));
@@ -260,7 +269,8 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	// A new offer starts in the last offer's currency, else the one the user's minimum salary is in (Preferences).
 	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
 	const preferred = profile?.minBase.amount === null ? undefined : profile?.minBase.currency;
-	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? preferred ?? "" };
+	const terms =
+		offer || currencyTyped ? draft : { ...draft, currency: hint?.currency ?? previousCurrency ?? preferred ?? "" };
 	const [more, setMore] = useState(Boolean(offer));
 	const [submitted, setSubmitted] = useState(false);
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));

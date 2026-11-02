@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { offerTermsSchema } from "./career";
-import { offerTermKeys, parseOfferEntry, previousOfferCurrency } from "./career-offer";
+import { offerHintFromSalary, offerTermKeys, parseOfferEntry, previousOfferCurrency } from "./career-offer";
 
 const entry = () => ({
 	applicationId: "owned-job",
@@ -122,5 +122,15 @@ describe("offerTermKeys", () => {
 		expect(
 			offerTermKeys(offerTermsSchema.parse({ currency: "EUR", period: "year", base: null, variable: null })),
 		).toEqual([]);
+	});
+});
+
+describe("offerHintFromSalary", () => {
+	it("reads the currency and the lower end of a range", () => {
+		expect(offerHintFromSalary("€165,000 – €190,000")).toEqual({ currency: "EUR", base: 165_000 });
+		expect(offerHintFromSalary("$120k–140k")).toEqual({ currency: "USD", base: 120_000 });
+		expect(offerHintFromSalary("GBP 85,000 + bonus")).toEqual({ currency: "GBP", base: 85_000 });
+		expect(offerHintFromSalary("Competitive")).toEqual({ currency: null, base: null });
+		expect(offerHintFromSalary("")).toEqual({ currency: null, base: null });
 	});
 });

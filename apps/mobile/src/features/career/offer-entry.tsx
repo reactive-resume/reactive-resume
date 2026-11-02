@@ -6,7 +6,12 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
-import { offerApplications, parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
+import {
+	offerApplications,
+	offerHintFromSalary,
+	parseOfferEntry,
+	previousOfferCurrency,
+} from "@reactive-resume/schema/career-offer";
 import { client, useCareerAction, useCareerQueries, useCareerTime, useOffers } from "./hooks";
 import { formatMoney } from "./offer-compare";
 import { EditorSheet, LoadState } from "./shared";
@@ -18,7 +23,14 @@ import { useMoveWithUndo } from "@/features/applications/stage-actions";
 import { routes } from "@/routes";
 import { Banner, Button, Card, SelectSheet, Text, TextField, showToast, useTheme } from "@/ui";
 
-type Application = { id: string; company: string; role: string; status?: ApplicationStatus | undefined };
+type Application = {
+	id: string;
+	company: string;
+	role: string;
+	status?: ApplicationStatus | undefined;
+	/** The job's salary line, to start a new offer's currency and base from. */
+	salary?: string | null | undefined;
+};
 type OfferEntryProps = {
 	application?: Application | undefined;
 	primary?: boolean;
@@ -153,8 +165,10 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 			: { ...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }), currency: "" },
 	);
 	const amount = (value: number | null | undefined) => (value === null || value === undefined ? "" : String(value));
+	// A new offer for a job starts from the job's own salary line: its currency, and the low end as an editable base.
+	const hint = offer ? null : offerHintFromSalary(application?.salary);
 	const [amounts, setAmounts] = useState(() => ({
-		base: amount(offer?.data.base),
+		base: amount(offer ? offer.data.base : hint?.base),
 		variable: amount(offer?.data.variable),
 		learning: amount(offer?.data.learning),
 	}));
@@ -172,7 +186,8 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	// A new offer starts in the last offer's currency, else the one the user's minimum salary is in (Preferences).
 	const careerProfile = useCareerQueries().profile.data;
 	const preferred = careerProfile?.minBase.amount === null ? undefined : careerProfile?.minBase.currency;
-	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? preferred ?? "" };
+	const terms =
+		offer || currencyTyped ? draft : { ...draft, currency: hint?.currency ?? previousCurrency ?? preferred ?? "" };
 	const [more, setMore] = useState(Boolean(offer));
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
 	const [submitted, setSubmitted] = useState(false);
