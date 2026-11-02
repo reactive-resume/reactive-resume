@@ -86,6 +86,7 @@ it("waits for a newly selected job to load before offering an unlinked copy", as
 			tags: [],
 			isLocked: false,
 			isPublic: false,
+			hasPassword: false,
 			slug: "resume",
 			trashedAt: null,
 			createdAt: new Date(),

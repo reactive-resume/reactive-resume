@@ -13,9 +13,7 @@ export function McpSection() {
 	return (
 		<SettingsSection
 			title={<Trans>MCP server</Trans>}
-			description={
-				<Trans>Let AI clients like Claude or Cursor read and edit your resumes, using an API key above.</Trans>
-			}
+			description={<Trans>Sign in from your AI client, or use an API key.</Trans>}
 		>
 			<div className="flex h-[38px] items-center rounded-lg border border-line-2 bg-raised ps-3 pe-1.5 font-mono text-[13px] font-medium">
 				<span className="min-w-0 flex-1 truncate">{address}</span>
