@@ -36,7 +36,7 @@ export function ProviderModel({ provider, value, onChange, disabled }: ProviderM
 					<ListRow
 						key={model.id}
 						title={model.name}
-						subtitle={`${model.id}${model.recommendation === "capable" ? ` · ${t`More capable`}` : model.id === defaultModel ? ` · ${t`Default`}` : ""}`}
+						subtitle={`${model.id}${model.recommendation === "capable" ? ` · ${t`More capable`}` : model.id === defaultModel ? ` · ${t`Default · fast, low cost`}` : ""}`}
 						selected={value === model.id}
 						onPress={() => {
 							onChange(model.id);
@@ -71,14 +71,9 @@ export function ProviderModel({ provider, value, onChange, disabled }: ProviderM
 					) : null
 				}
 			/>
-			{provider === "openai" && (
+			{defaultModel && (
 				<Text color="ink3">
-					{t`Fast, lower-cost default for everyday work.`} {defaultModel}
-				</Text>
-			)}
-			{provider !== "openai" && defaultModel && (
-				<Text color="ink3">
-					{t`Default`}: {defaultModel}
+					{t`${defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice.`}
 				</Text>
 			)}
 			{!hasSuggestions && <Text color="ink3">{t`No built-in suggestions for this provider.`}</Text>}
