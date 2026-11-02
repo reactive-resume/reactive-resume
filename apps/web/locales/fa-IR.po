@@ -422,6 +422,13 @@ msgstr "{0, plural, one {فونت انتخاب‌شدهٔ شما نمی‌توا
 msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{0} · {providerLabel}. این درخواست و دانسته‌های شما را می‌فرستد؛ ممکن است ارائه‌دهنده‌تان هزینه دریافت کند."
 
+#. Mode tab tooltip: the mode, then the key that opens it
+#. placeholder {0}: labels[mode]
+#. placeholder {1}: index + 1
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{0} · key {1}"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "{0} (copy)"
@@ -1026,9 +1033,20 @@ msgstr "{title} حذف شد"
 msgid "{title} is on · next {0}"
 msgstr "{title} روشن است · بعدی: {0}"
 
+#. placeholder {0}: rows.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title} moved to position {position} of {0}"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "{title} paused"
 msgstr "{title} متوقف شد"
+
+#. placeholder {0}: to + 1
+#. placeholder {1}: entryIds.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title}, entry {0} of {1}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{toCheck, plural, one {# field needs a look.} other {# fields need a look.}}"
@@ -1749,6 +1767,7 @@ msgstr "کلمه کلیدی اضافه کنید"
 msgid "Add language"
 msgstr "زبان اضافه کنید"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
@@ -3253,10 +3272,6 @@ msgstr "گذرواژهٔ خود را تغییر دهید"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "رزومه را مستقیماً تغییر داد (مکالمه قبلی)"
 
-#: src/dialogs/resume/index.tsx
-msgid "Changed your mind? Rename your resume to something more descriptive."
-msgstr "نظرتان عوض شده؟ نام رزومه خود را به چیزی توصیفی‌تر تغییر دهید."
-
 #: src/features/homepage/footer.tsx
 msgid "Changelog"
 msgstr "آخرین تغییرات"
@@ -3495,6 +3510,10 @@ msgstr "گذرواژه‌ای متفاوت از گذرواژهٔ فعلی خود
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "یک فایل PDF انتخاب کنید."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
@@ -5914,8 +5933,8 @@ msgid "Drafting…"
 msgstr "در حال پیش نویس…"
 
 #: src/features/resume/editor/write/write-panel.tsx
-msgid "drag · ⌥↑↓"
-msgstr "بکشید · ⌥↑↓"
+msgid "drag · {reorderKeys}"
+msgstr "بکشید · {reorderKeys}"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
@@ -7050,10 +7069,6 @@ msgstr "نام کامل"
 msgid "Full width"
 msgstr "تمام‌عرض"
 
-#: src/dialogs/resume/index.tsx
-msgid "Generate a random name"
-msgstr "تولید یک نام تصادفی"
-
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -8112,7 +8127,9 @@ msgstr "آن را زیر ۲.۵ مگابایت نگه دارید، معمولاً
 msgid "Keep mine"
 msgstr "مال من رو نگه دار"
 
+#. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr "در یک صفحه نگه دارید"
 
@@ -8147,11 +8164,6 @@ msgstr "آن‌ها را در حدود دو خط نگه دارید تا خوان
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
 msgstr "به دو یا سه خانوادهٔ فونت اکتفا کنید. هر فونت اضافه شانس دیگری برای نگاشت نادرست است."
-
-#. Layout editor toggle that prevents a section from splitting across pages
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Keep together"
-msgstr "با هم باشید"
 
 #: src/features/settings/account/profile.tsx
 msgid "Keep username"
@@ -8736,6 +8748,7 @@ msgstr "پیش از وارد کردن مرحله‌های نام‌گذاری‌
 msgid "Loading"
 msgstr "در حال بارگذاری"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "در حال بارگیری اتصال‌های هوش مصنوعی…"
@@ -10095,6 +10108,10 @@ msgstr ""
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "الان نه"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Not on the page"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Not recorded"
@@ -12347,6 +12364,8 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/account/security.tsx
 msgid "Rename"
 msgstr "تغییر نام دهید"
@@ -12354,6 +12373,10 @@ msgstr "تغییر نام دهید"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename letter"
 msgstr "تغییر نام نامه"
+
+#: src/dialogs/resume/index.tsx
+msgid "Rename resume"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Rename section"
@@ -12898,14 +12921,6 @@ msgstr "رومانیایی"
 msgid "Roomy"
 msgstr "جادار"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation"
-msgstr "چرخش"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "چرخش توسط رندر PDF پشتیبانی نمی‌شود."
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Row {row}, {0}: “{value}” is invalid."
@@ -13061,6 +13076,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Save job, create and open"
+msgstr ""
+
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Save link"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
@@ -13467,6 +13486,10 @@ msgstr "بخش ها · سفارش چاپ"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Sections found"
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Sections most resumes also have:"
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -14475,14 +14498,11 @@ msgstr "از یکی که دارید شروع کنید و درخواست کار �
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
 msgstr "از صفر شروع کنید یا آنچه دارید را وارد کنید. چند دقیقه طول می‌کشد و هر وقت بخواهید می‌توانید برگردید."
 
+#. Layout editor toggle that forces a section to begin on a new page
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Start on a new page"
 msgstr "از یک صفحه جدید شروع کنید"
-
-#. Layout editor toggle that forces a section to begin on a new page
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Start on new page"
-msgstr "شروع در صفحه جدید"
 
 #: src/features/ats-checker/messages.ts
 msgid "Start the resume with your name on its own line."
@@ -14752,10 +14772,6 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "Swap"
 msgstr "جابه‌جایی"
-
-#: src/features/resume/editor/page-overlay.tsx
-msgid "Swap rows"
-msgstr "جابه‌جایی ردیف‌ها"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Swap rows: lead with company"
@@ -15265,8 +15281,8 @@ msgid "the employer's message"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
-msgid "The end is before the start."
-msgstr "پایان قبل از شروع است."
+msgid "The end date is before the start date. Check both dates."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "The exported PDF"
@@ -16458,6 +16474,7 @@ msgid "Until then, Interview prep has your plan, your opening and the questions 
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "بدون عنوان"
@@ -16506,10 +16523,6 @@ msgstr ""
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Update resume"
-msgstr "به‌روزرسانی رزومه"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"

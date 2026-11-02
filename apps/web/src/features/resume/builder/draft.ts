@@ -1115,6 +1115,24 @@ export function useResumeUpdateSubscription({ resumeId, onUpdate, onError }: Res
 	}, [onError, onUpdate, resumeId, retryNonce]);
 }
 
+/** Resumes this tab is changing on the server itself (a version restore): their stream echo isn't "another tab". */
+const ownServerWrites = new Map<string, number>();
+
+/** Runs a server-side write this tab started; while it runs (and briefly after), its update event isn't announced. */
+export async function withOwnServerWrite<T>(resumeId: string, run: () => Promise<T>): Promise<T> {
+	ownServerWrites.set(resumeId, (ownServerWrites.get(resumeId) ?? 0) + 1);
+	try {
+		return await run();
+	} finally {
+		// The stream can deliver the echo just after the response: keep the mark a moment longer.
+		setTimeout(() => {
+			const count = (ownServerWrites.get(resumeId) ?? 1) - 1;
+			if (count > 0) ownServerWrites.set(resumeId, count);
+			else ownServerWrites.delete(resumeId);
+		}, 2_000);
+	}
+}
+
 export function useBuilderResumeUpdateSubscription() {
 	const queryClient = useQueryClient();
 	const replaceResumeFromServer = useResumeStore((state) => state.replaceResumeFromServer);
@@ -1164,7 +1182,7 @@ export function useBuilderResumeUpdateSubscription() {
 
 			// #53: attribute cross-tab / AI-agent edits instead of silently swapping the document.
 			replaceResumeFromServer(resume);
-			notifyExternalUpdate(event.mutation);
+			if (!ownServerWrites.has(resumeId)) notifyExternalUpdate(event.mutation);
 		},
 		[queryClient, replaceResumeFromServer, resumeId],
 	);

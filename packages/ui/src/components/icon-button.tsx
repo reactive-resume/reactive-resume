@@ -2,7 +2,7 @@ import type { ButtonProps } from "@reactive-resume/ui/components/button";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Kbd } from "@reactive-resume/ui/components/kbd";
+import { formatShortcut, Kbd } from "@reactive-resume/ui/components/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 
 type IconButtonProps = Omit<ButtonProps, "children" | "aria-label"> & {
@@ -33,7 +33,7 @@ function IconButton({
 			</TooltipTrigger>
 			<TooltipContent side={tooltipSide}>
 				{label}
-				{shortcut && <Kbd>{shortcut}</Kbd>}
+				{shortcut && <Kbd>{formatShortcut(shortcut)}</Kbd>}
 			</TooltipContent>
 		</Tooltip>
 	);

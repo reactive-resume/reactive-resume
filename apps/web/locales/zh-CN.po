@@ -422,6 +422,13 @@ msgstr "{0, plural, one {您选择的字体无法显示 {list}，它会显示为
 msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{0} · {providerLabel}。将发送此申请和您的知识库；您的提供商可能会收费。"
 
+#. Mode tab tooltip: the mode, then the key that opens it
+#. placeholder {0}: labels[mode]
+#. placeholder {1}: index + 1
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{0} · key {1}"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "{0} (copy)"
@@ -1026,9 +1033,20 @@ msgstr "{title} 已删除"
 msgid "{title} is on · next {0}"
 msgstr "“{title}”已开启 · 下次 {0}"
 
+#. placeholder {0}: rows.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title} moved to position {position} of {0}"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "{title} paused"
 msgstr "“{title}”已暂停"
+
+#. placeholder {0}: to + 1
+#. placeholder {1}: entryIds.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title}, entry {0} of {1}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{toCheck, plural, one {# field needs a look.} other {# fields need a look.}}"
@@ -1749,6 +1767,7 @@ msgstr "添加关键字"
 msgid "Add language"
 msgstr "添加语言"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
@@ -3253,10 +3272,6 @@ msgstr "更改你的密码"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "直接改了简历（之前的对话）"
 
-#: src/dialogs/resume/index.tsx
-msgid "Changed your mind? Rename your resume to something more descriptive."
-msgstr "改变主意了？那就把简历重命名得更具体一些吧。"
-
 #: src/features/homepage/footer.tsx
 msgid "Changelog"
 msgstr "更新日志"
@@ -3495,6 +3510,10 @@ msgstr "请选择与当前密码不同的密码。"
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "请选择 PDF 文件。"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
@@ -5914,8 +5933,8 @@ msgid "Drafting…"
 msgstr "起草…"
 
 #: src/features/resume/editor/write/write-panel.tsx
-msgid "drag · ⌥↑↓"
-msgstr "拖动·⌥↑↓"
+msgid "drag · {reorderKeys}"
+msgstr "拖动·{reorderKeys}"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
@@ -7050,10 +7069,6 @@ msgstr "姓名"
 msgid "Full width"
 msgstr "全宽"
 
-#: src/dialogs/resume/index.tsx
-msgid "Generate a random name"
-msgstr "生成一个随机名称"
-
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -8112,7 +8127,9 @@ msgstr "将文件控制在 2.5 MB 以内，通常可通过移除或缩小图片�
 msgid "Keep mine"
 msgstr "保留我的"
 
+#. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr "保留在一页上"
 
@@ -8147,11 +8164,6 @@ msgstr "把每一条控制在大约两行，方便快速浏览的读者读完。
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
 msgstr "字体最多保留两三种。每多一种字体，就多一次映射出错的风险。"
-
-#. Layout editor toggle that prevents a section from splitting across pages
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Keep together"
-msgstr "保持团结"
 
 #: src/features/settings/account/profile.tsx
 msgid "Keep username"
@@ -8736,6 +8748,7 @@ msgstr "导入带名称的阶段前，请先加载您的阶段。您的 CSV 数�
 msgid "Loading"
 msgstr "加载中"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "正在加载 AI 连接…"
@@ -10095,6 +10108,10 @@ msgstr ""
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "暂不"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Not on the page"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Not recorded"
@@ -12347,6 +12364,8 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/account/security.tsx
 msgid "Rename"
 msgstr "重命名"
@@ -12354,6 +12373,10 @@ msgstr "重命名"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename letter"
 msgstr "重命名字母"
+
+#: src/dialogs/resume/index.tsx
+msgid "Rename resume"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Rename section"
@@ -12898,14 +12921,6 @@ msgstr "罗马尼亚语"
 msgid "Roomy"
 msgstr "宽敞"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation"
-msgstr "旋转"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "PDF 渲染不支持旋转。"
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Row {row}, {0}: “{value}” is invalid."
@@ -13061,6 +13076,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Save job, create and open"
+msgstr ""
+
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Save link"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
@@ -13467,6 +13486,10 @@ msgstr "章节·打印顺序"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Sections found"
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Sections most resumes also have:"
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -14475,14 +14498,11 @@ msgstr "从您拥有的一份工作申请开始并链接该工作申请。"
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
 msgstr "从零开始，或导入已有内容。只需几分钟，随时可以回来继续。"
 
+#. Layout editor toggle that forces a section to begin on a new page
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Start on a new page"
 msgstr "从新的一页开始"
-
-#. Layout editor toggle that forces a section to begin on a new page
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Start on new page"
-msgstr "在新页面开始"
 
 #: src/features/ats-checker/messages.ts
 msgid "Start the resume with your name on its own line."
@@ -14752,10 +14772,6 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "Swap"
 msgstr "互换"
-
-#: src/features/resume/editor/page-overlay.tsx
-msgid "Swap rows"
-msgstr "交换行"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Swap rows: lead with company"
@@ -15265,8 +15281,8 @@ msgid "the employer's message"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
-msgid "The end is before the start."
-msgstr "结束在开始之前。"
+msgid "The end date is before the start date. Check both dates."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "The exported PDF"
@@ -16458,6 +16474,7 @@ msgid "Until then, Interview prep has your plan, your opening and the questions 
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "无题"
@@ -16506,10 +16523,6 @@ msgstr ""
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Update resume"
-msgstr "更新简历"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"

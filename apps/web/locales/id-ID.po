@@ -422,6 +422,13 @@ msgstr "{0, plural, one {Font yang Anda pilih tidak dapat menampilkan {list}. Ka
 msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{0} · {providerLabel}. Mengirim lamaran ini dan Pengetahuan Anda; penyedia Anda mungkin mengenakan biaya."
 
+#. Mode tab tooltip: the mode, then the key that opens it
+#. placeholder {0}: labels[mode]
+#. placeholder {1}: index + 1
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{0} · key {1}"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "{0} (copy)"
@@ -1026,9 +1033,20 @@ msgstr "{title} dihapus"
 msgid "{title} is on · next {0}"
 msgstr "{title} aktif · berikutnya {0}"
 
+#. placeholder {0}: rows.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title} moved to position {position} of {0}"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "{title} paused"
 msgstr "{title} dijeda"
+
+#. placeholder {0}: to + 1
+#. placeholder {1}: entryIds.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title}, entry {0} of {1}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{toCheck, plural, one {# field needs a look.} other {# fields need a look.}}"
@@ -1749,6 +1767,7 @@ msgstr "Tambahkan kata kunci"
 msgid "Add language"
 msgstr "Tambahkan bahasa"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
@@ -3253,10 +3272,6 @@ msgstr "Ubah kata sandi Anda"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Mengubah resume secara langsung (percakapan sebelumnya)"
 
-#: src/dialogs/resume/index.tsx
-msgid "Changed your mind? Rename your resume to something more descriptive."
-msgstr "Berubah pikiran? Ganti nama resume Anda menjadi sesuatu yang lebih deskriptif."
-
 #: src/features/homepage/footer.tsx
 msgid "Changelog"
 msgstr "Changelog"
@@ -3495,6 +3510,10 @@ msgstr "Pilih kata sandi yang berbeda dari kata sandi Anda saat ini."
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "Pilih file PDF."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
@@ -5914,8 +5933,8 @@ msgid "Drafting…"
 msgstr "Menyusun…"
 
 #: src/features/resume/editor/write/write-panel.tsx
-msgid "drag · ⌥↑↓"
-msgstr "seret · ⌥↑↓"
+msgid "drag · {reorderKeys}"
+msgstr "seret · {reorderKeys}"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
@@ -7050,10 +7069,6 @@ msgstr "Nama lengkap"
 msgid "Full width"
 msgstr "Lebar penuh"
 
-#: src/dialogs/resume/index.tsx
-msgid "Generate a random name"
-msgstr "Hasilkan nama acak"
-
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -8112,7 +8127,9 @@ msgstr "Jaga agar tetap di bawah 2,5 MB, biasanya dengan menghapus atau memperke
 msgid "Keep mine"
 msgstr "Simpan milikku"
 
+#. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr "Tetap di satu halaman"
 
@@ -8147,11 +8164,6 @@ msgstr "Buat masing-masing sekitar dua baris, agar pembaca sekilas dapat menyele
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
 msgstr "Batasi hingga dua atau tiga keluarga font. Setiap font tambahan adalah peluang lain untuk terpetakan dengan buruk."
-
-#. Layout editor toggle that prevents a section from splitting across pages
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Keep together"
-msgstr "Tetap bersatu"
 
 #: src/features/settings/account/profile.tsx
 msgid "Keep username"
@@ -8736,6 +8748,7 @@ msgstr "Muat tahap Anda sebelum mengimpor tahap bernama. Data CSV Anda tetap dis
 msgid "Loading"
 msgstr "Memuat"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "Memuat koneksi AI…"
@@ -10095,6 +10108,10 @@ msgstr ""
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "Jangan sekarang"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Not on the page"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Not recorded"
@@ -12347,6 +12364,8 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/account/security.tsx
 msgid "Rename"
 msgstr "Ganti nama"
@@ -12354,6 +12373,10 @@ msgstr "Ganti nama"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename letter"
 msgstr "Ganti nama surat"
+
+#: src/dialogs/resume/index.tsx
+msgid "Rename resume"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Rename section"
@@ -12898,14 +12921,6 @@ msgstr "Rumania"
 msgid "Roomy"
 msgstr "Luas"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation"
-msgstr "Rotasi"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "Rotasi tidak didukung oleh rendering PDF."
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Row {row}, {0}: “{value}” is invalid."
@@ -13061,6 +13076,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Save job, create and open"
+msgstr ""
+
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Save link"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
@@ -13467,6 +13486,10 @@ msgstr "Bagian · pesanan cetak"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Sections found"
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Sections most resumes also have:"
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -14475,13 +14498,10 @@ msgstr "Mulailah dari yang Anda miliki dan tautkan lamaran pekerjaan."
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
 msgstr "Mulai dari awal atau impor yang sudah Anda miliki. Hanya perlu beberapa menit, dan Anda bisa kembali kapan saja."
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Start on a new page"
-msgstr "Mulai di halaman baru"
-
 #. Layout editor toggle that forces a section to begin on a new page
+#: src/features/resume/editor/write/section-row.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Start on new page"
+msgid "Start on a new page"
 msgstr "Mulai di halaman baru"
 
 #: src/features/ats-checker/messages.ts
@@ -14752,10 +14772,6 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "Swap"
 msgstr "Tukar"
-
-#: src/features/resume/editor/page-overlay.tsx
-msgid "Swap rows"
-msgstr "Tukar baris"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Swap rows: lead with company"
@@ -15265,8 +15281,8 @@ msgid "the employer's message"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
-msgid "The end is before the start."
-msgstr "Akhir adalah sebelum permulaan."
+msgid "The end date is before the start date. Check both dates."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "The exported PDF"
@@ -16458,6 +16474,7 @@ msgid "Until then, Interview prep has your plan, your opening and the questions 
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Tanpa judul"
@@ -16506,10 +16523,6 @@ msgstr ""
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Update resume"
-msgstr "Perbarui CV"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"

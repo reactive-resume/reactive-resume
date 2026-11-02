@@ -14,4 +14,25 @@ function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
 	);
 }
 
-export { Kbd };
+const isApple = () =>
+	typeof navigator !== "undefined" && /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
+
+/**
+ * A shortcut written with Mac glyphs ("⌘K", "⇧⌘Z", "⌥↑") as this platform shows it: unchanged on Apple devices,
+ * "Ctrl+K", "Ctrl+Shift+Z", "Alt+↑" elsewhere (the bindings use Mod, so the key really is Ctrl there).
+ */
+function formatShortcut(shortcut: string, apple = isApple()): string {
+	if (apple) return shortcut;
+	const names: Record<string, string> = { "⌘": "Ctrl", "⌃": "Ctrl", "⇧": "Shift", "⌥": "Alt" };
+	const modifiers = [...shortcut].filter((char) => char in names);
+	if (modifiers.length === 0) return shortcut;
+	const key = [...shortcut].filter((char) => !(char in names)).join("");
+	// Ctrl first, as Windows and Linux write it.
+	const order = ["Ctrl", "Shift", "Alt"];
+	const named = [...new Set(modifiers.map((char) => names[char] ?? ""))].toSorted(
+		(a, b) => order.indexOf(a) - order.indexOf(b),
+	);
+	return [...named, key].join("+");
+}
+
+export { formatShortcut, Kbd };

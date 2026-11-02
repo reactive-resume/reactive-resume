@@ -16,7 +16,6 @@ import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { generateRandomName } from "@reactive-resume/utils/slug";
 import { useDialogStore } from "../store";
 import { ChipInput } from "@/components/input/chip-input";
 import { saveResumeMetadata } from "@/features/resume/builder/draft";
@@ -97,15 +96,13 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
 					<Icon name="pencil-simple" size={16} />
-					{isUpdate ? <Trans>Update resume</Trans> : <Trans>Duplicate resume</Trans>}
+					{isUpdate ? <Trans>Rename resume</Trans> : <Trans>Duplicate resume</Trans>}
 				</DialogTitle>
-				<DialogDescription>
-					{isUpdate ? (
-						<Trans>Changed your mind? Rename your resume to something more descriptive.</Trans>
-					) : (
+				{!isUpdate && (
+					<DialogDescription>
 						<Trans>Duplicate your resume to create a new one, just like the original.</Trans>
-					)}
-				</DialogDescription>
+					</DialogDescription>
+				)}
 			</DialogHeader>
 
 			<form
@@ -122,29 +119,18 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 							<FormLabel>
 								<Trans>Name</Trans>
 							</FormLabel>
-							<div className="flex items-center gap-x-2">
-								<FormControl
-									render={
-										<Input
-											minLength={1}
-											maxLength={64}
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
-										/>
-									}
-								/>
-
-								<Button
-									size="icon"
-									variant="secondary"
-									title={t`Generate a random name`}
-									onClick={() => form.setFieldValue("name", generateRandomName())}
-								>
-									<Icon name="magic-wand" size={16} />
-								</Button>
-							</div>
+							<FormControl
+								render={
+									<Input
+										minLength={1}
+										maxLength={64}
+										name={field.name}
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(event) => field.handleChange(event.target.value)}
+									/>
+								}
+							/>
 							<FormMessage errors={field.state.meta.errors} />
 							<FormDescription>
 								<Trans>Name the resume after the position you are applying for.</Trans>

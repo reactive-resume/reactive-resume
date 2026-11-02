@@ -422,6 +422,13 @@ msgstr "{0, plural, one {Fontul selectat nu poate afișa {list}. Apare ca “?�
 msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{0} · {providerLabel}. Trimite această candidatură și Cunoștințele dvs.; furnizorul poate percepe o taxă."
 
+#. Mode tab tooltip: the mode, then the key that opens it
+#. placeholder {0}: labels[mode]
+#. placeholder {1}: index + 1
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{0} · key {1}"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "{0} (copy)"
@@ -1026,9 +1033,20 @@ msgstr "{title} a fost șters"
 msgid "{title} is on · next {0}"
 msgstr "{title} este activ · următoarea {0}"
 
+#. placeholder {0}: rows.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title} moved to position {position} of {0}"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "{title} paused"
 msgstr "{title} în pauză"
+
+#. placeholder {0}: to + 1
+#. placeholder {1}: entryIds.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title}, entry {0} of {1}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{toCheck, plural, one {# field needs a look.} other {# fields need a look.}}"
@@ -1749,6 +1767,7 @@ msgstr "Adăugați cuvântul cheie"
 msgid "Add language"
 msgstr "Adăugați limba"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
@@ -3253,10 +3272,6 @@ msgstr "Schimbă-ți parola"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "S-a schimbat direct CV-ul (o conversație anterioară)"
 
-#: src/dialogs/resume/index.tsx
-msgid "Changed your mind? Rename your resume to something more descriptive."
-msgstr "V-ați răzgândit? Redenumiți CV-ul cu ceva mai descriptiv."
-
 #: src/features/homepage/footer.tsx
 msgid "Changelog"
 msgstr "Jurnal de modificări"
@@ -3495,6 +3510,10 @@ msgstr "Alege o parolă diferită de cea actuală."
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "Alege un fișier PDF."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
@@ -5914,8 +5933,8 @@ msgid "Drafting…"
 msgstr "Se redactează…"
 
 #: src/features/resume/editor/write/write-panel.tsx
-msgid "drag · ⌥↑↓"
-msgstr "trage · ⌥↑↓"
+msgid "drag · {reorderKeys}"
+msgstr "trage · {reorderKeys}"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
@@ -7050,10 +7069,6 @@ msgstr "Numele complet"
 msgid "Full width"
 msgstr "Lățime completă"
 
-#: src/dialogs/resume/index.tsx
-msgid "Generate a random name"
-msgstr "Generați un nume aleatoriu"
-
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -8112,7 +8127,9 @@ msgstr "Păstrați-l sub 2,5 MB, de obicei prin eliminarea sau micșorarea imagi
 msgid "Keep mine"
 msgstr "Păstrează-l pe al meu"
 
+#. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr "Rămâneți pe o singură pagină"
 
@@ -8147,11 +8164,6 @@ msgstr "Păstrați-le la aproximativ două rânduri, astfel încât un cititor r
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
 msgstr "Limitați-vă la două sau trei familii. Fiecare font suplimentar este încă o șansă ca unul să fie mapat incorect."
-
-#. Layout editor toggle that prevents a section from splitting across pages
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Keep together"
-msgstr "Rămâneți împreună"
 
 #: src/features/settings/account/profile.tsx
 msgid "Keep username"
@@ -8736,6 +8748,7 @@ msgstr "Încărcați etapele înainte de a importa etape cu nume. Datele CSV sun
 msgid "Loading"
 msgstr "Se încarcă"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "Se încarcă conexiunile AI…"
@@ -10095,6 +10108,10 @@ msgstr ""
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "Nu acum"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Not on the page"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Not recorded"
@@ -12347,6 +12364,8 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/account/security.tsx
 msgid "Rename"
 msgstr "Redenumiți"
@@ -12354,6 +12373,10 @@ msgstr "Redenumiți"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename letter"
 msgstr "Redenumiți scrisoarea"
+
+#: src/dialogs/resume/index.tsx
+msgid "Rename resume"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Rename section"
@@ -12898,14 +12921,6 @@ msgstr "Română"
 msgid "Roomy"
 msgstr "Spaţios"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation"
-msgstr "Rotire"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "Rotația nu este acceptată de redarea PDF."
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Row {row}, {0}: “{value}” is invalid."
@@ -13061,6 +13076,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Save job, create and open"
+msgstr ""
+
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Save link"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
@@ -13467,6 +13486,10 @@ msgstr "Secțiuni · comanda tipărire"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Sections found"
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Sections most resumes also have:"
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -14475,13 +14498,10 @@ msgstr "Începeți de la unul pe care îl aveți și conectați cererea de angaj
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
 msgstr "Începeți de la zero sau importați ce aveți. Durează câteva minute și puteți reveni oricând."
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Start on a new page"
-msgstr "Începeți pe o pagină nouă"
-
 #. Layout editor toggle that forces a section to begin on a new page
+#: src/features/resume/editor/write/section-row.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Start on new page"
+msgid "Start on a new page"
 msgstr "Începeți pe o pagină nouă"
 
 #: src/features/ats-checker/messages.ts
@@ -14752,10 +14772,6 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "Swap"
 msgstr "Inversați"
-
-#: src/features/resume/editor/page-overlay.tsx
-msgid "Swap rows"
-msgstr "Inversați rândurile"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Swap rows: lead with company"
@@ -15265,8 +15281,8 @@ msgid "the employer's message"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
-msgid "The end is before the start."
-msgstr "Sfârșitul este înainte de început."
+msgid "The end date is before the start date. Check both dates."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "The exported PDF"
@@ -16458,6 +16474,7 @@ msgid "Until then, Interview prep has your plan, your opening and the questions 
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Fără titlu"
@@ -16506,10 +16523,6 @@ msgstr ""
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Update resume"
-msgstr "Actualizează CV-ul"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"

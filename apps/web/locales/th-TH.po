@@ -422,6 +422,13 @@ msgstr "{0, plural, one {ฟอนต์ที่คุณเลือกแส�
 msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{0} · {providerLabel} ส่งใบสมัครนี้และคลังความรู้ของคุณ ผู้ให้บริการอาจเรียกเก็บค่าบริการ"
 
+#. Mode tab tooltip: the mode, then the key that opens it
+#. placeholder {0}: labels[mode]
+#. placeholder {1}: index + 1
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{0} · key {1}"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "{0} (copy)"
@@ -1026,9 +1033,20 @@ msgstr "ลบ {title} แล้ว"
 msgid "{title} is on · next {0}"
 msgstr "{title} เปิดอยู่ · ครั้งถัดไป {0}"
 
+#. placeholder {0}: rows.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title} moved to position {position} of {0}"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "{title} paused"
 msgstr "{title} หยุดชั่วคราว"
+
+#. placeholder {0}: to + 1
+#. placeholder {1}: entryIds.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title}, entry {0} of {1}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{toCheck, plural, one {# field needs a look.} other {# fields need a look.}}"
@@ -1749,6 +1767,7 @@ msgstr "เพิ่มคำค้นหา"
 msgid "Add language"
 msgstr "เพิ่มภาษา"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
@@ -3253,10 +3272,6 @@ msgstr "เปลี่ยนรหัสผ่านของคุณ"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "เปลี่ยนประวัติโดยตรง (บทสนทนาก่อนหน้านี้)"
 
-#: src/dialogs/resume/index.tsx
-msgid "Changed your mind? Rename your resume to something more descriptive."
-msgstr "เปลี่ยนใจหรือไม่? เปลี่ยนชื่อเรซูเม่ของคุณให้อธิบายมากขึ้น"
-
 #: src/features/homepage/footer.tsx
 msgid "Changelog"
 msgstr "บันทึกการเปลี่ยนแปลง"
@@ -3495,6 +3510,10 @@ msgstr "เลือกรหัสผ่านที่ต่างจากร
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "เลือกไฟล์ PDF"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
@@ -5914,8 +5933,8 @@ msgid "Drafting…"
 msgstr "กำลังร่าง…"
 
 #: src/features/resume/editor/write/write-panel.tsx
-msgid "drag · ⌥↑↓"
-msgstr "ลาก · ⌥↑↓"
+msgid "drag · {reorderKeys}"
+msgstr "ลาก · {reorderKeys}"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
@@ -7050,10 +7069,6 @@ msgstr "ชื่อเต็ม"
 msgid "Full width"
 msgstr "เต็มความกว้าง"
 
-#: src/dialogs/resume/index.tsx
-msgid "Generate a random name"
-msgstr "สร้างชื่อแบบสุ่ม"
-
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -8112,7 +8127,9 @@ msgstr "รักษาขนาดไฟล์ให้ต่ำกว่า 2.
 msgid "Keep mine"
 msgstr "เก็บของฉันไว้"
 
+#. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr "เอาไว้หน้าเดียว"
 
@@ -8147,11 +8164,6 @@ msgstr "จำกัดให้อยู่ที่ประมาณสอง
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
 msgstr "ใช้ฟอนต์เพียงสองถึงสามตระกูล ฟอนต์ที่เพิ่มขึ้นแต่ละตัวเป็นโอกาสที่จะแสดงผลผิดพลาดมากขึ้น"
-
-#. Layout editor toggle that prevents a section from splitting across pages
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Keep together"
-msgstr "อยู่ด้วยกันต่อไป"
 
 #: src/features/settings/account/profile.tsx
 msgid "Keep username"
@@ -8736,6 +8748,7 @@ msgstr "โหลดขั้นตอนของคุณก่อนนำเ
 msgid "Loading"
 msgstr "กำลังโหลด"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "กำลังโหลดการเชื่อมต่อ AI…"
@@ -10095,6 +10108,10 @@ msgstr ""
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "ไม่ใช่ตอนนี้"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Not on the page"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Not recorded"
@@ -12347,6 +12364,8 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/account/security.tsx
 msgid "Rename"
 msgstr "เปลี่ยนชื่อ"
@@ -12354,6 +12373,10 @@ msgstr "เปลี่ยนชื่อ"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename letter"
 msgstr "เปลี่ยนชื่อจดหมาย"
+
+#: src/dialogs/resume/index.tsx
+msgid "Rename resume"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Rename section"
@@ -12898,14 +12921,6 @@ msgstr "โรมาเนีย"
 msgid "Roomy"
 msgstr "กว้างขวาง"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation"
-msgstr "การหมุน"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "การเรนเดอร์ PDF ไม่รองรับการหมุน"
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Row {row}, {0}: “{value}” is invalid."
@@ -13061,6 +13076,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Save job, create and open"
+msgstr ""
+
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Save link"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
@@ -13467,6 +13486,10 @@ msgstr "ส่วน·สั่งพิมพ์"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Sections found"
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Sections most resumes also have:"
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -14475,14 +14498,11 @@ msgstr "เริ่มจากอันที่คุณมีและเช
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
 msgstr "เริ่มจากศูนย์หรือนำเข้าสิ่งที่มีอยู่ ใช้เวลาไม่กี่นาที และกลับมาทำต่อได้ทุกเมื่อ"
 
+#. Layout editor toggle that forces a section to begin on a new page
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Start on a new page"
 msgstr "เริ่มต้นในหน้าใหม่"
-
-#. Layout editor toggle that forces a section to begin on a new page
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Start on new page"
-msgstr "เริ่มที่หน้าใหม่"
 
 #: src/features/ats-checker/messages.ts
 msgid "Start the resume with your name on its own line."
@@ -14752,10 +14772,6 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "Swap"
 msgstr "สลับ"
-
-#: src/features/resume/editor/page-overlay.tsx
-msgid "Swap rows"
-msgstr "สลับแถว"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Swap rows: lead with company"
@@ -15265,8 +15281,8 @@ msgid "the employer's message"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
-msgid "The end is before the start."
-msgstr "จุดสิ้นสุดอยู่ก่อนที่จะเริ่มต้น"
+msgid "The end date is before the start date. Check both dates."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "The exported PDF"
@@ -16458,6 +16474,7 @@ msgid "Until then, Interview prep has your plan, your opening and the questions 
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ไม่มีชื่อ"
@@ -16506,10 +16523,6 @@ msgstr ""
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Update resume"
-msgstr "อัปเดตประวัติย่อ"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"

@@ -422,6 +422,13 @@ msgstr "{0, plural, one {നിങ്ങൾ തിരഞ്ഞെടുത്ത
 msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{0} · {providerLabel}. ഈ അപേക്ഷയും നിങ്ങളുടെ അറിവും അയയ്ക്കുന്നു; നിങ്ങളുടെ ദാതാവ് നിരക്ക് ഈടാക്കിയേക്കാം."
 
+#. Mode tab tooltip: the mode, then the key that opens it
+#. placeholder {0}: labels[mode]
+#. placeholder {1}: index + 1
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{0} · key {1}"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "{0} (copy)"
@@ -1026,9 +1033,20 @@ msgstr "{title} ഇല്ലാതാക്കി"
 msgid "{title} is on · next {0}"
 msgstr "{title} ഓണാണ് · അടുത്തത് {0}"
 
+#. placeholder {0}: rows.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title} moved to position {position} of {0}"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "{title} paused"
 msgstr "{title} താൽക്കാലികമായി നിർത്തി"
+
+#. placeholder {0}: to + 1
+#. placeholder {1}: entryIds.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title}, entry {0} of {1}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{toCheck, plural, one {# field needs a look.} other {# fields need a look.}}"
@@ -1749,6 +1767,7 @@ msgstr "കീവേഡ് ചേർക്കുക"
 msgid "Add language"
 msgstr "ഭാഷ ചേർക്കുക"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
@@ -3253,10 +3272,6 @@ msgstr "നിങ്ങളുടെ പാസ്‌വേഡ് മാറ്റ�
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "റെസ്യൂമെ നേരിട്ട് മാറ്റി (മുമ്പത്തെ സംഭാഷണം)"
 
-#: src/dialogs/resume/index.tsx
-msgid "Changed your mind? Rename your resume to something more descriptive."
-msgstr "കരുതൽ മാറിയോ? നിങ്ങളുടെ റിസ്യൂമിന് കൂടുതൽ വിശദീകരണപരമായ ഒരു പേര് നൽകാം."
-
 #: src/features/homepage/footer.tsx
 msgid "Changelog"
 msgstr "മാറ്റങ്ങൾ രേഖപ്പെടുത്തിയ ലോഗ്‌ (Changelog)"
@@ -3495,6 +3510,10 @@ msgstr "നിലവിലെ പാസ്‌വേഡിൽ നിന്ന് 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "ഒരു PDF ഫയൽ തിരഞ്ഞെടുക്കുക."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
@@ -5914,8 +5933,8 @@ msgid "Drafting…"
 msgstr "ഡ്രാഫ്റ്റിംഗ്..."
 
 #: src/features/resume/editor/write/write-panel.tsx
-msgid "drag · ⌥↑↓"
-msgstr "വലിച്ചിടുക · ⌥↑↓"
+msgid "drag · {reorderKeys}"
+msgstr "വലിച്ചിടുക · {reorderKeys}"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
@@ -7050,10 +7069,6 @@ msgstr "പൂർണ്ണമായ പേര്"
 msgid "Full width"
 msgstr "പൂർണ്ണ വീതി"
 
-#: src/dialogs/resume/index.tsx
-msgid "Generate a random name"
-msgstr "ഒരു റാൻഡം പേരുണ്ടാക്കുക"
-
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -8112,7 +8127,9 @@ msgstr "സാധാരണയായി ചിത്രങ്ങൾ നീക്�
 msgid "Keep mine"
 msgstr "എൻ്റേത് സൂക്ഷിക്കുക"
 
+#. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr "ഒരു പേജിൽ സൂക്ഷിക്കുക"
 
@@ -8147,11 +8164,6 @@ msgstr "ഏകദേശം രണ്ട് വരികളിൽ ഒതുക്
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
 msgstr "രണ്ടോ മൂന്നോ ഫാമിലികളിൽ ഒതുക്കുക. ഓരോ അധിക ഫോണ്ടും മോശമായി മാപ്പ് ചെയ്യപ്പെടാനുള്ള മറ്റൊരു സാധ്യതയാണ്."
-
-#. Layout editor toggle that prevents a section from splitting across pages
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Keep together"
-msgstr "ഒരുമിച്ച് നിലനിർത്തുക"
 
 #: src/features/settings/account/profile.tsx
 msgid "Keep username"
@@ -8736,6 +8748,7 @@ msgstr "പേരുള്ള ഘട്ടങ്ങൾ ഇറക്കുമത�
 msgid "Loading"
 msgstr "ലോഡ് ചെയ്യുന്നു"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "AI കണക്ഷനുകൾ ലോഡ് ചെയ്യുന്നു…"
@@ -10095,6 +10108,10 @@ msgstr ""
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "ഇപ്പോൾ വേണ്ട"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Not on the page"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Not recorded"
@@ -12347,6 +12364,8 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/account/security.tsx
 msgid "Rename"
 msgstr "പേരുമാറ്റുക"
@@ -12354,6 +12373,10 @@ msgstr "പേരുമാറ്റുക"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename letter"
 msgstr "കത്ത് പുനർനാമകരണം ചെയ്യുക"
+
+#: src/dialogs/resume/index.tsx
+msgid "Rename resume"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Rename section"
@@ -12898,14 +12921,6 @@ msgstr "റൊമാനിയൻ"
 msgid "Roomy"
 msgstr "മുറിയുള്ള"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation"
-msgstr "ററോട്ടേഷൻ"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "PDF റെൻഡറിംഗ് റൊട്ടേഷനെ പിന്തുണയ്ക്കുന്നില്ല."
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Row {row}, {0}: “{value}” is invalid."
@@ -13061,6 +13076,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Save job, create and open"
+msgstr ""
+
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Save link"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
@@ -13467,6 +13486,10 @@ msgstr "വിഭാഗങ്ങൾ · പ്രിൻ്റ് ഓർഡർ"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Sections found"
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Sections most resumes also have:"
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -14475,14 +14498,11 @@ msgstr "നിങ്ങളുടെ പക്കലുള്ള ഒന്നി�
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
 msgstr "പൂജ്യത്തിൽ നിന്ന് തുടങ്ങുക അല്ലെങ്കിൽ നിങ്ങളുടെ കൈവശമുള്ളത് ഇംപോർട്ട് ചെയ്യുക. കുറച്ച് മിനിറ്റുകൾ മതി, എപ്പോൾ വേണമെങ്കിലും തിരികെ വരാം."
 
+#. Layout editor toggle that forces a section to begin on a new page
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Start on a new page"
 msgstr "ഒരു പുതിയ പേജിൽ ആരംഭിക്കുക"
-
-#. Layout editor toggle that forces a section to begin on a new page
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Start on new page"
-msgstr "പുതിയ പേജിൽ ആരംഭിക്കുക"
 
 #: src/features/ats-checker/messages.ts
 msgid "Start the resume with your name on its own line."
@@ -14752,10 +14772,6 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "Swap"
 msgstr "പരസ്പരം മാറ്റുക"
-
-#: src/features/resume/editor/page-overlay.tsx
-msgid "Swap rows"
-msgstr "വരികൾ പരസ്പരം മാറ്റുക"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Swap rows: lead with company"
@@ -15265,8 +15281,8 @@ msgid "the employer's message"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
-msgid "The end is before the start."
-msgstr "തുടക്കത്തിനു മുമ്പാണ് അവസാനം."
+msgid "The end date is before the start date. Check both dates."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "The exported PDF"
@@ -16458,6 +16474,7 @@ msgid "Until then, Interview prep has your plan, your opening and the questions 
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ശീർഷകമില്ലാത്തത്"
@@ -16506,10 +16523,6 @@ msgstr ""
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Update resume"
-msgstr "റെസ്യൂമെ അപ്‌ഡേറ്റ് ചെയ്യുക"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"

@@ -8,6 +8,7 @@ import type {
 import type { ReactNode } from "react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useEffect, useRef, useState } from "react";
+import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { AnnotationMode, getDocument, getPdfWorker, RenderingCancelledException } from "./pdfjs";
 import { DEFAULT_PDF_PAGE_SIZE, getPreviewCanvasScale, getScaledPreviewPageSize } from "./preview.shared.utils";
@@ -101,7 +102,7 @@ export function PdfCanvasPage({
 	showPageNumbers,
 	totalPages,
 }: PdfCanvasPageProps) {
-	const { t } = useLingui();
+	const { t, i18n } = useLingui();
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const onLoadSuccessRef = useRef(onLoadSuccess);
 	const onRenderSuccessRef = useRef(onRenderSuccess);
@@ -199,7 +200,8 @@ export function PdfCanvasPage({
 	}, [document, pageNumber, pageScale]);
 
 	return (
-		<figure className="shrink-0">
+		// The caption and overlay tags are the app's words: they follow the app's direction, not an RTL resume's.
+		<figure dir={isRTL(i18n.locale) ? "rtl" : "ltr"} className="shrink-0">
 			{caption ??
 				(showPageNumbers ? (
 					<figcaption className="mb-1 text-[0.625rem] font-medium text-ink-3">
