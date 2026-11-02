@@ -440,12 +440,7 @@ msgstr "{0} · ସ୍କୋର୍ ଦିଆଯାଇନାହିଁ"
 msgid "{0} · Value uncertain"
 msgstr "{0} · ମୂଲ୍ୟ ଅନିଶ୍ଚିତ"
 
-#. placeholder {0}: document.name
-#. placeholder {0}: first.name
-#. placeholder {0}: resume.name
-#: src/features/document-menu/index.tsx
-#: src/features/documents/document-sheets.tsx
-#: src/features/documents/library.tsx
+#. placeholder {0}: source?.name ?? ""
 #: src/features/documents/new-document.tsx
 msgid "{0} (copy)"
 msgstr "{0} (କପି)"
@@ -2590,11 +2585,6 @@ msgstr "ରେଜୁମକୁ ସିଧାସଳଖ ବଦଳାଇଲେ (ପ�
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "ପରିବର୍ତ୍ତନଗୁଡିକ ସଞ୍ଚୟ ହୋଇପାରିବ ନାହିଁ। ଜାରି ରଖିବା ପୂର୍ବରୁ ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ।"
 
-#: src/features/design/style-groups.tsx
-#: src/features/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "କେବଳ ବିଭାଗ ବିଷୟବସ୍ତୁ ଏବଂ ତାରିଖ ଶବ୍ଦ ପରିବର୍ତ୍ତନ କରେ, ତୁମର ବିଷୟବସ୍ତୁ ନୁହେଁ |"
-
 #. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3092,8 +3082,8 @@ msgid "Complete {0} before saving."
 msgstr "ସେଭ୍ କରିବା ପୂର୍ବରୁ {0} ପୂରଣ କରନ୍ତୁ।"
 
 #: src/features/share/download.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "ସମ୍ପୂର୍ଣ୍ଣ ଡାଟା ବ୍ୟାକଅପ୍ | Reactive Resume କିମ୍ବା JSON Resume ଉପକରଣଗୁଡ଼ିକରେ ପୁନର୍ବାର ଆମଦାନୀ କରନ୍ତୁ |"
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/workspace/application-packet.tsx
 msgid "Complete the employer form manually in your browser using reviewed answers and approved PDFs."
@@ -3317,6 +3307,7 @@ msgid "Copy code"
 msgstr "କୋଡ୍ କପି କରନ୍ତୁ"
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
 msgid "Copy created"
 msgstr "କପି ସୃଷ୍ଟି ହୋଇଛି।"
 
@@ -4642,10 +4633,6 @@ msgid "Download reviewed packet"
 msgstr ""
 
 #: src/features/share/link.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "ଡାଉନଲୋଡ୍ ଟୋଟାଲ୍ ପୁନରାବୃତ୍ତି କ୍ଲିକ୍ ଅନ୍ତର୍ଭୂକ୍ତ କରିପାରିବ |"
-
-#: src/features/share/link.tsx
 msgid "downloads"
 msgstr "ଡାଉନଲୋଡ୍"
 
@@ -4766,6 +4753,10 @@ msgstr "ଆପଣ ମତାମତ ପାଇଥିବା ପ୍ରତ୍ୟେକ
 #: src/features/workspace/tabs/fit.tsx
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "ଚାକିରି ବିଜ୍ଞାପନର ପ୍ରତ୍ୟେକ ଆବଶ୍ୟକତାକୁ ଆପଣଙ୍କ ଜ୍ଞାନରେ ଥିବା ତଥ୍ୟ ଓ କାହାଣୀ ସହ ଯାଞ୍ଚ କରାଯାଏ। ଅଭାବଗୁଡ଼ିକ ଅନୁପସ୍ଥିତ ପ୍ରମାଣ ଭାବେ ଦେଖାଯାଏ, କେବେ ବି ଅନୁପସ୍ଥିତ ଦକ୍ଷତା ଭାବେ ନୁହେଁ।"
+
+#: src/features/share/link.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -5598,6 +5589,10 @@ msgstr ""
 msgid "Go to…"
 msgstr "… କୁ ଯାଆନ୍ତୁ"
 
+#: src/features/share/link.tsx
+msgid "Goes live at {url} when you publish."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Grade"
 msgstr "ଗ୍ରେଡ୍"
@@ -6311,6 +6306,10 @@ msgstr "ମୋର ରଖ |"
 #: src/features/write/section-sheet.tsx
 msgid "Keep on one page"
 msgstr "ଗୋଟିଏ ପୃଷ୍ଠାରେ ରଖ |"
+
+#: src/features/share/web-page.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -9259,8 +9258,8 @@ msgstr "ଦର୍ଶନ ଏବଂ ଡାଉନଲୋଡ୍ ଗଣନା କର�
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "ଆପଣଙ୍କ ଛୋଟ ଲିଙ୍କ୍ ଏବଂ କଷ୍ଟମ୍ ଡୋମେନ୍‌ରେ ଖୋଲିବା ପାଇଁ ଏହି ରେଜ୍ୟୁମେ ପ୍ରକାଶ କରନ୍ତୁ।"
 
-#: src/features/share/link.tsx
-msgid "Publish to choose an address."
+#: src/features/share/web-page.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/write/fields.ts
@@ -11074,6 +11073,11 @@ msgstr "ପଦବୀ ଖୋଜିବାକୁ ସେଟିଂସ୍‌ରେ ୱ
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -11120,6 +11124,10 @@ msgstr "|\n"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
+msgstr ""
+
+#: src/features/share/link.tsx
+msgid "Share image"
 msgstr ""
 
 #: src/features/applications/incoming-posting.tsx
@@ -11174,6 +11182,10 @@ msgstr "ସଂକ୍ଷିପ୍ତ ଏବଂ ପ୍ରତ୍ୟକ୍ଷ | ଯ�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "ନିଯୁକ୍ତିକାରୀଙ୍କ ପାଇଁ କ୍ଷୁଦ୍ର ଏବଂ ଭଦ୍ର"
+
+#: src/features/share/web-page.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Short link and domain"
@@ -11447,8 +11459,8 @@ msgid "Signed out, but some data on this device couldn't be removed."
 msgstr "ସାଇନ୍ ଆଉଟ୍ ହୋଇଛି, କିନ୍ତୁ ଏହି ଡିଭାଇସ୍‌ର କିଛି ତଥ୍ୟ ହଟାଯାଇପାରିଲା ନାହିଁ।"
 
 #: src/features/share/link.tsx
-msgid "since last view"
-msgstr "ଶେଷ ଦର୍ଶନ ଠାରୁ"
+msgid "since last counted view"
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
@@ -13136,6 +13148,10 @@ msgstr "ରପ୍ତାନି କରିବା ସମୟରେ ଇଚ୍ଛାଧ
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/share/web-page.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "ଏହି ସମୟସୂଚୀ ଚାଲୁ କରନ୍ତୁ"
@@ -13385,6 +13401,10 @@ msgstr "6–64 ଅକ୍ଷର ବ୍ୟବହାର କରନ୍ତୁ।"
 #: src/features/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "ଏକ ଗା er ଼ ଛାଇ ବ୍ୟବହାର କରନ୍ତୁ |"
+
+#: src/features/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Use a hex value like #3E6B4F or rgba(62, 107, 79, 1)."
@@ -14358,8 +14378,8 @@ msgid "Your email address is broken across pieces of text."
 msgstr "ଆପଣଙ୍କ ଇମେଲ୍ ଠିକଣା ଟେକ୍ସଟ୍ ଖଣ୍ଡ ମଧ୍ୟରେ ଭାଙ୍ଗି ଯାଇଛି।"
 
 #: src/features/share/web-page.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "ଆପଣଙ୍କ ଇମେଲ୍, ଫୋନ୍, ଅବସ୍ଥାନ ଏବଂ ଅନ୍ୟ ହେଡର୍ ବିବରଣୀ, ଏବଂ ସନ୍ଦର୍ଭଗୁଡ଼ିକର ଫୋନ୍ ନମ୍ବର, ୱେବ୍ ପୃଷ୍ଠା, ଏହାର PDF ଏବଂ ସନ୍ଧାନ ଫଳାଫଳରୁ ବାଦ ଦିଆଯାଏ।"
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/features/career/knowledge.tsx
 msgid "Your facts, stories and preferences. Editing Knowledge sends nothing to an AI connection."
@@ -14531,6 +14551,24 @@ msgstr ""
 #: src/features/share/web-page.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "ଆପଣ ପୁଣି ପ୍ରକାଶ ନକରିବା ପର୍ଯ୍ୟନ୍ତ, ଆପଣଙ୍କ ଛୋଟ ଲିଙ୍କ୍ ଏବଂ କଷ୍ଟମ୍ ଡୋମେନ୍ ଦେଖାଏ ଯେ ଏହି ରେଜ୍ୟୁମେ ଅଂଶୀଦାର ହୋଇନାହିଁ।"
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/share/web-page.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/share/web-page.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "your stories"

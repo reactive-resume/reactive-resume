@@ -2335,8 +2335,8 @@ msgid "Any font, in Advanced"
 msgstr "Katera koli pisava v naprednem načinu"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Anyone who opens the public URL will need this password."
-msgstr "Vsak, ki odpre javni URL, bo potreboval to geslo."
+msgid "Anyone who opens the public link needs this password."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
@@ -3288,11 +3288,6 @@ msgstr "Ste si premislili? Preimenujte svoj življenjepis v nekaj bolj opisa."
 msgid "Changelog"
 msgstr "Dnevnik sprememb"
 
-#: src/features/resume/editor/design/style-groups.tsx
-#: src/features/resume/editor/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "Spremeni samo naslove razdelkov in datumske besede, ne pa tudi vaše vsebine."
-
 #. placeholder {0}: versionLabel(earlier)
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3868,8 +3863,8 @@ msgid "Complete {0} before saving."
 msgstr "Pred shranjevanjem izpolnite {0}."
 
 #: src/features/resume/share/download-tab.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "Popolna varnostna kopija podatkov. Uvozi nazaj v orodja Reactive Resume ali JSON Resume."
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
@@ -5861,10 +5856,6 @@ msgstr "Prenesite vzorčni PDF"
 msgid "Download them"
 msgstr "Prenesite jih"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "Skupno število prenosov lahko vključuje ponavljajoče se klike."
-
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
@@ -6028,6 +6019,10 @@ msgstr "Vsaka zahteva v oglasu se preveri glede na dejstva in zgodbe v vašem Zn
 #: src/features/assistant/conversation.tsx
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "Vsako pošiljanje se začne na novo s tem sporočilom in izbranimi datotekami. Zgodovina prejšnjega pogovora ostane tukaj."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -7223,6 +7218,11 @@ msgstr "Pojdi na Reactive Resume"
 msgid "Go to…"
 msgstr "Pojdi na…"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/address-field.tsx
+msgid "Goes live at {0} when you publish."
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Good luck out there. Reactive Resume stays free because people chip in."
 msgstr "Vso srečo tam zunaj. Reactive Resume ostane brezplačen, ker ljudje vplačajo žetone."
@@ -7573,6 +7573,7 @@ msgid "Icon…"
 msgstr "Ikona ..."
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Icons in contact line"
 msgstr "Ikone v kontaktni vrstici"
 
@@ -8186,6 +8187,10 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr "Ohranjajte na eni strani"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -11702,8 +11707,8 @@ msgstr "Objavite spletno stran, da se štejejo ogledi in prenosi. Štetje je ano
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "Objavite ta življenjepis, da se bo odprl na vaši kratki povezavi in lastni domeni."
 
-#: src/features/resume/share/address-field.tsx
-msgid "Publish to choose an address."
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
@@ -13178,6 +13183,10 @@ msgstr "Shrani ime"
 msgid "Save offer"
 msgstr "Shrani ponudbo"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save PNG"
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
 msgstr ""
@@ -13198,6 +13207,10 @@ msgstr "Shrani urnik"
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
 msgstr "Shrani zgodbo"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Save SVG"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "Save tags"
@@ -13885,6 +13898,11 @@ msgstr "Nastavite aplikacijo za preverjanje pristnosti"
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -13977,6 +13995,10 @@ msgstr "Kratko in direktno. V redu, če objava za delo zahteva kratkost."
 #: src/features/assistant/assistant-panel.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "Kratko in vljudno, za zaposlovalca"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
@@ -14074,10 +14096,6 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Prikaži naslov"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Show icons"
-msgstr "Prikaži ikone"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
@@ -14252,8 +14270,8 @@ msgid "Signing up..."
 msgstr "Registriranje..."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "since last view"
-msgstr "od zadnjega pogleda"
+msgid "since last counted view"
+msgstr ""
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -16401,6 +16419,10 @@ msgstr "Vklopi preverjanje v dveh korakih"
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Vklopi ta urnik"
@@ -16740,6 +16762,10 @@ msgstr "Uporabite največ 64 znakov."
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "Uporabite temnejši odtenek"
+
+#: src/features/resume/editor/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a plain international form, such as +1 555 010 1234."
@@ -18020,8 +18046,8 @@ msgid "Your email address isn't verified with the provider. Verify it there, the
 msgstr "Vaš e-poštni naslov pri ponudniku ni preverjen. Preverite ga tam in poskusite znova."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "Vaš e-poštni naslov, telefon, lokacija in drugi podatki v glavi ter telefonske številke referenc niso vključeni v spletno stran, njen PDF in rezultate iskanja."
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -18231,6 +18257,24 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "Vaša kratka povezava in lastna domena prikazujeta, da ta življenjepis ni deljen, dokler ga znova ne objavite."
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."

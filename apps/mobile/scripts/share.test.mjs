@@ -63,6 +63,16 @@ const mocks = {
 	"react-native-qrcode-svg": "QRCode",
 	"react-native-svg": { default: "Svg", Rect: "Rect" },
 	"expo-clipboard": { setStringAsync: async () => {} },
+	"expo-file-system": {
+		File: class {
+			exists = false;
+			uri = "file:///cache/resume-qr-code.png";
+			delete() {}
+			write() {}
+		},
+		Paths: { cache: {} },
+	},
+	"expo-sharing": { isAvailableAsync: async () => true, shareAsync: async () => {} },
 	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
 	"@lingui/core/macro": { t: tag },
 	"@tanstack/react-query": { useQuery: () => ({ data: undefined }) },

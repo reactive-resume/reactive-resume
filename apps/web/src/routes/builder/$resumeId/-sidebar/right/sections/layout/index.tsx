@@ -2,21 +2,30 @@ import type z from "zod";
 import { Trans } from "@lingui/react/macro";
 import * as React from "react";
 import { metadataSchema } from "@reactive-resume/schema/resume/data";
+import { templateLayouts } from "@reactive-resume/schema/templates";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { InputGroup, InputGroupAddon, InputGroupText } from "@reactive-resume/ui/components/input-group";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { SectionBase } from "../../shared/section-base";
 import { LayoutPages } from "./pages";
 import { NumberInput } from "@/components/input/number-input";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentBuilderResumeSelector,
+	useCurrentResume,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 
 export function LayoutSectionBuilder() {
+	// A one-column template has no sidebar to size.
+	const twoColumns = useCurrentBuilderResumeSelector(
+		(resume) => templateLayouts[resume.data.metadata.template].columns === 2,
+	);
 	return (
 		<SectionBase type="layout" className="space-y-4">
 			<LayoutPages />
-			<LayoutSectionForm />
+			{twoColumns && <LayoutSectionForm />}
 		</SectionBase>
 	);
 }

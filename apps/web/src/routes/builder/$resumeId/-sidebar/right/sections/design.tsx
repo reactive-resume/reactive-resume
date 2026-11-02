@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type z from "zod";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
+import { useState } from "react";
 import { colorDesignSchema, levelDesignSchema } from "@reactive-resume/schema/resume/data";
 import { resolveLevelDisplaySizes } from "@reactive-resume/schema/resume/level-display-sizes";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
@@ -13,6 +14,7 @@ import { IconPicker } from "@/components/input/icon-picker";
 import { LevelTypeCombobox } from "@/components/level/combobox";
 import { LevelDisplay } from "@/components/level/display";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { hexToRgba, normalizeHex, rgbaToHex } from "@/features/resume/editor/design/presets";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -73,7 +75,14 @@ type ColorFormFieldProps = {
 	controlled?: boolean;
 };
 
+/** An opaque colour reads as hex, as Color shows it; one with transparency keeps its rgba(). */
+const displayColor = (value: string) => {
+	const alpha = /rgba\([^)]*,\s*([\d.]+)\s*\)/i.exec(value)?.[1];
+	return alpha === undefined || Number(alpha) === 1 ? (rgbaToHex(value) ?? value) : value;
+};
+
 function ColorFormField({ form, name, label, controlled }: ColorFormFieldProps) {
+	const [typed, setTyped] = useState<string | null>(null);
 	return (
 		<form.Field name={name}>
 			{(field) => (
@@ -90,10 +99,18 @@ function ColorFormField({ form, name, label, controlled }: ColorFormFieldProps) 
 							render={
 								<Input
 									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
+									value={typed ?? displayColor(field.state.value)}
+									className="font-mono"
+									onBlur={() => {
+										setTyped(null);
+										field.handleBlur();
+									}}
 									onChange={(e) => {
-										field.handleChange(e.target.value);
+										const value = e.target.value;
+										setTyped(value);
+										const hex = normalizeHex(value);
+										if (hex) field.handleChange(hexToRgba(hex));
+										else if (/^rgba?\(/i.test(value.trim())) field.handleChange(value);
 									}}
 								/>
 							}

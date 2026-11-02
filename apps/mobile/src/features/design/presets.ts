@@ -117,7 +117,19 @@ export function rgbaToHex(color: string): string | null {
 		.toUpperCase()}`;
 }
 
-export const isValidHex = (hex: string) => HEX.test(hex.trim());
+const isValidHex = (hex: string) => HEX.test(hex.trim());
+
+/** A typed hex colour as `#RRGGBB`: six digits, or three ("#0af" is "#00AAFF"); null when it's neither. */
+export function normalizeHex(hex: string): string | null {
+	const value = hex.trim().replace(/^#/, "");
+	if (/^[0-9a-f]{6}$/i.test(value)) return `#${value.toUpperCase()}`;
+	if (/^[0-9a-f]{3}$/i.test(value))
+		return `#${[...value]
+			.map((digit) => digit + digit)
+			.join("")
+			.toUpperCase()}`;
+	return null;
+}
 
 type Rgba = { r: number; g: number; b: number; a: number };
 

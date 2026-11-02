@@ -76,10 +76,18 @@ type PageOptions = {
 	customDomain?: string | undefined;
 };
 
-/** Off, unknown or trashed resumes read the same, in the visitor's language. */
-function unavailableResponse(request: Request) {
+/**
+ * Off, unknown or trashed resumes read the same, in the visitor's language; the owner of an unpublished one is told
+ * it's theirs, with a link to its Share panel.
+ */
+function unavailableResponse(request: Request, ownerResumeId?: string) {
 	const lang = getPageLocale(request)?.locale ?? localeFromAcceptLanguage(request.headers.get("accept-language"));
-	return html(renderUnavailableDocument({ lang, messages: webPageMessages(lang), homeUrl: `${origin()}/` }), 404);
+	const shareUrl = ownerResumeId ? `${origin()}/builder/${encodeURIComponent(ownerResumeId)}?mode=share` : undefined;
+	// `html` sends it private and no-store, so the owner's version is never cached for anyone else.
+	return html(
+		renderUnavailableDocument({ lang, messages: webPageMessages(lang), homeUrl: `${origin()}/`, shareUrl }),
+		404,
+	);
 }
 
 /**
@@ -133,7 +141,7 @@ async function showPage(request: Request, match: ResumeMatch, trustedClient: str
 				status: 302,
 				headers: { Location: `${appPath}${new URL(request.url).search}`, "Cache-Control": "no-store" },
 			});
-		return unavailableResponse(request);
+		return unavailableResponse(request, result.ownerResumeId);
 	}
 	if (result.status === "moved") return movedResponse(request, result);
 	if (result.status === "password") {

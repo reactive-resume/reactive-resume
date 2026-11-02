@@ -2,6 +2,8 @@ import type { ResumeDocument } from "@/draft/types";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
+import { File, Paths } from "expo-file-system";
+import * as Sharing from "expo-sharing";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Linking, Share, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
@@ -36,6 +38,16 @@ import {
 	useTheme,
 } from "@/ui";
 
+/** The QR code as a PNG in the cache, through the system share sheet (Save Image, Files, Messages…). */
+async function shareQrImage(dataUrl: string) {
+	if (!(await Sharing.isAvailableAsync())) throw new Error("Sharing unavailable");
+	const base64 = dataUrl.replace(/^data:image\/png;base64,/, "");
+	const file = new File(Paths.cache, "resume-qr-code.png");
+	if (file.exists) file.delete();
+	file.write(Uint8Array.from(atob(base64), (char) => char.charCodeAt(0)));
+	await Sharing.shareAsync(file.uri, { mimeType: "image/png", UTI: "public.png" });
+}
+
 /** Sharing settings: saved beside the resume, not in its data. */
 export type ShareSettings = Partial<
 	Pick<
@@ -57,6 +69,7 @@ export function LinkTab({ resume, offline }: LinkProps) {
 	const [takenBy, setTakenBy] = useState<string>();
 	const [retry, setRetry] = useState(0);
 	const [qrOpen, setQrOpen] = useState(false);
+	const qrRef = useRef<{ toDataURL: (callback: (data: string) => void) => void } | null>(null);
 	const profile = useQuery({ ...orpc.auth.getProfile.queryOptions(), enabled: !offline });
 	const username = profile.data?.username;
 	// Shared links use the app's alias (`APP_ALIAS_URL`) when the server has one; every public page works there too.
@@ -90,7 +103,8 @@ export function LinkTab({ resume, offline }: LinkProps) {
 	const saveCheckedSlug = useEffectEvent((value: string, cancelled: () => boolean) => save({ slug: value }, cancelled));
 
 	useEffect(() => {
-		if (!changed || !isValidSlug(slug) || !resume.isPublic || resume.isLocked || offline) return;
+		// Checked and saved while private too, so the address is chosen before it goes live.
+		if (!changed || !isValidSlug(slug) || resume.isLocked || offline) return;
 		let cancelled = false;
 		const timer = setTimeout(() => {
 			setSlugState("checking");
@@ -118,7 +132,7 @@ export function LinkTab({ resume, offline }: LinkProps) {
 			cancelled = true;
 			clearTimeout(timer);
 		};
-	}, [slug, changed, resume.id, resume.isPublic, resume.isLocked, offline, retry]);
+	}, [slug, changed, resume.id, resume.isLocked, offline, retry]);
 
 	const addressError =
 		changed && !slug
@@ -165,16 +179,16 @@ export function LinkTab({ resume, offline }: LinkProps) {
 				ltr
 				autoCapitalize="none"
 				autoCorrect={false}
-				editable={resume.isPublic && !disabled && slugState !== "saving"}
-				error={resume.isPublic ? addressError : undefined}
+				editable={!disabled && slugState !== "saving"}
+				error={addressError}
 				helper={
-					!resume.isPublic
-						? t`Publish to choose an address.`
-						: changed
-							? t`Checking… Copy is available after saving.`
-							: url
+					changed
+						? t`Checking… Copy is available after saving.`
+						: !url
+							? t`Loading your public address…`
+							: resume.isPublic
 								? t`Live at ${url}`
-								: t`Loading your public address…`
+								: t`Goes live at ${url} when you publish.`
 				}
 			/>
 			{suggestion && slugState === "taken" && (
@@ -245,9 +259,24 @@ export function LinkTab({ resume, offline }: LinkProps) {
 							quietZone={space.s3}
 							color={colors.paperInk}
 							backgroundColor={colors.paper}
+							getRef={(ref) => {
+								qrRef.current = ref;
+							}}
 						/>
 					)}
 					<Text selectable>{url}</Text>
+					{/* For print (a card, a paper resume): the share sheet saves it to Photos or Files, or sends it. */}
+					<Button
+						label={t`Share image`}
+						variant="secondary"
+						disabled={!url}
+						onPress={() =>
+							void operations.run(async () => {
+								const dataUrl = await new Promise<string>((resolve) => qrRef.current?.toDataURL(resolve));
+								await shareQrImage(dataUrl);
+							})
+						}
+					/>
 				</View>
 			</Sheet>
 		</View>
@@ -304,7 +333,7 @@ function Statistics({ id, isPublic, offline }: StatisticsProps) {
 							<Text variant="title">
 								{total.data?.lastViewedAt ? formatTimeSince(total.data.lastViewedAt, i18n.locale) : "—"}
 							</Text>
-							<Text variant="caption">{t`since last view`}</Text>
+							<Text variant="caption">{t`since last counted view`}</Text>
 						</View>
 					</View>
 					<View
@@ -331,7 +360,7 @@ function Statistics({ id, isPublic, offline }: StatisticsProps) {
 					</View>
 				</>
 			)}
-			<Text variant="caption" color="ink3">{t`Download totals can include repeat clicks.`}</Text>
+			{isPublic && <Text variant="caption" color="ink3">{t`Each visitor counts once an hour.`}</Text>}
 		</View>
 	);
 }

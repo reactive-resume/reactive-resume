@@ -1,5 +1,6 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
+import type { QueryClient } from "@tanstack/react-query";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
@@ -16,6 +17,16 @@ const SIZE = { width: 344, height: 486 };
 /** A hash of the content, so a thumbnail re-renders only when the resume changes. */
 const fingerprint = (data: ResumeData) =>
 	fnv1a(JSON.stringify({ ...data, metadata: { ...data.metadata, template: null } })).toString(36);
+
+/** The newest image already rendered for `template`, from any earlier content. */
+function lastRender(queryClient: QueryClient, template: Template): string | undefined {
+	const [latest] = queryClient
+		.getQueryCache()
+		.findAll({ queryKey: [QUERY_KEY, template] })
+		.filter((query) => typeof query.state.data === "string")
+		.toSorted((a, b) => b.state.dataUpdatedAt - a.state.dataUpdatedAt);
+	return latest?.state.data as string | undefined;
+}
 
 /**
  * A template's first page rendered from the user's own content, font and colour. Cached by template and
@@ -43,7 +54,8 @@ export function useTemplateThumbnail(template: Template, data: ResumeData, enabl
 		enabled: enabled && hasContent,
 		// Mutations invalidate every query; the same template and content draw the same image, so never refetch.
 		staleTime: "static",
-		// Keep the previous image while the content changes, so thumbnails don't flash back to the sample.
-		placeholderData: (previous) => (hasContent ? previous : undefined),
+		// While the new image renders, show this template's last render of the user's own content (also after Design
+		// was closed and reopened), never the sample: that one shows other people's names and photos.
+		placeholderData: (previous) => (hasContent ? (previous ?? lastRender(queryClient, template)) : undefined),
 	});
 }

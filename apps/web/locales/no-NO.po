@@ -2335,8 +2335,8 @@ msgid "Any font, in Advanced"
 msgstr "Enhver font, i Avansert"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Anyone who opens the public URL will need this password."
-msgstr "Alle som åpner den offentlige URL-en, trenger dette passordet."
+msgid "Anyone who opens the public link needs this password."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
@@ -3288,11 +3288,6 @@ msgstr "Om du har ombestemt deg, kan du gi CV-en et mer beskrivende navn."
 msgid "Changelog"
 msgstr "Endringslogg"
 
-#: src/features/resume/editor/design/style-groups.tsx
-#: src/features/resume/editor/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "Endrer kun seksjonstitler og datoord, ikke innholdet ditt."
-
 #. placeholder {0}: versionLabel(earlier)
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3868,8 +3863,8 @@ msgid "Complete {0} before saving."
 msgstr "Fyll ut {0} før du lagrer."
 
 #: src/features/resume/share/download-tab.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "Fullfør sikkerhetskopiering av data. Importerer tilbake til Reactive Resume eller JSON Resume verktøy."
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
@@ -5861,10 +5856,6 @@ msgstr "Last ned eksempel PDF"
 msgid "Download them"
 msgstr "Last ned dem"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "Nedlastingssummen kan inkludere gjentatte klikk."
-
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
@@ -6028,6 +6019,10 @@ msgstr "Hvert krav i stillingsannonsen sjekkes mot fakta og historier i Kunnskap
 #: src/features/assistant/conversation.tsx
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "Hver sending starter på nytt med denne meldingen og valgte filer. Tidligere samtalehistorikk blir her."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -7223,6 +7218,11 @@ msgstr "Gå til Reactive Resume"
 msgid "Go to…"
 msgstr "Gå til…"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/address-field.tsx
+msgid "Goes live at {0} when you publish."
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Good luck out there. Reactive Resume stays free because people chip in."
 msgstr "Lykke til der ute. Reactive Resume forblir gratis fordi folk chiper inn."
@@ -7573,6 +7573,7 @@ msgid "Icon…"
 msgstr "Ikon …"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Icons in contact line"
 msgstr "Ikoner i kontaktlinjen"
 
@@ -8186,6 +8187,10 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr "Hold deg på én side"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -11702,8 +11707,8 @@ msgstr "Publiser nettsiden for å telle visninger og nedlastinger. Tellingen er 
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "Publiser denne CV-en for å åpne den via den korte lenken og det egne domenet ditt."
 
-#: src/features/resume/share/address-field.tsx
-msgid "Publish to choose an address."
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
@@ -13178,6 +13183,10 @@ msgstr "Lagre navn"
 msgid "Save offer"
 msgstr "Lagre jobbtilbud"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save PNG"
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
 msgstr ""
@@ -13198,6 +13207,10 @@ msgstr "Lagre tidsplan"
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
 msgstr "Lagre historie"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Save SVG"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "Save tags"
@@ -13885,6 +13898,11 @@ msgstr "Sett opp autentiseringsappen din"
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -13977,6 +13995,10 @@ msgstr "Kort og direkte. Greit hvis stillingsannonsen ber om korthet."
 #: src/features/assistant/assistant-panel.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "Kort og høflig, for rekruttereren"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
@@ -14074,10 +14096,6 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Vis overskrift"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Show icons"
-msgstr "Vis ikoner"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
@@ -14252,8 +14270,8 @@ msgid "Signing up..."
 msgstr "Registrerer deg..."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "since last view"
-msgstr "siden forrige visning"
+msgid "since last counted view"
+msgstr ""
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -16401,6 +16419,10 @@ msgstr "Slå på to-trinns bekreftelse"
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Slå på denne tidsplanen"
@@ -16740,6 +16762,10 @@ msgstr "Bruk 64 tegn eller færre."
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "Bruk en mørkere nyanse"
+
+#: src/features/resume/editor/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a plain international form, such as +1 555 010 1234."
@@ -18020,8 +18046,8 @@ msgid "Your email address isn't verified with the provider. Verify it there, the
 msgstr "E-postadressen din er ikke bekreftet hos leverandøren. Bekreft den der, og prøv igjen."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "E-post, telefon, sted og andre opplysninger i toppteksten, samt telefonnumrene til referanser, utelates fra nettsiden, PDF-en og søkeresultatene."
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -18231,6 +18257,24 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "Den korte lenken og det egne domenet ditt viser at denne CV-en ikke er delt før du publiserer den igjen."
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."

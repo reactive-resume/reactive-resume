@@ -25,7 +25,7 @@ import {
 	darkenForWhite,
 	FONT_PAIRINGS,
 	hexToRgba,
-	isValidHex,
+	normalizeHex,
 	matchDensity,
 	matchFontPairing,
 	matchMargins,
@@ -174,11 +174,13 @@ export function ColorGroup() {
 	const { metadata, write } = useDesign();
 	const current = metadata ? (rgbaToHex(metadata.design.colors.primary) ?? "#000000") : "#000000";
 	const [typed, setTyped] = useState<string | null>(null);
+	const hexId = useId();
 	if (!metadata) return null;
 
 	const hex = typed ?? current;
-	const valid = isValidHex(hex);
-	const normalized = valid ? `#${hex.replace("#", "").toUpperCase()}` : current;
+	const typedHex = normalizeHex(hex);
+	const valid = typedHex !== null;
+	const normalized = typedHex ?? current;
 	const ratio = contrastOnWhite(normalized);
 	const tooLight = valid && ratio < 4.5;
 
@@ -222,16 +224,27 @@ export function ColorGroup() {
 					value={hex}
 					spellCheck={false}
 					className="font-mono"
+					aria-invalid={!valid}
+					aria-describedby={valid ? undefined : `${hexId}-error`}
 					onChange={(event) => {
 						setTyped(event.target.value);
-						if (isValidHex(event.target.value)) setAccent(`#${event.target.value.replace("#", "")}`, false);
+						const next = normalizeHex(event.target.value);
+						if (next) setAccent(next, false);
 					}}
 					onBlur={() => setTyped(null)}
 				/>
-				<span className={cn("shrink-0 font-mono text-xs", tooLight ? "text-warn-text" : "text-ink-3")}>
-					{ratio.toFixed(1)}:1
-				</span>
+				{/* An unreadable value has no ratio: the one shown would be the old colour's. */}
+				{valid && (
+					<span className={cn("shrink-0 font-mono text-xs", tooLight ? "text-warn-text" : "text-ink-3")}>
+						{ratio.toFixed(1)}:1
+					</span>
+				)}
 			</div>
+			{!valid && (
+				<p id={`${hexId}-error`} className="text-xs text-danger-text">
+					<Trans>Use a hex color such as #2F5A8A.</Trans>
+				</p>
+			)}
 
 			{tooLight && (
 				<div className="grid gap-2 rounded-lg bg-warn-soft p-3 text-[13px] leading-[19px] text-warn-text" role="status">
@@ -321,7 +334,7 @@ export function PageGroup({ showLanguage = true }: { showLanguage?: boolean } = 
 						}
 					/>
 					<span className="text-xs text-ink-3">
-						<Trans>Changes section titles and date words only, not your content.</Trans>
+						<Trans>Sets section titles, date words and text direction. Your content isn't translated.</Trans>
 					</span>
 				</div>
 			)}
