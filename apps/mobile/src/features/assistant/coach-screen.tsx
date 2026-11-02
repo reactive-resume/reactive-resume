@@ -21,6 +21,7 @@ import {
 	useWebSearch,
 	WebResearchChip,
 } from "./provider";
+import { usableStories } from "./sent";
 import { useDeleteThread, useThreadTime, useThreadTitle } from "./threads";
 import { client, orpc } from "@/api/client";
 import { useSession } from "@/auth/session";
@@ -52,16 +53,7 @@ function useCoachKnowledge() {
 	const facts = useQuery({ ...factsOptions, queryKey: [...factsOptions.queryKey, session.server], enabled });
 	const stories = useQuery({ ...storiesOptions, queryKey: [...storiesOptions.queryKey, session.server], enabled });
 	const active = (facts.data ?? []).filter((fact) => fact.status === "active" && fact.applicationId === null);
-	const usable = (stories.data ?? []).filter(
-		(story) =>
-			story.data.factIds.length > 0 &&
-			story.data.factIds.every((id) =>
-				active.some(
-					(fact) =>
-						fact.id === id && (fact.revisions.length === 0 || new Date(fact.updatedAt) <= new Date(story.updatedAt)),
-				),
-			),
-	);
+	const usable = usableStories(active, stories.data ?? []);
 	return {
 		all: facts.data ?? [],
 		allStories: stories.data ?? [],

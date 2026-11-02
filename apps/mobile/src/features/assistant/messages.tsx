@@ -134,7 +134,13 @@ export const MessageView = memo(function MessageView({
 				);
 			})}
 			{!streaming && proposals ? <UsedReads message={message} /> : null}
-			{!streaming && sent && reportText ? (
+			{/* A reply that only saved a story still shows what went with the question (web coach-chat). */}
+			{!streaming &&
+			sent &&
+			(reportText ||
+				message.parts.some(
+					(part) => part.type === "tool-save_story" && (part as ToolPart).state === "output-available",
+				)) ? (
 				sent.repeats && !showSent ? (
 					<Button variant="link" size="sm" label={t`What was sent`} onPress={() => setShowSent(true)} />
 				) : (

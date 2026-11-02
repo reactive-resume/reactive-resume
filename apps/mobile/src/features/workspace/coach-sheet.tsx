@@ -22,6 +22,7 @@ import {
 	useWebSearch,
 	WebResearchChip,
 } from "@/features/assistant/provider";
+import { usableStories } from "@/features/assistant/sent";
 import { useDeleteThread, useThreadTime, useThreadTitle } from "@/features/assistant/threads";
 import { StoryEditor } from "@/features/career/stories";
 import { Banner, Button, IconButton, ListRow, Sheet, Text, showToast, useTheme } from "@/ui";
@@ -192,7 +193,15 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 										.slice(0, 30)
 										.map((fact) => fact.id)
 								: [],
-							stories: chips.memory ? (stories.data ?? []).slice(0, 8).map((story) => story.id) : [],
+							// The stories the server gives the coach, so Sent never counts one it left out.
+							stories: chips.memory
+								? usableStories(
+										(facts.data ?? []).filter((fact) => fact.status === "active"),
+										stories.data ?? [],
+									)
+										.slice(0, 8)
+										.map((story) => story.id)
+								: [],
 							preferences: chips.memory,
 							applications: false,
 							offers: [],

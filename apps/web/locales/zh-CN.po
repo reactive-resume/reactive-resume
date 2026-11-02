@@ -1240,6 +1240,10 @@ msgid "A fact changed. Review this story."
 msgstr "某个事实已更改。请检查这个故事。"
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail; edit the story first."
 msgstr ""
 
@@ -9729,6 +9733,11 @@ msgstr "没有看起来像“职位 + 雇主”这种搭配的行。"
 msgid "No location"
 msgstr "没有位置"
 
+#. placeholder {0}: fact?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "No matching saved answers. Clear the search to see all answers."
 msgstr ""
@@ -9888,6 +9897,7 @@ msgid "No. {number} · {name}"
 msgstr "编号：{number}·{name}"
 
 #. Receipt line amount for something Reactive Resume doesn't have, e.g. ads.
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/homepage/sections.tsx
 msgid "none"
 msgstr "没有任何"
@@ -14715,6 +14725,11 @@ msgstr "标签能为软件提供明确的阅读顺序。如果你的工具支持
 #: src/features/documents/document-actions.tsx
 msgid "Tags group documents in the library; pick one above the grid to filter by it."
 msgstr "为库中的文档添加标签；选择网格上方的一个进行过滤。"
+
+#. placeholder {0}: previous?.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Tags, separated by commas"

@@ -974,6 +974,10 @@ msgid "A fact changed. Review this story."
 msgstr "事実が変更されました。このストーリーを見直してください。"
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail."
 msgstr ""
 
@@ -7666,6 +7670,11 @@ msgstr "リンクされた応募はありません"
 msgid "No location"
 msgstr "場所がありません"
 
+#. placeholder {0}: facts.find((fact) => fact.id === id)?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr ""
+
 #: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
@@ -7801,6 +7810,10 @@ msgstr "職歴は示されない"
 #: src/features/ats-checker/messages.ts
 msgid "No work-experience section was found."
 msgstr "職歴セクションが見つかりませんでした。"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "none"
+msgstr "なし"
 
 #: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
@@ -11764,6 +11777,11 @@ msgstr "タグ"
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 msgstr "タグはソフトウェアに明確な読み取り順を伝えます。ツールが対応していれば、エクスポート時に有効にしてください。"
+
+#. placeholder {0}: previous.data.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr ""
 
 #: src/features/documents/document-sheets.tsx
 msgid "Tags…"

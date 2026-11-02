@@ -86,6 +86,16 @@ export function ToolApprovals({
 						<Text variant="label" selectable>
 							{request.story.title}
 						</Text>
+						{request.story.tags.length > 0 ? (
+							<Text variant="caption" color="ink3">
+								{request.story.tags.join(" · ")}
+							</Text>
+						) : null}
+						{previous && previous.data.tags.join("\n") !== request.story.tags.join("\n") ? (
+							<Text variant="caption" color="ink3">
+								{t`Tags were: ${previous.data.tags.join(" · ") || t`none`}`}
+							</Text>
+						) : null}
 						{[
 							{ label: t`Situation`, text: request.story.situation, was: previous?.data.situation },
 							{ label: t`Task`, text: request.story.task, was: previous?.data.task },
@@ -129,6 +139,17 @@ export function ToolApprovals({
 								</View>
 							);
 						})}
+						{/* An update replaces the facts too: name the ones it no longer rests on (web tool-approvals). */}
+						{(previous?.data.factIds ?? [])
+							.filter((id) => !request.story.factIds.includes(id))
+							.map((id) => (
+								<View key={`removed-${id}`} style={{ flexDirection: "row", gap: space.s2 }}>
+									<Icon name="x-circle" size={16} color={colors.ink3} />
+									<Text color="ink3" style={{ flex: 1 }}>
+										{t`No longer backed by: ${facts.find((fact) => fact.id === id)?.text ?? t`a fact that isn't available here`}`}
+									</Text>
+								</View>
+							))}
 						<Text variant="caption" color="ink3">
 							<Trans>Check that these facts support what the story claims before saving.</Trans>
 						</Text>

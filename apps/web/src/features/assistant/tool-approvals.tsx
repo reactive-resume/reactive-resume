@@ -128,11 +128,18 @@ function StoryProposal({ story, facts, previous }: StoryProposalProps) {
 		{ letter: "R", label: t`Result`, text: story.result, was: previous?.result },
 		{ letter: "R", label: t`Reflection`, text: story.reflection, was: previous?.reflection },
 	];
+	const tagsChanged = previous !== undefined && previous.tags.join("\n") !== story.tags.join("\n");
+	const removedFacts = previous ? previous.factIds.filter((id) => !story.factIds.includes(id)) : [];
 	return (
 		<div className="grid gap-3">
 			<div className="grid gap-0.5">
 				<p className="text-[15px] leading-[22px] font-semibold text-pretty">{story.title}</p>
 				{story.tags.length > 0 && <p className="text-xs text-ink-3">{story.tags.join(" · ")}</p>}
+				{tagsChanged && (
+					<p className="text-xs text-ink-3">
+						<Trans>Tags were: {previous?.tags.join(" · ") || t`none`}</Trans>
+					</p>
+				)}
 			</div>
 			<dl className="grid">
 				{parts.map((part) => (
@@ -191,6 +198,18 @@ function StoryProposal({ story, facts, previous }: StoryProposalProps) {
 							) : (
 								<Trans>A fact that isn't available here. Saving will fail; edit the story first.</Trans>
 							)}
+						</p>
+					);
+				})}
+				{/* An update replaces the facts too: name the ones it no longer rests on. */}
+				{removedFacts.map((id) => {
+					const fact = facts.find((item) => item.id === id);
+					return (
+						<p key={id} className="flex items-start gap-2 px-2.5 text-[13px] leading-[19px] text-ink-3">
+							<Icon name="x-circle" size={16} className="mt-0.5 shrink-0" />
+							<span>
+								<Trans>No longer backed by: {fact?.text ?? t`a fact that isn't available here`}</Trans>
+							</span>
 						</p>
 					);
 				})}

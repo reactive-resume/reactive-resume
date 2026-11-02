@@ -968,6 +968,10 @@ msgid "A fact changed. Review this story."
 msgstr "A fact changed. Review this story."
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr "a fact that isn't available here"
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail."
 msgstr "A fact that isn't available here. Saving will fail."
 
@@ -7662,6 +7666,11 @@ msgstr "No linked application"
 msgid "No location"
 msgstr "No location"
 
+#. placeholder {0}: facts.find((fact) => fact.id === id)?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr "No longer backed by: {0}"
+
 #: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
@@ -7797,6 +7806,10 @@ msgstr "No work experience shows"
 #: src/features/ats-checker/messages.ts
 msgid "No work-experience section was found."
 msgstr "No work-experience section was found."
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "none"
+msgstr "none"
 
 #: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
@@ -11760,6 +11773,11 @@ msgstr "Tags"
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 msgstr "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
+
+#. placeholder {0}: previous.data.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr "Tags were: {0}"
 
 #: src/features/documents/document-sheets.tsx
 msgid "Tags…"

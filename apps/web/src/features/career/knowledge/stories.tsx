@@ -59,7 +59,7 @@ const factChanged = (story: Story, facts: Map<string, Fact>) =>
 	});
 
 /** A new story started from an interview plan's step: its title, and the step's detail shown as a note. */
-type StoryStart = { title: string; note: string };
+type StoryStart = { title: string; note: string; plan: string };
 
 type StoriesPageProps = { storyId: string | undefined; edit: boolean; start?: StoryStart | undefined };
 
@@ -481,7 +481,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 			: story
 				? `story:${story.id}`
 				: plan
-					? `story:new:plan:${plan.title}`
+					? `story:new:plan:${plan.plan}:${plan.title}`
 					: "story:new",
 		{
 			title: start?.title ?? plan?.title ?? "",

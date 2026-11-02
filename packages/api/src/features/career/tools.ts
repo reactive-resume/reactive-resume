@@ -157,14 +157,22 @@ export function buildCareerTools(input: CareerToolsInput): ToolSet {
 		});
 		tools.save_story = tool({
 			description:
-				"Propose a STARR story for the user to review and approve before saving. To improve a story the user already saved, pass its `id` (from search_knowledge) with the whole revised story: the user reviews the change and it replaces that story. Back it only with IDs of saved facts whose text states what the story claims (the accomplishment and its numbers), never unrelated skills or tenure; a fact that is only proposed has no ID yet. Leave Result or Reflection empty rather than inventing them. Nothing is saved until approval.",
-			inputSchema: careerStoryInputSchema
-				.omit({ applicationId: true })
-				.extend({ factIds: z.array(z.string()).min(1).max(30), id: z.string().optional() }),
-			execute: async ({ id, ...story }) => {
+				"Propose a STARR story for the user to review and approve before saving. To improve a story the user already saved, pass its `id` and its `updatedAt` as `basedOn` (both exactly as search_knowledge returned them) with the whole revised story: the user reviews the change and it replaces that story. Back it only with IDs of saved facts whose text states what the story claims (the accomplishment and its numbers), never unrelated skills or tenure; a fact that is only proposed has no ID yet. Leave Result or Reflection empty rather than inventing them. Nothing is saved until approval.",
+			inputSchema: careerStoryInputSchema.omit({ applicationId: true }).extend({
+				factIds: z.array(z.string()).min(1).max(30),
+				id: z.string().optional(),
+				basedOn: z.string().optional(),
+			}),
+			execute: async ({ id, basedOn, ...story }) => {
 				// Only a story this conversation can see may be updated; the service checks ownership again.
 				const existing = id ? input.context.stories.find((item) => item.id === id) : undefined;
 				if (id && !existing) throw new Error("That story isn't available here. Propose a new story instead.");
+				// An update replaces the whole story: if the user edited it after the proposal was made, refuse rather
+				// than overwrite their newer version.
+				if (existing && (!basedOn || new Date(basedOn).getTime() !== new Date(existing.updatedAt).getTime()))
+					throw new Error(
+						"That story changed after this proposal. Ask again to propose an update to the current story.",
+					);
 				const saved = await careerService.saveStory(
 					input.userId,
 					{ ...story, applicationId: existing ? existing.applicationId : scope.applicationId },
