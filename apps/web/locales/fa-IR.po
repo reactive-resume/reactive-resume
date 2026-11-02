@@ -85,10 +85,6 @@ msgstr "(بدون هدر)"
 msgid "(optional)"
 msgstr "(اختیاری)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(الزامی)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2094,6 +2090,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "همهٔ مدل‌ها"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "همهٔ اسناد، درخواست‌های شغلی، کلیدهای API و لینک‌های عمومی شما برای همیشه حذف می‌شوند. این کار قابل بازگشت نیست."
@@ -2978,10 +2978,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "خواننده داخلی"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "بلغاری"
@@ -3465,6 +3461,10 @@ msgstr "رنگ را انتخاب کنید"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "انتخاب مدل"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5154,6 +5154,7 @@ msgid "Deep breath."
 msgstr "نفس عمیق."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "پیش‌فرض"
@@ -6125,6 +6126,10 @@ msgstr "یک کلید API برای این ارائه‌دهنده وارد کن�
 msgid "Enter an http:// or https:// base URL."
 msgstr "یک URL پایه با http:// یا https:// وارد کنید."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "شناسهٔ هر مدلی را که نقطهٔ پایانی شما پشتیبانی می‌کند وارد کنید."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "برای دسترسی به حساب خود، یکی از کدهای پشتیبان ذخیره‌شده را وارد کنید."
@@ -6267,6 +6272,11 @@ msgstr "درباره رزومه‌ها بازخورد ردوبدل کنید، س
 msgid "Exit focus mode"
 msgstr "خروج از حالت فوکوس"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6400,6 +6410,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "مدل پیش‌فرض سریع و کم‌هزینه برای کارهای روزمره."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6920,6 +6934,10 @@ msgstr "برای هر نقش و مدرک تحصیلی یک بازهٔ تاریخ
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "برای ذخیره، ابتدا برای داستان عنوانی بگذارید."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "برای داستان عنوانی بگذارید، سپس بخش‌های «موقعیت»، «وظیفه» و «اقدام» را پر کنید. بخش‌های «نتیجه» و «تأمل» را تا زمانی که بتوانید برایشان شواهد ارائه کنید خالی بگذارید."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8945,7 +8963,7 @@ msgstr "بینابین"
 msgid "mixed format"
 msgstr "فرمت ترکیبی"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "مدل"
 
@@ -8964,6 +8982,10 @@ msgstr "مونونوکلئوز"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "توانمندتر"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9427,6 +9449,10 @@ msgstr "هنوز درخواستی وجود ندارد. ابتدا یکی را د
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "برای این ارائه‌دهنده پیشنهاد داخلی وجود ندارد."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11627,6 +11653,10 @@ msgstr "اخیر"
 msgid "Recipient"
 msgstr "گیرنده"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "پیشنهادی"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "ضبط دوباره"
@@ -13717,10 +13747,6 @@ msgstr "موقعیت"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "موقعیت، اقدام، نتیجه"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "بخش‌های «موقعیت»، «وظیفه» و «اقدام» الزامی هستند. بخش‌های «نتیجه» و «تأمل» را تا زمانی که بتوانید برایشان شواهد ارائه کنید خالی بگذارید."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17415,6 +17441,10 @@ msgstr "ترجیحات شما"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "ارائه دهنده شما"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "ارائه‌دهندهٔ شما ممکن است هزینهٔ درخواست‌هایی را که با کلید API شما ارسال می‌شوند از حساب شما دریافت کند."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

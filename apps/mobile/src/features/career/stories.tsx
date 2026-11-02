@@ -181,7 +181,7 @@ export function StoryEditor({ story, facts, onClose, proposal }: StoryEditorProp
 			title={proposal ? t`Edit the proposed story` : story ? t`Edit STARR story` : t`New STARR story`}
 		>
 			<View style={{ padding: space.s4, gap: space.s4 }}>
-				<Text color="ink3">{t`Situation, Task and Action are required. Leave Result and Reflection blank until you can support them.`}</Text>
+				<Text color="ink3">{t`Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them.`}</Text>
 				<TextField
 					label={t`Title`}
 					ref={(input) => {
@@ -196,7 +196,9 @@ export function StoryEditor({ story, facts, onClose, proposal }: StoryEditorProp
 				{parts().map((part) => (
 					<TextArea
 						key={part.key}
-						label={`${part.label} ${part.required ? t`(required)` : t`(optional)`}`}
+						label={part.required ? part.label : `${part.label} ${t`(optional)`}`}
+						// The visible label marks only optional parts; a screen reader still hears which are required.
+						{...(part.required ? { accessibilityLabel: `${part.label} ${t`(required)`}` } : {})}
 						ref={(input) => {
 							inputs.current[part.key] = input;
 						}}

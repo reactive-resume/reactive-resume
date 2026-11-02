@@ -85,10 +85,6 @@ msgstr "(geen kop)"
 msgid "(optional)"
 msgstr "(optioneel)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(verplicht)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2094,6 +2090,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "Alle modellen"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Al uw documenten, sollicitaties, API-sleutels en openbare links worden definitief verwijderd. Dit kan niet ongedaan worden gemaakt."
@@ -2978,10 +2978,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Ingebouwde lezer"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Bulgaars"
@@ -3465,6 +3461,10 @@ msgstr "Kies kleur"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Model kiezen"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5154,6 +5154,7 @@ msgid "Deep breath."
 msgstr "Diep ademhalen."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Standaard"
@@ -6125,6 +6126,10 @@ msgstr "Voer een API-sleutel voor deze provider in."
 msgid "Enter an http:// or https:// base URL."
 msgstr "Voer een basis-URL in die begint met http:// of https://."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Voer een model-ID in dat je eindpunt ondersteunt."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Voer een van uw opgeslagen back-upcodes in om toegang te krijgen tot uw account."
@@ -6267,6 +6272,11 @@ msgstr "Wissel feedback op cv’s uit, stel vragen en help Reactive Resume samen
 msgid "Exit focus mode"
 msgstr "Focusmodus verlaten"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6400,6 +6410,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Snel en voordeliger standaardmodel voor dagelijks werk."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6920,6 +6934,10 @@ msgstr "Geef elke functie en kwalificatie een periode."
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Geef het verhaal een titel voordat u opslaat."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Geef het verhaal een titel en vul daarna Situatie, Taak en Actie in. Laat Resultaat en Reflectie leeg totdat je ze kunt onderbouwen."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8945,7 +8963,7 @@ msgstr "Wisselend"
 msgid "mixed format"
 msgstr "gemengd formaat"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -8964,6 +8982,10 @@ msgstr "Mono"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Krachtiger"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9427,6 +9449,10 @@ msgstr "Nog geen sollicitaties. Voeg er eerst een toe in sollicitaties."
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Geen ingebouwde suggesties voor deze aanbieder."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11627,6 +11653,10 @@ msgstr "Recent"
 msgid "Recipient"
 msgstr "Ontvanger"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Aanbevolen"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "Opnieuw opnemen"
@@ -13717,10 +13747,6 @@ msgstr "Situatie"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Situatie, actie, resultaat"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Situatie, Taak en Actie zijn verplicht. Laat Resultaat en Reflectie leeg totdat je ze kunt onderbouwen."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17415,6 +17441,10 @@ msgstr "uw voorkeuren"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "uw aanbieder"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Je provider kan kosten in rekening brengen op je account voor verzoeken met je API-sleutel."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

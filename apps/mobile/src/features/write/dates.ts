@@ -31,9 +31,15 @@ export const fromPickerDate = (date: Date): YearMonth =>
 	toYearMonth({ year: date.getFullYear(), month: date.getMonth() + 1 });
 
 /** Any edit replaces the dates without `raw`, which clears the "needs a look" note. */
-export const editDates = (dates: ResumeDates, change: Partial<ResumeDates>): ResumeDates => ({
-	start: dates.start,
-	end: dates.end,
-	present: dates.present,
-	...change,
-});
+export const editDates = (dates: ResumeDates, change: Partial<ResumeDates>): ResumeDates => {
+	const next: ResumeDates = {
+		start: dates.start,
+		end: dates.end,
+		present: dates.present,
+		...(dates.expected ? { expected: true } : {}),
+		...change,
+	};
+	// Ongoing has no end date to come; Expected only reads while it's off.
+	if (next.present || next.expected === false) delete next.expected;
+	return next;
+};

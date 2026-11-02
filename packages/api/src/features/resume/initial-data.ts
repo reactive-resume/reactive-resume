@@ -9,6 +9,8 @@ type CreateResumeDataOptions = {
 	withSampleData?: boolean;
 	/** The person the resume is for, printed as its name: the account holder's name, not the document's. */
 	name?: string;
+	/** The account's email, for the contact line of a blank resume. */
+	email?: string | undefined;
 	locale?: Locale;
 	template?: Template | undefined;
 };
@@ -18,6 +20,9 @@ export function createResumeData(options: CreateResumeDataOptions): ResumeData {
 
 	const name = options.name?.trim();
 	if (name) data.basics.name = name;
+	// A sample keeps its own fictional contact details.
+	const email = options.email?.trim();
+	if (email && !options.withSampleData) data.basics.email = email;
 	if (options.locale) data.metadata.page.locale = options.locale;
 	if (options.template) data.metadata.template = options.template;
 	data.metadata.stylesheet = {

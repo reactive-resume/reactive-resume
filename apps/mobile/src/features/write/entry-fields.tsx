@@ -404,6 +404,7 @@ export function EntryFields({ type, autoFocus, ...props }: EntryFieldsProps) {
 						<DatesField
 							dates={values.dates ?? EMPTY_RESUME_DATES}
 							single={field.kind === "date"}
+							expectable={type === "education"}
 							locale={page.locale}
 							format={page.dateFormat}
 							autoFocus={!disabled && ["dates", "period", "date"].some((key) => focusField?.startsWith(key))}

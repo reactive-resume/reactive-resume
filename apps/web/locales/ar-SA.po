@@ -85,10 +85,6 @@ msgstr "(بدون رأس)"
 msgid "(optional)"
 msgstr "(اختياري)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(مطلوب)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2094,6 +2090,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "كل النماذج"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "ستُحذف جميع مستنداتك وطلبات العمل ومفاتيح API والروابط العامة الخاصة بك نهائيًا. لا يمكن التراجع عن هذا."
@@ -2978,10 +2978,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "قارئ مدمج"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "البلغارية"
@@ -3465,6 +3461,10 @@ msgstr "اختر اللون"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "اختيار نموذج"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5154,6 +5154,7 @@ msgid "Deep breath."
 msgstr "خذ نفسًا عميقًا."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "الافتراضي"
@@ -6125,6 +6126,10 @@ msgstr "أدخل مفتاح API لهذا المزوّد."
 msgid "Enter an http:// or https:// base URL."
 msgstr "أدخل عنوان URL أساسيًا يبدأ بـ http:// أو https://."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "أدخل أي معرّف نموذج تدعمه نقطة النهاية لديك."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "أدخِل أحد رموز النسخ الاحتياطي المحفوظة للوصول إلى حسابك."
@@ -6267,6 +6272,11 @@ msgstr "تبادل الملاحظات حول السير الذاتية، واط�
 msgid "Exit focus mode"
 msgstr "الخروج من وضع التركيز"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6400,6 +6410,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "نموذج افتراضي سريع وأقل تكلفة للمهام اليومية."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6920,6 +6934,10 @@ msgstr "أعطِ كل دور ومؤهل نطاقًا زمنيًا."
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "أعطِ القصة عنوانًا قبل أن تتمكن من الحفظ."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "أعطِ القصة عنوانًا، ثم املأ الموقف والمهمة والإجراء. اترك النتيجة والتأمّل فارغين حتى تتمكن من دعمهما بأدلة."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8945,7 +8963,7 @@ msgstr "متباين"
 msgid "mixed format"
 msgstr "تنسيق مختلط"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "النموذج"
 
@@ -8964,6 +8982,10 @@ msgstr "كثرة الوحيدات"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "أكثر قدرة"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9427,6 +9449,10 @@ msgstr "لا توجد طلبات عمل حتى الآن. أضف واحدًا ف�
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "لا توجد اقتراحات مدمجة لهذا المزوّد."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11627,6 +11653,10 @@ msgstr "الأخيرة"
 msgid "Recipient"
 msgstr "المستلم"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "موصى بها"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "سجّل مجددًا"
@@ -13717,10 +13747,6 @@ msgstr "الموقف"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "الموقف، الإجراء، النتيجة"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "الموقف والمهمة والإجراء أجزاء مطلوبة. اترك النتيجة والتأمّل فارغين حتى تتمكن من دعمهما بأدلة."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17415,6 +17441,10 @@ msgstr "تفضيلاتك"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "المزود الخاص بك"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "قد يفرض مزوّدك رسومًا على حسابك مقابل الطلبات التي تُجرى باستخدام مفتاح API الخاص بك."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

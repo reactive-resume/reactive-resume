@@ -91,6 +91,9 @@ export const crudRouter = {
 				data: createResumeData({
 					withSampleData: input.withSampleData,
 					name: context.user.name,
+					// A guest's address is a placeholder (see the auth anonymous plugin), not one to print. The plugin adds
+					// `isAnonymous` to the user row; the shared User type doesn't name it.
+					email: (context.user as { isAnonymous?: boolean | null }).isAnonymous ? undefined : context.user.email,
 					locale: context.locale,
 					template: input.template,
 				}),

@@ -197,7 +197,7 @@ it("keeps an unfinished story after navigating away and remounting, until Cancel
 	let view = mount(<StoriesPage storyId={undefined} edit />);
 	const title = await screen.findByRole("textbox", { name: "Title" });
 	fireEvent.change(title, { target: { value: "My unfinished customer story" } });
-	fireEvent.change(screen.getByRole("textbox", { name: "Situation (required)" }), {
+	fireEvent.change(screen.getByRole("textbox", { name: "Situation" }), {
 		target: { value: "Customers were blocked." },
 	});
 	view.unmount();
@@ -205,7 +205,7 @@ it("keeps an unfinished story after navigating away and remounting, until Cancel
 	expect(((await screen.findByRole("textbox", { name: "Title" })) as HTMLTextAreaElement).value).toBe(
 		"My unfinished customer story",
 	);
-	expect((screen.getByRole("textbox", { name: "Situation (required)" }) as HTMLTextAreaElement).value).toBe(
+	expect((screen.getByRole("textbox", { name: "Situation" }) as HTMLTextAreaElement).value).toBe(
 		"Customers were blocked.",
 	);
 	fireEvent.click(screen.getByRole("button", { name: /^Cancel$/ }));
@@ -226,7 +226,7 @@ it.each([
 		fireEvent.change(title, { target: { value: "Customer setup" } });
 		for (const [key, value] of Object.entries(draft)) {
 			const label = key.charAt(0).toUpperCase() + key.slice(1);
-			const field = screen.getByRole("textbox", { name: `${label} (required)` });
+			const field = screen.getByRole("textbox", { name: label });
 			expect(field.getAttribute("aria-required")).toBe("true");
 			fireEvent.change(field, { target: { value } });
 		}
@@ -238,11 +238,9 @@ it.each([
 		expect(screen.getAllByRole("alert").map((alert) => alert.textContent)).toEqual(
 			missing.map((label) => `Complete ${label} before saving.`),
 		);
-		await waitFor(() =>
-			expect(document.activeElement).toBe(screen.getByRole("textbox", { name: `${missing[0]} (required)` })),
-		);
+		await waitFor(() => expect(document.activeElement).toBe(screen.getByRole("textbox", { name: missing[0] })));
 		for (const label of missing) {
-			const field = screen.getByRole("textbox", { name: `${label} (required)` });
+			const field = screen.getByRole("textbox", { name: label });
 			expect(field.getAttribute("aria-invalid")).toBe("true");
 			expect(document.getElementById(field.getAttribute("aria-describedby") ?? "")?.textContent).toBe(
 				`Complete ${label} before saving.`,
@@ -253,7 +251,7 @@ it.each([
 			"Check setup sooner next time.",
 		);
 		for (const label of missing) {
-			fireEvent.change(screen.getByRole("textbox", { name: `${label} (required)` }), {
+			fireEvent.change(screen.getByRole("textbox", { name: label }), {
 				target: { value: `${label} detail` },
 			});
 		}

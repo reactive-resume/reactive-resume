@@ -59,7 +59,10 @@ export function ProviderList() {
 				/>
 			))}
 			{!managed && (
-				<Button label={t`Add AI provider`} icon="plus" variant="secondary" onPress={() => setAdding(true)} />
+				<>
+					<Text color="ink3">{t`Your provider may charge your account for requests made with your API key.`}</Text>
+					<Button label={t`Add AI provider`} icon="plus" variant="secondary" onPress={() => setAdding(true)} />
+				</>
 			)}
 			<AIProviderSetupSheet open={adding} onClose={() => setAdding(false)} />
 			{editing && !editing.managed && (

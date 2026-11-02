@@ -98,3 +98,32 @@ describe("custom date text", () => {
 		expect(screen.getByRole("textbox", { name: "End" })).toHaveValue("");
 	});
 });
+
+describe("expected end date", () => {
+	const mount = (dates: ResumeDates, expectable: boolean) => {
+		const onChange = vi.fn();
+		render(
+			<I18nProvider i18n={i18n}>
+				<DatesField dates={dates} locale="en-US" format="short" expectable={expectable} onChange={onChange} />
+			</I18nProvider>,
+		);
+		return onChange;
+	};
+
+	it("lets an education entry mark its end date as still to come", () => {
+		const onChange = mount({ start: "2023-09", end: "2027-05", present: false }, true);
+		fireEvent.click(screen.getByRole("switch", { name: "Expected" }));
+		expect(onChange).toHaveBeenLastCalledWith({ start: "2023-09", end: "2027-05", present: false, expected: true });
+	});
+
+	it("is only offered where it applies", () => {
+		mount({ start: "2023-09", end: "2027-05", present: false }, false);
+		expect(screen.queryByRole("switch", { name: "Expected" })).toBeNull();
+	});
+
+	it("drops Expected when the entry becomes ongoing", () => {
+		const onChange = mount({ start: "2023-09", end: "2027-05", present: false, expected: true }, true);
+		fireEvent.click(screen.getByRole("switch", { name: "Present" }));
+		expect(onChange).toHaveBeenLastCalledWith({ start: "2023-09", end: null, present: true });
+	});
+});

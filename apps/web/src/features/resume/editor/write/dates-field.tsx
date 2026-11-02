@@ -92,15 +92,30 @@ type DatesFieldProps = DateSettings & {
 	dates: ResumeDates;
 	/** Awards, certifications and publications have one date. */
 	single?: boolean | undefined;
+	/** Education: an end date still to come can print as "Expected May 2027". */
+	expectable?: boolean | undefined;
 	onChange: (dates: ResumeDates) => void;
 	className?: string;
 };
 
 /** Preset date fields or verbatim custom text, using the existing raw date representation. */
-export function DatesField({ dates, single = false, locale, format, onChange, className }: DatesFieldProps) {
+export function DatesField({
+	dates,
+	single = false,
+	expectable = false,
+	locale,
+	format,
+	onChange,
+	className,
+}: DatesFieldProps) {
 	const id = useId();
 	const [invalid, setInvalid] = useState<Record<"start" | "end", boolean>>({ start: false, end: false });
-	const current: ResumeDates = { start: dates.start, end: dates.end, present: dates.present };
+	const current: ResumeDates = {
+		start: dates.start,
+		end: dates.end,
+		present: dates.present,
+		...(dates.expected ? { expected: true } : {}),
+	};
 	const reversed = !single && !dates.present && dates.start && dates.end && isBefore(dates.end, dates.start);
 	const custom = dates.raw !== undefined;
 	const preset = formatResumeDates(current, { locale, format });
@@ -179,10 +194,26 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 					<label className="flex w-fit cursor-pointer items-center gap-2 p-1 text-sm">
 						<Switch
 							checked={dates.present}
-							onCheckedChange={(present) => onChange({ ...current, present, end: present ? null : dates.end })}
+							onCheckedChange={(present) => {
+								const { expected: _expected, ...rest } = current;
+								onChange({ ...rest, present, end: present ? null : dates.end });
+							}}
 						/>
 						<Trans>Present</Trans>
 					</label>
+					{expectable && !dates.present && (
+						// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI's Switch is the control; wrapping it in a label is its documented pattern.
+						<label className="flex w-fit cursor-pointer items-center gap-2 p-1 text-sm">
+							<Switch
+								checked={dates.expected === true}
+								onCheckedChange={(expected) => {
+									const { expected: _expected, ...rest } = current;
+									onChange(expected ? { ...rest, expected: true } : rest);
+								}}
+							/>
+							<Trans comment="Switch on an education entry's dates: the end date is still to come">Expected</Trans>
+						</label>
+					)}
 				</>
 			)}
 
