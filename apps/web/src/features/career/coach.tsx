@@ -256,9 +256,10 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 
 	// The privacy line names exactly what goes and what the coach may keep. The chips choose what this message adds;
 	// earlier messages go too, except those written before Knowledge last changed.
-	const privacy = ({ earlier, withheld }: ChatHistory) => {
+	const privacy = ({ earlier, withheld, attached }: ChatHistory) => {
 		const parts = [
 			t`your message`,
+			...(attached > 0 ? [plural(attached, { one: "# attached file", other: "# attached files" })] : []),
 			...(earlier > 0 ? [t`earlier messages in this chat`] : []),
 			...(chips.application ? [t`application summaries`] : []),
 			...(context.offerIds ? [plural(offerIds.length, { one: "# saved offer", other: "# saved offers" })] : []),
@@ -460,6 +461,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 								empty={(send) => (
 									<EmptyState
 										disabled={!provider || (chips.memory && (knowledge.isPending || knowledge.isError))}
+										offers={context.offerIds?.length ?? 0}
 										onPick={send}
 									/>
 								)}
@@ -487,7 +489,22 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	);
 }
 
-type EmptyStateProps = { disabled: boolean; onPick: (text: string) => void };
+/** `offers`: saved offers sent with this conversation (Offers → Plan what to ask), which get their own starters. */
+type EmptyStateProps = { disabled: boolean; offers: number; onPick: (text: string) => void };
+
+/** Opened from Offers → Plan what to ask: starters about the offers being decided. */
+const offerStarters = (count: number): { icon: IconName; text: string }[] =>
+	count > 1
+		? [
+				{ icon: "question", text: t`What should I ask before deciding?` },
+				{ icon: "scales", text: t`Which offer fits my requirements better?` },
+				{ icon: "list-checks", text: t`What's missing from these offers that I should get in writing?` },
+			]
+		: [
+				{ icon: "question", text: t`What should I ask before deciding on this offer?` },
+				{ icon: "scales", text: t`Does this offer meet what I want?` },
+				{ icon: "list-checks", text: t`What's missing from this offer that I should get in writing?` },
+			];
 
 const starterText = (starter: CoachStarter): { icon: IconName; text: string } => {
 	switch (starter.kind) {
@@ -522,8 +539,9 @@ function useStarters() {
 	}).map(starterText);
 }
 
-function EmptyState({ disabled, onPick }: EmptyStateProps) {
-	const starters = useStarters();
+function EmptyState({ disabled, offers, onPick }: EmptyStateProps) {
+	const accountStarters = useStarters();
+	const starters = offers > 0 ? offerStarters(offers) : accountStarters;
 	return (
 		<div className="grid gap-6 pt-[clamp(0px,6vh,48px)]">
 			<div className="grid gap-3">
@@ -533,7 +551,7 @@ function EmptyState({ disabled, onPick }: EmptyStateProps) {
 				<p className="text-[15px] leading-[23px] text-ink-2">
 					<Trans>
 						Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on
-						below and say what they relied on.
+						below, and each shows what was sent with it.
 					</Trans>
 				</p>
 			</div>
