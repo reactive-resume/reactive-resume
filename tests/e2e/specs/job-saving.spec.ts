@@ -105,20 +105,29 @@ test("save, manually prepare a copy, and confirm submitted documents without ser
 
 test("unreadable link preserves fields and source while offering immediate paste recovery", async ({
 	authPage: page,
-}) => {
+}, info) => {
 	await page.goto("/dashboard/applications");
 	await page.getByRole("button", { name: "Save job", exact: true }).first().click();
 	const dialog = page.getByRole("dialog", { name: "Save a job", exact: true });
+	await expect(
+		dialog.getByText("Fill in the role and company, or use Set up AI to read them from the posting.", { exact: true }),
+	).toBeVisible();
+	await dialog.screenshot({ path: info.outputPath("save-job-empty.png") });
 	const source = "https://127.0.0.1/job";
 	await dialog.getByLabel("Job link or posting text").fill(source);
+	await expect(dialog.getByText("Read posting to fill the role and company.", { exact: true })).toBeVisible();
+	await dialog.screenshot({ path: info.outputPath("save-job-unread-link.png") });
 	await dialog.getByLabel("Role", { exact: true }).fill("Manual role");
 	await dialog.getByLabel("Company", { exact: true }).fill("Manual company");
 	await dialog.getByRole("button", { name: "Read posting", exact: true }).click();
+	await expect(dialog.getByText("Reading the link…", { exact: true })).toBeVisible();
 	const approval = page.getByRole("alertdialog", { name: "Use web access?", exact: true });
 	await expect(approval).toContainText("No AI provider is used");
 	await expect(approval).toContainText("built-in reader");
 	await approval.getByRole("button", { name: "Allow this operation", exact: true }).click();
 	await expect(dialog.getByLabel("Pasted description")).toBeVisible();
+	await expect(dialog.getByRole("alert")).toBeVisible();
+	await expect(dialog.getByText("Read posting to fill the role and company.", { exact: true })).toHaveCount(0);
 	await expect(dialog.getByLabel("Role", { exact: true })).toHaveValue("Manual role");
 	await expect(dialog.getByLabel("Job link or posting text")).toHaveValue(source);
 	await dialog.getByLabel("Pasted description").fill("Complete manual description");
