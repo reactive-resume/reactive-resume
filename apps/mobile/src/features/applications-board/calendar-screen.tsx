@@ -189,8 +189,10 @@ function ApplicationCalendar() {
 						setSelectedDay(null);
 					}}
 				/>
+				{/* Secondary: the screen's one accent-filled action is New, in the tab bar. */}
 				<Button
 					size="sm"
+					variant="secondary"
 					icon="calendar-plus"
 					label={t`Schedule interview`}
 					disabled={!open.length}

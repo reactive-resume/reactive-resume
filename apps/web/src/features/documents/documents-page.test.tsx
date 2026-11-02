@@ -103,6 +103,7 @@ function page(offset: number, total = 19500): Page {
 			tags: [],
 			isLocked: false,
 			isPublic: false,
+			hasPassword: false,
 			slug: null,
 			trashedAt: null,
 			createdAt: new Date(),

@@ -119,7 +119,11 @@ function DocumentItem({
 						{selecting && (
 							<Icon name={selected ? "check-square" : "square"} color={colors.accent} size={size.icon.row} />
 						)}
-						{document.isPublic && <Text variant="caption" color="accentText">{t`Public`}</Text>}
+						{document.isPublic && (
+							<Text variant="caption" color="accentText">
+								{document.hasPassword ? t`Public, with a password` : t`Public`}
+							</Text>
+						)}
 						{document.isLocked && <Text variant="caption" color="ink2">{t`Locked`}</Text>}
 						{document.application ? (
 							<Text variant="caption" color="ink2">
