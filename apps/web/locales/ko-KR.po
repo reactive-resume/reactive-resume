@@ -2336,8 +2336,8 @@ msgid "Any font, in Advanced"
 msgstr "고급의 모든 글꼴"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Anyone who opens the public URL will need this password."
-msgstr "공개 URL을 여는 사람은 이 비밀번호가 필요합니다."
+msgid "Anyone who opens the public link needs this password."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
@@ -3290,11 +3290,6 @@ msgstr "생각이 바뀌셨나요? 이력서 이름을 더 잘 설명하는 이�
 msgid "Changelog"
 msgstr "변경 로그"
 
-#: src/features/resume/editor/design/style-groups.tsx
-#: src/features/resume/editor/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "콘텐츠가 아닌 섹션 제목과 날짜 단어만 변경합니다."
-
 #. placeholder {0}: versionLabel(earlier)
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3870,8 +3865,8 @@ msgid "Complete {0} before saving."
 msgstr "저장하기 전에 {0} 항목을 작성하세요."
 
 #: src/features/resume/share/download-tab.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "데이터 백업을 완료하세요. Reactive Resume 또는 JSON Resume 도구로 다시 가져옵니다."
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
@@ -4777,6 +4772,10 @@ msgstr "채용 공고를 저장할 수 없습니다. 다시 시도해 보세요.
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't save the provider. Try again."
 msgstr "제공자를 저장할 수 없습니다. 다시 시도해 보세요."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't save the QR code as PNG. Try SVG instead."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't save the story. Try again."
@@ -5864,10 +5863,6 @@ msgstr "샘플 PDF 다운로드"
 msgid "Download them"
 msgstr "다운로드하세요"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "다운로드 총계에는 반복 클릭이 포함될 수 있습니다."
-
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
@@ -6031,6 +6026,10 @@ msgstr "채용 공고의 각 요건을 지식에 있는 사실 및 스토리와 
 #: src/features/assistant/conversation.tsx
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "각 전송은 이 메시지와 선택한 파일로 새로 시작됩니다. 이전 대화 기록은 여기에 유지됩니다."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -7226,6 +7225,11 @@ msgstr "Reactive Resume로 이동"
 msgid "Go to…"
 msgstr "…로 이동하세요"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/address-field.tsx
+msgid "Goes live at {0} when you publish."
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Good luck out there. Reactive Resume stays free because people chip in."
 msgstr "행운을 빕니다. Reactive Resume는 사람들이 칩을 사용하기 때문에 무료로 유지됩니다."
@@ -7576,6 +7580,7 @@ msgid "Icon…"
 msgstr "상…"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Icons in contact line"
 msgstr "접촉선의 아이콘"
 
@@ -8190,6 +8195,10 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr "한 페이지에 계속"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -10579,6 +10588,10 @@ msgstr ""
 msgid "Only the text to read aloud is sent to this speech model."
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Only you can see this address. Publish it in Share."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "이 내용은 나만 볼 수 있습니다."
@@ -10645,6 +10658,10 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
+msgstr ""
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Open Share"
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -11708,8 +11725,8 @@ msgstr "웹 페이지를 게시하면 조회수와 다운로드 수를 집계합
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "이 이력서를 게시하면 짧은 링크와 사용자 지정 도메인에서 열 수 있습니다."
 
-#: src/features/resume/share/address-field.tsx
-msgid "Publish to choose an address."
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
@@ -13184,6 +13201,10 @@ msgstr "이름 저장"
 msgid "Save offer"
 msgstr "오퍼 저장"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save PNG"
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
 msgstr ""
@@ -13204,6 +13225,10 @@ msgstr "스케줄 저장"
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
 msgstr "스토리 저장"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Save SVG"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -13892,6 +13917,11 @@ msgstr "인증 앱 설정"
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -13984,6 +14014,10 @@ msgstr "짧고 직접적입니다. 채용 공고에서 간결성을 요구하는
 #: src/features/assistant/assistant-panel.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "채용 담당자를 위한 짧고 정중한 표현"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
@@ -14081,10 +14115,6 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "제목 표시"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Show icons"
-msgstr "아이콘 표시"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
@@ -14259,8 +14289,8 @@ msgid "Signing up..."
 msgstr "가입 중..."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "since last view"
-msgstr "마지막으로 본 이후"
+msgid "since last counted view"
+msgstr ""
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -16411,6 +16441,10 @@ msgstr "2단계 인증 켜기"
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "이 스케줄 켜기"
@@ -16754,6 +16788,10 @@ msgstr "64자 이하로 입력하세요."
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "더 어두운 그늘을 사용하세요"
+
+#: src/features/resume/editor/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a plain international form, such as +1 555 010 1234."
@@ -18034,8 +18072,8 @@ msgid "Your email address isn't verified with the provider. Verify it there, the
 msgstr "이메일 주소가 제공자에서 인증되지 않았습니다. 제공자에서 인증한 후 다시 시도해 보세요."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "이메일, 전화번호, 위치 및 기타 헤더 정보와 추천인의 전화번호는 웹 페이지, PDF, 검색 결과에서 제외됩니다."
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -18245,6 +18283,24 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "다시 게시할 때까지 짧은 링크와 사용자 지정 도메인에는 이 이력서가 공유되지 않았다고 표시됩니다."
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."

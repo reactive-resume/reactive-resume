@@ -9,6 +9,7 @@ import { publicResumePath } from "@reactive-resume/resume/sharing";
 import { verifiedDomainColumn } from "../custom-domain/service";
 import { createPreviewToken, hasResumeAccess, isValidPreviewToken } from "./access";
 import {
+	isOwner,
 	ownerIsNotBanned,
 	publicResumeData,
 	requiresPassword,
@@ -23,7 +24,8 @@ import { countVisit } from "./view-dedup";
 export type { ResumeMatch } from "./slugs";
 
 export type PublicWebPage =
-	| { status: "unavailable" }
+	/** Off, unknown or trashed; `ownerResumeId` when the viewer owns the unpublished resume at this address. */
+	| { status: "unavailable"; ownerResumeId?: string }
 	/** Locked behind a password; `locale` is the resume's language, for the form. */
 	| { status: "password"; locale: string }
 	/** A previous slug, or a username the owner changed in the last 30 days: the page lives at `username`/`slug` now. */
@@ -76,7 +78,16 @@ export async function loadPublicWebPage(input: {
 		},
 		previewToken ? undefined : eq(schema.resume.isPublic, true),
 	);
-	if (!resume) return { status: "unavailable" };
+	if (!resume) {
+		// The owner opening their own unpublished address is told so, with the way to publish it; visitors aren't.
+		if (previewToken) return { status: "unavailable" };
+		const unpublished = await findResume(match, { id: schema.resume.id, userId: schema.resume.userId }, undefined);
+		if (!unpublished) return { status: "unavailable" };
+		const viewer = await resolveViewer(input.requestHeaders);
+		return isOwner(unpublished, viewer)
+			? { status: "unavailable", ownerResumeId: unpublished.id }
+			: { status: "unavailable" };
+	}
 
 	const hasPassword = resume.passwordHash !== null;
 	const page = ({ preview }: { preview: boolean }): PublicWebPage => ({

@@ -58,7 +58,7 @@ export const getExportFormats = (): DownloadFormat[] => [
 		id: "odt",
 		label: "OpenDocument",
 		extension: ".odt",
-		icon: "file-doc",
+		icon: "file-text",
 		description: t`For LibreOffice and other open-source editors. Layout is simplified.`,
 	},
 	{
@@ -73,7 +73,7 @@ export const getExportFormats = (): DownloadFormat[] => [
 		label: "JSON",
 		extension: ".json",
 		icon: "brackets-curly",
-		description: t`Complete data backup. Imports back into Reactive Resume or JSON Resume tools.`,
+		description: t`Complete data backup. Imports back into Reactive Resume.`,
 	},
 ];
 

@@ -1,6 +1,6 @@
 import type { IconName } from "../../forme/icons";
 import type { Style } from "../../forme/style-types";
-import type { CustomField } from "@reactive-resume/schema/resume/data";
+import type { CustomField, ResumeData } from "@reactive-resume/schema/resume/data";
 import { View } from "#react-pdf-renderer";
 import { resolvedPdfFlowProps } from "../../semantic/adapter";
 import { useResolvedNode, useSemanticNodeKey, useSemanticNodeVisible } from "../../semantic/context";
@@ -187,3 +187,16 @@ export const LocationContactItem = ({
 		</View>
 	);
 };
+
+/**
+ * Whether the header has any contact detail to print. With none (a name-only resume, or "Hide contact details"),
+ * templates leave out the contact list's box, band or rule too.
+ */
+export const hasContactDetails = (basics: ResumeData["basics"]) =>
+	Boolean(
+		basics.email.trim() ||
+		basics.phone.trim() ||
+		basics.location.trim() ||
+		basics.website.url.trim() ||
+		basics.customFields.some((field) => field.text.trim()),
+	);

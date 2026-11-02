@@ -14,6 +14,8 @@ const ENGLISH = {
 	unavailableTitle: "This resume isn't shared right now.",
 	unavailableHint: "If someone sent you this link, ask them for a new one.",
 	home: "Go to Reactive Resume",
+	ownerUnavailableHint: "Only you can see this address. Publish it in Share.",
+	ownerPublish: "Open Share",
 };
 
 export type WebPageMessages = typeof ENGLISH;

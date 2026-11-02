@@ -172,7 +172,8 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 	const ref = useRef<HTMLButtonElement>(null);
 	// Only cards on or near the screen render, so a font or colour change doesn't re-render every template.
 	const isInView = useInView(ref, { margin: "240px" });
-	const { data: thumbnail } = useTemplateThumbnail(id, data, isInView);
+	const resumeId = useResumeStore((state) => state.resume?.id ?? "");
+	const { data: thumbnail } = useTemplateThumbnail(id, data, isInView, resumeId);
 	const metadata = templates[id];
 	const hold = useRef<{ timer?: number; previewing: boolean }>({ previewing: false });
 	// Where the pointer was when a scroll slid the card under it: that previews only once the pointer moves. A

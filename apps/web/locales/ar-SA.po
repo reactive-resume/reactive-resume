@@ -2336,8 +2336,8 @@ msgid "Any font, in Advanced"
 msgstr "أي خط، في المتقدم"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Anyone who opens the public URL will need this password."
-msgstr "سيحتاج كل من يفتح الرابط العام إلى كلمة المرور هذه."
+msgid "Anyone who opens the public link needs this password."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
@@ -3290,11 +3290,6 @@ msgstr "غيّرت رأيك؟ أعد تسمية سيرتك الذاتية إلى
 msgid "Changelog"
 msgstr "سجل التغييرات"
 
-#: src/features/resume/editor/design/style-groups.tsx
-#: src/features/resume/editor/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "يغير عناوين الأقسام وكلمات التاريخ فقط، وليس المحتوى الخاص بك."
-
 #. placeholder {0}: versionLabel(earlier)
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3870,8 +3865,8 @@ msgid "Complete {0} before saving."
 msgstr "أكمل {0} قبل الحفظ."
 
 #: src/features/resume/share/download-tab.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "استكمال النسخ الاحتياطي للبيانات. يتم الاستيراد مرة أخرى إلى أدوات Reactive Resume أو JSON Resume."
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
@@ -4777,6 +4772,10 @@ msgstr "تعذر حفظ إعلان الوظيفة. حاول مرة أخرى."
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't save the provider. Try again."
 msgstr "تعذر حفظ الموفر. حاول مرة أخرى."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't save the QR code as PNG. Try SVG instead."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't save the story. Try again."
@@ -5864,10 +5863,6 @@ msgstr "تحميل عينة PDF"
 msgid "Download them"
 msgstr "قم بتنزيلها"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "يمكن أن تتضمن إجماليات التنزيل نقرات متكررة."
-
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
@@ -6031,6 +6026,10 @@ msgstr "يُطابَق كل متطلب في إعلان الوظيفة مع ال�
 #: src/features/assistant/conversation.tsx
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "يبدأ كل إرسال جديدًا بهذه الرسالة والملفات المحددة. يبقى سجل المحادثات السابقة هنا."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -7226,6 +7225,11 @@ msgstr "الانتقال إلى Reactive Resume"
 msgid "Go to…"
 msgstr "انتقل إلى…"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/address-field.tsx
+msgid "Goes live at {0} when you publish."
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Good luck out there. Reactive Resume stays free because people chip in."
 msgstr "حظا سعيدا هناك. يظل Reactive Resume مجانيًا لأن الأشخاص يشاركون فيه."
@@ -7576,6 +7580,7 @@ msgid "Icon…"
 msgstr "رمز…"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Icons in contact line"
 msgstr "الرموز في خط الاتصال"
 
@@ -8190,6 +8195,10 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr "إبقاء على صفحة واحدة"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -10579,6 +10588,10 @@ msgstr ""
 msgid "Only the text to read aloud is sent to this speech model."
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Only you can see this address. Publish it in Share."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "أنت فقط ترى هذه"
@@ -10645,6 +10658,10 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
+msgstr ""
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Open Share"
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -11708,8 +11725,8 @@ msgstr "انشر صفحة الويب لاحتساب المشاهدات والت�
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "انشر هذه السيرة الذاتية لفتحها عبر رابطك المختصر ونطاقك المخصص."
 
-#: src/features/resume/share/address-field.tsx
-msgid "Publish to choose an address."
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
@@ -13184,6 +13201,10 @@ msgstr "حفظ الاسم"
 msgid "Save offer"
 msgstr "حفظ العرض الوظيفي"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save PNG"
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
 msgstr ""
@@ -13204,6 +13225,10 @@ msgstr "احفظ الجدول"
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
 msgstr "احفظ القصة"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Save SVG"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -13892,6 +13917,11 @@ msgstr "إعداد تطبيق المصادقة"
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -13984,6 +14014,10 @@ msgstr "قصيرة ومباشرة. حسنًا إذا كان إعلان الوظ�
 #: src/features/assistant/assistant-panel.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "قصيرة ومهذبة، بالنسبة للمجند"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
@@ -14081,10 +14115,6 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "إظهار العنوان"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Show icons"
-msgstr "إظهار الأيقونات"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
@@ -14259,8 +14289,8 @@ msgid "Signing up..."
 msgstr "جاري التسجيل..."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "since last view"
-msgstr "منذ آخر مشاهدة"
+msgid "since last counted view"
+msgstr ""
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -16411,6 +16441,10 @@ msgstr "تشغيل التحقق من خطوتين"
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "فعّل هذا الجدول"
@@ -16754,6 +16788,10 @@ msgstr "استخدم 64 حرفًا أو أقل."
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "استخدم ظلًا أغمق"
+
+#: src/features/resume/editor/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a plain international form, such as +1 555 010 1234."
@@ -18034,8 +18072,8 @@ msgid "Your email address isn't verified with the provider. Verify it there, the
 msgstr "عنوان بريدك الإلكتروني غير مُتحقَّق منه لدى المزوّد. تحقّق منه هناك، ثم حاول مرة أخرى."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "يُستبعد بريدك الإلكتروني وهاتفك وموقعك وغيرها من بيانات الترويسة، وأرقام هواتف المراجعين، من صفحة الويب وملف PDF الخاص بها ونتائج البحث."
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -18245,6 +18283,24 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "يُظهر رابطك المختصر ونطاقك المخصص أن هذه السيرة الذاتية غير مُشارَكة حتى تنشرها مجددًا."
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."

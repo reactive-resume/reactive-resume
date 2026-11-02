@@ -38,7 +38,7 @@ export function ResumeLanguage({ locked }: ResumeLanguageProps) {
 				className="h-7 w-auto min-w-36 text-xs"
 			/>
 			<span>
-				<Trans>Changes section titles and date words only, not your content.</Trans>
+				<Trans>Sets section titles, date words and text direction. Your content isn't translated.</Trans>
 			</span>
 		</div>
 	);

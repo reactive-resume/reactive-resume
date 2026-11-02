@@ -23,7 +23,8 @@ function useSlugAvailability(update: SaveSlug) {
 	const wellFormed = isValidSlug(slug);
 	const check = useQuery({
 		...orpc.resume.checkSlug.queryOptions({ input: { resumeId: resume.id, slug: debouncedSlug } }),
-		enabled: (resume.isPublic ?? false) && changed && wellFormed && debouncedSlug === slug,
+		// Checked and saved while private too, so the address is chosen before it goes live.
+		enabled: changed && wellFormed && debouncedSlug === slug,
 	});
 	const result = debouncedSlug === slug ? check.data : undefined;
 
@@ -63,14 +64,16 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 	const isPublic = resume.isPublic ?? false;
 	const { slug, setSlug, changed, wellFormed, result } = useSlugAvailability(update);
 
-	const invalid = isPublic && (!slug || (changed && !wellFormed) || result?.status === "taken");
+	const invalid = !slug || (changed && !wellFormed) || result?.status === "taken";
 	const canShare = typeof navigator.share === "function";
 
 	// The hint under the field, when the address isn't taken (that block has its own text).
 	const hint = () => {
-		if (!isPublic) return t`Publish to choose an address.`;
 		if (!slug) return t`Add an address.`;
-		if (!changed) return t`Live at ${url.replace(/^https?:\/\//, "")}`;
+		if (!changed)
+			return isPublic
+				? t`Live at ${url.replace(/^https?:\/\//, "")}`
+				: t`Goes live at ${url.replace(/^https?:\/\//, "")} when you publish.`;
 		if (slug.length > MAX_SLUG_LENGTH) return t`Use at most 64 characters.`;
 		if (!wellFormed) return t`Use Latin letters a–z, numbers and single dashes.`;
 		if (result?.status === "available")
@@ -79,7 +82,7 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 	};
 
 	return (
-		<div className={cn("grid gap-1.5 transition-opacity duration-standard", !isPublic && "opacity-45")}>
+		<div className="grid gap-1.5">
 			<label htmlFor={id} className="text-xs font-medium text-ink-2">
 				<Trans>Address</Trans>
 			</label>
@@ -92,14 +95,14 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 							: "border-control-border focus-within:border-accent focus-within:ring-accent-soft",
 					)}
 				>
-					{/* A long host or username truncates, so the part being edited stays visible. */}
-					<span className="max-w-[55%] truncate ps-2.5 font-mono text-[13px] font-medium text-ink-3" dir="ltr">
-						{new URL(url).host}/{username}/
+					{/* Only the path: the host is in the "Live at" line, so the part being edited keeps the room. */}
+					<span className="max-w-[40%] truncate ps-2.5 font-mono text-[13px] font-medium text-ink-3" dir="ltr">
+						/{username}/
 					</span>
 					<input
 						id={id}
 						value={slug}
-						disabled={!isPublic || resume.isLocked}
+						disabled={resume.isLocked}
 						spellCheck={false}
 						dir="ltr"
 						aria-invalid={invalid}
@@ -107,7 +110,7 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 						onChange={(event) => setSlug(normalizeSlug(event.target.value))}
 						className="h-full min-w-0 flex-1 bg-transparent pe-1.5 font-mono text-[13px] font-medium text-ink outline-none"
 					/>
-					{isPublic && slug && (
+					{slug && (
 						<Icon
 							name={invalid ? "warning-circle" : "check-circle"}
 							size={18}

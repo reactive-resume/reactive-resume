@@ -10,6 +10,7 @@ import { getPrimaryTint as getPrimaryAlpha } from "../shared/color-helpers";
 import {
 	CustomFieldContactItem,
 	EmailContactItem,
+	hasContactDetails,
 	LocationContactItem,
 	PhoneContactItem,
 	WebsiteContactItem,
@@ -134,17 +135,19 @@ const Header = ({ styles }: LeafishHeaderProps) => {
 				</SemanticTemplatePartView>
 			</SemanticTemplatePartView>
 
-			<SemanticTemplatePartView partKeys={["header-contact-band"]} style={styles.headerContactBand}>
-				<SemanticContactListView style={styles.contactList}>
-					<EmailContactItem email={basics.email} style={styles.contactItem} />
-					<PhoneContactItem phone={basics.phone} style={styles.contactItem} />
-					<LocationContactItem location={basics.location} style={styles.contactItem} />
-					<WebsiteContactItem website={basics.website} style={styles.contactItem} />
-					{basics.customFields.map((field) => (
-						<CustomFieldContactItem key={field.id} field={field} style={styles.contactItem} />
-					))}
-				</SemanticContactListView>
-			</SemanticTemplatePartView>
+			{hasContactDetails(basics) && (
+				<SemanticTemplatePartView partKeys={["header-contact-band"]} style={styles.headerContactBand}>
+					<SemanticContactListView style={styles.contactList}>
+						<EmailContactItem email={basics.email} style={styles.contactItem} />
+						<PhoneContactItem phone={basics.phone} style={styles.contactItem} />
+						<LocationContactItem location={basics.location} style={styles.contactItem} />
+						<WebsiteContactItem website={basics.website} style={styles.contactItem} />
+						{basics.customFields.map((field) => (
+							<CustomFieldContactItem key={field.id} field={field} style={styles.contactItem} />
+						))}
+					</SemanticContactListView>
+				</SemanticTemplatePartView>
+			)}
 		</SemanticHeaderView>
 	);
 };
