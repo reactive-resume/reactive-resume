@@ -50,6 +50,10 @@ To change the page's template, colours or typography, use **Design**; the web pa
 **Web page**, **Show “Made with Reactive Resume”** controls only the footer credit. Preview links let you review an
 unpublished page for 15 minutes; keep them private, since anyone with that preview link can open it while it's valid.
 
+The **Language** under **Design** → **Page** also sets the web page's reading direction. Arabic and Hebrew mirror the template's
+layout, with bullet markers beside their text. If you choose a **Sidebar side**, the web page keeps that choice;
+on a phone, the sidebar still follows the main content.
+
 ## Change the address
 
 The last part of the address is yours to choose. For a new resume with an automatically generated address, it follows the
@@ -112,7 +116,16 @@ Once connected, your domain shows your primary resume, and search engines are po
 
 Each account connects one domain. Keep the ownership TXT record as well as the routing records after verification.
 Your domain opens the primary resume at `/`; it doesn't move your account or editor there. To change domains,
-select **Remove**, then connect the replacement. Removing a domain doesn't unpublish the resume at its normal address.
+select **Remove**, then **Remove domain** in the confirmation dialog, before connecting the replacement. Choose
+**Keep domain** to cancel. The website and mobile apps keep the domain connected until you confirm. Removing a
+domain doesn't unpublish the resume at its normal address.
+
+<Frame caption="Keep the connected domain or confirm its removal; this example uses a fictional account and domain">
+  <img
+    src="/images/guides/sharing-your-resume-publicly/remove-domain-confirmation.png"
+    alt="A confirmation explains that removing a custom domain stops it opening the primary resume, with Keep domain and Remove domain buttons"
+  />
+</Frame>
 
 On a self-hosted instance, **Your domain** appears only when the operator enables custom domains. See
 [Sharing domains for self-hosters](/self-hosting/sharing-domains) for setup and troubleshooting.

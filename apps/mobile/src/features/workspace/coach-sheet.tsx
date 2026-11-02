@@ -2,17 +2,28 @@ import type { Application } from "@/features/applications/types";
 import type { MessageContext } from "@/features/assistant/chat";
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
 import { useLingui } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { View, useWindowDimensions } from "react-native";
 import { tabLabel } from "./parts";
-import { client } from "@/api/client";
+import { client, orpc } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { useThreads } from "@/features/assistant/chat";
-import { ChatView } from "@/features/assistant/chat-view";
-import { ModelButton, ModelSheet, ProviderGate, useConversationProvider } from "@/features/assistant/provider";
+import { ChatView, ContextChip, type ChatHistory } from "@/features/assistant/chat-view";
+import {
+	ConnectionNotice,
+	ModelButton,
+	ModelSheet,
+	ProviderGate,
+	useConversationProvider,
+	useMemoryNote,
+	useWebSearch,
+	WebResearchChip,
+} from "@/features/assistant/provider";
 import { useDeleteThread, useThreadTime, useThreadTitle } from "@/features/assistant/threads";
-import { Banner, IconButton, ListRow, Sheet, Text, useTheme } from "@/ui";
+import { StoryEditor } from "@/features/career/stories";
+import { Banner, IconButton, ListRow, Sheet, Text, showToast, useTheme } from "@/ui";
 
 type CoachSheetProps = { application: Application; tab: WorkspaceTab; open: boolean; onClose: () => void };
 
@@ -50,7 +61,12 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 	);
 	const threadId = selected === "new" ? null : (selected ?? list[0]?.id ?? null);
 	const summary = list.find((thread) => thread.id === threadId);
-	const { provider, label, choose } = useConversationProvider(providers, summary, threadId);
+	const { provider, stranded, label, choose } = useConversationProvider(providers, summary, threadId);
+	const web = useWebSearch();
+	// The same choices as Career → Coach, for this sheet: Knowledge on, Web research off until turned on.
+	const [chips, setChips] = useState({ memory: true, web: false });
+	const memory = useMemoryNote(chips.memory);
+	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
 	const title = useThreadTitle();
 	const time = useThreadTime();
 	const open = (id: string) => {
@@ -61,10 +77,33 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 	const remove = useDeleteThread((id) => {
 		if (id === threadId) open("new");
 	});
-	const context: MessageContext = { document: true, posting: true, application: true, memory: true, web: false, tab };
+	const context: MessageContext = {
+		document: true,
+		posting: true,
+		application: true,
+		memory: chips.memory,
+		web: chips.web && web.canSearch,
+		tab,
+	};
 	const company = application.company;
 	const tabName = tabLabel(tab);
-	const privacy = t`Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${label}.`;
+	const privacy = ({ earlier, withheld }: ChatHistory) =>
+		[
+			stranded
+				? t`Nothing is sent until you choose a connection for this conversation.`
+				: earlier > 0
+					? chips.memory
+						? t`Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${label}.`
+						: t`Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`
+					: chips.memory
+						? t`Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${label}.`
+						: t`Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`,
+			...(withheld > 0 ? [t`Messages from before Knowledge changed aren't sent.`] : []),
+			...(context.web ? [t`Search terms go to your web search service.`] : []),
+			memory.note,
+		]
+			.filter(Boolean)
+			.join(" ");
 
 	return (
 		<View style={{ height: height * 0.7 }}>
@@ -144,9 +183,52 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 						}}
 						context={context}
 						document={null}
-						disabled={!providers.hasAIProvider}
+						disabled={!providers.hasAIProvider || stranded}
 						connection={label}
 						privacy={privacy}
+						remember={{ applicationId: application.id }}
+						facts={facts.data ?? []}
+						storyEditor={({ story, onChange, onSaved, onClose }) => (
+							<StoryEditor
+								story={null}
+								facts={facts.data ?? []}
+								proposal={{
+									story,
+									onChange,
+									onSaved: () => {
+										onSaved();
+										showToast({ message: t`Your edited story is saved to Knowledge.` });
+									},
+								}}
+								onClose={onClose}
+							/>
+						)}
+						notice={
+							stranded ? (
+								<ConnectionNotice
+									label={summary?.providerLabel ?? null}
+									fallback={providers.usableProviders[0]}
+									onUse={(id) => void choose(id)}
+									onChoose={() => setModelOpen(true)}
+								/>
+							) : null
+						}
+						chips={
+							<>
+								<ContextChip
+									icon="brain"
+									label={t`Knowledge`}
+									pressed={chips.memory}
+									onPress={() => setChips({ ...chips, memory: !chips.memory })}
+								/>
+								<WebResearchChip
+									web={web}
+									pressed={chips.web}
+									onPress={() => setChips({ ...chips, web: !chips.web })}
+								/>
+								{memory.chip}
+							</>
+						}
 						placeholder={t`Ask about this application…`}
 						assistantName={t`Coach`}
 						onSwitchModel={() => setModelOpen(true)}

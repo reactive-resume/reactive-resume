@@ -350,7 +350,7 @@ const nextSteps = load("features/applications/next-step.ts", {
 });
 const time = { locale: "en-US", timeZone: "UTC", when: String, time: String, day: String, utcDay: String };
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
-	"@tanstack/react-query": {},
+	"@tanstack/react-query": { useQueryClient: () => ({ invalidateQueries: async () => {} }) },
 	"expo-document-picker": {},
 	"expo-file-system": {},
 	"expo-sqlite/kv-store": {},
@@ -886,6 +886,10 @@ console.log("PASS native calendar follows account month/day and preserves explic
 const amountParser = load("../../../packages/utils/src/amount.ts");
 const careerSchema = load("../../../packages/schema/src/career.ts", {
 	zod,
+	"./applications/data": load("../../../packages/schema/src/applications/data.ts", {
+		zod,
+		"@reactive-resume/utils/timezone": timeParser,
+	}),
 	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
 	"@reactive-resume/utils/timezone": timeParser,
 });
@@ -1396,6 +1400,7 @@ const { TodayScreen } = load("features/career/today.tsx", {
 		},
 		useCareerAction: () => ({ pending: false, run: async (operation) => operation(), refresh: async () => {} }),
 		useCareerTime: () => ({ timeZone: "UTC", locale: "en-US", when: () => "31 Oct", profile: { refetch() {} } }),
+		useSaveTimezone: () => ({ isPending: false, mutate() {} }),
 		useNow: () => new Date(),
 		useTodayQueries: () => ({
 			schedules: { data: [] },
@@ -1406,7 +1411,7 @@ const { TodayScreen } = load("features/career/today.tsx", {
 		useUndoRows: () => ({ hidden: [], remove() {} }),
 	},
 	"./schedule-sheet": { ScheduleSheet: "ScheduleSheet", scheduleTitle: (kind) => kind },
-	"./scheduling": { collectInterviews: () => [], rollForward: (at) => at },
+	"./scheduling": { collectInterviews: () => [], firstLeadAhead: () => "24h", rollForward: (at) => at },
 	"./shared": { Actions: "Actions", LoadState: "LoadState", Section: "Section", SwitchRow: "SwitchRow" },
 	"@/features/applications/lane-queries": { useApplicationLanes: () => ({ lanes: [] }) },
 	"@/features/applications/lanes": { getLaneLabel: () => "Saved", resolveLane: () => null },
@@ -1738,6 +1743,7 @@ console.log("PASS native Today past note edit preserves exact seconds and change
 		"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
 		"./scheduling": {
 			collectInterviews: () => [],
+			firstLeadAhead: () => "24h",
 			nextCareerRun: () => new Date("2026-11-02T12:00:00Z"),
 			toZoned: () => ({ date: "2026-11-02", time: "12:00" }),
 		},
@@ -1836,6 +1842,7 @@ const { NewDocument } = load("features/documents/new-document.tsx", {
 	},
 	"@reactive-resume/schema/resume/dates": {},
 	"./import-file": { ImportError: class extends Error {} },
+	"@/features/write/fields": { SECTION_TITLES: {} },
 	"./new-documents": { useNewDocuments: { getState: () => ({ markOpened() {} }) } },
 	"./queries": {
 		useDocuments: () => ({ data: [{ id: "source", type: "resume", name: "Resume" }] }),

@@ -20,6 +20,7 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { getCategoryLane, getLaneLabel, laneMoveInput } from "../lanes";
 import { useInvalidateApplications } from "../use-application-actions";
@@ -220,14 +221,14 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			...(sourceLink ? { sourceUrl: sourceLink } : {}),
 			...(stage !== "saved" && stageDate ? { stageEnteredAt: stageDate } : {}),
 			...(resumeId ? { resumeId } : {}),
-			...(stage !== "saved" && coverLetterId ? { coverLetterId } : {}),
+			...(coverLetterId ? { coverLetterId } : {}),
 			jobDescription: postingDescription || null,
 			postingSource,
 		};
 		try {
 			const applicationId = await create.mutateAsync(posting);
 			invalidate();
-			toast.add({ description: t`Added ${role.trim()} at ${company.trim()}` });
+			toast.add({ description: t`Added ${isolate(role.trim())} at ${isolate(company.trim())}` });
 			onClose();
 			if (tailor)
 				openDialog("document.new", { step: "copy", applicationId, ...(resumeId ? { sourceResumeId: resumeId } : {}) });
@@ -700,28 +701,30 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						))}
 				</select>
 			</div>
-			{stage !== "saved" && (
-				<div className="grid gap-1.5">
-					<Label htmlFor={`${id}-letter`}>
+			<div className="grid gap-1.5">
+				<Label htmlFor={`${id}-letter`}>
+					{stage === "saved" ? (
+						<Trans>Cover letter (optional)</Trans>
+					) : (
 						<Trans>Cover letter submitted (optional)</Trans>
-					</Label>
-					<select
-						id={`${id}-letter`}
-						value={coverLetterId}
-						onChange={(event) => setCoverLetterId(event.target.value)}
-						className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
-					>
-						<option value="">{t`No cover letter selected`}</option>
-						{documents
-							?.filter((document) => document.type === "letter")
-							.map((document) => (
-								<option key={document.id} value={document.id}>
-									{document.name}
-								</option>
-							))}
-					</select>
-				</div>
-			)}
+					)}
+				</Label>
+				<select
+					id={`${id}-letter`}
+					value={coverLetterId}
+					onChange={(event) => setCoverLetterId(event.target.value)}
+					className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
+				>
+					<option value="">{t`No cover letter selected`}</option>
+					{documents
+						?.filter((document) => document.type === "letter" && !document.isLocked)
+						.map((document) => (
+							<option key={document.id} value={document.id}>
+								{document.name}
+							</option>
+						))}
+				</select>
+			</div>
 			<DialogFooter>
 				<Button
 					type="button"

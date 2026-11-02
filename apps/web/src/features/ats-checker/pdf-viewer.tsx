@@ -1,4 +1,5 @@
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { Trans } from "@lingui/react/macro";
 // pdf.mjs must load before pdf_viewer.mjs, which reads `globalThis.pdfjsLib` as it loads.
 import { AnnotationMode } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { EventBus, LinkTarget, PDFLinkService, PDFViewer } from "pdfjs-dist/legacy/web/pdf_viewer.mjs";
@@ -193,7 +194,7 @@ export function PdfViewer({ className, file }: PdfViewerProps) {
 
 			{error ? (
 				<div className="absolute inset-0 flex items-center justify-center bg-bg px-6 text-center text-sm text-ink-3">
-					Unable to display PDF preview.
+					<Trans>Couldn't show the PDF preview. Upload the file again.</Trans>
 				</div>
 			) : (
 				<div

@@ -22,13 +22,19 @@ import { File } from "expo-file-system";
 import { useCallback, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ActivityIndicator, AppState, Pressable, ScrollView, TextInput, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-import { citesKnowledge, tailoringAllows } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import {
+	AGENT_ATTACHMENT_TYPES,
+	agentReplyError,
+	citesKnowledge,
+	tailoringAllows,
+} from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { withEditedText } from "@reactive-resume/resume/proposals";
+import { isNetworkError } from "@reactive-resume/utils/http";
 import { attachmentPart, refreshThreads, transcriptOf, useAssistantChat } from "./chat";
 import { FileChip, MessageView, Status } from "./messages";
-import { isProposeEdits, publishProposals, toProposals } from "./proposals";
+import { isProposeEdits, publishProposals, supersededIn, toProposals } from "./proposals";
 import { createRequestLane, recoverRun } from "./recovery";
-import { ToolApprovals } from "./tool-approvals";
+import { ToolApprovals, type StoryEditorRender } from "./tool-approvals";
 import { client, orpc, SessionChangedError } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 import { Button, Icon, Text, showToast, useTheme } from "@/ui";
@@ -50,8 +56,18 @@ export type ChatViewProps = {
 	document: AssistantDocument | null;
 	/** The provider, named in the error line: "OpenAI". */
 	connection: string;
-	/** Says what a send shares, under the composer. */
-	privacy: string;
+	/** Says what a send shares, under the composer; given how many earlier messages still go and how many don't. */
+	privacy: string | ((history: ChatHistory) => string);
+	/** Above the composer: what needs a decision before the next message (a connection that went away). */
+	notice?: ReactNode;
+	/** The coach: each of the user's messages can be remembered in Knowledge, for this application or all. */
+	remember?: { applicationId: string | null } | undefined;
+	/** The user's facts, to show which ones a proposed story rests on. */
+	facts?: readonly { id: string; text: string; status: string }[] | undefined;
+	/** The story editor a proposal's Edit first opens, in the conversation's scope. */
+	storyEditor?: StoryEditorRender | undefined;
+	/** Text the message box starts with, handed over from another screen; the user still taps Send. */
+	draft?: string | undefined;
 	placeholder: string;
 	/** How a copied transcript names the other side: "Assistant" or "Coach". */
 	assistantName: string;
@@ -71,6 +87,28 @@ export type ChatViewProps = {
 };
 
 type Prompt = { threadId: string; text: string; attachments: ChatAttachment[] };
+
+export type ChatHistory = { earlier: number; withheld: number };
+
+/** Why a reply failed, in the reader's language: a lost connection, the provider, or this server's own reason. */
+function replyFailure(error: unknown, fallback: string, t: ReturnType<typeof useLingui>["t"]) {
+	if (isNetworkError(error)) return t`Couldn't reach Reactive Resume. Check your internet connection, then try again.`;
+	const key = error instanceof Error && !(error instanceof ORPCError) ? agentReplyError(error.message) : null;
+	if (key)
+		return {
+			providerKey: t`The AI provider rejected the saved key. Check the key in Settings, or change the connection.`,
+			providerModel: t`The AI provider doesn't offer this model. Choose another model, or change the connection.`,
+			providerLimit: t`The AI provider is limiting requests (rate limit or quota). Wait a minute and try again, or change the connection.`,
+			providerDown: t`The AI provider is unavailable right now. Try again in a moment, or change the connection.`,
+			provider: t`The AI provider couldn't finish this reply. Try again, or change the connection.`,
+			failed: t`This reply couldn't finish. Try again.`,
+		}[key];
+	return error instanceof ORPCError && error.message ? error.message : fallback;
+}
+
+/** A failure another AI connection could fix; never a lost network or this server's refusal. */
+const providerFailure = (error: unknown) =>
+	error instanceof Error && agentReplyError(error.message)?.startsWith("provider") === true;
 
 const MAX_FILES = 10;
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
@@ -167,6 +205,7 @@ function ScopedChatView(props: ScopedChatViewProps) {
 				</ScrollView>
 				<Composer
 					{...props}
+					privacy={typeof props.privacy === "string" ? props.privacy : props.privacy({ earlier: 0, withheld: 0 })}
 					streaming={starting}
 					disabled={props.disabled ?? false}
 					ensureThread={ensureThread}
@@ -309,6 +348,8 @@ function Conversation(props: ConversationProps) {
 		clearError();
 		setStopped(false);
 		deliver(text, attachments);
+		// The new question and its reply come into view even when the reader had scrolled up.
+		requestAnimationFrame(() => void list.current?.scrollToEnd({ animated: true }));
 		return true;
 	};
 
@@ -326,8 +367,19 @@ function Conversation(props: ConversationProps) {
 
 	const stopReply = () => {
 		setStopped(true);
-		void client.agent.messages.stop({ threadId }, { context: { scope: props.scope } }).catch(() => undefined);
-		void lane.cancel();
+		void Promise.all([
+			client.agent.messages.stop({ threadId }, { context: { scope: props.scope } }).catch(() => undefined),
+			lane.cancel(),
+		]).then(async () => {
+			// The server keeps what it wrote before the stop reached it, which can differ from what arrived here. Show its
+			// copy once the run is settled, so Continue and Try again act on what was actually saved.
+			for (let attempt = 0; attempt < 10; attempt++) {
+				const saved = await reloadThread();
+				if (!saved) return;
+				if (!saved.active) return setMessages(saved.messages);
+				await new Promise((resolve) => setTimeout(resolve, 300));
+			}
+		});
 	};
 
 	const reloadThread = async (): Promise<SavedThread | null> => {
@@ -430,23 +482,46 @@ function Conversation(props: ConversationProps) {
 	});
 	const receiptsReady = !document?.proposalRevision || !!receipts.data;
 	const error = chatError ?? receipts.error;
-	const statuses = useMemo(
-		() =>
-			new Map<string, Receipt>([
-				...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
-					message.parts.flatMap((part) =>
-						isProposeEdits(part)
-							? toProposals(part, new Map()).map(
-									({ id, status, after, unsupported, edited }) =>
-										[id, edited ? { status, after, unsupported, edited } : { status }] as const,
-								)
-							: [],
-					),
+	// A new id, not every streamed chunk, changes the receipts.
+	const supersededIds = [...supersededIn(messages)].join(" ");
+	// What the server no longer sends (Knowledge changed) and which replies ended early, read again after each reply.
+	const history = useQuery({
+		...receiptOptions,
+		queryKey: [...receiptOptions.queryKey, props.scope, "history", messages.length, status],
+		select: (data) => ({
+			withheld: new Set(data.history?.withheld ?? []),
+			cutoffAt: data.history?.cutoffAt ?? null,
+			interrupted: data.interrupted ?? [],
+		}),
+		enabled: status === "ready" || status === "error",
+		placeholderData: (previous) => previous,
+	});
+	const withheld = messages.filter((message) => history.data?.withheld.has(message.id)).length;
+	const lastReply = messages.at(-1)?.role === "assistant" ? messages.at(-1) : undefined;
+	const endedEarly =
+		!busy &&
+		!error &&
+		(stopped || (lastReply !== undefined && (history.data?.interrupted ?? []).includes(lastReply.id)));
+	const saidSomething = lastReply?.parts.some((part) => part.type === "text" && part.text.trim() !== "") === true;
+	const statuses = useMemo(() => {
+		const map = new Map<string, Receipt>([
+			...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
+				message.parts.flatMap((part) =>
+					isProposeEdits(part)
+						? toProposals(part, new Map()).map(
+								({ id, status, after, unsupported, edited }) =>
+									[id, edited ? { status, after, unsupported, edited } : { status }] as const,
+							)
+						: [],
 				),
-				...[...rejections].map(([id, status]) => [id, { status }] as const),
-			]),
-		[receipts.data, rejections],
-	);
+			),
+			...[...rejections].map(([id, status]) => [id, { status }] as const),
+		]);
+		// Only an undecided edit reads as replaced: one accepted or rejected (here or on another device) keeps its outcome.
+		for (const id of supersededIds.split(" ").filter(Boolean))
+			if ((map.get(id)?.status ?? "pending") === "pending") map.set(id, { status: "rejected", superseded: true });
+		return map;
+	}, [receipts.data, rejections, supersededIds]);
 
 	// ---- Proposed edits ----
 
@@ -535,6 +610,7 @@ function Conversation(props: ConversationProps) {
 		() =>
 			document
 				? {
+						resumeId: document.kind === "resume" ? document.id : undefined,
 						statuses,
 						stateOf: document.stateOf,
 						locked: document.locked || !receiptsReady,
@@ -627,9 +703,13 @@ function Conversation(props: ConversationProps) {
 								answerable={index === messages.length - 1}
 								proposals={handlers}
 								onAnswer={answer}
+								remember={props.remember ?? null}
 							/>
 							<ToolApprovals
 								message={message}
+								facts={props.facts ?? []}
+								applicationId={props.remember?.applicationId ?? null}
+								storyEditor={props.storyEditor}
 								disabled={readOnly || busy || index !== messages.length - 1}
 								onDecision={(decision) => {
 									void lane.run(async () => {
@@ -647,13 +727,37 @@ function Conversation(props: ConversationProps) {
 								</Status>
 							) : null}
 
-							{stopped && !busy && !proposedInLast ? (
+							{withheld > 0 ? (
+								<View style={{ flexDirection: "row", gap: space.s2 }}>
+									<Icon name="eye-slash" size={16} color={colors.ink3} />
+									<Text variant="caption" color="ink2" style={{ flex: 1 }}>
+										<Trans>
+											Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them.
+											Start a new conversation to keep context together.
+										</Trans>
+									</Text>
+								</View>
+							) : null}
+
+							{endedEarly && !proposedInLast ? (
 								<View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: space.s2 }}>
 									<Icon name="stop-circle" size={18} color={colors.ink3} />
 									<Text variant="callout" color="ink2">
-										{document ? <Trans>Stopped. No edits were proposed.</Trans> : <Trans>Stopped</Trans>}
+										{document ? (
+											<Trans>Stopped. No edits were proposed.</Trans>
+										) : saidSomething ? (
+											<Trans>Stopped before the answer finished.</Trans>
+										) : (
+											<Trans>Stopped before answering.</Trans>
+										)}
 									</Text>
-									<Button variant="link" label={t`Continue`} disabled={readOnly} onPress={() => send(t`Continue`)} />
+									{/* A reply that said something is continued; one that said nothing is asked again. */}
+									<Button
+										variant="link"
+										label={saidSomething || document ? t`Continue` : t`Try again`}
+										disabled={readOnly}
+										onPress={() => (saidSomething || document ? send(t`Continue`) : retry())}
+									/>
 								</View>
 							) : null}
 
@@ -673,9 +777,7 @@ function Conversation(props: ConversationProps) {
 											{receipts.error ? (
 												<Trans>This conversation couldn't be opened.</Trans>
 											) : (
-												<Trans>
-													{props.connection} returned “{errorText(error, t`an error`)}”. Your message is kept.
-												</Trans>
+												`${replyFailure(error, t`${props.connection} didn't respond.`, t)} ${t`Your message is kept.`}`
 											)}
 										</Text>
 									</View>
@@ -693,7 +795,7 @@ function Conversation(props: ConversationProps) {
 											disabled={busy || (!receipts.error && (readOnly || continuationBlocked))}
 											onPress={retry}
 										/>
-										{props.onSwitchModel ? (
+										{props.onSwitchModel && providerFailure(error) ? (
 											<Button size="sm" variant="ghost" label={t`Switch model`} onPress={props.onSwitchModel} />
 										) : null}
 									</View>
@@ -724,6 +826,11 @@ function Conversation(props: ConversationProps) {
 
 			<Composer
 				{...props}
+				privacy={
+					typeof props.privacy === "string"
+						? props.privacy
+						: props.privacy({ earlier: messages.length - withheld, withheld })
+				}
 				streaming={busy}
 				disabled={readOnly}
 				ensureThread={() => Promise.resolve(threadId)}
@@ -743,7 +850,8 @@ function errorText(error: unknown, fallback: string) {
 
 type Upload = ChatAttachment & { size: number; busy?: boolean };
 
-type ComposerProps = Pick<ScopedChatViewProps, "chips" | "privacy" | "placeholder" | "scope"> & {
+type ComposerProps = Pick<ScopedChatViewProps, "chips" | "notice" | "placeholder" | "scope" | "draft"> & {
+	privacy: string;
 	streaming: boolean;
 	disabled: boolean;
 	ensureThread: () => Promise<string>;
@@ -756,8 +864,10 @@ type ComposerProps = Pick<ScopedChatViewProps, "chips" | "privacy" | "placeholde
 function Composer(props: ComposerProps) {
 	const { t } = useLingui();
 	const { colors, radius, size, space, type } = useTheme();
-	const [text, setText] = useState("");
+	const [text, setText] = useState(props.draft ?? "");
 	const [attachments, setAttachments] = useState<Upload[]>([]);
+	// Chips removed while their upload was still running: the finished upload is deleted, not kept.
+	const removedUploads = useRef(new Set<string>());
 	const uploading = attachments.some((attachment) => attachment.busy);
 	const hasText = text.trim().length > 0;
 
@@ -774,7 +884,11 @@ function Composer(props: ComposerProps) {
 	};
 
 	const attach = async () => {
-		const picked = await DocumentPicker.getDocumentAsync({ multiple: true, copyToCacheDirectory: true });
+		const picked = await DocumentPicker.getDocumentAsync({
+			multiple: true,
+			copyToCacheDirectory: true,
+			type: [...AGENT_ATTACHMENT_TYPES],
+		});
 		if (picked.canceled) return;
 		// Sizes are checked before any file is read: 25 MB a file and 100 MB in all, the server's limits.
 		let budget = MAX_TOTAL_BYTES - attachments.reduce((total, item) => total + item.size, 0);
@@ -787,7 +901,7 @@ function Composer(props: ComposerProps) {
 			else if (size > MAX_FILE_BYTES) skipped.big = true;
 			else if (size > budget) skipped.total = true;
 			else {
-				files.push({ asset, key: `upload-${Date.now()}-${index}`, size });
+				files.push({ asset, key: `upload-${index}-${asset.uri}`, size });
 				budget -= size;
 				room--;
 			}
@@ -817,6 +931,7 @@ function Composer(props: ComposerProps) {
 		}
 		// One file at a time: only one base64 copy is in memory at once.
 		for (const { asset, key } of files) {
+			if (removedUploads.current.delete(key)) continue;
 			try {
 				const attachment = await client.agent.attachments.create(
 					{
@@ -827,6 +942,13 @@ function Composer(props: ComposerProps) {
 					},
 					{ context: { scope: props.scope } },
 				);
+				if (removedUploads.current.delete(key)) {
+					// Removed while uploading.
+					void client.agent.attachments
+						.delete({ id: attachment.id }, { context: { scope: props.scope } })
+						.catch(() => undefined);
+					continue;
+				}
 				setAttachments((current) =>
 					current.map((item) =>
 						item.id === key
@@ -855,18 +977,34 @@ function Composer(props: ComposerProps) {
 				backgroundColor: colors.surface,
 			}}
 		>
+			{props.notice}
 			{props.chips || attachments.length > 0 ? (
-				<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }} accessibilityLabel={t`Context`}>
+				// One row that scrolls sideways, so the chips never push the message box down the screen.
+				<ScrollView
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
+					contentContainerStyle={{ flexDirection: "row", gap: space.s2 }}
+					accessibilityLabel={t`Context`}
+				>
 					{props.chips}
 					{attachments.map((attachment) => (
 						<FileChip
 							key={attachment.id}
 							name={attachment.filename}
 							busy={attachment.busy}
-							onRemove={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
+							onRemove={() => {
+								setAttachments((current) => current.filter((item) => item.id !== attachment.id));
+								// An uploaded but unsent file counts toward the message's limit until it's deleted.
+								if (attachment.busy) removedUploads.current.add(attachment.id);
+								else
+									void client.agent.attachments
+										.delete({ id: attachment.id }, { context: { scope: props.scope } })
+										.catch(() => undefined);
+							}}
 						/>
 					))}
-				</View>
+				</ScrollView>
 			) : null}
 
 			<View

@@ -13,7 +13,7 @@ Offers display application outcomes, mark **Latest** versions and compare two ve
 
 | Place                                                   | Purpose                                                                       |
 | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| **Career → Today**                                      | Notifications, discovered roles, your next interview and schedules.           |
+| **Career → Today**                                      | Notifications, discovered roles, your next three interviews and schedules.    |
 | **Career → Coach**                                      | Conversations across your search.                                             |
 | **Career → Knowledge → Facts**                          | Statements about your experience, sources, corrections and coaching controls. |
 | **Career → Knowledge → Stories**                        | Situation, Task, Action, Result and Reflection with supporting facts.         |
@@ -66,18 +66,20 @@ Sent resume and letter versions are document snapshots shown under **What you se
 
 **Ask the coach** opens application coaching beside a workspace tab. The coach receives the job and tab context selected for that conversation, including the application's form answers, its newest saved offer and its last messages when the application is shared. You can start another conversation or reopen one from its history.
 
+A new conversation suggests three starters drawn from what your account holds: preparing for your next interview when one is coming up, weighing an offer when an application is in the Offer stage, and reviewing found roles when discovery has some, before general ones such as turning an accomplishment into a story. A starter only fills in the question; nothing is sent until you choose it.
+
 In Career → Coach, context controls include:
 
-| Control          | What it includes when on                                                                                     |
-| ---------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Applications** | Summaries of your applications.                                                                              |
-| **Knowledge**    | Active facts, eligible stories and career preferences.                                                       |
-| **Web research** | Access to public research through the selected web service; off by default. Search terms go to that service. |
+| Control          | What it includes when on                                                                                                                                                                                                                      |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Applications** | Summaries of your applications.                                                                                                                                                                                                               |
+| **Knowledge**    | Active facts, eligible stories and career preferences. With Knowledge off, the coach also remembers nothing.                                                                                                                                  |
+| **Web research** | Access to public research through the selected web service; off by default. Search terms go to that service. Without a search service it reads **Web research · Set up** and opens Settings; the coach can still read public links you paste. |
 
-<Frame caption="Start a career conversation with the context you choose">
+<Frame caption="The line below the message explains what the next send includes, which AI connection receives it and what the coach may remember. Under the answer, Used shows what it relied on, and Add to resume hands it to a resume's assistant. The people and companies are fictional.">
   <img
     src="/images/guides/career/coach.png"
-    alt="Current Career Coach with starting questions, Applications and Knowledge context chips and a message field"
+    alt="Career coach answering which fictional applications to follow up on, with Used Preferences, Copy and Add to resume under the answer; Applications and Knowledge on, Web research · Set up, the connection chip and a privacy line ending with what the coach remembers and Change"
   />
 </Frame>
 
@@ -85,7 +87,15 @@ Before each coach web search, review the exact query and select **Search the web
 
 Choices persist for that conversation. Earlier messages in the same chat can already contain information shared before a control was turned off.
 
-Workspace buttons such as **Check fit** and **Read it for me** are separate AI actions. Each privacy line comes from the same list of inputs the server builds its request from, naming only the parts this application and your Knowledge actually have: preferences, posting, requirements, notes, contacts, resume, letter, Knowledge, and the action's own question, answer or message. **Read posting** and **Draft from the posting** name their provider before you click. They use the default usable AI connection. Scheduled preparation requires a selected connection and never falls back to the default. If you delete or switch off its connection, or change its key, model or address, review the paused schedule, choose a tested connection and approve it before enabling work again. [Provider selection](/guides/using-ai#which-provider-is-used) explains this further.
+The privacy line also says what the coach may keep: whether it asks before remembering facts you state, remembers them automatically, or never does. **Change** opens the memory setting. To keep a message yourself in any mode, choose **Remember** under it, review the wording, type and (in a job's workspace) whether it is for that application only, then **Remember**. This saves your own words and sends nothing to an AI connection. A fact remembered automatically in a job's workspace says it is for that application only; **Use for all applications** shares it, and **Undo** forgets it.
+
+When you correct, switch off or forget a fact, the coach stops sending messages written before that change, because they may repeat what you withdrew. The conversation marks where that happened, and the privacy line says those messages aren't sent. Start a new conversation to keep context together.
+
+A reply you stop, or one cut short, stays marked after you reopen the conversation. **Continue** asks the coach to carry on from what it said; **Try again** asks again when it had said nothing. An empty reply shows no **Used** chips.
+
+If the AI connection a conversation used is switched off or removed, the conversation says so and sends nothing until you choose the connection it uses next. This applies to the career coach, a job's coach and the editor assistant. A job's coach has the same **Knowledge** and **Web research** controls and connection menu as Career → Coach. **Change connection** appears only when the provider caused a failure, such as a rejected key or a rate limit; a lost internet connection says so instead.
+
+Workspace buttons such as **Check fit** and **Read it for me** are separate AI actions. Each privacy line comes from the same list of inputs the server builds its request from, naming only the parts this application and your Knowledge actually have: preferences, posting, requirements, notes, contacts, resume, letter, Knowledge, and the action's own question, answer or message. **Read posting** and **Draft from the posting** name their provider before you click. Chat context choices do not turn those inputs off. They use the default usable AI connection. Scheduled preparation requires a selected connection and never falls back to the default. If you delete or switch off its connection, or change its key, model or address, review the paused schedule, choose a tested connection and approve it before enabling work again. [Provider selection](/guides/using-ai#which-provider-is-used) explains this further.
 
 ## Discovery review
 
@@ -101,9 +111,11 @@ Today separates **Preference phrase matches**, **Keyword overlap** and optional 
 | **Interview prep** | Interview, AI connection; 24 hours before, 2 hours before or Morning of. | Saved briefing and a Today notification. |
 | **Remind me**      | Application, date and local time.                                        | A one-time reminder in Today.            |
 
-Interview times and calendar day grouping in Applications, its workspace and Today use your account timezone. Stage changes and notes keep their recorded whole-day dates.
+Interview times and calendar day grouping in Applications, its workspace and Today use your account timezone. When that isn't the timezone of the device you're using, times show their zone, for example "16:56 UTC", and Today offers **Use this device's timezone** to switch in one step. Stage changes and notes keep their recorded whole-day dates.
 
 New schedules use the account timezone from **Settings → Preferences**; existing schedules retain their saved timezone when edited. Morning of means 08:00 on the interview day, or two hours before interviews starting before 10:00. Prepare never schedules an immediate run labelled as a future briefing: the switch picks the first lead still ahead of the interview, says **Too close to the interview to schedule a refresh** when none remains, and the server rejects a past briefing time when it is saved.
+
+Each schedule in Today shows how its latest run went. A one-time schedule reads **Running** while its run is queued or being retried, **Done** once it finished, and **Failed · open to check it** in red when its last try failed; a repeating schedule whose last run failed reads **Last run failed**. Open the schedule to check its application and AI connection. A one-time schedule runs again only for a new time: for a reminder, pick a later date or time; for interview prep, choose another lead.
 
 Find roles and other web searches target the countries in **Where you're looking for work** under **Career → Knowledge → Preferences**: up to three, your account timezone's country until you change it, or none to search anywhere. Untouched UTC accounts adopt the device timezone's country on their first search or enabled discovery schedule. Each country is a separate search with the web service.
 
@@ -177,3 +189,15 @@ Private profile content stays out of automatic AI context, MCP results and docum
 ## Set up AI without leaving a task
 
 **Set up AI** opens the shared connection setup in place, retaining typed input. Every AI request names its provider, model and data for approval. With no AI, **Messages → Save message without AI** saves the pasted message in the workspace. Discovery states its search requirement before you fill the schedule; **Set up web access** retains the schedule form. Editing a scheduled preparation connection's key, model or address pauses affected schedules until you enable them again.
+
+### Documents and application details
+
+Use **Stage, details and timeline** in the workspace to open the application record, change its stage,
+edit details, or log a dated update. **Notes** holds things to remember and share with the coach;
+**Log an update** adds a dated timeline entry.
+
+For a saved job, **Use an existing letter** links a letter from Documents. Documents also offers
+**Link to application…** for resumes and letters, and **Write a letter…** on a resume. When starting
+a new letter, choose **Resume for a new letter**, or **No resume** for a standalone letter.
+A letter recorded as sent keeps its application link; pickers label unavailable targets **Letter already sent**.
+Builders offer a back link to their application. Submitted versions remain immutable; current drafts stay editable.

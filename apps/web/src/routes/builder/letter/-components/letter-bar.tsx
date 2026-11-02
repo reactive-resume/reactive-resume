@@ -1,4 +1,4 @@
-import { t } from "@lingui/core/macro";
+import { ph, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -18,6 +18,7 @@ import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
@@ -160,7 +161,7 @@ function LetterMenu() {
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 			void navigate({ to: "/dashboard" });
 			toast.add({
-				description: t`“${name}” moved to Trash`,
+				description: t`“${ph({ name: isolate(name) })}” moved to Trash`,
 				actionProps: {
 					children: t`Undo`,
 					onClick: () =>

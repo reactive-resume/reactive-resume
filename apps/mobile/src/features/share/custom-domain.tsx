@@ -6,7 +6,20 @@ import { useState } from "react";
 import { Linking, View } from "react-native";
 import { cvDomainRegistrationUrl, formatTimeSince } from "@reactive-resume/resume/sharing";
 import { orpc } from "@/api/client";
-import { Banner, Button, Icon, ListGroup, ListRow, Sheet, Text, TextField, haptics, showToast, useTheme } from "@/ui";
+import {
+	Banner,
+	Button,
+	ConfirmDialog,
+	Icon,
+	ListGroup,
+	ListRow,
+	Sheet,
+	Text,
+	TextField,
+	haptics,
+	showToast,
+	useTheme,
+} from "@/ui";
 
 const CODE = "RX";
 
@@ -32,6 +45,7 @@ export function CustomDomain({ offline, suggest }: CustomDomainProps) {
 	});
 	const [hostname, setHostname] = useState("");
 	const [recordsOpen, setRecordsOpen] = useState(false);
+	const [confirmRemove, setConfirmRemove] = useState(false);
 	const store = (next: RouterOutput["customDomain"]["get"]) =>
 		queryClient.setQueryData(orpc.customDomain.get.queryKey(), next);
 	const set = useMutation({
@@ -114,8 +128,21 @@ export function CustomDomain({ offline, suggest }: CustomDomainProps) {
 						variant="ghost"
 						label={t`Remove`}
 						loading={remove.isPending}
-						disabled={offline}
-						onPress={() => remove.mutate({})}
+						disabled={offline || set.isPending || verify.isPending}
+						onPress={() => setConfirmRemove(true)}
+					/>
+					<ConfirmDialog
+						open={confirmRemove}
+						title={t`Remove the custom domain?`}
+						message={t`Your domain will stop opening your primary resume. You can reconnect it later.`}
+						confirmLabel={t`Remove domain`}
+						cancelLabel={t`Keep domain`}
+						destructive
+						onCancel={() => setConfirmRemove(false)}
+						onConfirm={() => {
+							setConfirmRemove(false);
+							if (!offline && !remove.isPending) remove.mutate({});
+						}}
 					/>
 					<DnsRecordsSheet
 						domain={current}

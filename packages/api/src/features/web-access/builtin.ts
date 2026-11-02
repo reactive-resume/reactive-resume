@@ -159,7 +159,7 @@ function numericEntityCharacter(name: string) {
 	const code = /^#x/i.test(name) ? Number.parseInt(name.slice(2), 16) : Number.parseInt(name.slice(1), 10);
 	return code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff) ? String.fromCodePoint(code) : null;
 }
-export const decodeEntities = (text: string) =>
+const decodeEntities = (text: string) =>
 	text.replace(/&(#x[\da-f]+|#\d+|[a-z]+);/gi, (entity, name: string) => {
 		if (!name.startsWith("#")) return ENTITIES[name.toLowerCase()] ?? entity;
 		return numericEntityCharacter(name) ?? entity;

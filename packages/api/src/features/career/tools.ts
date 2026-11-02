@@ -157,7 +157,7 @@ export function buildCareerTools(input: CareerToolsInput): ToolSet {
 		});
 		tools.save_story = tool({
 			description:
-				"Propose a STARR story for the user to review and approve before saving, grounded in existing fact IDs. Leave Result or Reflection empty rather than inventing them. Nothing is saved until approval.",
+				"Propose a STARR story for the user to review and approve before saving. Back it only with IDs of saved facts whose text states what the story claims (the accomplishment and its numbers), never unrelated skills or tenure; a fact that is only proposed has no ID yet. Leave Result or Reflection empty rather than inventing them. Nothing is saved until approval.",
 			inputSchema: careerStoryInputSchema
 				.omit({ applicationId: true })
 				.extend({ factIds: z.array(z.string()).min(1).max(30) }),
@@ -187,6 +187,15 @@ export function buildCareerTools(input: CareerToolsInput): ToolSet {
 						category,
 						source: { kind: "user-message" as const, id: sourceMessageId, quote },
 					};
+					// Both modes check the quotation against the saved message first: a proposal the user can't save, or
+					// words they never wrote, is never shown as theirs.
+					const source = await careerService.quotedSource(input.userId, fact.source, scope.applicationId);
+					if (!source)
+						return {
+							status: "skipped" as const,
+							fact,
+							reason: "The quote is not in the user's latest message. Remember only their exact words.",
+						};
 					// Ask first: the reply shows the fact as a proposal; the user's Remember saves it.
 					if (mode === "ask") return { status: "proposed" as const, fact };
 					const saved = await careerService.saveFact(input.userId, fact, true);

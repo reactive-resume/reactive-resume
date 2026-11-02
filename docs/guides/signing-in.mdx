@@ -52,7 +52,7 @@ A social button signs you in to the account that is [linked to that provider](/g
 </Step>
 
   <Step title="Open the link in the email">
-    On the **Reset your password** page, enter a **New password** of at least 8 characters and select **Reset password**. You return to the sign-in page, where you can use the new password.
+    The **Reset your password** page says what a reset removes. Enter a **New password** of at least 8 characters and select **Reset password**. You're signed out on this browser too and return to the sign-in page, where you can use the new password.
   </Step>
 </Steps>
 
@@ -68,7 +68,8 @@ got into your account loses access. Create new keys and reconnect apps afterward
 address, the reset also removes two-step sign-in and linked social accounts that were added before it.
 
 <Note>
-  Password reset needs email delivery. On a self-hosted copy without email set up, ask the person who runs it for help.
+  Password reset needs email delivery. On a self-hosted copy without email set up, **Forgot password?** says reset isn't
+  available there; ask the person who runs it for help.
 </Note>
 
 ## Enter a two-step code
@@ -87,6 +88,8 @@ After your password, the **Two-step verification** page asks for the 6-digit cod
 If you don't have your authenticator app, select **Lost access to your authenticator?**, enter one of the backup codes you saved when you turned on two-step verification, and select **Verify**.
 
 Each backup code works once. You can paste it as shown, including the hyphen, or type the two groups together (`82cNK-qaOiN` or `82cNKqaOiN`).
+
+If you've lost your backup codes too, select **No backup codes either?** If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs the server to turn it off for your account, then sign in and set it up again.
 
 <Frame caption="Use one backup code if your authenticator is unavailable">
   <img src="/images/guides/signing-in/backup-code.webp" alt="Backup code sign-in page with an empty code field" />

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 import { streamToEventIterator } from "@orpc/server";
 import { MockLanguageModelV4 } from "ai/test";
 import { z } from "zod";
+import { AGENT_REPLY_ERRORS } from "@reactive-resume/ai/tools/agent-tool-contracts";
 
 const dbMock = {
 	select: vi.fn(),
@@ -1073,18 +1074,34 @@ describe("agentService.messages.send", () => {
 		vi.mocked(ai.convertToModelMessages).mockResolvedValue([{ role: "user", content: "Which office?" }]);
 		const model = new MockLanguageModelV4({
 			doStream: async () => {
-				throw new Error("provider unavailable");
+				// A provider's own refusal: English text and a body that can echo request data.
+				throw new real.APICallError({
+					message: "You exceeded your current quota, please check your plan.",
+					url: "https://provider.example/v1/responses",
+					requestBodyValues: {},
+					statusCode: 429,
+					responseBody: '{"error":{"message":"quota exceeded for key secret"}}',
+					isRetryable: false,
+				});
 			},
 		});
+		let settings: { onError?: unknown } = {};
 		const stream = vi.fn(async (options: Record<string, unknown>) => {
 			if (failure === "setup") throw new Error("provider unavailable");
-			return new real.ToolLoopAgent({ model, tools: {}, maxRetries: 0 }).stream(options as never);
+			// The agent's own error handler, against a real stream: what it logs is what production logs.
+			return new real.ToolLoopAgent({ model, tools: {}, maxRetries: 0, onError: settings.onError as never }).stream(
+				options as never,
+			);
 		});
 		vi.mocked(ai.ToolLoopAgent).mockImplementation(
 			class {
+				constructor(value: { onError?: unknown }) {
+					settings = value;
+				}
 				stream = stream;
 			} as never,
 		);
+		const logged = vi.spyOn(console, "error").mockImplementation(() => undefined);
 		const chunks: UIMessageChunk[] = [];
 		const { agentStreamLifecycle } = await import("./streams");
 		vi.mocked(agentStreamLifecycle.create).mockImplementation(async (_id, factory) => {
@@ -1117,7 +1134,19 @@ describe("agentService.messages.send", () => {
 
 		await attempt();
 		expect(stream).toHaveBeenCalledTimes(2);
-		if (failure === "stream") expect(chunks.filter((chunk) => chunk.type === "error")).toHaveLength(2);
+		if (failure === "stream") {
+			const errors = chunks.filter((chunk) => chunk.type === "error");
+			expect(errors).toHaveLength(2);
+			// The reply names the kind of failure in the app's words, never the provider's text, body or key.
+			for (const error of errors) expect(error).toEqual({ type: "error", errorText: AGENT_REPLY_ERRORS.providerLimit });
+			// The log names the failure without its text or body.
+			const lines = logged.mock.calls.map((call) =>
+				call.map((value) => (typeof value === "string" ? value : String(value))).join(" "),
+			);
+			expect(lines).toContainEqual(expect.stringContaining('"statusCode":429'));
+			for (const line of lines) expect(line).not.toMatch(/quota|secret/);
+		}
+		logged.mockRestore();
 
 		await expect(send(incoming("London"))).rejects.toThrow("This response was already handled.");
 		expect(stream).toHaveBeenCalledTimes(2);
@@ -1390,8 +1419,8 @@ describe("agentService.attachments.create", () => {
 	};
 
 	it.each([
-		{ total: 4, totalBytes: 90 * 1024 * 1024, uploadBytes: 6 * 1024 * 1024 },
-		{ total: 9, totalBytes: 0, uploadBytes: 1 },
+		{ total: 4, totalBytes: 90 * 1024 * 1024, uploadBytes: 6 * 1024 * 1024, code: "AGENT_THREAD_ATTACHMENTS_FULL" },
+		{ total: 9, totalBytes: 0, uploadBytes: 1, code: "AGENT_ATTACHMENT_LIMIT" },
 	])("serializes competing uploads before checking quota %o", async (initial) => {
 		let total = initial.total;
 		let totalBytes = initial.totalBytes;
@@ -1454,9 +1483,10 @@ describe("agentService.attachments.create", () => {
 		storageWrite.resolve();
 		const settled = await results;
 		expect(settled[0]?.status).toBe("fulfilled");
+		// A named limit, so the composer can say which one was reached.
 		expect(settled[1]).toMatchObject({
 			status: "rejected",
-			reason: { code: "BAD_REQUEST" },
+			reason: { code: initial.code, status: 400 },
 		});
 		expect(lockModes).toEqual(["update", "update"]);
 		expect(storageServiceMock.write).toHaveBeenCalledTimes(1);
@@ -1508,6 +1538,13 @@ describe("agentService.attachments.create", () => {
 		const { agentService } = await import("./service");
 
 		await expect(agentService.attachments.create(input)).resolves.toMatchObject({ filename: input.filename });
+	});
+
+	it("names the size limit for a file over 25 MB", async () => {
+		const { agentService } = await import("./service");
+		await expect(
+			agentService.attachments.create({ ...input, data: new Uint8Array(25 * 1024 * 1024 + 1) }),
+		).rejects.toMatchObject({ code: "AGENT_ATTACHMENT_TOO_LARGE", status: 400, message: "Files can be up to 25 MB." });
 	});
 });
 

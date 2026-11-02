@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { MessageScroller as MessageScrollerPrimitive } from "@shadcn/react/message-scroller";
+import { MessageScroller as MessageScrollerPrimitive, useMessageScroller } from "@shadcn/react/message-scroller";
 import { Button } from "@reactive-resume/ui/components/button";
 import { cn } from "@reactive-resume/utils/style";
 
@@ -86,4 +86,5 @@ export {
 	MessageScrollerItem,
 	MessageScrollerProvider,
 	MessageScrollerViewport,
+	useMessageScroller,
 };

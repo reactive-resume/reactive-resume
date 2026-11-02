@@ -17,6 +17,8 @@ import {
 	type careerFactInputSchema,
 	type careerOfferInputSchema,
 	type careerStoryInputSchema,
+	offerTermsSchema,
+	type OfferTerms,
 	type SavedItemData,
 } from "@reactive-resume/schema/career";
 import { countryForTimeZone } from "@reactive-resume/utils/region";
@@ -26,7 +28,7 @@ import { aiProvidersService } from "../ai-providers/service";
 import { findTrackedPosting } from "../applications/duplicates";
 import { syncFollowUp } from "../applications/follow-up";
 import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "../applications/lanes";
-import { applicationService, assertApplicationVersion, recordSentResume } from "../applications/service";
+import { applicationService, assertApplicationVersion, hasSubmitted, recordSentResume } from "../applications/service";
 import { assertSharedDocument, lockUser } from "../documents/ownership";
 import { matchPosting } from "./matching";
 import { noticeText } from "./notices";
@@ -64,33 +66,44 @@ export async function requireCareerApplication(input: Owned & { interviewId?: st
 	return application;
 }
 
-async function sourceText(userId: string, source: CareerSource, applicationId: string | null) {
+/** The text a source holds, and its stored id (a chat message is found by its row or its message id). */
+async function sourceText(
+	userId: string,
+	source: CareerSource,
+	applicationId: string | null,
+): Promise<{ text: string; id: string }> {
 	// Typed or confirmed by the user in the app.
-	if (source.kind === "manual" || source.kind === "debrief") return source.quote;
+	if (source.kind === "manual" || source.kind === "debrief") return { text: source.quote, id: source.id };
 	if (source.kind === "user-message") {
-		const [row] = await db
+		// The coach quotes the saved row; "Remember" on a message in the chat knows only the message's own id.
+		const rows = await db
 			.select({
+				id: tables.agentMessage.id,
 				message: tables.agentMessage.uiMessage,
 				applicationId: tables.agentThread.applicationId,
-				scope: tables.agentThread.scope,
 			})
 			.from(tables.agentMessage)
 			.innerJoin(tables.agentThread, eq(tables.agentMessage.threadId, tables.agentThread.id))
 			.where(
 				and(
-					eq(tables.agentMessage.id, source.id),
+					or(eq(tables.agentMessage.id, source.id), sql`${tables.agentMessage.uiMessage}->>'id' = ${source.id}`),
 					eq(tables.agentMessage.userId, userId),
 					eq(tables.agentMessage.role, "user"),
 					isNull(tables.agentThread.deletedAt),
 				),
-			);
-		if (!row || (row.applicationId && row.applicationId !== applicationId)) throw new ORPCError("NOT_FOUND");
+			)
+			.limit(2);
+		const [row] = rows;
+		// An application's conversation backs only facts private to that application; an ambiguous id backs nothing.
+		if (!row || rows.length > 1 || (row.applicationId && row.applicationId !== applicationId))
+			throw new ORPCError("NOT_FOUND");
 		const parts = row.message.parts;
-		return Array.isArray(parts)
+		const text = Array.isArray(parts)
 			? parts
 					.flatMap((part: { type?: string; text?: string }) => (part.type === "text" ? [part.text ?? ""] : []))
 					.join("\n")
 			: "";
+		return { text, id: row.id };
 	}
 	if (source.kind === "resume-version") {
 		const [row] = await db
@@ -98,7 +111,7 @@ async function sourceText(userId: string, source: CareerSource, applicationId: s
 			.from(tables.resumeVersion)
 			.where(and(eq(tables.resumeVersion.id, source.id), eq(tables.resumeVersion.userId, userId)));
 		if (!row) throw new ORPCError("NOT_FOUND");
-		return buildMarkdown(row.data);
+		return { text: buildMarkdown(row.data), id: source.id };
 	}
 	if (source.kind === "letter-version") {
 		const [row] = await db
@@ -106,7 +119,7 @@ async function sourceText(userId: string, source: CareerSource, applicationId: s
 			.from(tables.coverLetterVersion)
 			.where(and(eq(tables.coverLetterVersion.id, source.id), eq(tables.coverLetterVersion.userId, userId)));
 		if (!row) throw new ORPCError("NOT_FOUND");
-		return row.data.content;
+		return { text: row.data.content, id: source.id };
 	}
 	if (source.kind === "resume") {
 		const [row] = await db
@@ -114,7 +127,7 @@ async function sourceText(userId: string, source: CareerSource, applicationId: s
 			.from(tables.resume)
 			.where(and(eq(tables.resume.id, source.id), eq(tables.resume.userId, userId)));
 		if (!row) throw new ORPCError("NOT_FOUND");
-		return buildMarkdown(row.data);
+		return { text: buildMarkdown(row.data), id: source.id };
 	}
 	if (source.kind === "letter") {
 		const [row] = await db
@@ -122,7 +135,7 @@ async function sourceText(userId: string, source: CareerSource, applicationId: s
 			.from(tables.coverLetter)
 			.where(and(eq(tables.coverLetter.id, source.id), eq(tables.coverLetter.userId, userId)));
 		if (!row) throw new ORPCError("NOT_FOUND");
-		return row.content;
+		return { text: row.content, id: source.id };
 	}
 	throw new ORPCError("BAD_REQUEST", {
 		message: "Use a user statement or an owned document as evidence for a career fact.",
@@ -434,8 +447,28 @@ async function submitAnswerSnapshot(
 	return { application: submitted, stages: [savedStageOf(submitted)] };
 }
 
+const QUOTE_NOT_IN_SOURCE = "The source does not contain that quotation.";
+
+/** The application fields applying an employer's message owns, as stored on the reply for Undo. */
+const appliedFields = (row: typeof tables.application.$inferSelect) => ({
+	status: row.status,
+	laneId: row.laneId,
+	closedReason: row.closedReason,
+	followUpAt: row.followUpAt?.toISOString() ?? null,
+	followUpNote: row.followUpNote,
+	followUpDateOnly: row.followUpDateOnly,
+});
+
 export const careerService = {
 	memoryVersion,
+	/**
+	 * The source as it is stored when its text contains the quotation, else null. Ask-first proposals and saves check
+	 * the same text, so a proposal never quotes words its source doesn't hold.
+	 */
+	quotedSource: async (userId: string, source: CareerSource, applicationId: string | null) => {
+		const { text, id } = await sourceText(userId, source, applicationId);
+		return source.quote.trim() && text.includes(source.quote) ? { ...source, id } : null;
+	},
 	memoryCutoff: async (userId: string) => {
 		const [row] = await db
 			.select({ at: tables.careerFact.updatedAt })
@@ -516,10 +549,11 @@ export const careerService = {
 		if (automatic && (input.source.kind !== "user-message" || input.text !== input.source.quote))
 			throw new ORPCError("BAD_REQUEST", { message: "Automatic memory must quote the user's own words exactly." });
 		if (automatic && (await careerService.profile(userId)).memoryMode !== "auto") return null;
-		const original = await sourceText(userId, input.source, input.applicationId);
-		if (!input.source.quote.trim() || !original.includes(input.source.quote))
-			throw new ORPCError("BAD_REQUEST", { message: "The source does not contain that quotation." });
-		const sourceKey = hash(`${input.source.kind}:${input.source.id}:${input.source.quote.trim().toLocaleLowerCase()}`);
+		const source = await careerService.quotedSource(userId, input.source, input.applicationId);
+		if (!source) throw new ORPCError("BAD_REQUEST", { message: QUOTE_NOT_IN_SOURCE });
+		// One key per stored source, so a message remembered from the chat and by the coach is the same fact.
+		const fact = { ...input, source };
+		const sourceKey = hash(`${source.kind}:${source.id}:${source.quote.trim().toLocaleLowerCase()}`);
 		return db.transaction(async (tx) => {
 			await lockUser(tx, userId);
 			if (automatic) {
@@ -532,8 +566,8 @@ export const careerService = {
 				.where(
 					and(
 						eq(tables.careerFact.userId, userId),
-						sql`${tables.careerFact.source}->>'kind' = ${input.source.kind}`,
-						sql`${tables.careerFact.source}->>'id' = ${input.source.id}`,
+						sql`${tables.careerFact.source}->>'kind' = ${source.kind}`,
+						sql`${tables.careerFact.source}->>'id' = ${source.id}`,
 						or(
 							eq(tables.careerFact.status, "forgotten"),
 							eq(tables.careerFact.status, "excluded"),
@@ -544,12 +578,12 @@ export const careerService = {
 				.limit(1);
 			if (suppressed) return null;
 			// A forgotten source key remains a content-free tombstone; retries cannot recreate the fact.
-			const [fact] = await tx
+			const [row] = await tx
 				.insert(tables.careerFact)
-				.values({ userId, ...input, sourceKey })
+				.values({ userId, ...fact, sourceKey })
 				.onConflictDoNothing()
 				.returning();
-			return fact ?? null;
+			return row ?? null;
 		});
 	},
 	updateFact: async (
@@ -872,11 +906,44 @@ export const careerService = {
 			applicationId,
 			interviewId: null,
 			title: `${context.application.company} · ${terms.version === "verbal" ? "Verbal offer" : "Written offer"}`,
-			data: { kind: "offer", ...terms },
+			data: { kind: "offer", ...terms, origin: "manual" },
 			evidence: { factIds: [], storyIds: [] },
 			inputVersion: context.version,
 		});
 	},
+	/**
+	 * Corrects a saved offer's terms. `expected` is the copy the user edited: a change made elsewhere since then is a
+	 * conflict, never overwritten. Where the terms came from is kept.
+	 */
+	updateOffer: (userId: string, id: string, terms: OfferTerms, expected: OfferTerms) =>
+		db.transaction(async (tx) => {
+			await lockUser(tx, userId);
+			const [row] = await tx
+				.select()
+				.from(tables.careerArtifact)
+				.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)))
+				.for("update");
+			if (!row || row.data.kind !== "offer") throw new ORPCError("NOT_FOUND");
+			const { kind: _kind, origin, editedAt: _editedAt, ...current } = row.data;
+			if (!isDeepStrictEqual(offerTermsSchema.parse(current), offerTermsSchema.parse(expected)))
+				throw new ORPCError("CONFLICT", {
+					message: "This offer changed elsewhere. Review the latest terms before saving again.",
+				});
+			const data: SavedItemData = {
+				kind: "offer",
+				...offerTermsSchema.parse(terms),
+				...(origin ? { origin } : {}),
+				editedAt: new Date().toISOString(),
+			};
+			const company = row.title.split(" · ")[0] ?? "";
+			const [updated] = await tx
+				.update(tables.careerArtifact)
+				.set({ data, title: `${company} · ${terms.version === "verbal" ? "Verbal offer" : "Written offer"}` })
+				.where(eq(tables.careerArtifact.id, id))
+				.returning();
+			if (!updated) throw new ORPCError("NOT_FOUND");
+			return updated;
+		}),
 	saveSavedItem: (input: {
 		userId: string;
 		applicationId: string;
@@ -1147,6 +1214,7 @@ export const careerService = {
 			}
 			const changes = data.changes.filter((_, index) => selected.includes(index));
 			const now = new Date();
+			let offerId: string | null = null;
 			let status = application.status;
 			let followUpAt = application.followUpAt;
 			let followUpNote = application.followUpNote;
@@ -1162,16 +1230,21 @@ export const careerService = {
 					followUpAt = change.at ? new Date(change.at) : null;
 					followUpNote = change.note || followUpNote;
 				}
-				if (change.type === "offer" && data.offer)
-					await tx.insert(tables.careerArtifact).values({
-						userId,
-						applicationId: application.id,
-						interviewId: null,
-						title: `${application.company} · ${data.offer.version === "verbal" ? "Verbal offer" : "Written offer"}`,
-						data: { kind: "offer", ...data.offer },
-						evidence: { factIds: [], storyIds: [] },
-						inputVersion: item.inputVersion,
-					});
+				if (change.type === "offer" && data.offer && !offerId) {
+					const [offer] = await tx
+						.insert(tables.careerArtifact)
+						.values({
+							userId,
+							applicationId: application.id,
+							interviewId: null,
+							title: `${application.company} · ${data.offer.version === "verbal" ? "Verbal offer" : "Written offer"}`,
+							data: { kind: "offer", ...data.offer, origin: "message" },
+							evidence: { factIds: [], storyIds: [] },
+							inputVersion: item.inputVersion,
+						})
+						.returning({ id: tables.careerArtifact.id });
+					offerId = offer?.id ?? null;
+				}
 			}
 			const { values, transition } = await applicationTransitionValues(tx, userId, { status }, application, now);
 			const [updated] = await tx
@@ -1184,15 +1257,94 @@ export const careerService = {
 				})
 				.where(and(eq(tables.application.id, application.id), eq(tables.application.userId, userId)))
 				.returning();
-			if (updated && transition.canonicalTransition) await recordSentResume(updated, tx);
-			if (updated && changes.some((change) => change.type === "follow-up")) await syncFollowUp(tx, updated);
+			if (!updated) throw new ORPCError("NOT_FOUND");
+			if (transition.canonicalTransition && !hasSubmitted(application)) await recordSentResume(updated, tx);
+			if (changes.some((change) => change.type === "follow-up")) await syncFollowUp(tx, updated);
+			const undo = { before: appliedFields(application), after: appliedFields(updated), offerId };
 			await tx
 				.update(tables.careerArtifact)
-				.set({ data: { ...data, applied: { at: now.toISOString(), changes: selected } } })
+				.set({ data: { ...data, applied: { at: now.toISOString(), changes: selected, undo } } })
 				.where(eq(tables.careerArtifact.id, id));
 			return { stages: updated && transition.changed ? [savedStageOf(updated)] : submissionStages };
 		});
 	},
+	/**
+	 * Reverses Apply: the fields it set go back and the offer it saved is removed, only while nothing has changed them
+	 * since. Versions recorded as sent stay; they are what the employer received. Undoing twice is a no-op.
+	 */
+	undoReply: (userId: string, id: string) =>
+		db.transaction(async (tx) => {
+			await lockUser(tx, userId);
+			const [item] = await tx
+				.select()
+				.from(tables.careerArtifact)
+				.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)))
+				.for("update");
+			if (!item?.applicationId || item.data.kind !== "reply") throw new ORPCError("NOT_FOUND");
+			const { applied, ...data } = item.data;
+			if (!applied) return { stages: [] };
+			if (!applied.undo)
+				throw new ORPCError("BAD_REQUEST", {
+					message: "This was applied before Undo was available. Change the application in Applications instead.",
+				});
+			const { before, after, offerId } = applied.undo;
+			const [application] = await tx
+				.select()
+				.from(tables.application)
+				.where(and(eq(tables.application.id, item.applicationId), eq(tables.application.userId, userId)))
+				.for("update");
+			if (!application) throw new ORPCError("NOT_FOUND");
+			const changed = () =>
+				new ORPCError("CONFLICT", {
+					message: "This application changed after the update. Change it in Applications instead.",
+				});
+			if (!isDeepStrictEqual(appliedFields(application), after)) throw changed();
+			if (offerId) {
+				const [offer] = await tx
+					.select({ data: tables.careerArtifact.data })
+					.from(tables.careerArtifact)
+					.where(and(eq(tables.careerArtifact.id, offerId), eq(tables.careerArtifact.userId, userId)))
+					.for("update");
+				// An offer corrected since is the user's own; a deleted one has nothing left to undo.
+				if (offer?.data.kind === "offer" && offer.data.editedAt) throw changed();
+				if (offer)
+					await tx
+						.delete(tables.careerArtifact)
+						.where(and(eq(tables.careerArtifact.id, offerId), eq(tables.careerArtifact.userId, userId)));
+			}
+			const { values, transition } = await applicationTransitionValues(
+				tx,
+				userId,
+				{ status: before.status, laneId: before.laneId ?? undefined, closedReason: before.closedReason },
+				application,
+			);
+			// Moving back to Applied is not a new submission: the date sent and what was sent stay as recorded.
+			const activity =
+				values.activity && before.status === "applied"
+					? values.activity.map((entry, index, all) =>
+							index === all.length - 1 && entry.type === "stage" ? { ...entry, canonicalTransition: false } : entry,
+						)
+					: values.activity;
+			const [updated] = await tx
+				.update(tables.application)
+				.set({
+					...values,
+					...(activity ? { activity } : {}),
+					appliedAt: application.appliedAt,
+					followUpAt: before.followUpAt ? new Date(before.followUpAt) : null,
+					followUpNote: before.followUpNote,
+					followUpDateOnly: before.followUpDateOnly,
+				})
+				.where(eq(tables.application.id, application.id))
+				.returning();
+			if (!updated) throw new ORPCError("NOT_FOUND");
+			await syncFollowUp(tx, updated);
+			await tx
+				.update(tables.careerArtifact)
+				.set({ data: { ...data, applied: null } })
+				.where(eq(tables.careerArtifact.id, id));
+			return { stages: transition.changed ? [savedStageOf(updated)] : [] };
+		}),
 	workspace: async (userId: string, applicationId: string) => {
 		await requireCareerApplication({ userId, applicationId });
 		const [row] = await db

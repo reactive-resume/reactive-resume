@@ -51,6 +51,16 @@ describe("new account timezone", () => {
 		},
 	);
 
+	it("starts a new account in the interface language it signed up in", async () => {
+		await expect(createBefore(newUser, contextWith({ cookie: "theme=dark; locale=ar-SA" }))).resolves.toEqual({
+			data: expect.objectContaining({ locale: "ar-SA" }),
+		});
+	});
+
+	it.each(["locale=xx-XX", "locale=", ""])("leaves the language unknown for the cookie %j", async (cookie) => {
+		await expect(createBefore(newUser, contextWith({ cookie }))).resolves.toBeUndefined();
+	});
+
 	it("gives a guest both a username and the device timezone", async () => {
 		await expect(
 			createBefore({ ...newUser, isAnonymous: true }, contextWith({ "x-client-timezone": "Asia/Kolkata" })),

@@ -306,12 +306,19 @@ const ApplicationRow = memo(function ApplicationRow({
 
 	const openButton = (
 		<button type="button" data-application-open className="grid min-w-0 cursor-pointer text-start">
-			<span className="truncate font-medium">{application.role}</span>
-			<span className="truncate text-xs text-ink-3">
-				{phone
-					? `${application.company} · ${next.title}`
-					: [application.company, application.location].filter(Boolean).join(" · ")}
+			<span dir="auto" className="truncate font-medium">
+				{application.role}
 			</span>
+			{/* The company keeps its own direction; on phones the next step after it is interface text. */}
+			{phone ? (
+				<span className="truncate text-xs text-ink-3">
+					<bdi>{application.company}</bdi> · {next.title}
+				</span>
+			) : (
+				<span dir="auto" className="truncate text-xs text-ink-3">
+					{[application.company, application.location].filter(Boolean).join(" · ")}
+				</span>
+			)}
 		</button>
 	);
 

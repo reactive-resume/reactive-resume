@@ -2,7 +2,7 @@ import type { RouterInput } from "@/libs/orpc/client";
 import type { JdTermMatch } from "@reactive-resume/resume/ats-pdf";
 import type { ResumeData, SkillItem } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
-import { t } from "@lingui/core/macro";
+import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,7 +17,7 @@ import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { formatList } from "@reactive-resume/utils/locale";
-import { generateId, pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
+import { generateId, isolate, pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { checkStateOf, editWithUndo } from "./actions";
@@ -93,6 +93,7 @@ export function useJobMatch(data: ResumeData | undefined): JobMatch {
 				resumeText,
 				company: selectedApplication?.company,
 				location: selectedApplication?.location ?? undefined,
+				role: selectedApplication?.role,
 			})
 			.terms.filter((term) => !hidden.has(term.term))
 			.map((term) => ({ ...term, label: termAsWritten(engine.surfaceFormsOf(term.term), posting) ?? term.term }));
@@ -102,7 +103,15 @@ export function useJobMatch(data: ResumeData | undefined): JobMatch {
 			missing: terms.filter((term) => term.resumeCount === 0),
 			total: terms.length,
 		};
-	}, [engine, posting, resumeText, hiddenTerms, selectedApplication?.company, selectedApplication?.location]);
+	}, [
+		engine,
+		posting,
+		resumeText,
+		hiddenTerms,
+		selectedApplication?.company,
+		selectedApplication?.location,
+		selectedApplication?.role,
+	]);
 
 	return { application: selectedApplication, posting, result, hiddenTerms: hiddenTerms ?? [] };
 }
@@ -136,7 +145,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 			(draft) => {
 				draft.sections.skills.items.push(newSkill(written));
 			},
-			t`“${written}” added to Skills`,
+			t`“${ph({ written: isolate(written) })}” added to Skills`,
 		);
 		setOpenTerm(null);
 		useEditorStore.setState({ highlightTerm: term.term });
@@ -231,11 +240,19 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 										<Trans>If it's part of your experience, add it where it belongs.</Trans>
 									</p>
 									<div className="grid justify-items-start gap-1">
-										<Button size="sm" disabled={locked} onClick={() => addToSkills(open)}>
-											<Icon name="plus" size={16} />
-											<Trans>Add to Skills</Trans>
-										</Button>
-										<Button size="sm" variant="secondary" disabled={locked} onClick={() => askAssistant(open.label)}>
+										{/* Only a skill's name goes into Skills as it is; a phrase from the posting needs a place in context. */}
+										{open.skill && (
+											<Button size="sm" disabled={locked} onClick={() => addToSkills(open)}>
+												<Icon name="plus" size={16} />
+												<Trans>Add to Skills</Trans>
+											</Button>
+										)}
+										<Button
+											size="sm"
+											variant={open.skill ? "secondary" : "primary"}
+											disabled={locked}
+											onClick={() => askAssistant(open.label, application ? null : posting)}
+										>
 											<Icon name="sparkle" size={16} />
 											<Trans>Ask the assistant to work it in</Trans>
 										</Button>
@@ -739,9 +756,12 @@ function SaveAsApplication() {
 	);
 }
 
+/** Pasted postings go with the hand-off: without a linked application the assistant can't see them otherwise. */
+const MAX_HANDOFF_POSTING = 6_000;
+
 /** The assistant asks before adding anything, so it gets the term and a request to check first. */
-function askAssistant(label: string) {
-	openAssistantFrom({
-		ask: t`The posting asks for “${label}”. If it's true for me, work it into my resume where it fits. Ask me first.`,
-	});
+function askAssistant(label: string, pastedPosting: string | null) {
+	const request = t`The posting asks for “${label}”. If it's true for me, work it into my resume where it fits. Ask me first.`;
+	const posting = pastedPosting?.slice(0, MAX_HANDOFF_POSTING).trim();
+	openAssistantFrom({ ask: posting ? `${request}\n\n${t`The posting:`}\n${posting}` : request });
 }

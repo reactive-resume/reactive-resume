@@ -72,7 +72,13 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 	const { space } = useTheme();
 	const keyboardSpace = useKeyboardScrollSpace();
 	const router = useRouter();
-	const params = useLocalSearchParams<{ id: string; version?: string; speak?: string; story?: string }>();
+	const params = useLocalSearchParams<{
+		id: string;
+		version?: string;
+		speak?: string;
+		story?: string;
+		round?: string;
+	}>();
 	const id = params.id;
 	const now = useNow();
 	const query = useApplication(id);
@@ -105,7 +111,13 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 			</Screen>
 		);
 
-	const interview = currentInterview(application.activity, now);
+	// A link to a later round names it; otherwise the next one to come (web workspace).
+	const interview =
+		(params.round
+			? (application.activity.find((entry) => entry.type === "interview" && entry.id === params.round) as
+					| ReturnType<typeof currentInterview>
+					| undefined)
+			: undefined) ?? currentInterview(application.activity, now);
 	const version = params.version ? saved.data?.find((item) => item.id === params.version) : undefined;
 	const archived = params.version !== undefined;
 	const archiveUnavailable = archived && (!version || version.data.kind !== archiveKinds[tab]);
@@ -130,6 +142,11 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 	return (
 		<View style={{ flex: 1 }}>
 			<Stack.Screen options={{ title: application.company }} />
+			<Button
+				label={t`Stage, details and timeline`}
+				variant="secondary"
+				onPress={() => router.push(routes.applicationDetails(application.id))}
+			/>
 			<KeyboardAwareScrollView
 				extraKeyboardSpace={keyboardSpace}
 				bottomOffset={space.s6}

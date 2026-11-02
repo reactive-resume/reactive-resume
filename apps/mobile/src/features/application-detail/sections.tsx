@@ -45,7 +45,7 @@ import { acceptedStage, offerHintFor, useOfferHints, useStageMovedToast } from "
 import { PIPELINE } from "@/features/applications/stages";
 import { followUpEvent, icsFileName, interviewEvent, shareIcs, zonedParts } from "@/features/reminders";
 import { shareDocumentPdf } from "@/features/share/files";
-import { routes, withApplication } from "@/routes";
+import { routes } from "@/routes";
 import {
 	Button,
 	Card,
@@ -327,6 +327,22 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 	const { utcDay } = useUserTime();
 	const documents = useDocuments();
 	const { createLetter } = useDetailMutations(application.id);
+	const queryClient = useQueryClient();
+	const [linking, setLinking] = useState(false);
+	const linkLetter = async (id: string) => {
+		setLinking(true);
+		try {
+			await client.documents.linkApplication({ type: "letter", id, applicationId: application.id });
+			await Promise.all([
+				queryClient.invalidateQueries({ queryKey: orpc.applications.key() }),
+				queryClient.invalidateQueries({ queryKey: orpc.documents.key() }),
+			]);
+		} catch (error) {
+			showToast({ message: applicationError(error) });
+		} finally {
+			setLinking(false);
+		}
+	};
 	const [menu, setMenu] = useState<"resume" | "letter" | null>(null);
 	const [downloading, setDownloading] = useState<string | null>(null);
 	const download = async (kind: "resume" | "letter", id: string, name: string) => {
@@ -352,7 +368,7 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 				...(resumeId ? { resumeId } : {}),
 			},
 			{
-				onSuccess: (created) => router.push(withApplication(routes.letter(created.id), application.id)),
+				onSuccess: (created) => router.push(routes.letter(created.id, "write", undefined, application.id)),
 				onError: () => showToast({ message: t`Couldn't create the letter. Try again.` }),
 			},
 		);
@@ -378,7 +394,11 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 						title={t`Edit current draft`}
 						onPress={() => {
 							setMenu(null);
-							router.push(withApplication(kind === "resume" ? routes.builder(id) : routes.letter(id), application.id));
+							router.push(
+								kind === "resume"
+									? routes.builder(id, "write", application.id)
+									: routes.letter(id, "write", undefined, application.id),
+							);
 						}}
 					/>
 					<ListRow
@@ -421,10 +441,9 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 							accessibilityHint={sentResumeVersionId ? t`Opens the version you sent, read-only` : undefined}
 							onPress={() =>
 								router.push(
-									withApplication(
-										sentResumeVersionId ? routes.history(resumeId, sentResumeVersionId) : routes.builder(resumeId),
-										application.id,
-									),
+									sentResumeVersionId
+										? routes.history(resumeId, sentResumeVersionId, application.id)
+										: routes.builder(resumeId, "write", application.id),
 								)
 							}
 						/>
@@ -439,17 +458,30 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 							accessibilityHint={sentCoverLetterVersionId ? t`Opens the version you sent, read-only` : undefined}
 							onPress={() =>
 								router.push(
-									withApplication(
-										routes.letter(coverLetterId, "write", sentCoverLetterVersionId ?? undefined),
-										application.id,
-									),
+									routes.letter(coverLetterId, "write", sentCoverLetterVersionId ?? undefined, application.id),
 								)
 							}
 						/>
 					) : null}
 				</Card>
 			) : null}
-			{!resumeId || !coverLetterId ? (
+			{application.status === "saved" && !sentCoverLetterVersionId && (
+				<SelectSheet
+					label={t`Use an existing letter`}
+					value={coverLetterId ?? ""}
+					options={(documents.data ?? [])
+						.filter(
+							(item) =>
+								item.type === "letter" &&
+								!item.isLocked &&
+								(!item.application || item.application.id === application.id),
+						)
+						.map((item) => ({ value: item.id, label: item.name }))}
+					disabled={linking}
+					onChange={(id) => void linkLetter(id)}
+				/>
+			)}
+			{application.status !== "closed" && (!resumeId || !coverLetterId) ? (
 				<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 					{!resumeId ? (
 						<Button
@@ -815,9 +847,9 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 			<View style={{ flexDirection: "row", alignItems: "flex-end", gap: space.s2 }}>
 				<View style={{ flex: 1 }}>
 					<TextField
-						label={t`Add a note`}
+						label={t`Log an update`}
 						value={note}
-						placeholder={t`Add a note…`}
+						placeholder={t`Log an update…`}
 						returnKeyType="send"
 						editable={!addNote.isPending}
 						onChangeText={setNote}
@@ -826,12 +858,16 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 				</View>
 				<Button
 					variant="secondary"
-					label={t`Add`}
+					label={t`Log`}
 					disabled={!note.trim()}
 					loading={addNote.isPending}
 					onPress={submit}
 				/>
 			</View>
+			<Text
+				variant="caption"
+				color="ink3"
+			>{t`Dated updates. For things to remember and share with the coach, use Notes.`}</Text>
 			<Card style={{ padding: 0 }}>
 				{sorted.map((entry) => {
 					const { dot, text } = describe(entry);
@@ -966,7 +1002,7 @@ export function Attachments({ application }: SectionProps) {
 				),
 			)}
 			<Text variant="callout" color="ink3" style={{ paddingHorizontal: space.s1 }}>
-				{t`PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring.`}
+				{t`PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring.`}
 			</Text>
 			<ConfirmDialog
 				open={removing !== null}

@@ -14620,6 +14620,39 @@
 										},
 										"isReadOnly": {
 											"type": "boolean"
+										},
+										"history": {
+											"type": "object",
+											"properties": {
+												"cutoffAt": {
+													"anyOf": [
+														{
+															"type": "string",
+															"format": "date-time",
+															"x-native-type": "date"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"withheld": {
+													"type": "array",
+													"items": {
+														"type": "string"
+													}
+												}
+											},
+											"required": [
+												"cutoffAt",
+												"withheld"
+											]
+										},
+										"interrupted": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
 										}
 									},
 									"required": [
@@ -15110,7 +15143,7 @@
 											},
 											"memory": {
 												"type": "boolean",
-												"description": "Career coach: share switched-on facts, stories and preferences (on by default). Document assistant: let it look up switched-on Knowledge facts as evidence (off unless true)."
+												"description": "Career coach: share switched-on facts, stories and preferences (on by default). Document conversations: let the assistant search shared facts and stories, read-only (off by default)."
 											},
 											"web": {
 												"type": "boolean",
@@ -20600,6 +20633,28 @@
 												"type": "string",
 												"format": "date-time",
 												"x-native-type": "date"
+											},
+											"sentResumeVersionId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "The version of the linked resume saved when the application was sent (reached Applied)."
+											},
+											"sentCoverLetterVersionId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "The version of the linked letter saved when the application was sent."
 											},
 											"initialDetail": {
 												"type": "object",
@@ -34618,7 +34673,7 @@
 			"get": {
 				"operationId": "getProfile",
 				"summary": "Get your profile",
-				"description": "Returns only the authenticated user's profile and timezone. No secrets are included.",
+				"description": "Returns only the authenticated user's profile, timezone and interface language (null until an app reports one). No secrets are included.",
 				"tags": [
 					"Authentication"
 				],
@@ -34661,6 +34716,73 @@
 										},
 										"timezone": {
 											"type": "string"
+										},
+										"locale": {
+											"anyOf": [
+												{
+													"enum": [
+														"af-ZA",
+														"am-ET",
+														"ar-SA",
+														"az-AZ",
+														"bg-BG",
+														"bn-BD",
+														"ca-ES",
+														"cs-CZ",
+														"da-DK",
+														"de-DE",
+														"el-GR",
+														"en-US",
+														"en-GB",
+														"es-ES",
+														"fa-IR",
+														"fi-FI",
+														"fr-FR",
+														"he-IL",
+														"hi-IN",
+														"hu-HU",
+														"id-ID",
+														"it-IT",
+														"ja-JP",
+														"km-KH",
+														"kn-IN",
+														"ko-KR",
+														"lt-LT",
+														"lv-LV",
+														"ml-IN",
+														"mr-IN",
+														"ms-MY",
+														"ne-NP",
+														"nl-NL",
+														"no-NO",
+														"or-IN",
+														"pl-PL",
+														"pt-BR",
+														"pt-PT",
+														"ro-RO",
+														"ru-RU",
+														"sk-SK",
+														"sl-SI",
+														"sq-AL",
+														"sr-SP",
+														"sv-SE",
+														"ta-IN",
+														"te-IN",
+														"th-TH",
+														"tr-TR",
+														"uk-UA",
+														"uz-UZ",
+														"vi-VN",
+														"zh-CN",
+														"zh-TW",
+														"zu-ZA"
+													],
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -34671,7 +34793,8 @@
 										"image",
 										"email",
 										"emailVerified",
-										"timezone"
+										"timezone",
+										"locale"
 									]
 								}
 							}
@@ -34731,7 +34854,7 @@
 			"patch": {
 				"operationId": "updateProfile",
 				"summary": "Update your profile",
-				"description": "Updates only the authenticated user's name, username, image, or timezone. Usernames must be unique.",
+				"description": "Updates only the authenticated user's name, username, image, timezone, or interface language. The language picks the language of account emails. Usernames must be unique.",
 				"tags": [
 					"Authentication"
 				],
@@ -34767,6 +34890,66 @@
 									"timezone": {
 										"type": "string",
 										"maxLength": 100
+									},
+									"locale": {
+										"enum": [
+											"af-ZA",
+											"am-ET",
+											"ar-SA",
+											"az-AZ",
+											"bg-BG",
+											"bn-BD",
+											"ca-ES",
+											"cs-CZ",
+											"da-DK",
+											"de-DE",
+											"el-GR",
+											"en-US",
+											"en-GB",
+											"es-ES",
+											"fa-IR",
+											"fi-FI",
+											"fr-FR",
+											"he-IL",
+											"hi-IN",
+											"hu-HU",
+											"id-ID",
+											"it-IT",
+											"ja-JP",
+											"km-KH",
+											"kn-IN",
+											"ko-KR",
+											"lt-LT",
+											"lv-LV",
+											"ml-IN",
+											"mr-IN",
+											"ms-MY",
+											"ne-NP",
+											"nl-NL",
+											"no-NO",
+											"or-IN",
+											"pl-PL",
+											"pt-BR",
+											"pt-PT",
+											"ro-RO",
+											"ru-RU",
+											"sk-SK",
+											"sl-SI",
+											"sq-AL",
+											"sr-SP",
+											"sv-SE",
+											"ta-IN",
+											"te-IN",
+											"th-TH",
+											"tr-TR",
+											"uk-UA",
+											"uz-UZ",
+											"vi-VN",
+											"zh-CN",
+											"zh-TW",
+											"zu-ZA"
+										],
+										"type": "string"
 									}
 								}
 							}
@@ -35320,6 +35503,84 @@
 				]
 			}
 		},
+		"/auth/password": {
+			"post": {
+				"operationId": "setPassword",
+				"summary": "Set a password",
+				"description": "Adds a password to an account that signs in another way (a social account or passkey). Unlike a password reset, it keeps other devices signed in and keeps API keys, passkeys and connected apps. Requires a recent browser session.",
+				"tags": [
+					"Authentication"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"newPassword": {
+										"type": "string",
+										"minLength": 8,
+										"maxLength": 64
+									}
+								},
+								"required": [
+									"newPassword"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/auth/password\" --cookie \"<session-cookie>\" --header \"Content-Type: application/json\" --data '{\n  \"newPassword\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
 		"/auth/account/export": {
 			"get": {
 				"operationId": "exportAccountData",
@@ -35654,6 +35915,19 @@
 														}
 													]
 												},
+												"timezone": {
+													"type": "string"
+												},
+												"locale": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
 												"emailVerified": {
 													"type": "boolean"
 												},
@@ -35675,6 +35949,8 @@
 												"username",
 												"displayUsername",
 												"image",
+												"timezone",
+												"locale",
 												"emailVerified",
 												"createdAt",
 												"updatedAt"
@@ -42894,6 +43170,176 @@
 																									"minimum": -9007199254740991,
 																									"maximum": 9007199254740991
 																								}
+																							},
+																							"undo": {
+																								"type": "object",
+																								"properties": {
+																									"before": {
+																										"type": "object",
+																										"properties": {
+																											"status": {
+																												"enum": [
+																													"saved",
+																													"applied",
+																													"screening",
+																													"interview",
+																													"offer",
+																													"closed"
+																												],
+																												"type": "string"
+																											},
+																											"laneId": {
+																												"anyOf": [
+																													{
+																														"type": "string"
+																													},
+																													{
+																														"type": "null"
+																													}
+																												]
+																											},
+																											"closedReason": {
+																												"anyOf": [
+																													{
+																														"enum": [
+																															"accepted",
+																															"not-selected",
+																															"withdrew",
+																															"accepted-other",
+																															"no-response"
+																														],
+																														"type": "string"
+																													},
+																													{
+																														"type": "null"
+																													}
+																												]
+																											},
+																											"followUpAt": {
+																												"anyOf": [
+																													{
+																														"type": "string",
+																														"format": "date-time"
+																													},
+																													{
+																														"type": "null"
+																													}
+																												]
+																											},
+																											"followUpNote": {
+																												"anyOf": [
+																													{
+																														"type": "string"
+																													},
+																													{
+																														"type": "null"
+																													}
+																												]
+																											},
+																											"followUpDateOnly": {
+																												"type": "boolean",
+																												"default": false
+																											}
+																										},
+																										"required": [
+																											"status",
+																											"laneId",
+																											"closedReason",
+																											"followUpAt",
+																											"followUpNote"
+																										]
+																									},
+																									"after": {
+																										"type": "object",
+																										"properties": {
+																											"status": {
+																												"enum": [
+																													"saved",
+																													"applied",
+																													"screening",
+																													"interview",
+																													"offer",
+																													"closed"
+																												],
+																												"type": "string"
+																											},
+																											"laneId": {
+																												"anyOf": [
+																													{
+																														"type": "string"
+																													},
+																													{
+																														"type": "null"
+																													}
+																												]
+																											},
+																											"closedReason": {
+																												"anyOf": [
+																													{
+																														"enum": [
+																															"accepted",
+																															"not-selected",
+																															"withdrew",
+																															"accepted-other",
+																															"no-response"
+																														],
+																														"type": "string"
+																													},
+																													{
+																														"type": "null"
+																													}
+																												]
+																											},
+																											"followUpAt": {
+																												"anyOf": [
+																													{
+																														"type": "string",
+																														"format": "date-time"
+																													},
+																													{
+																														"type": "null"
+																													}
+																												]
+																											},
+																											"followUpNote": {
+																												"anyOf": [
+																													{
+																														"type": "string"
+																													},
+																													{
+																														"type": "null"
+																													}
+																												]
+																											},
+																											"followUpDateOnly": {
+																												"type": "boolean",
+																												"default": false
+																											}
+																										},
+																										"required": [
+																											"status",
+																											"laneId",
+																											"closedReason",
+																											"followUpAt",
+																											"followUpNote"
+																										]
+																									},
+																									"offerId": {
+																										"anyOf": [
+																											{
+																												"type": "string"
+																											},
+																											{
+																												"type": "null"
+																											}
+																										]
+																									}
+																								},
+																								"required": [
+																									"before",
+																									"after",
+																									"offerId"
+																								]
 																							}
 																						},
 																						"required": [
@@ -43039,6 +43485,17 @@
 																					}
 																				],
 																				"default": null
+																			},
+																			"origin": {
+																				"enum": [
+																					"manual",
+																					"message"
+																				],
+																				"type": "string"
+																			},
+																			"editedAt": {
+																				"type": "string",
+																				"format": "date-time"
 																			}
 																		},
 																		"required": [
@@ -45916,6 +46373,42 @@
 												"anyOf": [
 													{
 														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"lastRun": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"status": {
+																"enum": [
+																	"queued",
+																	"running",
+																	"completed",
+																	"failed",
+																	"canceled"
+																],
+																"type": "string"
+															},
+															"error": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															}
+														},
+														"required": [
+															"status",
+															"error"
+														]
 													},
 													{
 														"type": "null"
@@ -49632,6 +50125,176 @@
 																					"minimum": -9007199254740991,
 																					"maximum": 9007199254740991
 																				}
+																			},
+																			"undo": {
+																				"type": "object",
+																				"properties": {
+																					"before": {
+																						"type": "object",
+																						"properties": {
+																							"status": {
+																								"enum": [
+																									"saved",
+																									"applied",
+																									"screening",
+																									"interview",
+																									"offer",
+																									"closed"
+																								],
+																								"type": "string"
+																							},
+																							"laneId": {
+																								"anyOf": [
+																									{
+																										"type": "string"
+																									},
+																									{
+																										"type": "null"
+																									}
+																								]
+																							},
+																							"closedReason": {
+																								"anyOf": [
+																									{
+																										"enum": [
+																											"accepted",
+																											"not-selected",
+																											"withdrew",
+																											"accepted-other",
+																											"no-response"
+																										],
+																										"type": "string"
+																									},
+																									{
+																										"type": "null"
+																									}
+																								]
+																							},
+																							"followUpAt": {
+																								"anyOf": [
+																									{
+																										"type": "string",
+																										"format": "date-time"
+																									},
+																									{
+																										"type": "null"
+																									}
+																								]
+																							},
+																							"followUpNote": {
+																								"anyOf": [
+																									{
+																										"type": "string"
+																									},
+																									{
+																										"type": "null"
+																									}
+																								]
+																							},
+																							"followUpDateOnly": {
+																								"type": "boolean",
+																								"default": false
+																							}
+																						},
+																						"required": [
+																							"status",
+																							"laneId",
+																							"closedReason",
+																							"followUpAt",
+																							"followUpNote"
+																						]
+																					},
+																					"after": {
+																						"type": "object",
+																						"properties": {
+																							"status": {
+																								"enum": [
+																									"saved",
+																									"applied",
+																									"screening",
+																									"interview",
+																									"offer",
+																									"closed"
+																								],
+																								"type": "string"
+																							},
+																							"laneId": {
+																								"anyOf": [
+																									{
+																										"type": "string"
+																									},
+																									{
+																										"type": "null"
+																									}
+																								]
+																							},
+																							"closedReason": {
+																								"anyOf": [
+																									{
+																										"enum": [
+																											"accepted",
+																											"not-selected",
+																											"withdrew",
+																											"accepted-other",
+																											"no-response"
+																										],
+																										"type": "string"
+																									},
+																									{
+																										"type": "null"
+																									}
+																								]
+																							},
+																							"followUpAt": {
+																								"anyOf": [
+																									{
+																										"type": "string",
+																										"format": "date-time"
+																									},
+																									{
+																										"type": "null"
+																									}
+																								]
+																							},
+																							"followUpNote": {
+																								"anyOf": [
+																									{
+																										"type": "string"
+																									},
+																									{
+																										"type": "null"
+																									}
+																								]
+																							},
+																							"followUpDateOnly": {
+																								"type": "boolean",
+																								"default": false
+																							}
+																						},
+																						"required": [
+																							"status",
+																							"laneId",
+																							"closedReason",
+																							"followUpAt",
+																							"followUpNote"
+																						]
+																					},
+																					"offerId": {
+																						"anyOf": [
+																							{
+																								"type": "string"
+																							},
+																							{
+																								"type": "null"
+																							}
+																						]
+																					}
+																				},
+																				"required": [
+																					"before",
+																					"after",
+																					"offerId"
+																				]
 																			}
 																		},
 																		"required": [
@@ -49777,6 +50440,17 @@
 																	}
 																],
 																"default": null
+															},
+															"origin": {
+																"enum": [
+																	"manual",
+																	"message"
+																],
+																"type": "string"
+															},
+															"editedAt": {
+																"type": "string",
+																"format": "date-time"
 															}
 														},
 														"required": [
@@ -50885,6 +51559,176 @@
 																						"minimum": -9007199254740991,
 																						"maximum": 9007199254740991
 																					}
+																				},
+																				"undo": {
+																					"type": "object",
+																					"properties": {
+																						"before": {
+																							"type": "object",
+																							"properties": {
+																								"status": {
+																									"enum": [
+																										"saved",
+																										"applied",
+																										"screening",
+																										"interview",
+																										"offer",
+																										"closed"
+																									],
+																									"type": "string"
+																								},
+																								"laneId": {
+																									"anyOf": [
+																										{
+																											"type": "string"
+																										},
+																										{
+																											"type": "null"
+																										}
+																									]
+																								},
+																								"closedReason": {
+																									"anyOf": [
+																										{
+																											"enum": [
+																												"accepted",
+																												"not-selected",
+																												"withdrew",
+																												"accepted-other",
+																												"no-response"
+																											],
+																											"type": "string"
+																										},
+																										{
+																											"type": "null"
+																										}
+																									]
+																								},
+																								"followUpAt": {
+																									"anyOf": [
+																										{
+																											"type": "string",
+																											"format": "date-time"
+																										},
+																										{
+																											"type": "null"
+																										}
+																									]
+																								},
+																								"followUpNote": {
+																									"anyOf": [
+																										{
+																											"type": "string"
+																										},
+																										{
+																											"type": "null"
+																										}
+																									]
+																								},
+																								"followUpDateOnly": {
+																									"type": "boolean",
+																									"default": false
+																								}
+																							},
+																							"required": [
+																								"status",
+																								"laneId",
+																								"closedReason",
+																								"followUpAt",
+																								"followUpNote"
+																							]
+																						},
+																						"after": {
+																							"type": "object",
+																							"properties": {
+																								"status": {
+																									"enum": [
+																										"saved",
+																										"applied",
+																										"screening",
+																										"interview",
+																										"offer",
+																										"closed"
+																									],
+																									"type": "string"
+																								},
+																								"laneId": {
+																									"anyOf": [
+																										{
+																											"type": "string"
+																										},
+																										{
+																											"type": "null"
+																										}
+																									]
+																								},
+																								"closedReason": {
+																									"anyOf": [
+																										{
+																											"enum": [
+																												"accepted",
+																												"not-selected",
+																												"withdrew",
+																												"accepted-other",
+																												"no-response"
+																											],
+																											"type": "string"
+																										},
+																										{
+																											"type": "null"
+																										}
+																									]
+																								},
+																								"followUpAt": {
+																									"anyOf": [
+																										{
+																											"type": "string",
+																											"format": "date-time"
+																										},
+																										{
+																											"type": "null"
+																										}
+																									]
+																								},
+																								"followUpNote": {
+																									"anyOf": [
+																										{
+																											"type": "string"
+																										},
+																										{
+																											"type": "null"
+																										}
+																									]
+																								},
+																								"followUpDateOnly": {
+																									"type": "boolean",
+																									"default": false
+																								}
+																							},
+																							"required": [
+																								"status",
+																								"laneId",
+																								"closedReason",
+																								"followUpAt",
+																								"followUpNote"
+																							]
+																						},
+																						"offerId": {
+																							"anyOf": [
+																								{
+																									"type": "string"
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						}
+																					},
+																					"required": [
+																						"before",
+																						"after",
+																						"offerId"
+																					]
 																				}
 																			},
 																			"required": [
@@ -51030,6 +51874,17 @@
 																		}
 																	],
 																	"default": null
+																},
+																"origin": {
+																	"enum": [
+																		"manual",
+																		"message"
+																	],
+																	"type": "string"
+																},
+																"editedAt": {
+																	"type": "string",
+																	"format": "date-time"
 																}
 															},
 															"required": [
@@ -51147,6 +52002,1529 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/offers\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"currency\": \"<string>\",\n  \"period\": \"hour\",\n  \"base\": 123,\n  \"variable\": 123,\n  \"applicationId\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
+		"/career/offers/{id}": {
+			"patch": {
+				"operationId": "updateCareerOffer",
+				"summary": "Correct saved offer terms",
+				"description": "Replaces a saved offer's terms. `expected` is the copy being corrected; a change made elsewhere since then is a conflict.",
+				"tags": [
+					"Career"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"terms": {
+										"type": "object",
+										"properties": {
+											"version": {
+												"enum": [
+													"written",
+													"verbal"
+												],
+												"type": "string",
+												"default": "written"
+											},
+											"currency": {
+												"type": "string",
+												"pattern": "^[A-Z]{3}$"
+											},
+											"period": {
+												"enum": [
+													"hour",
+													"month",
+													"year"
+												],
+												"type": "string"
+											},
+											"base": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"variable": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"variableConditions": {
+												"type": "string",
+												"maxLength": 1000,
+												"default": ""
+											},
+											"equity": {
+												"type": "string",
+												"maxLength": 1000,
+												"default": ""
+											},
+											"location": {
+												"type": "string",
+												"maxLength": 500,
+												"default": ""
+											},
+											"officeDays": {
+												"anyOf": [
+													{
+														"type": "integer",
+														"minimum": 0,
+														"maximum": 5
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											},
+											"leave": {
+												"type": "string",
+												"maxLength": 500,
+												"default": ""
+											},
+											"learning": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											},
+											"other": {
+												"type": "string",
+												"maxLength": 1000,
+												"default": ""
+											},
+											"respondBy": {
+												"anyOf": [
+													{
+														"type": "string",
+														"format": "date-time"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											},
+											"startDate": {
+												"anyOf": [
+													{
+														"type": "string",
+														"format": "date"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											}
+										},
+										"required": [
+											"currency",
+											"period",
+											"base",
+											"variable"
+										]
+									},
+									"expected": {
+										"type": "object",
+										"properties": {
+											"version": {
+												"enum": [
+													"written",
+													"verbal"
+												],
+												"type": "string",
+												"default": "written"
+											},
+											"currency": {
+												"type": "string",
+												"pattern": "^[A-Z]{3}$"
+											},
+											"period": {
+												"enum": [
+													"hour",
+													"month",
+													"year"
+												],
+												"type": "string"
+											},
+											"base": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"variable": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"variableConditions": {
+												"type": "string",
+												"maxLength": 1000,
+												"default": ""
+											},
+											"equity": {
+												"type": "string",
+												"maxLength": 1000,
+												"default": ""
+											},
+											"location": {
+												"type": "string",
+												"maxLength": 500,
+												"default": ""
+											},
+											"officeDays": {
+												"anyOf": [
+													{
+														"type": "integer",
+														"minimum": 0,
+														"maximum": 5
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											},
+											"leave": {
+												"type": "string",
+												"maxLength": 500,
+												"default": ""
+											},
+											"learning": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											},
+											"other": {
+												"type": "string",
+												"maxLength": 1000,
+												"default": ""
+											},
+											"respondBy": {
+												"anyOf": [
+													{
+														"type": "string",
+														"format": "date-time"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											},
+											"startDate": {
+												"anyOf": [
+													{
+														"type": "string",
+														"format": "date"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											}
+										},
+										"required": [
+											"currency",
+											"period",
+											"base",
+											"variable"
+										]
+									}
+								},
+								"required": [
+									"terms",
+									"expected"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"userId": {
+											"type": "string"
+										},
+										"createdAt": {
+											"type": "string",
+											"format": "date-time",
+											"x-native-type": "date"
+										},
+										"updatedAt": {
+											"type": "string",
+											"format": "date-time",
+											"x-native-type": "date"
+										},
+										"applicationId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"interviewId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"title": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"kind": {
+															"const": "fit"
+														},
+														"headline": {
+															"type": "string",
+															"maxLength": 200
+														},
+														"summary": {
+															"type": "string",
+															"maxLength": 600
+														},
+														"requirements": {
+															"type": "array",
+															"maxItems": 20,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"text": {
+																		"type": "string",
+																		"maxLength": 300
+																	},
+																	"origin": {
+																		"enum": [
+																			"posting",
+																			"inferred"
+																		],
+																		"type": "string"
+																	},
+																	"status": {
+																		"enum": [
+																			"supported",
+																			"partial",
+																			"missing"
+																		],
+																		"type": "string"
+																	},
+																	"evidence": {
+																		"type": "string",
+																		"maxLength": 600
+																	},
+																	"factIds": {
+																		"type": "array",
+																		"maxItems": 10,
+																		"items": {
+																			"type": "string"
+																		},
+																		"default": []
+																	}
+																},
+																"required": [
+																	"text",
+																	"origin",
+																	"status",
+																	"evidence"
+																]
+															}
+														},
+														"checks": {
+															"type": "array",
+															"maxItems": 5,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"label": {
+																		"type": "string",
+																		"maxLength": 60
+																	},
+																	"met": {
+																		"anyOf": [
+																			{
+																				"type": "boolean"
+																			},
+																			{
+																				"type": "null"
+																			}
+																		]
+																	},
+																	"text": {
+																		"type": "string",
+																		"maxLength": 300
+																	}
+																},
+																"required": [
+																	"label",
+																	"met",
+																	"text"
+																]
+															}
+														},
+														"ask": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"person": {
+																			"type": "string",
+																			"maxLength": 100
+																		},
+																		"text": {
+																			"type": "string",
+																			"maxLength": 400
+																		}
+																	},
+																	"required": [
+																		"person",
+																		"text"
+																	]
+																},
+																{
+																	"type": "null"
+																}
+															]
+														}
+													},
+													"required": [
+														"kind",
+														"headline",
+														"summary",
+														"requirements",
+														"checks",
+														"ask"
+													]
+												},
+												{
+													"type": "object",
+													"properties": {
+														"kind": {
+															"const": "briefing"
+														},
+														"headline": {
+															"type": "string",
+															"maxLength": 200
+														},
+														"summary": {
+															"type": "string",
+															"maxLength": 300
+														},
+														"plan": {
+															"type": "array",
+															"maxItems": 8,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"minutes": {
+																		"type": "integer",
+																		"minimum": 1,
+																		"maximum": 60
+																	},
+																	"title": {
+																		"type": "string",
+																		"maxLength": 120
+																	},
+																	"detail": {
+																		"type": "string",
+																		"maxLength": 400
+																	},
+																	"action": {
+																		"enum": [
+																			"story",
+																			"draft-story",
+																			"questions",
+																			"practise",
+																			"none"
+																		],
+																		"type": "string"
+																	},
+																	"storyId": {
+																		"anyOf": [
+																			{
+																				"type": "string"
+																			},
+																			{
+																				"type": "null"
+																			}
+																		],
+																		"default": null
+																	}
+																},
+																"required": [
+																	"minutes",
+																	"title",
+																	"detail",
+																	"action"
+																]
+															}
+														},
+														"questions": {
+															"type": "array",
+															"maxItems": 8,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"text": {
+																		"type": "string",
+																		"maxLength": 400
+																	},
+																	"origin": {
+																		"type": "string",
+																		"maxLength": 60
+																	}
+																},
+																"required": [
+																	"text",
+																	"origin"
+																]
+															}
+														},
+														"focus": {
+															"type": "string",
+															"maxLength": 500
+														},
+														"opening": {
+															"type": "string",
+															"maxLength": 600
+														},
+														"stories": {
+															"type": "array",
+															"maxItems": 3,
+															"items": {
+																"type": "string",
+																"maxLength": 300
+															}
+														},
+														"honesty": {
+															"type": "string",
+															"maxLength": 400
+														},
+														"storyIds": {
+															"type": "array",
+															"maxItems": 5,
+															"items": {
+																"type": "string"
+															},
+															"default": []
+														},
+														"missingStory": {
+															"anyOf": [
+																{
+																	"type": "string",
+																	"maxLength": 300
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														},
+														"practiceQuestions": {
+															"type": "array",
+															"maxItems": 5,
+															"items": {
+																"type": "string",
+																"maxLength": 300
+															},
+															"default": []
+														}
+													},
+													"required": [
+														"kind",
+														"headline",
+														"summary",
+														"plan",
+														"questions",
+														"focus",
+														"opening",
+														"stories",
+														"honesty"
+													]
+												},
+												{
+													"type": "object",
+													"properties": {
+														"kind": {
+															"const": "practice"
+														},
+														"question": {
+															"type": "string",
+															"maxLength": 500
+														},
+														"origin": {
+															"enum": [
+																"simulated",
+																"recalled"
+															],
+															"type": "string"
+														},
+														"mode": {
+															"enum": [
+																"typed",
+																"spoken"
+															],
+															"type": "string"
+														},
+														"answer": {
+															"type": "string",
+															"maxLength": 6000
+														},
+														"title": {
+															"type": "string",
+															"maxLength": 200
+														},
+														"works": {
+															"type": "string",
+															"maxLength": 500
+														},
+														"strengthen": {
+															"type": "string",
+															"maxLength": 500
+														},
+														"opening": {
+															"type": "string",
+															"maxLength": 800
+														},
+														"note": {
+															"type": "string",
+															"maxLength": 60
+														}
+													},
+													"required": [
+														"kind",
+														"question",
+														"origin",
+														"mode",
+														"answer",
+														"title",
+														"works",
+														"strengthen",
+														"opening",
+														"note"
+													]
+												},
+												{
+													"type": "object",
+													"properties": {
+														"kind": {
+															"const": "debrief"
+														},
+														"round": {
+															"type": "string",
+															"maxLength": 100
+														},
+														"question": {
+															"type": "string",
+															"maxLength": 500
+														},
+														"answer": {
+															"type": "string",
+															"maxLength": 6000
+														},
+														"landed": {
+															"enum": [
+																"well",
+																"mixed",
+																"not"
+															],
+															"type": "string"
+														},
+														"title": {
+															"type": "string",
+															"maxLength": 200
+														},
+														"verdicts": {
+															"type": "array",
+															"maxItems": 6,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"tag": {
+																		"enum": [
+																			"supported",
+																			"observation"
+																		],
+																		"type": "string"
+																	},
+																	"text": {
+																		"type": "string",
+																		"maxLength": 400
+																	}
+																},
+																"required": [
+																	"tag",
+																	"text"
+																]
+															}
+														},
+														"nextRound": {
+															"type": "string",
+															"maxLength": 600
+														},
+														"priority": {
+															"type": "string",
+															"maxLength": 400
+														},
+														"remember": {
+															"anyOf": [
+																{
+																	"type": "string",
+																	"maxLength": 400
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														},
+														"plan": {
+															"type": "array",
+															"maxItems": 5,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"day": {
+																		"enum": [
+																			"mon",
+																			"tue",
+																			"wed",
+																			"thu",
+																			"fri",
+																			"sat",
+																			"sun"
+																		],
+																		"type": "string"
+																	},
+																	"minutes": {
+																		"type": "integer",
+																		"minimum": 5,
+																		"maximum": 120
+																	},
+																	"task": {
+																		"type": "string",
+																		"maxLength": 300
+																	}
+																},
+																"required": [
+																	"day",
+																	"minutes",
+																	"task"
+																]
+															}
+														}
+													},
+													"required": [
+														"kind",
+														"round",
+														"question",
+														"answer",
+														"landed",
+														"title",
+														"verdicts",
+														"nextRound",
+														"priority",
+														"plan"
+													]
+												},
+												{
+													"type": "object",
+													"properties": {
+														"kind": {
+															"const": "answers"
+														},
+														"answers": {
+															"type": "array",
+															"maxItems": 30,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"question": {
+																		"type": "string",
+																		"maxLength": 2000
+																	},
+																	"answer": {
+																		"type": "string",
+																		"maxLength": 6000
+																	}
+																},
+																"required": [
+																	"question",
+																	"answer"
+																]
+															}
+														}
+													},
+													"required": [
+														"kind",
+														"answers"
+													]
+												},
+												{
+													"type": "object",
+													"properties": {
+														"kind": {
+															"const": "reply"
+														},
+														"message": {
+															"type": "string",
+															"maxLength": 20000
+														},
+														"title": {
+															"type": "string",
+															"maxLength": 200
+														},
+														"asks": {
+															"type": "array",
+															"maxItems": 5,
+															"items": {
+																"type": "string",
+																"maxLength": 300
+															}
+														},
+														"unconfirmed": {
+															"type": "array",
+															"maxItems": 5,
+															"items": {
+																"type": "string",
+																"maxLength": 300
+															}
+														},
+														"reply": {
+															"type": "string",
+															"maxLength": 4000
+														},
+														"changes": {
+															"type": "array",
+															"maxItems": 4,
+															"items": {
+																"anyOf": [
+																	{
+																		"type": "object",
+																		"properties": {
+																			"type": {
+																				"const": "stage"
+																			},
+																			"stage": {
+																				"enum": [
+																					"screening",
+																					"interview",
+																					"offer",
+																					"closed"
+																				],
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"type",
+																			"stage"
+																		]
+																	},
+																	{
+																		"type": "object",
+																		"properties": {
+																			"type": {
+																				"const": "follow-up"
+																			},
+																			"at": {
+																				"anyOf": [
+																					{
+																						"type": "string",
+																						"format": "date-time"
+																					},
+																					{
+																						"type": "null"
+																					}
+																				]
+																			},
+																			"note": {
+																				"type": "string",
+																				"maxLength": 300
+																			}
+																		},
+																		"required": [
+																			"type",
+																			"at",
+																			"note"
+																		]
+																	},
+																	{
+																		"type": "object",
+																		"properties": {
+																			"type": {
+																				"const": "offer"
+																			}
+																		},
+																		"required": [
+																			"type"
+																		]
+																	}
+																]
+															}
+														},
+														"offer": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"version": {
+																			"enum": [
+																				"written",
+																				"verbal"
+																			],
+																			"type": "string",
+																			"default": "written"
+																		},
+																		"currency": {
+																			"type": "string",
+																			"pattern": "^[A-Z]{3}$"
+																		},
+																		"period": {
+																			"enum": [
+																				"hour",
+																				"month",
+																				"year"
+																			],
+																			"type": "string"
+																		},
+																		"base": {
+																			"anyOf": [
+																				{
+																					"type": "number",
+																					"minimum": 0
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
+																		"variable": {
+																			"anyOf": [
+																				{
+																					"type": "number",
+																					"minimum": 0
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
+																		"variableConditions": {
+																			"type": "string",
+																			"maxLength": 1000,
+																			"default": ""
+																		},
+																		"equity": {
+																			"type": "string",
+																			"maxLength": 1000,
+																			"default": ""
+																		},
+																		"location": {
+																			"type": "string",
+																			"maxLength": 500,
+																			"default": ""
+																		},
+																		"officeDays": {
+																			"anyOf": [
+																				{
+																					"type": "integer",
+																					"minimum": 0,
+																					"maximum": 5
+																				},
+																				{
+																					"type": "null"
+																				}
+																			],
+																			"default": null
+																		},
+																		"leave": {
+																			"type": "string",
+																			"maxLength": 500,
+																			"default": ""
+																		},
+																		"learning": {
+																			"anyOf": [
+																				{
+																					"type": "number",
+																					"minimum": 0
+																				},
+																				{
+																					"type": "null"
+																				}
+																			],
+																			"default": null
+																		},
+																		"other": {
+																			"type": "string",
+																			"maxLength": 1000,
+																			"default": ""
+																		},
+																		"respondBy": {
+																			"anyOf": [
+																				{
+																					"type": "string",
+																					"format": "date-time"
+																				},
+																				{
+																					"type": "null"
+																				}
+																			],
+																			"default": null
+																		},
+																		"startDate": {
+																			"anyOf": [
+																				{
+																					"type": "string",
+																					"format": "date"
+																				},
+																				{
+																					"type": "null"
+																				}
+																			],
+																			"default": null
+																		}
+																	},
+																	"required": [
+																		"currency",
+																		"period",
+																		"base",
+																		"variable"
+																	]
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														},
+														"applied": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"at": {
+																			"type": "string",
+																			"format": "date-time"
+																		},
+																		"changes": {
+																			"type": "array",
+																			"items": {
+																				"type": "integer",
+																				"minimum": -9007199254740991,
+																				"maximum": 9007199254740991
+																			}
+																		},
+																		"undo": {
+																			"type": "object",
+																			"properties": {
+																				"before": {
+																					"type": "object",
+																					"properties": {
+																						"status": {
+																							"enum": [
+																								"saved",
+																								"applied",
+																								"screening",
+																								"interview",
+																								"offer",
+																								"closed"
+																							],
+																							"type": "string"
+																						},
+																						"laneId": {
+																							"anyOf": [
+																								{
+																									"type": "string"
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						},
+																						"closedReason": {
+																							"anyOf": [
+																								{
+																									"enum": [
+																										"accepted",
+																										"not-selected",
+																										"withdrew",
+																										"accepted-other",
+																										"no-response"
+																									],
+																									"type": "string"
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						},
+																						"followUpAt": {
+																							"anyOf": [
+																								{
+																									"type": "string",
+																									"format": "date-time"
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						},
+																						"followUpNote": {
+																							"anyOf": [
+																								{
+																									"type": "string"
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						},
+																						"followUpDateOnly": {
+																							"type": "boolean",
+																							"default": false
+																						}
+																					},
+																					"required": [
+																						"status",
+																						"laneId",
+																						"closedReason",
+																						"followUpAt",
+																						"followUpNote"
+																					]
+																				},
+																				"after": {
+																					"type": "object",
+																					"properties": {
+																						"status": {
+																							"enum": [
+																								"saved",
+																								"applied",
+																								"screening",
+																								"interview",
+																								"offer",
+																								"closed"
+																							],
+																							"type": "string"
+																						},
+																						"laneId": {
+																							"anyOf": [
+																								{
+																									"type": "string"
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						},
+																						"closedReason": {
+																							"anyOf": [
+																								{
+																									"enum": [
+																										"accepted",
+																										"not-selected",
+																										"withdrew",
+																										"accepted-other",
+																										"no-response"
+																									],
+																									"type": "string"
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						},
+																						"followUpAt": {
+																							"anyOf": [
+																								{
+																									"type": "string",
+																									"format": "date-time"
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						},
+																						"followUpNote": {
+																							"anyOf": [
+																								{
+																									"type": "string"
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						},
+																						"followUpDateOnly": {
+																							"type": "boolean",
+																							"default": false
+																						}
+																					},
+																					"required": [
+																						"status",
+																						"laneId",
+																						"closedReason",
+																						"followUpAt",
+																						"followUpNote"
+																					]
+																				},
+																				"offerId": {
+																					"anyOf": [
+																						{
+																							"type": "string"
+																						},
+																						{
+																							"type": "null"
+																						}
+																					]
+																				}
+																			},
+																			"required": [
+																				"before",
+																				"after",
+																				"offerId"
+																			]
+																		}
+																	},
+																	"required": [
+																		"at",
+																		"changes"
+																	]
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														}
+													},
+													"required": [
+														"kind",
+														"message",
+														"title",
+														"asks",
+														"unconfirmed",
+														"reply",
+														"changes"
+													]
+												},
+												{
+													"type": "object",
+													"properties": {
+														"kind": {
+															"const": "offer"
+														},
+														"version": {
+															"enum": [
+																"written",
+																"verbal"
+															],
+															"type": "string",
+															"default": "written"
+														},
+														"currency": {
+															"type": "string",
+															"pattern": "^[A-Z]{3}$"
+														},
+														"period": {
+															"enum": [
+																"hour",
+																"month",
+																"year"
+															],
+															"type": "string"
+														},
+														"base": {
+															"anyOf": [
+																{
+																	"type": "number",
+																	"minimum": 0
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"variable": {
+															"anyOf": [
+																{
+																	"type": "number",
+																	"minimum": 0
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"variableConditions": {
+															"type": "string",
+															"maxLength": 1000,
+															"default": ""
+														},
+														"equity": {
+															"type": "string",
+															"maxLength": 1000,
+															"default": ""
+														},
+														"location": {
+															"type": "string",
+															"maxLength": 500,
+															"default": ""
+														},
+														"officeDays": {
+															"anyOf": [
+																{
+																	"type": "integer",
+																	"minimum": 0,
+																	"maximum": 5
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														},
+														"leave": {
+															"type": "string",
+															"maxLength": 500,
+															"default": ""
+														},
+														"learning": {
+															"anyOf": [
+																{
+																	"type": "number",
+																	"minimum": 0
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														},
+														"other": {
+															"type": "string",
+															"maxLength": 1000,
+															"default": ""
+														},
+														"respondBy": {
+															"anyOf": [
+																{
+																	"type": "string",
+																	"format": "date-time"
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														},
+														"startDate": {
+															"anyOf": [
+																{
+																	"type": "string",
+																	"format": "date"
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														},
+														"origin": {
+															"enum": [
+																"manual",
+																"message"
+															],
+															"type": "string"
+														},
+														"editedAt": {
+															"type": "string",
+															"format": "date-time"
+														}
+													},
+													"required": [
+														"kind",
+														"currency",
+														"period",
+														"base",
+														"variable"
+													]
+												}
+											]
+										},
+										"evidence": {
+											"type": "object",
+											"properties": {
+												"factIds": {
+													"type": "array",
+													"items": {
+														"type": "string"
+													}
+												},
+												"storyIds": {
+													"type": "array",
+													"items": {
+														"type": "string"
+													}
+												}
+											},
+											"required": [
+												"factIds",
+												"storyIds"
+											]
+										},
+										"jobId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"inputVersion": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"id",
+										"userId",
+										"createdAt",
+										"updatedAt",
+										"applicationId",
+										"interviewId",
+										"title",
+										"data",
+										"evidence",
+										"jobId",
+										"inputVersion"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/career/offers/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"terms\": {\n    \"currency\": \"<string>\",\n    \"period\": \"hour\",\n    \"base\": 123,\n    \"variable\": 123\n  },\n  \"expected\": {\n    \"currency\": \"<string>\",\n    \"period\": \"hour\",\n    \"base\": 123,\n    \"variable\": 123\n  }\n}'"
 					}
 				]
 			}
@@ -52229,6 +54607,176 @@
 																								"minimum": -9007199254740991,
 																								"maximum": 9007199254740991
 																							}
+																						},
+																						"undo": {
+																							"type": "object",
+																							"properties": {
+																								"before": {
+																									"type": "object",
+																									"properties": {
+																										"status": {
+																											"enum": [
+																												"saved",
+																												"applied",
+																												"screening",
+																												"interview",
+																												"offer",
+																												"closed"
+																											],
+																											"type": "string"
+																										},
+																										"laneId": {
+																											"anyOf": [
+																												{
+																													"type": "string"
+																												},
+																												{
+																													"type": "null"
+																												}
+																											]
+																										},
+																										"closedReason": {
+																											"anyOf": [
+																												{
+																													"enum": [
+																														"accepted",
+																														"not-selected",
+																														"withdrew",
+																														"accepted-other",
+																														"no-response"
+																													],
+																													"type": "string"
+																												},
+																												{
+																													"type": "null"
+																												}
+																											]
+																										},
+																										"followUpAt": {
+																											"anyOf": [
+																												{
+																													"type": "string",
+																													"format": "date-time"
+																												},
+																												{
+																													"type": "null"
+																												}
+																											]
+																										},
+																										"followUpNote": {
+																											"anyOf": [
+																												{
+																													"type": "string"
+																												},
+																												{
+																													"type": "null"
+																												}
+																											]
+																										},
+																										"followUpDateOnly": {
+																											"type": "boolean",
+																											"default": false
+																										}
+																									},
+																									"required": [
+																										"status",
+																										"laneId",
+																										"closedReason",
+																										"followUpAt",
+																										"followUpNote"
+																									]
+																								},
+																								"after": {
+																									"type": "object",
+																									"properties": {
+																										"status": {
+																											"enum": [
+																												"saved",
+																												"applied",
+																												"screening",
+																												"interview",
+																												"offer",
+																												"closed"
+																											],
+																											"type": "string"
+																										},
+																										"laneId": {
+																											"anyOf": [
+																												{
+																													"type": "string"
+																												},
+																												{
+																													"type": "null"
+																												}
+																											]
+																										},
+																										"closedReason": {
+																											"anyOf": [
+																												{
+																													"enum": [
+																														"accepted",
+																														"not-selected",
+																														"withdrew",
+																														"accepted-other",
+																														"no-response"
+																													],
+																													"type": "string"
+																												},
+																												{
+																													"type": "null"
+																												}
+																											]
+																										},
+																										"followUpAt": {
+																											"anyOf": [
+																												{
+																													"type": "string",
+																													"format": "date-time"
+																												},
+																												{
+																													"type": "null"
+																												}
+																											]
+																										},
+																										"followUpNote": {
+																											"anyOf": [
+																												{
+																													"type": "string"
+																												},
+																												{
+																													"type": "null"
+																												}
+																											]
+																										},
+																										"followUpDateOnly": {
+																											"type": "boolean",
+																											"default": false
+																										}
+																									},
+																									"required": [
+																										"status",
+																										"laneId",
+																										"closedReason",
+																										"followUpAt",
+																										"followUpNote"
+																									]
+																								},
+																								"offerId": {
+																									"anyOf": [
+																										{
+																											"type": "string"
+																										},
+																										{
+																											"type": "null"
+																										}
+																									]
+																								}
+																							},
+																							"required": [
+																								"before",
+																								"after",
+																								"offerId"
+																							]
 																						}
 																					},
 																					"required": [
@@ -52374,6 +54922,17 @@
 																				}
 																			],
 																			"default": null
+																		},
+																		"origin": {
+																			"enum": [
+																				"manual",
+																				"message"
+																			],
+																			"type": "string"
+																		},
+																		"editedAt": {
+																			"type": "string",
+																			"format": "date-time"
 																		}
 																	},
 																	"required": [
@@ -52908,6 +55467,159 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl \"https://rxresu.me/api/openapi/career/fit-evidence/<applicationId>\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
+		"/career/saved/{id}/undo": {
+			"post": {
+				"operationId": "undoCareerReply",
+				"summary": "Undo changes applied from a message",
+				"description": "Restores the application fields the changes set and removes the offer they saved, while nothing has changed them since. Sent document versions stay recorded.",
+				"tags": [
+					"Career"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"stages": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"status": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"laneId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"stageEntryId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"status",
+													"laneId",
+													"closedReason",
+													"stageEntryId"
+												]
+											}
+										}
+									},
+									"required": [
+										"stages"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/saved/<id>/undo\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -119311,7 +122023,7 @@
 											},
 											"memory": {
 												"type": "boolean",
-												"description": "Career coach: share switched-on facts, stories and preferences (on by default). Document assistant: let it look up switched-on Knowledge facts as evidence (off unless true)."
+												"description": "Career coach: share switched-on facts, stories and preferences (on by default). Document conversations: let the assistant search shared facts and stories, read-only (off by default)."
 											},
 											"web": {
 												"type": "boolean",

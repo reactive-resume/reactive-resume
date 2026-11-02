@@ -30,7 +30,7 @@ msgstr "„{0} · {1}“ a jeho časová osa budou trvale odstraněny. Toto nelz
 msgid "“{0}” hidden"
 msgstr "„{0}“ je skryto"
 
-#. placeholder {0}: document.name
+#. placeholder {0}: isolate(document.name)
 #: src/features/documents/document-actions.tsx
 msgid "“{0}” moved to Trash"
 msgstr "„{0}“ bylo přesunuto do koše"
@@ -93,6 +93,11 @@ msgstr "(povinné)"
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
 msgstr "{0, plural, =1 {Úprava použita} few {# úpravy použity} other {# úprav použito}}"
+
+#. placeholder {0}: overflow.authored
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr ""
 
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
@@ -203,13 +208,16 @@ msgstr "{0, plural, one {# dokument přesunut do koše} few {# dokumenty přesun
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {Úpravu # nelze umístit: její text se změnil. Požádejte znovu o její opakování.} other {Úpravy # nelze umístit: jejich text se změnil. Požádejte znovu o jejich přepracování.}}"
 
+#. placeholder {0}: section.entries
 #. placeholder {0}: step.entries
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# položka} few {# položky} other {# položek}}"
 
 #. placeholder {0}: knowledge.active.length
+#. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: used.facts.length
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -225,11 +233,21 @@ msgstr "{0, plural, one {# pole je v editoru označeno ke krátké kontrole.} fe
 msgid "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
 msgstr "{0, plural, one {Problém # je ignorován.} other {Problémy # jsou ignorovány.}}"
 
+#. placeholder {0}: review.notImported.length
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
+
 #. placeholder {0}: proposals.length
 #: src/features/assistant/conversation.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {Navrhovaná úprava #} other {# navrhované úpravy}}"
+
+#. placeholder {0}: unavailable.length
+#: src/features/career/knowledge/stories.tsx
+msgid "{0, plural, one {# proposed fact isn't available here and won't back the story.} other {# proposed facts aren't available here and won't back the story.}}"
+msgstr ""
 
 #. placeholder {0}: done.length
 #: src/features/career/today.tsx
@@ -259,7 +277,9 @@ msgstr "{0, plural, one {# sekce} few {# sekce} other {# sekcí}}"
 msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {Vybráno #} other {Vybráno #}}"
 
+#. placeholder {0}: knowledge.stories.length
 #. placeholder {0}: used.stories.length
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {# příběh} few {# příběhy} many {# příběhu} other {# příběhů}}"
@@ -329,6 +349,11 @@ msgstr "{0, plural, one {Importována # žádost.} few {Importovány # žádosti
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {Znalosti · # fakt} few {Znalosti · # fakta} many {Znalosti · # faktu} other {Znalosti · # faktů}}"
 
+#. placeholder {0}: -difference
+#: src/features/career/workspace/apply.tsx
+msgid "{0, plural, one {Longer by # word} other {Longer by # words}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
@@ -353,6 +378,11 @@ msgstr ""
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {Začalo před # minutou} few {Začalo před # minutami} many {Začalo před # minuty} other {Začalo před # minutami}}"
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
+msgstr ""
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -400,6 +430,11 @@ msgstr ""
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} uzavřen"
+
+#. placeholder {0}: props.providerLabel
+#: src/features/assistant/conversation.tsx
+msgid "{0} didn't respond."
+msgstr ""
 
 #. placeholder {0}: semantics.dates.length
 #: src/features/resume/editor/check/parser-view.tsx
@@ -454,12 +489,6 @@ msgstr "{0} z {1} použitelných kontrol prošlo"
 msgid "{0} of {1} applicable checks passed."
 msgstr "{0} z {1} použitelných kontrol prošlo."
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
-#: src/features/career/workspace/apply.tsx
-msgid "{0} of {1} characters"
-msgstr ""
-
 #. placeholder {0}: thread.editsAccepted
 #. placeholder {1}: thread.editsProposed
 #: src/features/assistant/assistant-panel.tsx
@@ -492,22 +521,10 @@ msgstr "{0} z {1} přizpůsobených žádostí dostalo odpověď; {2} z {3} odes
 msgid "{0} of {1} terms found"
 msgstr "{0} z {1} termínů nalezeno"
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
-#: src/features/career/workspace/apply.tsx
-msgid "{0} of {1} words"
-msgstr ""
-
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/conversation.tsx
 msgid "{0} posting"
 msgstr "Nabídka práce {0}"
-
-#. placeholder {0}: props.providerLabel
-#. placeholder {1}: getOrpcErrorMessage(error, { fallback: t`an error`, allowServerMessage: true, })
-#: src/features/assistant/conversation.tsx
-msgid "{0} returned “{1}”. Your message is kept."
-msgstr "{0} vrátilo „{1}“. Vaše zpráva je uložena."
 
 #. placeholder {0}: selection.length
 #: src/features/career/today.tsx
@@ -560,15 +577,14 @@ msgstr "{0}, není mezi vašimi místy"
 msgid "{0}. Issue resolved."
 msgstr "{0}. Problém vyřešen."
 
-#. placeholder {0}: terms.join(" · ")
-#: src/features/career/workspace/messages.tsx
-msgid "{0}. Opens in Career → Offers."
-msgstr ""
-
 #. placeholder {0}: proposals.length
 #: src/features/assistant/conversation.tsx
 msgid "{accepted} of {0} applied"
 msgstr "Použito {accepted} z {0}"
+
+#: src/features/career/workspace/apply.tsx
+msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -596,10 +612,6 @@ msgstr "Jen {company}"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "{company}: a follow-up is due."
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
 msgstr ""
 
 #: src/features/career/coach-chat.tsx
@@ -665,6 +677,10 @@ msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "{delta} vs {version}"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "{difference, plural, one {Shorter by # word} other {Shorter by # words}}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
@@ -768,6 +784,10 @@ msgstr "Rozhovor {kind}"
 #: src/features/career/coach-thread.tsx
 msgid "{label} connection"
 msgstr "Připojení {label}"
+
+#: src/features/assistant/connection-notice.tsx
+msgid "{label} is off or was removed. Choose the connection this conversation uses next."
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "{length}m"
@@ -878,6 +898,10 @@ msgstr "{proposed, plural, one {Navrhováno #} other {Navrhováno #}}"
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
 msgstr ""
 
+#: src/features/career/workspace/apply.tsx
+msgid "{removed, plural, one {changes or removes # of your sentences} other {changes or removes # of your sentences}}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
@@ -913,6 +937,10 @@ msgstr ""
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# příběh} few {# příběhy} many {# příběhu} other {# příběhů}}"
+
+#: src/features/career/workspace/messages.tsx
+msgid "{summary}. Opens in Career → Offers."
+msgstr "{summary}. Otevře se v Kariéra → Nabídky."
 
 #: src/features/career/workspace/fit.tsx
 msgid "{supported} supported · {partial} partly · {missing} missing"
@@ -950,6 +978,10 @@ msgstr "{toCheck, plural, one {Pole # potřebuje pohled.} other {Pole # je třeb
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# ke kontrole} other {# ke kontrole}}"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "{total, plural, one {# public link will change} other {# public links will change}}"
@@ -1117,6 +1149,10 @@ msgstr "Kód z ověřovací aplikace při přihlášení"
 msgid "A comfortable length, and it fits on one page."
 msgstr "Pohodlná délka a vejde se na jednu stránku."
 
+#: src/features/assistant/conversation.tsx
+msgid "A conversation's files can total up to 100 MB. Start a new conversation."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A date is in the future."
 msgstr "Datum je v budoucnosti."
@@ -1137,8 +1173,16 @@ msgstr "Datum nebude přečteno"
 msgid "A fact changed. Review this story."
 msgstr "Fakt se změnil. Zkontrolujte tento příběh."
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "A fact that isn't available here. Saving will fail; edit the story first."
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A fact that's no longer in Knowledge"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
 msgstr ""
 
 #: src/features/career/coach-chat.tsx
@@ -1205,6 +1249,11 @@ msgstr "Číselné datum se v různých zemích čte odlišně."
 #: src/features/ats-checker/messages.ts
 msgid "A page is rotated."
 msgstr "Stránka je otočená."
+
+#. Email footer. author: Amruth Pillai, linked
+#: src/features/auth/email-text.ts
+msgid "A passion project by {author}."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "A pasted posting can be saved as an application afterwards."
@@ -1288,6 +1337,10 @@ msgstr "Přijmout"
 msgid "Accept all"
 msgstr "Přijměte všechny"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Accept the others"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
@@ -1337,6 +1390,11 @@ msgstr "Účet"
 msgid "Account details"
 msgstr ""
 
+#: src/features/settings/preferences.tsx
+msgid "Account emails use it too."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1366,7 +1424,6 @@ msgstr "Aktivní"
 msgid "Activity"
 msgstr "Aktivita"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1422,13 +1479,9 @@ msgstr "Přidejte místo"
 msgid "Add a newer offer"
 msgstr ""
 
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "Přidejte poznámku"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "Přidat poznámku…"
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -1713,9 +1766,19 @@ msgstr "Přidejte koncovku domény, například {domain}.com"
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Přidejte tyto záznamy tam, kde spravujete doménu, a pak je zkontrolujte. Než se změny projeví všude, může to trvat několik hodin."
+
+#: src/features/career/coach-chat.tsx
+msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
+"\n"
+"{text}"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
@@ -1730,6 +1793,10 @@ msgstr "Přidat do procesu"
 #: src/features/career/workspace/fit.tsx
 msgid "Add to questions"
 msgstr "Přidat k otázkám"
+
+#: src/features/career/coach-chat.tsx
+msgid "Add to resume"
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Add to Skills"
@@ -1747,8 +1814,8 @@ msgstr "Přidejte dobrovolnictví"
 msgid "Add your name"
 msgstr "Přidejte své jméno"
 
-#. placeholder {0}: role.trim()
-#. placeholder {1}: company.trim()
+#. placeholder {0}: isolate(role.trim())
+#. placeholder {1}: isolate(company.trim())
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Added {0} at {1}"
 msgstr "Přidán {0} na {1}"
@@ -1778,6 +1845,10 @@ msgstr "Přidáno do Znalostí jako úspěch."
 msgid "Added to Knowledge as an experience."
 msgstr "Přidáno do Znalostí jako zkušenost."
 
+#: src/features/career/coach-chat.tsx
+msgid "Added to Knowledge."
+msgstr ""
+
 #: src/features/resume/share/address-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Address"
@@ -1795,9 +1866,10 @@ msgstr ""
 msgid "Address line 2"
 msgstr ""
 
-#: src/features/career/workspace/messages.tsx
-msgid "Adds a reminder to Today if you haven't heard back by then."
-msgstr "Pokud se do té doby neozvou, přidá připomínku do sekce Dnes."
+#. placeholder {0}: addition.anchor
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Adds after: {0}"
+msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Adjust fonts, colors, spacing and sections in the resume builder. Export your finished resume to PDF or Word, or share a link. The PDFs above are examples to help you compare designs."
@@ -2067,10 +2139,6 @@ msgstr "Vložené písmo se nepodařilo přečíst."
 msgid "An entry has no dates"
 msgstr "Záznam nemá žádná data"
 
-#: src/features/assistant/conversation.tsx
-msgid "an error"
-msgstr "chyba"
-
 #: src/features/career/offer-entry.tsx
 msgid "an hour"
 msgstr ""
@@ -2116,6 +2184,10 @@ msgstr "Odpověď zkopírována"
 #: src/features/assistant/question-card.tsx
 msgid "Answer in your own words"
 msgstr "Odpovězte vlastními slovy"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Answer replaced"
+msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Answer source"
@@ -2368,6 +2440,23 @@ msgstr "Použít 1 změnu"
 msgid "Approve and create packet"
 msgstr ""
 
+#: src/features/auth/email-text.ts
+msgid "Approve change"
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Approve changing your {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Approve email change"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Approve your email change"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Arabic"
 msgstr "Arabština"
@@ -2393,6 +2482,10 @@ msgstr "Požádat"
 #: src/features/career/offers.tsx
 msgid "Ask {0}"
 msgstr "Zeptat se: {0}"
+
+#: src/features/career/offers.tsx
+msgid "Ask {company}"
+msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
@@ -2462,10 +2555,6 @@ msgstr "Dotaz a <0>odpovězeno.</0>"
 msgid "Asks for an example of your onboarding work."
 msgstr "Chtějí ukázku vaší práce na onboardingu."
 
-#: src/features/career/workspace/messages.tsx
-msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
-msgstr ""
-
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Aspect ratio"
 msgstr "Poměr stran"
@@ -2534,6 +2623,10 @@ msgid "Attach a resume file (PDF, up to 10 MB)"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
+msgid "Attach up to 10 files per message."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Attachment"
 msgstr "Příloha"
@@ -2593,7 +2686,7 @@ msgstr "BA, komunikační design"
 msgid "Back"
 msgstr "Zadní"
 
-#. placeholder {0}: detail.data.company
+#. placeholder {0}: application.company
 #: src/features/resume/editor/chrome.tsx
 msgid "Back to {0}"
 msgstr ""
@@ -2631,6 +2724,7 @@ msgstr "Zpět na přihlášení"
 msgid "Back to stories"
 msgstr "Zpět na příběhy"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
@@ -2650,6 +2744,10 @@ msgstr "Záložní kód"
 msgid "Backup codes copied"
 msgstr "Záložní kódy zkopírovány"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "Vyvážený"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2668,14 +2766,9 @@ msgstr "Postranní pruh"
 msgid "Barista, 2012"
 msgstr "Barista, 2012"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
-#. placeholder {1}: periodLabel(offer.period)
-#: src/features/career/workspace/messages.tsx
-msgid "Base {0} {1}"
-msgstr ""
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Base salary"
 msgstr "Základní mzda"
 
@@ -2736,16 +2829,12 @@ msgstr "Tučné"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Bonus"
 msgstr "Bonus"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
-#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
-#: src/features/career/workspace/messages.tsx
-msgid "Bonus {0}{1}"
-msgstr ""
-
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Bonus conditions"
 msgstr "Podmínky bonusu"
 
@@ -2845,11 +2934,16 @@ msgstr "položka seznamu {n}"
 msgid "Bulleted list"
 msgstr "Seznam s odrážkami"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "Vínová"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
 msgstr ""
 
+#: src/features/auth/email-text.ts
 #: src/features/homepage/footer.tsx
 msgid "By the community, for the community."
 msgstr "Vytvořeno komunitou pro komunitu."
@@ -2884,18 +2978,19 @@ msgstr "Může software číst váš životopis?"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/fit.tsx
-#: src/features/career/workspace/messages.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -2946,6 +3041,11 @@ msgstr "Osvědčení"
 msgid "Change"
 msgstr "Změnit"
 
+#: src/features/career/coach-thread.tsx
+msgctxt "Change what the coach remembers"
+msgid "Change"
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Change connection"
@@ -2992,6 +3092,15 @@ msgstr "Změňte tento záznam na časové ose."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "Změnit časové pásmo"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3061,11 +3170,6 @@ msgstr "Zkontrolujte jiný soubor"
 msgid "Check any PDF, no account needed"
 msgstr "Zkontrolujte jakékoli PDF, není potřeba žádný účet"
 
-#. placeholder {0}: proposal.note
-#: src/features/career/workspace/apply.tsx
-msgid "Check before accepting: {0}"
-msgstr ""
-
 #: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
@@ -3095,6 +3199,14 @@ msgstr "před použitím zkontrolujte čísla a jména"
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
 msgstr "Funkce Kontrola čte váš životopis stejně jako náborový software a jednoduchými slovy vysvětluje, co je třeba opravit. Spustí se ve vašem prohlížeči, takže váš soubor zůstane na vašem zařízení: 0 nahrávání."
 
+#: src/features/career/workspace/apply.tsx
+msgid "Check that nothing you wrote yourself is lost."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Check that these facts support what the story claims before saving."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Check the details"
 msgstr "Zkontrolujte podrobnosti"
@@ -3110,6 +3222,10 @@ msgstr "Porovnejte tuto pozici se svými doklady"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Check views"
 msgstr "Zkontrolujte zobrazení"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/libs/seo.ts
 msgid "Check whether software can read your resume PDF. Runs entirely in your browser, so your file is never uploaded."
@@ -3145,6 +3261,10 @@ msgstr "Kontrola {0}"
 #: src/features/career/shared.tsx
 msgid "Checking against Knowledge"
 msgstr "Porovnávání se Znalostmi"
+
+#: src/features/career/coach-thread.tsx
+msgid "Checking for a web search service…"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Checking layout and content"
@@ -3210,6 +3330,10 @@ msgstr "Vyberte soubor"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose a file to import"
 msgstr "Vyberte soubor, který chcete importovat"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
@@ -3284,6 +3408,10 @@ msgstr ""
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
 msgstr "Vyberte, kam se má zařadit každá fáze uvedená v souboru, nebo ji přidejte jako novou."
 
+#: src/features/assistant/connection-notice.tsx
+msgid "Choose…"
+msgstr ""
+
 #: src/components/level/combobox.tsx
 msgid "Circle"
 msgstr "Kruh"
@@ -3301,12 +3429,17 @@ msgid "Clarify"
 msgstr "K vyjasnění"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "Klasický"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "Čistý"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -3359,6 +3492,7 @@ msgstr "ID klienta"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -3581,6 +3715,10 @@ msgstr "Připojit {0}"
 msgid "Connect {domain}"
 msgstr "Připojit {domain}"
 
+#: src/features/career/coach-thread.tsx
+msgid "Connect a search service in Settings to research the web. The coach can still read public links you paste."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Připojte službu"
@@ -3606,7 +3744,7 @@ msgid "Connect and test an AI provider in Settings, or keep entering roles manua
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Connect another…"
 msgstr "Připojte další…"
 
@@ -3644,7 +3782,7 @@ msgstr "Připojujeme váš účet {providerName}…"
 msgid "Connection saved"
 msgstr "Připojení uloženo"
 
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Connection: {text}"
 msgstr "Připojení: {text}"
 
@@ -3716,6 +3854,7 @@ msgstr ""
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Continue"
 msgstr "Pokračovat"
 
@@ -3769,6 +3908,14 @@ msgstr "Konverzace o jedné pozici najdete v jejím pracovním prostoru."
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
 msgstr "Zkopírováno"
+
+#: src/features/career/coach-chat.tsx
+msgid "Copies for {company}"
+msgstr ""
+
+#: src/features/career/coach-chat.tsx
+msgid "Copies for this job"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
@@ -3851,8 +3998,8 @@ msgid "Copy stylesheet"
 msgstr "Kopírovat stylový list"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "Zkopírujte celý popis práce z inzerátu a vložte jej níže. Pole za vás vyplníme a text uložíme k této žádosti pro hodnocení shody a přizpůsobení."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -3869,6 +4016,10 @@ msgstr "Kopírovat přepis"
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
 msgstr "Opravit"
+
+#: src/features/career/offer-entry.tsx
+msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Correct the year, or write \"Present\" for ongoing work."
@@ -3921,6 +4072,10 @@ msgstr "Tento plán se nepodařilo změnit. Zkuste to znovu."
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "Heslo se nepodařilo změnit. Zkontrolujte své současné heslo a zkuste to znovu."
 
+#: src/features/career/coach-thread.tsx
+msgid "Couldn't check for a web search service. Retry."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't check which resume opens your short link. Reload the page and try again."
 msgstr ""
@@ -3936,10 +4091,6 @@ msgstr ""
 #: src/features/auth/pages/consent.tsx
 msgid "Couldn't complete this connection. Restart the connection from your client and try again."
 msgstr "Toto připojení se nepodařilo dokončit. Spusťte připojení znovu ze svého klienta a zkuste to znovu."
-
-#: src/features/career/workspace/messages.tsx
-msgid "Couldn't confirm the application move. Reload this application before retrying."
-msgstr ""
 
 #. Fallback toast when linking a social authentication provider fails
 #: src/features/settings/account/auth-hooks.ts
@@ -3993,6 +4144,10 @@ msgstr "Váš účet se nepodařilo vytvořit. Zkuste to znovu."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Couldn't delete that offer. Try again."
 msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
@@ -4195,6 +4350,10 @@ msgstr "Životopis se nepodařilo připravit k tisku. Zkuste to znovu."
 msgid "Couldn't propose these edits: {0}"
 msgstr "Tyto úpravy nelze navrhnout: {0}"
 
+#: src/libs/error-message.ts
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't reach the AI provider. Try again in a moment."
 msgstr "Nepodařilo se spojit s poskytovatelem AI. Zkuste to znovu za chvíli."
@@ -4210,6 +4369,11 @@ msgstr "Tento soubor se nepodařilo přečíst. Vyberte soubor .csv a zkuste to 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
 msgstr "Tento soubor se nepodařilo přečíst. Zkuste to znovu."
+
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
@@ -4342,7 +4506,7 @@ msgstr "Příběh se nepodařilo uložit. Zkuste to znovu."
 msgid "Couldn't save the tags. Try again."
 msgstr "Tagy se nepodařilo uložit. Zkuste to znovu."
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "Časové pásmo se nepodařilo uložit. Zkuste to znovu."
 
@@ -4404,6 +4568,18 @@ msgstr "Heslo se nepodařilo nastavit. Zkuste to znovu."
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "Dvoufázové ověření se nepodařilo nastavit. Zkuste to znovu."
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr ""
+
+#: src/features/career/coach-chat.tsx
+msgid "Couldn't share that fact. Try again."
+msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "Náhled PDF se nepodařilo zobrazit. Nahrajte soubor znovu."
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
 msgstr "Náhled se nepodařilo zobrazit."
@@ -4439,6 +4615,7 @@ msgid "Couldn't suggest roles. Try again or enter roles manually."
 msgstr ""
 
 #: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Couldn't switch connections. Try again."
 msgstr "Připojení se nepodařilo přepnout. Zkuste to znovu."
 
@@ -4468,6 +4645,10 @@ msgstr "Poskytovatele se nepodařilo zapnout ani vypnout. Zkuste to znovu."
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't undo that. Try again."
 msgstr "Tuto akci se nepodařilo vrátit zpět. Zkuste to znovu."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't undo the update. The application is unchanged."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't unlink the application. Try again."
@@ -4600,6 +4781,10 @@ msgstr "Průvodní dopis — {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "Průvodní dopis · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4667,10 +4852,18 @@ msgstr "Vytvořte a otevřete"
 msgid "Create key"
 msgstr "Vytvořit klíč"
 
+#: src/features/auth/email-text.ts
+msgid "Create new password"
+msgstr ""
+
 #. Call-to-action link from login page to account registration page
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
 msgstr "Vytvořte si ji nyní"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Create resume"
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
@@ -4705,6 +4898,7 @@ msgstr "Data CSV"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "Měna"
@@ -4812,6 +5006,10 @@ msgstr "Sloupec s daty"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "Formát data"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -4935,6 +5133,10 @@ msgstr "Odstraňte je. Skrytá klíčová slova jsou brána jako úmyslný pokus
 #: src/features/documents/document-actions.tsx
 msgid "Delete now…"
 msgstr "Smazat nyní…"
+
+#: src/features/career/offers.tsx
+msgid "Delete offer"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete page"
@@ -5452,7 +5654,7 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Přetažením změňte pozici a před nahráním použijte posuvník pro přiblížení/zvětšení."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -5573,6 +5775,10 @@ msgstr "Upravit podrobnosti…"
 msgid "Edit entry"
 msgstr "Upravit záznam"
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Edit first"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Edit interview"
 msgstr "Upravit rozhovor"
@@ -5592,6 +5798,10 @@ msgstr "Upravit odkaz"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit note"
 msgstr "Upravit poznámku"
+
+#: src/features/career/offer-entry.tsx
+msgid "Edit offer terms"
+msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Edit posting"
@@ -5616,6 +5826,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "Upravit plán"
+
+#: src/features/career/offers.tsx
+msgid "Edit terms"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Edit the email"
@@ -5787,10 +6001,6 @@ msgstr "Zadejte celou částku, například 95000. Vaše předchozí částka se
 msgid "Enter a name, up to 64 characters."
 msgstr "Zadejte název o délce až 64 znaků."
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "Zadejte nové heslo pro svůj účet."
-
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
@@ -5873,6 +6083,10 @@ msgstr "Zadejte heslo pro vypnutí dvoufázového ověření. Bez něj se k úč
 msgid "Enter your password."
 msgstr "Zadejte heslo."
 
+#: src/features/career/offers.tsx
+msgid "Entered by you"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Entries"
 msgstr "Položky"
@@ -5887,13 +6101,9 @@ msgstr "Možnosti vstupu"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Equity"
 msgstr "Akcie"
-
-#. placeholder {0}: offer.equity
-#: src/features/career/workspace/messages.tsx
-msgid "Equity {0}"
-msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Every {days} days at {clock} · next {next}"
@@ -6047,10 +6257,12 @@ msgstr "Fakt · Úspěch"
 msgid "Fact forgotten"
 msgstr "Fakt zapomenut"
 
+#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 msgid "Fact type"
 msgstr "Typ faktu"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -6058,12 +6270,18 @@ msgid "Facts"
 msgstr "Fakta"
 
 #: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Facts, stories and preferences that are switched on in Knowledge"
 msgstr "Fakta, příběhy a preference zapnuté ve Znalostech"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Failed"
 msgstr "Nepodařilo se"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to check it"
+msgstr ""
 
 #: src/features/settings/profile.tsx
 msgid "Family name"
@@ -6076,6 +6294,10 @@ msgstr "Funkce"
 #: src/features/career/workspace/practise.tsx
 msgid "Feedback"
 msgstr "Zpětná vazba"
+
+#: src/features/career/workspace/practise.tsx
+msgid "Feedback needs an AI connection. <0/>. Nothing is sent until you ask."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -6118,6 +6340,10 @@ msgstr "Název souboru"
 #: src/features/resume/import/read-file.ts
 msgid "file read"
 msgstr "soubor přečten"
+
+#: src/features/assistant/conversation.tsx
+msgid "Files can be up to 25 MB."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
@@ -6322,6 +6548,10 @@ msgstr "Pro portály nebo náboráře, kteří žádají o Word. Uspořádání 
 #: src/features/settings/ai/api-keys.tsx
 msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
 msgstr "Pro skripty, rozšíření a klienty MCP. Klávesy fungují jako vy a mohou číst a upravovat vaše dokumenty."
+
+#: src/features/auth/email-text.ts
+msgid "For security, only use links from emails sent by Reactive Resume."
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "For the next round:"
@@ -6530,6 +6760,10 @@ msgstr "Získejte plán na pohovor sestavený z inzerátu a vašich vlastních p
 msgid "Get feedback"
 msgstr "Získat zpětnou vazbu"
 
+#: src/features/career/workspace/practise.tsx
+msgid "Get feedback sends the question, your answer, this posting and your stories to {providerName}."
+msgstr "„Získat zpětnou vazbu“ odešle otázku, vaši odpověď, tento inzerát a vaše příběhy poskytovateli {providerName}."
+
 #: src/features/homepage/sections.tsx
 msgid "Get it on"
 msgstr "Stáhnout z"
@@ -6623,6 +6857,10 @@ msgstr "Google"
 msgid "Grade"
 msgstr "Prospěch"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "Grafit"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "Šedá"
@@ -6707,9 +6945,18 @@ msgstr "Hebrejština"
 msgid "Help & docs"
 msgstr "Nápověda a dokumenty"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "Pomoz mi proměnit úspěch v příběh se situací, úkolem, akcí, výsledkem a reflexí."
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -6958,9 +7205,30 @@ msgstr "Pokud vám někdo poslal tento odkaz, požádejte ho o nový."
 msgid "If the app did not open, try again on a device where it is installed."
 msgstr "Pokud se aplikace neotevřela, zkuste to znovu na zařízení, kde je nainstalována."
 
+#: src/features/auth/email-text.ts
+msgid "If the button does not work, copy and paste this link into your browser:"
+msgstr ""
+
+#. Email change approval. newEmail is an email address
+#: src/features/auth/email-text.ts
+msgid "If you approve, we'll send a link to {newEmail} to finish the change."
+msgstr ""
+
 #: src/hooks/use-form-blocker.tsx
 msgid "If you close this dialog, your changes are lost."
 msgstr "Pokud tento dialog zavřete, vaše změny se ztratí."
+
+#: src/features/auth/email-text.ts
+msgid "If you did not create this account, you can safely ignore this email."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr ""
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Ignore"
@@ -7096,6 +7364,10 @@ msgstr "Indonéština"
 #: src/features/career/workspace/fit.tsx
 msgid "Inferred"
 msgstr "Odvozeno"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "Inkoustově modrá"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
@@ -7266,6 +7538,14 @@ msgstr "Problémy"
 msgid "Issues and Job match still work without AI."
 msgstr "Issues a Job match stále fungují bez AI."
 
+#: src/features/assistant/conversation.tsx
+msgid "It can also search Knowledge available to this application (facts and stories) and send what it finds."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "It can also search your shared Knowledge (facts and stories) and send what it finds."
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "Obsahuje položky, ale není umístěn na stránce."
@@ -7318,10 +7598,6 @@ msgstr "Jeho zprávy a přílohy budou smazány. Úpravy, které jste přijali, 
 msgid "Its own design ({summary})."
 msgstr "Vlastní design ({summary})."
 
-#: src/features/career/disclosure.tsx
-msgid "its requirements"
-msgstr ""
-
 #: src/features/settings/ai/providers.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "Jeho uložený klíč je smazán. Konverzace pomocí něj potřebují jiného poskytovatele."
@@ -7348,7 +7624,6 @@ msgstr "Popis práce"
 msgid "Job link or posting text"
 msgstr "Odkaz na nabídku práce nebo text nabídky práce"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "Pracovní zápas"
@@ -7445,6 +7720,14 @@ msgstr "Ponechte si přístup, když aplikaci nepoužíváte."
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "Ponechat účet"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "Ponechat připojení"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "Ponechat doménu"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -7568,6 +7851,8 @@ msgstr "Khmerština"
 msgid "Kind regards,"
 msgstr "s pozdravem"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
@@ -7575,6 +7860,11 @@ msgstr "s pozdravem"
 #: src/routes/dashboard/career/route.tsx
 msgid "Knowledge"
 msgstr "Znalosti"
+
+#. placeholder {0}: when(cutoffAt)
+#: src/features/career/coach-chat.tsx
+msgid "Knowledge changed on {0}. Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
@@ -7584,12 +7874,9 @@ msgstr "Znalosti se nepodařilo načíst. Zkuste to znovu nebo před odesláním
 msgid "Knowledge doesn’t mention mentoring."
 msgstr "Znalosti nezmiňují mentoring."
 
-#: src/features/assistant/conversation.tsx
-msgid "Knowledge facts the assistant looks up are sent too."
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "Knowledge that's switched on"
+#: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Knowledge is off for this message: the coach doesn't read it or remember anything you say"
 msgstr ""
 
 #: src/features/career/role-suggestions.tsx
@@ -7623,7 +7910,6 @@ msgstr "Krajina"
 #: src/features/settings/preferences.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
-#: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Language"
 msgstr "Jazyk"
 
@@ -7651,6 +7937,10 @@ msgstr "Naposledy upraveno"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7664,6 +7954,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "Naposledy použité"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -7706,11 +8000,13 @@ msgstr "Vede k tomu, proč se hodíte"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Learning budget"
 msgstr "Rozpočet na vzdělávání"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Leave"
 msgstr "Odejít"
 
@@ -7746,6 +8042,14 @@ msgstr "Vedení výzkumu pro redesign onboardingu; aktivace vzrostla z 31 % na 4
 msgid "Left"
 msgstr "Vlevo"
 
+#: src/features/career/offers.tsx
+msgid "Left blank"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Left blank. Add it later only if you can support it."
+msgstr ""
+
 #: src/features/resume/import/read-file.ts
 msgid "Legacy Word files aren't supported. Open the file in Word and save it as .docx first."
 msgstr "Starší soubory Word nejsou podporovány. Otevřete soubor v Word a nejprve jej uložte jako .docx."
@@ -7775,11 +8079,15 @@ msgstr "Délka není vadou a neexistuje univerzální pravidlo jedné stránky. 
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "Nechte klienty AI jako Claude nebo Cursor číst a upravovat vaše životopisy pomocí výše uvedeného klíče API."
 
+#: src/features/assistant/conversation.tsx
+msgid "Let the assistant search facts and stories you share with all applications, read-only"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "Začněme tím, co máte"
 
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Lets the coach search public pages through your web search service"
 msgstr "Umožní kouči prohledávat veřejné stránky přes vaši službu webového vyhledávání"
 
@@ -7808,6 +8116,11 @@ msgstr "Dopis · zatím neodeslán"
 #. placeholder {0}: date(application.appliedAt)
 #: src/features/career/workspace/shell.tsx
 msgid "Letter · version sent {0}"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -7905,13 +8218,17 @@ msgstr ""
 msgid "Link {0} URL"
 msgstr ""
 
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
 msgstr "Propojit Reactive Resume (doporučeno)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "Propojte životopis z Reactive Resume, abyste mohli využívat AI hodnocení shody a přizpůsobení."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -7926,6 +8243,10 @@ msgstr "Propojit žádost o zaměstnání"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "Propojit žádost o zaměstnání…"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8100,6 +8421,11 @@ msgstr "Načítání propojených dokumentů…"
 msgid "Loading providers…"
 msgstr "Načítání poskytovatelů…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "Načítání stránky životopisu {pageNumber} z {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "Načítání životopisů…"
@@ -8162,6 +8488,18 @@ msgstr "Zamčeno"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Zamčeno. Chcete-li upravit, odemkněte."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -8315,18 +8653,6 @@ msgstr "Okraje nastaveny na {minimum} pt"
 msgid "Mark as applied"
 msgstr "Označit jako podanou"
 
-#: src/features/career/workspace/messages.tsx
-msgid "Mark as applied and move"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "Mark as applied and move it?"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "Mark as applied and move to {stage}"
-msgstr ""
-
 #: src/features/applications/components/board.tsx
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "Mark as closed"
@@ -8340,6 +8666,10 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Mark as read"
 msgstr "Označit jako přečtené"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Mark it as applied in Apply first."
+msgstr "Nejdřív žádost označte jako podanou na kartě Přihláška."
 
 #: src/features/career/workspace/apply.tsx
 msgid "Markdown (.md)"
@@ -8447,6 +8777,15 @@ msgstr "Zprávy · Vloženo z vašeho e-mailu"
 msgid "Messages · Reply to Sam at Fieldnote"
 msgstr "Zprávy · Odpověď pro Sam z Fieldnote"
 
+#: src/features/career/coach-chat.tsx
+msgid "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
+msgstr ""
+
+#: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Messages from before Knowledge changed aren't sent."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Microphone blocked. Allow it in your browser settings, or type your answer."
 msgstr "Mikrofon je zablokovaný. Povolte ho v nastavení prohlížeče nebo odpověď napište."
@@ -8506,6 +8845,10 @@ msgstr "Další pro {title}"
 msgid "More formatting"
 msgstr "Další formátování"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "More from your file"
+msgstr ""
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
 msgstr "Více možností"
@@ -8526,6 +8869,10 @@ msgstr "Objevuje se více než jedna e-mailová adresa."
 #: src/features/career/today.tsx
 msgid "Morning of"
 msgstr "Ráno v den pohovoru"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "Mechová"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -8683,6 +9030,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Název"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Name of {label}"
 msgstr "Název fáze {label}"
@@ -8806,6 +9157,10 @@ msgstr ""
 msgid "New cover letter instead"
 msgstr "Místo toho nový průvodní dopis"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "New detail: check it's true"
+msgstr ""
+
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New document"
 msgstr "Nový dokument"
@@ -8825,6 +9180,7 @@ msgstr "Nová stránka"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "Nové heslo"
@@ -8887,8 +9243,8 @@ msgstr "Další krok: {0}"
 
 #. placeholder {0}: change.note
 #: src/features/career/workspace/messages.tsx
-msgid "Next step: {0}. Adds a reminder to Today."
-msgstr "Další krok: {0}. Přidá připomínku do sekce Dnes."
+msgid "Next step: {0}. Sets the application's follow-up date."
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Next time, I’d agree how to measure success before the first prototype."
@@ -8908,6 +9264,10 @@ msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "No amount stated · value uncertain"
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -8930,6 +9290,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Zatím žádné žádosti o zaměstnání. Nejprve přidejte jeden do žádostí o zaměstnání."
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -8993,10 +9357,6 @@ msgstr ""
 msgid "No documents attached"
 msgstr "Nejsou připojeny žádné dokumenty"
 
-#: src/features/career/workspace/messages.tsx
-msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
-msgstr ""
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
 msgstr "žádné úpravy"
@@ -9046,6 +9406,10 @@ msgstr "Zatím bez práce"
 #: src/features/settings/ai/api-keys.tsx
 msgid "No keys yet."
 msgstr "Zatím žádné klíče."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
@@ -9125,6 +9489,7 @@ msgstr "Žádná odezva"
 msgid "No results found."
 msgstr "Nebyly nalezeny žádné výsledky."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "Žádné resumé"
@@ -9141,6 +9506,10 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "Zatím žádné životopisy."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "No sections were found in this file."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "No selected documents were deleted. Refresh to see what remains."
@@ -9181,10 +9550,6 @@ msgstr "Zatím žádné tagy"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "No terms stood out in this posting."
 msgstr "V tomto inzerátu nevynikly žádné výrazy."
-
-#: src/features/career/workspace/messages.tsx
-msgid "No terms were extracted. Opens in Career → Offers."
-msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 #: src/features/ats-checker/messages.ts
@@ -9279,6 +9644,10 @@ msgstr "Není pro mě"
 msgid "not found"
 msgstr "nenalezen"
 
+#: src/features/career/offers.tsx
+msgid "Not found in the message"
+msgstr ""
+
 #. placeholder {0}: report.jd.missingTerms.join(", ")
 #: src/features/ats-checker/checker.tsx
 msgid "Not found: {0}"
@@ -9287,10 +9656,6 @@ msgstr "Nenalezeno: {0}"
 #: src/features/career/offers.tsx
 msgid "Not in either offer yet"
 msgstr "Zatím v žádné z nabídek"
-
-#: src/features/career/offers.tsx
-msgid "Not in the offer · ask {company}"
-msgstr "V nabídce chybí · zeptejte se ve společnosti {company}"
 
 #: src/features/ats-checker/report/jd-coverage.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
@@ -9348,6 +9713,10 @@ msgstr "Nevybráno"
 msgid "Not set up"
 msgstr "Není nastaveno"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Not stated"
+msgstr ""
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Not sure what to write?"
 msgstr "Nejste si jisti, co napsat?"
@@ -9404,6 +9773,11 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "Dokud se nerozhodnete, nic se nepodá ani nevytvoří."
+
+#: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Nothing is sent until you choose a connection for this conversation."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
@@ -9470,6 +9844,10 @@ msgstr "Číslovaný seznam"
 msgid "Observation"
 msgstr "Pozorování"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "okrová"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "Udijština"
@@ -9499,6 +9877,10 @@ msgstr "Vypnuto. Zapněte, aby vás náboráři našli přes Google."
 msgid "Offer"
 msgstr "Nabídka"
 
+#: src/features/career/offers.tsx
+msgid "Offer deleted"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "Nabídka uložena"
@@ -9508,7 +9890,16 @@ msgstr "Nabídka uložena"
 msgid "Offer saved. {0} moved to Offer."
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Offer terms"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
+msgid "Offer terms updated"
+msgstr ""
+
+#: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Offer type"
 msgstr "Typ nabídky"
 
@@ -9517,6 +9908,10 @@ msgstr "Typ nabídky"
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "Nabídky"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Office days a week"
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Office days a week, at most"
@@ -9588,6 +9983,10 @@ msgstr "Povolte pouze aplikace, kterým důvěřujete. Tato aplikace bude umět:
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Only applies when the section fits on a single page."
 msgstr "Platí pouze tehdy, když se sekce vejde na jednu stránku."
+
+#: src/features/career/coach-chat.tsx
+msgid "Only for {company}"
+msgstr ""
 
 #: src/features/homepage/faq.tsx
 msgid "Only if you want it to. Add your own key from OpenAI, Anthropic, Google Gemini, OpenRouter, Ollama or another provider for sharper lines, tailoring to a job posting, coaching for applications and interviews, and reading Word files. Without a key, nothing is sent to an AI service."
@@ -9689,6 +10088,10 @@ msgid "Open in Offers"
 msgstr "Otevřít v Nabídkách"
 
 #: src/features/career/coach-chat.tsx
+msgid "Open in the resume's assistant"
+msgstr ""
+
+#: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "Otevřít předvolby"
 
@@ -9740,6 +10143,10 @@ msgstr "Úvod"
 #: src/features/ats-checker/checker.tsx
 msgid "Opening the file"
 msgstr "Otevření souboru"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Opens in Career → Offers."
+msgstr "Otevře se v Kariéra → Nabídky."
 
 #: src/features/resume/stylesheet/editor.tsx
 msgid "opens in new tab"
@@ -9850,6 +10257,7 @@ msgstr "Jiné · Kompatibilní se OpenAI"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Other benefits"
 msgstr "Další benefity"
 
@@ -9891,11 +10299,13 @@ msgid "Page"
 msgstr "Stránka"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "Stránka {0}"
@@ -9914,6 +10324,16 @@ msgstr "Stránka {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "Strana {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "Stránka {pageNumber} z {pageCount}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "Stránka {pageNumber} z {totalPages}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -9984,6 +10404,10 @@ msgstr "Passkey"
 msgid "Passkeys"
 msgstr "Passkeys"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -10004,17 +10428,21 @@ msgstr "Heslo"
 msgid "Password changed"
 msgstr "Heslo změněno"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Heslo odstraněno"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "Heslo bylo obnoveno. Přihlaste se novým heslem."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Heslo nastaveno"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -10033,8 +10461,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "Vložte odkaz na pracovní pozici. Pracovní nabídku uložíme, aby ji mohla použít Check, asistent a váš dopis."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "Vložte inzerát jednou. Vznikne z něj upravená kopie vašeho životopisu, skóre shody, návrh motivačního dopisu a místo pro sledování pozice."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -10104,6 +10532,7 @@ msgstr "Pozastavené plány si zachovají nastavení."
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "Výplatní období"
@@ -10128,27 +10557,18 @@ msgstr "PDF, Word nebo JSON. Sestavíme z toho resumé."
 msgid "People using it"
 msgstr "Lidé to používají"
 
-#: src/features/career/workspace/messages.tsx
-msgid "per hour"
-msgstr ""
-
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Per hour"
 msgstr "Za hodinu"
 
-#: src/features/career/workspace/messages.tsx
-msgid "per month"
-msgstr ""
-
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Per month"
 msgstr "Za měsíc"
 
-#: src/features/career/workspace/messages.tsx
-msgid "per year"
-msgstr ""
-
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Per year"
 msgstr "Za rok"
 
@@ -10267,6 +10687,10 @@ msgstr "Plánuje se váš týden"
 msgid "Play the list of languages"
 msgstr "Přehrajte si seznam jazyků"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "Švestková"
+
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Polština"
@@ -10363,6 +10787,16 @@ msgstr "Nácvik · Váš úvod, asi 40 sekund nahlas"
 #: src/features/career/workspace/practise.tsx
 msgid "Practice another question"
 msgstr "Nacvičit další otázku"
+
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -10549,6 +10983,10 @@ msgstr "Produktový designér"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "Produktový designér s devíti lety zkušeností s tvorbou <0>designových systémů</0> a produktů založených na výzkumu pro B2B týmy."
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "Profesionální styl"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -10812,6 +11250,14 @@ msgstr "Čte nahlas hlasem vašeho prohlížeče."
 msgid "Read briefing"
 msgstr "Přečíst briefing"
 
+#: src/features/career/offers.tsx
+msgid "Read from a message"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Read from a message, edited by you"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Read it for me"
@@ -11036,11 +11482,6 @@ msgstr "Nahrávání se zastavilo na limitu 2 minut. Přepisuje se, co jste řek
 msgid "Recording time"
 msgstr "Doba nahrávání"
 
-#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
-#: src/features/career/workspace/messages.tsx
-msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
-msgstr ""
-
 #. placeholder {0}: records.join(" · ")
 #: src/features/career/workspace/apply.tsx
 msgid "Records {0} as sent. You submit on the employer's site yourself."
@@ -11101,14 +11542,11 @@ msgstr "Doporučení"
 msgid "Referred by…, things to emphasize, etc."
 msgstr "Odkaz od…, co zdůraznit atd."
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reflection"
 msgstr "Reflexe"
-
-#: src/features/career/workspace/prepare.tsx
-msgid "Refresh the briefing"
-msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing 2 hours before"
@@ -11173,12 +11611,17 @@ msgstr ""
 msgid "Relocation"
 msgstr ""
 
+#: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/remember.tsx
 msgid "Remember"
 msgstr "Zapamatovat"
+
+#: src/features/career/coach-chat.tsx
+msgid "Remember as a fact in Knowledge"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Remember facts from my messages"
@@ -11196,6 +11639,10 @@ msgstr "Zapamatovat si to pro budoucí koučování?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Remember your password? <0/>"
 msgstr "Vzpomínáte si na heslo? <0/>"
+
+#: src/features/career/coach-chat.tsx
+msgid "Remembered for {name} only: “{text}”"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Remembered: “{text}”"
@@ -11268,6 +11715,10 @@ msgstr "Odebrat {value}"
 msgid "Remove connection"
 msgstr "Odstraňte připojení"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "Odebrat doménu"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "Odebrat pole"
@@ -11320,9 +11771,17 @@ msgstr "Odebrat fázi"
 msgid "Remove tag"
 msgstr "Odebrat štítek"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "Odebrat vlastní doménu?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Odstranit heslo?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "Odebrat webové připojení?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11391,6 +11850,10 @@ msgstr "Nahraďte ikonová písma prostým textem a poté znovu exportujte."
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Nahraďte tabulky prostými odstavci a seznamy. Buňky se extrahují v pořadí uložení, nikoli v pořadí čtení."
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "Nahradí „{current}“ v žádosti."
@@ -11443,6 +11906,10 @@ msgstr "Požadavky"
 msgid "Requirements and your evidence"
 msgstr "Požadavky a vaše doklady"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "Vyhraďte velká písmena pro krátké nadpisy. Zpomalují čtení a mohou zmařit vyhledávání rozlišující velikost písmen."
@@ -11457,9 +11924,19 @@ msgstr "Obnovit výchozí nastavení návrhu"
 msgid "Reset password"
 msgstr "Obnovit heslo"
 
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Reset your {appName} password"
+msgstr ""
+
+#: src/features/auth/email-text.ts
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "Obnovte své heslo"
+
+#: src/features/auth/email-text.ts
+msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
+msgstr ""
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
@@ -11471,17 +11948,13 @@ msgstr "Zdroje"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Respond by"
 msgstr "Odpovědět do"
 
 #. placeholder {0}: day(data.respondBy)
 #: src/features/career/offer-entry.tsx
 msgid "respond by {0}"
-msgstr ""
-
-#. placeholder {0}: day(offer.respondBy ?? "")
-#: src/features/career/workspace/messages.tsx
-msgid "Respond by {0}"
 msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
@@ -11528,6 +12001,7 @@ msgstr "Obnovena verze z {0}. Váš předchozí stav se uloží jako „Před ob
 msgid "Restricted to its employer or application."
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Result"
@@ -11597,6 +12071,10 @@ msgstr "detaily životopisu"
 msgid "Resume file"
 msgstr "Soubor životopisu"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
 msgid "Resume options"
@@ -11605,6 +12083,11 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Resume page"
 msgstr "stránka s životopisem"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "Stránka životopisu {pageNumber} z {totalPages}"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -11729,6 +12212,10 @@ msgstr ""
 msgid "Review my answer"
 msgstr "Zhodnotit mou odpověď"
 
+#: src/features/career/workspace/debrief.tsx
+msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
+msgstr "„Zhodnotit mou odpověď“ odešle otázku, co jste řekli, tento inzerát a vaše Znalosti poskytovateli {providerName}."
+
 #: src/features/career/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
@@ -11777,6 +12264,10 @@ msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
+msgstr ""
+
+#: src/features/career/workspace/debrief.tsx
+msgid "Reviewing needs an AI connection. <0/>. What you write here stays in this browser until then."
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -11878,6 +12369,11 @@ msgstr "Spustit znovu"
 msgid "Run research with customers"
 msgstr "Vést výzkum se zákazníky"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
 msgstr "Přechází na stránku {next}"
@@ -11885,6 +12381,10 @@ msgstr "Přechází na stránku {next}"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "Ruština"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "Rezavá"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -11911,6 +12411,10 @@ msgstr "Sam"
 #: src/features/homepage/prepare.tsx
 msgid "Sam, Fieldnote"
 msgstr "Sam, Fieldnote"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Same length"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Same you. Less starting over."
@@ -12123,6 +12627,10 @@ msgstr ""
 msgid "Saved description"
 msgstr "Uložený popis"
 
+#: src/features/career/coach-chat.tsx
+msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
+msgstr ""
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Saved just now"
 msgstr "Uloženo právě teď"
@@ -12308,6 +12816,7 @@ msgid "Search saved answers"
 msgstr ""
 
 #: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Search terms go to your web search service."
 msgstr "Hledané výrazy se odesílají vaší službě webového vyhledávání."
 
@@ -12344,6 +12853,10 @@ msgstr "Hledat…"
 msgid "Searched the web"
 msgstr "Hledal na webu"
 
+#: src/features/assistant/conversation.tsx
+msgid "Searched your Knowledge"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Searches and reads pages with {connectedProvider}, whichever AI provider you use."
 msgstr "Vyhledává a čte stránky pomocí {connectedProvider}, bez ohledu na to, kterého poskytovatele AI používáte."
@@ -12368,6 +12881,10 @@ msgstr "Hledá se na webu"
 msgid "Searching the web…"
 msgstr "Vyhledávání na webu…"
 
+#: src/features/assistant/conversation.tsx
+msgid "Searching your Knowledge…"
+msgstr ""
+
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Secret copied"
 msgstr "Tajný klíč zkopírován"
@@ -12384,6 +12901,10 @@ msgstr "Sekce"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Sections · print order"
 msgstr "Sekce · objednávka tisku"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Sections found"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Sections use headings systems recognize, and work experience shows."
@@ -12463,6 +12984,10 @@ msgstr "Poslat"
 msgid "Send reset link"
 msgstr "Odeslat odkaz pro obnovení"
 
+#: src/features/settings/account/profile.tsx
+msgid "Send the approval link again"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "Odešlete samotný životopis, nikoli obal portfolia."
@@ -12479,18 +13004,8 @@ msgstr "Údaje o odesílateli zkopírovány do dopisu"
 msgid "Sending password reset email..."
 msgstr "Odesílání e-mailu pro obnovení hesla…"
 
-#: src/features/career/disclosure.tsx
-msgid "Sends {list} to {providerLabel}."
-msgstr ""
-
 #: src/features/career/role-suggestions.tsx
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr ""
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the {0} posting to {1} to draft the body."
 msgstr ""
 
 #. placeholder {0}: providerState.usableProviders[0]?.label
@@ -12499,9 +13014,14 @@ msgstr ""
 msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
 msgstr ""
 
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Sends the posting text to {0} to read it."
+#: src/features/career/workspace/prepare.tsx
+msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
+msgstr "Odešle tuto žádost (inzerát, poznámky, podrobnosti pohovoru) a zapnuté Znalosti poskytovateli {label}."
+
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/career/workspace/fit.tsx
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0} · {1}."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -12515,17 +13035,6 @@ msgstr "Odešle tento dopis a pracovní nabídku na {provider} s vaším klíče
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter to {provider} with your key, only when you press send."
 msgstr "Odešle tento dopis do {provider} s vaším klíčem, pouze když stisknete odeslat."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
-msgstr ""
-
-#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume to {0} to draft the body."
-msgstr ""
 
 #. placeholder {0}: provider.label
 #. placeholder {1}: provider.model
@@ -12549,13 +13058,25 @@ msgstr "Odešle tento příběh a zapnutá fakta vašemu připojení k AI. Bez n
 msgid "Sends your message and the posting to {provider} with your key, only when you press send."
 msgstr "Odešle vaši zprávu a pracovní nabídku do {provider} s vaším klíčem, pouze když stisknete odeslat."
 
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message and this application (posting, notes, documents sent) to {connection}."
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Sends your message to {provider} with your key, only when you press send."
 msgstr "Odešle vaši zprávu do {provider} pomocí vašeho klíče, pouze když stisknete odeslat."
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages in this chat, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
+msgid "Sends your message, earlier messages here and this application (posting, notes, documents sent) to {connection}."
 msgstr ""
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents sent) and Knowledge that's switched on to {connection}."
+msgstr ""
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to {connection}."
+msgstr "Odešle vaši zprávu, tuto žádost (inzerát, poznámky, odeslané dokumenty) a zapnuté Znalosti do připojení {connection}."
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -12591,10 +13112,13 @@ msgstr "Srbština"
 msgid "Set a follow-up…"
 msgstr "Nastavit pokračování…"
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "Nastavte heslo"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "Nastavit heslo"
@@ -12626,6 +13150,14 @@ msgstr ""
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
 msgstr "Nastavte ověřovací aplikaci"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/root.tsx
@@ -12971,6 +13503,7 @@ msgstr "Jeden sloupec s nadpisy sekcí velkými písmeny nad linkou a fotografi�
 msgid "Single-column; polished and serious for senior or enterprise-level positions."
 msgstr "Jednosloupcové; uhlazené a seriózní pro seniorské nebo enterprise pozice."
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Situation"
@@ -13092,6 +13625,11 @@ msgstr "Část textu je mimo stránku."
 #: src/features/ats-checker/messages.ts
 msgid "Some text is rotated."
 msgstr "Část textu je otočená."
+
+#. Email change approval. appName: Reactive Resume; previousEmail and newEmail are email addresses
+#: src/features/auth/email-text.ts
+msgid "Someone asked to change your {appName} email from {previousEmail} to {newEmail}."
+msgstr ""
 
 #: src/libs/error-message.ts
 msgid "Something went wrong. Please try again."
@@ -13221,6 +13759,10 @@ msgstr "Výsledek fáze"
 msgid "Stage stays {stage}"
 msgstr "Fáze zůstává {stage}"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13322,15 +13864,6 @@ msgstr ""
 msgid "Started"
 msgstr "Zahájeno"
 
-#: src/features/career/offers.tsx
-msgid "Starts"
-msgstr ""
-
-#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
-#: src/features/career/workspace/messages.tsx
-msgid "Starts {0}"
-msgstr ""
-
 #: src/features/career/shared.tsx
 msgid "Starts in {minutes} minutes"
 msgstr "Začíná za {minutes} min"
@@ -13367,6 +13900,10 @@ msgid "Step {0} of {1}"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
+msgid "Still runs onto page {next}."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -13385,14 +13922,18 @@ msgstr "Zastavit nahrávání"
 msgid "Stop when you're done. Nothing is sent until then."
 msgstr "Až skončíte, zastavte. Do té doby se nic neodešle."
 
-#: src/features/career/coach-chat.tsx
-msgid "Stopped"
-msgstr "Zastaveno"
-
 #. placeholder {0}: clock(seconds)
 #: src/features/career/workspace/practise.tsx
 msgid "Stopped at {0}"
 msgstr "Zastaveno v {0}"
+
+#: src/features/career/coach-chat.tsx
+msgid "Stopped before answering."
+msgstr ""
+
+#: src/features/career/coach-chat.tsx
+msgid "Stopped before the answer finished."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Stopped. No edits were proposed."
@@ -13402,6 +13943,7 @@ msgstr "Zastaveno. Nebyly navrženy žádné úpravy."
 msgid "Store these backup codes somewhere safe. Each one signs you in once if you lose your device."
 msgstr "Uložte tyto záložní kódy na bezpečné místo. Každý vás jednou přihlásí, pokud ztratíte zařízení."
 
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -13515,6 +14057,7 @@ msgstr "Podpora"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "Doloženo"
 
@@ -13675,10 +14218,15 @@ msgstr "Tamilština"
 msgid "Target roles"
 msgstr "Cílové pozice"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Task"
 msgstr "Úkol"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "Modrozelená"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
@@ -13775,6 +14323,10 @@ msgstr "Testování vyhledávací služby na vašem serveru…"
 msgid "Testing…"
 msgstr "Testování…"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Text"
 msgstr "Text"
@@ -13840,9 +14392,19 @@ msgstr "Thajština"
 msgid "Thank you for keeping it free."
 msgstr "Děkujeme, že je máte zdarma."
 
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Thanks for signing up for {appName}. Verify your email address to continue."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "Díky, Sam. Tady je jeden: v Northwind Labs byl na mně redesign onboardingu, od 14 rozhovorů se zákazníky až po kratší nastavení."
+
+#. placeholder {0}: still.user.email
+#: src/features/auth/pages/reset-password.tsx
+msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -13851,6 +14413,10 @@ msgstr "Tento soubor nelze přečíst jako PDF. Vyberte soubor PDF a zkuste to z
 #: src/features/ats-checker/checker.tsx
 msgid "That file is too large to check. PDFs up to 25 MB work."
 msgstr "Tento soubor je příliš velký na kontrolu. PDFs až 25 MB práce."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "That link couldn't be read. Paste the posting text instead."
+msgstr "Ten odkaz se nedal přečíst. Místo toho vložte text nabídky práce."
 
 #: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
@@ -13892,6 +14458,30 @@ msgstr ""
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "Adresa musí obsahovat pouze malá písmena a číslice, oddělené jednotlivými pomlčkami."
 
+#: src/libs/error-message.ts
+msgid "The AI provider couldn't finish this reply. Try again, or change the connection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The AI provider doesn't offer this model. Choose another model, or change the connection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The AI provider is limiting requests (rate limit or quota). Wait a minute and try again, or change the connection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The AI provider is unavailable right now. Try again in a moment, or change the connection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The AI provider rejected the saved key. Check the key in Settings, or change the connection."
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "The answer changed since, so it wasn't restored."
+msgstr ""
+
 #: src/features/homepage/faq.tsx
 msgid "The app is translated into {languages} languages by volunteers, and a resume can be written in any language, including right-to-left scripts like Arabic and Hebrew."
 msgstr "Aplikace je přeložena do jazyků {languages} dobrovolníky a resumé lze napsat v jakémkoli jazyce, včetně skriptů zprava doleva, jako je arabština a hebrejština."
@@ -13901,8 +14491,12 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "Aplikace, která vás sem poslala, vytvořila neplatný požadavek na autorizaci. Vraťte se do aplikace a zkuste to znovu."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "Žádost o zaměstnání, pro kterou je tento dopis určen."
+msgid "The application this document is for."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "The assistant can search facts and stories you share with all applications. It can't change them."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
@@ -13916,9 +14510,17 @@ msgstr "Vestavěná čtečka zůstává aktivní."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Kontroly jsou mechanické. To se dotazuje jazykového modelu, jak může čtenář reagovat na vaše položky seznamu, a navrhuje přepsání. Není součástí partitury."
 
+#: src/features/career/coach-thread.tsx
+msgid "The coach asks before remembering facts you state."
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Kouč si z vašich zpráv nic nepamatuje."
+
+#: src/features/career/coach-thread.tsx
+msgid "The coach doesn't remember anything you write."
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers and your applications work without it."
@@ -13931,6 +14533,10 @@ msgstr "Kouč každý fakt navrhne v chatu. Nic se neuloží, dokud nesouhlasít
 #: src/features/career/workspace/shell.tsx
 msgid "The coach reads these for this application only."
 msgstr "Kouč je čte jen pro tuto žádost."
+
+#: src/features/career/coach-thread.tsx
+msgid "The coach remembers facts you state, and tells you."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13956,14 +14562,6 @@ msgstr ""
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "Kopie je propojena s žádostí o zaměstnání, takže Check a asistent používají její pracovní nabídku."
 
-#: src/features/career/disclosure.tsx
-msgid "the cover letter for this job"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the employer's message"
-msgstr ""
-
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end is before the start."
 msgstr "Konec je před začátkem."
@@ -13984,20 +14582,12 @@ msgstr "Soubor nelze číst jako resumé."
 msgid "The greeting follows the name."
 msgstr "Za jménem následuje pozdrav."
 
-#: src/features/career/disclosure.tsx
-msgid "the interview details"
-msgstr ""
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Klíč je na serveru zašifrován a už se nikdy nezobrazí. Ukládání testuje připojení."
 
 #: src/features/settings/ai/test-error.ts
 msgid "The key was rejected. Check the key and test again."
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the last messages"
 msgstr ""
 
 #: src/routes/builder/letter/-components/download-sheet.tsx
@@ -14019,14 +14609,6 @@ msgstr "Dopis opět odpovídá designu resumé"
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "Linka se od vašeho dotazu změnila, takže nebyla nahrazena."
-
-#: src/features/career/workspace/messages.tsx
-msgid "the linked cover letter"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "the linked resume"
-msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 msgid "the message"
@@ -14088,6 +14670,10 @@ msgstr "Pracovní nabídka uložená s touto žádostí o zaměstnání."
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
 msgstr ""
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The posting:"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "Poskytovatel neodpověděl. Zkontrolujte klíč, model a základnu URL."
@@ -14116,14 +14702,6 @@ msgstr "Poskytovatel vrátil recenzi, kterou nelze přečíst. Zkuste to znovu."
 msgid "The provider's response couldn't be verified. Try again."
 msgstr "Odpověď poskytovatele se nepodařilo ověřit. Zkuste to znovu."
 
-#: src/features/career/disclosure.tsx
-msgid "the question and what you said"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the question and your answer"
-msgstr ""
-
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Důvod je ponechán pro Insights. Propojené dokumenty se nedotknou."
@@ -14141,10 +14719,6 @@ msgstr "resumé"
 msgid "The resume as it is"
 msgstr "Resumé tak, jak je"
 
-#: src/features/career/disclosure.tsx
-msgid "the resume for this job"
-msgstr ""
-
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
 msgstr "Recenze nemohla skončit. Zkuste to znovu."
@@ -14160,10 +14734,6 @@ msgstr "Uložený klíč není odeslán na novou základní adresu URL. Pokud te
 #: src/features/settings/ai/providers.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Uložený klíč není odeslán na novou základní adresu URL. Zadejte klíč znovu."
-
-#: src/features/career/disclosure.tsx
-msgid "the saved offer"
-msgstr ""
 
 #: src/libs/error-message.ts
 msgid "The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer."
@@ -14310,6 +14880,10 @@ msgstr "Tuto žádost se nepodařilo otevřít."
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "Tato žádost o zaměstnání zatím nemá uložený inzerát. Vložte ho pro porovnání."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "Tento prohlížeč zde nemůže nahrávat. Vyberte zvukový soubor nebo odpověď napište."
@@ -14320,6 +14894,10 @@ msgstr ""
 
 #: src/features/career/draft-recovery.tsx
 msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "This confirms the address belongs to you, which keeps your account secure."
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
@@ -14338,6 +14916,10 @@ msgstr "Tuto konverzaci se nepodařilo otevřít. Obnovte stránku a zkuste to z
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach.tsx
 msgid "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
+msgstr ""
+
+#: src/features/assistant/connection-notice.tsx
+msgid "This conversation's connection is off or was removed. Choose the one it uses next."
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -14405,6 +14987,10 @@ msgstr "Tento soubor je na životopis velký."
 msgid "This file is larger than many application forms accept."
 msgstr "Tento soubor je větší, než mnoho formulářů žádostí přijme."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
 msgstr ""
@@ -14420,6 +15006,10 @@ msgstr "Tento soubor používá mnoho různých písem."
 #: src/features/ats-checker/messages.ts
 msgid "This file uses Type 3 fonts, which carry drawings instead of characters."
 msgstr "Tento soubor používá písma typu 3, která obsahují kresby místo znaků."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -14437,13 +15027,18 @@ msgstr "Toto není běžná velikost stránky pro životopis."
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Toto písmeno a „{resumeName}“ jako dva PDFs, pojmenované tak, aby odpovídaly."
 
-#: src/routes/builder/letter/$coverLetterId.tsx
-msgid "This letter has an unkept draft. Click Keep to save it, or Discard to leave without it."
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "Tento dopis je uzamčen. Chcete-li jej upravit, odemkněte jej z nabídky."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -14493,10 +15088,6 @@ msgstr "Toto PDF je chráněno heslem. Uložte nechráněnou kopii a zkuste to z
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr ""
 
-#: src/features/career/disclosure.tsx
-msgid "this posting"
-msgstr ""
-
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr ""
@@ -14507,6 +15098,10 @@ msgstr ""
 
 #: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This reply couldn't finish. Try again."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -14561,6 +15156,14 @@ msgstr "Tuto uloženou verzi se nepodařilo načíst."
 msgid "This saved version is no longer available."
 msgstr "Tato uložená verze už není k dispozici."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
@@ -14586,8 +15189,12 @@ msgid "This step is optional, but recommended."
 msgstr "Tento krok je volitelný, ale doporučený."
 
 #: src/features/career/workspace/practise.tsx
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
+
+#: src/features/career/workspace/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
-msgstr "Tento příběh není k dispozici nebo používá vypnutá fakta."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -14617,6 +15224,19 @@ msgstr "Zestručnit"
 msgid "Tighten to one page"
 msgstr "Utáhněte na jednu stránku"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It already fits on one page, so only cut what's weak."
+msgstr ""
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next} by about {0} lines."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next}."
+msgstr ""
+
 #: src/features/career/shared.tsx
 msgid "Tightening"
 msgstr "Zestručňuje se"
@@ -14644,6 +15264,10 @@ msgstr "Čas, odkaz, kdo, co jste odeslali"
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "Časy se zobrazují v pásmu {timeZone}."
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -14695,10 +15319,6 @@ msgstr "Dnes, {hour}"
 msgid "Tomorrow"
 msgstr "Zítra"
 
-#: src/features/career/workspace/prepare.tsx
-msgid "Too close to the interview to schedule a refresh."
-msgstr ""
-
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Příliš světlé pro nadpisy na bílé. Může být obtížné číst a tisknout slabě."
@@ -14730,6 +15350,10 @@ msgstr "Sledujte svou první práci"
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "Sledování"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Tradiční styl"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -14995,7 +15619,9 @@ msgstr "Podtrhněte odkazy"
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/today.tsx
+#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/check/actions.ts
@@ -15024,7 +15650,6 @@ msgid "University of Porto"
 msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
-#: src/features/career/offers.tsx
 #: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "Neznámé"
@@ -15147,6 +15772,11 @@ msgstr "Nahrávání fotografie…"
 msgid "URL"
 msgstr "URL"
 
+#. placeholder {0}: fallback.label
+#: src/features/assistant/connection-notice.tsx
+msgid "Use {0}"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum}"
 msgstr "Použijte {minimum}"
@@ -15170,6 +15800,7 @@ msgstr "Použijte 3 až 64 malých písmen, číslic, teček, pomlček a podtrž
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15200,11 +15831,20 @@ msgstr "Použijte jeden sloupec pro vše, co má být čteno v pořadí."
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "Použijte formát A4 nebo US Letter, aby rozvržení přežilo opětovné vykreslení."
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
+
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
 msgstr "Použijte alespoň 3 znaky."
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15236,6 +15876,7 @@ msgstr "Použít výchozí"
 msgid "Use details from “{0}”"
 msgstr "Použít podrobnosti z „{0}“"
 
+#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 msgid "Use for all applications"
 msgstr "Použít pro všechny žádosti"
@@ -15243,10 +15884,6 @@ msgstr "Použít pro všechny žádosti"
 #: src/features/career/knowledge/facts.tsx
 msgid "Use in coaching: {excerpt}"
 msgstr "Použít při koučování: {excerpt}"
-
-#: src/features/assistant/conversation.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
@@ -15308,6 +15945,10 @@ msgstr ""
 msgid "Use this device's timezone ({device})"
 msgstr "Použít časové pásmo tohoto zařízení ({device})"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "Použijte tohoto poskytovatele"
@@ -15324,6 +15965,7 @@ msgstr ""
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 msgstr "Použijte běžný odrážkový seznam svého editoru, aby se v polovině věty neobjevily zbloudilé znaky."
 
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Used"
 msgstr "Použito"
@@ -15383,6 +16025,11 @@ msgstr "Používá vlastní webové vyhledávání vašeho poskytovatele AI, pok
 msgid "Uses your browser’s voice"
 msgstr "Používá hlas vašeho prohlížeče"
 
+#. placeholder {0}: proposal.factIds .map((id) => facts?.find((fact) => fact.id === id)?.text) .filter(Boolean) .map((value) => shortLabel(value ?? "")) .join(" · ")
+#: src/features/career/workspace/apply.tsx
+msgid "Uses: {0}"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Uzbek"
 msgstr "Uzbečtina"
@@ -15405,6 +16052,7 @@ msgstr "Obměňujte začátky, aby sekce nepůsobila jako obecný text."
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Verbal offer"
 msgstr "Ústní nabídka"
 
@@ -15419,13 +16067,30 @@ msgstr "Ověřovací kód"
 msgid "Verify"
 msgstr "Ověřit"
 
+#: src/features/auth/email-text.ts
+msgid "Verify email"
+msgstr ""
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verify with a backup code"
 msgstr "Ověřit záložním kódem"
 
+#: src/features/auth/email-text.ts
+msgid "Verify your email"
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Verify your email for {appName}"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "Nejdřív si v Nastavení ověřte e-mail"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -15567,6 +16232,11 @@ msgstr "WCAG 2.1 AA"
 msgid "We read the page and save the posting for Check, the assistant and your letter."
 msgstr "Přečteme si stránku a uložíme pracovní nabídku pro kontrolu, asistenta a váš dopis."
 
+#. Password reset email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "We received a request to reset your {appName} password."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "We sent a confirmation link to {email}. Open it to finish the change."
 msgstr "Odeslali jsme potvrzovací odkaz na {email}. Otevřete jej a dokončete změnu."
@@ -15598,9 +16268,17 @@ msgstr "Webová stránka"
 msgid "Web page preview"
 msgstr "Náhled webové stránky"
 
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Webový průzkum"
+
+#: src/features/career/coach-thread.tsx
+msgid "Web research · Retry"
+msgstr ""
+
+#: src/features/career/coach-thread.tsx
+msgid "Web research · Set up"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Web search didn't finish."
@@ -15698,6 +16376,10 @@ msgstr "Co kontroluje"
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "Kategorie, do které fáze patří, určuje připomínky, odeslané dokumenty a Přehledy. Později ji nelze změnit; místo toho přidejte novou fázi."
 
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
 msgstr "Co je důležité"
@@ -15780,10 +16462,6 @@ msgstr "Co funguje"
 msgid "When do they need your answer?"
 msgstr "Kdy potřebují vaši odpověď?"
 
-#: src/features/career/offers.tsx
-msgid "When would you start?"
-msgstr ""
-
 #: src/features/career/coach.tsx
 msgid "When you press send, {shared} go to {connection}."
 msgstr "Po stisknutí Odeslat půjdou {shared} do připojení {connection}."
@@ -15798,6 +16476,7 @@ msgstr "Kde chcete pracovat"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Where you work"
 msgstr "Místo výkonu práce"
 
@@ -15878,6 +16557,10 @@ msgstr "Přejde můj životopis mimo systémy sledování uchazečů?"
 msgid "Willing to relocate"
 msgstr ""
 
+#: src/features/career/coach-thread.tsx
+msgid "With Knowledge off, nothing you write is remembered."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Within a quarter, activation went from 31% to 44%."
 msgstr "Během čtvrtletí vzrostla aktivace z 31 % na 44 %."
@@ -15938,8 +16621,8 @@ msgstr ""
 msgid "Write a letter"
 msgstr "Napište dopis"
 
-#: src/features/career/workspace/messages.tsx
-msgid "Write a new reply in {languageName}"
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -16006,10 +16689,6 @@ msgstr "Napište odpověď nebo si nechte připravit návrh ze svých Znalostí.
 msgid "Write your professional resume"
 msgstr "Napište svůj profesní životopis"
 
-#: src/routes/builder/letter/-components/design-panel.tsx
-msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/check-panel.tsx
 #: src/features/resume/editor/check/issues.ts
@@ -16034,6 +16713,7 @@ msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Written offer"
 msgstr "Písemná nabídka"
 
@@ -16140,6 +16820,10 @@ msgstr "Přihlásíte se bez něj"
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "V sekci Dnes to uvidíte vždy. E-mail závisí na nastavení pošty na vašem serveru."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "Pro opětovné připojení budete muset znovu zadat klíč. Vestavěná čtečka zůstane aktivní."
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "Budete odpovídat za naše <0>designové systémy</0>, provádět <1>uživatelský výzkum</1> se zákazníky a dbát na vysokou úroveň <2>přístupnosti</2> v <3>mezioborovém</3> týmu."
@@ -16164,6 +16848,10 @@ msgstr "Používáte účet hosta"
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "Dosáhli jste {MAX_APPLICATION_LANES} fází. Chcete-li přidat další, jednu odeberte."
 
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
 msgstr "Váš účet byl smazán."
@@ -16173,13 +16861,14 @@ msgstr "Váš účet byl smazán."
 msgid "Your AI"
 msgstr "Vaše AI"
 
+#: src/features/career/workspace/debrief.tsx
+#: src/features/career/workspace/practise.tsx
+msgid "your AI connection"
+msgstr "vaše připojení k AI"
+
 #: src/features/career/hooks.ts
 msgid "Your AI connection"
 msgstr "Vaše připojení k AI"
-
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "your AI provider"
-msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Your AI settings changed. Nothing was sent; try again."
@@ -16190,7 +16879,11 @@ msgid "Your answer"
 msgstr "Vaše odpověď"
 
 #: src/features/career/workspace/apply.tsx
-msgid "Your answer changed while this was drafted. Draft again to review the newer version."
+msgid "Your answer changed while the draft was written. Draft again to use it."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Your assistant files can total up to 1 GB. Delete conversations you no longer need."
 msgstr ""
 
 #: src/features/career/workspace/practise.tsx
@@ -16251,10 +16944,6 @@ msgstr ""
 msgid "Your contact details are not on the first page."
 msgstr "Vaše kontaktní údaje nejsou na první stránce."
 
-#: src/features/career/disclosure.tsx
-msgid "your contacts"
-msgstr ""
-
 #: src/features/settings/account/data.tsx
 msgid "Your data"
 msgstr "Vaše data"
@@ -16270,6 +16959,14 @@ msgstr "Vaše údaje se v životopisu změnily. Dopis byl také aktualizován."
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "Vaše doména"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "Vaše doména přestane otevírat váš hlavní životopis. Později ji můžete znovu připojit."
+
+#: src/features/career/coach-chat.tsx
+msgid "Your edited story is saved to Knowledge."
+msgstr ""
 
 #. placeholder {0}: copy.name
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16316,16 +17013,12 @@ msgstr "Váš soubor"
 msgid "Your focus"
 msgstr "Vaše zaměření"
 
-#: src/features/career/disclosure.tsx
-msgid "your form answers"
-msgstr ""
-
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has and the guest's Career profile if it has its own. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -16360,6 +17053,10 @@ msgstr "Vaše okraje jsou velmi úzké."
 msgid "your message"
 msgstr "vaše zpráva"
 
+#: src/features/assistant/conversation.tsx
+msgid "Your message is kept."
+msgstr ""
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"
 msgstr "Vaše jméno"
@@ -16376,7 +17073,6 @@ msgstr "Vaše jméno se v životopise změnilo. Dopis byl také aktualizován."
 msgid "Your name is missing"
 msgstr "Vaše jméno chybí"
 
-#: src/features/career/disclosure.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "vaše poznámky"
@@ -16402,7 +17098,6 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "Vaše telefonní číslo je zapsáno v neobvyklém formátu."
 
 #: src/features/career/coach.tsx
-#: src/features/career/disclosure.tsx
 msgid "your preferences"
 msgstr "vaše předvolby"
 
@@ -16557,3 +17252,287 @@ msgstr "Oddálit"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
+
+
+#. placeholder {0}: overflow.pageCount
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Still runs to # page.} other {Still runs to # pages.}}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{lines, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "{lines, plural, one {Page {page} still runs over by about # line.} other {Page {page} still runs over by about # lines.}}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{pageCount, plural, one {Runs to # page} other {Runs to # pages}}"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It currently runs to {count} pages."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It fits within the planned pages, so only cut what's weak."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. Page {page} runs over by about {lines} lines."
+msgstr ""
+
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/career/workspace/apply.tsx
+msgid "{0} of {1} characters"
+msgstr ""
+
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/career/workspace/apply.tsx
+msgid "{0} of {1} words"
+msgstr ""
+
+#. placeholder {0}: terms.join(" · ")
+#: src/features/career/workspace/messages.tsx
+msgid "{0}. Opens in Career → Offers."
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
+msgstr ""
+
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
+#. placeholder {1}: periodLabel(offer.period)
+#: src/features/career/workspace/messages.tsx
+msgid "Base {0} {1}"
+msgstr ""
+
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
+#: src/features/career/workspace/messages.tsx
+msgid "Bonus {0}{1}"
+msgstr ""
+
+#. placeholder {0}: proposal.note
+#: src/features/career/workspace/apply.tsx
+msgid "Check before accepting: {0}"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't confirm the application move. Reload this application before retrying."
+msgstr ""
+
+#: src/features/resume/editor/proposals/page-fit.tsx
+msgid "Couldn't measure page fit. Check the page preview before accepting."
+msgstr ""
+
+#. placeholder {0}: offer.equity
+#: src/features/career/workspace/messages.tsx
+msgid "Equity {0}"
+msgstr ""
+
+#: src/features/resume/editor/proposals/page-fit.tsx
+msgid "Estimated overflow change: {change} lines."
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "its requirements"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "Knowledge that's switched on"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Mark as applied and move"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Mark as applied and move it?"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Mark as applied and move to {stage}"
+msgstr ""
+
+#: src/features/resume/editor/proposals/page-fit.tsx
+msgid "Measuring page fit…"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "No terms were extracted. Opens in Career → Offers."
+msgstr ""
+
+#. placeholder {0}: fit.data.before
+#. placeholder {1}: fit.data.after
+#: src/features/resume/editor/proposals/page-fit.tsx
+msgid "Page fit: {0} → {1} printed pages."
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "per hour"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "per month"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "per year"
+msgstr ""
+
+#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
+#: src/features/career/workspace/messages.tsx
+msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
+msgstr ""
+
+#: src/features/career/workspace/prepare.tsx
+msgid "Refresh the briefing"
+msgstr ""
+
+#. placeholder {0}: day(offer.respondBy ?? "")
+#: src/features/career/workspace/messages.tsx
+msgid "Respond by {0}"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "Sends {list} to {providerLabel}."
+msgstr ""
+
+#. placeholder {0}: application.company
+#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends the {0} posting to {1} to draft the body."
+msgstr ""
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Sends the posting text to {0} to read it."
+msgstr ""
+
+#. placeholder {0}: application.company
+#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
+msgstr ""
+
+#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends this letter's resume to {0} to draft the body."
+msgstr ""
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
+msgstr ""
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
+msgstr ""
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
+msgstr ""
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Starts"
+msgstr ""
+
+#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
+#: src/features/career/workspace/messages.tsx
+msgid "Starts {0}"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the cover letter for this job"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the employer's message"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the interview details"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the last messages"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "the linked cover letter"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "the linked resume"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the question and what you said"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the question and your answer"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the resume for this job"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the saved offer"
+msgstr ""
+
+#: src/routes/builder/letter/$coverLetterId.tsx
+msgid "This letter has an unkept draft. Click Keep to save it, or Discard to leave without it."
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "this posting"
+msgstr ""
+
+#: src/features/career/workspace/prepare.tsx
+msgid "Too close to the interview to schedule a refresh."
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "When would you start?"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Write a new reply in {languageName}"
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "your AI provider"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "Your answer changed while this was drafted. Draft again to review the newer version."
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "your contacts"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "your form answers"
+msgstr ""

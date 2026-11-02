@@ -7,18 +7,52 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const mocks = vi.hoisted(() => ({ send: vi.fn(), resume: vi.fn(), stop: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+	send: vi.fn(),
+	resume: vi.fn(),
+	stop: vi.fn(),
+	saveFact: vi.fn(),
+	updateFact: vi.fn(),
+	thread: vi.fn(async () => ({
+		history: { cutoffAt: null as Date | null, withheld: [] as string[] },
+		interrupted: [] as string[],
+	})),
+}));
 
 vi.mock("@tanstack/react-router", () => ({
 	Link: () => null,
+	useNavigate: () => vi.fn(),
 	useRouteContext: () => ({ session: { user: { id: "test-user", timezone: "UTC" } } }),
 }));
 vi.mock("@/libs/orpc/client", () => ({
 	streamClient: { agent: { messages: { send: mocks.send, resume: mocks.resume } } },
-	client: { agent: { attachments: { create: vi.fn() }, messages: { stop: mocks.stop } } },
+	client: {
+		agent: {
+			attachments: { create: vi.fn() },
+			messages: { stop: mocks.stop },
+			// The saved copy after Stop is the browser suites' job; here the read fails and the local transcript stays.
+			threads: { get: async () => Promise.reject(new Error("Offline")) },
+		},
+		career: { saveFact: mocks.saveFact, updateFact: mocks.updateFact, forgetFact: vi.fn() },
+	},
 	orpc: {
-		agent: { threads: { list: { key: () => ["threads"] } } },
-		career: { facts: { key: () => ["facts"] }, stories: { key: () => ["stories"] } },
+		agent: {
+			threads: {
+				list: { key: () => ["threads"] },
+				get: {
+					queryOptions: ({ input }: { input: { id: string } }) => ({
+						queryKey: ["thread", input.id],
+						queryFn: mocks.thread,
+					}),
+				},
+			},
+		},
+		documents: { list: { queryOptions: () => ({ queryKey: ["documents"], queryFn: async () => [] }) } },
+		career: {
+			facts: { key: () => ["facts"] },
+			stories: { key: () => ["stories"] },
+			profile: { queryOptions: () => ({ queryKey: ["profile"], queryFn: async () => ({ memoryMode: "off" }) }) },
+		},
 	},
 }));
 
@@ -28,6 +62,7 @@ import { useAssistantChat } from "@/features/assistant/use-assistant-chat";
 
 const knowledge = {
 	loaded: true,
+	updatedAt: 0,
 	isPending: false,
 	isError: false,
 	retry: vi.fn(),
@@ -86,19 +121,24 @@ function answer(stored: UIMessage, incoming: UIMessage): UIMessage {
 	};
 }
 
-function mount(messages: UIMessage[], applicationId: string | null = null, activeRun = false) {
+function mount(
+	messages: UIMessage[],
+	applicationId: string | null = null,
+	activeRun = false,
+	knowledgeState: typeof knowledge = knowledge,
+) {
 	return render(
 		<QueryClientProvider client={new QueryClient()}>
 			<I18nProvider i18n={i18n}>
 				<ChatView
 					threadId="thread-1"
-					knowledge={knowledge}
+					knowledge={knowledgeState}
 					context={{ document: false, posting: false, memory: true }}
 					connection="Local"
 					onChangeConnection={() => {}}
 					header={() => null}
 					empty={() => null}
-					privacy={null}
+					privacy={() => null}
 					placeholder="Ask coach"
 					variant="page"
 					createThread={async () => "thread-1"}
@@ -332,4 +372,92 @@ it("keeps the card visible but inert while busy or read-only", () => {
 		</I18nProvider>,
 	);
 	expect(screen.queryByText("This question didn't finish.")).toBeNull();
+});
+
+it("marks a reply that ended early after a reopen, without crediting Knowledge to an empty one", async () => {
+	const used = {
+		context: { facts: ["f-1"], stories: [], preferences: true, applications: false, offers: [], web: false },
+	};
+	const asked = { ...userMessage("Answer slowly please."), metadata: used } as UIMessage;
+	mocks.thread.mockResolvedValue({ history: { cutoffAt: null, withheld: [] }, interrupted: ["a-2"] });
+	const view = mount([asked, { id: "a-2", role: "assistant", parts: [] } as UIMessage]);
+	await screen.findByText("Stopped before answering.");
+	expect(screen.getByRole("button", { name: "Try again" })).toBeDefined();
+	expect(screen.queryByText("Used")).toBeNull();
+	view.unmount();
+	mount([asked, textMessage("word0 word1 word27")]);
+	await screen.findByText("Stopped before the answer finished.");
+	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+	await waitFor(() => expect(mocks.send).toHaveBeenCalledTimes(1));
+	expect(mocks.send.mock.calls[0]?.[0].message).toMatchObject({
+		role: "user",
+		parts: [{ type: "text", text: "Continue" }],
+	});
+});
+
+it("says which messages Knowledge changes hold back, as the server names them", async () => {
+	mocks.thread.mockResolvedValue({
+		history: { cutoffAt: new Date("2026-10-30T10:00:00Z"), withheld: ["u-2", "a-2"] },
+		interrupted: [],
+	});
+	mount([userMessage("My code word is PELICAN-42."), textMessage("Noted."), userMessage("What was it?", "u-3")]);
+	await screen.findByText(/Messages above aren't sent to the AI anymore/);
+});
+
+it("remembers a message only after the user reviews it, in Never mode, without asking the AI", async () => {
+	mocks.saveFact.mockResolvedValue({ id: "fact-1" });
+	mount([userMessage("I mentored three junior designers; two were promoted.", "u-9")], "application-1");
+	fireEvent.click(screen.getByRole("button", { name: "Remember" }));
+	const field = screen.getByRole("textbox", { name: "Remember as a fact in Knowledge" });
+	fireEvent.change(field, { target: { value: "Mentored three junior designers" } });
+	fireEvent.click(screen.getAllByRole("button", { name: "Remember" }).at(-1) as HTMLElement);
+	await screen.findByText("Added to Knowledge.");
+	expect(mocks.saveFact).toHaveBeenCalledWith({
+		applicationId: "application-1",
+		text: "Mentored three junior designers",
+		category: "accomplishment",
+		source: { kind: "user-message", id: "u-9", quote: "I mentored three junior designers; two were promoted." },
+	});
+	expect(mocks.send).not.toHaveBeenCalled();
+});
+
+it("says an automatic memory is private to one application and shares it only when asked", async () => {
+	mocks.updateFact.mockResolvedValue(undefined);
+	const remembered = {
+		id: "a-3",
+		role: "assistant",
+		parts: [
+			{
+				type: "tool-remember_fact",
+				toolCallId: "r-1",
+				state: "output-available",
+				input: {},
+				output: {
+					status: "saved",
+					id: "fact-2",
+					fact: {
+						applicationId: "application-1",
+						text: "I gave a talk on design tokens.",
+						category: "accomplishment",
+						source: { kind: "user-message", id: "row-1", quote: "I gave a talk on design tokens." },
+					},
+				},
+			},
+		],
+	} as UIMessage;
+	const fact = { id: "fact-2", applicationId: "application-1", company: "Figma", status: "active", text: "x" };
+	mount([remembered], "application-1", false, { ...knowledge, all: [fact] as never });
+	await screen.findByText(/Remembered for/);
+	fireEvent.click(screen.getByRole("button", { name: "Use for all applications" }));
+	await waitFor(() => expect(mocks.updateFact).toHaveBeenCalledWith({ id: "fact-2", share: true }));
+});
+
+it("names a lost connection and offers another AI connection only for provider failures", async () => {
+	mocks.send.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+	mount([]);
+	const view = screen.getByRole("textbox", { name: "Message the coach" });
+	fireEvent.change(view, { target: { value: "Hello" } });
+	fireEvent.keyDown(view, { key: "Enter" });
+	await screen.findByText("Couldn't reach Reactive Resume. Check your internet connection, then try again.");
+	expect(screen.queryByRole("button", { name: "Change connection" })).toBeNull();
 });

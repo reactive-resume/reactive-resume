@@ -41,6 +41,11 @@ test("AI imports retain the selecting account through parsing", async () => {
 			},
 		},
 		"@reactive-resume/schema/cover-letter/data": {},
+		"@reactive-resume/import/docx-text": { extractDocxText: () => "" },
+		"@reactive-resume/import/review": {
+			reviewImport: () => ({ sections: [], notImported: [], missingContact: false }),
+			withLeftoverSection: (data) => data,
+		},
 		"@/auth/session": { getAccountScope: () => scope },
 		"@/api/client": {
 			SessionChangedError,
@@ -69,11 +74,53 @@ test("AI imports retain the selecting account through parsing", async () => {
 	assert.equal(saved, 0);
 });
 
+test("AI imports wait for the user's review before anything is saved", async () => {
+	let saved = 0;
+	const { importDocument, createReviewedResume } = load("features/documents/import-file.ts", {
+		"@lingui/core/macro": { t: tag },
+		"expo-file-system": {
+			File: class {
+				size = 12;
+				base64 = async () => "file";
+				bytes = async () => new Uint8Array();
+			},
+		},
+		"@reactive-resume/schema/cover-letter/data": {},
+		"@reactive-resume/import/docx-text": { extractDocxText: () => "Priya Raman\nPatents: US 11,234,567" },
+		"@reactive-resume/import/review": {
+			reviewImport: (_data, lines) => ({ sections: [], notImported: lines ?? [], missingContact: false }),
+			withLeftoverSection: (data, lines) => ({ ...data, kept: lines }),
+		},
+		"@/auth/session": { getAccountScope: () => "account" },
+		"@/api/client": {
+			SessionChangedError: class extends Error {},
+			client: {
+				ai: { parseDocx: async () => ({ basics: { name: "Priya Raman" } }) },
+				resume: {
+					import: async ({ data }) => {
+						saved++;
+						assert.deepEqual(data.kept, ["Priya Raman", "Patents: US 11,234,567"]);
+						return "id";
+					},
+				},
+			},
+		},
+	});
+	const signal = new AbortController().signal;
+	const pending = await importDocument({ name: "resume.docx", uri: "fixture" }, true, false, signal);
+	assert.equal(pending.type, "review");
+	assert.equal(pending.compared, true);
+	assert.equal(saved, 0);
+	assert.deepEqual(await createReviewedResume(pending, true, signal), { id: "id", type: "resume" });
+	assert.equal(saved, 1);
+});
+
 function previewSession(values = [], development = true, clearAccountExportCache = () => {}) {
 	const store = new Map(values);
 	const session = load(
 		"auth/session.ts",
 		{
+			"@lingui/core": { i18n: { locale: "en-US" } },
 			"expo-auth-session": {},
 			"expo-network": {},
 			"expo-web-browser": {},

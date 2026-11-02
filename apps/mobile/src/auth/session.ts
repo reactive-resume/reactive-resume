@@ -20,6 +20,7 @@
  * - Each account (sign-in) gets a new identity number. Requests carry it; a 401 retry or refresh for an account that
  *   is no longer current fails instead of borrowing the new account's token.
  */
+import { i18n } from "@lingui/core";
 import * as AuthSession from "expo-auth-session";
 import * as Network from "expo-network";
 import * as SecureStore from "expo-secure-store";
@@ -325,7 +326,9 @@ async function authorize(origin: string, attempt: number): Promise<Tokens | null
 		redirectUri: redirectUri(origin),
 		scopes,
 		usePKCE: true,
-		extraParams: { resource: origin },
+		// OpenID's `ui_locales`: the browser's sign-in pages open in the app's language, and a new account (with its
+		// verification email) starts in it. Servers that don't read it ignore it.
+		extraParams: { resource: origin, ui_locales: i18n.locale },
 	});
 	await request.makeAuthUrlAsync(discovery);
 	// This attempt, bound to its state: only a redirect carrying the same state (and issuer) may use its verifier.

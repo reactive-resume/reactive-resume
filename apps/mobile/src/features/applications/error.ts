@@ -1,8 +1,11 @@
 import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
+import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 
 export function applicationError(error: unknown) {
 	if (error instanceof ORPCError) {
+		if (error.data?.reason === SUBMITTED_DOCUMENT_LOCKED)
+			return t`This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job.`;
 		if (error.code === "POSTING_SUPPORT_UNAVAILABLE")
 			return t`Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually.`;
 		if (error.code === "CONFLICT") return t`This changed elsewhere. Reload and try again.`;

@@ -1,7 +1,8 @@
 import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { AUTH_EMAIL_SOURCE_MESSAGES } from "@reactive-resume/email/templates/auth-messages";
 import { WEB_PAGE_SOURCE_MESSAGES } from "@reactive-resume/pdf/web-page-messages";
-import { generatePresentLabels, generateSectionTitleCatalog, generateWebPageCatalog } from "./section-titles";
+import { generateMessageCatalog, generatePresentLabels, generateSectionTitleCatalog } from "./section-titles";
 
 const catalogs = fileURLToPath(new URL("../../apps/web/locales/", import.meta.url));
 
@@ -15,9 +16,16 @@ const presentOutput = new URL("../../packages/schema/src/resume/present-labels.j
 await writeFile(presentOutput, `${JSON.stringify(presentLabels, null, "\t")}\n`);
 console.log(`Updated "Present" for ${Object.keys(presentLabels).length} locales.`);
 
-const webPage = await generateWebPageCatalog(catalogs, WEB_PAGE_SOURCE_MESSAGES);
+const webPage = await generateMessageCatalog(catalogs, WEB_PAGE_SOURCE_MESSAGES);
 // English needs no catalog: the page falls back to its source strings.
 delete webPage["en-US"];
 const webPageOutput = new URL("../../packages/pdf/src/html/web-page-catalog.json", import.meta.url);
 await writeFile(webPageOutput, `${JSON.stringify(webPage, null, "\t")}\n`);
 console.log(`Updated the web page's interface text for ${Object.keys(webPage).length} locales.`);
+
+const authEmails = await generateMessageCatalog(catalogs, AUTH_EMAIL_SOURCE_MESSAGES);
+// English needs no catalog: the emails fall back to their source strings.
+delete authEmails["en-US"];
+const authEmailsOutput = new URL("../../packages/email/src/templates/auth-catalog.json", import.meta.url);
+await writeFile(authEmailsOutput, `${JSON.stringify(authEmails, null, "\t")}\n`);
+console.log(`Updated the account emails' text for ${Object.keys(authEmails).length} locales.`);

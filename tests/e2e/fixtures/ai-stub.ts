@@ -11,6 +11,7 @@ import { createServer } from "node:http";
 type ChatMessage = { role: string; content?: unknown; tool_call_id?: string; tool_calls?: unknown[] };
 type ChatRequest = {
 	messages: ChatMessage[];
+	model?: string;
 	tools?: Array<{ function: { name: string; parameters?: { properties?: Record<string, unknown> } } }>;
 	stream?: boolean;
 };
@@ -53,6 +54,36 @@ const FIT = {
 	factIds: [],
 };
 
+/** An employer's offer, read: a follow-up for the reply that's due, and the terms to compare. */
+const REPLY = {
+	title: "They're making an offer",
+	asks: ["Reply with your decision by 20 November."],
+	unconfirmed: [],
+	reply: "Thank you for the offer. I'll reply by 20 November.",
+	changes: [
+		{ type: "follow-up", at: "2030-11-18T09:00:00+00:00", note: "Reply with your decision" },
+		{ type: "offer" },
+	],
+	offer: {
+		version: "written",
+		currency: "EUR",
+		period: "year",
+		base: 90000,
+		variable: null,
+		variableConditions: "Target annual bonus of 10%, depending on company performance",
+		equity: "",
+		location: "Berlin",
+		officeDays: null,
+		leave: "",
+		learning: null,
+		other: "",
+		respondBy: "2030-11-20T17:00:00Z",
+	},
+};
+
+/** A tightened form answer that drops one of the user's own sentences. */
+const TIGHTENED = { text: "I led the checkout audit and fixed 48 issues.", factIds: [] };
+
 async function streamText(response: ServerResponse, words: string[], delayMs = 0) {
 	chunk(response, { role: "assistant", content: "" });
 	for (const word of words) {
@@ -90,8 +121,46 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	const lastTool = [...sinceUser].reverse().find((message) => message.role === "tool");
 	const readTool = tools.has("read_letter") ? "read_letter" : "read_resume";
 
+	// A provider refusing the request: its own English text and a body that names the key.
+	if (said.includes("rate limit")) {
+		response.writeHead(429, { "content-type": "application/json" });
+		response.end(
+			JSON.stringify({
+				error: { message: "You exceeded your current quota for key stub-key.", type: "insufficient_quota" },
+			}),
+		);
+		return;
+	}
+
 	response.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-cache" });
 
+	// A realistic coaching answer for documentation captures; the people and companies are fictional.
+	if (said.includes("follow up on this week"))
+		return streamText(
+			response,
+			[
+				"### Follow up with Brightpath first\n\n",
+				"**Brightpath:** You interviewed on Tuesday and haven't heard back. A short note on Friday morning is reasonable; ",
+				"thank them for the conversation and ask about the timeline.\n\n",
+				"**Canopy Systems:** They asked for two references. Send those before following up, so your note has news.\n\n",
+				"**Your next step:** Draft the Brightpath note now and send it on Friday.",
+			],
+			20,
+		);
+	// A document conversation that shares Knowledge: search it once, then say what it found.
+	if (said.includes("from knowledge") && tools.has("read_knowledge")) {
+		if (!lastTool) return streamToolCall(response, "read_knowledge", { query: "Config" });
+		return streamText(response, ["I found your conference talk in Knowledge. Add it under Speaking?"]);
+	}
+	// Nothing for three seconds, then a slow answer: a Stop in between ends a reply that said nothing.
+	if (said.includes("pause first"))
+		return wait(3000).then(() =>
+			streamText(
+				response,
+				Array.from({ length: 12 }, (_, index) => `late${index} `),
+				50,
+			),
+		);
 	if (said.includes("slowly"))
 		return streamText(
 			response,
@@ -239,6 +308,13 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 			const asksForFit = parsed.messages.some((message) =>
 				text(message.content).includes("Check the posting's requirements"),
 			);
+			const prompt = parsed.messages.map((message) => text(message.content)).join("\n");
+			const structured =
+				parsed.model === "offer-fixture" && prompt.includes("Read the employer's message")
+					? REPLY
+					: prompt.includes("Write the user's answer to the application form question")
+						? TIGHTENED
+						: null;
 			const asksForRoles = parsed.messages.some((message) =>
 				text(message.content).includes("Suggest up to five plausible target job titles"),
 			);
@@ -318,7 +394,7 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 					choices: [
 						{
 							index: 0,
-							message: { role: "assistant", content },
+							message: { role: "assistant", content: structured ? JSON.stringify(structured) : content },
 							finish_reason: "stop",
 						},
 					],

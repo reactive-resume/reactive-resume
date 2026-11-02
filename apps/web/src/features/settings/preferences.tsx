@@ -3,21 +3,17 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouteContext, useRouter } from "@tanstack/react-router";
+import { useRouteContext } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { SettingsSection } from "./section";
+import { deviceTimeZone, useSaveTimezone } from "./use-save-timezone";
 import { PageHeader } from "@/components/layout/page-header";
 import { Combobox } from "@/components/ui/combobox";
 import { LocaleCombobox } from "@/features/locale/combobox";
 import { useTheme } from "@/features/theme/provider";
-import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
-import { sessionQueryKey } from "@/libs/root-context";
 import { themeMap } from "@/libs/theme";
 
 const THEMES: Array<{ value: Theme; icon: IconName }> = [
@@ -49,6 +45,7 @@ export function PreferencesSettings() {
 				</div>
 				<p className="text-xs text-ink-3">
 					<Trans>Interface only. Each resume sets its own language in Design.</Trans>{" "}
+					<Trans>Account emails use it too.</Trans>{" "}
 					<a
 						href="https://crowdin.com/project/reactive-resume"
 						target="_blank"
@@ -77,27 +74,16 @@ const timeZoneOptions = (current: string) =>
 
 /** The account's timezone, which interview times, reminders and schedules use. Saved as soon as it's chosen. */
 function TimezoneSetting({ id }: { id: string }) {
-	const router = useRouter();
-	const queryClient = useQueryClient();
 	const { session } = useRouteContext({ strict: false });
 	const saved = session?.user.timezone ?? "UTC";
 	const [value, setValue] = useState(saved);
-	const device = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	const device = deviceTimeZone();
+	const saveTimezone = useSaveTimezone();
 
 	const save = async (timezone: string) => {
 		const previous = value;
 		setValue(timezone);
-		const { error } = await authClient.updateUser({ timezone });
-		if (error) {
-			setValue(previous);
-			toast.add({
-				type: "error",
-				description: getReadableErrorMessage(error, t`Couldn't save the timezone. Try again.`),
-			});
-			return;
-		}
-		await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
-		await router.invalidate();
+		if (!(await saveTimezone(timezone))) setValue(previous);
 	};
 
 	return (

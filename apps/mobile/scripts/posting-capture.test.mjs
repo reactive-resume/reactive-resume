@@ -132,7 +132,11 @@ const { authorizeAiRequest } = load(source("api/ai-consent.ts"), {
 	},
 	"@/auth/session": auth,
 });
-const { applicationError } = load(source("features/applications/error.ts"), { "@orpc/client": { ORPCError } });
+const applicationErrors = load(schema("errors.ts"));
+const { applicationError } = load(source("features/applications/error.ts"), {
+	"@orpc/client": { ORPCError },
+	"@reactive-resume/schema/applications/errors": applicationErrors,
+});
 let supportFailure;
 const consentApi = {
 	applications: {

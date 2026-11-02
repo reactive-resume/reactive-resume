@@ -16,6 +16,7 @@ import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
 import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
+import { rewriteSummary } from "@reactive-resume/utils/string";
 import { AnswerLibrary } from "../answer-library";
 import {
 	clearDraft,
@@ -46,6 +47,7 @@ import { routes } from "@/routes";
 import { Banner, Button, Chip, IconButton, ListRow, Sheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type Answer = CareerWorkspace["answers"][number];
+type AnswerSnapshot = Pick<Answer, "answer" | "factIds">;
 type CountUnit = "words" | "characters";
 
 export function ApplyTab() {
@@ -91,10 +93,25 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 		? stored.answers.map((answer, index) => ({ ...answer, id: `stored-${index}`, factIds: [] }))
 		: live.filter((answer) => !removed.includes(answer.id));
 
-	const saveAnswer = (id: string, patch: Partial<Answer>) =>
-		workspace.save({
-			answers: workspace.current().answers.map((answer) => (answer.id === id ? { ...answer, ...patch } : answer)),
-		});
+	const saveAnswer = (id: string, patch: Partial<Answer>, accepted?: AnswerSnapshot): Promise<SaveResult> => {
+		const answers = workspace.current().answers;
+		const current = answers.find((answer) => answer.id === id);
+		if (
+			accepted &&
+			(!current ||
+				current.answer !== accepted.answer ||
+				JSON.stringify(current.factIds) !== JSON.stringify(accepted.factIds))
+		) {
+			showToast({ message: t`The answer changed since, so it wasn't restored.` });
+			return Promise.resolve({ ok: false, transient: false, code: "CONFLICT" });
+		}
+		return workspace.save(
+			{ answers: answers.map((answer) => (answer.id === id ? { ...answer, ...patch } : answer)) },
+			accepted
+				? { answers: answers.map((answer) => (answer.id === id ? { ...answer, ...accepted } : answer)) }
+				: undefined,
+		);
+	};
 	const currentAnswers = () => shown.map((answer) => drafts.current.get(answer.id)?.() ?? answer);
 	const removeAnswer = (id: string) => {
 		setRemoved((ids) => [...ids, id]);
@@ -187,7 +204,7 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 					readOnly={stored !== undefined}
 					disabled={submitting}
 					registerDraft={registerDraft}
-					onSave={(patch) => saveAnswer(answer.id, patch)}
+					onSave={(patch, accepted) => saveAnswer(answer.id, patch, accepted)}
 					fetchServer={() =>
 						workspace.fetchConfirmed().then((data) => data.answers.find((item) => item.id === answer.id))
 					}
@@ -232,7 +249,7 @@ type AnswerCardProps = {
 	disabled: boolean;
 	registerDraft: (id: string, read: () => Answer) => () => void;
 	/** Resolves once the server confirmed it, or with why it failed. */
-	onSave: (patch: Partial<Answer>) => Promise<SaveResult>;
+	onSave: (patch: Partial<Answer>, accepted?: AnswerSnapshot) => Promise<SaveResult>;
 	/** This answer in a freshly fetched, server-confirmed workspace (undefined when it was removed there). */
 	fetchServer: () => Promise<Answer | undefined>;
 	onRemove: () => void;
@@ -271,13 +288,25 @@ function AnswerCard({
 	);
 	const [editingQuestion, setEditingQuestion] = useState(answer.question === "");
 	const [menu, setMenu] = useState(false);
+	// A draft or tightening, with the answer it was written from: Accept saves it, and Undo restores that answer.
 	const [proposal, setProposal] = useState<{
 		text: string;
 		factIds: string[];
-		note: string | null;
-		/** The answer the proposal was written from; it may not replace a newer edit. */
-		basis: string;
+		note?: string | null;
+		before: { text: string; factIds: string[] };
 	} | null>(null);
+	// The answer as it reads now, for a toast's Undo that runs after later renders.
+	const current = useRef({ text, factIds: answer.factIds });
+	useLayoutEffect(() => {
+		current.current = { text, factIds: answer.factIds };
+	});
+	const previousSaved = useRef(answer.answer);
+	useLayoutEffect(() => {
+		// A refetch is not a local edit to autosave. Keep only text the user changed since the last saved copy.
+		if (previousSaved.current !== answer.answer && current.current.text === previousSaved.current)
+			setText(answer.answer);
+		previousSaved.current = answer.answer;
+	}, [answer.answer, setText]);
 	const generate = useGenerate(applicationId);
 	const provider = useHasAIProvider().defaultProvider;
 	const answerSave = useAutosave(
@@ -306,15 +335,53 @@ function AnswerCard({
 	const backing = answer.factIds.flatMap((id) => facts?.find((fact) => fact.id === id) ?? []);
 
 	const ask = async () => {
-		// Commit the question first: the tap may land before the field's blur.
+		// Save the current question even when Draft is clicked before blur.
 		questionSave.flush();
-		const basis = text;
-		const result = await generate.run({ task: "answer", question: question.trim(), answer: basis }).catch(() => null);
-		if (result?.answer) setProposal({ ...result.answer, basis });
+		const before = { text, factIds: answer.factIds };
+		const result = await generate.run({ task: "answer", question: question.trim(), answer: text }).catch(() => null);
+		if (!result?.answer) return;
+		// Written from an older copy: offering it would replace what the user typed since.
+		if (current.current.text !== before.text) {
+			showToast({ message: t`Your answer changed while the draft was written. Draft again to use it.` });
+			return;
+		}
+		setProposal({ ...result.answer, before });
 	};
 	const limit = answerLimit(question);
 	const measured = (value: string) => (limit?.kind === "characters" ? countCharacters(value) : countWords(value));
-	const stale = proposal !== null && text !== proposal.basis;
+	const stale = proposal !== null && text !== proposal.before.text;
+
+	const accept = (chosen: NonNullable<typeof proposal>) => {
+		setText(chosen.text);
+		const saved = onSave({ answer: chosen.text, factIds: chosen.factIds });
+		setProposal(null);
+		void saved.then((result) => {
+			if (!result.ok) return;
+			answerDraft.clear(chosen.text);
+			showToast({
+				message: t`Answer replaced`,
+				action: {
+					label: t`Undo`,
+					onPress: async () => {
+						// Only while the answer is still the accepted one: later typing stays.
+						if (current.current.text !== chosen.text) {
+							showToast({ message: t`The answer changed since, so it wasn't restored.` });
+							return;
+						}
+						const restored = await onSave(
+							{ answer: chosen.before.text, factIds: chosen.before.factIds },
+							{ answer: chosen.text, factIds: chosen.factIds },
+						);
+						if (restored.ok && current.current.text === chosen.text) {
+							setText(chosen.before.text);
+							answerDraft.clear(chosen.before.text);
+						}
+					},
+				},
+			});
+		});
+	};
+	const change = proposal && proposal.before.text.trim() ? rewriteSummary(proposal.before.text, proposal.text) : null;
 
 	return (
 		<Block
@@ -363,6 +430,29 @@ function AnswerCard({
 
 			{proposal ? (
 				<View style={{ gap: space.s2 }}>
+					{change ? (
+						<Text variant="caption" color={change.removed > 0 ? "warnText" : "ink3"}>
+							{[
+								change.words < 0
+									? plural(-change.words, { one: "Shorter by # word", other: "Shorter by # words" })
+									: change.words > 0
+										? plural(change.words, { one: "Longer by # word", other: "Longer by # words" })
+										: t`Same length`,
+								...(change.removed > 0
+									? [
+											plural(change.removed, {
+												one: "changes or removes # of your sentences",
+												other: "changes or removes # of your sentences",
+											}),
+										]
+									: []),
+								...(change.added > 0
+									? [plural(change.added, { one: "# new or reworded sentence", other: "# new or reworded sentences" })]
+									: []),
+							].join(" · ")}
+							{change.removed > 0 ? ` ${t`Check that nothing you wrote yourself is lost.`}` : ""}
+						</Text>
+					) : null}
 					<Text
 						style={{
 							padding: space.s3,
@@ -402,14 +492,7 @@ function AnswerCard({
 							icon="check"
 							label={t`Accept`}
 							disabled={disabled || stale}
-							onPress={() => {
-								const accepted = proposal.text;
-								setText(accepted);
-								void onSave({ answer: accepted, factIds: proposal.factIds }).then(
-									(result) => result.ok && answerDraft.clear(accepted),
-								);
-								setProposal(null);
-							}}
+							onPress={() => accept(proposal)}
 						/>
 						<Button variant="ghost" size="sm" label={t`Skip`} onPress={() => setProposal(null)} />
 						{limit ? (
@@ -424,6 +507,15 @@ function AnswerCard({
 							</Text>
 						) : null}
 					</Actions>
+					{proposal.factIds.length > 0 ? (
+						<Text variant="caption" color="ink3">
+							{t`Uses: ${proposal.factIds
+								.map((id) => facts?.find((fact) => fact.id === id)?.text)
+								.filter((value): value is string => !!value)
+								.map(shortLabel)
+								.join(" · ")}`}
+						</Text>
+					) : null}
 				</View>
 			) : readOnly ? (
 				<Text color="ink2">{text}</Text>

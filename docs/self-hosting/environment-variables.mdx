@@ -169,8 +169,28 @@ Its callback URL is `APP_URL` followed by `/api/auth/callback/custom`.
 ## Email
 
 Reactive Resume sends email for account verification, password resets and email changes. Sending turns on only when
-`SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM` are all set. Until then, each email is written to the server log
-instead, so you can still copy verification links from there.
+`SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM` are all set. Until then, emails aren't sent. In production the
+server logs only each email's recipient and subject, never its link, because the link signs someone in. So without
+SMTP, password reset, email verification and email changes don't work, and passkeys (which need a verified email)
+can't be added. The app says so on those screens. In development (`NODE_ENV` not `production`) the full email,
+link included, is printed to the server console. Each email goes out in the account's interface language, or English while that
+language has no translation for it.
+
+#### Recover an account without email
+
+If someone is locked out because they lost both their authenticator and their backup codes, you can turn off
+two-step verification for their account in the database, then ask them to sign in with their password and set it
+up again:
+
+```sql
+UPDATE "user" SET two_factor_enabled = false WHERE email = 'person@example.com';
+DELETE FROM two_factor WHERE user_id = (SELECT id FROM "user" WHERE email = 'person@example.com');
+-- Devices trusted for 30 days would otherwise skip the new second factor.
+DELETE FROM verification WHERE identifier LIKE 'trust-device-%' AND value = (SELECT id FROM "user" WHERE email = 'person@example.com');
+```
+
+A forgotten password needs the reset email, so configure SMTP, even temporarily, to send it. People who sign in with
+a social account or passkey can add a password in **Settings → Account** without one.
 
 | Variable      | Default | Description                                                                                                                                                                    |
 | ------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

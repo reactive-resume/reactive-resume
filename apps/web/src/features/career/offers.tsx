@@ -5,9 +5,9 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { selectOfferPair } from "@reactive-resume/schema/career-offer";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -16,6 +16,7 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
@@ -27,10 +28,11 @@ import { cn } from "@reactive-resume/utils/style";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { CareerLoadError } from "./load-state";
 import { formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
-import { OfferEntry } from "./offer-entry";
-import { useCareerTime, useNow } from "./shared";
+import { OfferEntry, OfferForm } from "./offer-entry";
+import { useCareerTime, useNow, withUndo } from "./shared";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
-import { orpc } from "@/libs/orpc/client";
+import { toastError } from "@/libs/error-message";
+import { client, orpc } from "@/libs/orpc/client";
 
 type Offer = SavedItem & { data: SavedData<"offer"> };
 type Side = "a" | "b";
@@ -111,10 +113,30 @@ type OffersPageProps = { a: string | undefined; b: string | undefined };
 /** C20: two saved offers side by side, in their own currency and pay period, against the user's requirements. */
 export function OffersPage({ a, b }: OffersPageProps) {
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const query = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "offer" } }));
 	const profileQuery = useQuery(orpc.career.profile.queryOptions());
 	const applications = useQuery(applicationsListQueryOptions());
-	const offers = query.data?.filter((item): item is Offer => item.data.kind === "offer");
+	const [hidden, setHidden] = useState<string[]>([]);
+	const [editing, setEditing] = useState<string | null>(null);
+	const offers = query.data?.filter((item): item is Offer => item.data.kind === "offer" && !hidden.includes(item.id));
+
+	// Deleting waits out its Undo toast, as everywhere else saved work is deleted.
+	const remove = (offer: Offer) => {
+		setHidden((ids) => [...ids, offer.id]);
+		withUndo({
+			description: t`Offer deleted`,
+			onUndo: () => setHidden((ids) => ids.filter((id) => id !== offer.id)),
+			commit: () =>
+				client.career
+					.deleteSavedItem({ id: offer.id })
+					.catch((error: unknown) => {
+						setHidden((ids) => ids.filter((id) => id !== offer.id));
+						toastError(error, t`Couldn't delete that offer. Try again.`);
+					})
+					.finally(() => void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() })),
+		});
+	};
 
 	const setPair = (next: { a: string | undefined; b: string | undefined }) =>
 		void navigate({ to: "/dashboard/career/offers", search: next });
@@ -203,11 +225,30 @@ export function OffersPage({ a, b }: OffersPageProps) {
 		? offers.filter((offer) => pair.some((item) => item.id === offer.id)).at(-1)
 		: undefined;
 
+	const edited = offers.find((offer) => offer.id === editing);
+
 	return (
 		<div className="grid gap-5">
 			{applicationOffers}
-			{applications.data && <OfferEntry />}
 			{earlier && <h2 className="text-base font-semibold">{t`Changes since ${versionLabel(earlier)}`}</h2>}
+			{edited ? (
+				<OfferForm
+					key={edited.id}
+					offer={edited}
+					{...(edited.applicationId && edited.application
+						? {
+								application: {
+									id: edited.applicationId,
+									company: edited.application.company,
+									role: edited.application.role,
+								},
+							}
+						: {})}
+					onClose={() => setEditing(null)}
+				/>
+			) : applications.data ? (
+				<OfferEntry />
+			) : null}
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<p className="text-sm text-ink-2">
 					<Trans>
@@ -239,6 +280,11 @@ export function OffersPage({ a, b }: OffersPageProps) {
 				left={left}
 				right={right}
 				onChoose={(side, id) => setPair(side === "a" ? { a: id, b } : { a, b: id })}
+				onEdit={(offer) => {
+					setEditing(offer.id);
+					window.scrollTo({ top: 0, behavior: "smooth" });
+				}}
+				onDelete={remove}
 			/>
 
 			<div className="grid items-start gap-5 md:grid-cols-2">
@@ -277,9 +323,11 @@ type ComparisonTableProps = {
 	left: Offer | undefined;
 	right: Offer | undefined;
 	onChoose: (side: Side, id: string) => void;
+	onEdit: (offer: Offer) => void;
+	onDelete: (offer: Offer) => void;
 };
 
-function ComparisonTable({ offers, left, right, onChoose }: ComparisonTableProps) {
+function ComparisonTable({ offers, left, right, onChoose, onEdit, onDelete }: ComparisonTableProps) {
 	const cells = useCells();
 	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
 	const rows = [
@@ -308,7 +356,14 @@ function ComparisonTable({ offers, left, right, onChoose }: ComparisonTableProps
 					return (
 						<div key={side} className="border-line max-md:not-first:border-t md:border-s">
 							{offer || side === "a" ? (
-								<OfferHeader offer={offer} offers={offers} otherId={other?.id} onChoose={(id) => onChoose(side, id)} />
+								<OfferHeader
+									offer={offer}
+									offers={offers}
+									otherId={other?.id}
+									onChoose={(id) => onChoose(side, id)}
+									onEdit={onEdit}
+									onDelete={onDelete}
+								/>
 							) : (
 								<div className="m-3 grid gap-1 rounded-lg border border-dashed border-line-2 p-4">
 									<p className="text-sm font-semibold">
@@ -419,10 +474,25 @@ type OfferHeaderProps = {
 	offers: Offer[];
 	otherId: string | undefined;
 	onChoose: (id: string) => void;
+	onEdit?: (offer: Offer) => void;
+	onDelete?: (offer: Offer) => void;
 };
 
-/** The column header is the picker: every application with a saved offer, and each version of it. */
-function OfferHeader({ offer, offers, otherId, onChoose }: OfferHeaderProps) {
+/** Where the terms came from, so a blank reads as what it is. */
+const originLabel = (offer: Offer) =>
+	offer.data.origin === "message"
+		? offer.data.editedAt
+			? t`Read from a message, edited by you`
+			: t`Read from a message`
+		: offer.data.origin === "manual"
+			? t`Entered by you`
+			: null;
+
+/**
+ * The column header is the picker: every application with a saved offer, and each version of it, and where the open
+ * offer is corrected or deleted.
+ */
+function OfferHeader({ offer, offers, otherId, onChoose, onEdit, onDelete }: OfferHeaderProps) {
 	const { when } = useCareerTime();
 	const groups = new Map<string, Offer[]>();
 	for (const item of offers) {
@@ -460,6 +530,7 @@ function OfferHeader({ offer, offers, otherId, onChoose }: OfferHeaderProps) {
 									.filter((item) => item.applicationId === offer.applicationId)
 									.findIndex((item) => item.id === offer.id) + 1}
 							</span>
+							{originLabel(offer) && <span className="text-xs text-ink-3">{originLabel(offer)}</span>}
 						</span>
 						<Icon name="caret-down" size={18} className="shrink-0 text-ink-3" />
 					</>
@@ -489,6 +560,19 @@ function OfferHeader({ offer, offers, otherId, onChoose }: OfferHeaderProps) {
 						</DropdownMenuGroup>
 					);
 				})}
+				{offer && onEdit && onDelete && (
+					<>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem onClick={() => onEdit(offer)}>
+							<Icon name="pencil-simple" size={18} />
+							<Trans>Edit terms</Trans>
+						</DropdownMenuItem>
+						<DropdownMenuItem variant="destructive" onClick={() => onDelete(offer)}>
+							<Icon name="trash" size={18} />
+							<Trans>Delete offer</Trans>
+						</DropdownMenuItem>
+					</>
+				)}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
@@ -502,15 +586,16 @@ function useCells() {
 	return (offer: Offer, other: Offer | undefined): Record<string, Cell> => {
 		const terms = offer.data;
 		const company = companyOf(offer);
+		// A blank is only "not in the message" if nobody checked it by hand; typed-in blanks were left blank.
+		const blank =
+			terms.origin === "message" && !terms.editedAt
+				? t`Not found in the message`
+				: terms.origin
+					? t`Left blank`
+					: t`Not recorded`;
 		const unknown: Cell = {
-			value: <span className="text-ink-3">{t`Unknown`}</span>,
-			notes: [
-				{
-					icon: "question",
-					tone: "warn",
-					text: isDeciding(offer) ? t`Not in the offer · ask ${company}` : t`Not recorded`,
-				},
-			],
+			value: <span className="text-ink-3">{isDeciding(offer) ? blank : t`Not recorded`}</span>,
+			notes: isDeciding(offer) ? [{ icon: "question", tone: "warn", text: t`Ask ${company}` }] : [],
 		};
 		const money = (amount: number) => {
 			const value = formatMoney(locale, terms.currency, amount);
@@ -564,7 +649,13 @@ function useCells() {
 			base: terms.base === null ? unknown : { value: money(terms.base), strong: true, notes: better("base") },
 			variable:
 				terms.variable === null
-					? unknown
+					? terms.variableConditions.trim()
+						? // A percentage or a condition without an amount: shown as written, never turned into money.
+							{
+								value: terms.variableConditions,
+								notes: [{ icon: "question", tone: "warn", text: t`No amount stated · value uncertain` }],
+							}
+						: unknown
 					: {
 							value: money(terms.variable),
 							notes: [
@@ -652,10 +743,13 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 
 	const checks: [string, (terms: Offer["data"]) => boolean][] = [
 		[t`What is the base salary, and is it negotiable?`, (terms) => terms.base === null],
-		[t`Is there a bonus, and what does it depend on?`, (terms) => terms.variable === null],
+		[
+			t`Is there a bonus, and what does it depend on?`,
+			(terms) => terms.variable === null && !terms.variableConditions.trim(),
+		],
 		[
 			t`How is the bonus decided, and how much of it was paid out last year?`,
-			(terms) => terms.variable !== null && terms.variableConditions.trim() !== "",
+			(terms) => terms.variableConditions.trim() !== "",
 		],
 		[t`Is equity part of the offer?`, (terms) => !terms.equity.trim()],
 		[

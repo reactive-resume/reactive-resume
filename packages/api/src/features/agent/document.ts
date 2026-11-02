@@ -6,6 +6,7 @@ import type {
 import type { Passage, ProposalEvidence, ProposalTarget, RequirementCoverage } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { UIMessage } from "ai";
+import { ORPCError } from "@orpc/client";
 import { and, desc, eq } from "drizzle-orm";
 import {
 	proposeEditsInputSchema,
@@ -235,14 +236,17 @@ export type ReviewContext = {
 
 const NO_REVIEW_CONTEXT: ReviewContext = { facts: new Map(), posting: null };
 
-type ReviewFields = Pick<ProposeEditsInput["edits"][number], "requirement" | "evidence" | "factIds" | "unsupported">;
+type ReviewFields = Pick<
+	ProposeEditsInput["edits"][number],
+	"requirement" | "evidence" | "factIds" | "unsupported" | "addsClaims"
+>;
 type Cite = (
 	passageIds?: readonly string[],
 	factIds?: readonly string[],
 ) => { evidence: ProposalEvidence[]; unresolved: number };
 /** What a reviewed change shows the user: the requirement it addresses, what's cited, what nothing backs. */
 type Review = Partial<
-	Pick<ProposeEditsOutput["edits"][number], "requirement" | "evidence" | "unresolved" | "unsupported">
+	Pick<ProposeEditsOutput["edits"][number], "requirement" | "evidence" | "unresolved" | "unsupported" | "addsClaims">
 >;
 
 /**
@@ -282,6 +286,8 @@ function reviewer(document: LoadedDocument, review: ReviewContext) {
 			...(evidence.length > 0 ? { evidence } : {}),
 			...(unresolved > 0 ? { unresolved } : {}),
 			...(unsupported.length > 0 ? { unsupported } : {}),
+			// A word the document doesn't use ("term") is too weak a sign on its own: most rewrites have one.
+			...(fields.addsClaims || unsupported.some((claim) => claim.kind !== "term") ? { addsClaims: true } : {}),
 		};
 	};
 	return { byId, cite, reviewOf };
@@ -444,11 +450,13 @@ export function resolveDocumentEdits(
 ): ProposeEditsOutput {
 	// Tailoring never edits a resume other jobs share: only the copy made for the posting's application.
 	if (document.kind === "resume" && review.posting && document.applicationId !== review.posting.applicationId)
-		throw new Error(NOT_JOB_COPY_MESSAGE);
+		throw new ORPCError("BAD_REQUEST", { message: NOT_JOB_COPY_MESSAGE });
 	const schema = document.kind === "resume" ? proposeResumeEditsInputSchema : proposeEditsInputSchema;
 	const parsed = schema.safeParse(input);
 	if (!parsed.success)
-		throw new Error("This suggestion couldn't be prepared. Read the document again, or edit it in Write.");
+		throw new ORPCError("BAD_REQUEST", {
+			message: "This suggestion couldn't be prepared. Read the document again, or edit it in Write.",
+		});
 	return "changes" in parsed.data
 		? resolveResumeEdits(document, parsed.data, review)
 		: resolveEdits(document, parsed.data, review);
@@ -524,6 +532,7 @@ function combinedReview(reviews: readonly Review[]): Review {
 		...(evidence.length > 0 ? { evidence } : {}),
 		...(unresolved > 0 ? { unresolved } : {}),
 		...(unsupported.length > 0 ? { unsupported } : {}),
+		...(reviews.some((review) => review.addsClaims) ? { addsClaims: true } : {}),
 	};
 }
 

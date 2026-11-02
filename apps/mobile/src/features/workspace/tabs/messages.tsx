@@ -4,7 +4,8 @@ import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "../shell";
 import type { SaveResult } from "../state";
 import { plural, t } from "@lingui/core/macro";
-import { useLingui } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { ORPCError } from "@orpc/client";
 import { useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -30,7 +31,6 @@ import { stageScope, useInvalidateApplications } from "@/features/applications/q
 import { listedApplication, offerHintFor, useOfferHints } from "@/features/applications/stage-actions";
 import { formatMoney } from "@/features/career/offer-compare";
 import { OfferEntry } from "@/features/career/offer-entry";
-import { withUndo } from "@/features/career/undo";
 import { Banner, Button, Icon, Sheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
@@ -226,8 +226,8 @@ type ProposalCardProps = {
 };
 
 /**
- * W16–W17: changes the message implies, each one ticked by default. Nothing changes until Apply; Apply shows at once
- * and commits when its Undo toast closes.
+ * W16–W17: changes the message implies, each one ticked by default. Nothing changes until Apply; Apply saves at once,
+ * and its toast's Undo reverses exactly what it changed while nothing else has changed it since.
  */
 function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) {
 	const { t, i18n } = useLingui();
@@ -280,9 +280,10 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				const at = when(change.at);
 				return {
 					title: t`Follow up on ${at}`,
+					// The date is the application's next step, shown with it in Applications; it doesn't schedule a reminder.
 					detail: note
-						? t`Next step: ${note}. Adds a reminder to Today.`
-						: t`Adds a reminder to Today if you haven't heard back by then.`,
+						? t`Next step: ${note}. Sets the application's follow-up date.`
+						: t`Sets the application's follow-up date, in case you haven't heard back by then.`,
 				};
 			}
 			case "offer": {
@@ -313,50 +314,93 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 		}
 	};
 
+	const offer = reply.data.offer;
+	const unknown = t`Not stated`;
+	const amount = (value: number | null) =>
+		offer && value !== null ? formatMoney(i18n.locale, offer.currency, value) : unknown;
+	const terms: Array<[string, string]> = offer
+		? [
+				[t`Offer type`, offer.version === "written" ? t`Written offer` : t`Verbal offer`],
+				[t`Currency`, offer.currency],
+				[t`Pay period`, offer.period === "year" ? t`Per year` : offer.period === "month" ? t`Per month` : t`Per hour`],
+				[t`Base salary`, amount(offer.base)],
+				[t`Bonus`, amount(offer.variable)],
+				[t`Bonus conditions`, offer.variableConditions || unknown],
+				[t`Equity`, offer.equity || unknown],
+				[t`Where you work`, offer.location || unknown],
+				[t`Office days a week`, offer.officeDays === null ? unknown : String(offer.officeDays)],
+				[t`Leave`, offer.leave || unknown],
+				[t`Learning budget`, amount(offer.learning)],
+				[t`Other benefits`, offer.other || unknown],
+				[t`Respond by`, offer.respondBy ? when(offer.respondBy) : unknown],
+			]
+		: [];
+
 	const followUp = changes.find((change, index) => change.type === "follow-up" && applied?.changes.includes(index));
 	const count = ticked.length;
 
-	const onApply = () => {
+	const refresh = () =>
+		Promise.all([
+			invalidate(),
+			queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() }),
+			queryClient.invalidateQueries({ queryKey: orpc.career.schedules.key() }),
+		]);
+	const reason = (error: unknown, fallback: string) =>
+		error instanceof ORPCError && error.message ? error.message : fallback;
+
+	// Saved before it shows as applied: leaving the app right after can't lose it. Undo is the server's reverse.
+	const onApply = async () => {
 		const chosen = ticked;
 		// A move from Saved needs the receipt the user confirmed. Nothing is written until that confirmation.
 		if (chosen.some((index) => needsSubmission(changes[index], application.status))) {
 			setConfirming(chosen);
 			return;
 		}
-		// One pending apply per reply, even after leaving and reopening the tab: Undo always cancels that one.
-		if (!replyApplies.start(pendingKey, { changes: chosen, at: new Date() })) return;
-		// The account that pressed Apply; the commit is dropped if another one is signed in by then.
 		const origin = getDraftScope();
-		// A bulk move of this application chosen while the changes wait behind Undo, or are on their way, starts from
-		// the stage they save.
+		const scope = stageScope();
+		// One apply per reply at a time, even after leaving and reopening the tab.
+		if (!replyApplies.start(pendingKey, { changes: chosen, at: new Date() })) return;
 		const saved = stageBaselinesFor(queryClient).write(
-			stageScope(),
+			scope,
 			application.id,
 			listedApplication(queryClient, application.id),
 		);
-		withUndo({
+		try {
+			const dispatched = await dispatchForOrigin(origin, getDraftScope, async () => {
+				const answer = await client.career.applyReply({ id: reply.id, changes: chosen });
+				if ((await origin) !== (await getDraftScope())) return;
+				saved(savedStageIn(answer, application.id));
+				await refresh();
+			});
+			if (dispatched === "cancelled" || (await origin) !== (await getDraftScope())) return;
+		} catch (error) {
+			showToast({ message: reason(error, t`Couldn't update the application. Nothing was changed; try again.`) });
+			return;
+		} finally {
+			saved(undefined);
+			replyApplies.finish(pendingKey);
+		}
+		showToast({
 			message: t`Application updated`,
-			restore: () => {
-				saved(undefined);
-				replyApplies.finish(pendingKey);
-			},
-			failed: () => showToast({ message: t`Couldn't update the application. Nothing was changed; try again.` }),
-			// The client, not this screen's mutation: the commit may run after the screen is gone.
-			commit: async () => {
-				try {
-					await dispatchForOrigin(origin, getDraftScope, async () => {
-						saved(savedStageIn(await client.career.applyReply({ id: reply.id, changes: chosen }), application.id));
-						await Promise.all([
-							invalidate(),
-							queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() }),
-							queryClient.invalidateQueries({ queryKey: orpc.career.schedules.key() }),
-						]);
-					});
-				} finally {
-					// A failed or dropped commit saved nothing (a saved one has settled already).
-					saved(undefined);
-					replyApplies.finish(pendingKey);
-				}
+			action: {
+				label: t`Undo`,
+				onPress: () => {
+					const reverted = stageBaselinesFor(queryClient).write(
+						scope,
+						application.id,
+						listedApplication(queryClient, application.id),
+					);
+					void dispatchForOrigin(origin, getDraftScope, async () => {
+						const answer = await client.career.undoReply({ id: reply.id });
+						if ((await origin) !== (await getDraftScope())) return;
+						reverted(savedStageIn(answer, application.id));
+						await refresh();
+					})
+						.catch((error: unknown) =>
+							showToast({ message: reason(error, t`Couldn't undo the update. The application is unchanged.`) }),
+						)
+						.finally(() => reverted(undefined));
+				},
 			},
 		});
 	};
@@ -446,6 +490,22 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				);
 			})}
 
+			{offer && changes.some((change) => change.type === "offer") ? (
+				<View style={{ gap: 8 }}>
+					<Text variant="label">
+						<Trans>Offer terms</Trans>
+					</Text>
+					{terms.map(([label, value]) => (
+						<View key={label}>
+							<Text variant="caption" color="ink3">
+								{label}
+							</Text>
+							<Text selectable>{value}</Text>
+						</View>
+					))}
+				</View>
+			) : null}
+
 			{/* Only a message about scheduling can tempt adding an interview from an unconfirmed time. */}
 			{reply.data.unconfirmed.length > 0 && !changes.some((change) => change.type === "offer") ? (
 				<Text variant="caption" color="ink3">
@@ -473,7 +533,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 						label={
 							count === 0 ? t`Nothing to apply` : plural(count, { one: "Apply # change", other: "Apply # changes" })
 						}
-						onPress={onApply}
+						onPress={() => void onApply()}
 					/>
 				)
 			) : null}

@@ -63,3 +63,18 @@ export function contentDisposition(filename: string, disposition: "inline" | "at
 	const value = `${disposition}; filename="${fallback}"`;
 	return fallback === safe ? value : `${value}; filename*=UTF-8''${encodeRfc5987(safe)}`;
 }
+
+// What runtimes say when a request never reached the server: Chrome, Safari, Firefox, React Native. Any other
+// TypeError is a bug worth seeing, not a lost connection.
+const NETWORK_FAILURES = new Set([
+	"Failed to fetch",
+	"Load failed",
+	"NetworkError when attempting to fetch resource.",
+	"network error",
+	"The network connection was lost.",
+	"The Internet connection appears to be offline.",
+	"Network request failed",
+]);
+
+/** The request couldn't reach the server: no connection, or it dropped mid-response. */
+export const isNetworkError = (error: unknown) => error instanceof TypeError && NETWORK_FAILURES.has(error.message);

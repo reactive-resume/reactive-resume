@@ -4,10 +4,12 @@ import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
 import { accountAuth, auth } from "@reactive-resume/auth/config";
 import * as schema from "@reactive-resume/db/schema";
+import { env } from "@reactive-resume/env/server";
 import { applicationProfileRecordSchema } from "@reactive-resume/schema/application-profile";
 import { applicationPipelineSchema } from "@reactive-resume/schema/applications/lanes";
 import { careerProfileDataSchema, careerWorkspaceSchema, discoverySourceSchema } from "@reactive-resume/schema/career";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
+import { localeSchema } from "@reactive-resume/utils/locale";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { protectedProcedure, publicProcedure } from "../../context";
 import { applicationDto } from "../../dto/application";
@@ -56,20 +58,23 @@ export const authRouter = {
 			tags: ["Authentication"],
 			operationId: "getProfile",
 			summary: "Get your profile",
-			description: "Returns only the authenticated user's profile and timezone. No secrets are included.",
+			description:
+				"Returns only the authenticated user's profile, timezone and interface language (null until an app reports one). No secrets are included.",
 		})
 		.input(z.object({}).optional())
 		.output(
-			createSelectSchema(schema.user).pick({
-				id: true,
-				name: true,
-				username: true,
-				displayUsername: true,
-				image: true,
-				email: true,
-				emailVerified: true,
-				timezone: true,
-			}),
+			createSelectSchema(schema.user)
+				.pick({
+					id: true,
+					name: true,
+					username: true,
+					displayUsername: true,
+					image: true,
+					email: true,
+					emailVerified: true,
+					timezone: true,
+				})
+				.extend({ locale: localeSchema.nullable() }),
 		)
 		.handler(({ context }) => authService.getProfile(context.user.id)),
 
@@ -81,7 +86,7 @@ export const authRouter = {
 			operationId: "updateProfile",
 			summary: "Update your profile",
 			description:
-				"Updates only the authenticated user's name, username, image, or timezone. Usernames must be unique.",
+				"Updates only the authenticated user's name, username, image, timezone, or interface language. The language picks the language of account emails. Usernames must be unique.",
 		})
 		.input(
 			z.object({
@@ -95,6 +100,7 @@ export const authRouter = {
 					.optional(),
 				image: z.url().nullable().optional(),
 				timezone: timezoneSchema.optional(),
+				locale: localeSchema.optional(),
 			}),
 		)
 		.output(z.object({ status: z.boolean() }))
@@ -104,6 +110,7 @@ export const authRouter = {
 				...(input.username !== undefined ? { username: input.username } : {}),
 				...(input.image !== undefined ? { image: input.image } : {}),
 				...(input.timezone !== undefined ? { timezone: input.timezone } : {}),
+				...(input.locale !== undefined ? { locale: input.locale } : {}),
 			}),
 		),
 
@@ -209,6 +216,32 @@ export const authRouter = {
 			return { key: result.key };
 		}),
 
+	setPassword: accountProcedure
+		.route({
+			// Session only: keys and OAuth tokens can't add a password.
+			spec: (operation) => ({ ...operation, security: [{ cookieAuth: [] }] }),
+			method: "POST",
+			path: "/auth/password",
+			tags: ["Authentication"],
+			operationId: "setPassword",
+			summary: "Set a password",
+			description:
+				"Adds a password to an account that signs in another way (a social account or passkey). Unlike a password reset, it keeps other devices signed in and keeps API keys, passkeys and connected apps. Requires a recent browser session.",
+		})
+		.input(z.object({ newPassword: z.string().min(8).max(64) }))
+		.output(z.void())
+		.handler(async ({ context, input }) => {
+			if (context.authentication?.method !== "session")
+				throw new ORPCError("FORBIDDEN", { message: "Set a password from Settings in a web browser." });
+			if (env.FLAG_DISABLE_EMAIL_AUTH)
+				throw new ORPCError("FORBIDDEN", { message: "Password sign-in is turned off on this server." });
+			await assertRecentSignIn(context.reqHeaders);
+			await auth.api.setPassword({
+				body: { newPassword: input.newPassword },
+				headers: context.reqHeaders ?? new Headers(),
+			});
+		}),
+
 	exportData: protectedProcedure
 		.use(accountRateLimit)
 		.route({
@@ -233,6 +266,8 @@ export const authRouter = {
 					username: true,
 					displayUsername: true,
 					image: true,
+					timezone: true,
+					locale: true,
 					emailVerified: true,
 					createdAt: true,
 					updatedAt: true,

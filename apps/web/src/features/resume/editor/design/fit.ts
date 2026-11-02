@@ -1,5 +1,4 @@
 import type { FitStep } from "./presets";
-import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
 import { plural, t } from "@lingui/core/macro";
@@ -36,32 +35,25 @@ function applyStep(metadata: WritableDraft<ResumeData["metadata"]>, step: FitSte
 const densityLabel = () => ({ compact: t`Compact`, normal: t`Normal`, roomy: t`Roomy` });
 const marginsLabel = () => ({ narrow: t`narrow margins`, normal: t`normal margins`, wide: t`wide margins` });
 
-/** How far the content runs past the authored pages, in lines of body text, from the page map on screen. */
-export function measureOverflow(data: ResumeData, rendered: { pageCount: number; pageMap: PageMap | undefined }) {
-	const authored = Math.max(1, data.metadata.layout.pages.length);
-	if (rendered.pageCount <= authored) return null;
-
-	// The extent of the content on each spill page (positions are per page), summed.
-	const extents = new Map<number, { top: number; bottom: number }>();
-	for (const node of rendered.pageMap?.nodes ?? []) {
-		if (node.page < authored) continue;
-		const extent = extents.get(node.page);
-		extents.set(node.page, {
-			top: Math.min(extent?.top ?? node.y, node.y),
-			bottom: Math.max(extent?.bottom ?? 0, node.y + node.height),
-		});
-	}
-	const height = [...extents.values()].reduce((sum, extent) => sum + extent.bottom - extent.top, 0);
-	const lineHeight = data.metadata.typography.body.fontSize * data.metadata.typography.body.lineHeight;
-	const lines = height > 0 && lineHeight > 0 ? Math.max(1, Math.round(height / lineHeight)) : null;
-	return { authored, pageCount: rendered.pageCount, lines };
-}
-
 /**
  * Fit to the authored pages: tightens density, then margins, then size (never below 9 pt), waiting for the page
  * to re-render after each step. The whole run is one undo step.
  */
-export async function runFit() {
+export function runFit() {
+	const id = useResumeStore.getState().resume?.id;
+	if (!id) return Promise.resolve();
+	const current = fitting.get(id);
+	if (current) return current;
+	const run = fitOnce().finally(() => fitting.delete(id));
+	fitting.set(id, run);
+	return run;
+}
+
+// One Fit at a time per resume: a second press joins the run already going instead of reading a page count that
+// hasn't caught up with the first run's last step. Runs for different resumes stay apart.
+const fitting = new Map<string, Promise<void>>();
+
+async function fitOnce() {
 	const { resume, updateResumeData, undo } = useResumeStore.getState();
 	if (!resume) return;
 	const { metadata } = resume.data;

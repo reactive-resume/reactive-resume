@@ -1,4 +1,6 @@
 import type { ImportKind } from "@/features/resume/import/read-file";
+import type { ImportReview } from "@reactive-resume/import/review";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { plural, t } from "@lingui/core/macro";
@@ -7,10 +9,12 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
+import { reviewImport, withLeftoverSection, withLinkTargets } from "@reactive-resume/import/review";
 import { Button } from "@reactive-resume/ui/components/button";
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -23,7 +27,14 @@ import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
 import { SetUpAi } from "@/features/assistant/provider-setup";
-import { detectImportKind, ImportError, readResumeFile, summarizeImport } from "@/features/resume/import/read-file";
+import { getSectionName } from "@/features/resume/editor/check/issues";
+import {
+	detectImportKind,
+	ImportError,
+	readImportSource,
+	readResumeFile,
+	summarizeImport,
+} from "@/features/resume/import/read-file";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
@@ -50,6 +61,14 @@ type Step =
 	| { name: "choose" }
 	| { name: "import-choice"; file: File; kind: "pdf" | "docx" }
 	| { name: "importing"; file: File; stage: number; notes: string[] }
+	| {
+			name: "review";
+			file: File;
+			data: ResumeData;
+			review: ImportReview;
+			/** How much of the file's own text the import was compared with. */
+			comparison: "full" | "partial" | "none";
+	  }
 	| { name: "imported"; file: File; resumeId: string; sections: number; entries: number; flagged: number }
 	| { name: "failed"; file: File; message: string }
 	| { name: "copy" };
@@ -139,10 +158,52 @@ function useResumeImport(
 				onRead: (note) => advance(1, note),
 			});
 			if (!current()) return;
-			const summary = summarizeImport(resume);
-			advance(1, t`file read`);
-			advance(2, plural(summary.sections, { one: "# section", other: "# sections" }));
+			// A PDF or Word file is read by a model or a heuristic: the user sees what came in, and what didn't,
+			// before anything is created. Structured files (JSON, LinkedIn) come in as they are.
+			if (kind === "pdf" || kind === "docx") {
+				advance(1, t`file read`);
+				const source = await readImportSource(file, kind);
+				if (!current()) return;
+				const data = source ? withLinkTargets(resume, source.links) : resume;
+				setStep({
+					name: "review",
+					file,
+					data,
+					review: reviewImport(data, source?.lines),
+					comparison: !source ? "none" : source.partial ? "partial" : "full",
+				});
+				return;
+			}
+			await create(file, resume, attempt);
+		} catch (error) {
+			if (current()) fail(file, error);
+		}
+	};
 
+	const fail = (file: File, error: unknown) => {
+		const message =
+			error instanceof ImportError
+				? error.message
+				: getOrpcErrorMessage(error, {
+						byCode: {
+							BAD_REQUEST: t`The file couldn't be read as a resume.`,
+							BAD_GATEWAY: t`Couldn't reach the AI provider. Try again in a moment.`,
+						},
+						fallback: t`Couldn't import the file. Try again, or start blank.`,
+					});
+		setStep({ name: "failed", file, message });
+	};
+
+	const create = async (file: File, resume: ResumeData, attempt = ++run.current) => {
+		const current = () => run.current === attempt;
+		const summary = summarizeImport(resume);
+		setStep({
+			name: "importing",
+			file,
+			stage: 2,
+			notes: [t`file read`, plural(summary.sections, { one: "# section", other: "# sections" })],
+		});
+		try {
 			const resumeId = await client.resume.import({ data: resume });
 			if (!current()) return;
 			if (applicationId) await client.documents.linkApplication({ type: "resume", id: resumeId, applicationId });
@@ -151,20 +212,16 @@ function useResumeImport(
 			void refreshDocuments();
 			setStep({ name: "imported", file, resumeId, ...summary });
 		} catch (error) {
-			if (!current()) return;
-			const message =
-				error instanceof ImportError
-					? error.message
-					: getOrpcErrorMessage(error, {
-							byCode: {
-								BAD_REQUEST: t`The file couldn't be read as a resume.`,
-								BAD_GATEWAY: t`Couldn't reach the AI provider. Try again in a moment.`,
-							},
-							fallback: t`Couldn't import the file. Try again, or start blank.`,
-						});
-			setStep({ name: "failed", file, message });
+			if (current()) fail(file, error);
 		}
 	};
+
+	/** Creates the reviewed resume, with what the reader couldn't place kept as a section when the user chose to. */
+	const confirm = (step: Extract<Step, { name: "review" }>, keepLeftovers: boolean) =>
+		create(
+			step.file,
+			keepLeftovers ? withLeftoverSection(step.data, step.review.notImported, t`More from your file`) : step.data,
+		);
 
 	const cancel = () => {
 		run.current++;
@@ -172,7 +229,7 @@ function useResumeImport(
 		setStep({ name: "choose" });
 	};
 
-	return { importFile, cancel, refreshDocuments };
+	return { importFile, confirm, cancel, refreshDocuments };
 }
 
 /**
@@ -211,7 +268,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 		void navigate({ to: "/dashboard/applications", search: { create: true } });
 	};
 
-	const { importFile, cancel, refreshDocuments } = useResumeImport(setStep, openLetter, data?.applicationId);
+	const { importFile, confirm, cancel, refreshDocuments } = useResumeImport(setStep, openLetter, data?.applicationId);
 
 	// A file dropped on the page starts importing as soon as the dialog opens.
 	const dropped = useRef(data?.file);
@@ -223,6 +280,8 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	});
 
 	const { startBlank, trySample, newLetter, creating } = useStartDocument(data?.applicationId);
+	const { data: letterResumes } = useQuery(orpc.resume.list.queryOptions());
+	const [letterResumeId, setLetterResumeId] = useState(data?.sourceResumeId ?? "");
 
 	const chooseFile = () => inputRef.current?.click();
 
@@ -293,6 +352,13 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						<Trans>Back</Trans>
 					</Button>
 				</div>
+			) : step.name === "review" ? (
+				<ReviewStep
+					key="review"
+					step={step}
+					onCreate={(keepLeftovers) => void confirm(step, keepLeftovers)}
+					onChooseFile={chooseFile}
+				/>
 			) : step.name !== "choose" ? (
 				<ImportStep
 					key="progress"
@@ -315,13 +381,28 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						</DialogDescription>
 					</DialogHeader>
 
+					<label className="grid gap-1.5 text-sm">
+						<Trans>Resume for a new letter</Trans>
+						<NativeSelect
+							value={letterResumeId}
+							onChange={(event) => setLetterResumeId(event.target.value)}
+							disabled={creating}
+						>
+							<option value="">{t`No resume`}</option>
+							{letterResumes?.map((resume) => (
+								<option key={resume.id} value={resume.id}>
+									{resume.name}
+								</option>
+							))}
+						</NativeSelect>
+					</label>
 					{context === "letters" && (
 						<ChoiceTile
 							icon="envelope-simple"
 							title={t`New cover letter`}
 							description={t`Start a letter for a job, or write one from scratch.`}
 							disabled={creating}
-							onClick={() => void newLetter()}
+							onClick={() => void newLetter(letterResumeId || null)}
 						/>
 					)}
 					{(context === "applications" || context === "career") && (
@@ -353,8 +434,9 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 							</span>
 							<span className="text-[13px] leading-[19px] text-ink-2">
 								<Trans>
-									Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every
-									section and flag anything we're unsure of.
+									Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in
+									ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create
+									the resume.
 								</Trans>
 							</span>
 						</span>
@@ -382,7 +464,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 								type="button"
 								className="flex items-center gap-1.5 text-ink-2 hover:text-ink disabled:opacity-60"
 								disabled={creating}
-								onClick={() => void newLetter()}
+								onClick={() => void newLetter(letterResumeId || null)}
 							>
 								<Icon name="envelope-simple" size={18} />
 								<Trans>New cover letter instead</Trans>
@@ -406,6 +488,110 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 				</div>
 			)}
 		</DialogContent>
+	);
+}
+
+type ReviewStepProps = {
+	step: Extract<Step, { name: "review" }>;
+	onCreate: (keepLeftovers: boolean) => void;
+	onChooseFile: () => void;
+};
+
+/** What the reader found, section by section, and the lines it couldn't place, before the resume is created. */
+function ReviewStep({ step, onCreate, onChooseFile }: ReviewStepProps) {
+	const { review, data } = step;
+	const [keepLeftovers, setKeepLeftovers] = useState(true);
+	const leftoversId = useId();
+	return (
+		<div className={cn(ENTER_CLASS, "grid gap-4")}>
+			<DialogHeader>
+				<DialogTitle className="font-display text-[22px] font-medium">
+					<Trans>Check what was found</Trans>
+				</DialogTitle>
+				<DialogDescription>{step.file.name}</DialogDescription>
+			</DialogHeader>
+
+			{review.sections.length > 0 ? (
+				<ul aria-label={t`Sections found`} className="grid gap-1 rounded-lg border border-line p-3 text-[13px]">
+					{review.sections.map((section) => (
+						<li key={section.key} className="flex justify-between gap-3">
+							<span className="truncate">{section.title.trim() || getSectionName(data, section.key)}</span>
+							<span className="shrink-0 text-ink-3">
+								{section.key === "summary" ? (
+									<Trans>text</Trans>
+								) : (
+									<Plural value={section.entries} one="# entry" other="# entries" />
+								)}
+							</span>
+						</li>
+					))}
+				</ul>
+			) : (
+				<p className="text-[13px] text-ink-2">
+					<Trans>No sections were found in this file.</Trans>
+				</p>
+			)}
+
+			{step.comparison !== "full" && (
+				<p className="text-[13px] leading-[19px] text-ink-2">
+					{step.comparison === "partial" ? (
+						<Trans>
+							This file is long, so only its first pages were compared with what came in. Check the rest in the editor.
+						</Trans>
+					) : (
+						<Trans>
+							This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each
+							section against your file in the editor.
+						</Trans>
+					)}
+				</p>
+			)}
+
+			{review.missingContact && (
+				<p className="flex gap-2 rounded-lg bg-warn-soft p-3 text-[13px] leading-[19px] text-warn-text">
+					<Icon name="warning-circle" size={20} className="shrink-0" />
+					<Trans>Name and contact details weren't found. Add them in Basics.</Trans>
+				</p>
+			)}
+
+			{review.notImported.length > 0 && (
+				<div className="grid gap-2 rounded-lg bg-sunken p-3 text-[13px] leading-[19px]">
+					<p className="font-medium">
+						<Plural
+							value={review.notImported.length}
+							one="# line wasn't placed in any section:"
+							other="# lines weren't placed in any section:"
+						/>
+					</p>
+					<ul className="grid max-h-40 gap-0.5 overflow-y-auto ps-4 text-ink-2">
+						{review.notImported.map((line) => (
+							<li key={line} className="list-disc">
+								{line}
+							</li>
+						))}
+					</ul>
+					<label htmlFor={leftoversId} className="flex items-center gap-2">
+						<input
+							id={leftoversId}
+							type="checkbox"
+							checked={keepLeftovers}
+							onChange={(event) => setKeepLeftovers(event.target.checked)}
+							className="size-4 accent-accent"
+						/>
+						<Trans>Add them as a section called “More from your file” to sort later</Trans>
+					</label>
+				</div>
+			)}
+
+			<div className="flex flex-wrap justify-end gap-2">
+				<Button variant="secondary" onClick={onChooseFile}>
+					<Trans>Choose another file</Trans>
+				</Button>
+				<Button onClick={() => onCreate(keepLeftovers && review.notImported.length > 0)}>
+					<Trans>Create resume</Trans>
+				</Button>
+			</div>
+		</div>
 	);
 }
 

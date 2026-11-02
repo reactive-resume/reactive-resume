@@ -35,6 +35,7 @@ import {
 } from "@/features/applications/next-step";
 import { offerHintFor, useOfferHints } from "@/features/applications/queries";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { useSaveTimezone } from "@/features/settings/use-save-timezone";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -79,6 +80,7 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 
 	return (
 		<div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start xl:grid-cols-[minmax(0,1fr)_380px]">
+			<TimezoneNotice className="order-first lg:col-span-full" />
 			<div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-7">
 				<NeedsYou now={now} onReview={reviewRoles} className="order-2 lg:order-none" />
 				<NewRoles
@@ -95,6 +97,34 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 			</div>
 			<ScheduleSheet schedule={schedule} onScheduleChange={onScheduleChange} onDelete={deleteSchedule} />
 		</div>
+	);
+}
+
+/**
+ * When the account's timezone isn't this device's, times here carry their zone ("16:56 UTC"); this says so once and
+ * offers the device's zone in one step, as Settings → Preferences does.
+ */
+function TimezoneNotice({ className }: { className?: string }) {
+	const { timeZone, deviceTimeZone } = useCareerTime();
+	const save = useSaveTimezone();
+	const [saving, setSaving] = useState(false);
+	if (!deviceTimeZone) return null;
+	return (
+		<p className={cn("flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink-2", className)}>
+			<Icon name="globe-simple" size={18} className="text-ink-3" />
+			<Trans>Times here are in {timeZone}, your account's timezone.</Trans>
+			<Button
+				variant="link"
+				className="h-auto p-0 text-[13px] text-ink-2 underline"
+				disabled={saving}
+				onClick={() => {
+					setSaving(true);
+					void save(deviceTimeZone).finally(() => setSaving(false));
+				}}
+			>
+				<Trans>Use this device's timezone ({deviceTimeZone})</Trans>
+			</Button>
+		</p>
 	);
 }
 
@@ -746,7 +776,7 @@ function RoleCard({ row, found, tracked, pending, selected, onSelect, onTrack, o
 type ComingUpProps = { now: Date; className?: string };
 
 function ComingUp({ now, className }: ComingUpProps) {
-	const { format, time, relative, locale } = useCareerTime();
+	const { format, time, when, relative, locale } = useCareerTime();
 	const applicationQuery = useQuery(applicationsListQueryOptions());
 	const applications = applicationQuery.data;
 	const briefingQuery = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "briefing" } }));
@@ -762,7 +792,8 @@ function ComingUp({ now, className }: ComingUpProps) {
 		);
 	if (applicationQuery.isPending || briefingQuery.isPending) return <Skeleton className="h-36 rounded-xl" />;
 	const open = (applications ?? []).filter((application) => application.status !== "closed");
-	const next = upcomingInterviews(collectInterviews(open), now)[0];
+	// The next interview in full, then the two after it, so tomorrow's screening isn't hidden behind today's.
+	const [next, ...later] = upcomingInterviews(collectInterviews(open), now).slice(0, 3);
 	if (!next) return null;
 
 	const { application, interview, start } = next;
@@ -819,6 +850,25 @@ function ComingUp({ now, className }: ComingUpProps) {
 				<Trans>Open workspace</Trans>
 				<Icon name="arrow-right" size={18} className="rtl:-scale-x-100" />
 			</Button>
+			{later.length > 0 && (
+				<ul aria-label={t`Later interviews`} className="grid gap-1 border-t border-line pt-3">
+					{later.map((item) => (
+						<li key={item.interview.id}>
+							<Link
+								to="/dashboard/applications/$applicationId/{-$tab}"
+								params={{ applicationId: item.application.id, tab: "prepare" }}
+								search={{ round: item.interview.id }}
+								className="flex min-w-0 items-baseline gap-2 rounded-sm text-[13px] hover:underline"
+							>
+								<span className="shrink-0 text-ink-3">{when(item.start)}</span>
+								<span className="truncate text-ink-2">
+									{item.application.company} · {interviewKindOf(item.interview.kind)?.label ?? item.interview.kind}
+								</span>
+							</Link>
+						</li>
+					))}
+				</ul>
+			)}
 		</section>
 	);
 }
@@ -887,7 +937,14 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 	};
 
 	const status = (row: Schedule) => {
-		if (!row.intervalDays && row.lastQueuedAt) return t`Done · ${day(row.nextRunAt)}`;
+		// A one-off's queued run goes by its outcome: still running or retrying, failed after its last try, or done.
+		if (!row.intervalDays && row.lastQueuedAt) {
+			const run = row.lastRun?.status;
+			if (run === "failed") return t`Failed · ${day(row.nextRunAt)} · open to check it`;
+			if (run === "queued" || run === "running") return t`Running · ${day(row.nextRunAt)}`;
+			return t`Done · ${day(row.nextRunAt)}`;
+		}
+		if (row.lastRun?.status === "failed") return t`Last run failed · open to check it`;
 		let line = when(row.nextRunAt);
 		if (row.kind === "discovery") {
 			const clock = time(row.nextRunAt);
@@ -965,6 +1022,7 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 					{rows.map((row) => {
 						const { icon, title } = scheduleKind(row.kind);
 						const done = !row.intervalDays && Boolean(row.lastQueuedAt);
+						const failed = row.lastRun?.status === "failed";
 						return (
 							<CollapseRow key={row.id} className="border-t border-line">
 								<div className="flex items-start gap-3 px-4 py-3">
@@ -976,7 +1034,12 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 									>
 										<span className="text-sm font-semibold">{title}</span>
 										<span className="line-clamp-2 text-xs leading-[17px] text-ink-2">{describe(row)}</span>
-										<span className={cn("text-xs", row.enabled && !done ? "text-accent-text" : "text-ink-3")}>
+										<span
+											className={cn(
+												"text-xs",
+												failed ? "text-danger-text" : row.enabled && !done ? "text-accent-text" : "text-ink-3",
+											)}
+										>
 											{status(row)}
 										</span>
 									</button>

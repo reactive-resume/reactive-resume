@@ -1,6 +1,7 @@
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties, ReactNode } from "react";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { DEFAULT_PDF_PAGE_SIZE, getResumePreviewGapValue, getScaledPreviewPageSize } from "./preview.shared.utils";
@@ -43,6 +44,7 @@ export function ResumePreviewLoader({
 	showPageNumbers = false,
 	failure,
 }: ResumePreviewLoaderProps) {
+	const { t } = useLingui();
 	const baseSize = data?.metadata.page.format === "letter" ? { width: 612, height: 792 } : DEFAULT_PDF_PAGE_SIZE;
 	const pageSize = getScaledPreviewPageSize(baseSize, pageScale);
 	const resolvedPageGap = getResumePreviewGapValue(pageGap);
@@ -64,13 +66,15 @@ export function ResumePreviewLoader({
 					<figure key={pageNumber} className="shrink-0">
 						{showPageNumbers ? (
 							<figcaption className="mb-1 text-[0.625rem] font-medium text-ink-3">
-								Page {pageNumber} of {pageCount}
+								<Trans>
+									Page {pageNumber} of {pageCount}
+								</Trans>
 							</figcaption>
 						) : null}
 
 						<div
 							role={failure ? undefined : "img"}
-							aria-label={failure ? undefined : `Loading resume page ${pageNumber} of ${pageCount}`}
+							aria-label={failure ? undefined : t`Loading resume page ${pageNumber} of ${pageCount}`}
 							style={pageSize}
 							className={cn(
 								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-white text-ink-3",

@@ -46,11 +46,18 @@ const approvalPartSchema = z.object({
 	input: z.unknown(),
 });
 
-/** Exact arguments awaiting a user decision; model prose cannot create an approval control. */
-export function agentApprovalRequests(
-	message: UIMessage,
-): Array<{ id: string; kind: "search" | "story"; text: string }> {
-	return message.parts.flatMap<{ id: string; kind: "search" | "story"; text: string }>((part) => {
+type ApprovalRequest =
+	| { id: string; kind: "search"; text: string }
+	| { id: string; kind: "story"; text: string; story: z.infer<typeof proposedStorySchema> };
+
+const proposedStorySchema = careerStoryInputSchema.omit({ applicationId: true });
+
+/**
+ * Exact arguments awaiting a user decision; model prose cannot create an approval control. A story comes with its
+ * parts and the fact IDs it claims to rest on, so it can be reviewed part by part; `text` keeps the flat form.
+ */
+export function agentApprovalRequests(message: UIMessage): ApprovalRequest[] {
+	return message.parts.flatMap<ApprovalRequest>((part) => {
 		const parsed = approvalPartSchema.safeParse(part);
 		if (!parsed.success) return [];
 		const { type, input, approval } = parsed.data;
@@ -58,7 +65,7 @@ export function agentApprovalRequests(
 			const query = searchWebInputSchema.safeParse(input);
 			return query.success ? [{ id: approval.id, kind: "search" as const, text: query.data.query }] : [];
 		}
-		const story = careerStoryInputSchema.omit({ applicationId: true }).safeParse(input);
+		const story = proposedStorySchema.safeParse(input);
 		if (!story.success) return [];
 		const { title, situation, task, action, result, reflection, tags } = story.data;
 		return [
@@ -66,9 +73,56 @@ export function agentApprovalRequests(
 				id: approval.id,
 				kind: "story" as const,
 				text: [title, situation, task, action, result, reflection, tags.join(", ")].filter(Boolean).join("\n\n"),
+				story: story.data,
 			},
 		];
 	});
+}
+
+/**
+ * Why a reply failed, as the server words it. Plain English so older clients still read it; current clients look the
+ * message up and show their own translation. Provider failures are the ones a different connection can fix.
+ */
+export const AGENT_REPLY_ERRORS = {
+	providerKey: "The AI provider rejected the saved key. Check the key in Settings, or change the connection.",
+	providerModel: "The AI provider doesn't offer this model. Choose another model, or change the connection.",
+	providerLimit:
+		"The AI provider is limiting requests (rate limit or quota). Wait a minute and try again, or change the connection.",
+	providerDown: "The AI provider is unavailable right now. Try again in a moment, or change the connection.",
+	provider: "The AI provider couldn't finish this reply. Try again, or change the connection.",
+	failed: "This reply couldn't finish. Try again.",
+} as const;
+export type AgentReplyError = keyof typeof AGENT_REPLY_ERRORS;
+
+/** The reply error a message names, or null for any other message (a safe server reason or a browser error). */
+export const agentReplyError = (message: string): AgentReplyError | null =>
+	(Object.keys(AGENT_REPLY_ERRORS) as AgentReplyError[]).find((key) => AGENT_REPLY_ERRORS[key] === message) ?? null;
+
+const knowledgeOutputSchema = z.object({
+	facts: z.array(z.object({ id: z.string(), text: z.string() })).catch([]),
+	stories: z.array(z.object({ id: z.string(), data: z.object({ title: z.string() }) })).catch([]),
+});
+
+/** The facts and stories a reply's Knowledge searches returned: what it actually read, once each. */
+export function agentKnowledgeUsed(message: UIMessage) {
+	const facts = new Map<string, string>();
+	const stories = new Map<string, string>();
+	for (const part of message.parts) {
+		const toolPart = part as { state?: string; output?: unknown };
+		if (
+			!["tool-search_career_knowledge", "tool-read_knowledge"].includes(part.type) ||
+			toolPart.state !== "output-available"
+		)
+			continue;
+		const parsed = knowledgeOutputSchema.safeParse(toolPart.output);
+		if (!parsed.success) continue;
+		for (const fact of parsed.data.facts) facts.set(fact.id, fact.text);
+		for (const story of parsed.data.stories) stories.set(story.id, story.data.title);
+	}
+	return {
+		facts: [...facts].map(([id, text]) => ({ id, text })),
+		stories: [...stories].map(([id, title]) => ({ id, title })),
+	};
 }
 
 export type AgentWebSource = {
@@ -124,6 +178,18 @@ export function agentWebSources(message: UIMessage): AgentWebSource[] {
 	return [...sources.values()];
 }
 
+/** File types the assistant can read from an attachment: text, Word, PDF, images and audio (the file pickers offer these). */
+export const AGENT_ATTACHMENT_TYPES = [
+	"text/plain",
+	"text/markdown",
+	"application/json",
+	"application/pdf",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	"image/*",
+	"audio/mpeg",
+	"audio/wav",
+] as const;
+
 /** Review fields any proposed change may carry when tailoring: what it addresses, what backs it, what nothing backs. */
 const reviewInput = {
 	requirement: z
@@ -149,6 +215,12 @@ const reviewInput = {
 		.optional()
 		.describe(
 			"Anything the new text claims that no cited passage or fact says: an employer, title, date, figure, skill or responsibility the user told you or must confirm. Leave none out.",
+		),
+	addsClaims: z
+		.boolean()
+		.optional()
+		.describe(
+			"true when the new text says something the document, cited facts or the user's messages don't: a new scope, outcome, audience or detail, however small. The user checks it before accepting.",
 		),
 };
 
@@ -246,6 +318,8 @@ export const proposedEditSchema = z.object({
 		.array(z.object({ kind: z.union([z.enum(UNSUPPORTED_CLAIM_KINDS), z.literal("term")]), text: z.string() }))
 		.optional(),
 	edited: z.boolean().optional(),
+	/** The new text says something nothing checked says; the user confirms it before accepting. */
+	addsClaims: z.boolean().optional(),
 });
 
 export const requirementCoverageSchema = z.object({
@@ -266,6 +340,8 @@ export const proposeEditsOutputSchema = z.looseObject({
 	tailoredFor: z.string().nullable().optional(),
 	/** Set when the server withheld these edits from acceptance here (see tailoringAllows). */
 	revoked: z.boolean().optional(),
+	/** Earlier undecided edits in the conversation that these replace (same passage); apps show them as replaced. */
+	supersedes: z.array(z.string()).optional(),
 });
 
 /**

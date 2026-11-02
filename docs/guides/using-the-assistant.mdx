@@ -85,6 +85,21 @@ A request involving fields, entries or sections appears as one card for the enti
 - For text-only suggestions with more than one edit waiting, **Accept all** applies the edits it can still place. The notification counts those edits and tells you how many could not be placed. A structural set has one Accept control for all its changes.
 - With an edit focused, press <kbd>A</kbd> to accept, <kbd>R</kbd> to reject, and <kbd>↑</kbd> <kbd>↓</kbd> to move between edits.
 
+Each set is headed by what the edits do together, as the assistant titled it, and how many there are: for example **Tailor to the Lumen posting · 3 proposed edits**. An edit that adds a passage after an existing one shows **Adds after:** and that passage, then the new text, one line per new bullet. An edit whose new text says something your document doesn't, however small, shows **New detail: check it's true**. **Accept all** leaves those out (the button reads **Accept the others**), so you accept each one yourself after checking it.
+
+Before accepting resume edits, **Page fit** compares the printed page count before and after the edits eligible for **Accept all** (or **Accept the others**). **Estimated overflow change** shows the signed change in spill lines: a positive number adds overflow, a negative number reduces it. Measurement uses private copies with the current design and does not save changes. Edits open for rewriting and new details needing individual confirmation are left out. If measurement fails, check the page preview before accepting.
+
+<Frame caption="Page-fit measurement before accepting: this fictional one-edit set stays at five printed pages, with no change in estimated overflow.">
+  <img
+    src="/images/guides/using-the-assistant/proposal-page-fit.png"
+    alt="Proposal header reading Tighten the first passage, 1 proposed edit, Page fit: 5 to 5 printed pages, Estimated overflow change: 0 lines"
+  />
+</Frame>
+
+When you refine a request ("Don't say last year, it was 2025"), the new suggestion replaces the earlier one for the same passage if you hadn't decided on it. The earlier card shows **Replaced by a newer suggestion**, so you don't have to reject it yourself.
+
+After you ask to **Tighten to one page**, the request tells the assistant how far the resume runs over, and its reply says how much its edits save. Wording alone often can't close a gap that comes from the layout. Once a set is applied and the resume still runs over, the card says by how much and offers **Fit to one page**, which adjusts the design. On mobile, use **Fit to one page** on the Page tab.
+
 Accepted edits show **Applied** and the set's title changes to, for example, **1 of 1 applied**. They stay applied when you refine the wording yourself. If you change a passage yourself before deciding, its edit shows **Out of date: the text has changed since.** A pending structural set also becomes out of date when resume content or layout changes. Ask again to get a fresh suggestion.
 
 <Frame caption="Accept all placed two edits; the competing rewrite could not be placed">
@@ -151,16 +166,21 @@ Above the message box, chips show what goes with your next message: the document
 
 Removing either context chip also leaves earlier conversation history out of the next reply. Pending questions or approvals from a different context cannot resume; send a new message with your current choices.
 
+The **Knowledge** chip is off by default. Turn it on for a message to let the assistant search your shared facts and stories, plus Knowledge private to the selected application when its posting is shared, read-only, for example "Add my conference talk from Knowledge". The line under the box then says what it finds is sent too. It can't change Knowledge; facts private to another application never appear. If you later correct, switch off or forget a fact, messages written after the assistant first searched Knowledge, up to that change, aren't sent again.
+
+From **Career → Coach** or a job's coach, **Add to resume** under an answer opens a resume's assistant with that answer in the message box; in a job's coach, that job's copies are listed first. The answer is handed over inside the app, not in the page address. Nothing is sent until you review it and press send, and the assistant proposes edits for you to accept as usual.
+
+Under each reply, **Used** names what it read: the document, and any facts and stories its Knowledge search found. Select a chip to see them.
+
 When you select **Interview prep** from an application's detail panel, the assistant uses that application's posting, even when several applications share the same resume.
 
 ## Attach files
 
-Select the paperclip in the message box to attach files, such as a job description PDF or your notes. You can attach them before your first message or later in the conversation. Each file shows as a chip; select its **×** to remove it before sending.
+Select the paperclip in the message box to attach files, such as a job description PDF or your notes. You can attach them before your first message or later in the conversation. The file picker offers the types the assistant can read. Each file shows as a chip; select its **×** to remove it before sending, which also deletes the uploaded file.
 
-- Plain text, Markdown and JSON files are read as text (up to the first 40,000 characters).
+- Plain text, Markdown, JSON and Word (`.docx`) files are read as text (up to the first 40,000 characters). A Word file's page headers and footers are read too. If a Word file is damaged or has no text, the step shows **Couldn't read the attachment**.
 - Images, PDFs and MP3 or WAV audio are passed to the model directly. Whether the model can use them depends on your provider.
-- Other file types are attached but not read. Paste the relevant text instead.
-- You can attach up to 10 files per message, each up to 25 MB, 100 MB per conversation and 1 GB across all your conversations.
+- You can attach up to 10 files per message, each up to 25 MB, 100 MB per conversation and 1 GB across all your conversations. When you reach a limit, the message names it.
 
 <Note>
   Attachments work with local, S3-compatible or Vercel Blob storage and stay private. If you use a reverse proxy, allow
@@ -172,6 +192,17 @@ Select the paperclip in the message box to attach files, such as a job descripti
 If you connect an optional **Web access** service in Integrations, the assistant uses that selected service for search and enhanced reading. If your installation's administrator set up server search, the assistant searches with it instead, with or without a connection. **Web access** then says **Your server provides search for Applications and the assistant**, and, until you connect a service, **Test search** checks it. Without a connection, the assistant can read supplied public URLs with the built-in reader or work from text you paste. See [Assistant tools](/guides/ai-agent-tools#web-search-support).
 
 You can also supply a public page URL: the assistant uses the selected reader or built-in reading. Page reading does not require a separate search account. Failed reading leads to pasted-text recovery; clipped or incomplete pages are identified before you rely on them.
+
+To remove your saved web connection, select **Remove connection**, then confirm. **Keep connection** cancels
+without changing it. On the website and mobile apps, the confirmation explains that reconnecting needs your API
+key again. The built-in reader remains active after removal.
+
+<Frame caption="Removing a saved web connection asks first; this example uses fictional local credentials">
+  <img
+    src="/images/guides/using-the-assistant/remove-web-connection-confirmation.png"
+    alt="The web connection removal dialog explains that reconnecting needs the key again, with Keep connection and Remove connection buttons"
+  />
+</Frame>
 
 Before each search, a card shows the exact query. Select **Search the web** to send that query to your search service, or **Skip** to continue without it. Review it for private details before approving. This applies on web and mobile.
 
@@ -191,7 +222,7 @@ The model chip in the assistant's header shows the model in use. Select it to ch
 ## Stop, retry or copy a conversation
 
 - **Stop a reply** with the stop button that replaces send while the assistant is working, or press <kbd>Esc</kbd> in the message box. If it stopped before proposing anything, you'll see **Stopped. No edits were proposed.** with **Continue**.
-- **When the provider returns an error**, your message is kept. Select **Retry**, or **Switch model** to try another provider.
+- **When a reply fails**, your message is kept. Select **Retry**. **Switch model** appears when the provider caused the failure, such as a rejected key, a missing model or a rate limit. A lost internet connection says **Couldn't reach Reactive Resume** instead.
 - **Copy transcript** at the end of the conversation copies the messages as plain text, speaker by speaker, without the tool steps, and includes the retrieved source links.
 
 A single reply can run for about four minutes. If it hits that limit, the assistant says "Time limit reached. Your progress is saved. Ask me to continue."

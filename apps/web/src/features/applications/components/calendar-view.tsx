@@ -43,7 +43,7 @@ type ApplicationCalendarProps = {
 };
 
 export function ApplicationCalendar({ compact, applications, allApplications, onOpen }: ApplicationCalendarProps) {
-	const { locale, timeZone, time } = useCareerTime();
+	const { locale, timeZone, plainTime, timeRange } = useCareerTime();
 	const now = useNow();
 	const todayKey = dayKey(now, timeZone);
 	// Grid dates are civil days carried in UTC; interview start/end remain absolute instants.
@@ -191,7 +191,7 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 											<InterviewChip
 												key={item.interview.id}
 												item={item}
-												time={time(item.start)}
+												time={plainTime(item.start)}
 												onOpen={() => edit(item)}
 											/>
 										))}
@@ -213,7 +213,7 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 														<InterviewChip
 															key={item.interview.id}
 															item={item}
-															time={time(item.start)}
+															time={plainTime(item.start)}
 															onOpen={() => edit(item)}
 														/>
 													))}
@@ -268,7 +268,7 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 									<UpcomingCard
 										key={item.interview.id}
 										item={item}
-										timeRange={`${time(item.start)} – ${time(item.end)}`}
+										timeRange={timeRange(item.start, item.end)}
 										locale={locale}
 										onEdit={() => edit(item)}
 										onOpenApplication={() => onOpen(item.application)}
@@ -314,9 +314,11 @@ function UpcomingCard({ item, timeRange, locale, onEdit, onOpenApplication }: Up
 					<span className="font-medium">{timeRange}</span>
 					<span className="text-ink-3">{formatDuration(item.interview.durationMinutes, locale)}</span>
 				</span>
-				<span className="mt-1 block truncate font-semibold">{item.application.company}</span>
+				<span dir="auto" className="mt-1 block truncate font-semibold">
+					{item.application.company}
+				</span>
 				<span className="block truncate text-xs text-ink-3">
-					{kind?.label ?? item.interview.kind} · {item.application.role}
+					{kind?.label ?? item.interview.kind} · <bdi>{item.application.role}</bdi>
 				</span>
 				{item.interview.location && (
 					<span className="mt-1.5 flex items-center gap-1 text-xs text-ink-3">
@@ -356,7 +358,9 @@ function InterviewChip({ item, time, onOpen }: InterviewChipProps) {
 			<span className="size-2 shrink-0 rounded-sm sm:hidden" style={{ background: kind?.color }} />
 			<span className="flex min-w-0 items-baseline gap-1.5 max-sm:hidden">
 				<span className="shrink-0 text-ink-3 tabular-nums">{time}</span>
-				<span className="truncate font-medium">{item.application.company}</span>
+				<span dir="auto" className="truncate font-medium">
+					{item.application.company}
+				</span>
 			</span>
 		</button>
 	);

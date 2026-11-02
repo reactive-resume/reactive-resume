@@ -9,14 +9,16 @@ import { View } from "react-native";
 import { selectOfferPair } from "@reactive-resume/schema/career-offer";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { useCareerQueries, useCareerTime, useNow, useOffers } from "./hooks";
+import { client } from "./hooks";
 import { formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
-import { OfferEntry } from "./offer-entry";
+import { OfferEntry, OfferForm } from "./offer-entry";
 import { Actions, LoadState } from "./shared";
+import { withUndo } from "./undo";
 import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
-import { Banner, Button, Card, EmptyState, Screen, SelectSheet, Text, useTheme } from "@/ui";
+import { Banner, Button, Card, EmptyState, Screen, SelectSheet, Text, showToast, useTheme } from "@/ui";
 
-type Offer = SavedItem & { data: OfferTerms & { kind: "offer" } };
+type Offer = SavedItem & { data: Extract<SavedItem["data"], { kind: "offer" }> };
 const periodLabel = (value: OfferTerms["period"]) =>
 	value === "year" ? t`Per year` : value === "month" ? t`Per month` : t`Per hour`;
 export function OffersScreen() {
@@ -28,7 +30,21 @@ export function OffersScreen() {
 	const query = useOffers();
 	const { profile } = useCareerQueries();
 	const applications = useApplications();
-	const offers = (query.data ?? []).filter((item): item is Offer => item.data.kind === "offer");
+	const [hidden, setHidden] = useState<string[]>([]);
+	const [editing, setEditing] = useState<Offer | null>(null);
+	const offers = (query.data ?? []).filter(
+		(item): item is Offer => item.data.kind === "offer" && !hidden.includes(item.id),
+	);
+	// Deleting waits out its Undo toast, as everywhere else saved work is deleted.
+	const remove = (offer: Offer) => {
+		setHidden((ids) => [...ids, offer.id]);
+		withUndo({
+			message: t`Offer deleted`,
+			restore: () => setHidden((ids) => ids.filter((id) => id !== offer.id)),
+			failed: () => showToast({ message: t`Couldn't delete that offer. Try again.` }),
+			commit: () => client.career.deleteSavedItem({ id: offer.id }).then(() => query.refetch()),
+		});
+	};
 	const params = useLocalSearchParams<{ a?: string; b?: string }>();
 	const routeKey = JSON.stringify([params.a, params.b]);
 	const [selection, setSelection] = useState<{ route: string; ids: (string | undefined)[] }>({
@@ -53,6 +69,21 @@ export function OffersScreen() {
 				<Text variant="title">{t`Changes since ${earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`}`}</Text>
 			)}
 			{applications.data && <OfferEntry primary={!query.isPending && !query.isError && !offers.length} />}
+			{editing ? (
+				<OfferForm
+					offer={editing}
+					{...(editing.applicationId && editing.application
+						? {
+								application: {
+									id: editing.applicationId,
+									company: editing.application.company,
+									role: editing.application.role,
+								},
+							}
+						: {})}
+					onClose={() => setEditing(null)}
+				/>
+			) : null}
 			<LoadState query={query} />
 			<LoadState query={profile} />
 			<LoadState query={applications} />
@@ -101,7 +132,13 @@ export function OffersScreen() {
 									onChange={(id) => setSelected(side === 0 ? [id, b?.id] : [a?.id, id])}
 								/>
 								{offer ? (
-									<OfferCard offer={offer} other={side === 0 ? b : a} profile={profile.data} />
+									<OfferCard
+										offer={offer}
+										other={side === 0 ? b : a}
+										profile={profile.data}
+										onEdit={() => setEditing(offer)}
+										onDelete={() => remove(offer)}
+									/>
 								) : (
 									<EmptyState
 										variant="card"
@@ -151,8 +188,14 @@ function OfferStageApplications({ offers, applications }: OfferStageApplications
 	);
 }
 
-type OfferCardProps = { offer: Offer; other: Offer | undefined; profile: CareerProfileData | undefined };
-function OfferCard({ offer, other, profile }: OfferCardProps) {
+type OfferCardProps = {
+	offer: Offer;
+	other: Offer | undefined;
+	profile: CareerProfileData | undefined;
+	onEdit: () => void;
+	onDelete: () => void;
+};
+function OfferCard({ offer, other, profile, onEdit, onDelete }: OfferCardProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const time = useCareerTime();
@@ -160,7 +203,22 @@ function OfferCard({ offer, other, profile }: OfferCardProps) {
 	const data = offer.data;
 	const deciding = offer.application?.status !== "closed";
 	const sameApplication = !!offer.applicationId && offer.applicationId === other?.applicationId;
-	const unknown = deciding ? t`Unknown · ask` : t`Not recorded`;
+	// A blank is only "not in the message" if nobody checked it by hand; typed-in blanks were left blank.
+	const unknown = !deciding
+		? t`Not recorded`
+		: data.origin === "message" && !data.editedAt
+			? t`Not found in the message · ask`
+			: data.origin
+				? t`Left blank · ask`
+				: t`Not recorded · ask`;
+	const origin =
+		data.origin === "message"
+			? data.editedAt
+				? t`Read from a message, edited by you`
+				: t`Read from a message`
+			: data.origin === "manual"
+				? t`Entered by you`
+				: null;
 	const money = (key: "base" | "variable" | "learning") => {
 		const amount = data[key];
 		if (amount === null) return unknown;
@@ -186,7 +244,14 @@ function OfferCard({ offer, other, profile }: OfferCardProps) {
 	const deadline = data.respondBy ? new Date(data.respondBy).getTime() - now.getTime() : null;
 	const terms = [
 		{ label: t`Base salary`, value: money("base") },
-		{ label: t`Bonus`, value: money("variable") },
+		{
+			label: t`Bonus`,
+			// A percentage or a condition without an amount is shown as written, never turned into money.
+			value:
+				data.variable === null && data.variableConditions
+					? t`${data.variableConditions} · No amount stated · value uncertain`
+					: money("variable"),
+		},
 		{ label: t`Bonus conditions`, value: data.variableConditions || unknown },
 		{ label: t`Equity`, value: data.equity ? t`${data.equity} · Value uncertain` : unknown },
 		{ label: t`Where you work`, value: data.location || unknown },
@@ -210,7 +275,7 @@ function OfferCard({ offer, other, profile }: OfferCardProps) {
 	];
 	const questions = [
 		data.base === null ? t`What is the base salary?` : null,
-		data.variable === null ? t`Is there a bonus, and what does it depend on?` : null,
+		data.variable === null && !data.variableConditions ? t`Is there a bonus, and what does it depend on?` : null,
 		!data.equity ? t`What equity is included, and on what terms?` : null,
 		data.officeDays === null ? t`How many office days are expected?` : null,
 		!data.startDate ? t`When would you start?` : null,
@@ -232,6 +297,11 @@ function OfferCard({ offer, other, profile }: OfferCardProps) {
 			<Text color="ink3">
 				{data.version === "verbal" ? t`Verbal offer` : t`Written offer`} · {data.currency} · {periodLabel(data.period)}
 			</Text>
+			{origin ? <Text color="ink3">{origin}</Text> : null}
+			<Actions>
+				<Button variant="secondary" size="sm" icon="pencil-simple" label={t`Edit terms`} onPress={onEdit} />
+				<Button variant="ghost" size="sm" icon="trash" label={t`Delete offer`} onPress={onDelete} />
+			</Actions>
 			{other && !sameTerms(data, other.data) ? (
 				<Banner tone="warn" message={t`Different currencies or pay periods. No money difference is calculated.`} />
 			) : null}

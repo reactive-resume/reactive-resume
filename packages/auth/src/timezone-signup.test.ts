@@ -3,7 +3,7 @@ import { env } from "@reactive-resume/env/server";
 
 const oauthState = vi.hoisted(() => ({
 	addOAuthServerContext: vi.fn(),
-	getOAuthState: vi.fn<() => Promise<{ serverContext?: { timezone?: unknown } } | null>>(),
+	getOAuthState: vi.fn<() => Promise<{ serverContext?: { timezone?: unknown; locale?: unknown } } | null>>(),
 }));
 
 vi.mock("better-auth/api", async (importOriginal) => ({
@@ -23,7 +23,7 @@ const newUser = {
 	updatedAt: now,
 };
 
-describe("social sign-up timezone", () => {
+describe("social sign-up timezone and language", () => {
 	const createBefore = auth.options.databaseHooks?.user?.create?.before;
 
 	if (!createBefore) throw new Error("Missing user create hook");
@@ -58,5 +58,28 @@ describe("social sign-up timezone", () => {
 		oauthState.getOAuthState.mockResolvedValue({ serverContext: { timezone: "Not/A_Timezone" } });
 
 		await expect(createBefore(newUser, { headers: new Headers() } as never)).resolves.toBeUndefined();
+	});
+
+	it("keeps the interface language across the provider redirect", async () => {
+		oauthState.addOAuthServerContext.mockClear();
+		oauthState.getOAuthState.mockResolvedValue(null);
+
+		await auth.handler(
+			new Request(`${env.APP_URL}/api/auth/sign-in/social`, {
+				method: "POST",
+				headers: new Headers({ "content-type": "application/json", origin: env.APP_URL, cookie: "locale=ar-SA" }),
+				body: JSON.stringify({ provider: "github" }),
+			}),
+		);
+
+		expect(oauthState.addOAuthServerContext).toHaveBeenCalledWith({ locale: "ar-SA" });
+	});
+
+	it("starts the account in the language saved in the OAuth state", async () => {
+		oauthState.getOAuthState.mockResolvedValue({ serverContext: { locale: "ar-SA" } });
+
+		await expect(createBefore(newUser, { headers: new Headers() } as never)).resolves.toEqual({
+			data: expect.objectContaining({ locale: "ar-SA" }),
+		});
 	});
 });

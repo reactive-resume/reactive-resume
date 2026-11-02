@@ -13,7 +13,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
-import { orpc } from "@/libs/orpc/client";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { useLetterEditorStore } from "@/features/letters/store";
+import { useResumeStore } from "@/features/resume/builder/draft";
 
 // The editor chrome resumes and letters share: the back link and drawer controls in the bar, the canvas width
 // and the zoom bar.
@@ -91,7 +93,9 @@ export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTr
 			className="-mx-1.5 flex max-w-[calc(100%+0.75rem)] min-w-0 flex-col items-start rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover"
 		>
 			<span className="flex max-w-full min-w-0 items-center gap-1.5">
-				<span className="truncate text-sm leading-[18px] font-semibold text-ink">{name}</span>
+				<span dir="auto" className="truncate text-sm leading-[18px] font-semibold text-ink">
+					{name}
+				</span>
 				{isLocked && <Icon name="lock" size={16} className="text-ink-3" />}
 				<Icon name="caret-down" size={16} className="text-ink-3" />
 			</span>
@@ -104,38 +108,39 @@ export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTr
  * there — after checking that application owns this document — instead of stranding the user in Documents.
  */
 export function BackLink() {
-	const search = useSearch({ strict: false }) as { applicationId?: string | undefined };
-	const params = useParams({ strict: false }) as { resumeId?: string; coverLetterId?: string };
-	const applicationId = search.applicationId;
-	const detail = useQuery({
-		...orpc.applications.getById.queryOptions({ input: { id: applicationId ?? "" } }),
-		enabled: Boolean(applicationId),
-		retry: false,
-	});
-	const linked =
-		detail.data &&
-		((params.resumeId !== undefined && detail.data.resumeId === params.resumeId) ||
-			(params.coverLetterId !== undefined && detail.data.coverLetterId === params.coverLetterId));
-	const label = linked && detail.data ? t`Back to ${detail.data.company}` : t`Back to documents`;
+	const params = useParams({ strict: false });
+	const search = useSearch({ strict: false });
+	const letterApplicationId = useLetterEditorStore((state) =>
+		state.letter?.id === params.coverLetterId ? state.letter?.sourceApplicationId : null,
+	);
+	const resumeApplicationId = useResumeStore((state) =>
+		state.resume?.id === params.resumeId ? state.resume?.applicationId : null,
+	);
+	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const applicationId = search.applicationId ?? letterApplicationId ?? resumeApplicationId;
+	const application =
+		applications?.find(
+			(item) =>
+				item.id === applicationId &&
+				(params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId),
+		) ??
+		(!search.applicationId
+			? applications?.find((item) =>
+					params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId,
+				)
+			: undefined);
+	const label = application ? t`Back to ${application.company}` : t`Back to documents`;
 
 	return (
 		<Tooltip>
 			<TooltipTrigger
 				render={
-					linked && detail.data ? (
-						<Link
-							to="/dashboard/applications/$applicationId/{-$tab}"
-							params={{ applicationId: detail.data.id }}
-							aria-label={label}
-							className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
-						/>
-					) : (
-						<Link
-							to="/dashboard"
-							aria-label={label}
-							className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
-						/>
-					)
+					<Link
+						to={application ? "/dashboard/applications" : "/dashboard"}
+						search={application ? { applicationId: application.id } : {}}
+						aria-label={label}
+						className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
+					/>
 				}
 			>
 				<Icon name="arrow-left" />

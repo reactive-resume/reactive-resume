@@ -13,11 +13,15 @@ const api = vi.hoisted(() => ({
 	parsePdf: vi.fn(),
 	parseDocx: vi.fn(),
 	readPdfResume: vi.fn(),
+	readPdfSource: vi.fn(),
 	createLetter: vi.fn(),
 	listDocuments: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn() }));
-vi.mock("@/features/resume/import/pdf-text", () => ({ readPdfResume: api.readPdfResume }));
+vi.mock("@/features/resume/import/pdf-text", () => ({
+	readPdfResume: api.readPdfResume,
+	readPdfSource: api.readPdfSource,
+}));
 vi.mock("@/libs/orpc/client", () => ({
 	client: {
 		documents: { list: api.listDocuments },
@@ -29,7 +33,10 @@ vi.mock("@/libs/orpc/client", () => ({
 			list: { queryOptions: () => ({ queryKey: ["providers"], queryFn: api.providers, retry: false }) },
 		},
 		documents: { key: () => ["documents"], list: { queryKey: () => ["documents", "list"] } },
-		resume: { create: { mutationOptions: () => ({ mutationFn: vi.fn() }) } },
+		resume: {
+			create: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			list: { queryOptions: () => ({ queryKey: ["resume", "list"], queryFn: async () => [] }) },
+		},
 		coverLetters: { create: { mutationOptions: () => ({ mutationFn: api.createLetter }) } },
 	},
 }));
@@ -44,6 +51,10 @@ beforeEach(() => {
 	api.listDocuments.mockResolvedValue([]);
 	api.providers.mockRejectedValue(new Error("Provider lookup offline"));
 	api.importResume.mockResolvedValue("imported-resume");
+	api.readPdfSource.mockResolvedValue({
+		lines: ["Alex Morgan", "Customer research", "Patents", "US 11,234,567 · Accessible payment validation"],
+		links: [],
+	});
 	api.readPdfResume.mockResolvedValue(
 		parseResumeText(
 			["Alex Morgan", "alex@example.test", "Product Manager", "Experience", "Customer research"].join("\n"),
@@ -72,11 +83,20 @@ it("imports a PDF through the local text reader when AI connection lookup fails"
 	await screen.findByRole("heading", { name: "Choose how to read this file" });
 	expect(api.parsePdf).not.toHaveBeenCalled();
 	fireEvent.click(screen.getByRole("button", { name: "Read on this device (free)" }));
+	// Nothing is created until the user has seen what was found and what wasn't.
+	await screen.findByRole("heading", { name: "Check what was found" });
+	expect(api.importResume).not.toHaveBeenCalled();
+	expect(screen.getByText("US 11,234,567 · Accessible payment validation")).toBeVisible();
+	fireEvent.click(screen.getByRole("button", { name: "Create resume" }));
 	await screen.findByRole("heading", { name: "Imported" });
 	expect(api.providers).toHaveBeenCalled();
 	expect(api.readPdfResume).toHaveBeenCalledWith(file);
 	expect(api.importResume).toHaveBeenCalledWith({
-		data: expect.objectContaining({ basics: expect.objectContaining({ name: "Alex Morgan" }) }),
+		data: expect.objectContaining({
+			basics: expect.objectContaining({ name: "Alex Morgan" }),
+			// The unplaced line is kept, as the user chose by default.
+			customSections: [expect.objectContaining({ title: "More from your file" })],
+		}),
 	});
 	expect(api.parsePdf).not.toHaveBeenCalled();
 	expect(api.parseDocx).not.toHaveBeenCalled();

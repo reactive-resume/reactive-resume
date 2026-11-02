@@ -4,6 +4,7 @@ import { migrateUserStorage } from "@reactive-resume/api/features/storage";
 import { auth, setAccountLinkHook } from "@reactive-resume/auth/config";
 import { env } from "@reactive-resume/env/server";
 import { isSessionIntentPath } from "@reactive-resume/utils/auth-intent";
+import { supportedLocales } from "@reactive-resume/utils/locale";
 import { TRUSTED_IP_HEADERS } from "@reactive-resume/utils/rate-limit";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
 
@@ -239,6 +240,13 @@ function redirectToOAuthLogin(url: URL, reauthenticate = false, headers = new He
 	const prompt = new Set(url.searchParams.get("prompt")?.split(" ") ?? []);
 	const loginUrl = new URL(prompt.has("create") ? "/auth/register" : "/auth/login", env.APP_URL);
 	if (reauthenticate) loginUrl.searchParams.set("reauthenticate", "true");
+	// A client's OpenID `ui_locales` (the mobile app sends its language) opens the sign-in pages in that language; the
+	// app keeps it, and a new account starts in it. Only a supported locale is passed on.
+	const uiLocale = url.searchParams
+		.get("ui_locales")
+		?.split(" ")
+		.find((tag) => supportedLocales.some((locale) => locale === tag));
+	if (uiLocale) loginUrl.searchParams.set("locale", uiLocale);
 	loginUrl.searchParams.set("callbackURL", `/api/auth/oauth${url.search}`);
 	headers.set("Location", `${loginUrl.pathname}${loginUrl.search}`);
 	return new Response(null, {

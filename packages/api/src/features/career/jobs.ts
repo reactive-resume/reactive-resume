@@ -45,6 +45,10 @@ const READ_NOTIFICATION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 // Due jobs inspected per claim; owners that are busy or locked are skipped, not waited on.
 const CLAIM_CANDIDATES = 20;
 
+const RUN_STATUSES = ["queued", "running", "completed", "failed", "canceled"] as const;
+const runStatus = (status: string): (typeof RUN_STATUSES)[number] =>
+	(RUN_STATUSES as readonly string[]).includes(status) ? (status as (typeof RUN_STATUSES)[number]) : "queued";
+
 export const careerJobs = {
 	list: async (userId: string) => {
 		const rows = await db
@@ -53,11 +57,36 @@ export const careerJobs = {
 			.where(eq(tables.careerSchedule.userId, userId))
 			.orderBy(desc(tables.careerSchedule.updatedAt), desc(tables.careerSchedule.id));
 		const applications = new Set<string>();
-		return rows.filter((row) => {
+		const listed = rows.filter((row) => {
 			if (row.kind !== "follow-up" || !row.applicationId) return true;
 			if (applications.has(row.applicationId)) return false;
 			applications.add(row.applicationId);
 			return true;
+		});
+		if (listed.length === 0) return [];
+		// Each schedule's latest run, so a one-off that failed reads as failed rather than done.
+		const runs = await db
+			.selectDistinctOn([tables.careerJob.scheduleId], {
+				scheduleId: tables.careerJob.scheduleId,
+				status: tables.careerJob.status,
+				error: tables.careerJob.error,
+			})
+			.from(tables.careerJob)
+			.where(
+				and(
+					eq(tables.careerJob.userId, userId),
+					inArray(
+						tables.careerJob.scheduleId,
+						listed.map((row) => row.id),
+					),
+				),
+			)
+			// The run queued last, not the one due last: a schedule moved earlier queues a run due before an older one.
+			.orderBy(tables.careerJob.scheduleId, desc(tables.careerJob.createdAt), desc(tables.careerJob.id));
+		const latest = new Map(runs.map((run) => [run.scheduleId, run]));
+		return listed.map((row) => {
+			const run = latest.get(row.id);
+			return { ...row, lastRun: run ? { status: runStatus(run.status), error: run.error } : null };
 		});
 	},
 

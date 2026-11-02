@@ -1,4 +1,4 @@
-import type { ImportedDocument } from "./import-file";
+import type { ImportedDocument, ImportToReview } from "./import-file";
 import type { DocumentPickerAsset } from "expo-document-picker";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
@@ -12,12 +12,13 @@ import { ActivityIndicator, View } from "react-native";
 import { forEachDatedEntry, hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
 import { copyForJob } from "./copy-for-job";
 import { defaultCopySource } from "./filter";
-import { importDocument, ImportError } from "./import-file";
+import { createReviewedResume, importDocument, ImportError } from "./import-file";
 import { useNewDocuments } from "./new-documents";
 import { documentError, useDocumentRefresh, useDocuments } from "./queries";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
+import { SECTION_TITLES } from "@/features/write/fields";
 import { routes } from "@/routes";
 import { Banner, Button, Card, ListRow, Screen, SelectSheet, Switch, Text, TextArea, TextField, useTheme } from "@/ui";
 
@@ -28,7 +29,7 @@ const ADD_JOB = "__add-job";
 
 export function NewDocument() {
 	const router = useRouter();
-	const { t } = useLingui();
+	const { t, i18n } = useLingui();
 	const { colors, space } = useTheme();
 	const params = useLocalSearchParams<{
 		context?: string;
@@ -45,6 +46,7 @@ export function NewDocument() {
 	const [setup, setSetup] = useState(false);
 	const [step, setStep] = useState<Step>(params.step === "copy" ? "copy" : "choose");
 	const [sourceId, setSourceId] = useState<string | null>(params.sourceResumeId ?? null);
+	const [letterResumeId, setLetterResumeId] = useState(params.sourceResumeId ?? "");
 	const [jobId, setJobId] = useState<string | null>(params.applicationId ?? null);
 	const [newJob, setNewJob] = useState<{ company: string; role: string; posting: string } | null>(null);
 	const [name, setName] = useState<string | null>(null);
@@ -54,6 +56,8 @@ export function NewDocument() {
 	const [progress, setProgress] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [created, setCreated] = useState<ImportedDocument | null>(null);
+	const [pending, setPending] = useState<ImportToReview | null>(null);
+	const [keepLeftovers, setKeepLeftovers] = useState(true);
 	const [applicationLinked, setApplicationLinked] = useState(false);
 	const [summary, setSummary] = useState<string | null>(null);
 	const running = useRef(false);
@@ -138,7 +142,7 @@ export function NewDocument() {
 		run(async (signal) => {
 			let document: ImportedDocument;
 			if (kind === "letter") {
-				const latest = resumes.toSorted((a, b) => b.editedAt.getTime() - a.editedAt.getTime())[0];
+				const selected = resumes.find((resume) => resume.id === letterResumeId);
 				// A number when an untitled letter already exists, so the library can tell them apart until they're named.
 				const base = t`Untitled letter`;
 				const taken = new Set(
@@ -153,7 +157,7 @@ export function NewDocument() {
 						name,
 						recipient: "",
 						content: "",
-						...(latest ? { resumeId: latest.id } : {}),
+						...(selected ? { resumeId: selected.id } : {}),
 						...(params.applicationId ? { applicationId: params.applicationId } : {}),
 					},
 					{ signal },
@@ -222,8 +226,26 @@ export function NewDocument() {
 	const read = (picked: DocumentPickerAsset) =>
 		run(async (signal) => {
 			setProgress(t`Reading the file and finding sections…`);
-			const document = await importDocument(picked, ai.hasAIProvider, aiPdf ?? false, signal);
+			const result = await importDocument(picked, ai.hasAIProvider, aiPdf ?? false, signal);
 			if (!current(signal)) return;
+			// Read with AI: nothing is created until the user has seen what came in and what didn't.
+			if (result.type === "review") {
+				setKeepLeftovers(true);
+				setPending(result);
+				return;
+			}
+			await finishImport(result, signal);
+		});
+	const confirmImport = (reviewed: ImportToReview) =>
+		run(async (signal) => {
+			setProgress(t`Creating the resume…`);
+			const document = await createReviewedResume(reviewed, keepLeftovers, signal);
+			if (!current(signal)) return;
+			setPending(null);
+			await finishImport(document, signal);
+		});
+	const finishImport = async (document: ImportedDocument, signal: AbortSignal) => {
+		{
 			setCreated(document);
 			useNewDocuments.getState().markNew(document);
 			cleanupFile();
@@ -248,7 +270,8 @@ export function NewDocument() {
 					/* Import already succeeded; a summary failure must not offer a duplicate import. */
 				}
 			}
-		});
+		}
+	};
 	const pick = () =>
 		run(async (signal) => {
 			const result = await getDocumentAsync({
@@ -294,7 +317,76 @@ export function NewDocument() {
 							<Text>{progress ?? t`Creating document…`}</Text>
 						</View>
 					)}
-					{created ? (
+					{pending && !created ? (
+						<>
+							<Text variant="heading">{t`Check what was found`}</Text>
+							{pending.review.sections.length > 0 ? (
+								<Card>
+									{pending.review.sections.map((section) => (
+										<ListRow
+											key={section.key}
+											title={
+												section.title.trim() ||
+												(section.key in SECTION_TITLES
+													? i18n._(SECTION_TITLES[section.key as keyof typeof SECTION_TITLES])
+													: section.key)
+											}
+											subtitle={
+												section.key === "summary"
+													? t`text`
+													: plural(section.entries, { one: "# entry", other: "# entries" })
+											}
+										/>
+									))}
+								</Card>
+							) : (
+								<Text color="ink2">{t`No sections were found in this file.`}</Text>
+							)}
+							{pending.review.missingContact && (
+								<Banner tone="warn" message={t`Name and contact details weren't found. Add them in Basics.`} />
+							)}
+							{pending.review.notImported.length > 0 ? (
+								<>
+									<Text variant="label">
+										{plural(pending.review.notImported.length, {
+											one: "# line wasn't placed in any section:",
+											other: "# lines weren't placed in any section:",
+										})}
+									</Text>
+									{pending.review.notImported.map((line) => (
+										<Text key={line} variant="caption" color="ink2">
+											{`• ${line}`}
+										</Text>
+									))}
+									<View style={{ flexDirection: "row", alignItems: "center", gap: space.s3 }}>
+										<Text
+											style={{ flex: 1 }}
+										>{t`Add them as a section called “More from your file” to sort later`}</Text>
+										<Switch
+											label={t`Add them as a section called “More from your file” to sort later`}
+											value={keepLeftovers}
+											onValueChange={setKeepLeftovers}
+											disabled={busy}
+										/>
+									</View>
+								</>
+							) : !pending.compared ? (
+								<Text variant="caption" color="ink2">
+									{t`Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device.`}
+								</Text>
+							) : null}
+							<Button label={t`Create resume`} loading={busy} onPress={() => void confirmImport(pending)} />
+							<Button
+								label={t`Choose another file`}
+								variant="secondary"
+								disabled={busy}
+								onPress={() => {
+									setPending(null);
+									void pick();
+								}}
+							/>
+						</>
+					) : created ? (
 						<>
 							<Text variant="heading">{t`Document ready`}</Text>
 							<Text color="ink2">{summary ?? t`Your document was saved. Review it in the editor.`}</Text>
@@ -362,6 +454,16 @@ export function NewDocument() {
 											onPress={() => void create("blank")}
 										/>
 									</Card>
+									<SelectSheet
+										label={t`Resume for a new letter`}
+										value={letterResumeId}
+										options={[
+											{ value: "", label: t`No resume` },
+											...resumes.map((resume) => ({ value: resume.id, label: resume.name })),
+										]}
+										onChange={setLetterResumeId}
+										disabled={busy}
+									/>
 									<Button
 										label={t`New cover letter instead`}
 										icon="envelope-simple"

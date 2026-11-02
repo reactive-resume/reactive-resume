@@ -9,8 +9,9 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useThreads } from "./chat";
 import { ChatView, ContextChip } from "./chat-view";
 import { useLetterAssistantDocument, useResumeAssistantDocument } from "./document";
+import { takeAssistantHandoff } from "./handoff";
 import { publishProposals } from "./proposals";
-import { ModelButton, ModelSheet, ProviderGate, useConversationProvider } from "./provider";
+import { ConnectionNotice, ModelButton, ModelSheet, ProviderGate, useConversationProvider } from "./provider";
 import { PastConversations } from "./threads";
 import { client } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
@@ -101,9 +102,13 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 	const store = props.kind === "letter" ? useLetterStore : useResumeStore;
 	const providers = useHasAIProvider();
 	const threads = useThreads();
+	// Text the coach handed over for this resume and account: it waits in a new conversation's box, unsent.
+	const [handed] = useState(() =>
+		props.kind === "resume" ? takeAssistantHandoff(getAccountScope(), props.documentId) : null,
+	);
 	// null: the document's latest conversation; "new": a new one.
 	const [selected, setSelected] = useState<string | null>(
-		props.ask || props.prepare ? "new" : (props.threadId ?? null),
+		props.ask || props.prepare || handed ? "new" : (props.threadId ?? null),
 	);
 	const [ask, setAsk] = useState(props.ask ?? null);
 	const [prepare, setPrepare] = useState(props.prepare ?? false);
@@ -115,7 +120,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 	const mine = document ? (threads.data ?? []).filter((thread) => belongsTo(thread, document)) : [];
 	const threadId = selected === "new" ? null : (selected ?? mine[0]?.id ?? null);
 	const summary = mine.find((thread) => thread.id === threadId);
-	const { provider, label, choose } = useConversationProvider(providers, summary, threadId);
+	const { provider, stranded, label, choose } = useConversationProvider(providers, summary, threadId);
 
 	const newConversation = () => {
 		if (props.kind === "resume") publishProposals(props.documentId, []);
@@ -220,11 +225,28 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 				placeholder={t`Ask, or describe a change…`}
 				assistantName={t`Assistant`}
 				disabled={document.locked || !provider}
+				{...(handed && threadId === null ? { draft: handed } : {})}
+				notice={
+					stranded ? (
+						<ConnectionNotice
+							label={summary?.providerLabel ?? null}
+							fallback={providers.usableProviders[0]}
+							onUse={(id) => void choose(id)}
+							onChoose={() => setModelOpen(true)}
+						/>
+					) : null
+				}
 				prompt={ask}
 				onPromptSent={() => setAsk(null)}
 				onSwitchModel={() => setModelOpen(true)}
 				chips={
 					<>
+						<ContextChip
+							icon="brain"
+							label={t`Knowledge`}
+							pressed={context.memory === true}
+							onPress={() => setContext({ ...context, memory: !context.memory })}
+						/>
 						{context.document ? (
 							<ContextChip
 								icon="file-text"
@@ -369,7 +391,8 @@ function disclosure(t: Translate, document: AssistantDocument, context: MessageC
 		!context.document || !context.posting
 			? t`Each send starts fresh with this message and selected files. Previous conversation history stays here.`
 			: t`Previous messages, including document details, are also sent.`;
-	const knowledge = context.memory === true ? ` ${t`Knowledge facts the assistant looks up are sent too.`}` : "";
+	const knowledge =
+		context.memory === true ? ` ${t`Knowledge facts and stories the assistant looks up are sent too.`}` : "";
 	const copy =
 		needsJobCopy(document, context) && document.posting
 			? ` ${t`Edits that use the ${document.posting.company} posting go to a copy made for that job, so this resume stays unchanged.`}`

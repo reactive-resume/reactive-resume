@@ -304,6 +304,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 											<Link
 												to="/builder/letter/$coverLetterId"
 												params={{ coverLetterId: selected }}
+												search={{ applicationId: application.id }}
 												aria-label={t`Edit cover letter`}
 												className={buttonVariants({ variant: "ghost" })}
 											>

@@ -9,6 +9,7 @@ import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { coachStarters, type CoachStarter } from "@reactive-resume/schema/career-starters";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import {
 	ContextMenu,
@@ -20,7 +21,6 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -35,13 +35,20 @@ import {
 	connectionName,
 	copyToClipboard,
 	deleteConversation,
+	MemoryNote,
+	ModelChip,
 	titleFor,
 	useCoachKnowledge,
 	useConversationDate,
+	WebResearchChip,
+	type ChatHistory,
 } from "./coach-thread";
 import { CareerLoadError } from "./load-state";
 import { ContextChip, Eyebrow, PrivacyLine } from "./shared";
+import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { transcriptOf } from "@/features/assistant/chat";
+import { ConnectionNotice } from "@/features/assistant/connection-notice";
 import { ProviderSetup, SetUpAi } from "@/features/assistant/provider-setup";
 import { WebAccessAttention } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -50,8 +57,6 @@ import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
 type ThreadSummary = RouterOutput["agent"]["threads"]["list"][number];
-type UsableProvider = ReturnType<typeof useHasUsableAiProvider>["usableProviders"][number];
-
 // ---- Context chips: per conversation, in this browser; new conversations start from the defaults. ----
 
 type Chips = { application: boolean; memory: boolean; web: boolean; offers: boolean };
@@ -150,10 +155,13 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	const conversations = (threads.data ?? []).filter((thread) => thread.scope === "career" && !hidden.has(thread.id));
 	const summary = threads.data?.find((thread) => thread.id === threadId);
 	const usable = providers.usableProviders;
-	// A conversation keeps its chosen destination until the user explicitly changes it.
-	const provider =
-		usable.find((item) => item.id === (summary ? summary.aiProviderId : providerId)) ??
-		(summary ? undefined : usable[0]);
+	const webAccess = useQuery(orpc.webAccess.status.queryOptions());
+	const canSearch = webAccess.data?.search === true;
+	// A conversation runs on its own connection. One switched off or removed is never swapped silently: the user picks
+	// another before the next message goes anywhere. A new conversation starts on the default (listed first).
+	const saved = summary ? usable.find((item) => item.id === summary.aiProviderId) : undefined;
+	const stranded = summary !== undefined && saved === undefined && !providers.isLoading;
+	const provider = summary ? saved : (usable.find((item) => item.id === providerId) ?? usable[0]);
 	const label = provider?.label ?? summary?.providerLabel ?? t`Your AI`;
 	const connection = connectionName(label);
 
@@ -163,7 +171,8 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		posting: true,
 		application: chips.application,
 		memory: chips.memory,
-		web: chips.web,
+		// Web research needs a search service; a choice saved before it went away doesn't count.
+		web: chips.web && canSearch,
 		...(offerIds.length > 0 && chips.offers ? { offerIds } : {}),
 	};
 
@@ -245,33 +254,39 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 				}),
 		);
 
-	// The privacy line names exactly what goes. The chips choose what this message adds; earlier messages always go.
-	const parts = [
-		t`your message`,
-		t`earlier messages in this chat`,
-		...(chips.application ? [t`application summaries`] : []),
-		...(context.offerIds ? [plural(offerIds.length, { one: "# saved offer", other: "# saved offers" })] : []),
-		...(chips.memory
-			? [
-					t`your preferences`,
-					...(knowledge.active.length > 0
-						? [plural(knowledge.active.length, { one: "# fact", other: "# facts" })]
-						: []),
-					...(knowledge.stories.length > 0 ? [t`your stories`] : []),
-				]
-			: []),
-	];
-	const shared = formatList(i18n.locale, parts);
-	const privacy = (
-		<PrivacyLine>
-			{chips.memory && knowledge.isError
-				? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
-				: chips.memory && knowledge.isPending
-					? t`Loading Knowledge before you send…`
-					: t`When you press send, ${shared} go to ${connection}.`}
-			{chips.web && ` ${t`Search terms go to your web search service.`}`}
-		</PrivacyLine>
-	);
+	// The privacy line names exactly what goes and what the coach may keep. The chips choose what this message adds;
+	// earlier messages go too, except those written before Knowledge last changed.
+	const privacy = ({ earlier, withheld }: ChatHistory) => {
+		const parts = [
+			t`your message`,
+			...(earlier > 0 ? [t`earlier messages in this chat`] : []),
+			...(chips.application ? [t`application summaries`] : []),
+			...(context.offerIds ? [plural(offerIds.length, { one: "# saved offer", other: "# saved offers" })] : []),
+			...(chips.memory
+				? [
+						t`your preferences`,
+						...(knowledge.active.length > 0
+							? [plural(knowledge.active.length, { one: "# fact", other: "# facts" })]
+							: []),
+						...(knowledge.stories.length > 0 ? [t`your stories`] : []),
+					]
+				: []),
+		];
+		const shared = formatList(i18n.locale, parts);
+		return (
+			<PrivacyLine>
+				{stranded
+					? t`Nothing is sent until you choose a connection for this conversation.`
+					: chips.memory && knowledge.isError
+						? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
+						: chips.memory && knowledge.isPending
+							? t`Loading Knowledge before you send…`
+							: t`When you press send, ${shared} go to ${connection}.`}
+				{withheld > 0 && ` ${t`Messages from before Knowledge changed aren't sent.`}`}
+				{context.web && ` ${t`Search terms go to your web search service.`}`} <MemoryNote knowledge={chips.memory} />
+			</PrivacyLine>
+		);
+	};
 
 	const contextChips = (
 		<>
@@ -286,15 +301,13 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 				pressed={chips.memory}
 				onPressedChange={(memory) => setChips({ ...chips, memory })}
 				label={plural(knowledge.active.length, { one: "Knowledge · # fact", other: "Knowledge · # facts" })}
-				tooltip={t`Facts, stories and preferences that are switched on in Knowledge`}
+				tooltip={
+					chips.memory
+						? t`Facts, stories and preferences that are switched on in Knowledge`
+						: t`Knowledge is off for this message: the coach doesn't read it or remember anything you say`
+				}
 			/>
-			<ContextChip
-				pressed={chips.web}
-				onPressedChange={(web) => setChips({ ...chips, web })}
-				label={t`Web research`}
-				tooltip={t`Lets the coach search public pages through your web search service`}
-				offIcon="globe-hemisphere-west"
-			/>
+			<WebResearchChip status={webAccess} pressed={chips.web} onPressedChange={(web) => setChips({ ...chips, web })} />
 			{offerIds.length > 0 && (
 				<ContextChip
 					pressed={chips.offers}
@@ -359,8 +372,8 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	);
 
 	return (
-		// The card fills what's left of the page height and scrolls inside.
-		<div className="relative min-h-[560px] flex-1">
+		// The card fills what's left of the page height and scrolls inside; on phones, all of it.
+		<div className="relative min-h-[560px] flex-1 max-sm:min-h-0">
 			<div className="absolute inset-0 grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
 				{wide ? (
 					rail
@@ -451,6 +464,16 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 									/>
 								)}
 								chips={contextChips}
+								notice={
+									stranded ? (
+										<ConnectionNotice
+											label={summary?.providerLabel ?? null}
+											fallback={usable[0]}
+											onUse={(id) => void chooseProvider(id)}
+											onChoose={() => setModelMenuOpen(true)}
+										/>
+									) : null
+								}
 								privacy={privacy}
 								placeholder={t`Ask about your next career step…`}
 								disabled={!provider || (chips.memory && (knowledge.isPending || knowledge.isError))}
@@ -466,15 +489,41 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 
 type EmptyStateProps = { disabled: boolean; onPick: (text: string) => void };
 
+const starterText = (starter: CoachStarter): { icon: IconName; text: string } => {
+	switch (starter.kind) {
+		case "interview":
+			return { icon: "microphone", text: t`Help me prepare for my ${starter.company} interview.` };
+		case "offers":
+			return { icon: "scales", text: t`Help me weigh the offer I have against what I want.` };
+		case "opportunities":
+			return { icon: "list-magnifying-glass", text: t`Which opportunities best match my priorities?` };
+		case "story":
+			return {
+				icon: "list-numbers",
+				text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
+			};
+		case "practice":
+			return { icon: "user-sound", text: t`What interview answers should I practice?` };
+		default:
+			return { icon: "compass", text: t`What kinds of roles fit what I've done so far?` };
+	}
+};
+
+/** Starters that fit the account: an upcoming interview, an offer or found roles come first when there are some. */
+function useStarters() {
+	const applications = useQuery(applicationsListQueryOptions());
+	const opportunities = useQuery(orpc.career.opportunities.queryOptions({ input: {} }));
+	const open = (applications.data ?? []).filter((application) => application.status !== "closed");
+	const next = upcomingInterviews(collectInterviews(open))[0];
+	return coachStarters({
+		nextInterviewCompany: next?.application.company,
+		offers: open.filter((application) => application.status === "offer").length,
+		opportunities: (opportunities.data ?? []).filter((row) => !row.trackedApplicationId).length,
+	}).map(starterText);
+}
+
 function EmptyState({ disabled, onPick }: EmptyStateProps) {
-	const starters: Array<{ icon: IconName; text: string }> = [
-		{ icon: "list-magnifying-glass", text: t`Which opportunities best match my priorities?` },
-		{
-			icon: "list-numbers",
-			text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
-		},
-		{ icon: "user-sound", text: t`What interview answers should I practice?` },
-	];
+	const starters = useStarters();
 	return (
 		<div className="grid gap-6 pt-[clamp(0px,6vh,48px)]">
 			<div className="grid gap-3">
@@ -491,7 +540,7 @@ function EmptyState({ disabled, onPick }: EmptyStateProps) {
 			<div className="grid gap-2.5 sm:grid-cols-3">
 				{starters.map((starter) => (
 					<button
-						key={starter.icon}
+						key={starter.text}
 						type="button"
 						disabled={disabled}
 						onClick={() => onPick(starter.text)}
@@ -503,51 +552,6 @@ function EmptyState({ disabled, onPick }: EmptyStateProps) {
 				))}
 			</div>
 		</div>
-	);
-}
-
-type ModelChipProps = {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-	providers: readonly UsableProvider[];
-	current: UsableProvider | undefined;
-	label: string;
-	onChoose: (id: string) => void;
-};
-
-/** "Demo AI · gpt-4.1-mini": the connection this conversation uses; the menu switches it. */
-function ModelChip({ open, onOpenChange, providers, current, label, onChoose }: ModelChipProps) {
-	const navigate = useNavigate();
-	const text = current ? `${current.label} · ${current.model}` : label;
-	return (
-		<DropdownMenu open={open} onOpenChange={onOpenChange}>
-			<DropdownMenuTrigger
-				render={
-					<button
-						type="button"
-						aria-label={t`Connection: ${text}`}
-						className="flex h-7 max-w-[50%] min-w-0 items-center rounded-sm bg-sunken px-2 font-mono text-xs text-ink-2 transition-colors duration-quick hover:text-ink aria-expanded:text-ink"
-					/>
-				}
-			>
-				<span className="truncate">{text}</span>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" className="w-64">
-				{providers.map((item) => (
-					<DropdownMenuItem key={item.id} onClick={() => onChoose(item.id)}>
-						<span className="grid min-w-0 flex-1">
-							<span className="truncate">{item.label}</span>
-							<span className="truncate font-mono text-xs text-ink-3">{item.model}</span>
-						</span>
-						{item.id === current?.id && <Icon name="check" size={16} />}
-					</DropdownMenuItem>
-				))}
-				{providers.length > 0 && <DropdownMenuSeparator />}
-				<DropdownMenuItem onClick={() => void navigate({ to: "/dashboard/settings/ai" })}>
-					<Trans>Connect another…</Trans>
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
 	);
 }
 

@@ -3,6 +3,7 @@ import type { LetterDraft } from "@/features/letters/store";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
@@ -89,11 +90,14 @@ function Section({ id, title, aside, children }: SectionProps) {
 export function LetterWritePanel() {
 	const letter = useLetterEditorStore((state) => state.letter);
 	const draft = useLetterEditorStore((state) => state.draft);
+	const status = useLetterEditorStore((state) => state.status);
 	const { data: applications } = useQuery(applicationsListQueryOptions());
 	if (!letter) return null;
 
 	const application = applications?.find((item) => item.id === letter.sourceApplicationId) ?? null;
-	const disabled = letter.isLocked;
+	// While the letter changed elsewhere, typing would only pile onto edits that can't save. Reload first.
+	const conflict = status === "conflict";
+	const disabled = letter.isLocked || conflict;
 
 	return (
 		<div className="divide-y divide-line">
@@ -101,6 +105,12 @@ export function LetterWritePanel() {
 				<p className="flex items-center gap-2 bg-sunken px-4 py-2.5 text-sm text-ink-2">
 					<Icon name="lock" size={18} />
 					<Trans>This letter is locked. Unlock it from its menu to edit.</Trans>
+				</p>
+			)}
+			{conflict && (
+				<p className="flex items-center gap-2 bg-warn-soft px-4 py-2.5 text-sm text-warn-text">
+					<Icon name="cloud-warning" size={18} />
+					<Trans>This letter changed in another tab. Reload above to keep editing; your edits stay in a copy.</Trans>
 				</p>
 			)}
 			<ForSection letter={letter} application={application} applications={applications ?? []} disabled={disabled} />
@@ -125,6 +135,7 @@ type ForSectionProps = {
 function ForSection({ letter, application, applications, disabled }: ForSectionProps) {
 	const { lanes } = useApplicationLanes();
 	const lane = application ? getDisplayLane(lanes, application) : null;
+	const submitted = Boolean(application?.sentCoverLetterVersionId && application.coverLetterId === letter.id);
 	const choices = applications.filter((item) => item.status !== "closed" || item.id === application?.id);
 
 	const choose = (next: ApplicationSummary | null) =>
@@ -138,14 +149,24 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 
 	const menu = (trigger: ReactElement) => (
 		<DropdownMenu>
-			<DropdownMenuTrigger disabled={disabled} render={trigger} />
+			<DropdownMenuTrigger disabled={disabled || submitted} render={trigger} />
 			<DropdownMenuContent align="end" className="max-h-80 w-72 overflow-y-auto">
 				{choices.map((item) => (
-					<DropdownMenuItem key={item.id} onClick={() => choose(item)}>
+					<DropdownMenuItem
+						key={item.id}
+						disabled={Boolean(item.sentCoverLetterVersionId && item.coverLetterId !== letter.id)}
+						className="data-disabled:opacity-60"
+						onClick={() => choose(item)}
+					>
 						<Icon name="briefcase" />
 						<span className="grid min-w-0">
 							<span className="truncate">{item.role}</span>
 							<span className="truncate text-xs text-ink-3">{item.company}</span>
+							{item.sentCoverLetterVersionId && item.coverLetterId !== letter.id && (
+								<span className="text-xs text-ink-3">
+									<Trans>Letter already sent</Trans>
+								</span>
+							)}
 						</span>
 					</DropdownMenuItem>
 				))}
@@ -169,6 +190,11 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 
 	return (
 		<Section id="letter-for" title={<Trans>For</Trans>}>
+			{submitted && (
+				<p className="text-xs text-ink-3">
+					<Trans>This letter is recorded as sent. Its application link stays with that submission.</Trans>
+				</p>
+			)}
 			{application ? (
 				<div className="flex items-center gap-3 rounded-xl border border-line p-3">
 					<span
@@ -794,11 +820,15 @@ function LengthSection({ content }: { content: string }) {
 
 /** DESIGN: what the letter looks like, and where to change it. */
 function DesignNote({ letter }: { letter: CoverLetter }) {
+	const { i18n } = useLingui();
 	const [, setMode] = useLetterMode();
 	const { metadata } = letter.style;
-	const pairing = FONT_PAIRINGS.find((option) => option.id === matchFontPairing(metadata))?.label;
+	const pairingLabel = FONT_PAIRINGS.find((option) => option.id === matchFontPairing(metadata))?.label;
 	const accent = ACCENTS.find((option) => option.hex === rgbaToHex(metadata.design.colors.primary))?.label;
-	const summary = [templates[metadata.template].name, pairing && t`${pairing} type`, accent].filter(Boolean).join(", ");
+	const pairing = pairingLabel && i18n._(pairingLabel);
+	const summary = [templates[metadata.template].name, pairing && t`${pairing} type`, accent && i18n._(accent)]
+		.filter(Boolean)
+		.join(", ");
 
 	return (
 		<Section id="letter-design" title={<Trans>Design</Trans>}>

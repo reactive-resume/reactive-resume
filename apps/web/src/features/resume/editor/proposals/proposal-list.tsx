@@ -10,11 +10,12 @@ import type { KeyboardEvent, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useId, useState } from "react";
-import { getProposalState } from "@reactive-resume/resume/proposals";
+import { additionParts, getProposalState, needsConfirmation, passageLines } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
+import { ProposalPageFit } from "./page-fit";
 import { acceptResumeProposals } from "./proposals";
 import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
@@ -38,9 +39,8 @@ const coverageLabel = (status: RequirementCoverage["status"]) =>
 		unassessed: t`Not assessed`,
 	})[status];
 
-/** The visible text of a passage's HTML, for the card. */
-const passageText = (html: string) =>
-	new DOMParser().parseFromString(html, "text/html").body.textContent?.replaceAll("\u00a0", " ").trim() ?? "";
+/** The visible text of a passage's HTML, for the card: one line per paragraph or list item. */
+const passageText = (html: string) => passageLines(html);
 
 /** What Edit starts from: the new passage, or only the added one (an addition repeats the passage it follows). */
 const addedText = ({ before, after }: Pick<Proposal, "before" | "after">) =>
@@ -83,6 +83,7 @@ export function ProposalList({ proposals, data, onSuggestAgain }: ProposalListPr
 }
 
 type ChangeSetProps = {
+	resumeId?: string | undefined;
 	proposals: readonly Proposal[];
 	/** Each proposal's state as the document reads now (out of date once its passage changed). */
 	states: readonly ProposalState[];
@@ -119,6 +120,9 @@ export function ChangeSet(props: ChangeSetProps) {
 		if (allowed.length > 0) onAccept(allowed);
 	};
 	const pending = proposals.filter((proposal, index) => acceptable(proposal, index));
+	// Edits that add a detail are accepted one by one, after the user checks them.
+	const checked = pending.filter((proposal) => !needsConfirmation(proposal));
+	const toConfirm = pending.length - checked.length;
 	const headingId = useId();
 
 	const onKeyDown = (event: KeyboardEvent<HTMLOListElement>) => {
@@ -154,11 +158,16 @@ export function ChangeSet(props: ChangeSetProps) {
 				<h3 id={headingId} className="text-sm font-semibold">
 					{title ?? <Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />}
 				</h3>
-				{pending.length > 1 && (
-					<Button size="sm" disabled={locked} onClick={() => accept(pending)}>
-						<Trans>Accept all</Trans>
-					</Button>
-				)}
+				<div className="grid justify-items-end gap-1">
+					{props.resumeId && !locked && checked.length > 0 && (
+						<ProposalPageFit resumeId={props.resumeId} proposals={checked} />
+					)}
+					{checked.length > 1 && (
+						<Button size="sm" disabled={locked} onClick={() => accept(checked)}>
+							{toConfirm > 0 ? <Trans>Accept the others</Trans> : <Trans>Accept all</Trans>}
+						</Button>
+					)}
+				</div>
 			</header>
 
 			{requirements.length > 0 && <Coverage requirements={requirements} factText={props.factText} />}
@@ -193,6 +202,15 @@ export function ChangeSet(props: ChangeSetProps) {
 			</ol>
 
 			<p className="border-t border-line px-3 py-2 text-xs text-ink-3">
+				{toConfirm > 0 && checked.length > 1 && (
+					<>
+						<Plural
+							value={toConfirm}
+							one="# edit adds a new detail, so accept it on its own once you've checked it."
+							other="# edits add new details, so accept each on its own once you've checked it."
+						/>{" "}
+					</>
+				)}
 				<Trans>A accepts and R rejects the focused edit. ↑ and ↓ move between edits.</Trans>
 			</p>
 		</section>
@@ -218,6 +236,7 @@ type ProposalItemProps = {
 
 function ProposalItem(props: ProposalItemProps) {
 	const { proposal, number, state, index, focusable, locked } = props;
+	const addition = additionParts(proposal);
 	const labelId = `proposal-${proposal.id}-location`;
 	const editId = useId();
 	const [draft, setDraftText] = useState<string | null>(null);
@@ -263,10 +282,16 @@ function ProposalItem(props: ProposalItemProps) {
 			</div>
 
 			<div className="grid gap-1.5 text-[13px] leading-[19px] whitespace-pre-wrap">
-				<del className="text-ink-3">{proposal.snapshot ? proposal.before : passageText(proposal.before)}</del>
+				{addition ? (
+					<p className="text-ink-3">
+						<Trans>Adds after: {addition.anchor}</Trans>
+					</p>
+				) : (
+					<del className="text-ink-3">{proposal.snapshot ? proposal.before : passageText(proposal.before)}</del>
+				)}
 				{draft === null ? (
 					<ins className="rounded-md bg-accent-soft px-1 py-0.5 no-underline">
-						{proposal.snapshot ? proposal.after : passageText(proposal.after)}
+						{proposal.snapshot ? proposal.after : (addition?.added ?? passageText(proposal.after))}
 					</ins>
 				) : (
 					<span className="grid gap-1">
@@ -289,6 +314,12 @@ function ProposalItem(props: ProposalItemProps) {
 					</span>
 				)}
 				{proposal.why && <span className="text-xs text-ink-2">{proposal.why}</span>}
+				{proposal.addsClaims && state === "pending" && (
+					<span className="flex w-fit items-center gap-1 rounded-md bg-warn-soft px-1.5 py-0.5 text-xs font-medium text-warn-text">
+						<Icon name="warning-circle" size={14} />
+						<Trans>New detail: check it's true</Trans>
+					</span>
+				)}
 			</div>
 
 			<ProposalReview proposal={proposal} factText={props.factText} />
@@ -358,7 +389,8 @@ function ProposalItem(props: ProposalItemProps) {
 							<Trans context="A proposed change has been applied">Applied</Trans>
 						</>
 					)}
-					{state === "rejected" && <Trans>Rejected</Trans>}
+					{state === "rejected" &&
+						(proposal.superseded ? <Trans>Replaced by a newer suggestion</Trans> : <Trans>Rejected</Trans>)}
 					{state === "stale" && (
 						<>
 							<Trans>Out of date: the text has changed since.</Trans>

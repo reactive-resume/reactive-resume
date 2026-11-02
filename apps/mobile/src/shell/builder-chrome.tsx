@@ -42,6 +42,7 @@ export type BuilderChromeSlots = {
 	actions?: ReactNode;
 	/** Under the top bar, full width: the locked banner. The offline strip shows by itself when `save.status` is offline. */
 	banner?: ReactNode;
+	applicationId?: string | null | undefined;
 	/** Counts on the pane tabs (`warn` badges), by pane, for example `{ check: 3 }` for open issues. */
 	badges?: Partial<Record<string, number | string>> | undefined;
 };

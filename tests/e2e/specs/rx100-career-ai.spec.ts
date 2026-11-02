@@ -58,9 +58,11 @@ test("returns to the application that owns the resume, not to documents", async 
 	await page.goto(`/builder/${resumeId}?applicationId=${id}`);
 	const back = page.getByRole("link", { name: "Back to Fictional Harbor" });
 	await expect(back).toBeVisible();
-	await expect(back).toHaveAttribute("href", new RegExp(`/dashboard/applications/${id}`));
+	await expect(back).toHaveAttribute("href", `/dashboard/applications?applicationId=${id}`);
 	await back.click();
-	await page.waitForURL(new RegExp(`/dashboard/applications/${id}`));
+	await page.waitForURL(
+		(url) => url.pathname === "/dashboard/applications" && url.searchParams.get("applicationId") === id,
+	);
 });
 
 test("keeps a ready letter draft after reload without asking the provider again", async ({
@@ -108,11 +110,22 @@ test("a real pointer click on Draft after typing commits the question and drafts
 	await page
 		.getByRole("textbox", { name: "Question from the form" })
 		.fill("Describe a reliability improvement (150 words max).");
+	const before = stub.requests.length;
 	// One physical click, no blur first: the old layout moved the button between mousedown and mouseup.
 	await page.getByRole("button", { name: "Draft", exact: true }).click();
 	await consent(page);
 	await expect(page.getByRole("button", { name: "Accept" })).toBeVisible({ timeout: 30_000 });
-	await expect(page.getByText("SLO burn reviews")).toBeVisible();
+	await expect(page.getByText("I led the checkout audit and fixed 48 issues.", { exact: true })).toBeVisible();
+	await expect(page.getByText("9 of 150 words", { exact: true })).toBeVisible();
+	const drafts = stub.requests
+		.slice(before)
+		.filter((request) =>
+			request.messages.some((message) =>
+				JSON.stringify(message.content).includes("Write the user's answer to the application form question"),
+			),
+		);
+	expect(drafts).toHaveLength(1);
+	expect(JSON.stringify(drafts[0]?.messages)).toContain("Describe a reliability improvement (150 words max).");
 	await page.screenshot({ path: testInfo.outputPath("apply-answer-limit.png") });
 });
 

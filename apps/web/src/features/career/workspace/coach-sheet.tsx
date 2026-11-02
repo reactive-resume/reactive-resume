@@ -18,9 +18,21 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
-import { CoachThread, connectionName, deleteConversation, titleFor, useConversationDate } from "../coach-thread";
-import { PrivacyLine, tabLabel } from "../shared";
-import { ProviderSetup, SetUpAi } from "@/features/assistant/provider-setup";
+import {
+	CoachThread,
+	connectionName,
+	deleteConversation,
+	MemoryNote,
+	ModelChip,
+	titleFor,
+	useConversationDate,
+	WebResearchChip,
+	type ChatHistory,
+} from "../coach-thread";
+import { ContextChip, PrivacyLine, tabLabel } from "../shared";
+import { ConnectionNotice } from "@/features/assistant/connection-notice";
+import { ProviderSetup } from "@/features/assistant/provider-setup";
+import { SetUpAi } from "@/features/assistant/provider-setup";
 import { WebAccessAttention } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -124,8 +136,17 @@ function CoachSheetBody({
 	const threadId = summary?.id ?? null;
 	const usable = providers.usableProviders;
 	const tabName = tabLabel(tab);
-	const provider = usable.find((item) => item.id === summary?.aiProviderId) ?? (summary ? undefined : usable[0]);
-	const connection = connectionName(provider?.label ?? summary?.providerLabel ?? t`Your AI`);
+	const webAccess = useQuery(orpc.webAccess.status.queryOptions());
+	const [modelMenuOpen, setModelMenuOpen] = useState(false);
+	const [providerId, setProviderId] = useState<string | null>(null);
+	// The same choices as Career → Coach, for this sheet: Knowledge on, Web research off until the user turns it on.
+	const [chips, setChips] = useState({ memory: true, web: false });
+	// As on Career → Coach: a switched-off or removed connection is replaced only by the user's choice.
+	const saved = summary ? usable.find((item) => item.id === summary.aiProviderId) : undefined;
+	const stranded = summary !== undefined && saved === undefined && !providers.isLoading;
+	const provider = summary ? saved : (usable.find((item) => item.id === providerId) ?? usable[0]);
+	const label = provider?.label ?? summary?.providerLabel ?? t`Your AI`;
+	const connection = connectionName(label);
 
 	const open = (next: CoachConversation) => {
 		setSession((current) => current + 1);
@@ -134,7 +155,25 @@ function CoachSheetBody({
 	const remove = (thread: ThreadSummary) => onDelete(thread.id, () => open("new"));
 
 	// The current tab is a hint, so answers fit the task at hand.
-	const context: MessageContext = { document: true, posting: true, application: true, memory: true, web: false, tab };
+	const context: MessageContext = {
+		document: true,
+		posting: true,
+		application: true,
+		memory: chips.memory,
+		web: chips.web && webAccess.data?.search === true,
+		tab,
+	};
+
+	const chooseProvider = async (id: string) => {
+		setProviderId(id);
+		if (!summary) return;
+		try {
+			await client.agent.threads.update({ id: summary.id, aiProviderId: id });
+		} catch (error) {
+			toastError(error, t`Couldn't switch connections. Try again.`);
+		}
+		void queryClient.invalidateQueries({ queryKey: orpc.agent.threads.list.key() });
+	};
 
 	const createThread = async () => {
 		const thread = await client.agent.threads.start({
@@ -159,6 +198,16 @@ function CoachSheetBody({
 					{application.company} · {tabLabel(tab)}
 				</SheetDescription>
 			</div>
+			{(usable.length > 0 || summary) && (
+				<ModelChip
+					open={modelMenuOpen}
+					onOpenChange={setModelMenuOpen}
+					providers={usable}
+					current={provider}
+					label={label}
+					onChoose={(id) => void chooseProvider(id)}
+				/>
+			)}
 			{list.length > 0 && <ConversationMenu threads={list} currentId={threadId} onOpen={open} onDelete={remove} />}
 			<IconButton
 				icon="note-pencil"
@@ -247,7 +296,7 @@ function CoachSheetBody({
 				company={application.company}
 				context={context}
 				connection={connection}
-				onChangeConnection={() => setChoosingModel(!choosingModel)}
+				onChangeConnection={() => setModelMenuOpen(true)}
 				header={() => null}
 				empty={() => (
 					<p className="text-sm text-ink-2">
@@ -257,11 +306,51 @@ function CoachSheetBody({
 						</Trans>
 					</p>
 				)}
-				privacy={
-					<PrivacyLine>
-						{t`Sends your message, earlier messages in this chat, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${connection}.`}
-					</PrivacyLine>
+				chips={
+					<>
+						<ContextChip
+							pressed={chips.memory}
+							onPressedChange={(memory) => setChips({ ...chips, memory })}
+							label={t`Knowledge`}
+							tooltip={
+								chips.memory
+									? t`Facts, stories and preferences that are switched on in Knowledge`
+									: t`Knowledge is off for this message: the coach doesn't read it or remember anything you say`
+							}
+						/>
+						<WebResearchChip
+							status={webAccess}
+							pressed={chips.web}
+							onPressedChange={(web) => setChips({ ...chips, web })}
+						/>
+					</>
 				}
+				notice={
+					stranded && (
+						<ConnectionNotice
+							label={summary?.providerLabel ?? null}
+							fallback={usable[0]}
+							onUse={(id) => void chooseProvider(id)}
+							onChoose={() => setModelMenuOpen(true)}
+						/>
+					)
+				}
+				privacy={({ earlier, withheld }: ChatHistory) => (
+					<PrivacyLine>
+						{stranded
+							? t`Nothing is sent until you choose a connection for this conversation.`
+							: earlier > 0
+								? chips.memory
+									? t`Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${connection}.`
+									: t`Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${connection}.`
+								: chips.memory
+									? t`Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${connection}.`
+									: t`Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${connection}.`}
+						{withheld > 0 && ` ${t`Messages from before Knowledge changed aren't sent.`}`}
+						{context.web && ` ${t`Search terms go to your web search service.`}`}{" "}
+						<MemoryNote knowledge={chips.memory} />
+					</PrivacyLine>
+				)}
 				placeholder={t`Ask about this application…`}
 				draftKey={`application:${application.id}`}
 				disabled={!provider}

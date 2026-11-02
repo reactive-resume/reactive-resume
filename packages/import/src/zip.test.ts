@@ -63,3 +63,12 @@ describe("unzipEntries", () => {
 		);
 	});
 });
+
+describe("unzipEntries total limit", () => {
+	it("stops when the selected entries together inflate past the total", () => {
+		const big = new Uint8Array(600);
+		const archive = zipSync({ "a.xml": big, "b.xml": big });
+		expect(() => unzipEntries(archive, () => true, 1_000, 1_000)).toThrow(ZipEntryTooLargeError);
+		expect(Object.keys(unzipEntries(archive, () => true, 1_000, 2_000))).toEqual(["a.xml", "b.xml"]);
+	});
+});

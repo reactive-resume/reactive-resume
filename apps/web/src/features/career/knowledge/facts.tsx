@@ -23,11 +23,11 @@ import { toastError } from "@/libs/error-message";
 import { D2, EASE, EXIT } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
-const CATEGORIES = factCategorySchema.options;
+export const CATEGORIES = factCategorySchema.options;
 /** Older rows may carry a retired category; they read as experience. */
 const categoryOf = (fact: Fact): FactCategory => factCategorySchema.catch("experience").parse(fact.category);
 
-const categoryLabel = (category: FactCategory) =>
+export const categoryLabel = (category: FactCategory) =>
 	({
 		accomplishment: t`Accomplishment`,
 		experience: t`Experience`,
@@ -183,7 +183,7 @@ export function FactsPage({ highlight }: FactsPageProps) {
 
 // ---- Memory mode ----
 
-function MemoryCard() {
+export function MemoryCard() {
 	const { profile, save, isError, retry } = useProfile();
 	const labelId = useId();
 	const mode = profile?.memoryMode;

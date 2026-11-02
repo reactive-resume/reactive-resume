@@ -28,8 +28,11 @@ export async function generatePresentLabels(catalogDirectory: string) {
 	return Object.fromEntries(Object.entries(catalog).map(([locale, messages]) => [locale, messages.Present]));
 }
 
-/** The web page's interface text per locale, declared for extraction in apps/web's `web-page-text.ts`. */
-export const generateWebPageCatalog = (catalogDirectory: string, messages: readonly string[]) =>
+/**
+ * Server-side text per locale (the web page's interface, account emails), declared for extraction in apps/web
+ * (`web-page-text.ts`, `email-text.ts`).
+ */
+export const generateMessageCatalog = (catalogDirectory: string, messages: readonly string[]) =>
 	generateCatalog(catalogDirectory, messages);
 
 async function generateCatalog(catalogDirectory: string, titles: readonly string[]) {

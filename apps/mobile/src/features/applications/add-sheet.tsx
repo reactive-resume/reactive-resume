@@ -237,7 +237,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 				postingSource,
 				...(stage !== "saved" ? { stageEnteredAt: stageDate } : {}),
 				resumeId: resumeId || null,
-				coverLetterId: stage !== "saved" ? letterId || null : null,
+				coverLetterId: letterId || null,
 				tags,
 				notes: notes || null,
 				followUpAt,
@@ -636,20 +636,20 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 										onChange={setResumeId}
 										disabled={!!busy}
 									/>
-									{stage !== "saved" && (
+									{
 										<SelectSheet
-											label={t`Cover letter submitted (optional)`}
+											label={stage === "saved" ? t`Cover letter (optional)` : t`Cover letter submitted (optional)`}
 											value={letterId}
 											options={[
 												{ value: "", label: t`No cover letter selected` },
 												...docs
-													.filter((doc) => doc.type === "letter")
+													.filter((doc) => doc.type === "letter" && !doc.isLocked)
 													.map((doc) => ({ value: doc.id, label: doc.name })),
 											]}
 											onChange={setLetterId}
 											disabled={!!busy}
 										/>
-									)}
+									}
 									<ChipInput
 										label={t`Tags`}
 										values={tags}

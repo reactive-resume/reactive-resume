@@ -4,7 +4,7 @@ import type { UIMessage } from "ai";
 import { and, asc, eq, max, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { withEditedText } from "@reactive-resume/resume/proposals";
+import { blockText, withEditedText } from "@reactive-resume/resume/proposals";
 
 // Crash-safe incremental persistence for the assistant message of an agent run.
 // A draft row is inserted before the stream starts, folded step-by-step in onStepEnd,
@@ -66,6 +66,37 @@ export function withEditStatuses(
 ): UIMessage {
 	if (statuses.size === 0) return message;
 	return mapEdits(message, toolCallId, (edit) => ({ ...edit, status: statuses.get(edit.id) ?? edit.status }));
+}
+
+const sameTarget = (a: ProposedEdit["target"], b: ProposedEdit["target"]) =>
+	a.sectionId === b.sectionId && a.itemId === b.itemId && a.roleId === b.roleId && a.field === b.field;
+
+/**
+ * Undecided passage edits in `message` that `newer` replaces: the same field and the same passage, as text (an
+ * addition's anchor carries its list item's end tag). Ones the document already holds are left out: their acceptance
+ * can be recorded after the save that applied them.
+ */
+export function supersededEdits(
+	message: UIMessage,
+	newer: readonly ProposedEdit[],
+	held: (edit: ProposedEdit) => boolean,
+): string[] {
+	return proposedEditsOf(message).flatMap((edit) => {
+		const passage = blockText(edit.before);
+		const replaced =
+			edit.status === "pending" &&
+			!edit.snapshot &&
+			!!passage &&
+			newer.some(
+				(next) =>
+					next.id !== edit.id &&
+					!next.snapshot &&
+					sameTarget(next.target, edit.target) &&
+					blockText(next.before) === passage,
+			) &&
+			!held(edit);
+		return replaced ? [edit.id] : [];
+	});
 }
 
 /**

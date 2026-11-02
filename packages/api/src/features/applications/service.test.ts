@@ -258,7 +258,11 @@ describe("applicationService sent resume", () => {
 				expect.anything(),
 				expect.objectContaining({ resumeId: "resume-1", kind: "sent", name: "Stripe", data }),
 			);
-			expect(setSent).toHaveBeenCalledWith({ sentResumeVersionId: "version-1", sentCheckScore: expect.any(Number) });
+			expect(setSent).toHaveBeenCalledWith({
+				submittedAt: expect.any(Date),
+				sentResumeVersionId: "version-1",
+				sentCheckScore: expect.any(Number),
+			});
 		},
 	);
 
@@ -738,6 +742,10 @@ describe("applicationService.importMany", () => {
 			expect.anything(),
 			expect.objectContaining({ resumeId: "resume-1", kind: "sent", data }),
 		);
-		expect(set).toHaveBeenCalledWith({ sentResumeVersionId: "version-1", sentCheckScore: expect.any(Number) });
+		expect(set).toHaveBeenCalledWith({
+			submittedAt: expect.any(Date),
+			sentResumeVersionId: "version-1",
+			sentCheckScore: expect.any(Number),
+		});
 	});
 });

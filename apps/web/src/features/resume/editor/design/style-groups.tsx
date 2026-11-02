@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { createContext, useContext, useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -71,6 +72,7 @@ type TypeGroupProps = {
 
 /** Type: five font pairings (or any font, in Advanced), the text size (9–12.5 pt) and density. */
 export function TypeGroup({ onCustomFonts }: TypeGroupProps) {
+	const { i18n } = useLingui();
 	const { metadata, write } = useDesign();
 	const sizeLabelId = useId();
 	if (!metadata) return null;
@@ -95,7 +97,7 @@ export function TypeGroup({ onCustomFonts }: TypeGroupProps) {
 							value={option.id}
 							className="flex h-12 cursor-pointer items-center gap-3 rounded-lg border border-line px-3 text-start transition-colors duration-quick hover:bg-hover data-checked:border-accent data-checked:bg-accent-soft data-checked:hover:bg-accent-soft"
 						>
-							<span className="text-sm font-medium">{option.label}</span>
+							<span className="text-sm font-medium">{i18n._(option.label)}</span>
 							<span className="truncate text-xs text-ink-3">{familiesLabel(option.heading, option.body)}</span>
 							{pairing === option.id && <Icon name="check" size={18} className="ms-auto text-accent-text" />}
 						</Radio.Root>
@@ -168,6 +170,7 @@ export function TypeGroup({ onCustomFonts }: TypeGroupProps) {
 
 /** Color: eight accents or a custom hex, with its contrast on white and a darker shade when it's too light. */
 export function ColorGroup() {
+	const { i18n } = useLingui();
 	const { metadata, write } = useDesign();
 	const current = metadata ? (rgbaToHex(metadata.design.colors.primary) ?? "#000000") : "#000000";
 	const [typed, setTyped] = useState<string | null>(null);
@@ -204,8 +207,8 @@ export function ColorGroup() {
 					<Radio.Root
 						key={accent.hex}
 						value={accent.hex}
-						aria-label={accent.label}
-						title={accent.label}
+						aria-label={i18n._(accent.label)}
+						title={i18n._(accent.label)}
 						className="aspect-square cursor-pointer rounded-sm transition-[box-shadow,scale] duration-quick ease-enter active:scale-[0.97] data-checked:shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--swatch)]"
 						style={{ backgroundColor: accent.hex, "--swatch": accent.hex } as CSSProperties}
 					/>

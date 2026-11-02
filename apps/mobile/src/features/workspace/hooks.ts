@@ -74,13 +74,13 @@ export function useWorkspace(applicationId: string) {
 	});
 	const current = () => queryClient.getQueryData<CareerWorkspace>(queryKey) ?? EMPTY_WORKSPACE;
 	/** Resolves once the server confirmed the change, or with why it failed (already reported). Never rejects. */
-	const save = (patch: Partial<CareerWorkspace>): Promise<SaveResult> => {
+	const save = (patch: Partial<CareerWorkspace>, expectedSnapshot?: Partial<CareerWorkspace>): Promise<SaveResult> => {
 		if (getServer() !== server) return Promise.resolve({ ok: false, transient: false, code: "SERVER_CHANGED" });
 		const previous = current();
 		const defined = Object.fromEntries(Object.entries(patch).filter(([, value]) => value !== undefined));
-		const expected = Object.fromEntries(
-			Object.keys(defined).map((key) => [key, previous[key as keyof CareerWorkspace]]),
-		);
+		const expected =
+			expectedSnapshot ??
+			Object.fromEntries(Object.keys(defined).map((key) => [key, previous[key as keyof CareerWorkspace]]));
 		// Capture and publish synchronously, so another control's immediate write builds on this one.
 		void queryClient.cancelQueries({ queryKey });
 		queryClient.setQueryData(queryKey, { ...previous, ...defined });

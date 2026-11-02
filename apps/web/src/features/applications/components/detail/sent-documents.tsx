@@ -3,7 +3,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
@@ -15,6 +15,7 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
+import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { isCanonicalStageEvent } from "../../lanes";
 import { PIPELINE } from "../../stages";
 import { useInvalidateApplications } from "../../use-application-actions";
@@ -71,6 +72,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 	const { download, downloading } = useDocumentDownload();
 	const workspace = variant === "workspace";
 	const invalidate = useInvalidateApplications();
+	const queryClient = useQueryClient();
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const [attaching, setAttaching] = useState(Boolean(application.resumeFileUrl || application.coverLetterUrl));
@@ -81,6 +83,14 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 		onError: (error) => toastError(error, t`Couldn't save the documents. Try again.`),
 	});
 	const createLetter = useMutation(orpc.coverLetters.create.mutationOptions());
+	const link = useMutation({
+		...orpc.documents.linkApplication.mutationOptions(),
+		onSuccess: () => {
+			invalidate(application.id);
+			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
+		},
+		onError: (error) => toastError(error, t`Couldn't save the documents. Try again.`),
+	});
 
 	const resume = documents?.find((document) => document.type === "resume" && document.id === application.resumeId);
 	const letter = documents?.find((document) => document.type === "letter" && document.id === application.coverLetterId);
@@ -129,7 +139,11 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 										params: { resumeId: documentId },
 										search: { applicationId: application.id },
 									}
-								: { to: "/builder/letter/$coverLetterId", params: { coverLetterId: documentId } },
+								: {
+										to: "/builder/letter/$coverLetterId",
+										params: { coverLetterId: documentId },
+										search: { applicationId: application.id },
+									},
 						)
 					}
 				>
@@ -227,7 +241,8 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 				</SentDocumentRow>
 			)}
 
-			{(!application.resumeId || !application.coverLetterId) && (
+			{/* A closed application has an outcome, not a preparation task: no Prepare a resume / Write a letter primary action. */}
+			{application.status !== "closed" && (!application.resumeId || !application.coverLetterId) && (
 				<div className="flex flex-wrap gap-1.5">
 					{!application.resumeId && (
 						<Button
@@ -251,6 +266,32 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 						</Button>
 					)}
 				</div>
+			)}
+
+			{application.status === "saved" && !application.sentCoverLetterVersionId && (
+				<NativeSelect
+					aria-label={t`Use an existing letter`}
+					value={application.coverLetterId ?? ""}
+					disabled={disabled || link.isPending}
+					onChange={(event) => {
+						const id = event.target.value;
+						if (id) link.mutate({ type: "letter", id, applicationId: application.id });
+					}}
+				>
+					<option value="">{t`Use an existing letter…`}</option>
+					{documents
+						?.filter(
+							(item) =>
+								item.type === "letter" &&
+								!item.isLocked &&
+								(!item.application || item.application.id === application.id),
+						)
+						.map((item) => (
+							<option key={item.id} value={item.id}>
+								{item.name}
+							</option>
+						))}
+				</NativeSelect>
 			)}
 
 			{attaching ? (

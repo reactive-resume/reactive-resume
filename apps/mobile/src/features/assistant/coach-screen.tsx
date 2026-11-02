@@ -7,14 +7,28 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
+import { coachStarters } from "@reactive-resume/schema/career-starters";
 import { formatList } from "@reactive-resume/utils/locale";
 import { refreshThreads, useThreads } from "./chat";
-import { ChatView, ContextChip } from "./chat-view";
-import { ModelButton, ModelSheet, ProviderGate, useConversationProvider } from "./provider";
+import { ChatView, ContextChip, type ChatHistory } from "./chat-view";
+import {
+	ConnectionNotice,
+	ModelButton,
+	ModelSheet,
+	ProviderGate,
+	useConversationProvider,
+	useMemoryNote,
+	useWebSearch,
+	WebResearchChip,
+} from "./provider";
 import { useDeleteThread, useThreadTime, useThreadTitle } from "./threads";
 import { client, orpc } from "@/api/client";
 import { useSession } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
+import { useApplications } from "@/features/applications/queries";
+import { useNow, useOpportunities } from "@/features/career/hooks";
+import { collectInterviews } from "@/features/career/scheduling";
+import { StoryEditor } from "@/features/career/stories";
 import { Button, Icon, IconButton, ListRow, Sheet, Text, TextField, showToast, useTheme } from "@/ui";
 
 type Chips = { application: boolean; memory: boolean; web: boolean; offers: boolean };
@@ -49,6 +63,7 @@ function useCoachKnowledge() {
 			),
 	);
 	return {
+		all: facts.data ?? [],
 		isPending: facts.isPending || stories.isPending,
 		isError: facts.isError || stories.isError,
 		retry: () => {
@@ -80,8 +95,10 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 
 	const conversations = (threads.data ?? []).filter((thread) => thread.scope === "career");
 	const summary = threads.data?.find((thread) => thread.id === threadId);
-	const { provider, label, choose } = useConversationProvider(providers, summary, threadId);
+	const { provider, stranded, label, choose } = useConversationProvider(providers, summary, threadId);
 	const title = useThreadTitle();
+	const web = useWebSearch();
+	const memory = useMemoryNote(chips.memory);
 
 	const context: MessageContext = {
 		// A career conversation has no document or posting to leave out.
@@ -89,35 +106,45 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 		posting: true,
 		application: chips.application,
 		memory: chips.memory,
-		web: chips.web,
+		// Web research needs a search service; a choice made before it went away doesn't count.
+		web: chips.web && web.canSearch,
 		...(offerIds.length > 0 && chips.offers ? { offerIds } : {}),
 	};
 	const knowledgeBlocks = chips.memory && (knowledge.isPending || knowledge.isError);
 
-	// The privacy line names exactly what goes. The chips choose what this message adds; earlier messages always go.
-	const parts = [
-		t`your message`,
-		t`earlier messages in this chat`,
-		...(chips.application ? [t`application summaries`] : []),
-		...(context.offerIds ? [plural(offerIds.length, { one: "# saved offer", other: "# saved offers" })] : []),
-		...(chips.memory
-			? [
-					t`your preferences`,
-					...(knowledge.facts > 0 ? [plural(knowledge.facts, { one: "# fact", other: "# facts" })] : []),
-					...(knowledge.stories > 0 ? [t`your stories`] : []),
-				]
-			: []),
-	];
-	const list = formatList(i18n.locale, parts);
+	// The privacy line names exactly what goes and what the coach may keep. The chips choose what this message adds;
+	// earlier messages go too, except those written before Knowledge last changed.
+	const privacyFor = ({ earlier, withheld }: ChatHistory) => {
+		const parts = [
+			t`your message`,
+			...(earlier > 0 ? [t`earlier messages in this chat`] : []),
+			...(chips.application ? [t`application summaries`] : []),
+			...(context.offerIds ? [plural(offerIds.length, { one: "# saved offer", other: "# saved offers" })] : []),
+			...(chips.memory
+				? [
+						t`your preferences`,
+						...(knowledge.facts > 0 ? [plural(knowledge.facts, { one: "# fact", other: "# facts" })] : []),
+						...(knowledge.stories > 0 ? [t`your stories`] : []),
+					]
+				: []),
+		];
+		const list = formatList(i18n.locale, parts);
+		return [
+			stranded
+				? t`Nothing is sent until you choose a connection for this conversation.`
+				: chips.memory && knowledge.isError
+					? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
+					: chips.memory && knowledge.isPending
+						? t`Loading Knowledge before you send…`
+						: t`When you tap send, ${list} go to ${connection}.`,
+			...(withheld > 0 ? [t`Messages from before Knowledge changed aren't sent.`] : []),
+			...(context.web ? [t`Search terms go to your web search service.`] : []),
+			memory.note,
+		]
+			.filter(Boolean)
+			.join(" ");
+	};
 	const connection = /connection$/i.test(label) ? label : t`${label} connection`;
-	const privacy = [
-		chips.memory && knowledge.isError
-			? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
-			: chips.memory && knowledge.isPending
-				? t`Loading Knowledge before you send…`
-				: t`When you tap send, ${list} go to ${connection}.`,
-		...(chips.web ? [t`Search terms go to your web search service.`] : []),
-	].join(" ");
 
 	const newConversation = () => {
 		setThreadId(null);
@@ -195,7 +222,34 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 						])
 					}
 					connection={connection}
-					privacy={privacy}
+					privacy={privacyFor}
+					remember={{ applicationId: null }}
+					facts={knowledge.all}
+					storyEditor={({ story, onChange, onSaved, onClose }) => (
+						<StoryEditor
+							story={null}
+							facts={knowledge.all}
+							proposal={{
+								story,
+								onChange,
+								onSaved: () => {
+									onSaved();
+									showToast({ message: t`Your edited story is saved to Knowledge.` });
+								},
+							}}
+							onClose={onClose}
+						/>
+					)}
+					notice={
+						stranded ? (
+							<ConnectionNotice
+								label={summary?.providerLabel ?? null}
+								fallback={providers.usableProviders[0]}
+								onUse={(id) => void choose(id)}
+								onChoose={() => setModelOpen(true)}
+							/>
+						) : null
+					}
 					placeholder={t`Ask about your next career step…`}
 					assistantName={t`Coach`}
 					disabled={knowledgeBlocks || !provider}
@@ -219,12 +273,8 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 								pressed={chips.memory}
 								onPress={() => setChips({ ...chips, memory: !chips.memory })}
 							/>
-							<ContextChip
-								icon="globe-hemisphere-west"
-								label={t`Web research`}
-								pressed={chips.web}
-								onPress={() => setChips({ ...chips, web: !chips.web })}
-							/>
+							<WebResearchChip web={web} pressed={chips.web} onPress={() => setChips({ ...chips, web: !chips.web })} />
+							{memory.chip}
 							{offerIds.length > 0 ? (
 								<ContextChip
 									icon="hand-heart"
@@ -268,14 +318,34 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: string) => void }) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
-	const starters: Array<{ icon: IconName; text: string }> = [
-		{ icon: "list-magnifying-glass", text: t`Which opportunities best match my priorities?` },
-		{
-			icon: "list-numbers",
-			text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
-		},
-		{ icon: "user-sound", text: t`What interview answers should I practice?` },
-	];
+	const applications = useApplications();
+	const opportunities = useOpportunities();
+	const now = useNow();
+	const open = (applications.data ?? []).filter((application) => application.status !== "closed");
+	// Starters that fit the account: an upcoming interview, an offer or found roles come first when there are some.
+	const starters = coachStarters({
+		nextInterviewCompany: collectInterviews(open, now)[0]?.application.company,
+		offers: open.filter((application) => application.status === "offer").length,
+		opportunities: (opportunities.data ?? []).filter((row) => !row.trackedApplicationId).length,
+	}).map((starter): { icon: IconName; text: string } => {
+		switch (starter.kind) {
+			case "interview":
+				return { icon: "microphone", text: t`Help me prepare for my ${starter.company} interview.` };
+			case "offers":
+				return { icon: "scales", text: t`Help me weigh the offer I have against what I want.` };
+			case "opportunities":
+				return { icon: "list-magnifying-glass", text: t`Which opportunities best match my priorities?` };
+			case "story":
+				return {
+					icon: "list-numbers",
+					text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
+				};
+			case "practice":
+				return { icon: "user-sound", text: t`What interview answers should I practice?` };
+			default:
+				return { icon: "compass", text: t`What kinds of roles fit what I've done so far?` };
+		}
+	});
 	return (
 		<View style={{ gap: space.s4, paddingTop: space.s4 }}>
 			<View style={{ gap: space.s2 }}>
@@ -291,7 +361,7 @@ function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: stri
 			</View>
 			{starters.map((starter) => (
 				<Pressable
-					key={starter.icon}
+					key={starter.text}
 					accessibilityRole="button"
 					disabled={disabled}
 					onPress={() => onPick(starter.text)}

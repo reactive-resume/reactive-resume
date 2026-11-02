@@ -50,6 +50,8 @@ export type WorkspaceSearch = {
 	story?: string | undefined;
 	/** Messages opens with the offer form ("Add the offer's terms"). */
 	offer?: "new" | undefined;
+	/** The interview round to work on, when a link names one (a later round of the same application). */
+	round?: string | undefined;
 };
 
 /** What every tab receives: the application, and a saved version to show read-only ("Open in Prepare"). */
@@ -145,7 +147,13 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 		);
 
 	const tab = requested ?? defaultTab(application, now);
-	const interview = currentInterview(application, now);
+	// A link to a later round names it; otherwise the next one to come.
+	const named = search.round
+		? application.activity.find(
+				(entry): entry is InterviewTimelineEntry => isInterview(entry) && entry.id === search.round,
+			)
+		: undefined;
+	const interview = named ?? currentInterview(application, now);
 	const version = search.version ? saved.data?.find((item) => item.id === search.version) : undefined;
 	const archived = search.version !== undefined;
 	const archiveUnavailable = archived && (!version || version.data.kind !== archiveKinds[tab]);
@@ -159,7 +167,8 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 		void navigate({
 			to: "/dashboard/applications/$applicationId/{-$tab}",
 			params: { applicationId, tab: next },
-			search: nextSearch,
+			// The chosen round stays chosen from tab to tab.
+			search: { ...(search.round ? { round: search.round } : {}), ...nextSearch },
 			viewTransition: false,
 		});
 	const setSearch = (patch: WorkspaceSearch, push = false) =>
@@ -427,7 +436,15 @@ function WorkspaceHeader({ application, onAskCoach }: WorkspaceHeaderProps) {
 						)}
 					</p>
 				</div>
-				<div className="flex items-center gap-4">
+				<div className="flex flex-wrap items-center gap-4">
+					<Link
+						to="/dashboard/applications"
+						search={{ applicationId: application.id }}
+						className={buttonVariants({ variant: "secondary" })}
+					>
+						<Icon name="briefcase" size={18} />
+						<Trans>Stage, details and timeline</Trans>
+					</Link>
 					{application.status !== "closed" && (
 						<div aria-hidden="true" className="hidden gap-1 lg:flex">
 							{steps.map((step, index) => (
@@ -621,7 +638,10 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 						<Link
 							to="/builder/$resumeId"
 							params={{ resumeId: application.resumeId }}
-							search={application.sentResumeVersionId ? { version: application.sentResumeVersionId } : {}}
+							search={{
+								applicationId: application.id,
+								...(application.sentResumeVersionId ? { version: application.sentResumeVersionId } : {}),
+							}}
 							className="flex items-center gap-2.5 rounded-xl border border-line p-3 transition-colors duration-quick hover:bg-hover"
 						>
 							<Icon name="file-text" className="shrink-0 text-ink-2" />
@@ -641,7 +661,10 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 						<Link
 							to="/builder/letter/$coverLetterId"
 							params={{ coverLetterId: application.coverLetterId }}
-							search={application.sentCoverLetterVersionId ? { version: application.sentCoverLetterVersionId } : {}}
+							search={{
+								applicationId: application.id,
+								...(application.sentCoverLetterVersionId ? { version: application.sentCoverLetterVersionId } : {}),
+							}}
 							className="flex items-center gap-2.5 rounded-xl border border-line p-3 transition-colors duration-quick hover:bg-hover"
 						>
 							<Icon name="envelope-simple" className="shrink-0 text-ink-2" />

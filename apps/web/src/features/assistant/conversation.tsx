@@ -5,17 +5,20 @@ import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
+	AGENT_ATTACHMENT_TYPES,
+	agentKnowledgeUsed,
 	agentWebSources,
 	citesKnowledge,
 	readPageOutputSchema,
 	tailoringAllows,
 } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { withEditedText } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -27,6 +30,7 @@ import {
 	MessageScrollerItem,
 	MessageScrollerProvider,
 	MessageScrollerViewport,
+	useMessageScroller,
 } from "@reactive-resume/ui/components/message-scroller";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -37,10 +41,14 @@ import { AssistantMarkdown } from "./markdown";
 import { QuestionCard } from "./question-card";
 import { ToolApprovals } from "./tool-approvals";
 import { useAssistantChat } from "./use-assistant-chat";
+import { UsedChip } from "./used-chip";
 import { useDialogStore } from "@/dialogs/store";
+import { ContextChip } from "@/features/career/shared";
+import { useResumeStore } from "@/features/resume/builder/draft";
+import { runFit } from "@/features/resume/editor/design/fit";
 import { ChangeSet, Coverage } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
-import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
+import { getOrpcErrorMessage, isProviderFailure, toastError } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -48,7 +56,7 @@ import { client, orpc } from "@/libs/orpc/client";
 type EditStatus = Proposal["status"];
 /** What the user did with an edit in this session: its status, and their wording when they rewrote it. */
 /** What the server's receipts say about an edit: its decision, and the user's saved wording when they changed it. */
-type Receipt = { status: EditStatus } & Partial<Pick<Proposal, "after" | "unsupported" | "edited">>;
+type Receipt = { status: EditStatus } & Partial<Pick<Proposal, "after" | "unsupported" | "edited" | "superseded">>;
 type FactText = (id: string) => string | null;
 type Part = UIMessage["parts"][number];
 type ToolPart = Part & {
@@ -74,6 +82,8 @@ type ConversationProps = {
 	initialContext: MessageContext;
 	onPromptSent: () => void;
 	onSwitchModel: () => void;
+	/** The conversation's connection was switched off or removed: nothing is sent until the user picks another. */
+	notice?: ReactNode;
 };
 
 /** One conversation: the thread (role="log"), change sets and questions in it, and the composer. */
@@ -182,23 +192,34 @@ export function Conversation(props: ConversationProps) {
 	});
 	const receiptsReady = !document.proposalRevision || !!receipts.data;
 	const error = chatError ?? receipts.error;
-	const statuses = useMemo(
-		() =>
-			new Map<string, Receipt>([
-				...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
-					message.parts.flatMap((part) =>
-						isProposeEdits(part)
-							? toProposals(part, new Map(), document).map(
-									({ id, status, after, unsupported, edited }) =>
-										[id, edited ? { status, after, unsupported, edited } : { status }] as const,
-								)
-							: [],
-					),
+	// Edits a later suggestion replaced read as rejected at once, before the receipts catch up.
+	// A new id, not every streamed chunk, changes the receipts.
+	const superseded = messages
+		.flatMap((message) =>
+			message.parts.flatMap((part) =>
+				isProposeEdits(part) ? ((part.output as ProposeEditsOutput | undefined)?.supersedes ?? []) : [],
+			),
+		)
+		.join(" ");
+	const statuses = useMemo(() => {
+		const map = new Map<string, Receipt>([
+			...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
+				message.parts.flatMap((part) =>
+					isProposeEdits(part)
+						? toProposals(part, new Map(), document).map(
+								({ id, status, after, unsupported, edited }) =>
+									[id, edited ? { status, after, unsupported, edited } : { status }] as const,
+							)
+						: [],
 				),
-				...[...rejections].map(([id, status]) => [id, { status }] as const),
-			]),
-		[receipts.data, rejections, document],
-	);
+			),
+			...[...rejections].map(([id, status]) => [id, { status }] as const),
+		]);
+		// Only an undecided edit reads as replaced: one accepted or rejected (here or on another device) keeps its outcome.
+		for (const id of superseded.split(" ").filter(Boolean))
+			if ((map.get(id)?.status ?? "pending") === "pending") map.set(id, { status: "rejected", superseded: true });
+		return map;
+	}, [receipts.data, rejections, superseded, document]);
 
 	// Every proposed edit in the conversation, with what the user did with it: marked on the page while pending.
 	const proposals = useMemo(
@@ -266,15 +287,88 @@ export function Conversation(props: ConversationProps) {
 	const last = messages.at(-1);
 	const proposedInLast = last?.role === "assistant" && last.parts.some(isProposeEdits);
 
+	// Status rows sit inside the last message's row: swapping rows of their own makes the scroller re-anchor to the
+	// first turn it hasn't settled, which is the top of a reopened conversation.
+	const footer = (
+		<>
+			{(status === "submitted" || resuming) && (
+				<TraceLine status="running" className={cn("mt-4", ENTER_CLASS)}>
+					<TraceIcon>
+						<Spinner decorative className="size-3" />
+					</TraceIcon>
+					<TraceTitle>
+						<Trans>Thinking…</Trans>
+					</TraceTitle>
+				</TraceLine>
+			)}
+
+			{stopped && !busy && !proposedInLast && (
+				<p className="mt-4 flex items-center gap-2 text-sm text-ink-2 transition-opacity duration-standard ease-enter starting:opacity-0">
+					<Icon name="stop-circle" size={18} className="text-ink-3" />
+					<Trans>Stopped. No edits were proposed.</Trans>
+					<button type="button" className="font-medium underline underline-offset-2" onClick={() => send(t`Continue`)}>
+						<Trans>Continue</Trans>
+					</button>
+				</p>
+			)}
+
+			{error && !busy && (
+				<div
+					role="alert"
+					className="mt-4 grid gap-2 rounded-xl bg-danger-soft p-3 text-[13px] text-danger-text transition-opacity duration-standard ease-enter starting:opacity-0"
+				>
+					<span className="flex gap-2">
+						<Icon name="warning-circle" size={18} className="shrink-0" />
+						{receipts.error ? (
+							<Trans>This conversation couldn't be opened.</Trans>
+						) : (
+							// Only a provider's failure is the provider's; a lost connection or this server's reason is said as is.
+							<span>
+								{getOrpcErrorMessage(error, {
+									fallback: t`${props.providerLabel} didn't respond.`,
+									allowServerMessage: true,
+								})}{" "}
+								<Trans>Your message is kept.</Trans>
+							</span>
+						)}
+					</span>
+					<span className="flex gap-1.5">
+						<Button size="sm" variant="secondary" onClick={retry}>
+							<Trans>Retry</Trans>
+						</Button>
+						{isProviderFailure(error) && (
+							<Button size="sm" variant="ghost" onClick={props.onSwitchModel}>
+								<Trans>Switch model</Trans>
+							</Button>
+						)}
+					</span>
+				</div>
+			)}
+
+			{!busy && messages.length > 0 && (
+				<div className="mt-4 flex justify-end transition-opacity duration-standard ease-enter starting:opacity-0">
+					<Button size="sm" variant="ghost" className="text-ink-3" onClick={() => void copyTranscript(messages)}>
+						<Icon name="copy" size={16} />
+						<Trans>Copy transcript</Trans>
+					</Button>
+				</div>
+			)}
+		</>
+	);
+
 	return (
 		<div className="flex min-h-0 flex-1 flex-col">
 			{/* Follows the reply only while the reader is at the latest message; a saved thread opens on its last question. */}
 			<MessageScrollerProvider autoScroll defaultScrollPosition="last-anchor">
+				<FollowNewQuestion messages={messages} initialIds={initialIds} />
 				<div className="relative min-h-0 flex-1">
 					<MessageScroller>
 						<MessageScrollerViewport aria-label={t`Conversation`}>
 							{/* Announced when the answer is complete, not token by token. */}
 							<MessageScrollerContent aria-busy={busy} className="gap-4 p-4">
+								{messages.length === 0 && (status === "submitted" || resuming) && (
+									<MessageScrollerItem>{footer}</MessageScrollerItem>
+								)}
 								{messages.map((message, index) => (
 									<MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={message.role === "user"}>
 										<MessageView
@@ -299,84 +393,9 @@ export function Conversation(props: ConversationProps) {
 												void addToolApprovalResponse(decision);
 											}}
 										/>
+										{index === messages.length - 1 && footer}
 									</MessageScrollerItem>
 								))}
-
-								{(status === "submitted" || resuming) && (
-									<MessageScrollerItem>
-										<TraceLine status="running" className={ENTER_CLASS}>
-											<TraceIcon>
-												<Spinner decorative className="size-3" />
-											</TraceIcon>
-											<TraceTitle>
-												<Trans>Thinking…</Trans>
-											</TraceTitle>
-										</TraceLine>
-									</MessageScrollerItem>
-								)}
-
-								{stopped && !busy && !proposedInLast && (
-									<MessageScrollerItem>
-										<p className="flex items-center gap-2 text-sm text-ink-2 transition-opacity duration-standard ease-enter starting:opacity-0">
-											<Icon name="stop-circle" size={18} className="text-ink-3" />
-											<Trans>Stopped. No edits were proposed.</Trans>
-											<button
-												type="button"
-												className="font-medium underline underline-offset-2"
-												onClick={() => send(t`Continue`)}
-											>
-												<Trans>Continue</Trans>
-											</button>
-										</p>
-									</MessageScrollerItem>
-								)}
-
-								{error && !busy && (
-									<MessageScrollerItem>
-										<div
-											role="alert"
-											className="grid gap-2 rounded-xl bg-danger-soft p-3 text-[13px] text-danger-text transition-opacity duration-standard ease-enter starting:opacity-0"
-										>
-											<span className="flex gap-2">
-												<Icon name="warning-circle" size={18} className="shrink-0" />
-												{receipts.error ? (
-													<Trans>This conversation couldn't be opened.</Trans>
-												) : (
-													<Trans>
-														{props.providerLabel} returned “
-														{getOrpcErrorMessage(error, {
-															fallback: t`an error`,
-															allowServerMessage: true,
-														})}
-														”. Your message is kept.
-													</Trans>
-												)}
-											</span>
-											<span className="flex gap-1.5">
-												<Button size="sm" variant="secondary" onClick={retry}>
-													<Trans>Retry</Trans>
-												</Button>
-												<Button size="sm" variant="ghost" onClick={props.onSwitchModel}>
-													<Trans>Switch model</Trans>
-												</Button>
-											</span>
-										</div>
-									</MessageScrollerItem>
-								)}
-
-								{!busy && messages.length > 0 && (
-									<MessageScrollerItem className="flex justify-end transition-opacity duration-standard ease-enter starting:opacity-0">
-										<Button
-											size="sm"
-											variant="ghost"
-											className="text-ink-3"
-											onClick={() => void copyTranscript(messages)}
-										>
-											<Icon name="copy" size={16} />
-											<Trans>Copy transcript</Trans>
-										</Button>
-									</MessageScrollerItem>
-								)}
 							</MessageScrollerContent>
 						</MessageScrollerViewport>
 						<MessageScrollerButton>
@@ -393,13 +412,32 @@ export function Conversation(props: ConversationProps) {
 				onContextChange={setContext}
 				providerLabel={props.providerLabel}
 				streaming={busy}
-				disabled={readOnly}
+				disabled={readOnly || !!props.notice}
 				threadId={threadId}
+				notice={props.notice}
 				onSend={send}
 				onStop={stopReply}
 			/>
 		</div>
 	);
+}
+
+type FollowNewQuestionProps = { messages: readonly UIMessage[]; initialIds: ReadonlySet<string> };
+
+/**
+ * Brings each question the person sends to the top of the view, even when they had scrolled up to read. The scroller
+ * notices new turns only at the end of the list, and this one's question lands above the Thinking and Copy rows.
+ */
+function FollowNewQuestion({ messages, initialIds }: FollowNewQuestionProps) {
+	const { scrollToMessage } = useMessageScroller();
+	const lastQuestion = messages.findLast((message) => message.role === "user")?.id;
+	const followed = useRef(lastQuestion);
+	useEffect(() => {
+		if (!lastQuestion || lastQuestion === followed.current || initialIds.has(lastQuestion)) return;
+		followed.current = lastQuestion;
+		scrollToMessage(lastQuestion, { align: "start" });
+	}, [lastQuestion, initialIds, scrollToMessage]);
+	return null;
 }
 
 const isProposeEdits = (part: Part): part is ToolPart =>
@@ -422,6 +460,7 @@ function toProposals(part: ToolPart, receipts: ReadonlyMap<string, Receipt>, doc
 			target,
 			location: document.locationOf({ ...edit, target }) ?? edit.location,
 			status: receipt?.status ?? edit.status,
+			...(receipt?.superseded ? { superseded: true } : {}),
 			source: "assistant",
 		};
 	});
@@ -478,7 +517,14 @@ const MessageView = memo(function MessageView({
 	}
 
 	const sources = agentWebSources(message);
+	const knowledge = agentKnowledgeUsed(message);
 	const lastTextIndex = message.parts.findLastIndex((part) => part.type === "text");
+	// What this reply read, as the coach shows it: the document, and any facts and stories its Knowledge search found.
+	const readDocument = message.parts.some(
+		(part) =>
+			(part.type === "tool-read_resume" || part.type === "tool-read_letter") &&
+			(part as ToolPart).state === "output-available",
+	);
 
 	return (
 		<div className={cn("grid gap-3 text-sm", enter && ENTER_CLASS)}>
@@ -512,6 +558,39 @@ const MessageView = memo(function MessageView({
 					/>
 				);
 			})}
+			{!streaming && (readDocument || knowledge.facts.length > 0 || knowledge.stories.length > 0) && (
+				<div className="flex flex-wrap items-center gap-1.5">
+					<span className="me-0.5 text-xs text-ink-3">
+						<Trans>Used</Trans>
+					</span>
+					{readDocument && (
+						<span className="inline-flex h-6 items-center rounded-sm border border-line-2 px-2 text-xs font-medium text-ink-2">
+							{document.name}
+						</span>
+					)}
+					{knowledge.facts.length > 0 && (
+						<UsedChip label={plural(knowledge.facts.length, { one: "# fact", other: "# facts" })} title={t`Facts`}>
+							{knowledge.facts.map((fact) => (
+								<li key={fact.id} className="text-[13px] leading-[19px]">
+									{fact.text}
+								</li>
+							))}
+						</UsedChip>
+					)}
+					{knowledge.stories.length > 0 && (
+						<UsedChip
+							label={plural(knowledge.stories.length, { one: "# story", other: "# stories" })}
+							title={t`Stories`}
+						>
+							{knowledge.stories.map((story) => (
+								<li key={story.id} className="text-[13px] leading-[19px]">
+									{story.title}
+								</li>
+							))}
+						</UsedChip>
+					)}
+				</div>
+			)}
 			{sources.length > 0 && (
 				<div className="grid gap-1 text-xs">
 					<span className="font-medium text-ink-3">
@@ -569,6 +648,17 @@ function ToolPartView({
 				</Status>
 			);
 		case "tool-read_attachment":
+			if (part.state === "output-error")
+				return (
+					<TraceLine role="alert" status="error">
+						<TraceIcon>
+							<Icon name="warning-circle" size={14} />
+						</TraceIcon>
+						<TraceTitle>
+							<Trans>Couldn't read the attachment: {part.errorText}</Trans>
+						</TraceTitle>
+					</TraceLine>
+				);
 			return (
 				<Status working={working}>
 					<Trans>Read the attachment</Trans>
@@ -674,17 +764,24 @@ function ToolPartView({
 				<div className="grid gap-1.5">
 					{proposals.length > 0 ? (
 						<ChangeSet
+							resumeId={document.kind === "resume" ? document.id : undefined}
 							proposals={proposals}
 							states={states}
 							locked={localEditsLocked || forJobCopy}
 							title={
-								pending > 0 ? (
-									<Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />
-								) : (
-									<Trans>
-										{accepted} of {proposals.length} applied
-									</Trans>
-								)
+								<>
+									{output.title && <span>{output.title} · </span>}
+									{/* Its own element, so the count reads (and is found) on its own. */}
+									<span>
+										{pending > 0 ? (
+											<Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />
+										) : (
+											<Trans>
+												{accepted} of {proposals.length} applied
+											</Trans>
+										)}
+									</span>
+								</>
 							}
 							onAccept={(chosen) => {
 								if (forJobCopy) return;
@@ -703,6 +800,7 @@ function ToolPartView({
 							</div>
 						)
 					)}
+					{document.kind === "resume" && answerable && accepted > 0 && pending === 0 && <StillOverflows />}
 					{forJobCopy && undecided && (
 						<p className="text-xs text-ink-2">
 							{"tailoredFor" in output ? (
@@ -736,9 +834,56 @@ function ToolPartView({
 					<Trans>This reply used Knowledge that has since changed, so it's hidden.</Trans>
 				</Status>
 			);
+		case "tool-search_career_knowledge":
+			return (
+				<Status working={working}>
+					{working ? <Trans>Searching your Knowledge…</Trans> : <Trans>Searched your Knowledge</Trans>}
+				</Status>
+			);
 		default:
 			return null;
 	}
+}
+
+/**
+ * After a set is applied, what the page still needs: wording edits often can't close an overflow that comes from the
+ * layout, so the design's own Fit is one click away.
+ */
+function StillOverflows() {
+	const rendered = useEditorStore((state) => state.rendered);
+	const data = useResumeStore((state) => state.resume?.data);
+	const [fitting, setFitting] = useState(false);
+	const overflow = data && rendered.pageCount > 0 ? measureOverflow(data, rendered) : null;
+	if (!overflow) return null;
+	const first = overflow.spills[0];
+	const page = first?.authoredPage;
+	const lines = first?.lines;
+	return (
+		<p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg bg-warn-soft px-3 py-2 text-xs text-warn-text">
+			<span className="flex-1">
+				{first && first.pages.length === 1 && lines ? (
+					<Plural
+						value={lines}
+						one={`Page ${page} still runs over by about # line.`}
+						other={`Page ${page} still runs over by about # lines.`}
+					/>
+				) : (
+					<Plural value={overflow.pageCount} one="Still runs to # page." other="Still runs to # pages." />
+				)}
+			</span>
+			<Button
+				size="sm"
+				variant="secondary"
+				disabled={fitting}
+				onClick={() => {
+					setFitting(true);
+					void runFit().finally(() => setFitting(false));
+				}}
+			>
+				<Plural value={overflow.authored} _1="Fit to one page" other="Fit to # pages" />
+			</Button>
+		</p>
+	);
 }
 
 /** One step the assistant took: a spinner while it runs, a check once done. */
@@ -768,6 +913,8 @@ type ComposerProps = {
 	onStop: () => void;
 	/** Text the box starts with (a link's `?ask=`); the user still presses Send. */
 	initialText?: string | undefined;
+	/** Above the box: what needs a decision before the next message. */
+	notice?: ReactNode;
 };
 
 /**
@@ -814,7 +961,7 @@ export function Composer(props: ComposerProps) {
 			);
 			setAttachments((current) => [...current, ...uploaded]);
 		} catch (error) {
-			toastError(error, t`Couldn't attach the file. Try again.`);
+			toastError(error, t`Couldn't attach the file. Try again.`, { byCode: attachmentErrorMessages() });
 		} finally {
 			setUploading(false);
 			if (fileInput.current) fileInput.current.value = "";
@@ -840,6 +987,12 @@ export function Composer(props: ComposerProps) {
 
 	const provider = props.providerLabel;
 	const sharesPosting = context.posting && document.posting;
+	// Knowledge is opt-in here, per message: the assistant can search shared facts and stories, never change them.
+	const knowledge = context.memory
+		? context.posting && document.posting
+			? t`It can also search Knowledge available to this application (facts and stories) and send what it finds.`
+			: t`It can also search your shared Knowledge (facts and stories) and send what it finds.`
+		: "";
 	const disclosure = context.document
 		? document.kind === "letter"
 			? sharesPosting
@@ -858,6 +1011,7 @@ export function Composer(props: ComposerProps) {
 
 	return (
 		<div className="grid gap-2 border-t border-line bg-surface px-3 pt-2.5 pb-3">
+			{props.notice}
 			{needsCopy && posting && (
 				<p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg bg-sunken px-3 py-2 text-xs text-ink-2">
 					<span className="flex-1">
@@ -879,6 +1033,16 @@ export function Composer(props: ComposerProps) {
 			)}
 			{/* The Knowledge switch is always here, so the row is too. */}
 			<div className="flex flex-wrap gap-1.5">
+				<ContextChip
+					pressed={context.memory === true}
+					onPressedChange={(memory) => onContextChange({ ...context, memory })}
+					label={t`Knowledge`}
+					tooltip={
+						context.memory
+							? t`The assistant can search facts and stories you share with all applications. It can't change them.`
+							: t`Let the assistant search facts and stories you share with all applications, read-only`
+					}
+				/>
 				{chips.map((chip) => (
 					<RemovableChip
 						key={chip.key}
@@ -889,18 +1053,6 @@ export function Composer(props: ComposerProps) {
 						onRemove={() => onContextChange({ ...context, [chip.key]: false })}
 					/>
 				))}
-				<button
-					type="button"
-					aria-pressed={context.memory === true}
-					onClick={() => onContextChange({ ...context, memory: context.memory !== true })}
-					className={cn(
-						"flex h-[26px] items-center gap-1 rounded-md px-2 text-xs transition-colors",
-						context.memory === true ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-3 hover:text-ink",
-					)}
-				>
-					<Icon name="brain" size={15} />
-					<Trans>Use Knowledge</Trans>
-				</button>
 				{attachments.map((attachment) => (
 					<RemovableChip
 						key={attachment.id}
@@ -950,6 +1102,7 @@ export function Composer(props: ComposerProps) {
 							ref={fileInput}
 							type="file"
 							multiple
+							accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
 							className="hidden"
 							onChange={(event) => void upload(event.target.files)}
 						/>
@@ -970,7 +1123,8 @@ export function Composer(props: ComposerProps) {
 			</div>
 
 			<p className="text-xs leading-4 text-ink-3">
-				{disclosure} {context.memory === true && <Trans>Knowledge facts the assistant looks up are sent too.</Trans>}{" "}
+				{disclosure}
+				{knowledge && ` ${knowledge}`}{" "}
 				{!context.document || !context.posting ? (
 					<Trans>
 						Each send starts fresh with this message and selected files. Previous conversation history stays here.
@@ -982,6 +1136,14 @@ export function Composer(props: ComposerProps) {
 		</div>
 	);
 }
+
+/** The upload limits by name: which one was reached, rather than "try again". */
+const attachmentErrorMessages = () => ({
+	AGENT_ATTACHMENT_LIMIT: t`Attach up to 10 files per message.`,
+	AGENT_ATTACHMENT_TOO_LARGE: t`Files can be up to 25 MB.`,
+	AGENT_THREAD_ATTACHMENTS_FULL: t`A conversation's files can total up to 100 MB. Start a new conversation.`,
+	AGENT_ACCOUNT_ATTACHMENTS_FULL: t`Your assistant files can total up to 1 GB. Delete conversations you no longer need.`,
+});
 
 type RemovableChipProps = {
 	icon: IconName;

@@ -15,14 +15,17 @@ const SLICE_BYTES = 16 * 1024;
 /**
  * Inflates the first entry of each name `select` accepts and nothing else. A ZIP's declared sizes can lie, so
  * inflation stops as soon as an entry actually produces more than `maxEntryBytes`: neither memory nor CPU follows
- * the archive's claims. Callers bound the number of names they accept.
+ * the archive's claims. Callers bound the number of names they accept, or pass `maxTotalBytes` when a pattern can
+ * match many entries.
  */
 export function unzipEntries(
 	data: Uint8Array,
 	select: (name: string) => boolean,
 	maxEntryBytes: number,
+	maxTotalBytes = Number.POSITIVE_INFINITY,
 ): Record<string, Uint8Array> {
 	const entries = new Map<string, Uint8Array[]>();
+	let totalBytes = 0;
 	let entryCount = 0;
 	const unzip = new Unzip((file) => {
 		if (++entryCount > 2_000) throw new Error("ZIP contains too many entries.");
@@ -33,7 +36,8 @@ export function unzipEntries(
 		file.ondata = (error, chunk) => {
 			if (error) throw error;
 			size += chunk.length;
-			if (size > maxEntryBytes) throw new ZipEntryTooLargeError(file.name);
+			totalBytes += chunk.length;
+			if (size > maxEntryBytes || totalBytes > maxTotalBytes) throw new ZipEntryTooLargeError(file.name);
 			chunks.push(chunk);
 		};
 		file.start();
