@@ -189,8 +189,10 @@ msgstr "{0, plural, one {# contact a une adresse e-mail invalide ou n'a pas de n
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {# jour restant} other {# jours restants}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# jour} other {# jours}}"
 
@@ -2154,6 +2156,10 @@ msgstr ""
 #: src/features/settings/ai/provider-model.tsx
 msgid "All models"
 msgstr "Tous les modèles"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -4172,6 +4178,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Copie pour un travail…"
 
@@ -6682,6 +6689,10 @@ msgstr "Rempli à partir de la demande d'emploi. La salutation suit le nom."
 msgid "Filled in what we could from the posting."
 msgstr "Nous avons rempli ce que nous pouvions à partir de l'offre."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "Remplir les entrées"
@@ -8636,6 +8647,7 @@ msgid "Link updated"
 msgstr "Lien mis à jour"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Lié · pas encore envoyé"
 
@@ -9375,6 +9387,11 @@ msgstr "Déplacez votre email et votre numéro de téléphone en haut de la prem
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{0} sur {1} déplacés vers la corbeille. Les documents verrouillés ont été ignorés."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13113,6 +13130,7 @@ msgid "Save these offer terms to compare"
 msgstr "Enregistrer ces conditions d'offre pour comparer"
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13274,6 +13292,10 @@ msgstr "Planification supprimée"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "Planifier un entretien"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13937,6 +13959,10 @@ msgstr "Afficher tous les types"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Afficher les candidatures clôturées"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

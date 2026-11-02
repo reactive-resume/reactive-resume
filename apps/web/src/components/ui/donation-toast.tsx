@@ -11,6 +11,10 @@ import { D3, EASE, EXIT } from "@/libs/motion";
 
 const DONATE_URL = "https://opencollective.com/reactive-resume/donate";
 const SHOW_DELAY_MS = 5 * 60 * 1000; // 5 minutes
+// While a toast or dialog is up (something was just saved, or is being decided), wait this long and look again.
+const HOLD_MS = 30 * 1000;
+
+const busy = () => !!document.querySelector('[data-slot="toast"], [role="dialog"], [role="alertdialog"]');
 const DISMISSED_COOKIE_NAME = "donation-toast-dismissed";
 
 export function DonationToast() {
@@ -21,7 +25,14 @@ export function DonationToast() {
 	const inApp = pathname.startsWith("/dashboard") || pathname.startsWith("/builder");
 
 	// Never closes by itself: "Maybe later", or donating, is what records the 1-week cookie.
-	useTimeout(() => setOpen(true), Cookies.get(DISMISSED_COOKIE_NAME) === "true" ? null : SHOW_DELAY_MS);
+	const [delay, setDelay] = useState<number | null>(() =>
+		Cookies.get(DISMISSED_COOKIE_NAME) === "true" ? null : SHOW_DELAY_MS,
+	);
+	useTimeout(() => {
+		if (!busy()) return setOpen(true);
+		// A different value restarts the timer for another wait.
+		setDelay((current) => (current === HOLD_MS ? HOLD_MS + 1 : HOLD_MS));
+	}, delay);
 
 	const dismiss = () => {
 		setOpen(false);
@@ -37,14 +48,12 @@ export function DonationToast() {
 					animate={{ opacity: 1, y: 0, transition: { duration: D3, ease: EASE } }}
 					exit={{ opacity: 0, y: 6, transition: { duration: D3 * EXIT, ease: EASE } }}
 					className={cn(
-						// Open Collective's blue, dark enough for white text (4.8:1).
-						"[--oc:#1869f5]",
 						"fixed inset-x-3 bottom-3 z-40 flex gap-3 rounded-xl border border-line bg-surface p-4 shadow-e2 sm:inset-x-auto sm:end-5 sm:bottom-5 sm:w-[344px]",
 						// Clears the dashboard's bottom tab bar on phones.
 						pathname.startsWith("/dashboard") && "max-sm:bottom-[calc(64px+env(safe-area-inset-bottom))]",
 					)}
 				>
-					<Icon name="hand-heart" className="mt-px shrink-0 text-(--oc)" />
+					<Icon name="hand-heart" className="mt-px shrink-0 text-accent-text" />
 
 					<div className="min-w-0">
 						<p id={titleId} className="text-sm font-semibold text-ink">
@@ -60,7 +69,6 @@ export function DonationToast() {
 								nativeButton={false}
 								render={<a href={DONATE_URL} target="_blank" rel="noopener noreferrer" />}
 								onClick={dismiss}
-								className="bg-(--oc) text-white hover:bg-(--oc) hover:brightness-[0.92]"
 							>
 								{t`Donate`}
 							</Button>

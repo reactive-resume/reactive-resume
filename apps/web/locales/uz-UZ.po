@@ -189,8 +189,10 @@ msgstr "{0, plural, one {# kontaktining e-pochta manzili yaroqsiz yoki ismi yo�
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {# kun qoldi} other {# kun qoldi}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# kuni} other {# kunlar}}"
 
@@ -2154,6 +2156,10 @@ msgstr ""
 #: src/features/settings/ai/provider-model.tsx
 msgid "All models"
 msgstr "Barcha modellar"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -4172,6 +4178,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Ish uchun nusxa oling…"
 
@@ -6682,6 +6689,10 @@ msgstr "Ish arizasidan to'ldirilgan. Salom ismdan keyin keladi."
 msgid "Filled in what we could from the posting."
 msgstr "E'londan imkon qadar ma'lumotlar to'ldirildi."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "Yozuvlarni to'ldirish"
@@ -8636,6 +8647,7 @@ msgid "Link updated"
 msgstr "Havola yangilandi"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Bog'langan · hali yuborilmagan"
 
@@ -9375,6 +9387,11 @@ msgstr "Elektron pochta va telefon raqamingizni birinchi sahifaning yuqorisiga k
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1} tadan {0} tasi chiqindiga o‘tkazildi. Qulflangan hujjatlar o‘tkazib yuborildi."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13113,6 +13130,7 @@ msgid "Save these offer terms to compare"
 msgstr "Solishtirish uchun bu taklif shartlarini saqlash"
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13274,6 +13292,10 @@ msgstr "Jadval o'chirildi"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "Suhbatni rejalashtirish"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13937,6 +13959,10 @@ msgstr "Barcha turlarni ko'rsatish"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Yopilgan ish arizalarini ko‘rsatish"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

@@ -189,8 +189,10 @@ msgstr "{0, plural, one {# kontaktpersonai ir nederīgs e-pasts vai nav vārda; 
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, zero {Atlikušas # dienas} one {Atlikusi # diena} other {Atlikušas # dienas}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# diena} other {# dienas}}"
 
@@ -2154,6 +2156,10 @@ msgstr ""
 #: src/features/settings/ai/provider-model.tsx
 msgid "All models"
 msgstr "Visi modeļi"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -4172,6 +4178,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Kopēt darbam…"
 
@@ -6682,6 +6689,10 @@ msgstr "Aizpildīts no darba pieteikuma. Sveiciens seko vārdam."
 msgid "Filled in what we could from the posting."
 msgstr "Aizpildījām, ko varējām no sludinājuma."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "Ierakstu aizpildīšana"
@@ -8636,6 +8647,7 @@ msgid "Link updated"
 msgstr "Saite atjaunināta"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Saistīts · vēl nav nosūtīts"
 
@@ -9375,6 +9387,11 @@ msgstr "Pārvietojiet savu e-pastu un tālruņa numuru pirmās lapas augšpusē.
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "Uz atkritni pārvietoti {0} no {1}. Bloķētie dokumenti tika izlaisti."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13113,6 +13130,7 @@ msgid "Save these offer terms to compare"
 msgstr "Saglabāt šos piedāvājuma nosacījumus salīdzināšanai"
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13274,6 +13292,10 @@ msgstr "Grafiks izdzēsts"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "Ieplāno interviju"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13937,6 +13959,10 @@ msgstr "Rādīt visus veidus"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Rādīt slēgtos darba pieteikumus"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

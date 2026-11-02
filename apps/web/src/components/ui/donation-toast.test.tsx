@@ -42,3 +42,18 @@ it("never covers the homepage or other public pages", async () => {
 	expect(screen.queryByText("Enjoying Reactive Resume?")).toBeNull();
 	route.pathname = "/dashboard";
 });
+
+it("waits while a toast or dialog is showing", async () => {
+	route.pathname = "/dashboard";
+	const toast = document.createElement("div");
+	toast.dataset.slot = "toast";
+	document.body.append(toast);
+	render(<DonationToast />);
+
+	await act(() => vi.advanceTimersByTimeAsync(FIVE_MINUTES));
+	expect(screen.queryByText("Enjoying Reactive Resume?")).not.toBeInTheDocument();
+
+	toast.remove();
+	await act(() => vi.advanceTimersByTimeAsync(31_000));
+	expect(screen.getByText("Enjoying Reactive Resume?")).toBeInTheDocument();
+});

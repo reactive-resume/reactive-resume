@@ -189,8 +189,10 @@ msgstr "{0, plural, one {#টি পরিচিতির ইমেল অবৈ
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {# দিন বাকি} other {# দিন বাকি}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# দিন} other {# দিন}}"
 
@@ -2154,6 +2156,10 @@ msgstr ""
 #: src/features/settings/ai/provider-model.tsx
 msgid "All models"
 msgstr "সব মডেল"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -4172,6 +4178,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "একটি কাজের জন্য অনুলিপি..."
 
@@ -6682,6 +6689,10 @@ msgstr "চাকরির আবেদনপত্র থেকে পূরণ
 msgid "Filled in what we could from the posting."
 msgstr "চাকরির বিজ্ঞপ্তি থেকে যতটুকু পেরেছি, ততটুকু পূরণ করেছি।"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "এন্ট্রি পূরণ"
@@ -8636,6 +8647,7 @@ msgid "Link updated"
 msgstr "লিঙ্ক আপডেট করা হয়েছে"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "লিঙ্ক করা · এখনও পাঠানো হয়নি"
 
@@ -9375,6 +9387,11 @@ msgstr "আপনার ইমেইল ও ফোন নম্বর প্র�
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1}টির মধ্যে {0}টি ট্র্যাশে সরানো হয়েছে। তালাবদ্ধ নথিগুলো বাদ দেওয়া হয়েছে।"
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13113,6 +13130,7 @@ msgid "Save these offer terms to compare"
 msgstr "তুলনা করতে অফারের এই শর্তগুলো সংরক্ষণ করুন"
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13274,6 +13292,10 @@ msgstr "সময়সূচি মুছে ফেলা হয়েছে"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "সাক্ষাৎকারের সময়সূচী"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13937,6 +13959,10 @@ msgstr "সব ধরন দেখান"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "বন্ধ চাকরির আবেদনগুলি দেখান"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

@@ -189,8 +189,10 @@ msgstr "{0, plural, one {# kontakt má neplatný e-mail alebo nemá meno; jeho �
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {Zostáva # deň} few {Zostávajú # dni} many {Zostáva # dňa} other {Zostáva # dní}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# deň} other {# dní}}"
 
@@ -2154,6 +2156,10 @@ msgstr ""
 #: src/features/settings/ai/provider-model.tsx
 msgid "All models"
 msgstr "Všetky modely"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -4172,6 +4178,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Kopírovať pre úlohu…"
 
@@ -6682,6 +6689,10 @@ msgstr "Vyplnené zo žiadosti o zamestnanie. Za menom nasleduje pozdrav."
 msgid "Filled in what we could from the posting."
 msgstr "Doplnili sme, čo sa dalo, z inzerátu."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "Vypĺňanie záznamov"
@@ -8636,6 +8647,7 @@ msgid "Link updated"
 msgstr "Odkaz bol aktualizovaný"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Prepojené · zatiaľ neodoslané"
 
@@ -9375,6 +9387,11 @@ msgstr "Presuňte svoj e-mail a telefónne číslo na začiatok prvej strany."
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "Do koša presunuté: {0} z {1}. Zamknuté dokumenty boli preskočené."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13113,6 +13130,7 @@ msgid "Save these offer terms to compare"
 msgstr "Uložiť tieto podmienky ponuky na porovnanie"
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13274,6 +13292,10 @@ msgstr "Naplánovaná úloha odstránená"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "Naplánujte si pohovor"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13937,6 +13959,10 @@ msgstr "Zobraziť všetky typy"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Zobraziť uzavreté žiadosti"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

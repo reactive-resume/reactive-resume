@@ -3,7 +3,6 @@ import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -16,7 +15,6 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
@@ -43,7 +41,6 @@ type LetterBarProps = {
 export function LetterBar({ layout, pinnable }: LetterBarProps) {
 	const setSheetTab = useEditorStore((state) => state.setSheetTab);
 	// Below 1280 the bar is too narrow for Export's label next to everything else.
-	const wide = useBreakpoint() === "wide";
 	const download = useDownloadLetter();
 
 	return (
@@ -64,14 +61,8 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 				</TabsList>
 			}
 		>
-			{layout === "desktop" && wide ? (
-				<Button variant="secondary" className="gap-1.5" onClick={() => setSheetTab("download")}>
-					<Icon name="export" />
-					<Trans>Export</Trans>
-				</Button>
-			) : (
-				<IconButton icon="export" label={t`Export`} onClick={() => setSheetTab("download")} />
-			)}
+			{/* Download PDF's ▾ opens the other formats; phones show only its icon, so they keep this way in. */}
+			{layout === "mobile" && <IconButton icon="export" label={t`Export`} onClick={() => setSheetTab("download")} />}
 			<DownloadButtons
 				busy={download.busy}
 				onDownload={() => void download.run()}

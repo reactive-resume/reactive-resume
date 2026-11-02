@@ -387,7 +387,12 @@ const ApplicationRow = memo(function ApplicationRow({
 				application.coverLetterId ||
 				application.resumeFileUrl ||
 				application.coverLetterUrl ? (
-					<span className="flex items-center gap-1 text-ink-2">
+					// Before the job is applied to, the documents are only linked: show them muted and say so.
+					<span
+						className={cn("flex items-center gap-1", sent ? "text-ink-2" : "text-ink-3 opacity-70")}
+						title={sent ? undefined : t`Linked · not sent yet`}
+					>
+						{!sent && <span className="sr-only">{t`Linked · not sent yet`}</span>}
 						{application.resumeFileUrl && (
 							<>
 								<Icon name="file-pdf" size={18} />

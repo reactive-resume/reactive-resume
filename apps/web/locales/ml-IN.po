@@ -189,8 +189,10 @@ msgstr "{0, plural, one {# കോൺടാക്‌റ്റിന് ഒരു 
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {# ദിവസം ബാക്കി} other {# ദിവസം ബാക്കി}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# ദിവസം} other {# ദിവസങ്ങൾ}}"
 
@@ -2154,6 +2156,10 @@ msgstr ""
 #: src/features/settings/ai/provider-model.tsx
 msgid "All models"
 msgstr "എല്ലാ മോഡലുകളും"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -4172,6 +4178,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "ജോലിക്കായി പകർത്തുക..."
 
@@ -6682,6 +6689,10 @@ msgstr "ജോലി അപേക്ഷയിൽ നിന്ന് പൂരി
 msgid "Filled in what we could from the posting."
 msgstr "പോസ്റ്റിംഗിൽ നിന്ന് ഞങ്ങൾക്ക് കഴിയുന്നത് പൂരിപ്പിച്ചു."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "എൻട്രികൾ പൂരിപ്പിക്കുന്നു"
@@ -8636,6 +8647,7 @@ msgid "Link updated"
 msgstr "ലിങ്ക് അപ്ഡേറ്റ് ചെയ്തു"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "ലിങ്ക് ചെയ്‌തു · ഇതുവരെ അയച്ചിട്ടില്ല"
 
@@ -9375,6 +9387,11 @@ msgstr "നിങ്ങളുടെ ഇമെയിലും ഫോൺ നമ്
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1}-ൽ {0} എണ്ണം ട്രാഷിലേക്ക് നീക്കി. ലോക്ക് ചെയ്ത പ്രമാണങ്ങൾ ഒഴിവാക്കി."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13113,6 +13130,7 @@ msgid "Save these offer terms to compare"
 msgstr "താരതമ്യം ചെയ്യാൻ ഈ ഓഫർ വ്യവസ്ഥകൾ സേവ് ചെയ്യുക"
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13274,6 +13292,10 @@ msgstr "ഷെഡ്യൂൾ ഡിലീറ്റ് ചെയ്തു"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "അഭിമുഖം ഷെഡ്യൂൾ ചെയ്യുക"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13937,6 +13959,10 @@ msgstr "എല്ലാ തരങ്ങളും കാണിക്കുക"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "അടച്ച ജോലി അപേക്ഷകൾ കാണിക്കുക"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

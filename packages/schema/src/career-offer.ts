@@ -91,3 +91,77 @@ export function offerTermKeys(terms: Pick<OfferTerms, OfferTermKey>): OfferTermK
 	};
 	return (["base", "variable", "equity", "startDate", "respondBy"] as const).filter((key) => known[key]);
 }
+
+const KNOWN_CURRENCIES: ReadonlySet<string> | null = (() => {
+	try {
+		return typeof Intl.supportedValuesOf === "function" ? new Set(Intl.supportedValuesOf("currency")) : null;
+	} catch {
+		return null;
+	}
+})();
+
+const CURRENCY_SYMBOLS: Readonly<Record<string, string>> = {
+	"€": "EUR",
+	"£": "GBP",
+	"¥": "JPY",
+	"₹": "INR",
+	"₩": "KRW",
+	"₺": "TRY",
+	zł: "PLN",
+	US$: "USD",
+	A$: "AUD",
+	C$: "CAD",
+	$: "USD",
+};
+
+/**
+ * What the job's own salary line says, to start an offer from: its currency (an ISO code, or a symbol such as € or £),
+ * the lower end of the range as the base, read as a whole amount ("€165,000 – €190,000", "$120k–140k", "$120–140k"),
+ * and its pay period ("/hour", "per month"; a year when it names none). Each is null when the line doesn't say; the
+ * person edits them before saving.
+ */
+export function offerHintFromSalary(salary: string | null | undefined): {
+	currency: string | null;
+	base: number | null;
+	period: "hour" | "month" | "year" | null;
+} {
+	const text = (salary ?? "").trim();
+	if (!text) return { currency: null, base: null, period: null };
+	// A three-letter code counts only beside an amount ("GBP 85k", "85,000 EUR") and, where the runtime lists them, when it
+	// is a real ISO 4217 code: "OTE $120k" is in dollars.
+	const codes = [...text.matchAll(/\b([A-Z]{3})\s*\d|\d\s*(?:k|m|thousand|million)?\s*([A-Z]{3})\b/gi)]
+		.map((match) => match[1] ?? match[2] ?? "")
+		.filter((value) => /^[A-Z]{3}$/.test(value) && (!KNOWN_CURRENCIES || KNOWN_CURRENCIES.has(value)));
+	const code = codes[0] ?? null;
+	const symbol = Object.keys(CURRENCY_SYMBOLS).find((key) => text.includes(key));
+	const currency = code ?? (symbol ? (CURRENCY_SYMBOLS[symbol] ?? null) : null);
+	const period = /(?:\/|\bper\s+|\ban?\s+)(?:h|hr|hour)\b|\bhourly\b/i.test(text)
+		? "hour"
+		: /(?:\/|\bper\s+|\ba\s+)(?:mo|month)\b|\bmonthly\b/i.test(text)
+			? "month"
+			: /(?:\/|\bper\s+|\ba\s+)(?:yr|year|annum)\b|\bannual(?:ly)?\b|\byearly\b/i.test(text)
+				? "year"
+				: null;
+	// Each amount (or range, whose unit may follow only its upper end: "120–140k"). The first one written with a
+	// currency or a unit wins, so "2026 compensation: $120,000" reads 120,000, not the year.
+	const amounts = [
+		...text.matchAll(
+			/(\d(?:[\d.,]*\d)?)\s*(k|m|thousand|million)?(?![a-z])(?:\s*(?:[-–—]|to)\s*\D{0,4}?\d(?:[\d.,]*\d)?\s*(k|m|thousand|million)?(?![a-z]))?/gi,
+		),
+	];
+	const anchored = (match: RegExpExecArray | RegExpMatchArray) => {
+		if (match[2] || match[3]) return true;
+		const index = match.index ?? 0;
+		const before = text.slice(Math.max(0, index - 4), index);
+		const after = text.slice(index + match[0].length);
+		return /(?:[$€£¥₹₩₺]|zł|\b[A-Z]{3})\s*$/.test(before) || /^\s*[A-Z]{3}\b/.test(after);
+	};
+	const first = amounts.find(anchored) ?? amounts[0];
+	if (!first?.[1]) return { currency, base: null, period };
+	const digits = first[1].replace(/[.,](?=\d{3}\b)/g, "").replace(",", ".");
+	const number = Number.parseFloat(digits);
+	const unit = (first[2] ?? first[3] ?? "").toLowerCase();
+	const scale = unit === "k" || unit === "thousand" ? 1_000 : unit === "m" || unit === "million" ? 1_000_000 : 1;
+	const base = Number.isFinite(number) ? Math.round(number * scale) : null;
+	return { currency, base: base && base > 0 ? base : null, period };
+}
