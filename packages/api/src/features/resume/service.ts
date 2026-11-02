@@ -475,26 +475,51 @@ async function notifyResumeUpdated(event: ResumeUpdatedEvent) {
 
 // One conditional UPDATE skips locked rows atomically; only a miss pays for the read that says why.
 // Resumes in Trash miss both the update and the fallback read (activeResumeWhere), throwing NOT_FOUND without leaking lock state.
-async function updateResumePassword(input: { id: string; userId: string; password: string | null }) {
-	const owned = activeResumeWhere(input.id, input.userId);
-	const [resume] = await db
-		.update(schema.resume)
-		.set({ password: input.password })
-		.where(activeUnlockedResumeWhere(input.id, input.userId))
-		.returning({ id: schema.resume.id, updatedAt: schema.resume.updatedAt });
-
-	if (!resume) {
-		const [existing] = await db.select({ id: schema.resume.id }).from(schema.resume).where(owned);
-		throw existing ? new ORPCError("RESUME_LOCKED", { status: 403 }) : new ORPCError("NOT_FOUND");
-	}
-
+/**
+ * Writes fields next to the data (lock, password, linked application) and answers with the accepted revision, so an
+ * open editor builds its next autosave on it instead of conflicting with it. With `expectedUpdatedAt` the write is
+ * conditional like `update`: a revision the caller hasn't seen returns RESUME_VERSION_CONFLICT.
+ */
+export async function writeResumeFields(input: {
+	id: string;
+	userId: string;
+	set: Partial<typeof schema.resume.$inferInsert>;
+	/** Refuse on a locked resume (everything but the lock itself). */
+	unlockedOnly: boolean;
+	expectedUpdatedAt?: Date | undefined;
+	mutation: ResumeUpdatedEvent["mutation"];
+	/** Runs first in the same transaction, such as taking the account lock that keeps lock order with other writes. */
+	before?: (tx: DbOrTx) => Promise<unknown>;
+}) {
+	const write = async (tx: DbOrTx) => {
+		await input.before?.(tx);
+		const [existing] = await tx
+			.select({ isLocked: schema.resume.isLocked, updatedAt: schema.resume.updatedAt })
+			.from(schema.resume)
+			.where(activeResumeWhere(input.id, input.userId))
+			.for("update");
+		if (!existing) throw new ORPCError("NOT_FOUND");
+		if (input.unlockedOnly && existing.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
+		assertResumeVersion(existing.updatedAt, input.expectedUpdatedAt);
+		// Each revision is later than the last, even in the same millisecond, so a stale revision can't match it.
+		const updatedAt = new Date(Math.max(Date.now(), existing.updatedAt.getTime() + 1));
+		const [updated] = await tx
+			.update(schema.resume)
+			.set({ ...input.set, updatedAt })
+			.where(activeResumeWhere(input.id, input.userId))
+			.returning(resumeColumns);
+		if (!updated) throw new ORPCError("NOT_FOUND");
+		return updated;
+	};
+	const resume = await db.transaction(write);
 	await notifyResumeUpdated({
 		type: "resume.updated",
 		resumeId: resume.id,
 		userId: input.userId,
 		updatedAt: resume.updatedAt.toISOString(),
-		mutation: "password",
+		mutation: input.mutation,
 	});
+	return resume;
 }
 
 let unusedHash: Promise<string> | undefined;
@@ -935,26 +960,25 @@ export const resumeService = {
 
 	patchInTransaction: applyResumePatchTx,
 
-	setLocked: async (input: { id: string; userId: string; isLocked: boolean }) => {
-		const [resume] = await db
-			.update(schema.resume)
-			.set({ isLocked: input.isLocked })
-			.where(activeResumeWhere(input.id, input.userId))
-			.returning({ id: schema.resume.id, updatedAt: schema.resume.updatedAt });
-
-		if (!resume) throw new ORPCError("NOT_FOUND");
-
-		await notifyResumeUpdated({
-			type: "resume.updated",
-			resumeId: resume.id,
+	setLocked: (input: { id: string; userId: string; isLocked: boolean; expectedUpdatedAt?: Date | undefined }) =>
+		writeResumeFields({
+			id: input.id,
 			userId: input.userId,
-			updatedAt: resume.updatedAt.toISOString(),
+			set: { isLocked: input.isLocked },
+			unlockedOnly: false,
+			expectedUpdatedAt: input.expectedUpdatedAt,
 			mutation: "lock",
-		});
-	},
+		}),
 
-	setPassword: async (input: { id: string; userId: string; password: string }) =>
-		updateResumePassword({ ...input, password: await hash(input.password, 10) }),
+	setPassword: async (input: { id: string; userId: string; password: string; expectedUpdatedAt?: Date | undefined }) =>
+		writeResumeFields({
+			id: input.id,
+			userId: input.userId,
+			set: { password: await hash(input.password, 10) },
+			unlockedOnly: true,
+			expectedUpdatedAt: input.expectedUpdatedAt,
+			mutation: "password",
+		}),
 
 	verifyPassword: async (input: {
 		slug: string;
@@ -984,7 +1008,15 @@ export const resumeService = {
 		return true;
 	},
 
-	removePassword: (input: { id: string; userId: string }) => updateResumePassword({ ...input, password: null }),
+	removePassword: (input: { id: string; userId: string; expectedUpdatedAt?: Date | undefined }) =>
+		writeResumeFields({
+			id: input.id,
+			userId: input.userId,
+			set: { password: null },
+			unlockedOnly: true,
+			expectedUpdatedAt: input.expectedUpdatedAt,
+			mutation: "password",
+		}),
 
 	/**
 	 * With `trashedBefore`, deletes only if the resume is still in Trash since before then (Trash expiry): a resume

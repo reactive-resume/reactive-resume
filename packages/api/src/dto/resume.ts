@@ -49,6 +49,21 @@ const versionSchema = z.object({
 	createdAt: z.date().describe("When this state was saved."),
 });
 
+// Writes next to the data (lock, password, linked application) take the revision the caller last saw, and answer
+// with the revision they made, so an open editor's next autosave builds on it.
+// Coercion would read null as 1970, which every resume fails; a malformed revision is refused before any check.
+export const expectedRevisionSchema = z
+	.union([z.date(), z.string(), z.number()])
+	.pipe(z.coerce.date())
+	.optional()
+	.describe(
+		"If provided, the change only applies when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409).",
+	);
+export const acceptedRevisionSchema = resumeSchema
+	.omit({ password: true, userId: true })
+	.extend({ hasPassword: z.boolean() })
+	.describe("The resume as the change left it, with its new updatedAt.");
+
 export const resumeDto = {
 	list: {
 		input: z
@@ -158,18 +173,20 @@ export const resumeDto = {
 	},
 
 	setLocked: {
-		input: resumeSchema.pick({ id: true, isLocked: true }),
-		output: z.void(),
+		input: resumeSchema.pick({ id: true, isLocked: true }).extend({ expectedUpdatedAt: expectedRevisionSchema }),
+		output: acceptedRevisionSchema,
 	},
 
 	setPassword: {
-		input: resumeSchema.pick({ id: true }).extend({ password: z.string().min(6).max(64) }),
-		output: z.void(),
+		input: resumeSchema
+			.pick({ id: true })
+			.extend({ password: z.string().min(6).max(64), expectedUpdatedAt: expectedRevisionSchema }),
+		output: acceptedRevisionSchema,
 	},
 
 	removePassword: {
-		input: resumeSchema.pick({ id: true }),
-		output: z.void(),
+		input: resumeSchema.pick({ id: true }).extend({ expectedUpdatedAt: expectedRevisionSchema }),
+		output: acceptedRevisionSchema,
 	},
 
 	patch: {

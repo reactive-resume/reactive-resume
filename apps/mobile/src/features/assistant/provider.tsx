@@ -207,7 +207,7 @@ export function ProviderGate({
 					More providers and options are in Settings. Editing, design, Check issues and downloads work without AI.
 				</Trans>
 			</Text>
-			<Button variant="link" label={t`Open AI settings`} onPress={() => router.push("/settings/ai-providers")} />
+			<Button variant="link" label={t`Set up AI`} onPress={() => router.push("/settings/ai-providers")} />
 			<AIProviderSetupSheet open={setupOpen} onClose={() => setSetupOpen(false)} />
 		</View>
 	);

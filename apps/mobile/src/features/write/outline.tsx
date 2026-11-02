@@ -35,10 +35,9 @@ import {
 import { resolvePictureUrl } from "./picture-screen";
 import { ResumeLanguage } from "./resume-language";
 import { SectionSheet } from "./section-sheet";
-import { client } from "@/api/client";
 import { useSession } from "@/auth/session";
 import { useIsResumeLocked } from "@/draft";
-import { resume } from "@/draft/runtime";
+import { setResumeLocked } from "@/features/share/revision";
 import { routes } from "@/routes";
 import { Banner, Button, Chip, Icon, IconButton, ListRow, Sheet, SortableList, Text, showToast, useTheme } from "@/ui";
 
@@ -522,8 +521,7 @@ function LockedBanner({ resumeId }: { resumeId: string }) {
 	const { t } = useLingui();
 	const unlock = useMutation({
 		mutationKey: ["write", "unlock", resumeId],
-		mutationFn: () => client.resume.setLocked({ id: resumeId, isLocked: false }),
-		onSuccess: () => resume.refresh(),
+		mutationFn: () => setResumeLocked(resumeId, false),
 		onError: () => showToast({ message: t`Couldn't unlock this resume. Try again.` }),
 	});
 	return (
