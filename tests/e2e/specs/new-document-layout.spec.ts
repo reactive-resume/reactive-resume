@@ -58,16 +58,17 @@ for (const lookup of ["empty", "ready", "failed"] as const) {
 			await page.setViewportSize({ width, height: 1000 });
 			await page.goto("/dashboard");
 			let failLookup = lookup === "failed";
+			let returnedProviders: unknown;
 			let release = () => {};
 			const held = new Promise<void>((resolve) => {
 				release = resolve;
 			});
 			await page.route("**/api/rpc/**", async (route) => {
 				const request = route.request();
-				const entries: { url: string }[] = new URL(request.url()).pathname.endsWith("/__batch__")
-					? request.postDataJSON()
-					: [{ url: request.url() }];
-				if (!entries.some((entry) => new URL(entry.url).pathname === "/api/rpc/aiProviders/list")) {
+				const batched = new URL(request.url()).pathname.endsWith("/__batch__");
+				const entries: { url: string }[] = batched ? request.postDataJSON() : [{ url: request.url() }];
+				const providerIndex = entries.findIndex((entry) => new URL(entry.url).pathname === "/api/rpc/aiProviders/list");
+				if (providerIndex < 0) {
 					await route.continue();
 					return;
 				}
@@ -78,6 +79,14 @@ for (const lookup of ["empty", "ready", "failed"] as const) {
 				}
 				// Hold the real response, including every sibling event; no lookup result is fabricated.
 				const response = await route.fetch();
+				const payload = batched
+					? (await response.text())
+							.split("\n")
+							.filter((line) => line.startsWith("data: "))
+							.map((line) => JSON.parse(line.slice(6)))
+							.find((event) => event.index === providerIndex)?.body
+					: await response.json();
+				returnedProviders = payload?.json;
 				await held;
 				await route.fulfill({ response });
 			});
@@ -100,6 +109,19 @@ for (const lookup of ["empty", "ready", "failed"] as const) {
 				release();
 				await expect(dialog.getByRole("status")).toHaveCount(0);
 				if (lookup === "failed") await expect(dialog.getByRole("alert")).toBeVisible();
+				if (lookup !== "failed") {
+					expect(returnedProviders).toEqual(
+						lookup === "ready"
+							? expect.arrayContaining([
+									expect.objectContaining({
+										label: "Fictional import connection",
+										enabled: true,
+										testStatus: "success",
+									}),
+								])
+							: [],
+					);
+				}
 				const after = await settledBoxes(dialog, targets);
 				await info.attach("target-geometry", {
 					body: JSON.stringify({ before, after }, null, 2),
@@ -116,6 +138,7 @@ for (const lookup of ["empty", "ready", "failed"] as const) {
 					failLookup = false;
 					await dialog.getByRole("button", { name: "Try again", exact: true }).click();
 					await expect(dialog.getByRole("alert")).toHaveCount(0);
+					expect(returnedProviders).toEqual([]);
 					const recovered = await settledBoxes(dialog, targets);
 					for (const [index, box] of recovered.entries()) {
 						const previous = before[index];
