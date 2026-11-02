@@ -16,8 +16,16 @@ export type DraftVariant = "draft" | "shorter" | "personal";
  */
 export type LetterDraft =
 	| { phase: "idle" }
-	| { phase: "streaming" | "ready"; text: string; revision: number; operation: string }
-	| { phase: "failed"; provider: string | null; error: unknown }
+	/** `versions` are the earlier finished drafts, oldest first; `stopped` marks text Stop cut short. */
+	| {
+			phase: "streaming" | "ready";
+			text: string;
+			revision: number;
+			operation: string;
+			versions: string[];
+			stopped?: true;
+	  }
+	| { phase: "failed"; provider: string | null; error: unknown; versions: string[] }
 	/** What's typed couldn't be saved (offline, error, conflict), so the server would draft from stale links. */
 	| { phase: "unsaved" };
 
@@ -30,6 +38,13 @@ type DraftingState = {
 };
 
 const idle: LetterDraft = { phase: "idle" };
+/** The most drafts kept side by side: the current one and up to four before it. */
+const MAX_DRAFT_VERSIONS = 5;
+
+const asVersions = (value: unknown) =>
+	Array.isArray(value)
+		? value.filter((version): version is string => typeof version === "string").slice(-(MAX_DRAFT_VERSIONS - 1))
+		: [];
 const defaultLast: LastDraft = { variant: "draft" };
 
 /** Storage and in-memory identity are scoped by server, account and letter so drafts cannot cross either boundary. */
@@ -71,7 +86,15 @@ export async function restoreLetterDraft(id: string) {
 	const request = ++restoreVersion;
 	try {
 		const raw = await Storage.getItem(owner);
-		const value = raw ? (JSON.parse(raw) as { text?: unknown; variant?: unknown; revision?: unknown }) : null;
+		const value = raw
+			? (JSON.parse(raw) as {
+					text?: unknown;
+					variant?: unknown;
+					revision?: unknown;
+					versions?: unknown;
+					stopped?: unknown;
+				})
+			: null;
 		if (typeof value?.text !== "string" || !value.text.trim()) return;
 		// A newer restore/discard/leave, another letter, or a changed revision invalidates this read.
 		const latest = useLetterStore.getState().document;
@@ -91,7 +114,14 @@ export async function restoreLetterDraft(id: string) {
 		useLetterDrafting.setState((currentState) =>
 			currentState.owner === owner
 				? {
-						draft: { phase: "ready", text: value.text as string, revision, operation: nextOperation() },
+						draft: {
+							phase: "ready",
+							text: value.text as string,
+							revision,
+							operation: nextOperation(),
+							versions: asVersions(value.versions),
+							...(value.stopped === true ? { stopped: true as const } : {}),
+						},
 						last: { variant },
 					}
 				: currentState,
@@ -101,9 +131,11 @@ export async function restoreLetterDraft(id: string) {
 	}
 }
 
-async function storeDraft(owner: string, text: string, variant: DraftVariant, revision: number) {
+type StoredDraft = { text: string; variant: DraftVariant; revision: number; versions: string[]; stopped?: true };
+
+async function storeDraft(owner: string, draft: StoredDraft) {
 	try {
-		await Storage.setItem(owner, JSON.stringify({ text, variant, revision }));
+		await Storage.setItem(owner, JSON.stringify(draft));
 	} catch {
 		// Storage full or unavailable: the draft stays in this view.
 	}
@@ -128,13 +160,23 @@ export async function startLetterDraft(variant: DraftVariant = "draft", previous
 	const controller = new AbortController();
 	drafting = controller;
 	let revision = letter.revision;
+	// A revision keeps what came before it; the oldest drops off past the limit.
+	const before = useLetterDrafting.getState();
+	const prior = before.owner === owner ? before.draft : idle;
+	const versions = (
+		prior.phase === "ready"
+			? [...prior.versions, prior.text]
+			: prior.phase === "streaming" || prior.phase === "failed"
+				? prior.versions
+				: []
+	).slice(-(MAX_DRAFT_VERSIONS - 1));
 	const set = (draft: LetterDraft) => {
 		if (drafting !== controller || letterDraftOwner(letter.id) !== owner) return;
 		useLetterDrafting.setState((state) => (state.owner === owner ? { draft } : state));
 	};
 	useLetterDrafting.setState({ owner, last: { variant, previous } });
 	void clearDraft(owner);
-	set({ phase: "streaming", text: "", revision, operation });
+	set({ phase: "streaming", text: "", revision, operation, versions });
 
 	try {
 		// The server drafts from the saved letter's links, so links chosen a moment ago must reach it first.
@@ -157,10 +199,10 @@ export async function startLetterDraft(variant: DraftVariant = "draft", previous
 		let text = "";
 		for await (const chunk of stream) {
 			text += chunk;
-			set({ phase: "streaming", text, revision, operation });
+			set({ phase: "streaming", text, revision, operation, versions });
 		}
 		if (!text.trim()) throw new Error("The draft came back empty.");
-		set({ phase: "ready", text: text.trim(), revision, operation });
+		set({ phase: "ready", text: text.trim(), revision, operation, versions });
 		// A late completion after leave/account/letter change may not persist into the new owner's namespace.
 		if (
 			drafting === controller &&
@@ -169,12 +211,66 @@ export async function startLetterDraft(variant: DraftVariant = "draft", previous
 			useLetterDrafting.getState().owner === owner &&
 			useLetterStore.getState().document?.id === letter.id
 		)
-			void storeDraft(owner, text.trim(), variant, revision);
+			void storeDraft(owner, { text: text.trim(), variant, revision, versions });
 	} catch (error) {
 		if (controller.signal.aborted) return;
 		const data = error instanceof ORPCError ? (error.data as { provider?: unknown } | undefined) : undefined;
-		set({ phase: "failed", provider: typeof data?.provider === "string" ? data.provider : null, error });
+		set({ phase: "failed", provider: typeof data?.provider === "string" ? data.provider : null, error, versions });
 	}
+}
+
+/** What's left when a run stops or its failure is dismissed: its text when any arrived, else the draft before it. */
+function settle(owner: string, text: string, versions: string[], revision: number, stopped: boolean): LetterDraft {
+	const last = versions.at(-1);
+	const draft: LetterDraft = text.trim()
+		? {
+				phase: "ready",
+				text: text.trim(),
+				revision,
+				operation: nextOperation(),
+				versions,
+				...(stopped ? { stopped: true as const } : {}),
+			}
+		: last !== undefined
+			? { phase: "ready", text: last, revision, operation: nextOperation(), versions: versions.slice(0, -1) }
+			: idle;
+	if (draft.phase === "ready")
+		void storeDraft(owner, {
+			text: draft.text,
+			variant: "draft",
+			revision,
+			versions: draft.versions,
+			...(draft.stopped ? { stopped: true as const } : {}),
+		});
+	else void clearDraft(owner);
+	return draft;
+}
+
+/** Stop while drafting: what arrived stays as a draft to review; with nothing yet, the draft before it. */
+export function stopLetterDraftKeepingText() {
+	const letter = useLetterStore.getState().document;
+	restoreVersion++;
+	drafting?.abort();
+	drafting = null;
+	if (!letter) return;
+	const owner = letterDraftOwner(letter.id);
+	useLetterDrafting.setState((state) =>
+		state.owner === owner && state.draft.phase === "streaming"
+			? { ...state, draft: settle(owner, state.draft.text, state.draft.versions, letter.revision, true) }
+			: state,
+	);
+}
+
+/** Dismiss on a failed run: back to the draft before it when there was one. */
+export function dismissLetterDraftFailure() {
+	const letter = useLetterStore.getState().document;
+	if (!letter) return;
+	const owner = letterDraftOwner(letter.id);
+	useLetterDrafting.setState((state) =>
+		state.owner === owner && state.draft.phase === "failed"
+			? { ...state, draft: settle(owner, "", state.draft.versions, letter.revision, false) }
+			: state,
+	);
 }
 
 /**
@@ -186,7 +282,12 @@ export function stopLetterDraft() {
 	drafting?.abort();
 	drafting = null;
 	useLetterDrafting.setState((state) =>
-		state.draft.phase === "streaming" || state.draft.phase === "unsaved" ? { ...state, draft: idle } : state,
+		state.draft.phase === "streaming" && state.owner && state.draft.versions.length
+			? // Earlier finished versions stay for the next visit; only the half-streamed one goes.
+				{ ...state, draft: settle(state.owner, "", state.draft.versions, state.draft.revision, false) }
+			: state.draft.phase === "streaming" || state.draft.phase === "unsaved"
+				? { ...state, draft: idle }
+				: state,
 	);
 }
 

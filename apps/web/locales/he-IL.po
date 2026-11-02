@@ -480,6 +480,12 @@ msgstr "{0} דק׳"
 msgid "{0} more"
 msgstr "{0} יותר"
 
+#. placeholder {0}: index + 1
+#. placeholder {1}: all.length
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "{0} of {1}"
+msgstr ""
+
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/score-header.tsx
@@ -592,7 +598,7 @@ msgstr "{0}, לא אחד מהמקומות שלך"
 msgid "{0}. Issue resolved."
 msgstr "{0}. הבעיה נפתרה."
 
-#. placeholder {0}: terms.join(" · ")
+#. placeholder {0}: terms.join(" · ").replace(/[\s.。]+$/u, "")
 #: src/features/career/workspace/messages.tsx
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
@@ -629,6 +635,10 @@ msgstr "{base} (עותק)"
 #: src/features/career/workspace/apply.tsx
 msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr "{characters, plural, one {תו אחד} two {שני תווים} other {# תווים}}"
+
+#: src/features/career/workspace/apply.tsx
+msgid "{characters} of {shownLimit} characters"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{column, plural, one {# column} other {# columns}}"
@@ -706,6 +716,10 @@ msgstr "{days, plural, one {יום משרד אחד, מתחת למגבלה שלך
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, one {יום משרד אחד, בדיוק המגבלה שלך} two {יומיים במשרד, בדיוק המגבלה שלך} other {# ימי משרד, בדיוק המגבלה שלך}}"
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -864,10 +878,6 @@ msgstr "{monthCount, plural, =0 {אין ראיונות} one {# ראיון} other
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} נוסף לדף 1"
-
-#: src/features/career/hooks.ts
-msgid "{name} didn't respond. Nothing was changed; try again."
-msgstr "{name} לא הגיב. שום דבר לא שונה; נסה שוב."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} is split into {columns} columns"
@@ -1056,10 +1066,18 @@ msgstr "{value} לשנה"
 msgid "{value} an hour"
 msgstr "{value} לשעה"
 
+#: src/features/career/hooks.ts
+msgid "{who} didn't respond. Nothing was changed; try again."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{words, plural, one {# word} other {# words}}"
 msgstr "{words, plural, one {מילה #} other {# מילים}}"
+
+#: src/features/career/workspace/apply.tsx
+msgid "{words} of {shownLimit} words"
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "/ hour"
@@ -1282,6 +1300,10 @@ msgstr ""
 msgid "A name helps you tell passkeys apart, like “Work laptop”."
 msgstr "שם עוזר לך להבדיל בין מפתחות גישה, כמו \"מחשב נייד לעבודה\"."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "A new version of the whole letter, as edits to accept"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
 msgstr "תאריך מספרי נקרא באופן שונה במדינות שונות."
@@ -1374,6 +1396,7 @@ msgstr "הדגשה משמש לכותרות, סמלים ורצועת הכותרו
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Accept"
 msgstr "לְקַבֵּל"
 
@@ -2058,6 +2081,10 @@ msgstr "לא ניתן היה לטעון ספקי AI. טען מחדש כדי לנ
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#: src/features/career/shared.tsx
+msgid "AI settings"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
@@ -2558,8 +2585,8 @@ msgid "Ask about your search, or bring an accomplishment you want to explain bet
 msgstr "שאל על החיפוש שלך, או הבא הישג שתרצה להסביר טוב יותר. התשובות משתמשות במה שמופעל למטה ומציינות על מה הן התבססו."
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and knows you're on {tabName}."
-msgstr "שאל כל דבר על המשרה הזו. המאמן קורא את המודעה, את ההערות שלך ואת מה ששלחת, ויודע שאתה בלשונית {tabName}."
+msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Ask before deciding."
@@ -4227,6 +4254,10 @@ msgstr "לא ניתן היה להמשיך כאורח. נסה שוב."
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "לא ניתן היה להעתיק את השאלות. סמן את הטקסט והעתק אותו ידנית."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't copy the resume. Choose it again to prepare it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't copy the resume. Try again."
@@ -4486,6 +4517,10 @@ msgstr "לא ניתן היה להגיע לספק הבינה המלאכותית. 
 msgid "Couldn't reach your AI provider. Its key may have expired."
 msgstr "לא הצלחתי להגיע לספק הבינה המלאכותית שלך. ייתכן שהמפתח שלו פג."
 
+#: src/features/career/hooks.ts
+msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "לא ניתן היה לקרוא את הקובץ. בחר קובץ ‎.csv ונסה שוב."
@@ -4493,6 +4528,10 @@ msgstr "לא ניתן היה לקרוא את הקובץ. בחר קובץ ‎.csv
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
 msgstr "לא ניתן היה לקרוא את הקובץ. נסה שוב."
+
+#: src/features/career/hooks.ts
+msgid "Couldn't read the AI's answer. Try again, or switch the default provider in AI settings."
+msgstr ""
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
@@ -5193,10 +5232,13 @@ msgid "Deep breath."
 msgstr "נשימה עמוקה."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "ברירת מחדל"
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Default · fast, low cost"
+msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Degree"
@@ -5468,7 +5510,6 @@ msgid "Different pay period, not compared"
 msgstr "תקופת תשלום שונה, לא הושווה"
 
 #: src/features/career/schedule-sheet.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Discard"
 msgstr "לזרוק"
 
@@ -5510,6 +5551,7 @@ msgstr ""
 msgid "Disconnecting your {providerName} account…"
 msgstr "מנתק את חשבון {providerName} שלך…"
 
+#: src/features/career/shared.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -5597,10 +5639,6 @@ msgstr "נַעֲשָׂה"
 #: src/features/career/today.tsx
 msgid "Done · {0}"
 msgstr "בוצע · {0}"
-
-#: src/features/career/shared.tsx
-msgid "Double-checking"
-msgstr "בודק שוב"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
@@ -6459,10 +6497,6 @@ msgstr ""
 msgid "Family name"
 msgstr ""
 
-#: src/features/settings/ai/provider-model.tsx
-msgid "Fast, lower-cost default for everyday work."
-msgstr "מודל ברירת מחדל מהיר וזול יותר לעבודה יומיומית."
-
 #: src/features/homepage/footer.tsx
 msgid "Features"
 msgstr "יכולות"
@@ -7121,6 +7155,10 @@ msgstr "עברית"
 msgid "Help & docs"
 msgstr "עזרה ומסמכים"
 
+#: src/features/career/workspace/coach-starters.ts
+msgid "Help me prepare for a first call"
+msgstr ""
+
 #. placeholder {0}: starter.company
 #: src/features/career/coach.tsx
 msgid "Help me prepare for my {0} interview."
@@ -7525,6 +7563,10 @@ msgid "Improve selected line"
 msgstr "שפר את השורה שנבחרה"
 
 #: src/features/resume/editor/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
 msgid "Improving…"
 msgstr "משפר..."
 
@@ -7690,6 +7732,10 @@ msgstr "האם יש בונוס, ובמה הוא תלוי?"
 #: src/features/career/offers.tsx
 msgid "Is there a learning budget?"
 msgstr "האם יש תקציב ללמידה?"
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "Is this job worth applying for?"
+msgstr ""
 
 #. placeholder {0}: issue.number
 #: src/features/resume/editor/check/parser-view.tsx
@@ -7894,7 +7940,6 @@ msgid "Kannada"
 msgstr "קנאדה"
 
 #: src/features/resume/editor/check/check-panel.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Keep"
 msgstr "לִשְׁמוֹר"
 
@@ -9216,6 +9261,10 @@ msgstr "{0} מתוך {1} הועברו לאשפה. מסמכים נעולים דו
 msgid "Moved to {label}"
 msgstr "הועבר לשלב {label}"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Moved to {stage}"
+msgstr ""
+
 #. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
@@ -9474,6 +9523,10 @@ msgstr ""
 #: src/features/homepage/remember.tsx
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "בפעם הבאה הייתי מסכם איך למדוד הצלחה לפני אב-הטיפוס הראשון."
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Next version"
+msgstr ""
 
 #: src/features/settings/profile.tsx
 msgid "No"
@@ -10259,6 +10312,13 @@ msgstr "רק גרסה אחת עד כה. כל סשן עריכה מוסיף אחד
 msgid "Only providers that pass their test can be turned on."
 msgstr "ניתן להפעיל רק ספקים שעוברים את המבחן שלהם."
 
+#. placeholder {0}: i18n.number(MAX_INPUT)
+#. placeholder {0}: i18n.number(MAX_MESSAGE)
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/workspace/messages.tsx
+msgid "Only the first {0} characters are kept."
+msgstr ""
+
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Only the first {0} pages were checked, so this report does not cover the whole file."
@@ -10344,6 +10404,10 @@ msgstr "פתח ב\"הצעות\""
 
 #: src/features/career/coach-chat.tsx
 msgid "Open in the resume's assistant"
+msgstr ""
+
+#: src/features/career/workspace/debrief.tsx
+msgid "Open Interview prep"
 msgstr ""
 
 #: src/features/career/coach-chat.tsx
@@ -10953,6 +11017,10 @@ msgstr "טקסט רגיל עם כותרות. הדבק בטפסי מועמדות 
 msgid "Plan again"
 msgstr "תכנן מחדש"
 
+#: src/features/career/workspace/coach-starters.ts
+msgid "Plan my counter-offer"
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Plan my preparation"
 msgstr "תכנן את ההכנה שלי"
@@ -10980,10 +11048,6 @@ msgstr "שזיף"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "פולנית"
-
-#: src/features/career/shared.tsx
-msgid "Polishing"
-msgstr "מלטש"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -11223,6 +11287,10 @@ msgstr "הודעות קודמות, כולל פרטי מסמך, נשלחות גם
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
 msgstr "החודש הקודם"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Previous version"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Primary color"
@@ -11484,6 +11552,10 @@ msgstr "השאלות הועתקו"
 msgid "Questions to ask"
 msgstr "שאלות לשאול"
 
+#: src/features/career/workspace/coach-starters.ts
+msgid "Quiz me on likely questions for this round"
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "R"
 msgstr "R"
@@ -11553,10 +11625,18 @@ msgstr ""
 msgid "Read from a message, edited by you"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read from the posting page on {readAt}."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Read it for me"
 msgstr "קרא בשבילי"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Read on {readAt}. The employer may have changed it since."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Read on this device (free)"
@@ -11835,6 +11915,10 @@ msgstr ""
 msgid "Redo resume change"
 msgstr "בצע מחדש את שינוי קורות החיים"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Redraft from the posting"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Reference {0}"
@@ -11892,7 +11976,9 @@ msgstr "חזור על תשובה אחת בקול"
 msgid "Rehearse one disagreement with engineering and how it ended."
 msgstr "חזור בקול על מחלוקת אחת עם צוות הפיתוח ואיך היא הסתיימה."
 
+#: src/features/career/workspace/apply.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Reject"
 msgstr "לִדחוֹת"
 
@@ -12458,17 +12544,6 @@ msgstr "קורות חיים תמיד מוצגים על נייר לבן, לא מ�
 #: src/features/homepage/sections.tsx
 msgid "Resumes created"
 msgstr "נוצרו קורות חיים"
-
-#. placeholder {0}: application.postingSource.retrievedAt
-#. placeholder {1}: application.postingSource.method
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Retrieved {0} using {1}. Retrieval time does not establish origin freshness."
-msgstr "אוחזר {0} באמצעות {1}. זמן השליפה אינו קובע את טריות המקור."
-
-#. placeholder {0}: parsed.postingSource.retrievedAt
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Retrieved {0}. Origin freshness is unknown unless reported."
-msgstr "אוחזר {0}. טריות המקור אינה ידועה אלא אם כן דווח."
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -13397,6 +13472,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr ""
+
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
 msgstr "שולח את קורות החיים ואת פרסום המשרה אל {provider} עם המפתח שלך, רק כאשר אתה לוחץ על שלח."
@@ -13414,7 +13501,7 @@ msgid "Sends your message and the posting to {provider} with your key, only when
 msgstr "שולח את ההודעה שלך ואת פרסום המשרה אל {provider} עם המפתח שלך, רק כאשר אתה לוחץ על שלח."
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
+msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -13422,15 +13509,15 @@ msgid "Sends your message to {provider} with your key, only when you press send.
 msgstr "שולח את ההודעה שלך אל {provider} עם המפתח שלך, רק כאשר אתה לוחץ על שלח."
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
+msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
 msgstr ""
 
 #. placeholder {0}: provider?.label
@@ -13607,6 +13694,7 @@ msgstr "קישור מקוצר ודומיין"
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "קצר שאלות ל-2,000 תווים ותשובות ל-6,000 תווים לפני שתסמן כהוגש."
 
+#: src/features/resume/editor/write/improve.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Shorter"
 msgstr "קצר יותר"
@@ -13737,6 +13825,10 @@ msgstr "הצג תבניות"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show them again"
 msgstr "תראה אותם שוב"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Show what it asks for"
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Shown in your timezone."
@@ -13914,7 +14006,6 @@ msgid "Skills"
 msgstr "מיומנויות"
 
 #: src/features/assistant/tool-approvals.tsx
-#: src/features/career/workspace/apply.tsx
 msgid "Skip"
 msgstr "דלג"
 
@@ -14217,6 +14308,18 @@ msgid "Start the resume with your name on its own line."
 msgstr "התחל את קורות החיים בשמך בשורה נפרדת."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or connect an AI provider to draft from the {company} posting and your resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or connect an AI provider to draft from the {company} posting."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or connect an AI provider to draft from your resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Start typing, or draft from what we know: the {company} posting and your resume."
 msgstr "התחל להקליד, או לנסח טיוטה ממה שאנחנו יודעים: משרת המשרה {company} וקורות החיים שלך."
 
@@ -14293,8 +14396,13 @@ msgstr ""
 msgid "Still saving your latest changes. They're kept on this device if you leave now."
 msgstr ""
 
+#: src/features/career/shared.tsx
+msgid "Still working"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
+#: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Stop"
@@ -14323,6 +14431,10 @@ msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Stopped before the answer finished."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Stopped before the end. Accept it and finish it yourself, or reject it."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -15659,6 +15771,10 @@ msgstr "לא ניתן היה לטעון את סביבת העבודה הזו."
 msgid "Threads"
 msgstr "שרשורים"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Tie to the posting"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Tighten"
 msgstr "צמצם"
@@ -15869,6 +15985,7 @@ msgstr "נסה דוגמה"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
@@ -16143,6 +16260,10 @@ msgstr "מפתח ללא שם"
 #: src/features/settings/account/security.tsx
 msgid "Unnamed passkey"
 msgstr "מפתח גישה ללא שם"
+
+#: src/features/career/workspace/debrief.tsx
+msgid "Until then, Interview prep has your plan, your opening and the questions to ask."
+msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/stylesheet/targets.ts
@@ -16677,6 +16798,10 @@ msgstr "ממתין לך"
 msgid "Waiting to hear back"
 msgstr "מחכה לשמוע בחזרה"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Warmer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Warning"
 msgstr "אזהרה"
@@ -16786,6 +16911,10 @@ msgstr "מה אדם רואה"
 msgid "What are you working on?"
 msgstr "על מה אתה עובד?"
 
+#: src/features/career/workspace/coach-starters.ts
+msgid "What can I learn from this application?"
+msgstr ""
+
 #: src/features/resume/editor/write/improve.tsx
 msgid "What changed because of this? A number, a time saved, who used it."
 msgstr ""
@@ -16854,6 +16983,18 @@ msgstr "מה חשוב לך"
 #: src/features/resume/editor/write/improve.tsx
 msgid "What should change?"
 msgstr "מה צריך לשנות?"
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "What should I ask them?"
+msgstr ""
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "What should I check before accepting?"
+msgstr ""
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "What should my resume lead with for this job?"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "What should run"
@@ -16924,6 +17065,10 @@ msgstr "מה עובד"
 #: src/features/career/offers.tsx
 msgid "When do they need your answer?"
 msgstr "מתי הם צריכים את התשובה שלך?"
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "When should I follow up, and what should I say?"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "When would you start?"
@@ -17147,6 +17292,11 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "כתוב את הכתובת המלאה כדי שתזוהה כקישור."
+
+#. placeholder {0}: time.day(upcoming.at)
+#: src/features/career/workspace/debrief.tsx
+msgid "Write this after your interview on {0}"
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 msgid "Write what you did."

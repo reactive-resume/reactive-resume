@@ -18,4 +18,12 @@ describe("improve", () => {
 		);
 		expect(buildUserPrompt(improveInputSchema.parse(base))).toContain("Request: Add a result\n");
 	});
+
+	it("gives Tie to the posting the posting as data, and says None without one", () => {
+		const input = improveInputSchema.parse({ line: "I rebuilt our rating service.", action: "posting" });
+		const prompt = buildUserPrompt({ ...input, posting: "You will own shipment pricing." });
+		expect(prompt).toContain("Request: Tie to the posting\n");
+		expect(prompt).toContain("<<<POSTING_START>>>\nYou will own shipment pricing.\n<<<POSTING_END>>>");
+		expect(buildUserPrompt(input)).toContain("<<<POSTING_START>>>\nNone\n<<<POSTING_END>>>");
+	});
 });

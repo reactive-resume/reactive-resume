@@ -74,7 +74,7 @@ export function webSources(message: UIMessage): WebSource[] {
 type TranscriptNames = { user: string; assistant: string; sources: string };
 
 /** Copy transcript's wording in the reader's language: speakers, edits with their outcome, and question answers. */
-export function transcriptLabels(names: TranscriptNames): TranscriptLabels {
+function transcriptLabels(names: TranscriptNames): TranscriptLabels {
 	const statusLabel = { pending: t`proposed`, accepted: t`accepted`, rejected: t`rejected` };
 	return {
 		...names,

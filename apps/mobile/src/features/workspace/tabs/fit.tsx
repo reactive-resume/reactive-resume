@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { latest, useFacts, useGenerate, useSavedItems, useWorkspace, workspaceError } from "../hooks";
-import { Actions, AiNotice, Block, StatusPill, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, StatusPill, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
 import { useHasAIProvider } from "@/features/ai/providers";
@@ -108,6 +108,7 @@ function Fit({ application, version }: WorkspaceTabProps) {
 						onPress={check}
 					/>
 				) : null}
+				<GenerateNotice generate={generate} onRetry={check} />
 			</EmptyState>
 		);
 
@@ -160,6 +161,7 @@ function Fit({ application, version }: WorkspaceTabProps) {
 					{provider ? (
 						<Button variant="secondary" label={againLabel} loading={generate.isPending} onPress={check} />
 					) : null}
+					<GenerateNotice generate={generate} onRetry={check} />
 					<AiNotice task="fit" application={application} />
 				</View>
 			) : null}

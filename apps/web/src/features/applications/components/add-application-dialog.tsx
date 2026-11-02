@@ -1,9 +1,12 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { PostingCapture } from "@reactive-resume/schema/applications/capture";
+import type { SetStateAction } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -20,14 +23,18 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { isolate } from "@reactive-resume/utils/string";
+import { isolate, pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { formatReadTime } from "@reactive-resume/utils/timezone";
 import { getCategoryLane, getLaneLabel, laneMoveInput } from "../lanes";
 import { useInvalidateApplications } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { useDialogStore } from "@/dialogs/store";
 import { SetUpAi } from "@/features/assistant/provider-setup";
+import { useSessionDraft } from "@/features/career/hooks";
+import { defaultCopySource } from "@/features/documents/filter";
+import { useNewDocumentsStore } from "@/features/documents/new-documents";
 import { SetUpWebAccess, testFailureMessage } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -38,8 +45,59 @@ type Parsed = RouterOutput["applications"]["ai"]["parsePosting"];
 // Adding offers lanes of these stages: still to apply, or already applied or interviewing.
 const ADD_CATEGORIES = ["saved", "applied", "interview"] as const;
 const MAX_POSTING_CHARS = 20_000;
+// The longest link or posting kept from a paste.
+const MAX_INPUT = 100_000;
 
 const isLink = (value: string) => /^https?:\/\/\S+$/i.test(value.trim());
+
+type SaveJobDraft = {
+	input: string;
+	role: string;
+	company: string;
+	location: string;
+	salary: string;
+	pasteOpen: boolean;
+	pastedText: string;
+	description: string | null;
+	reading: { text: string; result: Parsed } | null;
+};
+
+const EMPTY_SAVE_JOB: SaveJobDraft = {
+	input: "",
+	role: "",
+	company: "",
+	location: "",
+	salary: "",
+	pasteOpen: false,
+	pastedText: "",
+	description: null,
+	reading: null,
+};
+
+const draftFromCapture = (capture: PostingCapture): SaveJobDraft => ({
+	...EMPTY_SAVE_JOB,
+	input: capture.url ?? "",
+	role: capture.role ?? "",
+	company: capture.company ?? "",
+	location: capture.location ?? "",
+	pasteOpen: !!capture.description,
+	pastedText: capture.description ?? "",
+	description: capture.description || null,
+});
+
+/** A kept draft from this tab's storage; anything malformed starts a fresh form. */
+function parseSaveJobDraft(value: unknown): SaveJobDraft | undefined {
+	if (!value || typeof value !== "object") return undefined;
+	const draft = { ...EMPTY_SAVE_JOB, ...(value as Partial<SaveJobDraft>) };
+	const texts = [draft.input, draft.role, draft.company, draft.location, draft.salary, draft.pastedText];
+	if (texts.some((text) => typeof text !== "string" || text.length > MAX_INPUT)) return undefined;
+	if (typeof draft.pasteOpen !== "boolean") return undefined;
+	if (draft.description !== null && typeof draft.description !== "string") return undefined;
+	const reading = draft.reading;
+	if (reading !== null && (typeof reading !== "object" || typeof reading.text !== "string" || !reading.result))
+		return undefined;
+	return draft;
+}
 
 type AddApplicationDialogProps = {
 	open: boolean;
@@ -62,7 +120,7 @@ export function AddApplicationDialog({
 	initialCapture,
 	forPicker = false,
 }: AddApplicationDialogProps) {
-	// A fresh form for every open, kept in place while the dialog animates closed.
+	// A new form mounts on every open (and stays while the dialog animates closed); it restores the kept draft.
 	const [instance, setInstance] = useState(0);
 	const [wasOpen, setWasOpen] = useState(open);
 	if (open !== wasOpen) {
@@ -98,28 +156,53 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const [query, setQuery] = useState("");
 	const search = useMutation(orpc.applications.ai.searchPostings.mutationOptions());
-	const [input, setInput] = useState(initialCapture?.url ?? "");
-	const [role, setRole] = useState(initialCapture?.role ?? "");
-	const [company, setCompany] = useState(initialCapture?.company ?? "");
+	// Without a capture, what was pasted and read survives closing the dialog (and a reload in this tab) until saved.
+	const kept = useSessionDraft<SaveJobDraft>(
+		initialCapture ? null : "save-job",
+		initialCapture ? draftFromCapture(initialCapture) : EMPTY_SAVE_JOB,
+		parseSaveJobDraft,
+	);
+	const keep = <K extends keyof SaveJobDraft>(name: K) =>
+		[
+			kept.value[name],
+			(update: SetStateAction<SaveJobDraft[K]>) =>
+				kept.setValue((previous) => ({
+					...previous,
+					[name]:
+						typeof update === "function"
+							? (update as (value: SaveJobDraft[K]) => SaveJobDraft[K])(previous[name])
+							: update,
+				})),
+		] as const;
+	const [input, setInput] = keep("input");
+	const [role, setRole] = keep("role");
+	const [company, setCompany] = keep("company");
 	const { lanes, active, mode } = useApplicationLanes();
 	const choices = ADD_CATEGORIES.flatMap((category) => active.filter((lane) => lane.category === category));
 	const [laneId, setLaneId] = useState<string | null>(null);
 	const lane = choices.find((item) => item.id === laneId) ?? getCategoryLane(lanes, "saved");
 	const stage = lane.category;
 	const [stageDate, setStageDate] = useState(() => new Date().toLocaleDateString("en-CA"));
-	const [resumeId, setResumeId] = useState("");
+	// A saved job starts on the most recently edited base resume; a submitted one names what was sent, so it starts empty.
+	const [resumeChoice, setResumeId] = useState<string | null>(null);
+	const resumes = documents?.filter((document) => document.type === "resume") ?? [];
+	const resumeId = resumeChoice ?? (stage === "saved" ? (defaultCopySource(resumes)?.id ?? "") : "");
 	const [coverLetterId, setCoverLetterId] = useState("");
-	const [location, setLocation] = useState(initialCapture?.location ?? "");
-	const [salary, setSalary] = useState("");
+	const [location, setLocation] = keep("location");
+	const [salary, setSalary] = keep("salary");
 	const authored = useRef(new Set<"role" | "company" | "location" | "salary">());
-	const [pasteOpen, setPasteOpen] = useState(!!initialCapture?.description);
-	const [pastedText, setPastedText] = useState(initialCapture?.description ?? "");
-	const [description, setDescription] = useState<string | null>(initialCapture?.description || null);
-	const [reading, setReading] = useState<{ text: string; result: Parsed } | null>(null);
+	const [pasteOpen, setPasteOpen] = keep("pasteOpen");
+	const [pastedText, setPastedText] = keep("pastedText");
+	const [description, setDescription] = keep("description");
+	const [reading, setReading] = keep("reading");
 	const providerState = useHasUsableAiProvider();
 	const { hasUsableProvider } = providerState;
 	const invalidate = useInvalidateApplications();
 	const openDialog = useDialogStore((state) => state.openDialog);
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const markNew = useNewDocumentsStore((state) => state.markNew);
+	const copyForJob = useMutation(orpc.documents.copyForJob.mutationOptions());
 
 	const controller = useRef<AbortController | null>(null);
 	useEffect(() => () => controller.current?.abort(), []);
@@ -162,6 +245,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const postingDescription = (description ?? (!link ? text : "")).slice(0, MAX_POSTING_CHARS);
 	const readable = text.length > 8 && (link || hasUsableProvider);
 	const parsed = reading?.text === text ? reading.result : null;
+	const retrievedAt = parsed?.postingSource.retrievedAt;
+	const readAt = retrievedAt ? (formatReadTime(retrievedAt, i18n.locale) ?? retrievedAt) : null;
 	const clipped = Boolean(
 		initialCapture?.truncated || parsed?.postingSource.truncated || (!link && text.length > MAX_POSTING_CHARS),
 	);
@@ -227,15 +312,41 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 		};
 		try {
 			const applicationId = await create.mutateAsync(posting);
+			kept.clear();
 			invalidate();
 			toast.add({ description: t`Added ${isolate(role.trim())} at ${isolate(company.trim())}` });
+			const source = tailor ? resumes.find((resume) => resume.id === resumeId) : undefined;
+			if (source) return await prepare(applicationId, source);
 			onClose();
-			if (tailor)
-				openDialog("document.new", { step: "copy", applicationId, ...(resumeId ? { sourceResumeId: resumeId } : {}) });
+			if (tailor) openDialog("document.new", { step: "copy", applicationId });
 			else onAdded(applicationId);
 		} catch (error) {
 			if (sourceLink) void duplicate.refetch();
 			toastError(error, t`Couldn't add the application. Try again.`);
+		}
+	};
+
+	// With a resume chosen, "Save and prepare resume" makes the copy for this job (named as Copy for a job names it)
+	// and opens it; when that fails, the copy step opens prefilled instead.
+	const prepare = async (applicationId: string, source: (typeof resumes)[number]) => {
+		const base = source.name.split(" — ")[0] ?? source.name;
+		const input = { resumeId: source.id, applicationId, name: `${base} — ${company.trim()}`.slice(0, 100) };
+		const key = `copy-for-job:${JSON.stringify(input)}`;
+		try {
+			const copyId = await copyForJob.mutateAsync({ ...input, newId: pendingRequestId(key) });
+			settleRequestId(key);
+			markNew(copyId);
+			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
+			onClose();
+			void navigate({
+				to: "/builder/$resumeId",
+				params: { resumeId: copyId },
+				search: hasUsableProvider ? { assistant: "new" } : {},
+			});
+		} catch (error) {
+			toastError(error, t`Couldn't copy the resume. Choose it again to prepare it.`);
+			onClose();
+			openDialog("document.new", { step: "copy", applicationId, sourceResumeId: source.id });
 		}
 	};
 
@@ -378,11 +489,13 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					<Trans>Job link or posting text</Trans>
 				</Label>
 				<Textarea
+					// What people paste or write here can be in any language: its own text sets the direction.
+					dir="auto"
 					id={`${id}-posting`}
 					rows={4}
 					value={input}
 					className="max-h-72 overflow-y-auto"
-					maxLength={100_000}
+					maxLength={MAX_INPUT}
 					placeholder="https://…"
 					onChange={(event) => {
 						setInput(event.target.value);
@@ -394,6 +507,12 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					}}
 					autoFocus
 				/>
+				{/* A longer paste is cut at the limit: say so, rather than drop the rest silently. */}
+				{input.length >= MAX_INPUT && (
+					<p role="status" className="text-xs text-warn-text">
+						<Trans>Only the first {i18n.number(MAX_INPUT)} characters are kept.</Trans>
+					</p>
+				)}
 				{sourceLink && !initialCapture && (
 					<Button
 						type="button"
@@ -414,6 +533,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							<Trans>Pasted description</Trans>
 						</Label>
 						<Textarea
+							// What people paste or write here can be in any language: its own text sets the direction.
+							dir="auto"
 							id={`${id}-recovery`}
 							rows={5}
 							value={pastedText}
@@ -471,6 +592,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							<Trans>Saved description</Trans>
 						</Label>
 						<Textarea
+							// What people paste or write here can be in any language: its own text sets the direction.
+							dir="auto"
 							id={`${id}-description`}
 							rows={5}
 							maxLength={MAX_POSTING_CHARS}
@@ -478,11 +601,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							onChange={(event) => setDescription(event.target.value)}
 							className="max-h-72 overflow-y-auto"
 						/>
-						{parsed?.postingSource.retrievedAt && (
+						{readAt && (
 							<p className="text-xs text-ink-3">
-								<Trans>
-									Retrieved {parsed.postingSource.retrievedAt}. Origin freshness is unknown unless reported.
-								</Trans>
+								<Trans>Read from the posting page on {readAt}.</Trans>
 							</p>
 						)}
 					</div>
@@ -548,6 +669,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 									sourceUrl: sourceLink,
 									...(postingDescription.trim() ? { jobDescription: postingDescription, postingSource } : {}),
 								});
+								kept.clear();
 								invalidate();
 								onClose();
 								onAdded(duplicate.data.id);
@@ -694,13 +816,11 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
 				>
 					<option value="">{t`No resume selected`}</option>
-					{documents
-						?.filter((document) => document.type === "resume")
-						.map((document) => (
-							<option key={document.id} value={document.id}>
-								{document.name}
-							</option>
-						))}
+					{resumes.map((document) => (
+						<option key={document.id} value={document.id}>
+							{document.name}
+						</option>
+					))}
 				</select>
 			</div>
 			<div className="grid gap-1.5">
@@ -741,6 +861,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						type="button"
 						variant={logsSentResume ? "secondary" : "primary"}
 						disabled={!ready || !!duplicate.data}
+						loading={copyForJob.isPending}
 						onClick={() => void add(true)}
 					>
 						<Trans>Save and prepare resume</Trans>
@@ -793,14 +914,30 @@ function ReadStatus({ link, readable, pending, error, parsed, ai }: ReadStatusPr
 	}
 	if (parsed?.filledBy === "ai") {
 		return (
-			<p className={cn(base, "text-accent-text")} role="status">
-				<Icon name="check-circle" size={16} className="shrink-0" />
-				<Plural
-					value={parsed.requirements.length}
-					one="Found role, company and # requirement. Review the details before saving."
-					other="Found role, company and # requirements. Review the details before saving."
-				/>
-			</p>
+			<div className="grid gap-1.5">
+				<p className={cn(base, "text-accent-text")} role="status">
+					<Icon name="check-circle" size={16} className="shrink-0" />
+					<Plural
+						value={parsed.requirements.length}
+						one="Found role, company and # requirement. Review the details before saving."
+						other="Found role, company and # requirements. Review the details before saving."
+					/>
+				</p>
+				{parsed.requirements.length > 0 && (
+					<details className="group text-xs">
+						<summary className="w-fit cursor-pointer text-ink-2 hover:text-ink">
+							<Trans>Show what it asks for</Trans>
+						</summary>
+						<ul className="mt-1.5 flex flex-wrap gap-1.5">
+							{parsed.requirements.map((requirement) => (
+								<li key={requirement} className="rounded-md bg-sunken px-2 py-1">
+									{requirement}
+								</li>
+							))}
+						</ul>
+					</details>
+				)}
+			</div>
 		);
 	}
 	if (parsed?.filledBy === "page") {

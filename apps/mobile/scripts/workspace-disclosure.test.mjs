@@ -105,6 +105,7 @@ function nativeLine(query) {
 		},
 		"@/features/ai/report-content": { ReportAiContent: (p) => jsx("ReportAiContent", p) },
 		"@/ui": ui,
+		"expo-router": { useRouter: () => ({ push: () => {} }) },
 		"@/shell/workspace-tab-label": { workspaceTabLabel: (label) => label },
 	});
 	return sentenceOf(AiNotice({ task: "briefing", application, interview: true }));

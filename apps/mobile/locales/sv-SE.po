@@ -501,6 +501,12 @@ msgstr "{0} mindre"
 msgid "{0} more"
 msgstr "{0} mer"
 
+#. placeholder {0}: index + 1
+#. placeholder {1}: all.length
+#: src/features/letters/write.tsx
+msgid "{0} of {1}"
+msgstr ""
+
 #. placeholder {0}: measured(proposal.text)
 #. placeholder {1}: limit.max
 #: src/features/workspace/tabs/apply.tsx
@@ -573,7 +579,7 @@ msgstr ""
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, post {1} av {2}"
 
-#. placeholder {0}: terms.join(" · ")
+#. placeholder {0}: terms.join(" · ").replace(/[\s.。]+$/u, "")
 #: src/features/workspace/tabs/messages.tsx
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
@@ -608,6 +614,10 @@ msgstr "{authored, plural, =1 {Anpassa till en sida} other {Anpassa till # sidor
 #: src/features/workspace/tabs/apply.tsx
 msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr "{characters, plural, one {# tecken} other {# tecken}}"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "{characters} of {shownLimit} characters"
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "{closed} closed"
@@ -660,6 +670,10 @@ msgstr "{days, plural, =0 {· sedan i dag} one {· sedan # dag} other {· sedan 
 #: src/features/applications/list-screen.tsx
 msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 msgstr "{days, plural, one {{company}: inget svar på # dag. En kort uppföljning brukar vara okej nu.} other {{company}: inget svar på # dagar. En kort uppföljning brukar vara okej nu.}}"
+
+#: src/features/ai/provider-model.tsx
+msgid "{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice."
+msgstr ""
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -762,10 +776,6 @@ msgstr "{monthInterviews, plural, =0 {Inga intervjuer} one {# intervju} other {#
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} har lagts till på sida 1"
-
-#: src/features/workspace/hooks.ts
-msgid "{name} didn't respond. Nothing was changed; try again."
-msgstr "{name} svarade inte. Inget ändrades; försök igen."
 
 #: src/features/check/issues.ts
 msgid "{name} is split into {columns} columns"
@@ -871,10 +881,18 @@ msgstr ""
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
+#: src/features/workspace/hooks.ts
+msgid "{who} didn't respond. Nothing was changed; try again."
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "{words, plural, one {# word} other {# words}}"
 msgstr "{words, plural, one {# ord} other {# ord}}"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "{words} of {shownLimit} words"
+msgstr ""
 
 #. placeholder {0}: items.length - MAX_PER_DAY
 #: src/features/applications-board/calendar-screen.tsx
@@ -989,6 +1007,10 @@ msgstr "En modells åsikt, inte en dom. Det kan vara fel."
 msgid "a month"
 msgstr ""
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "A new version of the whole letter, as edits to accept"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
 msgstr "Ett numeriskt datum läses olika i olika länder."
@@ -1055,6 +1077,7 @@ msgstr "Accent används för rubriker, ikoner och rubrikbandet. Brödtexten för
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
+#: src/features/letters/write.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Accept"
 msgstr "Acceptera"
@@ -1620,6 +1643,10 @@ msgstr "AI-leverantörerna kunde inte läsas in. Försök igen eller fyll i uppg
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI läser bara inklistrad text när du frågar. Länkar kan använda sidans egna jobbdata utan AI."
 
+#: src/features/workspace/parts.tsx
+msgid "AI settings"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
@@ -2033,8 +2060,8 @@ msgid "Ask about your search, or bring an accomplishment you want to explain bet
 msgstr "Fråga om ditt jobbsökande eller ta med en prestation du vill förklara bättre. Svaren använder det som är påslaget nedan och berättar vad de byggde på."
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and knows you're on {tabName}."
-msgstr "Fråga vad som helst om det här jobbet. Coachen läser annonsen, dina anteckningar och det du skickade, och vet att du är på fliken {tabName}."
+msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Ask first"
@@ -3128,10 +3155,6 @@ msgstr "Anslutna applikationer"
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Ansluten. Din domän öppnar ditt primära CV."
 
-#: src/features/workspace/parts.tsx
-msgid "Connecting the dots"
-msgstr "Knyter ihop trådarna"
-
 #: src/features/ai/web-access.tsx
 msgid "Connection saved"
 msgstr "Anslutningen har sparats"
@@ -3208,10 +3231,6 @@ msgstr "Konversationer om ett visst jobb finns i dess arbetsyta."
 #: src/features/workspace/coach-sheet.tsx
 msgid "Conversations couldn't load."
 msgstr "Det gick inte att läsa in konversationer."
-
-#: src/features/workspace/parts.tsx
-msgid "Cooking"
-msgstr "Puttrar"
 
 #: src/features/share/custom-domain.tsx
 msgid "Copied"
@@ -3585,10 +3604,18 @@ msgstr ""
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Det gick inte att nå din AI-leverantör. Försök igen eller kontrollera dess nyckel i inställningarna för AI."
 
+#: src/features/workspace/hooks.ts
+msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
+msgstr ""
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
 msgstr "Det gick inte att läsa filen. Försök igen."
+
+#: src/features/workspace/hooks.ts
+msgid "Couldn't read the AI's answer. Try again, or switch the default provider in AI settings."
+msgstr ""
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -4114,10 +4141,13 @@ msgid "Decrease {label}"
 msgstr "Minska {label}"
 
 #: src/features/ai/provider-list.tsx
-#: src/features/ai/provider-model.tsx
 #: src/features/write/pickers.tsx
 msgid "Default"
 msgstr "Standard"
+
+#: src/features/ai/provider-model.tsx
+msgid "Default · fast, low cost"
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Degree"
@@ -4349,10 +4379,6 @@ msgstr "Olika valutor eller betalningsperioder. Ingen skillnad i pengar beräkna
 msgid "Direction"
 msgstr "Riktning"
 
-#: src/features/letters/write.tsx
-msgid "Discard"
-msgstr "Släng"
-
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
 msgid "Discard changes"
@@ -4456,10 +4482,6 @@ msgstr "Gjort"
 #: src/features/applications/list-screen.tsx
 msgid "Done selecting"
 msgstr "Klart att välja"
-
-#: src/features/workspace/parts.tsx
-msgid "Double-checking"
-msgstr "Dubbelkollar"
 
 #: src/features/letters/share.tsx
 #: src/features/share/export-screen.tsx
@@ -5088,10 +5110,6 @@ msgstr ""
 msgid "Family name"
 msgstr ""
 
-#: src/features/ai/provider-model.tsx
-msgid "Fast, lower-cost default for everyday work."
-msgstr "Snabb och billigare standardmodell för vardagsarbete."
-
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
 msgstr "Feedback"
@@ -5539,6 +5557,10 @@ msgstr "Hebreiska"
 msgid "Help & docs"
 msgstr "Hjälp & dokument"
 
+#: src/features/workspace/coach-starters.ts
+msgid "Help me prepare for a first call"
+msgstr ""
+
 #. placeholder {0}: starter.company
 #: src/features/assistant/coach-screen.tsx
 msgid "Help me prepare for my {0} interview."
@@ -5976,6 +5998,10 @@ msgstr "Intervjuare"
 msgid "Is there a bonus, and what does it depend on?"
 msgstr "Finns det en bonus, och vad beror den på?"
 
+#: src/features/workspace/coach-starters.ts
+msgid "Is this job worth applying for?"
+msgstr ""
+
 #. placeholder {0}: issue.number
 #. placeholder {1}: issues.length
 #: src/features/check/page.tsx
@@ -6105,7 +6131,6 @@ msgid "Kannada"
 msgstr "Kanadensiska"
 
 #: src/features/check/screen.tsx
-#: src/features/letters/write.tsx
 msgid "Keep"
 msgstr "Hålla"
 
@@ -7242,6 +7267,10 @@ msgid "Moved to {0}"
 msgstr "Flyttade till {0}"
 
 #: src/features/workspace/tabs/messages.tsx
+msgid "Moved to {stage}"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
 msgstr "Flyttar jobbansökan från {from}."
 
@@ -7455,6 +7484,10 @@ msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Next unsynced drafts"
+msgstr ""
+
+#: src/features/letters/write.tsx
+msgid "Next version"
 msgstr ""
 
 #: src/shell/workspace-chrome.tsx
@@ -8108,6 +8141,13 @@ msgstr "Endast en version än så länge. Varje redigeringssession lägger till 
 msgid "Only providers that pass their test can be turned on."
 msgstr "Endast leverantörer som klarar sitt test kan aktiveras."
 
+#. placeholder {0}: i18n.number(100_000)
+#. placeholder {0}: i18n.number(MAX_MESSAGE)
+#: src/features/applications/add-sheet.tsx
+#: src/features/workspace/tabs/messages.tsx
+msgid "Only the first {0} characters are kept."
+msgstr ""
+
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
@@ -8201,6 +8241,10 @@ msgstr "Öppna i Erbjudanden"
 
 #: src/features/assistant/messages.tsx
 msgid "Open in the resume's assistant"
+msgstr ""
+
+#: src/features/workspace/tabs/debrief.tsx
+msgid "Open Interview prep"
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
@@ -8682,6 +8726,10 @@ msgstr "Vanlig text med rubriker. Klistra in i ansökningsformulär och anteckni
 msgid "Plan again"
 msgstr "Planera igen"
 
+#: src/features/workspace/coach-starters.ts
+msgid "Plan my counter-offer"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Plan my preparation"
 msgstr "Planera min förberedelse"
@@ -8706,10 +8754,6 @@ msgstr "Plommonlila"
 #: src/features/settings/locale-names.ts
 msgid "Polish"
 msgstr "Polska"
-
-#: src/features/workspace/parts.tsx
-msgid "Polishing"
-msgstr "Putsar"
 
 #: src/features/write/picture-screen.tsx
 msgid "Portrait"
@@ -8889,6 +8933,10 @@ msgstr "Tidigare PDF-resultat. Det kanske inte motsvarar ditt nuvarande utkast."
 
 #: src/features/documents/library.tsx
 msgid "Previous unsynced drafts"
+msgstr ""
+
+#: src/features/letters/write.tsx
+msgid "Previous version"
 msgstr ""
 
 #: src/shell/workspace-chrome.tsx
@@ -9085,6 +9133,10 @@ msgstr "Frågan borttagen"
 msgid "Questions to ask"
 msgstr "Frågor att ställa"
 
+#: src/features/workspace/coach-starters.ts
+msgid "Quiz me on likely questions for this round"
+msgstr ""
+
 #: src/features/design/design-pane.tsx
 msgid "Raise the design sheet"
 msgstr "Lyft upp designarket"
@@ -9136,6 +9188,11 @@ msgstr "Läs den åt mig"
 #: app/(tabs)/settings/licences.tsx
 msgid "Read license"
 msgstr "Läs licens"
+
+#. placeholder {0}: (source.retrievedAt && formatReadTime(source.retrievedAt, i18n.locale)) || source.retrievedAt || ""
+#: src/features/application-detail/sheets.tsx
+msgid "Read on {0}. The employer may have changed it since."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
@@ -9327,6 +9384,10 @@ msgstr "Rektangel (full bredd)"
 msgid "Redo"
 msgstr "Gör om"
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "Redraft from the posting"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
@@ -9372,6 +9433,8 @@ msgstr "Öva högt"
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
+#: src/features/letters/write.tsx
+#: src/features/workspace/tabs/apply.tsx
 msgid "Reject"
 msgstr "Avvisa"
 
@@ -9854,12 +9917,6 @@ msgstr "Ta {0} ur bruk?"
 msgid "Retire lane"
 msgstr "Ta fas ur bruk"
 
-#. placeholder {0}: source.retrievedAt
-#. placeholder {1}: source.method
-#: src/features/application-detail/sheets.tsx
-msgid "Retrieved {0} using {1}. Retrieval time does not establish origin freshness."
-msgstr "Hämtade {0} med {1}. Hämtningstiden fastställer inte ursprungets färskhet."
-
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
@@ -10018,8 +10075,8 @@ msgid "Review target roles, one per line"
 msgstr ""
 
 #: src/features/applications/add-sheet.tsx
-msgid "Review the details before saving. Retrieved content does not establish that the posting is still open."
-msgstr "Granska uppgifterna innan du sparar. Hämtat innehåll bekräftar inte att tjänsten fortfarande är ledig."
+msgid "Review the details before saving. The employer may have changed or closed the posting since it was read."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review the selected resume and cover letter in their editors."
@@ -11182,7 +11239,6 @@ msgid "Skills"
 msgstr "Färdigheter"
 
 #: src/features/assistant/tool-approvals.tsx
-#: src/features/workspace/tabs/apply.tsx
 msgid "Skip"
 msgstr "Hoppa över"
 
@@ -11408,6 +11464,18 @@ msgid "Start the resume with your name on its own line."
 msgstr "Börja CV:t med ditt namn på en egen rad."
 
 #: src/features/letters/write.tsx
+msgid "Start typing, or connect an AI provider to draft from the {company} posting and your resume."
+msgstr ""
+
+#: src/features/letters/write.tsx
+msgid "Start typing, or connect an AI provider to draft from the {company} posting."
+msgstr ""
+
+#: src/features/letters/write.tsx
+msgid "Start typing, or connect an AI provider to draft from your resume."
+msgstr ""
+
+#: src/features/letters/write.tsx
 msgid "Start typing, or draft from what we know: the {company} posting and your resume."
 msgstr "Börja skriva, eller skriv utkast från vad vi vet: {company} jobbannons och ditt CV."
 
@@ -11462,8 +11530,13 @@ msgstr "Bo i Dokument"
 msgid "Step {0} of {1}"
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "Still working"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
+#: src/features/workspace/parts.tsx
 msgid "Stop"
 msgstr "Stopp"
 
@@ -11485,6 +11558,10 @@ msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Stopped before the answer finished."
+msgstr ""
+
+#: src/features/letters/write.tsx
+msgid "Stopped before the end. Accept it and finish it yourself, or reject it."
 msgstr ""
 
 #: src/features/assistant/chat-view.tsx
@@ -12222,10 +12299,6 @@ msgstr "Dessa öppnar din servers kontoinställningar i en webbläsarflik i appe
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "De letar efter rubriker som erfarenhet, utbildning och färdigheter."
 
-#: src/features/workspace/parts.tsx
-msgid "Thinking"
-msgstr "Tänker"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Thinking…"
 msgstr "Tänkande…"
@@ -12941,6 +13014,10 @@ msgstr "Namnlös nyckel"
 msgid "Unsynced on this device"
 msgstr "Osynkroniserad på den här enheten"
 
+#: src/features/workspace/tabs/debrief.tsx
+msgid "Until then, Interview prep has your plan, your opening and the questions to ask."
+msgstr ""
+
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Untitled"
@@ -13476,6 +13553,10 @@ msgstr "Vad en person ser"
 msgid "What are you working on?"
 msgstr "Vad arbetar du med?"
 
+#: src/features/workspace/coach-starters.ts
+msgid "What can I learn from this application?"
+msgstr ""
+
 #: src/features/write/improve.tsx
 msgid "What changed because of this? A number, a time saved, who used it."
 msgstr ""
@@ -13524,6 +13605,18 @@ msgstr "Vad som är viktigt för dig"
 msgid "What should change?"
 msgstr "Vad bör förändras?"
 
+#: src/features/workspace/coach-starters.ts
+msgid "What should I ask them?"
+msgstr ""
+
+#: src/features/workspace/coach-starters.ts
+msgid "What should I check before accepting?"
+msgstr ""
+
+#: src/features/workspace/coach-starters.ts
+msgid "What should my resume lead with for this job?"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "What should run"
 msgstr "Vad som ska köras"
@@ -13563,6 +13656,10 @@ msgstr "Vad fungerar"
 #: src/features/career/offers.tsx
 msgid "When do you need a decision?"
 msgstr "När behöver du ett beslut?"
+
+#: src/features/workspace/coach-starters.ts
+msgid "When should I follow up, and what should I say?"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "When would you start?"
@@ -13738,6 +13835,11 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "Skriv hela adressen så att den känns igen som en länk."
+
+#. placeholder {0}: day(upcoming.at)
+#: src/features/workspace/tabs/debrief.tsx
+msgid "Write this after your interview on {0}"
+msgstr ""
 
 #: src/features/workspace/tabs/fit.tsx
 msgid "Write what you did."

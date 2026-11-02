@@ -16,7 +16,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { DisclosureText } from "../disclosure";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
-import { StatusPill, Swap, Working, workingSteps } from "../shared";
+import { StatusPill, Swap, GenerateNotice, Working, workingSteps } from "../shared";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { toastError } from "@/libs/error-message";
@@ -104,6 +104,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 				}
 			>
 				<AiNotice task="fit" application={application} className="max-w-[420px] text-start" />
+				<GenerateNotice generate={generate} onRetry={check} className="max-w-[420px]" />
 				{evidenceState.isError && (
 					<div role="alert">
 						<p>
@@ -232,6 +233,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 				</p>
 			</div>
 			{item.outdated && !readOnly && <AiNotice task="fit" application={application} className="-mt-2" />}
+			{!readOnly && <GenerateNotice generate={generate} onRetry={check} className="-mt-2 w-fit" />}
 
 			<div
 				role="table"

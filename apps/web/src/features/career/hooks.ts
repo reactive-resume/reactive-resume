@@ -4,6 +4,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import type { SetStateAction } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
+import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext, useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -11,8 +12,8 @@ import { EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
 import { pendingCommits } from "./pending-commits";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getAccountGeneration } from "@/libs/auth/clear-account-data";
-import { toastError } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
+import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
+import { client, orpc } from "@/libs/orpc/client";
 
 export type SavedItem = RouterOutput["career"]["savedItems"][number];
 export type Fact = RouterOutput["career"]["facts"][number];
@@ -231,26 +232,51 @@ export function useDefaultProvider() {
 	return { ...state, provider: state.usableProviders[0] ?? null };
 }
 
+type GenerateInput = Parameters<typeof client.career.generate>[0];
+
+/** What a failed workspace task says: an unreadable answer names the provider and where to switch it. */
+function generateFailure(error: unknown, name: string | undefined) {
+	if (error instanceof ORPCError && error.code === "INTERNAL_SERVER_ERROR")
+		return name
+			? t`Couldn't read ${name}'s answer. Try again, or switch the default provider in AI settings.`
+			: t`Couldn't read the AI's answer. Try again, or switch the default provider in AI settings.`;
+	const who = name ?? t`Your AI connection`;
+	return getOrpcErrorMessage(error, {
+		fallback: t`${who} didn't respond. Nothing was changed; try again.`,
+		allowServerMessage: true,
+	});
+}
+
 /**
- * Asks the coach for one structured piece of work for a tab. Errors say what didn't run; stored data stays usable.
+ * Asks the coach for one structured piece of work for a tab. A failure is kept as `failure` for the tab to show inline;
+ * `stop` cancels the request and clears it. Stored data stays usable either way.
  */
 export function useGenerate(applicationId: string) {
 	const { i18n } = useLingui();
 	const queryClient = useQueryClient();
 	const connection = useDefaultProvider();
 	const { provider } = connection;
+	const controller = useRef<AbortController | null>(null);
 	const mutation = useMutation({
-		...orpc.career.generate.mutationOptions(),
+		mutationKey: orpc.career.generate.mutationKey(),
+		mutationFn: (input: GenerateInput) => {
+			const abort = new AbortController();
+			controller.current = abort;
+			return client.career.generate(input, { signal: abort.signal });
+		},
 		onSuccess: (result) => {
 			if (result.item) void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
 		},
-		onError: (error) => {
-			const name = provider?.label ?? t`Your AI connection`;
-			toastError(error, t`${name} didn't respond. Nothing was changed; try again.`, { allowServerMessage: true });
-		},
 	});
+	const { reset } = mutation;
 	return {
 		...mutation,
+		failure: mutation.error ? generateFailure(mutation.error, provider?.label) : null,
+		// Reset first: the aborted request then rejects without reaching this hook's state.
+		stop: () => {
+			reset();
+			controller.current?.abort();
+		},
 		run: (task: GenerateTask) => {
 			if (connection.isUnavailable)
 				return Promise.reject(new Error(t`AI connections haven't loaded. Try again before generating.`));

@@ -20,7 +20,7 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks, useWorkspace } from "../hooks";
-import { Eyebrow, flash, minutesUntil, useCareerTime, useNow, Working, workingSteps } from "../shared";
+import { Eyebrow, flash, minutesUntil, useCareerTime, useNow, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import { interviewTypeLabel } from "@/features/applications/components/interview-dialog";
 import { SetUpAi } from "@/features/assistant/provider-setup";
@@ -93,6 +93,7 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 	const connection = useDefaultProvider();
 	const { provider } = connection;
 	const generate = useGenerate(application.id);
+	const plan = () => void generate.run({ task: "briefing", interviewId: interview.id }).catch(() => undefined);
 	return (
 		<EmptyState
 			title={t`A focused plan for this round`}
@@ -104,11 +105,7 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 			}
 			action={
 				connection.isUnavailable ? undefined : provider ? (
-					<Button
-						loading={generate.isPending}
-						disabled={!provider}
-						onClick={() => void generate.run({ task: "briefing", interviewId: interview.id }).catch(() => {})}
-					>
+					<Button loading={generate.isPending} disabled={!provider} onClick={plan}>
 						{generate.isPending ? <Working steps={workingSteps("briefing")} /> : <Trans>Plan my preparation</Trans>}
 					</Button>
 				) : (
@@ -119,7 +116,10 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 			{connection.isUnavailable ? (
 				<AiProviderLoadState state={connection} />
 			) : provider ? (
-				<AiNotice task="briefing" application={application} interview className="max-w-[360px] text-start" />
+				<>
+					<AiNotice task="briefing" application={application} interview className="max-w-[360px] text-start" />
+					<GenerateNotice generate={generate} onRetry={plan} className="max-w-[360px]" />
+				</>
 			) : null}
 		</EmptyState>
 	);
@@ -147,6 +147,8 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 	const questions = [...data.questions, ...workspace.data.questions];
 	const { provider } = useDefaultProvider();
 	const generate = useGenerate(application.id);
+	const planAgain = (interviewId: string) =>
+		void generate.run({ task: "briefing", interviewId }).catch(() => undefined);
 
 	const action = (row: SavedData<"briefing">["plan"][number]) => {
 		const className = cn(buttonVariants({ variant: "secondary", size: "sm" }));
@@ -208,9 +210,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 								size="sm"
 								className="font-sans text-[13px] tracking-normal normal-case"
 								loading={generate.isPending}
-								onClick={() =>
-									void generate.run({ task: "briefing", interviewId: interview.id }).catch(() => undefined)
-								}
+								onClick={() => interview && planAgain(interview.id)}
 							>
 								{generate.isPending ? <Working steps={workingSteps("briefing")} /> : <Trans>Plan again</Trans>}
 							</Button>

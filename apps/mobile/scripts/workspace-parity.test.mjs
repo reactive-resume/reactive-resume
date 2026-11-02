@@ -155,7 +155,7 @@ const otherServer = draftOwner.letterDraftOwnerKey("https://other.example", "acc
 assert.notEqual(draftA, draftB);
 assert.notEqual(draftA, otherAccount);
 assert.notEqual(draftA, otherServer);
-const readyA = { phase: "ready", text: "A's unkept draft", revision: 1 };
+const readyA = { phase: "ready", text: "A's unkept draft", revision: 1, versions: [] };
 const state = { owner: draftA, draft: readyA };
 assert.equal(draftOwner.draftForOwner(state, draftA, { phase: "idle" }), readyA);
 assert.deepEqual(draftOwner.draftForOwner(state, draftB, { phase: "idle" }), { phase: "idle" });
@@ -183,13 +183,13 @@ assert.deepEqual(drafting.useLetterDrafting.getState().draft, { phase: "idle" })
 // Leaving after a ready draft keeps it for this letter; leaving mid-stream clears the phantom card.
 drafting.useLetterDrafting.setState({
 	owner: draftA,
-	draft: { phase: "ready", text: "A stored", revision: 1, operation: "test" },
+	draft: { phase: "ready", text: "A stored", revision: 1, operation: "test", versions: [] },
 });
 drafting.stopLetterDraft();
 assert.equal(drafting.useLetterDrafting.getState().draft.phase, "ready");
 drafting.useLetterDrafting.setState({
 	owner: draftA,
-	draft: { phase: "streaming", text: "half", revision: 1, operation: "test" },
+	draft: { phase: "streaming", text: "half", revision: 1, operation: "test", versions: [] },
 });
 drafting.stopLetterDraft();
 assert.deepEqual(drafting.useLetterDrafting.getState().draft, { phase: "idle" });
@@ -204,7 +204,7 @@ assert.deepEqual(drafting.useLetterDrafting.getState().draft, { phase: "idle" })
 // Discard only touches the open letter's stored draft.
 drafting.useLetterDrafting.setState({
 	owner: draftB,
-	draft: { phase: "ready", text: "B", revision: 1, operation: "test" },
+	draft: { phase: "ready", text: "B", revision: 1, operation: "test", versions: [] },
 });
 draftStorage.set(draftA, JSON.stringify({ text: "A stored", variant: "draft", revision: 1 }));
 draftStorage.set(draftB, JSON.stringify({ text: "B", variant: "draft", revision: 1 }));

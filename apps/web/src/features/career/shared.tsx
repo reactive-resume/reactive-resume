@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { useRouteContext } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
 import { useEffect, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -205,19 +205,18 @@ export const workingSteps = (task: GenerateTask["task"] | "tighten" | "chat") =>
 type WorkingProps = { steps: string[] };
 
 /**
- * A 10–30 second wait reads as progress: the label moves through the work's steps every 2.2 seconds, then loops
- * through general phrases. Each phrase rises in from below out of a 2px blur as the last one leaves upward; all of
- * them share one grid cell, so a button keeps the width of the longest.
+ * A 10–30 second wait reads as progress: the label moves through the work's steps every 2.2 seconds, then stays on
+ * "Still working". Each phrase rises in from below out of a 2px blur as the last one leaves upward; all of them share
+ * one grid cell, so a button keeps the width of the longest.
  */
 export function Working({ steps }: WorkingProps) {
-	const general = [t`Thinking`, t`Double-checking`, t`Polishing`];
-	const phrases = [...steps, ...general];
+	const phrases = [...steps, t`Still working`];
 	const [tick, setTick] = useState(0);
 	useEffect(() => {
 		const id = window.setInterval(() => setTick((current) => current + 1), 2200);
 		return () => window.clearInterval(id);
 	}, []);
-	const at = (n: number) => (n < phrases.length ? n : steps.length + ((n - steps.length) % general.length));
+	const at = (n: number) => Math.min(n, phrases.length - 1);
 	const shown = at(tick);
 	const left = tick > 0 ? at(tick - 1) : -1;
 
@@ -241,6 +240,46 @@ export function Working({ steps }: WorkingProps) {
 				</span>
 			))}
 		</span>
+	);
+}
+
+type GenerateNoticeProps = {
+	generate: { isPending: boolean; failure: string | null; stop: () => void; reset: () => void };
+	onRetry: () => void;
+	className?: string;
+};
+
+/** Beside a workspace AI action: Stop while it runs; when it failed, the reason inline with Try again. */
+export function GenerateNotice({ generate, onRetry, className }: GenerateNoticeProps) {
+	if (generate.isPending)
+		return (
+			<Button size="sm" variant="ghost" className={className} onClick={generate.stop}>
+				<Icon name="stop" size={16} />
+				<Trans>Stop</Trans>
+			</Button>
+		);
+	if (!generate.failure) return null;
+	return (
+		<div
+			role="alert"
+			className={cn("grid gap-2.5 rounded-xl bg-danger-soft p-3 text-start text-[13px] text-danger-text", className)}
+		>
+			<span className="flex gap-2">
+				<Icon name="warning-circle" size={18} className="shrink-0" />
+				{generate.failure}
+			</span>
+			<div className="flex flex-wrap gap-1.5">
+				<Button size="sm" variant="secondary" onClick={onRetry}>
+					<Trans>Try again</Trans>
+				</Button>
+				<Button size="sm" variant="ghost" nativeButton={false} render={<Link to="/dashboard/settings/ai" />}>
+					<Trans>AI settings</Trans>
+				</Button>
+				<Button size="sm" variant="ghost" onClick={generate.reset}>
+					<Trans>Dismiss</Trans>
+				</Button>
+			</div>
+		</div>
 	);
 }
 

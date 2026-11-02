@@ -16,7 +16,17 @@ import { offerTermKeys } from "@reactive-resume/schema/career-offer";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { latest, useAutosave, useDraft, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { isFixedChange, needsSubmission, openChanges } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, Pill, SaveError, useWorking, workingSteps } from "../parts";
+import {
+	Actions,
+	AiNotice,
+	Block,
+	CheckRow,
+	Pill,
+	SaveError,
+	GenerateNotice,
+	useWorking,
+	workingSteps,
+} from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { createPendingRegistry, dispatchForOrigin } from "../state";
 import { client, orpc } from "@/api/client";
@@ -34,6 +44,9 @@ import { OfferEntry } from "@/features/career/offer-entry";
 import { Banner, Button, Icon, Sheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
+
+// The longest message kept from a paste (web messages).
+const MAX_MESSAGE = 20_000;
 
 const periodLabel = (period: "year" | "month" | "hour") =>
 	({
@@ -103,7 +116,7 @@ type PasteBoxProps = {
 
 /** W15: the employer's message, kept with the application, and "Read it for me". */
 function PasteBox({ application, initial, readOnly, onSave, fetchServer }: PasteBoxProps) {
-	const { t } = useLingui();
+	const { t, i18n } = useLingui();
 	const { space } = useTheme();
 	// Kept on the device until the server has it, so a failed save survives leaving the tab.
 	const draft = useDraft(readOnly ? null : `message:${application.id}`, initial, true);
@@ -112,6 +125,7 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 	const provider = useHasAIProvider().defaultProvider;
 	const autosave = useAutosave(readOnly ? initial : message, initial, onSave, draft, fetchServer);
 	const label = useWorking(generate.isPending, workingSteps("reply"), t`Read it for me`);
+	const read = () => void generate.run({ task: "reply", message: message.trim() }).catch(() => undefined);
 	const company = application.company;
 
 	return (
@@ -119,10 +133,15 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 			<TextArea
 				label={t`Paste a message from ${company}`}
 				value={message}
-				maxLength={20_000}
+				maxLength={MAX_MESSAGE}
 				maxLines={12}
 				editable={!readOnly}
-				helper={t`Paste the email or message, without the signature.`}
+				// A longer paste is cut at the limit: say so, rather than drop the rest silently (web messages).
+				helper={
+					message.length >= MAX_MESSAGE
+						? t`Only the first ${i18n.number(MAX_MESSAGE)} characters are kept.`
+						: t`Paste the email or message, without the signature.`
+				}
 				onChangeText={draft.setValue}
 				onBlur={autosave.flush}
 			/>
@@ -143,9 +162,10 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 							label={label}
 							loading={generate.isPending}
 							disabled={!message.trim()}
-							onPress={() => void generate.run({ task: "reply", message: message.trim() }).catch(() => undefined)}
+							onPress={read}
 						/>
 					) : null}
+					<GenerateNotice generate={generate} onRetry={read} />
 				</View>
 			) : null}
 		</View>
@@ -164,6 +184,8 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const text = readOnly ? reply.data.reply : draft.value;
 	// The employer's language is the default; this is the explicit way back to the user's interface language.
 	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
+	const rewrite = () =>
+		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
 	const copy = async () => {
 		await Clipboard.setStringAsync(text);
@@ -201,14 +223,11 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 								size="sm"
 								label={t`Write a new reply in ${languageName}`}
 								loading={generate.isPending}
-								onPress={() =>
-									void generate
-										.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale })
-										.catch(() => undefined)
-								}
+								onPress={rewrite}
 							/>
 						) : null}
 					</Actions>
+					{!readOnly ? <GenerateNotice generate={generate} onRetry={rewrite} /> : null}
 					<Text variant="caption" color="ink3">
 						{t`You send it from your own email.`}
 					</Text>
@@ -259,13 +278,16 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 		).title;
 	const from = getLaneLabel(resolveLane(lanes.lanes, application));
 
-	const describe = (change: (typeof changes)[number]) => {
+	const describe = (change: (typeof changes)[number], index: number) => {
 		switch (change.type) {
 			case "stage": {
 				const stage =
 					change.stage === application.status ? from : getLaneLabel(resolveLane(lanes.lanes, { status: change.stage }));
 				if (change.stage === application.status)
-					return { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
+					// Applied, the stage is now the one it moved to: say so, rather than "stays".
+					return applied?.changes.includes(index)
+						? { title: t`Moved to ${stage}`, detail: "" }
+						: { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
 				if (application.status === "saved")
 					return {
 						title: t`Mark as applied and move to ${stage}`,
@@ -307,7 +329,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				return {
 					title: t`Save these offer terms to compare`,
 					detail: terms.length
-						? t`${terms.join(" · ")}. Opens in Career → Offers.`
+						? t`${terms.join(" · ").replace(/[\s.。]+$/u, "")}. Opens in Career → Offers.`
 						: t`No terms were extracted. Opens in Career → Offers.`,
 				};
 			}
@@ -476,7 +498,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 			}
 		>
 			{changes.map((change, index) => {
-				const { title, detail } = describe(change);
+				const { title, detail } = describe(change, index);
 				const fixed = isFixedChange(change, application.status);
 				return (
 					<CheckRow

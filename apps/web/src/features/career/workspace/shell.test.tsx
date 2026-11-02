@@ -24,6 +24,7 @@ vi.mock("@/libs/orpc/client", () => {
 		key: () => [name],
 		queryKey: () => [name],
 		queryOptions: () => ({ queryKey: [name], queryFn, staleTime: Infinity }),
+		mutationKey: () => [name],
 		mutationOptions: () => ({ mutationFn }),
 	});
 	return {
@@ -55,6 +56,7 @@ vi.mock("@/libs/orpc/client", () => {
 				generate: endpoint("generate"),
 			},
 		},
+		client: { career: { generate: vi.fn() } },
 	};
 });
 vi.mock("@tanstack/react-router", () => ({

@@ -11178,6 +11178,8 @@
 											"verb",
 											"result",
 											"shorter",
+											"posting",
+											"warmer",
 											"custom"
 										],
 										"type": "string"
@@ -11195,6 +11197,9 @@
 										"type": "string",
 										"maxLength": 10000,
 										"default": ""
+									},
+									"applicationId": {
+										"type": "string"
 									}
 								},
 								"required": [
@@ -70626,6 +70631,10 @@
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
 																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																							},
 																							"raw": {
 																								"type": "string",
 																								"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -70714,6 +70723,10 @@
 																										"present": {
 																											"type": "boolean",
 																											"description": "Whether it's ongoing, printed as 'Present'."
+																										},
+																										"expected": {
+																											"type": "boolean",
+																											"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																										},
 																										"raw": {
 																											"type": "string",
@@ -70871,6 +70884,10 @@
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
 																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																							},
 																							"raw": {
 																								"type": "string",
 																								"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -71024,6 +71041,10 @@
 																							"present": {
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
+																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																							},
 																							"raw": {
 																								"type": "string",
@@ -71354,6 +71375,10 @@
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
 																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																							},
 																							"raw": {
 																								"type": "string",
 																								"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -71508,6 +71533,10 @@
 																							"present": {
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
+																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																							},
 																							"raw": {
 																								"type": "string",
@@ -71664,6 +71693,10 @@
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
 																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																							},
 																							"raw": {
 																								"type": "string",
 																								"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -71818,6 +71851,10 @@
 																							"present": {
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
+																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																							},
 																							"raw": {
 																								"type": "string",
@@ -72415,6 +72452,10 @@
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
 																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																								},
 																								"raw": {
 																									"type": "string",
 																									"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -72503,6 +72544,10 @@
 																											"present": {
 																												"type": "boolean",
 																												"description": "Whether it's ongoing, printed as 'Present'."
+																											},
+																											"expected": {
+																												"type": "boolean",
+																												"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																											},
 																											"raw": {
 																												"type": "string",
@@ -72673,6 +72718,10 @@
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
 																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																								},
 																								"raw": {
 																									"type": "string",
 																									"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -72839,6 +72888,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -73325,6 +73378,10 @@
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
 																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																								},
 																								"raw": {
 																									"type": "string",
 																									"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -73492,6 +73549,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -73661,6 +73722,10 @@
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
 																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																								},
 																								"raw": {
 																									"type": "string",
 																									"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -73828,6 +73893,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -96304,6 +96373,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -96392,6 +96465,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -96549,6 +96626,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -96702,6 +96783,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -97032,6 +97117,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -97186,6 +97275,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -97342,6 +97435,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -97496,6 +97593,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -98093,6 +98194,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -98181,6 +98286,10 @@
 																									"present": {
 																										"type": "boolean",
 																										"description": "Whether it's ongoing, printed as 'Present'."
+																									},
+																									"expected": {
+																										"type": "boolean",
+																										"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																									},
 																									"raw": {
 																										"type": "string",
@@ -98351,6 +98460,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -98517,6 +98630,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -99003,6 +99120,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -99170,6 +99291,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -99339,6 +99464,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -99506,6 +99635,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -100838,6 +100971,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -100926,6 +101063,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -101083,6 +101224,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -101236,6 +101381,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -101566,6 +101715,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -101720,6 +101873,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -101876,6 +102033,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -102030,6 +102191,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -102627,6 +102792,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -102715,6 +102884,10 @@
 																									"present": {
 																										"type": "boolean",
 																										"description": "Whether it's ongoing, printed as 'Present'."
+																									},
+																									"expected": {
+																										"type": "boolean",
+																										"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																									},
 																									"raw": {
 																										"type": "string",
@@ -102885,6 +103058,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -103051,6 +103228,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -103537,6 +103718,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -103704,6 +103889,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -103873,6 +104062,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -104040,6 +104233,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -105375,6 +105572,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -105463,6 +105664,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -105620,6 +105825,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -105773,6 +105982,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -106103,6 +106316,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -106257,6 +106474,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -106413,6 +106634,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -106567,6 +106792,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -107164,6 +107393,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -107252,6 +107485,10 @@
 																									"present": {
 																										"type": "boolean",
 																										"description": "Whether it's ongoing, printed as 'Present'."
+																									},
+																									"expected": {
+																										"type": "boolean",
+																										"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																									},
 																									"raw": {
 																										"type": "string",
@@ -107422,6 +107659,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -107588,6 +107829,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -108074,6 +108319,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -108241,6 +108490,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -108410,6 +108663,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -108577,6 +108834,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -109962,6 +110223,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -110050,6 +110315,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -110207,6 +110476,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -110360,6 +110633,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -110690,6 +110967,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -110844,6 +111125,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -111000,6 +111285,10 @@
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
 																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																					},
 																					"raw": {
 																						"type": "string",
 																						"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -111154,6 +111443,10 @@
 																					"present": {
 																						"type": "boolean",
 																						"description": "Whether it's ongoing, printed as 'Present'."
+																					},
+																					"expected": {
+																						"type": "boolean",
+																						"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																					},
 																					"raw": {
 																						"type": "string",
@@ -111751,6 +112044,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -111839,6 +112136,10 @@
 																									"present": {
 																										"type": "boolean",
 																										"description": "Whether it's ongoing, printed as 'Present'."
+																									},
+																									"expected": {
+																										"type": "boolean",
+																										"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																									},
 																									"raw": {
 																										"type": "string",
@@ -112009,6 +112310,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -112175,6 +112480,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -112661,6 +112970,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -112828,6 +113141,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -112997,6 +113314,10 @@
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
 																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																						},
 																						"raw": {
 																							"type": "string",
 																							"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -113164,6 +113485,10 @@
 																						"present": {
 																							"type": "boolean",
 																							"description": "Whether it's ongoing, printed as 'Present'."
+																						},
+																						"expected": {
+																							"type": "boolean",
+																							"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																						},
 																						"raw": {
 																							"type": "string",
@@ -141881,6 +142206,10 @@
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
 																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																							},
 																							"raw": {
 																								"type": "string",
 																								"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -141969,6 +142298,10 @@
 																										"present": {
 																											"type": "boolean",
 																											"description": "Whether it's ongoing, printed as 'Present'."
+																										},
+																										"expected": {
+																											"type": "boolean",
+																											"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																										},
 																										"raw": {
 																											"type": "string",
@@ -142126,6 +142459,10 @@
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
 																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																							},
 																							"raw": {
 																								"type": "string",
 																								"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -142279,6 +142616,10 @@
 																							"present": {
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
+																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																							},
 																							"raw": {
 																								"type": "string",
@@ -142609,6 +142950,10 @@
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
 																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																							},
 																							"raw": {
 																								"type": "string",
 																								"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -142763,6 +143108,10 @@
 																							"present": {
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
+																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																							},
 																							"raw": {
 																								"type": "string",
@@ -142919,6 +143268,10 @@
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
 																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																							},
 																							"raw": {
 																								"type": "string",
 																								"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -143073,6 +143426,10 @@
 																							"present": {
 																								"type": "boolean",
 																								"description": "Whether it's ongoing, printed as 'Present'."
+																							},
+																							"expected": {
+																								"type": "boolean",
+																								"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																							},
 																							"raw": {
 																								"type": "string",
@@ -143670,6 +144027,10 @@
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
 																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																								},
 																								"raw": {
 																									"type": "string",
 																									"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -143758,6 +144119,10 @@
 																											"present": {
 																												"type": "boolean",
 																												"description": "Whether it's ongoing, printed as 'Present'."
+																											},
+																											"expected": {
+																												"type": "boolean",
+																												"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																											},
 																											"raw": {
 																												"type": "string",
@@ -143928,6 +144293,10 @@
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
 																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																								},
 																								"raw": {
 																									"type": "string",
 																									"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -144094,6 +144463,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -144580,6 +144953,10 @@
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
 																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																								},
 																								"raw": {
 																									"type": "string",
 																									"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -144747,6 +145124,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -144916,6 +145297,10 @@
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
 																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
+																								},
 																								"raw": {
 																									"type": "string",
 																									"description": "Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields."
@@ -145083,6 +145468,10 @@
 																								"present": {
 																									"type": "boolean",
 																									"description": "Whether it's ongoing, printed as 'Present'."
+																								},
+																								"expected": {
+																									"type": "boolean",
+																									"description": "Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true."
 																								},
 																								"raw": {
 																									"type": "string",
@@ -159372,6 +159761,8 @@
 											"verb",
 											"result",
 											"shorter",
+											"posting",
+											"warmer",
 											"custom"
 										],
 										"type": "string"
@@ -159389,6 +159780,9 @@
 										"type": "string",
 										"maxLength": 10000,
 										"default": ""
+									},
+									"applicationId": {
+										"type": "string"
 									}
 								},
 								"required": [
