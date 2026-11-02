@@ -1827,10 +1827,6 @@ msgstr "Add some whitespace between sections so a person can skim it."
 msgid "Add stage"
 msgstr "Add stage"
 
-#: src/features/applications/components/list-view.tsx
-msgid "Add tag"
-msgstr "Add tag"
-
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "Add text"
@@ -2140,10 +2136,6 @@ msgstr "All applications"
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "All applications (including closed)"
 msgstr "All applications (including closed)"
-
-#: src/features/settings/account/data.tsx
-msgid "All documents and applications as JSON, in one zip"
-msgstr "All documents and applications as JSON, in one zip"
 
 #: src/features/documents/trash-page.tsx
 msgid "All documents in Trash will be deleted for good and can't be restored."
@@ -3099,6 +3091,10 @@ msgstr "Can it help me prepare for interviews?"
 msgid "Can software read your resume?"
 msgstr "Can software read your resume?"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Can't scan? Enter this key in the app:"
+msgstr "Can't scan? Enter this key in the app:"
+
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3267,6 +3263,10 @@ msgstr "Changes section titles and date words only, not your content."
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
 msgstr "Changes since {0}"
+
+#: src/features/settings/account/profile.tsx
+msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
+msgstr "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3555,6 +3555,10 @@ msgstr "Choose model"
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
 msgstr "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
+
+#: src/features/applications/components/list-view.tsx
+msgid "Choose up to 200 applications per bulk action."
+msgstr "Choose up to 200 applications per bulk action."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3851,6 +3855,10 @@ msgstr "Confirm"
 msgid "Confirm applied"
 msgstr "Confirm applied"
 
+#: src/features/auth/email-text.ts
+msgid "Confirm email"
+msgstr "Confirm email"
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Confirm password"
 msgstr "Confirm password"
@@ -3870,6 +3878,29 @@ msgstr "Confirm the time with {contact} before adding a new interview."
 #: src/features/career/workspace/prepare.tsx
 msgid "Confirm the time, link and who you'll meet. Glance at the resume and letter you sent."
 msgstr "Confirm the time, link and who you'll meet. Glance at the resume and letter you sent."
+
+#. Email sent to a new address to finish an email change. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this address to finish changing your {appName} email. The link works for 1 hour."
+msgstr "Confirm this address to finish changing your {appName} email. The link works for 1 hour."
+
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this is your email address for {appName}. The link works for 1 hour."
+msgstr "Confirm this is your email address for {appName}. The link works for 1 hour."
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm your new {appName} email address"
+msgstr "Confirm your new {appName} email address"
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email"
+msgstr "Confirm your new email"
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email address"
+msgstr "Confirm your new email address"
 
 #: src/features/homepage/prepare.tsx
 msgid "Confirms {time} today, by video."
@@ -5351,6 +5382,7 @@ msgstr "Delete offer"
 msgid "Delete page"
 msgstr "Delete page"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
 msgstr "Delete permanently…"
@@ -5415,7 +5447,6 @@ msgstr "Delete your documents and account data."
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
 msgstr "Delete…"
@@ -5636,6 +5667,10 @@ msgstr "Documents for this job"
 #: src/features/documents/trash-page.tsx
 msgid "Documents you move here stay for 30 days."
 msgstr "Documents you move here stay for 30 days."
+
+#: src/features/settings/account/data.tsx
+msgid "Documents, applications and Career data as JSON, in one zip"
+msgstr "Documents, applications and Career data as JSON, in one zip"
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -7487,12 +7522,16 @@ msgid "If you close this dialog, your changes are lost."
 msgstr "If you close this dialog, your changes are lost."
 
 #: src/features/auth/email-text.ts
-msgid "If you did not create this account, you can safely ignore this email."
-msgstr "If you did not create this account, you can safely ignore this email."
-
-#: src/features/auth/email-text.ts
 msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 msgstr "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, ignore this email; your account won't change."
+msgstr "If you didn't ask for this, ignore this email; your account won't change."
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, you can ignore this email."
+msgstr "If you didn't ask for this, you can ignore this email."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
@@ -12405,10 +12444,6 @@ msgstr "Reset your {appName} password"
 msgid "Reset your password"
 msgstr "Reset your password"
 
-#: src/features/auth/email-text.ts
-msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
-msgstr "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "Resetting your password..."
@@ -13411,6 +13446,10 @@ msgstr "Select {0}"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "Select {0} at {1}"
+
+#: src/features/applications/components/list-view.tsx
+msgid "Select all"
+msgstr "Select all"
 
 #: src/features/career/today.tsx
 msgid "Select all roles"
@@ -14744,7 +14783,6 @@ msgstr "Tag"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
-#: src/features/documents/documents-page.tsx
 msgid "Tags"
 msgstr "Tags"
 
@@ -14769,7 +14807,9 @@ msgstr "Tags were: {0}"
 msgid "Tags, separated by commas"
 msgstr "Tags, separated by commas"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Tags…"
 msgstr "Tags…"
 
@@ -14985,11 +15025,6 @@ msgstr "Thai"
 #: src/features/homepage/sections.tsx
 msgid "Thank you for keeping it free."
 msgstr "Thank you for keeping it free."
-
-#. Verification email. appName: Reactive Resume
-#: src/features/auth/email-text.ts
-msgid "Thanks for signing up for {appName}. Verify your email address to continue."
-msgstr "Thanks for signing up for {appName}. Verify your email address to continue."
 
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
@@ -15223,6 +15258,10 @@ msgstr "The letter matches the resume's design again"
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "The line changed since you asked, so it wasn't replaced."
+
+#: src/features/auth/email-text.ts
+msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
+msgstr "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
 
 #: src/features/career/workspace/messages.tsx
 msgid "the linked cover letter"

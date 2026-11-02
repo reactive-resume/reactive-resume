@@ -5,7 +5,8 @@ export function clearAccountExportCache() {
 	for (const entry of Paths.cache.list()) {
 		if (
 			entry instanceof File &&
-			(/^(?:reactive-resume|application-profile)-\d+\.json$/.test(entry.name) || entry.name.startsWith("workspace-"))
+			(/^(?:reactive-resume|application-profile)-\d+\.(?:json|zip)$/.test(entry.name) ||
+				entry.name.startsWith("workspace-"))
 		)
 			entry.delete();
 	}

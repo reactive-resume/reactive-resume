@@ -1832,10 +1832,6 @@ msgstr "在各部分之間加一些留白，方便讀者快速瀏覽。"
 msgid "Add stage"
 msgstr "新增階段"
 
-#: src/features/applications/components/list-view.tsx
-msgid "Add tag"
-msgstr "新增標籤"
-
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "新增文字"
@@ -2143,10 +2139,6 @@ msgstr "所有應徵紀錄"
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "All applications (including closed)"
 msgstr "所有職位申請（包括已關閉的職位申請）"
-
-#: src/features/settings/account/data.tsx
-msgid "All documents and applications as JSON, in one zip"
-msgstr "所有文件和工作申請均以 JSON 形式壓縮在一個 zip 中"
 
 #: src/features/documents/trash-page.tsx
 msgid "All documents in Trash will be deleted for good and can't be restored."
@@ -3102,6 +3094,10 @@ msgstr "它能幫我準備面試嗎？"
 msgid "Can software read your resume?"
 msgstr "軟體可以讀取您的履歷嗎？"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Can't scan? Enter this key in the app:"
+msgstr ""
+
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3270,6 +3266,10 @@ msgstr "僅更改部分標題和日期單詞，而不更改您的內容。"
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
 msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
+msgstr "更改時會先請您目前的地址核准，然後確認新地址。您的用戶名是每個公共連結的一部分。"
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3558,6 +3558,10 @@ msgstr "選擇模型"
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "Choose up to 200 applications per bulk action."
+msgstr "每次批次操作最多可選 200 筆應徵紀錄。"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3854,6 +3858,10 @@ msgstr "確認"
 msgid "Confirm applied"
 msgstr "確認已申請"
 
+#: src/features/auth/email-text.ts
+msgid "Confirm email"
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Confirm password"
 msgstr "確認密碼"
@@ -3873,6 +3881,29 @@ msgstr "新增面試前，請先與 {contact} 確認時間。"
 #: src/features/career/workspace/prepare.tsx
 msgid "Confirm the time, link and who you'll meet. Glance at the resume and letter you sent."
 msgstr "確認時間、連結和面試官。瀏覽一下您寄出的履歷和求職信。"
+
+#. Email sent to a new address to finish an email change. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this address to finish changing your {appName} email. The link works for 1 hour."
+msgstr ""
+
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this is your email address for {appName}. The link works for 1 hour."
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm your new {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email address"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Confirms {time} today, by video."
@@ -5354,9 +5385,10 @@ msgstr ""
 msgid "Delete page"
 msgstr "刪除頁面"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
-msgstr ""
+msgstr "永久刪除…"
 
 #: src/features/settings/profile.tsx
 msgid "Delete profile"
@@ -5418,7 +5450,6 @@ msgstr "刪除您的文件和帳戶資料。"
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
 msgstr "刪除…"
@@ -5639,6 +5670,10 @@ msgstr "這份工作的文件"
 #: src/features/documents/trash-page.tsx
 msgid "Documents you move here stay for 30 days."
 msgstr "您移至此處的文件會保留 30 天。"
+
+#: src/features/settings/account/data.tsx
+msgid "Documents, applications and Career data as JSON, in one zip"
+msgstr ""
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -7490,11 +7525,15 @@ msgid "If you close this dialog, your changes are lost."
 msgstr "如果關閉此對話框，您的變更將會遺失。"
 
 #: src/features/auth/email-text.ts
-msgid "If you did not create this account, you can safely ignore this email."
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 msgstr ""
 
 #: src/features/auth/email-text.ts
-msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgid "If you didn't ask for this, ignore this email; your account won't change."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, you can ignore this email."
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -12408,10 +12447,6 @@ msgstr ""
 msgid "Reset your password"
 msgstr "重設您的密碼"
 
-#: src/features/auth/email-text.ts
-msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
-msgstr ""
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "正在重設您的密碼…"
@@ -13414,6 +13449,10 @@ msgstr "選擇 {0}"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "在 {1} 處選擇 {0}"
+
+#: src/features/applications/components/list-view.tsx
+msgid "Select all"
+msgstr "全選"
 
 #: src/features/career/today.tsx
 msgid "Select all roles"
@@ -14747,7 +14786,6 @@ msgstr "標籤"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
-#: src/features/documents/documents-page.tsx
 msgid "Tags"
 msgstr "標籤"
 
@@ -14772,7 +14810,9 @@ msgstr ""
 msgid "Tags, separated by commas"
 msgstr "標籤，以逗號分隔"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Tags…"
 msgstr "標籤..."
 
@@ -14988,11 +15028,6 @@ msgstr "泰文"
 #: src/features/homepage/sections.tsx
 msgid "Thank you for keeping it free."
 msgstr "感謝您保持免費。"
-
-#. Verification email. appName: Reactive Resume
-#: src/features/auth/email-text.ts
-msgid "Thanks for signing up for {appName}. Verify your email address to continue."
-msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
@@ -15226,6 +15261,10 @@ msgstr "這封信再次與履歷的設計相匹配"
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "自您提出要求以來，線路發生了變化，因此沒有被替換。"
+
+#: src/features/auth/email-text.ts
+msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "the linked cover letter"

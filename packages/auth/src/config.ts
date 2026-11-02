@@ -31,7 +31,12 @@ import { createLocalJWKSet, jwtVerify } from "jose";
 import { createDefaultOwnedApplicationLanes, MAX_APPLICATION_LANES } from "@reactive-resume/db/application-lanes";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { resetPasswordEmail, verifyEmail, verifyEmailChange } from "@reactive-resume/email/templates/auth";
+import {
+	confirmNewEmail,
+	resetPasswordEmail,
+	verifyEmail,
+	verifyEmailChange,
+} from "@reactive-resume/email/templates/auth";
 import { sendEmail } from "@reactive-resume/email/transport";
 import { env } from "@reactive-resume/env/server";
 import { defaultLocale, isLocale, localeSchema } from "@reactive-resume/utils/locale";
@@ -39,6 +44,7 @@ import { rateLimitConfig } from "@reactive-resume/utils/rate-limit";
 import { generateId, toUsername } from "@reactive-resume/utils/string";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
+import { generateBackupCodes } from "./backup-codes";
 import {
 	allocateUniqueUsername,
 	createGithubProfileMapper,
@@ -47,6 +53,18 @@ import {
 } from "./oauth-profile";
 import { authRateLimitStorage } from "./rate-limit";
 import { getTrustedOrigins } from "./trusted-origins";
+
+/** Better Auth's verification tokens carry `updateTo` when they move the account to a new address. */
+export function isEmailChangeToken(token: string): boolean {
+	try {
+		const payload = token.split(".")[1];
+		if (!payload) return false;
+		const claims = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as { updateTo?: unknown };
+		return typeof claims.updateTo === "string" && claims.updateTo.length > 0;
+	} catch {
+		return false;
+	}
+}
 
 const authBaseUrl = env.APP_URL;
 
@@ -880,6 +898,8 @@ const getAuthConfig = () => {
 			minPasswordLength: 8,
 			maxPasswordLength: 64,
 			requireEmailVerification: false,
+			// The reset email says the link works for 1 hour; keep this in step with it.
+			resetPasswordTokenExpiresIn: 60 * 60,
 			disableSignUp: env.FLAG_DISABLE_SIGNUPS || env.FLAG_DISABLE_EMAIL_AUTH,
 			sendResetPassword: async ({ user, url }, request) => {
 				await sendEmail({ to: user.email, ...resetPasswordEmail({ url, locale: accountEmailLocale(user, request) }) });
@@ -917,8 +937,13 @@ const getAuthConfig = () => {
 		emailVerification: {
 			sendOnSignUp: true,
 			autoSignInAfterVerification: true,
-			sendVerificationEmail: async ({ user, url }, request) => {
-				await sendEmail({ to: user.email, ...verifyEmail({ url, locale: accountEmailLocale(user, request) }) });
+			// The emails say the link works for 1 hour; keep this in step with them.
+			expiresIn: 60 * 60,
+			sendVerificationEmail: async ({ user, url, token }, request) => {
+				const locale = accountEmailLocale(user, request);
+				// A token that moves the account to another address is an email change, not a sign-up: say so.
+				const email = isEmailChangeToken(token) ? confirmNewEmail({ url, locale }) : verifyEmail({ url, locale });
+				await sendEmail({ to: user.email, ...email });
 			},
 		},
 
@@ -1019,7 +1044,11 @@ const getAuthConfig = () => {
 			admin(),
 			passkey(),
 			genericOAuth({ config: authConfigs }),
-			twoFactor({ issuer: "Reactive Resume" }),
+			twoFactor({
+				issuer: "Reactive Resume",
+				// Capitals without look-alike characters; the sign-in form also tries what's typed in capitals.
+				backupCodeOptions: { customBackupCodesGenerate: () => generateBackupCodes() },
+			}),
 			apiKey({
 				enableSessionForAPIKeys: false,
 				rateLimit: {

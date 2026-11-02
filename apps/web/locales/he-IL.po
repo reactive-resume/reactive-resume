@@ -1832,10 +1832,6 @@ msgstr "הוסף מעט רווח לבן בין המקטעים כדי שאדם י
 msgid "Add stage"
 msgstr "הוספת שלב"
 
-#: src/features/applications/components/list-view.tsx
-msgid "Add tag"
-msgstr "הוסף תגית"
-
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "הוסף טקסט"
@@ -2143,10 +2139,6 @@ msgstr "כל המועמדויות"
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "All applications (including closed)"
 msgstr "כל הבקשות לעבודה (כולל סגורות)"
-
-#: src/features/settings/account/data.tsx
-msgid "All documents and applications as JSON, in one zip"
-msgstr "כל המסמכים והמועמדויות כ-JSON, ב-zip אחד"
 
 #: src/features/documents/trash-page.tsx
 msgid "All documents in Trash will be deleted for good and can't be restored."
@@ -3102,6 +3094,10 @@ msgstr "האם זה יכול לעזור לי להתכונן לראיונות?"
 msgid "Can software read your resume?"
 msgstr "האם תוכנה יכולה לקרוא את קורות החיים שלך?"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Can't scan? Enter this key in the app:"
+msgstr ""
+
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3270,6 +3266,10 @@ msgstr "משנה את כותרות המדור ומילות התאריך בלבד
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
 msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
+msgstr "שינוי זה מבקש תחילה אישור מהכתובת הנוכחית שלך, ואז מאשר את החדשה. שם המשתמש שלך הוא חלק מכל קישור ציבורי."
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3558,6 +3558,10 @@ msgstr "בחירת מודל"
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "Choose up to 200 applications per bulk action."
+msgstr "בחר עד 200 מועמדויות לכל פעולה מרוכזת."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3854,6 +3858,10 @@ msgstr "אישור"
 msgid "Confirm applied"
 msgstr "אשר הגשה"
 
+#: src/features/auth/email-text.ts
+msgid "Confirm email"
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Confirm password"
 msgstr "אשר את הסיסמה"
@@ -3873,6 +3881,29 @@ msgstr "אשר את השעה עם {contact} לפני הוספת ראיון חד�
 #: src/features/career/workspace/prepare.tsx
 msgid "Confirm the time, link and who you'll meet. Glance at the resume and letter you sent."
 msgstr "אשר את השעה, הקישור ועם מי תיפגש. העף מבט בקורות החיים ובמכתב ששלחת."
+
+#. Email sent to a new address to finish an email change. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this address to finish changing your {appName} email. The link works for 1 hour."
+msgstr ""
+
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this is your email address for {appName}. The link works for 1 hour."
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm your new {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email address"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Confirms {time} today, by video."
@@ -5354,9 +5385,10 @@ msgstr ""
 msgid "Delete page"
 msgstr "מחיקת עמוד"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
-msgstr ""
+msgstr "מחיקה לצמיתות…"
 
 #: src/features/settings/profile.tsx
 msgid "Delete profile"
@@ -5418,7 +5450,6 @@ msgstr "מחק את המסמכים ונתוני החשבון שלך."
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
 msgstr "לִמְחוֹק…"
@@ -5639,6 +5670,10 @@ msgstr "מסמכים לעבודה זו"
 #: src/features/documents/trash-page.tsx
 msgid "Documents you move here stay for 30 days."
 msgstr "מסמכים שתעביר לכאן נשמרים למשך 30 יום."
+
+#: src/features/settings/account/data.tsx
+msgid "Documents, applications and Career data as JSON, in one zip"
+msgstr ""
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -7490,11 +7525,15 @@ msgid "If you close this dialog, your changes are lost."
 msgstr "אם תסגור את תיבת הדו-שיח, השינויים שלך יאבדו."
 
 #: src/features/auth/email-text.ts
-msgid "If you did not create this account, you can safely ignore this email."
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 msgstr ""
 
 #: src/features/auth/email-text.ts
-msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgid "If you didn't ask for this, ignore this email; your account won't change."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, you can ignore this email."
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -12408,10 +12447,6 @@ msgstr ""
 msgid "Reset your password"
 msgstr "איפוס הסיסמה שלך"
 
-#: src/features/auth/email-text.ts
-msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
-msgstr ""
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "איפוס הסיסמה שלך..."
@@ -13414,6 +13449,10 @@ msgstr "בחר את {0}"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "בחר {0} ב-{1}"
+
+#: src/features/applications/components/list-view.tsx
+msgid "Select all"
+msgstr "בחירת הכול"
 
 #: src/features/career/today.tsx
 msgid "Select all roles"
@@ -14747,7 +14786,6 @@ msgstr "תָג"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
-#: src/features/documents/documents-page.tsx
 msgid "Tags"
 msgstr "תגיות"
 
@@ -14772,7 +14810,9 @@ msgstr ""
 msgid "Tags, separated by commas"
 msgstr "תגיות, מופרדות בפסיקים"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Tags…"
 msgstr "תגים…"
 
@@ -14988,11 +15028,6 @@ msgstr "תאית"
 #: src/features/homepage/sections.tsx
 msgid "Thank you for keeping it free."
 msgstr "תודה ששמרת את זה בחינם."
-
-#. Verification email. appName: Reactive Resume
-#: src/features/auth/email-text.ts
-msgid "Thanks for signing up for {appName}. Verify your email address to continue."
-msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
@@ -15226,6 +15261,10 @@ msgstr "המכתב תואם שוב את עיצוב קורות החיים"
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "הקו השתנה מאז שביקשת, אז הוא לא הוחלף."
+
+#: src/features/auth/email-text.ts
+msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "the linked cover letter"

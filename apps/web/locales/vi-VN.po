@@ -1832,10 +1832,6 @@ msgstr "Thêm khoảng trắng giữa các phần để người đọc có th�
 msgid "Add stage"
 msgstr "Thêm giai đoạn"
 
-#: src/features/applications/components/list-view.tsx
-msgid "Add tag"
-msgstr "Thêm thẻ"
-
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "Thêm văn bản"
@@ -2143,10 +2139,6 @@ msgstr "Tất cả hồ sơ ứng tuyển"
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "All applications (including closed)"
 msgstr "Tất cả các đơn xin việc (bao gồm cả đã đóng)"
-
-#: src/features/settings/account/data.tsx
-msgid "All documents and applications as JSON, in one zip"
-msgstr "Tất cả các tài liệu và đơn xin việc dưới dạng JSON, trong một zip"
 
 #: src/features/documents/trash-page.tsx
 msgid "All documents in Trash will be deleted for good and can't be restored."
@@ -3102,6 +3094,10 @@ msgstr "Nó có giúp tôi chuẩn bị phỏng vấn không?"
 msgid "Can software read your resume?"
 msgstr "Phần mềm có đọc được sơ yếu lý lịch của bạn không?"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Can't scan? Enter this key in the app:"
+msgstr ""
+
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3270,6 +3266,10 @@ msgstr "Chỉ thay đổi tiêu đề của phần và từ ngày tháng chứ k
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
 msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
+msgstr "Khi thay đổi, địa chỉ hiện tại của bạn sẽ được yêu cầu phê duyệt trước, sau đó địa chỉ mới được xác nhận. Tên người dùng của bạn là một phần của mọi liên kết công khai."
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3558,6 +3558,10 @@ msgstr "Chọn mô hình"
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "Choose up to 200 applications per bulk action."
+msgstr "Chọn tối đa 200 hồ sơ ứng tuyển cho mỗi hành động hàng loạt."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3854,6 +3858,10 @@ msgstr "Xác nhận"
 msgid "Confirm applied"
 msgstr "Xác nhận đã ứng tuyển"
 
+#: src/features/auth/email-text.ts
+msgid "Confirm email"
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Confirm password"
 msgstr "Xác nhận mật khẩu"
@@ -3873,6 +3881,29 @@ msgstr "Hãy xác nhận thời gian với {contact} trước khi thêm buổi p
 #: src/features/career/workspace/prepare.tsx
 msgid "Confirm the time, link and who you'll meet. Glance at the resume and letter you sent."
 msgstr "Xác nhận thời gian, đường liên kết và người bạn sẽ gặp. Xem qua sơ yếu lý lịch và thư bạn đã gửi."
+
+#. Email sent to a new address to finish an email change. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this address to finish changing your {appName} email. The link works for 1 hour."
+msgstr ""
+
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this is your email address for {appName}. The link works for 1 hour."
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm your new {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email address"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Confirms {time} today, by video."
@@ -5354,9 +5385,10 @@ msgstr ""
 msgid "Delete page"
 msgstr "Xóa trang"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
-msgstr ""
+msgstr "Xóa vĩnh viễn…"
 
 #: src/features/settings/profile.tsx
 msgid "Delete profile"
@@ -5418,7 +5450,6 @@ msgstr "Xóa tài liệu và dữ liệu tài khoản của bạn."
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
 msgstr "Xóa bỏ…"
@@ -5639,6 +5670,10 @@ msgstr "Tài liệu cho công việc này"
 #: src/features/documents/trash-page.tsx
 msgid "Documents you move here stay for 30 days."
 msgstr "Tài liệu bạn chuyển vào đây sẽ được giữ trong 30 ngày."
+
+#: src/features/settings/account/data.tsx
+msgid "Documents, applications and Career data as JSON, in one zip"
+msgstr ""
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -7490,11 +7525,15 @@ msgid "If you close this dialog, your changes are lost."
 msgstr "Nếu bạn đóng hộp thoại này, các thay đổi sẽ bị mất."
 
 #: src/features/auth/email-text.ts
-msgid "If you did not create this account, you can safely ignore this email."
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 msgstr ""
 
 #: src/features/auth/email-text.ts
-msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgid "If you didn't ask for this, ignore this email; your account won't change."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, you can ignore this email."
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -12408,10 +12447,6 @@ msgstr ""
 msgid "Reset your password"
 msgstr "Đặt lại mật khẩu"
 
-#: src/features/auth/email-text.ts
-msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
-msgstr ""
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "Đang đặt lại mật khẩu..."
@@ -13414,6 +13449,10 @@ msgstr "Chọn {0}"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "Chọn {0} tại {1}"
+
+#: src/features/applications/components/list-view.tsx
+msgid "Select all"
+msgstr "Chọn tất cả"
 
 #: src/features/career/today.tsx
 msgid "Select all roles"
@@ -14747,7 +14786,6 @@ msgstr "Nhãn"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
-#: src/features/documents/documents-page.tsx
 msgid "Tags"
 msgstr "Thẻ"
 
@@ -14772,7 +14810,9 @@ msgstr ""
 msgid "Tags, separated by commas"
 msgstr "Thẻ, phân tách bằng dấu phẩy"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Tags…"
 msgstr "Thẻ…"
 
@@ -14988,11 +15028,6 @@ msgstr "Thái"
 #: src/features/homepage/sections.tsx
 msgid "Thank you for keeping it free."
 msgstr "Cảm ơn bạn đã giữ nó miễn phí."
-
-#. Verification email. appName: Reactive Resume
-#: src/features/auth/email-text.ts
-msgid "Thanks for signing up for {appName}. Verify your email address to continue."
-msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
@@ -15226,6 +15261,10 @@ msgstr "Bức thư lại phù hợp với thiết kế của bản lý lịch"
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "Dòng này đã thay đổi kể từ khi bạn hỏi nên nó không được thay thế."
+
+#: src/features/auth/email-text.ts
+msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "the linked cover letter"

@@ -1,8 +1,19 @@
-import type { RouterOutput } from "@/libs/orpc/client";
 import { strToU8, zipSync } from "fflate";
-import { slugify } from "@reactive-resume/utils/slug";
+import { slugify } from "./slug";
 
-type AccountExport = RouterOutput["auth"]["exportData"];
+/** The parts of the account export the archive is made from (the API's `auth.exportData` result). */
+export type AccountExportData = {
+	exportedAt: string;
+	user: unknown;
+	applications: unknown;
+	applicationPipeline?: unknown;
+	career: unknown;
+	applicationProfile?: unknown;
+	documentVersions?: unknown;
+	aiContentReports: unknown;
+	resumes: readonly { id: string; name: string }[];
+	coverLetters: readonly { id: string; name: string }[];
+};
 
 const json = (value: unknown) => strToU8(`${JSON.stringify(value, null, 2)}\n`);
 
@@ -10,10 +21,11 @@ const json = (value: unknown) => strToU8(`${JSON.stringify(value, null, 2)}\n`);
 const fileName = (name: string, id: string) => `${slugify(name)}-${id}.json`;
 
 /**
- * "Export everything": account, documents, applications with their stages, and career records, including source metadata and conversations.
- * Extract the archive to import individual resumes and letters; the other files are records. Attachments remain references.
+ * "Export everything" as one zip, the same on web and mobile: account, documents, applications with their stages, and
+ * career records. Extract it to import individual resumes and letters; the other files are records. Attachments remain
+ * references.
  */
-export function buildAccountZip(data: AccountExport): Uint8Array {
+export function buildAccountZip(data: AccountExportData): Uint8Array {
 	const files: Record<string, Uint8Array> = {
 		"account.json": json({ exportedAt: data.exportedAt, user: data.user }),
 		"applications.json": json(data.applications),
