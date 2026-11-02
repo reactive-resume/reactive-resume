@@ -85,9 +85,7 @@ export function ApiKeysSection() {
 	return (
 		<SettingsSection
 			title={<Trans>API keys</Trans>}
-			description={
-				<Trans>For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents.</Trans>
-			}
+			description={<Trans>Keys act as you with the access you choose. New keys start read-only.</Trans>}
 			action={
 				<Button size="sm" variant="secondary" onClick={() => setCreating(true)}>
 					<Icon name="plus" size={18} />
@@ -191,7 +189,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 	const id = useId();
 	const [name, setName] = useState("");
 	const [expiry, setExpiry] = useState(0);
-	const [access, setAccess] = useState<"read" | "full">("full");
+	const [access, setAccess] = useState<"read" | "full">("read");
 	const [key, setKey] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [creating, setCreating] = useState(false);
@@ -202,7 +200,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 	const reset = () => {
 		setName("");
 		setExpiry(0);
-		setAccess("full");
+		setAccess("read");
 		setKey(null);
 		setFailure(null);
 		setCopied(false);
@@ -234,7 +232,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 						<Trans>New API key</Trans>
 					</DialogTitle>
 					<DialogDescription className={cn(key && "sr-only")}>
-						<Trans>Keys act as you and can read and edit your documents.</Trans>
+						<Trans>Keys act as you with the access you choose. New keys start read-only.</Trans>
 					</DialogDescription>
 				</DialogHeader>
 

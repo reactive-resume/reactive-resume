@@ -69174,6 +69174,10 @@
 												"type": "boolean",
 												"description": "Whether a resume's public link is on; always false for letters."
 											},
+											"hasPassword": {
+												"type": "boolean",
+												"description": "Whether a resume has a password set. Visitors need it while the resume is public (isPublic); always false for letters."
+											},
 											"slug": {
 												"anyOf": [
 													{
@@ -69261,6 +69265,7 @@
 											"tags",
 											"isLocked",
 											"isPublic",
+											"hasPassword",
 											"slug",
 											"trashedAt",
 											"createdAt",
@@ -69499,6 +69504,10 @@
 														"type": "boolean",
 														"description": "Whether a resume's public link is on; always false for letters."
 													},
+													"hasPassword": {
+														"type": "boolean",
+														"description": "Whether a resume has a password set. Visitors need it while the resume is public (isPublic); always false for letters."
+													},
 													"slug": {
 														"anyOf": [
 															{
@@ -69586,6 +69595,7 @@
 													"tags",
 													"isLocked",
 													"isPublic",
+													"hasPassword",
 													"slug",
 													"trashedAt",
 													"createdAt",
