@@ -1,8 +1,9 @@
+import type { PdfAtsReport } from "./types";
 import { describe, expect, it } from "vite-plus/test";
 import { buildResumeSemantics } from "./analyze/semantics";
 import { PDF_ATS_RULE_CODES } from "./catalog";
 import { buildExtractedDocument } from "./extract";
-import { analyzePdfResume } from "./index";
+import { analyzePdfResume, pdfVerdict } from "./index";
 import { healthyResume, makeRawExtraction } from "./test-fixtures";
 
 const NOW = new Date("2024-06-15T00:00:00Z");
@@ -78,5 +79,15 @@ describe("analyzePdfResume", () => {
 
 		expect(Number.isInteger(report.score)).toBe(true);
 		expect(report.checks).toHaveLength(PDF_ATS_RULE_CODES.length);
+	});
+});
+
+describe("pdfVerdict", () => {
+	const finding = { code: "NO_EMAIL", severity: "warning" } as unknown as PdfAtsReport["findings"][number];
+	it("says it reads cleanly only with nothing to fix", () => {
+		expect(pdfVerdict({ score: 87, findings: [] })).toEqual({ verdict: "clean", tone: "accent" });
+		expect(pdfVerdict({ score: 87, findings: [finding] })).toEqual({ verdict: "mostly", tone: "accent" });
+		expect(pdfVerdict({ score: 60, findings: [finding] })).toEqual({ verdict: "mostly", tone: "warn" });
+		expect(pdfVerdict({ score: 10, findings: [finding] })).toEqual({ verdict: "hard", tone: "danger" });
 	});
 });

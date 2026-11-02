@@ -7,6 +7,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
 import { useIsClient } from "usehooks-ts";
+import { pdfVerdict } from "@reactive-resume/resume/ats-pdf/verdict";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -14,7 +15,7 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { cn } from "@reactive-resume/utils/style";
-import { PdfPasswordRequiredError, PdfTooLargeError, PdfUnreadableError } from "./extract-client";
+import { PdfDamagedError, PdfPasswordRequiredError, PdfTooLargeError, PdfUnreadableError } from "./extract-client";
 import { getPdfCategoryDescription, getPdfCategoryLabel, getPdfFindingMessage } from "./messages";
 import { savePendingImport, takePendingImport } from "./pending-import";
 import { runAtsCheck } from "./run-ats-check";
@@ -45,6 +46,8 @@ function describeError(error: unknown) {
 	if (error instanceof PdfTooLargeError) return t`That file is too large to check. PDFs up to 25 MB work.`;
 	if (error instanceof PdfUnreadableError)
 		return t`That file couldn't be read as a PDF. Choose a PDF file and try again.`;
+	if (error instanceof PdfDamagedError)
+		return t`This PDF looks damaged. Export it again from your editor and choose the new file.`;
 	return t`Couldn't read that file. Try again.`;
 }
 
@@ -198,6 +201,23 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 				</p>
 			</div>
 
+			{/* Before the file, so a posting can be added first: the result has no posting field. */}
+			<div className="grid gap-1.5">
+				<label htmlFor={id} className="text-[13px] font-medium">
+					<Trans>
+						Job posting <span className="font-normal text-ink-3">· optional, adds a keyword match</span>
+					</Trans>
+				</label>
+				<Textarea
+					id={id}
+					rows={3}
+					maxLength={MAX_POSTING}
+					value={posting}
+					placeholder={t`Paste the posting to see which of its terms your resume already has.`}
+					onChange={(event) => onPosting(event.target.value)}
+				/>
+			</div>
+
 			{/* A drop zone, not a form: the card takes a dropped file; its buttons take the keyboard. */}
 			{/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- dropping is pointer-only; "choose a file" is the keyboard path. */}
 			<div
@@ -218,18 +238,15 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 				}}
 			>
 				<Icon name="file-arrow-up" size={36} className="text-accent-text" />
-				<button
-					type="button"
-					className="text-base font-semibold underline-offset-2 hover:underline"
-					onClick={() => input.current?.click()}
-				>
-					<Trans>Drop a PDF here or choose a file</Trans>
-				</button>
+				{/* Your own file is the main path; the sample is there to try it without one. */}
+				<Button onClick={() => input.current?.click()}>
+					<Trans>Choose a PDF</Trans>
+				</Button>
 				<span className="text-sm text-ink-3">
-					<Trans>Up to 25 MB · checked in your browser, never uploaded</Trans>
+					<Trans>or drop it here · up to 25 MB · checked in your browser, never uploaded</Trans>
 				</span>
-				<Button className="mt-1.5" onClick={() => void sample()}>
-					<Trans>Check a sample file</Trans>
+				<Button variant="link" size="sm" className="h-auto" onClick={() => void sample()}>
+					<Trans>Try a sample file</Trans>
 				</Button>
 				<input
 					ref={input}
@@ -251,22 +268,6 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 					{error ?? sampleError}
 				</p>
 			)}
-
-			<div className="grid gap-1.5">
-				<label htmlFor={id} className="text-[13px] font-medium">
-					<Trans>
-						Job posting <span className="font-normal text-ink-3">· optional, adds a keyword match</span>
-					</Trans>
-				</label>
-				<Textarea
-					id={id}
-					rows={3}
-					maxLength={MAX_POSTING}
-					value={posting}
-					placeholder={t`Paste the posting to see which of its terms your resume already has.`}
-					onChange={(event) => onPosting(event.target.value)}
-				/>
-			</div>
 
 			<section aria-labelledby={`${id}-checks`} className="mt-8 grid gap-4 border-t border-line pt-8">
 				<div className="grid gap-1.5">
@@ -326,8 +327,11 @@ function Progress({ file, step }: { file: File; step: number }) {
 	);
 }
 
-const verdict = (score: number) =>
-	score >= 80 ? t`Reads cleanly` : score >= 50 ? t`Mostly readable` : t`Hard for software to read`;
+const VERDICT_LABEL = {
+	clean: () => t`Reads cleanly`,
+	mostly: () => t`Mostly readable`,
+	hard: () => t`Hard for software to read`,
+};
 
 type Row = { key: string; title: string; count: string; tone: "danger" | "warn" | "accent"; body: React.ReactNode };
 
@@ -399,6 +403,8 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 	const [open, setOpen] = useState<string | null>(rows[0]?.key ?? null);
 	const [lens, setLens] = useState<"page" | "text">("page");
 	const issues = report.findings.length;
+	const tips = report.tips.length;
+	const { verdict, tone } = pdfVerdict(report);
 
 	return (
 		<div className="grid min-h-[calc(100svh-5rem)] lg:grid-cols-[440px_minmax(0,1fr)]">
@@ -411,7 +417,7 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 						style={
 							{
 								"--ring-value": `${report.score}%`,
-								"--ring-color": report.score >= 80 ? "var(--accent)" : "var(--warn)",
+								"--ring-color": `var(--${tone})`,
 							} as CSSProperties
 						}
 					>
@@ -420,13 +426,15 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 						</span>
 					</div>
 					<div className="grid gap-1">
-						<b className="text-base font-semibold">{verdict(report.score)}</b>
+						<b className="text-base font-semibold">{VERDICT_LABEL[verdict]()}</b>
 						<span className="text-[13px] leading-[19px] text-ink-2">
 							{issues > 0 ? (
 								<Plural value={issues} one="# issue could cost you a match." other="# issues could cost you a match." />
 							) : (
 								<Trans>Nothing here should cost you a match.</Trans>
 							)}{" "}
+							{/* Rows below count tips too; say so, so the numbers add up. */}
+							{tips > 0 && <Plural value={tips} one="Plus # tip." other="Plus # tips." />}{" "}
 							<Trans>The score reflects how reliably text is extracted, not your chances.</Trans>
 						</span>
 					</div>
@@ -459,7 +467,7 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 												row.key === "content"
 													? "pencil-simple"
 													: row.tone === "accent"
-														? "briefcase"
+														? "info"
 														: row.tone === "danger"
 															? "warning-circle"
 															: "warning"
@@ -510,6 +518,20 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 								</Trans>
 							</span>
 							<StartInstead signedIn={signedIn} />
+						</>
+					) : issues === 0 ? (
+						<>
+							<b className="text-[15px] font-semibold max-lg:hidden">
+								<Trans>Keep it this way</Trans>
+							</b>
+							<span className="text-[13px] leading-[19px] text-ink-2 max-lg:hidden">
+								<Trans>
+									Import this file into a free Reactive Resume to keep editing it, with Check reading it as you go.
+								</Trans>
+							</span>
+							<Button className="h-10" variant="secondary" onClick={onFix}>
+								<Trans>Edit it in Reactive Resume</Trans>
+							</Button>
 						</>
 					) : (
 						<>

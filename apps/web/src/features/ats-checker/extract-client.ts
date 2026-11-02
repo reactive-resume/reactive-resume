@@ -45,6 +45,17 @@ export class PdfUnreadableError extends Error {
 	}
 }
 
+/** A file that starts like a PDF but PDF.js can't open: truncated or damaged. Choosing it again can't help. */
+export class PdfDamagedError extends Error {
+	constructor(cause?: unknown) {
+		super("This PDF looks damaged.");
+		this.name = "PdfDamagedError";
+		this.cause = cause;
+	}
+}
+
+const DAMAGED_EXCEPTIONS = new Set(["InvalidPDFException", "FormatError", "UnexpectedResponseException"]);
+
 const PDF_MAGIC_BYTES = [0x25, 0x50, 0x44, 0x46] as const; // "%PDF"
 
 /** Sniffs the format from the bytes rather than trusting the extension or the reported MIME type. */
@@ -90,6 +101,8 @@ export async function extractPdf(file: File, options: ExtractOptions = {}): Prom
 		});
 	} catch (error) {
 		if (isPasswordException(error)) throw new PdfPasswordRequiredError();
+		if (typeof error === "object" && error !== null && "name" in error && DAMAGED_EXCEPTIONS.has(String(error.name)))
+			throw new PdfDamagedError(error);
 		throw error;
 	} finally {
 		void loadingTask.destroy();
