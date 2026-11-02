@@ -553,7 +553,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 					rows={1}
 					value={draft.title}
 					maxLength={200}
-					placeholder={t`Story title`}
+					placeholder={t`Name the story`}
 					aria-label={t`Title`}
 					aria-required
 					aria-describedby={tried && missingTitle ? `${errorId}-title` : undefined}
@@ -598,7 +598,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 							<span className="grid min-w-0 gap-1.5">
 								<span id={`${errorId}-label-${part.key}`} className="text-[13px] font-semibold text-ink-2">
 									{/* One rule, said once above: only the parts that may stay blank are marked. */}
-									{required ? part.label : t`${part.label} (optional)`}
+									{required ? part.label : `${part.label} ${t`(optional)`}`}
 								</span>
 								<Textarea
 									rows={2}

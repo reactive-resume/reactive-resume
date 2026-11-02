@@ -81,6 +81,10 @@ msgstr "“ஆன்போர்டிங் மறுவடிவமைப்�
 msgid "(no header)"
 msgstr "(தலைப்பு இல்லை)"
 
+#: src/features/career/knowledge/stories.tsx
+msgid "(optional)"
+msgstr "(விருப்பத்தேர்வு)"
+
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -416,11 +420,6 @@ msgstr "{0} (நகல்)"
 #: src/features/letters/store.ts
 #: src/features/resume/builder/draft.ts
 msgid "{0} (mine)"
-msgstr ""
-
-#. placeholder {0}: part.label
-#: src/features/career/knowledge/stories.tsx
-msgid "{0} (optional)"
 msgstr ""
 
 #. placeholder {0}: insights.closed
@@ -6615,10 +6614,6 @@ msgstr "LibreOffice மற்றும் பிற திறந்த மூல
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Word கேட்கும் இணையதளங்கள் அல்லது ஆட்சேர்ப்பு செய்பவர்களுக்கு. தளவமைப்பு எளிமைப்படுத்தப்பட்டுள்ளது."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "ஸ்கிரிப்டுகள், நீட்டிப்புகள் மற்றும் MCP கிளையண்டுகளுக்கு. விசைகள் உங்களைப் போலவே செயல்படுகின்றன, மேலும் உங்கள் ஆவணங்களைப் படிக்கவும் திருத்தவும் முடியும்."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -7905,8 +7900,8 @@ msgid "Key stored encrypted"
 msgstr "குறியாக்கம் செய்யப்பட்ட விசை சேமிக்கப்பட்டது"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "விசைகள் உங்களைப் போலவே செயல்படுகின்றன, மேலும் உங்கள் ஆவணங்களைப் படிக்கவும் திருத்தவும் முடியும்."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "நீங்கள் தேர்ந்தெடுக்கும் அணுகல் அனுமதியுடன் விசைகள் உங்கள் சார்பாகச் செயல்படும். புதிய விசைகள் தொடக்கத்தில் படிக்க மட்டுமே அனுமதிக்கும்."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8161,10 +8156,6 @@ msgstr "நிமிடங்களில் கால அளவு"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "நீளம் ஒரு குறை அல்ல, ஒரு-பக்க விதி என்று உலகளாவியதாக எதுவும் இல்லை. தகுதியான பக்கங்களை மட்டும் வைத்திருங்கள்."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Claude அல்லது Cursor போன்ற AI கிளையன்ட்கள் மேலே உள்ள API விசையைப் பயன்படுத்தி உங்கள் ரெஸ்யூம்களைப் படிக்கவும் திருத்தவும் அனுமதிக்கவும்."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -9157,6 +9148,10 @@ msgstr "பிரச்சினை, நீங்கள் வழிநடத்
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
 msgstr "நீங்கள் விண்ணப்பிக்கும் பதவியின் பெயரையே ரெஸ்யூமுக்கு வையுங்கள்."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Name the story"
+msgstr "கதைக்குப் பெயரிடு"
 
 #: src/features/settings/account/security.tsx
 msgid "Name this passkey"
@@ -13563,6 +13558,10 @@ msgstr "பக்கப்பட்டிகள் பெரும்பால�
 msgid "Sign in"
 msgstr "உள்நுழைக"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "உங்கள் AI கிளையன்டிலிருந்து உள்நுழையவும் அல்லது API விசையைப் பயன்படுத்தவும்."
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14140,10 +14139,6 @@ msgstr "கதை நீக்கப்பட்டது"
 #: src/features/career/knowledge/stories.tsx
 msgid "Story not found"
 msgstr "கதை கிடைக்கவில்லை"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Story title"
-msgstr ""
 
 #: src/features/career/workspace/practise.tsx
 msgid "Strengthen"
@@ -17515,11 +17510,3 @@ msgstr "சிறிதாக்கு"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ஜூலு"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "நீங்கள் தேர்ந்தெடுக்கும் அணுகல் அனுமதியுடன் விசைகள் உங்கள் சார்பாகச் செயல்படும். புதிய விசைகள் தொடக்கத்தில் படிக்க மட்டுமே அனுமதிக்கும்."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "உங்கள் AI கிளையன்டிலிருந்து உள்நுழையவும் அல்லது API விசையைப் பயன்படுத்தவும்."

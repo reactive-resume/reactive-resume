@@ -196,7 +196,7 @@ export function StoryEditor({ story, facts, onClose, proposal }: StoryEditorProp
 				{parts().map((part) => (
 					<TextArea
 						key={part.key}
-						label={part.required ? part.label : t`${part.label} (optional)`}
+						label={part.required ? part.label : `${part.label} ${t`(optional)`}`}
 						ref={(input) => {
 							inputs.current[part.key] = input;
 						}}
