@@ -72,3 +72,25 @@ describe("renderResumeWebPage", () => {
 		expect(html).toMatch(/<h2[ >]|role="heading" aria-level="2"/);
 	});
 });
+
+describe("right-to-left web page with Latin bullets", () => {
+	it("keeps each bullet's row mirrored while its sentence reads left to right", async () => {
+		const data = structuredClone(sampleResumeData);
+		data.metadata.template = "onyx";
+		data.metadata.page.locale = "ar-SA";
+		const { html, css } = await renderResumeWebPage({ data });
+		const rules = [...css.matchAll(/\.rr \.(c\d+)\{([^}]*)\}/g)].map(([, name, body]) => ({ name, body: body ?? "" }));
+		// A text box laid out as a row places its runs by justify-content: a left-to-right sentence aligned right must
+		// sit at the row's end, next to its bullet, not at the far left.
+		const misplaced = rules.filter(
+			({ body }) =>
+				body.includes("display:flex") &&
+				body.includes("--rr-text-direction:ltr") &&
+				body.includes("text-align:right") &&
+				!body.includes("justify-content:flex-end"),
+		);
+		expect(misplaced.filter(({ name }) => html.includes(`class="t ${name}"`))).toEqual([]);
+		// The sentence itself still reads left to right.
+		expect(rules.some(({ name, body }) => body.includes("--rr-text-direction:ltr") && html.includes(name))).toBe(true);
+	});
+});
