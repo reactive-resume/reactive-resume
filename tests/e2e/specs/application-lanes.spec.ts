@@ -106,6 +106,13 @@ test("custom stages preserve same-category history, retire safely, and retain a 
 	const id: string = await created.json();
 	const initial = await readApplication(page.request, id);
 
+	await page.setViewportSize({ width: 1440, height: 1000 });
+	await page.goto("/dashboard/applications?view=board");
+	await expect(page.getByRole("region", { name: "Offer", exact: true })).toBeVisible();
+	await page.screenshot({ path: testInfo.outputPath("default-application-board.png"), fullPage: true });
+	for (const name of ["Saved", "Applied", "Screening", "Interview", "Offer"])
+		await expect(page.getByRole("region", { name, exact: true }).getByRole("heading")).toBeInViewport({ ratio: 1 });
+	await page.setViewportSize({ width: 2700, height: 1100 });
 	await page.goto("/dashboard/applications?view=board&closed=true");
 	await page.getByRole("button", { name: "More", exact: true }).click();
 	await page.getByRole("menuitem", { name: "Manage stages…", exact: true }).click();
@@ -145,6 +152,16 @@ test("custom stages preserve same-category history, retire safely, and retain a 
 	await page.setViewportSize({ width: 1440, height: 1000 });
 	await takeHomeColumn.scrollIntoViewIfNeeded();
 	await page.screenshot({ path: testInfo.outputPath("custom-application-board.png"), fullPage: true });
+	expect(await takeHomeColumn.locator("..").evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
+		true,
+	);
+	for (const width of [1440, 1024]) {
+		await page.setViewportSize({ width, height: 1000 });
+		const lastColumn = page.getByRole("region", { name: "Ghosted", exact: true });
+		await lastColumn.scrollIntoViewIfNeeded();
+		await expect(lastColumn.getByRole("heading")).toBeInViewport({ ratio: 1 });
+		expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+	}
 	await page.setViewportSize({ width: 2700, height: 1100 });
 	await page.route("**/api/rpc/applications/update", (route) => route.abort("failed"));
 	const refusedMove = page.waitForEvent("requestfailed", {

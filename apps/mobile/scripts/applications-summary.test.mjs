@@ -690,6 +690,11 @@ assert.deepEqual(list.visibleSelection(grouped, new Set(["awaiting-review"]), ne
 	"legacy",
 ]);
 const board = load("features/applications-board/board.ts");
+const tabletLane = board.tabletColumnWidth(1200, 5, 16, 12);
+assert.ok(16 + tabletLane * 5 + 12 * 4 <= 1200, "Offer fits after the sidebar on a 1440pt tablet");
+assert.equal(board.tabletColumnWidth(2000, 5, 16, 12), 250, "Wide boards retain their preferred column size");
+assert.ok(board.tabletColumnWidth(784, 5, 16, 12) >= 208, "Narrow boards scroll instead of squeezing cards");
+assert.ok(board.tabletColumnWidth(1200, 8, 16, 12) * 8 > 1200, "Extra custom lanes remain scrollable");
 const pending = { id: "custom", from: "applied", to: "awaiting-review" };
 assert.equal(board.keepPending(pending, [{ id: "custom", status: "applied", laneId: "awaiting-review" }]), null);
 assert.equal(board.keepPending(pending, [{ id: "custom", status: "applied", laneId: "applied" }]), pending);

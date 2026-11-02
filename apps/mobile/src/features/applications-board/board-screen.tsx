@@ -19,7 +19,7 @@ import Animated, {
 	withSpring,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-import { keepPending, pendingAfterError, stageAt } from "./board";
+import { keepPending, pendingAfterError, stageAt, tabletColumnWidth } from "./board";
 import { useApplicationSearch } from "./search";
 import { ApplicationsViewFrame } from "./views";
 import { useUserTime } from "@/features/application-detail/hooks";
@@ -52,9 +52,8 @@ import {
 } from "@/ui";
 import { usePullRefresh } from "@/ui/use-pull-refresh";
 
-// Column widths from the mockup (career.html `.column`): phone 268 pt, tablet 250 pt.
+// Preferred column widths from the mockup (career.html `.column`); tablet lanes can shrink to fit.
 const PHONE_COLUMN = 268;
-const TABLET_COLUMN = 250;
 // Cards mounted per column at first; the rest show in batches, as web.
 const COLUMN_PAGE_SIZE = 50;
 const LONG_PRESS_MS = 400;
@@ -89,6 +88,7 @@ function Board() {
 	const { motion, radius, shadows, space } = useTheme();
 	const { width: windowWidth } = useWindowDimensions();
 	const tablet = useIsTablet();
+	const [boardWidth, setBoardWidth] = useState(0);
 	const reduceMotion = useReducedMotion();
 	const query = useApplications();
 	const laneQuery = useApplicationLanes();
@@ -135,7 +135,11 @@ function Board() {
 	const byStage = new Map<string, Application[]>(stageIds.map((stage) => [stage, []]));
 	for (const application of applications) byStage.get(statusOf(application))?.push(application);
 
-	const columnWidth = tablet ? TABLET_COLUMN : Math.min(PHONE_COLUMN, windowWidth - space.s4 * 2 - space.s8);
+	const columnWidth = tablet
+		? boardWidth
+			? tabletColumnWidth(boardWidth, stages.filter((lane) => lane.category !== "closed").length, space.s4, space.s3)
+			: 250
+		: Math.min(PHONE_COLUMN, windowWidth - space.s4 * 2 - space.s8);
 	const cardWidth = columnWidth - space.s3 * 2;
 
 	const moveTo = (application: Application, stage: string) => {
@@ -334,12 +338,13 @@ function Board() {
 			<View
 				ref={board}
 				style={{ flex: 1 }}
-				onLayout={() =>
+				onLayout={(event) => {
+					setBoardWidth(event.nativeEvent.layout.width);
 					board.current?.measureInWindow((x, y, width) => {
 						boardRect.current = { x, y, width };
 						bounds.set({ x, width });
-					})
-				}
+					});
+				}}
 			>
 				<AnimatedScrollView
 					ref={scrollRef}
