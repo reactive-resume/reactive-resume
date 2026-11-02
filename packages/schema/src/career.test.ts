@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
-import { careerOfferInputSchema, careerProfileDataSchema } from "./career";
+import z from "zod";
+import { careerOfferInputSchema, careerProfileDataSchema, resumeFactProposalSchema } from "./career";
 
 describe("careerProfileDataSchema searchRegions", () => {
 	it("leaves searchRegions absent when the input has none", () => {
@@ -47,4 +48,32 @@ describe("manual offer input", () => {
 	])("rejects invalid terms %j", (patch) => {
 		expect(careerOfferInputSchema.safeParse({ ...input, ...patch }).success).toBe(false);
 	});
+});
+
+it.each(["text", "quote"] as const)("rejects blank %s in both the runtime and published JSON Schema", (field) => {
+	const published = z.toJSONSchema(resumeFactProposalSchema);
+	const property = published.properties?.[field];
+	const pattern = typeof property === "object" && property !== null ? property.pattern : undefined;
+	if (typeof pattern !== "string") throw new Error(`Missing published non-blank rule for ${field}`);
+	const consumer = new RegExp(pattern);
+	for (const value of [" ", "\n\t", "\u00a0", "\u3000"]) {
+		expect(consumer.test(value)).toBe(false);
+		expect(
+			resumeFactProposalSchema.safeParse({
+				text: "Valid fact",
+				category: "experience",
+				quote: "Valid quote",
+				[field]: value,
+			}).success,
+		).toBe(false);
+	}
+	expect(consumer.test("  Valid excerpt  ")).toBe(true);
+	expect(
+		resumeFactProposalSchema.parse({
+			text: "Valid fact",
+			category: "experience",
+			quote: "Valid quote",
+			[field]: "  Valid excerpt  ",
+		})[field],
+	).toBe("Valid excerpt");
 });

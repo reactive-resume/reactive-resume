@@ -36,7 +36,7 @@ test("selected resume excerpts stay drafts until reviewed save, then retain edit
 	const stub = await startAiStub();
 	const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 	try {
-		// A saved connection must not receive resume text merely because Knowledge is being edited.
+		// Saved-connection non-dispatch coverage requires FLAG_ALLOW_UNSAFE_AI_BASE_URL=true (as in CI).
 		if (process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL === "true") {
 			await expect(
 				await page.request.post("/api/openapi/ai-providers", {
@@ -64,6 +64,10 @@ test("selected resume excerpts stay drafts until reviewed save, then retain edit
 		await panel.getByLabel("Resume", { exact: true }).selectOption(resumeId);
 		await panel.getByRole("button", { name: "Review resume facts", exact: true }).click();
 		await expect(panel.getByRole("textbox", { name: "Fact", exact: true })).toHaveCount(2);
+		await expect(panel.getByRole("textbox", { name: "Fact", exact: true }).nth(0)).toHaveValue(original);
+		await expect(panel.getByRole("textbox", { name: "Fact", exact: true }).nth(1)).toHaveValue(
+			"TypeScript: Accessibility",
+		);
 		await panel.getByRole("textbox", { name: "Fact", exact: true }).first().fill("Unsaved cancelled edit");
 		await panel.getByRole("button", { name: "Cancel", exact: true }).click();
 		expect(await (await page.request.get("/api/openapi/career/facts")).json()).toEqual([]);
@@ -152,6 +156,13 @@ test("protected import rejects foreign, changed, trashed and forged sources atom
 				})
 			).status(),
 		).toBe(400);
+		await empty();
+		for (const field of ["text", "quote"]) {
+			const response = await page.request.post(endpoint, {
+				data: { ...input(), proposals: [{ ...review.proposals[0], [field]: " \n\t " }] },
+			});
+			expect(response.status()).toBe(400);
+		}
 		await empty();
 		await expect(
 			await page.request.put(`/api/openapi/resumes/${resumeId}`, { data: { name: "Changed after review" } }),

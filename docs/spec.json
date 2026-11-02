@@ -50489,7 +50489,9 @@
 													"text": {
 														"type": "string",
 														"minLength": 1,
-														"maxLength": 2000
+														"maxLength": 2000,
+														"pattern": "\\S",
+														"description": "Non-blank fact text. Trimmed before length validation."
 													},
 													"category": {
 														"enum": [
@@ -50503,7 +50505,9 @@
 													"quote": {
 														"type": "string",
 														"minLength": 1,
-														"maxLength": 2000
+														"maxLength": 2000,
+														"pattern": "\\S",
+														"description": "Non-blank source quotation. Trimmed before length validation."
 													}
 												},
 												"required": [
@@ -50616,7 +50620,9 @@
 												"text": {
 													"type": "string",
 													"minLength": 1,
-													"maxLength": 2000
+													"maxLength": 2000,
+													"pattern": "\\S",
+													"description": "Non-blank fact text. Trimmed before length validation."
 												},
 												"category": {
 													"enum": [
@@ -50630,7 +50636,9 @@
 												"quote": {
 													"type": "string",
 													"minLength": 1,
-													"maxLength": 2000
+													"maxLength": 2000,
+													"pattern": "\\S",
+													"description": "Non-blank source quotation. Trimmed before length validation."
 												}
 											},
 											"required": [
