@@ -694,6 +694,7 @@ const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 		useQuery: (options) => ({ data: options.queryKey[0] === "posting-match" ? matchedPosting : [] }),
 	},
 	"./date": { parseDateOnly: () => new Date() },
+	"@/features/documents/filter": { defaultCopySource: () => undefined },
 	"./error": { applicationError: String },
 	"./lane-notice": { LaneNotice: "LaneNotice" },
 	"./lane-queries": laneQuery,
