@@ -215,8 +215,10 @@ msgstr "{0, plural, one {# post} other {# poster}}"
 
 #. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
+#. placeholder {0}: sent.facts.length
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# faktum} other {# fakta}}"
 
@@ -263,7 +265,9 @@ msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
 #. placeholder {0}: offerIds.length
+#. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, one {# sparat erbjudande} other {# sparade erbjudanden}}"
 
@@ -278,7 +282,9 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# har valts} other {# har valts}}"
 
 #. placeholder {0}: knowledge.stories.length
+#. placeholder {0}: sent.stories.length
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {# berättelse} other {# berättelser}}"
 
@@ -968,6 +974,10 @@ msgid "A fact changed. Review this story."
 msgstr "Ett faktum har ändrats. Granska den här berättelsen."
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail."
 msgstr ""
 
@@ -1348,10 +1358,6 @@ msgstr "Lägg till erbjudande"
 msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 msgstr "Lägg till erbjudandevillkor manuellt, även för accepterade erbjudanden, eller klistra in erbjudandets e-post i fliken Meddelanden i en ansökan och välj Läs den åt mig för att använda AI. Att stänga en ansökan som accepterad sparar inte villkoren."
 
-#: src/features/career/facts.tsx
-msgid "Add one above."
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "Lägg till en länk som visar ditt arbete."
@@ -1447,6 +1453,10 @@ msgstr ""
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Lägg till de här posterna där du hanterar domänen och kontrollera sedan. Det kan ta några timmar innan ändringarna når alla."
+
+#: src/features/career/facts.tsx
+msgid "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
@@ -1941,6 +1951,7 @@ msgid "Application phone"
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "ansökningssammanfattningar"
 
@@ -2056,8 +2067,8 @@ msgid "Ask about your next career step…"
 msgstr "Fråga om ditt nästa karriärsteg…"
 
 #: src/features/assistant/coach-screen.tsx
-msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
-msgstr "Fråga om ditt jobbsökande eller ta med en prestation du vill förklara bättre. Svaren använder det som är påslaget nedan och berättar vad de byggde på."
+msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
+msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
@@ -2080,6 +2091,7 @@ msgid "Ask the assistant to work it in"
 msgstr "Be assistenten arbeta in den"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/today.tsx
 #: src/features/workspace/shell.tsx
 msgid "Ask the coach"
 msgstr "Fråga coachen"
@@ -2321,6 +2333,10 @@ msgstr "Under din lägsta grundlön."
 #: src/features/settings/locale-names.ts
 msgid "Bengali"
 msgstr "Bengali"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "blank"
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "Board"
@@ -4450,6 +4466,10 @@ msgstr "Dokument du flyttar hit ligger kvar i 30 dagar."
 msgid "Documents, applications and Career data as JSON, in one zip. Images and attachments remain references."
 msgstr ""
 
+#: src/features/assistant/coach-screen.tsx
+msgid "Does this offer meet what I want?"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "Domänen är ansluten"
@@ -5396,6 +5416,11 @@ msgstr "Från fliken Matchning"
 #: src/features/assistant/assistant-screen.tsx
 msgid "From your experience entries"
 msgstr "Från dina erfarenhetsposter"
+
+#. placeholder {0}: start.note
+#: src/features/career/stories.tsx
+msgid "From your interview plan: {0}"
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "From your timezone"
@@ -7649,6 +7674,11 @@ msgstr "Ingen länkad jobbansökan"
 msgid "No location"
 msgstr "Ingen plats"
 
+#. placeholder {0}: facts.find((fact) => fact.id === id)?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr ""
+
 #: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
@@ -7784,6 +7814,10 @@ msgstr "Ingen arbetslivserfarenhet visar"
 #: src/features/ats-checker/messages.ts
 msgid "No work-experience section was found."
 msgstr "Inget avsnitt för arbetslivserfarenhet hittades."
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "none"
+msgstr "ingen"
 
 #: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
@@ -9092,6 +9126,10 @@ msgstr "Publicera webbsidan för att räkna visningar och nedladdningar. Räknin
 #: src/features/share/web-page.tsx
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "Publicera det här CV:t för att öppna det via din kortlänk och din egen domän."
+
+#: src/features/share/link.tsx
+msgid "Publish to choose an address."
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Publisher"
@@ -10457,6 +10495,10 @@ msgstr "Sparar jobbet. Vänta på bekräftelse innan du gör en ny ändring."
 msgid "Saving…"
 msgstr "Sparar…"
 
+#: src/features/career/today.tsx
+msgid "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -10785,6 +10827,11 @@ msgstr "Skickat"
 msgid "Sent to {0}"
 msgstr "Skickat till {0}"
 
+#. placeholder {0}: sent.summary
+#: src/features/assistant/messages.tsx
+msgid "Sent: {0}"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbiska"
@@ -10844,6 +10891,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
 msgstr "Ställ in webbsökning i Inställningar för att hitta roller."
+
+#: src/features/career/today.tsx
+msgid "Set your preferences"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -11734,6 +11785,11 @@ msgstr "Taggar"
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 msgstr "Taggar ger program en tydlig läsordning. Aktivera dem vid export, om ditt verktyg erbjuder det."
+
+#. placeholder {0}: previous.data.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr ""
 
 #: src/features/documents/document-sheets.tsx
 msgid "Tags…"
@@ -12886,10 +12942,6 @@ msgstr "Turkiska"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "Stäng av valfria ligaturer vid export."
 
-#: src/features/share/link.tsx
-msgid "Turn on the link to choose an address."
-msgstr "Slå på länken för att välja en adress."
-
 #: src/features/share/web-page.tsx
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
@@ -13051,12 +13103,25 @@ msgstr "Upp till 25 MB · kontrolleras på servern och inte lagras"
 msgid "Update"
 msgstr ""
 
+#. placeholder {0}: previous.data.title
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update “{0}” in Knowledge?"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Update posting details"
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update story"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update this story in Knowledge?"
 msgstr ""
 
 #: src/features/applications/queries.ts
@@ -13491,6 +13556,15 @@ msgstr "Väntar på dig"
 msgid "Waiting to hear back"
 msgstr "Väntar på att höra tillbaka"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "was {was}"
+msgstr ""
+
+#. placeholder {0}: part.was.trim() || t`blank`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Was: {0}"
+msgstr ""
+
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
 #: src/features/ai/web-access.tsx
@@ -13609,6 +13683,14 @@ msgstr "Vad som är viktigt för dig"
 msgid "What should change?"
 msgstr "Vad bör förändras?"
 
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding on this offer?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding?"
+msgstr ""
+
 #: src/features/workspace/coach-starters.ts
 msgid "What should I ask them?"
 msgstr ""
@@ -13637,6 +13719,10 @@ msgstr "Vad de bad dig förbereda"
 msgid "What to do"
 msgstr "Vad ska man göra"
 
+#: src/features/assistant/messages.tsx
+msgid "What was sent"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "What works"
 msgstr "Det som fungerar"
@@ -13652,6 +13738,14 @@ msgstr "Det du skickade"
 #: src/features/career/preferences.tsx
 msgid "What you're looking for"
 msgstr "Vad du letar efter"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from these offers that I should get in writing?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from this offer that I should get in writing?"
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "What's working"
@@ -13698,6 +13792,10 @@ msgstr "Där du söker arbete"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Where your applications went"
 msgstr "Vart dina ansökningar tog vägen"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Which offer fits my requirements better?"
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
@@ -14082,6 +14180,10 @@ msgstr ""
 msgid "Your headings look the same as your body text."
 msgstr "Dina rubriker ser likadana ut som din brödtext."
 
+#: src/features/career/today.tsx
+msgid "Your job search starts here"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"
 msgstr "din Kunskap"
@@ -14136,6 +14238,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "Ditt telefonnummer är skrivet i ett ovanligt format."
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 #: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "dina önskemål"

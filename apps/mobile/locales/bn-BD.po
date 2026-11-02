@@ -215,8 +215,10 @@ msgstr "{0, plural, one {# এন্ট্রি} other {#টি এন্ট্
 
 #. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
+#. placeholder {0}: sent.facts.length
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {#টি তথ্য} other {#টি তথ্য}}"
 
@@ -263,7 +265,9 @@ msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
 #. placeholder {0}: offerIds.length
+#. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, one {#টি সংরক্ষিত অফার} other {#টি সংরক্ষিত অফার}}"
 
@@ -278,7 +282,9 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# নির্বাচিত হয়েছে৷} other {# নির্বাচিত হয়েছে৷}}"
 
 #. placeholder {0}: knowledge.stories.length
+#. placeholder {0}: sent.stories.length
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {#টি গল্প} other {#টি গল্প}}"
 
@@ -968,6 +974,10 @@ msgid "A fact changed. Review this story."
 msgstr "একটি তথ্য বদলেছে। এই গল্পটি পর্যালোচনা করুন।"
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail."
 msgstr ""
 
@@ -1348,10 +1358,6 @@ msgstr "চাকরির অফার যোগ করুন"
 msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 msgstr "গৃহীত অফারসহ অফারের শর্ত নিজে যোগ করুন, অথবা কোনো আবেদনের «বার্তা» ট্যাবে অফারের ইমেইল পেস্ট করে AI ব্যবহার করতে «আমার হয়ে পড়ে দিন» বেছে নিন। আবেদন গৃহীত হিসেবে বন্ধ করলে শর্ত সংরক্ষিত হয় না।"
 
-#: src/features/career/facts.tsx
-msgid "Add one above."
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "আপনার কাজ দেখায় এমন একটি লিঙ্ক যোগ করুন।"
@@ -1447,6 +1453,10 @@ msgstr ""
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "যেখানে আপনি ডোমেইন পরিচালনা করেন সেখানে এই রেকর্ডগুলো যোগ করুন, তারপর যাচাই করুন। পরিবর্তনগুলো সবার কাছে পৌঁছাতে কয়েক ঘণ্টা লাগতে পারে।"
+
+#: src/features/career/facts.tsx
+msgid "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
@@ -1941,6 +1951,7 @@ msgid "Application phone"
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "আবেদনের সারাংশ"
 
@@ -2056,8 +2067,8 @@ msgid "Ask about your next career step…"
 msgstr "আপনার ক্যারিয়ারের পরবর্তী ধাপ নিয়ে জিজ্ঞাসা করুন…"
 
 #: src/features/assistant/coach-screen.tsx
-msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
-msgstr "আপনার চাকরি খোঁজা নিয়ে জিজ্ঞাসা করুন, অথবা এমন একটি অর্জন নিয়ে আসুন যা আরও ভালোভাবে ব্যাখ্যা করতে চান। উত্তরগুলো নিচে চালু থাকা বিষয়গুলো ব্যবহার করে এবং কিসের ওপর নির্ভর করেছে তা জানায়।"
+msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
+msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
@@ -2080,6 +2091,7 @@ msgid "Ask the assistant to work it in"
 msgstr "সহকারীকে এটিতে কাজ করতে বলুন"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/today.tsx
 #: src/features/workspace/shell.tsx
 msgid "Ask the coach"
 msgstr "কোচকে জিজ্ঞাসা করুন"
@@ -2321,6 +2333,10 @@ msgstr "আপনার ন্যূনতম বেস বেতনের ন�
 #: src/features/settings/locale-names.ts
 msgid "Bengali"
 msgstr "বাংলা"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "blank"
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "Board"
@@ -4450,6 +4466,10 @@ msgstr "আপনি এখানে যে নথিগুলো সরান �
 msgid "Documents, applications and Career data as JSON, in one zip. Images and attachments remain references."
 msgstr ""
 
+#: src/features/assistant/coach-screen.tsx
+msgid "Does this offer meet what I want?"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "ডোমেইন সংযুক্ত হয়েছে"
@@ -5396,6 +5416,11 @@ msgstr "উপযুক্ততা থেকে"
 #: src/features/assistant/assistant-screen.tsx
 msgid "From your experience entries"
 msgstr "আপনার অভিজ্ঞতা এন্ট্রি থেকে"
+
+#. placeholder {0}: start.note
+#: src/features/career/stories.tsx
+msgid "From your interview plan: {0}"
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "From your timezone"
@@ -7649,6 +7674,11 @@ msgstr "কোন লিঙ্ক নেই আবেদন"
 msgid "No location"
 msgstr "অবস্থান নেই"
 
+#. placeholder {0}: facts.find((fact) => fact.id === id)?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr ""
+
 #: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
@@ -7784,6 +7814,10 @@ msgstr "কাজের অভিজ্ঞতা নেই"
 #: src/features/ats-checker/messages.ts
 msgid "No work-experience section was found."
 msgstr "কোনো কর্ম-অভিজ্ঞতা সেকশন পাওয়া যায়নি।"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "none"
+msgstr "কোনটি"
 
 #: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
@@ -9092,6 +9126,10 @@ msgstr "ভিউ ও ডাউনলোড গণনা করতে ওয়�
 #: src/features/share/web-page.tsx
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "আপনার ছোট লিঙ্ক ও কাস্টম ডোমেইনে খুলতে এই জীবনবৃত্তান্তটি প্রকাশ করুন।"
+
+#: src/features/share/link.tsx
+msgid "Publish to choose an address."
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Publisher"
@@ -10457,6 +10495,10 @@ msgstr "চাকরি বাঁচাচ্ছে। অন্য পরিব
 msgid "Saving…"
 msgstr "… সংরক্ষণ করা হচ্ছে"
 
+#: src/features/career/today.tsx
+msgid "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -10785,6 +10827,11 @@ msgstr "পাঠানো হয়েছে"
 msgid "Sent to {0}"
 msgstr "{0} এ পাঠানো হয়েছে"
 
+#. placeholder {0}: sent.summary
+#: src/features/assistant/messages.tsx
+msgid "Sent: {0}"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "সার্বিয়ান"
@@ -10844,6 +10891,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
 msgstr "চাকরি খুঁজতে সেটিংস-এ ওয়েব অনুসন্ধান সেট আপ করুন।"
+
+#: src/features/career/today.tsx
+msgid "Set your preferences"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -11734,6 +11785,11 @@ msgstr "ট্যাগসমূহ"
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 msgstr "ট্যাগ সফটওয়্যারকে একটি স্পষ্ট পড়ার ক্রম দেয়। আপনার টুল সুযোগ দিলে এক্সপোর্ট করার সময় এটি সক্রিয় করুন।"
+
+#. placeholder {0}: previous.data.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr ""
 
 #: src/features/documents/document-sheets.tsx
 msgid "Tags…"
@@ -12886,10 +12942,6 @@ msgstr "তুর্কি"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "এক্সপোর্ট করার সময় ঐচ্ছিক লিগেচার বন্ধ করুন।"
 
-#: src/features/share/link.tsx
-msgid "Turn on the link to choose an address."
-msgstr "একটি ঠিকানা বেছে নিতে লিঙ্কটি চালু করুন।"
-
 #: src/features/share/web-page.tsx
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
@@ -13051,12 +13103,25 @@ msgstr "25 MB পর্যন্ত · সার্ভারে চেক কর
 msgid "Update"
 msgstr ""
 
+#. placeholder {0}: previous.data.title
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update “{0}” in Knowledge?"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Update posting details"
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update story"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update this story in Knowledge?"
 msgstr ""
 
 #: src/features/applications/queries.ts
@@ -13491,6 +13556,15 @@ msgstr "আপনার অপেক্ষায়"
 msgid "Waiting to hear back"
 msgstr "ফিরে শোনার অপেক্ষায়"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "was {was}"
+msgstr ""
+
+#. placeholder {0}: part.was.trim() || t`blank`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Was: {0}"
+msgstr ""
+
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
 #: src/features/ai/web-access.tsx
@@ -13609,6 +13683,14 @@ msgstr "আপনার কাছে যা গুরুত্বপূর্ণ
 msgid "What should change?"
 msgstr "কি পরিবর্তন করা উচিত?"
 
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding on this offer?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding?"
+msgstr ""
+
 #: src/features/workspace/coach-starters.ts
 msgid "What should I ask them?"
 msgstr ""
@@ -13637,6 +13719,10 @@ msgstr "তারা আপনাকে যা প্রস্তুত কর�
 msgid "What to do"
 msgstr "কি করতে হবে"
 
+#: src/features/assistant/messages.tsx
+msgid "What was sent"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "What works"
 msgstr "যা কাজ করে"
@@ -13652,6 +13738,14 @@ msgstr "যা তুমি পাঠিয়েছ"
 #: src/features/career/preferences.tsx
 msgid "What you're looking for"
 msgstr "আপনি যা খুঁজছেন"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from these offers that I should get in writing?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from this offer that I should get in writing?"
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "What's working"
@@ -13698,6 +13792,10 @@ msgstr "যেখানে আপনি কাজ খুঁজছেন"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Where your applications went"
 msgstr "আপনার আবেদনগুলো কোথায় গেল"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Which offer fits my requirements better?"
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
@@ -14082,6 +14180,10 @@ msgstr ""
 msgid "Your headings look the same as your body text."
 msgstr "আপনার শিরোনামগুলো মূল টেক্সটের মতোই দেখাচ্ছে।"
 
+#: src/features/career/today.tsx
+msgid "Your job search starts here"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"
 msgstr "আপনার জ্ঞানভান্ডার"
@@ -14136,6 +14238,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "আপনার ফোন নম্বর অস্বাভাবিক আকারে লেখা।"
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 #: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "আপনার পছন্দসমূহ"

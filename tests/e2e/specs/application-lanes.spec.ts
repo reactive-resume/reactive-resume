@@ -107,7 +107,8 @@ test("custom stages preserve same-category history, retire safely, and retain a 
 	const initial = await readApplication(page.request, id);
 
 	await page.goto("/dashboard/applications?view=board&closed=true");
-	await page.getByRole("button", { name: "Manage stages", exact: true }).click();
+	await page.getByRole("button", { name: "More", exact: true }).click();
+	await page.getByRole("menuitem", { name: "Manage stages…", exact: true }).click();
 	const stages = page.getByRole("dialog", { name: "Stages", exact: true });
 	await stages.getByLabel("Name", { exact: true }).fill("Take-home assignment");
 	await stages.getByRole("button", { name: "Add stage", exact: true }).click();
@@ -156,7 +157,8 @@ test("custom stages preserve same-category history, retire safely, and retain a 
 	expect((await readApplication(page.request, id)).laneId).toBe(takeHome.id);
 	await page.unroute("**/api/rpc/applications/update");
 
-	await page.getByRole("button", { name: "Manage stages", exact: true }).click();
+	await page.getByRole("button", { name: "More", exact: true }).click();
+	await page.getByRole("menuitem", { name: "Manage stages…", exact: true }).click();
 	await stages.getByRole("button", { name: "Remove Take-home assignment…", exact: true }).click();
 	const retire = page.getByRole("dialog", { name: "Remove “Take-home assignment”?", exact: true });
 	await retire.getByLabel("Move its applications to").selectOption(interview.id);
@@ -209,7 +211,10 @@ test("an older server keeps fixed-stage reads and writes without synthetic lane 
 		return route.continue();
 	});
 	await page.goto("/dashboard/applications");
-	await expect(page.getByRole("button", { name: "Manage stages", exact: true })).not.toBeVisible();
+	await page.getByRole("button", { name: "More", exact: true }).click();
+	await expect(page.getByRole("menuitem", { name: "Import CSV…", exact: true })).toBeVisible();
+	await expect(page.getByRole("menuitem", { name: "Manage stages…", exact: true })).toHaveCount(0);
+	await page.keyboard.press("Escape");
 	await page.getByRole("button", { name: "Save job", exact: true }).first().click();
 	const save = page.getByRole("dialog", { name: "Save a job", exact: true });
 	await save.getByLabel("Role", { exact: true }).fill("Legacy Engineer");
@@ -225,9 +230,10 @@ test("an older server keeps fixed-stage reads and writes without synthetic lane 
 for (const failure of ["none", "second-create", "import", "lost-create-response"] as const) {
 	test(`CSV import maps distinct same-category stages and resumes after ${failure}`, async ({ authPage: page }) => {
 		await page.goto("/dashboard/applications");
-		await page.getByRole("button", { name: "Manage stages", exact: true }).waitFor();
-		await page.getByRole("button", { name: "Import or export CSV", exact: true }).click();
-		await page.getByRole("menuitem", { name: "Import from CSV…", exact: true }).click();
+		await page.getByRole("button", { name: "More", exact: true }).click();
+		// Stages have loaded once the menu offers to manage them.
+		await page.getByRole("menuitem", { name: "Manage stages…", exact: true }).waitFor();
+		await page.getByRole("menuitem", { name: "Import CSV…", exact: true }).click();
 		const sheet = page.getByRole("dialog", { name: "Import from CSV", exact: true });
 		await sheet
 			.getByLabel("CSV data", { exact: true })
@@ -319,8 +325,8 @@ test("named CSV import survives pending and failed stage discovery without disca
 		return route.continue();
 	});
 	await page.goto("/dashboard/applications");
-	await page.getByRole("button", { name: "Import or export CSV", exact: true }).click();
-	await page.getByRole("menuitem", { name: "Import from CSV…", exact: true }).click();
+	await page.getByRole("button", { name: "More", exact: true }).click();
+	await page.getByRole("menuitem", { name: "Import CSV…", exact: true }).click();
 	const sheet = page.getByRole("dialog", { name: "Import from CSV", exact: true });
 	const csv =
 		"Company,Role,Stage,Lane,Lane Category,Lane Closed Reason\nFictional Labs,Engineer,closed,Ghosted,closed,no-response";

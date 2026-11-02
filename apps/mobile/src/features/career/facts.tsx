@@ -154,7 +154,11 @@ export function Facts({ children, onRefresh }: FactsProps) {
 				<EmptyState
 					variant="compact"
 					title={!facts.data?.length ? t`No facts yet` : t`No facts match`}
-					message={!facts.data?.length ? t`Add one above.` : t`Try another word or type.`}
+					message={
+						!facts.data?.length
+							? t`Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them.`
+							: t`Try another word or type.`
+					}
 					action={category !== "all" ? { label: t`Show all types`, onPress: () => setCategory("all") } : undefined}
 				/>
 			) : null}

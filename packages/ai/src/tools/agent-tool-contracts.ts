@@ -50,7 +50,8 @@ type ApprovalRequest =
 	| { id: string; kind: "search"; text: string }
 	| { id: string; kind: "story"; text: string; story: z.infer<typeof proposedStorySchema> };
 
-const proposedStorySchema = careerStoryInputSchema.omit({ applicationId: true });
+/** `id`: a saved story this proposal updates; without it, a new story. */
+const proposedStorySchema = careerStoryInputSchema.omit({ applicationId: true }).extend({ id: z.string().optional() });
 
 /**
  * Exact arguments awaiting a user decision; model prose cannot create an approval control. A story comes with its

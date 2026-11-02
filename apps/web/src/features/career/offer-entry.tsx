@@ -17,8 +17,10 @@ import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
+import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
 import { formatMoney } from "./offer-compare";
@@ -72,6 +74,7 @@ function ScopedOfferEntry({
 	frame = (action) => action,
 }: OfferEntryProps) {
 	const [open, setOpen] = useState(initialOpen);
+	const phone = useBreakpoint() === "mobile";
 	const [requested, setRequested] = useState(initialOpen);
 	if (initialOpen !== requested) {
 		setRequested(initialOpen);
@@ -91,17 +94,38 @@ function ScopedOfferEntry({
 		onDone?.();
 	};
 
-	if (open)
-		return (
-			<OfferForm
-				application={application}
-				onClose={close}
-				onSaved={(offer) => {
-					if (offer) setJustSaved(offer);
-					close();
-				}}
-			/>
-		);
+	const form = (
+		<OfferForm
+			application={application}
+			onClose={close}
+			onSaved={(offer) => {
+				if (offer) setJustSaved(offer);
+				close();
+			}}
+		/>
+	);
+	// Beside one application the form opens in place; the page-level Add offer is a long form, so it takes a sheet
+	// and leaves the page as it was (DESIGN.md: dialog, sheet or inline).
+	if (open && application) return form;
+	const sheet = !application && (
+		<Sheet
+			open={open}
+			onOpenChange={(next) => {
+				if (!next) close();
+			}}
+		>
+			<SheetContent
+				side={phone ? "bottom" : "right"}
+				closeLabel={t`Close`}
+				className="gap-0 overflow-y-auto p-4 data-[side=right]:border-s data-[side=right]:border-line data-[side=right]:sm:max-w-[560px]"
+			>
+				<SheetTitle className="sr-only">
+					<Trans>Add offer</Trans>
+				</SheetTitle>
+				{form}
+			</SheetContent>
+		</Sheet>
+	);
 	const variant = primary ? "primary" : "secondary";
 	const add = (
 		<Button variant={variant} className="w-fit" onClick={() => setOpen(true)}>
@@ -113,9 +137,13 @@ function ScopedOfferEntry({
 		<div className="grid gap-3">
 			<OfferSummary offer={latest} />
 			{frame(action)}
+			{sheet}
 		</div>
 	) : (
-		frame(action)
+		<>
+			{frame(action)}
+			{sheet}
+		</>
 	);
 }
 
@@ -229,7 +257,10 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		const currency = previousOfferCurrency(savedOffers.data);
 		if (currency) setPreviousCurrency(currency);
 	}
-	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
+	// A new offer starts in the last offer's currency, else the one the user's minimum salary is in (Preferences).
+	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
+	const preferred = profile?.minBase.amount === null ? undefined : profile?.minBase.currency;
+	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? preferred ?? "" };
 	const [more, setMore] = useState(Boolean(offer));
 	const [submitted, setSubmitted] = useState(false);
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));

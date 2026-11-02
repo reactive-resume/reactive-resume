@@ -215,8 +215,10 @@ msgstr "{0, plural, one {# запис} few {# записи} many {# записі
 
 #. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
+#. placeholder {0}: sent.facts.length
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# факт} few {# факти} many {# фактів} other {# факту}}"
 
@@ -263,7 +265,9 @@ msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
 #. placeholder {0}: offerIds.length
+#. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, one {# збережена пропозиція} few {# збережені пропозиції} many {# збережених пропозицій} other {# збереженої пропозиції}}"
 
@@ -278,7 +282,9 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {Вибрано #} other {Вибрано #}}"
 
 #. placeholder {0}: knowledge.stories.length
+#. placeholder {0}: sent.stories.length
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {# розповідь} few {# розповіді} many {# розповідей} other {# розповіді}}"
 
@@ -968,6 +974,10 @@ msgid "A fact changed. Review this story."
 msgstr "Факт змінився. Перегляньте цю розповідь."
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail."
 msgstr ""
 
@@ -1348,10 +1358,6 @@ msgstr "Додати пропозицію роботи"
 msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 msgstr "Додайте умови пропозицій вручну, зокрема для прийнятих пропозицій, або вставте лист із пропозицією на вкладці «Повідомлення» відгуку та виберіть «Прочитати за мене», щоб скористатися ШІ. Закриття відгуку як прийнятого не зберігає умови."
 
-#: src/features/career/facts.tsx
-msgid "Add one above."
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "Додайте одне посилання, яке демонструє вашу роботу."
@@ -1447,6 +1453,10 @@ msgstr ""
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Додайте ці записи там, де керуєте доменом, а потім перевірте. Зміни можуть поширюватися кілька годин."
+
+#: src/features/career/facts.tsx
+msgid "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
@@ -1941,6 +1951,7 @@ msgid "Application phone"
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "підсумки заявок"
 
@@ -2056,8 +2067,8 @@ msgid "Ask about your next career step…"
 msgstr "Запитайте про наступний крок у кар’єрі…"
 
 #: src/features/assistant/coach-screen.tsx
-msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
-msgstr "Запитайте про свій пошук або принесіть досягнення, яке хочете пояснити краще. Відповіді використовують те, що ввімкнено нижче, і вказують, на що спиралися."
+msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
+msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
@@ -2080,6 +2091,7 @@ msgid "Ask the assistant to work it in"
 msgstr "Попросіть асистента опрацювати це"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/today.tsx
 #: src/features/workspace/shell.tsx
 msgid "Ask the coach"
 msgstr "Запитати коуча"
@@ -2321,6 +2333,10 @@ msgstr "Нижче вашої мінімальної базової зарпла
 #: src/features/settings/locale-names.ts
 msgid "Bengali"
 msgstr "Бенгальська"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "blank"
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "Board"
@@ -4450,6 +4466,10 @@ msgstr "Документи, які ви переміщуєте сюди, збе�
 msgid "Documents, applications and Career data as JSON, in one zip. Images and attachments remain references."
 msgstr ""
 
+#: src/features/assistant/coach-screen.tsx
+msgid "Does this offer meet what I want?"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "Домен підключено"
@@ -5396,6 +5416,11 @@ msgstr "З перевірки відповідності"
 #: src/features/assistant/assistant-screen.tsx
 msgid "From your experience entries"
 msgstr "З ваших записів про досвід"
+
+#. placeholder {0}: start.note
+#: src/features/career/stories.tsx
+msgid "From your interview plan: {0}"
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "From your timezone"
@@ -7649,6 +7674,11 @@ msgstr "Немає пов’язаної заявки"
 msgid "No location"
 msgstr "Немає місцезнаходження"
 
+#. placeholder {0}: facts.find((fact) => fact.id === id)?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr ""
+
 #: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
@@ -7784,6 +7814,10 @@ msgstr "Досвід роботи відсутній"
 #: src/features/ats-checker/messages.ts
 msgid "No work-experience section was found."
 msgstr "Розділ досвіду роботи не знайдено."
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "none"
+msgstr "немає"
 
 #: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
@@ -9092,6 +9126,10 @@ msgstr "Опублікуйте вебсторінку, щоб рахувати �
 #: src/features/share/web-page.tsx
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "Опублікуйте це резюме, щоб відкривати його за коротким посиланням і на власному домені."
+
+#: src/features/share/link.tsx
+msgid "Publish to choose an address."
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Publisher"
@@ -10457,6 +10495,10 @@ msgstr "Збереження роботи. Зачекайте підтвердж
 msgid "Saving…"
 msgstr "Збереження…"
 
+#: src/features/career/today.tsx
+msgid "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -10785,6 +10827,11 @@ msgstr "Надіслано"
 msgid "Sent to {0}"
 msgstr "Надіслано на {0}"
 
+#. placeholder {0}: sent.summary
+#: src/features/assistant/messages.tsx
+msgid "Sent: {0}"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Сербська"
@@ -10844,6 +10891,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
 msgstr "Налаштуйте веб-пошук у Налаштування, щоб знайти ролі."
+
+#: src/features/career/today.tsx
+msgid "Set your preferences"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -11734,6 +11785,11 @@ msgstr "Теги"
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 msgstr "Теги надають програмам явний порядок читання. Увімкніть їх під час експорту, якщо ваш інструмент це пропонує."
+
+#. placeholder {0}: previous.data.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr ""
 
 #: src/features/documents/document-sheets.tsx
 msgid "Tags…"
@@ -12886,10 +12942,6 @@ msgstr "Турецька"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "Вимкніть необов'язкові лігатури під час експорту."
 
-#: src/features/share/link.tsx
-msgid "Turn on the link to choose an address."
-msgstr "Увімкніть посилання, щоб вибрати адресу."
-
 #: src/features/share/web-page.tsx
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
@@ -13051,12 +13103,25 @@ msgstr "До 25 МБ · перевірено на сервері та не зб�
 msgid "Update"
 msgstr ""
 
+#. placeholder {0}: previous.data.title
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update “{0}” in Knowledge?"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Update posting details"
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update story"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update this story in Knowledge?"
 msgstr ""
 
 #: src/features/applications/queries.ts
@@ -13491,6 +13556,15 @@ msgstr "Чекає на вас"
 msgid "Waiting to hear back"
 msgstr "Чекаю на відповідь"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "was {was}"
+msgstr ""
+
+#. placeholder {0}: part.was.trim() || t`blank`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Was: {0}"
+msgstr ""
+
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
 #: src/features/ai/web-access.tsx
@@ -13609,6 +13683,14 @@ msgstr "Що для вас важливо"
 msgid "What should change?"
 msgstr "Що має змінитися?"
 
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding on this offer?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding?"
+msgstr ""
+
 #: src/features/workspace/coach-starters.ts
 msgid "What should I ask them?"
 msgstr ""
@@ -13637,6 +13719,10 @@ msgstr "Що вас попросили підготувати"
 msgid "What to do"
 msgstr "Що робити"
 
+#: src/features/assistant/messages.tsx
+msgid "What was sent"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "What works"
 msgstr "Що вдалося"
@@ -13652,6 +13738,14 @@ msgstr "Що ви надіслали"
 #: src/features/career/preferences.tsx
 msgid "What you're looking for"
 msgstr "Що ви шукаєте"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from these offers that I should get in writing?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from this offer that I should get in writing?"
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "What's working"
@@ -13698,6 +13792,10 @@ msgstr "Де ти шукаєш роботу"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Where your applications went"
 msgstr "Куди пішли ваші заявки"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Which offer fits my requirements better?"
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
@@ -14082,6 +14180,10 @@ msgstr ""
 msgid "Your headings look the same as your body text."
 msgstr "Ваші заголовки виглядають так само, як основний текст."
 
+#: src/features/career/today.tsx
+msgid "Your job search starts here"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"
 msgstr "ваші Знання"
@@ -14136,6 +14238,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "Ваш номер телефону записаний у незвичному форматі."
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 #: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "ваші побажання"

@@ -330,8 +330,11 @@ function AnswerCard({
 		empty ? t`Draft` : t`Tighten`,
 	);
 
-	const words = countWords(text);
-	const characters = countCharacters(text);
+	// While a draft waits for Accept, the count is the draft's, so its fit against the form's limit shows first.
+	const counted = proposal?.text ?? text;
+	const words = countWords(counted);
+	const characters = countCharacters(counted);
+	const was = proposal ? (unit === "words" ? countWords(text) : countCharacters(text)) : null;
 	const backing = answer.factIds.flatMap((id) => facts?.find((fact) => fact.id === id) ?? []);
 
 	const ask = async () => {
@@ -405,6 +408,7 @@ function AnswerCard({
 								: unit === "words"
 									? plural(words, { one: "# word", other: "# words" })
 									: plural(characters, { one: "# character", other: "# characters" })}
+							{was !== null ? ` · ${t`was ${was}`}` : ""}
 						</Text>
 					</Pressable>
 					{!readOnly ? (

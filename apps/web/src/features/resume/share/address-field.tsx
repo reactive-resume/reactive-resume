@@ -68,7 +68,7 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 
 	// The hint under the field, when the address isn't taken (that block has its own text).
 	const hint = () => {
-		if (!isPublic) return t`Turn on the link to choose an address.`;
+		if (!isPublic) return t`Publish to choose an address.`;
 		if (!slug) return t`Add an address.`;
 		if (!changed) return t`Live at ${url.replace(/^https?:\/\//, "")}`;
 		if (slug.length > MAX_SLUG_LENGTH) return t`Use at most 64 characters.`;
