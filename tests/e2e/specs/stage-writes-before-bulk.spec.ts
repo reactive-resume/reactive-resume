@@ -50,6 +50,8 @@ async function openWorkspace(page: Page, role: string) {
 	await page.goto("/dashboard/applications");
 	await page.getByText(role, { exact: true }).click();
 	await page.getByRole("button", { name: "Open workspace" }).click();
+	// The detail sheet also has "Mark as applied" while the workspace route is loading.
+	await expect(page.getByRole("heading", { name: "Review checks", exact: true })).toBeVisible();
 }
 
 async function bulkMove(page: Page, company: string, stage: string) {
