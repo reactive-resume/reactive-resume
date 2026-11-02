@@ -2,6 +2,7 @@ import z from "zod";
 import { protectedProcedure } from "../../context";
 import { documentsDto } from "../../dto/documents";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
+import { suggestDuplicateName } from "./naming";
 import { documentsService } from "./service";
 
 const route = (
@@ -85,6 +86,20 @@ export const documentsRouter = {
 		.input(z.object({}).optional())
 		.output(documentsDto.counts.output)
 		.handler(({ context }) => documentsService.counts({ userId: context.user.id })),
+
+	suggestDuplicateName: protectedProcedure
+		.route(
+			route(
+				"GET",
+				"/documents/duplicate-name",
+				"suggestDuplicateDocumentName",
+				"Suggest a duplicate name",
+				"Suggests an available numbered name across this account’s documents, including Trash. Reads names only; does not create or reserve a document.",
+			),
+		)
+		.input(documentsDto.suggestDuplicateName.input)
+		.output(documentsDto.suggestDuplicateName.output)
+		.handler(({ context, input }) => suggestDuplicateName({ ...input, userId: context.user.id })),
 
 	rename: protectedProcedure
 		.route(route("POST", "/documents/rename", "renameDocument", "Rename a document", "Renames a resume or letter."))

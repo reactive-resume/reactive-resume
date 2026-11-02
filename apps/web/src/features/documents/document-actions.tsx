@@ -1,3 +1,4 @@
+import type { DocumentsSearch } from "./documents-page";
 import type { DocumentSummary } from "./filter";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
@@ -32,7 +33,7 @@ import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useDocumentDownload } from "@/features/applications/use-document-download";
 import { useShareOrigin } from "@/features/resume/share/use-share-origin";
 import { useClosingValue } from "@/hooks/use-closing-value";
-import { useConfirm } from "@/hooks/use-confirm";
+import { useConfirm, usePrompt } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -53,6 +54,8 @@ function useRefreshDocuments() {
 
 export function useDocumentActions() {
 	const confirm = useConfirm();
+	const prompt = usePrompt();
+	const navigate = useNavigate();
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const markNew = useNewDocumentsStore((state) => state.markNew);
 	const refresh = useRefreshDocuments();
@@ -80,13 +83,40 @@ export function useDocumentActions() {
 		},
 
 		duplicate: async (document: DocumentSummary) => {
-			const copied =
-				document.type === "resume"
-					? duplicateResume.mutateAsync({ id: document.id, name: t`${document.name} (copy)`, tags: document.tags })
-					: duplicateLetter.mutateAsync({ id: document.id }).then((letter) => letter.id);
 			try {
-				markNew(await copied);
-				toast.add({ description: t`Duplicated “${document.name}”` });
+				const suggested = await orpc.documents.suggestDuplicateName.call(ref(document));
+				const answer = await prompt(t`Duplicate`, {
+					defaultValue: suggested,
+					maxLength: 100,
+					confirmText: t`Duplicate`,
+				});
+				const name = answer?.trim().slice(0, 100);
+				if (!name) return;
+				const id =
+					document.type === "resume"
+						? await duplicateResume.mutateAsync({ id: document.id, name, tags: document.tags })
+						: (await duplicateLetter.mutateAsync({ id: document.id, name })).id;
+				markNew(id);
+				toast.add({
+					description: t`Duplicated “${document.name}”`,
+					actionProps: {
+						children: t`Rename`,
+						onClick: () => {
+							useNewDocumentsStore.getState().requestRename(id);
+							void navigate({
+								to: "/dashboard",
+								search: (previous: DocumentsSearch) => ({
+									...previous,
+									q: name,
+									type: document.type,
+									tags: [],
+									public: false,
+									sort: "created",
+								}),
+							});
+						},
+					},
+				});
 			} catch (error) {
 				toastError(error, t`Couldn't duplicate the document. Try again.`);
 			}

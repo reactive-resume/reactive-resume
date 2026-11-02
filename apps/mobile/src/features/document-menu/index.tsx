@@ -90,11 +90,13 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 									title={t`Duplicate`}
 									leading="copy"
 									disabled={operations.busy || printing}
-									onPress={() => {
-										setName(t`${resume.name} (copy)`.slice(0, 100));
-										setSlug("");
-										setPanel("duplicate");
-									}}
+									onPress={() =>
+										void operations.run(async () => {
+											setName(await client.documents.suggestDuplicateName({ type: "resume", id }));
+											setSlug("");
+											setPanel("duplicate");
+										})
+									}
 								/>
 								{/* The library's job copy, from inside the editor (web's builder menu has it too). */}
 								<ListRow

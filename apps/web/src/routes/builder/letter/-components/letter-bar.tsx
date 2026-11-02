@@ -124,7 +124,11 @@ function LetterMenu() {
 		try {
 			if (!(await useLetterEditorStore.getState().flush()))
 				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
-			const copy = await client.coverLetters.duplicate({ id });
+			const suggested = await client.documents.suggestDuplicateName({ type: "letter", id });
+			const answer = await prompt(t`Duplicate`, { defaultValue: suggested, maxLength: 100, confirmText: t`Duplicate` });
+			const copyName = answer?.trim().slice(0, 100);
+			if (!copyName) return;
+			const copy = await client.coverLetters.duplicate({ id, name: copyName });
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 			toast.add({ description: t`Letter duplicated` });
 			void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: copy.id } });
