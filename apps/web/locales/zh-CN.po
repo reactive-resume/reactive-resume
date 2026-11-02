@@ -642,6 +642,10 @@ msgstr "{authored, plural, =1 {可容纳在一页内：{details}} other {可容�
 msgid "{base} (copy)"
 msgstr "{base}（副本）"
 
+#: src/features/settings/account/sessions.tsx
+msgid "{browser} on {system}"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr "{characters, plural, other {# 个字符}}"
@@ -885,6 +889,10 @@ msgstr "{minutes} 分钟"
 msgid "{monthCount, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthCount, plural, =0 {没有面试} other {# 场面试}}"
 
+#: src/features/settings/account/sessions.tsx
+msgid "{name} · this device"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} 添加到第 1 页"
@@ -1055,7 +1063,7 @@ msgstr ""
 msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
 msgstr ""
 
-#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale, "short")
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr "{type} · 已编辑 {0}"
@@ -1399,6 +1407,10 @@ msgstr "关于"
 msgid "About 90 seconds when spoken"
 msgstr "说出来大约 90 秒"
 
+#: src/features/settings/root.tsx
+msgid "About Reactive Resume"
+msgstr ""
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Accent"
 msgstr "强调色"
@@ -1628,6 +1640,10 @@ msgstr "添加标签"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Add a tag and press Enter…"
 msgstr "添加标签并按 Enter…"
+
+#: src/features/documents/document-actions.tsx
+msgid "Add a tag…"
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Add AI provider"
@@ -2856,7 +2872,12 @@ msgstr "背景色"
 msgid "Backup code"
 msgstr "备份代码"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Backup codes"
+msgstr ""
+
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Backup codes copied"
 msgstr "备份码已复制"
 
@@ -3278,12 +3299,12 @@ msgid "Changes since {0}"
 msgstr ""
 
 #: src/features/settings/account/profile.tsx
-msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
-msgstr "更改时会先请您当前的地址批准，然后确认新地址。您的用户名是每个公共链接的一部分。"
+msgid "Changing it asks your current address to approve, then confirms the new one."
+msgstr "更改时会先请您当前的地址批准，然后确认新地址。"
 
 #: src/features/settings/account/profile.tsx
-msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
-msgstr "更改它会向新地址发送确认信息。您的用户名是每个公共链接的一部分。"
+msgid "Changing it sends a confirmation to the new address."
+msgstr "更改它会向新地址发送确认信息。"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
@@ -3623,6 +3644,7 @@ msgstr "清除格式"
 msgid "Clear resume"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Clear search"
 msgstr "清除搜索"
@@ -3688,6 +3710,7 @@ msgstr "客户端 ID"
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/resume/stylesheet/editor.tsx
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/ai/providers.tsx
@@ -4161,6 +4184,7 @@ msgstr "复制回答"
 
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Copy codes"
 msgstr "复制备份码"
 
@@ -4470,10 +4494,6 @@ msgstr "无法导入"
 msgid "Couldn't import the file. Try again from Documents."
 msgstr "无法导入文件。从文档中重试。"
 
-#: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't import the file. Try again, or start blank."
-msgstr "无法导入文件。请重试，或从空白开始。"
-
 #: src/features/auth/pages/error.tsx
 msgid "Couldn't link that provider account. Try again."
 msgstr "无法关联该提供商账户。请重试。"
@@ -4554,6 +4574,10 @@ msgstr ""
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't lock the document. Try again."
 msgstr "无法锁定文档。请重试。"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Couldn't make new codes. Try again."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't make this provider the default. Try again."
@@ -4782,6 +4806,7 @@ msgid "Couldn't save your changes. Try again before continuing."
 msgstr "无法保存您的更改。继续之前请重试。"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/libs/error-message.ts
 msgid "Couldn't save your changes. Try again."
 msgstr "无法保存你的更改。请重试。"
 
@@ -4848,6 +4873,10 @@ msgstr "无法显示预览。"
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
 msgstr "无法登录。请重试。"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Couldn't sign out of that device. Try again."
+msgstr ""
 
 #. Fallback toast when signing out fails
 #: src/features/settings/account/page.tsx
@@ -5612,6 +5641,11 @@ msgstr "币种不同，不作比较"
 msgid "Different pay period, not compared"
 msgstr "发薪周期不同，不作比较"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Digit {position} of {total}"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Discard"
 msgstr "放弃"
@@ -5670,7 +5704,7 @@ msgstr ""
 msgid "Do not share a resume"
 msgstr ""
 
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Docs"
 msgstr "文档"
 
@@ -5737,11 +5771,12 @@ msgstr ""
 
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Donate"
 msgstr "捐赠"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
 msgstr "完毕"
@@ -5786,6 +5821,7 @@ msgstr ""
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Download codes"
 msgstr "下载备份码"
 
@@ -5937,7 +5973,7 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "拖动即可重新定位，上传前可使用滑块进行缩放。"
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume, JSON Resume or a LinkedIn export (.zip). Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6384,6 +6420,10 @@ msgstr "在下方填写你的信息。选择简历后，这些信息将被替换
 #: src/features/auth/pages/register.tsx
 msgid "Enter your name."
 msgstr "请输入你的姓名。"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Enter your password to replace your backup codes. Codes you saved before stop working."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enter your password to set up two-step verification. Once it's on, you need a code from your authenticator app every time you sign in."
@@ -7068,6 +7108,10 @@ msgstr "全宽"
 msgid "Generate a random name"
 msgstr "生成一个随机名称"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Generate new codes"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -7277,10 +7321,6 @@ msgstr "收到回音"
 #: src/libs/locale.ts
 msgid "Hebrew"
 msgstr "希伯来语"
-
-#: src/features/settings/root.tsx
-msgid "Help & docs"
-msgstr "帮助和文档"
 
 #: src/features/career/workspace/coach-starters.ts
 msgid "Help me prepare for a first call"
@@ -8139,6 +8179,10 @@ msgstr "将文件控制在 2.5 MB 以内，通常可通过移除或缩小图片�
 msgid "Keep mine"
 msgstr "保留我的"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Keep my codes"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr "保留在一页上"
@@ -8146,6 +8190,10 @@ msgstr "保留在一页上"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "在这里记录关于这份简历的私人备注。其他人看不到。"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Keep provider"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep resume content as real text rather than as pictures of text."
@@ -8306,6 +8354,10 @@ msgstr "语言"
 #: src/libs/resume/section.tsx
 msgid "Languages"
 msgstr "语言"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Last active {active}"
+msgstr ""
 
 #. placeholder {0}: monthYear(new Date(password.updatedAt))
 #: src/features/settings/account/security.tsx
@@ -8884,6 +8936,10 @@ msgstr ""
 msgid "Locked. I can answer questions; unlock to get edits."
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+msgid "Locked. Unlock it to rename, tag or move it to Trash."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "锁定。解锁即可编辑。"
@@ -8944,6 +9000,10 @@ msgstr "主导航"
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
+msgstr ""
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Make a new set if you've used them up or lost them. The old ones stop working."
 msgstr ""
 
 #: src/features/homepage/design.tsx
@@ -9566,6 +9626,10 @@ msgstr "全新 API 钥匙"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New application"
 msgstr "新申请"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "New backup codes"
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
@@ -10913,6 +10977,7 @@ msgstr ""
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/account/security.tsx
 msgid "Password"
 msgstr "密码"
@@ -11764,6 +11829,7 @@ msgstr "Re: 高级产品设计师"
 msgid "Reactive Resume - Go to homepage"
 msgstr "Reactive Resume - 返回首页"
 
+#: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
 msgstr "Reactive Resume {__APP_VERSION__} · MIT"
@@ -12464,7 +12530,7 @@ msgstr ""
 
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "报告问题"
 
@@ -13010,6 +13076,10 @@ msgid "Same you. Less starting over."
 msgstr "还是您，少些从头再来。"
 
 #: src/features/documents/use-start-document.ts
+msgid "Sample resume"
+msgstr ""
+
+#: src/features/documents/use-start-document.ts
 msgid "Sample resume added. Delete it anytime."
 msgstr "添加了简历样本。随时删除。"
 
@@ -13144,6 +13214,10 @@ msgstr ""
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "保存这些录用条件以进行比较"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Save these somewhere safe. Each works once, and they won't be shown again."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -13783,6 +13857,7 @@ msgid "Set the document language when exporting."
 msgstr "导出时设置文档语言。"
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Set up AI"
 msgstr "设置 AI"
 
@@ -14124,9 +14199,14 @@ msgstr "使用您的指纹、面部或设备 PIN 码登录"
 
 #. User menu action to sign out of current account
 #: src/features/settings/account/page.tsx
+#: src/features/settings/account/sessions.tsx
 #: src/features/user/dropdown-menu.tsx
 msgid "Sign out"
 msgstr "退出登录"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Sign out of {name}"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Sign out of all other devices"
@@ -14153,6 +14233,10 @@ msgstr "结束语"
 #: src/features/auth/pages/consent.tsx
 msgid "Signed in as {email}"
 msgstr "已登录为 {email}"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Signed out of that device."
+msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
@@ -14326,10 +14410,6 @@ msgstr "有些文字被旋转了。"
 msgid "Someone asked to change your {appName} email from {previousEmail} to {newEmail}."
 msgstr ""
 
-#: src/libs/error-message.ts
-msgid "Something went wrong. Please try again."
-msgstr "出了点问题。请重试。"
-
 #: src/features/documents/documents-page.tsx
 msgid "Sort"
 msgstr "种类"
@@ -14342,7 +14422,7 @@ msgstr "按日期排序"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/facts.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Source"
 msgstr "来源"
 
@@ -15161,6 +15241,11 @@ msgstr "该文件太大，无法检查。 PDFs 最多可与 25 个 MB 一起工�
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "密码不正确。请向简历所有者确认后重试。"
 
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
+msgid "That password isn't right. Try again or reset it."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to another account. Use a different provider account."
 msgstr "该提供商账户已关联到另一个账户。请使用其他提供商账户。"
@@ -15815,6 +15900,10 @@ msgstr "这是一个 XFA 表单，大多数软件只能读取到空壳。"
 msgid "This is not a common resume page size."
 msgstr "这不是简历常用的页面尺寸。"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "This JSON isn't a Reactive Resume or JSON Resume file."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "此字母与“{resumeName}”为两个PDFs，命名相匹配。"
@@ -16183,7 +16272,7 @@ msgstr "正在使用 {model} 转写…"
 msgid "Transcript copied"
 msgstr "复制成绩单"
 
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "翻译"
 
@@ -16476,6 +16565,10 @@ msgstr "University of Porto"
 msgid "Unknown"
 msgstr "未知"
 
+#: src/features/settings/account/sessions.tsx
+msgid "Unknown device"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Unlink"
 msgstr "取消链接"
@@ -16498,10 +16591,6 @@ msgstr "解锁"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Unlock editing"
 msgstr "解锁编辑"
-
-#: src/features/documents/document-actions.tsx
-msgid "Unlock it first"
-msgstr "先解锁吧"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "unnamed key"

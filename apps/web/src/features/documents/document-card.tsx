@@ -38,7 +38,8 @@ function useDocumentMeta(document: DocumentSummary) {
 	const type = document.type === "resume" ? t`Resume` : t`Letter`;
 	if (document.trashedAt)
 		return plural(daysLeftInTrash(document.trashedAt), { one: `${type} · # day left`, other: `${type} · # days left` });
-	return t`${type} · Edited ${formatRelativeTime(document.editedAt, i18n.locale)}`;
+	// Short, so the card's narrow meta line shows the whole time instead of "Edited 20 minutes a…".
+	return t`${type} · Edited ${formatRelativeTime(document.editedAt, i18n.locale, "short")}`;
 }
 
 /** Opens the document in its editor: resumes and letters share the editor shell. */
@@ -186,7 +187,8 @@ export function DocumentCard({
 					<article
 						style={introIndex === undefined ? undefined : stagger(introIndex)}
 						className={cn(
-							"group/card grid gap-2",
+							// content-start: a neighbour's extra application line doesn't push this card's title down.
+							"group/card grid content-start gap-2",
 							introIndex !== undefined && ENTER_CLASS,
 							isNew && "animate-arrive",
 							document.trashedAt && "opacity-70",
@@ -213,7 +215,8 @@ export function DocumentCard({
 						) : (
 							<LetterThumbnail name={document.name} recipient={document.recipient} />
 						)}
-						<span className="absolute start-2 top-2 flex gap-1">
+						{/* Bottom of the paper: its top is where every template prints the person's name. */}
+						<span className="absolute start-2 bottom-2 flex gap-1">
 							{isNew && (
 								<span className="rounded bg-accent px-1.5 text-[11px] leading-[18px] font-semibold text-on-accent">
 									<Trans>New</Trans>
@@ -379,7 +382,14 @@ export function DocumentRow({
 								</span>
 							</span>
 						)}
-						{document.isLocked && <Icon name="lock" size={16} className="shrink-0 text-ink-3" />}
+						{document.isLocked && (
+							<span title={t`Locked`} className="flex shrink-0 items-center">
+								<Icon name="lock" size={16} className="text-ink-3" />
+								<span className="sr-only">
+									<Trans>Locked</Trans>
+								</span>
+							</span>
+						)}
 					</span>
 				</td>
 				<td className="px-2 text-sm text-ink-2 max-sm:hidden">

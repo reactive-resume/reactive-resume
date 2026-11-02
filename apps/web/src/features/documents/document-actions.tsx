@@ -125,17 +125,16 @@ export function useDocumentActions() {
 		copyForJob: (document: DocumentSummary) =>
 			openDialog("document.new", { step: "copy", sourceResumeId: document.id }),
 
+		// The menu that called this unmounts on select, and a mutation's per-call callbacks with it: catch the promise.
 		setLocked: (document: DocumentSummary, isLocked: boolean) =>
-			setLocked.mutate(
-				{ ...ref(document), isLocked },
-				{
-					onError: (error) =>
-						toastError(
-							error,
-							isLocked ? t`Couldn't lock the document. Try again.` : t`Couldn't unlock the document. Try again.`,
-						),
-				},
-			),
+			void setLocked
+				.mutateAsync({ ...ref(document), isLocked })
+				.catch((error: unknown) =>
+					toastError(
+						error,
+						isLocked ? t`Couldn't lock the document. Try again.` : t`Couldn't unlock the document. Try again.`,
+					),
+				),
 
 		/** Undoable, so it doesn't ask first. */
 		trash: async (document: DocumentSummary) => {
@@ -478,15 +477,16 @@ export function DocumentMenuContent({
 
 	return (
 		<Content align="end" className="w-60">
+			{/* Visible, not a tooltip: keyboard and touch users never see a title. */}
+			{entries.some((entry) => entry.disabled) && (
+				<p className="px-2 pt-1 pb-1.5 text-xs text-ink-3">
+					<Trans>Locked. Unlock it to rename, tag or move it to Trash.</Trans>
+				</p>
+			)}
 			{entries.map((entry) => (
 				<div key={entry.label} className="contents">
 					{entry.danger && <Separator />}
-					<Item
-						variant={entry.danger ? "destructive" : "default"}
-						disabled={entry.disabled}
-						onClick={entry.onSelect}
-						title={entry.disabled ? t`Unlock it first` : undefined}
-					>
+					<Item variant={entry.danger ? "destructive" : "default"} disabled={entry.disabled} onClick={entry.onSelect}>
 						<Icon name={entry.icon} />
 						{entry.label}
 					</Item>
@@ -569,7 +569,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 						)}
 					</DialogDescription>
 				</DialogHeader>
-				<ChipInput value={tags ?? shared} onChange={setTags} />
+				<ChipInput value={tags ?? shared} onChange={setTags} placeholder={t`Add a tag…`} />
 				<DialogFooter>
 					<Button onClick={() => void save()} disabled={setDocumentTags.isPending}>
 						<Trans>Save tags</Trans>

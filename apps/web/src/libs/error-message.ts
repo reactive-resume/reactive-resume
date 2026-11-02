@@ -91,7 +91,7 @@ export function getResumeErrorMessage(error: unknown): string {
 			RESUME_LOCKED: t`This resume is locked. Unlock it to make changes.`,
 			INVALID_SLUG: `${t`Use at most 64 characters.`} ${t`The address must contain only Latin letters a–z and numbers, separated by single dashes.`}`,
 		},
-		fallback: t`Something went wrong. Please try again.`,
+		fallback: t`Couldn't save your changes. Try again.`,
 	});
 }
 

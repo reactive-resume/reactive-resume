@@ -135,10 +135,13 @@ async function documentFacets(database: DbOrTx, input: ListInput) {
 		.from(rows)
 		.where(predicate(rows, input, false))
 		.groupBy(rows.type);
-	// Tag discovery follows search, not the current page/type/tag selection. Search can find any tag.
+	// Tag discovery follows search and the type tab, not the current page or tag selection: on Letters, a tag only
+	// resumes carry would filter to nothing.
+	const ofType = input.type !== "all" ? eq(rows.type, input.type) : undefined;
 	const tagRows = database
 		.select({ tag: sql<string>`unnest(${rows.tags})`.as("tag") })
 		.from(rows)
+		.where(ofType)
 		.as("document_tags");
 	const tags = await database
 		.selectDistinct({ tag: tagRows.tag })
@@ -151,7 +154,11 @@ async function documentFacets(database: DbOrTx, input: ListInput) {
 		)
 		.orderBy(sql`tag`)
 		.limit(100);
-	const publicRows = await database.select({ id: rows.id }).from(rows).where(eq(rows.isPublic, true)).limit(1);
+	const publicRows = await database
+		.select({ id: rows.id })
+		.from(rows)
+		.where(and(eq(rows.isPublic, true), ofType))
+		.limit(1);
 	return {
 		counts: {
 			resume: counts.find((row) => row.type === "resume")?.total ?? 0,

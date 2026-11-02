@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/compone
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { getInitials } from "@reactive-resume/utils/string";
 import { SignOutButton } from "./account/page";
+import { getProjectLinks } from "./project-links";
 import { PageHeader } from "@/components/layout/page-header";
 import { useTheme } from "@/features/theme/provider";
 import { orpc } from "@/libs/orpc/client";
@@ -82,14 +83,22 @@ export function SettingsRoot() {
 				</Link>
 			</nav>
 
-			<a
-				href="https://docs.rxresu.me"
-				target="_blank"
-				rel="noopener noreferrer"
-				className="flex h-12 items-center rounded-lg border border-line bg-surface px-3.5 font-medium transition-colors duration-quick ease-enter active:bg-press"
+			{/* The desktop footer's links, as rows: each opens outside the app. */}
+			<nav
+				aria-label={t`About Reactive Resume`}
+				className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface"
 			>
-				<Trans>Help & docs</Trans>
-			</a>
+				{getProjectLinks().map((link) => (
+					<a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={rowClass}>
+						<Icon name={link.icon} size={22} className="text-ink-2" />
+						<span className="flex-1">{link.label}</span>
+						<Icon name="arrow-square-out" size={20} className="text-ink-3" />
+					</a>
+				))}
+			</nav>
+			<p className="text-center text-xs text-ink-3">
+				<Trans>Reactive Resume {__APP_VERSION__} · MIT</Trans>
+			</p>
 			<SignOutButton />
 		</div>
 	);

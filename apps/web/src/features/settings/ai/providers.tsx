@@ -586,6 +586,7 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 								!(await confirm(t`Delete “${provider.label}”?`, {
 									description: t`Its saved key is deleted. Conversations using it need another provider.`,
 									confirmText: t`Delete provider`,
+									cancelText: t`Keep provider`,
 									variant: "danger",
 								}))
 							)

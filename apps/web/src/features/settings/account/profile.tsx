@@ -291,14 +291,9 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 								</Trans>
 							) : // A verified address approves the change first; an unverified one confirms the new address only.
 							user.emailVerified ? (
-								<Trans>
-									Changing it asks your current address to approve, then confirms the new one. Your username is part of
-									every public link.
-								</Trans>
+								<Trans>Changing it asks your current address to approve, then confirms the new one.</Trans>
 							) : (
-								<Trans>
-									Changing it sends a confirmation to the new address. Your username is part of every public link.
-								</Trans>
+								<Trans>Changing it sends a confirmation to the new address.</Trans>
 							)}{" "}
 							{user.emailVerified ? null : smtpEnabled ? (
 								<button

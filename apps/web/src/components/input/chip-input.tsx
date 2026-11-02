@@ -155,6 +155,8 @@ type Props = Omit<React.ComponentProps<"div">, "value" | "onChange"> & {
 	defaultValue?: string[];
 	onChange?: (value: string[]) => void;
 	allowCommas?: boolean;
+	/** The empty field's hint; keywords by default. Document tags say "Add a tag…". */
+	placeholder?: string;
 };
 
 export function ChipInput({
@@ -163,6 +165,7 @@ export function ChipInput({
 	onChange,
 	className,
 	allowCommas = false,
+	placeholder,
 	id: idProp,
 	"aria-describedby": ariaDescribedByProp,
 	"aria-invalid": ariaInvalidProp,
@@ -351,7 +354,7 @@ export function ChipInput({
 								aria-labelledby={labelId}
 								aria-describedby={describedBy}
 								aria-invalid={invalid}
-								placeholder={isEditingKeyword ? t`Editing keyword...` : t`Add a keyword...`}
+								placeholder={isEditingKeyword ? t`Editing keyword...` : (placeholder ?? t`Add a keyword...`)}
 								onKeyDown={handleKeyDown}
 								onChange={handleInputChange}
 								className="h-9 flex-1 border-none p-0 focus-visible:border-none focus-visible:ring-0 dark:bg-transparent"

@@ -18,8 +18,9 @@ type CreateResumeDataOptions = {
 export function createResumeData(options: CreateResumeDataOptions): ResumeData {
 	const data = structuredClone(options.withSampleData ? sampleResumeData : defaultResumeData);
 
+	// A sample keeps its fictional person: printing the account's name (or "Guest") on someone else's career misleads.
 	const name = options.name?.trim();
-	if (name) data.basics.name = name;
+	if (name && !options.withSampleData) data.basics.name = name;
 	// A sample keeps its own fictional contact details.
 	const email = options.email?.trim();
 	if (email && !options.withSampleData) data.basics.email = email;

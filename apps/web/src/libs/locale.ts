@@ -91,17 +91,19 @@ export const resolveLocale = (locale: string): Locale => {
 // Changing the locale reloads the page (`changeLocale`), so one formatter per locale is enough.
 const relativeTimeFormatters = new Map<string, Intl.RelativeTimeFormat>();
 
-function getRelativeTimeFormatter(locale: string) {
-	let formatter = relativeTimeFormatters.get(locale);
+function getRelativeTimeFormatter(locale: string, style: Intl.RelativeTimeFormatStyle = "long") {
+	const key = `${locale}:${style}`;
+	let formatter = relativeTimeFormatters.get(key);
 	if (!formatter) {
-		formatter = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
-		relativeTimeFormatters.set(locale, formatter);
+		formatter = new Intl.RelativeTimeFormat(locale, { numeric: "auto", style });
+		relativeTimeFormatters.set(key, formatter);
 	}
 	return formatter;
 }
 
-export function formatRelativeTime(value: Date | string, locale: string) {
-	const formatter = getRelativeTimeFormatter(locale);
+/** "20 minutes ago"; with `short`, "20 min. ago", for narrow places such as a document card. */
+export function formatRelativeTime(value: Date | string, locale: string, style: Intl.RelativeTimeFormatStyle = "long") {
+	const formatter = getRelativeTimeFormatter(locale, style);
 	const date = value instanceof Date ? value : new Date(value);
 	const diffMs = date.getTime() - Date.now();
 	if (Number.isNaN(diffMs)) return formatter.format(0, "second");

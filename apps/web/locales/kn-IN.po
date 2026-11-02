@@ -642,6 +642,10 @@ msgstr "{authored, plural, =1 {ಒಂದು ಪುಟದಲ್ಲಿ ಹೊಂ�
 msgid "{base} (copy)"
 msgstr "{base} (ನಕಲು)"
 
+#: src/features/settings/account/sessions.tsx
+msgid "{browser} on {system}"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr "{characters, plural, one {# ಅಕ್ಷರ} other {# ಅಕ್ಷರಗಳು}}"
@@ -885,6 +889,10 @@ msgstr "{minutes} ನಿಮಿಷ"
 msgid "{monthCount, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthCount, plural, =0 {ಸಂದರ್ಶನಗಳಿಲ್ಲ} one {# ಸಂದರ್ಶನ} other {# ಸಂದರ್ಶನಗಳು}}"
 
+#: src/features/settings/account/sessions.tsx
+msgid "{name} · this device"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} ಅನ್ನು ಪುಟ 1 ಗೆ ಸೇರಿಸಲಾಗಿದೆ"
@@ -1055,7 +1063,7 @@ msgstr ""
 msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
 msgstr ""
 
-#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale, "short")
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr "{type} · ಸಂಪಾದಿಸಲಾಗಿದೆ {0}"
@@ -1399,6 +1407,10 @@ msgstr "ಈ ಅಪ್ಲಿಕೇಶನ್ ಬಗ್ಗೆ"
 msgid "About 90 seconds when spoken"
 msgstr "ಮಾತನಾಡಿದಾಗ ಸುಮಾರು 90 ಸೆಕೆಂಡುಗಳು"
 
+#: src/features/settings/root.tsx
+msgid "About Reactive Resume"
+msgstr ""
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Accent"
 msgstr "ಹೈಲೈಟ್"
@@ -1628,6 +1640,10 @@ msgstr "ಟ್ಯಾಗ್ ಸೇರಿಸಿ"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Add a tag and press Enter…"
 msgstr "ಟ್ಯಾಗ್ ಸೇರಿಸಿ ಮತ್ತು Enter ಒತ್ತಿ…"
+
+#: src/features/documents/document-actions.tsx
+msgid "Add a tag…"
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Add AI provider"
@@ -2856,7 +2872,12 @@ msgstr "ಹಿನ್ನೆಲೆ ಬಣ್ಣ"
 msgid "Backup code"
 msgstr "ಬ್ಯಾಕಪ್ ಕೋಡ್"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Backup codes"
+msgstr ""
+
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Backup codes copied"
 msgstr "ಬ್ಯಾಕಪ್ ಕೋಡ್‌ಗಳನ್ನು ನಕಲಿಸಲಾಗಿದೆ"
 
@@ -3278,12 +3299,12 @@ msgid "Changes since {0}"
 msgstr ""
 
 #: src/features/settings/account/profile.tsx
-msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
-msgstr "ಅದನ್ನು ಬದಲಾಯಿಸಿದಾಗ ಮೊದಲು ನಿಮ್ಮ ಪ್ರಸ್ತುತ ವಿಳಾಸದ ಅನುಮೋದನೆ ಕೇಳಲಾಗುತ್ತದೆ, ನಂತರ ಹೊಸದನ್ನು ದೃಢೀಕರಿಸಲಾಗುತ್ತದೆ. ನಿಮ್ಮ ಬಳಕೆದಾರಹೆಸರು ಪ್ರತಿ ಸಾರ್ವಜನಿಕ ಲಿಂಕ್‌ನ ಭಾಗವಾಗಿದೆ."
+msgid "Changing it asks your current address to approve, then confirms the new one."
+msgstr "ಅದನ್ನು ಬದಲಾಯಿಸಿದಾಗ ಮೊದಲು ನಿಮ್ಮ ಪ್ರಸ್ತುತ ವಿಳಾಸದ ಅನುಮೋದನೆ ಕೇಳಲಾಗುತ್ತದೆ, ನಂತರ ಹೊಸದನ್ನು ದೃಢೀಕರಿಸಲಾಗುತ್ತದೆ."
 
 #: src/features/settings/account/profile.tsx
-msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
-msgstr "ಅದನ್ನು ಬದಲಾಯಿಸುವುದು ಹೊಸ ವಿಳಾಸಕ್ಕೆ ದೃಢೀಕರಣವನ್ನು ಕಳುಹಿಸುತ್ತದೆ. ನಿಮ್ಮ ಬಳಕೆದಾರಹೆಸರು ಪ್ರತಿ ಸಾರ್ವಜನಿಕ ಲಿಂಕ್‌ನ ಭಾಗವಾಗಿದೆ."
+msgid "Changing it sends a confirmation to the new address."
+msgstr "ಅದನ್ನು ಬದಲಾಯಿಸುವುದು ಹೊಸ ವಿಳಾಸಕ್ಕೆ ದೃಢೀಕರಣವನ್ನು ಕಳುಹಿಸುತ್ತದೆ."
 
 #: src/features/settings/ai/providers.tsx
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
@@ -3623,6 +3644,7 @@ msgstr "ಫಾರ್ಮ್ಯಾಟಿಂಗ್ ಅನ್ನು ತೆರವು�
 msgid "Clear resume"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Clear search"
 msgstr "ಹುಡುಕಾಟವನ್ನು ತೆರವುಗೊಳಿಸಿ"
@@ -3688,6 +3710,7 @@ msgstr "ಗ್ರಾಹಕ ID"
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/resume/stylesheet/editor.tsx
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/ai/providers.tsx
@@ -4161,6 +4184,7 @@ msgstr "ಉತ್ತರಗಳನ್ನು ನಕಲಿಸಿ"
 
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Copy codes"
 msgstr "ಕೋಡ್‌ಗಳನ್ನು ನಕಲಿಸಿ"
 
@@ -4470,10 +4494,6 @@ msgstr "ಆಮದು ಮಾಡಿಕೊಳ್ಳಲು ಸಾಧ್ಯವಾಗ�
 msgid "Couldn't import the file. Try again from Documents."
 msgstr "ಫೈಲ್ ಅನ್ನು ಆಮದು ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳಿಂದ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
-#: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't import the file. Try again, or start blank."
-msgstr "ಫೈಲ್ ಆಮದು ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಖಾಲಿಯಿಂದ ಪ್ರಾರಂಭಿಸಿ."
-
 #: src/features/auth/pages/error.tsx
 msgid "Couldn't link that provider account. Try again."
 msgstr "ಆ ಪೂರೈಕೆದಾರ ಖಾತೆಯನ್ನು ಲಿಂಕ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
@@ -4554,6 +4574,10 @@ msgstr ""
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't lock the document. Try again."
 msgstr "ದಾಖಲೆಯನ್ನು ಲಾಕ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Couldn't make new codes. Try again."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't make this provider the default. Try again."
@@ -4782,6 +4806,7 @@ msgid "Couldn't save your changes. Try again before continuing."
 msgstr "ನಿಮ್ಮ ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮುಂದುವರಿಯುವ ಮೊದಲು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/libs/error-message.ts
 msgid "Couldn't save your changes. Try again."
 msgstr "ನಿಮ್ಮ ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
@@ -4848,6 +4873,10 @@ msgstr "ಮುನ್ನೋಟವನ್ನು ತೋರಿಸಲು ಸಾಧ್�
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
 msgstr "ಸೈನ್ ಇನ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+
+#: src/features/settings/account/sessions.tsx
+msgid "Couldn't sign out of that device. Try again."
+msgstr ""
 
 #. Fallback toast when signing out fails
 #: src/features/settings/account/page.tsx
@@ -5612,6 +5641,11 @@ msgstr "ಬೇರೆ ಕರೆನ್ಸಿ, ಹೋಲಿಸಲಾಗಿಲ್ಲ
 msgid "Different pay period, not compared"
 msgstr "ಬೇರೆ ವೇತನ ಅವಧಿ, ಹೋಲಿಸಲಾಗಿಲ್ಲ"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Digit {position} of {total}"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Discard"
 msgstr "ತಿರಸ್ಕರಿಸು"
@@ -5670,7 +5704,7 @@ msgstr ""
 msgid "Do not share a resume"
 msgstr ""
 
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Docs"
 msgstr "ದಾಖಲೆಗಳು"
 
@@ -5737,11 +5771,12 @@ msgstr ""
 
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Donate"
 msgstr "ದಾನ ಮಾಡಿ"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
 msgstr "ಮುಗಿದಿದೆ"
@@ -5786,6 +5821,7 @@ msgstr ""
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Download codes"
 msgstr "ಕೋಡ್‌ಗಳನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ"
 
@@ -5937,7 +5973,7 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "ಮರುಸ್ಥಾನಗೊಳಿಸಲು ಎಳೆಯಿರಿ ಮತ್ತು ಅಪ್‌ಲೋಡ್ ಮಾಡುವ ಮೊದಲು ಜೂಮ್ ಮಾಡಲು ಸ್ಲೈಡರ್ ಬಳಸಿ."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume, JSON Resume or a LinkedIn export (.zip). Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6384,6 +6420,10 @@ msgstr "ಕೆಳಗೆ ನಿಮ್ಮ ವಿವರಗಳನ್ನು ನಮೂ
 #: src/features/auth/pages/register.tsx
 msgid "Enter your name."
 msgstr "ನಿಮ್ಮ ಹೆಸರನ್ನು ನಮೂದಿಸಿ."
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Enter your password to replace your backup codes. Codes you saved before stop working."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enter your password to set up two-step verification. Once it's on, you need a code from your authenticator app every time you sign in."
@@ -7068,6 +7108,10 @@ msgstr "ಪೂರ್ಣ ಅಗಲ"
 msgid "Generate a random name"
 msgstr "ಯಾದೃಚ್ಛಿಕ ಹೆಸರನ್ನು ತಯಾರಿಸಿ"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Generate new codes"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -7277,10 +7321,6 @@ msgstr "ಮತ್ತೆ ಕೇಳಿದ"
 #: src/libs/locale.ts
 msgid "Hebrew"
 msgstr "ಹೀಬ್ರೂ"
-
-#: src/features/settings/root.tsx
-msgid "Help & docs"
-msgstr "ಸಹಾಯ ಮತ್ತು ಡಾಕ್ಸ್"
 
 #: src/features/career/workspace/coach-starters.ts
 msgid "Help me prepare for a first call"
@@ -8139,6 +8179,10 @@ msgstr "ಸಾಮಾನ್ಯವಾಗಿ ಚಿತ್ರಗಳನ್ನು ತ�
 msgid "Keep mine"
 msgstr "ನನ್ನದನ್ನು ಇಟ್ಟುಕೊಳ್ಳಿ"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Keep my codes"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr "ಒಂದು ಪುಟದಲ್ಲಿ ಇರಿಸಿ"
@@ -8146,6 +8190,10 @@ msgstr "ಒಂದು ಪುಟದಲ್ಲಿ ಇರಿಸಿ"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "ಈ ರೆಸ್ಯೂಮ್ ಬಗ್ಗೆ ಖಾಸಗಿ ಟಿಪ್ಪಣಿಗಳನ್ನು ಇಲ್ಲಿ ಇಟ್ಟುಕೊಳ್ಳಿ. ಅವನ್ನು ಬೇರೆ ಯಾರೂ ನೋಡಲಾರರು."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Keep provider"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep resume content as real text rather than as pictures of text."
@@ -8306,6 +8354,10 @@ msgstr "ಭಾಷೆ"
 #: src/libs/resume/section.tsx
 msgid "Languages"
 msgstr "ಭಾಷೆಗಳು"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Last active {active}"
+msgstr ""
 
 #. placeholder {0}: monthYear(new Date(password.updatedAt))
 #: src/features/settings/account/security.tsx
@@ -8884,6 +8936,10 @@ msgstr ""
 msgid "Locked. I can answer questions; unlock to get edits."
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+msgid "Locked. Unlock it to rename, tag or move it to Trash."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "ಲಾಕ್ ಮಾಡಲಾಗಿದೆ. ಸಂಪಾದಿಸಲು ಅನ್‌ಲಾಕ್ ಮಾಡಿ."
@@ -8944,6 +9000,10 @@ msgstr "ಮುಖ್ಯ ನ್ಯಾವಿಗೇಶನ್"
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
+msgstr ""
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Make a new set if you've used them up or lost them. The old ones stop working."
 msgstr ""
 
 #: src/features/homepage/design.tsx
@@ -9566,6 +9626,10 @@ msgstr "ಹೊಸ API ಕೀ"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New application"
 msgstr "ಹೊಸ ಅರ್ಜಿ"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "New backup codes"
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
@@ -10913,6 +10977,7 @@ msgstr ""
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/account/security.tsx
 msgid "Password"
 msgstr "ಗುಪ್ತಪದ"
@@ -11764,6 +11829,7 @@ msgstr "Re: Senior Product Designer"
 msgid "Reactive Resume - Go to homepage"
 msgstr "Reactive Resume - ಮುಖ್ಯ ಪುಟಕ್ಕೆ ಹೋಗಿ"
 
+#: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
 msgstr "Reactive Resume {__APP_VERSION__} · MIT"
@@ -12464,7 +12530,7 @@ msgstr ""
 
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "ದೋಷ ವರದಿ ಮಾಡಿ"
 
@@ -13010,6 +13076,10 @@ msgid "Same you. Less starting over."
 msgstr "ಅದೇ ನೀವು. ಮತ್ತೆ ಮೊದಲಿನಿಂದ ಶುರು ಮಾಡುವುದು ಕಡಿಮೆ."
 
 #: src/features/documents/use-start-document.ts
+msgid "Sample resume"
+msgstr ""
+
+#: src/features/documents/use-start-document.ts
 msgid "Sample resume added. Delete it anytime."
 msgstr "ಮಾದರಿ ರೆಸ್ಯೂಮೆ ಸೇರಿಸಲಾಗಿದೆ. ಅದನ್ನು ಯಾವಾಗ ಬೇಕಾದರೂ ಅಳಿಸಿ."
 
@@ -13144,6 +13214,10 @@ msgstr ""
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "ಹೋಲಿಸಲು ಈ ಆಫರ್ ನಿಯಮಗಳನ್ನು ಉಳಿಸಿ"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Save these somewhere safe. Each works once, and they won't be shown again."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -13783,6 +13857,7 @@ msgid "Set the document language when exporting."
 msgstr "ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡುವಾಗ ಡಾಕ್ಯುಮೆಂಟ್ ಭಾಷೆಯನ್ನು ಹೊಂದಿಸಿ."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Set up AI"
 msgstr "AI ಹೊಂದಿಸಿ"
 
@@ -14124,9 +14199,14 @@ msgstr "ನಿಮ್ಮ ಫಿಂಗರ್‌ಪ್ರಿಂಟ್, ಮುಖ �
 
 #. User menu action to sign out of current account
 #: src/features/settings/account/page.tsx
+#: src/features/settings/account/sessions.tsx
 #: src/features/user/dropdown-menu.tsx
 msgid "Sign out"
 msgstr "ಸೈನ್ ಔಟ್"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Sign out of {name}"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Sign out of all other devices"
@@ -14153,6 +14233,10 @@ msgstr "ಸಮಾರೋಪ"
 #: src/features/auth/pages/consent.tsx
 msgid "Signed in as {email}"
 msgstr "{email} ಎಂದು ಸೈನ್ ಇನ್ ಮಾಡಲಾಗಿದೆ"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Signed out of that device."
+msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
@@ -14326,10 +14410,6 @@ msgstr "ಕೆಲವು ಪಠ್ಯ ತಿರುಗಿಸಲ್ಪಟ್ಟಿ�
 msgid "Someone asked to change your {appName} email from {previousEmail} to {newEmail}."
 msgstr ""
 
-#: src/libs/error-message.ts
-msgid "Something went wrong. Please try again."
-msgstr "ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
-
 #: src/features/documents/documents-page.tsx
 msgid "Sort"
 msgstr "ವಿಂಗಡಿಸಿ"
@@ -14342,7 +14422,7 @@ msgstr "ದಿನಾಂಕದ ಪ್ರಕಾರ ವಿಂಗಡಿಸಿ"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/facts.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Source"
 msgstr "ಮೂಲ"
 
@@ -15161,6 +15241,11 @@ msgstr "ಆ ಫೈಲ್ ಪರಿಶೀಲಿಸಲು ತುಂಬಾ ದೊ�
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "ಆ ಪಾಸ್‌ವರ್ಡ್ ಸರಿಯಾಗಿಲ್ಲ. ರೆಸ್ಯೂಮ್ ಮಾಲೀಕರೊಂದಿಗೆ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
+msgid "That password isn't right. Try again or reset it."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to another account. Use a different provider account."
 msgstr "ಆ ಪೂರೈಕೆದಾರ ಖಾತೆಯನ್ನು ಈಗಾಗಲೇ ಇನ್ನೊಂದು ಖಾತೆಗೆ ಲಿಂಕ್ ಮಾಡಲಾಗಿದೆ. ಬೇರೆ ಪೂರೈಕೆದಾರ ಖಾತೆಯನ್ನು ಬಳಸಿ."
@@ -15815,6 +15900,10 @@ msgstr "ಇದು XFA ಫಾರ್ಮ್ ಆಗಿದೆ, ಆದ್ದರಿಂ�
 msgid "This is not a common resume page size."
 msgstr "ಇದು ಸಾಮಾನ್ಯ ರೆಸ್ಯೂಮೆ ಪುಟದ ಗಾತ್ರವಲ್ಲ."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "This JSON isn't a Reactive Resume or JSON Resume file."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "ಈ ಅಕ್ಷರ ಮತ್ತು \"{resumeName}\" ಎರಡು PDFs, ಹೊಂದಿಕೆಯಾಗುವಂತೆ ಹೆಸರಿಸಲಾಗಿದೆ."
@@ -16183,7 +16272,7 @@ msgstr "{model} ನೊಂದಿಗೆ ಪ್ರತಿಲೇಖಿಸಲಾಗು
 msgid "Transcript copied"
 msgstr "ಪ್ರತಿಲಿಪಿಯನ್ನು ನಕಲಿಸಲಾಗಿದೆ"
 
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "ಅನುವಾದಿಸಿ"
 
@@ -16476,6 +16565,10 @@ msgstr "University of Porto"
 msgid "Unknown"
 msgstr "ತಿಳಿದಿಲ್ಲ"
 
+#: src/features/settings/account/sessions.tsx
+msgid "Unknown device"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Unlink"
 msgstr "ಅನ್‌ಲಿಂಕ್ ಮಾಡಿ"
@@ -16498,10 +16591,6 @@ msgstr "ಅನ್‌ಲಾಕ್ ಮಾಡಿ"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Unlock editing"
 msgstr "ಸಂಪಾದನೆಯನ್ನು ಅನ್ಲಾಕ್ ಮಾಡಿ"
-
-#: src/features/documents/document-actions.tsx
-msgid "Unlock it first"
-msgstr "ಮೊದಲು ಅದನ್ನು ಅನ್ಲಾಕ್ ಮಾಡಿ"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "unnamed key"

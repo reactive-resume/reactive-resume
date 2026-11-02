@@ -8,6 +8,8 @@ import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { SettingsRow, SettingsSection } from "../section";
 import { getProviderName, useAuthAccounts, useAuthProviderActions, useEnabledProviders } from "./auth-hooks";
+import { BackupCodesRow } from "./backup-codes";
+import { SessionsRows } from "./sessions";
 import { useDialogStore } from "@/dialogs/store";
 import { useConfirm, usePrompt } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
@@ -67,7 +69,11 @@ export function SecuritySection() {
 				</SettingsRow>
 			)}
 
+			{password && twoFactor && <BackupCodesRow />}
+
 			<Passkeys />
+
+			<SessionsRows />
 
 			{social.map((provider) => {
 				const account = getAccountByProviderId(provider);
