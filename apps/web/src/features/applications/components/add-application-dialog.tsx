@@ -5,7 +5,8 @@ import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -22,7 +23,7 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { isolate } from "@reactive-resume/utils/string";
+import { isolate, pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { formatReadTime } from "@reactive-resume/utils/timezone";
 import { getCategoryLane, getLaneLabel, laneMoveInput } from "../lanes";
@@ -32,6 +33,8 @@ import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { useDialogStore } from "@/dialogs/store";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { useSessionDraft } from "@/features/career/hooks";
+import { defaultCopySource } from "@/features/documents/filter";
+import { useNewDocumentsStore } from "@/features/documents/new-documents";
 import { SetUpWebAccess, testFailureMessage } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -180,7 +183,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const lane = choices.find((item) => item.id === laneId) ?? getCategoryLane(lanes, "saved");
 	const stage = lane.category;
 	const [stageDate, setStageDate] = useState(() => new Date().toLocaleDateString("en-CA"));
-	const [resumeId, setResumeId] = useState("");
+	// A saved job starts on the most recently edited base resume; a submitted one names what was sent, so it starts empty.
+	const [resumeChoice, setResumeId] = useState<string | null>(null);
+	const resumes = documents?.filter((document) => document.type === "resume") ?? [];
+	const resumeId = resumeChoice ?? (stage === "saved" ? (defaultCopySource(resumes)?.id ?? "") : "");
 	const [coverLetterId, setCoverLetterId] = useState("");
 	const [location, setLocation] = keep("location");
 	const [salary, setSalary] = keep("salary");
@@ -193,6 +199,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const { hasUsableProvider } = providerState;
 	const invalidate = useInvalidateApplications();
 	const openDialog = useDialogStore((state) => state.openDialog);
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const markNew = useNewDocumentsStore((state) => state.markNew);
+	const copyForJob = useMutation(orpc.documents.copyForJob.mutationOptions());
 
 	const controller = useRef<AbortController | null>(null);
 	useEffect(() => () => controller.current?.abort(), []);
@@ -305,13 +315,38 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			kept.clear();
 			invalidate();
 			toast.add({ description: t`Added ${isolate(role.trim())} at ${isolate(company.trim())}` });
+			const source = tailor ? resumes.find((resume) => resume.id === resumeId) : undefined;
+			if (source) return await prepare(applicationId, source);
 			onClose();
-			if (tailor)
-				openDialog("document.new", { step: "copy", applicationId, ...(resumeId ? { sourceResumeId: resumeId } : {}) });
+			if (tailor) openDialog("document.new", { step: "copy", applicationId });
 			else onAdded(applicationId);
 		} catch (error) {
 			if (sourceLink) void duplicate.refetch();
 			toastError(error, t`Couldn't add the application. Try again.`);
+		}
+	};
+
+	// With a resume chosen, "Save and prepare resume" makes the copy for this job (named as Copy for a job names it)
+	// and opens it; when that fails, the copy step opens prefilled instead.
+	const prepare = async (applicationId: string, source: (typeof resumes)[number]) => {
+		const base = source.name.split(" — ")[0] ?? source.name;
+		const input = { resumeId: source.id, applicationId, name: `${base} — ${company.trim()}`.slice(0, 100) };
+		const key = `copy-for-job:${JSON.stringify(input)}`;
+		try {
+			const copyId = await copyForJob.mutateAsync({ ...input, newId: pendingRequestId(key) });
+			settleRequestId(key);
+			markNew(copyId);
+			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
+			onClose();
+			void navigate({
+				to: "/builder/$resumeId",
+				params: { resumeId: copyId },
+				search: hasUsableProvider ? { assistant: "new" } : {},
+			});
+		} catch (error) {
+			toastError(error, t`Couldn't copy the resume. Choose it again to prepare it.`);
+			onClose();
+			openDialog("document.new", { step: "copy", applicationId, sourceResumeId: source.id });
 		}
 	};
 
@@ -779,13 +814,11 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
 				>
 					<option value="">{t`No resume selected`}</option>
-					{documents
-						?.filter((document) => document.type === "resume")
-						.map((document) => (
-							<option key={document.id} value={document.id}>
-								{document.name}
-							</option>
-						))}
+					{resumes.map((document) => (
+						<option key={document.id} value={document.id}>
+							{document.name}
+						</option>
+					))}
 				</select>
 			</div>
 			<div className="grid gap-1.5">
@@ -822,7 +855,12 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					{stage === "saved" ? <Trans>Save job</Trans> : <Trans>Record application</Trans>}
 				</Button>
 				{!forPicker && (
-					<Button type="button" disabled={!ready || !!duplicate.data} onClick={() => void add(true)}>
+					<Button
+						type="button"
+						disabled={!ready || !!duplicate.data}
+						loading={copyForJob.isPending}
+						onClick={() => void add(true)}
+					>
 						<Trans>Save and prepare resume</Trans>
 					</Button>
 				)}
@@ -881,14 +919,30 @@ function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadSt
 	}
 	if (parsed?.filledBy === "ai") {
 		return (
-			<p className={cn(base, "text-accent-text")} role="status">
-				<Icon name="check-circle" size={16} className="shrink-0" />
-				<Plural
-					value={parsed.requirements.length}
-					one="Found role, company and # requirement. Review the details before saving."
-					other="Found role, company and # requirements. Review the details before saving."
-				/>
-			</p>
+			<div className="grid gap-1.5">
+				<p className={cn(base, "text-accent-text")} role="status">
+					<Icon name="check-circle" size={16} className="shrink-0" />
+					<Plural
+						value={parsed.requirements.length}
+						one="Found role, company and # requirement. Review the details before saving."
+						other="Found role, company and # requirements. Review the details before saving."
+					/>
+				</p>
+				{parsed.requirements.length > 0 && (
+					<details className="group text-xs">
+						<summary className="w-fit cursor-pointer text-ink-2 hover:text-ink">
+							<Trans>Show what it asks for</Trans>
+						</summary>
+						<ul className="mt-1.5 flex flex-wrap gap-1.5">
+							{parsed.requirements.map((requirement) => (
+								<li key={requirement} className="rounded-md bg-sunken px-2 py-1">
+									{requirement}
+								</li>
+							))}
+						</ul>
+					</details>
+				)}
+			</div>
 		);
 	}
 	if (parsed?.filledBy === "page") {

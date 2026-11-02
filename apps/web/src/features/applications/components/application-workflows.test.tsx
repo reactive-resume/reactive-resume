@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const api = vi.hoisted(() => ({
 	bulkDelete: vi.fn(),
+	copyForJob: vi.fn(),
 	bulkUpdate: vi.fn(),
 	parsePosting: vi.fn(),
 	findPosting: vi.fn(),
@@ -22,7 +23,10 @@ const api = vi.hoisted(() => ({
 	confirm: vi.fn(),
 	moveWithUndo: vi.fn(),
 }));
-vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
+vi.mock("@tanstack/react-router", () => ({
+	useNavigate: () => vi.fn(),
+	useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }),
+}));
 vi.mock("@/libs/orpc/client", () => ({
 	client: { applications: { findPosting: api.findPosting, ai: { parsePosting: api.parsePosting } } },
 	orpc: {
@@ -50,7 +54,11 @@ vi.mock("@/libs/orpc/client", () => ({
 		webAccess: {
 			status: { queryOptions: () => ({ queryKey: ["web-access"], queryFn: async () => ({ search: false }) }) },
 		},
-		documents: { list: { queryOptions: () => ({ queryKey: ["documents"], queryFn: async () => [] }) } },
+		documents: {
+			key: () => ["documents"],
+			list: { queryOptions: () => ({ queryKey: ["documents"], queryFn: async () => [] }) },
+			copyForJob: { mutationOptions: () => ({ mutationFn: api.copyForJob }) },
+		},
 	},
 }));
 vi.mock("../use-application-actions", () => ({
