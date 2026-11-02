@@ -461,6 +461,7 @@ async function storeFact(tx: DbOrTx, userId: string, fact: FactInput) {
 				eq(tables.careerFact.userId, userId),
 				sql`${tables.careerFact.source}->>'kind' = ${source.kind}`,
 				sql`${tables.careerFact.source}->>'id' = ${source.id}`,
+				source.kind === "resume" ? eq(tables.careerFact.sourceKey, sourceKey) : undefined,
 				or(
 					eq(tables.careerFact.status, "forgotten"),
 					eq(tables.careerFact.status, "excluded"),
