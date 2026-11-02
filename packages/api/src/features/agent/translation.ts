@@ -34,15 +34,17 @@ const TEXT_FIELDS = new Set([
 	"raw",
 ]);
 const RICH_FIELDS = new Set(["content", "description"]);
+const NAME_FIELDS = new Set(["name", "company", "school", "organization", "awarder", "issuer", "publisher", "network"]);
 type TranslationField = { id: string; text: string; path: string; start?: number; end?: number };
 type TranslationData = Pick<ResumeData, "basics" | "customSections"> & {
 	summary?: ResumeData["summary"] | undefined;
 	sections: Partial<ResumeData["sections"]>;
 };
 const pointer = (key: string) => key.replaceAll("~", "~0").replaceAll("/", "~1");
-const tooLarge = (fields: TranslationField[]) =>
+const tooLarge = (fields: readonly { text: string }[]) =>
 	fields.length > 500 || fields.reduce((size, field) => size + field.text.length, 0) > 100_000;
 
+/** Rebuild a bounded model view instead of forwarding historical translation-field lists. */
 export function translationView(data: TranslationData, locale: string) {
 	const fields = translationFields(data);
 	return tooLarge(fields)
@@ -133,7 +135,7 @@ export function proposeTranslation(
 	if (input.locale !== data.metadata.page.locale)
 		throw new Error("Choose Translate into… to create a copy in that language first.");
 	const fields = translationFields(data);
-	if (tooLarge(fields))
+	if (tooLarge(fields) || tooLarge(input.fields))
 		throw new Error("This resume is too large to translate in one review. Translate a smaller copy instead.");
 	const supplied = new Map(input.fields.map((field) => [field.id, field]));
 	if (
@@ -160,6 +162,8 @@ export function proposeTranslation(
 			const translated = supplied.get(field.id)?.text;
 			if (translated === undefined) throw new Error("Missing translation field.");
 			if (translated === field.text) continue;
+			// Translated labels may also be proper names; the reviewer confirms those changes explicitly.
+			if (NAME_FIELDS.has(path.split("/").at(-1) ?? "")) unsupported.push({ kind: "term", text: translated });
 			before.push(`${locationOf(path)}\n${field.text}`);
 			after.push(`${locationOf(path)}\n${translated}`);
 			unsupported.push(

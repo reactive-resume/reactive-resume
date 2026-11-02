@@ -110,6 +110,15 @@ test("language copy keeps the source and waits for Send and review before saving
 	expect(saved.data.metadata.notes).toBe("PRIVATE_TRANSLATION_NOTE");
 	expect(JSON.parse(await resumeJson(page, sourceId))).toEqual(source);
 	await expect(page.getByText("Review German translation · 1 of 1 applied", { exact: true })).toBeVisible();
+	await send(page, "Check this language copy name warning.");
+	await expect(edits).toHaveCount(2);
+	const nameChange = edits.last();
+	await expect(nameChange.getByText("New detail: check it's true", { exact: true })).toBeVisible();
+	await expect(nameChange).toContainText("Anna Müller");
+	expect(JSON.parse(await resumeJson(page, copyId)).data.basics.name).toBe("Priya Raman");
+	await nameChange.getByRole("button", { name: "Reject", exact: true }).click();
+	expect(JSON.parse(await resumeJson(page, copyId)).data.basics.name).toBe("Priya Raman");
+	expect(JSON.parse(await resumeJson(page, sourceId))).toEqual(source);
 });
 
 test("history keeps the original opening message beneath its task title without more AI calls", async ({

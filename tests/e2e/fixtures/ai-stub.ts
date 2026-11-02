@@ -224,6 +224,7 @@ function reply(request: ChatRequest, response: ServerResponse) {
 		lastToolName === readTool ? result.data?.passages?.find((item) => item.text && item.text !== "(empty)") : undefined;
 	if (lastToolName === readTool && said.includes("language copy") && result.data?.translationFields) {
 		const translations: Record<string, string> = {
+			"Priya Raman": said.includes("name warning") ? "Anna Müller" : "Priya Raman",
 			"Product designer": "Produktdesignerin",
 			"Build accessible tools.": "Barrierefreie Werkzeuge entwickeln.",
 			Research: "Forschung",

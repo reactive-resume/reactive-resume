@@ -278,7 +278,11 @@ const translationChange = z.strictObject({
 			z.strictObject({
 				id: z.string().min(1).max(500),
 				before: z.string().max(100_000),
-				text: z.string().min(1).max(100_000),
+				text: z
+					.string()
+					.min(1)
+					.max(100_000)
+					.refine((text) => Boolean(text.trim()), "Translated text cannot be blank."),
 			}),
 		)
 		.min(1)

@@ -204,3 +204,70 @@ it("keeps ordinary reading available when a resume exceeds the one-review transl
 		/too large/,
 	);
 });
+
+it("flags changed proper names for explicit confirmation while keeping ordinary wording reviewable", () => {
+	const data = structuredClone(defaultResumeData);
+	data.metadata.page.locale = "de-DE";
+	data.basics.name = "Priya Raman";
+	data.basics.headline = "Designer";
+	for (const name of ["Priya Raman", "Anna Müller"]) {
+		const output = proposeTranslation(
+			data,
+			{
+				locale: "de-DE",
+				why: "Translation",
+				fields: [
+					{ id: "/basics/name", before: "Priya Raman", text: name },
+					{ id: "/basics/headline", before: "Designer", text: "Designerin" },
+				],
+			},
+			"German copy",
+		);
+		expect(output.edits[0]?.addsClaims).toBe(name === "Priya Raman" ? undefined : true);
+	}
+	expect(data.basics.name).toBe("Priya Raman");
+});
+
+it("bounds aggregate replacement text before building a translation snapshot", () => {
+	const data = structuredClone(defaultResumeData);
+	data.metadata.page.locale = "de-DE";
+	data.summary.content = "<p>A</p><p>B</p>";
+	const fields = [
+		{ id: "/summary/content@3:4", before: "A", text: "x".repeat(60_000) },
+		{ id: "/summary/content@11:12", before: "B", text: "y".repeat(60_000) },
+	];
+	expect(() => proposeTranslation(data, { locale: "de-DE", why: "Translation", fields }, "Translation")).toThrow(
+		/too large/,
+	);
+	expect(data.summary.content).toBe("<p>A</p><p>B</p>");
+});
+
+it("localizes Basics locality while preserving email, phone and the source document", () => {
+	const data = structuredClone(defaultResumeData);
+	data.metadata.page.locale = "de-DE";
+	data.basics.location = "Cologne, Germany";
+	data.basics.email = "priya@example.test";
+	data.basics.phone = "+49 123456789";
+	const output = proposeTranslation(
+		data,
+		{
+			locale: "de-DE",
+			why: "Localize place name",
+			fields: [{ id: "/basics/location", before: "Cologne, Germany", text: "Köln, Deutschland" }],
+		},
+		"German copy",
+	);
+	const next = structuredClone(data);
+	expect(
+		applyResumeProposals(
+			next,
+			output.edits.map((edit) => ({ ...edit, source: "assistant" as const })),
+		).applied,
+	).toHaveLength(1);
+	expect(next.basics).toMatchObject({
+		location: "Köln, Deutschland",
+		email: "priya@example.test",
+		phone: "+49 123456789",
+	});
+	expect(data.basics.location).toBe("Cologne, Germany");
+});
