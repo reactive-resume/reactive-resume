@@ -15,13 +15,14 @@ import { templates } from "@/dialogs/resume/template/data";
 const TEMPLATE_AT = [0.05, 0.2, 0.36, 0.52, 0.7];
 
 /**
- * The contact sheet the scene zooms out to: every real template, six by three, with Alex's page taking the eighteenth
- * cell. Its cell sits half a column left of centre, so the page drifts there as the sheet comes in.
+ * The contact sheet the scene zooms out to: every real template, seven by three, with Alex's page in the middle cell,
+ * so the page stays centred as the sheet comes in. Cells past the last template stay empty.
  */
-const STACK_CELL = 8;
+const SHEET_COLUMNS = 7;
+const STACK_CELL = SHEET_COLUMNS + Math.floor(SHEET_COLUMNS / 2);
 const sheetCells = (() => {
 	const names = [...templateSchema.options];
-	return Array.from({ length: 18 }, (_, index) => ({
+	return Array.from({ length: Math.max(SHEET_COLUMNS * 3, names.length + 1) }, (_, index) => ({
 		index,
 		template: index === STACK_CELL ? null : (names.shift() ?? null),
 		rise: 30 + ((index * 37) % 60),
@@ -109,7 +110,7 @@ export function Design() {
 
 				<div
 					aria-hidden="true"
-					className="absolute top-(--dpt) left-1/2 grid [transform:translate(-50%,calc(-50%-var(--z)*8vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] grid-cols-[repeat(6,var(--pw))] gap-[calc(var(--pw)*.12)] opacity-(--z) will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
+					className="absolute top-(--dpt) left-1/2 grid [transform:translate(-50%,calc(-50%-var(--z)*8vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] grid-cols-[repeat(7,var(--pw))] gap-[calc(var(--pw)*.12)] opacity-(--z) will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
 				>
 					{sheetCells.map((cell) => (
 						<div
@@ -143,7 +144,7 @@ export function Design() {
 
 				<div
 					data-stack
-					className="absolute top-(--dpt) left-1/2 aspect-[612/792] w-(--pw) [transform:translate(calc(-50%-var(--dir)*var(--z)*.56*var(--pw)*(1-var(--z)*(1-var(--smin,.5)))),calc(-50%-var(--z)*8vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] opacity-[clamp(0,var(--p)*20,1)] will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
+					className="absolute top-(--dpt) left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,calc(-50%-var(--z)*8vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] opacity-[clamp(0,var(--p)*20,1)] will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
 				>
 					<div className="absolute inset-0 rounded-sm shadow-paper" />
 					{sheetTemplates.map((template, index) => (

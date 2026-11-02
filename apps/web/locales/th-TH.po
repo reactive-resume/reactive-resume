@@ -1015,6 +1015,10 @@ msgstr "เทมเพลต CV ฟรี {templateCount}"
 msgid "{time} · Video call · 45 min"
 msgstr "{time} · วิดีโอคอล · 45 นาที"
 
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
 msgstr "ล้าง {title} แล้ว"
@@ -2828,6 +2832,7 @@ msgstr "ย้อนกลับไปตอนนี้"
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
+#: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Back to sign in"
 msgstr "กลับไปที่การลงชื่อเข้าใช้"
@@ -3311,10 +3316,6 @@ msgstr "ตรวจสอบ"
 msgid "Check a PDF"
 msgstr "ตรวจสอบ PDF"
 
-#: src/features/ats-checker/checker.tsx
-msgid "Check a sample file"
-msgstr "ตรวจสอบไฟล์ตัวอย่าง"
-
 #: src/features/career/workspace/fit.tsx
 msgid "Check again"
 msgstr "ตรวจสอบอีกครั้ง"
@@ -3402,10 +3403,6 @@ msgstr "ตรวจสอบการเชื่อมต่อของคุ
 #: src/features/auth/pages/register.tsx
 msgid "Check your email"
 msgstr "ตรวจสอบอีเมลของคุณ"
-
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Check your email for a link to reset your password."
-msgstr "ตรวจสอบอีเมลของคุณสำหรับลิงก์รีเซ็ตรหัสผ่าน"
 
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
@@ -3497,6 +3494,10 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "เลือกรหัสผ่านที่ต่างจากรหัสผ่านปัจจุบัน"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Choose a PDF"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
@@ -5596,6 +5597,10 @@ msgstr "เริ่มพิมพ์ด้วยเสียงแล้ว"
 msgid "Dictation stopped at the 2-minute limit."
 msgstr "การพิมพ์ด้วยเสียงหยุดเมื่อครบ 2 นาที"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Didn't get it?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Didn't land"
 msgstr "ไม่ได้ผล"
@@ -5940,10 +5945,6 @@ msgstr "ลากเพื่อจัดตำแหน่งใหม่ แ�
 msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Drop a PDF here or choose a file"
-msgstr "วาง PDF ที่นี่หรือเลือกไฟล์"
-
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
 msgstr "ตัดคำสรรพนามออกแล้วเริ่มต้นด้วยคำกริยา นี่คือธรรมเนียมปฏิบัติในตลาดส่วนใหญ่"
@@ -6083,6 +6084,10 @@ msgstr "แก้ไขบทสัมภาษณ์"
 msgid "Edit interview…"
 msgstr "แก้ไขบทสัมภาษณ์..."
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "แก้ไขคำค้นหา"
@@ -6206,9 +6211,7 @@ msgstr "อีเมล (ไม่บังคับ)"
 
 #. Label for email input on forgot-password form
 #. Label for email input on registration form
-#. Label for login identifier input that accepts email or username
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Email address"
 msgstr "ที่อยู่อีเมล"
@@ -6224,6 +6227,11 @@ msgstr ""
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
 msgstr "ไม่ได้ตั้งค่าการส่งอีเมลบนเซิร์ฟเวอร์นี้ ดังนั้นที่อยู่จึงไม่ได้รับการยืนยัน"
+
+#. Label for login identifier input that accepts email or username
+#: src/features/auth/pages/login.tsx
+msgid "Email or username"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Email the recruiter"
@@ -7159,6 +7167,7 @@ msgstr "กลับบ้าน"
 
 #: src/components/layout/error-screen.tsx
 #: src/components/layout/not-found-screen.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "ไปที่แดชบอร์ด"
@@ -7532,6 +7541,10 @@ msgstr "ไอคอน…"
 msgid "Icons in contact line"
 msgstr "ไอคอนในสายติดต่อ"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account uses that address, a reset link is on its way."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "If another resume holds Primary, turn it on for this one instead."
 msgstr ""
@@ -7641,6 +7654,10 @@ msgstr "ขั้นตอนการนำเข้า"
 
 #: src/features/documents/documents-page.tsx
 msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Import this file into a free Reactive Resume to keep editing it, with Check reading it as you go."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -8113,6 +8130,10 @@ msgstr "ช่วยให้บริการนี้<0>ใช้ฟรีต
 #: src/features/career/workspace/prepare.tsx
 msgid "Keep it honest"
 msgstr "ซื่อตรงไว้"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Keep it this way"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
@@ -8748,6 +8769,7 @@ msgstr "โหลดขั้นตอนของคุณก่อนนำเ
 msgid "Loading"
 msgstr "กำลังโหลด"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "กำลังโหลดการเชื่อมต่อ AI…"
@@ -10523,11 +10545,6 @@ msgstr "เปิด {title}"
 msgid "Open briefing"
 msgstr "เปิดสรุปย่อ"
 
-#. Button label to open the user's default email app
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Open email app"
-msgstr "เปิดแอปอีเมล"
-
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
 msgstr "เปิดโหมดโฟกัส"
@@ -10688,6 +10705,10 @@ msgstr "หรือ"
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "หรือดำเนินการต่อด้วย"
+
+#: src/features/ats-checker/checker.tsx
+msgid "or drop it here · up to 25 MB · checked in your browser, never uploaded"
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "Or in your own words…"
@@ -13573,6 +13594,10 @@ msgstr "ส่ง"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Send again"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Send it in the <0>x-api-key</0> header."
 msgstr ""
@@ -13724,6 +13749,10 @@ msgstr "ส่งแล้ว"
 #: src/features/career/coach-chat.tsx
 msgctxt "What went to the AI provider with a message"
 msgid "Sent"
+msgstr ""
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Sent again. It can take a minute to arrive."
 msgstr ""
 
 #. placeholder {0}: version.name
@@ -15856,6 +15885,10 @@ msgstr ""
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "PDF นี้มีการป้องกันด้วยรหัสผ่าน โปรดบันทึกสำเนาที่ไม่มีการป้องกันแล้วลองใหม่"
 
+#: src/features/ats-checker/checker.tsx
+msgid "This PDF looks damaged. Export it again from your editor and choose the new file."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr ""
@@ -16204,6 +16237,10 @@ msgstr "ลอง {0} ดูครับ"
 msgid "Try a sample"
 msgstr "ลองตัวอย่าง"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Try a sample file"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -16507,10 +16544,6 @@ msgstr "ไม่เกิน 2 นาที หรือ<0>เลือกไ�
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "ไม่เกิน 2 นาที คำพูดของคุณจะแสดงขณะที่คุณพูด"
-
-#: src/features/ats-checker/checker.tsx
-msgid "Up to 25 MB · checked in your browser, never uploaded"
-msgstr "มากถึง 25 MB · ตรวจสอบในเบราว์เซอร์ของคุณ ไม่เคยอัปโหลด"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
@@ -17658,10 +17691,6 @@ msgstr "คุณตอบ: {answer}"
 msgid "You applied to {0} before and didn't hear back."
 msgstr "คุณเคยสมัครงานที่ {0} และไม่ได้รับการตอบกลับ"
 
-#: src/features/auth/pages/login.tsx
-msgid "You can also sign in with your username."
-msgstr "คุณสามารถเข้าสู่ระบบด้วยชื่อผู้ใช้ได้เช่นกัน"
-
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
 msgstr ""
@@ -17753,6 +17782,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "คุณมีขั้นตอนครบขีดจำกัด {MAX_APPLICATION_LANES} ขั้นตอนแล้ว นำขั้นตอนหนึ่งออกเพื่อเพิ่มขั้นตอนใหม่"
+
+#: src/features/auth/pages/login.tsx
+msgid "you@example.com or your username"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

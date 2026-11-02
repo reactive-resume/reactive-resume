@@ -95,6 +95,7 @@ export function ResetPasswordPage({ token }: Props) {
 			</div>
 
 			<form
+				noValidate
 				className="space-y-6"
 				onSubmit={(event) => {
 					event.preventDefault();

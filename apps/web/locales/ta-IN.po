@@ -1015,6 +1015,10 @@ msgstr "{templateCount} இலவச CV டெம்ப்ளேட்டுக�
 msgid "{time} · Video call · 45 min"
 msgstr "{time} · வீடியோ அழைப்பு · 45 நிமி"
 
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
 msgstr "{title} அழிக்கப்பட்டது"
@@ -2828,6 +2832,7 @@ msgstr "இப்போது திரும்பவும்"
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
+#: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Back to sign in"
 msgstr "உள்நுழைவுக்குத் திரும்பு"
@@ -3311,10 +3316,6 @@ msgstr "சரிபார்ப்பு"
 msgid "Check a PDF"
 msgstr "PDF ஐச் சரிபார்க்கவும்"
 
-#: src/features/ats-checker/checker.tsx
-msgid "Check a sample file"
-msgstr "மாதிரி கோப்பை சரிபார்க்கவும்"
-
 #: src/features/career/workspace/fit.tsx
 msgid "Check again"
 msgstr "மீண்டும் சரிபார்"
@@ -3402,10 +3403,6 @@ msgstr "உங்கள் இணைப்பைச் சரிபார்த�
 #: src/features/auth/pages/register.tsx
 msgid "Check your email"
 msgstr "உங்கள் மின்னஞ்சலைச் சரிபார்க்கவும்"
-
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Check your email for a link to reset your password."
-msgstr "உங்கள் கடவுச்சொல்லை மீட்டமைக்க ஒரு இணைப்புக்காக உங்கள் மின்னஞ்சலைச் சரிபார்க்கவும்."
 
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
@@ -3497,6 +3494,10 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "உங்கள் தற்போதைய கடவுச்சொல்லிலிருந்து வேறுபட்ட கடவுச்சொல்லைத் தேர்வுசெய்யவும்."
+
+#: src/features/ats-checker/checker.tsx
+msgid "Choose a PDF"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
@@ -5596,6 +5597,10 @@ msgstr "குரல் தட்டச்சு தொடங்கியது"
 msgid "Dictation stopped at the 2-minute limit."
 msgstr "2 நிமிட வரம்பில் குரல் தட்டச்சு நின்றது."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Didn't get it?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Didn't land"
 msgstr "எடுபடவில்லை"
@@ -5940,10 +5945,6 @@ msgstr "பதிவேற்றுவதற்கு முன், நிலை
 msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Drop a PDF here or choose a file"
-msgstr "இங்கே PDF ஐ விடுங்கள் அல்லது கோப்பைத் தேர்வுசெய்யவும்"
-
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
 msgstr "பிரதிப்பெயர்களை நீக்கி வினைச்சொல்லிலிருந்து தொடங்கவும். பெரும்பாலான சந்தைகளில் இதுவே வழக்கம்."
@@ -6083,6 +6084,10 @@ msgstr "நேர்காணலைத் திருத்தவும்"
 msgid "Edit interview…"
 msgstr "நேர்காணலைத் திருத்து..."
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "முக்கியச்சொல்லைத் திருத்து"
@@ -6206,9 +6211,7 @@ msgstr "மின்னஞ்சல் (விருப்பத்திற்�
 
 #. Label for email input on forgot-password form
 #. Label for email input on registration form
-#. Label for login identifier input that accepts email or username
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Email address"
 msgstr "மின்னஞ்சல் முகவரி"
@@ -6224,6 +6227,11 @@ msgstr ""
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
 msgstr "இந்த சர்வரில் மின்னஞ்சல் டெலிவரி அமைக்கப்படவில்லை, எனவே முகவரி சரிபார்க்கப்படவில்லை."
+
+#. Label for login identifier input that accepts email or username
+#: src/features/auth/pages/login.tsx
+msgid "Email or username"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Email the recruiter"
@@ -7159,6 +7167,7 @@ msgstr "வீட்டிற்குச் செல்லுங்கள்"
 
 #: src/components/layout/error-screen.tsx
 #: src/components/layout/not-found-screen.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "டாஷ்போர்டுக்கு செல்லவும்"
@@ -7532,6 +7541,10 @@ msgstr "ஐகான்…"
 msgid "Icons in contact line"
 msgstr "தொடர்பு வரிசையில் உள்ள சின்னங்கள்"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account uses that address, a reset link is on its way."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "If another resume holds Primary, turn it on for this one instead."
 msgstr ""
@@ -7641,6 +7654,10 @@ msgstr "இறக்குமதி படிகள்"
 
 #: src/features/documents/documents-page.tsx
 msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Import this file into a free Reactive Resume to keep editing it, with Check reading it as you go."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -8113,6 +8130,10 @@ msgstr "இதை <0>இலவசமாக</0> வைத்திருக்க
 #: src/features/career/workspace/prepare.tsx
 msgid "Keep it honest"
 msgstr "நேர்மையாக இருங்கள்"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Keep it this way"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
@@ -8748,6 +8769,7 @@ msgstr "பெயரிடப்பட்ட நிலைகளை இறக்�
 msgid "Loading"
 msgstr "ஏற்றப்படுகிறது"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "AI இணைப்புகளை ஏற்றுகிறது…"
@@ -10523,11 +10545,6 @@ msgstr "{title}ஐத் திறக்கவும்"
 msgid "Open briefing"
 msgstr "சுருக்கக் குறிப்பைத் திற"
 
-#. Button label to open the user's default email app
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Open email app"
-msgstr "மின்னஞ்சல் பயன்பாட்டைத் திற"
-
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
 msgstr "குவிய முறையைத் திற"
@@ -10688,6 +10705,10 @@ msgstr "அல்லது"
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "அல்லது இதன் மூலம் தொடரவும்"
+
+#: src/features/ats-checker/checker.tsx
+msgid "or drop it here · up to 25 MB · checked in your browser, never uploaded"
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "Or in your own words…"
@@ -13573,6 +13594,10 @@ msgstr "அனுப்பு"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Send again"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Send it in the <0>x-api-key</0> header."
 msgstr ""
@@ -13724,6 +13749,10 @@ msgstr "அனுப்பப்பட்டது"
 #: src/features/career/coach-chat.tsx
 msgctxt "What went to the AI provider with a message"
 msgid "Sent"
+msgstr ""
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Sent again. It can take a minute to arrive."
 msgstr ""
 
 #. placeholder {0}: version.name
@@ -15856,6 +15885,10 @@ msgstr ""
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "இந்த PDF கடவுச்சொல் பாதுகாப்புடையது. பாதுகாக்கப்படாத நகலைச் சேமித்து மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/ats-checker/checker.tsx
+msgid "This PDF looks damaged. Export it again from your editor and choose the new file."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr ""
@@ -16204,6 +16237,10 @@ msgstr "{0} முயற்சிக்கவும்"
 msgid "Try a sample"
 msgstr "ஒரு மாதிரியை முயற்சிக்கவும்"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Try a sample file"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -16507,10 +16544,6 @@ msgstr "2 நிமிடங்கள் வரை. அல்லது 2 MB வ�
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "2 நிமிடங்கள் வரை. நீங்கள் பேசும்போதே உங்கள் சொற்கள் தோன்றும்."
-
-#: src/features/ats-checker/checker.tsx
-msgid "Up to 25 MB · checked in your browser, never uploaded"
-msgstr "25 MB · உங்கள் உலாவியில் சரிபார்க்கப்பட்டது, ஒருபோதும் பதிவேற்றப்படவில்லை"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
@@ -17658,10 +17691,6 @@ msgstr "நீங்கள் பதிலளித்தீர்கள்: {an
 msgid "You applied to {0} before and didn't hear back."
 msgstr "நீங்கள் முன்பு {0} நிறுவனத்திற்கு விண்ணப்பித்தீர்கள், ஆனால் பதில் வரவில்லை."
 
-#: src/features/auth/pages/login.tsx
-msgid "You can also sign in with your username."
-msgstr "உங்கள் பயனர் பெயரைப் பயன்படுத்தியும் உள்நுழையலாம்."
-
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
 msgstr ""
@@ -17753,6 +17782,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "{MAX_APPLICATION_LANES} நிலைகள் என்ற வரம்பை எட்டிவிட்டீர்கள். மற்றொன்றைச் சேர்க்க ஒரு நிலையை அகற்றவும்."
+
+#: src/features/auth/pages/login.tsx
+msgid "you@example.com or your username"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

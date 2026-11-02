@@ -50,7 +50,8 @@ export function UserDropdownMenu({ children }: Props) {
 				onSuccess: () => {
 					toast.close(toastId);
 					clearAccountData(queryClient);
-					void router.invalidate();
+					// Signed out, people land on the site, not on a sign-in form that would bring them back here.
+					void router.navigate({ to: "/", replace: true }).then(() => router.invalidate());
 				},
 				onError: ({ error }) => {
 					toast.add({

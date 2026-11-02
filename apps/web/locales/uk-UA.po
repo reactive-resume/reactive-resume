@@ -1015,6 +1015,10 @@ msgstr "{templateCount} безкоштовних шаблонів резюме."
 msgid "{time} · Video call · 45 min"
 msgstr "{time} · Відеодзвінок · 45 хв"
 
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
 msgstr "{title} очищено"
@@ -2828,6 +2832,7 @@ msgstr "Назад до зараз"
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
+#: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Back to sign in"
 msgstr "Назад до входу"
@@ -3311,10 +3316,6 @@ msgstr "Перевірка"
 msgid "Check a PDF"
 msgstr "Перевірте PDF"
 
-#: src/features/ats-checker/checker.tsx
-msgid "Check a sample file"
-msgstr "Перевірте зразок файлу"
-
 #: src/features/career/workspace/fit.tsx
 msgid "Check again"
 msgstr "Перевірити знову"
@@ -3402,10 +3403,6 @@ msgstr "Перевірте підключення та повторіть спр
 #: src/features/auth/pages/register.tsx
 msgid "Check your email"
 msgstr "Перевірте електронну пошту"
-
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Check your email for a link to reset your password."
-msgstr "Перевірте свою електронну пошту для посилання для скидання пароля."
 
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
@@ -3497,6 +3494,10 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "Виберіть пароль, що відрізняється від поточного."
+
+#: src/features/ats-checker/checker.tsx
+msgid "Choose a PDF"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
@@ -5596,6 +5597,10 @@ msgstr "Диктування розпочато"
 msgid "Dictation stopped at the 2-minute limit."
 msgstr "Диктування зупинено: досягнуто ліміту у 2 хвилини."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Didn't get it?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Didn't land"
 msgstr "Не спрацювало"
@@ -5940,10 +5945,6 @@ msgstr "Перетягніть, щоб змінити положення, та �
 msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Drop a PDF here or choose a file"
-msgstr "Перетягніть сюди PDF або виберіть файл"
-
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
 msgstr "Прибрати займенники та починати з дієслова. Це прийнято на більшості ринків."
@@ -6083,6 +6084,10 @@ msgstr "Редагувати інтерв'ю"
 msgid "Edit interview…"
 msgstr "Редагувати інтерв'ю…"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "Редагувати ключове слово"
@@ -6206,9 +6211,7 @@ msgstr "Електронна адреса (необов'язково)"
 
 #. Label for email input on forgot-password form
 #. Label for email input on registration form
-#. Label for login identifier input that accepts email or username
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Email address"
 msgstr "Електронна адреса"
@@ -6224,6 +6227,11 @@ msgstr ""
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
 msgstr "На цьому сервері не налаштовано доставку електронної пошти, тому адреса не підтверджена."
+
+#. Label for login identifier input that accepts email or username
+#: src/features/auth/pages/login.tsx
+msgid "Email or username"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Email the recruiter"
@@ -7159,6 +7167,7 @@ msgstr "Іди додому"
 
 #: src/components/layout/error-screen.tsx
 #: src/components/layout/not-found-screen.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Перейти до дашборду"
@@ -7532,6 +7541,10 @@ msgstr "Значок…"
 msgid "Icons in contact line"
 msgstr "Значки в контактній лінії"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account uses that address, a reset link is on its way."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "If another resume holds Primary, turn it on for this one instead."
 msgstr ""
@@ -7641,6 +7654,10 @@ msgstr "Кроки імпорту"
 
 #: src/features/documents/documents-page.tsx
 msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Import this file into a free Reactive Resume to keep editing it, with Check reading it as you go."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -8113,6 +8130,10 @@ msgstr "Зберігайте його <0>безкоштовно.</0>"
 #: src/features/career/workspace/prepare.tsx
 msgid "Keep it honest"
 msgstr "Будьте чесні"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Keep it this way"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
@@ -8748,6 +8769,7 @@ msgstr "Завантажте свої етапи перед імпортом і�
 msgid "Loading"
 msgstr "Завантаження"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "Завантаження підключень до AI…"
@@ -10523,11 +10545,6 @@ msgstr "Відкрийте {title}"
 msgid "Open briefing"
 msgstr "Відкрити брифінг"
 
-#. Button label to open the user's default email app
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Open email app"
-msgstr "Відкрити поштовий застосунок"
-
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
 msgstr "Відкрити режим фокусування"
@@ -10688,6 +10705,10 @@ msgstr "або"
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "або"
+
+#: src/features/ats-checker/checker.tsx
+msgid "or drop it here · up to 25 MB · checked in your browser, never uploaded"
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "Or in your own words…"
@@ -13573,6 +13594,10 @@ msgstr "Надіслати"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Send again"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Send it in the <0>x-api-key</0> header."
 msgstr ""
@@ -13724,6 +13749,10 @@ msgstr "Надіслано"
 #: src/features/career/coach-chat.tsx
 msgctxt "What went to the AI provider with a message"
 msgid "Sent"
+msgstr ""
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Sent again. It can take a minute to arrive."
 msgstr ""
 
 #. placeholder {0}: version.name
@@ -15856,6 +15885,10 @@ msgstr ""
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Цей PDF захищений паролем. Збережіть незахищену копію і спробуйте ще раз."
 
+#: src/features/ats-checker/checker.tsx
+msgid "This PDF looks damaged. Export it again from your editor and choose the new file."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr ""
@@ -16204,6 +16237,10 @@ msgstr "Спробуйте {0}"
 msgid "Try a sample"
 msgstr "Спробуйте зразок"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Try a sample file"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -16507,10 +16544,6 @@ msgstr "До 2 хвилин. Або <0>виберіть аудіофайл</0> �
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "До 2 хвилин. Ваші слова з’являються, поки ви говорите."
-
-#: src/features/ats-checker/checker.tsx
-msgid "Up to 25 MB · checked in your browser, never uploaded"
-msgstr "До 25 MB · перевірено у вашому браузері, жодного разу не завантажено"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
@@ -17658,10 +17691,6 @@ msgstr "Ви відповіли: {answer}"
 msgid "You applied to {0} before and didn't hear back."
 msgstr "Ви вже подавали заявку до {0} і не отримали відповіді."
 
-#: src/features/auth/pages/login.tsx
-msgid "You can also sign in with your username."
-msgstr "Увійти можна також за іменем користувача."
-
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
 msgstr ""
@@ -17753,6 +17782,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "Ви досягли обмеження в {MAX_APPLICATION_LANES} етапів. Видаліть один, щоб додати інший."
+
+#: src/features/auth/pages/login.tsx
+msgid "you@example.com or your username"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

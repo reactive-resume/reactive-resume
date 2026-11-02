@@ -15,8 +15,21 @@ import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { sessionQueryKey } from "@/libs/root-context";
 
-export function SocialAuth() {
-	const { data: providers = {}, isLoading } = useQuery(orpc.auth.providers.list.queryOptions());
+type Providers = RouterOutput["auth"]["providers"]["list"];
+const SOCIAL = ["apple", "custom", "passkey", "google", "github", "linkedin"] as const;
+
+type SocialAuthProps = {
+	/** On sign-up a passkey can't help: it only signs in an account that already has one. */
+	signUp?: boolean;
+};
+
+export function SocialAuth({ signUp = false }: SocialAuthProps) {
+	const { data: all = {}, isLoading } = useQuery(orpc.auth.providers.list.queryOptions());
+	const providers: Providers = signUp
+		? Object.fromEntries(Object.entries(all).filter(([key]) => key !== "passkey"))
+		: all;
+	const shown = SOCIAL.filter((key) => key in providers);
+	if (!isLoading && shown.length === 0) return null;
 
 	return (
 		<>
@@ -35,15 +48,9 @@ export function SocialAuth() {
 	);
 }
 
+// One row: the providers list is tiny and most installations offer one or two, so four boxes collapsing reads as a jump.
 function SocialAuthSkeleton() {
-	return (
-		<div className="grid grid-cols-2 gap-4">
-			<Skeleton className="h-9 w-full" />
-			<Skeleton className="h-9 w-full" />
-			<Skeleton className="h-9 w-full" />
-			<Skeleton className="h-9 w-full" />
-		</div>
-	);
+	return <Skeleton className="h-9 w-full" />;
 }
 
 type SocialAuthButtonsProps = {
@@ -51,6 +58,10 @@ type SocialAuthButtonsProps = {
 };
 
 function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
+	const shown = SOCIAL.filter((key) => key in providers);
+	// One provider fills the row; with an odd number, the last one does.
+	const span = (key: (typeof SOCIAL)[number]) =>
+		shown.length % 2 === 1 && shown.at(-1) === key ? "col-span-2" : undefined;
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { callbackURL } = useSearch({ from: "/auth" });
@@ -93,7 +104,11 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 						}),
 					)
 				}
-				className={cn("hidden flex-1 bg-black text-white hover:bg-black/80", "apple" in providers && "inline-flex")}
+				className={cn(
+					"hidden flex-1 bg-black text-white hover:bg-black/80",
+					"apple" in providers && "inline-flex",
+					span("apple"),
+				)}
 			>
 				<AppleLogoIcon />
 				<Trans comment="Brand name label for Apple social sign-in button">Apple</Trans>
@@ -110,7 +125,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 						}),
 					)
 				}
-				className={cn("hidden", "custom" in providers && "inline-flex")}
+				className={cn("hidden", "custom" in providers && "inline-flex", span("custom"))}
 			>
 				<Icon name="key" size={16} />
 				{providers.custom}
@@ -121,7 +136,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				onClick={() =>
 					runSignIn(() => authClient.signIn.passkey({ autoFill: false, ...getOAuthPasskeyOptions(callbackURL) }), true)
 				}
-				className={cn("hidden", "passkey" in providers && "inline-flex")}
+				className={cn("hidden", "passkey" in providers && "inline-flex", span("passkey"))}
 			>
 				<Icon name="fingerprint" size={16} />
 				<Trans comment="Label for passkey sign-in button">Passkey</Trans>
@@ -140,6 +155,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				className={cn(
 					"hidden flex-1 bg-[#4285F4] text-white hover:bg-[#4285F4]/80",
 					"google" in providers && "inline-flex",
+					span("google"),
 				)}
 			>
 				<GoogleLogoIcon />
@@ -159,6 +175,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				className={cn(
 					"hidden flex-1 bg-[#2b3137] text-white hover:bg-[#2b3137]/80",
 					"github" in providers && "inline-flex",
+					span("github"),
 				)}
 			>
 				<GithubLogoIcon />
@@ -178,6 +195,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				className={cn(
 					"hidden flex-1 bg-[#0A66C2] text-white hover:bg-[#0A66C2]/80",
 					"linkedin" in providers && "inline-flex",
+					span("linkedin"),
 				)}
 			>
 				<LinkedinLogoIcon />

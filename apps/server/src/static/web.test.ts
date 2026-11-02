@@ -124,6 +124,21 @@ describe("web app fallback classification", () => {
 		expect(await unknown.text()).toContain('<div id="app">en-US</div>');
 	});
 
+	it("names structured data's language as a BCP 47 tag, and as English when the page falls back to the shell", async () => {
+		vi.mocked(fs.readFile).mockImplementation((path) => {
+			const locale = String(path).match(/dist-prerender\/home\/(.+)\.html$/)?.[1];
+			if (locale === "fr-FR") return Promise.reject(new Error("missing"));
+			return Promise.resolve(`<html><head></head><body><div id="app">${locale ?? "shell"}</div></body></html>`);
+		});
+
+		const serbian = await (await handleWebApp(new Request("https://example.com/?locale=sr-SP"))).text();
+		expect(serbian).toContain('"inLanguage":"sr"');
+		expect(serbian).not.toContain('"inLanguage":"sr-SP"');
+
+		const missing = await (await handleWebApp(new Request("https://example.com/?locale=fr-FR"))).text();
+		expect(missing).toContain('"inLanguage":"en-US"');
+	});
+
 	it("keeps shared HTML and its cache validators independent of browser language hints", async () => {
 		vi.mocked(fs.readFile).mockImplementation((path) =>
 			Promise.resolve(`<html><head></head><body>${String(path)}</body></html>`),
