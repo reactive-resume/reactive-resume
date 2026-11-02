@@ -1,5 +1,29 @@
 import { describe, expect, it } from "vite-plus/test";
-import { getLocaleAlternates, isLocale, localeSchema, localizedUrl, supportedLocales } from "./locale";
+import {
+	getLocaleAlternates,
+	getPreferredLocale,
+	isLocale,
+	localeSchema,
+	localizedUrl,
+	supportedLocales,
+} from "./locale";
+
+it.each([
+	[["de-DE"], "de-DE"],
+	[["unsupported", "fr-CA", "de-DE"], "fr-FR"],
+	[["de-AT", "fr-FR"], "de-DE"],
+	[["de-de"], "de-DE"],
+	[["de"], "de-DE"],
+	[["en-GB", "en-US"], "en-GB"],
+	[["pt-PT", "pt-BR"], "pt-PT"],
+	[["zh-TW", "zh-CN"], "zh-TW"],
+	[["zu-ZA", "de-DE"], "de-DE"],
+	[["zu-ZA"], "en-US"],
+	[["unsupported"], "en-US"],
+	[[], "en-US"],
+])("matches ordered language preferences %j to %s", (languages, expected) => {
+	expect(getPreferredLocale(languages)).toBe(expected);
+});
 
 it("keeps the testing catalog valid without counting it as a supported translation", () => {
 	expect(isLocale("zu-ZA")).toBe(true);

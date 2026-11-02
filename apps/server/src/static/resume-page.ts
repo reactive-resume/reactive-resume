@@ -16,6 +16,7 @@ import {
 import { publicResumePath } from "@reactive-resume/resume/sharing";
 import { getResumeSocialMeta } from "@reactive-resume/resume/social-meta";
 import { mistypedAppPath } from "@reactive-resume/utils/app-paths";
+import { getPageLocale } from "./locale";
 import { BASE_SECURITY_HEADERS, contentSecurityPolicy } from "./web";
 
 const origin = () => new URL(env.APP_URL).origin;
@@ -77,7 +78,7 @@ type PageOptions = {
 
 /** Off, unknown or trashed resumes read the same, in the visitor's language. */
 function unavailableResponse(request: Request) {
-	const lang = localeFromAcceptLanguage(request.headers.get("accept-language"));
+	const lang = getPageLocale(request)?.locale ?? localeFromAcceptLanguage(request.headers.get("accept-language"));
 	return html(renderUnavailableDocument({ lang, messages: webPageMessages(lang), homeUrl: `${origin()}/` }), 404);
 }
 

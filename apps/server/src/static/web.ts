@@ -8,14 +8,9 @@ import { env } from "@reactive-resume/env/server";
 import { jsonLdScript, socialMetaTags } from "@reactive-resume/pdf/web-page-document";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { isAppSectionPath, RESERVED_SEGMENTS } from "@reactive-resume/utils/app-paths";
-import {
-	defaultLocale,
-	getLocaleAlternates,
-	isLocale,
-	localizedUrl,
-	supportedLocales,
-} from "@reactive-resume/utils/locale";
+import { defaultLocale, getLocaleAlternates, localizedUrl } from "@reactive-resume/utils/locale";
 import { escapeHtml } from "@reactive-resume/utils/string";
+import { getPageLocale } from "./locale";
 import { CONTEXT7_ASK_DESCRIPTION, CONTEXT7_ASK_URL } from "./seo";
 
 function resolveWebDistPath() {
@@ -326,19 +321,6 @@ function getFallbackResponseHeaders(pathname: string) {
 	return null;
 }
 
-/**
- * A prerendered page's language: a `?locale=` address first (its hreflang alternates), then the visitor's saved
- * choice, in the order the app reads them (apps/web/src/libs/locale.ts).
- */
-function getPageLocale(request: Request) {
-	const requested = new URL(request.url).searchParams.get("locale");
-	if (isLocale(requested))
-		return { locale: supportedLocales.includes(requested) ? requested : defaultLocale, requested: true };
-
-	const saved = request.headers.get("cookie")?.match(/(?:^|;\s*)locale=([^;]*)/)?.[1] ?? "";
-	return { locale: isLocale(saved) && supportedLocales.includes(saved) ? saved : defaultLocale, requested: false };
-}
-
 /** Swaps the page's <title> and description. Function replacers keep `$&`, `$'` etc. in user text literal. */
 const withMeta = (html: string, meta: { title: string; description: string }) =>
 	html
@@ -415,7 +397,7 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 
 	const prerendered = prerenderedPages[pathname];
 	if (prerendered) {
-		const { locale, requested } = getPageLocale(request);
+		const { locale, requested } = getPageLocale(request) ?? { locale: defaultLocale, requested: false };
 		const origin = new URL(env.APP_URL).origin;
 		// Without a prerendered page (a build that skipped it), the app shell titled for the page renders it in the browser.
 		const page = await readFile(`${prerenderRoot}/${prerendered.name}/${locale}.html`).catch(() =>
