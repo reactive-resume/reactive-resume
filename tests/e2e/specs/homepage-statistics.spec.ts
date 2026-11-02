@@ -107,7 +107,16 @@ for (const scenario of [
 		const proof = page.getByRole("region", { name: "In good company", exact: true });
 		if (scenario.labels.length) {
 			await expect(proof.getByRole("term")).toHaveCount(scenario.labels.length);
-			for (const label of scenario.labels) await expect(proof.getByText(label, { exact: true })).toBeVisible();
+			const values: Record<string, number | undefined> = {
+				"People using it": scenario.totals?.users,
+				"Resumes created": scenario.totals?.resumes,
+				"Stars on GitHub": scenario.stars ?? undefined,
+			};
+			for (const label of scenario.labels) {
+				const term = proof.getByRole("term").filter({ hasText: label });
+				await expect(proof.getByText(label, { exact: true })).toBeVisible();
+				await expect(term.locator("..").getByRole("definition").locator(".sr-only")).toHaveText(String(values[label]));
+			}
 			for (const [width, height, colorScheme] of [
 				[1440, 900, "light"],
 				[1024, 768, "light"],
@@ -129,6 +138,7 @@ for (const scenario of [
 				: `Star Reactive Resume on GitHub, ${scenario.stars} stars`,
 		);
 		await expect(github.locator('[data-slot="icon"]')).toHaveCount(scenario.stars === null ? 0 : 1);
+		if (scenario.stars !== null) await expect(github).toHaveText(String(scenario.stars));
 	});
 }
 
@@ -159,6 +169,7 @@ test("homepage drops cached totals and stars after their refetch fails", async (
 	const github = page.getByRole("link", { name: /^Star Reactive Resume on GitHub/ });
 	await expect(proof.getByRole("term")).toHaveCount(3);
 	await expect(github).toHaveAccessibleName("Star Reactive Resume on GitHub, 300 stars");
+	await expect(github).toHaveText("300");
 	state.totals = null;
 	state.stars = null;
 	// Keep mounted query caches, expire their six-hour freshness, then use the real focus-refetch path.
@@ -166,6 +177,7 @@ test("homepage drops cached totals and stars after their refetch fails", async (
 	await page.evaluate(() => window.dispatchEvent(new Event("visibilitychange")));
 	await expect(proof).toHaveCount(0, { timeout: 20000 });
 	await expect(github).toHaveAccessibleName("Star Reactive Resume on GitHub");
+	await expect(github).toHaveText("");
 	await expect(github.locator('[data-slot="icon"]')).toHaveCount(0);
 	state.totals = { users: 120, resumes: 240 };
 	state.stars = 300;
@@ -173,5 +185,6 @@ test("homepage drops cached totals and stars after their refetch fails", async (
 	await page.evaluate(() => window.dispatchEvent(new Event("visibilitychange")));
 	await expect(proof.getByRole("term")).toHaveCount(3);
 	await expect(github).toHaveAccessibleName("Star Reactive Resume on GitHub, 300 stars");
+	await expect(github).toHaveText("300");
 	await expect(github.locator('[data-slot="icon"]')).toHaveCount(1);
 });
