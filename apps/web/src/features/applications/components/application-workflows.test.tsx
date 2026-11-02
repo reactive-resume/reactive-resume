@@ -120,6 +120,7 @@ const mount = (children: ReactNode) => {
 };
 beforeEach(() => {
 	vi.clearAllMocks();
+	sessionStorage.clear();
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	api.confirm.mockResolvedValue(true);
 	api.findPosting.mockResolvedValue({ application: null });
@@ -214,6 +215,18 @@ it("keeps saving available when duplicate lookup fails, with an explicit warning
 	expect(save.disabled).toBe(false);
 	fireEvent.click(save);
 	await waitFor(() => expect(onAdded).toHaveBeenCalledWith("saved"));
+});
+
+it("keeps what was pasted when the dialog closes and reopens (A3-39)", async () => {
+	const view = mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
+		target: { value: "Build tools for a fictional company." },
+	});
+	view.rerender(<AddApplicationDialog open={false} onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	view.rerender(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	expect(
+		((await screen.findByRole("textbox", { name: "Job link or posting text" })) as HTMLTextAreaElement).value,
+	).toBe("Build tools for a fictional company.");
 });
 
 it("offers only the explicit AI read for pasted text", async () => {
