@@ -197,7 +197,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 			<div className="grid gap-3.5">
 				<div className="flex flex-wrap items-end gap-x-4 gap-y-2">
 					<div className="grid min-w-0 flex-1 basis-64 gap-1">
-						<h2 className="font-display text-[22px] leading-7 font-medium">{data.headline}</h2>
+						<h2 className="font-display text-[22px] leading-7">{data.headline}</h2>
 						<p className="text-sm text-ink-2">{data.summary}</p>
 					</div>
 					<span className="flex flex-wrap items-baseline gap-x-2 font-mono text-xs font-medium text-ink-3">
@@ -534,7 +534,7 @@ function Soon({ application, interview, briefing, now, go }: SoonProps) {
 				<div className="flex items-center gap-3 rounded-lg bg-warn-soft px-4 py-3.5">
 					<Icon name="timer" size={28} className="shrink-0 text-warn-text" />
 					<div className="grid min-w-0">
-						<p className="font-display text-[22px] leading-7 font-medium">{heading}</p>
+						<p className="font-display text-[22px] leading-7">{heading}</p>
 						<p className="text-[13px] text-ink-2">
 							{[
 								interviewTypeLabel(interview.kind),
@@ -599,7 +599,7 @@ function Soon({ application, interview, briefing, now, go }: SoonProps) {
 				<div className="flex items-center gap-3.5 rounded-xl border border-warn bg-warn-soft px-5 py-[18px]">
 					<Icon name="timer" size={28} className="shrink-0 text-warn-text" />
 					<div className="grid min-w-0 gap-0.5">
-						<p className="font-display text-[22px] leading-7 font-medium">{heading}</p>
+						<p className="font-display text-[22px] leading-7">{heading}</p>
 						<p className="text-[13px] text-ink-2">
 							{[
 								interviewTypeLabel(interview.kind),

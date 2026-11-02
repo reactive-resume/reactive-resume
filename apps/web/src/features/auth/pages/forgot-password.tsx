@@ -27,7 +27,7 @@ export function ForgotPasswordPage() {
 		defaultValues: { email: "" },
 		validators: { onSubmit: formSchema },
 		onSubmit: async ({ value }) => {
-			const toastId = toast.add({ type: "loading", description: t`Sending password reset email...` });
+			const toastId = toast.add({ type: "loading", description: t`Sending password reset email…` });
 
 			const { error } = await authClient.requestPasswordReset({
 				email: value.email,

@@ -70,7 +70,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 		fn: () => Promise<{ data?: unknown; error: { message?: string | undefined } | null }>,
 		isPasskey = false,
 	) => {
-		const toastId = toast.add({ type: "loading", description: t`Signing in...` });
+		const toastId = toast.add({ type: "loading", description: t`Signing in…` });
 		const { data, error } = await fn();
 		if (error) {
 			toast.add({

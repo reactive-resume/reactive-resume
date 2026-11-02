@@ -1500,8 +1500,8 @@ msgid "Access"
 msgstr "Erişim"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "Erişim izni verildi"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "Erişim izni verildi <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1600,8 +1600,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "Bir anahtar kelime ekleyin..."
+msgid "Add a keyword…"
+msgstr "Bir anahtar kelime ekleyin…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -6075,8 +6075,8 @@ msgid "Duplicated “{0}”"
 msgstr "“{0}” çoğaltıldı"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "Özgeçmişiniz çoğaltılıyor..."
+msgid "Duplicating your resume…"
+msgstr "Özgeçmişiniz çoğaltılıyor…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6263,8 +6263,8 @@ msgid "Editing"
 msgstr "Düzenleme"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "Anahtar kelime düzenleme..."
+msgid "Editing keyword…"
+msgstr "Anahtar kelime düzenleme…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
@@ -6359,7 +6359,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -8914,16 +8914,16 @@ msgid "Loading applications…"
 msgstr "Başvurular yükleniyor…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
-msgstr "Bağlantı isteği yükleniyor..."
+msgid "Loading connection request…"
+msgstr "Bağlantı isteği yükleniyor…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Loading connection…"
 msgstr "Bağlantı yükleniyor…"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "Bağlantılar yükleniyor..."
+msgid "Loading connections…"
+msgstr "Bağlantılar yükleniyor…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12729,8 +12729,8 @@ msgid "Reset your password"
 msgstr "Şifrenizi sıfırlayın"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "Şifreniz sıfırlanıyor..."
+msgid "Resetting your password…"
+msgstr "Şifreniz sıfırlanıyor…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -13668,11 +13668,8 @@ msgstr "Arama, sunucunuzun aramasıyla test edildi. Bağlantılar yerleşik okuy
 msgid "Search works"
 msgstr "Arama çalışmaları"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "Ara..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "Arama…"
@@ -13786,8 +13783,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "Seç..."
+msgid "Select…"
+msgstr "Seç…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -13850,8 +13847,8 @@ msgid "Sender details copied into the letter"
 msgstr "Gönderenin ayrıntıları mektuba kopyalandı"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "Şifre sıfırlama e-postası gönderiliyor..."
+msgid "Sending password reset email…"
+msgstr "Şifre sıfırlama e-postası gönderiliyor…"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14402,16 +14399,16 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "Giriş yapılıyor..."
+msgid "Signing in…"
+msgstr "Giriş yapılıyor…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "Çıkış yapılıyor..."
+msgid "Signing out…"
+msgstr "Çıkış yapılıyor…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "Kayıt olunuyor..."
+msgid "Signing up…"
+msgstr "Kayıt olunuyor…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
@@ -16750,7 +16747,6 @@ msgid "Unlink this application"
 msgstr "Bu iş başvurusunun bağlantısını kaldır"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16758,6 +16754,7 @@ msgid "Unlock"
 msgstr "Kilidi aç"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16852,8 +16849,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "{total} belgeden {done} tanesi güncellendi. Kilitli belgeler ve herkese açık bağlantılar için ön yazılar atlandı."
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "Özgeçmişiniz güncelleniyor..."
+msgid "Updating your resume…"
+msgstr "Özgeçmişiniz güncelleniyor…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17207,14 +17204,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "Yedek kod doğrulanıyor..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "Kod doğrulanıyor..."
+msgid "Verifying backup code…"
+msgstr "Yedek kod doğrulanıyor…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "Kodun doğrulanması…"
 

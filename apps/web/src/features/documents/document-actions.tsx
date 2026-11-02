@@ -459,7 +459,7 @@ export function DocumentMenuContent({
 			: []),
 		{ icon: "tag", label: t`Tags…`, onSelect: onTags, disabled: document.isLocked },
 		document.isLocked
-			? { icon: "lock-open", label: t`Unlock`, onSelect: () => actions.setLocked(document, false) }
+			? { icon: "lock-open", label: t`Unlock editing`, onSelect: () => actions.setLocked(document, false) }
 			: { icon: "lock", label: t`Lock editing`, onSelect: () => actions.setLocked(document, true) },
 		{
 			icon: "trash",

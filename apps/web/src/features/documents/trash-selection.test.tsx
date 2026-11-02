@@ -180,7 +180,7 @@ it("confirms Empty trash as every document in Trash, not the selected IDs", asyn
 	confirm.mockClear();
 	renderPage();
 
-	fireEvent.click(await screen.findByRole("button", { name: "Empty trash…" }));
+	fireEvent.click(await screen.findByRole("button", { name: "Empty Trash…" }));
 
 	await waitFor(() => expect(batch.emptyTrash).toHaveBeenCalledTimes(1));
 	expect(confirm).toHaveBeenCalledWith(

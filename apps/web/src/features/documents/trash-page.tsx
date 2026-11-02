@@ -149,7 +149,7 @@ export function TrashPage() {
 							onClick={() => void emptyTrash()}
 						>
 							<Icon name="trash" />
-							<Trans>Empty trash…</Trans>
+							<Trans>Empty Trash…</Trans>
 						</Button>
 					) : undefined
 				}

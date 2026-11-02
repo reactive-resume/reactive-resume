@@ -136,7 +136,7 @@ function Waiting({ onCancel }: WaitingProps) {
 			<AuthHeader />
 			<View style={{ gap: space.s4, alignItems: "center", paddingHorizontal: space.s2 }}>
 				<ActivityIndicator size="large" color={colors.accent} />
-				<Text variant="heading" align="center">{t`Finish signing in in the browser`}</Text>
+				<Text variant="heading" align="center">{t`Continue in your browser`}</Text>
 				<Text color="ink2" align="center">{t`When you're done, the browser closes and you come back here.`}</Text>
 				<View style={{ alignSelf: "center" }}>
 					<Button label={t`Cancel`} variant="secondary" onPress={onCancel} />

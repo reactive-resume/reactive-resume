@@ -60,7 +60,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 		onSubmit: ({ value }) => {
 			const toastId = toast.add({
 				type: "loading",
-				description: isUpdate ? t`Updating your resume...` : t`Duplicating your resume...`,
+				description: isUpdate ? t`Updating your resume…` : t`Duplicating your resume…`,
 			});
 			const onError = (error: unknown) => {
 				toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });

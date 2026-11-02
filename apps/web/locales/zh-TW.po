@@ -1500,8 +1500,8 @@ msgid "Access"
 msgstr "存取權限"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "存取權限授予對象"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "存取權限授予對象 <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1600,8 +1600,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "新增關鍵字..."
+msgid "Add a keyword…"
+msgstr "新增關鍵字…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -6075,7 +6075,7 @@ msgid "Duplicated “{0}”"
 msgstr "已複製「{0}」"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
+msgid "Duplicating your resume…"
 msgstr "正在複製您的履歷…"
 
 #: src/libs/locale.ts
@@ -6263,8 +6263,8 @@ msgid "Editing"
 msgstr "編輯"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "編輯關鍵字..."
+msgid "Editing keyword…"
+msgstr "編輯關鍵字…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
@@ -6359,7 +6359,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -8914,7 +8914,7 @@ msgid "Loading applications…"
 msgstr "正在載入應徵紀錄…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
+msgid "Loading connection request…"
 msgstr "正在載入連線請求…"
 
 #: src/features/settings/ai/web-access.tsx
@@ -8922,8 +8922,8 @@ msgid "Loading connection…"
 msgstr "正在加載連接..."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "正在載入連結..."
+msgid "Loading connections…"
+msgstr "正在載入連結…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12729,7 +12729,7 @@ msgid "Reset your password"
 msgstr "重設您的密碼"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
+msgid "Resetting your password…"
 msgstr "正在重設您的密碼…"
 
 #: src/features/homepage/footer.tsx
@@ -13668,11 +13668,8 @@ msgstr "搜尋已透過您伺服器的搜尋進行了測試。使用內建閱讀
 msgid "Search works"
 msgstr "搜尋作品"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "搜尋..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "搜尋…"
@@ -13786,8 +13783,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "選擇..."
+msgid "Select…"
+msgstr "選擇…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -13850,7 +13847,7 @@ msgid "Sender details copied into the letter"
 msgstr "寄件者詳細資料複製到信件中"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
+msgid "Sending password reset email…"
 msgstr "正在傳送重設密碼電子郵件…"
 
 #: src/features/career/disclosure.tsx
@@ -14402,15 +14399,15 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
+msgid "Signing in…"
 msgstr "正在登入…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
+msgid "Signing out…"
 msgstr "正在登出…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
+msgid "Signing up…"
 msgstr "正在註冊…"
 
 #: src/features/resume/share/share-panel.tsx
@@ -16750,7 +16747,6 @@ msgid "Unlink this application"
 msgstr "取消此職位申請的鏈接"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16758,6 +16754,7 @@ msgid "Unlock"
 msgstr "解鎖"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16852,7 +16849,7 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "已更新 {total} 份中的 {done} 份。已略過鎖定的文件，公共連結操作也已略過求職信。"
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
+msgid "Updating your resume…"
 msgstr "正在更新您的履歷…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -17207,14 +17204,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
+msgid "Verifying backup code…"
 msgstr "正在驗證備份代碼…"
 
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "正在驗證代碼…"
-
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "驗證碼…"
 

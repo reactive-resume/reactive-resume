@@ -43,7 +43,7 @@ type SheetContentProps = SheetPrimitive.Popup.Props & {
 } & CloseButtonProps;
 
 /**
- * A task beside the page. Side sheets slide in from their edge over 320ms; the bottom variant is the mobile
+ * A task beside the page. Side sheets slide in from their edge over 320ms ("right" is the inline end, so the left in RTL); the bottom variant is the mobile
  * form (18px top radius and a grabber) and follows a downward swipe: a flick or a drag past half its height
  * dismisses it, anything less settles back.
  */
@@ -61,8 +61,8 @@ function SheetContent({
 			data-side={side}
 			className={cn(
 				"pointer-events-auto fixed z-50 flex flex-col gap-4 bg-raised text-sm text-ink shadow-e3 transition-[translate] duration-emphasized ease-enter outline-none data-ending-style:duration-[calc(var(--d3)*0.7)]",
-				"data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-full data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full data-[side=left]:sm:max-w-[440px]",
-				"data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-full data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full data-[side=right]:sm:max-w-[440px]",
+				"data-[side=left]:inset-y-0 data-[side=left]:start-0 data-[side=left]:h-full data-[side=left]:w-full data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full data-[side=left]:sm:max-w-[440px]",
+				"data-[side=right]:inset-y-0 data-[side=right]:end-0 data-[side=right]:h-full data-[side=right]:w-full data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full data-[side=right]:sm:max-w-[440px]",
 				"rtl:data-[side=left]:data-ending-style:translate-x-full rtl:data-[side=left]:data-starting-style:translate-x-full rtl:data-[side=right]:data-ending-style:-translate-x-full rtl:data-[side=right]:data-starting-style:-translate-x-full",
 				"data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full",
 				"data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[calc(100svh-2rem)] data-[side=bottom]:rounded-t-3xl data-[side=bottom]:pt-3 data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full",
@@ -113,7 +113,7 @@ function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
 	return (
 		<SheetPrimitive.Title
 			data-slot="sheet-title"
-			className={cn("font-display text-[22px] leading-7 font-medium text-ink", className)}
+			className={cn("font-display text-[22px] leading-7 text-ink", className)}
 			{...props}
 		/>
 	);

@@ -53,7 +53,7 @@ export function ConnectedAppsSection() {
 			{error || revoke.error ? <p role="alert">{(error ?? revoke.error)?.message}</p> : null}
 			{isPending ? (
 				<p role="status">
-					<Trans>Loading connections...</Trans>
+					<Trans>Loading connections…</Trans>
 				</p>
 			) : connections.length === 0 ? (
 				<p className="text-sm text-ink-3">
