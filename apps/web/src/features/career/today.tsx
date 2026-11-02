@@ -365,6 +365,42 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 								})}
 							</AnimatePresence>
 						</div>
+					) : data?.length === 0 && applications?.length === 0 ? (
+						// A new account: what Career is for, and the first three things to do.
+						<EmptyState
+							title={<Trans>Your job search starts here</Trans>}
+							description={
+								<Trans>
+									Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and
+									finished briefings appear here.
+								</Trans>
+							}
+							action={
+								<Button nativeButton={false} render={<Link to="/dashboard/career/knowledge/preferences" />}>
+									<Trans>Set your preferences</Trans>
+								</Button>
+							}
+							secondary={
+								<span className="flex flex-wrap justify-center gap-2">
+									<Button
+										variant="secondary"
+										nativeButton={false}
+										render={<Link to="/dashboard/career/knowledge/facts" />}
+									>
+										<Trans>Add facts</Trans>
+									</Button>
+									<Button
+										variant="secondary"
+										nativeButton={false}
+										render={
+											<Link to="/dashboard/career/coach/{-$conversationId}" params={{ conversationId: undefined }} />
+										}
+									>
+										<Trans>Ask the coach</Trans>
+									</Button>
+								</span>
+							}
+						/>
 					) : (
 						<EmptyState
 							title={<Trans>You're up to date</Trans>}
