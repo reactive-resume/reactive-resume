@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -35,14 +36,32 @@ type ApiKey = {
 	createdAt: Date;
 	lastRequest: Date | null;
 	expiresAt: Date | null;
+	permissions?: unknown;
 };
+
+/** Keys without a permission statement predate access choices and can do everything. */
+function isReadOnly(permissions: unknown): boolean {
+	let statements = permissions;
+	if (typeof statements === "string") {
+		try {
+			statements = JSON.parse(statements);
+		} catch {
+			return false;
+		}
+	}
+	if (!statements || typeof statements !== "object" || !("api" in statements)) return false;
+	const api = statements.api;
+	return Array.isArray(api) && !api.includes("write") && !api.includes("delete");
+}
 
 const shortDate = (date: Date) =>
 	date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 
-export function ApiKeysSection() {
+type ApiKeysSectionProps = { openNewKey?: boolean };
+
+export function ApiKeysSection({ openNewKey = false }: ApiKeysSectionProps) {
 	const queryClient = useQueryClient();
-	const [creating, setCreating] = useState(false);
+	const [creating, setCreating] = useState(openNewKey);
 	const { data: keys = [], isLoading } = useQuery({
 		queryKey: KEYS,
 		queryFn: () => authClient.apiKey.list(),
@@ -84,6 +103,7 @@ export function ApiKeysSection() {
 
 	return (
 		<SettingsSection
+			id="api-keys"
 			title={<Trans>API keys</Trans>}
 			description={<Trans>Keys act as you with the access you choose. New keys start read-only.</Trans>}
 			action={
@@ -110,6 +130,9 @@ export function ApiKeysSection() {
 								<Trans>Name</Trans>
 							</th>
 							<th scope="col" className="text-start font-medium">
+								<Trans>Access</Trans>
+							</th>
+							<th scope="col" className="text-start font-medium">
 								<Trans>Created</Trans>
 							</th>
 							<th scope="col" className="text-start font-medium">
@@ -133,6 +156,12 @@ export function ApiKeysSection() {
 							>
 								<td className="ps-3.5 font-medium max-sm:w-full max-sm:ps-0">
 									{key.name || <span className="font-mono text-ink-2">{key.start}…</span>}
+								</td>
+								<td className="text-ink-2 max-sm:text-xs">
+									<span className="sm:hidden">
+										<Trans>Access</Trans>{" "}
+									</span>
+									{isReadOnly(key.permissions) ? <Trans>Read only</Trans> : <Trans>Full access</Trans>}
 								</td>
 								<td className="text-ink-2 max-sm:text-xs">
 									<span className="sm:hidden">
@@ -181,6 +210,53 @@ const EXPIRIES: Expiry[] = [
 	{ label: () => t`90 days`, seconds: 90 * DAY },
 	{ label: () => t`Never`, seconds: null },
 ];
+
+/** A ready-to-paste MCP client entry for this instance, with the new key in its header. */
+const mcpConfig = (key: string) =>
+	JSON.stringify(
+		{ mcpServers: { "reactive-resume": { url: `${window.location.origin}/mcp`, headers: { "x-api-key": key } } } },
+		null,
+		2,
+	);
+
+type ChoicesProps = {
+	legend: ReactNode;
+	name: string;
+	options: string[];
+	selected: number;
+	onSelect: (index: number) => void;
+	hint?: ReactNode;
+};
+
+/** A row of equal buttons for one choice, like a segmented control, built on radios. */
+function Choices({ legend, name, options, selected, onSelect, hint }: ChoicesProps) {
+	return (
+		<fieldset className="grid gap-1.5">
+			<legend className="mb-1.5 text-sm font-medium">{legend}</legend>
+			<div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
+				{options.map((option, index) => (
+					<label
+						key={option}
+						className={cn(
+							"flex min-h-9 cursor-pointer items-center justify-center rounded-lg border border-control-border px-2 py-1.5 text-center text-sm font-medium transition-colors duration-quick hover:bg-hover has-focus-visible:outline-2 has-focus-visible:outline-accent",
+							selected === index && "border-accent bg-accent-soft text-accent-text",
+						)}
+					>
+						<input
+							type="radio"
+							name={name}
+							className="sr-only"
+							checked={selected === index}
+							onChange={() => onSelect(index)}
+						/>
+						{option}
+					</label>
+				))}
+			</div>
+			{hint ? <p className="text-xs text-ink-3">{hint}</p> : null}
+		</fieldset>
+	);
+}
 
 type NewKeyDialogProps = { open: boolean; onOpenChange: (open: boolean) => void; onCreated: () => void };
 
@@ -270,6 +346,25 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 								/>
 							</Button>
 						</div>
+						<div className="flex flex-wrap items-center justify-between gap-2 text-[13px] text-ink-2">
+							<p>
+								<Trans>
+									Send it in the <code className="font-mono">x-api-key</code> header.
+								</Trans>
+							</p>
+							<Button
+								size="sm"
+								variant="ghost"
+								onClick={async () => {
+									if (await copy(mcpConfig(key)))
+										toast.add({ type: "success", description: t`Copied the MCP config with this key.` });
+									else toast.add({ type: "error", description: t`Couldn't copy to the clipboard. Try again.` });
+								}}
+							>
+								<Icon name="copy" size={16} />
+								<Trans>Copy MCP config</Trans>
+							</Button>
+						</div>
 						<DialogFooter>
 							<Button onClick={() => onOpenChange(false)}>
 								<Trans>Done</Trans>
@@ -296,45 +391,21 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 								onChange={(event) => setName(event.target.value)}
 							/>
 						</div>
-						<div className="grid gap-1.5">
-							<Label htmlFor={`${id}-access`}>
-								<Trans>Access</Trans>
-							</Label>
-							<select
-								id={`${id}-access`}
-								value={access}
-								onChange={(event) => setAccess(event.target.value === "read" ? "read" : "full")}
-								className="h-9 rounded-lg border border-control-border bg-bg px-3 text-sm"
-							>
-								<option value="read">{t`Read only`}</option>
-								<option value="full">{t`Read, write and delete`}</option>
-							</select>
-						</div>
-						<fieldset className="grid gap-1.5">
-							<legend className="mb-1.5 text-sm font-medium">
-								<Trans>Expires</Trans>
-							</legend>
-							<div className="grid grid-cols-3 gap-2">
-								{EXPIRIES.map((option, index) => (
-									<label
-										key={option.label()}
-										className={cn(
-											"flex h-9 cursor-pointer items-center justify-center rounded-lg border border-control-border text-sm font-medium transition-colors duration-quick hover:bg-hover has-focus-visible:outline-2 has-focus-visible:outline-accent",
-											expiry === index && "border-accent bg-accent-soft text-accent-text",
-										)}
-									>
-										<input
-											type="radio"
-											name={`${id}-expiry`}
-											className="sr-only"
-											checked={expiry === index}
-											onChange={() => setExpiry(index)}
-										/>
-										{option.label()}
-									</label>
-								))}
-							</div>
-						</fieldset>
+						<Choices
+							legend={<Trans>Access</Trans>}
+							name={`${id}-access`}
+							options={[t`Read only`, t`Read, write and delete`]}
+							selected={access === "read" ? 0 : 1}
+							onSelect={(index) => setAccess(index === 0 ? "read" : "full")}
+							hint={<Trans>Read only can't change or delete anything.</Trans>}
+						/>
+						<Choices
+							legend={<Trans>Expires</Trans>}
+							name={`${id}-expiry`}
+							options={EXPIRIES.map((option) => option.label())}
+							selected={expiry}
+							onSelect={setExpiry}
+						/>
 						{failure && (
 							<p role="alert" className="text-sm text-danger-text">
 								{failure}

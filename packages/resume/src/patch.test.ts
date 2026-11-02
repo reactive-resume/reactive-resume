@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { applyResumePatches, ResumePatchError } from "./patch";
+import { applyResumePatches, describeResumePatchError, ResumePatchError } from "./patch";
 
 describe("applyResumePatches", () => {
 	it("applies multiple ops in sequence", () => {
@@ -35,6 +35,19 @@ describe("applyResumePatches", () => {
 		expect(() =>
 			applyResumePatches(defaultResumeData, [{ op: "replace", path: "/does/not/exist", value: "x" }]),
 		).toThrow(ResumePatchError);
+	});
+
+	it("names the failing operation and path", () => {
+		let caught: unknown;
+		try {
+			applyResumePatches(defaultResumeData, [{ op: "replace", path: "/basics/nope/x", value: "y" }]);
+		} catch (error) {
+			caught = error;
+		}
+		expect(caught).toBeInstanceOf(ResumePatchError);
+		expect(describeResumePatchError(caught as ResumePatchError)).toMatch(
+			/^The replace operation at \/basics\/nope\/x failed: /,
+		);
 	});
 
 	it("throws ResumePatchError for failed test op", () => {

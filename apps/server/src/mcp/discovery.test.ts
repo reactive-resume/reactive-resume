@@ -136,7 +136,8 @@ it("precomputes discovery before the first request without user queries or netwo
 	const { handleMcp } = await import("./handler");
 	const response = await handleMcp(request());
 	expect(response.status).toBe(200);
-	expect((await response.json()).result.tools.length).toBeGreaterThan(70);
+	// The default credential is read-only, so it lists the read-only tools.
+	expect((await response.json()).result.tools.length).toBeGreaterThan(40);
 	expect(conversions.mock.calls.length).toBe(0);
 }, 30_000);
 
@@ -150,7 +151,7 @@ it("reuses static schema conversions across separate authenticated discovery req
 		const started = performance.now();
 		const response = await handleMcp(request("tools/list", token));
 		expect(response.status).toBe(200);
-		expect((await response.json()).result.tools.length).toBeGreaterThan(70);
+		expect((await response.json()).result.tools.length).toBeGreaterThan(token === "writer" ? 70 : 40);
 		durations.push(performance.now() - started);
 	}
 	console.info("MCP tools/list milliseconds", durations.map(Math.round));

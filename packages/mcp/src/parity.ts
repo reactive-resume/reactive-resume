@@ -4,7 +4,7 @@ import type { AnyProcedure, InferRouterInitialContext, RouterClient } from "@orp
 import type { RequestAuthentication } from "@reactive-resume/api/context";
 import { call, ORPCError } from "@orpc/server";
 import z from "zod";
-import { requiredPermission } from "@reactive-resume/api/context";
+import { missingPermissionMessage, requiredPermission } from "@reactive-resume/api/context";
 import { restAliases } from "@reactive-resume/api/rest";
 import router from "@reactive-resume/api/routers";
 import { env } from "@reactive-resume/env/server";
@@ -159,8 +159,8 @@ const HANDOFFS: Record<string, Handoff> = {
 	"aiProviders.update": settingsHandoff("Edit an AI provider in the app", "ai"),
 	"webAccess.save": settingsHandoff("Set up web search in the app", "ai"),
 	"resume.getRoot": settingsHandoff("Open the dashboard", ""),
-	"auth.createApiKey": settingsHandoff("Create an API key in the app", "api-keys"),
-	"auth.deleteAccount": settingsHandoff("Delete your account in the app", "account"),
+	"auth.createApiKey": settingsHandoff("Create an API key in the app", "ai?newKey=true#api-keys"),
+	"auth.deleteAccount": settingsHandoff("Delete your account in the app", "account?deleteAccount=true"),
 	// Resume share passwords are credentials too: owners set them and visitors enter them in the browser.
 	"resume.setPassword": {
 		title: "Set a resume's share password in the app",
@@ -182,12 +182,30 @@ const HANDOFFS: Record<string, Handoff> = {
 };
 const handoffOutputSchema = z.object({ url: z.url(), action: z.string(), requiresBrowser: z.literal(true) });
 // Its output carries no `action`, so it is registered on its own.
+/** Where each settings page or group lives now. `authentication` is the old name for `security`, kept for clients. */
+const ACCOUNT_SETTINGS_PATHS = {
+	account: "/dashboard/settings/account",
+	profile: "/dashboard/settings/profile",
+	security: "/dashboard/settings/account#security",
+	authentication: "/dashboard/settings/account#security",
+	preferences: "/dashboard/settings/preferences",
+	ai: "/dashboard/settings/ai",
+	"api-keys": "/dashboard/settings/ai#api-keys",
+	"connected-applications": "/dashboard/settings/ai#connected-applications",
+} as const;
 const accountToolMeta = {
 	title: "Open account settings",
 	description:
-		"Open profile, security, connected applications, API keys or preferences. Authentication changes require the user's browser interaction.",
+		"Open a settings page or group: account, profile, security, preferences, ai (AI providers and web access), api-keys or connected-applications. Authentication changes require the user's browser interaction.",
 	inputSchema: z.object({
-		page: z.enum(["profile", "authentication", "api-keys", "preferences", "account"]).default("profile"),
+		page: z
+			.enum(
+				Object.keys(ACCOUNT_SETTINGS_PATHS) as [
+					keyof typeof ACCOUNT_SETTINGS_PATHS,
+					...(keyof typeof ACCOUNT_SETTINGS_PATHS)[],
+				],
+			)
+			.default("account"),
 	}),
 	outputSchema: z.object({ url: z.url(), requiresBrowser: z.literal(true) }),
 	annotations: { title: "Open account settings", ...READ_IDEMPOTENT },
@@ -257,6 +275,13 @@ const PARITY_CONTRACTS = new Map(
 		path,
 		{ procedure, annotations, ...parityToolContract(path, procedure) },
 	]),
+);
+
+/** Parity tools a read-only credential can't call: their route needs write or delete, whatever their annotations say. */
+export const PARITY_WRITE_TOOLS: ReadonlySet<string> = new Set(
+	[...PARITY_CONTRACTS]
+		.filter(([, { procedure }]) => requiredPermission(procedure["~orpc"].route) !== "read")
+		.map(([path]) => parityToolName(path)),
 );
 
 export const PARITY_TOOL_META: Record<
@@ -383,7 +408,7 @@ export function registerParityTools(
 				const permission = requiredPermission(definition.route);
 				if (!context.authentication.permissions.includes(permission))
 					throw new ORPCError("FORBIDDEN", {
-						message: `This credential needs the api:${permission} permission. Use a credential that includes it.`,
+						message: missingPermissionMessage(context.authentication.method, permission),
 					});
 				const maxBytes =
 					path === "rest.checkPdf"
@@ -459,6 +484,6 @@ export function registerParityTools(
 		);
 	}
 	server.registerTool("open_account_settings", accountToolMeta, ({ page }) =>
-		json({ url: new URL(`/dashboard/settings/${page}`, env.APP_URL).toString(), requiresBrowser: true }),
+		json({ url: new URL(ACCOUNT_SETTINGS_PATHS[page], env.APP_URL).toString(), requiresBrowser: true }),
 	);
 }

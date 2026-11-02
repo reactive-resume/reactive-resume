@@ -5,17 +5,19 @@ import { PROMPT_META } from "./prompts";
 const RESUME_ID_ARGUMENT = [{ name: "id", description: "Resume ID.", required: true }] as const;
 
 /** Shared server identity for both the live MCP server and the static server card. */
-export function buildMcpServerInfo(version: string) {
+export function buildMcpServerInfo(version: string, baseUrl = "https://rxresu.me") {
+	// A self-hosted server names itself, not the hosted service.
+	const origin = new URL(baseUrl).origin;
 	return {
 		name: "reactive-resume",
 		version,
 		title: "Reactive Resume",
-		websiteUrl: "https://rxresu.me",
+		websiteUrl: origin,
 		description:
 			"Reactive Resume is a free and open-source resume builder. Use this MCP server to interact with your resume using an LLM of your choice.",
 		icons: [
-			{ src: "https://rxresu.me/icon/light.svg", mimeType: "image/svg+xml", theme: "light" as const },
-			{ src: "https://rxresu.me/icon/dark.svg", mimeType: "image/svg+xml", theme: "dark" as const },
+			{ src: `${origin}/icon/light.svg`, mimeType: "image/svg+xml", theme: "light" as const },
+			{ src: `${origin}/icon/dark.svg`, mimeType: "image/svg+xml", theme: "dark" as const },
 		],
 	};
 }
@@ -27,7 +29,7 @@ export function buildMcpServerInfo(version: string) {
  * Some registries only surface the `resources` array in their UI, not `resourceTemplates`.
  * The parameterized resume URI is therefore duplicated here so discovery matches the live template.
  */
-export function buildMcpServerCard(appVersion: string) {
+export function buildMcpServerCard(appVersion: string, baseUrl?: string) {
 	const tools = prepareMcpDiscovery().tools.map(({ execution: _execution, ...tool }) => tool);
 
 	const prompts = Object.entries(PROMPT_META).map(([name, meta]) => ({
@@ -86,7 +88,7 @@ export function buildMcpServerCard(appVersion: string) {
 				},
 			},
 		},
-		serverInfo: buildMcpServerInfo(appVersion),
+		serverInfo: buildMcpServerInfo(appVersion, baseUrl),
 		tools,
 		prompts,
 		resources,

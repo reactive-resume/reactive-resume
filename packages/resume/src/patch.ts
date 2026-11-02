@@ -42,6 +42,15 @@ export class ResumePatchError extends Error {
 }
 
 /**
+ * The failure named by its operation and path, e.g. "The replace operation at /basics/nope failed: …". Named by op and
+ * path rather than index: fast-json-patch reports index 0 for some failures, whichever operation it was.
+ */
+export function describeResumePatchError(error: ResumePatchError): string {
+	const { op, path } = error.operation;
+	return `The ${op} operation at ${path} failed: ${error.message}`;
+}
+
+/**
  * Human-readable messages for each `fast-json-patch` error code.
  * These are returned to the API consumer instead of the raw library output.
  */

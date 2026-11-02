@@ -26,7 +26,7 @@ import { admin, anonymous, jwt, openAPI } from "better-auth/plugins";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { username } from "better-auth/plugins/username";
-import { and, eq, gt, inArray, ne, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull, lt, ne, sql } from "drizzle-orm";
 import { createLocalJWKSet, jwtVerify } from "jose";
 import { createDefaultOwnedApplicationLanes, MAX_APPLICATION_LANES } from "@reactive-resume/db/application-lanes";
 import { db } from "@reactive-resume/db/client";
@@ -178,6 +178,54 @@ async function missingResourceRedirect(params: Record<string, unknown> | undefin
 	if (typeof params?.state === "string") target.searchParams.append("state", params.state);
 	target.searchParams.append("iss", oauthIssuer);
 	return target.toString();
+}
+
+type Database = typeof db;
+type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
+
+/** Marks a grant's stored refresh and access tokens revoked, so they stop working with or without the consent row. */
+async function revokeGrantTokens(executor: Database | Transaction, userId: string, clientId: string) {
+	const revoked = new Date();
+	await executor
+		.update(schema.oauthRefreshToken)
+		.set({ revoked })
+		.where(and(eq(schema.oauthRefreshToken.clientId, clientId), eq(schema.oauthRefreshToken.userId, userId)));
+	await executor
+		.update(schema.oauthAccessToken)
+		.set({ revoked })
+		.where(and(eq(schema.oauthAccessToken.clientId, clientId), eq(schema.oauthAccessToken.userId, userId)));
+}
+
+// A consent this new was just granted, not an earlier one whose scopes were changed.
+const FRESH_GRANT_MS = 60_000;
+
+/**
+ * After a reconnect, refresh tokens from before it stop working. A refresh racing an earlier disconnect could leave
+ * one unrevoked; it would otherwise mint tokens for the new grant. An existing grant re-approved keeps its tokens.
+ */
+async function revokeTokensFromBeforeGrant(oauthQuery: string, headers: Headers | undefined) {
+	const clientId = new URLSearchParams(oauthQuery).get("client_id");
+	if (!clientId) return;
+	const session = await auth.api.getSession({ headers: headers ?? new Headers(), query: { disableCookieCache: true } });
+	if (!session) return;
+	const [consent] = await db
+		.select({ createdAt: schema.oauthConsent.createdAt })
+		.from(schema.oauthConsent)
+		.where(and(eq(schema.oauthConsent.clientId, clientId), eq(schema.oauthConsent.userId, session.user.id)))
+		.limit(1);
+	if (!consent?.createdAt || Date.now() - consent.createdAt.getTime() > FRESH_GRANT_MS) return;
+	const revoked = new Date();
+	await db
+		.update(schema.oauthRefreshToken)
+		.set({ revoked })
+		.where(
+			and(
+				eq(schema.oauthRefreshToken.clientId, clientId),
+				eq(schema.oauthRefreshToken.userId, session.user.id),
+				lt(schema.oauthRefreshToken.createdAt, consent.createdAt),
+				isNull(schema.oauthRefreshToken.revoked),
+			),
+		);
 }
 
 export function isCustomOAuthProviderEnabled() {
@@ -822,25 +870,7 @@ const getAuthConfig = () => {
 					if (!consent) throw new APIError("NOT_FOUND");
 					// Native consent deletion alone leaves refresh tokens usable. Revoke
 					// the grant's stored tokens before removing its consent.
-					const revoked = new Date();
-					await db
-						.update(schema.oauthRefreshToken)
-						.set({ revoked })
-						.where(
-							and(
-								eq(schema.oauthRefreshToken.clientId, consent.clientId),
-								eq(schema.oauthRefreshToken.userId, current.user.id),
-							),
-						);
-					await db
-						.update(schema.oauthAccessToken)
-						.set({ revoked })
-						.where(
-							and(
-								eq(schema.oauthAccessToken.clientId, consent.clientId),
-								eq(schema.oauthAccessToken.userId, current.user.id),
-							),
-						);
+					await revokeGrantTokens(db, current.user.id, consent.clientId);
 					return;
 				}
 				if (!ctx.path.includes("/oauth2/register")) return;
@@ -867,6 +897,10 @@ const getAuthConfig = () => {
 				const payload = ctx.context.returned as JWTPayload | undefined;
 				if (ctx.path === "/oauth2/public-client-prelogin" && payload && typeof payload.client_id === "string") {
 					return ctx.json({ client_id: payload.client_id, client_name: payload.client_name });
+				}
+				if (ctx.path === "/oauth2/consent" && ctx.body?.accept === true && typeof ctx.body.oauth_query === "string") {
+					await revokeTokensFromBeforeGrant(ctx.body.oauth_query, ctx.headers);
+					return;
 				}
 				// Run after the provider authenticates the introspecting client and verifies the token.
 				if (ctx.path !== "/oauth2/introspect" || !payload || payload.active !== true || typeof payload.azp !== "string")
@@ -1050,6 +1084,8 @@ const getAuthConfig = () => {
 				backupCodeOptions: { customBackupCodesGenerate: () => generateBackupCodes() },
 			}),
 			apiKey({
+				// A fixed prefix lets secret scanners and people reading config files recognize a leaked key.
+				defaultPrefix: "rr_",
 				enableSessionForAPIKeys: false,
 				rateLimit: {
 					...rateLimitConfig.betterAuth.apiKey,
@@ -1170,6 +1206,36 @@ export const accountAuth = {
 		),
 	listApiKeys: (user: User) => accountUser.run(user, () => auth.api.listApiKeys({})),
 	deleteApiKey: (user: User, keyId: string) => accountUser.run(user, () => auth.api.deleteApiKey({ body: { keyId } })),
+	/** The applications this account allowed through OAuth, newest first, with the name each registered. */
+	listConnections: (user: User) =>
+		db
+			.select({
+				id: schema.oauthConsent.id,
+				clientId: schema.oauthConsent.clientId,
+				clientName: schema.oauthClient.name,
+				scopes: schema.oauthConsent.scopes,
+				createdAt: schema.oauthConsent.createdAt,
+			})
+			.from(schema.oauthConsent)
+			.innerJoin(schema.oauthClient, eq(schema.oauthClient.clientId, schema.oauthConsent.clientId))
+			.where(eq(schema.oauthConsent.userId, user.id))
+			.orderBy(desc(schema.oauthConsent.createdAt)),
+	/** Disconnects one application: its tokens stop working and its consent is removed. False when it isn't this account's. */
+	revokeConnection: (user: User, id: string) =>
+		db.transaction(async (tx) => {
+			const [consent] = await tx
+				.select({ clientId: schema.oauthConsent.clientId })
+				.from(schema.oauthConsent)
+				.where(and(eq(schema.oauthConsent.id, id), eq(schema.oauthConsent.userId, user.id)))
+				.limit(1)
+				.for("update");
+			if (!consent) return false;
+			await revokeGrantTokens(tx, user.id, consent.clientId);
+			await tx.delete(schema.oauthConsent).where(eq(schema.oauthConsent.id, id));
+			// Again after the delete: a refresh that committed while the first pass ran is caught here.
+			await revokeGrantTokens(tx, user.id, consent.clientId);
+			return true;
+		}),
 };
 
 export async function initializeAuth(): Promise<void> {

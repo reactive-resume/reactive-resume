@@ -779,6 +779,10 @@ msgstr "{minutes} دقیقه"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {بدون مصاحبه} one {# مصاحبه} other {# مصاحبه}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} به صفحه 1 اضافه شد"
@@ -1942,6 +1946,10 @@ msgstr "تاریخ درخواست شغل"
 msgid "Application deleted"
 msgstr "درخواست کار حذف شد"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "برنامه‌هایی که از «{0}» استفاده می‌کنند دیگر کار نخواهند کرد. این کار قابل بازگشت نیست."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -3168,7 +3180,14 @@ msgstr "ابزارهایی را که برای نوشتن، جستجوی شغل �
 msgid "Connected · {milliseconds} ms"
 msgstr "متصل · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "برنامه های متصل"
 
@@ -3495,6 +3514,10 @@ msgstr "درخواست‌های شغلی بارگیری نشد."
 msgid "Couldn't load applications. Try again."
 msgstr "درخواست‌ها بارگیری نشدند. دوباره امتحان کنید."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "بارگیری اسناد ممکن نشد. دوباره تلاش کنید."
@@ -3587,7 +3610,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3684,6 +3706,10 @@ msgstr "این رزومه ارائه نشد."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "نمی توان کلید را باطل کرد. دوباره امتحان کنید."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "ابطال این اتصال ممکن نشد. دوباره امتحان کنید."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3979,6 +4005,10 @@ msgstr "ایجاد رزومهٔ جدید"
 msgid "Create a resume first, then ask about it."
 msgstr "ابتدا یک رزومه ایجاد کنید، سپس در مورد آن بپرسید."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "کپی ایجاد کنید"
@@ -4217,6 +4247,10 @@ msgstr "حذف درخواست…"
 msgid "Delete conversation"
 msgstr "حذف گفتگو"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "حذف ورودی"
@@ -4421,6 +4455,27 @@ msgstr "ویرایش های آفلاین خود را کنار بگذارید و 
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "ویرایش‌های آفلاین شما کنار گذاشته شود؟"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "قطع اتصال"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -5440,6 +5495,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "بر اساس منطقه زمانی شما"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6074,6 +6133,10 @@ msgstr "مسائل"
 msgid "It has entries but isn't placed on a page."
 msgstr "ورودی دارد اما در صفحه ای قرار نمی گیرد."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline and the calendar for good."
 msgstr ""
@@ -6184,6 +6247,10 @@ msgstr "نگه دارید"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "فقط یک نشانی نگه دارید تا نرم‌افزار مجبور نباشد حدس بزند کدام را استفاده کند."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "هنگامی که از برنامه استفاده نمی‌کنید، دسترسی را حفظ کنید."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6715,6 +6782,10 @@ msgstr "در حال بارگیری کلیدهای API…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "بارگیری درخواست‌ها…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "در حال بارگیری اتصالات..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7585,6 +7656,10 @@ msgstr "نیازی به تغییر نیست. از قبل در {stage} است."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "هیچ دستوری با این جستجو مطابقت ندارد."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "هنوز هیچ برنامهٔ متصلی وجود ندارد. برنامه‌هایی که اجازهٔ دسترسی به حساب خود را به آن‌ها می‌دهید اینجا نمایش داده می‌شوند."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9254,6 +9329,10 @@ msgstr "خواندن مجوز"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "دسترسی فقط خواندنی"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9289,6 +9368,22 @@ msgstr "رزومه خوانده شد"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "آدرس ایمیل خود را بخوانید."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "اطلاعات پروفایل خود را بخوانید."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -10133,10 +10228,6 @@ msgstr "بازبینی پاسخ من"
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
-
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr "مجوزها را بررسی کنید و اتصال برنامه‌ها را در مرورگر خود قطع کنید. ممکن است لازم باشد آنجا وارد شوید."
 
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
@@ -12927,6 +13018,7 @@ msgstr "{suggestion} را امتحان کنید"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

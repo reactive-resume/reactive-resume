@@ -4,18 +4,18 @@ test("new API keys default to read-only and grant full access only when selected
 	await page.goto("/dashboard/settings/ai");
 	const open = () => page.getByRole("button", { name: "New key", exact: true }).click();
 	const dialog = page.getByRole("dialog", { name: "New API key" });
-	const access = dialog.getByLabel("Access", { exact: true });
+	const readOnly = dialog.getByRole("radio", { name: "Read only", exact: true });
 
 	await open();
-	await expect(access).toHaveValue("read");
-	await access.selectOption("full");
+	await expect(readOnly).toBeChecked();
+	await dialog.getByText("Read, write and delete", { exact: true }).click();
 	await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
 	await expect(dialog).toBeHidden();
 
 	for (const selected of ["read", "full"] as const) {
 		await open();
-		await expect(access).toHaveValue("read");
-		if (selected === "full") await access.selectOption("full");
+		await expect(readOnly).toBeChecked();
+		if (selected === "full") await dialog.getByText("Read, write and delete", { exact: true }).click();
 		await dialog.getByLabel("What's it for?").fill(`Fictional ${selected} client`);
 		const issued = page.waitForResponse((response) => response.url().endsWith("/api/rpc/auth/createApiKey"));
 		await dialog.getByRole("button", { name: "Create key", exact: true }).click();
@@ -36,5 +36,5 @@ test("new API keys default to read-only and grant full access only when selected
 	}
 
 	await open();
-	await expect(access).toHaveValue("read");
+	await expect(readOnly).toBeChecked();
 });
