@@ -1,8 +1,10 @@
 import type { AIProvider, SavedProvider } from "./catalog";
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
+import { openBrowserAsync } from "expo-web-browser";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
+import { AI_PROVIDER_KEY_URLS, getAIProviderSetupProblem } from "@reactive-resume/ai/defaults";
 import { providerDefaults, providerLabel, providerOptions } from "./catalog";
 import { aiSettingsError, providerTestError } from "./error";
 import { useHasAIProvider } from "./provider-state";
@@ -18,6 +20,7 @@ import {
 	Switch,
 	Text,
 	TextField,
+	showToast,
 	useTheme,
 } from "@/ui";
 
@@ -106,6 +109,12 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [reveal, setReveal] = useState(false);
 	const [confirmDelete, setConfirmDelete] = useState(false);
+	const [advanced, setAdvanced] = useState(
+		Boolean(
+			saved?.provider !== "openai-compatible" && saved?.baseURL && saved.baseURL !== providerDefaults(provider).baseURL,
+		),
+	);
+	const [urlTouched, setUrlTouched] = useState(false);
 	const [modelFocused, setModelFocused] = useState(false);
 	const defaultModel = providerDefaults(provider).model;
 	const models = defaultModel ? [{ id: defaultModel, name: defaultModel }] : [];
@@ -118,6 +127,17 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 	const apiKey = fields.apiKey.trim();
 	// The server won't send the saved key to a new address, so the key comes with it (Ollama may have none).
 	const keyMissing = newURL && provider !== "ollama" && !apiKey;
+	const problem = getAIProviderSetupProblem(provider, fields, Boolean(current && !newURL));
+	const explanation =
+		problem === "baseURL"
+			? t`Enter an http:// or https:// base URL.`
+			: problem === "apiKey"
+				? t`Enter an API key for this provider.`
+				: problem === "model"
+					? t`Enter a model ID.`
+					: null;
+	const keyURL = AI_PROVIDER_KEY_URLS[provider];
+	const compatible = provider === "openai-compatible";
 	const changes = {
 		...(fields.label.trim() && fields.label.trim() !== baseline?.label ? { label: fields.label.trim() } : {}),
 		...(fields.model.trim() && fields.model.trim() !== baseline?.model ? { model: fields.model.trim() } : {}),
@@ -126,12 +146,7 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 		...(newURL || apiKey ? { apiKey } : {}),
 	};
 	const changed = Object.keys(changes).length > 0;
-	const ready = !!(
-		fields.model.trim() &&
-		(current || provider === "ollama" || apiKey) &&
-		!keyMissing &&
-		(!saved || changed)
-	);
+	const ready = !!(problem === null && !keyMissing && (!saved || changed));
 
 	const save = async () => {
 		const server = getServer();
@@ -220,6 +235,20 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 		}
 	};
 
+	const urlField = (
+		<TextField
+			label={compatible ? t`Base URL (required)` : t`Base URL`}
+			value={fields.baseURL}
+			onChangeText={(baseURL) => set({ baseURL })}
+			onBlur={() => setUrlTouched(true)}
+			error={urlTouched && problem === "baseURL" ? t`Enter an http:// or https:// base URL.` : undefined}
+			autoCapitalize="none"
+			autoCorrect={false}
+			keyboardType="url"
+			editable={!pending}
+		/>
+	);
+
 	return (
 		<View style={{ gap: space.s4, padding: space.s4 }}>
 			<Text color="ink2">{t`The key is encrypted on the server and never shown again. Saving tests the connection.`}</Text>
@@ -233,6 +262,8 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 				disabled={pending || !!current}
 				onChange={(next) => {
 					setProvider(next);
+					setAdvanced(false);
+					setUrlTouched(false);
 					set({ ...providerDefaults(next), apiKey: "" });
 				}}
 			/>
@@ -269,6 +300,17 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 					/>
 				}
 			/>
+			{keyURL ? (
+				<Button
+					variant="link"
+					label={t`Get an API key`}
+					onPress={() =>
+						void openBrowserAsync(keyURL).catch(() => showToast({ message: t`Couldn't open the browser. Try again.` }))
+					}
+				/>
+			) : (
+				<Text color="ink3">{t`Get an API key from your endpoint operator.`}</Text>
+			)}
 			<TextField
 				label={t`Model`}
 				value={fields.model}
@@ -293,22 +335,30 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 							disabled={pending}
 						/>
 					))}
-			<TextField
-				label={t`Name`}
-				value={fields.label}
-				placeholder={providerLabel(provider)}
-				onChangeText={(label) => set({ label })}
-				editable={!pending}
-			/>
-			<TextField
-				label={t`Base URL`}
-				value={fields.baseURL}
-				onChangeText={(baseURL) => set({ baseURL })}
-				autoCapitalize="none"
-				autoCorrect={false}
-				keyboardType="url"
-				editable={!pending}
-			/>
+			{compatible && urlField}
+			{!compatible && (
+				<Button
+					label={t`Advanced`}
+					variant="ghost"
+					icon={advanced ? "caret-down" : "caret-right"}
+					expanded={advanced}
+					onPress={() => setAdvanced(!advanced)}
+					disabled={pending}
+				/>
+			)}
+			{(compatible || advanced) && (
+				<View style={{ gap: space.s3 }}>
+					<TextField
+						label={t`Name`}
+						value={fields.label}
+						placeholder={providerLabel(provider)}
+						onChangeText={(label) => set({ label })}
+						editable={!pending}
+					/>
+					{!compatible && urlField}
+				</View>
+			)}
+			{explanation && !(urlTouched && problem === "baseURL") && <Text color="ink3">{explanation}</Text>}
 			{current && (
 				<>
 					<Text>{t`Use this provider`}</Text>

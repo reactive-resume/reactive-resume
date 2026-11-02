@@ -1,3 +1,4 @@
+import type { ProviderFields } from "./provider-fields";
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { AIProvider } from "@reactive-resume/ai/types";
 import { t } from "@lingui/core/macro";
@@ -5,7 +6,7 @@ import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useRef, useState } from "react";
-import { AI_PROVIDER_DEFAULT_BASE_URLS } from "@reactive-resume/ai/types";
+import { AI_PROVIDER_DEFAULT_BASE_URLS, getAIProviderSetupProblem } from "@reactive-resume/ai/defaults";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -16,12 +17,12 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 import { describeTest, keyEnding, providerDefaults, providerLabel, providerOptions } from "./catalog";
+import { ProviderFieldsForm } from "./provider-fields";
 import { providerTestError } from "./test-error";
 import { Combobox } from "@/components/ui/combobox";
 import { useClosingValue } from "@/hooks/use-closing-value";
@@ -30,15 +31,6 @@ import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type SavedProvider = RouterOutput["aiProviders"]["list"][number];
-
-const secretInputProps = {
-	autoCorrect: "off",
-	autoCapitalize: "off",
-	spellCheck: false,
-	"data-lpignore": "true",
-	"data-1p-ignore": "true",
-	"data-bwignore": "true",
-} as const;
 
 const isConfigError = (error: unknown) => error instanceof ORPCError && error.code === "PRECONDITION_FAILED";
 
@@ -289,108 +281,6 @@ function ProviderRow({ provider, isDefault, onMakeDefault, makingDefault, onEdit
 	);
 }
 
-type ProviderFields = { label: string; model: string; baseURL: string; apiKey: string };
-
-type ProviderFieldsProps = {
-	provider: AIProvider;
-	value: ProviderFields;
-	onChange: (value: ProviderFields) => void;
-	/** Editing: an empty key keeps the saved one. */
-	keyOptional?: boolean;
-	/** Editing with a new base URL: the saved key isn't sent there, so it's entered again. */
-	keyAgain?: boolean;
-};
-
-function ProviderFieldsForm({ provider, value, onChange, keyOptional, keyAgain }: ProviderFieldsProps) {
-	const id = useId();
-	const set = (patch: Partial<ProviderFields>) => onChange({ ...value, ...patch });
-	const defaults = providerDefaults(provider);
-	const models = defaults.model ? [{ id: defaults.model, name: defaults.model }] : [];
-
-	return (
-		<div className="grid gap-3 sm:grid-cols-2">
-			<div className="grid gap-1.5 sm:col-span-2">
-				<Label htmlFor={`${id}-key`}>
-					<Trans>API key</Trans>
-				</Label>
-				<Input
-					id={`${id}-key`}
-					type="password"
-					value={value.apiKey}
-					placeholder={
-						keyOptional && !keyAgain
-							? t`Leave empty to keep the saved key`
-							: provider === "ollama"
-								? t`Optional for local Ollama`
-								: undefined
-					}
-					required={keyAgain && provider !== "ollama"}
-					aria-describedby={keyAgain ? `${id}-key-hint` : undefined}
-					onChange={(event) => set({ apiKey: event.target.value })}
-					{...secretInputProps}
-				/>
-				{keyAgain && (
-					<p id={`${id}-key-hint`} className="text-xs leading-5 text-ink-3">
-						{provider === "ollama" ? (
-							<Trans>The saved key isn't sent to a new base URL. Enter it again if this server needs one.</Trans>
-						) : (
-							<Trans>The saved key isn't sent to a new base URL. Enter it again.</Trans>
-						)}
-					</p>
-				)}
-			</div>
-			<div className="grid gap-1.5 sm:col-span-2">
-				<Label htmlFor={`${id}-model`}>
-					<Trans>Model</Trans>
-				</Label>
-				<Input
-					id={`${id}-model`}
-					list={`${id}-models`}
-					aria-describedby={`${id}-model-hint`}
-					value={value.model}
-					placeholder={defaults.model || "gpt-4.1"}
-					onChange={(event) => set({ model: event.target.value })}
-					{...secretInputProps}
-				/>
-				<datalist id={`${id}-models`}>
-					{models.map((model) => (
-						<option key={model.id} value={model.id}>
-							{model.name}
-						</option>
-					))}
-				</datalist>
-				<p id={`${id}-model-hint`} className="text-xs leading-5 text-ink-3">
-					<Trans>Built-in suggestion. You can enter any model ID supported by your endpoint.</Trans>
-				</p>
-			</div>
-			<div className="grid gap-1.5 sm:col-span-2">
-				<Label htmlFor={`${id}-label`}>
-					<Trans>Name</Trans>
-				</Label>
-				<Input
-					id={`${id}-label`}
-					value={value.label}
-					placeholder={providerLabel(provider)}
-					onChange={(event) => set({ label: event.target.value })}
-				/>
-			</div>
-			<div className="grid gap-1.5 sm:col-span-2">
-				<Label htmlFor={`${id}-url`}>
-					<Trans>Base URL</Trans>
-				</Label>
-				<Input
-					id={`${id}-url`}
-					type="url"
-					value={value.baseURL}
-					placeholder={defaults.baseURL || "https://gateway.example.com/v1"}
-					onChange={(event) => set({ baseURL: event.target.value })}
-					{...secretInputProps}
-				/>
-			</div>
-		</div>
-	);
-}
-
 type AddProviderDialogProps = { open: boolean; onOpenChange: (open: boolean) => void };
 
 /** Every supported provider; saving tests the connection at once. */
@@ -454,11 +344,7 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 	};
 
 	const pending = create.isPending || update.isPending || test.isPending;
-	const ready = Boolean(
-		(provider === "ollama" || fields.apiKey.trim()) &&
-		fields.model.trim() &&
-		(provider !== "openai-compatible" || fields.baseURL.trim()),
-	);
+	const ready = getAIProviderSetupProblem(provider, fields) === null;
 
 	return (
 		<Dialog
@@ -477,6 +363,7 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 					</DialogDescription>
 				</DialogHeader>
 				<form
+					noValidate
 					className="grid gap-3"
 					onSubmit={(event) => {
 						event.preventDefault();
@@ -505,11 +392,11 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 							onValueChange={(next) => {
 								if (!next) return;
 								setProvider(next);
-								setFields((current) => ({ ...current, ...providerDefaults(next) }));
+								setFields((current) => ({ ...current, ...providerDefaults(next), apiKey: "" }));
 							}}
 						/>
 					</div>
-					<ProviderFieldsForm provider={provider} value={fields} onChange={setFields} />
+					<ProviderFieldsForm key={provider} provider={provider} value={fields} onChange={setFields} />
 					{failure && (
 						<p role="alert" className="text-sm text-danger-text">
 							{failure}
@@ -573,6 +460,7 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 	const apiKey = fields.apiKey.trim();
 	// The server won't send the saved key to a new address, so the key comes with it (Ollama may have none).
 	const keyMissing = newURL && provider.provider !== "ollama" && !apiKey;
+	const valid = getAIProviderSetupProblem(provider.provider, fields, !newURL) === null;
 	const changes = {
 		...(fields.label.trim() && fields.label.trim() !== provider.label ? { label: fields.label.trim() } : {}),
 		...(fields.model.trim() && fields.model.trim() !== provider.model ? { model: fields.model.trim() } : {}),
@@ -635,10 +523,11 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 				</DialogDescription>
 			</DialogHeader>
 			<form
+				noValidate
 				className="grid gap-4"
 				onSubmit={(event) => {
 					event.preventDefault();
-					if (changed && !keyMissing) void save();
+					if (changed && !keyMissing && valid) void save();
 				}}
 			>
 				<ProviderFieldsForm
@@ -701,7 +590,7 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 					</Button>
 					<Button
 						type="submit"
-						disabled={!changed || keyMissing || update.isPending || test.isPending}
+						disabled={!changed || keyMissing || !valid || update.isPending || test.isPending}
 						loading={update.isPending || test.isPending}
 					>
 						<Trans>Save and test</Trans>
