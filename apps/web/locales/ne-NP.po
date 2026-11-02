@@ -25,6 +25,14 @@ msgstr ""
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
+#. placeholder {0}: link.resumeName
+#. placeholder {1}: date(link.createdAt)
+#. placeholder {2}: statusLabel(link.status)
+#. placeholder {3}: link.expiresAt && link.status === "active" ? ` · ${t`expires ${date(link.expiresAt)}`}` : ""
+#: src/features/resume/share/feedback-links.tsx
+msgid "“{0}” as saved {1}. {2}{3}"
+msgstr ""
+
 #. placeholder {0}: term.label
 #: src/features/resume/editor/check/job-match.tsx
 msgid "“{0}” hidden"
@@ -239,6 +247,11 @@ msgstr "{0, plural, one {# मुद्दालाई बेवास्ता 
 #. placeholder {0}: review.notImported.length
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
+
+#. placeholder {0}: link.openCommentCount
+#: src/features/resume/share/feedback-links.tsx
+msgid "{0, plural, one {# new comment} other {# new comments}}"
 msgstr ""
 
 #. placeholder {0}: proposals.length
@@ -961,6 +974,10 @@ msgstr "{now} · टाइप गरिएको"
 msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{open, plural, one {# समीक्षा गर्न चीज।} other {# समीक्षा गर्न चीजहरू।}}"
 
+#: src/features/feedback/review-page.tsx
+msgid "{owner} asked for your feedback"
+msgstr ""
+
 #: src/features/resume/editor/chrome.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
@@ -1556,11 +1573,13 @@ msgstr "एक त्रैमासिकमा एक्टिभेसन 31%
 msgid "Activation rose from 31%…"
 msgstr "एक्टिभेसन 31% बाट…"
 
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Active"
 msgstr "सक्रिय"
 
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/resume/share/feedback-links.tsx
 msgid "Activity"
 msgstr "गतिविधि"
 
@@ -2225,6 +2244,10 @@ msgstr "तपाईंका सबै कागजातहरू, जाग�
 msgid "Allow access"
 msgstr "पहुँच अनुमति दिनुहोस्"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Allow comments"
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "Allow scheduled sharing"
 msgstr ""
@@ -2516,6 +2539,10 @@ msgstr ""
 msgid "Application preparation"
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
+msgid "Application progress"
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "application summaries"
 msgstr "आवेदनका सारांशहरू"
@@ -2568,7 +2595,9 @@ msgid "Applied"
 msgstr "लागू गरियो"
 
 #. placeholder {0}: date(application.appliedAt)
+#. placeholder {0}: i18n.date(application.appliedAt, { dateStyle: "medium" })
 #: src/features/career/workspace/shell.tsx
+#: src/features/feedback/review-page.tsx
 msgid "Applied {0}"
 msgstr "{0} मा आवेदन गरियो"
 
@@ -2698,6 +2727,10 @@ msgstr "कोचलाई सोध्नुहोस्"
 #: src/features/resume/share/download-tab.tsx
 msgid "Ask the community. Remove personal details before posting."
 msgstr "समुदायलाई सोध्नुहोस्। पोस्ट गर्नुअघि व्यक्तिगत विवरण हटाउनुहोस्।"
+
+#: src/features/feedback/review-page.tsx
+msgid "Ask the person who sent it for a new link. Comments you left are still with them."
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Ask your server administrator to enable credential encryption or configure a shared web connection."
@@ -3194,6 +3227,7 @@ msgstr ""
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
@@ -3418,6 +3452,10 @@ msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Check that these facts support what the story claims before saving."
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Check that you copied the whole link, or ask the person who sent it for a new one."
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -3746,6 +3784,7 @@ msgstr "ग्राहक आईडी"
 #: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/resume/stylesheet/editor.tsx
 #: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3841,6 +3880,28 @@ msgstr "आदेश प्यालेट"
 #: src/features/command-palette/content.tsx
 msgid "Command palette: {currentPage}"
 msgstr "आदेश प्यालेट: {currentPage}"
+
+#: src/features/feedback/review-page.tsx
+msgid "Comment"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Comment left"
+msgstr ""
+
+#. placeholder {0}: view.ownerName
+#: src/features/feedback/review-page.tsx
+msgid "Comment sent to {0}"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+#: src/features/resume/share/feedback-links.tsx
+msgid "Comments"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Comments and progress"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Community"
@@ -4613,11 +4674,19 @@ msgstr "नमूना फाइल लोड गर्न सकिएन। �
 msgid "Couldn't load the saved review."
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't load this link."
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "यो लोड गर्न सकिएन। तपाईंको सुरक्षित डेटा परिवर्तन भएको छैन।"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't load your feedback links."
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load your stages, so the standard ones are shown. Try again."
@@ -4637,6 +4706,10 @@ msgstr "कागजात लक गर्न सकिएन। पुन: प
 
 #: src/features/settings/account/backup-codes.tsx
 msgid "Couldn't make new codes. Try again."
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't make the link. Try again."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4908,6 +4981,10 @@ msgstr "इमेल पठाउन सकिएन। पुन: प्रय�
 msgid "Couldn't send the password reset email. Try again."
 msgstr "पासवर्ड रिसेट इमेल पठाउन सकिएन। पुन: प्रयास गर्नुहोस्।"
 
+#: src/features/feedback/review-page.tsx
+msgid "Couldn't send your comment. Try again."
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Couldn't set the password. Try again."
 msgstr "पासवर्ड सेट गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
@@ -4980,6 +5057,10 @@ msgstr "मोडेल बदल्न सकिएन। पुन: प्र�
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "ट्रान्सक्राइब गर्न सकिएन। तपाईंको रेकर्डिङ अझै यहीँ छ।"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't turn off the link. Try again."
+msgstr ""
+
 #. Fallback toast when disabling two-factor authentication fails
 #: src/dialogs/auth/disable-two-factor.tsx
 msgid "Couldn't turn off two-step verification. Check your password and try again."
@@ -5031,6 +5112,10 @@ msgstr "आवेदन अद्यावधिक गर्न सकिएन
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "जागिरका आवेदनहरू अद्यावधिक गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't update the comment. Try again."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Couldn't update the interview. Try again."
@@ -5366,6 +5451,10 @@ msgstr "मितिको स्तम्भ"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "मिति ढाँचा"
+
+#: src/features/feedback/review-page.tsx
+msgid "date unknown"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Dated updates. For things to remember and share with the coach, use Notes."
@@ -5845,6 +5934,7 @@ msgid "Donate"
 msgstr "दान गर्नुहोस्"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
@@ -6609,9 +6699,18 @@ msgstr "अनुभव"
 msgid "Experience, Education and more"
 msgstr "अनुभव, शिक्षा र थप"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Expired"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Expires"
 msgstr "म्याद सकिन्छ"
+
+#. placeholder {0}: date(link.expiresAt)
+#: src/features/resume/share/feedback-links.tsx
+msgid "expires {0}"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "explain one limit of the measurement clearly, without underselling the work."
@@ -6739,6 +6838,19 @@ msgstr "सुविधाहरू"
 #: src/features/career/workspace/practise.tsx
 msgid "Feedback"
 msgstr "प्रतिक्रिया"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Feedback link"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Feedback links"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+#: src/routes/feedback/$token.tsx
+msgid "Feedback request"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -6972,6 +7084,10 @@ msgstr "example.com जस्तो मूल डोमेनका लागि
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "प्रत्येकका लागि: स्थिति, कार्य, तपाईंको कदम, नतिजा, प्रतिबिम्ब। निश्चित नभएका सङ्ख्याहरू नराख्नुहोस्।"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "For example, Careers office"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "For example, note which companies you sent this resume to, or links to the job descriptions."
@@ -7285,6 +7401,7 @@ msgstr "ड्यासबोर्डमा जानुहोस्"
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Go to Reactive Resume"
 msgstr "Reactive Resume मा जानुहोस्"
@@ -7822,6 +7939,18 @@ msgstr ""
 msgid "Improving…"
 msgstr "सुधार गर्दै…"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 30 days"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 7 days"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 90 days"
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "In good company"
 msgstr "राम्रो संगत मा"
@@ -8051,6 +8180,10 @@ msgstr ""
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "यो मेटाइएको हुन सक्छ। अर्को कथा छान्नुहोस् वा नयाँ थप्नुहोस्।"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "It stops opening at once. Comments already left are kept. You can make a new link anytime."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "It will be deleted for good and can't be restored."
@@ -8782,6 +8915,14 @@ msgstr ""
 msgid "Link copied"
 msgstr "लिङ्क प्रतिलिपि गरियो"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link expires"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link made"
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link this resume"
 msgstr ""
@@ -8793,6 +8934,10 @@ msgstr "नौकरी आवेदन लिङ्क"
 #: src/features/documents/document-actions.tsx
 msgid "Link to application…"
 msgstr "जागिरको आवेदन लिङ्क…"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link turned off"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
@@ -8984,6 +9129,7 @@ msgstr "कार्यक्षेत्र लोड गर्दै…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/profile.tsx
 msgid "Loading…"
@@ -9114,6 +9260,10 @@ msgstr "यसलाई छोटो बनाउनुहोस्"
 #: src/features/templates/gallery.tsx
 msgid "Make it yours, then take it with you."
 msgstr "यसलाई आफ्नो बनाउनुहोस्, त्यसपछि यसलाई आफ्नो साथ लिनुहोस्।"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Make link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Make primary"
@@ -9697,6 +9847,7 @@ msgid "Network"
 msgstr "नेटवर्क"
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Never"
 msgstr "कहिल्यै"
@@ -9748,6 +9899,10 @@ msgstr "नयाँ कागजात"
 #: src/features/career/knowledge/facts.tsx
 msgid "New fact"
 msgstr "नयाँ तथ्य"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "New feedback link"
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "New key"
@@ -9897,6 +10052,11 @@ msgstr "परिवर्तन आवश्यक छैन। यो पह�
 msgid "No commands match that search."
 msgstr "त्यो खोजसँग मिल्ने कुनै कमाण्ड छैन।"
 
+#: src/features/feedback/review-page.tsx
+#: src/features/resume/share/feedback-links.tsx
+msgid "No comments yet."
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
 msgstr "अहिलेसम्म कुनै एप्लिकेसन जडान गरिएको छैन। तपाईंले आफ्नो खातामा पहुँच दिनुभएका एपहरू यहाँ देखिन्छन्।"
@@ -10041,6 +10201,10 @@ msgstr "नयाँ भूमिका छैनन्। खोज फेर�
 #: src/features/career/offers.tsx
 msgid "No offers to compare yet"
 msgstr "तुलना गर्न अझै प्रस्तावहरू छैनन्"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "No open applications."
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
@@ -10294,6 +10458,10 @@ msgstr "अहिले होइन"
 msgid "Not on the page"
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Not opened yet"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/career/offers.tsx
@@ -10494,6 +10662,10 @@ msgstr "ओडिया"
 msgid "Off"
 msgstr "बन्द"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Off makes the link read-only."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Off: the coach won’t see it or claim it."
 msgstr "बन्द: कोचले यो देख्ने वा दाबी गर्ने छैन।"
@@ -10691,6 +10863,10 @@ msgstr ""
 msgid "Only you see these"
 msgstr "तपाई मात्र यी देख्नुहुन्छ"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Only you see this."
+msgstr ""
+
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "केवल तपाईं, तपाईंले यो साझा नगरेसम्म। एक रिजुमे निजी रहन सक्छ, सार्वजनिक लिङ्कमा लाइभ हुन सक्छ, वा पासवर्डको साथ सुरक्षित हुन सक्छ, र तपाइँ यसलाई कुनै पनि समयमा परिवर्तन गर्न सक्नुहुन्छ। तपाईंको खाता मेटाउनुले तपाईंको रिजुमेहरू मेटाउँछ।"
@@ -10815,6 +10991,15 @@ msgstr ""
 #: src/features/settings/ai/providers.tsx
 msgid "OpenAI, Anthropic, Gemini, Ollama and more"
 msgstr "OpenAI, Anthropic, Gemini, Ollama र अन्य"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Opened"
+msgstr ""
+
+#. placeholder {0}: formatTimeSince(link.lastViewedAt, i18n.locale)
+#: src/features/resume/share/feedback-links.tsx
+msgid "Opened {0} ago"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Opening"
@@ -12836,6 +13021,7 @@ msgstr "पुन: सुरु"
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
+#: src/features/feedback/review-page.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "बायोडाटा"
@@ -12874,6 +13060,7 @@ msgstr "पुन: सुरु बिल्डर"
 msgid "Resume changed since this review. Review these suggestions as out of date or run again."
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "बायोडाटा सामग्री"
@@ -13082,6 +13269,10 @@ msgstr "रद्द गर्नुहोस्"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0} रद्द गर्नुहोस्"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Revoked"
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -13817,8 +14008,16 @@ msgstr "पठाउनुहोस्"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
+msgstr ""
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Send comment"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -14085,6 +14284,10 @@ msgstr "सेयर गर्नुहोस्"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "सार्वजनिक लिङ्क साझा गर्नुहोस्, पासवर्ड थप्नुहोस् वा यसलाई निजी राख्नुहोस्। 3 दृश्यता विकल्पहरूबाट छनौट गर्नुहोस्। PDF वा Word मा निर्यात गर्नुहोस्, वा JSON को रूपमा आफ्नो सबै डाटा साथमा लैजानुहोस्।"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Share application progress (optional)"
+msgstr ""
 
 #. placeholder {0}: provider.label
 #: src/libs/orpc/ai-consent.ts
@@ -14706,6 +14909,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Stages"
 msgstr "चरणहरू"
+
+#: src/features/feedback/review-page.tsx
+msgid "Stages and dates only. Notes, contacts and pay stay private."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 msgid "Standard section headings"
@@ -15618,6 +15825,10 @@ msgstr "पत्र पुन: रेजुमेको डिजाइनस�
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "तपाईंले सोध्नुभएपछि लाइन परिवर्तन भयो, त्यसैले यसलाई बदलिएको थिएन।"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "The link opens the resume as it is now. Later edits aren't shared, so every comment is about this version."
+msgstr ""
+
 #: src/features/auth/email-text.ts
 msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
 msgstr ""
@@ -15754,6 +15965,10 @@ msgstr ""
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
 msgstr "समीक्षा समाप्त हुन सकेन। पुन: प्रयास गर्नुहोस्।"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
@@ -16051,6 +16266,11 @@ msgstr "यो फाइलले Type 3 फन्ट प्रयोग गर�
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr ""
 
+#. placeholder {0}: view.resumeName
+#: src/features/feedback/review-page.tsx
+msgid "This is “{0}” as they saved it on {sharedOn}. Your comments go only to them and don't change the resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "यो PDF पोर्टफोलियो हो: देखिने पृष्ठ केवल कभर मात्र हो।"
@@ -16091,6 +16311,23 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
 msgstr "यो पत्रले आफ्नो प्राप्तकर्तालाई लेखेको रूपमा राख्छ।"
+
+#: src/features/feedback/review-page.tsx
+msgid "This link doesn't open"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "This link has expired"
+msgstr ""
+
+#. placeholder {0}: view.ownerName
+#: src/features/feedback/review-page.tsx
+msgid "This link is read-only. Reply to {0} directly with your thoughts."
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "This link was turned off"
+msgstr ""
 
 #: src/features/ats-checker/report/report-view.tsx
 msgid "This measures how faithfully software can extract this file's text. It does not predict whether an application will be rejected, and no tool can. Your file was read in this browser and never uploaded."
@@ -16501,6 +16738,7 @@ msgstr ""
 #: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/preview/preview.browser.tsx
 #: src/features/resume/share/download-tab.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
@@ -16544,9 +16782,21 @@ msgstr "नमूना रिज्यूमको साथ प्रयास
 msgid "Turkish"
 msgstr "टर्किस"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "निर्यात गर्दा वैकल्पिक लिगेचर बन्द गर्नुहोस्।"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off link…"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off this link?"
+msgstr ""
 
 #. Destructive action button to turn off two-factor authentication
 #: src/dialogs/auth/disable-two-factor.tsx
@@ -17688,6 +17938,10 @@ msgstr "यससँग पेन्सन वा भत्ता जस्त�
 msgid "Who can see my resume?"
 msgstr "मेरो रिजुमे कसले हेर्न सक्छ?"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Who is it for?"
+msgstr ""
+
 #: src/features/homepage/prepare.tsx
 msgid "Who owns the design system today? What does success look like in 90 days?"
 msgstr "आज डिजाइन प्रणालीको जिम्मा कसको छ? 90 दिनमा सफलता कस्तो देखिन्छ?"
@@ -18278,6 +18532,7 @@ msgstr "तपाईंको सन्देश"
 msgid "Your message is kept."
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"
 msgstr "तपाईंको नाम"

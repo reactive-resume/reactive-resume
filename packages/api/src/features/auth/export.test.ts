@@ -28,6 +28,9 @@ vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: mock
 vi.mock("../applications/lanes", () => ({ applicationLaneService: { get: mocks.getPipeline } }));
 vi.mock("../career/service", () => ({ careerService: { exportData: mocks.exportCareer } }));
 vi.mock("../application-profile/service", () => ({ applicationProfileService: { get: mocks.getApplicationProfile } }));
+vi.mock("../feedback/service", () => ({
+	feedbackService: { exportData: vi.fn().mockResolvedValue({ links: [], comments: [], events: [] }) },
+}));
 const { authService } = await import("./service");
 
 describe("account backup", () => {

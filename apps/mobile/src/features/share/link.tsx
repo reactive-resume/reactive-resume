@@ -17,6 +17,7 @@ import {
 	summarizeViews,
 } from "@reactive-resume/resume/sharing";
 import { flushResume } from "./document";
+import { FeedbackLinks } from "./feedback";
 import { WebPageSettings } from "./web-page";
 import { client, orpc } from "@/api/client";
 import { useFlags } from "@/api/flags";
@@ -246,6 +247,7 @@ export function LinkTab({ resume, offline }: LinkProps) {
 				save={save}
 			/>
 			<Statistics id={resume.id} isPublic={resume.isPublic} offline={offline} />
+			<FeedbackLinks resumeId={resume.id} offline={offline} />
 			<Sheet open={qrOpen} title={t`QR code`} onClose={() => setQrOpen(false)} detents={[0.5]}>
 				<View
 					accessible

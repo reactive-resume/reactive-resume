@@ -23,6 +23,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { AddressField } from "./address-field";
 import { CopyLinkButton } from "./copy-link-button";
 import { CustomDomainField } from "./custom-domain-field";
+import { FeedbackLinksSection } from "./feedback-links";
 import { useShareOrigin } from "./use-share-origin";
 import { templates } from "@/dialogs/resume/template/data";
 import {
@@ -121,6 +122,9 @@ export function SharePanel() {
 
 			<Separator />
 			<ViewsAndDownloads isPublic={isPublic} />
+
+			<Separator />
+			<FeedbackLinksSection resumeId={resume.id} />
 		</div>
 	);
 }

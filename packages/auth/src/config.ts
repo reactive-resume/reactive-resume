@@ -507,6 +507,17 @@ export async function linkAnonymousAccount({
 			.set({ userId: toUserId })
 			.where(eq(schema.resumeSlugRedirect.userId, fromUserId));
 
+		// Feedback links move with their resumes, so links already sent keep working and their comments stay together.
+		await tx
+			.update(schema.feedbackLink)
+			.set({ userId: toUserId, snapshot: rewriteUploadsJson(schema.feedbackLink.snapshot) })
+			.where(eq(schema.feedbackLink.userId, fromUserId));
+		await tx
+			.update(schema.feedbackComment)
+			.set({ userId: toUserId })
+			.where(eq(schema.feedbackComment.userId, fromUserId));
+		await tx.update(schema.feedbackEvent).set({ userId: toUserId }).where(eq(schema.feedbackEvent.userId, fromUserId));
+
 		// Ownership updates lock document rows, so guest saves cannot add uncopied references during copying.
 		const hook = accountLinkHook;
 		if (!hook) return;

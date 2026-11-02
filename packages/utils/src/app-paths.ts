@@ -40,6 +40,12 @@ export const isReservedUsername = (username: string) => {
 	return (RESERVED_SEGMENTS as readonly string[]).includes(name) || Object.hasOwn(SITE_PATH_ALIASES, name);
 };
 
+/**
+ * A feedback link's page, `/feedback/<id>~<signature>`, which the app renders. Slugs never hold `~`, so an account named
+ * "feedback" keeps its resume pages.
+ */
+export const isFeedbackPath = (pathname: string) => /^\/feedback\/[^/]+~[^/]+\/?$/.test(pathname);
+
 /** Whether `pathname` is in one of the signed-in app's sections. */
 export const isAppSectionPath = (pathname: string) =>
 	APP_SECTIONS.some((section) => pathname === `/${section}` || pathname.startsWith(`/${section}/`));

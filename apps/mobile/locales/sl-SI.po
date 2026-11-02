@@ -24,6 +24,12 @@ msgstr ""
 msgid "“{0}” added to Skills"
 msgstr "»{0}« dodano v Spretnosti"
 
+#. placeholder {0}: link.resumeName
+#. placeholder {1}: date(link.createdAt)
+#: src/features/share/feedback.tsx
+msgid "“{0}” as saved {1}."
+msgstr ""
+
 #. placeholder {0}: open.label
 #: src/features/check/job-match.tsx
 msgid "“{0}” hidden"
@@ -507,6 +513,11 @@ msgstr "{0} manj"
 msgid "{0} more"
 msgstr "{0} več"
 
+#. placeholder {0}: i18n.number(link.openCommentCount)
+#: src/features/share/feedback.tsx
+msgid "{0} new comments"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #. placeholder {1}: all.length
 #: src/features/letters/write.tsx
@@ -929,6 +940,10 @@ msgstr "1 dan"
 msgid "1 h"
 msgstr "1 ura"
 
+#: src/features/share/feedback.tsx
+msgid "1 new comment"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "10-minute briefing"
 msgstr "10-minutni povzetek"
@@ -952,6 +967,18 @@ msgstr "2–3 stavki se najbolje berejo"
 #: src/features/career/schedule-sheet.tsx
 msgid "24 hours before"
 msgstr "24 ur prej"
+
+#: src/features/share/feedback.tsx
+msgid "30 days"
+msgstr "30 dni"
+
+#: src/features/share/feedback.tsx
+msgid "7 days"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "90 days"
+msgstr "90 dni"
 
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
@@ -1162,6 +1189,10 @@ msgstr "Dejanja za {0} pri {1}"
 #: src/features/ai/web-access.tsx
 msgid "Active"
 msgstr "Aktiven"
+
+#: src/features/share/feedback.tsx
+msgid "Activity"
+msgstr "dejavnost"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/improve.tsx
@@ -1719,6 +1750,10 @@ msgstr "Vse vaše prijave so zaprte"
 #: src/features/settings/profile.tsx
 msgid "Allow camera access in your device settings to take a photo."
 msgstr "Dovolite dostop do kamere v nastavitvah naprave, da posnamete fotografijo."
+
+#: src/features/share/feedback.tsx
+msgid "Allow comments"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Allow microphone access in device settings, or type your answer."
@@ -3027,6 +3062,14 @@ msgstr "Stolpci lahko zamegljujejo besedilo naročila, v katerem se bere."
 msgid "Coming up"
 msgstr "Prihajajoče"
 
+#: src/features/share/feedback.tsx
+msgid "Comment left"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Comments"
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 msgid "Compact"
 msgstr "Kompakten"
@@ -3287,6 +3330,7 @@ msgstr "Kopirano v odložišče"
 msgid "Copies it"
 msgstr "Kopira besedilo"
 
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 #: src/features/workspace/answer-library.tsx
 msgid "Copy"
@@ -3574,6 +3618,10 @@ msgstr "Vzorčne datoteke ni bilo mogoče naložiti. poskusi ponovno"
 msgid "Couldn't load the saved review."
 msgstr ""
 
+#: src/features/share/feedback.tsx
+msgid "Couldn't load this link."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Couldn't load this version's page."
@@ -3589,6 +3637,10 @@ msgstr "Tega ni bilo mogoče naložiti. Preverite povezavo in poskusite znova."
 #: src/features/letters/share.tsx
 msgid "Couldn't load versions."
 msgstr "Ni bilo mogoče naložiti različic."
+
+#: src/features/share/feedback.tsx
+msgid "Couldn't load your feedback links."
+msgstr ""
 
 #: app/(tabs)/settings/account.tsx
 msgid "Couldn't load your profile."
@@ -3608,6 +3660,10 @@ msgstr "Vašega časovnega pasu ni bilo mogoče naložiti."
 
 #: src/features/settings/application-profile.tsx
 msgid "Couldn't load. Try again."
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Couldn't make the link. Try again."
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
@@ -3875,6 +3931,10 @@ msgstr "Modela ni bilo mogoče zamenjati. Poskusite znova."
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "Prepis ni uspel. Vaš posnetek je še vedno tukaj."
 
+#: src/features/share/feedback.tsx
+msgid "Couldn't turn off the link. Try again."
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Couldn't undo that. Try again."
 msgstr "Tega ni bilo mogoče razveljaviti. Poskusite znova."
@@ -3902,6 +3962,10 @@ msgstr "Prijave ni bilo mogoče posodobiti. Nič ni bilo spremenjeno; poskusite 
 #: src/features/applications/stage-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "Prošenj za delo ni bilo mogoče posodobiti. poskusi ponovno"
+
+#: src/features/share/feedback.tsx
+msgid "Couldn't update the comment. Try again."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't update the interview. Try again."
@@ -4570,6 +4634,7 @@ msgstr "Donirajte prek Open Collective"
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/rich-text-field.tsx
+#: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
 #: src/features/write/rich-text-field.tsx
@@ -5150,6 +5215,11 @@ msgstr ""
 msgid "Experience"
 msgstr "Izkušnje"
 
+#. placeholder {0}: date(link.expiresAt)
+#: src/features/share/feedback.tsx
+msgid "expires {0}"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Export a smaller PDF and check it again, or start a blank resume and fix these there."
 msgstr "Izvozite manjši PDF in ga znova preverite ali pa zaženite prazen življenjepis in jih tam popravite."
@@ -5223,6 +5293,14 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
 msgstr "Povratne informacije"
+
+#: src/features/share/feedback.tsx
+msgid "Feedback link"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Feedback links"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/features/write/basics-screen.tsx
@@ -5408,6 +5486,10 @@ msgstr "Za stopnjo Brez odgovora izberite »Brez odgovora«."
 #: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Za korensko domeno, kot je example.com, namesto zapisa CNAME uporabite zapise A in AAAA z naslovi {0}."
+
+#: src/features/share/feedback.tsx
+msgid "For example, Careers office"
+msgstr ""
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -6155,6 +6237,10 @@ msgstr "Ima vnose, vendar ni postavljen na stran."
 msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
 msgstr ""
 
+#: src/features/share/feedback.tsx
+msgid "It stops opening at once. Comments already left are kept. You can make a new link anytime."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline and the calendar for good."
 msgstr ""
@@ -6699,10 +6785,19 @@ msgstr "Povežite prošnjo za delo"
 msgid "Link an application or paste a posting to compare its terms."
 msgstr "Povežite prijavo ali prilepite oglas za primerjavo njegovih ključnih besed."
 
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 #: src/features/share/web-page.tsx
 msgid "Link copied"
 msgstr "Povezava je kopirana"
+
+#: src/features/share/feedback.tsx
+msgid "Link expires"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Link made"
+msgstr ""
 
 #: src/features/check/job-match.tsx
 msgid "Link this resume"
@@ -6715,6 +6810,10 @@ msgstr "Povezava do prošnje za delo"
 #: src/features/documents/document-sheets.tsx
 msgid "Link to application…"
 msgstr "Povezava do prošnje za delo…"
+
+#: src/features/share/feedback.tsx
+msgid "Link turned off"
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "Link updated"
@@ -6981,6 +7080,10 @@ msgstr "Naj bo bolj natančno"
 #: src/features/write/improve.tsx
 msgid "Make it shorter"
 msgstr "Naj bo krajši"
+
+#: src/features/share/feedback.tsx
+msgid "Make link"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Make primary"
@@ -7518,6 +7621,7 @@ msgstr "Omrežje"
 
 #: src/features/career/preferences.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/share/feedback.tsx
 msgid "Never"
 msgstr "Nikoli"
 
@@ -7565,6 +7669,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Nov dokument"
+
+#: src/features/share/feedback.tsx
+msgid "New feedback link"
+msgstr ""
 
 #: app/(tabs)/settings/ai-mcp.tsx
 #: src/features/settings/api-keys.tsx
@@ -7686,6 +7794,10 @@ msgstr "Sprememba ni potrebna. Že je na stopnji {stage}."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "Nobenega ukaza ni, ki bi ustrezal temu iskanju."
+
+#: src/features/share/feedback.tsx
+msgid "No comments yet."
+msgstr ""
 
 #: src/features/settings/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
@@ -7829,6 +7941,10 @@ msgstr "Ni novih delovnih mest. Iskanje se znova izvede ob {0}."
 #: src/features/career/offers.tsx
 msgid "No offers to compare yet"
 msgstr "Še ni ponudb za primerjavo"
+
+#: src/features/share/feedback.tsx
+msgid "No open applications."
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "No phone number"
@@ -8032,6 +8148,10 @@ msgstr ""
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Not now"
 msgstr "Ne zdaj"
+
+#: src/features/share/feedback.tsx
+msgid "Not opened yet"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/career/offers.tsx
@@ -8368,6 +8488,10 @@ msgstr "Samo ta naprava načrtuje obvestilo. Dovoli obvestila, ko sistem vpraša
 msgid "Only you see these"
 msgstr "Samo ti jih vidiš"
 
+#: src/features/share/feedback.tsx
+msgid "Only you see this."
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
@@ -8485,6 +8609,15 @@ msgstr "OpenAI, Anthropic, Gemini, Ollama in drugi"
 #: src/features/share/download.tsx
 msgid "OpenDocument"
 msgstr "OpenDocument"
+
+#: src/features/share/feedback.tsx
+msgid "Opened"
+msgstr ""
+
+#. placeholder {0}: formatTimeSince(link.lastViewedAt, i18n.locale)
+#: src/features/share/feedback.tsx
+msgid "Opened {0} ago"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Opening the file"
@@ -10171,6 +10304,7 @@ msgstr "Umakni stopnjo"
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
@@ -10908,6 +11042,10 @@ msgstr "Semantični CSS slogovni predlog"
 msgid "Send"
 msgstr "Pošlji"
 
+#: src/features/share/feedback.tsx
+msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
+msgstr ""
+
 #: src/features/ai/report-content.tsx
 msgid "Send report"
 msgstr "Pošlji poročilo"
@@ -11116,6 +11254,10 @@ msgstr "Širina sence"
 msgid "Share"
 msgstr "Delite"
 
+#: src/features/share/feedback.tsx
+msgid "Share application progress (optional)"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Share calendar event (.ics)"
 msgstr "Skupna raba koledarskega dogodka (.ics)"
@@ -11153,6 +11295,7 @@ msgstr "Delite PNG"
 msgid "Share recording"
 msgstr "Delite posnetek"
 
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 msgid "Share via…"
 msgstr "Delite prek ..."
@@ -12359,6 +12502,10 @@ msgstr "Pismo se spet ujema z zasnovo življenjepisa"
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "Vrstica se je spremenila, odkar ste vprašali, zato ni bila zamenjana."
 
+#: src/features/share/feedback.tsx
+msgid "The link opens the resume as it is now. Later edits aren't shared, so every comment is about this version."
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "the linked cover letter"
 msgstr ""
@@ -12433,6 +12580,10 @@ msgstr "Življenjepis, kot je"
 
 #: src/features/workspace/parts.tsx
 msgid "the resume for this job"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -13150,9 +13301,21 @@ msgstr "Poskusite z vzorcem življenjepisa"
 msgid "Turkish"
 msgstr "turščina"
 
+#: src/features/share/feedback.tsx
+msgid "Turn off"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "Pri izvozu izklopite neobvezne ligature."
+
+#: src/features/share/feedback.tsx
+msgid "Turn off link…"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Turn off this link?"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Turn this on to open this resume at your short link and custom domain."
@@ -14021,6 +14184,10 @@ msgstr ""
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
 msgstr "Katere priložnosti se najbolj ujemajo z mojimi prednostmi?"
+
+#: src/features/share/feedback.tsx
+msgid "Who is it for?"
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Who you'll meet"

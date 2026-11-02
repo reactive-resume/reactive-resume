@@ -25,6 +25,14 @@ msgstr ""
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
+#. placeholder {0}: link.resumeName
+#. placeholder {1}: date(link.createdAt)
+#. placeholder {2}: statusLabel(link.status)
+#. placeholder {3}: link.expiresAt && link.status === "active" ? ` · ${t`expires ${date(link.expiresAt)}`}` : ""
+#: src/features/resume/share/feedback-links.tsx
+msgid "“{0}” as saved {1}. {2}{3}"
+msgstr ""
+
 #. placeholder {0}: term.label
 #: src/features/resume/editor/check/job-match.tsx
 msgid "“{0}” hidden"
@@ -239,6 +247,11 @@ msgstr "{0, plural, one {Проблем # је занемарен.} other {Пр�
 #. placeholder {0}: review.notImported.length
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
+
+#. placeholder {0}: link.openCommentCount
+#: src/features/resume/share/feedback-links.tsx
+msgid "{0, plural, one {# new comment} other {# new comments}}"
 msgstr ""
 
 #. placeholder {0}: proposals.length
@@ -961,6 +974,10 @@ msgstr "{now} · откуцано"
 msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{open, plural, one {# ствар за преглед.} other {# ствари за преглед.}}"
 
+#: src/features/feedback/review-page.tsx
+msgid "{owner} asked for your feedback"
+msgstr ""
+
 #: src/features/resume/editor/chrome.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
@@ -1556,11 +1573,13 @@ msgstr "Активација је порасла са 31% на 44% за једн
 msgid "Activation rose from 31%…"
 msgstr "Активација је порасла са 31%…"
 
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Active"
 msgstr "Активан"
 
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/resume/share/feedback-links.tsx
 msgid "Activity"
 msgstr "Активност"
 
@@ -2225,6 +2244,10 @@ msgstr "Сви ваши документи, пријаве за посао, API 
 msgid "Allow access"
 msgstr "Дозволи приступ"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Allow comments"
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "Allow scheduled sharing"
 msgstr ""
@@ -2516,6 +2539,10 @@ msgstr ""
 msgid "Application preparation"
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
+msgid "Application progress"
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "application summaries"
 msgstr "сажеци пријава"
@@ -2568,7 +2595,9 @@ msgid "Applied"
 msgstr "Примењено"
 
 #. placeholder {0}: date(application.appliedAt)
+#. placeholder {0}: i18n.date(application.appliedAt, { dateStyle: "medium" })
 #: src/features/career/workspace/shell.tsx
+#: src/features/feedback/review-page.tsx
 msgid "Applied {0}"
 msgstr "Пријављено {0}"
 
@@ -2698,6 +2727,10 @@ msgstr "Питајте саветника"
 #: src/features/resume/share/download-tab.tsx
 msgid "Ask the community. Remove personal details before posting."
 msgstr "Питајте заједницу. Уклоните личне податке пре објављивања."
+
+#: src/features/feedback/review-page.tsx
+msgid "Ask the person who sent it for a new link. Comments you left are still with them."
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Ask your server administrator to enable credential encryption or configure a shared web connection."
@@ -3194,6 +3227,7 @@ msgstr ""
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
@@ -3418,6 +3452,10 @@ msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Check that these facts support what the story claims before saving."
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Check that you copied the whole link, or ask the person who sent it for a new one."
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -3746,6 +3784,7 @@ msgstr "ИД клијента"
 #: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/resume/stylesheet/editor.tsx
 #: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3841,6 +3880,28 @@ msgstr "Палета команди"
 #: src/features/command-palette/content.tsx
 msgid "Command palette: {currentPage}"
 msgstr "Палета команди: {currentPage}"
+
+#: src/features/feedback/review-page.tsx
+msgid "Comment"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Comment left"
+msgstr ""
+
+#. placeholder {0}: view.ownerName
+#: src/features/feedback/review-page.tsx
+msgid "Comment sent to {0}"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+#: src/features/resume/share/feedback-links.tsx
+msgid "Comments"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Comments and progress"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Community"
@@ -4613,11 +4674,19 @@ msgstr "Није могуће учитати датотеку узорка. По
 msgid "Couldn't load the saved review."
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't load this link."
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Није могуће учитати ово. Ваши сачувани подаци нису промењени."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't load your feedback links."
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load your stages, so the standard ones are shown. Try again."
@@ -4637,6 +4706,10 @@ msgstr "Није могуће закључати документ. Покуша�
 
 #: src/features/settings/account/backup-codes.tsx
 msgid "Couldn't make new codes. Try again."
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't make the link. Try again."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4908,6 +4981,10 @@ msgstr "Није могуће послати имејл. Покушајте по
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Није могуће послати е-поруку за ресетовање лозинке. Покушајте поново."
 
+#: src/features/feedback/review-page.tsx
+msgid "Couldn't send your comment. Try again."
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Couldn't set the password. Try again."
 msgstr "Није могуће поставити лозинку. Покушајте поново."
@@ -4980,6 +5057,10 @@ msgstr "Није могуће променити модел. Покушајте 
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "Транскрипција није успела. Ваш снимак је и даље овде."
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't turn off the link. Try again."
+msgstr ""
+
 #. Fallback toast when disabling two-factor authentication fails
 #: src/dialogs/auth/disable-two-factor.tsx
 msgid "Couldn't turn off two-step verification. Check your password and try again."
@@ -5031,6 +5112,10 @@ msgstr "Није могуће ажурирати пријаву. Покушај�
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "Није могуће ажурирати пријаве за посао. Покушајте поново."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't update the comment. Try again."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Couldn't update the interview. Try again."
@@ -5366,6 +5451,10 @@ msgstr "Колона са датумима"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "Формат датума"
+
+#: src/features/feedback/review-page.tsx
+msgid "date unknown"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Dated updates. For things to remember and share with the coach, use Notes."
@@ -5845,6 +5934,7 @@ msgid "Donate"
 msgstr "Донирајте"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
@@ -6609,9 +6699,18 @@ msgstr "Искуство"
 msgid "Experience, Education and more"
 msgstr "Искуство, Образовање и друго"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Expired"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Expires"
 msgstr "Истиче"
+
+#. placeholder {0}: date(link.expiresAt)
+#: src/features/resume/share/feedback-links.tsx
+msgid "expires {0}"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "explain one limit of the measurement clearly, without underselling the work."
@@ -6739,6 +6838,19 @@ msgstr "Функције"
 #: src/features/career/workspace/practise.tsx
 msgid "Feedback"
 msgstr "Повратне информације"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Feedback link"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Feedback links"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+#: src/routes/feedback/$token.tsx
+msgid "Feedback request"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -6972,6 +7084,10 @@ msgstr "За основни домен као што је example.com, умес�
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "За сваку: ситуација, задатак, ваша акција, резултат, рефлексија. Изоставите бројеве у које нисте сигурни."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "For example, Careers office"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "For example, note which companies you sent this resume to, or links to the job descriptions."
@@ -7285,6 +7401,7 @@ msgstr "Иди на контролну таблу"
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Go to Reactive Resume"
 msgstr "Иди на Reactive Resume"
@@ -7822,6 +7939,18 @@ msgstr ""
 msgid "Improving…"
 msgstr "Побољшање…"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 30 days"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 7 days"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 90 days"
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "In good company"
 msgstr "У добром друштву"
@@ -8051,6 +8180,10 @@ msgstr ""
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "Можда је обрисана. Изаберите другу причу или додајте нову."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "It stops opening at once. Comments already left are kept. You can make a new link anytime."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "It will be deleted for good and can't be restored."
@@ -8782,6 +8915,14 @@ msgstr ""
 msgid "Link copied"
 msgstr "Линк је копиран"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link expires"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link made"
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link this resume"
 msgstr ""
@@ -8793,6 +8934,10 @@ msgstr "Линк до пријаве за посао"
 #: src/features/documents/document-actions.tsx
 msgid "Link to application…"
 msgstr "Линк до пријаве за посао…"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link turned off"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
@@ -8984,6 +9129,7 @@ msgstr "Учитавање радног простора…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/profile.tsx
 msgid "Loading…"
@@ -9114,6 +9260,10 @@ msgstr "Нека буде краће"
 #: src/features/templates/gallery.tsx
 msgid "Make it yours, then take it with you."
 msgstr "Нека буде ваш, па га понесите са собом."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Make link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Make primary"
@@ -9697,6 +9847,7 @@ msgid "Network"
 msgstr "Мрежа"
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Never"
 msgstr "Никада"
@@ -9748,6 +9899,10 @@ msgstr "Нови документ"
 #: src/features/career/knowledge/facts.tsx
 msgid "New fact"
 msgstr "Нова чињеница"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "New feedback link"
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "New key"
@@ -9897,6 +10052,11 @@ msgstr "Измена није потребна. Већ је у фази {stage}.
 msgid "No commands match that search."
 msgstr "Ниједна команда не одговара тој претрази."
 
+#: src/features/feedback/review-page.tsx
+#: src/features/resume/share/feedback-links.tsx
+msgid "No comments yet."
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
 msgstr "Још нема повезаних апликација. Апликације којима дозволите приступ налогу појављују се овде."
@@ -10041,6 +10201,10 @@ msgstr "Нема нових улога. Откривање се поново п�
 #: src/features/career/offers.tsx
 msgid "No offers to compare yet"
 msgstr "Још нема понуда за поређење"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "No open applications."
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
@@ -10294,6 +10458,10 @@ msgstr "Не сада"
 msgid "Not on the page"
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Not opened yet"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/career/offers.tsx
@@ -10494,6 +10662,10 @@ msgstr "Одија"
 msgid "Off"
 msgstr "Офф"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Off makes the link read-only."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Off: the coach won’t see it or claim it."
 msgstr "Искључено: саветник то неће видети нити тврдити."
@@ -10691,6 +10863,10 @@ msgstr ""
 msgid "Only you see these"
 msgstr "Само ти видиш ове"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Only you see this."
+msgstr ""
+
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "Само ти, док то не поделиш. Резиме може да остане приватан, да се приказује уживо на јавном линку или да буде заштићен лозинком, а то можете променити у било ком тренутку. Брисањем налога бришете своје биографије са њим."
@@ -10815,6 +10991,15 @@ msgstr ""
 #: src/features/settings/ai/providers.tsx
 msgid "OpenAI, Anthropic, Gemini, Ollama and more"
 msgstr "OpenAI, Anthropic, Gemini, Ollama и други"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Opened"
+msgstr ""
+
+#. placeholder {0}: formatTimeSince(link.lastViewedAt, i18n.locale)
+#: src/features/resume/share/feedback-links.tsx
+msgid "Opened {0} ago"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Opening"
@@ -12836,6 +13021,7 @@ msgstr "резиме"
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
+#: src/features/feedback/review-page.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "Резиме"
@@ -12874,6 +13060,7 @@ msgstr "ресуме буилдер"
 msgid "Resume changed since this review. Review these suggestions as out of date or run again."
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "Садржај резимеа"
@@ -13082,6 +13269,10 @@ msgstr "Опозови"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "Опозовите {0}"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Revoked"
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -13817,8 +14008,16 @@ msgstr "Пошаљи"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
+msgstr ""
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Send comment"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -14085,6 +14284,10 @@ msgstr "Дели"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Делите јавну везу, додајте лозинку или је чувајте приватном. Изаберите неку од 3 опције видљивости. Извезите на PDF или Word или понесите све своје податке са собом као JSON."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Share application progress (optional)"
+msgstr ""
 
 #. placeholder {0}: provider.label
 #: src/libs/orpc/ai-consent.ts
@@ -14706,6 +14909,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Stages"
 msgstr "Фазе"
+
+#: src/features/feedback/review-page.tsx
+msgid "Stages and dates only. Notes, contacts and pay stay private."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 msgid "Standard section headings"
@@ -15618,6 +15825,10 @@ msgstr "Писмо поново одговара дизајну резимеа"
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "Линија се променила откако сте тражили, тако да није замењена."
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "The link opens the resume as it is now. Later edits aren't shared, so every comment is about this version."
+msgstr ""
+
 #: src/features/auth/email-text.ts
 msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
 msgstr ""
@@ -15754,6 +15965,10 @@ msgstr ""
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
 msgstr "Преглед није могао да се заврши. Покушајте поново."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
@@ -16051,6 +16266,11 @@ msgstr "Ова датотека користи Type 3 фонтове, који �
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr ""
 
+#. placeholder {0}: view.resumeName
+#: src/features/feedback/review-page.tsx
+msgid "This is “{0}” as they saved it on {sharedOn}. Your comments go only to them and don't change the resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Ово је PDF портфолио: видљива страница је само насловна."
@@ -16091,6 +16311,23 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
 msgstr "Ово писмо чува примаоца како је написано."
+
+#: src/features/feedback/review-page.tsx
+msgid "This link doesn't open"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "This link has expired"
+msgstr ""
+
+#. placeholder {0}: view.ownerName
+#: src/features/feedback/review-page.tsx
+msgid "This link is read-only. Reply to {0} directly with your thoughts."
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "This link was turned off"
+msgstr ""
 
 #: src/features/ats-checker/report/report-view.tsx
 msgid "This measures how faithfully software can extract this file's text. It does not predict whether an application will be rejected, and no tool can. Your file was read in this browser and never uploaded."
@@ -16501,6 +16738,7 @@ msgstr ""
 #: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/preview/preview.browser.tsx
 #: src/features/resume/share/download-tab.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
@@ -16544,9 +16782,21 @@ msgstr "Покушајте са узорком резимеа"
 msgid "Turkish"
 msgstr "Турски"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "Искључите необавезне лигатуре приликом извоза."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off link…"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off this link?"
+msgstr ""
 
 #. Destructive action button to turn off two-factor authentication
 #: src/dialogs/auth/disable-two-factor.tsx
@@ -17688,6 +17938,10 @@ msgstr "Које још погодности следују, на пример �
 msgid "Who can see my resume?"
 msgstr "Ко може да види мој резиме?"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Who is it for?"
+msgstr ""
+
 #: src/features/homepage/prepare.tsx
 msgid "Who owns the design system today? What does success look like in 90 days?"
 msgstr "Ко је данас одговоран за дизајн систем? Како изгледа успех за 90 дана?"
@@ -18278,6 +18532,7 @@ msgstr "ваша порука"
 msgid "Your message is kept."
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"
 msgstr "Ваше име"
