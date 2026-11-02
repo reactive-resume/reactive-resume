@@ -2268,3 +2268,70 @@ assert.equal(nativeCreateRequests.length, 2);
 assert.equal(nativeCreateRequests[0].newId, nativeCreateRequests[1].newId, "link retry returns the original job");
 assert.equal(control(matchView(), "Paste a job posting").value, "");
 console.log("PASS native saved-job link retries retain original ID and draft until success");
+
+// Builder tags use the existing draft/flush owner and leave resume content intact.
+reset();
+const tagSaves = [];
+state = {
+	document: {
+		id: "menu-tags",
+		name: "Cedar resume",
+		tags: ["base"],
+		isLocked: false,
+		data: { basics: { headline: "Portfolio designer" } },
+	},
+	status: "saved",
+	conflict: null,
+	updateDocument: (edit) => edit(state.document),
+	flush: async () => tagSaves.push(structuredClone(state.document)),
+};
+const menuStore = Object.assign(() => state, { getState: () => state });
+const { DocumentMenu: BuilderDocumentMenu } = load("features/document-menu/index.tsx", {
+	react: { ...react, useEffect() {} },
+	"react-native-enriched-html": { EnrichedTextInput: "EnrichedTextInput" },
+	"@reactive-resume/resume/sharing": {},
+	"@reactive-resume/utils/string": { isolate: (value) => value },
+	"@/api/client": { client: {} },
+	"@/draft": { useResumeStore: menuStore, resumeFieldFocus: {} },
+	"@/features/documents/new-documents": { useNewDocuments: {} },
+	"@/features/documents/queries": {
+		useDocumentOperations: () => ({
+			busy: false,
+			run: async (work) => {
+				await work();
+				return true;
+			},
+		}),
+	},
+	"@/features/share/document": document,
+	"@/features/share/files": {},
+	"@/features/share/revision": {},
+	"@/shell/builder-chrome": { useBuilderChrome() {} },
+	"@/shell/key-commands": { useKeyCommands() {} },
+	"@/ui": { ...ui, IconButton: "IconButton", Sheet: "Sheet" },
+});
+const menuView = () => render(BuilderDocumentMenu, { id: "menu-tags" });
+const tagsAction = () =>
+	nodes(menuView()).find((node) => node.type === "ListRow" && node.props.title === "Tags…").props;
+control(menuView(), "Document options").onPress();
+assert.equal(tagsAction().disabled, false);
+tagsAction().onPress();
+control(menuView(), "Tags").onChange(["base", "portfolio"]);
+control(menuView(), "Save").onPress();
+await settle();
+assert.deepEqual(
+	tagSaves.map((saved) => saved.tags),
+	[["base"], ["base", "portfolio"]],
+);
+assert.equal(tagSaves.at(-1).data.basics.headline, "Portfolio designer");
+control(menuView(), "Document options").onPress();
+tagsAction().onPress();
+control(menuView(), "Tags").onChange(["x".repeat(41)]);
+assert.equal(control(menuView(), "Save").disabled, true);
+control(menuView(), "Tags").onChange(Array.from({ length: 21 }, (_, index) => `tag-${index}`));
+assert.equal(control(menuView(), "Save").disabled, true);
+state.document.isLocked = true;
+assert.equal(control(menuView(), "Save").disabled, true);
+control(menuView(), "Back").onPress();
+assert.equal(tagsAction().disabled, true);
+console.log("PASS native builder tags use draft flush, retain body, and respect tag limits and locks");

@@ -3,7 +3,15 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import { Button } from "@reactive-resume/ui/components/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@reactive-resume/ui/components/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -16,14 +24,11 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { isolate } from "@reactive-resume/utils/string";
 import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
 import { DocumentDetails } from "./document-details";
+import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
-import { savePendingChanges } from "@/features/resume/builder/draft";
-import {
-	useCurrentBuilderResumeSelector,
-	useCurrentResume,
-	usePatchResume,
-	useResumeStore,
-} from "@/features/resume/builder/draft";
+import { InlineNameInput } from "@/features/documents/inline-name-input";
+import { savePendingChanges, saveResumeMetadata } from "@/features/resume/builder/draft";
+import { useCurrentResume, usePatchResume, useResumeStore } from "@/features/resume/builder/draft";
 import { setResumeLocked } from "@/features/resume/builder/lock";
 import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
 import { SaveStatus } from "@/features/resume/editor/save-status";
@@ -32,24 +37,47 @@ import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
-type DocumentDialog = "notes" | "details" | null;
+type DocumentDialog = "rename" | "tags" | "notes" | "details" | null;
 
 /**
  * The document name in the editor bar opens the document menu: rename, duplicate, lock, notes,
  * details, print and delete.
  */
 export function DocumentMenu() {
-	const name = useCurrentBuilderResumeSelector((resume) => resume.name);
-	const isLocked = useCurrentBuilderResumeSelector((resume) => resume.isLocked);
+	const resume = useCurrentResume();
+	const { id, name, isLocked } = resume;
 	const [dialog, setDialog] = useState<DocumentDialog>(null);
+	const saveMetadata = (values: { name?: string; tags?: string[] }) =>
+		saveResumeMetadata(id, (expectedUpdatedAt, options) =>
+			orpc.resume.update.call({ id, ...values, expectedUpdatedAt }, options),
+		);
 
 	return (
 		<>
-			<DropdownMenu>
-				<DropdownMenuTrigger render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
-				<DocumentMenuItems onOpenDialog={setDialog} />
-			</DropdownMenu>
+			{dialog === "rename" && !isLocked ? (
+				<InlineNameInput
+					key={id}
+					name={name}
+					disabled={isLocked}
+					onSave={(next) => saveMetadata({ name: next })}
+					onDone={() => setDialog(null)}
+				/>
+			) : (
+				<DropdownMenu>
+					<DropdownMenuTrigger render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
+					<DocumentMenuItems onOpenDialog={setDialog} />
+				</DropdownMenu>
+			)}
 			<SaveStatus />
+			{dialog === "tags" && (
+				<BuilderTagsDialog
+					key={id}
+					tags={resume.tags}
+					locked={isLocked}
+					onSave={(tags) => saveMetadata({ tags })}
+					onClose={() => setDialog(null)}
+				/>
+			)}
 
 			<Dialog open={dialog === "notes"} onOpenChange={(open) => !open && setDialog(null)}>
 				<DialogContent closeLabel={t`Close`} className="sm:max-w-[560px]">
@@ -68,6 +96,55 @@ export function DocumentMenu() {
 				</DialogContent>
 			</Dialog>
 		</>
+	);
+}
+
+type BuilderTagsDialogProps = {
+	tags: string[];
+	locked: boolean;
+	onSave: (tags: string[]) => Promise<unknown>;
+	onClose: () => void;
+};
+
+function BuilderTagsDialog({ tags: current, locked, onSave, onClose }: BuilderTagsDialogProps) {
+	const [tags, setTags] = useState(current);
+	const save = useMutation({ mutationFn: onSave });
+	const invalid = tags.length > 20 || tags.some((tag) => !tag.trim() || tag.length > 40);
+	return (
+		<Dialog open onOpenChange={(open) => !open && onClose()}>
+			<DialogContent closeLabel={t`Close`}>
+				<DialogHeader>
+					<DialogTitle>
+						<Trans>Tags</Trans>
+					</DialogTitle>
+					<DialogDescription>
+						<Trans>Tags group documents in the library; pick one above the grid to filter by it.</Trans>
+					</DialogDescription>
+				</DialogHeader>
+				<form
+					onSubmit={(event) => {
+						event.preventDefault();
+						if (locked || save.isPending || invalid) return;
+						save.mutate(tags, {
+							onSuccess: onClose,
+							onError: (error) => toast.add({ type: "error", description: getResumeErrorMessage(error) }),
+						});
+					}}
+				>
+					<fieldset disabled={locked || save.isPending} className="grid gap-3">
+						<ChipInput value={tags} onChange={setTags} placeholder={t`Add a tag…`} />
+						<p className="text-xs text-ink-3">
+							<Trans>Up to 20 tags per document, 40 characters per tag.</Trans>
+						</p>
+						<DialogFooter>
+							<Button type="submit" disabled={invalid}>
+								<Trans>Save tags</Trans>
+							</Button>
+						</DialogFooter>
+					</fieldset>
+				</form>
+			</DialogContent>
+		</Dialog>
 	);
 }
 
@@ -135,7 +212,7 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 
 	return (
 		<DropdownMenuContent align="start" className="w-60">
-			<DropdownMenuItem disabled={isLocked} onClick={() => openDialog("resume.update", { id, name, slug, tags })}>
+			<DropdownMenuItem disabled={isLocked} onClick={() => onOpenDialog("rename")}>
 				<Icon name="pencil-simple" />
 				<Trans>Rename…</Trans>
 			</DropdownMenuItem>
@@ -163,6 +240,10 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 			>
 				<Icon name="briefcase" />
 				<Trans>Copy for a job…</Trans>
+			</DropdownMenuItem>
+			<DropdownMenuItem disabled={isLocked} onClick={() => onOpenDialog("tags")}>
+				<Icon name="tag" />
+				<Trans>Tags…</Trans>
 			</DropdownMenuItem>
 			<DropdownMenuItem onClick={handleToggleLock}>
 				<Icon name={isLocked ? "lock-open" : "lock"} />
