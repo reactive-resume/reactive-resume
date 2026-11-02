@@ -76,6 +76,11 @@ msgstr "(optional)"
 msgid "(required)"
 msgstr "(erforderlich)"
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, =0 {Since today} one {For # day} other {For # days}}"
+msgstr "{0, plural, =0 {Seit heute} one {Für # Tag} other {Für # Tage}}"
+
 #. placeholder {0}: applied.length
 #: src/features/assistant/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -339,11 +344,6 @@ msgstr "{0, plural, one {# Bewerbung löschen} other {# Bewerbungen löschen}}"
 #: src/features/career/today.tsx
 msgid "{0, plural, one {Every day} other {Every # days}}"
 msgstr "{0, plural, one {Jeden Tag} other {Alle # Tage}}"
-
-#. placeholder {0}: step.days
-#: src/features/applications/next-step.ts
-msgid "{0, plural, one {For # day} other {For # days}}"
-msgstr "{0, plural, one {Für # Tag} other {Für # Tage}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -7823,7 +7823,7 @@ msgstr "Es wurde keine Telefonnummer gefunden."
 
 #: src/features/write/basics-screen.tsx
 msgid "No photo. Most ATS ignore photos; some regions expect one."
-msgstr "Kein Foto. Die meisten ATS ignorieren Fotos; Einige Regionen erwarten einen."
+msgstr "Kein Foto. Die meisten ATS ignorieren Fotos; einige Regionen erwarten eins."
 
 #: src/features/applications/add-sheet.tsx
 msgid "No postings found. Try different keywords."
@@ -9000,7 +9000,7 @@ msgstr "Bereiten Sie eine Antwort vor"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare a resume"
-msgstr "Bereiten Sie einen Lebenslauf vor"
+msgstr "Lebenslauf vorbereiten"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare application"
@@ -13181,6 +13181,7 @@ msgstr "Unterstreichen Sie Links"
 #: app/builder/[id]/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/interview-sheet.tsx
+#: src/features/applications/stage-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/proposals.ts
@@ -13731,7 +13732,7 @@ msgstr "Wartet auf Sie"
 
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
-msgstr "Ich warte auf eine Antwort"
+msgstr "Warten auf Antwort"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
@@ -14065,7 +14066,7 @@ msgstr ""
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Write a letter"
-msgstr "Schreibe einen Brief"
+msgstr "Brief schreiben"
 
 #: src/features/documents/document-sheets.tsx
 msgid "Write a letter…"

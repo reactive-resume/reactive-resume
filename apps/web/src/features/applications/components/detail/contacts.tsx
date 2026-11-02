@@ -33,7 +33,11 @@ export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
 
 	return (
 		<Popover>
-			<PopoverTrigger className="grid min-w-0 rounded-md text-start hover:underline">
+			{/* Named for the field, so "—" isn't read out as the button's name. */}
+			<PopoverTrigger
+				aria-label={primary ? t`Contact: ${primary.name}` : t`Contact: none yet`}
+				className="grid min-w-0 rounded-md text-start hover:underline"
+			>
 				<span className="truncate text-sm font-medium">{primary ? primary.name : "—"}</span>
 				{others.length > 0 && <span className="text-xs text-ink-3">{t`and ${others.length} more`}</span>}
 			</PopoverTrigger>

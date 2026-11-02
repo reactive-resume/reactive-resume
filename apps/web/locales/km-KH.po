@@ -90,6 +90,11 @@ msgstr "(ស្រេចចិត្ត)"
 msgid "{0, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr ""
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, =0 {Since today} one {For # day} other {For # days}}"
+msgstr "{0, plural, one {សម្រាប់ថ្ងៃ #} other {សម្រាប់ # ថ្ងៃ។}}"
+
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -333,11 +338,6 @@ msgstr "{0, plural, one {លុបពាក្យសុំ #} other {លុប�
 #: src/features/documents/trash-page.tsx
 msgid "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
-
-#. placeholder {0}: step.days
-#: src/features/applications/next-step.ts
-msgid "{0, plural, one {For # day} other {For # days}}"
-msgstr "{0, plural, one {សម្រាប់ថ្ងៃ #} other {សម្រាប់ # ថ្ងៃ។}}"
 
 #. placeholder {0}: parsed.requirements.length
 #: src/features/applications/components/add-application-dialog.tsx
@@ -4079,6 +4079,15 @@ msgstr "ទូរស័ព្ទទំនាក់ទំនង"
 msgid "Contact role"
 msgstr "តួនាទីទំនាក់ទំនង"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6221,6 +6230,10 @@ msgstr "កំពុងកែសម្រួលពាក្យគន្លឹះ
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "វគ្គកែសម្រួល"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16582,6 +16595,7 @@ msgstr "គូសបន្ទាត់ពីក្រោម"
 msgid "Underline links"
 msgstr "គូសបន្ទាត់ក្រោមតំណ"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx

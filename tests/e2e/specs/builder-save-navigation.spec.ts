@@ -32,10 +32,10 @@ test("retains the current draft when saving during navigation fails", async ({ a
 		await route.abort("failed");
 	});
 	await page.getByRole("textbox", { name: "Full name", exact: true }).fill("Keep unsaved draft");
-	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
+	await expect(page.getByRole("alert").filter({ hasText: "Not saved" })).toBeVisible();
 	await clickDashboardWithoutNavigationWait(page);
 	await expect.poll(() => attempts).toBe(2);
-	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
+	await expect(page.getByRole("alert").filter({ hasText: "Not saved" })).toBeVisible();
 	expect(page.url()).toBe(url);
 	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toHaveValue("Keep unsaved draft");
 	await page.unroute(updateUrl);
@@ -62,7 +62,7 @@ test("retains failed letter edits until navigation can save them", async ({ auth
 	await page.getByRole("button", { name: "Write it myself", exact: true }).click();
 	const body = page.getByRole("textbox", { name: "Letter body", exact: true });
 	await body.fill("Retain this failed letter draft");
-	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
+	await expect(page.getByRole("alert").filter({ hasText: "Not saved" })).toBeVisible();
 	await clickDashboardWithoutNavigationWait(page);
 	await expect.poll(() => attempts).toBeGreaterThanOrEqual(2);
 	expect(page.url()).toBe(url);

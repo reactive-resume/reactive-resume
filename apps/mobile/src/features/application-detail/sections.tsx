@@ -119,7 +119,9 @@ export function StageStepper({ application, onMarkApplied, onCloseLane, onSchedu
 					const scheduled = application.activity.some(
 						(entry) => entry.type === "interview" && new Date(entry.at).getTime() > Date.now(),
 					);
-					stageMoved(application, target, scheduled ? undefined : onSchedule);
+					stageMoved(application, target, scheduled ? undefined : onSchedule, () =>
+						update.mutate({ id: application.id, ...laneInput(lane, lanes.supported) }),
+					);
 				},
 				onError: (error) => showToast({ message: applicationError(error) }),
 			},

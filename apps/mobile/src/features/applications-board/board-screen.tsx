@@ -154,7 +154,12 @@ function Board() {
 		update.mutate(
 			{ id: application.id, ...laneInput(lane, laneQuery.supported) },
 			{
-				onSuccess: () => stageMoved(application, lane),
+				onSuccess: () => {
+					const from = resolveLane(laneQuery.lanes, application);
+					stageMoved(application, lane, undefined, () =>
+						update.mutate({ id: application.id, ...laneInput(from, laneQuery.supported) }),
+					);
+				},
 				onError: (error) => {
 					setPending((current) => pendingAfterError(current, application.id, stage));
 					showToast({ message: applicationError(error) });

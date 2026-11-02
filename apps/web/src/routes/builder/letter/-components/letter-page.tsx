@@ -115,7 +115,10 @@ export function LetterPage() {
 				// oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region must be reachable by keyboard.
 				tabIndex={0}
 				aria-label={t`Letter page`}
-				className={cn("absolute inset-0 overflow-auto pt-7 pb-24 outline-none", isPhone ? "px-4" : "px-10")}
+				className={cn(
+					"absolute inset-0 overflow-auto pt-7 pb-24 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent",
+					isPhone ? "px-4" : "px-10",
+				)}
 			>
 				<ResumePreview
 					data={data}

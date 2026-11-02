@@ -112,7 +112,7 @@ for (const kind of ["resume", "letter"] as const) {
 		const failed = page.waitForEvent("requestfailed", { predicate: (request) => request.url().endsWith("/update") });
 		await rename(page, kind, "Rejected document");
 		await failed;
-		if (kind === "letter") await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
+		if (kind === "letter") await expect(page.getByRole("alert").filter({ hasText: "Not saved" })).toBeVisible();
 		expect(await page.title()).toBe("Renamed document | Reactive Resume");
 		await page.unroute(updateUrl);
 		if (kind === "resume") {

@@ -191,7 +191,7 @@ export function useApplicationActions() {
 		},
 		// Toasts live on the mutation, not on mutate(): a board card's menu unmounts when the card changes column, and
 		// mutate()'s own callbacks die with it.
-		onSuccess: (_data, input) => {
+		onSuccess: (_data, input, context) => {
 			const lane = input.laneId
 				? lanes.find((item) => item.id === input.laneId)
 				: input.status
@@ -250,6 +250,11 @@ export function useApplicationActions() {
 				return;
 			}
 
+			// A move is reversible: Undo moves it back to the stage it was in (its timeline keeps both moves).
+			const before = context?.previous?.find((row) => row.id === input.id);
+			const back = before
+				? (lanes.find((item) => item.id === before.laneId) ?? getCategoryLane(lanes, before.status))
+				: undefined;
 			toast.add({
 				description:
 					lane.category !== "closed"
@@ -257,6 +262,15 @@ export function useApplicationActions() {
 						: lane.systemKey
 							? t`Application closed`
 							: t`Closed as ${label}`,
+				...(before && back && back.id !== lane.id
+					? {
+							actionProps: {
+								children: t`Undo`,
+								onClick: () =>
+									update.mutate({ id: input.id, ...laneMoveInput(back, mode, before.closedReason ?? null) }),
+							},
+						}
+					: {}),
 			});
 		},
 		onSettled: (_data, _error, input) => invalidate(input.id),

@@ -149,9 +149,16 @@ export const offerHintFor = (hints: ReadonlyMap<string, OfferHint> | undefined, 
 export function useStageMovedToast() {
 	const router = useRouter();
 	// `onSchedule`: after a move to Interview, offer to schedule one (the caller passes it only when none is coming up).
-	return (application: Pick<ApplicationSummary, "id">, lane: ApplicationLane, onSchedule?: () => void) =>
+	// `onUndo`: moves it back; offered when the toast has no other action, since a move is reversible.
+	return (
+		application: Pick<ApplicationSummary, "id">,
+		lane: ApplicationLane,
+		onSchedule?: () => void,
+		onUndo?: () => void,
+	) =>
 		showToast({
 			message: t`Moved to ${getLaneLabel(lane)}`,
+			...(onUndo ? { action: { label: t`Undo`, onPress: onUndo } } : {}),
 			...(lane.category === "interview" && onSchedule
 				? { action: { label: t`Schedule it`, onPress: onSchedule } }
 				: {}),

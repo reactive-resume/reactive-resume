@@ -90,6 +90,11 @@ msgstr "(አማራጭ)"
 msgid "{0, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr ""
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, =0 {Since today} one {For # day} other {For # days}}"
+msgstr "{0, plural, one {ለ # ቀን} other {ለ # ቀናት}}"
+
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -333,11 +338,6 @@ msgstr "{0, plural, one {# ማመልከቻ ሰርዝ} other {# ማመልከቻ�
 #: src/features/documents/trash-page.tsx
 msgid "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
-
-#. placeholder {0}: step.days
-#: src/features/applications/next-step.ts
-msgid "{0, plural, one {For # day} other {For # days}}"
-msgstr "{0, plural, one {ለ # ቀን} other {ለ # ቀናት}}"
 
 #. placeholder {0}: parsed.requirements.length
 #: src/features/applications/components/add-application-dialog.tsx
@@ -4079,6 +4079,15 @@ msgstr "የእውቂያ ስልክ"
 msgid "Contact role"
 msgstr "የግንኙነት ሚና"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6221,6 +6230,10 @@ msgstr "ቁልፍ ቃል በማርትዕ ላይ..."
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "የአርትዖት ክፍለ ጊዜ"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16582,6 +16595,7 @@ msgstr "ከስር አስምር"
 msgid "Underline links"
 msgstr "አገናኞችን አስምር"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx

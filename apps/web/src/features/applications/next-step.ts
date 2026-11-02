@@ -103,14 +103,15 @@ export function describeNextStep(
 				: {
 						icon: "hourglass",
 						title: t`Waiting to hear back`,
-						sub: step.days === null ? "" : plural(step.days, { one: "For # day", other: "For # days" }),
+						sub:
+							step.days === null ? "" : plural(step.days, { 0: "Since today", one: "For # day", other: "For # days" }),
 						tone: "normal",
 					};
 		case "interview-feedback":
 			return {
 				icon: "hourglass",
 				title: t`Waiting for interview feedback`,
-				sub: step.days === null ? "" : plural(step.days, { one: "For # day", other: "For # days" }),
+				sub: step.days === null ? "" : plural(step.days, { 0: "Since today", one: "For # day", other: "For # days" }),
 				tone: "normal",
 			};
 		case "no-interview":

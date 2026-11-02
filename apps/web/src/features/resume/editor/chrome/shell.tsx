@@ -130,17 +130,20 @@ function DesktopBody({ mode, panelLabel, panel, page, assistant, column, replace
 				replaced={replace && assistantOpen}
 				assistant={<div className="min-h-0 border-e border-line">{assistant}</div>}
 			>
-				<TabsContent
-					key={mode}
-					value={mode}
-					aria-label={panelLabel}
-					// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
-					// stretching the document, which would let scrollIntoView shift the whole editor. Keyed by mode so each
-					// mode starts at its top; no scroll anchoring, which yanked the Design panel back while scrolling it.
-					className="relative min-h-0 overflow-y-auto border-e border-line bg-surface [overflow-anchor:none]"
-				>
-					{panel}
-				</TabsContent>
+				{/* A landmark of its own beside the page's <main> (layout-neutral: `contents`). */}
+				<aside aria-label={t`Editor`} className="contents">
+					<TabsContent
+						key={mode}
+						value={mode}
+						aria-label={panelLabel}
+						// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
+						// stretching the document, which would let scrollIntoView shift the whole editor. Keyed by mode so each
+						// mode starts at its top; no scroll anchoring, which yanked the Design panel back while scrolling it.
+						className="relative min-h-0 overflow-y-auto border-e border-line bg-surface [overflow-anchor:none]"
+					>
+						{panel}
+					</TabsContent>
+				</aside>
 			</AssistantReplace>
 			<main id="main-content" className="min-h-0 min-w-0">
 				{page}
@@ -181,20 +184,22 @@ function TabletBody({ mode, panelLabel, panel, page }: BodyProps) {
 			<main id="main-content" className={cn("h-full min-w-0", drawerOpen && "ps-[380px]")}>
 				{page}
 			</main>
-			<TabsContent
-				key={mode}
-				value={mode}
-				aria-label={panelLabel}
-				ref={panelRef}
-				id="editor-panel"
-				inert={!drawerOpen}
-				className={cn(
-					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-e border-line bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
-					!drawerOpen && "-translate-x-full rtl:translate-x-full",
-				)}
-			>
-				{panel}
-			</TabsContent>
+			<aside aria-label={t`Editor`} className="contents">
+				<TabsContent
+					key={mode}
+					value={mode}
+					aria-label={panelLabel}
+					ref={panelRef}
+					id="editor-panel"
+					inert={!drawerOpen}
+					className={cn(
+						"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-e border-line bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
+						!drawerOpen && "-translate-x-full rtl:translate-x-full",
+					)}
+				>
+					{panel}
+				</TabsContent>
+			</aside>
 		</div>
 	);
 }

@@ -76,6 +76,11 @@ msgstr "（任意）"
 msgid "(required)"
 msgstr "（必須）"
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, =0 {Since today} one {For # day} other {For # days}}"
+msgstr "{0, plural, one {# 日の場合} other {# 日間}}"
+
 #. placeholder {0}: applied.length
 #: src/features/assistant/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -339,11 +344,6 @@ msgstr "{0, plural, one {# 件の応募を削除} other {# 件の応募を削除
 #: src/features/career/today.tsx
 msgid "{0, plural, one {Every day} other {Every # days}}"
 msgstr "{0, plural, one {毎日} other {# 日ごと}}"
-
-#. placeholder {0}: step.days
-#: src/features/applications/next-step.ts
-msgid "{0, plural, one {For # day} other {For # days}}"
-msgstr "{0, plural, one {# 日の場合} other {# 日間}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -13181,6 +13181,7 @@ msgstr "リンクに下線を引く"
 #: app/builder/[id]/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/interview-sheet.tsx
+#: src/features/applications/stage-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/proposals.ts
