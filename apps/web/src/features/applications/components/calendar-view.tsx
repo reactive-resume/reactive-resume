@@ -117,7 +117,8 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 						<Button size="icon-sm" variant="ghost" title={t`Next month`} onClick={() => shiftMonth(1)}>
 							<Icon name="caret-right" size={16} />
 						</Button>
-						<Button size="sm" className="ms-2" onClick={() => schedule()}>
+						{/* Secondary: the page's one accent-filled action is Save job, in the header. */}
+						<Button size="sm" variant="secondary" className="ms-2" onClick={() => schedule()}>
 							<Icon name="calendar-plus" size={16} />
 							<Trans>Schedule interview</Trans>
 						</Button>
