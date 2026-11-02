@@ -349,6 +349,8 @@ function AnswerCard({
 	};
 	const limit = answerLimit(question);
 	const measured = (value: string) => (limit?.kind === "characters" ? countCharacters(value) : countWords(value));
+	const shownLimit = limit && limit.kind === unit ? limit.max : null;
+	const over = shownLimit !== null && (unit === "words" ? words : characters) > shownLimit;
 	const stale = proposal !== null && text !== proposal.before.text;
 
 	const accept = (chosen: NonNullable<typeof proposal>) => {
@@ -394,10 +396,15 @@ function AnswerCard({
 						onPress={onToggleUnit}
 						hitSlop={8}
 					>
-						<Text variant="mono" color="ink2">
-							{unit === "words"
-								? plural(words, { one: "# word", other: "# words" })
-								: plural(characters, { one: "# character", other: "# characters" })}
+						<Text variant="mono" color={over ? "warnText" : "ink2"}>
+							{/* The question's own limit, when it states one in this unit (web apply). */}
+							{shownLimit
+								? unit === "words"
+									? t`${words} of ${shownLimit} words`
+									: t`${characters} of ${shownLimit} characters`
+								: unit === "words"
+									? plural(words, { one: "# word", other: "# words" })
+									: plural(characters, { one: "# character", other: "# characters" })}
 						</Text>
 					</Pressable>
 					{!readOnly ? (

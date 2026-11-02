@@ -35,6 +35,9 @@ import { Banner, Button, Icon, Sheet, Skeleton, Text, TextArea, showToast, useTh
 
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
 
+// The longest message kept from a paste (web messages).
+const MAX_MESSAGE = 20_000;
+
 const periodLabel = (period: "year" | "month" | "hour") =>
 	({
 		year: t`per year`,
@@ -103,7 +106,7 @@ type PasteBoxProps = {
 
 /** W15: the employer's message, kept with the application, and "Read it for me". */
 function PasteBox({ application, initial, readOnly, onSave, fetchServer }: PasteBoxProps) {
-	const { t } = useLingui();
+	const { t, i18n } = useLingui();
 	const { space } = useTheme();
 	// Kept on the device until the server has it, so a failed save survives leaving the tab.
 	const draft = useDraft(readOnly ? null : `message:${application.id}`, initial, true);
@@ -119,10 +122,15 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 			<TextArea
 				label={t`Paste a message from ${company}`}
 				value={message}
-				maxLength={20_000}
+				maxLength={MAX_MESSAGE}
 				maxLines={12}
 				editable={!readOnly}
-				helper={t`Paste the email or message, without the signature.`}
+				// A longer paste is cut at the limit: say so, rather than drop the rest silently (web messages).
+				helper={
+					message.length >= MAX_MESSAGE
+						? t`Only the first ${i18n.number(MAX_MESSAGE)} characters are kept.`
+						: t`Paste the email or message, without the signature.`
+				}
 				onChangeText={draft.setValue}
 				onBlur={autosave.flush}
 			/>

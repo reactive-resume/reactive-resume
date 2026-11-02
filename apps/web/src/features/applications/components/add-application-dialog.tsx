@@ -40,6 +40,8 @@ type Parsed = RouterOutput["applications"]["ai"]["parsePosting"];
 // Adding offers lanes of these stages: still to apply, or already applied or interviewing.
 const ADD_CATEGORIES = ["saved", "applied", "interview"] as const;
 const MAX_POSTING_CHARS = 20_000;
+// The longest link or posting kept from a paste.
+const MAX_INPUT = 100_000;
 
 const isLink = (value: string) => /^https?:\/\/\S+$/i.test(value.trim());
 
@@ -385,7 +387,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					rows={4}
 					value={input}
 					className="max-h-72 overflow-y-auto"
-					maxLength={100_000}
+					maxLength={MAX_INPUT}
 					placeholder="https://…"
 					onChange={(event) => {
 						setInput(event.target.value);
@@ -397,6 +399,12 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					}}
 					autoFocus
 				/>
+				{/* A longer paste is cut at the limit: say so, rather than drop the rest silently. */}
+				{input.length >= MAX_INPUT && (
+					<p role="status" className="text-xs text-warn-text">
+						<Trans>Only the first {i18n.number(MAX_INPUT)} characters are kept.</Trans>
+					</p>
+				)}
 				{sourceLink && !initialCapture && (
 					<Button
 						type="button"

@@ -417,6 +417,8 @@ function AnswerCard({
 	};
 	const limit = answerLimit(question);
 	const measured = (value: string) => (limit?.kind === "characters" ? [...value].length : countWords(value));
+	const shownLimit = limit && limit.kind === unit ? limit.max : null;
+	const over = shownLimit !== null && (unit === "words" ? words : characters) > shownLimit;
 	const stale = proposal !== null && text !== proposal.before.text;
 
 	return (
@@ -465,13 +467,21 @@ function AnswerCard({
 							<button
 								type="button"
 								onClick={onToggleUnit}
-								className="touch-target relative shrink-0 rounded-sm font-mono text-xs leading-[22px] font-medium text-ink-2 transition-colors duration-quick hover:text-ink"
+								className={cn(
+									"touch-target relative shrink-0 rounded-sm font-mono text-xs leading-[22px] font-medium text-ink-2 transition-colors duration-quick hover:text-ink",
+									over && "text-warn-text hover:text-warn-text",
+								)}
 							/>
 						}
 					>
-						{unit === "words"
-							? plural(words, { one: "# word", other: "# words" })
-							: plural(characters, { one: "# character", other: "# characters" })}
+						{/* The question's own limit, when it states one in this unit: "174 of 150 words". */}
+						{shownLimit
+							? unit === "words"
+								? t`${words} of ${shownLimit} words`
+								: t`${characters} of ${shownLimit} characters`
+							: unit === "words"
+								? plural(words, { one: "# word", other: "# words" })
+								: plural(characters, { one: "# character", other: "# characters" })}
 					</TooltipTrigger>
 					<TooltipContent>{unit === "words" ? t`Count characters` : t`Count words`}</TooltipContent>
 				</Tooltip>

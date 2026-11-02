@@ -53,6 +53,9 @@ import { orpc } from "@/libs/orpc/client";
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
 
 /** A pay period as words, so an amount is never shown without what it covers. */
+// The longest message kept from a paste.
+const MAX_MESSAGE = 20_000;
+
 const periodLabel = (period: "year" | "month" | "hour") =>
 	({
 		year: t`per year`,
@@ -109,6 +112,7 @@ type PasteBoxProps = {
 
 /** W15: the employer's message, kept with the application, and "Read it for me". */
 function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
+	const { i18n } = useLingui();
 	const draft = useSessionDraft(
 		readOnly ? null : `message:${application.id}`,
 		initial,
@@ -132,13 +136,19 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 					dir="auto"
 					id={`${application.id}-message`}
 					value={message}
-					maxLength={20_000}
+					maxLength={MAX_MESSAGE}
 					readOnly={readOnly}
 					placeholder={t`Paste the email or message, without the signature.`}
 					onChange={(event) => setMessage(event.target.value)}
 					onBlur={flush}
 					className="max-h-72 min-h-[92px] overflow-y-auto px-3.5 py-3 text-sm leading-[22px] pointer-coarse:text-base"
 				/>
+				{/* A longer paste is cut at the limit: say so, rather than drop the rest silently. */}
+				{message.length >= MAX_MESSAGE && (
+					<p role="status" className="text-xs text-warn-text">
+						<Trans>Only the first {i18n.number(MAX_MESSAGE)} characters are kept.</Trans>
+					</p>
+				)}
 			</div>
 			{!readOnly && (
 				<div className="grid justify-items-start gap-2">

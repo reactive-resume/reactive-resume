@@ -61,7 +61,7 @@ const today = () => {
 /** Mounted until an explicit close/discard; unmounting cancels transient posting requests. */
 export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApplicationSheetProps) {
 	const router = useRouter();
-	const { t } = useLingui();
+	const { t, i18n } = useLingui();
 	const { timeZone } = useUserTime();
 	const { space } = useTheme();
 	const session = useSession();
@@ -396,6 +396,10 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 									onChangeText={changeInput}
 									editable={!busy}
 									maxLength={100_000}
+									// A longer paste is cut at the limit: say so (web add-application-dialog).
+									{...(input.length >= 100_000
+										? { helper: t`Only the first ${i18n.number(100_000)} characters are kept.` }
+										: {})}
 								/>
 							)}
 							{mode === "text" && !providers.hasAIProvider && (
