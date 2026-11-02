@@ -131,7 +131,7 @@ function preloadLinks(html: string) {
  */
 function htmlResponse(html: string, headers: Record<string, string>, template = html) {
 	const verification = new URL(CONTEXT7_ASK_URL).searchParams.get("siteKey") ?? "";
-	const note = `<blockquote data-context7-ask="true" aria-hidden="true" class="sr-only"><h2>Search</h2><p>Page index: https://rxresu.me/llms.txt.</p><p>${escapeHtml(CONTEXT7_ASK_DESCRIPTION)}</p></blockquote>`;
+	const note = `<blockquote data-context7-ask="true" aria-hidden="true" class="sr-only"><h2>Search</h2><p>Page index: ${escapeHtml(new URL("/llms.txt", env.APP_URL).toString())}.</p><p>${escapeHtml(CONTEXT7_ASK_DESCRIPTION)}</p></blockquote>`;
 	const body = html
 		.replace("</head>", () => `<meta name="context7-site-verification" content="${verification}"></head>`)
 		.replace(/<body\b[^>]*>/i, (tag) => `${tag}${note}`);

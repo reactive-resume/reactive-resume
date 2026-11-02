@@ -377,7 +377,15 @@ export const aiRouter = {
 	// Extract structured fields from a pasted job description. The posting text itself is stored
 	// verbatim on the application, so nothing here fetches or scrapes a URL.
 	autofill: protectedProcedure
-		.route({ method: "POST", path: "/applications/ai/autofill", operationId: "aiAutofillApplication", ...reserved })
+		.route({
+			method: "POST",
+			path: "/applications/ai/autofill",
+			operationId: "aiAutofillApplication",
+			summary: "Fill application fields from a job posting",
+			description:
+				"Extracts the company, role, location, salary and other fields from pasted job-posting text with your AI provider. Nothing is saved; review the fields, then create or update the application.",
+			...reserved,
+		})
 		.input(autofillInputSchema)
 		.use(aiRequestRateLimit)
 		.output(autofillOutput)
@@ -404,6 +412,9 @@ export const aiRouter = {
 			method: "POST",
 			path: "/applications/{id}/ai/match-score",
 			operationId: "aiApplicationMatchScore",
+			summary: "Score the linked resume against the job",
+			description:
+				"Compares the application's linked resume with its job description using your AI provider and returns a 0–100 fit score with matching strengths and missing qualifications.",
 			...reserved,
 		})
 		.input(z.object({ id: z.string() }))
@@ -454,6 +465,9 @@ export const aiRouter = {
 			method: "POST",
 			path: "/applications/{id}/ai/draft-message",
 			operationId: "aiDraftApplicationMessage",
+			summary: "Draft a message about this application",
+			description:
+				"Drafts a cover letter or follow-up message from the application's posting and linked resume using your AI provider. A cover letter is saved as a new letter and its ID returned; a follow-up is returned as text. Nothing is sent.",
 			...reserved,
 		})
 		.input(z.object({ id: z.string(), kind: z.enum(["cover-letter", "follow-up"]) }))
@@ -497,6 +511,9 @@ export const aiRouter = {
 			method: "POST",
 			path: "/applications/{id}/ai/tailor-resume",
 			operationId: "aiTailorResumeForApplication",
+			summary: "Tailor a resume copy for this application",
+			description:
+				"Creates a copy of the linked resume with a summary rewritten for the job using your AI provider, and links the copy to the application.",
 			...reserved,
 		})
 		.input(z.object({ id: z.string() }))

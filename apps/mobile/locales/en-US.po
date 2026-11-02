@@ -773,6 +773,10 @@ msgstr "{minutes} min"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr "{name} (this app)"
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} added to page 1"
@@ -1938,6 +1942,10 @@ msgstr "Application date"
 msgid "Application deleted"
 msgstr "Application deleted"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr "Application disconnected."
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr "Application email"
@@ -2032,6 +2040,10 @@ msgstr "Approve and create packet"
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "Apps using “{0}” will stop working. This can't be undone."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -3159,7 +3171,14 @@ msgstr "Connect the tools you use for writing, job search and working with your 
 msgid "Connected · {milliseconds} ms"
 msgstr "Connected · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr "Connected {0}"
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Connected applications"
 
@@ -3486,6 +3505,10 @@ msgstr "Couldn't load applications."
 msgid "Couldn't load applications. Try again."
 msgstr "Couldn't load applications. Try again."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr "Couldn't load connected applications."
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "Couldn't load documents. Try again."
@@ -3578,7 +3601,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr "Couldn't measure page fit. Check the page preview before accepting."
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3675,6 +3697,10 @@ msgstr "Couldn't render this resume."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Couldn't revoke the key. Try again."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Couldn't revoke this connection. Try again."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3970,6 +3996,10 @@ msgstr "Create a new resume"
 msgid "Create a resume first, then ask about it."
 msgstr "Create a resume first, then ask about it."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr "Create and change documents, applications and your profile."
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "Create copy"
@@ -4208,6 +4238,10 @@ msgstr "Delete application…"
 msgid "Delete conversation"
 msgstr "Delete conversation"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr "Delete documents and account data."
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "Delete entry"
@@ -4408,6 +4442,27 @@ msgstr "Discard your offline edits and load the saved version."
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "Discard your offline edits?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "Disconnect"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr "Disconnect “{0}”?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr "Disconnect {name}"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr "Disconnect an application from your account."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr "Disconnected “{name}”."
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -5418,6 +5473,10 @@ msgstr "From your interview plan: {0}"
 msgid "From your timezone"
 msgstr "From your timezone"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr "Full access"
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6052,6 +6111,10 @@ msgstr "Issues"
 msgid "It has entries but isn't placed on a page."
 msgstr "It has entries but isn't placed on a page."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr "It loses access now. To use it again, connect it from the app. This cannot be undone."
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "It's removed from the timeline for good."
@@ -6158,6 +6221,10 @@ msgstr "Keep"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "Keep a single address, so software does not have to guess which one to use."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "Keep access when you are not using the application."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6689,6 +6756,10 @@ msgstr "Loading API keys…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "Loading applications…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "Loading connections..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7559,6 +7630,10 @@ msgstr "No change needed. It's already at {stage}."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "No commands match that search."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "No connected applications. Apps you allow appear here."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9228,6 +9303,10 @@ msgstr "Read license"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr "Read on {0}. The employer may have changed it since."
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "Read only"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9264,6 +9343,22 @@ msgstr "Read the resume"
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
 msgstr "Read with AI"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "Read your email address."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "Read your profile information."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr "Read your whole account, including exports and coaching conversations."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr "Read, change and delete documents and applications (legacy connection)."
 
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
@@ -10091,10 +10186,6 @@ msgstr "Review my answer"
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr "Review packet"
-
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr "Review permissions and disconnect apps in your browser. You may need to sign in there."
 
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
@@ -12876,6 +12967,7 @@ msgstr "Try {suggestion}"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

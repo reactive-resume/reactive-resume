@@ -57,9 +57,11 @@ function isReadOnly(permissions: unknown): boolean {
 const shortDate = (date: Date) =>
 	date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 
-export function ApiKeysSection() {
+type ApiKeysSectionProps = { openNewKey?: boolean };
+
+export function ApiKeysSection({ openNewKey = false }: ApiKeysSectionProps) {
 	const queryClient = useQueryClient();
-	const [creating, setCreating] = useState(false);
+	const [creating, setCreating] = useState(openNewKey);
 	const { data: keys = [], isLoading } = useQuery({
 		queryKey: KEYS,
 		queryFn: () => authClient.apiKey.list(),
@@ -101,6 +103,7 @@ export function ApiKeysSection() {
 
 	return (
 		<SettingsSection
+			id="api-keys"
 			title={<Trans>API keys</Trans>}
 			description={<Trans>Keys act as you with the access you choose. New keys start read-only.</Trans>}
 			action={

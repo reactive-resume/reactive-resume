@@ -32,9 +32,23 @@ export function prepareMcpDiscovery() {
 	return (discovery ??= { tools: buildToolDefinitions() });
 }
 
-/** Install after tool registration so SDK tools/call validation and callbacks remain intact. */
-export function registerToolDiscovery(server: McpServer) {
-	const metadata = prepareMcpDiscovery();
+let readOnlyDiscovery: { tools: ReturnType<typeof buildToolDefinitions> } | undefined;
+
+/** The tools a read-only credential can call: those marked read-only. Saves context and stops agents planning writes. */
+function prepareReadOnlyMcpDiscovery() {
+	return (readOnlyDiscovery ??= {
+		tools: prepareMcpDiscovery().tools.filter((tool) => tool.annotations?.readOnlyHint === true),
+	});
+}
+
+type ToolDiscoveryOptions = { canWrite?: boolean };
+
+/**
+ * Install after tool registration so SDK tools/call validation and callbacks remain intact. A credential that can't
+ * write lists only read-only tools; calling another one still answers with the permission it needs.
+ */
+export function registerToolDiscovery(server: McpServer, { canWrite = true }: ToolDiscoveryOptions = {}) {
+	const metadata = canWrite ? prepareMcpDiscovery() : prepareReadOnlyMcpDiscovery();
 	// The public low-level handler API avoids SDK tools/list reconverting every schema per request.
 	server.server.setRequestHandler(ListToolsRequestSchema, () => metadata);
 }

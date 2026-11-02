@@ -49,3 +49,25 @@ it("matches the complete unmodified SDK tools/list response and server-card sche
 		await server.close();
 	}
 }, 30_000);
+
+it("lists only read-only tools to a credential that can't write", async () => {
+	const server = new McpServer({ name: "discovery-test", version: "1.0.0" });
+	// The SDK installs tool handling with the first registered tool.
+	server.registerTool("placeholder", { description: "Placeholder." }, () => ({ content: [] }));
+	registerToolDiscovery(server, { canWrite: false });
+	const client = new Client({ name: "discovery-client", version: "1.0.0" });
+	const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+	try {
+		await server.connect(serverTransport);
+		await client.connect(clientTransport);
+		const { tools } = await client.listTools();
+		const all = buildMcpServerCard("1.0.0").tools;
+		expect(tools.length).toBeGreaterThan(0);
+		expect(tools.length).toBeLessThan(all.length);
+		expect(tools.every((tool) => tool.annotations?.readOnlyHint === true)).toBe(true);
+		expect(tools.map((tool) => tool.name)).not.toContain("apply_resume_patch");
+	} finally {
+		await client.close();
+		await server.close();
+	}
+}, 30_000);

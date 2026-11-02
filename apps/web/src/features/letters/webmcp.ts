@@ -50,6 +50,9 @@ const letterFieldsSchema = z.strictObject({
 		),
 });
 
+const FREEFORM_FIELDS = ["recipient"] as const;
+const STRUCTURED_FIELDS = ["recipientName", "recipientCompany", "letterDate", "greeting", "signOff"] as const;
+
 /** The letter this editor has open, as on screen: with edits that haven't reached the server yet. */
 function getOpenLetter(coverLetterId: string) {
 	const letter = useLetterEditorStore.getState().letter;
@@ -106,6 +109,16 @@ function createLetterTools(coverLetterId: string): readonly WebMcpTool[] {
 				Object.entries(fields).filter(([, value]) => value !== undefined),
 			) as LetterEdits;
 			if (Object.keys(edits).length === 0) throw new Error("Give at least one field to change.");
+			// A field the layout doesn't show would be stored where nobody sees it, so refuse it instead.
+			const hidden = (letter.layout === "structured" ? FREEFORM_FIELDS : STRUCTURED_FIELDS).filter(
+				(field) => field in edits,
+			);
+			if (hidden.length > 0)
+				throw new Error(
+					letter.layout === "structured"
+						? "This letter is structured: use recipientName and recipientCompany instead of recipient."
+						: `This letter is freeform: put the recipient in recipient, and leave out ${hidden.join(", ")}.`,
+				);
 
 			const store = useLetterEditorStore.getState();
 			store.edit(edits);

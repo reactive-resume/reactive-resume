@@ -61,7 +61,14 @@ const speechModel = ({ provider, settings }: VoiceConnection, model: string) =>
 
 export const careerVoiceRouter = {
 	transcripts: protectedProcedure
-		.route({ method: "GET", path: "/career/voice/transcripts", tags: ["Career"], operationId: "listCareerTranscripts" })
+		.route({
+			method: "GET",
+			path: "/career/voice/transcripts",
+			tags: ["Career"],
+			operationId: "listCareerTranscripts",
+			summary: "List voice answer transcripts",
+			description: "Lists the transcripts of answers you recorded by voice in Career practice, newest first.",
+		})
 		.input(z.object({ applicationId: z.string().nullable().default(null) }))
 		.output(z.array(createSelectSchema(careerTranscript)))
 		.handler(async ({ context, input }) => {
@@ -86,6 +93,9 @@ export const careerVoiceRouter = {
 			path: "/career/voice/transcribe",
 			tags: ["Career"],
 			operationId: "transcribeCareerAnswer",
+			summary: "Transcribe a spoken answer",
+			description:
+				"Transcribes an answer you recorded in Career practice with your AI provider and saves the transcript.",
 		})
 		.input(
 			z.object({
@@ -146,6 +156,8 @@ export const careerVoiceRouter = {
 			path: "/career/voice/transcripts/{id}",
 			tags: ["Career"],
 			operationId: "editCareerTranscript",
+			summary: "Edit a voice answer transcript",
+			description: "Corrects the text of a saved voice answer transcript.",
 		})
 		.input(z.object({ id: z.string(), text: z.string().trim().min(1).max(40_000) }))
 		.output(z.void())
@@ -163,6 +175,8 @@ export const careerVoiceRouter = {
 			path: "/career/voice/transcripts/{id}",
 			tags: ["Career"],
 			operationId: "deleteCareerTranscript",
+			summary: "Delete a voice answer transcript",
+			description: "Deletes a saved voice answer transcript.",
 		})
 		.input(z.object({ id: z.string() }))
 		.output(z.void())
@@ -172,7 +186,14 @@ export const careerVoiceRouter = {
 				.where(and(eq(careerTranscript.id, input.id), eq(careerTranscript.userId, context.user.id)));
 		}),
 	speak: procedure
-		.route({ method: "POST", path: "/career/voice/speak", tags: ["Career"], operationId: "speakCareerQuestion" })
+		.route({
+			method: "POST",
+			path: "/career/voice/speak",
+			tags: ["Career"],
+			operationId: "speakCareerQuestion",
+			summary: "Read a practice question aloud",
+			description: "Turns a Career practice question into speech audio with your AI provider.",
+		})
 		.input(
 			z.object({
 				providerId: z.string().min(1),

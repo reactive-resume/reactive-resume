@@ -779,6 +779,10 @@ msgstr "{minutes} perc"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {Nincs interjú} one {# interjú} other {# interjú}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} hozzáadva az 1. oldalhoz"
@@ -1942,6 +1946,10 @@ msgstr "állás jelentkezés dátuma"
 msgid "Application deleted"
 msgstr "álláspályázat törölve"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "A(z) „{0}” kulcsot használó alkalmazások leállnak. Ez nem vonható vissza."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -3163,7 +3175,14 @@ msgstr "Csatlakoztassa az íráshoz, álláskereséshez és munkához használt 
 msgid "Connected · {milliseconds} ms"
 msgstr "Csatlakoztatva · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Csatlakoztatott alkalmazások"
 
@@ -3490,6 +3509,10 @@ msgstr "Nem sikerült betölteni az jelentkezéseket."
 msgid "Couldn't load applications. Try again."
 msgstr "Nem sikerült betölteni a jelentkezéseket. Próbáld újra."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "Nem sikerült betölteni a dokumentumokat. Próbálja újra."
@@ -3582,7 +3605,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3679,6 +3701,10 @@ msgstr "Nem sikerült megjeleníteni ezt az önéletrajzot."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Nem sikerült visszavonni a kulcsot. Próbáld újra."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Nem sikerült visszavonni ezt a kapcsolatot. Próbáld újra."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3974,6 +4000,10 @@ msgstr "Új önéletrajz létrehozása"
 msgid "Create a resume first, then ask about it."
 msgstr "Először készítsen önéletrajzot, majd kérdezzen rá."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "Másolat létrehozása"
@@ -4212,6 +4242,10 @@ msgstr "Jelentkezés törlése…"
 msgid "Delete conversation"
 msgstr "Beszélgetés törlése"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "Bejegyzés törlése"
@@ -4412,6 +4446,27 @@ msgstr "Vesse el az offline szerkesztéseket, és töltse be a mentett verziót.
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "Elveti az offline szerkesztéseket?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "Leválasztás"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -5422,6 +5477,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "Az időzónád alapján"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6056,6 +6115,10 @@ msgstr "Kérdések"
 msgid "It has entries but isn't placed on a page."
 msgstr "Vannak benne bejegyzések, de nincs oldalra helyezve."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Végleg eltávolították az idővonalról."
@@ -6162,6 +6225,10 @@ msgstr "Tartsa"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "Csak egy címet adjon meg, hogy a szoftvernek ne kelljen találgatnia, melyiket használja."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "Tartsa meg a hozzáférést, amikor nem használja az alkalmazást."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6693,6 +6760,10 @@ msgstr "API-kulcsok betöltése…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "Jelentkezések betöltése…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "Kapcsolatok betöltése..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7563,6 +7634,10 @@ msgstr "Nincs szükség módosításra. Már ebben a szakaszban van: {stage}."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "Egyetlen parancs sem felel meg a keresésnek."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "Még nincsenek csatlakoztatott alkalmazások. Itt jelennek meg azok az alkalmazások, amelyeknek hozzáférést adsz a fiókodhoz."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9232,6 +9307,10 @@ msgstr "Licenc elolvasása"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "Csak olvasási hozzáférés"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9267,6 +9346,22 @@ msgstr "Elolvasta az önéletrajzot"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "Olvassa el az e-mail címét."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "Olvassa el profiladatait."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -10095,10 +10190,6 @@ msgstr "Válaszom értékelése"
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
-
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr "Tekintsd át az engedélyeket, és válaszd le az alkalmazásokat a böngésződben. Előfordulhat, hogy ott be kell jelentkezned."
 
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
@@ -12880,6 +12971,7 @@ msgstr "Próbálja ki a következőt: {suggestion}"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

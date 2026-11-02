@@ -779,6 +779,10 @@ msgstr "{minutes} min."
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {Darbo pokalbių nėra} one {# darbo pokalbis} few {# darbo pokalbiai} other {# darbo pokalbių}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} įtraukta į 1 puslapį"
@@ -1942,6 +1946,10 @@ msgstr "paraiškos dėl darbo data"
 msgid "Application deleted"
 msgstr "darbo paraiška ištrinta"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "Programos, naudojančios „{0}“, nustos veikti. To negalima anuliuoti."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -3163,7 +3175,14 @@ msgstr "Susiekite rašymo, darbo paieškos ir darbo įrankius su savo gyvenimo a
 msgid "Connected · {milliseconds} ms"
 msgstr "Prisijungta · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Prijungtos programos"
 
@@ -3490,6 +3509,10 @@ msgstr "Nepavyko įkelti darbo paraiškų."
 msgid "Couldn't load applications. Try again."
 msgstr "Nepavyko įkelti paraiškų. Bandykite dar kartą."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "Nepavyko įkelti dokumentų. Bandykite dar kartą."
@@ -3582,7 +3605,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3679,6 +3701,10 @@ msgstr "Nepavyko atvaizduoti šio gyvenimo aprašymo."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Nepavyko atšaukti rakto. Bandykite dar kartą."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Nepavyko atšaukti šio ryšio. Bandykite dar kartą."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3974,6 +4000,10 @@ msgstr "Sukurti naują gyvenimo aprašymą"
 msgid "Create a resume first, then ask about it."
 msgstr "Pirmiausia sukurkite gyvenimo aprašymą, tada paklauskite apie tai."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "Sukurti kopiją"
@@ -4212,6 +4242,10 @@ msgstr "Ištrinti paraišką…"
 msgid "Delete conversation"
 msgstr "Ištrinti pokalbį"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "Ištrinti įrašą"
@@ -4412,6 +4446,27 @@ msgstr "Atmeskite neprisijungus atliktus pakeitimus ir įkelkite išsaugotą ver
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "Atmesti neprisijungus atliktus pakeitimus?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "Atsijungti"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -5422,6 +5477,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "Pagal jūsų laiko juostą"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6056,6 +6115,10 @@ msgstr "Problemos"
 msgid "It has entries but isn't placed on a page."
 msgstr "Jame yra įrašų, bet jis nėra įdėtas į puslapį."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Jis visam laikui pašalintas iš laiko juostos."
@@ -6162,6 +6225,10 @@ msgstr "Laikyti"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "Naudokite vieną adresą, kad programinei įrangai nereikėtų spėlioti, kurį pasirinkti."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "Turėkite prieigą, kai nenaudojate programos."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6693,6 +6760,10 @@ msgstr "Įkeliami API raktai…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "Įkeliamos paraiškos…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "Įkeliami ryšiai..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7563,6 +7634,10 @@ msgstr "Keisti nereikia. Jau yra etape „{stage}“."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "Pagal šią paiešką komandų nerasta."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "Prijungtų programų dar nėra. Čia rodomos programos, kurioms leidžiate pasiekti jūsų paskyrą."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9232,6 +9307,10 @@ msgstr "Skaityti licenciją"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "Tik skaitymo prieiga"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9267,6 +9346,22 @@ msgstr "Perskaitė gyvenimo aprašymą"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "Perskaitykite savo el. pašto adresą."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "Perskaitykite savo profilio informaciją."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -10094,10 +10189,6 @@ msgstr "Įvertinti mano atsakymą"
 
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
-msgstr ""
-
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -12880,6 +12971,7 @@ msgstr "Išbandykite {suggestion}"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

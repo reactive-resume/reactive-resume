@@ -779,6 +779,10 @@ msgstr "{minutes} ನಿಮಿಷ"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {ಸಂದರ್ಶನಗಳಿಲ್ಲ} one {# ಸಂದರ್ಶನ} other {# ಸಂದರ್ಶನಗಳು}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} ಅನ್ನು ಪುಟ 1 ಗೆ ಸೇರಿಸಲಾಗಿದೆ"
@@ -1942,6 +1946,10 @@ msgstr "ಉದ್ಯೋಗ ಅರ್ಜಿ ದಿನಾಂಕ"
 msgid "Application deleted"
 msgstr "ಉದ್ಯೋಗ ಅರ್ಜಿಯನ್ನು ಅಳಿಸಲಾಗಿದೆ"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "“{0}” ಬಳಸುವ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು ಕಾರ್ಯನಿರ್ವಹಿಸುವುದನ್ನು ನಿಲ್ಲಿಸುತ್ತವೆ. ಇದನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗುವುದಿಲ್ಲ."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -3163,7 +3175,14 @@ msgstr "ಬರೆಯಲು, ಉದ್ಯೋಗ ಹುಡುಕಾಟ ಮತ್�
 msgid "Connected · {milliseconds} ms"
 msgstr "ಸಂಪರ್ಕಗೊಂಡಿದೆ · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "ಸಂಪರ್ಕಿತ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು"
 
@@ -3490,6 +3509,10 @@ msgstr "ಅರ್ಜಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ
 msgid "Couldn't load applications. Try again."
 msgstr "ಅರ್ಜಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "ದಾಖಲೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
@@ -3582,7 +3605,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3679,6 +3701,10 @@ msgstr "ಈ ರೆಸ್ಯೂಮ್ ಅನ್ನು ನಿರೂಪಿಸಲು
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "ಕೀಯನ್ನು ಹಿಂಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "ಈ ಸಂಪರ್ಕವನ್ನು ಹಿಂಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3974,6 +4000,10 @@ msgstr "ಹೊಸ ರೆಸ್ಯೂಮ್ ಅನ್ನು ರಚಿಸಿ"
 msgid "Create a resume first, then ask about it."
 msgstr "ಮೊದಲು ರೆಸ್ಯೂಮೆ ರಚಿಸಿ, ನಂತರ ಅದರ ಬಗ್ಗೆ ಕೇಳಿ."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "ನಕಲನ್ನು ರಚಿಸಿ"
@@ -4212,6 +4242,10 @@ msgstr "ಅರ್ಜಿಯನ್ನು ಅಳಿಸಿ…"
 msgid "Delete conversation"
 msgstr "ಸಂಭಾಷಣೆಯನ್ನು ಅಳಿಸಿ"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "ನಮೂದನ್ನು ಅಳಿಸಿ"
@@ -4412,6 +4446,27 @@ msgstr "ನಿಮ್ಮ ಆಫ್‌ಲೈನ್ ಸಂಪಾದನೆಗಳನ�
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "ನಿಮ್ಮ ಆಫ್‌ಲೈನ್ ಸಂಪಾದನೆಗಳನ್ನು ತ್ಯಜಿಸುವುದೇ?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "ಡಿಸ್ಕನೆಕ್ಟ್ ಮಾಡಿ"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -5422,6 +5477,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "ನಿಮ್ಮ ಸಮಯ ವಲಯದಿಂದ"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6056,6 +6115,10 @@ msgstr "ಸಮಸ್ಯೆಗಳು"
 msgid "It has entries but isn't placed on a page."
 msgstr "ಇದು ನಮೂದುಗಳನ್ನು ಹೊಂದಿದೆ ಆದರೆ ಪುಟದಲ್ಲಿ ಇರಿಸಲಾಗಿಲ್ಲ."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "ಒಳ್ಳೆಯದಕ್ಕಾಗಿ ಇದನ್ನು ಟೈಮ್‌ಲೈನ್‌ನಿಂದ ತೆಗೆದುಹಾಕಲಾಗಿದೆ."
@@ -6162,6 +6225,10 @@ msgstr "ಇರಿಸಿಕೊಳ್ಳಿ"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "ಒಂದೇ ವಿಳಾಸವನ್ನು ಇಟ್ಟುಕೊಳ್ಳಿ; ಆಗ ಯಾವುದನ್ನು ಬಳಸಬೇಕೆಂದು ತಂತ್ರಾಂಶ ಊಹಿಸಬೇಕಾಗಿಲ್ಲ."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "ನೀವು ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಬಳಸದೆ ಇರುವಾಗ ಪ್ರವೇಶವನ್ನು ಇರಿಸಿಕೊಳ್ಳಿ."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6693,6 +6760,10 @@ msgstr "API ಕೀಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತ
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "ಅರ್ಜಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "ಸಂಪರ್ಕಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7563,6 +7634,10 @@ msgstr "ಯಾವುದೇ ಬದಲಾವಣೆ ಅಗತ್ಯವಿಲ್ಲ.
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "ಆ ಹುಡುಕಾಟಕ್ಕೆ ಹೊಂದುವ ಯಾವುದೇ ಆದೇಶಗಳಿಲ್ಲ."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "ಇನ್ನೂ ಯಾವುದೇ ಸಂಪರ್ಕಿತ ಅಪ್ಲಿಕೇಶನ್‌ಗಳಿಲ್ಲ. ನಿಮ್ಮ ಖಾತೆಗೆ ಪ್ರವೇಶಿಸಲು ನೀವು ಅನುಮತಿಸುವ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9232,6 +9307,10 @@ msgstr "ಪರವಾನಗಿ ಓದಿ"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "ಓದಲು-ಮಾತ್ರ ಪ್ರವೇಶ"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9267,6 +9346,22 @@ msgstr "ರೆಸ್ಯೂಮ್ ಅನ್ನು ಓದಲಾಗಿದೆ"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ಓದಿ."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿಯನ್ನು ಓದಿ."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -10094,10 +10189,6 @@ msgstr "ನನ್ನ ಉತ್ತರವನ್ನು ಪರಿಶೀಲಿಸಿ"
 
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
-msgstr ""
-
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -12880,6 +12971,7 @@ msgstr "{suggestion} ಪ್ರಯತ್ನಿಸಿ"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

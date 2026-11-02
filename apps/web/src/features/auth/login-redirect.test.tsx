@@ -22,9 +22,10 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@tanstack/react-query", () => ({
-	useQuery: () => ({
-		data: { google: "Google", github: "GitHub", linkedin: "LinkedIn", custom: "SSO", passkey: true },
-	}),
+	useQuery: (options: { queryKey?: unknown[] }) =>
+		options.queryKey?.[0] === "oauth-client"
+			? { data: "Docs example client" }
+			: { data: { google: "Google", github: "GitHub", linkedin: "LinkedIn", custom: "SSO", passkey: true } },
 	useQueryClient: () => mocks.queryClient,
 	useMutation: () => ({ mutate: vi.fn(), isPending: false }),
 }));
@@ -137,6 +138,11 @@ describe("OAuth callback after sign-in", () => {
 				oauth_query: mocks.callbackURL.split("?")[1],
 			}),
 		);
+	});
+
+	it("names the application waiting for the sign-in", () => {
+		renderLogin();
+		expect(screen.getByText("Sign in to connect Docs example client.")).toBeTruthy();
 	});
 
 	it("resumes the callback after passkey sign-in", async () => {

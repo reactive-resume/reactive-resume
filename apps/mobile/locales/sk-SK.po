@@ -779,6 +779,10 @@ msgstr "{minutes} min"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {Žiadne pohovory} one {# pohovor} few {# pohovory} other {# pohovorov}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} pridané na stranu 1"
@@ -1942,6 +1946,10 @@ msgstr "dátum žiadosti o zamestnanie"
 msgid "Application deleted"
 msgstr "žiadosť o zamestnanie vymazaná"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "Aplikácie používajúce „{0}“ prestanú fungovať. Túto akciu nie je možné vrátiť späť."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -3163,7 +3175,14 @@ msgstr "Prepojte nástroje, ktoré používate na písanie, hľadanie zamestnani
 msgid "Connected · {milliseconds} ms"
 msgstr "Pripojené · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Pripojené aplikácie"
 
@@ -3490,6 +3509,10 @@ msgstr "Nepodarilo sa načítať žiadosti o prácu."
 msgid "Couldn't load applications. Try again."
 msgstr "Žiadosti sa nepodarilo načítať. Skúste to znova."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "Dokumenty sa nepodarilo načítať. Skúste to znova."
@@ -3582,7 +3605,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3679,6 +3701,10 @@ msgstr "Tento životopis sa nepodarilo vykresliť."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Kľúč sa nepodarilo odvolať. Skúste to znova."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Toto pripojenie sa nepodarilo zrušiť. Skúste to znova."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3974,6 +4000,10 @@ msgstr "Vytvoriť nový životopis"
 msgid "Create a resume first, then ask about it."
 msgstr "Najprv vytvorte životopis a potom sa naň pýtajte."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "Vytvorte kópiu"
@@ -4212,6 +4242,10 @@ msgstr "Odstrániť žiadosť…"
 msgid "Delete conversation"
 msgstr "Odstrániť konverzáciu"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "Odstrániť záznam"
@@ -4412,6 +4446,27 @@ msgstr "Zahoďte svoje offline úpravy a načítajte uloženú verziu."
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "Chcete zahodiť offline úpravy?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "Odpojiť"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -5422,6 +5477,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "Na základe vášho časového pásma"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6056,6 +6115,10 @@ msgstr "Problémy"
 msgid "It has entries but isn't placed on a page."
 msgstr "Obsahuje položky, ale nie je umiestnený na stránke."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Nadobro je odstránený z časovej osi."
@@ -6162,6 +6225,10 @@ msgstr "Udržujte"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "Ponechajte jedinú adresu, aby softvér nemusel hádať, ktorú použiť."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "Ponechajte si prístup, keď aplikáciu nepoužívate."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6693,6 +6760,10 @@ msgstr "Načítavajú sa kľúče API…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "Načítavajú sa žiadosti…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "Načítavajú sa pripojenia..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7563,6 +7634,10 @@ msgstr "Netreba nič meniť. Už je v etape {stage}."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "Tomuto hľadaniu nezodpovedajú žiadne príkazy."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "Zatiaľ žiadne pripojené aplikácie. Zobrazia sa tu aplikácie, ktorým povolíte prístup k účtu."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9232,6 +9307,10 @@ msgstr "Prečítať licenciu"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "Prístup len na čítanie"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9267,6 +9346,22 @@ msgstr "Prečítal životopis"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "Prečítajte si svoju e-mailovú adresu."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "Prečítajte si informácie o svojom profile."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -10095,10 +10190,6 @@ msgstr "Posúdiť moju odpoveď"
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
-
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr "Skontrolujte povolenia a odpojte aplikácie v prehliadači. Možno sa tam budete musieť prihlásiť."
 
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
@@ -12880,6 +12971,7 @@ msgstr "Skúste {suggestion}"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

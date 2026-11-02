@@ -46,6 +46,7 @@ export function ConnectedAppsSection() {
 
 	return (
 		<SettingsSection
+			id="connected-applications"
 			title={<Trans>Connected applications</Trans>}
 			description={<Trans>Disconnect an application from your account.</Trans>}
 		>

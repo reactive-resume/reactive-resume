@@ -779,6 +779,10 @@ msgstr "{minutes} நிமி"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {நேர்காணல்கள் இல்லை} one {# நேர்காணல்} other {# நேர்காணல்கள்}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} பக்கம் 1 இல் சேர்க்கப்பட்டது"
@@ -1942,6 +1946,10 @@ msgstr "வேலை விண்ணப்ப தேதி"
 msgid "Application deleted"
 msgstr "வேலை விண்ணப்பம் நீக்கப்பட்டது"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "“{0}”-ஐப் பயன்படுத்தும் பயன்பாடுகள் வேலை செய்வதை நிறுத்தும். இதைச் செயல்தவிர்க்க முடியாது."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -3163,7 +3175,14 @@ msgstr "எழுதுவதற்கும், வேலை தேடுவத
 msgid "Connected · {milliseconds} ms"
 msgstr "இணைக்கப்பட்டது · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "இணைக்கப்பட்ட பயன்பாடுகள்"
 
@@ -3490,6 +3509,10 @@ msgstr "வேலை விண்ணப்பங்களை ஏற்ற மு
 msgid "Couldn't load applications. Try again."
 msgstr "விண்ணப்பங்களை ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "ஆவணங்களை ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
@@ -3582,7 +3605,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3679,6 +3701,10 @@ msgstr "இந்த ரெஸ்யூமை ரெண்டர் செய்
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "விசையைத் திரும்பப் பெற முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "இந்த இணைப்பைத் திரும்பப் பெற முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3974,6 +4000,10 @@ msgstr "ஒரு புதிய ரெஸ்யூமியை உருவா
 msgid "Create a resume first, then ask about it."
 msgstr "முதலில் ஒரு ரெஸ்யூமே உருவாக்கவும், பிறகு அதைப் பற்றி கேட்கவும்."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "நகலை உருவாக்கவும்"
@@ -4212,6 +4242,10 @@ msgstr "விண்ணப்பத்தை நீக்கு…"
 msgid "Delete conversation"
 msgstr "உரையாடலை நீக்கு"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "உள்ளீட்டை நீக்கு"
@@ -4412,6 +4446,27 @@ msgstr "உங்கள் ஆஃப்லைன் திருத்தங்�
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "உங்கள் ஆஃப்லைன் திருத்தங்களை நிராகரிக்கவா?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "துண்டிக்கவும்"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -5422,6 +5477,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "உங்கள் நேர மண்டலத்தின் அடிப்படையில்"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6056,6 +6115,10 @@ msgstr "சிக்கல்கள்"
 msgid "It has entries but isn't placed on a page."
 msgstr "இதில் உள்ளீடுகள் உள்ளன ஆனால் ஒரு பக்கத்தில் வைக்கப்படவில்லை."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "இது காலவரிசையில் இருந்து அகற்றப்பட்டது."
@@ -6162,6 +6225,10 @@ msgstr "வைத்துக்கொள்"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "ஒரே ஒரு முகவரியை மட்டும் வைத்திருங்கள்; அப்போது எதைப் பயன்படுத்துவது என்று மென்பொருள் யூகிக்க வேண்டியிருக்காது."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "நீங்கள் பயன்பாட்டைப் பயன்படுத்தாத போதும் அணுகலைத் தக்கவைத்துக் கொள்ளுங்கள்."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6693,6 +6760,10 @@ msgstr "API விசைகளை ஏற்றுகிறது…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "விண்ணப்பங்கள் ஏற்றப்படுகின்றன…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "இணைப்புகளை ஏற்றுகிறது..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7563,6 +7634,10 @@ msgstr "மாற்றம் தேவையில்லை. இது ஏற�
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "அந்தத் தேடலுக்குப் பொருந்தும் கட்டளைகள் எதுவும் இல்லை."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "இன்னும் இணைக்கப்பட்ட பயன்பாடுகள் இல்லை. உங்கள் கணக்கை அணுக நீங்கள் அனுமதிக்கும் பயன்பாடுகள் இங்கே தோன்றும்."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9232,6 +9307,10 @@ msgstr "உரிமத்தைப் படி"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "படிக்க மட்டும் அணுகல்"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9267,6 +9346,22 @@ msgstr "ரெஸ்யூமைப் படித்தது"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "உங்கள் மின்னஞ்சல் முகவரியைப் படியுங்கள்."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "உங்கள் சுயவிவரத் தகவலைப் படியுங்கள்."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -10095,10 +10190,6 @@ msgstr "என் பதிலை மதிப்பாய்வு செய்
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
-
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr "உலாவியில் அனுமதிகளை மதிப்பாய்வு செய்து செயலிகளின் இணைப்பைத் துண்டிக்கவும். அங்கு நீங்கள் உள்நுழைய வேண்டியிருக்கலாம்."
 
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
@@ -12880,6 +12971,7 @@ msgstr "{suggestion} முயற்சிக்கவும்"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

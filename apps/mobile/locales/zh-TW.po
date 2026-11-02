@@ -779,6 +779,10 @@ msgstr "{minutes} 分鐘"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {沒有面試} one {# 場面試} other {# 場面試}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} 加入第 1 頁"
@@ -1942,6 +1946,10 @@ msgstr "工作申請日期"
 msgid "Application deleted"
 msgstr "職缺申請已刪除"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "使用「{0}」的應用程式將停止運作。此操作無法復原。"
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -3163,7 +3175,14 @@ msgstr "連結您用於寫作、求職和處理履歷的工具。"
 msgid "Connected · {milliseconds} ms"
 msgstr "已連接·{milliseconds}毫秒"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "已連結的應用程式"
 
@@ -3490,6 +3509,10 @@ msgstr "無法載入應徵紀錄。"
 msgid "Couldn't load applications. Try again."
 msgstr "無法載入應徵紀錄。請重試。"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "無法載入文件，請再試一次。"
@@ -3582,7 +3605,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3679,6 +3701,10 @@ msgstr "無法轉譯此履歷。"
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "無法撤銷金鑰。請重試。"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "無法撤銷此連線。請再試一次。"
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3974,6 +4000,10 @@ msgstr "建立新履歷"
 msgid "Create a resume first, then ask about it."
 msgstr "首先創建一份簡歷，然後詢問。"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "建立副本"
@@ -4212,6 +4242,10 @@ msgstr "刪除應徵紀錄…"
 msgid "Delete conversation"
 msgstr "刪除對話"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "刪除條目"
@@ -4412,6 +4446,27 @@ msgstr "放棄您的離線編輯並載入已儲存的版本。"
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "放棄您的離線編輯嗎？"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "中斷連結"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -5422,6 +5477,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "根據您的時區"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6056,6 +6115,10 @@ msgstr "問題"
 msgid "It has entries but isn't placed on a page."
 msgstr "它有條目但未放置在頁面上。"
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "它已從時間軸中永久刪除。"
@@ -6162,6 +6225,10 @@ msgstr "保持"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "只保留一個地址，讓軟體不必猜要用哪一個。"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "在您未使用該應用程式時保持存取權限。"
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6693,6 +6760,10 @@ msgstr "正在載入API金鑰…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "正在載入應徵紀錄…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "正在載入連結..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7563,6 +7634,10 @@ msgstr "無需變更。它已在「{stage}」。"
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "沒有符合搜尋的指令。"
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "還沒有已連結的應用程式。您允許存取帳戶的應用程式會顯示在這裡。"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9232,6 +9307,10 @@ msgstr "閱讀授權條款"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "唯讀"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9267,6 +9346,22 @@ msgstr "讀取簡歷"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "讀取您的電子郵件地址。"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "讀取您的個人資料。"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -10094,10 +10189,6 @@ msgstr "評論我的回答"
 
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
-msgstr ""
-
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -12880,6 +12971,7 @@ msgstr "試試 {suggestion}"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx
