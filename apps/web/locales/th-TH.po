@@ -1921,6 +1921,7 @@ msgstr "ปรับแบบอักษร สี ระยะห่าง แ
 msgid "Ads"
 msgstr "โฆษณา"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "ขั้นสูง"
@@ -2271,8 +2272,7 @@ msgstr "มีอะไรให้จำเกี่ยวกับงานน
 msgid "Anywhere"
 msgstr "ที่ไหนก็ได้"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "กุญแจ API"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "เงินเดือนพื้นฐาน"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "URL พื้นฐาน"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "URL หลัก (จำเป็น)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "เครื่องอ่านในตัว"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "กรอกจำนวนเงินเต็ม เช่น 95000 �
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "ป้อนจำนวนเต็ม เช่น 95000 จำนวนเดิมของคุณไม่มีการเปลี่ยนแปลง"
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "ป้อน ID โมเดล"
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "ป้อนชื่อ สูงสุด 64 อักขระ"
@@ -6087,6 +6094,14 @@ msgstr "ป้อนที่อยู่อีเมลที่ถูกต้
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "ป้อนที่อยู่เว็บ เช่น example.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "ป้อนคีย์ API สำหรับผู้ให้บริการนี้"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "ป้อน URL หลักที่ขึ้นต้นด้วย http:// หรือ https://"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6829,6 +6844,14 @@ msgstr "รับกุญแจได้ที่ <0>{0}</0> มันถูก
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "รับแผนการสัมภาษณ์ที่สร้างจากประกาศงานและเรื่องราวของคุณเอง ฝึกพูดออกเสียง แล้วจดว่าผลเป็นอย่างไร"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "รับคีย์ API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "รับคีย์ API จากผู้ดูแลเอนด์พอยต์ของคุณ"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8101,7 +8124,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "เว้นระยะขอบอย่างน้อยครึ่งนิ้วรอบหน้ากระดาษ"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "เว้นว่างไว้เพื่อเก็บคีย์ที่บันทึกไว้"
 
@@ -8910,8 +8933,7 @@ msgstr "ปนกัน"
 msgid "mixed format"
 msgstr "รูปแบบผสม"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "โมเดล"
 
@@ -9119,7 +9141,7 @@ msgstr "หน้าที่ของฉันคือหาสาเหตุ
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "ชื่อ"
@@ -10286,7 +10308,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "ทางเลือกสำหรับ Ollama แบบโลคัล"
 
@@ -14941,11 +14963,11 @@ msgstr "การตรวจสอบไม่สามารถเสร็จ
 msgid "The same line repeats on every page."
 msgstr "บรรทัดเดียวกันซ้ำในทุกหน้า"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "คีย์ที่บันทึกไว้จะไม่ถูกส่งไปยัง URL ฐานใหม่ ป้อนรหัสอีกครั้งหากเซิร์ฟเวอร์นี้ต้องการรหัส"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "คีย์ที่บันทึกไว้จะไม่ถูกส่งไปยัง URL ฐานใหม่ ป้อนรหัสอีกครั้ง"
 

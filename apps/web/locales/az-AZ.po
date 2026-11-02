@@ -1921,6 +1921,7 @@ msgstr "CV qurucusunda şriftləri, rəngləri, boşluqları və bölmələri t�
 msgid "Ads"
 msgstr "Reklamlar"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Qabaqcıl"
@@ -2271,8 +2272,7 @@ msgstr "Bu iş haqqında yadda qalan hər şey var"
 msgid "Anywhere"
 msgstr "Hər yerdə"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API açarı"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Əsas maaş"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Əsas URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Baza URL-i (tələb olunur)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Quraşdırılmış oxucu"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "95000 kimi tam məbləğ daxil edin və ya boş saxlayın."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Tam məbləği daxil edin, məsələn, 95000. Əvvəlki məbləğiniz dəyişməz qalır."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Model ID-sini daxil edin."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 simvola qədər ad daxil edin."
@@ -6087,6 +6094,14 @@ msgstr "Etibarlı e-poçt ünvanı daxil edin."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Məsələn.com kimi veb ünvanı daxil edin"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Bu provayder üçün API açarını daxil edin."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// və ya https:// ilə başlayan baza URL-i daxil edin."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6829,6 +6844,14 @@ msgstr "<0>{0}</0> ünvanında açar əldə edin. O, şifrələnmiş şəkildə 
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "İş elanı və öz hekayələriniz əsasında müsahibə planı alın. Səsli məşq edin, sonra necə keçdiyini yazın."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API açarı əldə edin"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Son nöqtənizin operatorundan API açarı əldə edin."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8101,7 +8124,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Səhifənin ətrafında ən azı yarım düym boşluq buraxın."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Saxlanmış açarı saxlamaq üçün boş buraxın"
 
@@ -8910,8 +8933,7 @@ msgstr "Qarışıq"
 msgid "mixed format"
 msgstr "qarışıq format"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -9119,7 +9141,7 @@ msgstr "Mənim vəzifəm dəstək işini artırmadan səbəbini tapmaq idi."
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Ad"
@@ -10286,7 +10308,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Yerli Ollama üçün isteğe bağlıdır"
 
@@ -14941,11 +14963,11 @@ msgstr "Nəzərdən keçirməni bitirmək mümkün olmadı. Yenidən cəhd edin.
 msgid "The same line repeats on every page."
 msgstr "Eyni sətir hər səhifədə təkrarlanır."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Saxlanmış açar yeni əsas URL-ə göndərilmir. Bu server açar tələb edərsə, açarı yenidən daxil edin."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Saxlanmış açar yeni əsas URL-ə göndərilmir. Açarı yenidən daxil edin."
 

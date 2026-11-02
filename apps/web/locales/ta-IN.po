@@ -1921,6 +1921,7 @@ msgstr "CV பில்டரில் எழுத்துருக்கள�
 msgid "Ads"
 msgstr "விளம்பரங்கள்"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "மேம்பட்ட"
@@ -2271,8 +2272,7 @@ msgstr "இந்த வேலையைப் பற்றி நினைவி
 msgid "Anywhere"
 msgstr "எங்கும்"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API விசை"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "அடிப்படைச் சம்பளம்"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "அடிப்படை URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "அடிப்படை URL (கட்டாயம்)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "உள்ளமைக்கப்பட்ட வாசகர்"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "95000 போன்ற முழுத் தொகையை உள்ள
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "95000 போன்ற முழுத் தொகையை உள்ளிடவும். உங்கள் முந்தைய தொகை மாறவில்லை."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "மாதிரி ID-ஐ உள்ளிடவும்."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 எழுத்துகள் வரை ஒரு பெயரை உள்ளிடவும்."
@@ -6087,6 +6094,14 @@ msgstr "சரியான மின்னஞ்சல் முகவரிய�
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "உதாரணம்.com போன்ற இணைய முகவரியை உள்ளிடவும்"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "இந்த வழங்குநருக்கான API விசையை உள்ளிடவும்."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// அல்லது https:// என்று தொடங்கும் அடிப்படை URL-ஐ உள்ளிடவும்."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6829,6 +6844,14 @@ msgstr "<0>{0}</0> இல் விசையைப் பெறுங்கள�
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "வேலை அறிவிப்பு மற்றும் உங்கள் சொந்தக் கதைகளிலிருந்து உருவான நேர்காணல் திட்டத்தைப் பெறுங்கள். சத்தமாகப் பயிற்சி செய்து, பிறகு எப்படி நடந்தது என்பதை எழுதுங்கள்."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API விசையைப் பெறவும்"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "உங்கள் எண்ட்பாயிண்ட் நிர்வாகியிடமிருந்து API விசையைப் பெறவும்."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8101,7 +8124,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "பக்கத்தைச் சுற்றி குறைந்தது அரை அங்குலம் இடைவெளி விடவும்."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "சேமித்த விசையை வைத்திருக்க காலியாக விடவும்"
 
@@ -8910,8 +8933,7 @@ msgstr "கலவையானது"
 msgid "mixed format"
 msgstr "கலப்பு வடிவம்"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "மாதிரி"
 
@@ -9119,7 +9141,7 @@ msgstr "ஆதரவுப் பணியைக் கூட்டாமல்,
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "பெயர்"
@@ -10286,7 +10308,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "உள்ளூர் Ollama சேவைக்கு விருப்பத்தேர்வு"
 
@@ -14941,11 +14963,11 @@ msgstr "மதிப்பாய்வை முடிக்க முடிய�
 msgid "The same line repeats on every page."
 msgstr "ஒரே வரி ஒவ்வொரு பக்கத்திலும் மீண்டும் வருகிறது."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "சேமித்த விசை புதிய அடிப்படை URL க்கு அனுப்பப்படவில்லை. இந்த சேவையகத்திற்கு விசை தேவைப்பட்டால் மீண்டும் விசையை உள்ளிடவும்."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "சேமித்த விசை புதிய அடிப்படை URL க்கு அனுப்பப்படவில்லை. விசையை மீண்டும் உள்ளிடவும்."
 

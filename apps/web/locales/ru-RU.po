@@ -1921,6 +1921,7 @@ msgstr "Настройте шрифты, цвета, интервалы и ра�
 msgid "Ads"
 msgstr "Объявления"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Передовой"
@@ -2271,8 +2272,7 @@ msgstr "Все, что следует помнить об этой работе"
 msgid "Anywhere"
 msgstr "Где угодно"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "Ключ API"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Базовый оклад"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Базовый URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Базовый URL (обязательно)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Встроенный ридер"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "Введите полную сумму, например 95000, или �
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Введите полную сумму, например 95000. Предыдущая сумма не изменилась."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Введите идентификатор модели."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Введите имя длиной до 64 символов."
@@ -6087,6 +6094,14 @@ msgstr "Введите действительный адрес электрон�
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Введите веб-адрес, например .com."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Введите ключ API для этого провайдера."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Введите базовый URL, начинающийся с http:// или https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6829,6 +6844,14 @@ msgstr "Получите ключ по адресу <0>{0}</0>. Он храни�
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Получите план к собеседованию на основе вакансии и ваших собственных историй. Потренируйтесь вслух, а потом запишите, как все прошло."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Получить ключ API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Получите ключ API у оператора вашей конечной точки."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8101,7 +8124,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Оставляйте не менее половины дюйма отступа по краям страницы."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Оставьте пустым, чтобы сохранить сохраненный ключ."
 
@@ -8910,8 +8933,7 @@ msgstr "Неоднозначно"
 msgid "mixed format"
 msgstr "смешанный формат"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Модель"
 
@@ -9119,7 +9141,7 @@ msgstr "Моей задачей было выяснить причину, не �
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Название"
@@ -10286,7 +10308,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Опционально для локального Ollama"
 
@@ -14941,11 +14963,11 @@ msgstr "Обзор не удалось завершить. Попробуйте 
 msgid "The same line repeats on every page."
 msgstr "Одна и та же строка повторяется на каждой странице."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Сохраненный ключ не отправляется на новый базовый URL-адрес. Введите ключ еще раз, если этому серверу требуется ключ."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Сохраненный ключ не отправляется на новый базовый URL-адрес. Введите ключ еще раз."
 

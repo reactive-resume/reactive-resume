@@ -1921,6 +1921,7 @@ msgstr "സിവി ബിൽഡറിൽ ഫോണ്ടുകൾ, നിറ�
 msgid "Ads"
 msgstr "പരസ്യങ്ങൾ"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "വിപുലമായത്"
@@ -2271,8 +2272,7 @@ msgstr "ഈ ജോലിയെക്കുറിച്ച് ഓർമ്മി�
 msgid "Anywhere"
 msgstr "എവിടെയും"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API കീ"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "അടിസ്ഥാന ശമ്പളം"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "അടിസ്ഥാന URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "അടിസ്ഥാന URL (നിർബന്ധം)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "ബിൽറ്റ്-ഇൻ റീഡർ"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "95000 പോലെ പൂർണ്ണമായ തുക നൽകുക
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "95000 പോലെ പൂർണ്ണ തുക നൽകുക. നിങ്ങളുടെ മുമ്പത്തെ തുകയ്ക്ക് മാറ്റമില്ല."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "ഒരു മോഡൽ ID നൽകുക."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 പ്രതീകങ്ങൾ വരെ ഒരു പേര് നൽകുക."
@@ -6087,6 +6094,14 @@ msgstr "സാധുവായ ഒരു ഇമെയിൽ വിലാസം �
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "ഉദാഹരണം.com പോലുള്ള ഒരു വെബ് വിലാസം നൽകുക"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "ഈ സേവനദാതാവിന്റെ API കീ നൽകുക."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// അല്ലെങ്കിൽ https:// ൽ തുടങ്ങുന്ന അടിസ്ഥാന URL നൽകുക."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6829,6 +6844,14 @@ msgstr "<0>{0}</0> എന്നതിൽ ഒരു കീ നേടുക. ഇ�
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "പോസ്റ്റിംഗിൽ നിന്നും നിങ്ങളുടെ സ്വന്തം കഥകളിൽ നിന്നും തയ്യാറാക്കിയ ഒരു അഭിമുഖ പ്ലാൻ നേടുക. ഉറക്കെ പരിശീലിക്കുക, തുടർന്ന് അത് എങ്ങനെ പോയെന്ന് എഴുതിവെക്കുക."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API കീ നേടുക"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "നിങ്ങളുടെ എൻഡ്‌പോയിന്റ് നടത്തിപ്പുകാരിൽ നിന്ന് API കീ നേടുക."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8101,7 +8124,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "പേജിന് ചുറ്റും കുറഞ്ഞത് അര ഇഞ്ച് വിടുക."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "സംരക്ഷിച്ച കീ സൂക്ഷിക്കാൻ ശൂന്യമായി വിടുക"
 
@@ -8910,8 +8933,7 @@ msgstr "സമ്മിശ്രം"
 msgid "mixed format"
 msgstr "മിക്സഡ് ഫോർമാറ്റ്"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "മോഡൽ"
 
@@ -9119,7 +9141,7 @@ msgstr "സപ്പോർട്ട് ജോലി കൂട്ടാതെ ക
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "പേര്"
@@ -10286,7 +10308,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "പ്രാദേശിക Ollama-ന് ഓപ്ഷണൽ"
 
@@ -14941,11 +14963,11 @@ msgstr "അവലോകനം പൂർത്തിയാക്കാനായ�
 msgid "The same line repeats on every page."
 msgstr "ഒരേ വരി ഓരോ പേജിലും ആവർത്തിക്കുന്നു."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "സംരക്ഷിച്ച കീ ഒരു പുതിയ അടിസ്ഥാന URL-ലേക്ക് അയച്ചിട്ടില്ല. ഈ സെർവറിന് ഒരു കീ ആവശ്യമാണെങ്കിൽ വീണ്ടും കീ നൽകുക."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "സംരക്ഷിച്ച കീ ഒരു പുതിയ അടിസ്ഥാന URL-ലേക്ക് അയച്ചിട്ടില്ല. കീ വീണ്ടും നൽകുക."
 
