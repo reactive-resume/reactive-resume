@@ -80,7 +80,8 @@ export function ConnectedApps() {
 			{list.map((connection, index) => {
 				const name = connection.clientName?.trim() || connection.clientId;
 				// Disconnecting this app here would sign it out mid-tap; sign out from Settings instead.
-				const own = ownClient.data === connection.clientId;
+				// Until this app's client ID is known, every row could be this app: offer no Disconnect yet.
+				const own = !ownClient.isSuccess || ownClient.data === connection.clientId;
 				const connected = connection.createdAt
 					? t`Connected ${i18n.date(connection.createdAt, { dateStyle: "medium" })}`
 					: null;

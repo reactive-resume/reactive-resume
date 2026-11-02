@@ -1162,10 +1162,13 @@ export const accountAuth = {
 				.select({ clientId: schema.oauthConsent.clientId })
 				.from(schema.oauthConsent)
 				.where(and(eq(schema.oauthConsent.id, id), eq(schema.oauthConsent.userId, user.id)))
-				.limit(1);
+				.limit(1)
+				.for("update");
 			if (!consent) return false;
 			await revokeGrantTokens(tx, user.id, consent.clientId);
 			await tx.delete(schema.oauthConsent).where(eq(schema.oauthConsent.id, id));
+			// Again after the delete: a refresh that committed while the first pass ran is caught here.
+			await revokeGrantTokens(tx, user.id, consent.clientId);
 			return true;
 		}),
 };

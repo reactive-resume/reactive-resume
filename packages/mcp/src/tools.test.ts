@@ -192,7 +192,7 @@ describe("registerTools", () => {
 				`\`${MCP_TOOL_NAME.listResumes}\`, \`${MCP_TOOL_NAME.listCoverLetters}\`, and \`${MCP_TOOL_NAME.listApplications}\` return valid ones.`,
 			],
 			["RESUME_SLUG_ALREADY_EXISTS", 400, "The slug is already in use."],
-			["FORBIDDEN", undefined, "This credential can't do that."],
+			["FORBIDDEN", undefined, "Not allowed."],
 			["BAD_REQUEST", undefined, "Check the input parameters against the tool's schema."],
 		])("hints on %s", async (code, status, expected) => {
 			const result = await readResume(new ORPCError(code, status ? { status } : undefined));

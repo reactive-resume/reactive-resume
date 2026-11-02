@@ -277,6 +277,13 @@ const PARITY_CONTRACTS = new Map(
 	]),
 );
 
+/** Parity tools a read-only credential can't call: their route needs write or delete, whatever their annotations say. */
+export const PARITY_WRITE_TOOLS: ReadonlySet<string> = new Set(
+	[...PARITY_CONTRACTS]
+		.filter(([, { procedure }]) => requiredPermission(procedure["~orpc"].route) !== "read")
+		.map(([path]) => parityToolName(path)),
+);
+
 export const PARITY_TOOL_META: Record<
 	string,
 	Pick<ParityToolContract, "inputSchema" | "outputSchema"> & {

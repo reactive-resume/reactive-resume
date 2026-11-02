@@ -356,8 +356,9 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 								size="sm"
 								variant="ghost"
 								onClick={async () => {
-									await copy(mcpConfig(key));
-									toast.add({ type: "success", description: t`Copied the MCP config with this key.` });
+									if (await copy(mcpConfig(key)))
+										toast.add({ type: "success", description: t`Copied the MCP config with this key.` });
+									else toast.add({ type: "error", description: t`Couldn't copy to the clipboard. Try again.` });
 								}}
 							>
 								<Icon name="copy" size={16} />

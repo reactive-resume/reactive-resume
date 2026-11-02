@@ -36,7 +36,7 @@ function errorHint(error: unknown): string {
 	if (code === "NOT_FOUND" || status === 404)
 		return `\n\nHint: Not found. Check the ID — \`${listResumes}\`, \`${MCP_TOOL_NAME.listCoverLetters}\`, and \`${listApplications}\` return valid ones.`;
 	if (code === "FORBIDDEN" || status === 403)
-		return "\n\nHint: This credential can't do that. Ask the user for a key or connection with more access.";
+		return "\n\nHint: Not allowed. If the message names a permission or a read-only key, ask the user for a key or connection with more access; otherwise this account can't reach that record.";
 	if (code === "CONFLICT" || status === 409)
 		return "\n\nHint: Reread the document and recompute changes using its latest timestamp or revision.";
 	if (status === 401) return "\n\nHint: Reconnect with OAuth or supply a valid API key.";

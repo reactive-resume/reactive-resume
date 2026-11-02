@@ -383,7 +383,7 @@ export const aiRouter = {
 			operationId: "aiAutofillApplication",
 			summary: "Fill application fields from a job posting",
 			description:
-				"Extracts the company, role, location, salary and other fields from pasted job-posting text with your AI provider. Nothing is saved; review the fields, then create or update the application.",
+				"Extracts the company, role, location and salary from pasted job-posting text with your AI provider. Nothing is saved; review the fields, then create or update the application.",
 			...reserved,
 		})
 		.input(autofillInputSchema)
