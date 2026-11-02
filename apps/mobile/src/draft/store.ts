@@ -408,12 +408,12 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			await inflight;
 			return flush();
 		}
-		// Only this draft's own write holds its saves: another visit or account doesn't wait on it.
+		if (!record || !dirty || state().conflict || state().locked) return;
+		// Only this draft's own write holds its unsaved edits: a clean draft, another visit or account doesn't wait.
 		if (metadataWrite && metadataWrite.record === record) {
 			await metadataWrite.run.catch(() => undefined);
 			return flush();
 		}
-		if (!record || !dirty || state().conflict || state().locked) return;
 		if (!env.online()) {
 			store.setState({ status: durable ? "offline" : "error" });
 			return;
@@ -541,8 +541,18 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 	 * keeps Undo, Redo, confirmed assistant decisions and edits typed meanwhile. A revision from elsewhere still fails
 	 * the write's version check, and a draft that changed visit or account in between is left to refresh as before.
 	 */
-	async function writeMetadata(write: (baseline: D) => Promise<D>): Promise<D> {
+	/**
+	 * `conditional: false` is for a write sent without the saved revision (unlocking: a lock from elsewhere can't be
+	 * unseen on a draft whose edits wait for it). Its answer is taken only when the server's data is still the saved
+	 * revision's, so an edit made elsewhere still reaches the draft the usual way.
+	 */
+	async function writeMetadata(
+		write: (baseline: D) => Promise<D>,
+		{ conditional = true }: { conditional?: boolean } = {},
+	): Promise<D> {
 		if (inflight) await inflight;
+		// One at a time: a second change waits for the first's revision, so its version check builds on it.
+		while (metadataWrite && metadataWrite.record === record) await metadataWrite.run.catch(() => undefined);
 		if (!record) throw new Error("No draft is open.");
 		const active = record;
 		const visit = generation;
@@ -552,6 +562,19 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		try {
 			const written = await run;
 			const owner = await currentOwner();
+			// A revision a refresh set aside while the write ran is newer than this answer: its lock state stands.
+			const newer = deferred && adapter.version(deferred) > adapter.version(written) ? deferred : null;
+			// The lock state is the server's whether or not the answer becomes the base: an unchecked unlock whose data
+			// is unseen here still unlocks, and the next save then meets that data's version check.
+			if (
+				owner &&
+				record === active &&
+				visit === generation &&
+				!newer &&
+				// An answer older than a revision the draft already took (a refresh during the write) says nothing new.
+				adapter.version(written) >= adapter.version(active.baseline)
+			)
+				store.setState({ locked: written.isLocked });
 			// Checked after every wait: a refresh may have moved the baseline on meanwhile. An answer as new as the
 			// baseline (two writes in one millisecond) is still this write's own.
 			if (
@@ -559,20 +582,33 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 				record === active &&
 				visit === generation &&
 				active.baseline === before &&
-				adapter.version(written) >= adapter.version(before)
+				adapter.version(written) >= adapter.version(before) &&
+				(conditional || JSON.stringify(adapter.data(written)) === JSON.stringify(adapter.data(before)))
 			) {
 				active.baseline = written;
 				// Local fields changed since the saved revision stay; the rest is the server's answer.
 				active.document = adapter.merge(written, before, active.document);
 				publish(active.document);
-				store.setState({ locked: written.isLocked });
+				if (newer) store.setState({ locked: newer.isLocked });
 				if (dirty) persist();
 				else settleStored();
 			}
 			return written;
+		} catch (error) {
+			// A revision from elsewhere refused the write: read it, so a retry checks against what's saved now.
+			if (adapter.isConflict(error) && record === active) void refresh().catch(() => undefined);
+			throw error;
 		} finally {
 			if (metadataWrite?.run === run) metadataWrite = null;
-			if (dirty && record === active) void flush();
+			if (record === active) {
+				// A stream event that arrived during the write waited for its answer; anything newer applies now.
+				const late = deferred;
+				if (late && !dirty && !editing && !env.focused()) {
+					deferred = null;
+					applyRemote(late);
+				}
+				if (dirty) void flush();
+			}
 		}
 	}
 
@@ -582,6 +618,13 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		const remote = await adapter.read(active.document.id);
 		if (!(await currentOwner()) || record !== active) return;
 		if (adapter.version(remote) <= adapter.version(active.baseline)) return;
+		// This app's own sharing or lock write may be what the stream announced: wait for its answer first.
+		if (metadataWrite && metadataWrite.record === active) {
+			// Unsaved edits still learn of a lock from elsewhere at once, so they wait instead of failing to save.
+			if (dirty || inflight) store.setState({ locked: remote.isLocked });
+			deferred = remote;
+			return;
+		}
 		// Never advance the baseline of unsaved data in response to SSE (including our own echo).
 		if (dirty || inflight) {
 			const unlocked = state().locked && !remote.isLocked;
