@@ -87,11 +87,11 @@ it("leaves another resume alone", () => {
 	expect(mocks.toasts).toHaveLength(1);
 });
 
-it("leaves a locked resume alone and says to use Undo", () => {
+it("leaves a locked resume alone and says it's locked", () => {
 	deleteFirst();
 	mocks.store.update((draft) => void (draft.headline = "Later"));
 	mocks.store.resume.isLocked = true;
 	mocks.toasts[0]?.actionProps?.onClick();
 	expect(mocks.store.resume.data.entries).toEqual(["Globex"]);
-	expect(mocks.toasts.at(-1)?.description).toBe("You've made changes since. Use Undo to step back through them.");
+	expect(mocks.toasts.at(-1)?.description).toBe("This resume is locked. Unlock it to make changes.");
 });

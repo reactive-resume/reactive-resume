@@ -231,14 +231,19 @@ export function useBatchActions() {
 						: t`Moved ${done.length} of ${documents.length} to Trash. Locked documents were skipped.`,
 				actionProps: {
 					children: t`Undo`,
-					// Confirmed like a single Undo, once anything came back.
+					// Confirmed like a single Undo when everything came back; otherwise how many did, and that the rest wait in
+					// Trash.
 					onClick: () =>
 						void run(
 							done,
 							() => true,
 							(document) => restore.mutateAsync({ type: document.type, id: document.id }),
 						).then((restored) => {
-							if (restored.length > 0) confirmUndone();
+							if (restored.length === done.length) return confirmUndone();
+							toast.add({
+								type: restored.length === 0 ? "error" : undefined,
+								description: t`Restored ${restored.length} of ${done.length}. The rest are still in Trash.`,
+							});
 						}),
 				},
 			});

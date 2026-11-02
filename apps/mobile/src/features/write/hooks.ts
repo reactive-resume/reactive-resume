@@ -71,6 +71,8 @@ export function useUndoToast() {
 					const current = useResumeStore.getState();
 					// The toast can outlive the resume it was about: another one open here is left alone.
 					if (!current.document || current.document.id !== resumeId) return;
+					// Locked since: nothing can change until it's unlocked, so say that rather than "use Undo".
+					if (current.locked) return showToast({ message: t`This resume is locked. Unlock it to make changes.` });
 					// "Restored" for a moment shows the press did something, and only when the resume changed back.
 					if (changed && current.data === changed && current.canUndo && !current.locked) {
 						current.undo();

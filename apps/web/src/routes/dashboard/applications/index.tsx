@@ -60,19 +60,25 @@ const searchSchema = z.object({
 type Search = z.output<typeof searchSchema>;
 const defaultSearch: Search = { q: "", view: "list", closed: false, followUp: false, create: false };
 
+// How long the page waits for the lanes before drawing rows in the default order.
+const LANES_WAIT_MS = 800;
+
 export const Route = createFileRoute("/dashboard/applications/")({
 	head: () => ({ meta: [{ title: getPageTitle(t`Applications`) }] }),
 	component: RouteComponent,
 	validateSearch: searchSchema,
 	search: { middlewares: [stripSearchParams(defaultSearch)] },
 	// Arrive with the list, as Documents does: a new account sees "Track your first job" at once, not a toolbar and a
-	// skeleton that then vanish. The lanes come with it, so rows first draw in the owner's lane order, not the defaults'.
-	// A failed load still renders the page, which shows its error and retry.
-	loader: ({ context }) =>
-		Promise.all([
+	// skeleton that then vanish. The lanes come with it when they're quick, so rows first draw in the owner's lane order;
+	// slow or failing lanes never hold the page (it shows the defaults and the lanes' own error). A failed list still
+	// renders the page, which shows its error and retry.
+	loader: async ({ context }) => {
+		const lanes = context.queryClient.ensureQueryData(applicationLanesQueryOptions());
+		await Promise.allSettled([
 			context.queryClient.ensureQueryData(applicationsListQueryOptions()),
-			context.queryClient.ensureQueryData(applicationLanesQueryOptions()),
-		]).catch(() => undefined),
+			Promise.race([lanes, new Promise((resolve) => setTimeout(resolve, LANES_WAIT_MS))]),
+		]);
+	},
 });
 
 /** Search reads role, company, location, contacts and tags. */

@@ -171,7 +171,11 @@ export function useDocumentOperations(enabled = true) {
 										}),
 									)
 									.then(() => {
-										if (restored.length > 0) confirmUndone();
+										// As on web: "Restored" when everything came back, otherwise how many did.
+										if (restored.length === done.length) return confirmUndone();
+										showToast({
+											message: t`Restored ${restored.length} of ${done.length}. The rest are still in Trash.`,
+										});
 									});
 							},
 						}
