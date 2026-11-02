@@ -641,3 +641,26 @@ test("resume: unlocking unchecked takes the answer only while the saved data is 
 	await o.refresh();
 	assert.equal(s().data.basics.headline, "Edited elsewhere");
 });
+
+test("resume: an unchecked unlock clears the lock on a dirty draft even when its answer isn't adopted (RX-160)", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	online = false;
+	s().update((d) => void (d.basics.headline = "Typed offline"), { newStep: true });
+	online = true;
+	const remote = structuredClone(documents.resume);
+	remote.data.basics.name = "Renamed elsewhere";
+	remote.isLocked = true;
+	remote.updatedAt = new Date(remote.updatedAt.getTime() + 5);
+	documents.resume = remote;
+	await o.refresh();
+	assert.equal(s().locked, true, "A dirty draft learns of the lock");
+	await o.writeMetadata(
+		async (baseline) => ({ ...baseline, ...(await network("resume").setLocked({ id: "resume", isLocked: false })) }),
+		{ conditional: false },
+	);
+	assert.equal(s().locked, false);
+	assert.equal(s().data.basics.headline, "Typed offline");
+});

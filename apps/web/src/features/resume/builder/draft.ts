@@ -110,6 +110,8 @@ type Runtime = {
 	queryClient?: QueryClient;
 	hasPendingLocalChanges: boolean;
 	isSaving: boolean;
+	/** Settles when the body save on the wire finishes, whatever its answer. */
+	saveSettled?: Promise<void> | undefined;
 	metadataWrite?: Promise<Resume> | undefined;
 	metadataWriting?: boolean | undefined;
 	/** Version of the data we accepted, never metadata fetched while local edits are pending. */
@@ -389,6 +391,10 @@ async function flushResumeSave(id: string) {
 	const submittedApplications = runtime.pendingProposalApplications;
 	runtime.pendingResume = undefined;
 	runtime.isSaving = true;
+	let settle = () => {};
+	runtime.saveSettled = new Promise<void>((resolve) => {
+		settle = resolve;
+	});
 
 	try {
 		const updated = (await orpc.resume.update.call(
@@ -462,6 +468,7 @@ async function flushResumeSave(id: string) {
 			runtime.slowSaveToastId = undefined;
 		}
 		runtime.isSaving = false;
+		settle();
 		if (runtime.pendingResume && !runtime.saveFailed) void flushResumeSave(id);
 	}
 }
@@ -986,6 +993,9 @@ export async function saveResumeMetadata<T extends Resume>(
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
 		if (savePending && !(await savePendingChanges(id)))
 			throw new Error(t`Couldn't save your changes. Try again before continuing.`);
+		// Unchecked writes still wait for a body save already on the wire: its older answer must not land after this
+		// write's and move the base back.
+		if (!savePending && runtime.isSaving) await runtime.saveSettled;
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
 		runtime.metadataWriting = true;
 		try {

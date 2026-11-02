@@ -562,6 +562,9 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		try {
 			const written = await run;
 			const owner = await currentOwner();
+			// The lock state is the server's whether or not the answer becomes the base: an unchecked unlock whose data
+			// is unseen here still unlocks, and the next save then meets that data's version check.
+			if (owner && record === active && visit === generation) store.setState({ locked: written.isLocked });
 			// Checked after every wait: a refresh may have moved the baseline on meanwhile. An answer as new as the
 			// baseline (two writes in one millisecond) is still this write's own.
 			if (
@@ -576,7 +579,6 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 				// Local fields changed since the saved revision stay; the rest is the server's answer.
 				active.document = adapter.merge(written, before, active.document);
 				publish(active.document);
-				store.setState({ locked: written.isLocked });
 				if (dirty) persist();
 				else settleStored();
 			}
@@ -607,6 +609,8 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		if (adapter.version(remote) <= adapter.version(active.baseline)) return;
 		// This app's own sharing or lock write may be what the stream announced: wait for its answer first.
 		if (metadataWrite && metadataWrite.record === active) {
+			// Unsaved edits still learn of a lock from elsewhere at once, so they wait instead of failing to save.
+			if (dirty || inflight) store.setState({ locked: remote.isLocked });
 			deferred = remote;
 			return;
 		}
