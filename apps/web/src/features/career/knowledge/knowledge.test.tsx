@@ -1,7 +1,7 @@
 import type { CareerProfileData } from "@reactive-resume/schema/career";
 // @vitest-environment happy-dom
 import type { ReactNode } from "react";
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -662,7 +662,7 @@ it("leaves an application already at Offer where it is", async () => {
 	expect(api.moveWithUndo).not.toHaveBeenCalled();
 });
 
-it("leads to adding an application when there is none, and opens Add offer in place of the empty state", async () => {
+it("leads to adding an application when there is none, and opens Add offer in a sheet over the empty state", async () => {
 	api.data.applications = [];
 	const view = mount(<OffersPage a={undefined} b={undefined} />);
 	await screen.findByText("No offers to compare yet");
@@ -673,8 +673,8 @@ it("leads to adding an application when there is none, and opens Add offer in pl
 	api.data.applications = [{ id: "job-a", company: "Acme", role: "Engineer" }];
 	mount(<OffersPage a={undefined} b={undefined} />);
 	fireEvent.click(await screen.findByRole("button", { name: "Add offer" }));
-	expect(screen.queryByText("No offers to compare yet")).toBeNull();
-	expect(screen.getByRole("button", { name: "Save offer" })).toBeDefined();
+	const sheet = await screen.findByRole("dialog", { name: "Add offer" });
+	expect(within(sheet).getByRole("button", { name: "Save offer" })).toBeDefined();
 });
 
 it("starts in the last offer's currency, keeps the rarer terms under More options and the timezone with the time", async () => {

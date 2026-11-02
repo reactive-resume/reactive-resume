@@ -220,7 +220,7 @@ function IssueCard({ issue, selected, locked, primary }: IssueCardProps) {
 					{issue.number}
 				</span>
 				<div className="grid min-w-0 gap-[3px]">
-					<span className="font-mono text-xs text-ink-3">{getCategoryName(issue.category)}</span>
+					<span className="text-xs font-semibold text-ink-3">{getCategoryName(issue.category)}</span>
 					<h3 id={titleId} className="text-sm leading-5 font-semibold">
 						<span className="sr-only">
 							<Trans>Issue {issue.number}:</Trans>{" "}

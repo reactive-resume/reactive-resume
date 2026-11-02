@@ -207,6 +207,7 @@ Generic primitives live in `packages/ui/src/components`, using Base UI and cmdk 
 - **Segments and tabs:** use `SegmentedControl` for 2–4 options in a radio group. Use `Tabs` to switch panels; set `TabsList variant="line"` for underline tabs.
 - **Menus:** 4px radius and 36px items. Size popups for their content and trigger; put destructive items last, after a separator.
 - **Layers:** menus and popovers provide lightweight choices; sheets hold tasks beside the document and use the bottom variant on mobile; dialogs hold decisions. Use `AlertDialog` for destructive confirmation and name what cancel keeps.
+- **Creating things:** a short create form (up to about six fields, such as New document or Save a job) is a dialog. A long form, or one that needs the page behind it, is a sheet (New schedule, Add offer on Offers). A form tied to one item already on screen opens in place beside it (Add fact, Add offer in a job's Offer stage).
 - **Toasts:** one visible at a time, bottom center, with `bg-ink` and `text-bg`. The default timeout is six seconds; `timeout: 0` keeps a toast visible. Undo is an optional underlined action. Pressing an action closes its toast after the action's handler runs, and a second press while it leaves does nothing.
 - **Chats:** the assistant and career coach transcripts use `MessageScroller` (shadcn, behaviour from `@shadcn/react`): it follows a streaming reply only while the reader is at the latest message, settles each question near the top, reopens a saved thread on its last question, and shows a “Latest” button after scrolling away. Agent steps are `Trace` lines: spinner and shimmer while running, check when done, danger when failed, dimmed dash when unfinished. Mobile mirrors both.
 - **Alerts:** `info`, `success`, `warn`, and `error`; only the error variant adds `role="alert"` by default.
@@ -252,7 +253,8 @@ The public homepage in `apps/web/src/features/homepage` shares app colors and th
 
 - Repeat the same primary CTA, “Build your resume,” in the header, hero, and closing section. Buttons have 2px corners, in Figtree 600, at 38px, 54px, and 56px respectively.
 - Scene navigation appears from 1240px. Sentence-case labels use `ink` when active and `ink-3` when inactive; a 6px accent dot marks the active scene. The Share night scene uses its own light inks.
-- The GitHub link appears from 1024px, with the GitHub mark, a filled gold star, and a live compact count. Format counts with the locale's `Intl.NumberFormat`; include the full count in the accessible name.
+- The GitHub link appears from 1024px, with the GitHub mark and, when available, a filled gold star and live compact count. Format counts with the locale's `Intl.NumberFormat`; include the full count in the accessible name. Failed counts leave the GitHub link available without a star or number.
+- Community totals need at least two eligible rows. Hide failed totals and values below 100; reserve loading placeholders and announcements for pending queries.
 - The homepage theme control is a fixed 30px pull-cord button at the top end corner. Its height is 92px at rest, 112px on hover, and 124px during a pull. It uses a 450ms spring curve, toggles the shared theme after 170ms, and sways every seven seconds until first activated. The bulb glows in dark mode.
 
 ### Motion
