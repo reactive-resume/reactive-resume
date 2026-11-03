@@ -89,6 +89,8 @@ Use the same `path` (including the query string) and the same user as in step 1.
 | `429`  | Prepare           | Rate limit exceeded.                                                                                                          |
 | `503`  | Prepare           | Redis isn't available.                                                                                                        |
 
+A preparation `404` makes the web app send the RPC directly. Other unsuccessful preparation responses, and unsuccessful byte-upload responses, stop before finalization and show a translated error with the HTTP status. If a request fails before a response arrives, no HTTP status is available.
+
 A reference can't be retried. If a finalize response is lost, check whether the change was saved before you stage and send the request again.
 
 ## Related pages

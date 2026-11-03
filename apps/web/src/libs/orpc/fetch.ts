@@ -1,4 +1,5 @@
 import type { DeferredFetch } from "@reactive-resume/utils/deferred-request";
+import { t } from "@lingui/core/macro";
 import { getAccountId } from "@/libs/auth/account-scope";
 
 let stagingUnavailable = false;
@@ -54,7 +55,7 @@ export async function rpcFetch(
 		stagingUnavailable = true;
 		return sendDirect();
 	}
-	if (!prepared.ok) throw new Error(`Couldn't prepare the upload (${prepared.status}). Try again.`);
+	if (!prepared.ok) throw new Error(t`Couldn't prepare the upload (${prepared.status}). Try again.`);
 	const stage = (await prepared.json()) as { id: string; url: string };
 	const uploaded = await fetch(stage.url, {
 		method: "PUT",
@@ -62,7 +63,7 @@ export async function rpcFetch(
 		headers: { "content-type": "application/octet-stream" },
 		signal: request.signal,
 	});
-	if (!uploaded.ok) throw new Error(`The upload didn't finish (${uploaded.status}). Try again.`);
+	if (!uploaded.ok) throw new Error(t`The upload didn't finish (${uploaded.status}). Try again.`);
 	const headers = new Headers(request.headers);
 	headers.set("x-resume-staged-body", stage.id);
 	headers.delete("content-length");

@@ -1,3 +1,4 @@
+import type { Messages } from "@lingui/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 const fetchMock = vi.fn<typeof fetch>();
@@ -21,6 +22,41 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("RPC fetch", () => {
+	it.each([
+		{
+			stage: "preparation",
+			status: 503,
+			message: "Der Upload konnte nicht vorbereitet werden (503). Versuche es erneut.",
+		},
+		{
+			stage: "upload",
+			status: 502,
+			message: "Der Upload wurde nicht abgeschlossen (502). Versuche es erneut.",
+		},
+	])("localizes $stage failures and stops dispatch", async ({ stage, status, message }) => {
+		const { i18n } = await import("@lingui/core");
+		const catalogs = import.meta.glob<Messages>("../../../locales/*.po", { import: "messages" });
+		const german = catalogs["../../../locales/de-DE.po"];
+		if (!german) throw new Error("German catalog missing");
+		const messages = await german();
+		const { rpcFetch } = await import("./fetch");
+		const { getReadableErrorMessage } = await import("../error-message");
+		i18n.loadAndActivate({ locale: "de-DE", messages });
+		if (stage === "upload")
+			fetchMock.mockResolvedValueOnce(Response.json({ id: "upload-1", url: "https://blob.test/signed-put" }));
+		fetchMock.mockResolvedValueOnce(new Response("Unavailable", { status }));
+		try {
+			const visible = await rpcFetch(new Request(rpcUrl, { method: "POST", body: largeBody })).then(
+				() => null,
+				(error: unknown) => getReadableErrorMessage(error, "Upload fehlgeschlagen"),
+			);
+			expect(visible).toBe(message);
+			expect(fetchMock).toHaveBeenCalledTimes(stage === "upload" ? 2 : 1);
+		} finally {
+			i18n.loadAndActivate({ locale: "en-US", messages: {} });
+		}
+	});
+
 	it("bounds keepalive to small requests instead of failing supported large drafts", async () => {
 		fetchMock.mockResolvedValue(new Response("ok"));
 		const { rpcFetch } = await import("./fetch");
