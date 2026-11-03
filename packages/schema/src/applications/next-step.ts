@@ -22,6 +22,24 @@ type NextStepSource = ApplicationStageSource & {
  */
 export type OfferHint = { respondBy: string | null };
 
+/** A newest offer with no deadline deliberately clears the older deadline. */
+export function latestOfferHints(
+	items: readonly {
+		applicationId: string | null;
+		createdAt: Date | string;
+		data: { kind: string; respondBy?: string | null | undefined };
+	}[],
+): ReadonlyMap<string, OfferHint> {
+	const hints = new Map<string, OfferHint & { at: number }>();
+	for (const item of items) {
+		if (item.data.kind !== "offer" || !item.applicationId) continue;
+		const at = new Date(item.createdAt).getTime();
+		const known = hints.get(item.applicationId);
+		if (!known || at > known.at) hints.set(item.applicationId, { respondBy: item.data.respondBy ?? null, at });
+	}
+	return hints;
+}
+
 export type NextStep =
 	| { kind: "interview"; interview: InterviewTimelineEntry; at: Date }
 	| { kind: "follow-up"; at: Date; note: string; overdue: boolean }
