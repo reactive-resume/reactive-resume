@@ -63,6 +63,7 @@ function createStageBaselines() {
 		 */
 		begin(scope: string, rows: ReadonlyMap<string, ListedRow>) {
 			const baselines = new Map<string, Promise<StageBaseline>>();
+			const outcomes = new Map<string, Promise<StageBaseline>>();
 			for (const [id, row] of rows) {
 				const key = `${scope}:${id}`;
 				const earlier = pending.get(key);
@@ -81,10 +82,19 @@ function createStageBaselines() {
 					const { id: _id, ...saved } = stage;
 					return saved;
 				});
+				outcomes.set(id, outcome);
 				follow(`${scope}:${id}`, outcome);
 			}
 
-			return { baselines, settle };
+			return {
+				baselines,
+				settle,
+				// Readiness can arrive after a later intent; only its own latest rows may change optimistically.
+				isLatest: (id: string) => {
+					const outcome = outcomes.get(id);
+					return outcome !== undefined && pending.get(`${scope}:${id}`) === outcome;
+				},
+			};
 		},
 
 		/**
