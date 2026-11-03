@@ -76,8 +76,8 @@ export function GuestBanner() {
 /**
  * On sign-up and sign-in from a guest session: what moves to the account and what doesn't. It matches the account
  * link in `@reactive-resume/auth` (documents, their history, applications, the application profile, saved answers and
- * Career knowledge move, except facts the account already holds and a profile when it has its own; assistant
- * conversations are deleted with the guest).
+ * Career knowledge move, except facts the account already holds; conflicting profiles stop the move, and assistant
+ * conversations are deleted with the guest after a successful move).
  */
 export function GuestTransferNote() {
 	useEffect(() => writeTransfer(Date.now()), []);
@@ -88,7 +88,8 @@ export function GuestTransferNote() {
 			<AlertDescription>
 				<Trans>
 					Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it
-					already has and the guest's Career profile if it has its own. Assistant conversations don't.
+					already has. Different Career profiles stop sign-in and keep your guest work. Assistant conversations don't
+					move.
 				</Trans>
 			</AlertDescription>
 		</Alert>
