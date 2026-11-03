@@ -529,8 +529,8 @@ function Conversation(props: ConversationProps) {
 		(stopped || (lastReply !== undefined && (history.data?.interrupted ?? []).includes(lastReply.id)));
 	const saidSomething = lastReply?.parts.some((part) => part.type === "text" && part.text.trim() !== "") === true;
 	const statuses = useMemo(() => {
-		const map = new Map<string, Receipt>([
-			...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
+		const map = new Map<string, Receipt>(
+			((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
 				message.parts.flatMap((part) =>
 					isProposeEdits(part)
 						? toProposals(part, new Map()).map(
@@ -540,8 +540,8 @@ function Conversation(props: ConversationProps) {
 						: [],
 				),
 			),
-			...[...rejections].map(([id, status]) => [id, { status }] as const),
-		]);
+		);
+		for (const [id, status] of rejections) map.set(id, { ...map.get(id), status });
 		// Only an undecided edit reads as replaced: one accepted or rejected (here or on another device) keeps its outcome.
 		for (const id of supersededIds.split(" ").filter(Boolean))
 			if ((map.get(id)?.status ?? "pending") === "pending") map.set(id, { status: "rejected", superseded: true });

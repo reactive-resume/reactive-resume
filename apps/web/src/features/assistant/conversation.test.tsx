@@ -625,7 +625,7 @@ it("never accepts tailored or older sets into a resume that isn't the job's copy
 	}
 });
 
-it("keeps the wording draft and every Accept closed until a fresh read shows the saved wording", async () => {
+it("keeps restored edits and Accept bound to wording confirmed by a fresh read", async () => {
 	const saved = {
 		messages: [
 			proposing({
@@ -657,8 +657,18 @@ it("keeps the wording draft and every Accept closed until a fresh read shows the
 			return { data, isError: false };
 		});
 	mocks.receipts.mockImplementation(() => ({ data, refetch }));
-	mocks.record.mockRejectedValueOnce(new Error("offline")).mockResolvedValue({});
-	const { accept, rerender } = renderConversation([proposing({ tailoredFor: "application-2" })]);
+	mocks.record
+		.mockResolvedValueOnce({})
+		.mockResolvedValueOnce({})
+		.mockRejectedValueOnce(new Error("offline"))
+		.mockResolvedValue({});
+	const { accept, rerender } = renderConversation([proposing({ tailoredFor: "application-2" })], {
+		stateOf: (proposal) => proposal.status,
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Reject" }));
+	fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+	await waitFor(() => expect(mocks.record).toHaveBeenCalledTimes(2));
+	mocks.record.mockClear();
 	const write = {
 		threadId: "thread-1",
 		messageId: "proposal-reply",
