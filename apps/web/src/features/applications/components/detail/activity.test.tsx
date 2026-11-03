@@ -41,6 +41,13 @@ it("does not repeat a localized reply label and keeps a custom note's canonical 
 				text: "Custom note",
 				followedUp: { kind: "reply", stageEntryId: null },
 			},
+			{
+				id: "legacy",
+				type: "note",
+				at: new Date(),
+				text: "Legacy note",
+				followedUp: { stageEntryId: null },
+			},
 		],
 	} as Application;
 	render(
@@ -52,4 +59,5 @@ it("does not repeat a localized reply label and keeps a custom note's canonical 
 	);
 	expect(screen.getByText("Réponse donnée", { exact: true })).toBeVisible();
 	expect(screen.getByText("Réponse donnée · Custom note", { exact: true })).toBeVisible();
+	expect(screen.getByText("Followed up · Legacy note", { exact: true })).toBeVisible();
 });

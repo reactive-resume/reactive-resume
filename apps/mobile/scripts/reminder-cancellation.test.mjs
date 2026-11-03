@@ -31,6 +31,8 @@ let failChannel = false;
 const platform = { OS: "ios" };
 let hold;
 let entered = () => {};
+let readHold;
+let readEntered = () => {};
 const notifications = {
 	getPermissionsAsync: async () => ({ granted: true }),
 	SchedulableTriggerInputTypes: { DATE: "date" },
@@ -53,9 +55,14 @@ const notifications = {
 		}
 		scheduled.delete(id);
 	},
-	getAllScheduledNotificationsAsync: async () => [...scheduled.values()],
+	getAllScheduledNotificationsAsync: async () => {
+		const snapshot = [...scheduled.values()];
+		readEntered();
+		if (readHold) await readHold;
+		return snapshot;
+	},
 };
-const { useReminders } = load("../src/features/reminders/index.ts", {
+const { useReminders, syncReminders } = load("../src/features/reminders/index.ts", {
 	"@lingui/core/macro": { t: (parts) => parts.join("") },
 	"@tanstack/react-query": {
 		useQuery: () => ({ data: new Map() }),
@@ -83,6 +90,75 @@ beforeEach(() => {
 	platform.OS = "ios";
 	hold = undefined;
 	entered = () => {};
+	readHold = undefined;
+	readEntered = () => {};
+});
+
+for (const timing of ["before", "during"]) {
+	for (const action of ["clear", "move"]) {
+		test(`reconciliation ${action} respects a reminder request begun ${timing} its notification read`, async () => {
+			const old = target(`sync-${timing}-${action}`);
+			const reminders = useReminders(old.applicationId);
+			await reminders.turnOn(old, 5);
+			let releaseSchedule;
+			hold = new Promise((resolve) => {
+				releaseSchedule = resolve;
+			});
+			const scheduleArrival = new Promise((resolve) => {
+				entered = resolve;
+			});
+			let releaseRead;
+			readHold = new Promise((resolve) => {
+				releaseRead = resolve;
+			});
+			const readArrival = new Promise((resolve) => {
+				readEntered = resolve;
+			});
+			const newer = target(old.applicationId, "2035-01-09T10:00:00Z");
+			let replacing;
+			if (timing === "before") {
+				replacing = reminders.turnOn(newer, 10);
+				await scheduleArrival;
+			}
+			const syncing = syncReminders(
+				old.applicationId,
+				action === "clear" ? [] : [target(old.applicationId, "2035-01-03T11:00:00Z")],
+			);
+			await readArrival;
+			if (timing === "during") {
+				replacing = reminders.turnOn(newer, 10);
+				await scheduleArrival;
+			}
+			releaseRead();
+			releaseSchedule();
+			await replacing;
+			await syncing;
+			const saved = scheduled.get(schedule.reminderId(old.kind, old.applicationId));
+			if (timing === "during") {
+				assert.equal(saved?.content.data.start, newer.start.toISOString());
+				assert.equal(saved?.content.data.lead, 10);
+			} else if (action === "clear") {
+				assert.equal(saved, undefined);
+			} else {
+				assert.equal(saved?.content.data.start, "2035-01-03T11:00:00.000Z");
+				assert.equal(saved?.content.data.lead, 5);
+			}
+		});
+	}
+}
+
+test("unchanged reconciliation still moves and cancels the observed reminder", async () => {
+	const old = target("sync-current");
+	const reminders = useReminders(old.applicationId);
+	await reminders.turnOn(old, 5);
+	const moved = target(old.applicationId, "2035-01-06T10:00:00Z");
+	await syncReminders(old.applicationId, [moved]);
+	assert.equal(
+		scheduled.get(schedule.reminderId(old.kind, old.applicationId))?.content.data.start,
+		moved.start.toISOString(),
+	);
+	await syncReminders(old.applicationId, []);
+	assert.equal(scheduled.has(schedule.reminderId(old.kind, old.applicationId)), false);
 });
 
 for (const failure of ["channel", "schedule"]) {
