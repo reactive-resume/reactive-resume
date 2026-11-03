@@ -50,7 +50,7 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
 
     Word files are read with their page headers and footers, where many templates keep the name and contact details. For PDFs, a profile such as LinkedIn gets its address from the link behind its name, and an empty email from a mail link. Mobile reads this source text on your server without another AI request.
 
-    If only part of the file could be compared, the review names that limit even when it lists leftover lines. This can happen with a long file or a page whose text couldn't be read. A scan, failed comparison or older server can leave no source text to compare after an AI reading; the review says so and asks you to check the file yourself. Reading a PDF without AI requires a server that supports previews and a complete readable text layer; update an older server or split a PDF longer than 30 pages before trying again. Nothing is saved until **Create resume**.
+    If only part of the file could be compared, the review names that limit even when it lists leftover lines. This can happen with a long file, a page whose text couldn't be read, or link targets that couldn't be read. A scan, failed comparison or older server can leave no source text to compare after an AI reading; the review says so and asks you to check the file yourself. Reading a PDF without AI requires a server that supports previews and complete readable source text and links; update an older server or split a PDF longer than 30 pages before trying again. Nothing is saved until **Create resume**.
 
     <Frame caption="Web review of a fictional PDF, before creating the resume">
       <img src="/images/guides/importing-resumes/pdf-review.png" alt="Check what was found dialog for Avery-Morgan.pdf, listing two profile entries and one education entry, with Choose another file and Create resume controls" />
@@ -139,7 +139,7 @@ Go through every section before you send the resume. PDF and Word files don't st
   />
 </Frame>
 
-**"Couldn't read the whole PDF."** Check that every page has readable text; splitting a file won't repair an unreadable page. Text-layer import supports up to 30 pages, so split a longer PDF into smaller files and import each separately. A partial file is never imported as a complete resume.
+**"Couldn't read the whole PDF."** Check that every page has readable text. If text or link targets cannot be read, try exporting a fresh copy; splitting a file won't repair unreadable content. Text-layer import supports up to 30 pages, so split a longer PDF into smaller files and import each separately. A partial file is never imported as a complete resume.
 
 **"This PDF is a scanned image."** Try the Word version of the resume, set up an AI provider, or start blank and paste your sections in.
 

@@ -12,13 +12,33 @@ type PreparationApplication = {
 	coverLetterUrl: string | null;
 };
 
+/** Persisted indices never move when a document or answer subject is absent. */
+export function applicationReviewChecks(application: PreparationApplication, workspace: CareerWorkspace) {
+	const review = workspace.submissionReview;
+	const submitted = review !== undefined || hasApplicationSubmission(application);
+	const documents = submitted
+		? review?.documents === true
+		: Boolean(
+				application.resumeId || application.coverLetterId || application.resumeFileUrl || application.coverLetterUrl,
+			);
+	const answers = submitted ? review?.answers === true : workspace.answers.length > 0;
+	return {
+		submitted,
+		recorded: review != null,
+		checklist: submitted ? (review?.checklist ?? []) : workspace.checklist,
+		indices: ([0, 1, 2, 3] as const).filter((index) =>
+			index === 0 ? documents : index === 1 ? documents || answers : index === 2 ? answers : !submitted,
+		),
+	};
+}
+
 /** Guidance only: the existing review checks are user acknowledgements, never proof of submission or quality. */
 export function nextPreparationStep(
 	application: PreparationApplication,
-	workspace: Pick<CareerWorkspace, "checklist" | "answers">,
+	workspace: Pick<CareerWorkspace, "checklist" | "answers" | "submissionReview">,
 	documents?: readonly { id: string; type: "resume" | "letter" }[],
 ) {
-	if (hasApplicationSubmission(application)) return "submitted";
+	if (workspace.submissionReview !== undefined || hasApplicationSubmission(application)) return "submitted";
 	if (application.status === "closed") return "closed";
 	if (!application.jobDescription?.trim()) return "posting";
 	const selected = (type: "resume" | "letter", id: string | null) =>
@@ -30,7 +50,7 @@ export function nextPreparationStep(
 		return "letter";
 	if (
 		workspace.answers.some((answer) => !answer.question.trim() || !answer.answer.trim()) ||
-		!workspace.checklist.includes(2)
+		(workspace.answers.length > 0 && !workspace.checklist.includes(2))
 	)
 		return "answers";
 	return "review";

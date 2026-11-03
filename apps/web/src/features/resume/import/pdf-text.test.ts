@@ -68,15 +68,18 @@ it("refuses a partial PDF harvest before it can report a successful no-AI import
 	await expect(result).rejects.toThrow("Check that all pages have readable text, or try a smaller file.");
 });
 
-it("preserves readable source as partial and refuses no-AI creation after a page text failure", async () => {
-	const raw = rawExtraction([[{ text: "Readable surviving page", x: 40, y: 60 }]]);
-	extract.mockResolvedValue({ ...raw, textReadFailed: true });
-	const file = new File(["%PDF-fixture"], "resume.pdf");
-	expect(await readPdfSource(file)).toMatchObject({ lines: ["Readable surviving page"], partial: true });
-	const reading = readResumeFile(file, "pdf", { aiAvailable: false });
-	await expect(reading).rejects.toThrow(ImportError);
-	await expect(reading).rejects.toThrow("Check that all pages have readable text, or try a smaller file.");
-});
+it.each(["textReadFailed", "annotationReadFailed"] as const)(
+	"keeps incomplete source partial and refuses no-AI creation after %s",
+	async (failure) => {
+		const raw = rawExtraction([[{ text: "Readable surviving page", x: 40, y: 60 }]]);
+		extract.mockResolvedValue({ ...raw, [failure]: true });
+		const file = new File(["%PDF-fixture"], "resume.pdf");
+		expect(await readPdfSource(file)).toMatchObject({ lines: ["Readable surviving page"], partial: true });
+		const reading = readResumeFile(file, "pdf", { aiAvailable: false });
+		await expect(reading).rejects.toThrow(ImportError);
+		await expect(reading).rejects.toThrow("Check that all pages have readable text, or try a smaller file.");
+	},
+);
 
 describe("documentToLines", () => {
 	it("groups items on the same baseline into one line", () => {

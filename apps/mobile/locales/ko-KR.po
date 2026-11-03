@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: ko-KR\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: removing?.role
 #. placeholder {1}: removing?.company
@@ -139,8 +133,6 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, one {지원 #건 중 {count}건이 변경되었습니다.} other {지원 #건 중 {count}건이 변경되었습니다.}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, other {답변 #개}}"
@@ -631,6 +623,10 @@ msgstr "{0}개 중 {accepted}개 적용됨"
 msgid "{active, plural, one {# active application} other {# active applications}}"
 msgstr "{active, plural, one {진행 중인 지원 #건} other {진행 중인 지원 #건}}"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, other {답변 #개}}"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. 이 지원 내역과 지식을 전송합니다. 제공자가 요금을 부과할 수 있습니다."
@@ -845,6 +841,14 @@ msgstr "{pairing} 유형"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {이 페이지에 수정 제안 #개 · 수락해야 변경됩니다} other {이 페이지에 수정 제안 #개 · 수락해야 변경됩니다}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "기본급의 {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "기본급의 {percent} ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -946,6 +950,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0}개 더보기"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ 연 {yearly} ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2458,7 +2466,7 @@ msgstr "굵게"
 msgid "Bonus"
 msgstr "보너스"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3494,10 +3502,6 @@ msgstr "사실 수정"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5239,6 +5243,14 @@ msgstr "0~52 사이의 정수를 입력하거나 공백으로 남겨두세요."
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org와 같은 주소를 입력하세요."
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "금액 또는 기본급의 비율(예: 10%)을 입력하세요."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "금액이나 비율(예: 10%)을 입력하거나 비워 두세요."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
 msgstr "이 제공업체의 API 키를 입력하세요."
@@ -6024,6 +6036,10 @@ msgstr "채용 관리자"
 #: src/features/share/letter.ts
 msgid "Hiring team"
 msgstr "채용팀"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "이전 검토 체크 항목을 사용할 수 없습니다."
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
@@ -7900,6 +7916,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "새 키는 읽기 전용으로 시작합니다. 브라우저의 계정 설정에서 키를 만드세요."
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "제안의 새 버전을 저장했습니다"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8581,10 +8601,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10665,8 +10681,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "최초 지원서 제출 시 검토 체크 항목이 기록되었습니다."
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -10917,6 +10933,10 @@ msgstr "연결 저장"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "수정한 조건을 새 버전으로 저장합니다. 이전 버전도 계속 이용할 수 있습니다. AI 요청은 전송되지 않습니다."
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

@@ -1,22 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-11-04 23:14+0100\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: pl\n"
-"Project-Id-Version: reactive-resume\n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-28 05:40\n"
-"Last-Translator: \n"
-"Language-Team: Polish\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
-"X-Crowdin-Project: reactive-resume\n"
-"X-Crowdin-Project-ID: 503410\n"
-"X-Crowdin-Language: pl\n"
-"X-Crowdin-File: /apps/web/locales/en-US.po\n"
-"X-Crowdin-File-ID: 545\n"
+"Language: pl-PL\n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -125,8 +114,6 @@ msgid "{0, plural, one {# active application} other {# active applications}}"
 msgstr "{0, plural, one {# aktywna aplikacja o pracę} few {# aktywne aplikacje o pracę} many {# aktywnych aplikacji o pracę} other {# aktywnej aplikacji o pracę}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# odpowiedź} few {# odpowiedzi} many {# odpowiedzi} other {# odpowiedzi}}"
@@ -637,6 +624,10 @@ msgstr "Zastosowano {accepted} z {0}"
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/career/workspace/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, one {# odpowiedź} few {# odpowiedzi} many {# odpowiedzi} other {# odpowiedzi}}"
+
 #: src/features/career/coach.tsx
 msgid "{attached, plural, one {# attached file} other {# attached files}}"
 msgstr ""
@@ -985,6 +976,14 @@ msgstr "{passedRules} z {totalRules} sprawdza poprawność."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# zaproponowało edycję tej strony · nic się nie zmieni, dopóki nie zaakceptujesz} other {# zaproponował zmiany na tej stronie · nic się nie zmienia, dopóki nie zaakceptujesz}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} wynagrodzenia podstawowego"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} wynagrodzenia podstawowego ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {Zaproponowano #} other {Zaproponowano #}}"
@@ -1170,6 +1169,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr "<0>Sumy celowo nie są zliczane.</0> Premia i udziały zależą od warunków, a wartość udziałów jest niepewna. Przed porównaniem sum przeczytaj oryginalne dokumenty ofert."
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} rocznie ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3068,7 +3071,7 @@ msgstr "Pogrubienie"
 msgid "Bonus"
 msgstr "Premia"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4410,10 +4413,6 @@ msgstr "Popraw"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6588,6 +6587,14 @@ msgstr "Wpisz prawidłowy adres e-mail."
 msgid "Enter a web address, like example.com"
 msgstr "Wprowadź adres internetowy, na przykład .com"
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Wpisz kwotę lub procent wynagrodzenia podstawowego, np. 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Wpisz kwotę lub procent, np. 10%, albo pozostaw puste."
+
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
 msgstr "Wpisz klucz API dla tego dostawcy."
@@ -7714,6 +7721,10 @@ msgstr "Zatrudnię menadżera"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Hiring team"
 msgstr "Zatrudnianie zespołu"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "Wcześniejsze zaznaczenia kontroli są niedostępne."
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -10033,6 +10044,10 @@ msgstr ""
 msgid "New key"
 msgstr "Nowy klucz"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "Zapisano nową wersję oferty"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10847,10 +10862,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13369,8 +13380,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "Zaznaczenia kontroli zapisano przy pierwszym wysłaniu aplikacji."
 
 #: src/features/career/today.tsx
 msgid "Review draft"
@@ -13655,6 +13666,10 @@ msgstr "Zapisz zmiany"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Zapisz połączenie"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Zapisz poprawione warunki jako nową wersję. Poprzednia wersja pozostanie dostępna. Żadne żądanie do AI nie jest wysyłane."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

@@ -1,22 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-11-04 23:14+0100\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: hi\n"
-"Project-Id-Version: reactive-resume\n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-28 05:40\n"
-"Last-Translator: \n"
-"Language-Team: Hindi\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: reactive-resume\n"
-"X-Crowdin-Project-ID: 503410\n"
-"X-Crowdin-Language: hi\n"
-"X-Crowdin-File: /apps/web/locales/en-US.po\n"
-"X-Crowdin-File-ID: 545\n"
+"Language: hi-IN\n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -125,8 +114,6 @@ msgid "{0, plural, one {# active application} other {# active applications}}"
 msgstr "{0, plural, one {# सक्रिय आवेदन} other {# सक्रिय आवेदन}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# जवाब} other {# जवाब}}"
@@ -637,6 +624,10 @@ msgstr "{0} में से {accepted} लागू किए गए"
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/career/workspace/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, one {# जवाब} other {# जवाब}}"
+
 #: src/features/career/coach.tsx
 msgid "{attached, plural, one {# attached file} other {# attached files}}"
 msgstr ""
@@ -985,6 +976,14 @@ msgstr "{totalRules} का {passedRules} चेक पास हो गया�
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# ने इस पृष्ठ पर प्रस्तावित संपादन · जब तक आप स्वीकार नहीं करते तब तक कुछ भी नहीं बदलता} other {# ने इस पृष्ठ पर संपादन प्रस्तावित किया · जब तक आप स्वीकार नहीं करते तब तक कुछ भी नहीं बदलता}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "मूल वेतन का {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "मूल वेतन का {percent} ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# प्रस्तावित} other {# प्रस्तावित}}"
@@ -1170,6 +1169,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ सालाना {yearly} ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3068,7 +3071,7 @@ msgstr "बोल्ड"
 msgid "Bonus"
 msgstr "बोनस"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4410,10 +4413,6 @@ msgstr "सुधारें"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6588,6 +6587,14 @@ msgstr "एक मान्य ईमेल पता दर्ज करें�
 msgid "Enter a web address, like example.com"
 msgstr "एक वेब पता दर्ज करें, जैसे example.com"
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "राशि या मूल वेतन का प्रतिशत दर्ज करें, जैसे 10%।"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "राशि या 10% जैसा प्रतिशत दर्ज करें, या खाली छोड़ दें।"
+
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
 msgstr "इस प्रदाता के लिए API कुंजी दर्ज करें।"
@@ -7714,6 +7721,10 @@ msgstr "नियुक्ति प्रबंधक"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Hiring team"
 msgstr "नियुक्ति दल"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "पिछली समीक्षा के चिह्न उपलब्ध नहीं हैं।"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -10033,6 +10044,10 @@ msgstr ""
 msgid "New key"
 msgstr "नई कुंजी"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "ऑफ़र का नया संस्करण सहेजा गया"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10847,10 +10862,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13369,8 +13380,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "पहली बार आवेदन जमा करते समय समीक्षा के चिह्न सहेजे गए थे।"
 
 #: src/features/career/today.tsx
 msgid "Review draft"
@@ -13655,6 +13666,10 @@ msgstr "बदलाव सहेजें"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "कनेक्शन सहेजें"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "सुधारी गई शर्तों को नए संस्करण के रूप में सहेजें। पिछला संस्करण उपलब्ध रहता है। कोई AI अनुरोध नहीं भेजा जाता।"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

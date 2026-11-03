@@ -117,29 +117,44 @@ export const careerStoryInputSchema = careerScopeSchema.extend({
 });
 export type CareerStoryData = z.infer<typeof careerStoryInputSchema>;
 
+const validBonus = (terms: { variable: number | null; variablePercent?: number | null | undefined }) =>
+	terms.variable === null || terms.variablePercent == null;
+const bonusError = { message: "Enter a bonus amount or a percentage, not both.", path: ["variablePercent"] };
+
 /** Offer terms in their own currency and pay period. Unknown amounts are null, never zero. */
-export const offerTermsSchema = z.object({
-	version: z.enum(["written", "verbal"]).default("written"),
-	currency: currencySchema,
-	period: payPeriodSchema,
-	base: z.number().nonnegative().nullable(),
-	variable: z.number().nonnegative().nullable(),
-	/** What the bonus depends on, or "" when unconditional or unknown. */
-	variableConditions: z.string().max(1000).default(""),
-	equity: z.string().max(1000).default(""),
-	location: z.string().max(500).default(""),
-	officeDays: z.number().int().min(0).max(5).nullable().default(null),
-	leave: z.string().max(500).default(""),
-	learning: z.number().nonnegative().nullable().default(null),
-	other: z.string().max(1000).default(""),
-	respondBy: z.iso.datetime({ offset: true }).nullable().default(null),
-	/** The first day of work the employer stated, as a local date (YYYY-MM-DD). */
-	startDate: z.iso.date().nullable().default(null),
-});
+export const offerTermsSchema = z
+	.object({
+		version: z.enum(["written", "verbal"]).default("written"),
+		currency: currencySchema,
+		period: payPeriodSchema,
+		base: z.number().nonnegative().nullable(),
+		variable: z.number().nonnegative().nullable(),
+		/** Percentage of base, in the base currency and pay period. Older amount records omit this. */
+		variablePercent: z
+			.number()
+			.nonnegative()
+			.nullable()
+			.optional()
+			.describe(
+				"Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null.",
+			),
+		/** What the bonus depends on, or "" when unconditional or unknown. */
+		variableConditions: z.string().max(1000).default(""),
+		equity: z.string().max(1000).default(""),
+		location: z.string().max(500).default(""),
+		officeDays: z.number().int().min(0).max(5).nullable().default(null),
+		leave: z.string().max(500).default(""),
+		learning: z.number().nonnegative().nullable().default(null),
+		other: z.string().max(1000).default(""),
+		respondBy: z.iso.datetime({ offset: true }).nullable().default(null),
+		/** The first day of work the employer stated, as a local date (YYYY-MM-DD). */
+		startDate: z.iso.date().nullable().default(null),
+	})
+	.refine(validBonus, bonusError);
 export type OfferTerms = z.infer<typeof offerTermsSchema>;
 
 /** Manually entered terms use the same saved offer shape as confirmed message proposals. */
-export const careerOfferInputSchema = offerTermsSchema.extend({ applicationId: z.string().min(1) });
+export const careerOfferInputSchema = offerTermsSchema.safeExtend({ applicationId: z.string().min(1) });
 
 const text = (max = 2000) => z.string().trim().max(max);
 
@@ -280,17 +295,29 @@ export const savedItemDataSchema = z.discriminatedUnion("kind", [
 			.nullable()
 			.default(null),
 	}),
-	z.object({
-		kind: z.literal("offer"),
-		...offerTermsSchema.shape,
-		/** Typed in by the user, or read from an employer's message. Absent on offers saved before it was recorded. */
-		origin: z.enum(["manual", "message"]).optional(),
-		/** When the user last corrected the terms by hand. */
-		editedAt: z.iso.datetime({ offset: true }).optional(),
-	}),
+	z
+		.object({
+			kind: z.literal("offer"),
+			...offerTermsSchema.shape,
+			/** Typed in by the user, or read from an employer's message. Absent on offers saved before it was recorded. */
+			origin: z.enum(["manual", "message"]).optional(),
+			/** When the user last corrected the terms by hand. */
+			editedAt: z.iso.datetime({ offset: true }).optional(),
+		})
+		.refine(validBonus, bonusError),
 ]);
 export type SavedItemData = z.infer<typeof savedItemDataSchema>;
 export type SavedItemKind = SavedItemData["kind"];
+
+/** Immutable manual review, stored separately from mutable workspace data. */
+export const submissionReviewSchema = z.object({
+	at: z.iso.datetime({ offset: true }),
+	checklist: z.array(z.number().int().min(0).max(10)).max(10),
+	documents: z.boolean(),
+	answers: z.boolean(),
+	answerVersionId: z.string().nullable().optional(),
+	stageEntryId: z.string().nullable().optional(),
+});
 
 /**
  * Live, user-owned state of one application's workspace. Each widget owns one key and saves the whole value, so
@@ -309,6 +336,8 @@ export const careerWorkspaceSchema = z.object({
 		.max(30),
 	/** Indexes of the ticked "Before you submit" items. */
 	checklist: z.array(z.number().int().min(0).max(10)).max(10),
+	/** Server-owned first-submission review; null means historical checks were not recorded. */
+	submissionReview: submissionReviewSchema.nullable().optional(),
 	/** Questions to ask, added from Fit or the coach. */
 	questions: z.array(z.object({ text: text(400), origin: text(60) })).max(20),
 	/** Fit requirements closed with "Add evidence": requirement text → the new fact's id. */
@@ -318,6 +347,7 @@ export const careerWorkspaceSchema = z.object({
 	/** The employer message pasted into Messages, kept with the application. */
 	message: text(20_000),
 });
+export const careerWorkspaceDataSchema = careerWorkspaceSchema.omit({ submissionReview: true });
 export type CareerWorkspace = z.infer<typeof careerWorkspaceSchema>;
 export const EMPTY_WORKSPACE: CareerWorkspace = {
 	answers: [],

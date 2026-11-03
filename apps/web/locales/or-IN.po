@@ -1,22 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-11-04 23:14+0100\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: or\n"
-"Project-Id-Version: reactive-resume\n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-28 05:40\n"
-"Last-Translator: \n"
-"Language-Team: Odia\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: reactive-resume\n"
-"X-Crowdin-Project-ID: 503410\n"
-"X-Crowdin-Language: or\n"
-"X-Crowdin-File: /apps/web/locales/en-US.po\n"
-"X-Crowdin-File-ID: 545\n"
+"Language: or-IN\n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -125,8 +114,6 @@ msgid "{0, plural, one {# active application} other {# active applications}}"
 msgstr "{0, plural, one {# ସକ୍ରିୟ ଆବେଦନ} other {# ସକ୍ରିୟ ଆବେଦନ}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {#ଟି ଉତ୍ତର} other {#ଟି ଉତ୍ତର}}"
@@ -637,6 +624,10 @@ msgstr "{0} ର {accepted} ପ୍ରୟୋଗ ହୋଇଛି |"
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/career/workspace/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, one {#ଟି ଉତ୍ତର} other {#ଟି ଉତ୍ତର}}"
+
 #: src/features/career/coach.tsx
 msgid "{attached, plural, one {# attached file} other {# attached files}}"
 msgstr ""
@@ -985,6 +976,14 @@ msgstr "{totalRules} ଯାଞ୍ଚର {passedRules} ପାସ୍ |"
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# ଏହି ପୃଷ୍ଠାରେ ସମ୍ପାଦନା ପ୍ରସ୍ତାବିତ · ଆପଣ ଗ୍ରହଣ ନକରିବା ପର୍ଯ୍ୟନ୍ତ କିଛି ପରିବର୍ତ୍ତନ ହୁଏ ନାହିଁ |} other {# ଏହି ପୃଷ୍ଠାରେ ପ୍ରସ୍ତାବିତ ସମ୍ପାଦନା · ଆପଣ ଗ୍ରହଣ ନକରିବା ପର୍ଯ୍ୟନ୍ତ କିଛି ପରିବର୍ତ୍ତନ ହୁଏ ନାହିଁ |}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "ମୂଳ ଦରମାର {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "ମୂଳ ଦରମାର {percent} ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# ପ୍ରସ୍ତାବିତ |} other {# ପ୍ରସ୍ତାବିତ |}}"
@@ -1170,6 +1169,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr "<0>ମୋଟ ରାଶି ଜାଣିଶୁଣି ଯୋଗ କରାଯାଇନାହିଁ।</0> ବୋନସ୍ ଏବଂ ଇକ୍ୱିଟି ସର୍ତ୍ତ ଉପରେ ନିର୍ଭର କରେ, ଏବଂ ଇକ୍ୱିଟିର ମୂଲ୍ୟ ଅନିଶ୍ଚିତ। ମୋଟ ରାଶି ତୁଳନା କରିବା ପୂର୍ବରୁ ମୂଳ ଅଫର୍ ଦଲିଲଗୁଡ଼ିକ ପଢ଼ନ୍ତୁ।"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ ବର୍ଷକୁ {yearly} ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3068,7 +3071,7 @@ msgstr "ବୋଲ୍ଡ"
 msgid "Bonus"
 msgstr "ବୋନସ୍"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4410,10 +4413,6 @@ msgstr "ସଂଶୋଧନ କରନ୍ତୁ"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6588,6 +6587,14 @@ msgstr "ଏକ ବ valid ଧ ଇମେଲ୍ ଠିକଣା ପ୍ରବେଶ 
 msgid "Enter a web address, like example.com"
 msgstr "ଉଦାହରଣ .com ପରି ଏକ ୱେବ୍ ଠିକଣା ପ୍ରବେଶ କରନ୍ତୁ |"
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "ଏକ ରାଶି କିମ୍ବା ମୂଳ ଦରମାର ପ୍ରତିଶତ ଲେଖନ୍ତୁ, ଯେପରି 10%।"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "ଏକ ରାଶି କିମ୍ବା 10% ପରି ପ୍ରତିଶତ ଲେଖନ୍ତୁ, କିମ୍ବା ଖାଲି ରଖନ୍ତୁ।"
+
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
 msgstr "ଏହି ପ୍ରଦାନକାରୀଙ୍କ ପାଇଁ ଏକ API କି ପ୍ରବେଶ କରନ୍ତୁ।"
@@ -7714,6 +7721,10 @@ msgstr "ମ୍ୟାନେଜର ନିଯୁକ୍ତି"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Hiring team"
 msgstr "ନିଯୁକ୍ତି ଦଳ"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "ପୂର୍ବ ସମୀକ୍ଷା ଚିହ୍ନଗୁଡ଼ିକ ଉପଲବ୍ଧ ନାହିଁ।"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -10034,6 +10045,10 @@ msgstr ""
 msgid "New key"
 msgstr "ନୂତନ ଚାବି |"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "ଅଫରର ନୂଆ ସଂସ୍କରଣ ସଞ୍ଚୟ ହେଲା"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10848,10 +10863,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13371,8 +13382,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "ପ୍ରଥମ ଥର ଆବେଦନ ଦାଖଲ ବେଳେ ସମୀକ୍ଷା ଚିହ୍ନଗୁଡ଼ିକ ରେକର୍ଡ କରାଯାଇଛି।"
 
 #: src/features/career/today.tsx
 msgid "Review draft"
@@ -13657,6 +13668,10 @@ msgstr "ପରିବର୍ତ୍ତନଗୁଡିକ ସଞ୍ଚୟ କରନ�
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "ସଂଯୋଗ ସଞ୍ଚୟ କରନ୍ତୁ |"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "ସଂଶୋଧିତ ସର୍ତ୍ତକୁ ନୂଆ ସଂସ୍କରଣ ଭାବରେ ସଞ୍ଚୟ କରନ୍ତୁ। ପୂର୍ବ ସଂସ୍କରଣ ଉପଲବ୍ଧ ରହିବ। କୌଣସି AI ଅନୁରୋଧ ପଠାଯାଏ ନାହିଁ।"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

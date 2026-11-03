@@ -18,6 +18,7 @@ import { latestStageEntryId } from "@reactive-resume/schema/applications/data";
 import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 import { isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
 import { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
+import { careerWorkspaceDataSchema, EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
@@ -239,11 +240,42 @@ export const hasSubmitted = (row: SubmissionHistory) =>
  * the company, with its Check score at the time, and so is its linked letter. The application keeps pointing at
  * them, so it can open exactly what went out while the documents move on.
  */
-export async function recordSentResume(row: ApplicationRow, client: DbOrTx): Promise<ApplicationRow> {
+export async function recordSentResume(
+	row: ApplicationRow,
+	client: DbOrTx,
+	previouslySubmitted = false,
+): Promise<ApplicationRow> {
 	if (!SENT_STAGES.has(row.status)) return row;
 	const changes: Partial<ApplicationRow> = {};
+	const recordedAt = row.submittedAt ?? new Date();
 	// The first sent snapshot also fixes the durable lifetime submission marker. Later timeline edits cannot erase it.
-	if (!row.submittedAt) changes.submittedAt = new Date();
+	if (!row.submittedAt) changes.submittedAt = recordedAt;
+	const [workspace] = await client
+		.select()
+		.from(schema.careerWorkspace)
+		.where(and(eq(schema.careerWorkspace.applicationId, row.id), eq(schema.careerWorkspace.userId, row.userId)));
+	if (!workspace?.submissionReview && !row.submittedAt && !previouslySubmitted) {
+		const data = careerWorkspaceDataSchema.parse({ ...EMPTY_WORKSPACE, ...workspace?.data });
+		const submissionReview = {
+			at: recordedAt.toISOString(),
+			checklist: [...data.checklist],
+			documents: Boolean(row.resumeId || row.coverLetterId || row.resumeFileUrl || row.coverLetterUrl),
+			answers: data.answers.length > 0,
+			answerVersionId: null,
+			stageEntryId:
+				row.activity.findLast(
+					(entry) => entry.type === "stage" && entry.stage === "applied" && entry.canonicalTransition !== false,
+				)?.id ?? null,
+		};
+		await client
+			.insert(schema.careerWorkspace)
+			.values({ applicationId: row.id, userId: row.userId, data, submissionReview })
+			// Recording review metadata must not make unchanged answers look edited after submission.
+			.onConflictDoUpdate({
+				target: schema.careerWorkspace.applicationId,
+				set: { submissionReview, updatedAt: sql`${schema.careerWorkspace.updatedAt}` },
+			});
+	}
 
 	if (row.resumeId && !row.sentResumeVersionId) {
 		const [resume] = await client
@@ -887,7 +919,7 @@ export const applicationService = {
 			}
 			const rows = await tx.insert(schema.application).values(values).returning();
 			for (const row of rows) {
-				await recordSentResume(row, tx);
+				await recordSentResume(row, tx, true);
 				if (row.followUpAt) await syncFollowUp(tx, row);
 				if (row.coverLetterId)
 					await linkLetterToApplication(tx, {
@@ -1012,7 +1044,7 @@ export const applicationService = {
 					fields.followUpDateOnly !== undefined
 				)
 					await syncFollowUp(tx, updated);
-				if (current.status === "saved" && updated.resumeId !== current.resumeId) {
+				if (current.status === "saved" && !hasSubmitted(current) && updated.resumeId !== current.resumeId) {
 					const [workspace] = await tx
 						.select()
 						.from(schema.careerWorkspace)
