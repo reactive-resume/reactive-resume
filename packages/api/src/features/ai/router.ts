@@ -72,15 +72,15 @@ export const aiRouter = {
 			operationId: "getWeeklyAiUsage",
 			summary: "Get this week's AI provider request attempts",
 		})
-		.input(z.object({}).default({}))
+		.input(z.object({ includeWebSearch: z.boolean().optional() }).default({}))
 		.output(aiWeeklyUsageSchema)
-		.handler(({ context }) => readWeeklyAiUsage(context.user.id)),
+		.handler(({ context, input }) => readWeeklyAiUsage(context.user.id, undefined, input.includeWebSearch)),
 	reportContent: reportAiContent,
 	capabilities: protectedProcedure
 		.route({ method: "GET", path: "/ai/capabilities", tags: ["AI"], operationId: "getAiCapabilities" })
 		.input(z.object({}).default({}))
-		.output(z.object({ recipientApproval: z.literal(1), explicitNoAi: z.literal(true) }))
-		.handler(() => ({ recipientApproval: 1 as const, explicitNoAi: true as const })),
+		.output(z.object({ recipientApproval: z.literal(1), explicitNoAi: z.literal(true), nativeWebSearch: z.literal(1) }))
+		.handler(() => ({ recipientApproval: 1 as const, explicitNoAi: true as const, nativeWebSearch: 1 as const })),
 	writingReview: protectedProcedure
 		.route({
 			method: "GET",

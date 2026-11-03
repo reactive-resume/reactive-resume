@@ -18,6 +18,14 @@ export type WebAccessContext = {
 	regions?: string[] | undefined;
 	/** The user's UI locale, for place names written into region queries. */
 	locale?: string | undefined;
+	/** Installed by an authenticated caller only after approving this alternate destination. */
+	fallbackSearch?:
+		| ((
+				query: string,
+				region: string | undefined,
+				signal: AbortSignal,
+		  ) => Promise<{ url: string; title: string; snippet?: string }[]>)
+		| undefined;
 };
 
 export type ReadPageResult = {

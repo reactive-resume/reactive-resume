@@ -6,6 +6,7 @@ import { APICallError, generateText, RetryError } from "ai";
 import z from "zod";
 import { safetySystemPrompt } from "@reactive-resume/ai/prompts";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
+import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { postingSourceSchema } from "@reactive-resume/schema/applications/data";
 import { slugify } from "@reactive-resume/utils/slug";
@@ -14,7 +15,7 @@ import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
 import { dataBlock } from "../ai/data-block";
-import { isNoAiDestination } from "../ai/destination";
+import { approvedAiProviderId, isNoAiDestination } from "../ai/destination";
 import { aiDeadline, generateJson as sharedGenerateJson } from "../ai/generate-json";
 import { getModel } from "../ai/service";
 import { createAiUsage } from "../ai/usage";
@@ -22,6 +23,7 @@ import { coverLetterService } from "../cover-letters/service";
 import { assertDocumentVersion } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { webAccessService } from "../web-access/credentials";
+import { nativeSearch } from "../web-access/native-search";
 import { searchScope } from "../web-access/regions";
 import {
 	fetchJobPosting,
@@ -212,7 +214,7 @@ export const aiRouter = {
 				"Searches through the server's SearXNG when it has one, otherwise the selected Firecrawl, Tavily or Exa connection. Returns up to five public links to review and import. Requires authentication.",
 			...reserved,
 		})
-		.input(z.object({ query: z.string().trim().min(2).max(500) }))
+		.input(z.object({ query: z.string().trim().min(2).max(500), aiProviderId: z.string().min(1).optional() }))
 		.output(z.array(postingSearchResult))
 		.errors({
 			SEARCH_UNAVAILABLE: { message: "Job search isn't configured on this server.", status: 503 },
@@ -222,8 +224,20 @@ export const aiRouter = {
 			RATE_LIMIT_EXCEEDED: { message: "Too many web requests. Try again later.", status: 429 },
 		})
 		.handler(async ({ context, input, signal }) => {
+			if (
+				input.aiProviderId &&
+				(context.reqHeaders.get("x-ai-native-search") !== "1" || approvedAiProviderId() !== input.aiProviderId)
+			)
+				throw new ORPCError("FORBIDDEN", { message: "Approve the AI search destination before retrying." });
+			const provider = input.aiProviderId
+				? await aiProvidersService.getRunnableById({ id: input.aiProviderId, userId: context.user.id })
+				: null;
+			if (provider && !supportsNativeWebSearch(provider))
+				throw new ORPCError("BAD_REQUEST", { message: "This connection doesn't support native web search." });
+			const usage = provider ? createAiUsage(context.user.id, "web-search", provider) : null;
 			const [connection, scope] = await Promise.all([
-				webAccessService.resolve(context.user.id),
+				// An explicit search retry may test saved credentials already marked invalid.
+				webAccessService.resolve(context.user.id, provider !== null),
 				searchScope(context.user.id, context.reqHeaders.get("x-client-timezone") ?? undefined),
 			]);
 			if (!webAccessService.canSearch(connection !== null)) throw new ORPCError("SEARCH_UNAVAILABLE", { status: 503 });
@@ -234,6 +248,20 @@ export const aiRouter = {
 					signal,
 					...scope,
 					locale: context.locale,
+					...(provider && usage
+						? {
+								fallbackSearch: async (query: string, region: string | undefined, requestSignal: AbortSignal) => {
+									await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
+									return nativeSearch({
+										...provider,
+										usage,
+										query,
+										region,
+										signal: requestSignal,
+									});
+								},
+							}
+						: {}),
 				});
 			} catch (error) {
 				signal?.throwIfAborted();

@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import z from "zod";
 import { AGENT_ATTACHMENT_TYPES } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
@@ -492,7 +493,18 @@ export function MemoryNote({ knowledge }: { knowledge: boolean }) {
 	);
 }
 
+/** A failed configured service can still be retried through an explicitly approved native AI search. */
+export function useWebSearch(provider: RouterOutput["aiProviders"]["list"][number] | undefined) {
+	const status = useQuery(orpc.webAccess.status.queryOptions());
+	const failure = status.data?.testResult?.search.error;
+	const eligible = !!provider && supportsNativeWebSearch(provider) && (failure === "auth" || failure === "quota");
+	const capabilities = useQuery({ ...orpc.ai.capabilities.queryOptions(), enabled: eligible });
+	const fallbackLabel = eligible && capabilities.data?.nativeWebSearch === 1 ? provider.label : undefined;
+	return { status, canSearch: status.data?.search === true || !!fallbackLabel, fallbackLabel };
+}
+
 type WebResearchChipProps = {
+	fallbackLabel?: string | undefined;
 	status: { data?: { search: boolean } | undefined; isPending: boolean; isError: boolean; refetch: () => unknown };
 	pressed: boolean;
 	onPressedChange: (pressed: boolean) => void;
@@ -502,14 +514,19 @@ type WebResearchChipProps = {
  * Web research needs a search service. Without one the chip is a way to set it up, not a switch that claims to send
  * searches anywhere; reading links the user pastes doesn't need it.
  */
-export function WebResearchChip({ status, pressed, onPressedChange }: WebResearchChipProps) {
-	if (status.data?.search)
+export function WebResearchChip({ status, pressed, onPressedChange, fallbackLabel }: WebResearchChipProps) {
+	const nativeSearchLabel = fallbackLabel ?? "";
+	if (status.data?.search || fallbackLabel)
 		return (
 			<ContextChip
 				pressed={pressed}
 				onPressedChange={onPressedChange}
 				label={t`Web research`}
-				tooltip={t`Lets the coach search public pages through your web search service`}
+				tooltip={
+					fallbackLabel
+						? t`Retry with ${nativeSearchLabel}`
+						: t`Lets the coach search public pages through your web search service`
+				}
 				offIcon="globe-hemisphere-west"
 			/>
 		);

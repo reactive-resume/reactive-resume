@@ -6224,6 +6224,10 @@ msgstr "Agar internetga kirish ishlatilsa, qidiruv soʻzlari serveringiz qidiruv
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Agar vebga kirish ishlatilsa, qidiruv so'zlari serveringizning qidiruv xizmatiga va u foydalanadigan qidiruv tizimlariga o'tadi va havolalar o'qilayotgan saytlarga o'tadi."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Veb kirish kalitni rad etsa yoki kvota tugasa, bu sun’iy intellekt ulanishi o‘z qidiruv xizmati orqali qidiruvni takrorlashi mumkin. Bu qo‘shimcha sun’iy intellekt so‘rovlari va to‘lovlarga sabab bo‘lishi mumkin."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "E'tibor bermaslik"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Veb kirish kalitni rad etsa yoki kvota tugasa, bu sun’iy intellekt ulanishiga faqat qidiruv so‘rovingiz va qidiruv mamlakatlari yuboriladi. Hujjatlar, Bilim va ishga ariza konteksti qo‘shilmaydi. Provayder qidiruvi pulli bo‘lishi mumkin."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Qayta saqlashga harakat qiling"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel} bilan qayta urinish"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Bu server faqat fayl havolalarini eksport qiladi. Yuklangan fayllarni ha
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Bu server ilova uchun juda eski. Administratoringizdan uni yangilashini so'rang."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Bu server yoki sun’iy intellekt ulanishi provayderning o‘z veb qidiruvini qo‘llab-quvvatlamaydi."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Bu server siz kiritgan manzildan boshqa manzil haqida xabar beradi. U foydalanadigan manzilni kiriting yoki administratoringizdan so'rang."
@@ -14588,6 +14604,7 @@ msgstr "Vebga kirish sozlamalarini saqlab boʻlmadi yoki yuklanmadi."
 msgid "Web page"
 msgstr "Veb-sahifa"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Veb-tadqiqot"

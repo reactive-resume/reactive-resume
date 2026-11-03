@@ -4,7 +4,7 @@ import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { Alert } from "react-native";
 import { aiConfiguredModels, aiModelForTask, aiTaskForOperation } from "@reactive-resume/ai/task-models";
-import { aiDestination, NO_AI_DESTINATION } from "@reactive-resume/ai/types";
+import { aiDestination, NO_AI_DESTINATION, supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { getAccountScope, getServer } from "@/auth/session";
 
 type ConsentApi = Pick<typeof client, "aiProviders" | "agent" | "webAccess" | "applications" | "ai">;
@@ -18,7 +18,7 @@ export async function authorizeAiRequest(
 	api: ConsentApi,
 	scope: string | null,
 	signal?: AbortSignal,
-): Promise<{ aiDestination?: string; webDestination?: string } | undefined> {
+): Promise<{ aiDestination?: string; webDestination?: string; nativeSearchFallback?: boolean } | undefined> {
 	const operation = path.join(".");
 	const fields = input && typeof input === "object" ? (input as Record<string, unknown>) : {};
 	const scheduled = operation === "career.saveSchedule" && fields.enabled !== false && fields.kind !== "follow-up";
@@ -51,7 +51,11 @@ export async function authorizeAiRequest(
 		if (!scope || getAccountScope() !== scope) throw new Error(t`The account changed. Try again.`);
 	};
 	current();
-	const webOnly = operation === "applications.ai.searchPostings" || (scheduled && fields.kind === "discovery");
+	const nativeSearchRequested =
+		operation === "applications.ai.searchPostings" && typeof fields.aiProviderId === "string";
+	const webOnly =
+		(operation === "applications.ai.searchPostings" && !nativeSearchRequested) ||
+		(scheduled && fields.kind === "discovery");
 	const optionalAi = operation === "applications.ai.parsePosting";
 	const voiceKind =
 		operation === "career.voice.speak"
@@ -102,6 +106,18 @@ export async function authorizeAiRequest(
 		(!provider || fields.providerId !== provider.id || fields.recipientVersion !== provider.recipientVersion)
 	)
 		throw new Error(t`Your AI settings changed while you were deciding. Nothing was sent; try again.`);
+	const messageContext =
+		fields.context && typeof fields.context === "object" ? (fields.context as Record<string, unknown>) : {};
+	const eligibleForNativeSearch =
+		provider && supportsNativeWebSearch(provider) && (nativeSearchRequested || (chat && messageContext.web !== false));
+	const nativeCapabilities = eligibleForNativeSearch ? await api.ai.capabilities({}, options).catch(() => null) : null;
+	const nativeSearchFallback = eligibleForNativeSearch && nativeCapabilities?.nativeWebSearch === 1;
+	if (nativeSearchRequested && !nativeSearchFallback)
+		throw new Error(t`This server or AI connection doesn't support native web search.`);
+	const nativeSearchNotice =
+		nativeSearchFallback && chat
+			? t`If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges.`
+			: "";
 	const task = aiTaskForOperation(operation);
 	const disclosedModel = provider
 		? (voice?.model ??
@@ -129,21 +145,23 @@ export async function authorizeAiRequest(
 	const server = getServer();
 	const data = webOnly
 		? t`Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted.`
-		: operation === "career.suggestTargetRoles"
-			? t`Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded.`
-			: !provider
-				? optionalAi
-					? t`The posting text or retrieved page. Links also go to the reader and the site being read.`
-					: t`Your search terms and public links go through your server to the selected web services and sites. No AI provider is used.`
-				: rebind
-					? t`Earlier messages and attachments in this conversation will be sent to this destination when you send again.`
-					: connectionTest
-						? t`Your server sends a test prompt and the saved API key to this provider.`
-						: operation === "career.voice.transcribe"
-							? t`Only your recording is sent to this transcription model. The returned transcript is saved to your account.`
-							: operation === "career.voice.speak"
-								? t`Only the text to read aloud is sent to this speech model.`
-								: t`Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information.`;
+		: operation === "applications.ai.searchPostings"
+			? t`Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge.`
+			: operation === "career.suggestTargetRoles"
+				? t`Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded.`
+				: !provider
+					? optionalAi
+						? t`The posting text or retrieved page. Links also go to the reader and the site being read.`
+						: t`Your search terms and public links go through your server to the selected web services and sites. No AI provider is used.`
+					: rebind
+						? t`Earlier messages and attachments in this conversation will be sent to this destination when you send again.`
+						: connectionTest
+							? t`Your server sends a test prompt and the saved API key to this provider.`
+							: operation === "career.voice.transcribe"
+								? t`Only your recording is sent to this transcription model. The returned transcript is saved to your account.`
+								: operation === "career.voice.speak"
+									? t`Only the text to read aloud is sent to this speech model.`
+									: t`Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information.`;
 	// Older servers leave `searxng` out. With it, searches go to the server's SearXNG and only reading uses the connection.
 	const reader = webStatus?.provider;
 	const webNotice =
@@ -167,7 +185,7 @@ export async function authorizeAiRequest(
 		const allowed = await new Promise<boolean>((resolve) => {
 			Alert.alert(
 				provider ? t`Share data with ${provider.label}?` : t`Use web access?`,
-				`${t`Server`}: ${server}\n${t`Provider`}: ${destination}\n\n${data}\n\n${webNotice}\n${scheduleNotice}\n${t`Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available.`}`,
+				`${t`Server`}: ${server}\n${t`Provider`}: ${destination}\n\n${data}\n\n${webNotice}\n${nativeSearchNotice}\n${scheduleNotice}\n${t`Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available.`}`,
 				[
 					{ text: t`Don't share`, style: "cancel", onPress: () => resolve(false) },
 					{ text: scheduled ? t`Allow scheduled sharing` : t`Allow this operation`, onPress: () => resolve(true) },
@@ -187,6 +205,7 @@ export async function authorizeAiRequest(
 			throw new Error(t`Your web settings changed. Nothing was sent; try again.`);
 		return {
 			aiDestination: provider ? aiDestination(provider, voice) : NO_AI_DESTINATION,
+			...(nativeSearchFallback ? { nativeSearchFallback: true } : {}),
 			...(webStatus ? { webDestination: webStatus.revision } : {}),
 		};
 	});

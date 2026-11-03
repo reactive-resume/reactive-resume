@@ -22,6 +22,7 @@ export type ClientContext = {
 	bound?: boolean;
 	aiDestination?: string;
 	webDestination?: string;
+	nativeSearchFallback?: boolean;
 };
 
 const getRpcUrl = () => `${window.location.origin}/api/rpc`;
@@ -30,6 +31,7 @@ const headers = ({ context }: { context: ClientContext }) => ({
 	...(context.accountId ? { "x-account-id": context.accountId } : {}),
 	...(context.aiDestination ? { "x-ai-destination": context.aiDestination } : {}),
 	...(context.webDestination ? { "x-web-destination": context.webDestination } : {}),
+	...(context.nativeSearchFallback ? { "x-ai-native-search": "1" } : {}),
 });
 
 export const client: RouterClient<typeof router, ClientContext> = createORPCClient(
@@ -43,7 +45,8 @@ export const client: RouterClient<typeof router, ClientContext> = createORPCClie
 				groups: [{ condition: () => true, context: {} }],
 				// A consent-scoped AI call and an explicitly bound call must each keep their own request envelope.
 				exclude: ({ context }) =>
-					context.bound === true || Boolean(context.defer || context.aiDestination || context.webDestination),
+					context.bound === true ||
+					Boolean(context.defer || context.aiDestination || context.webDestination || context.nativeSearchFallback),
 			}),
 		],
 		interceptors: [

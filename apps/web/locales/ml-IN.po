@@ -7966,6 +7966,10 @@ msgstr "ആപ്പ് തുറന്നില്ലെങ്കിൽ, അത
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "വെബ് ആക്സസ് കീ നിരസിക്കുകയോ ക്വോട്ട തീരുകയോ ചെയ്താൽ, ഈ AI കണക്ഷൻ സ്വന്തം തിരയൽ സേവനത്തിലൂടെ വീണ്ടും തിരഞ്ഞേക്കാം. ഇത് അധിക AI അഭ്യർത്ഥനകൾക്കും നിരക്കുകൾക്കും കാരണമായേക്കാം."
+
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -11131,6 +11135,10 @@ msgstr "നിങ്ങൾ മാത്രം, നിങ്ങൾ അത് പ�
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "വെബ് ആക്സസ് കീ നിരസിക്കുകയോ ക്വോട്ട തീരുകയോ ചെയ്താൽ, നിങ്ങളുടെ തിരയൽ ചോദ്യവും തിരയേണ്ട രാജ്യങ്ങളും മാത്രമാണ് ഈ AI കണക്ഷനിലേക്ക് അയയ്ക്കുന്നത്. രേഖകളോ അറിവോ ജോലി അപേക്ഷയുടെ പശ്ചാത്തലമോ ചേർക്കില്ല. ദാതാവിന്റെ തിരയലിന് നിരക്ക് ഈടാക്കിയേക്കാം."
+
 #: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "ഓൺസൈറ്റ്"
@@ -13489,6 +13497,11 @@ msgstr ""
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry saving"
 msgstr "സംരക്ഷിക്കാൻ വീണ്ടും ശ്രമിക്കുക"
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel} ഉപയോഗിച്ച് വീണ്ടും ശ്രമിക്കുക"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
@@ -16889,6 +16902,10 @@ msgstr "ഈ സെർവർ ഫയൽ റഫറൻസുകൾ മാത്ര�
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "ഈ സെർവർ പുതിയ അക്കൗണ്ടുകൾ സ്വീകരിക്കുന്നില്ല. നിലവിലുള്ള ഒരു അക്കൗണ്ട് ഉപയോഗിച്ച് സൈൻ ഇൻ ചെയ്യുക."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "ഈ സെർവറോ AI കണക്ഷനോ ദാതാവിന്റെ സ്വന്തം വെബ് തിരയലിനെ പിന്തുണയ്ക്കുന്നില്ല."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "ഈ സർവർ സാധാരണ ഘട്ടങ്ങൾ ഉപയോഗിക്കുന്നതിനാൽ ഫയലിലെ ഘട്ടങ്ങളുടെ പേരുകൾ നിലനിർത്തില്ല."
@@ -18094,6 +18111,7 @@ msgstr "വെബ് പേജ്"
 msgid "Web page preview"
 msgstr "വെബ് പേജ് പ്രിവ്യൂ"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "വെബ് ഗവേഷണം"

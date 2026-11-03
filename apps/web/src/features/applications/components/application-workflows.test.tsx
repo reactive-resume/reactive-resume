@@ -24,6 +24,7 @@ const api = vi.hoisted(() => ({
 	moveWithUndo: vi.fn(),
 	searchPostings: vi.fn(),
 	webStatus: vi.fn(),
+	capabilities: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => vi.fn(),
@@ -32,6 +33,7 @@ vi.mock("@tanstack/react-router", () => ({
 vi.mock("@/libs/orpc/client", () => ({
 	client: { applications: { findPosting: api.findPosting, ai: { parsePosting: api.parsePosting } } },
 	orpc: {
+		ai: { capabilities: { queryOptions: () => ({ queryKey: ["capabilities"], queryFn: api.capabilities }) } },
 		applications: {
 			lanes: {
 				get: {
@@ -135,6 +137,7 @@ const mount = (children: ReactNode) => {
 };
 beforeEach(() => {
 	vi.clearAllMocks();
+	api.capabilities.mockResolvedValue({ nativeWebSearch: 1 });
 	sessionStorage.clear();
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	api.confirm.mockResolvedValue(true);
@@ -172,6 +175,40 @@ it("refreshes a rejected search connection in place without losing the query", a
 	await waitFor(() =>
 		expect((screen.getByRole("button", { name: /^Search$/ }) as HTMLButtonElement).disabled).toBe(true),
 	);
+});
+
+it("keeps native-search recovery after declining approval without dropping authored data", async () => {
+	const connection = { search: true, provider: "firecrawl", managed: false, canSave: true, searxng: false };
+	api.webStatus.mockResolvedValue(connection);
+	api.searchPostings
+		.mockImplementationOnce(async () => {
+			api.webStatus.mockResolvedValue({
+				...connection,
+				search: false,
+				testResult: { search: { success: false, error: "auth" } },
+			});
+			throw new ORPCError("SEARCH_AUTH");
+		})
+		.mockRejectedValueOnce(new DOMException("Declined", "AbortError"))
+		.mockResolvedValueOnce([
+			{ url: "https://jobs.example.com/design-engineer", title: "Fictional role", description: "" },
+		]);
+	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	fireEvent.change(await screen.findByRole("textbox", { name: "Search job postings" }), {
+		target: { value: "Fictional engineer" },
+	});
+	fireEvent.change(screen.getByRole("textbox", { name: "Role" }), { target: { value: "Authored role" } });
+	fireEvent.click(screen.getByRole("button", { name: /^Search$/ }));
+	fireEvent.click(await screen.findByRole("button", { name: "Retry with Fictional provider" }));
+	await screen.findByText("Declined");
+	await waitFor(() => expect(api.searchPostings).toHaveBeenCalledTimes(2));
+	const retry = await screen.findByRole("button", { name: "Retry with Fictional provider" });
+	await waitFor(() => expect(retry).not.toBeDisabled());
+	fireEvent.click(retry);
+	await screen.findByText("Fictional role");
+	expect(screen.getByRole("textbox", { name: "Search job postings" })).toHaveValue("Fictional engineer");
+	expect(screen.getByRole("textbox", { name: "Role" })).toHaveValue("Authored role");
+	expect(api.searchPostings.mock.calls[2]?.[0]).toEqual({ query: "Fictional engineer", aiProviderId: "local" });
 });
 
 it("removes hidden closed applications from bulk selection before deleting visible rows", async () => {

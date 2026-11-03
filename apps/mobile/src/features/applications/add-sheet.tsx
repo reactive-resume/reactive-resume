@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
+import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { readPastedPostingHeader } from "@reactive-resume/import/job-posting";
 import { postingReadReceipt } from "@reactive-resume/schema/applications/posting-source";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
@@ -119,6 +120,20 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 	const [busy, setBusy] = useState<"read" | "fill" | "search" | "save" | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [searchFailure, setSearchFailure] = useState<string>();
+	const nativeSearchFailure = searchFailure ?? web.data?.testResult?.search?.error;
+	const nativeOptions = orpc.ai.capabilities.queryOptions();
+	const nativeCapabilities = useQuery({
+		...nativeOptions,
+		queryKey: [...nativeOptions.queryKey, session.server],
+		enabled: nativeSearchFailure === "auth" || nativeSearchFailure === "quota",
+	});
+	const nativeSearchProvider =
+		providers.defaultProvider &&
+		supportsNativeWebSearch(providers.defaultProvider) &&
+		nativeCapabilities.data?.nativeWebSearch === 1
+			? providers.defaultProvider
+			: undefined;
+	const nativeSearchLabel = nativeSearchProvider?.label ?? "";
 	const lock = useRef(false);
 	const active = useRef(true);
 	const controller = useRef<AbortController | null>(null);
@@ -202,15 +217,18 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 			setLocation((value) => (authored.current.has("location") ? value : result.location));
 			setSalary((value) => (authored.current.has("salary") ? value : result.salary));
 		});
-	const search = () =>
+	const search = (aiProviderId?: string) =>
 		void run("search", async (signal) => {
 			setResults(null);
 			if (!current(signal)) return;
 			const result = await client.applications.ai.searchPostings(
-				{ query: query.trim() },
+				{ query: query.trim(), ...(aiProviderId ? { aiProviderId } : {}) },
 				{ signal, context: { scope: accountScope ?? undefined } },
 			);
-			if (current(signal)) setResults(result);
+			if (current(signal)) {
+				setResults(result);
+				void web.refetch();
+			}
 		});
 	const changeInput = (value: string) => {
 		setInput(value);
@@ -575,8 +593,16 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 								label={t`Search`}
 								loading={busy === "search"}
 								disabled={!!busy || query.trim().length < 2 || !web.data?.search}
-								onPress={search}
+								onPress={() => search()}
 							/>
+							{(nativeSearchFailure === "auth" || nativeSearchFailure === "quota") && nativeSearchProvider && (
+								<Button
+									label={t`Retry with ${nativeSearchLabel}`}
+									variant="secondary"
+									disabled={!!busy || query.trim().length < 2}
+									onPress={() => search(nativeSearchProvider.id)}
+								/>
+							)}
 							{results?.length === 0 && <Text>{t`No postings found. Try different keywords.`}</Text>}
 							{results?.map((result) => (
 								<ListRow

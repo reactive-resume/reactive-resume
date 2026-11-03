@@ -6224,6 +6224,10 @@ msgstr "Ако се използва уеб достъп, думите за тъ
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Ако се използва уеб достъп, думите за търсене отиват към услугата за търсене на вашия сървър и търсачките, които използва, а връзките отиват към сайтовете, които се четат."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Ако уеб достъпът отхвърли ключа или квотата е изчерпана, тази AI връзка може да повтори търсенето със собствената си услуга. Това може да доведе до допълнителни AI заявки и такси."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Игнорирайте"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Ако уеб достъпът отхвърли ключа или квотата е изчерпана, към тази AI връзка се изпращат само заявката и държавите за търсене. Не се добавят документи, Знания или контекст на кандидатури. Доставчикът може да таксува търсенето."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Повторен опит за запазване"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Опитайте отново с {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Този сървър експортира само препратки �
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Този сървър е твърде стар за приложението. Помолете вашия администратор да го актуализира."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Този сървър или AI връзка не поддържа собственото уеб търсене на доставчика."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Този сървър отчита адрес, различен от този, който сте въвели. Въведете адреса, който използва, или попитайте вашия администратор."
@@ -14588,6 +14604,7 @@ msgstr "Настройките за уеб достъп не можаха да �
 msgid "Web page"
 msgstr "Уеб страница"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Уеб проучване"

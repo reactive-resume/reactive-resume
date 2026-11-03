@@ -48,6 +48,8 @@ Besides what the tools return, each message can include:
 
 Search through `search_web` comes from the server's SearXNG when the operator set one up, otherwise from a selected **Web access** connection, regardless of which AI provider you use. Only one search mechanism is offered per reply. Reading a supplied link uses `read_page`; built-in reading needs no commercial web account.
 
+After explicit sharing approval, `search_web` can retry an authentication or quota failure through the selected direct OpenAI, Anthropic or Google Gemini connection’s native search. The same approved query and country are used, with no additional document or Knowledge context. Only retrieved URL sources become results; generated prose links do not. Models can refuse native search, and custom endpoints or compatible gateways are excluded. AI fallback requests are included in [AI usage](/guides/using-ai#see-your-ai-usage). Other failures and cancellation do not trigger it.
+
 Without a web connection, the assistant can choose `read_page` to fetch a supplied public URL with the built-in reader. If the page cannot be read, paste the relevant text. The AI model does not fetch page content from a URL alone.
 
 The source list combines successful search/read results, deduplicates links, and survives reopening the conversation. Links invented in the reply text are not added as retrieved sources. Failed or interrupted web tools show that outcome; they do not show a successful search. Existing conversations retain source evidence from historical native searches.

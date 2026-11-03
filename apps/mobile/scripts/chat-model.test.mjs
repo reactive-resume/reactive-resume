@@ -5,9 +5,24 @@ import { createRequire } from "node:module";
 import { test } from "node:test";
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const react = { createElement: (type, props, ...children) => ({ type, props: { ...props, children } }) };
+let webStatus;
+let nativeCapability;
+const aiTypes = { exports: {} };
+new Function(
+	"module",
+	"exports",
+	buildSync({
+		entryPoints: [new URL("../../../packages/ai/src/types.ts", import.meta.url).pathname],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text,
+)(aiTypes, aiTypes.exports);
 const mocks = {
+	"@reactive-resume/ai/types": aiTypes.exports,
 	"@lingui/react/macro": {
 		useLingui: () => ({ t: (parts, ...values) => parts.reduce((s, part, i) => s + part + (values[i] ?? ""), "") }),
 	},
@@ -16,14 +31,21 @@ const mocks = {
 			(task === "capable" ? provider.capableModel : provider.fastModel) ?? provider.model,
 	},
 	"@orpc/client": {},
-	"@tanstack/react-query": {},
+	"@tanstack/react-query": {
+		useQuery: ({ queryKey }) => ({ data: queryKey[0] === "web" ? webStatus : nativeCapability }),
+	},
 	"expo-router": {},
 	react,
 	"react-native": { Pressable: "Pressable" },
 	"./chat": {},
 	"./chat-view": {},
-	"@/api/client": {},
-	"@/auth/session": {},
+	"@/api/client": {
+		orpc: {
+			webAccess: { status: { queryOptions: () => ({ queryKey: ["web"] }), key: () => ["web"] } },
+			ai: { capabilities: { queryOptions: () => ({ queryKey: ["capabilities"] }) } },
+		},
+	},
+	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "https://fictional.example.test" }) },
 	"@/features/ai/providers": {},
 	"@/features/ai/web-access": {},
 	"@/routes": {},
@@ -49,7 +71,7 @@ new Function(
 	module,
 	module.exports,
 );
-const { ModelButton } = module.exports;
+const { ModelButton, useWebSearch } = module.exports;
 
 test("native chat model control names the selected connection and model, retaining a missing-connection fallback", () => {
 	for (const [current, expected] of [
@@ -66,5 +88,25 @@ test("native chat model control names the selected connection and model, retaini
 		assert.equal(control.props.accessibilityLabel, `Model: ${expected}`);
 		control.props.onPress();
 		assert.equal(opens, 1);
+	}
+});
+
+test("native Coach retains approved fallback after auth/quota failure, without enabling unsupported destinations", () => {
+	for (const [search, failure, provider, capability, expected] of [
+		[true, undefined, undefined, undefined, true],
+		[false, "auth", { provider: "openai" }, 1, true],
+		[false, "quota", { provider: "anthropic" }, 1, true],
+		[false, "auth", { provider: "gemini" }, 1, true],
+		[false, "auth", { provider: "openai", baseURL: "https://proxy.example.test/v1" }, 1, false],
+		[false, "auth", { provider: "openai-compatible" }, 1, false],
+		[false, "auth", { provider: "openai" }, undefined, false],
+		[false, "auth", undefined, 1, false],
+		[false, "rate-limit", { provider: "openai" }, 1, false],
+		[false, "unreachable", { provider: "openai" }, 1, false],
+		[false, undefined, { provider: "openai" }, 1, false],
+	]) {
+		webStatus = { search, testResult: { search: { error: failure } } };
+		nativeCapability = { nativeWebSearch: capability };
+		assert.equal(useWebSearch(provider).canSearch, expected, JSON.stringify({ search, failure, provider, capability }));
 	}
 });
