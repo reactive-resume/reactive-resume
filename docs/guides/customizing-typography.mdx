@@ -86,6 +86,15 @@ If you set an exact body line height or **Vertical spacing** in Advanced that do
 
 The list contains Google Fonts plus the PDF standard fonts Helvetica, Courier and Times-Roman. Fonts for Chinese, Japanese, Korean, Arabic, Hebrew, Thai, Indic scripts (such as Devanagari, Bengali, Tamil and Telugu), Amharic and Khmer text are included, and missing characters fall back to a matching Noto font so they still print.
 
+If none of the available fonts can draw a character, the PDF shows a question mark and leaves room for it so the following text stays readable. The export warning names the missing character. Your saved text stays unchanged, so you can choose another font or edit the character and export again.
+
+<Frame caption="An unavailable symbol prints as a question mark without overlapping the following text">
+  <img
+    src="/images/guides/customizing-typography/font-replacement.png"
+    alt="Fictional Avery Morgan resume with three question marks in place of unavailable symbols and readable text after them"
+  />
+</Frame>
+
 ### Exact typography settings
 
 **Advanced → Typography** has the same fields for **Body** and **Heading**, plus one **Hyphenation** switch for both:

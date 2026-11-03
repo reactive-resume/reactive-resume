@@ -1,10 +1,12 @@
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { execFileSync } from "node:child_process";
 import { expect, it } from "vite-plus/test";
 import * as forme from "@formepdf/core";
-import { act } from "react";
+import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { createResumePdfFile } from "../server";
-import { lostCharacters, renderResume } from "./render";
+import { Document, Page, Text } from "./primitives";
+import { lostCharacters, renderResume, renderResumeElement } from "./render";
 
 function summaryResume(html: string, font = "Noto Sans", locale = "en-US") {
 	const data = structuredClone(defaultResumeData);
@@ -57,11 +59,51 @@ it.each(["span", "em", "a"])(
 	},
 );
 
-it('exports characters no font can draw as "?" and names them', { timeout: 60_000 }, async () => {
-	expect(await exportText("<p>Unsupported \u{10FFFF}</p>")).toContain("Unsupported ?");
-	const result = await act(() => renderResume(forme, { data: summaryResume("<p>Unsupported \u{10FFFF}</p>") }));
-	expect(lostCharacters(result.warnings)).toEqual([expect.stringContaining("U+10FFFF")]);
-});
+it(
+	'measures the "?" it draws for unsupported characters, retaining their warning and authored text',
+	{ timeout: 60_000 },
+	async () => {
+		const html = "<p>Before \u{10FFFF}\u{10FFFF}\u{10FFFF} AFTER</p>";
+		const data = summaryResume(html, "IBM Plex Serif");
+		const result = await act(() => renderResume(forme, { data }));
+		const bbox = execFileSync("pdftotext", ["-bbox", "-", "-"], { input: result.pdf, encoding: "utf8" });
+		const replacementEnd = Number(bbox.match(/<word[^>]*xMax="([\d.]+)"[^>]*>\?\?\?<\/word>/)?.[1]);
+		const followingStart = Number(bbox.match(/<word xMin="([\d.]+)"[^>]*>AFTER<\/word>/)?.[1]);
+		expect(replacementEnd).toBeGreaterThan(0);
+		expect(followingStart).toBeGreaterThan(replacementEnd);
+		expect(lostCharacters(result.warnings)).toEqual([expect.stringContaining("U+10FFFF")]);
+		expect(data.summary.content).toBe(html);
+	},
+);
+
+type MixedFontsProps = { data: ResumeData };
+
+function MixedFonts({ data }: MixedFontsProps) {
+	return createElement(
+		Document,
+		null,
+		createElement(
+			Page,
+			null,
+			createElement(Text, { style: { fontFamily: "Helvetica" } }, `Before ${data.basics.name} AFTER`),
+			createElement(Text, { style: { fontFamily: "STIX Two Text" } }, data.basics.name),
+		),
+	);
+}
+
+it(
+	"preserves a character supported by another text's font when repairing its unsupported occurrence",
+	{ timeout: 60_000 },
+	async () => {
+		const data = summaryResume("", "STIX Two Text");
+		data.basics.name = "∕";
+		const result = await act(() => renderResumeElement(forme, createElement(MixedFonts, { data })));
+		const text = execFileSync("pdftotext", ["-", "-"], { input: result.pdf, encoding: "utf8" });
+		expect(text).toContain("Before ? AFTER");
+		expect(text).toContain("∕");
+		expect(lostCharacters(result.warnings)).toEqual([expect.stringContaining("U+2215")]);
+	},
+);
 
 it.each([
 	["अमित शर्मा", "hi-IN"],
