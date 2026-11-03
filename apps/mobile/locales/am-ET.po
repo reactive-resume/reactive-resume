@@ -2448,8 +2448,9 @@ msgstr "ከመመለሱ በፊት"
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Before restoring “{0}”"
-msgstr ""
+msgstr "“{0}” ከመመለሱ በፊት"
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -2537,6 +2538,7 @@ msgstr "በገጽ ላይ የተቀመጠውን ቋንቋ በመጠቀም ረዣ�
 msgid "Briefing"
 msgstr "አጭር መግለጫ"
 
+#: src/features/career/prepare-now.tsx
 #: src/features/career/today.tsx
 msgid "Briefing ready"
 msgstr "አጭር መግለጫው ዝግጁ ነው"
@@ -3595,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "ጥያቄውን ማጠናቀቅ አልተቻለም። ግንኙነትዎን ይፈትሹ እና እንደገና ይሞክሩ።"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "ይህን እርምጃ ማጠናቀቅ አልተቻለም። እንደገና ይሞክሩ።"
@@ -3945,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "ያንን ለውጥ ማስቀመጥ አልተቻለም። ግንኙነትዎን አረጋግጠው እንደገና ይሞክሩ።"
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "ያንን ለውጥ ማስቀመጥ አልተቻለም። እንደገና ይሞክሩ።"
 
@@ -4676,6 +4681,10 @@ msgstr "የተለያዩ ምንዛሬዎች ወይም የክፍያ ጊዜዎች�
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "አቅጣጫ"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "አስወግድ"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5761,10 @@ msgstr "የቅጽ መልስ"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "የቅጽ ጥያቄዎች (አማራጭ)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "በመቅረጽ ላይ"
@@ -5820,6 +5833,10 @@ msgstr "ሙሉ ስም"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "ሙሉ ስፋት"
+
+#: src/features/career/prepare-now.tsx
+msgid "Generate briefing now"
+msgstr "አሁን የቃለ መጠይቅ መግለጫ ፍጠር"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
@@ -6606,6 +6623,10 @@ msgstr "ሶፍትዌር የትኛውን እንደሚጠቀም መገመት እ�
 msgid "Keep access when you are not using the application."
 msgstr "መተግበሪያውን በማይጠቀሙበት ጊዜ መዳረሻዎን ይቀጥሉ።"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "መልሱን አስቀምጥ"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6659,10 @@ msgstr "ታማኝ ይሁኑ"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "ብዙ ጊዜ ምስሎችን በማስወገድ ወይም በማጥበብ ከ2.5 ሜባ በታች ያድርጉት።"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "ደብዳቤውን አስቀምጥ"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6988,7 @@ msgid "Letter body"
 msgstr "የደብዳቤ አካል"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "የደብዳቤ ረቂቅ"
 
@@ -8179,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "ምንም አርትዖቶች የሉም"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "ማስተካከያዎች አልተጠቆሙም።"
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "ምንም የትምህርት ክፍል አልተገኘም።"
@@ -8858,6 +8888,10 @@ msgstr "በአካል"
 msgid "Open"
 msgstr "ክፈት"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "የAI ረዳትን ክፈት"
+
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
@@ -9478,6 +9512,10 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "ተለማመድ"
 
+#: src/features/career/prepare-now.tsx
+msgid "Practice {count} questions"
+msgstr "{count} ጥያቄዎችን ተለማመድ"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "ሌላ ጥያቄ ተለማመድ"
@@ -9485,6 +9523,10 @@ msgstr "ሌላ ጥያቄ ተለማመድ"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "ለ{company} ቃለ መጠይቆችዎ ይለማመዱ።"
+
+#: src/features/career/prepare-now.tsx
+msgid "Practice in {company}’s workspace"
+msgstr "በ{company} የሥራ ቦታ ውስጥ ተለማመድ"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
@@ -9531,8 +9573,17 @@ msgid "Prepare a resume"
 msgstr "የትምህርት ማስረጃ ያዘጋጁ"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "ማመልከቻ ያዘጋጁ"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "ለግምገማ ረቂቆችን አዘጋጅ"
+
+#: src/features/career/prepare-now.tsx
+msgid "Prepare for {company}"
+msgstr "ለ{company} ተዘጋጅ"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9605,11 @@ msgstr "ወደ ውጭ መላክን በማዘጋጀት ላይ…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "ፋይል በማዘጋጀት ላይ…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "በማዘጋጀት ላይ…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9758,10 @@ msgstr "የሂደት አሞሌ"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "ፕሮጀክቶች"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "የሲቪ ነጥብ ጠቁም"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10571,14 +10631,16 @@ msgstr ""
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”"
 msgstr "\"{0}\" ወደነበረበት ተመልሷል"
 
 #. placeholder {0}: selected.name
 #. placeholder {1}: selected.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
-msgstr ""
+msgstr "“{0}” ተመልሷል. የቀድሞ ሁኔታዎ እንደ ““{1}” ከመመለሱ በፊት” ተቀምጧል።"
 
 #. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
@@ -10665,6 +10727,10 @@ msgstr "የየስራ ልምድ ማስረጃ ገፅ {0}"
 #: src/features/documents/thumbnail.tsx
 msgid "Resume preview"
 msgstr "የየስራ ልምድ ማስረጃ ቅድመ እይታ"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "የሲቪ ጥቆማዎች"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
@@ -10862,6 +10928,10 @@ msgstr "የሚያስፈልጉ የቅጽ መልሶችን ይገምግሙ፣ ያ�
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "የሕይወት ታሪክ እውነታዎችን ክለስ"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "የማስማማት ጥቆማዎችን፣ የደብዳቤ ረቂቅን እና መልሶችን አብረው ይገምግሙ። ለቀጣሪው ምንም አይላክም።"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11711,10 @@ msgstr "ወደ {0} ተልኳል።"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "ጥያቄዎችን በባዶ መስመር ይለዩ። እስከ አምስት ጥያቄዎች፣ እያንዳንዱ 2,000 ቁምፊዎች።"
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "ሰርቢኛ"
@@ -11793,6 +11867,18 @@ msgstr "በ… አጋራ"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "ሲቪ እና የሥራ ማስታወቂያ ብቻ ይጋራሉ። እውቀት፣ የግል ማስታወሻዎች እና የድር መዳረሻ አይካተቱም። ከመቀበልዎ በፊት ጥቆማዎችን ይገምግሙ፤ ዋናው አይቀየርም።"
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "የተመረጠው የእውቀት መግለጫ፣ ሲቪ እና የሥራ ማስታወቂያ ብቻ ይጋራሉ። ሌላ እውቀት፣ የግል ማስታወሻዎች እና የድር መዳረሻ አይካተቱም። ከመቀበልዎ በፊት ነጥቡን ይገምግሙ።"
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "ሲቪ፣ የሥራ ማስታወቂያ እና የተለጠፉ ጥያቄዎች ይጋራሉ። የመልስ ረቂቆች ደብዳቤዎን፣ የሙያ ምርጫዎችን፣ የማመልከቻ ማስታወሻዎችን እና እውቂያዎችን፣ እንዲሁም ንቁ የእውቀት እውነታዎችን እና ታሪኮችን ይጠቀማሉ። አውዱ ሊጠቃለል ይችላል። የድር መዳረሻ ጠፍቷል። ከማስቀመጥዎ በፊት ይገምግሙ፤ ምንም አይቀርብም።"
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12273,10 @@ msgstr "አንዳንድ ቁምፊዎች መሳል አልተቻለም፡ {0}። �
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "አንዳንድ ቁምፊዎችን መስራት አልተቻለም። ወደ ውጭ ከመላክዎ በፊት ገጹን ያረጋግጡ።"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "አንዳንድ ረቂቆች አልተጠናቀቁም። እንደገና ከመሞከርዎ በፊት የተጠናቀቁትን ረቂቆች ያስቀምጡ።"
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "አንዳንድ ፊደላት ከዚህ ፋይል ውጭ ትርጉም የላቸውም።"
@@ -12486,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "ተወ"
 
@@ -12902,6 +12994,7 @@ msgstr "መለያው ተቀይሯል። እንደገና ይሞክሩ።"
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "አድራሻው በነጠላ ሰረዞች (-) የተለዩ የላቲን ፊደላትን (a–z) እና ቁጥሮችን ብቻ መያዝ አለበት።"
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -13454,6 +13547,10 @@ msgstr "የዚህ ፋይል መጠን ሊነበብ አልቻለም። ሌላ PDF
 #: src/features/documents/new-document.tsx
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr "የዚህን ፋይል ጽሑፍ ከገባው ይዘት ጋር ማነጻጸር አልተቻለም፣ ስለዚህ የቀሩ መስመሮች አልተዘረዘሩም። በአርታዒው ውስጥ እያንዳንዱን ክፍል ከፋይልዎ ጋር ያነጻጽሩ።"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "This interview is unavailable."
+msgstr "ይህ ቃለ መጠይቅ አይገኝም።"
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -14014,6 +14111,7 @@ msgstr "አገናኞችን አስምር"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

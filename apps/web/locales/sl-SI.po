@@ -3054,7 +3054,7 @@ msgstr "Pred obnovitvijo"
 #. placeholder {0}: version.name
 #: src/features/resume/share/format.ts
 msgid "Before restoring “{0}”"
-msgstr ""
+msgstr "Pred obnovitvijo »{0}«"
 
 #: src/features/applications/interviews.ts
 msgid "Behavioral"
@@ -3148,6 +3148,7 @@ msgstr "Prelomi dolge besede med zloge z uporabo jezika, nastavljenega v strani.
 msgid "Briefing"
 msgstr "Povzetek"
 
+#: src/features/career/prepare-now.tsx
 #: src/features/career/today.tsx
 msgid "Briefing ready"
 msgstr "Povzetek je pripravljen"
@@ -4533,6 +4534,11 @@ msgstr ""
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Couldn't complete this action. Try again."
+msgstr "Tega dejanja ni bilo mogoče dokončati. Poskusite znova."
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -4963,6 +4969,7 @@ msgstr "Te spremembe ni bilo mogoče shraniti. Preverite povezavo in poskusite z
 #: src/features/assistant/use-attachment-removal.ts
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Te spremembe ni bilo mogoče shraniti. poskusi ponovno"
@@ -5908,6 +5915,7 @@ msgid "Digit {position} of {total}"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "Discard"
 msgstr "Zavrzi"
 
@@ -7306,6 +7314,10 @@ msgstr "Odgovor v obrazcu"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Vprašanja obrazca (neobvezno)"
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Format"
 msgstr "Oblika"
@@ -7456,6 +7468,10 @@ msgstr "Polno ime"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Full width"
 msgstr "Polna širina"
+
+#: src/features/career/prepare-now.tsx
+msgid "Generate briefing now"
+msgstr "Ustvari povzetek priprav zdaj"
 
 #: src/features/settings/account/backup-codes.tsx
 msgid "Generate new codes"
@@ -8526,6 +8542,10 @@ msgstr "Ohranite dostop, ko aplikacije ne uporabljate."
 msgid "Keep account"
 msgstr "Obdrži račun"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Obdrži odgovor"
+
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Keep application"
@@ -8565,6 +8585,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Ohranite ga pod 2,5 MB, običajno z odstranitvijo ali zmanjšanjem slik."
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Obdrži pismo"
 
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -8980,6 +9004,7 @@ msgid "Letter details"
 msgstr "Podrobnosti pisma"
 
 #: src/features/ai/usage.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Osnutek pisma"
 
@@ -10357,6 +10382,10 @@ msgstr ""
 msgid "no edits"
 msgstr "brez urejanj"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Ni predlaganih sprememb."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Razdelka za izobrazbo ni bilo mogoče najti."
@@ -11152,6 +11181,10 @@ msgstr "Odpri"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Open {title}"
 msgstr "Odprite {title}"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Odpri pomočnika UI"
 
 #: src/features/applications/components/list-view.tsx
 msgid "Open application"
@@ -11955,6 +11988,10 @@ msgstr "Vadi"
 msgid "Practice · Your opening, about 40 seconds aloud"
 msgstr "Vadba · Vaš uvod, približno 40 sekund na glas"
 
+#: src/features/career/prepare-now.tsx
+msgid "Practice {count} questions"
+msgstr "Vadite {count} vprašanja"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Practice another question"
 msgstr "Vadi drugo vprašanje"
@@ -11972,6 +12009,10 @@ msgstr ""
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "Vaja za vaše intervjuje pri podjetju {company}."
+
+#: src/features/career/prepare-now.tsx
+msgid "Practice in {company}’s workspace"
+msgstr "Vadite v delovnem prostoru podjetja {company}"
 
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
@@ -12037,6 +12078,18 @@ msgstr "Pripravi povzetek"
 msgid "Prepare a resume"
 msgstr "Pripravite življenjepis"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Prepare application"
+msgstr "Pripravite aplikacijo"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Pripravi osnutke za pregled"
+
+#: src/features/career/prepare-now.tsx
+msgid "Prepare for {company}"
+msgstr "Pripravite se na {company}"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "Pripravi me na razgovor"
@@ -12053,6 +12106,8 @@ msgstr "Priprava popravkov …"
 msgid "Preparing resume for printing…"
 msgstr "Pripravljanje življenjepisa za tisk…"
 
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 msgid "Preparing…"
 msgstr "Priprava ..."
@@ -12226,6 +12281,10 @@ msgstr "Projekti"
 #: src/features/homepage/hero.tsx
 msgid "Promoted to lead, 2021"
 msgstr "Napredovan v vodjo, 2021"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Predlagaj alinejo življenjepisa"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -13293,7 +13352,7 @@ msgstr "Obnovljeno »{0}«"
 #. placeholder {1}: version.name
 #: src/features/resume/share/history-tab.tsx
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
-msgstr ""
+msgstr "»{0}« obnovljena. Prejšnje stanje je shranjeno kot “Pred obnovitvijo »{1}«”."
 
 #. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/document-actions.tsx
@@ -13426,6 +13485,10 @@ msgstr "stran z življenjepisom"
 #: src/features/resume/preview/pdf-canvas.tsx
 msgid "Resume page {pageNumber} of {totalPages}"
 msgstr "Stran življenjepisa {pageNumber} od {totalPages}"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Predlogi za življenjepis"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -13572,6 +13635,10 @@ msgstr "Preglej dejstva iz življenjepisa"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Review saved version"
 msgstr ""
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Skupaj preglejte prilagoditve, pismo in odgovore. Delodajalcu se nič ne pošlje."
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Review target roles in Knowledge"
@@ -14565,6 +14632,10 @@ msgstr "Poslano na {0}"
 msgid "Sent to Lumen"
 msgstr "Poslano Lumnu"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Vprašanja ločite s prazno vrstico. Največ pet vprašanj po 2000 znakov."
+
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "srbščina"
@@ -14686,6 +14757,18 @@ msgstr "Delite prek ..."
 #: src/features/documents/document-actions.tsx
 msgid "Share…"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Deli le življenjepis in oglas. Znanje, zasebne opombe in spletni dostop so izključeni. Pred sprejemom preglejte predloge; izvirnik ostane nespremenjen."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Deli le izbrano trditev iz Znanja, življenjepis in oglas. Drugo znanje, zasebne opombe in spletni dostop so izključeni. Pred sprejemom preglejte alinejo."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Deli življenjepis, oglas in prilepljena vprašanja. Osnutki odgovorov uporabljajo tudi pismo, karierne želje, opombe in stike prijave ter aktivna dejstva in zgodbe iz Znanja. Kontekst se lahko skrajša. Spletni dostop je izklopljen. Pred shranjevanjem preglejte; nič se ne odda."
 
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
@@ -15134,6 +15217,10 @@ msgstr "Nekateri znaki se prikažejo kot vprašaji."
 msgid "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
 msgstr "Nekatera preverjanja potrebujejo podatke, ki jih ta datoteka ne nosi: vsebino strani, ki je ni bilo mogoče pregledati, ali besedilo v jeziku, ki ga ta preverjanja ne pokrivajo. Ne štejejo niti kot uspeh niti kot neuspeh."
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Nekaterih osnutkov ni bilo mogoče dokončati. Pred ponovnim poskusom obdržite dokončane osnutke."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Nekateri znaki nimajo pomena zunaj te datoteke."
@@ -15483,6 +15570,8 @@ msgstr ""
 
 #: src/features/assistant/chat-chrome.tsx
 #: src/features/career/shared.tsx
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Stop"
@@ -16075,6 +16164,7 @@ msgid "The AI provider rejected the saved key. Check the key in Settings, or cha
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
 
@@ -16681,6 +16771,10 @@ msgstr "Ta datoteka uporablja pisave Type 3, ki namesto znakov vsebujejo risbe."
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr ""
+
+#: src/features/career/workspace/practise.tsx
+msgid "This interview is unavailable."
+msgstr "Ta razgovor ni na voljo."
 
 #. placeholder {0}: view.resumeName
 #: src/features/feedback/review-page.tsx
@@ -17399,6 +17493,7 @@ msgstr "Podčrtaj povezave"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/career/workspace/messages.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
 #: src/features/resume/builder/undo-toast.ts

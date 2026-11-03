@@ -43,6 +43,7 @@ import { CollapseRow, Swap, withUndo, GenerateNotice, Working, workingSteps } fr
 import { AnswerLibrary } from "./answer-library";
 import { AiNotice } from "./fit";
 import { Preparation } from "./preparation";
+import { PrepareReview } from "./prepare-review";
 import { SentDocuments } from "@/features/applications/components/detail/sent-documents";
 import { useInvalidateApplications } from "@/features/applications/use-application-actions";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
@@ -202,7 +203,10 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 					{hasApplicationSubmission(application) ? (
 						<SentDocuments application={application} disabled={submitting} variant="workspace" />
 					) : (
-						<Preparation key={application.id} application={application} disabled={submitting} />
+						<>
+							<Preparation key={application.id} application={application} disabled={submitting} />
+							<PrepareReview key={`review:${application.id}`} application={application} disabled={submitting} />
+						</>
 					)}
 				</div>
 			)}

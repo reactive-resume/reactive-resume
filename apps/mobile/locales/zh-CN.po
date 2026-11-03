@@ -2448,8 +2448,9 @@ msgstr "恢复前"
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Before restoring “{0}”"
-msgstr ""
+msgstr "恢复“{0}”之前"
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -2537,6 +2538,7 @@ msgstr "使用 Page 中设置的语言在音节之间断开长单词。"
 msgid "Briefing"
 msgstr "简报"
 
+#: src/features/career/prepare-now.tsx
 #: src/features/career/today.tsx
 msgid "Briefing ready"
 msgstr "简报已就绪"
@@ -3595,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "无法完成请求。请检查网络连接后重试。"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "无法完成此操作。再试一次。"
@@ -3945,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "无法保存该更改。请检查网络连接后重试。"
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "无法保存该更改。再试一次。"
 
@@ -4676,6 +4681,10 @@ msgstr "不同的货币或支付周期。不计算金钱差额。"
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "方向"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "放弃"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5761,10 @@ msgstr "表单回答"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "表单问题（可选）"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "格式化"
@@ -5820,6 +5833,10 @@ msgstr "姓名"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "全宽"
+
+#: src/features/career/prepare-now.tsx
+msgid "Generate briefing now"
+msgstr "立即生成面试准备摘要"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
@@ -6606,6 +6623,10 @@ msgstr "只保留一个地址，这样软件就不用猜该用哪一个。"
 msgid "Keep access when you are not using the application."
 msgstr "在你未使用该应用时保持访问权限。"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "保留回答"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6659,10 @@ msgstr "保持诚实"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "将文件控制在 2.5 MB 以内，通常可通过移除或缩小图片实现。"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "保留求职信"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6988,7 @@ msgid "Letter body"
 msgstr "信体"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "信件草稿"
 
@@ -8179,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "没有编辑"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "未提出修改建议。"
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "未找到教育经历部分。"
@@ -8858,6 +8888,10 @@ msgstr "现场面试"
 msgid "Open"
 msgstr "打开"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "打开 AI 助手"
+
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
@@ -9478,6 +9512,10 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "练习"
 
+#: src/features/career/prepare-now.tsx
+msgid "Practice {count} questions"
+msgstr "练习 {count} 个问题"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "练习另一个问题"
@@ -9485,6 +9523,10 @@ msgstr "练习另一个问题"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "为您在 {company} 的面试做练习。"
+
+#: src/features/career/prepare-now.tsx
+msgid "Practice in {company}’s workspace"
+msgstr "在 {company} 的工作区练习"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
@@ -9531,8 +9573,17 @@ msgid "Prepare a resume"
 msgstr "准备一份简历"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "准备求职申请"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "准备草稿以供审阅"
+
+#: src/features/career/prepare-now.tsx
+msgid "Prepare for {company}"
+msgstr "为 {company} 做好准备"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9605,11 @@ msgstr "正在准备导出…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "正在准备文件…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "正在准备……"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9758,10 @@ msgstr "进度条"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "项目"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "建议一条简历要点"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10571,14 +10631,16 @@ msgstr ""
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”"
 msgstr "恢复“{0}”"
 
 #. placeholder {0}: selected.name
 #. placeholder {1}: selected.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
-msgstr ""
+msgstr "已恢复“{0}”. 之前的状态已保存为“恢复“{1}”之前”。"
 
 #. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
@@ -10665,6 +10727,10 @@ msgstr "简历页 {0}"
 #: src/features/documents/thumbnail.tsx
 msgid "Resume preview"
 msgstr "简历预览"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "简历修改建议"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
@@ -10862,6 +10928,10 @@ msgstr "检查必填的表单回答，删除没有依据的陈述。"
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "审核简历事实"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "一起审阅定制建议、求职信草稿和回答。不会向雇主提交任何内容。"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11711,10 @@ msgstr "发送至{0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "用空行分隔问题。最多五个问题，每个不超过 2,000 字符。"
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "塞尔维亚语"
@@ -11793,6 +11867,18 @@ msgstr "分享通过..."
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "仅分享简历和招聘信息。不包含知识库、私人笔记和网页访问。接受前请审阅建议，原件保持不变。"
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "仅分享选中的知识库陈述、简历和招聘信息。不包含其他知识、私人笔记和网页访问。接受前请审阅要点。"
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "分享简历、招聘信息和粘贴的问题。回答草稿还会使用求职信、职业偏好、申请笔记和联系人，以及知识库中启用的事实和经历。上下文可能被节选。网页访问已关闭。保存前请审阅，不会提交任何内容。"
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12273,10 @@ msgstr "无法绘制某些字符：{0}。请在“设计”中选择其他字体
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "某些字符无法呈现。导出前请检查页面。"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "部分草稿未能完成。重试前请保留已完成的草稿。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "有些字形脱离这份文件后就没有意义了。"
@@ -12486,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "停止"
 
@@ -12902,6 +12994,7 @@ msgstr "账户变了。再试一次。"
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "地址只能包含拉丁字母 a–z和数字，并用单个短划线分隔。"
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -13454,6 +13547,10 @@ msgstr "无法读取该文件的大小。选择另一个PDF。"
 #: src/features/documents/new-document.tsx
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr "无法将此文件的文本与导入的内容进行比较，因此未列出遗漏的行。请在编辑器中将每个部分与原文件进行核对。"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "This interview is unavailable."
+msgstr "此面试不可用。"
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -14014,6 +14111,7 @@ msgstr "下划线链接"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

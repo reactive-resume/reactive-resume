@@ -2448,8 +2448,9 @@ msgstr "Преди възстановяване"
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Before restoring “{0}”"
-msgstr ""
+msgstr "Преди възстановяването на „{0}“"
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -2537,6 +2538,7 @@ msgstr "Разделя дълги думи между срички, използ
 msgid "Briefing"
 msgstr "Брифинг"
 
+#: src/features/career/prepare-now.tsx
 #: src/features/career/today.tsx
 msgid "Briefing ready"
 msgstr "Брифингът е готов"
@@ -3595,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Заявката не можа да бъде изпълнена. Проверете връзката си и опитайте отново."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Това действие не можа да бъде завършено. Опитайте отново."
@@ -3945,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Промяната не можа да бъде запазена. Проверете връзката си и опитайте отново."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Тази промяна не можа да бъде запазена. Опитайте отново."
 
@@ -4676,6 +4681,10 @@ msgstr "Различни валути или периоди на плащане.
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Посока"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Изхвърлете"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5761,10 @@ msgstr "Отговор във формуляр"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Въпроси от формуляра (по избор)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Форматиране"
@@ -5820,6 +5833,10 @@ msgstr "Пълно име"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "Пълна ширина"
+
+#: src/features/career/prepare-now.tsx
+msgid "Generate briefing now"
+msgstr "Генериране на подготовка сега"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
@@ -6606,6 +6623,10 @@ msgstr "Използвайте един-единствен адрес, за да
 msgid "Keep access when you are not using the application."
 msgstr "Запазете достъп, когато не използвате приложението."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Запази отговора"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6659,10 @@ msgstr "Бъдете честни"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Дръжте го под 2.5 MB, обикновено чрез премахване или намаляване на изображенията."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Запази писмото"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6988,7 @@ msgid "Letter body"
 msgstr "Тяло на писмото"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Чернова на писмо"
 
@@ -8179,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "без редакции"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Няма предложени промени."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Не бе открит раздел „Education“."
@@ -8858,6 +8888,10 @@ msgstr "На място"
 msgid "Open"
 msgstr "Отвори"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Отвори AI асистента"
+
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
@@ -9478,6 +9512,10 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "Упражнение"
 
+#: src/features/career/prepare-now.tsx
+msgid "Practice {count} questions"
+msgstr "Упражнете {count} въпроса"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "Упражнете друг въпрос"
@@ -9485,6 +9523,10 @@ msgstr "Упражнете друг въпрос"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "Упражнения за интервютата ви в {company}."
+
+#: src/features/career/prepare-now.tsx
+msgid "Practice in {company}’s workspace"
+msgstr "Упражнявайте се в работното пространство на {company}"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
@@ -9531,8 +9573,17 @@ msgid "Prepare a resume"
 msgstr "Подгответе резюме"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Подгответе приложение"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Подготви чернови за преглед"
+
+#: src/features/career/prepare-now.tsx
+msgid "Prepare for {company}"
+msgstr "Подгответе се за {company}"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9605,11 @@ msgstr "Подготвя се експорт…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Файлът се подготвя…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Подготвя се..."
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9758,10 @@ msgstr "Лента за напредък"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Проекти"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Предложи точка за автобиографията"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10571,14 +10631,16 @@ msgstr ""
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”"
 msgstr "Възстановено „{0}“"
 
 #. placeholder {0}: selected.name
 #. placeholder {1}: selected.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
-msgstr ""
+msgstr "Възстановено „{0}“. Предишното ви състояние е запазено като “Преди възстановяването на „{1}“”."
 
 #. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
@@ -10665,6 +10727,10 @@ msgstr "Страница {0} на автобиографията"
 #: src/features/documents/thumbnail.tsx
 msgid "Resume preview"
 msgstr "Преглед на автобиографията"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Предложения за автобиографията"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
@@ -10862,6 +10928,10 @@ msgstr "Прегледайте задължителните отговори в�
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Преглед на фактите от автобиографията"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Прегледай заедно предложенията за адаптиране, писмото и отговорите. Нищо не се изпраща на работодателя."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11711,10 @@ msgstr "Изпратено до {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Разделяй въпросите с празен ред. До пет въпроса с по 2000 знака."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Сръбски"
@@ -11793,6 +11867,18 @@ msgstr "Споделете чрез..."
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Споделя само автобиографията и обявата. Знанията, личните бележки и уеб достъпът са изключени. Прегледай предложенията преди приемане; оригиналът остава непроменен."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Споделя само избраното твърдение от Знания, автобиографията и обявата. Другите знания, личните бележки и уеб достъпът са изключени. Прегледай точката преди приемане."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Споделя автобиографията, обявата и поставените въпроси. Черновите на отговори използват и писмото, кариерните предпочитания, бележките и контактите на кандидатурата и активните факти и истории от Знания. Контекстът може да е съкратен. Уеб достъпът е изключен. Прегледай преди запазване; нищо не се изпраща."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12273,10 @@ msgstr "Някои символи не могат да бъдат начерта
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Някои символи не могат да бъдат изобразени. Проверете страницата, преди да експортирате."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Някои чернови не бяха завършени. Запази готовите чернови преди нов опит."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Някои глифи нямат значение извън този файл."
@@ -12486,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Спрете"
 
@@ -12902,6 +12994,7 @@ msgstr "Сметката е променена. Опитайте отново."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Адресът трябва да съдържа само латински букви a–z и цифри, разделени с единични тирета."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -13454,6 +13547,10 @@ msgstr "Размерът на този файл не може да бъде пр
 #: src/features/documents/new-document.tsx
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr "Текстът на този файл не може да бъде сравнен с импортираното съдържание, затова пропуснатите редове не са изброени. Сравнете всеки раздел с файла си в редактора."
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "This interview is unavailable."
+msgstr "Това интервю не е налично."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -14014,6 +14111,7 @@ msgstr "Подчертайте връзките"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

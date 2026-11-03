@@ -107,7 +107,10 @@ export async function authorizeAiRequest(
 		const destination = provider ? aiDestination(provider, voice) : NO_AI_DESTINATION;
 		const web =
 			nativeSearchFallback ||
-			path[0] === "applications" ||
+			(path[0] === "applications" &&
+				!["applications.ai.prepare", "applications.ai.proposeEvidence", "applications.ai.tailorResume"].includes(
+					operation,
+				)) ||
 			scheduled ||
 			(chat &&
 				fields.context &&
@@ -117,33 +120,43 @@ export async function authorizeAiRequest(
 		const access = web ? await api.webAccess.status({}, options) : null;
 		if (webOnly && !access?.search)
 			throw new Error(t`Set up web search in Settings before enabling discovery. AI is not required.`);
-		const data = webOnly
-			? t`Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted.`
-			: operation === "career.suggestTargetRoles"
-				? t`Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded.`
-				: voice?.kind === "speech"
-					? t`Only the text to read aloud is sent to this speech model.`
-					: voice?.kind === "transcription"
-						? t`Only your recording is sent to this transcription model. The returned transcript is saved to your account.`
-						: test
-							? t`A test prompt and saved API key.`
-							: rebind
-								? t`Earlier messages and attachments in this conversation will be sent to this destination when you send again.`
-								: operation === "ai.improve"
-									? t`The selected line, surrounding field text, and your rewrite instructions.`
-									: operation === "ai.parsePdf"
-										? t`The complete PDF file.`
-										: operation === "ai.parseDocx"
-											? t`The Word document's text.`
-											: operation === "ai.atsReview"
-												? t`Your resume text, selected passages, and check findings.`
-												: operation === "applications.ai.parsePosting"
-													? t`The posting text or retrieved page. Links also go to the reader and the site being read.`
-													: operation === "applications.ai.searchPostings"
-														? t`Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge.`
-														: operation === "coverLetters.draft"
-															? t`The selected resume and this letter's recipient and posting information.`
-															: t`Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action.`;
+		const reviewData =
+			operation === "applications.ai.prepare"
+				? t`Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted.`
+				: operation === "applications.ai.proposeEvidence"
+					? t`Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting.`
+					: operation === "applications.ai.tailorResume"
+						? t`Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged.`
+						: null;
+		const data =
+			reviewData ??
+			(webOnly
+				? t`Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted.`
+				: operation === "career.suggestTargetRoles"
+					? t`Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded.`
+					: voice?.kind === "speech"
+						? t`Only the text to read aloud is sent to this speech model.`
+						: voice?.kind === "transcription"
+							? t`Only your recording is sent to this transcription model. The returned transcript is saved to your account.`
+							: test
+								? t`A test prompt and saved API key.`
+								: rebind
+									? t`Earlier messages and attachments in this conversation will be sent to this destination when you send again.`
+									: operation === "ai.improve"
+										? t`The selected line, surrounding field text, and your rewrite instructions.`
+										: operation === "ai.parsePdf"
+											? t`The complete PDF file.`
+											: operation === "ai.parseDocx"
+												? t`The Word document's text.`
+												: operation === "ai.atsReview"
+													? t`Your resume text, selected passages, and check findings.`
+													: operation === "applications.ai.parsePosting"
+														? t`The posting text or retrieved page. Links also go to the reader and the site being read.`
+														: operation === "applications.ai.searchPostings"
+															? t`Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge.`
+															: operation === "coverLetters.draft"
+																? t`The selected resume and this letter's recipient and posting information.`
+																: t`Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action.`);
 		if ((await api.auth.getProfile({}, options)).id !== accountId) throw new Error(t`The account changed. Try again.`);
 		signal?.throwIfAborted();
 		const reader = access?.provider;
@@ -158,7 +171,13 @@ export async function authorizeAiRequest(
 		const task = aiTaskForOperation(operation);
 		const disclosedModel = provider
 			? (voice?.model ??
-				(test ? aiConfiguredModels(provider).join(", ") : task ? aiModelForTask(provider, task) : provider.model))
+				(test
+					? aiConfiguredModels(provider).join(", ")
+					: operation === "applications.ai.prepare"
+						? [...new Set([provider.model, aiModelForTask(provider, "capable")])].join(", ")
+						: task
+							? aiModelForTask(provider, task)
+							: provider.model))
 			: "";
 		const allowed = await confirmOperation(provider ? t`Share data with ${provider.label}?` : t`Use web access?`, {
 			description: `${provider ? `${provider.label} · ${disclosedModel} · ${provider.baseURL ?? provider.provider}` : t`No AI provider is used for this operation.`}\n\n${data}\n\n${webNotice} ${nativeSearchNotice} ${scheduled ? t`This allows recurring processing until you turn the schedule off.` : ""} ${t`Provider retention follows its own policy. Your provider may charge for this request.`}`,

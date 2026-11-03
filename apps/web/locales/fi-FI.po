@@ -3054,7 +3054,7 @@ msgstr "Ennen palautusta"
 #. placeholder {0}: version.name
 #: src/features/resume/share/format.ts
 msgid "Before restoring “{0}”"
-msgstr ""
+msgstr "Ennen version ”{0}” palauttamista"
 
 #: src/features/applications/interviews.ts
 msgid "Behavioral"
@@ -3148,6 +3148,7 @@ msgstr "Katkaisee pitkiä sanoja tavujen väliin käyttämällä Page-kohdassa a
 msgid "Briefing"
 msgstr "Muistio"
 
+#: src/features/career/prepare-now.tsx
 #: src/features/career/today.tsx
 msgid "Briefing ready"
 msgstr "Muistio valmis"
@@ -4533,6 +4534,11 @@ msgstr ""
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Couldn't complete this action. Try again."
+msgstr "Tätä toimintoa ei voitu suorittaa. Yritä uudelleen."
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -4963,6 +4969,7 @@ msgstr "Muutosta ei voitu tallentaa. Tarkista yhteytesi ja yritä uudelleen."
 #: src/features/assistant/use-attachment-removal.ts
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Muutosta ei voitu tallentaa. Yritä uudelleen."
@@ -5908,6 +5915,7 @@ msgid "Digit {position} of {total}"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "Discard"
 msgstr "Hylkää"
 
@@ -7306,6 +7314,10 @@ msgstr "Lomakevastaus"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Lomakekysymykset (valinnainen)"
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Format"
 msgstr "Muoto"
@@ -7456,6 +7468,10 @@ msgstr "Koko nimi"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Full width"
 msgstr "Täysi leveys"
+
+#: src/features/career/prepare-now.tsx
+msgid "Generate briefing now"
+msgstr "Luo valmistautumiskooste nyt"
 
 #: src/features/settings/account/backup-codes.tsx
 msgid "Generate new codes"
@@ -8526,6 +8542,10 @@ msgstr "Säilyttää käyttöoikeuden, kun et käytä sovellusta."
 msgid "Keep account"
 msgstr "Pidä tili"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Säilytä vastaus"
+
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Keep application"
@@ -8565,6 +8585,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Pidä se alle 2,5 megatavun, yleensä poistamalla tai pienentämällä kuvia."
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Säilytä kirje"
 
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -8980,6 +9004,7 @@ msgid "Letter details"
 msgstr "Kirjeen yksityiskohdat"
 
 #: src/features/ai/usage.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Kirjeluonnos"
 
@@ -10357,6 +10382,10 @@ msgstr ""
 msgid "no edits"
 msgstr "ei muokkauksia"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Ei muutosehdotuksia."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Koulutusosiota ei löytynyt."
@@ -11152,6 +11181,10 @@ msgstr "Avaa"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Open {title}"
 msgstr "Avaa {title}"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Avaa tekoälyavustaja"
 
 #: src/features/applications/components/list-view.tsx
 msgid "Open application"
@@ -11955,6 +11988,10 @@ msgstr "Harjoittele"
 msgid "Practice · Your opening, about 40 seconds aloud"
 msgstr "Harjoittelu · Avauksesi, noin 40 sekuntia ääneen"
 
+#: src/features/career/prepare-now.tsx
+msgid "Practice {count} questions"
+msgstr "Harjoittele {count} kysymystä"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Practice another question"
 msgstr "Harjoittele toista kysymystä"
@@ -11972,6 +12009,10 @@ msgstr ""
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "Harjoitusta yrityksen {company} haastatteluihin."
+
+#: src/features/career/prepare-now.tsx
+msgid "Practice in {company}’s workspace"
+msgstr "Harjoittele yrityksen {company} työtilassa"
 
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
@@ -12037,6 +12078,18 @@ msgstr "Valmistele muistio"
 msgid "Prepare a resume"
 msgstr "Valmistele ansioluettelo"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Prepare application"
+msgstr "Valmistele hakemus"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Valmistele luonnokset tarkistettaviksi"
+
+#: src/features/career/prepare-now.tsx
+msgid "Prepare for {company}"
+msgstr "Valmistaudu yritystä {company} varten"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "Valmista minut haastatteluun"
@@ -12053,6 +12106,8 @@ msgstr "Muokkauksia valmistellaan…"
 msgid "Preparing resume for printing…"
 msgstr "Valmistellaan ansioluetteloa tulostusta varten…"
 
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 msgid "Preparing…"
 msgstr "Valmistellaan…"
@@ -12226,6 +12281,10 @@ msgstr "Projektit"
 #: src/features/homepage/hero.tsx
 msgid "Promoted to lead, 2021"
 msgstr "Ylennettiin johtajaksi, 2021"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Ehdota ansioluettelon kohtaa"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -13293,7 +13352,7 @@ msgstr "Palautettu \"{0}\""
 #. placeholder {1}: version.name
 #: src/features/resume/share/history-tab.tsx
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
-msgstr ""
+msgstr "”{0}” palautettu. Aiempi tila on tallennettu nimellä “Ennen version ”{1}” palauttamista”."
 
 #. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/document-actions.tsx
@@ -13426,6 +13485,10 @@ msgstr "ansioluettelosivu"
 #: src/features/resume/preview/pdf-canvas.tsx
 msgid "Resume page {pageNumber} of {totalPages}"
 msgstr "Ansioluettelon sivu {pageNumber}/{totalPages}"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Ansioluetteloehdotukset"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -13572,6 +13635,10 @@ msgstr "Tarkista ansioluettelon tiedot"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Review saved version"
 msgstr ""
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Tarkista muokkausehdotukset, kirje ja vastaukset yhdessä. Työnantajalle ei lähetetä mitään."
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Review target roles in Knowledge"
@@ -14565,6 +14632,10 @@ msgstr "Lähetetty numeroon {0}"
 msgid "Sent to Lumen"
 msgstr "Lähetetty Lumenille"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Erota kysymykset tyhjällä rivillä. Enintään viisi kysymystä, kussakin 2 000 merkkiä."
+
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "serbia"
@@ -14686,6 +14757,18 @@ msgstr "Jaa…"
 #: src/features/documents/document-actions.tsx
 msgid "Share…"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Jakaa vain ansioluettelon ja työpaikkailmoituksen. Tietopohja, yksityiset muistiinpanot ja verkkoyhteys eivät sisälly. Tarkista ehdotukset ennen hyväksymistä; alkuperäinen ei muutu."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Jakaa vain valitun Tietopohjan tiedon, ansioluettelon ja työpaikkailmoituksen. Muu tietopohja, yksityiset muistiinpanot ja verkkoyhteys eivät sisälly. Tarkista kohta ennen hyväksymistä."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Jakaa ansioluettelon, työpaikkailmoituksen ja liitetyt kysymykset. Vastausluonnokset käyttävät myös kirjettä, uratoiveita, hakemuksen muistiinpanoja ja yhteystietoja sekä Tietopohjan käytössä olevia tietoja ja tarinoita. Kontekstia voidaan lyhentää. Verkkoyhteys on pois päältä. Tarkista ennen tallentamista; mitään ei lähetetä."
 
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
@@ -15134,6 +15217,10 @@ msgstr "Osa merkeistä muuttuu kysymysmerkeiksi."
 msgid "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
 msgstr "Jotkin tarkistukset tarvitsevat tietoa, jota tämä tiedosto ei sisällä: sivujen sisältöä, jota ei voitu tutkia, tai tekstiä kielellä, jota nämä tarkistukset eivät kata. Ne eivät ole hyväksyttyjä eivätkä hylättyjä."
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Joitakin luonnoksia ei voitu viimeistellä. Säilytä valmiit luonnokset ennen uutta yritystä."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Osalla glyfeistä ei ole merkitystä tämän tiedoston ulkopuolella."
@@ -15483,6 +15570,8 @@ msgstr ""
 
 #: src/features/assistant/chat-chrome.tsx
 #: src/features/career/shared.tsx
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Stop"
@@ -16075,6 +16164,7 @@ msgid "The AI provider rejected the saved key. Check the key in Settings, or cha
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
 
@@ -16681,6 +16771,10 @@ msgstr "Tämä tiedosto käyttää Type 3 -fontteja, jotka sisältävät piirrok
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr ""
+
+#: src/features/career/workspace/practise.tsx
+msgid "This interview is unavailable."
+msgstr "Tämä haastattelu ei ole saatavilla."
 
 #. placeholder {0}: view.resumeName
 #: src/features/feedback/review-page.tsx
@@ -17399,6 +17493,7 @@ msgstr "Alleviivaa linkit"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/career/workspace/messages.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
 #: src/features/resume/builder/undo-toast.ts

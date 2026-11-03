@@ -2448,8 +2448,9 @@ msgstr "Geri yüklemeden önce"
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Before restoring “{0}”"
-msgstr ""
+msgstr "“{0}” geri yüklenmeden önce"
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -2537,6 +2538,7 @@ msgstr "Page'de ayarlanan dili kullanarak uzun kelimeleri heceler arasında böl
 msgid "Briefing"
 msgstr "Brifing"
 
+#: src/features/career/prepare-now.tsx
 #: src/features/career/today.tsx
 msgid "Briefing ready"
 msgstr "Brifing hazır"
@@ -3595,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "İstek tamamlanamadı. Bağlantınızı kontrol edip tekrar deneyin."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Bu işlem tamamlanamadı. Tekrar deneyin."
@@ -3945,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Bu değişiklik kaydedilemedi. İnternet bağlantınızı kontrol edip tekrar deneyin."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Bu değişiklik kaydedilemedi. Tekrar deneyin."
 
@@ -4676,6 +4681,10 @@ msgstr "Farklı para birimleri veya ödeme dönemleri. Para farkı hesaplanmaz."
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Yön"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "At"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5761,10 @@ msgstr "Form yanıtı"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Form soruları (isteğe bağlı)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Biçimlendirme"
@@ -5820,6 +5833,10 @@ msgstr "Ad Soyad"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "Tam genişlik"
+
+#: src/features/career/prepare-now.tsx
+msgid "Generate briefing now"
+msgstr "Hazırlık özetini şimdi oluştur"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
@@ -6606,6 +6623,10 @@ msgstr "Tek bir adres tutun, böylece yazılımın hangisini kullanacağını ta
 msgid "Keep access when you are not using the application."
 msgstr "Uygulamayı kullanmadığınız zamanlarda erişime devam edin."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Yanıtı sakla"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6659,10 @@ msgstr "Dürüst kalın"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Genellikle görselleri kaldırarak veya küçülterek 2,5 MB'ın altında tutun."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Mektubu sakla"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6988,7 @@ msgid "Letter body"
 msgstr "Mektup gövdesi"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Mektup taslağı"
 
@@ -8179,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "düzenleme yok"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Düzenleme önerilmedi."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Eğitim bölümü bulunamadı."
@@ -8858,6 +8888,10 @@ msgstr "Yüz yüze"
 msgid "Open"
 msgstr "Aç"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Yapay zekâ asistanını aç"
+
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
@@ -9478,6 +9512,10 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "Pratik"
 
+#: src/features/career/prepare-now.tsx
+msgid "Practice {count} questions"
+msgstr "{count} soruyla pratik yap"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "Başka bir soruyla pratik yap"
@@ -9485,6 +9523,10 @@ msgstr "Başka bir soruyla pratik yap"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "{company} görüşmeleriniz için pratik."
+
+#: src/features/career/prepare-now.tsx
+msgid "Practice in {company}’s workspace"
+msgstr "{company} çalışma alanında pratik yap"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
@@ -9531,8 +9573,17 @@ msgid "Prepare a resume"
 msgstr "Özgeçmiş hazırlayın"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Başvuruyu hazırlayın"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "İnceleme için taslak hazırla"
+
+#: src/features/career/prepare-now.tsx
+msgid "Prepare for {company}"
+msgstr "{company} için hazırlan"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9605,11 @@ msgstr "Dışa aktarım hazırlanıyor…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Dosya hazırlanıyor…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Hazırlanıyor…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9758,10 @@ msgstr "İlerleme çubuğu"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projeler"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Özgeçmiş maddesi öner"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10571,14 +10631,16 @@ msgstr ""
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”"
 msgstr "“{0}” geri yüklendi"
 
 #. placeholder {0}: selected.name
 #. placeholder {1}: selected.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
-msgstr ""
+msgstr "“{0}” geri yüklendi. Önceki durumunuz ““{1}” geri yüklenmeden önce” olarak kaydedildi."
 
 #. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
@@ -10665,6 +10727,10 @@ msgstr "Özgeçmiş sayfa {0}"
 #: src/features/documents/thumbnail.tsx
 msgid "Resume preview"
 msgstr "Özgeçmiş önizleme"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Özgeçmiş önerileri"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
@@ -10862,6 +10928,10 @@ msgstr "Zorunlu form cevaplarını gözden geçirin ve desteklenmeyen iddiaları
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Özgeçmiş bilgilerini incele"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Uyarlama önerilerini, mektubu ve yanıtları birlikte inceleyin. İşverene hiçbir şey gönderilmez."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11711,10 @@ msgstr "{0} adresine gönderildi"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Soruları boş satırla ayırın. Her biri 2.000 karakter olan en fazla beş soru."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Sırpça"
@@ -11793,6 +11867,18 @@ msgstr "Şununla paylaş:"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Yalnızca özgeçmiş ve ilan paylaşılır. Bilgi, özel notlar ve web erişimi dışarıda tutulur. Kabul etmeden önce önerileri inceleyin; asıl belge değişmez."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Yalnızca seçilen Bilgi ifadesi, özgeçmiş ve ilan paylaşılır. Diğer bilgiler, özel notlar ve web erişimi dışarıda tutulur. Kabul etmeden önce maddeyi inceleyin."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Özgeçmiş, ilan ve yapıştırılan sorular paylaşılır. Yanıt taslakları mektubunuzu, kariyer tercihlerinizi, başvuru notları ve kişilerini, etkin Bilgi olguları ve hikâyelerini de kullanır. Bağlam kısaltılabilir. Web erişimi kapalıdır. Kaydetmeden önce inceleyin; hiçbir şey gönderilmez."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12273,10 @@ msgstr "Bazı karakterler çizilemedi: {0}. Tasarım'da başka bir yazı tipi se
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Bazı karakterler oluşturulamadı. Dışa aktarmadan önce sayfayı kontrol edin."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Bazı taslaklar tamamlanamadı. Yeniden denemeden önce tamamlanan taslakları saklayın."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Bazı glifler bu dosya dışında bir anlam taşımıyor."
@@ -12486,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Durmak"
 
@@ -12902,6 +12994,7 @@ msgstr "Hesap değişti. Tekrar deneyin."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Adres yalnızca Latin harfler (a–z) ve sayılar içermeli, tek tirelerle ayrılmalıdır."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -13454,6 +13547,10 @@ msgstr "Bu dosyanın boyutu okunamadı. Başka bir PDF seçin."
 #: src/features/documents/new-document.tsx
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr "Bu dosyanın metni içe aktarılan içerikle karşılaştırılamadı, bu nedenle atlanan satırlar listelenmiyor. Düzenleyicide her bölümü dosyanızla karşılaştırın."
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "This interview is unavailable."
+msgstr "Bu görüşme kullanılamıyor."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -14014,6 +14111,7 @@ msgstr "Bağlantıların altını çizin"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

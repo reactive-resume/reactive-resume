@@ -264,3 +264,30 @@ it.each([true, false, undefined])(
 		expect(description.includes("This can add AI requests and charges")).toBe(web !== false);
 	},
 );
+
+it("discloses Prepare's complete context and both actual task models once, with no web destination", async () => {
+	vi.mocked(confirmOperation).mockResolvedValue(true);
+	api.aiProviders.list.mockResolvedValue([{ ...provider, fastModel: "unused-fast", capableModel: "capable-model" }]);
+	const approval = await authorizeAiRequest(
+		["applications", "ai", "prepare"],
+		{ id: "job", questions: ["Why?"] },
+		consentApi,
+	);
+	expect(confirmOperation).toHaveBeenCalledTimes(1);
+	const description = vi.mocked(confirmOperation).mock.calls[0]?.[1]?.description ?? "";
+	expect(description).toContain("stub, capable-model");
+	expect(description).toContain("application notes and contacts");
+	expect(description).toContain("enabled Knowledge facts and stories");
+	expect(description).toContain("Web access is off");
+	expect(description).not.toContain("unused-fast");
+	expect(api.webAccess.status).not.toHaveBeenCalled();
+	expect(approval?.webDestination).toBeUndefined();
+});
+it("Fit evidence disclosure does not authorize all Knowledge or private notes", async () => {
+	vi.mocked(confirmOperation).mockResolvedValue(true);
+	await authorizeAiRequest(["applications", "ai", "proposeEvidence"], { id: "job", factId: "selected" }, consentApi);
+	const description = vi.mocked(confirmOperation).mock.calls[0]?.[1]?.description ?? "";
+	expect(description).toContain("Shares only the selected Knowledge statement");
+	expect(description).toContain("Other Knowledge, private notes and web access are excluded");
+	expect(api.webAccess.status).not.toHaveBeenCalled();
+});

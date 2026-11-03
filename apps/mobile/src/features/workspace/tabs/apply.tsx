@@ -33,6 +33,7 @@ import {
 import { answersClipboard, answersDocument, countCharacters, countWords, diffWords, shortLabel } from "../logic";
 import { Actions, AiNotice, Block, CheckRow, SaveError, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { Preparation } from "../preparation";
+import { PrepareReview } from "../prepare-review";
 import { shareText } from "../share";
 import { WorkspaceScreen } from "../shell";
 import { client, orpc, prepareRpc, SessionChangedError } from "@/api/client";
@@ -183,7 +184,10 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 				submitted ? (
 					<WhatYouSent application={application} drafts />
 				) : (
-					<Preparation key={application.id} application={application} disabled={submitting} />
+					<>
+						<Preparation key={application.id} application={application} disabled={submitting} />
+						<PrepareReview key={`review:${application.id}`} application={application} disabled={submitting} />
+					</>
 				)
 			) : null}
 

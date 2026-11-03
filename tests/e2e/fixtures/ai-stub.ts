@@ -85,6 +85,29 @@ const REPLY = {
 /** A tightened form answer that drops one of the user's own sentences. */
 const TIGHTENED = { text: "I led the checkout audit and fixed 48 issues.", factIds: [] };
 
+const BRIEFING = {
+	title: "Fictional Cedar interview preparation",
+	headline: "A focused plan for the fictional round",
+	summary: "Review your own evidence before the conversation.",
+	plan: [
+		{ minutes: 10, title: "Practice your opening", detail: "Use a real example.", action: "practise", storyId: null },
+	],
+	questions: [{ text: "How does the fictional team review reliability?", origin: "Briefing" }],
+	focus: "Explain your contribution clearly.",
+	opening: "I build reliable services and document what I learn.",
+	stories: [],
+	honesty: "Keep unknown results unknown.",
+	storyIds: [],
+	missingStory: null,
+	practiceQuestions: [
+		"Fictional round question one?",
+		"Fictional round question two?",
+		"Fictional round question three?",
+		"Fictional round question four?",
+		"Fictional round question five?",
+	],
+};
+
 async function streamText(response: ServerResponse, words: string[], delayMs = 0) {
 	chunk(response, { role: "assistant", content: "" });
 	for (const word of words) {
@@ -296,7 +319,17 @@ function reply(request: ChatRequest, response: ServerResponse) {
 					},
 					{ passageId: passage.id, text: "A conflicting rewrite.", why: "Conflicts with the first rewrite." },
 				]
-			: [{ passageId: passage.id, text: `${passage.text} (tightened by the stub)`, why: "Leads with the outcome." }];
+			: [
+					{
+						passageId: passage.id,
+						text: said.includes("propose truthful edits")
+							? passage.text.replace(/^Passionate /, "")
+							: `${passage.text} (tightened by the stub)`,
+						why: said.includes("propose truthful edits")
+							? "Removes a generic opening without changing the experience."
+							: "Leads with the outcome.",
+					},
+				];
 		const title = overlapping ? "Overlapping passage edits" : "Tighten the first passage";
 		return streamToolCall(
 			response,
@@ -351,8 +384,9 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 						summary: { ...defaultResumeData.summary, content: "<p>Built fictional reliable services.</p>" },
 					}
 				: null;
-			const structured =
-				parsed.model === "offer-fixture" && prompt.includes("Read the employer's message")
+			const structured = prompt.includes("Plan the user's preparation for the selected interview round.")
+				? BRIEFING
+				: parsed.model === "offer-fixture" && prompt.includes("Read the employer's message")
 					? REPLY
 					: prompt.includes("Write the user's answer to the application form question")
 						? TIGHTENED

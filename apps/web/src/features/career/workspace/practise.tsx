@@ -1,5 +1,6 @@
 import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
+import type { PracticeQuestion as Question } from "@reactive-resume/schema/career-practice";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { ph, t } from "@lingui/core/macro";
@@ -9,6 +10,7 @@ import { AnimatePresence, m } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
 import { z } from "zod";
 import { AI_VOICE_MODELS } from "@reactive-resume/ai/types";
+import { threePracticeQuestions } from "@reactive-resume/schema/career-practice";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -46,31 +48,42 @@ import { client } from "@/libs/orpc/client";
 
 type Practice = SavedData<"practice">;
 type Attempt = SavedItem & { data: Practice };
-type Question = { text: string; origin: Practice["origin"] };
 type Mode = Practice["mode"];
 
 const isAttempt = (item: SavedItem): item is Attempt => item.data.kind === "practice";
 
 /** The briefing's practice questions for this interview, then questions recalled in Debrief; generic ones without either. */
-function practiceQuestions(items: SavedItem[] | undefined, interviewId: string | undefined, company: string) {
+function practiceQuestions(
+	items: SavedItem[] | undefined,
+	interviewId: string | undefined,
+	company: string,
+	warmup = false,
+) {
 	const simulated = latest(items, "briefing", interviewId)?.data.practiceQuestions ?? [];
 	const recalled = (items ?? []).flatMap((item) => (item.data.kind === "debrief" ? [item.data.question] : []));
 	const questions: Question[] = [
 		...simulated.map((text) => ({ text, origin: "simulated" as const })),
 		...[...new Set(recalled)].map((text) => ({ text, origin: "recalled" as const })),
 	];
-	if (questions.length > 0) return questions;
-	return [
+	const fallbacks = [
 		t`Tell me about a piece of work you're proud of. What was your part in it, and how did you measure success?`,
 		t`Tell me about a time you disagreed with a colleague. How did you resolve it?`,
 		t`Why do you want this role at ${company}?`,
-	].map((text) => ({ text, origin: "simulated" as const }));
+	];
+	if (warmup) return threePracticeQuestions(questions, fallbacks);
+	return questions.length > 0 ? questions : fallbacks.map((text) => ({ text, origin: "simulated" as const }));
 }
 
-export function PractiseTab({ application, version, interview, speak, story, now, go }: WorkspaceTabProps) {
+export function PractiseTab({ application, version, interview, speak, story, warmup, now, go }: WorkspaceTabProps) {
 	const saved = useSavedItems(application.id);
 	const knowledge = useCoachKnowledge(application.id);
 	const voice = useVoiceSettings();
+	if (warmup && !interview)
+		return (
+			<Notice icon="warning-circle">
+				<Trans>This interview is unavailable.</Trans>
+			</Notice>
+		);
 	const viewing = version && isAttempt(version) ? version : undefined;
 	const attempts = saved.data?.filter(isAttempt) ?? [];
 	const selectedStory = story ? knowledge.stories.find((item) => item.id === story) : undefined;
@@ -81,7 +94,7 @@ export function PractiseTab({ application, version, interview, speak, story, now
 					origin: "simulated",
 				},
 			]
-		: practiceQuestions(saved.data, interview?.id, application.company);
+		: practiceQuestions(saved.data, interview?.id, application.company, warmup);
 	if (story && knowledge.isError)
 		return (
 			<Notice icon="warning-circle">
@@ -124,7 +137,7 @@ export function PractiseTab({ application, version, interview, speak, story, now
 				</div>
 			) : (
 				<Session
-					key={`${application.id}:${interview?.id ?? "none"}:${story ?? "general"}`}
+					key={`${application.id}:${interview?.id ?? "none"}:${story ?? "general"}:${warmup ? "three" : "all"}`}
 					application={application}
 					applicationId={application.id}
 					interviewId={interview?.id ?? null}
@@ -133,6 +146,7 @@ export function PractiseTab({ application, version, interview, speak, story, now
 					storyTitle={selectedStory?.data.title}
 					voice={voice}
 					initialMode={speak ? "spoken" : "typed"}
+					warmup={warmup === true}
 				/>
 			)}
 			<aside className="grid gap-3 rounded-xl border border-line bg-surface p-4">
@@ -223,6 +237,7 @@ type SessionProps = {
 	storyTitle: string | undefined;
 	voice: VoiceSettings;
 	initialMode: Mode;
+	warmup: boolean;
 };
 
 function Session({
@@ -234,13 +249,14 @@ function Session({
 	initialMode,
 	storyId,
 	storyTitle,
+	warmup,
 }: SessionProps) {
 	const id = useId();
 	const generate = useGenerate(applicationId);
 	const connection = useDefaultProvider();
 	const { provider } = connection;
 	const draft = useSessionDraft<PracticeDraft>(
-		`practice:${applicationId}:${interviewId ?? "none"}:${storyId ?? "general"}`,
+		`practice:${applicationId}:${interviewId ?? "none"}:${storyId ?? "general"}${warmup ? ":three" : ""}`,
 		{
 			question: questions[0] ?? { text: t`Tell me about a piece of work you're proud of.`, origin: "simulated" },
 			mode: initialMode,

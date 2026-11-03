@@ -983,13 +983,14 @@ const nativeInterviewUndo = load("features/career/undo.ts", {
 	},
 	"@/ui": { ...ui, dismissToast() {}, toastLifetime: (value) => value },
 });
-const nativeQueryClient = {
-	cancelQueries: async () => {},
-	invalidateQueries: async () => {
-		calls.push("canonical-read");
-	},
-	setQueryData: (_key, update) => calls.push({ cachedActivity: update(nativeJob).activity }),
-};
+const { QueryClient: InterviewQueryClient } = mobileRequire("@tanstack/react-query");
+const nativeQueryClient = new InterviewQueryClient({
+	defaultOptions: { queries: { retry: false, gcTime: Infinity } },
+});
+const nativeInterviewKey = ["application", nativeJob.id];
+let nativeCanonicalRow = nativeJob;
+let nativeCanonicalError = false;
+let nativeCanonicalReads = 0;
 const nativeReminders = {
 	leadFor: () => 30,
 	turnOn: async () => {
@@ -1050,6 +1051,7 @@ const { InterviewSheet: NativeInterviewSheet } = load("features/application-deta
 					calls.push({ deleteRound: input });
 					if (switchDuringDelete) interviewScope = "another-account";
 					if (deleteInterviewError) throw new Error("Unavailable");
+					nativeCanonicalRow = { ...nativeCanonicalRow, activity: [] };
 				},
 			},
 		},
@@ -1057,6 +1059,14 @@ const { InterviewSheet: NativeInterviewSheet } = load("features/application-deta
 	"@/auth/session": { getAccountScope: () => interviewScope },
 	"@/features/applications/queries": {
 		applicationDetailQueryKey: (id) => ["application", id],
+		applicationDetailQueryOptions: (id) => ({
+			queryKey: ["application", id],
+			queryFn: async () => {
+				nativeCanonicalReads++;
+				if (nativeCanonicalError) throw new Error("Fictional detail unavailable");
+				return nativeCanonicalRow;
+			},
+		}),
 		useInvalidateApplications: () => () => calls.push("invalidate"),
 	},
 	"@/features/reminders": {
@@ -1115,6 +1125,10 @@ const originalClearTimeout = globalThis.clearTimeout;
 try {
 	for (const scenario of [
 		"undo",
+		"hydrated-undo",
+		"erased-undo",
+		"read-failed-undo",
+		"preflight-failed",
 		"deleted",
 		"unmount-before-ready",
 		"background",
@@ -1124,6 +1138,12 @@ try {
 		"switch-during",
 	]) {
 		reset();
+		nativeQueryClient.clear();
+		nativeCanonicalRow = nativeJob;
+		nativeCanonicalReads = 0;
+		nativeCanonicalError = scenario === "preflight-failed";
+		if (scenario === "hydrated-undo") nativeQueryClient.setQueryData(nativeInterviewKey, nativeJob);
+		else assert.equal(nativeQueryClient.getQueryState(nativeInterviewKey), undefined);
 		interviewScope = "fixture";
 		deleteInterviewError = scenario === "delete-failed";
 		switchDuringDelete = scenario === "switch-during";
@@ -1152,9 +1172,41 @@ try {
 		await settle();
 		if (scenario === "unmount-before-ready")
 			assert.equal(calls.includes("closed"), false, "late deletion does not close the next editor");
+		if (scenario === "preflight-failed") {
+			assert.equal(
+				calls.some((call) => call?.action?.label === "Undo"),
+				false,
+			);
+			assert.equal(
+				calls.some((call) => call?.held || call?.deleteRound),
+				false,
+			);
+			assert.equal(calls.includes("closed"), false);
+			assert.ok(nativeCanonicalRow.activity.some((entry) => entry.id === nativeRound.id));
+			continue;
+		}
 		assert.equal(calls.find((call) => call?.message)?.action.label, "Undo");
 		assert.equal(calls.filter((call) => call?.event).length, 0);
-		if (scenario === "undo") calls.find((call) => call?.message).action.onPress();
+		assert.deepEqual(nativeQueryClient.getQueryData(nativeInterviewKey).activity, []);
+		if (scenario.endsWith("undo")) {
+			if (scenario === "erased-undo") nativeCanonicalRow = { ...nativeJob, activity: [] };
+			nativeCanonicalError = scenario === "read-failed-undo";
+			const readsBeforeUndo = nativeCanonicalReads;
+			calls.find((call) => call?.message).action.onPress();
+			await settle();
+			assert.ok(nativeCanonicalReads > readsBeforeUndo, "Undo reads canonical data on cold and hydrated entry points");
+			if (nativeCanonicalError) {
+				assert.deepEqual(nativeQueryClient.getQueryData(nativeInterviewKey).activity, []);
+				nativeCanonicalError = false;
+				calls.findLast((call) => call?.action?.label === "Retry").action.onPress();
+				await settle();
+			}
+			assert.deepEqual(
+				nativeQueryClient.getQueryData(nativeInterviewKey).activity,
+				scenario === "erased-undo" ? [] : [nativeRound],
+				"canonical read restores retained identity but never an erased interview's private fields",
+			);
+		}
 		if (scenario === "switch-before") interviewScope = "another-account";
 		if (scenario === "background") for (const run of nativeInterviewListeners) run("background");
 		commit?.();
@@ -1174,7 +1226,7 @@ try {
 			assert.equal(shared.event.uid, nativeRound.id);
 			assert.equal(shared.method, "CANCEL");
 		} else assert.equal(cancellation, undefined);
-		if (scenario === "undo" || scenario === "switch-before")
+		if (scenario.endsWith("undo") || scenario === "switch-before")
 			assert.equal(
 				calls.find((call) => call?.deleteRound),
 				undefined,
@@ -1709,6 +1761,7 @@ const careerSchema = load("../../../packages/schema/src/career.ts", {
 	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
 	"@reactive-resume/utils/timezone": timeParser,
 });
+mocks["@reactive-resume/schema/career-practice"] = load("../../../packages/schema/src/career-practice.ts");
 const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 	"./career": careerSchema,
 	"@reactive-resume/utils/amount": amountParser,
@@ -2483,6 +2536,7 @@ let todayOffers = [];
 let todayOfferState = { isPending: false, isError: false };
 let todayNow = new Date();
 const { TodayScreen } = load("features/career/today.tsx", {
+	"./prepare-now": { PrepareNow: "PrepareNow" },
 	"@/features/applications/stage-actions": { useOfferHints: () => undefined, offerHintFor: () => undefined },
 	"expo-web-browser": { openBrowserAsync: async () => {} },
 	"./hooks": {
@@ -2606,6 +2660,114 @@ todayApplications = [];
 todayOffers = [];
 console.log("PASS native Today shows simultaneous dated steps, latest offer clearing and exact interview navigation");
 
+todayApplications = [
+	{
+		...nativeJob,
+		status: "interview",
+		activity: [{ ...nativeRound, at: "2030-01-03T12:00:00Z" }],
+		followUpAt: "2030-01-03T11:00:00Z",
+		followUpDateOnly: false,
+		followUpNote: "Earlier reminder",
+	},
+];
+const duePreparation = nodes(comingUpView()).find((node) => node.type === "PrepareNow");
+assert.equal(duePreparation.props.applicationId, nativeJob.id);
+assert.equal(duePreparation.props.interviewId, nativeRound.id);
+todayApplications = [{ ...todayApplications[0], activity: [{ ...nativeRound, at: "2030-01-04T10:00:00.001Z" }] }];
+assert.equal(
+	nodes(comingUpView()).some((node) => node.type === "PrepareNow"),
+	false,
+	"a round outside24h has no immediate preparation action",
+);
+todayApplications = [];
+
+reset();
+const preparationJob = {
+	...nativeJob,
+	status: "interview",
+	company: "Fictional Cedar",
+	activity: [{ ...nativeRound, at: "2030-01-03T12:00:00Z" }],
+};
+let preparationQuery = { data: preparationJob, isError: false };
+let preparationProvider = { id: "fictional-provider" };
+let finishPreparation;
+let failPreparation;
+const preparationGeneration = {
+	isPending: false,
+	failure: null,
+	data: undefined,
+	run: (task) => {
+		calls.push({ task });
+		return new Promise((resolve, reject) => {
+			finishPreparation = resolve;
+			failPreparation = reject;
+		});
+	},
+};
+const preparationModule = load("features/career/prepare-now.tsx", {
+	"./shared": { LoadState: "LoadState" },
+	"./hooks": { useNow: () => todayNow, useCareerTime: () => ({ when: (at) => `Round ${at}` }) },
+	"./scheduling": load("features/career/scheduling.ts", { "@reactive-resume/utils/timezone": timeParser }),
+	"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: preparationProvider }) },
+	"@/features/applications/queries": {
+		useApplication: () => preparationQuery,
+		useApplications: () => ({ data: [preparationJob] }),
+	},
+	"@/features/workspace/hooks": {
+		useGenerate: (id) => {
+			assert.equal(id, preparationJob.id);
+			return preparationGeneration;
+		},
+	},
+	"@/features/workspace/parts": { AiNotice: "AiNotice", GenerateNotice: "GenerateNotice" },
+	"@/features/workspace/shell": {
+		workspaceHref: (id, tab, search) => {
+			calls.push({ destination: { id, tab, search } });
+			return `/applications/${id}/${tab}`;
+		},
+	},
+});
+const preparationView = () =>
+	render(preparationModule.PrepareNow, {
+		applicationId: preparationJob.id,
+		interviewId: nativeRound.id,
+		now: todayNow,
+	});
+const disclosure = nodes(preparationView()).find((node) => node.type === "AiNotice");
+assert.match(JSON.stringify(preparationView()), /Round 2030-01-03T12:00:00Z/);
+assert.equal(disclosure.props.application, preparationJob);
+assert.equal(disclosure.props.task, "briefing");
+assert.equal(disclosure.props.interview, true);
+control(preparationView(), "Generate briefing now").onPress();
+control(preparationView(), "Generate briefing now").onPress();
+assert.deepEqual(calls, [{ task: { task: "briefing", interviewId: nativeRound.id } }]);
+failPreparation(new Error("Fictional offline request"));
+await settle();
+control(preparationView(), "Generate briefing now").onPress();
+finishPreparation({ item: { id: "briefing" } });
+await settle();
+assert.equal(calls.length, 2, "failed request can be retried without duplicate dispatch");
+preparationProvider = null;
+assert.equal(control(preparationView(), "Generate briefing now").disabled, true);
+control(preparationView(), "Practice 3 questions").onPress();
+assert.deepEqual(calls.findLast((entry) => entry?.destination).destination, {
+	id: preparationJob.id,
+	tab: "practise",
+	search: { round: nativeRound.id, warmup: true },
+});
+reset();
+control(render(preparationModule.PracticeHandoff), "Practice in Fictional Cedar’s workspace").onPress();
+assert.deepEqual(calls.find((entry) => entry?.destination).destination, {
+	id: preparationJob.id,
+	tab: "practise",
+	search: { round: nativeRound.id, warmup: true },
+});
+preparationQuery = { data: undefined, isError: true };
+assert.equal(preparationView().type, "LoadState");
+console.log(
+	"PASS native Today immediate briefing shares disclosed owned context, guards repeats and retries; Today/Coach handoffs target the same warm-up round without a provider",
+);
+
 const { DraftConflictSheet } = load("draft/conflict-sheet.tsx", {
 	"./runtime": {},
 	"react-native": { ...mocks["react-native"], Modal: "Modal" },
@@ -2647,14 +2809,16 @@ for (const kind of ["resume", "letter"]) {
 console.log("PASS native older-draft refusal explains cause and offers only copy or saved-version recovery");
 
 let headerSaved = { data: undefined, isPending: true, isError: false, refetch: () => calls.push("retry-saved") };
-const { WorkspaceScreen } = load("features/workspace/shell.tsx", {
+let headerApplication = { ...application, status: "offer", company: "Context job", role: "Engineer" };
+let headerCurrentInterview;
+const { WorkspaceScreen, workspaceHref } = load("features/workspace/shell.tsx", {
 	"@reactive-resume/schema/career": careerSchema,
 	"./coach-sheet": { CoachSheet: "CoachSheet" },
 	"./hooks": {
 		useSavedItems: () => headerSaved,
 		useWorkspace: () => ({ isPending: false, query: { isError: false, data: {}, refetch: () => {} } }),
 	},
-	"./logic": { currentInterview: () => undefined },
+	"./logic": { currentInterview: () => headerCurrentInterview },
 	"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => time },
 	"@/features/application-detail/interview-sheet": { InterviewSheet: "InterviewSheet" },
 	"@/features/applications/error": { applicationError: String },
@@ -2662,7 +2826,7 @@ const { WorkspaceScreen } = load("features/workspace/shell.tsx", {
 	"@/features/applications/lanes": lanes,
 	"@/features/applications/queries": {
 		useApplication: () => ({
-			data: { ...application, status: "offer", company: "Context job", role: "Engineer" },
+			data: headerApplication,
 			isPending: false,
 		}),
 	},
@@ -2689,6 +2853,44 @@ assert.equal(loadedHeader.disabled, false);
 loadedHeader.onPress();
 assert.deepEqual(calls.at(-1), { pathname: "/career/offers", params: { a: "context-latest" } });
 console.log("PASS native contextual offers gated cold/error and retain latest offer when loaded");
+
+const quickPracticeUrl = new URL(
+	workspaceHref("fictional-job", "practise", { round: "round & one", warmup: true }),
+	"https://fictional.invalid",
+);
+assert.equal(quickPracticeUrl.pathname, "/applications/fictional-job/practise");
+assert.deepEqual(Object.fromEntries(quickPracticeUrl.searchParams), { warmup: "1", round: "round & one" });
+headerApplication = { ...headerApplication, activity: [nativeRound] };
+headerCurrentInterview = { ...nativeRound, id: "other-round" };
+const practiceProps = () => {
+	reset();
+	let props;
+	render(WorkspaceScreen, {
+		tab: "practise",
+		children: (value) => {
+			props = value;
+			return null;
+		},
+	});
+	return props;
+};
+searchParams = { id: headerApplication.id, warmup: "1", round: nativeRound.id };
+assert.equal(practiceProps().interview.id, nativeRound.id);
+assert.equal(practiceProps().warmup, true);
+practiceProps().go("prepare");
+assert.equal(calls.at(-1), `/applications/${headerApplication.id}/prepare?round=${nativeRound.id}`);
+searchParams = { ...searchParams, round: "removed-round" };
+assert.equal(practiceProps().interview, undefined, "quick Practice must not switch to another round after removal");
+searchParams = { id: headerApplication.id, round: "removed-round" };
+assert.equal(
+	practiceProps().interview.id,
+	"other-round",
+	"ordinary workspace navigation retains its existing fallback",
+);
+searchParams = {};
+console.log(
+	"PASS native quick Practice URL encoding and screen parsing pin the requested round without changing ordinary navigation",
+);
 
 reset();
 const scheduleWrites = [];
@@ -3033,6 +3235,7 @@ console.log(
 			}),
 		},
 		"expo-crypto": {},
+		"@/auth/session": { getAccountScope: () => "fixture" },
 		"../hooks": {
 			useSavedItems: () => ({ data: [] }),
 			useWorkspace: () => ({ data: {} }),
@@ -4629,6 +4832,7 @@ const { AnswerCard: NativeAnswerCard } = load(
 			workingSteps: () => [],
 			useWorking: (_busy, _steps, label) => label,
 		},
+		"../prepare-review": { PrepareReview: () => null },
 		"../preparation": {},
 		"../share": {},
 		"../shell": {},
@@ -4689,3 +4893,91 @@ assert.equal(
 	"Canonical question correction replaces an untouched native draft instead of autosaving the old wording",
 );
 console.log("PASS native canonical question wording updates an untouched draft");
+
+// Named letter restore labels use the same snapshot identity as the resume History consumer.
+const rx233Letter = { id: "birch-letter", isLocked: false };
+let rx233Versions = [];
+let rx233Current = true;
+let rx233Restore;
+const { LetterShareSheet: rx233Share } = load("features/letters/share.tsx", {
+	"./compose": {},
+	"./page": {},
+	"./queries": {},
+	"./save": {
+		restoreLetterVersion: async (...input) => {
+			rx233Restore = input;
+			return rx233Current;
+		},
+	},
+	"@/api/client": { client: {}, orpc: { coverLetters: { listVersions: { queryOptions: (options) => options } } } },
+	"@/draft": { useLetterStore: (select) => select({ document: rx233Letter }) },
+	"@/features/ai/usage": {},
+	"@/features/documents/queries": {
+		useDocumentOperations: () => ({
+			busy: false,
+			run: async (operation) => {
+				await operation();
+				return true;
+			},
+		}),
+	},
+	"@/features/share/files": {},
+	"@/features/share/letter": {},
+	"@/features/share/model": {},
+	"@reactive-resume/utils/file": {},
+	"expo-network": { useNetworkState: () => ({ isConnected: true, isInternetReachable: true }) },
+	"@tanstack/react-query": { useQuery: () => ({ data: rx233Versions, refetch: async () => undefined }) },
+});
+for (const name of ["Birch version A", null]) {
+	const version = { id: "birch-version", name, kind: name ? "named" : "auto", createdAt: new Date() };
+	rx233Versions = [version];
+	reset();
+	const sheet = render(rx233Share, { id: rx233Letter.id, open: true, onClose() {}, version: version.id });
+	const history = nodes(sheet).find((node) => node.type?.name === "LetterHistory");
+	assert.ok(history, "Letter share routes the selected version to History");
+	reset();
+	let tree = render(history.type, history.props);
+	control(tree, "Restore this version").onPress();
+	tree = render(history.type, history.props);
+	nodes(tree)
+		.find((node) => node.type === "ConfirmDialog")
+		.props.onConfirm();
+	await settle();
+	assert.deepEqual(rx233Restore.slice(0, 2), [rx233Letter.id, version.id]);
+	assert.equal(
+		calls.find((call) => call.message)?.message,
+		name
+			? `Restored “${name}”. Your previous state is saved as “Before restoring “${name}””.`
+			: "Version restored. Your previous state is saved as “Before restore”.",
+	);
+	rx233Versions = [
+		{ ...version, id: "before", kind: "before-restore" },
+		{ ...version, id: "restored", kind: "restored" },
+	];
+	tree = render(history.type, history.props);
+	assert.deepEqual(
+		nodes(tree)
+			.filter((node) => node.type === "ListRow" && node.props.leading === "clock-counter-clockwise")
+			.map((node) => node.props.title),
+		[name ? `Before restoring “${name}”` : "Before restore", name ? `Restored “${name}”` : "Restored a version"],
+	);
+}
+rx233Current = false;
+rx233Versions = [{ id: "birch-version", name: "Birch version A", kind: "named", createdAt: new Date() }];
+reset();
+const rx233Sheet = render(rx233Share, { id: rx233Letter.id, open: true, onClose() {}, version: "birch-version" });
+const rx233History = nodes(rx233Sheet).find((node) => node.type?.name === "LetterHistory");
+reset();
+let rx233Tree = render(rx233History.type, rx233History.props);
+control(rx233Tree, "Restore this version").onPress();
+rx233Tree = render(rx233History.type, rx233History.props);
+nodes(rx233Tree)
+	.find((node) => node.type === "ConfirmDialog")
+	.props.onConfirm();
+await settle();
+assert.equal(
+	calls.some((call) => call.message),
+	false,
+	"Late restore cannot notify a replacement editor",
+);
+console.log("PASS native letter named/unnamed History labels, restore notice and late-editor fence");

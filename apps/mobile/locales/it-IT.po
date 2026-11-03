@@ -2448,8 +2448,9 @@ msgstr "Prima del ripristino"
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Before restoring “{0}”"
-msgstr ""
+msgstr "Prima del ripristino di «{0}»"
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -2537,6 +2538,7 @@ msgstr "Suddivide le parole lunghe tra le sillabe, utilizzando la lingua imposta
 msgid "Briefing"
 msgstr "Briefing"
 
+#: src/features/career/prepare-now.tsx
 #: src/features/career/today.tsx
 msgid "Briefing ready"
 msgstr "Briefing pronto"
@@ -3595,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Impossibile completare la richiesta. Controlla la connessione e riprova."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Impossibile completare questa azione. Riprova."
@@ -3945,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Impossibile salvare la modifica. Controlla la connessione e riprova."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Impossibile salvare la modifica. Riprova."
 
@@ -4676,6 +4681,10 @@ msgstr "Le valute o i periodi salariali differiscono. La differenza di retribuzi
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Direzione"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Scarta"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5761,10 @@ msgstr "Risposta al modulo"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Domande del modulo (facoltative)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formattazione"
@@ -5820,6 +5833,10 @@ msgstr "Nome e cognome"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "Larghezza completa"
+
+#: src/features/career/prepare-now.tsx
+msgid "Generate briefing now"
+msgstr "Genera ora il riepilogo di preparazione"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
@@ -6606,6 +6623,10 @@ msgstr "Usa un solo indirizzo, così il software non deve indovinare quale utili
 msgid "Keep access when you are not using the application."
 msgstr "Mantenere l'accesso quando non stai usando l'applicazione."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Conserva risposta"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6659,10 @@ msgstr "Resta onesto"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Mantienilo sotto i 2,5 MB, di solito rimuovendo o riducendo le immagini."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Conserva lettera"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6988,7 @@ msgid "Letter body"
 msgstr "Corpo della lettera"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Bozza di lettera"
 
@@ -8179,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "nessuna modifica"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Nessuna modifica proposta."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Non è stata trovata una sezione istruzione."
@@ -8858,6 +8888,10 @@ msgstr "In sede"
 msgid "Open"
 msgstr "Apri"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Apri assistente IA"
+
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
@@ -9478,6 +9512,10 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "Esercitati"
 
+#: src/features/career/prepare-now.tsx
+msgid "Practice {count} questions"
+msgstr "Esercitati con {count} domande"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "Esercitati su un'altra domanda"
@@ -9485,6 +9523,10 @@ msgstr "Esercitati su un'altra domanda"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "Esercitati per i colloqui con {company}."
+
+#: src/features/career/prepare-now.tsx
+msgid "Practice in {company}’s workspace"
+msgstr "Esercitati nello spazio di lavoro di {company}"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
@@ -9531,8 +9573,17 @@ msgid "Prepare a resume"
 msgstr "Preparare un curriculum"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Prepara la candidatura"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Prepara bozze da rivedere"
+
+#: src/features/career/prepare-now.tsx
+msgid "Prepare for {company}"
+msgstr "Preparati per {company}"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9605,11 @@ msgstr "Preparazione dell'esportazione…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Preparazione del file…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Preparazione…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9758,10 @@ msgstr "Barra di avanzamento"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Progetti"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Proponi un punto per il curriculum"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10571,14 +10631,16 @@ msgstr ""
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”"
 msgstr "Restaurato “{0}”"
 
 #. placeholder {0}: selected.name
 #. placeholder {1}: selected.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
-msgstr ""
+msgstr "«{0}» ripristinata. Lo stato precedente è salvato come “Prima del ripristino di «{1}»”."
 
 #. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
@@ -10665,6 +10727,10 @@ msgstr "Pagina {0} del curriculum"
 #: src/features/documents/thumbnail.tsx
 msgid "Resume preview"
 msgstr "Anteprima curriculum"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Proposte per il curriculum"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
@@ -10862,6 +10928,10 @@ msgstr "Rivedi le risposte obbligatorie del modulo e rimuovi le affermazioni non
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Rivedi i fatti del curriculum"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Rivedi insieme gli adattamenti, la lettera e le risposte. Nulla viene inviato al datore di lavoro."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11711,10 @@ msgstr "Inviato a {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Separa le domande con una riga vuota. Fino a cinque domande di 2.000 caratteri ciascuna."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbo"
@@ -11793,6 +11867,18 @@ msgstr "Condividi tramite..."
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Condivide solo curriculum e annuncio. Conoscenze, note private e accesso web sono esclusi. Rivedi le proposte prima di accettarle; l’originale resta invariato."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Condivide solo il fatto selezionato nelle Conoscenze, il curriculum e l’annuncio. Altre conoscenze, note private e accesso web sono esclusi. Rivedi il punto prima di accettarlo."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Condivide curriculum, annuncio e domande incollate. Le bozze delle risposte usano anche lettera, preferenze professionali, note e contatti della candidatura e fatti e storie attivi delle Conoscenze. Il contesto può essere abbreviato. Accesso web disattivato. Rivedi prima di salvare; nulla viene inviato."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12273,10 @@ msgstr "Impossibile disegnare alcuni caratteri: {0}. Scegli un altro carattere i
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Impossibile eseguire il rendering di alcuni caratteri. Controlla la pagina prima di esportare."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Alcune bozze non sono state completate. Conserva quelle completate prima di riprovare."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Alcuni glifi non hanno significato al di fuori di questo file."
@@ -12486,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Fermare"
 
@@ -12902,6 +12994,7 @@ msgstr "Il conto è cambiato. Riprova."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "L'indirizzo deve contenere solo lettere latine a–z e numeri, separati da trattini singoli."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -13454,6 +13547,10 @@ msgstr "Impossibile leggere la dimensione di questo file. Scegli un altro PDF."
 #: src/features/documents/new-document.tsx
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr "Non è stato possibile confrontare il testo di questo file con il contenuto importato, quindi le righe omesse non sono elencate. Confronta ogni sezione con il tuo file nell’editor."
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "This interview is unavailable."
+msgstr "Questo colloquio non è disponibile."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -14014,6 +14111,7 @@ msgstr "Sottolinea i collegamenti"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

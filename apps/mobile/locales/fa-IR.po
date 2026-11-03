@@ -2448,8 +2448,9 @@ msgstr "قبل از بازیابی"
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Before restoring “{0}”"
-msgstr ""
+msgstr "پیش از بازیابی «{0}»"
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -2537,6 +2538,7 @@ msgstr "با استفاده از زبان تنظیم شده در صفحه، کل
 msgid "Briefing"
 msgstr "گزارش توجیهی"
 
+#: src/features/career/prepare-now.tsx
 #: src/features/career/today.tsx
 msgid "Briefing ready"
 msgstr "گزارش توجیهی آماده است"
@@ -3595,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "انجام درخواست ممکن نشد. اتصال خود را بررسی کنید و دوباره امتحان کنید."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "این اقدام تکمیل نشد. دوباره امتحان کنید."
@@ -3945,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "آن تغییر ذخیره نشد. اتصال خود را بررسی کنید و دوباره امتحان کنید."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "این تغییر ذخیره نشد. دوباره امتحان کنید."
 
@@ -4676,6 +4681,10 @@ msgstr "ارزهای مختلف یا دوره های پرداخت. تفاوت پ
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "جهت"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "دور انداختن"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5761,10 @@ msgstr "پاسخ فرم"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "پرسش‌های فرم (اختیاری)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "قالب بندی"
@@ -5820,6 +5833,10 @@ msgstr "نام کامل"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "تمام‌عرض"
+
+#: src/features/career/prepare-now.tsx
+msgid "Generate briefing now"
+msgstr "ایجاد خلاصهٔ آمادگی اکنون"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
@@ -6606,6 +6623,10 @@ msgstr "فقط یک نشانی نگه دارید تا نرم‌افزار مجب
 msgid "Keep access when you are not using the application."
 msgstr "هنگامی که از برنامه استفاده نمی‌کنید، دسترسی را حفظ کنید."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "نگه داشتن پاسخ"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6659,10 @@ msgstr "صادق بمانید"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "آن را زیر ۲.۵ مگابایت نگه دارید، معمولاً با حذف یا کوچک کردن تصاویر."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "نگه داشتن نامه"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6988,7 @@ msgid "Letter body"
 msgstr "بدن نامه"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "پیش‌نویس نامه"
 
@@ -8179,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "بدون ویرایش"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "ویرایشی پیشنهاد نشد."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "هیچ بخش تحصیلاتی پیدا نشد."
@@ -8858,6 +8888,10 @@ msgstr "حضوری"
 msgid "Open"
 msgstr "باز کردن"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "باز کردن دستیار هوش مصنوعی"
+
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
@@ -9478,6 +9512,10 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "تمرین"
 
+#: src/features/career/prepare-now.tsx
+msgid "Practice {count} questions"
+msgstr "تمرین {count} پرسش"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "تمرین پرسشی دیگر"
@@ -9485,6 +9523,10 @@ msgstr "تمرین پرسشی دیگر"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "تمرین برای مصاحبه‌های {company}."
+
+#: src/features/career/prepare-now.tsx
+msgid "Practice in {company}’s workspace"
+msgstr "تمرین در فضای کاری {company}"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
@@ -9531,8 +9573,17 @@ msgid "Prepare a resume"
 msgstr "یک رزومه تهیه کنید"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "برنامه را آماده کنید"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "آماده‌سازی پیش‌نویس‌ها برای بررسی"
+
+#: src/features/career/prepare-now.tsx
+msgid "Prepare for {company}"
+msgstr "برای {company} آماده شوید"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9605,11 @@ msgstr "در حال آماده‌سازی خروجی…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "در حال آماده سازی فایل…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "در حال آماده سازی…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9758,10 @@ msgstr "نوار پیشرفت"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "پروژه‌ها"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "پیشنهاد یک مورد برای رزومه"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10571,14 +10631,16 @@ msgstr ""
 
 #. placeholder {0}: version.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”"
 msgstr "\"{0}\" بازیابی شد"
 
 #. placeholder {0}: selected.name
 #. placeholder {1}: selected.name
 #: src/features/history/history.tsx
+#: src/features/letters/share.tsx
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
-msgstr ""
+msgstr "«{0}» بازیابی شد. وضعیت قبلی شما با نام “پیش از بازیابی «{1}»” ذخیره شده است."
 
 #. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
@@ -10665,6 +10727,10 @@ msgstr "صفحه رزومه {0}"
 #: src/features/documents/thumbnail.tsx
 msgid "Resume preview"
 msgstr "پیش نمایش رزومه"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "پیشنهادهای رزومه"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
@@ -10862,6 +10928,10 @@ msgstr "پاسخ‌های الزامی فرم را بازبینی کنید و ا
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "مرور اطلاعات رزومه"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "پیشنهادهای تطبیق، نامه و پاسخ‌ها را با هم بررسی کنید. چیزی برای کارفرما ارسال نمی‌شود."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11711,10 @@ msgstr "به {0} ارسال شد"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "پرسش‌ها را با یک خط خالی جدا کنید. حداکثر پنج پرسش، هرکدام ۲۰۰۰ نویسه."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "صربی"
@@ -11793,6 +11867,18 @@ msgstr "اشتراک گذاری از طریق…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "فقط رزومه و آگهی شغلی به اشتراک گذاشته می‌شوند. دانش، یادداشت‌های خصوصی و دسترسی وب حذف می‌شوند. پیش از پذیرش، پیشنهادها را بررسی کنید؛ اصل تغییر نمی‌کند."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "فقط گزاره انتخابی دانش، رزومه و آگهی شغلی به اشتراک گذاشته می‌شوند. دیگر دانش‌ها، یادداشت‌های خصوصی و دسترسی وب حذف می‌شوند. پیش از پذیرش، مورد را بررسی کنید."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "رزومه، آگهی و پرسش‌های چسبانده‌شده به اشتراک گذاشته می‌شوند. پیش‌نویس پاسخ‌ها از نامه، ترجیحات شغلی، یادداشت‌ها و مخاطبان درخواست و واقعیت‌ها و داستان‌های فعال دانش نیز استفاده می‌کنند. ممکن است زمینه کوتاه شود. دسترسی وب خاموش است. پیش از ذخیره بررسی کنید؛ چیزی ارسال نمی‌شود."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12273,10 @@ msgstr "برخی نویسه‌ها ترسیم نشدند: {0}. فونت دیگر
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "برخی نویسه‌ها نمایش داده نشدند. پیش از خروجی گرفتن، صفحه را بررسی کنید."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "برخی پیش‌نویس‌ها تکمیل نشدند. پیش از تلاش دوباره، پیش‌نویس‌های تکمیل‌شده را نگه دارید."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "برخی گلیف‌ها خارج از این فایل معنایی ندارند."
@@ -12486,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "توقف کنید"
 
@@ -12902,6 +12994,7 @@ msgstr "حساب تغییر کرد. دوباره امتحان کنید."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "آدرس باید فقط شامل حروف لاتین a–z و اعداد باشد که با خط تیره تکی از هم جدا شده‌اند."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -13454,6 +13547,10 @@ msgstr "اندازه این فایل قابل خواندن نیست. PDF دیگ�
 #: src/features/documents/new-document.tsx
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr "متن این فایل با محتوای واردشده قابل مقایسه نبود، بنابراین سطرهای جاافتاده فهرست نشده‌اند. هر بخش را در ویرایشگر با فایل خود مقایسه کنید."
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "This interview is unavailable."
+msgstr "این مصاحبه در دسترس نیست."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -14014,6 +14111,7 @@ msgstr "زیر لینک ها خط بکشید"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

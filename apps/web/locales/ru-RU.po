@@ -3054,7 +3054,7 @@ msgstr "Перед восстановлением"
 #. placeholder {0}: version.name
 #: src/features/resume/share/format.ts
 msgid "Before restoring “{0}”"
-msgstr ""
+msgstr "До восстановления «{0}»"
 
 #: src/features/applications/interviews.ts
 msgid "Behavioral"
@@ -3148,6 +3148,7 @@ msgstr "Разбивает длинные слова между слогами, 
 msgid "Briefing"
 msgstr "Брифинг"
 
+#: src/features/career/prepare-now.tsx
 #: src/features/career/today.tsx
 msgid "Briefing ready"
 msgstr "Брифинг готов"
@@ -4533,6 +4534,11 @@ msgstr ""
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Couldn't complete this action. Try again."
+msgstr "Не удалось выполнить это действие. Попробуйте еще раз."
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -4963,6 +4969,7 @@ msgstr "Не удалось сохранить изменение. Провер�
 #: src/features/assistant/use-attachment-removal.ts
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Не удалось сохранить изменение. Попробуйте еще раз."
@@ -5908,6 +5915,7 @@ msgid "Digit {position} of {total}"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "Discard"
 msgstr "Отбросить"
 
@@ -7306,6 +7314,10 @@ msgstr "Ответ в форме"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Вопросы анкеты (необязательно)"
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Format"
 msgstr "Формат"
@@ -7456,6 +7468,10 @@ msgstr "Полное имя"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Full width"
 msgstr "На всю ширину"
+
+#: src/features/career/prepare-now.tsx
+msgid "Generate briefing now"
+msgstr "Создать сводку для подготовки сейчас"
 
 #: src/features/settings/account/backup-codes.tsx
 msgid "Generate new codes"
@@ -8526,6 +8542,10 @@ msgstr "Сохраняйте доступ, когда вы не использу
 msgid "Keep account"
 msgstr "Сохранить аккаунт"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Сохранить ответ"
+
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Keep application"
@@ -8565,6 +8585,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Держите размер файла до 2,5 МБ, обычно за счёт удаления или уменьшения изображений."
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Сохранить письмо"
 
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -8980,6 +9004,7 @@ msgid "Letter details"
 msgstr "Детали письма"
 
 #: src/features/ai/usage.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Черновик письма"
 
@@ -10357,6 +10382,10 @@ msgstr ""
 msgid "no edits"
 msgstr "нет правок"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Правки не предложены."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Раздел «Education» не найден."
@@ -11152,6 +11181,10 @@ msgstr "Открыть"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Open {title}"
 msgstr "Откройте {title}."
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Открыть ИИ-помощника"
 
 #: src/features/applications/components/list-view.tsx
 msgid "Open application"
@@ -11955,6 +11988,10 @@ msgstr "Потренироваться"
 msgid "Practice · Your opening, about 40 seconds aloud"
 msgstr "Тренировка · Ваше вступление, около 40 секунд вслух"
 
+#: src/features/career/prepare-now.tsx
+msgid "Practice {count} questions"
+msgstr "Отрепетировать {count} вопроса"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Practice another question"
 msgstr "Потренировать другой вопрос"
@@ -11972,6 +12009,10 @@ msgstr ""
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "Тренируйтесь к собеседованиям в {company}."
+
+#: src/features/career/prepare-now.tsx
+msgid "Practice in {company}’s workspace"
+msgstr "Репетировать в рабочей области {company}"
 
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
@@ -12037,6 +12078,18 @@ msgstr "Подготовить брифинг"
 msgid "Prepare a resume"
 msgstr "Подготовьте резюме"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Prepare application"
+msgstr "Подготовить заявку"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Подготовить черновики для проверки"
+
+#: src/features/career/prepare-now.tsx
+msgid "Prepare for {company}"
+msgstr "Подготовиться к собеседованию в {company}"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "Подготовь меня к собеседованию"
@@ -12053,6 +12106,8 @@ msgstr "Готовим правки…"
 msgid "Preparing resume for printing…"
 msgstr "Подготовка резюме к печати…"
 
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 msgid "Preparing…"
 msgstr "Подготовка…"
@@ -12226,6 +12281,10 @@ msgstr "Проекты"
 #: src/features/homepage/hero.tsx
 msgid "Promoted to lead, 2021"
 msgstr "Повышение до руководителя, 2021 г."
+
+#: src/features/career/workspace/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Предложить пункт резюме"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -13293,7 +13352,7 @@ msgstr "Восстановлен «{0}»"
 #. placeholder {1}: version.name
 #: src/features/resume/share/history-tab.tsx
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
-msgstr ""
+msgstr "Восстановлена «{0}». Предыдущее состояние сохранено как “До восстановления «{1}»”."
 
 #. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/document-actions.tsx
@@ -13426,6 +13485,10 @@ msgstr "страница резюме"
 #: src/features/resume/preview/pdf-canvas.tsx
 msgid "Resume page {pageNumber} of {totalPages}"
 msgstr "Страница резюме {pageNumber} из {totalPages}"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Предложения для резюме"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -13572,6 +13635,10 @@ msgstr "Проверить факты из резюме"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Review saved version"
 msgstr ""
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Проверьте вместе правки для вакансии, письмо и ответы. Работодателю ничего не отправляется."
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Review target roles in Knowledge"
@@ -14565,6 +14632,10 @@ msgstr "Отправлено на {0}."
 msgid "Sent to Lumen"
 msgstr "Отправлено в Lumen"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Разделяйте вопросы пустой строкой. До пяти вопросов по 2000 символов."
+
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Сербский"
@@ -14686,6 +14757,18 @@ msgstr "Поделиться через…"
 #: src/features/documents/document-actions.tsx
 msgid "Share…"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Передаются только резюме и вакансия. Знания, личные заметки и доступ к вебу исключены. Проверьте предложения перед принятием; оригинал не меняется."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Передаются только выбранное утверждение из Знаний, резюме и вакансия. Другие знания, личные заметки и доступ к вебу исключены. Проверьте пункт перед принятием."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Передаются резюме, вакансия и вставленные вопросы. Черновики ответов также используют письмо, карьерные предпочтения, заметки и контакты отклика и активные факты и истории из Знаний. Контекст может быть сокращён. Доступ к вебу отключён. Проверьте перед сохранением; ничего не отправляется."
 
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
@@ -15134,6 +15217,10 @@ msgstr "Некоторые символы отображаются как зна
 msgid "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
 msgstr "Некоторым проверкам нужны сведения, которых в этом файле нет: содержимое страниц, которое не удалось изучить, или текст на языке, не охваченном этими проверками. Такие проверки не считаются ни пройденными, ни проваленными."
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Некоторые черновики не удалось завершить. Сохраните готовые перед повторной попыткой."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Некоторые глифы не имеют смысла вне этого файла."
@@ -15483,6 +15570,8 @@ msgstr ""
 
 #: src/features/assistant/chat-chrome.tsx
 #: src/features/career/shared.tsx
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Stop"
@@ -16075,6 +16164,7 @@ msgid "The AI provider rejected the saved key. Check the key in Settings, or cha
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
 
@@ -16681,6 +16771,10 @@ msgstr "В этом файле используются шрифты Type 3, к�
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr ""
+
+#: src/features/career/workspace/practise.tsx
+msgid "This interview is unavailable."
+msgstr "Это собеседование недоступно."
 
 #. placeholder {0}: view.resumeName
 #: src/features/feedback/review-page.tsx
@@ -17399,6 +17493,7 @@ msgstr "Подчеркнуть ссылки"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/career/workspace/messages.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
 #: src/features/resume/builder/undo-toast.ts

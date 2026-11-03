@@ -377,6 +377,7 @@ reset();
 const renameWrites = [];
 const careerThread = { id: "career-thread", title: "Northwind interview", scope: "career" };
 const { CoachScreen } = load("features/assistant/coach-screen.tsx", {
+	"@/features/career/prepare-now": { PracticeHandoff: "PracticeHandoff" },
 	"@/ui": { ...ui, Sheet: "Sheet", TextField: "TextField" },
 	"@tanstack/react-query": { useQuery: () => state(), useQueryClient: () => ({}) },
 	"@reactive-resume/schema/career-starters": { coachStarters: () => [] },

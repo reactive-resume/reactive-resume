@@ -6,7 +6,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -20,8 +20,9 @@ import { StatusPill, Swap, GenerateNotice, Working, workingSteps } from "../shar
 import { useDialogStore } from "@/dialogs/store";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { toastError } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
+import { client, orpc } from "@/libs/orpc/client";
 
 type FitItem = SavedItem & { data: SavedData<"fit"> };
 type Requirement = SavedData<"fit">["requirements"][number];
@@ -57,6 +58,17 @@ export function AiNotice({ task, application, interview, className }: AiNoticePr
 /** W1–W3: each requirement from the posting against the user's evidence, with gaps closed in place. */
 export function FitTab({ application, version }: WorkspaceTabProps) {
 	const navigate = useNavigate();
+	const proposing = useRef<AbortController | null>(null);
+	const proposalKey = JSON.stringify([getAccountGeneration(), application.id]);
+	const [proposalOwner, setProposalOwner] = useState<string | null>(null);
+	const proposalPending = proposalOwner === proposalKey;
+	useEffect(
+		() => () => {
+			proposing.current?.abort();
+			proposing.current = null;
+		},
+		[proposalKey],
+	);
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const tailor = () =>
 		application.resumeId
@@ -69,6 +81,35 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 	const queryClient = useQueryClient();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
+	const proposeEvidence = async (factId: string) => {
+		if (proposing.current) return;
+		const controller = new AbortController();
+		const account = getAccountGeneration();
+		proposing.current = controller;
+		setProposalOwner(proposalKey);
+		try {
+			await workspace.settled();
+			if (controller.signal.aborted || account !== getAccountGeneration()) return;
+			const result = await client.applications.ai.proposeEvidence(
+				{ id: application.id, factId },
+				{ signal: controller.signal },
+			);
+			if (controller.signal.aborted || account !== getAccountGeneration()) return;
+			await navigate({
+				to: "/builder/$resumeId",
+				params: { resumeId: result.resumeId },
+				search: { assistant: result.conversation?.thread.id ?? "new" },
+			});
+		} catch (error) {
+			if (!controller.signal.aborted && account === getAccountGeneration())
+				toastError(error, t`Couldn't complete this action. Try again.`);
+		} finally {
+			if (proposing.current === controller) {
+				proposing.current = null;
+				if (account === getAccountGeneration()) setProposalOwner(null);
+			}
+		}
+	};
 	const generate = useGenerate(application.id);
 	const { provider } = useDefaultProvider();
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
@@ -279,10 +320,28 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 							readOnly={readOnly}
 							onTailor={tailor}
 							onSaved={(id) => onSaved(requirement, id)}
+							onPropose={
+								application.resumeId && factId && facts?.some((fact) => fact.id === factId && fact.status === "active")
+									? () => void proposeEvidence(factId)
+									: undefined
+							}
+							proposalPending={proposalPending}
 						/>
 					);
 				})}
 			</div>
+			{proposalPending && (
+				<Button
+					variant="secondary"
+					onClick={() => {
+						proposing.current?.abort();
+						proposing.current = null;
+						setProposalOwner(null);
+					}}
+				>
+					<Trans>Stop</Trans>
+				</Button>
+			)}
 
 			{(item.data.checks.length > 0 || item.data.ask) && (
 				<div className="grid items-start gap-4 @xl:grid-cols-2">
@@ -326,10 +385,21 @@ type RequirementRowProps = {
 	readOnly: boolean;
 	onSaved: (factId: string) => void;
 	onTailor: () => void;
+	onPropose?: (() => void) | undefined;
+	proposalPending: boolean;
 };
 
 /** One requirement. Below 1024px From and Status sit under the name; on phones each row is a card. */
-function RequirementRow({ requirement, status, evidence, readOnly, onSaved, onTailor }: RequirementRowProps) {
+function RequirementRow({
+	requirement,
+	status,
+	evidence,
+	readOnly,
+	onSaved,
+	onTailor,
+	onPropose,
+	proposalPending,
+}: RequirementRowProps) {
 	const [editing, setEditing] = useState(false);
 	const from = requirement.origin === "posting" ? t`Posting` : t`Inferred`;
 	const canAdd = !readOnly && (status === "missing" || status === "partial");
@@ -354,6 +424,11 @@ function RequirementRow({ requirement, status, evidence, readOnly, onSaved, onTa
 			</div>
 			<div role="cell" className="grid content-start justify-items-start gap-2.5">
 				<p className={cn("text-sm leading-5", status === "missing" ? "text-ink-2" : "text-ink")}>{evidence}</p>
+				{!readOnly && onPropose && (
+					<Button size="sm" variant="secondary" disabled={proposalPending} onClick={onPropose}>
+						{proposalPending ? <Trans>Preparing…</Trans> : <Trans>Propose a resume bullet</Trans>}
+					</Button>
+				)}
 				{(status === "missing" || status === "partial") && (
 					<Button size="sm" variant="link" onClick={onTailor}>
 						<Trans>Tailor resume for this job</Trans>

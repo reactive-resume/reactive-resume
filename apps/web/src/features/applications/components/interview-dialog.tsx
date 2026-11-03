@@ -21,7 +21,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { interviewCalendarAction, showInterviewCancellation } from "../calendar";
 import { dayKey, interviewTypeLabel } from "../interviews";
-import { applicationsListQueryKey } from "../queries";
+import { applicationDetailQueryOptions, applicationsListQueryKey } from "../queries";
 import { Combobox } from "@/components/ui/combobox";
 import { useCareerTime, withQueryUndo } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
@@ -306,6 +306,8 @@ export function InterviewDialog({
 			description: t`Interview deleted`,
 			errorMessage: t`Couldn't delete the interview. Try again.`,
 			prepare: async () => {
+				// Calendar summaries can have no detail query, or a hydrated row without its read function.
+				await queryClient.fetchQuery({ ...applicationDetailQueryOptions(applicationId), staleTime: 0 });
 				const request = await prepareRpc(client.applications.deleteTimelineEntry, {
 					id: applicationId,
 					entryId: editing.id,
