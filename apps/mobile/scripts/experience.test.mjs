@@ -1401,9 +1401,16 @@ const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 	"@orpc/client": { ORPCError: class extends Error {} },
 	"@tanstack/react-query": {
 		useQuery: (options) => ({ data: options.queryKey[0] === "posting-match" ? matchedPosting : [] }),
+		useQueryClient: () => ({ invalidateQueries: async () => {} }),
 	},
 	"./date": { parseDateOnly: () => new Date() },
 	"@/features/documents/filter": { defaultCopySource: () => undefined },
+	"@/features/documents/copy-for-job": {
+		copyForJob: async () => {
+			throw new Error("No copy requested");
+		},
+	},
+	"@/features/documents/new-documents": { useNewDocuments: { getState: () => ({ markOpened() {} }) } },
 	"./error": { applicationError: String },
 	"./lane-notice": { LaneNotice: "LaneNotice" },
 	"./lane-queries": laneQuery,
