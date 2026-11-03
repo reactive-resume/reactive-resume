@@ -159,6 +159,10 @@ type Props = Omit<React.ComponentProps<"div">, "value" | "onChange"> & {
 	commitRef?: React.Ref<() => string[]>;
 	/** The empty field's hint; keywords by default. Document tags say "Add a tag…". */
 	placeholder?: string;
+	/** Tags this account already uses. Chosen ones are hidden, and typing narrows the rest. */
+	suggestions?: readonly string[];
+	/** A caption above the suggestions, for example "Your tags". */
+	suggestionsLabel?: string;
 };
 
 export function ChipInput({
@@ -169,6 +173,8 @@ export function ChipInput({
 	allowCommas = false,
 	commitRef,
 	placeholder,
+	suggestions,
+	suggestionsLabel,
 	id: idProp,
 	"aria-describedby": ariaDescribedByProp,
 	"aria-invalid": ariaInvalidProp,
@@ -193,6 +199,11 @@ export function ChipInput({
 	const dndContextId = React.useId();
 	const isEditingKeyword = editingIndex !== null;
 	const hasChips = chips.length > 0;
+	// Suggestions follow what is typed, but never offer a tag that is already on the document.
+	const query = input.trim().toLocaleLowerCase();
+	const offered = (suggestions ?? []).filter(
+		(suggestion) => !chips.includes(suggestion) && suggestion.toLocaleLowerCase().includes(query),
+	);
 
 	const addChips = (values: string[]) => {
 		const nextValues = values.flatMap((chip) => {
@@ -401,6 +412,29 @@ export function ChipInput({
 					</Trans>
 				)}
 			</p>
+
+			{offered.length > 0 && (
+				<div className="grid gap-1.5">
+					{suggestionsLabel && <p className="text-xs text-ink-3">{suggestionsLabel}</p>}
+					<div className="flex max-h-28 flex-wrap gap-1.5 overflow-y-auto">
+						{offered.map((suggestion) => (
+							<button
+								key={suggestion}
+								type="button"
+								aria-label={t({
+									comment: "Button that adds a suggested tag. Variable is the tag text.",
+									message: `Add ${suggestion}`,
+								})}
+								className="inline-flex min-h-7 max-w-full items-center gap-1 rounded-sm border border-line-2 px-2.5 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none pointer-coarse:min-h-11"
+								onClick={() => addChips([suggestion])}
+							>
+								<Icon name="plus" size={12} className="shrink-0 text-ink-3" />
+								<span className="truncate">{suggestion}</span>
+							</button>
+						))}
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
