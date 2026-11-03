@@ -33,6 +33,8 @@ test("AI imports retain the selecting account through parsing", async () => {
 	let saved = 0;
 	class SessionChangedError extends Error {}
 	const { importDocument } = load("features/documents/import-file.ts", {
+		"@lingui/core": { i18n: { locale: "en-US" } },
+		"@reactive-resume/utils/locale": { localeSchema: { parse: (locale) => locale } },
 		"@lingui/core/macro": { t: tag },
 		"expo-file-system": {
 			File: class {
@@ -77,6 +79,8 @@ test("AI imports retain the selecting account through parsing", async () => {
 test("AI imports wait for the user's review before anything is saved", async () => {
 	let saved = 0;
 	const { importDocument, createReviewedResume } = load("features/documents/import-file.ts", {
+		"@lingui/core": { i18n: { locale: "en-US" } },
+		"@reactive-resume/utils/locale": { localeSchema: { parse: (locale) => locale } },
 		"@lingui/core/macro": { t: tag },
 		"expo-file-system": {
 			File: class {
@@ -95,7 +99,7 @@ test("AI imports wait for the user's review before anything is saved", async () 
 		"@/api/client": {
 			SessionChangedError: class extends Error {},
 			client: {
-				ai: { parseDocx: async () => ({ basics: { name: "Priya Raman" } }) },
+				ai: { parseDocx: async () => ({ basics: { name: "Priya Raman" }, metadata: { page: { locale: "en-US" } } }) },
 				resume: {
 					import: async ({ data }) => {
 						saved++;
