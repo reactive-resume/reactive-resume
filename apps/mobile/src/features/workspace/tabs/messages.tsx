@@ -9,7 +9,7 @@ import { ORPCError } from "@orpc/client";
 import { useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 import { View } from "react-native";
 import { replyLogVersion, replyPlaceholders } from "@reactive-resume/schema/applications/reply";
 import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
@@ -34,7 +34,7 @@ import { client, orpc } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 import { getDraftScope } from "@/draft";
 import { useHasAIProvider } from "@/features/ai/providers";
-import { reminderTargets, useUserTime } from "@/features/application-detail/hooks";
+import { useUserTime } from "@/features/application-detail/hooks";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
@@ -42,7 +42,7 @@ import { stageScope, useInvalidateApplications } from "@/features/applications/q
 import { listedApplication, offerHintFor, useOfferHints } from "@/features/applications/stage-actions";
 import { formatMoney } from "@/features/career/offer-compare";
 import { OfferEntry } from "@/features/career/offer-entry";
-import { syncReminders } from "@/features/reminders";
+import { useReminders } from "@/features/reminders";
 import { Banner, Button, Icon, Sheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
@@ -184,11 +184,12 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const invalidate = useInvalidateApplications();
 	const copying = useRef(false);
 	const [logging, setLogging] = useState(false);
-	const { timeZone } = useUserTime();
-	useEffect(() => {
-		if (scope === getAccountScope())
-			void syncReminders(application.id, reminderTargets(application, timeZone)).catch(() => undefined);
-	}, [application, scope, timeZone]);
+	const reminders = useReminders(application.id);
+	const clearReminder = useEffectEvent(() => {
+		if (scope && scope === getAccountScope() && !application.followUpAt)
+			void reminders.turnOff({ kind: "follow-up", applicationId: application.id }).catch(() => undefined);
+	});
+	useEffect(() => clearReminder(), [application.id, application.followUpAt, scope]);
 	const generate = useGenerate(application.id);
 	const provider = useHasAIProvider().defaultProvider;
 	const draft = useDraft(`reply:${reply.id}`, reply.data.reply);
@@ -222,7 +223,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 			if (copied) void invalidate();
 			showToast({
 				message: copied
-					? t`Reply copied. Logging wasn't confirmed. Check Activity before trying again.`
+					? t`Reply copied. Logging wasn't confirmed. Check the timeline before trying again.`
 					: t`Couldn't copy the reply. Nothing was logged. Try again.`,
 			});
 		} finally {

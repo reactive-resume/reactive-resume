@@ -60,6 +60,8 @@ function harness({ lifetime = 30 } = {}) {
 		copy: async () => true,
 		copied: [],
 		logs: [],
+		effects: [],
+		clearedReminders: [],
 	};
 	const undo = load(MOBILE + "/src/features/career/undo.ts", {
 		"@lingui/core/macro": { t: tag },
@@ -91,7 +93,8 @@ function harness({ lifetime = 30 } = {}) {
 			react: {
 				useState: (init) => [typeof init === "function" ? init() : init, () => {}],
 				useRef: (value) => ({ current: value }),
-				useEffect: () => {},
+				useEffect: (effect) => env.effects.push(effect),
+				useEffectEvent: (effect) => effect,
 				useSyncExternalStore: (_subscribe, get) => get(),
 			},
 			"react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "Fragment" },
@@ -147,7 +150,9 @@ function harness({ lifetime = 30 } = {}) {
 			},
 			"@/features/career/offer-compare": { formatMoney: String },
 			"@/features/career/offer-entry": { OfferEntry: "OfferEntry" },
-			"@/features/reminders": {},
+			"@/features/reminders": {
+				useReminders: () => ({ turnOff: async (target) => env.clearedReminders.push(target) }),
+			},
 			"@/features/career/undo": undo,
 			"@/ui": {
 				Banner: "Banner",
@@ -248,6 +253,19 @@ test("native reply does not log clipboard failure or a stale account, and ignore
 	resolveCopy(true);
 	await new Promise(setImmediate);
 	assert.equal(h.env.logs.length, 0);
+});
+
+test("native reply view cancels only the cleared follow-up reminder and ignores a stale account effect", async () => {
+	const h = harness();
+	h.replyTree();
+	h.env.effects.shift()();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.clearedReminders, [{ kind: "follow-up", applicationId: "app-1" }]);
+	h.replyTree();
+	h.env.account = "acct-B";
+	h.env.effects.shift()();
+	await new Promise(setImmediate);
+	assert.equal(h.env.clearedReminders.length, 1);
 });
 
 const pendingFor = (promise, ms = 200) =>

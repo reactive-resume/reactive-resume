@@ -231,7 +231,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 			toast.add({
 				type: "error",
 				description: copied
-					? t`Reply copied. Logging wasn't confirmed. Check Activity before trying again.`
+					? t`Reply copied. Logging wasn't confirmed. Check the timeline before trying again.`
 					: t`Couldn't copy the reply. Nothing was logged. Try again.`,
 			});
 		} finally {
