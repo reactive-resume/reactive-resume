@@ -48,6 +48,7 @@ export type { ChatAttachment, MessageContext } from "./chat";
 export type { AssistantDocument } from "./document";
 
 export type ChatViewProps = {
+	onPostingSaved?: ((posting: { id: string; company: string; role: string }) => void) | undefined;
 	onRefresh?: (() => Promise<unknown>) | undefined;
 	/** The conversation, or null for a new one: the first message (or attachment) creates it through `createThread`. */
 	threadId: string | null;
@@ -680,8 +681,8 @@ function Conversation(props: ConversationProps) {
 		[continuationBlocked, lane, addToolOutput],
 	);
 	const extraData = useMemo(
-		() => ({ streaming: busy, readOnly, handlers, answer }),
-		[busy, readOnly, handlers, answer],
+		() => ({ streaming: busy, readOnly, handlers, answer, onPostingSaved: props.onPostingSaved }),
+		[busy, readOnly, handlers, answer, props.onPostingSaved],
 	);
 
 	const last = messages.at(-1);
@@ -749,6 +750,7 @@ function Conversation(props: ConversationProps) {
 								proposals={handlers}
 								onAnswer={answer}
 								remember={props.remember ?? null}
+								onPostingSaved={props.onPostingSaved}
 							/>
 							<ToolApprovals
 								message={message}

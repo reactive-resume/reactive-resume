@@ -18,7 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { memo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-native";
-import { agentKnowledgeUsed } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { agentKnowledgeUsed, agentReadPostings } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { additionParts, blockText, needsConfirmation, proposalText } from "@reactive-resume/resume/proposals";
 import { wordDiff } from "@reactive-resume/resume/word-diff";
 import { webSources } from "./chat";
@@ -26,6 +26,7 @@ import { handToAssistant } from "./handoff";
 import { AssistantMarkdown } from "./markdown";
 import { ProposalPageFit } from "./page-fit";
 import { isProposeEdits, requirementsOf, skippedCount, titleOf, toProposals } from "./proposals";
+import { SavePosting } from "./save-posting";
 import { client, orpc } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
 import { ReportAiContent } from "@/features/ai/report-content";
@@ -57,6 +58,7 @@ export type ProposalHandlers = {
 type FactText = (id: string) => string | null;
 
 type MessageViewProps = {
+	onPostingSaved?: ((posting: { id: string; company: string; role: string }) => void) | undefined;
 	message: UIMessage;
 	streaming: boolean;
 	readOnly: boolean;
@@ -81,6 +83,7 @@ export const MessageView = memo(function MessageView({
 	onAnswer,
 	remember,
 	sent,
+	onPostingSaved,
 }: MessageViewProps) {
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
@@ -101,6 +104,8 @@ export const MessageView = memo(function MessageView({
 	}
 
 	const sources = webSources(message);
+	const postings = agentReadPostings(message);
+	const resumeId = proposals?.resumeId;
 	const reportText = message.parts.flatMap((part) => (part.type === "text" ? [part.text] : [])).join("\n");
 	const lastText = message.parts.findLastIndex((part) => part.type === "text");
 
@@ -158,19 +163,32 @@ export const MessageView = memo(function MessageView({
 					<Text variant="caption" color="ink3">
 						<Trans>Sources</Trans>
 					</Text>
-					{sources.map((source) => (
-						<Text
-							key={source.url}
-							variant="callout"
-							color="accentText"
-							numberOfLines={1}
-							accessibilityRole="link"
-							onPress={() => void Linking.openURL(source.url)}
-							style={{ textDecorationLine: "underline" }}
-						>
-							{source.title}
-						</Text>
-					))}
+					{sources.map((source) => {
+						const posting = postings.find((item) => item.sourceUrl === source.url);
+						return (
+							<View key={source.url} style={{ gap: space.s1 }}>
+								<Text
+									variant="callout"
+									color="accentText"
+									numberOfLines={1}
+									accessibilityRole="link"
+									onPress={() => void Linking.openURL(source.url)}
+									style={{ textDecorationLine: "underline" }}
+								>
+									{source.title}
+								</Text>
+								{posting && resumeId && onPostingSaved ? (
+									<SavePosting
+										key={posting.postingSource.retrievedAt}
+										posting={posting}
+										resumeId={resumeId}
+										disabled={readOnly || streaming || !!proposals?.locked}
+										onSaved={onPostingSaved}
+									/>
+								) : null}
+							</View>
+						);
+					})}
 				</View>
 			) : null}
 		</View>

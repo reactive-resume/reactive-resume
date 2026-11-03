@@ -101,7 +101,13 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
 	const session = useSession();
-	const { document, loadFailed } = props;
+	const { loadFailed } = props;
+	const [savedPosting, setSavedPosting] = useState<AssistantDocument["posting"]>(null);
+	const document =
+		props.document && savedPosting
+			? { ...props.document, posting: savedPosting, madeFor: savedPosting.id, jobCopy: true }
+			: props.document;
+	if (savedPosting && props.document?.posting?.id === savedPosting.id) setSavedPosting(null);
 	const store = props.kind === "letter" ? useLetterStore : useResumeStore;
 	const providers = useHasAIProvider();
 	const threads = useThreads();
@@ -223,6 +229,11 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 					void threads.refetch();
 				}}
 				context={{ ...context, ...(document.posting ? { applicationId: document.posting.id } : {}) }}
+				onPostingSaved={(posting) => {
+					setSavedPosting(posting);
+					setContext((previous) => ({ ...previous, posting: true, applicationId: posting.id }));
+					router.setParams({ applicationId: posting.id });
+				}}
 				document={document}
 				connection={label}
 				privacy={(history) => disclosure(t, document, context, label, history.earlier > 0)}

@@ -212,6 +212,17 @@ If you connect an optional **Web access** service in Integrations, the assistant
 
 You can also supply a public page URL: the assistant uses the selected reader or built-in reading. Page reading does not require a separate search account. Failed reading leads to pasted-text recovery; clipped or incomplete pages are identified before you rely on them.
 
+In a resume conversation, a successfully read page offers **Save as a job…** beneath its **Sources** link. Enter the company and role, check **Saved description**, then choose **Save and link this resume**. This saves the retained posting snapshot and its reading source, links the open resume, and switches on that posting's context chip for your next message. It does not read the page again or make another AI call. Search snippets and failed reads do not offer this action.
+
+**Cancel** saves nothing before confirmation. If saving succeeds but linking fails, retry the same confirmation to finish linking the saved application. When a link's response is lost, the app reads the stored link before confirming it. If that check fails, retry rechecks the same saved application. The posting chip switches on only after linking is confirmed. This action links the current resume rather than making a copy; use **Copy for a job** first when you want to keep it separate from your base resume. Clipped or incomplete snapshots keep that warning. Page text remains external content to review, including anything that looks like an instruction.
+
+<Frame caption="A fictional page read offers explicit posting review and save/link beneath its source. The company and role need confirmation before anything is saved.">
+  <img
+    src="/images/guides/using-the-assistant/save-read-posting.png"
+    alt="Assistant source for a fictional job with Company and Role fields, a Saved description disclosure, and Save and link this resume and Cancel buttons"
+  />
+</Frame>
+
 To remove your saved web connection, select **Remove connection**, then confirm. **Keep connection** cancels
 without changing it. On the website and mobile apps, the confirmation explains that reconnecting needs your API
 key again. The built-in reader remains active after removal.

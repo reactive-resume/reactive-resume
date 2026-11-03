@@ -622,6 +622,41 @@ test("resume: a second Share change waits for the first's revision, and the firs
 	assert.notDeepEqual(s().proposalApplications, {});
 });
 
+for (const changedElsewhere of [false, true])
+	test(`resume: link readback preserves pending edits and Undo; changed body=${changedElsewhere}`, async () => {
+		const { owner } = setup("resume");
+		const o = owner();
+		const s = o.store.getState;
+		await s().open("resume");
+		accept(s, "resume");
+		await s().flush();
+		const receipts = structuredClone(s().proposalApplications);
+		const baselineVersion = s().document.updatedAt.getTime();
+		online = false;
+		s().update((data) => void (data.basics.headline = "Typed during lost response"), { newStep: true });
+		const committed = structuredClone(documents.resume);
+		committed.applicationId = "confirmed-job";
+		committed.updatedAt = new Date(committed.updatedAt.getTime() + 5);
+		if (changedElsewhere) committed.data.basics.name = "Edited elsewhere";
+		documents.resume = committed;
+		await o.writeMetadata(async () => structuredClone(committed), { conditional: false });
+		assert.equal(s().data.basics.headline, "Typed during lost response");
+		assert.equal(s().canUndo, true);
+		assert.deepEqual(s().proposalApplications, receipts);
+		assert.equal(s().document.updatedAt.getTime(), changedElsewhere ? baselineVersion : committed.updatedAt.getTime());
+		assert.notEqual(s().data.basics.name, "Edited elsewhere");
+		online = true;
+		await s().flush();
+		if (changedElsewhere) {
+			assert.ok(s().conflict);
+			assert.equal(s().data.basics.headline, "Typed during lost response");
+		} else {
+			assert.equal(s().status, "saved");
+			assert.equal(documents.resume.applicationId, "confirmed-job");
+			assert.equal(documents.resume.data.basics.headline, "Typed during lost response");
+		}
+	});
+
 test("resume: unlocking unchecked takes the answer only while the saved data is unchanged (RX-160)", async () => {
 	const { owner } = setup("resume");
 	const o = owner();

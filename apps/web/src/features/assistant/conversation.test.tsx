@@ -28,6 +28,7 @@ vi.mock("@/features/resume/editor/store", () => ({
 	),
 }));
 vi.mock("@/features/resume/builder/draft", () => ({
+	usePatchResume: () => vi.fn(),
 	useResumeStore: (select: (state: { resume: null }) => unknown) => select({ resume: null }),
 }));
 vi.mock("@/features/resume/editor/proposals/page-fit", () => ({ ProposalPageFit: () => null }));
@@ -39,6 +40,7 @@ vi.mock("@/libs/orpc/client", () => ({
 	},
 }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
+vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn(), useSearch: () => ({}) }));
 vi.mock("./use-assistant-chat", () => ({ useAssistantChat: mocks.chat }));
 vi.mock("./chat", () => ({
 	fileToBase64: async () => "Zm9v",
@@ -74,6 +76,36 @@ beforeEach(() => {
 	mocks.attach.mockResolvedValue({ id: "file-1", filename: "posting.txt", mediaType: "text/plain" });
 });
 afterEach(cleanup);
+
+it("offers explicit save only beneath a successfully read page", () => {
+	renderConversation([
+		{
+			id: "read-posting",
+			role: "assistant",
+			parts: [
+				{
+					type: "tool-read_page",
+					toolCallId: "read",
+					state: "output-available",
+					input: {},
+					output: {
+						requestedUrl: "https://jobs.example/engineer",
+						content: "Engineer — Fictional Labs\nBuild accessible tools.",
+						format: "text",
+						retrievedAt: "2026-11-03T00:00:00Z",
+						method: "builtin",
+						truncated: false,
+						completeness: "unknown",
+					},
+				},
+			],
+		},
+	]);
+	expect(screen.getByText("Sources")).toBeDefined();
+	expect(screen.getByRole("button", { name: "Save as a job…" })).toBeDefined();
+	fireEvent.click(screen.getByRole("button", { name: "Don't send Resume" }));
+	expect(screen.getByRole("button", { name: "Save as a job…" })).toBeEnabled();
+});
 
 it("keeps composition and newlines local, submits Enter, and offers Stop while streaming", () => {
 	const send = vi.fn();
