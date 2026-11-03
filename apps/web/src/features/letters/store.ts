@@ -1,5 +1,5 @@
 import type { Proposal, ProposalApplications } from "@reactive-resume/resume/proposals";
-import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
+import type { CoverLetterDraftVersion, CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { isEqual } from "es-toolkit";
@@ -11,7 +11,11 @@ import {
 	readProposalApplications,
 	restoreProposalApplications,
 } from "@reactive-resume/resume/proposals";
-import { coverLetterDocumentSchema, coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
+import {
+	coverLetterDocumentSchema,
+	coverLetterDraftVersionSchema,
+	coverLetterSchema,
+} from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { getAccountGeneration, getAccountId } from "@/libs/auth/account-scope";
 import { client, streamClient } from "@/libs/orpc/client";
@@ -25,7 +29,15 @@ type LetterMetadata = CoverLetter["style"]["metadata"];
 export type LetterEdits = Partial<
 	Pick<
 		CoverLetter,
-		"name" | "recipient" | "content" | "greeting" | "signOff" | "recipientName" | "recipientCompany" | "letterDate"
+		| "name"
+		| "recipient"
+		| "content"
+		| "greeting"
+		| "signOff"
+		| "recipientName"
+		| "recipientCompany"
+		| "letterDate"
+		| "aiOperationIds"
 	>
 > & {
 	/** The letter's own sender details, all of them editable once the sender link is off. */
@@ -45,6 +57,7 @@ const mergeEdits = (edits: LetterEdits, next: LetterEdits): LetterEdits => ({
 const applyEdits = (letter: CoverLetter, { metadata, sender, locale, ...fields }: LetterEdits): CoverLetter => ({
 	...letter,
 	...fields,
+	...(fields.aiOperationIds && !isEqual(fields.aiOperationIds, letter.aiOperationIds ?? []) ? { aiUsage: null } : {}),
 	...(metadata ? { designLinked: false } : {}),
 	style: {
 		...letter.style,
@@ -82,8 +95,14 @@ export type LetterDraft =
 	 * `versions` are the earlier finished drafts, oldest first, so Shorter or More personal never loses one.
 	 * `stopped` marks text Stop cut short.
 	 */
-	| { phase: "streaming" | "ready"; text: string; versions: string[]; stopped?: true }
-	| { phase: "failed"; provider: string | null; error: unknown; versions: string[] };
+	| {
+			phase: "streaming" | "ready";
+			text: string;
+			aiOperationIds: string[];
+			versions: CoverLetterDraftVersion[];
+			stopped?: true;
+	  }
+	| { phase: "failed"; provider: string | null; error: unknown; versions: CoverLetterDraftVersion[] };
 
 /** The most drafts kept side by side: the current one and up to four before it. */
 const MAX_DRAFT_VERSIONS = 5;
@@ -135,7 +154,8 @@ const idleDraft: LetterDraft = { phase: "idle" };
 const draftKey = (id: string) => `letter-draft:${getAccountId() ?? "signed-out"}:${id}`;
 type StoredDraft = {
 	text: string;
-	versions?: string[];
+	versions?: CoverLetterDraftVersion[];
+	aiOperationIds?: string[];
 	variant: "draft" | "shorter" | "personal";
 	revision: number;
 	stopped?: true;
@@ -144,12 +164,30 @@ type StoredDraft = {
 /** An unkept draft survives a same-tab reload with Keep/Discard, so it never costs a second paid request. */
 function readStoredDraft(id: string, revision: number): LetterDraft | null {
 	try {
-		const value = JSON.parse(sessionStorage.getItem(draftKey(id)) ?? "null") as StoredDraft | null;
+		const value = JSON.parse(sessionStorage.getItem(draftKey(id)) ?? "null") as
+			| (Omit<StoredDraft, "versions"> & { versions?: unknown[]; versionAiOperationIds?: unknown[] })
+			| null;
 		if (!value || typeof value.text !== "string" || !value.text.trim() || value.revision !== revision) return null;
 		const versions = Array.isArray(value.versions)
-			? value.versions.filter((version): version is string => typeof version === "string").slice(-4)
+			? value.versions
+					.flatMap((version, index) => {
+						const parsed = coverLetterDraftVersionSchema.safeParse(
+							typeof version === "string"
+								? { text: version, aiOperationIds: value.versionAiOperationIds?.[index] }
+								: version,
+						);
+						return parsed.success ? [parsed.data] : [];
+					})
+					.slice(-4)
 			: [];
-		return { phase: "ready", text: value.text, versions, ...(value.stopped ? { stopped: true as const } : {}) };
+		return {
+			phase: "ready",
+			text: value.text,
+			aiOperationIds: coverLetterDraftVersionSchema.parse({ text: value.text, aiOperationIds: value.aiOperationIds })
+				.aiOperationIds,
+			versions,
+			...(value.stopped ? { stopped: true as const } : {}),
+		};
 	} catch {
 		return null;
 	}
@@ -157,7 +195,15 @@ function readStoredDraft(id: string, revision: number): LetterDraft | null {
 
 function writeStoredDraft(id: string, draft: StoredDraft) {
 	try {
-		sessionStorage.setItem(draftKey(id), JSON.stringify(draft));
+		// Keep text-only versions readable by older app bundles.
+		sessionStorage.setItem(
+			draftKey(id),
+			JSON.stringify({
+				...draft,
+				versions: draft.versions?.map((version) => version.text),
+				versionAiOperationIds: draft.versions?.map((version) => version.aiOperationIds),
+			}),
+		);
 	} catch {
 		// Blocked storage leaves the draft in this view; only a reload loses it.
 	}
@@ -180,6 +226,7 @@ const recoveryEditsSchema = coverLetterSchema
 		name: true,
 		recipient: true,
 		content: true,
+		aiOperationIds: true,
 		greeting: true,
 		signOff: true,
 		recipientName: true,
@@ -520,6 +567,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 				recoveryCopy?.sessionId === sessionId && recoveryCopy.letter === letter ? recoveryCopy.copy : undefined;
 			if (!copy) {
 				copy = await client.coverLetters.import({
+					...(letter.aiOperationIds ? { aiOperationIds: letter.aiOperationIds } : {}),
 					document: coverLetterDocumentSchema.parse({
 						...letter,
 						format: "reactive-resume-cover-letter",
@@ -561,7 +609,11 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 }));
 
 /** Streams a draft from the posting (or a Shorter / More personal revision of `previous`) into `draft`. */
-export async function startLetterDraft(variant: "draft" | "shorter" | "personal" = "draft", previous?: string) {
+export async function startLetterDraft(
+	variant: "draft" | "shorter" | "personal" = "draft",
+	previous?: string,
+	previousAiOperationIds: string[] = [],
+) {
 	const { letter, sessionId } = useLetterEditorStore.getState();
 	if (!letter) return;
 	const account = getAccountGeneration();
@@ -576,15 +628,27 @@ export async function startLetterDraft(variant: "draft" | "shorter" | "personal"
 	// A revision keeps what came before it; the oldest drops off past the limit.
 	const before = useLetterEditorStore.getState().draft;
 	const versions = (
-		before.phase === "ready" ? [...before.versions, before.text] : before.phase === "idle" ? [] : before.versions
+		before.phase === "ready"
+			? [...before.versions, { text: before.text, aiOperationIds: before.aiOperationIds }]
+			: before.phase === "idle"
+				? []
+				: before.versions
 	).slice(-(MAX_DRAFT_VERSIONS - 1));
 	const setDraft = (draft: LetterDraft) => {
 		if (!current()) return;
 		useLetterEditorStore.setState({ draft });
-		if (draft.phase === "ready") writeStoredDraft(letter.id, { text: draft.text, versions, variant, revision });
+		if (draft.phase === "ready")
+			writeStoredDraft(letter.id, {
+				text: draft.text,
+				aiOperationIds: draft.aiOperationIds,
+				versions,
+				variant,
+				revision,
+			});
 	};
 	clearStoredLetterDraft(letter.id);
-	setDraft({ phase: "streaming", text: "", versions });
+	let aiOperationIds = variant === "draft" ? [] : previousAiOperationIds;
+	setDraft({ phase: "streaming", text: "", aiOperationIds, versions });
 
 	try {
 		// Draft from the same saved links and revision the editor shows.
@@ -595,16 +659,18 @@ export async function startLetterDraft(variant: "draft" | "shorter" | "personal"
 		if (!savedLetter || savedLetter.id !== letter.id) return;
 		revision = savedLetter.revision;
 		const stream = await streamClient.coverLetters.draft(
-			{ id: letter.id, variant, ...(previous ? { previous } : {}) },
+			{ id: letter.id, variant, includeProvenance: true, ...(previous ? { previous } : {}) },
 			{ signal: controller.signal },
 		);
 		let text = "";
 		for await (const chunk of stream) {
-			text += chunk;
-			setDraft({ phase: "streaming", text, versions });
+			if (typeof chunk !== "string") {
+				aiOperationIds = [...new Set([...aiOperationIds, chunk.aiOperationId])];
+			} else text += chunk;
+			setDraft({ phase: "streaming", text, aiOperationIds, versions });
 		}
 		if (!text.trim()) throw new Error("The draft came back empty.");
-		setDraft({ phase: "ready", text: text.trim(), versions });
+		setDraft({ phase: "ready", text: text.trim(), aiOperationIds, versions });
 	} catch (error) {
 		if (controller.signal.aborted) return;
 		const data = error instanceof ORPCError ? (error.data as { provider?: unknown } | undefined) : undefined;
@@ -618,18 +684,24 @@ export async function startLetterDraft(variant: "draft" | "shorter" | "personal"
 }
 
 /** The draft's earlier version, or nothing: what's left when a run is stopped or its failure dismissed. */
-function settleDraft(text: string, versions: string[], stopped: boolean): LetterDraft {
+function settleDraft(
+	text: string,
+	versions: CoverLetterDraftVersion[],
+	stopped: boolean,
+	aiOperationIds: string[] = [],
+): LetterDraft {
 	const { letter } = useLetterEditorStore.getState();
 	const last = versions.at(-1);
 	const draft: LetterDraft = text.trim()
-		? { phase: "ready", text: text.trim(), versions, ...(stopped ? { stopped: true as const } : {}) }
+		? { phase: "ready", text: text.trim(), aiOperationIds, versions, ...(stopped ? { stopped: true as const } : {}) }
 		: last !== undefined
-			? { phase: "ready", text: last, versions: versions.slice(0, -1) }
+			? { phase: "ready", ...last, versions: versions.slice(0, -1) }
 			: idleDraft;
 	if (letter) {
 		if (draft.phase === "ready")
 			writeStoredDraft(letter.id, {
 				text: draft.text,
+				aiOperationIds: draft.aiOperationIds,
 				versions: draft.versions,
 				variant: "draft",
 				revision: letter.revision,
@@ -646,7 +718,7 @@ export function stopLetterDraft() {
 	drafting?.abort();
 	drafting = null;
 	if (draft.phase !== "streaming") return;
-	useLetterEditorStore.setState({ draft: settleDraft(draft.text, draft.versions, true) });
+	useLetterEditorStore.setState({ draft: settleDraft(draft.text, draft.versions, true, draft.aiOperationIds) });
 }
 
 /** Closes a failed run, going back to the draft before it when there was one. */

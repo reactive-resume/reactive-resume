@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
+import type { LetterDraft } from "@/features/letters/store";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import type { ReactNode } from "react";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -11,11 +12,12 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const state = vi.hoisted(() => ({
 	letter: null as CoverLetter | null,
-	draft: { phase: "idle" as const },
+	draft: { phase: "idle" } as LetterDraft,
 	status: "saved" as "saved" | "saving" | "error" | "conflict",
 	changing: false,
 	sessionId: "session",
 	edit: vi.fn(),
+	start: vi.fn(),
 }));
 
 vi.mock("@/features/letters/store", () => ({
@@ -23,7 +25,7 @@ vi.mock("@/features/letters/store", () => ({
 		getState: () => state,
 	}),
 	discardLetterDraft: vi.fn(),
-	startLetterDraft: vi.fn(),
+	startLetterDraft: state.start,
 }));
 vi.mock("@/features/applications/queries", () => ({
 	applicationsListQueryOptions: () => ({ queryKey: ["applications"], queryFn: async () => [] }),
@@ -110,6 +112,7 @@ const letter: CoverLetter = {
 };
 
 beforeEach(() => {
+	vi.clearAllMocks();
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 	state.letter = letter;
 	state.draft = { phase: "idle" };
@@ -143,4 +146,40 @@ it("stops accepting typing while the letter changed elsewhere, without hiding th
 	renderPanel();
 	expect(screen.queryByText(/This letter changed in another tab/)).toBeNull();
 	expect((screen.getByLabelText("Full name") as HTMLInputElement).closest("fieldset")?.disabled).toBe(false);
+});
+
+it("accepts or revises the displayed earlier draft with its own request sources", () => {
+	state.draft = {
+		phase: "ready",
+		text: "Newest draft",
+		aiOperationIds: ["new-operation"],
+		versions: [{ text: "Earlier draft", aiOperationIds: ["original-operation"] }],
+	};
+	renderPanel();
+	fireEvent.click(screen.getByLabelText("Previous version"));
+	fireEvent.click(screen.getByText("Shorter", { selector: "button" }));
+	expect(state.start).toHaveBeenCalledWith("shorter", "Earlier draft", ["original-operation"]);
+	fireEvent.click(screen.getByText("Accept", { selector: "button" }));
+	expect(state.edit).toHaveBeenCalledWith({ content: "<p>Earlier draft</p>", aiOperationIds: ["original-operation"] });
+});
+
+it("shows original requested provider and model beside a saved letter body", () => {
+	state.letter = {
+		...letter,
+		aiOperationIds: ["original-operation"],
+		aiUsage: {
+			requests: 2,
+			models: [
+				{
+					providerId: "deleted-connection",
+					label: "Original connection",
+					provider: "openai-compatible",
+					model: "original-model",
+				},
+			],
+		},
+	};
+	renderPanel();
+	expect(screen.getByText("AI request attempts: 2")).toBeTruthy();
+	expect(screen.getByText("Original connection · openai-compatible · original-model")).toBeTruthy();
 });

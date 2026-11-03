@@ -60,6 +60,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			"20261001042749_v6_release",
 			"20261009132123_left_proteus",
 			"20261101050044_rx114_content_edited_at",
+			"20261103112850_magenta_shadow_king",
 		]) {
 			const migration = await readFile(
 				new URL(`../../../../../migrations/${name}/migration.sql`, import.meta.url),

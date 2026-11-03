@@ -1,4 +1,5 @@
 import z from "zod";
+import { aiOperationIdsSchema, aiUsageSummarySchema } from "../ai-usage";
 import { basicsSchema, metadataSchema, pictureSchema } from "../resume/data";
 
 export const coverLetterStyleSchema = z.object({
@@ -52,6 +53,8 @@ export const coverLetterContentSchema = z.object({
 
 export const coverLetterSchema = coverLetterContentSchema.extend({
 	id: z.string(),
+	aiOperationIds: aiOperationIdsSchema.optional(),
+	aiUsage: aiUsageSummarySchema.nullable().optional(),
 	sourceResumeId: z.string().nullable(),
 	sourceApplicationId: z.string().nullable(),
 	senderLinked: z
@@ -63,6 +66,13 @@ export const coverLetterSchema = coverLetterContentSchema.extend({
 	createdAt: z.date(),
 	updatedAt: z.date(),
 });
+
+/** Older saved drafts contain only text; their request history stays unknown. */
+export const coverLetterDraftVersionSchema = z.union([
+	z.string().transform((text) => ({ text, aiOperationIds: [] as string[] })),
+	z.object({ text: z.string(), aiOperationIds: aiOperationIdsSchema.catch([]) }),
+]);
+export type CoverLetterDraftVersion = z.infer<typeof coverLetterDraftVersionSchema>;
 
 export const coverLetterDocumentSchema = coverLetterContentSchema.extend({
 	format: z.literal("reactive-resume-cover-letter"),

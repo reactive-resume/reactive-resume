@@ -48,7 +48,7 @@ In `applications.json`, `appliedAt` is filled in even for a job you only saved: 
 
 `career.json` contains your preferences, facts and their source/correction history, stories, reviewed reusable answers with scope, source and evidence revision references, workspace answers and checklist state, saved results, schedules, notifications, discovered roles, voice transcripts, and career conversations with attachment metadata. Referenced live attachment files are saved separately under `uploads/`. Raw voice recordings are not retained or exported.
 
-It also includes `aiRequests` (recorded request attempts, action, connection label, provider type, requested model and timestamp) and `writingReviews` (saved wording reviews and their source references). Usage records contain no prompts, credentials, provider endpoint URLs, token counts or cost estimates. Deleting a saved connection preserves these historical records; deleting the account removes them.
+It also includes `aiRequests` (recorded request attempts, action, connection label, provider type, requested model and timestamp) and `writingReviews` (saved wording reviews and their source references). Saved letters and their history include private operation references that link to these records; portable letter JSON omits them. Usage records contain no prompts, credentials, provider endpoint URLs, token counts or cost estimates. Deleting a saved connection preserves these historical records; deleting the account removes them.
 
 Each resume and letter file is named after the document plus a unique ID, so two documents with the same name don't overwrite each other.
 

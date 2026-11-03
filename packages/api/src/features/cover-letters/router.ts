@@ -1,7 +1,6 @@
 import { eventIterator } from "@orpc/server";
-import z from "zod";
 import { protectedProcedure } from "../../context";
-import { coverLetterDto } from "../../dto/cover-letter";
+import { coverLetterDraftChunkSchema, coverLetterDto } from "../../dto/cover-letter";
 import { aiRequestRateLimit, resumeMutationRateLimit } from "../../middleware/rate-limit";
 import { paginate } from "../../pagination";
 import { draftLetterBody } from "./draft";
@@ -243,11 +242,11 @@ export const coverLettersRouter = {
 			operationId: "draftCoverLetter",
 			summary: "Draft a cover letter's body",
 			description:
-				"Streams a draft of the letter's body, as text, from its linked resume and its application's posting, using only facts from them. Nothing is saved. `shorter` and `personal` revise a previous draft.",
+				"Streams a draft of the letter's body, as text, from its linked resume and its application's posting, using only facts from them. Nothing is saved. `shorter` and `personal` revise a previous draft. With `includeProvenance`, an initial event supplies the AI operation ID before text; the default stream contains only strings.",
 			successDescription: "The draft, streamed as text.",
 		})
 		.input(coverLetterDto.draft.input)
-		.output(eventIterator(z.string()))
+		.output(eventIterator(coverLetterDraftChunkSchema))
 		.use(aiRequestRateLimit)
 		.handler(({ context, input, signal }) => draftLetterBody({ ...input, userId: context.user.id, signal })),
 };

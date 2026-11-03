@@ -51,7 +51,7 @@ function buildLetterDraftPrompt(input: PromptInput): string {
  */
 export async function draftLetterBody(
 	input: CoverLetterDraftInput & { userId: string; signal?: AbortSignal | undefined },
-): Promise<AsyncGenerator<string>> {
+): Promise<AsyncGenerator<string | { aiOperationId: string }>> {
 	const { userId } = input;
 	const letter = await coverLetterService.getById({ id: input.id, userId });
 	const [resume, application] = await Promise.all([
@@ -72,12 +72,13 @@ export async function draftLetterBody(
 	const posting =
 		application?.jobDescription?.trim() ||
 		(application?.requirements.length ? application.requirements.map((item) => `- ${item}`).join("\n") : undefined);
+	const usage = createAiUsage(userId, "draft-letter", provider, async (tx) => {
+		await assertDocumentVersion(tx, userId, { kind: "letter", ...letter });
+		if (resume) await assertDocumentVersion(tx, userId, { kind: "resume", ...resume });
+		if (application) await assertApplicationVersion(tx, userId, application);
+	});
 	const model = getModel({
-		usage: createAiUsage(userId, "draft-letter", provider, async (tx) => {
-			await assertDocumentVersion(tx, userId, { kind: "letter", ...letter });
-			if (resume) await assertDocumentVersion(tx, userId, { kind: "resume", ...resume });
-			if (application) await assertApplicationVersion(tx, userId, application);
-		}),
+		usage,
 		provider: provider.provider,
 		model: aiModelForTask(provider, "capable"),
 		apiKey: provider.apiKey,
@@ -116,6 +117,7 @@ export async function draftLetterBody(
 	// Resolve and authorize inside the request scope; oRPC iterates the result after that scope has ended.
 	return (async function* () {
 		try {
+			if (input.includeProvenance) yield { aiOperationId: usage.operationId };
 			for await (const part of result.stream) {
 				if (part.type === "text-delta") yield part.text;
 				else if (part.type === "error") throw unreachable(part.error);
