@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {#条目} other {# 条目}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {已遗忘 # 条事实} other {已遗忘 # 条事实}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, other {# 个待解决问题}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, other {# 行没有公司或职位，已跳过。}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, other {在 GitHub 上为我们加星，目前 # 颗星（在新标签页中打开）}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "申请人跟踪系统会在任何人阅读之前将您的 PDF 转换为纯文本。检查器也会做同样的事情，使用浏览器中的 PDF.js 库，然后根据文本的可靠程度，而不是根据您获得工作的机会，对您的简历存活率进行评分：0 到 100。"
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "在设计中更改它。"
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "更改语言"
 
@@ -7557,7 +7557,6 @@ msgstr "回家"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "转到仪表板"
 
@@ -9428,10 +9427,6 @@ msgstr "使用Reactive Resume制作，免费开源"
 msgid "Main"
 msgstr "主界面"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "主导航"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "暂无可关联的事实。请在“事实”中添加。"
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "没有已遗忘的事实"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "重新导出并嵌入字体，然后打开文件检查文字复制出来
 msgid "Re: Senior Product Designer"
 msgstr "Re: 高级产品设计师"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - 返回首页"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "定时任务"
 msgid "School"
 msgstr "学校"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "适用范围"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "显示 DNS 记录"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "显示已遗忘的事实"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "显示标题"
@@ -15072,6 +15075,7 @@ msgstr "跳过并上传"
 msgid "Skip to content"
 msgstr "跳至内容"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "标准章节标题"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "GitHub 上的明星 Reactive Resume"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "在 GitHub 上为我们加星（在新标签页中打开）"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "开关型号"
 msgid "Switch to dark mode"
 msgstr "切换到深色模式"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "切换到深色主题"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "切换到灯光模式"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "切换到浅色主题"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

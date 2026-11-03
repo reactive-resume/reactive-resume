@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# oppføring} other {#-oppføringer}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# glemt faktum} other {# glemte fakta}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# åpent problem} other {# åpne problemer}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# rad hadde ingen bedrift eller rolle og ble hoppet over.} other {# rader hadde ingen bedrift eller rolle og ble hoppet over.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Gi oss en stjerne på GitHub, for øyeblikket # stjerne (åpnes i ny fane)} other {Gi oss en stjerne på GitHub, for øyeblikket # stjerner (åpnes i ny fane)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Søkersporingssystemer gjør din PDF til ren tekst før noen leser den. Kontrolløren gjør det samme, med PDF.js-biblioteket i nettleseren din, og scorer deretter hvor mye av CV-en din som overlever: 0 til 100, fra hvor pålitelig teksten kommer ut, ikke fra sjansene dine for å få jobben."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Endre det i Design."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Endre språk"
 
@@ -7557,7 +7557,6 @@ msgstr "Gå hjem"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Gå til dashbordet"
 
@@ -9428,10 +9427,6 @@ msgstr "Laget med Reactive Resume, gratis og åpen kildekode"
 msgid "Main"
 msgstr "Hoved"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Hovednavigasjon"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "Ingen fakta å koble til ennå. Legg dem til i Fakta."
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Ingen glemte fakta"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "Eksporter på nytt med skriftene innebygd, åpne deretter filen og sjekk
 msgid "Re: Senior Product Designer"
 msgstr "SV: Senior Product Designer"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Gå til startsiden"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "Tidsplaner"
 msgid "School"
 msgstr "Skole"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Omfang"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "Vis DNS-poster"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Vis glemte fakta"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Vis overskrift"
@@ -15072,6 +15075,7 @@ msgstr "Hopp over og last opp"
 msgid "Skip to content"
 msgstr "Gå til innhold"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "Standard seksjonsoverskrifter"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Stjerne Reactive Resume på GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Gi oss en stjerne på GitHub (åpnes i ny fane)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "Bytt modell"
 msgid "Switch to dark mode"
 msgstr "Bytt til mørk modus"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Bytt til mørkt tema"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Bytt til lysmodus"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Bytt til lyst tema"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

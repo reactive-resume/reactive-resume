@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {إدخال #} other {إدخالات #}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {نُسيت # حقيقة} zero {لم تُنسَ أي حقائق} two {نُسيت # حقيقتان} few {نُسيت # حقائق} many {نُسيت # حقيقة} other {نُسيت # حقيقة}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {مشكلة مفتوحة واحدة} two {مشكلتان مفتوحتان} few {# مشكلات مفتوحة} many {# مشكلة مفتوحة} other {# مشكلة مفتوحة}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} نقطة"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {تم تخطي صف واحد لعدم وجود شركة أو دور.} two {تم تخطي صفين لعدم وجود شركة أو دور.} few {تم تخطي # صفوف لعدم وجود شركة أو دور.} many {تم تخطي # صفًا لعدم وجود شركة أو دور.} other {تم تخطي # صف لعدم وجود شركة أو دور.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {امنحنا نجمة على GitHub، حاليًا نجمة واحدة (يفتح في علامة تبويب جديدة)} two {امنحنا نجمة على GitHub، حاليًا نجمتان (يفتح في علامة تبويب جديدة)} few {امنحنا نجمة على GitHub، حاليًا # نجوم (يفتح في علامة تبويب جديدة)} many {امنحنا نجمة على GitHub، حاليًا # نجمة (يفتح في علامة تبويب جديدة)} other {امنحنا نجمة على GitHub، حاليًا # نجمة (يفتح في علامة تبويب جديدة)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "تحوّل أنظمة تتبّع المتقدمين (ATS) ملف PDF الخاص بك إلى نص عادي قبل أن يقرأه أحد. ويفعل المدقق الشيء نفسه بمكتبة PDF.js في متصفحك، ثم يقيس مقدار ما يبقى سليمًا من سيرتك الذاتية: من ٠ إلى ١٠٠، بحسب مدى موثوقية استخراج النص، لا بحسب فرصك في الحصول على الوظيفة."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "تغييره في التصميم."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "تغيير اللغة"
 
@@ -7557,7 +7557,6 @@ msgstr "اذهب إلى المنزل"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "الذهاب إلى لوحة التحكم"
 
@@ -9428,10 +9427,6 @@ msgstr "مصنوع باستخدام Reactive Resume، وهو مجاني ومفت
 msgid "Main"
 msgstr "رئيسي"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "التنقل الرئيسي"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr "إنشاء نسخة لهذه الوظيفة"
@@ -10391,6 +10386,10 @@ msgstr "لا توجد حقائق لربطها بعد. أضفها في الحقا
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "لا توجد حقائق منسية"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "أعد التصدير مع تضمين الخطوط، ثم افتح ال�
 msgid "Re: Senior Product Designer"
 msgstr "رد: مصمم منتجات أول"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - الانتقال إلى الصفحة الرئيسية"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "الجداول"
 msgid "School"
 msgstr "المدرسة"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "النطاق"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "إظهار سجلات DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "إظهار الحقائق المنسية"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "إظهار العنوان"
@@ -15072,6 +15075,7 @@ msgstr "تخطي وتحميل"
 msgid "Skip to content"
 msgstr "انتقل إلى المحتوى"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "عناوين الأقسام القياسية"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "النجم Reactive Resume على GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "امنحنا نجمة على GitHub (يفتح في علامة تبويب جديدة)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "نموذج التبديل"
 msgid "Switch to dark mode"
 msgstr "التبديل إلى الوضع المظلم"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "التبديل إلى السمة الداكنة"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "التبديل إلى وضع الضوء"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "التبديل إلى السمة المضيئة"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

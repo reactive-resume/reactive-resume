@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# ಪ್ರವೇಶ} other {# ನಮೂದುಗಳು}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# ಸಂಗತಿಯನ್ನು ಮರೆಯಲಾಗಿದೆ} other {# ಸಂಗತಿಗಳನ್ನು ಮರೆಯಲಾಗಿದೆ}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# ಬಾಕಿ ಸಮಸ್ಯೆ} other {# ಬಾಕಿ ಸಮಸ್ಯೆಗಳು}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# ಸಾಲಿನಲ್ಲಿ ಕಂಪನಿ ಅಥವಾ ಹುದ್ದೆ ಇರಲಿಲ್ಲ, ಆದ್ದರಿಂದ ಅದನ್ನು ಬಿಟ್ಟುಬಿಡಲಾಗಿದೆ.} other {# ಸಾಲುಗಳಲ್ಲಿ ಕಂಪನಿ ಅಥವಾ ಹುದ್ದೆ ಇರಲಿಲ್ಲ, ಆದ್ದರಿಂದ ಅವುಗಳನ್ನು ಬಿಟ್ಟುಬಿಡಲಾಗಿದೆ.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {GitHub ನಲ್ಲಿ ನಮಗೆ ಸ್ಟಾರ್ ನೀಡಿ, ಪ್ರಸ್ತುತ # ಸ್ಟಾರ್ (ಹೊಸ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ತೆರೆಯುತ್ತದೆ)} other {GitHub ನಲ್ಲಿ ನಮಗೆ ಸ್ಟಾರ್ ನೀಡಿ, ಪ್ರಸ್ತುತ # ಸ್ಟಾರ್‌ಗಳು (ಹೊಸ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ತೆರೆಯುತ್ತದೆ)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "ಅರ್ಜಿದಾರರ ಟ್ರ್ಯಾಕಿಂಗ್ ವ್ಯವಸ್ಥೆಗಳು ನಿಮ್ಮ PDF ಅನ್ನು ಯಾರಾದರೂ ಓದುವ ಮೊದಲು ಅದನ್ನು ಸರಳ ಪಠ್ಯವನ್ನಾಗಿ ಪರಿವರ್ತಿಸುತ್ತವೆ. ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿರುವ PDF.js ಲೈಬ್ರರಿಯೊಂದಿಗೆ ಪರೀಕ್ಷಕನು ಅದೇ ರೀತಿ ಮಾಡುತ್ತಾನೆ, ನಂತರ ನಿಮ್ಮ ರೆಸ್ಯೂಮ್ ಎಷ್ಟು ಉಳಿದಿದೆ ಎಂಬುದನ್ನು ಸ್ಕೋರ್ ಮಾಡುತ್ತದೆ: 0 ರಿಂದ 100, ಪಠ್ಯವು ಎಷ್ಟು ವಿಶ್ವಾಸಾರ್ಹವಾಗಿ ಹೊರಬರುತ್ತದೆ, ಕೆಲಸ ಪಡೆಯುವ ನಿಮ್ಮ ಅವಕಾಶಗಳಿಂದ ಅಲ್ಲ."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "ಅದನ್ನು ವಿನ್ಯಾಸದಲ್ಲಿ ಬದಲಾಯಿಸಿ."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "ಭಾಷೆ ಬದಲಿಸಿ"
 
@@ -7557,7 +7557,6 @@ msgstr "ಮನೆಗೆ ಹೋಗು"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "ಡ್ಯಾಶ್ಬೋರ್ಡ್ಗೆ ಹೋಗಿ"
 
@@ -9428,10 +9427,6 @@ msgstr "Reactive Resume, ಉಚಿತ ಮತ್ತು ಮುಕ್ತ ಮೂಲ�
 msgid "Main"
 msgstr "ಮುಖ್ಯ"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "ಮುಖ್ಯ ನ್ಯಾವಿಗೇಶನ್"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "ಲಿಂಕ್ ಮಾಡಲು ಇನ್ನೂ ಸಂಗತಿಗಳಿ
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "ಮರೆತ ಸಂಗತಿಗಳಿಲ್ಲ"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "ಫಾಂಟ್‌ಗಳನ್ನು ಎಂಬೆಡ್ ಮಾಡಿ ಮ
 msgid "Re: Senior Product Designer"
 msgstr "Re: Senior Product Designer"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - ಮುಖ್ಯ ಪುಟಕ್ಕೆ ಹೋಗಿ"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "ವೇಳಾಪಟ್ಟಿಗಳು"
 msgid "School"
 msgstr "ಶಾಲೆ"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "ವ್ಯಾಪ್ತಿ"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "DNS ರೆಕಾರ್ಡ್‌ಗಳನ್ನು ತೋರಿಸಿ"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "ಮರೆತ ಸಂಗತಿಗಳನ್ನು ತೋರಿಸಿ"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "ಶೀರ್ಷಿಕೆ ತೋರಿಸು"
@@ -15072,6 +15075,7 @@ msgstr "ಬಿಟ್ಟುಬಿಡಿ ಮತ್ತು ಅಪ್‌ಲೋಡ್ 
 msgid "Skip to content"
 msgstr "ವಿಷಯಕ್ಕೆ ತೆರಳಿ"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "ಪ್ರಮಾಣಿತ ವಿಭಾಗದ ಶೀರ್ಷಿಕೆಗ�
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "GitHub ನಲ್ಲಿ Reactive Resume ನಕ್ಷತ್ರ ಹಾಕಿ"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "GitHub ನಲ್ಲಿ ನಮಗೆ ಸ್ಟಾರ್ ನೀಡಿ (ಹೊಸ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ತೆರೆಯುತ್ತದೆ)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "ಮಾದರಿಯನ್ನು ಬದಲಿಸಿ"
 msgid "Switch to dark mode"
 msgstr "ಡಾರ್ಕ್ ಮೋಡ್‌ಗೆ ಬದಲಿಸಿ"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "ಡಾರ್ಕ್ ಥೀಮ್‌ಗೆ ಬದಲಾಯಿಸಿ"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "ಲೈಟ್ ಮೋಡ್‌ಗೆ ಬದಲಿಸಿ"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "ಲೈಟ್ ಥೀಮ್‌ಗೆ ಬದಲಾಯಿಸಿ"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

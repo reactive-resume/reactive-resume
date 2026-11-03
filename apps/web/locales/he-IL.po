@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {ערך #} other {ערכי #}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# עובדה נשכחה} other {# עובדות נשכחו}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {בעיה פתוחה #} other {# בעיות פתוחות}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {בשורה # לא הייתה חברה או תפקיד והיא דולגה.} other {ב-# שורות לא הייתה חברה או תפקיד והן דולגו.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {תן לנו כוכב ב-GitHub, כרגע כוכב # (נפתח בכרטיסייה חדשה)} other {תן לנו כוכב ב-GitHub, כרגע # כוכבים (נפתח בכרטיסייה חדשה)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "מערכות מעקב של מועמדים הופכות את ה-PDF שלך לטקסט רגיל לפני שמישהו קורא אותו. הבודק עושה את אותו הדבר, עם ספריית PDF.js בדפדפן שלך, ואז קולע כמה מהקורות חיים שלך שורד: 0 עד 100, מכמה מהימנות הטקסט יוצא, לא מהסיכויים שלך לקבל את העבודה."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "שנה את זה בעיצוב."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "שינוי שפה"
 
@@ -7557,7 +7557,6 @@ msgstr "לך הביתה"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "מעבר ללוח בקרה"
 
@@ -9428,10 +9427,6 @@ msgstr "מיוצר עם Reactive Resume, חינם וקוד פתוח"
 msgid "Main"
 msgstr "ראשי"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "ניווט ראשי"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "אין עדיין עובדות לקישור. הוסף אותן ב\"עו�
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "אין עובדות שנשכחו"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "ייצא מחדש עם גופנים מוטבעים, ולאחר מכן פ
 msgid "Re: Senior Product Designer"
 msgstr "Re: מעצב מוצר בכיר"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - מעבר לדף הבית"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "תזמונים"
 msgid "School"
 msgstr "בית ספר"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "היקף"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "הצגת רשומות DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "הצגת עובדות שנשכחו"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "הצג כותרת"
@@ -15072,6 +15075,7 @@ msgstr "דלג והעלה"
 msgid "Skip to content"
 msgstr "דלג לתוכן"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "כותרות סעיפים סטנדרטיים"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "סמן את Reactive Resume ב-GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "סמנו אותנו בכוכב ב־GitHub (נפתח בלשונית חדשה)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "החלף דגם"
 msgid "Switch to dark mode"
 msgstr "עבור למצב כהה"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "מעבר לערכת עיצוב כהה"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "עבור למצב אור"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "מעבר לערכת עיצוב בהירה"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

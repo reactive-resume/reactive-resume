@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# įrašas} other {# įrašai}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# pamirštas faktas} few {# pamiršti faktai} many {# pamiršto fakto} other {# pamirštų faktų}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# atvira problema} few {# atviros problemos} many {# atviros problemos} other {# atvirų problemų}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# eilutėje nebuvo įmonės ar pareigų, todėl ji praleista.} few {# eilutėse nebuvo įmonės ar pareigų, todėl jos praleistos.} many {# eilutės neturėjo įmonės ar pareigų, todėl praleistos.} other {# eilučių neturėjo įmonės ar pareigų, todėl praleistos.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Įvertinkite mus žvaigžde GitHub, šiuo metu # žvaigždė (atidaroma naujame skirtuke)} few {Įvertinkite mus žvaigžde GitHub, šiuo metu # žvaigždės (atidaroma naujame skirtuke)} many {Įvertinkite mus žvaigžde GitHub, šiuo metu # žvaigždės (atidaroma naujame skirtuke)} other {Įvertinkite mus žvaigžde GitHub, šiuo metu # žvaigždžių (atidaroma naujame skirtuke)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Paraiškos stebėjimo sistemos paverčia jūsų PDF paprastu tekstu, kol kas nors jį neskaito. Tikriklis daro tą patį, naršyklėje turėdamas PDF.js biblioteką, tada įvertina, kiek jūsų gyvenimo aprašymo išliko: nuo 0 iki 100, atsižvelgiant į tai, kaip patikimai pasirodo tekstas, o ne nuo jūsų galimybių gauti darbą."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Pakeiskite jį dizaine."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Keisti kalbą"
 
@@ -7557,7 +7557,6 @@ msgstr "Eik namo"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Eikite į skydelį"
 
@@ -9428,10 +9427,6 @@ msgstr "Pagaminta su Reactive Resume, nemokama ir atviro kodo"
 msgid "Main"
 msgstr "Pagrindinis"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Pagrindinė navigacija"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "Kol kas nėra faktų, kuriuos galima susieti. Pridėkite juos skiltyje �
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Pamirštų faktų nėra"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "Eksportuokite iš naujo su įterptais šriftais, tada atidarykite failą
 msgid "Re: Senior Product Designer"
 msgstr "Re: Vyresnysis produkto dizaineris"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "„Reactive Resume“ – eiti į pagrindinį puslapį"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "Tvarkaraščiai"
 msgid "School"
 msgstr "Mokykla"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Taikymo sritis"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "Rodyti DNS įrašus"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Rodyti pamirštus faktus"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Rodyti antraštę"
@@ -15072,6 +15075,7 @@ msgstr "Praleisti ir įkelti"
 msgid "Skip to content"
 msgstr "Pereiti prie turinio"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "Standartinės skyrių antraštės"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Žvaigždė Reactive Resume ant GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Pridėkite žvaigždutę „GitHub“ (atidaro naujame skirtuke)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "Perjungti modelį"
 msgid "Switch to dark mode"
 msgstr "Perjungti į tamsųjį režimą"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Perjungti į tamsią temą"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Perjungti į šviesos režimą"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Perjungti į šviesią temą"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

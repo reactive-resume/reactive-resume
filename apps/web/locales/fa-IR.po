@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {ورودی #} other {ورودی های #}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# واقعیت فراموش شده} other {# واقعیت فراموش شده}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# مشکل باز} other {# مشکل باز}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# ردیف شرکت یا نقش نداشت و رد شد.} other {# ردیف شرکت یا نقش نداشتند و رد شدند.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {به ما در GitHub ستاره بدهید، در حال حاضر # ستاره (در برگهٔ جدید باز می‌شود)} other {به ما در GitHub ستاره بدهید، در حال حاضر # ستاره (در برگهٔ جدید باز می‌شود)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "سیستم‌های ردیابی متقاضی، PDF شما را قبل از خواندن آن به متن ساده تبدیل می‌کنند. جستجوگر همین کار را انجام می‌دهد، با کتابخانه PDF.js در مرورگر شما، سپس میزان باقی‌مانده رزومه‌تان را از ۰ تا ۱۰۰ امتیاز می‌دهد، نه از میزان قابل اعتماد بودن متن، نه از شانس شما برای به دست آوردن شغل."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "آن را در طراحی تغییر دهید."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "تغییر زبان"
 
@@ -7557,7 +7557,6 @@ msgstr "برو به خانه"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "رفتن به داشبورد"
 
@@ -9428,10 +9427,6 @@ msgstr "ساخته شده با Reactive Resume، رایگان و منبع باز
 msgid "Main"
 msgstr "اصلی"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "ناوبری اصلی"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "هنوز واقعیتی برای پیوند نیست. آن‌ها را �
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "واقعیت فراموش‌شده‌ای وجود ندارد"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "با فونت‌های جاسازی‌شده دوباره خروجی ب�
 msgid "Re: Senior Product Designer"
 msgstr "Re: طراح ارشد محصول"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - رفتن به صفحهٔ اصلی"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "زمان‌بندی‌ها"
 msgid "School"
 msgstr "مدرسه"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "دامنه"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "نمایش رکوردهای DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "نمایش واقعیت‌های فراموش‌شده"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "نمایش عنوان"
@@ -15072,6 +15075,7 @@ msgstr "رد کردن و بارگذاری"
 msgid "Skip to content"
 msgstr "پرش به محتوا"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "سرفصل های بخش استاندارد"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "ستاره Reactive Resume در GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "در GitHub برای ما ستاره بگذارید (در زبانهٔ جدید باز می‌شود)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "مدل سوئیچ"
 msgid "Switch to dark mode"
 msgstr "به حالت تاریک بروید"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "تغییر به تم تیره"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "به حالت نور تغییر دهید"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "تغییر به تم روشن"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

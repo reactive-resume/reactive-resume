@@ -1,5 +1,5 @@
 import type { DbOrTx } from "@reactive-resume/db/client";
-import type { CareerSource } from "@reactive-resume/schema/career";
+import type { CareerFactCorrection, CareerSource } from "@reactive-resume/schema/career";
 import type z from "zod";
 import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
@@ -657,6 +657,20 @@ export const careerService = {
 			usedBy: { stories, savedItems },
 		}));
 	},
+	/** Project metadata in SQL: even legacy forgotten rows must never leave this boundary with private text. */
+	forgottenFacts: (userId: string) =>
+		db
+			.select({ count: sql<number>`count(*)::integer`, at: tables.careerFact.updatedAt })
+			.from(tables.careerFact)
+			.where(
+				and(
+					eq(tables.careerFact.userId, userId),
+					availableApplicationContext(userId, tables.careerFact.applicationId),
+					eq(tables.careerFact.status, "forgotten"),
+				),
+			)
+			.groupBy(tables.careerFact.updatedAt)
+			.orderBy(desc(tables.careerFact.updatedAt)),
 	proposeResumeFacts: async (userId: string, resumeId: string) => {
 		const { data: _data, ...review } = await resumeForFacts(userId, resumeId);
 		return review;
@@ -705,29 +719,66 @@ export const careerService = {
 		input: {
 			id: string;
 			text?: string | undefined;
+			category?: CareerFactCorrection["category"];
+			applicationId?: string | null | undefined;
+			before?: CareerFactCorrection["before"] | undefined;
 			status?: "active" | "excluded" | undefined;
 			share?: boolean | undefined;
 		},
 	) => {
 		const updated = await db.transaction(async (tx) => {
 			await lockUser(tx, userId);
+			if (input.applicationId) {
+				const [application] = await tx
+					.select({ id: tables.application.id })
+					.from(tables.application)
+					.where(and(activeApplications(userId), eq(tables.application.id, input.applicationId)))
+					.for("share");
+				if (!application) throw new ORPCError("NOT_FOUND");
+			}
 			const [row] = await tx.select().from(tables.careerFact).where(ownedFact(input.id, userId)).for("update");
 			if (!row || row.status === "forgotten") throw new ORPCError("NOT_FOUND");
+			if (
+				input.before &&
+				!isDeepStrictEqual(input.before, {
+					text: row.text,
+					category: row.category,
+					applicationId: row.applicationId,
+				})
+			)
+				throw new ORPCError("CONFLICT", {
+					message: "This fact changed. Close the correction and review its current text, type and scope.",
+				});
+			const text = input.text ?? row.text;
+			const category = input.category ?? row.category;
+			const applicationId =
+				input.applicationId !== undefined ? input.applicationId : input.share ? null : row.applicationId;
+			const corrected = text !== row.text || category !== row.category || applicationId !== row.applicationId;
+			if (!corrected && (input.status === undefined || input.status === row.status)) return row;
 			const [updated] = await tx
 				.update(tables.careerFact)
 				.set({
-					...(input.text !== undefined
+					text,
+					category,
+					applicationId,
+					...(corrected
 						? {
-								text: input.text,
-								revisions: [...row.revisions, { text: row.text, at: new Date().toISOString() }].slice(-50),
+								revisions: [
+									...row.revisions,
+									{
+										text: row.text,
+										category: row.category,
+										applicationId: row.applicationId,
+										at: new Date().toISOString(),
+									},
+								].slice(-50),
 							}
 						: {}),
 					...(input.status ? { status: input.status } : {}),
-					...(input.share ? { applicationId: null } : {}),
 				})
 				.where(ownedFact(input.id, userId))
 				.returning();
-			if (input.text !== undefined || input.status !== undefined) await invalidateMemory(userId, input.id, tx);
+			await invalidateMemory(userId, input.id, tx);
 			if (!updated) throw new ORPCError("NOT_FOUND");
 			return updated;
 		});

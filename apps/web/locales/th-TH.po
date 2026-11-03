@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {รายการ #} other {รายการ #}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {ลืมข้อเท็จจริง # รายการแล้ว} other {ลืมข้อเท็จจริง # รายการแล้ว}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, other {ปัญหาที่ยังไม่แก้ไข # รายการ}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} พอยต์"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, other {ข้าม # แถวที่ไม่มีบริษัทหรือตำแหน่ง}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, other {กดดาวให้เราบน GitHub ตอนนี้มี # ดาว (เปิดในแท็บใหม่)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "ระบบติดตามผู้สมัครจะเปลี่ยน PDF ของคุณให้เป็นข้อความธรรมดาก่อนที่ใครก็ตามจะอ่าน ตัวตรวจสอบจะทำเช่นเดียวกัน โดยมีไลบรารี PDF.js ในเบราว์เซอร์ของคุณ จากนั้นจะให้คะแนนว่าเรซูเม่ของคุณยังคงอยู่ได้มากเพียงใด: 0 ถึง 100 โดยพิจารณาจากความน่าเชื่อถือของข้อความ ไม่ใช่จากโอกาสที่จะได้งาน"
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "เปลี่ยนมันในการออกแบบ"
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "เปลี่ยนภาษา"
 
@@ -7557,7 +7557,6 @@ msgstr "กลับบ้าน"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "ไปที่แดชบอร์ด"
 
@@ -9428,10 +9427,6 @@ msgstr "สร้างด้วย Reactive Resume ฟรีและเป็�
 msgid "Main"
 msgstr "ส่วนหลัก"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "เมนูนำทางหลัก"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "ยังไม่มีข้อเท็จจริงให้ลิ
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "ไม่มีข้อเท็จจริงที่ลืมแล้ว"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "ส่งออกใหม่พร้อมฝังฟอนต์ �
 msgid "Re: Senior Product Designer"
 msgstr "Re: Senior Product Designer"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - ไปที่หน้าแรก"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "กำหนดการ"
 msgid "School"
 msgstr "โรงเรียน"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "ขอบเขต"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "แสดงเรกคอร์ด DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "แสดงข้อเท็จจริงที่ลืมแล้ว"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "แสดงหัวเรื่อง"
@@ -15072,6 +15075,7 @@ msgstr "ข้ามและอัปโหลด"
 msgid "Skip to content"
 msgstr "ข้ามไปที่เนื้อหา"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "ส่วนหัวของส่วนมาตรฐาน"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "ติดดาว Reactive Resume บน GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "กดดาวที่ GitHub ของเรา (เปิดในแท็บใหม่)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "สลับรุ่น"
 msgid "Switch to dark mode"
 msgstr "สลับไปที่โหมดมืด"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "เปลี่ยนเป็นธีมมืด"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "สลับไปที่โหมดแสง"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "เปลี่ยนเป็นธีมสว่าง"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

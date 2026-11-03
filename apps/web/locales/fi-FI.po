@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Sisäänpääsy #} other {#-merkinnät}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# tieto unohdettu} other {# tietoa unohdettu}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# avoin ongelma} other {# avointa ongelmaa}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# riviltä puuttui yritys tai rooli, joten se ohitettiin.} other {# riviltä puuttui yritys tai rooli, joten ne ohitettiin.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Anna meille tähti GitHubissa, nyt # tähti (avautuu uuteen välilehteen)} other {Anna meille tähti GitHubissa, nyt # tähteä (avautuu uuteen välilehteen)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Hakijoiden seurantajärjestelmät muuttavat PDF:n pelkkäksi tekstiksi ennen kuin kukaan lukee sitä. Tarkistin tekee saman selaimesi PDF.js-kirjaston avulla ja arvioi sitten, kuinka suuri osa ansioluettelostasi säilyy: 0-100, sen perusteella, kuinka luotettavasti teksti tulee ulos, ei mahdollisuuksistasi saada työpaikka."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Muuta se Suunnittelussa."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Vaihda kieli"
 
@@ -7557,7 +7557,6 @@ msgstr "Mene kotiin"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Siirry hallintapaneeliin"
 
@@ -9428,10 +9427,6 @@ msgstr "Tehty Reactive Resumella – ilmainen ja avoimen lähdekoodin sovellus"
 msgid "Main"
 msgstr "Pääosa"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Päävalikko"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "Ei vielä linkitettäviä faktoja. Lisää niitä Faktat-osiossa."
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Ei unohdettuja tietoja"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "Vie tiedosto uudelleen fontit upotettuina, avaa se sitten ja tarkista, e
 msgid "Re: Senior Product Designer"
 msgstr "Vs: Senior Product Designer"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume – Siirry etusivulle"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "Ajastukset"
 msgid "School"
 msgstr "Oppilaitos"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Laajuus"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "Näytä DNS-tietueet"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Näytä unohdetut tiedot"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Näytä otsikko"
@@ -15072,6 +15075,7 @@ msgstr "Ohita ja lataa"
 msgid "Skip to content"
 msgstr "Siirry sisältöön"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "Vakioosien otsikot"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Star Reactive Resume mallissa GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Anna meille tähti GitHubissa (avautuu uuteen välilehteen)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "Vaihda mallia"
 msgid "Switch to dark mode"
 msgstr "Vaihda pimeään tilaan"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Vaihda tummaan teemaan"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Vaihda valotilaan"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Vaihda vaaleaan teemaan"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

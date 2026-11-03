@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# ግቤት} other {# ግቤቶች}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# እውነታ ተረስቷል} other {# እውነታዎች ተረስተዋል}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# ያልተፈታ ችግር} other {# ያልተፈቱ ችግሮች}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# ረድፍ ኩባንያ ወይም ሚና ስላልነበረው ተዘሏል።} other {# ረድፎች ኩባንያ ወይም ሚና ስላልነበራቸው ተዘለዋል።}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {በ GitHub ላይ ኮከብ ስጡን፣ አሁን # ኮከብ (በአዲስ ታብ ይከፈታል)} other {በ GitHub ላይ ኮከብ ስጡን፣ አሁን # ኮከቦች (በአዲስ ታብ ይከፈታል)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "የአመልካቾች መከታተያ ስርዓቶች ማንም ከማንበብ በፊት የእርስዎን PDF ወደ ግልጽ ጽሁፍ ይለውጠዋል። አረጋጋጩም እንዲሁ ያደርጋል፣ በአሳሽዎ ውስጥ ካለው PDF.js ቤተ-መጽሐፍት ጋር፣ ከዚያ ምን ያህል የትምህርት ማስረጃዎ እንደሚተርፍ ያስመዘግባል፡ ከ 0 እስከ 100፣ ፅሁፉ እንዴት በአስተማማኝ ሁኔታ እንደሚወጣ እንጂ ስራውን የማግኘት እድሎችዎ ላይ አይደለም።"
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "በንድፍ ውስጥ ይለውጡት."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "ቋንቋ ቀይር"
 
@@ -7557,7 +7557,6 @@ msgstr "ወደ ቤት ሂድ"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "ወደ ዳሽቦርዱ ሂድ"
 
@@ -9428,10 +9427,6 @@ msgstr "በReactive Resume፣ ነፃ እና ክፍት ምንጭ የተሰራ"
 msgid "Main"
 msgstr "ዋና"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "ዋና አቅጣጫ"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "ለማገናኘት እስካሁን እውነታዎች የሉም። በ�
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "የተረሱ እውነታዎች የሉም"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "ፊደሎች ተካትተው እንደገና ወደ ውጭ ይላኩ፣ 
 msgid "Re: Senior Product Designer"
 msgstr "Re: ከፍተኛ የምርት ዲዛይነር"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - ወደ መነሻ ገጽ ሂድ"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "መርሐ ግብሮች"
 msgid "School"
 msgstr "ት/ቤት"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "ወሰን"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "የDNS መዝገቦችን አሳይ"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "የተረሱ እውነታዎችን አሳይ"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "ርዕስ አሳይ"
@@ -15072,6 +15075,7 @@ msgstr "ይዝለሉ እና ይስቀሉ"
 msgid "Skip to content"
 msgstr "ወደ ይዘት ዝለል"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "መደበኛ ክፍል ርዕሶች"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "ኮከብ Reactive Resume በ GitHub ላይ"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "በ GitHub ላይ ኮከብ ስጡን (በአዲስ ታብ ይከፈታል)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "ሞዴል ቀይር"
 msgid "Switch to dark mode"
 msgstr "ወደ ጨለማ ሁነታ ቀይር"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "ወደ ጨለማ ገጽታ ቀይር"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "ወደ ብርሃን ሁነታ ቀይር"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "ወደ ብርሃን ገጽታ ቀይር"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

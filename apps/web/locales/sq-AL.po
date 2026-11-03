@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Hyrja #} other {# hyrjet}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# fakt i harruar} other {# fakte të harruara}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# problem i hapur} other {# probleme të hapura}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# rresht nuk kishte kompani ose rol dhe u anashkalua.} other {# rreshta nuk kishin kompani ose rol dhe u anashkaluan.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Na jepni një yll në GitHub, aktualisht # yll (hapet në skedë të re)} other {Na jepni një yll në GitHub, aktualisht # yje (hapet në skedë të re)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Sistemet e gjurmimit të aplikantëve e kthejnë PDF tuaj në tekst të thjeshtë përpara se dikush ta lexojë atë. Kontrolluesi bën të njëjtën gjë, me bibliotekën PDF.js në shfletuesin tuaj, më pas shënon se sa nga rezymeja juaj mbijeton: 0 deri në 100, nga sa e besueshme del teksti, jo nga shanset tuaja për të marrë vendin e punës."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Ndryshojeni atë në Design."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Ndrysho gjuhën"
 
@@ -7557,7 +7557,6 @@ msgstr "Shko në shtëpi"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Shko te paneli kryesor"
 
@@ -9428,10 +9427,6 @@ msgstr "Bërë me Reactive Resume, falas dhe me burim të hapur"
 msgid "Main"
 msgstr "Kryesore"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Navigimi kryesor"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "Ende nuk ka fakte për t’u lidhur. Shtojini te Faktet."
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Nuk ka fakte të harruara"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "Eksportoni përsëri me fontet e integruara, pastaj hapni skedarin dhe k
 msgid "Re: Senior Product Designer"
 msgstr "Re: Dizajner i lartë produkti"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Shko në faqen kryesore"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "Oraret"
 msgid "School"
 msgstr "Shkolla"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Fusha e zbatimit"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "Shfaq regjistrimet DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Shfaq faktet e harruara"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Shfaq titullin"
@@ -15072,6 +15075,7 @@ msgstr "Kapërce dhe ngarko"
 msgid "Skip to content"
 msgstr "Kalo te përmbajtja"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "Titujt standard të seksioneve"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Ylli Reactive Resume në GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Jepna yll në GitHub (hapet në skedë të re)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "Modeli i ndërprerësit"
 msgid "Switch to dark mode"
 msgstr "Kalo në modalitetin e errët"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Kalo te tema e errët"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Kalo në modalitetin e dritës"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Kalo te tema e çelët"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

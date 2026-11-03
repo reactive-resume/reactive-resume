@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Kemasukan #} other {Entri #}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# fakta dilupakan} other {# fakta dilupakan}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# isu terbuka} other {# isu terbuka}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# baris tiada syarikat atau peranan dan telah dilangkau.} other {# baris tiada syarikat atau peranan dan telah dilangkau.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Beri bintang di GitHub, kini # bintang (dibuka dalam tab baharu)} other {Beri bintang di GitHub, kini # bintang (dibuka dalam tab baharu)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Sistem penjejakan pemohon menukar PDF anda menjadi teks biasa sebelum sesiapa membacanya. Pemeriksa melakukan perkara yang sama, dengan pustaka PDF.js dalam penyemak imbas anda, kemudian menjaringkan jumlah resume anda yang masih hidup: 0 hingga 100, daripada sejauh mana kebolehpercayaan teks keluar, bukan daripada peluang anda untuk mendapatkan pekerjaan itu."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Tukar dalam Reka Bentuk."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Tukar bahasa"
 
@@ -7557,7 +7557,6 @@ msgstr "Pulanglah ke rumah"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Pergi ke papan pemuka"
 
@@ -9428,10 +9427,6 @@ msgstr "Dibuat dengan Reactive Resume, percuma dan sumber terbuka"
 msgid "Main"
 msgstr "Utama"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Navigasi utama"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "Belum ada fakta untuk dipautkan. Tambahkannya dalam Fakta."
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Tiada fakta yang dilupakan"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "Eksport semula dengan fon dibenamkan, kemudian buka fail dan semak teks 
 msgid "Re: Senior Product Designer"
 msgstr "Re: Pereka Produk Kanan"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Pergi ke laman utama"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "Jadual"
 msgid "School"
 msgstr "Sekolah"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Skop"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "Tunjukkan rekod DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Tunjukkan fakta yang dilupakan"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Tunjukkan tajuk"
@@ -15072,6 +15075,7 @@ msgstr "Langkau dan muat naik"
 msgid "Skip to content"
 msgstr "Langkau ke kandungan"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "Tajuk bahagian standard"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Bintangkan Reactive Resume pada GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Berikan bintang kepada kami di GitHub (dibuka dalam tab baharu)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "Tukar model"
 msgid "Switch to dark mode"
 msgstr "Tukar kepada mod gelap"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Tukar kepada tema gelap"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Tukar kepada mod cahaya"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Tukar kepada tema cerah"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

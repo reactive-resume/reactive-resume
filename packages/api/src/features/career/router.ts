@@ -2,6 +2,7 @@ import z from "zod";
 import { aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
 import {
 	careerFactInputSchema,
+	careerFactCorrectionSchema,
 	resumeFactProposalSchema,
 	resumeFactsReviewSchema,
 	careerOfferInputSchema,
@@ -217,6 +218,17 @@ export const careerRouter = {
 		)
 		.output(z.array(careerFactSchema))
 		.handler(({ context, input }) => careerService.facts({ userId: context.user.id, ...input })),
+	forgottenFacts: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/career/facts/forgotten",
+			tags: ["Career"],
+			operationId: "listForgottenCareerFactCounts",
+			summary: "List redacted forgotten fact counts and timestamps",
+		})
+		.input(z.object({}))
+		.output(z.array(z.object({ count: z.number().int().positive(), at: z.date() })))
+		.handler(({ context }) => careerService.forgottenFacts(context.user.id)),
 	proposeResumeFacts: protectedProcedure
 		.route({
 			method: "POST",
@@ -276,6 +288,21 @@ export const careerRouter = {
 				share: z.boolean().optional(),
 			}),
 		)
+		.output(z.void())
+		.handler(async ({ context, input }) => {
+			await careerService.updateFact(context.user.id, input);
+		}),
+	correctFact: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/career/facts/{id}/corrections",
+			tags: ["Career"],
+			operationId: "correctCareerFact",
+			summary: "Atomically correct a fact's text, type or scope",
+			description:
+				"Requires the reviewed text, category and scope. Rejects changed or forgotten facts and unavailable application scopes without saving any correction.",
+		})
+		.input(careerFactCorrectionSchema)
 		.output(z.void())
 		.handler(async ({ context, input }) => {
 			await careerService.updateFact(context.user.id, input);

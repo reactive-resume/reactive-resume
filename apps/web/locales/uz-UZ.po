@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# kirish} other {# yozuvlari}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# fakt unutildi} other {# fakt unutildi}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# ta ochiq muammo} other {# ta ochiq muammo}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# ta qatorda kompaniya yoki rol yo'q edi va o'tkazib yuborildi.} other {# ta qatorda kompaniya yoki rol yo'q edi va ular o'tkazib yuborildi.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {GitHub'da bizga yulduzcha bering, hozir # ta yulduz (yangi oynada ochiladi)} other {GitHub'da bizga yulduzcha bering, hozir # ta yulduz (yangi oynada ochiladi)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Ariza beruvchini kuzatish tizimlari PDF-ni hech kim o‘qimasdan oldin uni oddiy matnga aylantiradi. Tekshiruvchi brauzeringizdagi PDF.js kutubxonasi bilan ham xuddi shunday qiladi, so‘ngra rezyumeingiz qancha saqlanib qolganini baholaydi: 0 dan 100 gacha, matn qanchalik ishonchli chiqishiga qarab, ishga kirish imkoniyatingizga qarab emas."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Uni dizaynda o'zgartiring."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Tilni oʻzgartirish"
 
@@ -7557,7 +7557,6 @@ msgstr "Uyga ket"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Dashboardga o'tish"
 
@@ -9428,10 +9427,6 @@ msgstr "Reactive Resume bilan yaratilgan, bepul va ochiq manba"
 msgid "Main"
 msgstr "Asosiy"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Asosiy navigatsiya"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10391,6 +10386,10 @@ msgstr "Hali bog'lash uchun faktlar yo'q. Ularni Faktlar bo'limida qo'shing."
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Unutilgan faktlar yoʻq"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12435,10 +12434,6 @@ msgstr "Shriftlar joylashtirilgan holda qayta eksport qiling, soʻng faylni ochi
 msgid "Re: Senior Product Designer"
 msgstr "Re: Katta mahsulot dizayneri"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Bosh sahifaga o'tish"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14119,6 +14114,10 @@ msgstr "Jadvallar"
 msgid "School"
 msgstr "Maktab"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Qamrov"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14806,6 +14805,10 @@ msgstr "DNS yozuvlarini ko'rsatish"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Unutilgan faktlarni koʻrsatish"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Sarlavhani ko'rsatish"
@@ -15072,6 +15075,7 @@ msgstr "O‘tkazib yuborish va yuklash"
 msgid "Skip to content"
 msgstr "Tarkibga oʻtish"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15311,6 @@ msgstr "Standart bo'lim sarlavhalari"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "GitHub da Reactive Resume yulduzi"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "GitHubda bizni yulduzlang (yangi tabda ochiladi)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15668,10 @@ msgstr "Modelni almashtirish"
 msgid "Switch to dark mode"
 msgstr "Qorong'i rejimga o'tish"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Qorong'u mavzuga o'tish"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Yorug'lik rejimiga o'ting"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Yorug' mavzuga o'tish"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
