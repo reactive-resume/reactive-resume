@@ -44,6 +44,7 @@ import {
 	type ChatHistory,
 } from "./coach-thread";
 import { CareerLoadError } from "./load-state";
+import { PracticeHandoff } from "./prepare-now";
 import { ContextChip, Eyebrow, PrivacyLine } from "./shared";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -335,64 +336,67 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	);
 
 	const header = (messages: readonly UIMessage[]) => (
-		<header className="flex h-12 shrink-0 items-center gap-2 border-b border-line ps-4 pe-2">
-			{!wide && (
-				<IconButton
-					icon="clock-counter-clockwise"
-					label={t`Conversations`}
-					size="icon-sm"
-					className="-ms-2 text-ink-2"
-					onClick={(event) => {
-						railOpener.current = event.currentTarget;
-						setRailOpen(true);
-					}}
-				/>
-			)}
-			<Icon name="sparkle" size={20} className="shrink-0 text-accent-text" />
-			<h2 className="me-auto min-w-0 truncate text-sm font-semibold">
-				{summary ? (
-					<button
-						ref={titleButton}
-						type="button"
-						aria-label={`${t`Rename`}: ${titleFor(summary)}`}
+		<>
+			<header className="flex h-12 shrink-0 items-center gap-2 border-b border-line ps-4 pe-2">
+				{!wide && (
+					<IconButton
+						icon="clock-counter-clockwise"
+						label={t`Conversations`}
+						size="icon-sm"
+						className="-ms-2 text-ink-2"
 						onClick={(event) => {
 							railOpener.current = event.currentTarget;
-							setRenaming(summary.id);
 							setRailOpen(true);
 						}}
-						className="touch-target block max-w-full truncate rounded-md text-start outline-none hover:text-accent-text focus-visible:ring-2 focus-visible:ring-accent"
-					>
-						{titleFor(summary)}
-					</button>
-				) : (
-					titleFor(summary)
+					/>
 				)}
-			</h2>
-			{(usable.length > 0 || summary) && (
-				<ModelMenu
-					open={modelMenuOpen}
-					onOpenChange={setModelMenuOpen}
-					onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
-					providers={usable}
-					current={provider}
-					label={label}
-					onChoose={(id) => void chooseProvider(id)}
+				<Icon name="sparkle" size={20} className="shrink-0 text-accent-text" />
+				<h2 className="me-auto min-w-0 truncate text-sm font-semibold">
+					{summary ? (
+						<button
+							ref={titleButton}
+							type="button"
+							aria-label={`${t`Rename`}: ${titleFor(summary)}`}
+							onClick={(event) => {
+								railOpener.current = event.currentTarget;
+								setRenaming(summary.id);
+								setRailOpen(true);
+							}}
+							className="touch-target block max-w-full truncate rounded-md text-start outline-none hover:text-accent-text focus-visible:ring-2 focus-visible:ring-accent"
+						>
+							{titleFor(summary)}
+						</button>
+					) : (
+						titleFor(summary)
+					)}
+				</h2>
+				{(usable.length > 0 || summary) && (
+					<ModelMenu
+						open={modelMenuOpen}
+						onOpenChange={setModelMenuOpen}
+						onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
+						providers={usable}
+						current={provider}
+						label={label}
+						onChoose={(id) => void chooseProvider(id)}
+					/>
+				)}
+				<IconButton
+					icon="copy"
+					label={t`Copy conversation`}
+					size="icon-sm"
+					className="text-ink-2"
+					disabled={messages.length === 0}
+					onClick={() =>
+						void copyToClipboard(
+							transcriptOf(messages, { user: t`You`, assistant: t`Coach`, sources: t`Sources` }),
+							t`Conversation copied`,
+						)
+					}
 				/>
-			)}
-			<IconButton
-				icon="copy"
-				label={t`Copy conversation`}
-				size="icon-sm"
-				className="text-ink-2"
-				disabled={messages.length === 0}
-				onClick={() =>
-					void copyToClipboard(
-						transcriptOf(messages, { user: t`You`, assistant: t`Coach`, sources: t`Sources` }),
-						t`Conversation copied`,
-					)
-				}
-			/>
-		</header>
+			</header>
+			<PracticeHandoff />
+		</>
 	);
 
 	const notSetUp = threads.error instanceof ORPCError && threads.error.code === "PRECONDITION_FAILED";

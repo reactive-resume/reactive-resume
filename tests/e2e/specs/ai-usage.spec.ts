@@ -123,6 +123,58 @@ test("Prepare application reviews actual tailoring, letter and pasted answers un
 	expect(stub.requests.length - before).toBe(6);
 });
 
+test("Fit offers a real reviewed resume bullet only after explicit Knowledge save", async ({
+	authPage: page,
+}, info) => {
+	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs isolated local AI stub permission");
+	await approveLocalStubOperations(page);
+	const connection = await page.request.post("/api/openapi/ai-providers", {
+		data: {
+			label: "Fictional Evidence AI",
+			provider: "openai-compatible",
+			model: "evidence-main",
+			capableModel: "evidence-capable",
+			baseURL: stub.baseURL,
+			apiKey: "stub-key",
+		},
+	});
+	await expect(connection).toBeOK();
+	const { id: providerId } = await connection.json();
+	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
+	await createSampleResumeFromDashboard(page, info);
+	const resumeId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
+	const created = await page.request.post("/api/openapi/applications", {
+		data: { company: "Fictional Cedar", role: "Engineer", resumeId, jobDescription: "Enterprise onboarding" },
+	});
+	await expect(created).toBeOK();
+	const id = await created.json();
+	await page.goto(`/dashboard/applications/${id}/fit`);
+	await page.getByRole("button", { name: "Check fit", exact: true }).click();
+	await expect(page.getByRole("table", { name: "Requirements and your evidence" })).toBeVisible();
+	expect(await page.getByRole("button", { name: "Propose a resume bullet", exact: true }).count()).toBe(0);
+	await page.getByRole("button", { name: "Add evidence", exact: true }).click();
+	await page
+		.getByRole("textbox", { name: "What you did: Enterprise onboarding", exact: true })
+		.fill("I built fictional onboarding for five teams.");
+	await page.getByRole("button", { name: "Save to Knowledge", exact: true }).click();
+	const propose = page.getByRole("button", { name: "Propose a resume bullet", exact: true });
+	await expect(propose).toBeVisible();
+	const facts = await (await page.request.get("/api/openapi/career/facts")).json();
+	expect(facts.some((fact: { text: string }) => fact.text === "I built fictional onboarding for five teams.")).toBe(
+		true,
+	);
+	const before = stub.requests.length;
+	await propose.click();
+	await expect(page).toHaveURL(/\/builder\/.*assistant=/);
+	await expect(page.getByRole("list", { name: "Proposed edits" })).toBeVisible();
+	expect(stub.requests.length - before).toBe(3);
+	const app = await (await page.request.get(`/api/openapi/applications/${id}`)).json();
+	const copy = await (await page.request.get(`/api/openapi/resumes/${app.resumeId}`)).json();
+	const base = await (await page.request.get(`/api/openapi/resumes/${resumeId}`)).json();
+	expect(copy.id).not.toBe(resumeId);
+	expect(copy.data).toEqual(base.data);
+});
+
 test("application message REST draft stays empty until approved and retains the canonical letter source", async ({
 	authPage: page,
 }, info) => {

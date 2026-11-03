@@ -27,7 +27,10 @@ vi.mock("@/libs/orpc/client", () => ({
 		career: { schedules: { queryOptions: () => ({ queryKey: ["schedules"], queryFn: async () => [] }) } },
 	},
 }));
-vi.mock("../queries", () => ({ applicationsListQueryKey: () => ["applications"] }));
+vi.mock("../queries", () => ({
+	applicationsListQueryKey: () => ["applications"],
+	applicationDetailQueryOptions: () => ({ queryKey: ["application"], queryFn: async () => (await api.read())[0] }),
+}));
 vi.mock("@tanstack/react-router", () => ({
 	useRouteContext: () => ({ session: { user: { id: "interview-test", timezone: "Europe/Berlin" } } }),
 }));

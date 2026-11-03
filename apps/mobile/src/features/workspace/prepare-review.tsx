@@ -227,7 +227,18 @@ export function PrepareReview({ application, disabled }: PrepareReviewProps) {
 				<>
 					{review.failed.length > 0 && (
 						<Text>
-							{t`Some drafts couldn't finish. Keep completed drafts before trying again.`} {review.failed.join(", ")}
+							{t`Some drafts couldn't finish. Keep completed drafts before trying again.`}{" "}
+							{[
+								...new Set(
+									review.failed.map((failure) =>
+										failure === "tailoring"
+											? t`Resume proposals`
+											: failure === "letter"
+												? t`Letter draft`
+												: t`Form questions (optional)`,
+									),
+								),
+							].join(", ")}
 						</Text>
 					)}
 					<Button
@@ -292,7 +303,7 @@ export function PrepareReview({ application, disabled }: PrepareReviewProps) {
 						</View>
 					)}
 					{review.answers.map((item, index) => (
-						<View key={item.question} style={{ gap: space.s2 }}>
+						<View key={`${index}:${item.question}`} style={{ gap: space.s2 }}>
 							<Text>{item.question}</Text>
 							<TextArea
 								label={item.question}

@@ -19,6 +19,7 @@ export const Route = createFileRoute("/dashboard/applications/$applicationId/{-$
 		// Practise opens with Speak selected ("Rehearse one answer aloud").
 		speak: z.boolean().optional().catch(undefined),
 		story: z.string().min(1).optional().catch(undefined),
+		warmup: z.boolean().optional().catch(undefined),
 		// "Add the offer's terms": Messages opens with the offer form.
 		offer: z.literal("new").optional().catch(undefined),
 		// The interview round to work on, from links to a later round of the same application.

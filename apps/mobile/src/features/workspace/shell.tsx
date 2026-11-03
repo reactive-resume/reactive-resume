@@ -28,7 +28,7 @@ import { useWorkspaceChrome } from "@/shell/workspace-chrome";
 import { Banner, Button, EmptyState, Screen, Text, useTheme } from "@/ui";
 import { useKeyboardScrollSpace } from "@/ui/keyboard";
 
-export type WorkspaceSearch = { version?: string; speak?: boolean; story?: string };
+export type WorkspaceSearch = { version?: string; speak?: boolean; story?: string; warmup?: boolean; round?: string };
 
 /** What every tab receives: the application, and a saved version to show read-only ("Open in Prepare"). */
 export type WorkspaceTabProps = {
@@ -41,6 +41,7 @@ export type WorkspaceTabProps = {
 	speak: boolean;
 	/** Practise: a story from Knowledge to practise. */
 	story: string | undefined;
+	warmup?: boolean;
 	now: Date;
 	go: (tab: WorkspaceTab, search?: WorkspaceSearch) => void;
 	/** Opens the interview editor for a new round. */
@@ -63,6 +64,8 @@ export function workspaceHref(id: string, tab: WorkspaceTab, search: WorkspaceSe
 		search.version ? `version=${encodeURIComponent(search.version)}` : "",
 		search.speak ? "speak=1" : "",
 		search.story ? `story=${encodeURIComponent(search.story)}` : "",
+		search.warmup ? "warmup=1" : "",
+		search.round ? `round=${encodeURIComponent(search.round)}` : "",
 	].filter(Boolean);
 	return `${routes.application(id, tab)}${query.length > 0 ? `?${query.join("&")}` : ""}` as const;
 }
@@ -79,6 +82,7 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 		version?: string;
 		speak?: string;
 		story?: string;
+		warmup?: string;
 		round?: string;
 	}>();
 	const id = params.id;
@@ -114,12 +118,13 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 		);
 
 	// A link to a later round names it; otherwise the next one to come (web workspace).
+	const named = params.round
+		? (application.activity.find((entry) => entry.type === "interview" && entry.id === params.round) as
+				| ReturnType<typeof currentInterview>
+				| undefined)
+		: undefined;
 	const interview =
-		(params.round
-			? (application.activity.find((entry) => entry.type === "interview" && entry.id === params.round) as
-					| ReturnType<typeof currentInterview>
-					| undefined)
-			: undefined) ?? currentInterview(application.activity, now);
+		params.warmup === "1" && params.round ? named : (named ?? currentInterview(application.activity, now));
 	const version = params.version ? saved.data?.find((item) => item.id === params.version) : undefined;
 	const archived = params.version !== undefined;
 	const archiveUnavailable = archived && (!version || version.data.kind !== archiveKinds[tab]);
@@ -128,7 +133,8 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 		(saved.isError && saved.data === undefined) ||
 		(!archived && tab !== "saved" && workspace.query.isError && workspace.query.data === undefined);
 	const blocked = waiting || failed || archiveUnavailable;
-	const go = (next: WorkspaceTab, search: WorkspaceSearch = {}) => router.push(workspaceHref(id, next, search));
+	const go = (next: WorkspaceTab, search: WorkspaceSearch = {}) =>
+		router.push(workspaceHref(id, next, { ...(params.round ? { round: params.round } : {}), ...search }));
 	const backToCurrent = () => router.replace(workspaceHref(id, tab));
 	const props: WorkspaceTabProps = {
 		application,
@@ -138,6 +144,7 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 		go,
 		speak: params.speak === "1",
 		story: params.story,
+		warmup: params.warmup === "1",
 		addInterview: () => setAddingInterview(true),
 	};
 
