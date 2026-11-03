@@ -117,6 +117,13 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	const threads = useQuery(orpc.agent.threads.list.queryOptions());
 	const knowledge = useCoachKnowledge(null);
 	const [railOpen, setRailOpen] = useState(false);
+	const [renaming, setRenaming] = useState<string | null>(null);
+	const railOpener = useRef<HTMLElement | null>(null);
+	const titleButton = useRef<HTMLButtonElement | null>(null);
+	const focusTarget = () => (railOpener.current?.isConnected ? railOpener.current : titleButton.current);
+	useEffect(() => {
+		if (wide && renaming === null && document.activeElement === document.body) focusTarget()?.focus();
+	}, [wide, renaming]);
 	const [modelMenuOpen, setModelMenuOpen] = useState(false);
 	const [providerId, setProviderId] = useState<string | null>(null);
 	const [hidden, setHidden] = useState<ReadonlySet<string>>(() => new Set());
@@ -328,11 +335,32 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 					label={t`Conversations`}
 					size="icon-sm"
 					className="-ms-2 text-ink-2"
-					onClick={() => setRailOpen(true)}
+					onClick={(event) => {
+						railOpener.current = event.currentTarget;
+						setRailOpen(true);
+					}}
 				/>
 			)}
 			<Icon name="sparkle" size={20} className="shrink-0 text-accent-text" />
-			<h2 className="me-auto min-w-0 truncate text-sm font-semibold">{titleFor(summary)}</h2>
+			<h2 className="me-auto min-w-0 truncate text-sm font-semibold">
+				{summary ? (
+					<button
+						ref={titleButton}
+						type="button"
+						aria-label={`${t`Rename`}: ${titleFor(summary)}`}
+						onClick={(event) => {
+							railOpener.current = event.currentTarget;
+							setRenaming(summary.id);
+							setRailOpen(true);
+						}}
+						className="touch-target block max-w-full truncate rounded-md text-start outline-none hover:text-accent-text focus-visible:ring-2 focus-visible:ring-accent"
+					>
+						{titleFor(summary)}
+					</button>
+				) : (
+					titleFor(summary)
+				)}
+			</h2>
 			{(usable.length > 0 || summary) && (
 				<ModelMenu
 					open={modelMenuOpen}
@@ -367,6 +395,8 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		<ConversationRail
 			threads={conversations}
 			currentId={threadId}
+			renaming={renaming}
+			onRenamingChange={setRenaming}
 			onNavigate={() => setRailOpen(false)}
 			onRename={(thread, title) => void rename(thread, title)}
 			onDelete={remove}
@@ -381,7 +411,12 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 					rail
 				) : (
 					<Sheet open={railOpen} onOpenChange={setRailOpen}>
-						<SheetContent side="left" closeLabel={t`Close`} className="p-4 pt-5 data-[side=left]:sm:max-w-[320px]">
+						<SheetContent
+							side="left"
+							finalFocus={focusTarget}
+							closeLabel={t`Close`}
+							className="p-4 pt-5 data-[side=left]:sm:max-w-[320px]"
+						>
 							<SheetTitle>
 								<Trans>Conversations</Trans>
 							</SheetTitle>
@@ -570,14 +605,23 @@ function EmptyState({ disabled, offers, onPick }: EmptyStateProps) {
 type ConversationRailProps = {
 	threads: ThreadSummary[];
 	currentId: string | null;
+	renaming: string | null;
+	onRenamingChange: (id: string | null) => void;
 	onNavigate: () => void;
 	onRename: (thread: ThreadSummary, title: string) => void;
 	onDelete: (thread: ThreadSummary) => void;
 };
 
-function ConversationRail({ threads, currentId, onNavigate, onRename, onDelete }: ConversationRailProps) {
+function ConversationRail({
+	threads,
+	currentId,
+	renaming,
+	onRenamingChange: setRenaming,
+	onNavigate,
+	onRename,
+	onDelete,
+}: ConversationRailProps) {
 	const when = useConversationDate();
-	const [renaming, setRenaming] = useState<string | null>(null);
 
 	return (
 		<nav aria-label={t`Conversations`} className="flex min-h-0 flex-1 flex-col gap-4">

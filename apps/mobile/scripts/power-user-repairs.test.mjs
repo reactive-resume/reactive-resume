@@ -385,6 +385,89 @@ saved.data = [];
 
 console.log("PASS native Offers loading/error/retry/persisted row and genuine-empty controls");
 
+// Header and rail share the actual conversation editor and update path.
+reset();
+const renameWrites = [];
+const careerThread = { id: "career-thread", title: "Northwind interview", scope: "career" };
+const { CoachScreen } = load("features/assistant/coach-screen.tsx", {
+	"@/ui": { ...ui, Sheet: "Sheet", TextField: "TextField" },
+	"@tanstack/react-query": { useQuery: () => state(), useQueryClient: () => ({}) },
+	"@reactive-resume/schema/career-starters": { coachStarters: () => [] },
+	"@reactive-resume/utils/locale": { formatList: (_locale, values) => values.join(", ") },
+	"./chat": { useThreads: () => state({ data: [careerThread] }), refreshThreads: () => {} },
+	"./chat-view": { ChatView: "ChatView", ContextChip: "ContextChip" },
+	"./chat-welcome": { ChatWelcome: "ChatWelcome" },
+	"./provider": {
+		ConnectionNotice: "ConnectionNotice",
+		ModelButton: "ModelButton",
+		ModelSheet: "ModelSheet",
+		ProviderGate: "ProviderGate",
+		WebResearchChip: "WebResearchChip",
+		useConversationProvider: () => ({ label: "Fictional connection", stranded: false, choose() {} }),
+		useMemoryNote: () => ({ note: "", chip: null }),
+		useWebSearch: () => ({}),
+	},
+	"./sent": { usableStories: () => [] },
+	"./threads": {
+		useDeleteThread: () => ({ ask() {}, dialog: null }),
+		useThreadTitle: () => (thread) => thread.title,
+		useThreadTime: () => () => "Now",
+	},
+	"@/api/client": {
+		client: { agent: { threads: { update: async (input) => renameWrites.push(input) } } },
+		orpc: {
+			career: {
+				facts: { queryOptions: () => ({ queryKey: [] }) },
+				stories: { queryOptions: () => ({ queryKey: [] }) },
+			},
+		},
+	},
+	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "fictional" }) },
+	"@/features/ai/providers": { useHasAIProvider: () => ({ usableProviders: [] }) },
+	"@/features/applications/queries": { useApplications: () => state() },
+	"@/features/career/hooks": { useNow: () => new Date(), useOpportunities: () => state() },
+	"@/features/career/scheduling": { collectInterviews: () => [] },
+	"@/features/career/stories": { StoryEditor: "StoryEditor" },
+});
+const coachTree = () => render(() => CoachScreen({ offerIds: [] }));
+const conversationSheet = () => nodes(coachTree()).find((node) => node.type?.name === "ConversationsSheet");
+conversationSheet().props.onOpen(careerThread.id);
+const titleAction = () =>
+	nodes(coachTree()).find((node) => node.props.accessibilityLabel === "Rename Northwind interview");
+assert.ok(titleAction(), "saved conversation exposes a header rename control");
+titleAction().props.onPress();
+let renameSheet = conversationSheet();
+assert.equal(renameSheet.props.open, true);
+let renameEditor = renameSheet.type(renameSheet.props);
+assert.equal(nodes(renameEditor).find((node) => node.type === "TextField").props.value, careerThread.title);
+nodes(renameEditor)
+	.find((node) => node.type === "TextField")
+	.props.onChangeText("  Northwind practice plan  ");
+renameSheet = conversationSheet();
+renameEditor = renameSheet.type(renameSheet.props);
+nodes(renameEditor)
+	.find((node) => node.type === "Button" && node.props.label === "Save")
+	.props.onPress();
+await Promise.resolve();
+assert.deepEqual(renameWrites, [{ id: careerThread.id, title: "Northwind practice plan" }]);
+assert.equal(
+	nodes(conversationSheet().type(conversationSheet().props)).some((node) => node.type === "TextField"),
+	false,
+);
+titleAction().props.onPress();
+renameSheet = conversationSheet();
+renameEditor = renameSheet.type(renameSheet.props);
+nodes(renameEditor)
+	.find((node) => node.type === "Button" && node.props.label === "Cancel")
+	.props.onPress();
+assert.equal(
+	nodes(conversationSheet().type(conversationSheet().props)).some((node) => node.type === "TextField"),
+	false,
+);
+assert.equal(renameWrites.length, 1, "Cancel does not write another title");
+reset();
+console.log("PASS native header invokes existing conversation rename editor and mutation");
+
 let count = 9;
 let failed = false;
 let resumesPending = false;
