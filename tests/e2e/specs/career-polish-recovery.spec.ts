@@ -48,6 +48,9 @@ test("Preferences and offer currency choices save code and period without guessi
 	await expect(form.getByRole("combobox", { name: "Currency", exact: true })).toContainText("JPY");
 	await expect(form.getByRole("combobox", { name: "Pay period", exact: true })).toHaveValue("month");
 	await chooseCurrency(page, "EUR", form);
+	await form.getByRole("button", { name: "Clear selection", exact: true }).click();
+	await expect(form.getByRole("combobox", { name: "Currency", exact: true })).toHaveAttribute("aria-invalid", "true");
+	await chooseCurrency(page, "EUR", form);
 	await form.getByLabel("Base salary", { exact: true }).fill("8000");
 	await form.screenshot({ path: info.outputPath("offer-currency-choice.png"), animations: "disabled" });
 	await form.getByRole("button", { name: "Save offer", exact: true }).click();

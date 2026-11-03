@@ -994,3 +994,15 @@ it("keeps an open global offer draft mounted when application metadata refresh f
 	await waitFor(() => expect(screen.queryAllByRole("alert")).toHaveLength(0));
 	expect(screen.getByLabelText("Base salary")).toHaveValue("123456");
 });
+
+it("keeps an amount-only job salary annual beside monthly Preferences", async () => {
+	api.data.profile = { ...profile(), minBase: { amount: 8000, currency: "EUR", period: "month" } };
+	mount(
+		<OfferEntry
+			application={{ id: "salary-job", company: "Fictional Salary", role: "Engineer", salary: "$120k–140k" }}
+		/>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+	await waitFor(() => expect((screen.getByLabelText("Pay period") as HTMLSelectElement).value).toBe("year"));
+	expect((screen.getByLabelText("Base salary") as HTMLInputElement).value).toBe("120000");
+});
