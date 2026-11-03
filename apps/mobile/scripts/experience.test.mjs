@@ -998,13 +998,14 @@ const nativeInterviewUndo = load("features/career/undo.ts", {
 	},
 	"@/ui": { ...ui, dismissToast() {}, toastLifetime: (value) => value },
 });
-const nativeQueryClient = {
-	cancelQueries: async () => {},
-	invalidateQueries: async () => {
-		calls.push("canonical-read");
-	},
-	setQueryData: (_key, update) => calls.push({ cachedActivity: update(nativeJob).activity }),
-};
+const { QueryClient: InterviewQueryClient } = mobileRequire("@tanstack/react-query");
+const nativeQueryClient = new InterviewQueryClient({
+	defaultOptions: { queries: { retry: false, gcTime: Infinity } },
+});
+const nativeInterviewKey = ["application", nativeJob.id];
+let nativeCanonicalRow = nativeJob;
+let nativeCanonicalError = false;
+let nativeCanonicalReads = 0;
 const nativeReminders = {
 	leadFor: () => 30,
 	turnOn: async () => {
@@ -1065,6 +1066,7 @@ const { InterviewSheet: NativeInterviewSheet } = load("features/application-deta
 					calls.push({ deleteRound: input });
 					if (switchDuringDelete) interviewScope = "another-account";
 					if (deleteInterviewError) throw new Error("Unavailable");
+					nativeCanonicalRow = { ...nativeCanonicalRow, activity: [] };
 				},
 			},
 		},
@@ -1072,6 +1074,14 @@ const { InterviewSheet: NativeInterviewSheet } = load("features/application-deta
 	"@/auth/session": { getAccountScope: () => interviewScope },
 	"@/features/applications/queries": {
 		applicationDetailQueryKey: (id) => ["application", id],
+		applicationDetailQueryOptions: (id) => ({
+			queryKey: ["application", id],
+			queryFn: async () => {
+				nativeCanonicalReads++;
+				if (nativeCanonicalError) throw new Error("Fictional detail unavailable");
+				return nativeCanonicalRow;
+			},
+		}),
 		useInvalidateApplications: () => () => calls.push("invalidate"),
 	},
 	"@/features/reminders": {
@@ -1130,6 +1140,10 @@ const originalClearTimeout = globalThis.clearTimeout;
 try {
 	for (const scenario of [
 		"undo",
+		"hydrated-undo",
+		"erased-undo",
+		"read-failed-undo",
+		"preflight-failed",
 		"deleted",
 		"unmount-before-ready",
 		"background",
@@ -1139,6 +1153,12 @@ try {
 		"switch-during",
 	]) {
 		reset();
+		nativeQueryClient.clear();
+		nativeCanonicalRow = nativeJob;
+		nativeCanonicalReads = 0;
+		nativeCanonicalError = scenario === "preflight-failed";
+		if (scenario === "hydrated-undo") nativeQueryClient.setQueryData(nativeInterviewKey, nativeJob);
+		else assert.equal(nativeQueryClient.getQueryState(nativeInterviewKey), undefined);
 		interviewScope = "fixture";
 		deleteInterviewError = scenario === "delete-failed";
 		switchDuringDelete = scenario === "switch-during";
@@ -1167,9 +1187,41 @@ try {
 		await settle();
 		if (scenario === "unmount-before-ready")
 			assert.equal(calls.includes("closed"), false, "late deletion does not close the next editor");
+		if (scenario === "preflight-failed") {
+			assert.equal(
+				calls.some((call) => call?.action?.label === "Undo"),
+				false,
+			);
+			assert.equal(
+				calls.some((call) => call?.held || call?.deleteRound),
+				false,
+			);
+			assert.equal(calls.includes("closed"), false);
+			assert.ok(nativeCanonicalRow.activity.some((entry) => entry.id === nativeRound.id));
+			continue;
+		}
 		assert.equal(calls.find((call) => call?.message)?.action.label, "Undo");
 		assert.equal(calls.filter((call) => call?.event).length, 0);
-		if (scenario === "undo") calls.find((call) => call?.message).action.onPress();
+		assert.deepEqual(nativeQueryClient.getQueryData(nativeInterviewKey).activity, []);
+		if (scenario.endsWith("undo")) {
+			if (scenario === "erased-undo") nativeCanonicalRow = { ...nativeJob, activity: [] };
+			nativeCanonicalError = scenario === "read-failed-undo";
+			const readsBeforeUndo = nativeCanonicalReads;
+			calls.find((call) => call?.message).action.onPress();
+			await settle();
+			assert.ok(nativeCanonicalReads > readsBeforeUndo, "Undo reads canonical data on cold and hydrated entry points");
+			if (nativeCanonicalError) {
+				assert.deepEqual(nativeQueryClient.getQueryData(nativeInterviewKey).activity, []);
+				nativeCanonicalError = false;
+				calls.findLast((call) => call?.action?.label === "Retry").action.onPress();
+				await settle();
+			}
+			assert.deepEqual(
+				nativeQueryClient.getQueryData(nativeInterviewKey).activity,
+				scenario === "erased-undo" ? [] : [nativeRound],
+				"canonical read restores retained identity but never an erased interview's private fields",
+			);
+		}
 		if (scenario === "switch-before") interviewScope = "another-account";
 		if (scenario === "background") for (const run of nativeInterviewListeners) run("background");
 		commit?.();
@@ -1189,7 +1241,7 @@ try {
 			assert.equal(shared.event.uid, nativeRound.id);
 			assert.equal(shared.method, "CANCEL");
 		} else assert.equal(cancellation, undefined);
-		if (scenario === "undo" || scenario === "switch-before")
+		if (scenario.endsWith("undo") || scenario === "switch-before")
 			assert.equal(
 				calls.find((call) => call?.deleteRound),
 				undefined,
