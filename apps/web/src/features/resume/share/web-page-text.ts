@@ -5,6 +5,8 @@ import { msg } from "@lingui/core/macro";
 // extracts it into the app's catalogs for translators; `pnpm pdf:translations` copies the translations to the page.
 // Keep both lists in step: the generator fails when one of these is missing from the catalog.
 msg`Download PDF`;
+msg`Download`;
+msg`Download Word`;
 msg`Share`;
 msg`Link copied`;
 msg`Made with Reactive Resume, free and open source`;

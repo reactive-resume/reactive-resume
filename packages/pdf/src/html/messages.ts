@@ -3,6 +3,8 @@ import webPageCatalog from "./web-page-catalog.json";
 /** The interface text on a web page, in English; `web-page-catalog.json` translates it (`pnpm pdf:translations`). */
 const ENGLISH = {
 	downloadPdf: "Download PDF",
+	download: "Download",
+	downloadWord: "Download Word",
 	share: "Share",
 	linkCopied: "Link copied",
 	credit: "Made with Reactive Resume, free and open source",

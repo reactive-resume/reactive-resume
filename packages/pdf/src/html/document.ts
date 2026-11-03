@@ -23,6 +23,8 @@ export type WebPageDocumentOptions = {
 	messages: WebPageMessages;
 	/** The PDF's address, when the owner allows downloads. */
 	downloadUrl?: string | undefined;
+	/** The editable Word file, only when the owner explicitly allows it. */
+	wordDownloadUrl?: string | undefined;
 	/** Where the footer credit links; absent when the owner turned it off. */
 	creditUrl?: string | undefined;
 };
@@ -39,25 +41,33 @@ body{margin:0;background:#f8f7f3;color:#111;font-family:system-ui,-apple-system,
 @media (prefers-color-scheme:dark){body{background:#100f0c}.rr .rr-credit:hover{color:#d6d3cc}}
 .rr.rr-desk{padding:40px 16px 112px}
 .rr-page{box-shadow:0 1px 2px rgb(0 0 0/.06),0 8px 32px rgb(0 0 0/.08)}
-.rr-actions a:focus-visible,.rr-actions button:focus-visible,.rr .rr-credit:focus-visible{outline:2px solid #337344;outline-offset:4px}
+.rr-actions a:focus-visible,.rr-actions button:focus-visible,.rr-actions summary:focus-visible,.rr .rr-credit:focus-visible{outline:2px solid #337344;outline-offset:4px}
 .rr .rr-credit{display:flex;flex-direction:column;align-items:center;gap:6px;width:max-content;margin:36px auto 0;color:#8e8e96;opacity:.7;text-decoration:none;font:500 11px/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.02em;border-radius:6px;transition:opacity .2s,color .2s}
 .rr .rr-credit svg{width:18px;height:18px}
 .rr .rr-credit:hover{opacity:1;color:#3f3f46}
 .rr-actions{position:fixed;right:24px;bottom:24px;display:flex;gap:8px;z-index:10}
-.rr-actions a,.rr-actions button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:3px;font:500 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff;color:#111;box-shadow:0 1px 2px rgb(0 0 0/.08),0 4px 16px rgb(0 0 0/.12)}
+.rr-actions a,.rr-actions button,.rr-actions summary{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:3px;font:500 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff;color:#111;box-shadow:0 1px 2px rgb(0 0 0/.08),0 4px 16px rgb(0 0 0/.12)}
+.rr-download{position:relative}
+.rr-download summary{display:flex;list-style:none}
+.rr-download summary::-webkit-details-marker{display:none}
+.rr-download summary::after{content:"▾"}
+.rr-download-options{position:absolute;bottom:calc(100% + 8px);inset-inline-start:0;min-width:180px;padding:4px;background:#fff;border:1px solid #ddd;border-radius:4px;box-shadow:0 4px 16px rgb(0 0 0/.12)}
+.rr-actions .rr-download-options a{display:flex;box-shadow:none;border:0;white-space:nowrap}
+.rr-actions .rr-download-options a:hover{background:#f0f0eb}
 .rr-actions .rr-primary{background:#337344;color:#f7fef8}
 .rr-toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#111;color:#fff;font:500 14px system-ui,sans-serif;padding:10px 16px;border-radius:4px;opacity:0;transition:opacity .2s;pointer-events:none}
 .rr-toast[data-on]{opacity:1}
 @media (min-width:641px) and (max-width:1279px){
 .rr-actions{left:0;right:0;bottom:0;justify-content:center;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgb(255 255 255/.92);backdrop-filter:blur(12px);box-shadow:0 -1px 0 rgb(0 0 0/.08)}
-.rr-actions a,.rr-actions button{box-shadow:none;border:1px solid rgb(0 0 0/.12)}
+.rr-actions a,.rr-actions button,.rr-actions summary{box-shadow:none;border:1px solid rgb(0 0 0/.12)}
 .rr-actions .rr-primary{border-color:#337344}
 }
 @media (max-width:640px){
+.rr-download{flex:1}
 .rr.rr-desk{padding:0 0 96px}
 .rr-page{box-shadow:none}
 .rr-actions{left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgb(255 255 255/.92);backdrop-filter:blur(12px);box-shadow:0 -1px 0 rgb(0 0 0/.08)}
-.rr-actions a,.rr-actions button{flex:1;justify-content:center;height:48px;font-size:16px;box-shadow:none;border:1px solid rgb(0 0 0/.12)}
+.rr-actions a,.rr-actions button,.rr-actions summary{flex:1;justify-content:center;height:48px;font-size:16px;box-shadow:none;border:1px solid rgb(0 0 0/.12)}
 .rr-actions .rr-primary{border-color:#337344}
 }
 @media print{body{background:#fff}.rr.rr-desk{padding:0}.rr-page{box-shadow:none}.rr-actions,.rr-credit,.rr-toast{display:none}}
@@ -145,11 +155,17 @@ export function renderWebPageDocument({
 	head,
 	messages,
 	downloadUrl,
+	wordDownloadUrl,
 	creditUrl,
 }: WebPageDocumentOptions): string {
-	const download = downloadUrl
-		? `<a class="rr-primary" href="${escapeHtml(downloadUrl)}" download>${escapeHtml(messages.downloadPdf)}</a>`
+	const pdf = downloadUrl
+		? `<a href="${escapeHtml(downloadUrl)}" download>${escapeHtml(messages.downloadPdf)}</a>`
 		: "";
+	const download = wordDownloadUrl
+		? `<details class="rr-download"><summary class="rr-primary">${escapeHtml(messages.download)}</summary><div class="rr-download-options">${pdf}<a href="${escapeHtml(wordDownloadUrl)}" download>${escapeHtml(messages.downloadWord)}</a></div></details>`
+		: downloadUrl
+			? `<a class="rr-primary" href="${escapeHtml(downloadUrl)}" download>${escapeHtml(messages.downloadPdf)}</a>`
+			: "";
 	const body = [
 		`<main id="main-content" class="rr rr-desk">${page.html}`,
 		creditUrl

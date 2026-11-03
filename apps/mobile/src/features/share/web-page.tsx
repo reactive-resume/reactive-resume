@@ -226,6 +226,18 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 						/>
 					}
 				/>
+				<ListRow
+					title={t`Visitors can download Word`}
+					subtitle={t`Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified.`}
+					trailing={
+						<Switch
+							label={t`Visitors can download Word`}
+							value={resume.allowWordDownload === true}
+							disabled={disabled}
+							onValueChange={(value) => void save({ allowWordDownload: value })}
+						/>
+					}
+				/>
 			</ListGroup>
 
 			<ConfirmDialog

@@ -158,3 +158,36 @@ addressProps.onChangeText("");
 tree = render(LinkTab, { resume: legacyResume, offline: false });
 addressProps = control(tree, "Address");
 assert.equal(addressProps.error, "Add an address.");
+
+// The actual native Privacy control opts in explicitly; old cached drafts remain off, and saves use Share's queue.
+const saves = [];
+const { WebPageSettings } = load("features/share/web-page.tsx", {
+	"./custom-domain": { CustomDomain: "CustomDomain" },
+	"./revision": { setResumePassword: async () => {} },
+	"expo-web-browser": { openBrowserAsync: async () => {} },
+	"@/api/client": { client: {}, orpc: { resume: { list: { queryOptions: () => ({}) } } } },
+});
+const shareResume = { ...legacyResume, data: { metadata: {} }, isPrimary: false, hasPassword: false };
+const shareProps = {
+	resume: shareResume,
+	offline: false,
+	origin: "https://example.test",
+	flags: {},
+	operations: { busy: false },
+	save: async (patch) => {
+		saves.push(patch);
+		return true;
+	},
+};
+hooks = [];
+const wordControl = (props) => control(render(WebPageSettings, props), "Visitors can download Word")?.trailing?.props;
+assert.equal(wordControl(shareProps)?.value, false, "Old cached drafts must not opt into Word");
+wordControl(shareProps).onValueChange(true);
+assert.deepEqual(saves, [{ allowWordDownload: true }]);
+assert.equal(wordControl({ ...shareProps, resume: { ...shareResume, allowWordDownload: true } }).value, true);
+for (const props of [
+	{ ...shareProps, offline: true },
+	{ ...shareProps, resume: { ...shareResume, isLocked: true } },
+	{ ...shareProps, operations: { busy: true } },
+])
+	assert.equal(wordControl(props).disabled, true);
