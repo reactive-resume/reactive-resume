@@ -67,4 +67,22 @@ describe("account scope", () => {
 		expect(listener).not.toHaveBeenCalled();
 		stop();
 	});
+
+	it("one storage event fences all active subscribers once, and stopped subscribers leave no listener", () => {
+		const first = vi.fn();
+		const second = vi.fn();
+		const stopFirst = subscribeAccountChange(first);
+		const stopSecond = subscribeAccountChange(second);
+		const before = getAccountGeneration();
+		const event = new Event("storage");
+		Object.defineProperty(event, "key", { value: "reactive-resume:account-change" });
+		window.dispatchEvent(event);
+		expect(first).toHaveBeenCalledOnce();
+		expect(second).toHaveBeenCalledOnce();
+		expect(getAccountGeneration()).toBe(before + 1);
+		stopFirst();
+		stopSecond();
+		window.dispatchEvent(event);
+		expect(getAccountGeneration()).toBe(before + 1);
+	});
 });
