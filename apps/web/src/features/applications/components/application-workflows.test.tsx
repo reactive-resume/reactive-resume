@@ -367,6 +367,7 @@ it("shows pasted text once when AI couldn't read it, and saves that text (J2-20)
 	});
 	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
 	await screen.findByText(/AI couldn't fill the details/);
+	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();
 	expect(screen.queryByRole("textbox", { name: "Saved description" })).toBeNull();
 	fireEvent.change(screen.getByRole("textbox", { name: "Role" }), { target: { value: "VP of Engineering" } });
 	fireEvent.change(screen.getByRole("textbox", { name: "Company" }), { target: { value: "Fieldnote" } });
@@ -398,6 +399,7 @@ it("shows the posting once when a link couldn't be read, its text was pasted and
 	fireEvent.change(await screen.findByRole("textbox", { name: "Pasted description" }), { target: { value: posting } });
 	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
 	await screen.findByText(/AI couldn't fill the details/);
+	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();
 
 	expect(screen.getAllByRole("textbox").filter((box) => (box as HTMLTextAreaElement).value === posting)).toHaveLength(
 		1,
