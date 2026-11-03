@@ -25,6 +25,7 @@ import { relinkLetter } from "./save";
 import { relinked } from "./write";
 import { useLetterStore } from "@/draft";
 import { applyTextSize } from "@/features/design/presets";
+import { getLocaleOptions } from "@/features/settings/locale-names";
 import { selectableLocales } from "@/i18n";
 import { routes } from "@/routes";
 import { Button, IconButton, ListRow, Segmented, SelectSheet, Switch, Text, TextField, useTheme } from "@/ui";
@@ -260,17 +261,13 @@ type LetterLanguageFieldProps = { letter: LetterDocument; disabled: boolean };
 /** The letter's language, independent of whether its design follows the resume. Write and Design both offer it. */
 export function LetterLanguageField({ letter, disabled }: LetterLanguageFieldProps) {
 	const { t, i18n } = useLingui();
-	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" });
 	return (
 		<SelectSheet
 			label={t`Language`}
 			value={letter.style.metadata.page.locale}
 			disabled={disabled}
-			options={selectableLocales.map((code) => ({
-				value: code,
-				label: languageName.of(code) ?? code,
-				description: code,
-			}))}
+			options={getLocaleOptions(i18n, selectableLocales)}
+			searchable
 			onChange={(value) =>
 				useLetterStore.getState().update((draft) => void (draft.style.metadata.page.locale = value), {
 					coalesceKey: "locale",

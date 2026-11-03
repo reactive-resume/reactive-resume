@@ -1,6 +1,20 @@
-import type { MessageDescriptor } from "@lingui/core";
+import type { I18n, MessageDescriptor } from "@lingui/core";
 import type { Locale } from "@reactive-resume/utils/locale";
 import { msg } from "@lingui/core/macro";
+import { getLanguageName } from "@reactive-resume/utils/locale";
+
+export function getLocaleOptions(i18n: I18n, locales: readonly Locale[]) {
+	return locales.map((value) => {
+		const label = getLanguageName(value);
+		const translated = i18n._(localeMap[value]);
+		return {
+			value,
+			label,
+			description: translated === label ? undefined : translated,
+			keywords: [value, translated, getLanguageName(value, "en-US")],
+		};
+	});
+}
 
 export const localeMap = {
 	"af-ZA": msg`Afrikaans`,

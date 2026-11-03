@@ -209,6 +209,7 @@ export type SelectOption<T extends string> = {
 	value: T;
 	label: string;
 	description?: string | undefined;
+	keywords?: readonly string[] | undefined;
 	icon?: IconName | undefined;
 };
 

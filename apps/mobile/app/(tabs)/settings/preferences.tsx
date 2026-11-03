@@ -4,10 +4,11 @@ import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DevSettings, View, useWindowDimensions } from "react-native";
+import { filterOptions } from "@reactive-resume/utils/string";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { client, orpc } from "@/api/client";
 import { SettingsGroup, SettingsPage } from "@/features/settings/layout";
-import { localeMap } from "@/features/settings/locale-names";
+import { getLocaleOptions } from "@/features/settings/locale-names";
 import { useProfile } from "@/features/settings/queries";
 import { getDeviceLocale, getLocalePreference, selectableLocales, setLocalePreference } from "@/i18n";
 import { timeZones } from "@/lib/timezones";
@@ -62,11 +63,9 @@ export default function PreferencesScreen() {
 		},
 		onError: () => showToast({ message: t`Couldn't save the timezone. Try again.` }),
 	});
-	const languageName = (value: Locale) => i18n._(localeMap[value]);
-	const languages = selectableLocales.map((value) => ({ value, label: languageName(value) }));
-	const matchingLanguages = languages.filter(({ value, label }) =>
-		`${value} ${label}`.toLowerCase().includes(search.trim().toLowerCase()),
-	);
+	const languages = getLocaleOptions(i18n, selectableLocales);
+	const languageName = (value: Locale) => languages.find((option) => option.value === value)?.label ?? value;
+	const matchingLanguages = filterOptions(languages, search);
 	const zones = [
 		...new Set(["UTC", deviceTimezone, ...(profile.data ? [profile.data.timezone] : []), ...timeZones]),
 	].sort();
@@ -179,11 +178,11 @@ export default function PreferencesScreen() {
 							disabled={changingLanguage}
 							onPress={() => void chooseLanguage(null)}
 						/>
-						{matchingLanguages.map(({ value, label }) => (
+						{matchingLanguages.map(({ value, label, description }) => (
 							<ListRow
 								key={value}
 								title={label}
-								subtitle={value}
+								subtitle={description}
 								selected={locale === value}
 								disabled={changingLanguage}
 								onPress={() => void chooseLanguage(value)}
