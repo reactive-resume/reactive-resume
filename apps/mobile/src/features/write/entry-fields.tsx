@@ -242,7 +242,7 @@ function Roles({ entry, write, page, disabled, focusField }: FieldProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const roles = (entry as unknown as Values).roles ?? [];
-	const writeRoles = (key: string, mutate: (roles: RoleItem[]) => void, options?: { newStep?: boolean }) =>
+	const writeRoles = (key: string, mutate: (roles: RoleItem[]) => void, options?: Parameters<EntryWriter>[2]) =>
 		write(
 			`roles:${key}`,
 			(target) => {
@@ -250,7 +250,12 @@ function Roles({ entry, write, page, disabled, focusField }: FieldProps) {
 			},
 			options,
 		);
-	const update = (role: RoleItem, key: string, mutate: (role: RoleItem) => void, options?: { newStep?: boolean }) =>
+	const update = (
+		role: RoleItem,
+		key: string,
+		mutate: (role: RoleItem) => void,
+		options?: Parameters<EntryWriter>[2],
+	) =>
 		writeRoles(
 			`${role.id}:${key}`,
 			(list) => {

@@ -1,5 +1,6 @@
 import type { DraftStore, UpdateOptions } from "./types";
 import type { ProposalApplications, ProposalSnapshot } from "@reactive-resume/resume/proposals";
+import type { AiUsageSummary } from "@reactive-resume/schema/ai-usage";
 import type { WritableDraft } from "immer";
 import { produce } from "immer";
 import { create } from "zustand";
@@ -12,7 +13,13 @@ import {
 } from "@reactive-resume/resume/proposals";
 import { generateId } from "@reactive-resume/utils/string";
 
-type Document = { id: string; isLocked: boolean };
+type Document = {
+	id: string;
+	isLocked: boolean;
+	aiOperationIds?: string[] | undefined;
+	aiUsage?: AiUsageSummary | null | undefined;
+};
+type Snapshot<T> = ProposalSnapshot<T> & Pick<Document, "aiOperationIds" | "aiUsage">;
 type Record<D> = {
 	baseline: D;
 	document: D;
@@ -99,8 +106,8 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 	let replaying: Promise<void> | null = null;
 	let resolving = false;
 	let force = false;
-	let undo: ProposalSnapshot<T>[] = [];
-	let redo: ProposalSnapshot<T>[] = [];
+	let undo: Snapshot<T>[] = [];
+	let redo: Snapshot<T>[] = [];
 	let last: { at: number; key: string | undefined; coalesce: boolean } | null = null;
 	const prefix = (owner: string) => `reactive-resume:unsaved:${encodeURIComponent(owner)}:${adapter.kind}:`;
 	const key = () => {
@@ -120,6 +127,12 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		flush,
 	}));
 	const state = store.getState;
+	const checkpoint = (document: D): Snapshot<T> => ({
+		data: adapter.data(document),
+		applications: state().proposalApplications,
+		aiOperationIds: document.aiOperationIds ?? [],
+		aiUsage: document.aiUsage,
+	});
 
 	function publish(document: D, proposalApplications: ProposalApplications = state().proposalApplications) {
 		store.setState({ document, data: adapter.data(document), locked: document.isLocked, proposalApplications });
@@ -353,21 +366,35 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		if (!record || state().locked || resolving) return;
 		const before = adapter.data(record.document);
 		const next = produce(before, recipe);
-		if (next === before) return;
+		const existingSources = record.document.aiOperationIds ?? [];
+		const newSources = options.aiOperationIds?.some((id) => !existingSources.includes(id));
+		if (next === before && !newSources) return;
 		const now = Date.now();
 		const coalesce =
 			!options.newStep &&
 			last?.coalesce &&
 			last.key === options.coalesceKey &&
 			((options.sameStep && options.coalesceKey !== undefined) || now - last.at < (options.coalesceKey ? 1000 : 500));
-		if (!coalesce) undo = [...undo.slice(-199), { data: before, applications: state().proposalApplications }];
+		if (!coalesce) undo = [...undo.slice(-199), checkpoint(record.document)];
 		redo = [];
 		last = { at: now, key: options.coalesceKey, coalesce: !options.newStep };
 		history();
-		queue(adapter.withData(record.document, next), {
-			...state().proposalApplications,
-			...appliedApplications(options.applied ?? []),
-		});
+		const document = adapter.withData(record.document, next);
+		queue(
+			newSources
+				? {
+						...document,
+						aiOperationIds: [
+							...new Set([...(record.document.aiOperationIds ?? []), ...(options.aiOperationIds ?? [])]),
+						],
+						aiUsage: null,
+					}
+				: document,
+			{
+				...state().proposalApplications,
+				...appliedApplications(options.applied ?? []),
+			},
+		);
 	}
 
 	function updateDocument(recipe: (draft: WritableDraft<D>) => void) {
@@ -387,16 +414,20 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		queue(document);
 	}
 
-	function travel(from: ProposalSnapshot<T>[], to: ProposalSnapshot<T>[]) {
+	function travel(from: Snapshot<T>[], to: Snapshot<T>[]) {
 		if (!record || state().locked || resolving) return;
 		const next = from.pop();
 		if (next === undefined) return;
-		to.push({ data: adapter.data(record.document), applications: state().proposalApplications });
+		to.push(checkpoint(record.document));
 		if (to.length > 200) to.shift();
 		last = null;
 		history();
 		queue(
-			adapter.withData(record.document, next.data),
+			{
+				...adapter.withData(record.document, next.data),
+				aiOperationIds: next.aiOperationIds ?? [],
+				aiUsage: next.aiUsage,
+			},
 			restoreProposalApplications(state().proposalApplications, next.applications),
 		);
 	}

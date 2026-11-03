@@ -28,7 +28,7 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { useKeyboardInset } from "@reactive-resume/ui/hooks/use-keyboard-inset";
 import { cn } from "@reactive-resume/utils/style";
 import { ImprovePanel, lineAtCaret } from "./improve";
-import { acceptImproveLine } from "./improve-history";
+import { acceptImproveLine, improveSourceChanges } from "./improve-history";
 import { cleanPastedHtml } from "@/components/input/pasted-html";
 import { richTextExtensions } from "@/components/input/rich-text-extensions";
 import { hasUnsupportedTableMarkup, toPreviewHtml } from "@/components/input/rich-text-markup";
@@ -181,7 +181,14 @@ export type RichTextEditorProps = {
 	/** Accessible name of the text box. */
 	label: string;
 	value: string;
-	onChange: (html: string, options?: { newStep?: boolean }) => void;
+	onChange: (
+		html: string,
+		options?: {
+			newStep?: boolean;
+			aiOperationIds?: string[] | undefined;
+			removedAiOperationIds?: string[] | undefined;
+		},
+	) => void;
 	/** Guidance under the text while editing, e.g. "2–3 sentences reads best". */
 	hint?: ReactNode;
 	disabled?: boolean;
@@ -219,7 +226,7 @@ export function RichTextEditor({
 	const ai = useHasUsableAiProvider();
 	const mobile = useBreakpoint() === "mobile";
 	const keyboardInset = useKeyboardInset();
-	const acceptedReplacement = useRef(false);
+	const acceptedReplacement = useRef<Parameters<RichTextEditorProps["onChange"]>[1]>(undefined);
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
 	const editorValue = useMemo(() => (readOnlyTable ? toPreviewHtml(value) : value), [readOnlyTable, value]);
 
@@ -281,10 +288,16 @@ export function RichTextEditor({
 				),
 			},
 		},
-		onUpdate: ({ editor }) => {
-			const newStep = acceptedReplacement.current;
-			acceptedReplacement.current = false;
-			onChange(editor.getHTML(), newStep ? { newStep: true } : undefined);
+		onTransaction: ({ editor, transaction }) => {
+			const sources = improveSourceChanges(transaction);
+			if (!sources || transaction.getMeta("preventUpdate") || !transaction.before.eq(editor.state.doc)) return;
+			acceptedReplacement.current = undefined;
+			onChange(editor.getHTML(), sources);
+		},
+		onUpdate: ({ editor, transaction }) => {
+			const options = improveSourceChanges(transaction) ?? acceptedReplacement.current;
+			acceptedReplacement.current = undefined;
+			onChange(editor.getHTML(), options);
 		},
 	});
 
@@ -333,10 +346,16 @@ export function RichTextEditor({
 
 	const editing = focused || improving !== null || menus.open;
 
-	const acceptImprove = (line: ImproveLine, text: string) => {
-		if (!editor) return;
-		acceptedReplacement.current = true;
-		acceptImproveLine(editor, line, text);
+	const acceptImprove = (line: ImproveLine, text: string, aiOperationIds?: string[]) => {
+		if (!editor?.isEditable || editor.state.doc.textBetween(line.from, line.to) !== line.text) return;
+		acceptedReplacement.current = { newStep: true, aiOperationIds };
+		acceptImproveLine(editor, line, text, aiOperationIds);
+		// Identical wording can still have an accepted source; Tiptap emits no content update in that case.
+		if (acceptedReplacement.current) {
+			const options = acceptedReplacement.current;
+			acceptedReplacement.current = undefined;
+			onChange(editor.getHTML(), options);
+		}
 	};
 
 	const startImprove = () => {
@@ -469,7 +488,7 @@ export function RichTextEditor({
 					line={improving}
 					where={label}
 					onClose={() => setImproving(null)}
-					onAccept={(text) => acceptImprove(improving, text)}
+					onAccept={(text, aiOperationIds) => acceptImprove(improving, text, aiOperationIds)}
 					kind={improve}
 				/>
 			)}

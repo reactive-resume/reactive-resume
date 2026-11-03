@@ -51,7 +51,7 @@ const Button = ({ label, onPress, disabled }) => h("button", { onClick: onPress,
 const deps = {
 	react: React,
 	"react/jsx-runtime": req("react/jsx-runtime"),
-	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: String } }) },
 	"@lingui/core/macro": { plural: (count) => `${count} characters` },
 	"react-native": { View, ScrollView },
 	"react-native-enriched-html": { EnrichedTextInput: NativeInput },
@@ -86,7 +86,7 @@ const deps = {
 				isError: false,
 				mutate(input) {
 					fixture.requests.push(input);
-					setData({ text: "Reviewed replacement", why: "Fictional suggestion", addsFacts: false });
+					setData(fixture.result);
 				},
 				reset() {
 					setData(null);
@@ -159,6 +159,16 @@ async function mount(props = {}) {
 		letterFocus: 0,
 		letterBlur: 0,
 		resumeFocus: 0,
+		result: {
+			text: "Reviewed replacement",
+			why: "Fictional suggestion",
+			addsFacts: false,
+			aiOperationIds: ["reviewed-improve"],
+			aiUsage: {
+				requests: 2,
+				models: [{ label: "Fictional Review AI", provider: "openai-compatible", model: "actual-fast" }],
+			},
+		},
 		read: () => Promise.resolve(fixture.html),
 	};
 	const onChange = (html, options) => fixture.writes.push({ html, options });
@@ -199,6 +209,7 @@ for (const [action, label] of [
 		assert.deepEqual(fixture.requests, [
 			{
 				aiProviderId: "fixture-provider",
+				includeProvenance: true,
 				action,
 				line: "Original line",
 				where: "Letter body",
@@ -210,9 +221,36 @@ for (const [action, label] of [
 		await act(async () => {
 			fireEvent.click(screen.getByRole("button", { name: "Replace", exact: true }));
 		});
-		assert.deepEqual(fixture.writes, [{ html: "<p>Reviewed replacement</p>", options: { newStep: true } }]);
+		assert.deepEqual(fixture.writes, [
+			{ html: "<p>Reviewed replacement</p>", options: { newStep: true, aiOperationIds: ["reviewed-improve"] } },
+		]);
+		assert.ok(
+			screen.queryByText("Fictional Review AI · openai-compatible · actual-fast") === null,
+			"accepted panel closes",
+		);
 	});
 }
+test("Improve review displays actual result model and attempts; Keep mine adds no sources", async () => {
+	await mount();
+	await choose("Warmer");
+	assert.ok(screen.getByText("AI request attempts: 2"));
+	assert.ok(screen.getByText("Fictional Review AI · openai-compatible · actual-fast"));
+	assert.equal(fixture.writes.length, 0);
+	await act(async () => fireEvent.click(screen.getByRole("button", { name: "Keep mine" })));
+	assert.equal(fixture.writes.length, 0);
+	assert.equal(fixture.requests.length, 1);
+});
+test("source-less older Improve response stays usable without repeating generation", async () => {
+	await mount();
+	fixture.result = { text: "Reviewed replacement", why: "Older server", addsFacts: false };
+	await choose("Warmer");
+	assert.ok(screen.getByText("AI request history unavailable for this result."));
+	await act(async () => fireEvent.click(screen.getByRole("button", { name: "Replace", exact: true })));
+	assert.deepEqual(fixture.writes, [
+		{ html: "<p>Reviewed replacement</p>", options: { newStep: true, aiOperationIds: undefined } },
+	]);
+	assert.equal(fixture.requests.length, 1);
+});
 test("standalone letter exposes warmer/shorter but no posting or resume-only presets", async () => {
 	await mount();
 	await act(async () => {
@@ -300,5 +338,5 @@ test("two captured Replace presses commit one reviewed history step", async () =
 		held.resolve("<p>Original line</p>");
 	});
 	assert.equal(fixture.writes.length, 1);
-	assert.deepEqual(fixture.writes[0].options, { newStep: true });
+	assert.deepEqual(fixture.writes[0].options, { newStep: true, aiOperationIds: ["reviewed-improve"] });
 });

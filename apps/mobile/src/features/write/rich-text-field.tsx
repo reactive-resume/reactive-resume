@@ -61,7 +61,7 @@ export type RichTextFieldProps = {
 	improve?: boolean | undefined;
 	minLines?: number | undefined;
 	/** Receives document HTML, only after the user edits this field. `newStep` marks an accepted AI replacement. */
-	onChange: (html: string, options?: { newStep?: boolean }) => void;
+	onChange: (html: string, options?: { newStep?: boolean; aiOperationIds?: string[] | undefined }) => void;
 	/** Guidance while editing, e.g. "2–3 sentences reads best". */
 	hint?: string | undefined;
 	disabled?: boolean | undefined;
@@ -249,7 +249,7 @@ export function RichTextField({
 						improveSequence.current++;
 						setImproving(null);
 					}}
-					onReplace={async (replacement) => {
+					onReplace={async (replacement, aiOperationIds) => {
 						const current = () =>
 							mounted.current &&
 							!latest.current.disabled &&
@@ -271,7 +271,7 @@ export function RichTextField({
 						)
 							return false;
 						improveSequence.current++;
-						latest.current.onChange(next, { newStep: true });
+						latest.current.onChange(next, { newStep: true, aiOperationIds });
 						ref.current?.setValue(session.wrote(next));
 						setImproving(null);
 						return true;

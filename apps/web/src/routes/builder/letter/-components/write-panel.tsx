@@ -561,7 +561,26 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 					disabled={disabled}
 					heightClassName="min-h-[240px]"
 					improve={{ letter: true, applicationId: application?.id }}
-					onChange={(content) => edit({ content })}
+					onChange={(content, options) => {
+						const current = useLetterEditorStore.getState();
+						if (
+							getAccountGeneration() !== account ||
+							current.sessionId !== sessionId ||
+							current.letter?.id !== letter.id ||
+							current.letter.isLocked
+						)
+							return;
+						edit({
+							content,
+							...(options?.aiOperationIds?.length || options?.removedAiOperationIds?.length
+								? {
+										aiOperationIds: [
+											...new Set([...(current.letter.aiOperationIds ?? []), ...(options.aiOperationIds ?? [])]),
+										].filter((id) => !options.removedAiOperationIds?.includes(id)),
+									}
+								: {}),
+						});
+					}}
 				/>
 			) : (
 				<EmptyBody

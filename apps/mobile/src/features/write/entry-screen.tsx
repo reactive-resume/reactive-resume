@@ -96,6 +96,7 @@ export function EntryScreen({ resumeId, sectionId, entryId, focusField }: EntryS
 				</Text>
 			) : null}
 			<EntryFields
+				key={`${resumeId}:${entryId}`}
 				type={section.type}
 				entry={entry}
 				write={write}
@@ -125,12 +126,13 @@ export function SummaryScreen({ autoFocus }: SummaryScreenProps) {
 	const title = useSectionTitle({ id: "summary", kind: "summary", type: "summary" });
 	const locked = useIsResumeLocked();
 	const update = useResumeStore((state) => state.update);
-	const loaded = useResumeStore((state) => state.document !== null);
+	const documentId = useResumeStore((state) => state.document?.id);
 
 	return (
 		<EditorScreen title={title}>
-			{loaded ? (
+			{documentId ? (
 				<RichTextField
+					key={documentId}
 					label={t`Summary`}
 					value={content}
 					disabled={locked}

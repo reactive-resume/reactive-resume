@@ -20,7 +20,7 @@ describe("accepted Improve replacement history", () => {
 
 		// The user's edit is already a history event. Replace 100 ms later, inside the editor's 500 ms group window.
 		vi.setSystemTime(new Date(100));
-		acceptImproveLine(editor, { from: 1, to: 1 + user.length }, replacement);
+		acceptImproveLine(editor, { from: 1, to: 1 + user.length }, replacement, ["reviewed-improve"]);
 		expect(editor.getText()).toBe(replacement);
 
 		editor.commands.undo();
@@ -37,7 +37,9 @@ describe("accepted Improve replacement history", () => {
 		const replacement = "Led fictional delivery work.";
 
 		vi.setSystemTime(new Date(100));
-		acceptImproveLine(editor, { from: 1, to: "Owned synthetic delivery.".length + 1 }, replacement);
+		acceptImproveLine(editor, { from: 1, to: "Owned synthetic delivery.".length + 1 }, replacement, [
+			"reviewed-improve",
+		]);
 
 		vi.setSystemTime(new Date(150));
 		editor.commands.insertContent(" More");

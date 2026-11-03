@@ -18,6 +18,7 @@ import {
 	readProposalApplications,
 	restoreProposalApplications,
 } from "@reactive-resume/resume/proposals";
+import { aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { syncResumeDates } from "@reactive-resume/schema/resume/dates";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -60,7 +61,9 @@ type ResumeUpdateEvent = { mutation: ResumeUpdateMutation };
  */
 type SaveStatus = "idle" | "saving" | "saved" | "offline" | "error" | "conflict" | "locked";
 
-type UpdateResumeDataOptions = {
+export type UpdateResumeDataOptions = {
+	aiOperationIds?: string[] | undefined;
+	removedAiOperationIds?: string[] | undefined;
 	/** Proposals this edit applied, recorded with their wording in this undo step alongside the authored data. */
 	applied?: readonly Pick<Proposal, "id" | "after" | "snapshot">[];
 	/**
@@ -77,6 +80,8 @@ type UpdateResumeDataOptions = {
 	sameStep?: boolean;
 };
 
+type ResumeSnapshot = ProposalSnapshot<ResumeData> & Pick<Resume, "aiOperationIds" | "aiUsage">;
+
 type ResumeStoreState = {
 	resume: Resume | null;
 	resumeId?: string | undefined;
@@ -85,8 +90,8 @@ type ResumeStoreState = {
 	// Undo/redo stacks of `ResumeData` references. Immer's immutable updates share structure, so a
 	// step costs only the parts that changed.
 	proposalApplications: ProposalApplications;
-	undoStack: ProposalSnapshot<ResumeData>[];
-	redoStack: ProposalSnapshot<ResumeData>[];
+	undoStack: ResumeSnapshot[];
+	redoStack: ResumeSnapshot[];
 };
 
 type ResumeStoreActions = {
@@ -194,6 +199,7 @@ function storeUnsavedResume(resume: Resume) {
 			recoveryKey(resume),
 			JSON.stringify({
 				data: resume.data,
+				aiOperationIds: resume.aiOperationIds,
 				baseUpdatedAt: getRuntime(resume.id).baseUpdatedAt,
 				storedAt: Date.now(),
 				proposalApplications: getRuntime(resume.id).proposalApplications,
@@ -214,6 +220,7 @@ function clearUnsavedResume(resume: Resume) {
 				recoveryKey(resume),
 				JSON.stringify({
 					data: resume.data,
+					aiOperationIds: resume.aiOperationIds,
 					baseUpdatedAt: runtime.baseUpdatedAt,
 					storedAt: Date.now(),
 					clean: true,
@@ -233,6 +240,7 @@ function clearUnsavedResume(resume: Resume) {
 
 type UnsavedResume = {
 	data: ResumeData;
+	aiOperationIds?: string[];
 	baseUpdatedAt?: string;
 	storedAt: number;
 	key: string;
@@ -253,6 +261,8 @@ function readUnsavedResume(id: string): UnsavedResume | undefined {
 			if (!raw) continue;
 			try {
 				const parsed = JSON.parse(raw) as Omit<UnsavedResume, "key" | "raw">;
+				if (parsed.aiOperationIds !== undefined && !aiOperationIdsSchema.safeParse(parsed.aiOperationIds).success)
+					delete parsed.aiOperationIds;
 				if (
 					!Number.isFinite(parsed.storedAt) ||
 					(Date.now() - parsed.storedAt > 7 * 86_400_000 &&
@@ -405,6 +415,7 @@ async function flushResumeSave(id: string) {
 			{
 				id: submitted.id,
 				data: submittedData,
+				...(submitted.aiOperationIds !== undefined ? { aiOperationIds: submitted.aiOperationIds } : {}),
 				sessionId: runtime.sessionId,
 				expectedUpdatedAt: runtime.baseUpdatedAt,
 				...(runtime.proposalSafety ? { proposalSafety: runtime.proposalSafety } : {}),
@@ -425,10 +436,12 @@ async function flushResumeSave(id: string) {
 		runtime.queryClient?.setQueryData(getResumeQueryKey(submitted.id), updated);
 
 		const currentResume = useResumeStore.getState().resume;
-		const currentDataStillMatchesSubmission =
+		const contentStillMatchesSubmission =
 			currentResume?.id === submitted.id &&
 			isEqual(currentResume.data, submittedData) &&
-			Object.keys(runtime.pendingProposalApplications).length === 0;
+			isEqual(currentResume.aiOperationIds ?? [], submitted.aiOperationIds ?? []);
+		const currentDataStillMatchesSubmission =
+			contentStillMatchesSubmission && Object.keys(runtime.pendingProposalApplications).length === 0;
 
 		if (currentDataStillMatchesSubmission && !runtime.pendingResume) {
 			runtime.hasPendingLocalChanges = false;
@@ -443,7 +456,7 @@ async function flushResumeSave(id: string) {
 			runtime.hasPendingLocalChanges = true;
 			useResumeStore.getState().mergeResumeMetadata(updated);
 
-			if (!runtime.pendingResume && currentResume?.id === submitted.id && !isEqual(currentResume.data, submittedData)) {
+			if (!runtime.pendingResume && currentResume?.id === submitted.id && !contentStillMatchesSubmission) {
 				runtime.syncResume.cancel();
 				runtime.pendingResume = structuredClone(currentResume);
 			}
@@ -599,9 +612,22 @@ export const useResumeStore = create<ResumeStore>()(
 			const pending = readProposalApplications(unsaved?.pendingProposalApplications);
 			const hasPendingDecisions = Object.keys(pending).length > 0;
 			const sameRevision = unsaved?.baseUpdatedAt === resume?.updatedAt.toISOString();
+			const hasSourceChanges =
+				unsaved?.aiOperationIds !== undefined && !isEqual(unsaved.aiOperationIds, resume?.aiOperationIds ?? []);
 			const restored =
-				resume && unsaved && ((!unsaved.clean && !isEqual(unsaved.data, resume.data)) || hasPendingDecisions)
-					? { ...resume, data: unsaved.data }
+				resume &&
+				unsaved &&
+				((!unsaved.clean && (!isEqual(unsaved.data, resume.data) || hasSourceChanges)) || hasPendingDecisions)
+					? {
+							...resume,
+							data: unsaved.data,
+							...(unsaved.aiOperationIds !== undefined
+								? {
+										aiOperationIds: unsaved.aiOperationIds,
+										aiUsage: hasSourceChanges ? null : resume.aiUsage,
+									}
+								: {}),
+						}
 					: null;
 			if (resume) {
 				const runtime = getRuntime(resume.id);
@@ -717,8 +743,10 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resume.showInSearchEngines = resume.showInSearchEngines;
 				state.resume.hideContactDetails = resume.hideContactDetails;
 				state.resume.isPrimary = resume.isPrimary;
-				if (resume.aiOperationIds !== undefined) state.resume.aiOperationIds = resume.aiOperationIds;
-				if (resume.aiUsage !== undefined) state.resume.aiUsage = resume.aiUsage;
+				if (!getRuntime(resume.id).hasPendingLocalChanges) {
+					if (resume.aiOperationIds !== undefined) state.resume.aiOperationIds = resume.aiOperationIds;
+					if (resume.aiUsage !== undefined) state.resume.aiUsage = resume.aiUsage;
+				}
 			});
 		},
 
@@ -751,13 +779,30 @@ export const useResumeStore = create<ResumeStore>()(
 				if (!state.resume) return;
 
 				if (snapshotBefore) {
-					state.undoStack.push({ data: snapshotBefore, applications: state.proposalApplications });
+					state.undoStack.push({
+						data: snapshotBefore,
+						applications: state.proposalApplications,
+						aiOperationIds: currentResume.aiOperationIds ?? [],
+						aiUsage: currentResume.aiUsage,
+					});
 					if (state.undoStack.length > MAX_HISTORY_ENTRIES) state.undoStack.shift();
 					// A fresh edit invalidates the redo branch.
 					state.redoStack = [];
 				}
 
 				fn(state.resume.data as WritableDraft<ResumeData>);
+				if (options.aiOperationIds?.length) {
+					state.resume.aiOperationIds = [
+						...new Set([...(state.resume.aiOperationIds ?? []), ...options.aiOperationIds]),
+					];
+					state.resume.aiUsage = null;
+				}
+				if (options.removedAiOperationIds?.length) {
+					state.resume.aiOperationIds = (state.resume.aiOperationIds ?? []).filter(
+						(id) => !options.removedAiOperationIds?.includes(id),
+					);
+					state.resume.aiUsage = null;
+				}
 				if (options.applied?.length)
 					state.proposalApplications = { ...state.proposalApplications, ...appliedApplications(options.applied) };
 				// The server writes the date text from the dates on save; doing the same here keeps its echo
@@ -896,10 +941,17 @@ function applyHistoryStep(get: StoreGet, set: ImmerSet, direction: "undo" | "red
 		const snapshot = from.pop();
 		if (snapshot === undefined) return;
 
-		to.push({ data: current as WritableDraft<ResumeData>, applications: draft.proposalApplications });
+		to.push({
+			data: current as WritableDraft<ResumeData>,
+			applications: draft.proposalApplications,
+			aiOperationIds: currentResume.aiOperationIds ?? [],
+			aiUsage: currentResume.aiUsage,
+		});
 		if (to.length > MAX_HISTORY_ENTRIES) to.shift();
 
 		draft.resume.data = snapshot.data;
+		draft.resume.aiOperationIds = snapshot.aiOperationIds ?? [];
+		draft.resume.aiUsage = snapshot.aiUsage;
 		draft.proposalApplications = restoreProposalApplications(draft.proposalApplications, snapshot.applications);
 		if (!getRuntime(currentResume.id).conflict) draft.saveStatus = "saving";
 	});
@@ -1081,7 +1133,7 @@ export function useUpdateResumeData() {
 
 	return useCallback(
 		(fn: (draft: WritableDraft<ResumeData>) => void, options?: UpdateResumeDataOptions) => {
-			if (!resumeId) return;
+			if (!resumeId || useResumeStore.getState().resume?.id !== resumeId) return;
 			bindRuntimeQueryClient(resumeId, queryClient);
 			updateResumeData(fn, options);
 		},

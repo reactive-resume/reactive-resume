@@ -621,7 +621,19 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 				value={letter.content}
 				disabled={disabled}
 				autoFocus={writing && countWords(letter.content) === 0}
-				onChange={(content, options) => edit("content", (value) => void (value.content = content), options)}
+				onChange={(content, options) =>
+					edit(
+						"content",
+						(value) => {
+							value.content = content;
+							if (options?.aiOperationIds?.length) {
+								value.aiOperationIds = [...new Set([...(value.aiOperationIds ?? []), ...options.aiOperationIds])];
+								value.aiUsage = null;
+							}
+						},
+						options,
+					)
+				}
 			/>
 		) : (
 			<EmptyBody letter={letter} application={application} disabled={disabled} onWrite={() => setWriting(true)} />

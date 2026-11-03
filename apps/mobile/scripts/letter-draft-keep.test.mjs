@@ -252,6 +252,7 @@ test("native Stop retains partial request lineage through recovery without anoth
 test("letter body wires the shared Improve history step and owned posting into its draft store", () => {
 	const f = fixture();
 	const current = letter();
+	current.aiOperationIds = ["original-source"];
 	f.setDocument(current);
 	f.draft.useLetterDrafting.setState({ owner: f.draft.letterDraftOwner(current.id), draft: { phase: "idle" } });
 	const { BodySection } = loadWriteCaller(f);
@@ -267,7 +268,9 @@ test("letter body wires the shared Improve history step and owned posting into i
 	walk(tree);
 	assert.ok(field);
 	assert.equal(field.props.applicationId, "owned-application");
-	field.props.onChange("<p>Reviewed paragraph</p>", { newStep: true });
+	field.props.onChange("<p>Reviewed paragraph</p>", { newStep: true, aiOperationIds: ["reviewed-improve"] });
 	assert.equal(current.content, "<p>Reviewed paragraph</p>");
-	assert.deepEqual(f.lastUpdate, { coalesceKey: "content", newStep: true });
+	assert.deepEqual(current.aiOperationIds, ["original-source", "reviewed-improve"]);
+	assert.equal(current.aiUsage, null);
+	assert.deepEqual(f.lastUpdate, { coalesceKey: "content", newStep: true, aiOperationIds: ["reviewed-improve"] });
 });

@@ -45,7 +45,18 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 	let pool: Pool;
 	let baseURL: string;
 	let user: typeof tables.user.$inferSelect;
-	let mode: "text" | "retry" | "tools" | "stream" | "failure" | "hold" | "reply" | "answer" | "writing" | "resume";
+	let mode:
+		| "text"
+		| "retry"
+		| "tools"
+		| "stream"
+		| "failure"
+		| "hold"
+		| "reply"
+		| "answer"
+		| "writing"
+		| "resume"
+		| "improve";
 	let release = () => {};
 	let arrived = () => {};
 	let requests: { model: string; path: string }[] = [];
@@ -81,27 +92,29 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				}
 				const callsTool = mode === "tools" && requests.length === 1;
 				const text =
-					mode === "resume"
-						? JSON.stringify(sampleResumeData)
-						: mode === "writing"
-							? JSON.stringify({
-									summary: "Fictional saved wording review",
-									strengths: [],
-									suggestions: [],
-									jdAlignment: null,
-								})
-							: mode === "answer"
-								? JSON.stringify({ text: "Built a fictional reporting workflow.", factIds: [], note: null })
-								: mode === "reply"
-									? JSON.stringify({
-											title: "Reply",
-											asks: [],
-											unconfirmed: [],
-											reply: "Thank you.",
-											changes: [],
-											offer: null,
-										})
-									: "done";
+					mode === "improve"
+						? JSON.stringify({ text: "Led fictional reliable delivery.", why: "Uses a direct verb.", addsFacts: false })
+						: mode === "resume"
+							? JSON.stringify(sampleResumeData)
+							: mode === "writing"
+								? JSON.stringify({
+										summary: "Fictional saved wording review",
+										strengths: [],
+										suggestions: [],
+										jdAlignment: null,
+									})
+								: mode === "answer"
+									? JSON.stringify({ text: "Built a fictional reporting workflow.", factIds: [], note: null })
+									: mode === "reply"
+										? JSON.stringify({
+												title: "Reply",
+												asks: [],
+												unconfirmed: [],
+												reply: "Thank you.",
+												changes: [],
+												offer: null,
+											})
+										: "done";
 				res.writeHead(200, { "content-type": "application/json" });
 				res.end(
 					JSON.stringify({
@@ -559,6 +572,41 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				submitted.submissionReview,
 			);
 			expect(requests).toHaveLength(1);
+		}));
+
+	it("returns opt-in Improve sources from actual transport records while preserving the default result contract", () =>
+		run(async () => {
+			const connection = await provider();
+			const api = client();
+			mode = "improve";
+			const input = { action: "verb" as const, line: "Helped with fictional reliable delivery." };
+			const legacy = await api.ai.improve(input);
+			expect(legacy).toEqual({
+				text: "Led fictional reliable delivery.",
+				why: "Uses a direct verb.",
+				addsFacts: false,
+			});
+			const result = await api.ai.improve({ ...input, includeProvenance: true });
+			expect(result.aiOperationIds).toEqual([expect.any(String)]);
+			expect(result.aiUsage).toEqual({
+				requests: 1,
+				models: [
+					{ providerId: connection.id, label: connection.label, provider: connection.provider, model: "fast-model" },
+				],
+			});
+			expect((await pool.query("select * from resume")).rows).toEqual([]);
+			const id = await api.resume.import({ data: sampleResumeData });
+			const current = await api.resume.getById({ id });
+			const data = { ...current.data, summary: { ...current.data.summary, content: `<p>${result.text}</p>` } };
+			const accepted = await api.resume.update({
+				id,
+				data,
+				aiOperationIds: result.aiOperationIds,
+				expectedUpdatedAt: current.updatedAt,
+			});
+			expect(accepted.aiUsage).toEqual(result.aiUsage);
+			expect(accepted.data.summary.content).toBe(`<p>${result.text}</p>`);
+			expect(requests).toHaveLength(2);
 		}));
 
 	it("pairs reviewed resume imports with real request sources through old edits, copies, history, export and deletion", () =>
