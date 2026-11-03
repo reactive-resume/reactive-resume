@@ -471,3 +471,38 @@ it("keeps the link's failure above paste recovery instead of replacing it with i
 	});
 	await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
 });
+
+it("keeps one failure status when optional AI enrichment fails for a captured posting", async () => {
+	const posting = "Build accessible tools for a fictional studio.";
+	api.parsePosting.mockResolvedValue({
+		role: "",
+		company: "",
+		location: "",
+		salary: "",
+		requirements: [],
+		jobDescription: posting,
+		filledBy: "none",
+		enrichmentWarning: true,
+		postingSource: { method: "paste", format: "text", truncated: false, completeness: "unknown" },
+	});
+	mount(
+		<AddApplicationDialog
+			open
+			onOpenChange={vi.fn()}
+			onAdded={vi.fn()}
+			initialCapture={{
+				url: "https://jobs.example.test/captured",
+				role: "Tools Engineer",
+				company: "Fictional Studio",
+				location: "",
+				description: posting,
+				truncated: false,
+			}}
+		/>,
+	);
+	fireEvent.click(await screen.findByRole("button", { name: "Read with AI" }));
+	await waitFor(() => expect(api.parsePosting).toHaveBeenCalledTimes(1));
+	expect(await screen.findAllByText(/AI couldn't fill the details/)).toHaveLength(1);
+	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();
+	expect(screen.getByRole("textbox", { name: "Saved description" })).toHaveValue(posting);
+});

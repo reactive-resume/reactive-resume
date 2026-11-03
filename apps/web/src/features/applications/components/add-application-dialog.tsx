@@ -681,7 +681,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						)}
 					</div>
 				)}
-				{initialCapture?.description && !read.error && !read.isPending ? null : providerState.isUnavailable && !link ? (
+				{initialCapture?.description &&
+				!read.error &&
+				!read.isPending &&
+				!parsed?.enrichmentWarning ? null : providerState.isUnavailable && !link ? (
 					<AiProviderLoadState state={providerState} />
 				) : (
 					<ReadStatus
