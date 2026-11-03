@@ -51,6 +51,34 @@ it("retains comma-separated bulk entry for tags", () => {
 	expect(onChange).toHaveBeenLastCalledWith(["first", "second"]);
 });
 
+it("offers existing tags without repeating selections and keeps them keyboard and touch reachable", () => {
+	const onChange = vi.fn();
+	render(
+		<I18nProvider i18n={i18n}>
+			<ChipInput
+				defaultValue={["Design"]}
+				suggestions={["Design", "Remote", "Support"]}
+				suggestionsLabel="Your tags"
+				onChange={onChange}
+			/>
+		</I18nProvider>,
+	);
+	expect(screen.getByText("Your tags")).toBeTruthy();
+	expect(screen.queryByRole("button", { name: "Add Design" })).toBeNull();
+	const remote = screen.getByRole("button", { name: "Add Remote" });
+	expect(remote).toHaveProperty("type", "button");
+	expect(remote.tabIndex).toBe(0);
+
+	const input = screen.getByRole("textbox", { name: "Add keyword" });
+	fireEvent.change(input, { target: { value: "sup" } });
+	expect(screen.getByRole("button", { name: "Add Support" })).toBeTruthy();
+	expect(screen.queryByRole("button", { name: "Add Remote" })).toBeNull();
+	fireEvent.change(input, { target: { value: "" } });
+	fireEvent.click(screen.getByRole("button", { name: "Add Remote" }));
+	expect(onChange).toHaveBeenLastCalledWith(["Design", "Remote"]);
+	expect(screen.queryByRole("button", { name: "Add Remote" })).toBeNull();
+});
+
 const liveRegion = () => document.querySelector('[id^="DndLiveRegion"]');
 
 // Moving between keywords needs real layout, so the browser tests cover it; happy-dom covers what's read out.

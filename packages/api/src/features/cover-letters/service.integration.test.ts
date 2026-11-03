@@ -46,6 +46,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			`CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text, data jsonb,
 			name text NOT NULL DEFAULT 'Resume', slug text NOT NULL DEFAULT 'resume', tags text[] NOT NULL DEFAULT '{}',
 			is_public boolean NOT NULL DEFAULT false, show_download_buttons boolean NOT NULL DEFAULT true,
+			allow_word_download boolean NOT NULL DEFAULT false,
 			show_in_search_engines boolean NOT NULL DEFAULT false, hide_contact_details boolean NOT NULL DEFAULT false,
 			is_primary boolean NOT NULL DEFAULT false, is_locked boolean NOT NULL DEFAULT false, auto_name boolean NOT NULL DEFAULT false,
 			auto_slug boolean NOT NULL DEFAULT false,

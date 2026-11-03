@@ -37,7 +37,7 @@ import { handleAuth, handleOAuth } from "./auth";
 import { handleCareerJobs } from "./career-jobs";
 import { handleCustomDomain, handleTraefikProvider } from "./custom-domain";
 import { handleHealth } from "./health";
-import { handlePublicResumePdf } from "./public-resume-pdf";
+import { handlePublicResumeDownload } from "./public-resume-download";
 import { handleResumePdfDownload } from "./resume-pdf";
 
 type ServerEnvironment = { Bindings: HttpBindings | Http2Bindings };
@@ -129,7 +129,10 @@ export function createApp(options: AppOptions = {}) {
 	app.get("/api/internal/traefik", (c) => handleTraefikProvider(c.req.raw));
 	app.on(["GET", "POST"], "/api/career/run", (c) => handleCareerJobs(c.req.raw));
 	app.get("/api/resumes/:username/:slug/pdf", (c) =>
-		handlePublicResumePdf(c.req.raw, c.req.param("username"), c.req.param("slug"), client(c)),
+		handlePublicResumeDownload(c.req.raw, c.req.param("username"), c.req.param("slug"), client(c)),
+	);
+	app.get("/api/resumes/:username/:slug/docx", (c) =>
+		handlePublicResumeDownload(c.req.raw, c.req.param("username"), c.req.param("slug"), client(c), "docx"),
 	);
 	app.get("/api/resumes/:id/pdf", (c) => handleResumePdfDownload(c.req.raw, c.req.param("id")));
 	// Outside /api/resumes, which robots.txt keeps crawlers out of: link previews need to fetch these.

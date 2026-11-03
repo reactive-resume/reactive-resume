@@ -16,6 +16,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
@@ -210,11 +216,33 @@ type ProviderRowProps = {
 
 function ProviderRow({ provider, isDefault, onMakeDefault, makingDefault, onEdit }: ProviderRowProps) {
 	const test = useProviderTest();
+	const queryClient = useQueryClient();
+	const confirm = useConfirm();
+	const remove = useMutation(orpc.aiProviders.delete.mutationOptions({ meta: { noInvalidate: true } }));
 	const error = test.result
 		? test.result.error
 		: provider.testStatus === "failure"
 			? providerTestError(provider.testErrorKind)
 			: null;
+
+	const askDelete = async () => {
+		if (
+			!(await confirm(t`Delete “${provider.label}”?`, {
+				description: t`Its saved key is deleted. Conversations using it need another provider.`,
+				confirmText: t`Delete provider`,
+				cancelText: t`Keep provider`,
+				variant: "danger",
+			}))
+		)
+			return;
+		remove.mutate(
+			{ id: provider.id },
+			{
+				onSuccess: () => void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() }),
+				onError: (failure) => toastError(failure, t`Couldn't delete the provider. Try again.`),
+			},
+		);
+	};
 
 	return (
 		<div className="grid gap-2 rounded-lg border border-line p-3">
@@ -278,6 +306,19 @@ function ProviderRow({ provider, isDefault, onMakeDefault, makingDefault, onEdit
 					<Button size="sm" variant="ghost" onClick={onEdit}>
 						<Trans>Edit</Trans>
 					</Button>
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							render={<Button size="sm" variant="ghost" aria-label={t`Provider options`} disabled={remove.isPending} />}
+						>
+							<Icon name="dots-three" />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem variant="destructive" onClick={() => void askDelete()}>
+								<Icon name="trash" />
+								<Trans>Delete provider</Trans>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 			</div>
 			{test.result?.ok && (

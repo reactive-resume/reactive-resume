@@ -8,10 +8,10 @@ vi.mock("@reactive-resume/api/features/resume/public-pdf", () => ({
 	createPublicResumePdf: mocks.createPublicResumePdf,
 }));
 
-const { handlePublicResumePdf } = await import("./public-resume-pdf");
+const { handlePublicResumeDownload } = await import("./public-resume-download");
 const trustedClient = "203.0.113.9";
 
-describe("handlePublicResumePdf", () => {
+describe("handlePublicResumeDownload", () => {
 	beforeEach(() => vi.clearAllMocks());
 
 	it("returns the authorized on-demand PDF without forwarding compatibility metadata", async () => {
@@ -25,7 +25,7 @@ describe("handlePublicResumePdf", () => {
 			headers: { "x-forwarded-for": "203.0.113.7" },
 		});
 
-		const response = await handlePublicResumePdf(request, "jane", "resume", trustedClient);
+		const response = await handlePublicResumeDownload(request, "jane", "resume", trustedClient);
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get("Content-Type")).toBe("application/pdf");
@@ -52,7 +52,7 @@ describe("handlePublicResumePdf", () => {
 		});
 		const request = new Request("https://example.com/api/resumes/jane/untitled-resume/pdf?download");
 
-		const response = await handlePublicResumePdf(request, "jane", "untitled-resume", trustedClient);
+		const response = await handlePublicResumeDownload(request, "jane", "untitled-resume", trustedClient);
 
 		expect(response.headers.get("Content-Disposition")).toBe(
 			"attachment; filename=\"Resume.pdf\"; filename*=UTF-8''%E6%9D%8E%E6%98%8E-Resume.pdf",
@@ -83,7 +83,7 @@ describe("handlePublicResumePdf", () => {
 			etag: '"abc"',
 		});
 
-		const response = await handlePublicResumePdf(
+		const response = await handlePublicResumeDownload(
 			new Request("https://example.com/api/resumes/jane/resume/pdf?download"),
 			"jane",
 			"resume",
@@ -99,7 +99,7 @@ describe("handlePublicResumePdf", () => {
 
 	it("answers a current copy with 304 and keeps refusals uncacheable", async () => {
 		mocks.createPublicResumePdf.mockResolvedValueOnce({ body: null, filename: "李明-Resume.pdf", etag: '"abc"' });
-		const current = await handlePublicResumePdf(
+		const current = await handlePublicResumeDownload(
 			new Request("https://example.com/api/resumes/jane/resume/pdf", { headers: { "if-none-match": '"abc"' } }),
 			"jane",
 			"resume",
@@ -114,7 +114,7 @@ describe("handlePublicResumePdf", () => {
 		expect(await current.text()).toBe("");
 
 		mocks.createPublicResumePdf.mockRejectedValueOnce({ code: "NEED_PASSWORD" });
-		const locked = await handlePublicResumePdf(
+		const locked = await handlePublicResumeDownload(
 			new Request("https://example.com/api/resumes/jane/resume/pdf", { headers: { "if-none-match": '"abc"' } }),
 			"jane",
 			"resume",

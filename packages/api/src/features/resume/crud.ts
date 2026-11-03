@@ -179,6 +179,7 @@ export const crudRouter = {
 				...(input.data !== undefined ? { data: input.data } : {}),
 				...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
 				...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
+				...(input.allowWordDownload !== undefined ? { allowWordDownload: input.allowWordDownload } : {}),
 				...(input.showInSearchEngines !== undefined ? { showInSearchEngines: input.showInSearchEngines } : {}),
 				...(input.hideContactDetails !== undefined ? { hideContactDetails: input.hideContactDetails } : {}),
 				...(input.isPrimary !== undefined ? { isPrimary: input.isPrimary } : {}),
