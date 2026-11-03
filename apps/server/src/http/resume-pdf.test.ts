@@ -91,6 +91,16 @@ describe("handleResumePdfDownload", () => {
 		expect(response.status).toBe(410);
 		expect(mocks.createResumePdfDownload).not.toHaveBeenCalled();
 	});
+	it("answers a legacy cover-letter target as Not Found", async () => {
+		mocks.verifyResumePdfDownloadToken.mockReturnValueOnce({ ok: true, resumeId: "resume-1", userId: "user-1" });
+		const response = await handleResumePdfDownload(
+			new Request("https://example.com/api/resumes/resume-1/pdf?token=signed&target=cover-letter"),
+			"resume-1",
+		);
+		expect(response.status).toBe(404);
+		expect(await response.text()).toBe("Not Found");
+		expect(mocks.createResumePdfDownload).not.toHaveBeenCalled();
+	});
 	it("returns the shared renderer's rate limit as HTTP 429", async () => {
 		mocks.verifyResumePdfDownloadToken.mockReturnValueOnce({ ok: true, userId: "user-1" });
 		mocks.createResumePdfDownload.mockRejectedValueOnce({
