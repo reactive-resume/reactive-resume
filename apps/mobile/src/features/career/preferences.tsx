@@ -3,10 +3,10 @@ import type { CareerProfileData } from "@reactive-resume/schema/career";
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AppState, View } from "react-native";
 import { careerProfileDataSchema } from "@reactive-resume/schema/career";
-import { parseAmount } from "@reactive-resume/utils/amount";
+import { getCurrencyOptions, parseAmount } from "@reactive-resume/utils/amount";
 import { useCareerTime } from "./hooks";
 import { RoleSuggestions } from "./role-suggestions";
 import { SearchRegionsField } from "./search-regions-field";
@@ -37,6 +37,10 @@ export function Preferences({ initial }: PreferencesProps) {
 		true,
 	);
 	const draft = kept.value.draft;
+	const currencies = useMemo(
+		() => getCurrencyOptions(locale, draft.minBase.currency),
+		[locale, draft.minBase.currency],
+	);
 	const setDraft = (update: CareerProfileData | ((value: CareerProfileData) => CareerProfileData)) =>
 		kept.setValue((current) => ({ ...current, draft: typeof update === "function" ? update(current.draft) : update }));
 	const amount = kept.value.amount;
@@ -205,14 +209,12 @@ export function Preferences({ initial }: PreferencesProps) {
 						: undefined
 				}
 			/>
-			<TextField
+			<SelectSheet
 				label={t`Currency`}
 				value={draft.minBase.currency}
-				autoCapitalize="characters"
-				maxLength={3}
-				onChangeText={(currency) => change({ minBase: { ...draft.minBase, currency: currency.toUpperCase() } })}
-				onBlur={() => flush()}
-				error={!/^[A-Z]{3}$/.test(draft.minBase.currency) ? t`Enter a three-letter currency code.` : undefined}
+				searchable
+				options={currencies}
+				onChange={(currency) => change({ minBase: { ...draft.minBase, currency } })}
 			/>
 			<SelectSheet
 				label={t`Pay period`}

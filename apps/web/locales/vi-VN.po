@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 20:42+0100\n"
+"POT-Creation-Date: 2026-11-03 23:07+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Thêm một quốc gia"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Thêm một sự thật"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Thêm một dữ kiện, ví dụ “Tôi đã kèm cặp hai PM cấp dưới vào năm 2025”"
 
@@ -3134,6 +3138,14 @@ msgstr "Bo viền"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Độ rộng bo viền"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Cả hai tài khoản đều có hồ sơ ứng tuyển riêng tư. Hãy xuất và xóa một hồ sơ trong Cài đặt → Tài khoản trước khi liên kết để không hồ sơ nào bị ghi đè."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Cả hai tài khoản có câu trả lời ứng tuyển đã lưu trùng nhau. Hãy xuất và xóa một bản trước khi liên kết để không bản nào bị ghi đè."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4937,7 +4949,6 @@ msgstr "Không thể đổi tên khóa truy cập. Hãy thử lại."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Không thể đổi tên cuộc trò chuyện này. Hãy thử lại."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Không thể đặt lại mật khẩu của bạn. Hãy thử lại."
@@ -5091,7 +5102,6 @@ msgstr "Không thể lên lịch phỏng vấn. Hãy thử lại."
 msgid "Couldn't send the email. Try again."
 msgstr "Không thể gửi email. Hãy thử lại."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Không thể gửi email đặt lại mật khẩu. Hãy thử lại."
@@ -5124,8 +5134,6 @@ msgstr "Không thể hiển thị bản xem trước PDF. Hãy tải tệp lên 
 msgid "Couldn't show the preview."
 msgstr "Không thể hiển thị bản xem trước."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5270,12 +5278,10 @@ msgstr "Không thể tải ảnh lên. Hãy thử lại."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Không thể xác minh mã. Hãy nhập mã hiện tại từ ứng dụng xác thực của bạn."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Không thể xác minh mã dự phòng của bạn. Hãy kiểm tra mã và thử lại."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Không thể xác minh mã của bạn. Hãy kiểm tra mã và thử lại."
@@ -5459,7 +5465,7 @@ msgstr "Lãnh đạo đa chức năng"
 msgid "CSV data"
 msgstr "Dữ liệu CSV"
 
-#: src/features/career/knowledge/preferences.tsx
+#: src/features/career/currency-select.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
@@ -7636,6 +7642,10 @@ msgstr "Lời chào"
 msgid "Grid"
 msgstr "Lưới"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Tùy chọn nghề nghiệp của khách và tài khoản khác nhau. Công việc của khách vẫn nguyên vẹn. Hãy đồng bộ tùy chọn nghề nghiệp và cài đặt bộ nhớ Kiến thức của hai tài khoản trước khi thử lại."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Rất sẵn lòng trình bày chi tiết trong cuộc gọi của chúng ta."
@@ -9712,6 +9722,7 @@ msgstr "Nhắn tin cho trợ lý"
 msgid "Message the coach"
 msgstr "Nhắn cho cố vấn"
 
+#: src/features/career/offers.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Messages"
@@ -10769,6 +10780,10 @@ msgstr "Chưa lưu"
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "Không lưu — dữ kiện này đã bị quên trước đó."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Chưa lưu · Đăng nhập để lưu"
 
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
@@ -13522,6 +13537,10 @@ msgstr "sơ yếu lý lịch luôn được trình bày trên giấy trắng, b�
 msgid "Resumes created"
 msgstr "sơ yếu lý lịch được tạo"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Ngừng dùng các cột ứng tuyển không cần thiết trước khi gộp tài khoản; tổng số vượt quá 40 cột đang hoạt động."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14463,6 +14482,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Gửi liên kết mới"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15006,6 +15029,10 @@ msgstr "Các thanh bên thường được đọc cuối cùng hoặc trộn và
 msgid "Sign in"
 msgstr "Đăng nhập"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Đăng nhập lại"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Đăng nhập từ ứng dụng AI của bạn hoặc dùng khóa API."
@@ -15024,6 +15051,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Đăng nhập để lưu"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16084,6 +16115,10 @@ msgstr "Cảm ơn Sam. Đây là một ví dụ: tại Northwind Labs, tôi dẫ
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Mã không khớp. Hãy kiểm tra và thử lại."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16091,6 +16126,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "Email, tên người dùng hoặc mật khẩu không khớp. Hãy kiểm tra hoặc đặt lại mật khẩu."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16917,6 +16956,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Liên kết đặt lại này đã hết hạn hoặc đã được dùng."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Liên kết đặt lại này đã hết hạn hoặc đã được dùng. Gửi liên kết mới."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Sơ yếu lý lịch này đã bị khóa. Hãy mở khóa từ menu của nó để chỉnh sửa."
@@ -17005,6 +17052,10 @@ msgstr "Máy chủ này dùng giai đoạn tiêu chuẩn nên tên giai đoạn 
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Lần đăng nhập này đã hết hạn hoặc đã được sử dụng. Hãy thử lại."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Bước đăng nhập này đã hết hạn. Hãy đăng nhập lại."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17152,6 +17203,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Quá nhạt cho các tiêu đề có màu trắng. Nó có thể khó đọc và in mờ."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Quá nhiều lần thử. Hãy chờ một lát rồi thử lại."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19231,6 +19286,10 @@ msgstr "Máy chủ của bạn cung cấp tính năng tìm kiếm trên web tron
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Phiên của bạn đã kết thúc. Hãy đăng nhập lại để tiếp tục làm việc."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19333,63 +19392,3 @@ msgstr "Thu nhỏ"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Cả hai tài khoản đều có hồ sơ ứng tuyển riêng tư. Hãy xuất và xóa một hồ sơ trong Cài đặt → Tài khoản trước khi liên kết để không hồ sơ nào bị ghi đè."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Cả hai tài khoản có câu trả lời ứng tuyển đã lưu trùng nhau. Hãy xuất và xóa một bản trước khi liên kết để không bản nào bị ghi đè."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Tùy chọn nghề nghiệp của khách và tài khoản khác nhau. Công việc của khách vẫn nguyên vẹn. Hãy đồng bộ tùy chọn nghề nghiệp và cài đặt bộ nhớ Kiến thức của hai tài khoản trước khi thử lại."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Ngừng dùng các cột ứng tuyển không cần thiết trước khi gộp tài khoản; tổng số vượt quá 40 cột đang hoạt động."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Gửi liên kết mới"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Đăng nhập lại"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Đăng nhập để lưu"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Mã không khớp. Hãy kiểm tra và thử lại."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "Email, tên người dùng hoặc mật khẩu không khớp. Hãy kiểm tra hoặc đặt lại mật khẩu."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Liên kết đặt lại này đã hết hạn hoặc đã được dùng."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Bước đăng nhập này đã hết hạn. Hãy đăng nhập lại."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Quá nhiều lần thử. Hãy chờ một lát rồi thử lại."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Phiên của bạn đã kết thúc. Hãy đăng nhập lại để tiếp tục làm việc."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Chưa lưu · Đăng nhập để lưu"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Liên kết đặt lại này đã hết hạn hoặc đã được dùng. Gửi liên kết mới."

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 20:42+0100\n"
+"POT-Creation-Date: 2026-11-03 23:07+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "添加國家"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "新增事實"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "新增一個事實，例如「2025 年我指導了兩位初階產品經理」"
 
@@ -3134,6 +3138,14 @@ msgstr "邊框弧度"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "邊框寬度"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "兩個帳戶都有私人求職資料。連結前，請在設定 → 帳戶中匯出並刪除其中一份，以免被覆寫。"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "兩個帳戶有重複的已儲存求職回答。連結前，請匯出並刪除其中一份，以免被覆寫。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4937,7 +4949,6 @@ msgstr "無法重新命名通行金鑰。請再試一次。"
 msgid "Couldn't rename this conversation. Try again."
 msgstr "無法重新命名此對話。請再試一次。"
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "無法重設您的密碼。請再試一次。"
@@ -5091,7 +5102,6 @@ msgstr "無法安排面試。請再試一次。"
 msgid "Couldn't send the email. Try again."
 msgstr "無法傳送電子郵件。再試一次。"
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "無法傳送重設密碼電子郵件。請再試一次。"
@@ -5124,8 +5134,6 @@ msgstr "無法顯示 PDF 預覽。請重新上傳檔案。"
 msgid "Couldn't show the preview."
 msgstr "無法顯示預覽。"
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5270,12 +5278,10 @@ msgstr "無法上傳照片。請再試一次。"
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "無法驗證代碼。請輸入驗證器應用程式中的目前驗證碼。"
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "無法驗證您的備份代碼。請檢查代碼後再試一次。"
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "無法驗證您的驗證碼。請檢查代碼後再試一次。"
@@ -5459,7 +5465,7 @@ msgstr "跨職能領導"
 msgid "CSV data"
 msgstr "CSV 資料"
 
-#: src/features/career/knowledge/preferences.tsx
+#: src/features/career/currency-select.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
@@ -7636,6 +7642,10 @@ msgstr "稱呼"
 msgid "Grid"
 msgstr "網格"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "訪客與帳戶的職涯偏好不同。訪客工作保持不變。請先統一兩個帳戶的職涯偏好與知識記憶設定，再重試。"
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "很樂意在通話中詳細說明。"
@@ -9712,6 +9722,7 @@ msgstr "給助理留言"
 msgid "Message the coach"
 msgstr "傳訊息給教練"
 
+#: src/features/career/offers.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Messages"
@@ -10769,6 +10780,10 @@ msgstr "未保存"
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "未儲存 — 這個事實先前已被忘記。"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "未儲存 · 登入以儲存"
 
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
@@ -13522,6 +13537,10 @@ msgstr "無論主題是什麼，履歷總是呈現在白紙上。"
 msgid "Resumes created"
 msgstr "創建的簡歷"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "合併帳戶前，請停用不再使用的求職欄；合併後將超過40個使用中欄位。"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14463,6 +14482,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "傳送新連結"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15006,6 +15029,10 @@ msgstr "側邊欄通常是最後閱讀的，或混合到主欄。"
 msgid "Sign in"
 msgstr "登入"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "重新登入"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "從你的 AI 用戶端登入，或使用 API 金鑰。"
@@ -15024,6 +15051,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "登入以儲存"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16084,6 +16115,10 @@ msgstr "謝謝 Sam。舉個例子：在 Northwind Labs，我主導了新手引�
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "驗證碼不符。請檢查後再試。"
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16091,6 +16126,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "電子郵件、使用者名稱或密碼不符。請檢查，或重設密碼。"
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16917,6 +16956,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "此重設連結已過期或已使用。"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "此重設連結已過期或已使用。 傳送新連結。"
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "這份履歷已鎖定。請從其選單中解鎖後再編輯。"
@@ -17005,6 +17052,10 @@ msgstr "此伺服器使用標準階段，因此不會保留檔案中的階段名
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "這次登入嘗試已過期或已被使用。請再試一次。"
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "此登入步驟已過期。請重新登入。"
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17152,6 +17203,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "對於白色標題來說太亮了。微弱地閱讀和列印可能會很困難。"
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "嘗試次數過多。請稍候再試。"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19231,6 +19286,10 @@ msgstr "您的伺服器在 應徵紀錄 部分和助手中提供網路搜尋。�
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "工作階段已結束。請重新登入以繼續工作。"
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19333,63 +19392,3 @@ msgstr "縮小"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "祖魯語"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "兩個帳戶都有私人求職資料。連結前，請在設定 → 帳戶中匯出並刪除其中一份，以免被覆寫。"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "兩個帳戶有重複的已儲存求職回答。連結前，請匯出並刪除其中一份，以免被覆寫。"
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "訪客與帳戶的職涯偏好不同。訪客工作保持不變。請先統一兩個帳戶的職涯偏好與知識記憶設定，再重試。"
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "合併帳戶前，請停用不再使用的求職欄；合併後將超過40個使用中欄位。"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "傳送新連結"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "重新登入"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "登入以儲存"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "驗證碼不符。請檢查後再試。"
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "電子郵件、使用者名稱或密碼不符。請檢查，或重設密碼。"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "此重設連結已過期或已使用。"
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "此登入步驟已過期。請重新登入。"
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "嘗試次數過多。請稍候再試。"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "工作階段已結束。請重新登入以繼續工作。"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "未儲存 · 登入以儲存"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "此重設連結已過期或已使用。 傳送新連結。"

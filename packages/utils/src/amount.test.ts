@@ -1,5 +1,16 @@
 import { expect, it } from "vite-plus/test";
-import { parseAmount, parseDecimal } from "./amount";
+import { getCurrencyOptions, parseAmount, parseDecimal } from "./amount";
+
+it("labels currency choices with codes and localized symbols without dropping saved codes", () => {
+	const english = getCurrencyOptions("en-US", "BTC");
+	expect(english.find((option) => option.value === "USD")?.label).toBe("USD · $");
+	expect(english.find((option) => option.value === "EUR")?.label).toBe("EUR · €");
+	expect(english.find((option) => option.value === "BTC")?.label).toBe("BTC");
+	expect(getCurrencyOptions("de-DE").find((option) => option.value === "USD")?.label).toBe("USD · $");
+	expect(getCurrencyOptions("ar-SA").find((option) => option.value === "EUR")?.label).toContain("EUR");
+	expect(new Set(english.map((option) => option.value)).size).toBe(english.length);
+	expect(getCurrencyOptions("en-US", "bad input").some((option) => option.value === "bad input")).toBe(false);
+});
 
 it("keeps monetary precision and safe bounds while accepting finite percentage decimals", () => {
 	for (const [locale, text, value] of [

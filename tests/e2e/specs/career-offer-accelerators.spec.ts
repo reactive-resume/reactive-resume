@@ -1,4 +1,5 @@
 import type { Page } from "@playwright/test";
+import { chooseCurrency } from "../fixtures/career";
 import { expect, test } from "../fixtures/test";
 
 async function application(page: Page, company: string) {
@@ -122,7 +123,7 @@ test("percentage bonus persists as a percentage and reopens without becoming an 
 	await page.goto("/dashboard/career/offers");
 	await page.getByRole("button", { name: "Add offer", exact: true }).last().click();
 	await page.getByLabel("Application", { exact: true }).selectOption(job);
-	await page.getByLabel("Currency", { exact: true }).fill("EUR");
+	await chooseCurrency(page, "EUR");
 	await page.getByLabel("Base salary", { exact: true }).fill("85000");
 	await page.getByRole("button", { name: "More options", exact: true }).click();
 	await page.getByLabel("Bonus", { exact: true }).fill("10%");

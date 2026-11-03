@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 20:42+0100\n"
+"POT-Creation-Date: 2026-11-03 23:07+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Tambah negara"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Tambah fakta"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Tambah fakta, contohnya “Saya membimbing dua PM bersekutu pada 2025”"
 
@@ -3134,6 +3138,14 @@ msgstr "Jejari sempadan"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Lebar sempadan"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Kedua-dua akaun mempunyai profil permohonan peribadi. Eksport dan padam satu profil di Tetapan → Akaun sebelum dipautkan supaya tiada yang ditulis ganti."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Kedua-dua akaun mempunyai jawapan permohonan tersimpan yang berulang. Eksport dan padam satu salinan sebelum dipautkan supaya tiada yang ditulis ganti."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4937,7 +4949,6 @@ msgstr "Tidak dapat menamakan semula kunci laluan. Cuba lagi."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Tidak dapat menamakan semula perbualan ini. Cuba lagi."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Tidak dapat menetapkan semula kata laluan anda. Cuba lagi."
@@ -5091,7 +5102,6 @@ msgstr "Tidak dapat menjadualkan temu duga. Cuba lagi."
 msgid "Couldn't send the email. Try again."
 msgstr "Tidak dapat menghantar e-mel. Cuba lagi."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Tidak dapat menghantar e-mel tetapan semula kata laluan. Cuba lagi."
@@ -5124,8 +5134,6 @@ msgstr "Pratonton PDF tidak dapat dipaparkan. Muat naik fail sekali lagi."
 msgid "Couldn't show the preview."
 msgstr "Tidak dapat memaparkan pratonton."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5270,12 +5278,10 @@ msgstr "Tidak dapat memuat naik foto. Cuba lagi."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Tidak dapat mengesahkan kod. Masukkan kod semasa daripada aplikasi pengesah anda."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Tidak dapat mengesahkan kod sandaran anda. Semak kod dan cuba lagi."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Tidak dapat mengesahkan kod anda. Semak kod dan cuba lagi."
@@ -5459,7 +5465,7 @@ msgstr "Kepimpinan lintas fungsi"
 msgid "CSV data"
 msgstr "Data CSV"
 
-#: src/features/career/knowledge/preferences.tsx
+#: src/features/career/currency-select.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
@@ -7636,6 +7642,10 @@ msgstr "Salam pembuka"
 msgid "Grid"
 msgstr "Grid"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Keutamaan kerjaya tetamu dan akaun berbeza. Kerja tetamu anda kekal. Samakan keutamaan kerjaya dan tetapan memori Pengetahuan pada kedua-dua akaun sebelum mencuba lagi."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Gembira untuk menerangkannya semasa panggilan kita."
@@ -9712,6 +9722,7 @@ msgstr "Mesej pembantu"
 msgid "Message the coach"
 msgstr "Hantar mesej kepada jurulatih"
 
+#: src/features/career/offers.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Messages"
@@ -10769,6 +10780,10 @@ msgstr "Tidak disimpan"
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "Tidak disimpan — fakta ini telah dilupakan sebelum ini."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Belum disimpan · Log masuk untuk menyimpan"
 
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
@@ -13522,6 +13537,10 @@ msgstr "resume sentiasa dipaparkan di atas kertas putih, apa jua temanya."
 msgid "Resumes created"
 msgstr "resume dibuat"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Hentikan penggunaan lajur permohonan yang tidak digunakan sebelum menggabungkan akaun; jumlah melebihi 40 lajur aktif."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14463,6 +14482,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Hantar pautan baharu"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15006,6 +15029,10 @@ msgstr "Bar sisi sering dibaca terakhir, atau dicampur ke dalam lajur utama."
 msgid "Sign in"
 msgstr "Log masuk"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Log masuk semula"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Log masuk daripada klien AI anda, atau gunakan kunci API."
@@ -15024,6 +15051,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Log masuk untuk menyimpan"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16084,6 +16115,10 @@ msgstr "Terima kasih, Sam. Ini satu contoh: di Northwind Labs, saya menerajui re
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Kod tidak sepadan. Semak dan cuba lagi."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16091,6 +16126,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "E-mel, nama pengguna atau kata laluan tidak sepadan. Semak atau tetapkan semula kata laluan."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16917,6 +16956,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Pautan penetapan semula ini tamat tempoh atau telah digunakan."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Pautan penetapan semula ini tamat tempoh atau telah digunakan. Hantar pautan baharu."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Resume ini dikunci. Buka kuncinya daripada menunya untuk menyunting."
@@ -17005,6 +17052,10 @@ msgstr "Pelayan ini menggunakan peringkat standard, jadi nama peringkat dalam fa
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Percubaan log masuk ini telah tamat tempoh atau telah digunakan. Cuba lagi."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Langkah log masuk ini tamat tempoh. Log masuk semula."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17152,6 +17203,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Terlalu ringan untuk tajuk berwarna putih. Mungkin sukar untuk membaca dan mencetak dengan samar-samar."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Terlalu banyak percubaan. Tunggu sebentar, kemudian cuba lagi."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19231,6 +19286,10 @@ msgstr "Pelayan anda menyediakan carian web dalam bahagian Permohonan dan untuk 
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Sesi anda telah tamat. Log masuk semula untuk meneruskan kerja."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19333,63 +19392,3 @@ msgstr "Zum keluar"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Kedua-dua akaun mempunyai profil permohonan peribadi. Eksport dan padam satu profil di Tetapan → Akaun sebelum dipautkan supaya tiada yang ditulis ganti."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Kedua-dua akaun mempunyai jawapan permohonan tersimpan yang berulang. Eksport dan padam satu salinan sebelum dipautkan supaya tiada yang ditulis ganti."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Keutamaan kerjaya tetamu dan akaun berbeza. Kerja tetamu anda kekal. Samakan keutamaan kerjaya dan tetapan memori Pengetahuan pada kedua-dua akaun sebelum mencuba lagi."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Hentikan penggunaan lajur permohonan yang tidak digunakan sebelum menggabungkan akaun; jumlah melebihi 40 lajur aktif."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Hantar pautan baharu"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Log masuk semula"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Log masuk untuk menyimpan"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Kod tidak sepadan. Semak dan cuba lagi."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "E-mel, nama pengguna atau kata laluan tidak sepadan. Semak atau tetapkan semula kata laluan."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Pautan penetapan semula ini tamat tempoh atau telah digunakan."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Langkah log masuk ini tamat tempoh. Log masuk semula."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Terlalu banyak percubaan. Tunggu sebentar, kemudian cuba lagi."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Sesi anda telah tamat. Log masuk semula untuk meneruskan kerja."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Belum disimpan · Log masuk untuk menyimpan"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Pautan penetapan semula ini tamat tempoh atau telah digunakan. Hantar pautan baharu."

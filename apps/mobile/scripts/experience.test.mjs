@@ -1798,6 +1798,7 @@ const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 let offerScope = "offer-account";
 let offerLocale = "en-US";
 let offerProfile = { isSuccess: false, isPending: true, isError: false };
+let offerPreferences;
 let savedOffers = [
 	{ createdAt: "2026-09-01T00:00:00Z", data: { kind: "offer", currency: "USD" } },
 	{ createdAt: "2026-10-01T00:00:00Z", data: { kind: "offer", currency: "GBP" } },
@@ -1844,6 +1845,7 @@ const loadOfferEntry = () =>
 		"@/auth/session": { getAccountScope: () => offerScope },
 		"@reactive-resume/schema/career": careerSchema,
 		"@reactive-resume/schema/career-offer": offerParser,
+		"@reactive-resume/utils/amount": amountParser,
 		"./hooks": {
 			useCareerTime: () => ({ locale: offerLocale, timeZone: "Europe/Berlin", profile: offerProfile }),
 			useCareerAction: () => ({
@@ -1877,7 +1879,7 @@ const loadOfferEntry = () =>
 				},
 			},
 			useOffers: () => ({ data: savedOffers }),
-			useCareerQueries: () => ({ profile: { data: undefined } }),
+			useCareerQueries: () => ({ profile: { data: offerPreferences } }),
 		},
 		"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
 		"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
@@ -1890,6 +1892,30 @@ const loadOfferEntry = () =>
 		"@/features/applications/queries": { useApplications: () => offerApplications },
 	});
 const { OfferEntry, OfferForm } = loadOfferEntry();
+reset();
+offerPreferences = { minBase: { amount: 8000, currency: "EUR", period: "month" } };
+const defaultPeriodView = () =>
+	render(OfferForm, { application: { id: "period-job", company: "Fictional Labs", role: "Engineer" }, onClose() {} });
+assert.equal(
+	control(defaultPeriodView(), "Pay period").value,
+	"month",
+	"saved Preferences seed the native offer period",
+);
+offerPreferences = { minBase: { amount: 100, currency: "EUR", period: "hour" } };
+assert.equal(
+	control(defaultPeriodView(), "Pay period").value,
+	"hour",
+	"untouched period follows late saved Preferences",
+);
+control(defaultPeriodView(), "Pay period").onChange("year");
+offerPreferences = { minBase: { amount: 8000, currency: "EUR", period: "month" } };
+assert.equal(
+	control(defaultPeriodView(), "Pay period").value,
+	"year",
+	"explicit offer period survives later Preferences",
+);
+offerPreferences = undefined;
+
 reset();
 offerApplications = { isPending: true };
 assert.equal(render(OfferEntry, {}).type, "LoadState", "unknown metadata offers no ready action");
@@ -1919,10 +1945,11 @@ assert.equal(control(offerView(), "Currency").value, "GBP", "starts in the last 
 savedOffers = [{ createdAt: "2026-11-01T00:00:00Z", data: { kind: "offer", currency: "EUR" } }];
 assert.equal(control(offerView(), "Currency").value, "GBP", "late refetch cannot replace the draft currency");
 assert.equal(control(offerView(), "Currency").placeholder, undefined, "no placeholder posing as a value");
-assert.match(control(offerView(), "Currency").helper, /three-letter/);
+assert.equal(control(offerView(), "Currency").searchable, true);
+assert.equal(control(offerView(), "Currency").options.find((item) => item.value === "USD").label, "USD · $");
 assert.ok(!nodes(offerView()).some((node) => node.props.label === "Learning budget"), "rarer terms start folded");
 assert.ok(!nodes(offerView()).some((node) => /Times are shown/.test(String(node.props.children))));
-control(offerView(), "Currency").onChangeText("EUR");
+control(offerView(), "Currency").onChange("EUR");
 control(offerView(), "More options").onPress();
 control(offerView(), "Learning budget").onChangeText("95k");
 assert.equal(control(offerView(), "Learning budget").error, undefined, "typing shows no premature error");
@@ -1972,7 +1999,7 @@ const appliedForm = nodes(appliedEntry).find((node) => typeof node.type === "fun
 assert.ok(appliedForm, "initialOpen shows the form at once");
 reset();
 const appliedView = () => render(appliedForm.type, { ...appliedForm.props, onClose() {} });
-control(appliedView(), "Currency").onChangeText("EUR");
+control(appliedView(), "Currency").onChange("EUR");
 control(appliedView(), "Save offer").onPress();
 await settle();
 const moved = calls.find((call) => call?.moveWithUndo)?.moveWithUndo;
@@ -2079,7 +2106,11 @@ const { Stories } = load("features/career/stories.tsx", {
 	"./shared": { Actions: "Actions", EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
 });
 reset();
-control(render(Stories, {}), "Add a story").onPress();
+const emptyStory = nodes(render(Stories, {})).find((node) => node.props.title === "No stories yet");
+assert.ok(emptyStory);
+assert.equal(emptyStory.props.variant, "card");
+assert.equal(emptyStory.props.action.label, "Add a story");
+emptyStory.props.action.onPress();
 const storyEditor = nodes(render(Stories, {})).find(
 	(node) => typeof node.type === "function" && node.props.story === null,
 );
@@ -3943,7 +3974,11 @@ assert.equal(
 console.log("PASS native Facts owns loaded memory consent with scoped writes, pending guard and failure recovery");
 
 reset();
-control(factsHeader(), "Add a fact").onPress();
+const emptyFact = nodes(factsHeader()).find((node) => node.props.title === "No facts yet");
+assert.ok(emptyFact);
+assert.equal(emptyFact.props.variant, "card");
+assert.equal(emptyFact.props.action.label, "Add a fact");
+emptyFact.props.action.onPress();
 const nativeFactEditor = nodes(render(KnowledgeFacts, { onRefresh: async () => {} })).find(
 	(node) => typeof node.type === "function" && node.type.name === "FactEditor",
 ).type;

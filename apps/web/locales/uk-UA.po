@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 20:42+0100\n"
+"POT-Creation-Date: 2026-11-03 23:07+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Додайте країну"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Додати факт"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Додайте факт, наприклад «У 2025 році я був наставником двох молодших продакт-менеджерів»"
 
@@ -3134,6 +3138,14 @@ msgstr "Округлення кутів"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Товщина рамки"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Обидва облікові записи мають приватний профіль для заявок. Перед зв’язуванням експортуйте й видаліть один у Налаштування → Обліковий запис, щоб нічого не перезаписати."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Обидва облікові записи мають дублікати збережених відповідей для заявок. Перед зв’язуванням експортуйте й видаліть одну копію, щоб нічого не перезаписати."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4937,7 +4949,6 @@ msgstr "Не вдалося перейменувати ключ доступу. 
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Не вдалося перейменувати цю розмову. Спробуйте ще раз."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Не вдалося скинути пароль. Спробуйте ще раз."
@@ -5091,7 +5102,6 @@ msgstr "Не вдалося запланувати співбесіду. Спр�
 msgid "Couldn't send the email. Try again."
 msgstr "Не вдалося надіслати електронний лист. Спробуйте знову."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Не вдалося надіслати лист для скидання пароля. Спробуйте ще раз."
@@ -5124,8 +5134,6 @@ msgstr "Не вдалося показати попередній перегля
 msgid "Couldn't show the preview."
 msgstr "Не вдалося показати попередній перегляд."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5270,12 +5278,10 @@ msgstr "Не вдалося завантажити фото. Спробуйте 
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Не вдалося перевірити код. Введіть поточний код із застосунку автентифікатора."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Не вдалося підтвердити резервний код. Перевірте код і спробуйте ще раз."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Не вдалося підтвердити ваш код. Перевірте код і спробуйте ще раз."
@@ -5459,7 +5465,7 @@ msgstr "Міжфункціональне лідерство"
 msgid "CSV data"
 msgstr "Дані CSV"
 
-#: src/features/career/knowledge/preferences.tsx
+#: src/features/career/currency-select.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
@@ -7636,6 +7642,10 @@ msgstr "Звертання"
 msgid "Grid"
 msgstr "Сітка"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Кар’єрні вподобання гостя й облікового запису відрізняються. Роботу гостя збережено. Узгодьте кар’єрні вподобання й налаштування пам’яті Знань в обох записах і повторіть спробу."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Охоче розповім детальніше під час нашого дзвінка."
@@ -9712,6 +9722,7 @@ msgstr "Надішліть повідомлення асистенту"
 msgid "Message the coach"
 msgstr "Напишіть коучу"
 
+#: src/features/career/offers.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Messages"
@@ -10769,6 +10780,10 @@ msgstr "Не збережено"
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "Не збережено — цей факт раніше було забуто."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Не збережено · Увійдіть для збереження"
 
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
@@ -13522,6 +13537,10 @@ msgstr "резюме завжди відображаються на білому
 msgid "Resumes created"
 msgstr "створено резюме"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Перед об’єднанням записів виведіть із використання зайві стовпці заявок: разом їх понад 40 активних."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14463,6 +14482,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Надіслати нове посилання"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15006,6 +15029,10 @@ msgstr "Бічні панелі часто читаються в останню 
 msgid "Sign in"
 msgstr "Увійти"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Увійти знову"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Увійдіть зі свого ШІ-клієнта або використайте ключ API."
@@ -15024,6 +15051,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Увійдіть для збереження"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16084,6 +16115,10 @@ msgstr "Дякую, Sam. Ось приклад: у Northwind Labs я керув�
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Код не збігається. Перевірте його й повторіть спробу."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16091,6 +16126,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "Пошта, ім’я користувача або пароль не збігаються. Перевірте дані або скиньте пароль."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16917,6 +16956,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Це посилання для скидання прострочене або вже використане."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Це посилання для скидання прострочене або вже використане. Надіслати нове посилання."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Це резюме заблоковано. Розблокуйте його в меню, щоб редагувати."
@@ -17005,6 +17052,10 @@ msgstr "Цей сервер використовує стандартні ета
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Термін дії цієї спроби входу минув або її вже використано. Спробуйте ще раз."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Термін цього кроку входу минув. Увійдіть знову."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17152,6 +17203,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Занадто світлий для заголовків на білому. Це може бути важко прочитати та надрукувати тьмяно."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Забагато спроб. Трохи зачекайте й повторіть спробу."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19231,6 +19286,10 @@ msgstr "Ваш сервер забезпечує веб-пошук у розді
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Сеанс завершено. Увійдіть знову, щоб продовжити роботу."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19333,63 +19392,3 @@ msgstr "Зменшити"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Зулу"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Обидва облікові записи мають приватний профіль для заявок. Перед зв’язуванням експортуйте й видаліть один у Налаштування → Обліковий запис, щоб нічого не перезаписати."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Обидва облікові записи мають дублікати збережених відповідей для заявок. Перед зв’язуванням експортуйте й видаліть одну копію, щоб нічого не перезаписати."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Кар’єрні вподобання гостя й облікового запису відрізняються. Роботу гостя збережено. Узгодьте кар’єрні вподобання й налаштування пам’яті Знань в обох записах і повторіть спробу."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Перед об’єднанням записів виведіть із використання зайві стовпці заявок: разом їх понад 40 активних."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Надіслати нове посилання"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Увійти знову"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Увійдіть для збереження"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Код не збігається. Перевірте його й повторіть спробу."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "Пошта, ім’я користувача або пароль не збігаються. Перевірте дані або скиньте пароль."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Це посилання для скидання прострочене або вже використане."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Термін цього кроку входу минув. Увійдіть знову."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Забагато спроб. Трохи зачекайте й повторіть спробу."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Сеанс завершено. Увійдіть знову, щоб продовжити роботу."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Не збережено · Увійдіть для збереження"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Це посилання для скидання прострочене або вже використане. Надіслати нове посилання."

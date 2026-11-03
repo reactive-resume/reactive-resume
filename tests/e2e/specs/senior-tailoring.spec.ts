@@ -1,4 +1,5 @@
 import type { Locator, Page, TestInfo } from "@playwright/test";
+import { chooseCurrency } from "../fixtures/career";
 import { expect, test } from "../fixtures/test";
 
 /**
@@ -399,7 +400,7 @@ test("reaching Offer asks for terms, saving them keeps them in view, and accepti
 	await page.getByRole("button", { name: "Add the offer's terms" }).click();
 	await page.waitForURL(new RegExp(`/dashboard/applications/${won}/messages\\?offer=new`));
 	await expect(page.getByRole("heading", { name: "Add offer" })).toBeVisible();
-	await page.getByLabel("Currency").fill("EUR");
+	await chooseCurrency(page, "EUR");
 	await page.getByLabel("Base salary").fill("182000");
 	await page.getByRole("button", { name: "Save offer" }).click();
 	const summary = page.getByRole("status").filter({ hasText: "Written offer" });
@@ -412,7 +413,7 @@ test("reaching Offer asks for terms, saving them keeps them in view, and accepti
 	await page.goto("/dashboard/career/offers");
 	await page.getByRole("button", { name: "Add offer" }).first().click();
 	await page.getByLabel("Application").selectOption(third);
-	await page.getByLabel("Currency").fill("EUR");
+	await chooseCurrency(page, "EUR");
 	await page.getByLabel("Base salary").fill("175000");
 	await page.getByRole("button", { name: "Save offer" }).click();
 	await expect(page.getByText("Offer saved. Fieldnote moved to Offer.")).toBeVisible();

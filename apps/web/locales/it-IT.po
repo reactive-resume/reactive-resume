@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 20:42+0100\n"
+"POT-Creation-Date: 2026-11-03 23:07+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Aggiungi un paese"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Aggiungi un fatto"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Aggiungi un fatto, ad esempio “Nel 2025 ho fatto da mentor a due associate PM”"
 
@@ -3134,6 +3138,14 @@ msgstr "Raggio del bordo"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Larghezza del bordo"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Entrambi gli account hanno un profilo di candidatura privato. Esporta ed elimina un profilo in Impostazioni → Account prima di collegarli, per evitare sovrascritture."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Entrambi gli account hanno risposte di candidatura salvate duplicate. Esporta ed elimina una copia prima di collegarli, per evitare sovrascritture."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4937,7 +4949,6 @@ msgstr "Impossibile rinominare la passkey. Riprova."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Impossibile rinominare questa conversazione. Riprova."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Impossibile reimpostare la password. Riprova."
@@ -5091,7 +5102,6 @@ msgstr "Impossibile programmare il colloquio. Riprova."
 msgid "Couldn't send the email. Try again."
 msgstr "Impossibile inviare l'e-mail. Riprova."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Impossibile inviare l'email di reimpostazione della password. Riprova."
@@ -5124,8 +5134,6 @@ msgstr "Impossibile mostrare l'anteprima del PDF. Carica di nuovo il file."
 msgid "Couldn't show the preview."
 msgstr "Impossibile mostrare l'anteprima."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5270,12 +5278,10 @@ msgstr "Impossibile caricare la foto. Riprova."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Impossibile verificare il codice. Inserisci il codice attuale dalla tua app di autenticazione."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Impossibile verificare il codice di backup. Controlla il codice e riprova."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Impossibile verificare il codice. Controlla il codice e riprova."
@@ -5459,7 +5465,7 @@ msgstr "Leadership interfunzionale"
 msgid "CSV data"
 msgstr "Dati CSV"
 
-#: src/features/career/knowledge/preferences.tsx
+#: src/features/career/currency-select.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
@@ -7636,6 +7642,10 @@ msgstr "Saluto iniziale"
 msgid "Grid"
 msgstr "Griglia"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Le preferenze di carriera dell’ospite e dell’account sono diverse. Il lavoro dell’ospite è intatto. Allinea le preferenze e le impostazioni di memoria delle conoscenze nei due account prima di riprovare."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Felice di illustrartelo durante la nostra chiamata."
@@ -9712,6 +9722,7 @@ msgstr "Invia un messaggio all'assistente"
 msgid "Message the coach"
 msgstr "Scrivi al coach"
 
+#: src/features/career/offers.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Messages"
@@ -10769,6 +10780,10 @@ msgstr "Non salvato"
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "Non salvato: questo fatto era già stato dimenticato."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Non salvato · Accedi per salvare"
 
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
@@ -13522,6 +13537,10 @@ msgstr "i curriculum vengono sempre visualizzati su carta bianca, qualunque sia 
 msgid "Resumes created"
 msgstr "curriculum creati"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Ritira le colonne di candidatura inutilizzate prima di unire gli account: il totale supera 40 colonne attive."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14463,6 +14482,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Invia un nuovo link"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15006,6 +15029,10 @@ msgstr "Le barre laterali vengono spesso lette per ultime o mescolate nella colo
 msgid "Sign in"
 msgstr "Accedi"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Accedi di nuovo"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Accedi dal tuo client IA oppure usa una chiave API."
@@ -15024,6 +15051,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Accedi per salvare"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16084,6 +16115,10 @@ msgstr "Grazie, Sam. Eccone uno: in Northwind Labs ho guidato il redesign dell'o
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Il codice non corrisponde. Controllalo e riprova."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16091,6 +16126,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "L’email, il nome utente o la password non corrisponde. Controllali oppure reimposta la password."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16917,6 +16956,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Questo link di ripristino è scaduto o è già stato usato."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Questo link di ripristino è scaduto o è già stato usato. Invia un nuovo link."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Questo curriculum è bloccato. Sbloccalo dal suo menu per modificarlo."
@@ -17005,6 +17052,10 @@ msgstr "Questo server usa le fasi standard, quindi i nomi delle fasi nel file no
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Questo tentativo di accesso è scaduto o è già stato usato. Riprova."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Questo passaggio di accesso è scaduto. Accedi di nuovo."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17152,6 +17203,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Troppo chiaro per i titoli su bianco. Potrebbe essere difficile da leggere e stampare in modo debole."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Troppi tentativi. Attendi un momento, poi riprova."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19231,6 +19286,10 @@ msgstr "Il tuo server fornisce la ricerca web nella sezione Candidature e per l'
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "La sessione è terminata. Accedi di nuovo per continuare."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19333,63 +19392,3 @@ msgstr "Rimpicciolisci"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Entrambi gli account hanno un profilo di candidatura privato. Esporta ed elimina un profilo in Impostazioni → Account prima di collegarli, per evitare sovrascritture."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Entrambi gli account hanno risposte di candidatura salvate duplicate. Esporta ed elimina una copia prima di collegarli, per evitare sovrascritture."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Le preferenze di carriera dell’ospite e dell’account sono diverse. Il lavoro dell’ospite è intatto. Allinea le preferenze e le impostazioni di memoria delle conoscenze nei due account prima di riprovare."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Ritira le colonne di candidatura inutilizzate prima di unire gli account: il totale supera 40 colonne attive."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Invia un nuovo link"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Accedi di nuovo"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Accedi per salvare"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Il codice non corrisponde. Controllalo e riprova."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "L’email, il nome utente o la password non corrisponde. Controllali oppure reimposta la password."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Questo link di ripristino è scaduto o è già stato usato."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Questo passaggio di accesso è scaduto. Accedi di nuovo."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Troppi tentativi. Attendi un momento, poi riprova."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "La sessione è terminata. Accedi di nuovo per continuare."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Non salvato · Accedi per salvare"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Questo link di ripristino è scaduto o è già stato usato. Invia un nuovo link."

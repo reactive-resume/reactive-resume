@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 20:42+0100\n"
+"POT-Creation-Date: 2026-11-03 23:07+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Adjon hozzá egy országot"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Tény hozzáadása"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Adj hozzá egy tényt, például: „2025-ben két junior PM-et mentoráltam”"
 
@@ -3134,6 +3138,14 @@ msgstr "Szegély lekerekítése"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Szegély vastagsága"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Mindkét fiókhoz tartozik privát jelentkezési profil. Összekapcsolás előtt exportáld és töröld az egyiket a Beállítások → Fiók alatt, hogy egyik se íródjon felül."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Mindkét fiókban vannak azonos mentett jelentkezési válaszok. Összekapcsolás előtt exportáld és töröld az egyik példányt, hogy egyik se íródjon felül."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4937,7 +4949,6 @@ msgstr "Nem sikerült átnevezni a passkeyt. Próbáld újra."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Nem sikerült átnevezni ezt a beszélgetést. Próbáld újra."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Nem sikerült visszaállítani a jelszavadat. Próbáld újra."
@@ -5091,7 +5102,6 @@ msgstr "Nem sikerült ütemezni az interjút. Próbáld újra."
 msgid "Couldn't send the email. Try again."
 msgstr "Nem sikerült elküldeni az e-mailt. Próbáld újra."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Nem sikerült elküldeni a jelszó-visszaállító e-mailt. Próbáld újra."
@@ -5124,8 +5134,6 @@ msgstr "Nem sikerült megjeleníteni a PDF előnézetét. Töltse fel újra a f�
 msgid "Couldn't show the preview."
 msgstr "Nem sikerült megjeleníteni az előnézetet."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5270,12 +5278,10 @@ msgstr "Nem sikerült feltölteni a fotót. Próbáld újra."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Nem sikerült ellenőrizni a kódot. Add meg a hitelesítő alkalmazásod aktuális kódját."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Nem sikerült ellenőrizni a biztonsági kódodat. Ellenőrizd a kódot, és próbáld újra."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Nem sikerült ellenőrizni a kódodat. Ellenőrizd a kódot, és próbáld újra."
@@ -5459,7 +5465,7 @@ msgstr "Többfunkciós vezetés"
 msgid "CSV data"
 msgstr "CSV-adatok"
 
-#: src/features/career/knowledge/preferences.tsx
+#: src/features/career/currency-select.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
@@ -7636,6 +7642,10 @@ msgstr "Megszólítás"
 msgid "Grid"
 msgstr "Rács"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "A vendég és a fiók karrierbeállításai eltérnek. A vendégként végzett munkád megmarad. Egyeztesd mindkét fiók karrier- és Tudás-memóriabeállításait, majd próbáld újra."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "A hívásunkon szívesen végigvezetlek rajta."
@@ -9712,6 +9722,7 @@ msgstr "Üzenet az asszisztensnek"
 msgid "Message the coach"
 msgstr "Üzenet a coachnak"
 
+#: src/features/career/offers.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Messages"
@@ -10769,6 +10780,10 @@ msgstr "Nincs mentve"
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "Nincs mentve — ezt a tényt korábban elfelejtetted."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Nincs mentve · Jelentkezz be a mentéshez"
 
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
@@ -13522,6 +13537,10 @@ msgstr "Az önéletrajzok mindig fehér papírra jelennek meg, bármilyen témá
 msgid "Resumes created"
 msgstr "önéletrajzok készültek"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "A fiókok összevonása előtt szüntesd meg a nem használt jelentkezési oszlopokat; együtt több mint 40 aktív oszlopuk van."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14463,6 +14482,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Új hivatkozás küldése"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15006,6 +15029,10 @@ msgstr "Az oldalsávokat gyakran utoljára olvassák be, vagy keverik a fő oszl
 msgid "Sign in"
 msgstr "Bejelentkezés"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Új bejelentkezés"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Jelentkezzen be az AI-klienséből, vagy használjon API-kulcsot."
@@ -15024,6 +15051,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Bejelentkezés a mentéshez"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16084,6 +16115,10 @@ msgstr "Köszönöm, Sam. Íme egy: a Northwind Labsnél én vezettem az onboard
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "A kód nem egyezik. Ellenőrizd, és próbáld újra."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16091,6 +16126,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "Az e-mail, felhasználónév vagy jelszó nem egyezik. Ellenőrizd az adatokat, vagy állítsd vissza a jelszavadat."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16917,6 +16956,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Ez a visszaállítási hivatkozás lejárt, vagy már felhasználták."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Ez a visszaállítási hivatkozás lejárt, vagy már felhasználták. Új hivatkozás küldése."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Ez az önéletrajz zárolva van. A szerkesztéshez oldd fel a menüjéből."
@@ -17005,6 +17052,10 @@ msgstr "Ez a szerver az alapértelmezett szakaszokat használja, ezért a fájlb
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Ez a bejelentkezési kísérlet lejárt, vagy már felhasználták. Próbáld újra."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Ez a bejelentkezési lépés lejárt. Jelentkezz be újra."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17152,6 +17203,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Túl világos a fehér címsorokhoz. Lehet, hogy nehéz olvasni és halványan nyomtatni."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Túl sok próbálkozás. Várj egy kicsit, majd próbáld újra."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19231,6 +19286,10 @@ msgstr "Az Ön szervere webes keresést biztosít a Jelentkezések részben és 
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "A munkameneted véget ért. A munka folytatásához jelentkezz be újra."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19333,63 +19392,3 @@ msgstr "Kicsinyítés"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Mindkét fiókhoz tartozik privát jelentkezési profil. Összekapcsolás előtt exportáld és töröld az egyiket a Beállítások → Fiók alatt, hogy egyik se íródjon felül."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Mindkét fiókban vannak azonos mentett jelentkezési válaszok. Összekapcsolás előtt exportáld és töröld az egyik példányt, hogy egyik se íródjon felül."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "A vendég és a fiók karrierbeállításai eltérnek. A vendégként végzett munkád megmarad. Egyeztesd mindkét fiók karrier- és Tudás-memóriabeállításait, majd próbáld újra."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "A fiókok összevonása előtt szüntesd meg a nem használt jelentkezési oszlopokat; együtt több mint 40 aktív oszlopuk van."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Új hivatkozás küldése"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Új bejelentkezés"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Bejelentkezés a mentéshez"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "A kód nem egyezik. Ellenőrizd, és próbáld újra."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "Az e-mail, felhasználónév vagy jelszó nem egyezik. Ellenőrizd az adatokat, vagy állítsd vissza a jelszavadat."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Ez a visszaállítási hivatkozás lejárt, vagy már felhasználták."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Ez a bejelentkezési lépés lejárt. Jelentkezz be újra."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Túl sok próbálkozás. Várj egy kicsit, majd próbáld újra."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "A munkameneted véget ért. A munka folytatásához jelentkezz be újra."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Nincs mentve · Jelentkezz be a mentéshez"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Ez a visszaállítási hivatkozás lejárt, vagy már felhasználták. Új hivatkozás küldése."

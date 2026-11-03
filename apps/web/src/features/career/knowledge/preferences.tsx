@@ -13,6 +13,7 @@ import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/comp
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { parseAmount } from "@reactive-resume/utils/amount";
 import { cn } from "@reactive-resume/utils/style";
+import { CurrencySelect } from "../currency-select";
 import { DraftRecovery } from "../draft-recovery";
 import { useDebouncedSave, useSessionDraft } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
@@ -271,16 +272,15 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 						</span>
 					</div>
 				</div>
-
-				<div className="grid gap-2 text-xs text-ink-3">
-					<p>
-						<Trans>Times are shown in {timeZone}.</Trans>{" "}
-						<Link to="/dashboard/settings/preferences" className="underline underline-offset-2 hover:text-ink">
-							<Trans>Change timezone</Trans>
-						</Link>
-					</p>
-				</div>
 			</section>
+			<div className="grid gap-2 text-xs text-ink-3">
+				<p>
+					<Trans>Times are shown in {timeZone}.</Trans>{" "}
+					<Link to="/dashboard/settings/preferences" className="underline underline-offset-2 hover:text-ink">
+						<Trans>Change timezone</Trans>
+					</Link>
+				</p>
+			</div>
 		</div>
 	);
 }
@@ -358,8 +358,6 @@ type SalaryFieldProps = {
 	onChange: (value: CareerProfileData["minBase"]) => void;
 };
 
-const currencies = Intl.supportedValuesOf("currency");
-
 /** Minimum base: currency prefix and period suffix are small selects; the amount gets separators on blur. */
 function SalaryField({ id, locale, value, onChange }: SalaryFieldProps) {
 	const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
@@ -367,11 +365,6 @@ function SalaryField({ id, locale, value, onChange }: SalaryFieldProps) {
 	const [typing, setTyping] = useState<string | null>(null);
 	const [invalid, setInvalid] = useState(false);
 	const formatted = value.amount === null ? "" : number.format(value.amount);
-
-	const symbol = (currency: string) =>
-		new Intl.NumberFormat(locale, { style: "currency", currency, currencyDisplay: "symbol" })
-			.formatToParts(0)
-			.find((part) => part.type === "currency")?.value ?? currency;
 
 	const periods = { hour: t`/ hour`, month: t`/ month`, year: t`/ year` };
 
@@ -381,18 +374,11 @@ function SalaryField({ id, locale, value, onChange }: SalaryFieldProps) {
 				<Trans>Minimum base salary</Trans>
 			</label>
 			<span className={fieldShell}>
-				<select
-					aria-label={t`Currency`}
+				<CurrencySelect
 					value={value.currency}
-					onChange={(event) => onChange({ ...value, currency: event.target.value })}
-					className={cn(bareSelect, "text-sm")}
-				>
-					{currencies.map((currency) => (
-						<option key={currency} value={currency}>
-							{symbol(currency)}
-						</option>
-					))}
-				</select>
+					onChange={(currency) => onChange({ ...value, currency })}
+					className="h-auto w-auto border-0 bg-transparent px-0 text-sm shadow-none"
+				/>
 				<input
 					id={id}
 					inputMode="decimal"

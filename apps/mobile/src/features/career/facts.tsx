@@ -178,7 +178,7 @@ export function Facts({ children, onRefresh }: FactsProps) {
 				options={[{ value: "all", label: t`All` }, ...factCategories()]}
 			/>
 			<ResumeFacts />
-			<Button label={t`Add a fact`} onPress={() => setEditor({ fact: null })} />
+			{facts.data?.length ? <Button label={t`Add a fact`} onPress={() => setEditor({ fact: null })} /> : null}
 			<SwitchRow label={t`Show forgotten`} value={showForgotten} onValueChange={setShowForgotten} />
 			{showForgotten ? <ForgottenFacts /> : null}
 			<LoadState query={facts} />
@@ -187,14 +187,20 @@ export function Facts({ children, onRefresh }: FactsProps) {
 			) : null}
 			{!facts.isPending && !facts.isError && !rows.length ? (
 				<EmptyState
-					variant="compact"
+					variant={facts.data?.length ? "compact" : "card"}
 					title={!facts.data?.length ? t`No facts yet` : t`No facts match`}
 					message={
 						!facts.data?.length
 							? t`Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them.`
 							: t`Try another word or type.`
 					}
-					action={category !== "all" ? { label: t`Show all types`, onPress: () => setCategory("all") } : undefined}
+					action={
+						!facts.data?.length
+							? { label: t`Add a fact`, onPress: () => setEditor({ fact: null }) }
+							: category !== "all"
+								? { label: t`Show all types`, onPress: () => setCategory("all") }
+								: undefined
+					}
 				/>
 			) : null}
 		</View>
