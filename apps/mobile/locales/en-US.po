@@ -1726,6 +1726,17 @@ msgstr "AI providers couldn't be loaded. Retry or fill the details manually."
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "AI request attempts: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "AI request history unavailable for this result."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "AI settings"
@@ -1733,6 +1744,14 @@ msgstr "AI settings"
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "AI usage this week"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2226,6 +2245,7 @@ msgid "Aspect ratio"
 msgstr "Aspect ratio"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "Assistant"
@@ -2504,6 +2524,7 @@ msgstr "Break the resume into the usual sections so it can be segmented."
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Breaks long words between syllables, using the language set in Page."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2613,6 +2634,10 @@ msgstr "Capable model"
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Career"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Career chat"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4391,6 +4416,7 @@ msgstr "Dear {name},"
 msgid "Dear hiring team,"
 msgstr "Dear hiring team,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5516,6 +5542,10 @@ msgstr "Fill details manually"
 msgid "Fill empty fields with AI"
 msgstr "Fill empty fields with AI"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Fill fields"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Filled from the application. The greeting follows the name."
@@ -5548,6 +5578,7 @@ msgstr "First offer"
 msgid "First run (YYYY-MM-DD)"
 msgstr "First run (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5712,6 +5743,10 @@ msgstr "Forget"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Form answer"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6264,6 +6299,10 @@ msgstr "Imported from {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Importing it into your new resume…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "Improve"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6917,6 +6956,10 @@ msgstr "Letter already sent"
 msgid "Letter body"
 msgstr "Letter body"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Letter draft"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Letter page"
@@ -7193,6 +7236,10 @@ msgstr "Loading saved answers…"
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Loading saved version…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Loading usage…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7496,10 +7543,22 @@ msgstr "May be available"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP match score"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP message draft"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP server"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP tailoring"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8021,6 +8080,10 @@ msgstr "No AI provider is used for this operation."
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "No AI provider yet"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "No AI request attempts recorded this week."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9179,6 +9242,10 @@ msgstr "PDF · Best for applying"
 msgid "PDF check canceled. Retry when ready."
 msgstr "PDF check canceled. Retry when ready."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF import"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
@@ -9385,6 +9452,7 @@ msgstr "Posting source"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr "Postings can change or close. Publication date unknown; search coverage is incomplete."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9647,6 +9715,10 @@ msgstr "Provider options"
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Provider test"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9806,6 +9878,7 @@ msgstr "Read license"
 msgid "Read only"
 msgstr "Read only"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10050,6 +10123,10 @@ msgstr "Refresh the briefing 24 hours before"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Refresh the briefing on the morning of"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Refresh usage"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10341,6 +10418,7 @@ msgstr "Replaces target roles only after you choose Use. Wait for Saved before o
 msgid "Replied"
 msgstr "Replied"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Reply"
@@ -10387,6 +10465,10 @@ msgstr "Report an issue"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Report received by your server operator. Thank you."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10833,6 +10915,10 @@ msgstr "Role (optional)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Role {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Role suggestions"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13118,6 +13204,10 @@ msgstr "There is no summary paragraph."
 msgid "There's no text here to bring into the editor"
 msgstr "There's no text here to bring into the editor"
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr "These are saved draft answers."
@@ -14407,9 +14497,17 @@ msgstr "Visitors can download Word"
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Visitors enter it before they see the resume. Share it only with people you trust."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Voice playback"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Voice settings"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Voice transcription"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14483,6 +14581,10 @@ msgstr "Web searches look for work here, up to three countries."
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Website"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14714,6 +14816,10 @@ msgstr "Without one, you fill in the recipient yourself and drafting uses only y
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word import"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
@@ -14839,6 +14945,10 @@ msgstr "Writing"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Writing review"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

@@ -186,6 +186,16 @@ Account export includes `career.json`: preferences, facts and source/revision me
 
 Account deletion removes the user's dependent career records along with the existing account data and private upload storage. Deleting an individual fact, saved item, transcript, application, or conversation has narrower effects; it does not delete copies previously exported or sent to a provider. Include database backups and externally retained data in your installation's retention policy.
 
+### AI request usage
+
+The authenticated `ai.usage` procedure (`GET /api/openapi/ai/usage`) reports the account's current Monday-to-Monday half-open week, calculated in its saved timezone with PostgreSQL calendar arithmetic. Both clients expose it in AI settings without requiring a live provider or per-operation sharing approval: reading server records performs no AI action.
+
+Inference factories require server-created account/action/operation scope. The transport reserves one durable `ai_request` row before each provider transport invocation, after account, context, provider availability and abort checks. SDK retries and later model calls in tool loops reserve separate rows; stream chunks, tool execution, replay and local saves do not. Failed or cancelled invocations remain counted. Network policy remains owned by the existing transport. A crash between reservation and I/O may leave an unsent attempt, so totals do not assert remote receipt, billing, tokens or cost.
+
+Connection labels, provider types and requested models are captured when the operation is created; later connection edits or deletion do not rewrite them. Saved artifacts, reusable answers, transcripts, writing reviews and conversation metadata reference server-created operations. Client-referenced answer operations must exist for the same account and answer action; legacy answer writers retain recorded sources for stable answer identities. Counts and model summaries are derived from owned request rows rather than client claims. Existing results without references stay unknown.
+
+Account export retains usage and writing reviews within the existing Career backup object, which older archive builders preserve. Account deletion cascades usage with its user. Never point metering integration fixtures at a production database. Verify actual SDK transport retries/tool loops/streaming, account isolation, recipient changes, week/DST boundaries, saved result reload, connection removal and account export/deletion independently of UI presentation.
+
 ## Verify before rollout
 
 Use a disposable PostgreSQL database and synthetic users. These integration suites create an isolated schema, apply the complete migration chain, and remove their schema afterward. Never point test environment variables at production data.

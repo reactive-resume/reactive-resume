@@ -1,6 +1,7 @@
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
 import * as tables from "@reactive-resume/db/schema";
+import { aiOperationIdsSchema, aiUsageSummarySchema } from "@reactive-resume/schema/ai-usage";
 import { answerEvidenceSchema, answerScopeSchema } from "@reactive-resume/schema/application-answers";
 import {
 	careerNoticeSchema,
@@ -22,8 +23,9 @@ export const careerFactSchema = createSelectSchema(tables.careerFact, {
 export const careerStorySchema = createSelectSchema(tables.careerStory, { data: careerStoryInputSchema });
 export const savedItemSchema = createSelectSchema(tables.careerArtifact, {
 	data: savedItemDataSchema,
+	aiOperationId: z.string().nullable().optional(),
 	evidence: z.object({ factIds: z.array(z.string()), storyIds: z.array(z.string()) }),
-});
+}).extend({ aiUsage: aiUsageSummarySchema.nullable().optional() });
 export const careerScheduleSchema = createSelectSchema(tables.careerSchedule).omit({ aiProviderVersion: true });
 /** A schedule in the list, with how its latest run went: "failed" after its last try, with the reason. */
 export const careerScheduleListItemSchema = careerScheduleSchema.extend({
@@ -56,6 +58,7 @@ export const careerOpportunitySchema = createSelectSchema(tables.careerOpportuni
 	});
 
 export const reviewedAnswerSchema = createSelectSchema(tables.careerAnswer, {
+	aiOperationIds: aiOperationIdsSchema.optional(),
 	scope: answerScopeSchema,
 	source: z.enum(["manual", "application", "ai-assisted"]),
 	factIds: z.array(z.string()),

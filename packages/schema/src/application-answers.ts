@@ -1,5 +1,6 @@
 import z from "zod";
 import { fnv1a } from "@reactive-resume/utils/string";
+import { aiOperationIdsSchema } from "./ai-usage";
 
 export const answerScopeSchema = z.enum(["reusable", "employer", "application"]);
 export const answerEvidenceSchema = z.object({
@@ -17,6 +18,7 @@ export const reviewedAnswerInputSchema = z
 		applicationId: z.string().min(1),
 		question: z.string().trim().min(1).max(2000),
 		answer: z.string().trim().min(1).max(6000),
+		aiOperationIds: aiOperationIdsSchema.optional(),
 		source: z.enum(["manual", "application", "ai-assisted"]),
 		scope: answerScopeSchema,
 		factIds: z.array(z.string().min(1)).max(10),

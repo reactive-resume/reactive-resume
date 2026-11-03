@@ -1724,6 +1724,17 @@ msgstr "AI 제공자를 불러올 수 없습니다. 다시 시도하거나 세�
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI는 요청할 때만 붙여넣은 텍스트를 읽습니다. 링크는 AI 없이 페이지 자체의 채용 정보를 사용할 수 있습니다."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "AI 요청 시도: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "이 결과의 AI 요청 기록을 사용할 수 없습니다."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "AI 사용량을 불러오지 못했습니다. 새로 고침하세요. 이전 서버는 업데이트가 필요할 수 있습니다."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "이번 주 AI 사용량"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2224,6 +2243,7 @@ msgid "Aspect ratio"
 msgstr "화면 비율"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "어시스턴트"
@@ -2502,6 +2522,7 @@ msgstr "이력서를 일반적인 섹션으로 나누어 구분할 수 있게 �
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "페이지에 설정된 언어를 사용하여 음절 사이의 긴 단어를 끊습니다."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2611,6 +2632,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "커리어"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "커리어 채팅"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4389,6 +4414,7 @@ msgstr "친애하는 {name}님,"
 msgid "Dear hiring team,"
 msgstr "친애하는 채용팀 여러분,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5514,6 +5540,10 @@ msgstr "세부사항을 수동으로 입력하세요"
 msgid "Fill empty fields with AI"
 msgstr "AI로 빈 필드 채우기"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "항목 채우기"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "취업 지원서에서 작성되었습니다. 인사말은 이름을 따릅니다."
@@ -5546,6 +5576,7 @@ msgstr "첫 번째 제안"
 msgid "First run (YYYY-MM-DD)"
 msgstr "첫 실행 (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5710,6 +5741,10 @@ msgstr "잊기"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "잊어버리면 이 사실과 스토리 및 저장된 항목의 연결이 해제됩니다. 원본 소스는 변경되지 않습니다."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "양식 답변"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6262,6 +6297,10 @@ msgstr "{source}에서 가져왔습니다."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "새 이력서로 가져오는 중…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "개선하다"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6915,6 +6954,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "편지 본문"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "편지 초안"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "편지 페이지"
@@ -7191,6 +7234,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "저장된 버전 불러오는 중…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "사용량 불러오는 중…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7494,10 +7541,22 @@ msgstr "등록 가능할 수 있음"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP 일치 점수"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP 메시지 초안"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP 서버"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP 맞춤 조정"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8019,6 +8078,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "아직 AI 제공업체 없음"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "이번 주에 기록된 AI 요청 시도가 없습니다."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9177,6 +9240,10 @@ msgstr "PDF · 입사 지원에 적합"
 msgid "PDF check canceled. Retry when ready."
 msgstr "PDF 검사가 취소되었습니다. 준비되면 다시 시도하세요."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF 가져오기"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9383,6 +9450,7 @@ msgstr "채용 공고 출처"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9645,6 +9713,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "공급자 보유 및 사용은 해당 개인정보 보호정책을 따릅니다. 거부하면 이 작업이 방지되고 다른 앱 기능을 계속 사용할 수 있습니다."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "제공업체 테스트"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9804,6 +9876,7 @@ msgstr "라이선스 읽기"
 msgid "Read only"
 msgstr "읽기 전용 액세스"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10048,6 +10121,10 @@ msgstr "24시간 전에 브리핑 새로 고침"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "당일 아침에 브리핑 새로 고침"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "사용량 새로 고침"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10339,6 +10416,7 @@ msgstr ""
 msgid "Replied"
 msgstr "답장 완료"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "답장"
@@ -10385,6 +10463,10 @@ msgstr "문제 신고"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "귀하의 서버 운영자로부터 보고를 받았습니다. 감사합니다."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "이 서버가 기록한 요청 시도로, 실패하거나 취소된 시도도 포함합니다. 재시도와 도구 반복 내 각 모델 호출은 별도로 계산하며, 스트림 조각, 도구 자체 및 저장은 계산하지 않습니다."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10831,6 +10913,10 @@ msgstr "직무(선택 사항)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "역할 {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "직무 제안"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13116,6 +13202,10 @@ msgstr "요약 문단이 없습니다."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "이는 시도 횟수이며 청구, 토큰 수 또는 비용이 아닙니다. 서버 중단으로 전송 전에 시도가 기록될 수 있으며, 이 보고서는 제공업체의 수신을 확인하지 못합니다."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14405,9 +14495,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "방문자는 이력서를 보기 전에 비밀번호를 입력합니다. 믿을 수 있는 사람들에게만 공유하세요."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "음성 재생"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "음성 설정"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "음성 전사"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14481,6 +14579,10 @@ msgstr "웹 검색을 통해 해당 국가의 일자리를 찾아보세요. 최�
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "웹사이트"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "주간은 계정 시간대의 월요일부터 일요일까지입니다. 기록은 이 서버가 기록을 시작한 때부터이며, 이전 요청은 복원하지 않습니다. 연결 이름과 모델은 사용 당시 상태로 보관되며 연결 삭제 후에도 유지됩니다."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14712,6 +14814,10 @@ msgstr "하나도 없으면 수신자를 직접 입력하고 초안 작성 시 �
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word 가져오기"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Word 가져오기, 개선하기, 어시스턴트, 레터 초안, 커리어 코칭 및 생성, 음성 연습에는 AI 제공자가 필요합니다. 편집, 디자인, 가독성 검사, 다운로드는 없이도 작동합니다."
@@ -14837,6 +14943,10 @@ msgstr "글쓰기"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "작성 도움, 맞춤 제안, 어시스턴트. 따로 선택하지 않으면 기본 제공업체가 사용됩니다. 키는 암호화된 상태로 보관됩니다."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "글쓰기 검토"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

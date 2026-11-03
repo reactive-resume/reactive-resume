@@ -1,3 +1,4 @@
+import type { AiUsage } from "./usage";
 import type { AIProvider } from "@reactive-resume/ai/types";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { ModelMessage } from "ai";
@@ -32,7 +33,8 @@ import { withLinkTargets } from "@reactive-resume/import/review";
 import { extractPdf } from "../resume/pdf-analysis";
 import { isDirectOpenAIProvider } from "./capabilities";
 import { aiDeadline } from "./generate-json";
-import { aiTransport, resolveAiBaseUrl } from "./url-policy";
+import { resolveAiBaseUrl } from "./url-policy";
+import { aiUsageTransport } from "./usage";
 
 const aiExtractionTemplate = buildAiExtractionTemplate();
 
@@ -70,6 +72,7 @@ type GetModelInput = {
 	model: string;
 	apiKey: string;
 	baseURL?: string;
+	usage: AiUsage;
 };
 
 const MAX_AI_FILE_BYTES = 10 * 1024 * 1024; // 10MB
@@ -92,7 +95,7 @@ const TEST_CONNECTION_TIMEOUT_MS = z.coerce
 export function getModel(input: GetModelInput) {
 	const { provider, model, apiKey } = input;
 	const baseURL = resolveAiBaseUrl(input);
-	const settings = { apiKey, baseURL, ...aiTransport() };
+	const settings = { apiKey, baseURL, ...aiUsageTransport(input.usage, provider, model) };
 
 	return match(provider)
 		.with("openai", () => createOpenAI(settings).chat(model))
@@ -116,7 +119,7 @@ export function getModel(input: GetModelInput) {
 			const ollama = createOllama({
 				name: "ollama",
 				baseURL,
-				...aiTransport(),
+				fetch: settings.fetch,
 				...(apiKey ? { headers: { Authorization: `Bearer ${apiKey}` } } : {}),
 			});
 
@@ -129,9 +132,11 @@ export function getAgentModel(input: GetModelInput) {
 	if (!isDirectOpenAIProvider(input)) return getModel(input);
 
 	// Direct OpenAI assistants use Responses for reasoning with function tools.
-	return createOpenAI({ apiKey: input.apiKey, baseURL: resolveAiBaseUrl(input), ...aiTransport() }).responses(
-		input.model,
-	);
+	return createOpenAI({
+		apiKey: input.apiKey,
+		baseURL: resolveAiBaseUrl(input),
+		...aiUsageTransport(input.usage, input.provider, input.model),
+	}).responses(input.model);
 }
 
 const aiCredentialsSchema = z.object({
@@ -266,7 +271,7 @@ function describeTestConnectionFailure(input: TestConnectionInput, error: unknow
 }
 
 export async function testConnection(
-	input: TestConnectionInput & { signal?: AbortSignal | undefined },
+	input: TestConnectionInput & { signal?: AbortSignal | undefined; usage: AiUsage },
 ): Promise<TestConnectionResult> {
 	const RESPONSE_OK = "1";
 	const provider = AI_PROVIDER_DISPLAY_NAMES[input.provider];
@@ -312,6 +317,7 @@ export async function testConnection(
 }
 
 type ParsePdfInput = z.infer<typeof aiCredentialsSchema> & {
+	usage: AiUsage;
 	file: z.infer<typeof fileInputSchema>;
 	signal?: AbortSignal | undefined;
 };
@@ -389,6 +395,7 @@ async function pdfLinks(file: z.infer<typeof fileInputSchema>, signal?: AbortSig
 }
 
 type ParseDocxInput = z.infer<typeof aiCredentialsSchema> & {
+	usage: AiUsage;
 	file: z.infer<typeof fileInputSchema>;
 	signal?: AbortSignal | undefined;
 	mediaType: "application/msword" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document";

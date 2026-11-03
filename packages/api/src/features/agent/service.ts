@@ -30,10 +30,12 @@ import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 import { canApplyTo, withEditedText } from "@reactive-resume/resume/proposals";
+import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 import { generateId } from "@reactive-resume/utils/string";
 import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
 import { extractDocxTextFromBytes, getAgentModel } from "../ai/service";
+import { createAiUsage } from "../ai/usage";
 import { availableApplicationContext } from "../applications/access";
 import { assertApplicationVersion } from "../applications/service";
 import { careerService, requireCareerApplication } from "../career/service";
@@ -1734,79 +1736,91 @@ export const agentService = {
 						offers,
 					});
 				};
+				const checkContext = async (tx: DbOrTx) => {
+					const [currentThread] = await tx
+						.select({ id: schema.agentThread.id, providerId: schema.agentThread.aiProviderId })
+						.from(schema.agentThread)
+						.where(
+							and(
+								eq(schema.agentThread.id, input.threadId),
+								and(
+									eq(schema.agentThread.userId, input.userId),
+									availableApplicationContext(input.userId, schema.agentThread.applicationId),
+								),
+								isNull(schema.agentThread.deletedAt),
+							),
+						)
+						.for("share");
+					if (!currentThread || currentThread.providerId !== runnableProvider.id)
+						throw new ORPCError("CONFLICT", {
+							message: "This conversation changed. Open it again before sending.",
+						});
+					if (document && loaded && input.context?.document !== false)
+						await assertDocumentVersion(tx, input.userId, { ...document, updatedAt: loaded.updatedAt });
+					if (loaded?.sourceResume && input.context?.document !== false)
+						await assertDocumentVersion(tx, input.userId, { kind: "resume", ...loaded.sourceResume });
+					if (posting)
+						await assertApplicationVersion(tx, input.userId, {
+							id: posting.applicationId,
+							updatedAt: posting.updatedAt,
+						});
+					if (documentMemoryVersion !== null)
+						await careerService.assertMemoryVersion(
+							input.userId,
+							documentMemoryVersion,
+							undefined,
+							undefined,
+							undefined,
+							tx,
+						);
+					if (careerContext)
+						await careerService.assertMemoryVersion(
+							input.userId,
+							careerContext.memoryVersion,
+							{
+								applicationId: thread.applicationId,
+								...(input.context?.application !== false
+									? {
+											...(careerContext.application ? { application: careerContext.application } : {}),
+											documents: [careerContext.resume, careerContext.letter].filter(
+												(entry): entry is NonNullable<typeof entry> => entry !== null,
+											),
+										}
+									: {}),
+								...(input.context?.memory !== false
+									? {
+											sources: {
+												facts: careerContext.facts,
+												stories: careerContext.stories,
+												profile: careerContext.profile,
+											},
+										}
+									: {}),
+							},
+							undefined,
+							undefined,
+							tx,
+						);
+					return projectCareerInstructions(tx);
+				};
+				let preparedInstructions: string | undefined;
+				const usage = createAiUsage(
+					input.userId,
+					thread.scope === "career" ? "career-chat" : "assistant",
+					runnableProvider,
+					async (tx) => {
+						if ((await checkContext(tx)) !== preparedInstructions)
+							throw new ORPCError("CONFLICT", { message: "Shared context changed. Start a new reply." });
+					},
+				);
 				const agent = createAgent({
 					authorize: async () => {
 						controller.signal.throwIfAborted();
-						let freshInstructions: string | undefined;
 						await aiProvidersService.authorize({ userId: input.userId, id: runnableProvider.id }, async (tx) => {
-							const [currentThread] = await tx
-								.select({ id: schema.agentThread.id, providerId: schema.agentThread.aiProviderId })
-								.from(schema.agentThread)
-								.where(
-									and(
-										eq(schema.agentThread.id, input.threadId),
-										and(
-											eq(schema.agentThread.userId, input.userId),
-											availableApplicationContext(input.userId, schema.agentThread.applicationId),
-										),
-										isNull(schema.agentThread.deletedAt),
-									),
-								)
-								.for("share");
-							if (!currentThread || currentThread.providerId !== runnableProvider.id)
-								throw new ORPCError("CONFLICT", {
-									message: "This conversation changed. Open it again before sending.",
-								});
-							if (document && loaded && input.context?.document !== false)
-								await assertDocumentVersion(tx, input.userId, { ...document, updatedAt: loaded.updatedAt });
-							if (loaded?.sourceResume && input.context?.document !== false)
-								await assertDocumentVersion(tx, input.userId, { kind: "resume", ...loaded.sourceResume });
-							if (posting)
-								await assertApplicationVersion(tx, input.userId, {
-									id: posting.applicationId,
-									updatedAt: posting.updatedAt,
-								});
-							if (documentMemoryVersion !== null)
-								await careerService.assertMemoryVersion(
-									input.userId,
-									documentMemoryVersion,
-									undefined,
-									undefined,
-									undefined,
-									tx,
-								);
-							if (careerContext)
-								await careerService.assertMemoryVersion(
-									input.userId,
-									careerContext.memoryVersion,
-									{
-										applicationId: thread.applicationId,
-										...(input.context?.application !== false
-											? {
-													...(careerContext.application ? { application: careerContext.application } : {}),
-													documents: [careerContext.resume, careerContext.letter].filter(
-														(entry): entry is NonNullable<typeof entry> => entry !== null,
-													),
-												}
-											: {}),
-										...(input.context?.memory !== false
-											? {
-													sources: {
-														facts: careerContext.facts,
-														stories: careerContext.stories,
-														profile: careerContext.profile,
-													},
-												}
-											: {}),
-									},
-									undefined,
-									undefined,
-									tx,
-								);
-							freshInstructions = await projectCareerInstructions(tx);
+							preparedInstructions = await checkContext(tx);
 						});
 						controller.signal.throwIfAborted();
-						return freshInstructions;
+						return preparedInstructions;
 					},
 					deviceTimeZone: input.deviceTimeZone,
 					userId: input.userId,
@@ -1866,6 +1880,7 @@ export const agentService = {
 						baseURL: runnableProvider.baseURL ?? "",
 					},
 					model: getAgentModel({
+						usage,
 						provider: runnableProvider.provider,
 						model: capableModel,
 						apiKey: runnableProvider.apiKey,
@@ -1898,7 +1913,8 @@ export const agentService = {
 								metadata: {
 									...(draftUiMessage.metadata as Record<string, unknown> | undefined),
 									provider: runnableProvider.provider,
-									model: runnableProvider.model,
+									model: capableModel,
+									aiOperationIds: [...new Set([...aiOperationIds(draftUiMessage.metadata), usage.operationId])],
 								},
 							};
 							const upserted = await upsertAssistantUiMessage({
@@ -1929,7 +1945,8 @@ export const agentService = {
 									part.type === "finish"
 										? {
 												usage: part.totalUsage,
-												model: runnableProvider.model,
+												model: capableModel,
+												aiOperationIds: [usage.operationId],
 												provider: runnableProvider.provider,
 												contextScope,
 												contextMessageId,

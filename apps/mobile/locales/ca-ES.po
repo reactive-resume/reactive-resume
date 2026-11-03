@@ -1724,6 +1724,17 @@ msgstr "No s'han pogut carregar els proveïdors d'IA. Torneu-ho a provar o emple
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "L'IA llegeix el text enganxat només quan ho demanes. Els enllaços poden utilitzar les dades de feina de la pàgina sense intel·ligència artificial."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Intents de sol·licitud d’IA: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "L’historial de sol·licituds d’IA no està disponible per a aquest resultat."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "No s’ha pogut carregar l’ús d’IA. Actualitza la vista. Els servidors antics poden necessitar una actualització."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Ús d’IA aquesta setmana"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2224,6 +2243,7 @@ msgid "Aspect ratio"
 msgstr "Relació d'aspecte"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "Assistent"
@@ -2502,6 +2522,7 @@ msgstr "Divideix el currículum en les seccions habituals perquè es pugui segme
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Trenca paraules llargues entre síl·labes, utilitzant l'idioma establert a la pàgina."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2611,6 +2632,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Carrera"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Xat professional"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4389,6 +4414,7 @@ msgstr "Benvolgut {name},"
 msgid "Dear hiring team,"
 msgstr "Benvolgut equip de contractació,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5514,6 +5540,10 @@ msgstr "Ompliu els detalls manualment"
 msgid "Fill empty fields with AI"
 msgstr "Ompliu els camps buits amb IA"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Omple els camps"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Omplert des de la sol·licitud de feina. La salutació segueix el nom."
@@ -5546,6 +5576,7 @@ msgstr "Primera oferta"
 msgid "First run (YYYY-MM-DD)"
 msgstr "Primera execució (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5710,6 +5741,10 @@ msgstr "Oblida"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "L'oblit desenllaça aquest fet de les històries i dels elements desats. La font original es manté sense canvis."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Resposta del formulari"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6262,6 +6297,10 @@ msgstr "Importat de {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Important-lo al teu nou currículum..."
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "Millora"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6915,6 +6954,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "Cos de la lletra"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Esborrany de carta"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Pàgina de carta"
@@ -7191,6 +7234,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Carregant la versió desada…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Carregant l’ús…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7494,10 +7541,22 @@ msgstr "Pot estar disponible"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "Puntuació de coincidència MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "Esborrany de missatge MCP"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "Servidor MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "Adaptació MCP"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8019,6 +8078,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "Encara no hi ha proveïdor d'IA"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "No s’han registrat intents de sol·licitud d’IA aquesta setmana."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9177,6 +9240,10 @@ msgstr "PDF · Ideal per presentar candidatures"
 msgid "PDF check canceled. Retry when ready."
 msgstr "S'ha cancel·lat la comprovació del PDF. Torneu-ho a provar quan estigueu a punt."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "Importació de PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9383,6 +9450,7 @@ msgstr "Font de l'anunci"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9645,6 +9713,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "La retenció i l'ús del proveïdor segueixen la seva política de privadesa. La declinació impedeix aquesta operació i deixa disponibles altres funcions de l'aplicació."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Prova del proveïdor"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9804,6 +9876,7 @@ msgstr "Llegeix la llicència"
 msgid "Read only"
 msgstr "Accés només de lectura"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10048,6 +10121,10 @@ msgstr "Actualitza el dossier 24 hores abans"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Actualitza el dossier el matí del dia"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Actualitza l’ús"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10339,6 +10416,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Respost"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Resposta"
@@ -10385,6 +10463,10 @@ msgstr "Informa d’un problema"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Informe rebut pel vostre operador de servidor. Gràcies."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Intents de sol·licitud registrats per aquest servidor, inclosos errors i cancel·lacions. Els reintents i cada crida al model en un bucle d’eines compten per separat; els fragments del flux, les eines mateixes i desar no compten."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10831,6 +10913,10 @@ msgstr "Rol (opcional)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Rol {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Suggeriments de llocs de treball"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13116,6 +13202,10 @@ msgstr "No hi ha cap paràgraf de resum."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Són intents, no facturació, recomptes de tokens ni costos. Un servidor interromput pot registrar un intent abans d’enviar-lo; l’informe no confirma que el proveïdor l’hagi rebut."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14405,9 +14495,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Els visitants introdueixen la contrasenya abans de veure el currículum. Compartiu-la només amb persones de confiança."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Reproducció de veu"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Configuració de veu"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Transcripció de veu"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14481,6 +14579,10 @@ msgstr "Les cerques web busquen feina en aquests països. Trieu fins a tres paï
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Lloc web"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Les setmanes van de dilluns a diumenge en el fus horari del compte. L’historial comença quan aquest servidor inicia el registre; no es reconstrueixen sol·licituds anteriors. Es conserven les etiquetes de connexió i els models utilitzats, fins i tot després d’eliminar una connexió."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14712,6 +14814,10 @@ msgstr "Sense un, empleneu el destinatari vosaltres mateixos i la redacció nom�
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Importació de Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "La importació de Word, Millora, l'assistent, els esborranys de cartes, l'orientació i generació de Carrera i la pràctica de veu en necessiten un. L'edició, Disseny, les comprovacions de llegibilitat i les baixades funcionen sense."
@@ -14837,6 +14943,10 @@ msgstr "Redacció"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Ajuda per escriure, suggeriments adaptats i l'assistent. El proveïdor predeterminat s'utilitza allà on no en trieu cap. Les vostres claus es mantenen xifrades."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Revisió de redacció"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

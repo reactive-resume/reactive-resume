@@ -2172,6 +2172,18 @@ msgstr "AI provayderlərini yükləmək mümkün olmadı. Yenidən cəhd etmək 
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+#: src/features/settings/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Süni intellekt sorğu cəhdləri: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Bu nəticə üçün süni intellekt sorğu tarixçəsi mövcud deyil."
+
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr ""
@@ -2179,6 +2191,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Süni intellekt istifadəsi yüklənmədi. Yeniləyin. Köhnə serverlərin yenilənməsi lazım ola bilər."
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Bu həftə süni intellekt istifadəsi"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2776,6 +2796,7 @@ msgstr ""
 msgid "Aspect ratio"
 msgstr "Proporsiya"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/assistant/conversation.tsx
@@ -3120,6 +3141,7 @@ msgstr "CV-ni adi bölmələrə ayırın ki, seqmentləşdirilə bilsin."
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Səhifədə təyin olunmuş dildən istifadə edərək uzun sözləri hecalar arasında bölür."
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Briefing"
@@ -3286,6 +3308,10 @@ msgstr ""
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
 msgstr "Karyera"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Karyera söhbəti"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Career coach"
@@ -5569,6 +5595,7 @@ msgstr "Hörmətli Fieldnote komandası,"
 msgid "Dear hiring team,"
 msgstr "Hörmətli işə qəbul komandası,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -7006,6 +7033,7 @@ msgstr "faylı oxuyun"
 msgid "Files can be up to 25 MB."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "Sahələri doldur"
@@ -7074,6 +7102,7 @@ msgstr "Fin"
 msgid "First run"
 msgstr "İlk icra"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Fit"
@@ -7258,6 +7287,10 @@ msgstr "Parolu unutmusunuz?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "Parolunuzu unutmusunuz?"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Forma cavabı"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Form answers"
@@ -8044,6 +8077,7 @@ msgstr "İdxal olunur"
 msgid "Importing it into your new resume…"
 msgstr "O, yeni CV-yə import edilir..."
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "Təkmilləşdirmək"
@@ -8932,6 +8966,10 @@ msgstr ""
 msgid "Letter details"
 msgstr "Məktub təfərrüatları"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Məktub qaralaması"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Letter duplicated"
 msgstr "Məktubun surəti çıxarıldı"
@@ -9262,6 +9300,10 @@ msgstr "Üslub cədvəli redaktoru yüklənir…"
 msgid "Loading the total"
 msgstr "Cəmi yüklənir"
 
+#: src/features/settings/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "İstifadə yüklənir…"
+
 #: src/features/career/workspace/shell.tsx
 msgid "Loading workspace…"
 msgstr "İş sahəsi yüklənir…"
@@ -9580,9 +9622,21 @@ msgstr "Bəlkə sonra"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP uyğunluq balı"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP mesaj qaralaması"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "MCP serveri"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP uyğunlaşdırması"
 
 #: src/features/resume/editor/proposals/page-fit.tsx
 msgid "Measuring page fit…"
@@ -10175,6 +10229,10 @@ msgstr ""
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Bu həftə süni intellekt sorğu cəhdi qeydə alınmayıb."
 
 #: src/features/career/offers.tsx
 msgid "No amount stated · value uncertain"
@@ -11611,6 +11669,10 @@ msgstr "Ödəniş dövrü"
 msgid "Pay, deadline and conditions, so you can compare and decide"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF idxalı"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "PDF üslubları CSS alt çoxluğunu dəstəkləyir. Fırlanma, kəsikli və nöqtəli haşiyələr və bəzi düzən xüsusiyyətləri nəzərə alınmır."
@@ -11853,6 +11915,7 @@ msgstr "CV-nizdə iş elanı terminləri"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Practice"
@@ -12185,6 +12248,10 @@ msgstr ""
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Təchizatçı sınağı"
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -12413,6 +12480,7 @@ msgstr "Yalnız oxumaq üçün giriş"
 msgid "Read only can't change or delete anything."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12727,6 +12795,10 @@ msgstr "Brifinqi 24 saat əvvəl yenilə"
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Brifinqi həmin günün səhəri yenilə"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "İstifadəni yenilə"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Register at OlaCV"
@@ -13055,6 +13127,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Cavab verildi"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13090,6 +13163,10 @@ msgstr ""
 #: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "Səhvi bildirin"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Bu serverin qeydə aldığı sorğu cəhdləri, uğursuz və ya ləğv edilənlər daxil. Təkrarlar və alət dövrəsində hər model çağırışı ayrıca sayılır; axın hissələri, alətlərin özü və saxlama sayılmır."
 
 #: src/features/settings/profile.tsx
 msgid "Requested amount"
@@ -13559,6 +13636,10 @@ msgstr "Rol {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "{0} nömrəli şəxsin rolu"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Vəzifə təklifləri"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Role, company or location"
@@ -16403,6 +16484,10 @@ msgstr "Xülasə paraqrafı yoxdur."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/settings/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Bunlar cəhdlərdir, hesablaşma, token sayı və ya xərc deyil. Serverin işi kəsildikdə cəhd göndərilmədən qeydə alına bilər; bu hesabat təchizatçının qəbulunu təsdiqləmir."
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -17910,9 +17995,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Ziyarətçilər rezyumeni görməzdən əvvəl parolu daxil edirlər. Onu yalnız etibar etdiyiniz insanlarla paylaşın."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Səsin səsləndirilməsi"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
 msgstr "Səs parametrləri"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Səs transkripsiyası"
 
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -18028,6 +18121,10 @@ msgstr "Hər həftə saat {clock} · növbəti {next}"
 #: src/features/career/knowledge/preferences.tsx
 msgid "weeks"
 msgstr "həftə"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Həftələr hesabınızın saat qurşağında bazar ertəsindən bazar gününə qədərdir. Tarixçə server qeydə almağa başlayanda yaranır; əvvəlki sorğular bərpa edilmir. Bağlantı adları və modellər istifadə edildiyi kimi, bağlantı silindikdən sonra da saxlanılır."
 
 #: src/features/career/shared.tsx
 msgid "Weighing each requirement"
@@ -18343,6 +18440,10 @@ msgstr ""
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "Bir olmadan, siz alıcını özünüz doldurursunuz və layihənin hazırlanmasında yalnız rezyumeniz istifadə olunur."
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word idxalı"
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
 msgstr ""
@@ -18491,6 +18592,10 @@ msgstr "Cavab yazılır…"
 #: src/features/settings/ai/providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Yazı köməyi, fərdiləşdirilmiş təkliflər və köməkçi. Seçim etmədiyiniz hər yerdə defolt provayder istifadə olunur. Açarlarınız şifrələnmiş qalır."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Mətnə baxış"
 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"

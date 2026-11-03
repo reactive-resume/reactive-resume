@@ -795,8 +795,8 @@ describe("agentService.messages.send", () => {
 	// Regression (defect 8): a question continuation streams into the SAME uiMessage id; onFinish
 	// must upsert the existing assistant row instead of inserting a duplicate row.
 	it.each([
-		{ provider: "openai", model: "gpt-5" },
-		{ provider: "gemini", model: "gemini-3.8-flash" },
+		{ provider: "openai", model: "gpt-5", capableModel: "gpt-6.1-sol" },
+		{ provider: "gemini", model: "gemini-3.8-flash", capableModel: "gemini-3.8-pro" },
 	])("continues one row and replays portable web evidence with correct $provider metadata", async (provider) => {
 		const activeThread = buildActiveThread();
 		const userMessage = {
@@ -987,6 +987,13 @@ describe("agentService.messages.send", () => {
 		expect(JSON.stringify(replayed)).not.toContain("ws_old");
 
 		const onFinish = uiStreamOptions?.onFinish as (event: Record<string, unknown>) => Promise<void>;
+		const { getAgentModel } = await import("../ai/service");
+		expect(vi.mocked(getAgentModel).mock.calls.at(-1)?.[0]).toMatchObject({ model: provider.capableModel });
+		const messageMetadata = uiStreamOptions?.messageMetadata as (event: { part: { type: string } }) => unknown;
+		expect(messageMetadata({ part: { type: "finish" } })).toMatchObject({
+			provider: provider.provider,
+			model: provider.capableModel,
+		});
 		const continuedMessage = {
 			...answeredAssistantMessage.uiMessage,
 			parts: [...answeredAssistantMessage.uiMessage.parts, { type: "text", text: "Renamed the header." }],

@@ -79,6 +79,7 @@ export const careerArtifact = pg.pgTable(
 		evidence: pg.jsonb("evidence").notNull().$type<{ factIds: string[]; storyIds: string[] }>(),
 		jobId: pg.text("job_id").references(() => careerJob.id, { onDelete: "set null" }),
 		inputVersion: pg.text("input_version").notNull(),
+		aiOperationId: pg.text("ai_operation_id"),
 	},
 	(t) => [pg.index().on(t.userId, t.applicationId, t.createdAt), pg.uniqueIndex().on(t.jobId)],
 );
@@ -190,6 +191,7 @@ export const careerTranscript = pg.pgTable(
 		original: pg.text("original").notNull(),
 		edited: pg.text("edited").notNull(),
 		model: pg.text("model").notNull(),
+		aiOperationId: pg.text("ai_operation_id"),
 	},
 	(t) => [pg.index().on(t.userId, t.applicationId)],
 );
@@ -201,6 +203,7 @@ export const careerAnswer = pg.pgTable(
 		...owned(),
 		question: pg.text("question").notNull(),
 		answer: pg.text("answer").notNull(),
+		aiOperationIds: pg.text("ai_operation_ids").array().notNull().default([]),
 		source: pg.text("source").$type<"manual" | "application" | "ai-assisted">().notNull(),
 		scope: pg.text("scope").$type<"reusable" | "employer" | "application">().notNull(),
 		employer: pg.text("employer").notNull(),

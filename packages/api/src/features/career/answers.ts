@@ -17,6 +17,7 @@ import {
 	reviewedAnswerInputSchema,
 	reuseAnswerInputSchema as reuseSchema,
 } from "@reactive-resume/schema/application-answers";
+import { assertAiOperations } from "../ai/usage";
 import { availableApplicationContext } from "../applications/access";
 import { activeApplications } from "../applications/access";
 import { lockUser } from "../documents/ownership";
@@ -110,6 +111,8 @@ export const reviewedAnswers = {
 					message:
 						"This answer is restricted to its employer or application. Open that application to edit it, or save a separately reviewed answer.",
 				});
+			const aiOperationIds = [...new Set(input.aiOperationIds ?? existing?.aiOperationIds ?? [])];
+			await assertAiOperations(userId, aiOperationIds, ["answer"], tx);
 			const applicationId = input.scope === "application" ? target.id : null;
 			const current = await knowledge(tx, userId);
 			const selectedStories = current.stories.filter(
@@ -161,6 +164,7 @@ export const reviewedAnswers = {
 			const values = {
 				question: input.question,
 				answer: input.answer,
+				aiOperationIds,
 				source: input.source,
 				scope: input.scope,
 				employer: target.company,
@@ -213,7 +217,7 @@ export const reviewedAnswers = {
 				throw new ORPCError("CONFLICT", {
 					message: "Supporting evidence changed or was removed. Review the saved answer first.",
 				});
-			return { text: input.answer, factIds: row.factIds };
+			return { text: input.answer, factIds: row.factIds, aiOperationIds: row.aiOperationIds };
 		});
 	},
 	delete: (userId: string, id: string, expectedRevision: number) =>

@@ -97,6 +97,13 @@ describe("AI DOCX parsing", () => {
 		generateTextMock.mockResolvedValue({ text: JSON.stringify(defaultResumeData) });
 
 		await aiService.parseDocx({
+			usage: {
+				userId: "user",
+				operationId: "import",
+				action: "import-docx",
+				providerId: "connection",
+				label: "Test connection",
+			},
 			provider: "openai-compatible",
 			model: "test-model",
 			apiKey: "test-key",

@@ -2,16 +2,18 @@ import { ORPCError } from "@orpc/client";
 import { AISDKError } from "ai";
 import { flattenError, ZodError, z } from "zod";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
+import { aiWeeklyUsageSchema, aiUsageSummarySchema } from "@reactive-resume/schema/ai-usage";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
-import { applicationService } from "../applications/service";
+import { applicationService, assertApplicationVersion } from "../applications/service";
 import { assertDocumentVersion } from "../documents/ownership";
 import { atsReviewInputSchema, atsReviewOutputSchema, reviewResumeText } from "./ats-review";
 import { improveInputSchema, improveLine, improveOutputSchema } from "./improve";
 import { reportAiContent } from "./reports";
 import { aiService, fileInputSchema } from "./service";
+import { createAiUsage, readWeeklyAiUsage } from "./usage";
 import { beginWritingReview, readWritingReview, saveWritingReview } from "./writing-review";
 
 /**
@@ -62,6 +64,17 @@ async function getRunnableProvider(userId: string, aiProviderId?: string) {
 }
 
 export const aiRouter = {
+	usage: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/ai/usage",
+			tags: ["AI"],
+			operationId: "getWeeklyAiUsage",
+			summary: "Get this week's AI provider request attempts",
+		})
+		.input(z.object({}).default({}))
+		.output(aiWeeklyUsageSchema)
+		.handler(({ context }) => readWeeklyAiUsage(context.user.id)),
 	reportContent: reportAiContent,
 	capabilities: protectedProcedure
 		.route({ method: "GET", path: "/ai/capabilities", tags: ["AI"], operationId: "getAiCapabilities" })
@@ -84,6 +97,7 @@ export const aiRouter = {
 					passages: z.array(z.object({ id: z.string(), where: z.string(), text: z.string() })),
 					review: atsReviewOutputSchema,
 					reviewedAt: z.date(),
+					aiUsage: aiUsageSummarySchema.nullable().optional(),
 				})
 				.nullable(),
 		)
@@ -109,6 +123,7 @@ export const aiRouter = {
 				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
 				signal?.throwIfAborted();
 				return await aiService.parsePdf({
+					usage: createAiUsage(context.user.id, "import-pdf", provider),
 					provider: provider.provider,
 					model: aiModelForTask(provider, "fast"),
 					apiKey: provider.apiKey,
@@ -151,6 +166,7 @@ export const aiRouter = {
 				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
 				signal?.throwIfAborted();
 				return await aiService.parseDocx({
+					usage: createAiUsage(context.user.id, "import-docx", provider),
 					provider: provider.provider,
 					model: aiModelForTask(provider, "fast"),
 					apiKey: provider.apiKey,
@@ -189,7 +205,11 @@ export const aiRouter = {
 				});
 				signal?.throwIfAborted();
 
+				const usage = createAiUsage(context.user.id, "writing-review", provider, async (tx) => {
+					if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
+				});
 				const review = await reviewResumeText({
+					usage,
 					...input,
 					signal,
 					provider: provider.provider,
@@ -200,6 +220,7 @@ export const aiRouter = {
 				if (input.resumeId && resume)
 					await saveWritingReview({
 						requestGeneration: resume.generation,
+						aiOperationId: usage.operationId,
 						resumeId: input.resumeId,
 						userId: context.user.id,
 						inputText: input.extractedText,
@@ -234,15 +255,17 @@ export const aiRouter = {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
 				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
 				// The posting comes from the user's own application, never from the client.
-				const posting =
+				const application =
 					input.action === "posting" && input.applicationId
-						? await applicationService
-								.getById({ id: input.applicationId, userId: context.user.id })
-								.then((application) => application.jobDescription?.slice(0, 12_000))
-						: undefined;
+						? await applicationService.getById({ id: input.applicationId, userId: context.user.id })
+						: null;
+				const posting = application?.jobDescription?.slice(0, 12_000);
 				signal?.throwIfAborted();
 
 				return await improveLine({
+					usage: createAiUsage(context.user.id, "improve", provider, async (tx) => {
+						if (application) await assertApplicationVersion(tx, context.user.id, application);
+					}),
 					...input,
 					posting,
 					signal,

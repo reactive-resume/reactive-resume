@@ -1,9 +1,11 @@
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { GenerateTask, SavedItemData } from "@reactive-resume/schema/career";
 import { ORPCError } from "@orpc/client";
 import z from "zod";
 import { careerWorkspaceSchema, savedItemDataSchema } from "@reactive-resume/schema/career";
 import { aiProvidersService } from "../ai-providers/service";
 import { getModel } from "../ai/service";
+import { createAiUsage } from "../ai/usage";
 import { generateJson } from "../applications/ai";
 import { careerService, hasFitEvidence } from "./service";
 
@@ -144,7 +146,9 @@ export async function generateCareer(input: GenerateInput) {
 		throw new ORPCError("CONFLICT", {
 			message: "The scheduled AI connection changed. Review and enable the schedule again.",
 		});
+	const usage = createAiUsage(input.userId, task.task, provider, (reader) => assertCurrent(reader));
 	const model = getModel({
+		usage,
 		provider: provider.provider,
 		model: provider.model,
 		apiKey: provider.apiKey,
@@ -242,7 +246,7 @@ export async function generateCareer(input: GenerateInput) {
 		contextMayBeExcerpted: true,
 	});
 	const generationSignal = AbortSignal.any([AbortSignal.timeout(120_000), ...(input.signal ? [input.signal] : [])]);
-	const assertCurrent = () =>
+	const assertCurrent = (reader?: DbOrTx) =>
 		careerService.assertMemoryVersion(
 			input.userId,
 			context.memoryVersion,
@@ -260,6 +264,7 @@ export async function generateCareer(input: GenerateInput) {
 			},
 			undefined,
 			provider.id,
+			reader,
 		);
 	await assertCurrent();
 	generationSignal.throwIfAborted();
@@ -288,6 +293,7 @@ export async function generateCareer(input: GenerateInput) {
 		return {
 			item: null,
 			answer: {
+				aiOperationIds: [usage.operationId],
 				text: answered.text,
 				factIds: used.slice(0, 10),
 				note: answered.note?.trim() ? answered.note.trim() : null,
@@ -326,6 +332,7 @@ export async function generateCareer(input: GenerateInput) {
 		]),
 	];
 	const item = await careerService.saveSavedItem({
+		aiOperationId: usage.operationId,
 		userId: input.userId,
 		applicationId: application.id,
 		interviewId,
