@@ -629,7 +629,7 @@ function useCells() {
 			}
 			if (difference !== null && difference > 0)
 				return [{ icon: "arrow-up", tone: "better", text: t`${formatMoney(locale, terms.currency, difference)} more` }];
-			if (key === "base" && difference === null && other.data.base !== null && terms.base !== null)
+			if (key === "base" && difference === null && terms.base !== null && (other.data.base !== null || annual !== null))
 				return [
 					{
 						icon: "info",
@@ -773,7 +773,7 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 		[t`What is the base salary, and is it negotiable?`, (terms) => terms.base === null],
 		[
 			t`Is there a bonus, and what does it depend on?`,
-			(terms) => terms.variable === null && terms.variablePercent == null && !terms.variableConditions.trim(),
+			(terms) => terms.variable === null && !terms.variableConditions.trim(),
 		],
 		[
 			t`How is the bonus decided, and how much of it was paid out last year?`,

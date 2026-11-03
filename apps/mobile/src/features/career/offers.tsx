@@ -283,9 +283,7 @@ function OfferCard({ offer, highlight, other, profile, onEdit, onDelete }: Offer
 	];
 	const questions = [
 		data.base === null ? t`What is the base salary?` : null,
-		data.variable === null && data.variablePercent == null && !data.variableConditions
-			? t`Is there a bonus, and what does it depend on?`
-			: null,
+		data.variable === null && !data.variableConditions.trim() ? t`Is there a bonus, and what does it depend on?` : null,
 		!data.equity ? t`What equity is included, and on what terms?` : null,
 		data.officeDays === null ? t`How many office days are expected?` : null,
 		!data.startDate ? t`When would you start?` : null,

@@ -1584,6 +1584,37 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			await expect(service.updateOffer("alice", fit.id, terms, terms)).rejects.toMatchObject({ code: "NOT_FOUND" });
 	});
 
+	it("replays one receipted offer version without duplicating it or reviving a deleted version", async () => {
+		const input = careerOfferInputSchema.parse({
+			applicationId: "alice-app",
+			currency: "EUR",
+			period: "year",
+			base: 85000,
+			variable: null,
+		});
+		const original = await service.createOffer("alice", input);
+		if (original?.data.kind !== "offer") throw new Error("Expected an offer.");
+		const expected = offerTermsSchema.parse(original.data);
+		const terms = { ...expected, base: 90000 };
+		const newId = randomUUID();
+		const save = () => service.updateOffer("alice", original.id, terms, expected, true, newId);
+		const [first, replay] = await Promise.all([save(), save()]);
+		expect(replay.id).toBe(first.id);
+		expect(first.id).toBe(newId);
+		expect(await service.savedItems({ userId: "alice", kind: "offer" })).toHaveLength(2);
+		await expect(
+			service.updateOffer("alice", original.id, { ...terms, base: 1 }, expected, true, newId),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		await expect(service.updateOffer("bob", original.id, terms, expected, true, newId)).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await service.updateOffer("alice", original.id, { ...expected, base: 86000 }, expected);
+		expect((await save()).id).toBe(newId);
+		await service.deleteSavedItem("alice", newId);
+		await expect(save()).rejects.toMatchObject({ code: "CONFLICT" });
+		expect(await service.savedItems({ userId: "alice", kind: "offer" })).toHaveLength(1);
+	});
+
 	it("names the messages no longer sent after Knowledge changes, and replies that ended early", async () => {
 		const { agentService } = await import("../agent/service");
 		const at = (minutes: number) => new Date(Date.UTC(2026, 9, 1, 9, minutes));
@@ -2497,6 +2528,7 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		});
 		const prompt = fixture.generate.mock.calls[0]?.[1]?.prompt as string;
 		expect(prompt).toContain("Record percentage bonuses in variablePercent");
+		expect(prompt).toContain("bonus amount (never a percentage) into offer.variable");
 		expect(prompt).toContain("respondBy is the stated decision deadline");
 	});
 

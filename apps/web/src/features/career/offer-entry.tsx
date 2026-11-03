@@ -28,6 +28,7 @@ import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
 import { formatMoney } from "./offer-compare";
@@ -42,7 +43,7 @@ import { useMoveWithUndo } from "@/features/applications/use-application-actions
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { MoreOptions } from "@/features/resume/editor/write/fields";
 import { getAccountId, getAccountGeneration } from "@/libs/auth/account-scope";
-import { orpc } from "@/libs/orpc/client";
+import { client, orpc } from "@/libs/orpc/client";
 
 type Application = {
 	id: string;
@@ -365,6 +366,16 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	});
 	const update = useMutation({
 		...orpc.career.updateOffer.mutationOptions(),
+		mutationFn: async (input: Parameters<typeof client.career.updateOffer>[0]) => {
+			if (!current() || !owner.id) throw new Error("Account changed");
+			const key = JSON.stringify(["career:offer-version", owner.id, owner.generation, input]);
+			const result = await client.career.updateOffer(
+				{ ...input, newId: pendingRequestId(key) },
+				{ context: { accountId: owner.id } },
+			);
+			settleRequestId(key);
+			return result;
+		},
 		onSuccess: (offer) => {
 			if (!current()) return;
 			rememberOffer(offer);

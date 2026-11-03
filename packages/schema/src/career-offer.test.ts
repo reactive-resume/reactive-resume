@@ -197,11 +197,15 @@ it("derives percentages only from their own base and round trips localized editi
 	expect(bonusAmount({ ...percentage, base: 0 })).toBe(0);
 	expect(offerTermsSchema.safeParse({ ...old, variablePercent: 10 }).success).toBe(false);
 	const input = entry();
-	input.amounts.variable = bonusEntry(percentage, "de-DE");
-	expect(parseOfferEntry({ ...input, locale: "de-DE" }).payload).toMatchObject({
-		success: true,
-		data: { variable: null, variablePercent: 12.5 },
-	});
+	for (const locale of ["en-US", "de-DE", "ar-SA"]) {
+		for (const variablePercent of [0, 12.5, 12.345, 1e-25, 1e30, 1.2345678901234567]) {
+			input.amounts.variable = bonusEntry({ ...percentage, variablePercent }, locale);
+			expect(parseOfferEntry({ ...input, locale }).payload, `${locale}: ${input.amounts.variable}`).toMatchObject({
+				success: true,
+				data: { variable: null, variablePercent },
+			});
+		}
+	}
 	const yearly = { ...old, period: "year" as const };
 	expect(annualBaseHint(old, yearly)).toBe(84000);
 	expect(annualBaseHint(old, { ...yearly, currency: "USD" })).toBeNull();

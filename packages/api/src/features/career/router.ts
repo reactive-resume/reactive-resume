@@ -358,12 +358,19 @@ export const careerRouter = {
 			operationId: "updateCareerOffer",
 			summary: "Correct saved offer terms",
 			description:
-				"Corrects saved terms, or saves a new version when newVersion is true. `expected` is the copy being corrected; concurrent changes conflict.",
+				"Corrects saved terms, or saves a new version when newVersion is true. `expected` is the copy being corrected; concurrent changes conflict. Supply the same newId and payload when retrying a new version after a lost response; a deleted version cannot be recreated by retrying.",
 		})
-		.input(id.extend({ terms: offerTermsSchema, expected: offerTermsSchema, newVersion: z.boolean().optional() }))
+		.input(
+			id.extend({
+				terms: offerTermsSchema,
+				expected: offerTermsSchema,
+				newVersion: z.boolean().optional(),
+				newId: z.uuid().optional(),
+			}),
+		)
 		.output(savedItemSchema)
 		.handler(({ context, input }) =>
-			careerService.updateOffer(context.user.id, input.id, input.terms, input.expected, input.newVersion),
+			careerService.updateOffer(context.user.id, input.id, input.terms, input.expected, input.newVersion, input.newId),
 		),
 	deleteSavedItem: protectedProcedure
 		.route({

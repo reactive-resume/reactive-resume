@@ -1353,7 +1353,10 @@ let savedOffers = [
 	{ createdAt: "2026-10-01T00:00:00Z", data: { kind: "offer", currency: "GBP" } },
 ];
 let offerApplications = { data: [] };
+let loseOfferResponse = false;
+let offerFailures = 0;
 const { OfferEntry, OfferForm } = load("features/career/offer-entry.tsx", {
+	"@reactive-resume/utils/string": load("../../../packages/utils/src/string.ts", { uuid: serverRequire("uuid") }),
 	"@/auth/session": { getAccountScope: () => offerScope },
 	"@reactive-resume/schema/career": careerSchema,
 	"@reactive-resume/schema/career-offer": offerParser,
@@ -1362,7 +1365,11 @@ const { OfferEntry, OfferForm } = load("features/career/offer-entry.tsx", {
 		useCareerAction: () => ({
 			pending: false,
 			run: async (work, success) => {
-				success(await work());
+				try {
+					success(await work());
+				} catch {
+					offerFailures++;
+				}
 			},
 		}),
 		client: {
@@ -1373,6 +1380,10 @@ const { OfferEntry, OfferForm } = load("features/career/offer-entry.tsx", {
 				},
 				updateOffer: async (input) => {
 					calls.push(input);
+					if (loseOfferResponse) {
+						loseOfferResponse = false;
+						throw new Error("Response lost after commit");
+					}
 					return { id: "new-version", data: { kind: "offer", ...input.terms } };
 				},
 			},
@@ -1501,8 +1512,15 @@ const correctedView = () =>
 assert.equal(control(correctedView(), "Bonus").value, "10%");
 assert.equal(control(correctedView(), "Bonus").keyboardType, "default", "percentage entry needs a percent key");
 control(correctedView(), "Bonus").onChangeText("12.5%");
+loseOfferResponse = true;
 control(correctedView(), "Save offer").onPress();
 await settle();
+assert.equal(offerFailures, 1);
+assert.equal(calls.length, 1, "lost response keeps the native form open without navigation");
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.deepEqual(calls[1], calls[0], "retry uses the same version receipt after a lost response");
+assert.match(calls[0].newId, /^[0-9a-f-]{36}$/);
 assert.equal(calls[0].id, "original-offer");
 assert.equal(calls[0].newVersion, true);
 assert.equal(calls[0].terms.variable, null);

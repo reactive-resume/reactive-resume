@@ -1,5 +1,5 @@
 import type { OfferTerms } from "./career";
-import { parseAmount } from "@reactive-resume/utils/amount";
+import { parseAmount, parseDecimal } from "@reactive-resume/utils/amount";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { careerOfferInputSchema } from "./career";
 
@@ -18,7 +18,9 @@ type OfferEntry = {
 export function parseOfferEntry({ applicationId, terms, amounts, date, time, locale, timeZone }: OfferEntry) {
 	const base = parseAmount(amounts.base, locale);
 	const percentage = amounts.variable.trim().endsWith("%");
-	const variable = parseAmount(percentage ? amounts.variable.trim().slice(0, -1).trim() : amounts.variable, locale);
+	const variable = percentage
+		? parseDecimal(amounts.variable.trim().slice(0, -1).trim(), locale)
+		: parseAmount(amounts.variable, locale);
 	const invalidVariable = variable === undefined || (percentage && variable === null);
 	const learning = parseAmount(amounts.learning, locale);
 	const deadline = date && timeZone ? fromZonedDateTime(date, time, timeZone) : null;
@@ -179,7 +181,7 @@ export function bonusAmount(terms: Pick<OfferTerms, "base" | "variable" | "varia
 
 export function bonusEntry(terms: Pick<OfferTerms, "variable" | "variablePercent">, locale: string) {
 	return terms.variablePercent != null
-		? `${new Intl.NumberFormat(locale, { useGrouping: false, maximumFractionDigits: 20 }).format(terms.variablePercent)}%`
+		? `${new Intl.NumberFormat(locale, { useGrouping: false, maximumSignificantDigits: 21 }).format(terms.variablePercent)}%`
 		: terms.variable === null
 			? ""
 			: String(terms.variable);

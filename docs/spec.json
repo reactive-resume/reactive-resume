@@ -55471,7 +55471,7 @@
 			"patch": {
 				"operationId": "updateCareerOffer",
 				"summary": "Correct saved offer terms",
-				"description": "Corrects saved terms, or saves a new version when newVersion is true. `expected` is the copy being corrected; concurrent changes conflict.",
+				"description": "Corrects saved terms, or saves a new version when newVersion is true. `expected` is the copy being corrected; concurrent changes conflict. Supply the same newId and payload when retrying a new version after a lost response; a deleted version cannot be recreated by retrying.",
 				"tags": [
 					"Career"
 				],
@@ -55771,6 +55771,10 @@
 									},
 									"newVersion": {
 										"type": "boolean"
+									},
+									"newId": {
+										"type": "string",
+										"format": "uuid"
 									}
 								},
 								"required": [

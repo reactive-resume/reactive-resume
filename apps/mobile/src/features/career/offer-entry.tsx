@@ -13,6 +13,7 @@ import {
 	parseOfferEntry,
 	previousOfferCurrency,
 } from "@reactive-resume/schema/career-offer";
+import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { client, useCareerAction, useCareerQueries, useCareerTime, useOffers } from "./hooks";
 import { formatMoney } from "./offer-compare";
 import { EditorSheet, LoadState } from "./shared";
@@ -262,6 +263,16 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 			}
 		/>
 	);
+	const saveTerms = async () => {
+		if (!payload.success || !scope || getAccountScope() !== scope) throw new Error("Account changed");
+		if (!offer) return client.career.createOffer(payload.data, { context: { scope } });
+		const { applicationId: _applicationId, ...terms } = payload.data;
+		const input = { id: offer.id, terms, expected: offerTermsSchema.parse(offer.data), newVersion: true };
+		const key = JSON.stringify(["career:offer-version", scope, input]);
+		const result = await client.career.updateOffer({ ...input, newId: pendingRequestId(key) }, { context: { scope } });
+		settleRequestId(key);
+		return result;
+	};
 	return (
 		<EditorSheet
 			title={offer ? t`Edit offer terms` : t`Add offer`}
@@ -407,44 +418,30 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						setSubmitted(true);
 						if (amountErrors.variable || amountErrors.learning) setMore(true);
 						if (payload.success)
-							void action.run(
-								() =>
-									offer
-										? client.career.updateOffer(
-												{
-													id: offer.id,
-													terms: (({ applicationId: _, ...terms }) => terms)(payload.data),
-													expected: offerTermsSchema.parse(offer.data),
-													newVersion: true,
-												},
-												{ context: { scope } },
-											)
-										: client.career.createOffer(payload.data, { context: { scope } }),
-								(result) => {
-									if (getAccountScope() !== scope) return;
-									if (offer) {
-										if (result) router.setParams({ a: result.id, b: params.b, highlight: result.id });
-										showToast({ message: t`New offer version saved` });
-										onClose();
-										return;
-									}
-									if (!application && result) router.setParams({ a: result.id, b: params.b, highlight: result.id });
-									if (result?.data.kind === "offer") onSaved?.({ id: result.id, data: result.data });
-									const row = applications.data?.find((item) => item.id === payload.data.applicationId);
-									const target = application ?? row;
-									const status = application?.status ?? row?.status;
-									if (target && status && BEFORE_OFFER.includes(status))
-										// An offer means the application is at Offer; Undo keeps the offer and leaves the stage.
-										moveWithUndo({
-											applications: [{ id: payload.data.applicationId }],
-											lane: resolveLane(lanes.lanes, { status: "offer" }),
-											supported: lanes.supported,
-											message: t`Offer saved. ${target.company} moved to Offer.`,
-										});
-									else showToast({ message: t`Offer saved` });
+							void action.run(saveTerms, (result) => {
+								if (getAccountScope() !== scope) return;
+								if (offer) {
+									if (result) router.setParams({ a: result.id, b: params.b, highlight: result.id });
+									showToast({ message: t`New offer version saved` });
 									onClose();
-								},
-							);
+									return;
+								}
+								if (!application && result) router.setParams({ a: result.id, b: params.b, highlight: result.id });
+								if (result?.data.kind === "offer") onSaved?.({ id: result.id, data: result.data });
+								const row = applications.data?.find((item) => item.id === payload.data.applicationId);
+								const target = application ?? row;
+								const status = application?.status ?? row?.status;
+								if (target && status && BEFORE_OFFER.includes(status))
+									// An offer means the application is at Offer; Undo keeps the offer and leaves the stage.
+									moveWithUndo({
+										applications: [{ id: payload.data.applicationId }],
+										lane: resolveLane(lanes.lanes, { status: "offer" }),
+										supported: lanes.supported,
+										message: t`Offer saved. ${target.company} moved to Offer.`,
+									});
+								else showToast({ message: t`Offer saved` });
+								onClose();
+							});
 					}}
 				/>
 			</View>

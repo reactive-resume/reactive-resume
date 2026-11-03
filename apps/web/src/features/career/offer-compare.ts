@@ -37,7 +37,7 @@ export const matchingPlace = (location: string, places: string[]) => {
 export function formatBonus(locale: string, terms: OfferTerms) {
 	if (terms.variablePercent == null)
 		return terms.variable === null ? null : formatMoney(locale, terms.currency, terms.variable);
-	const percent = new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 20 }).format(
+	const percent = new Intl.NumberFormat(locale, { style: "percent", maximumSignificantDigits: 21 }).format(
 		terms.variablePercent / 100,
 	);
 	const amount = bonusAmount(terms);

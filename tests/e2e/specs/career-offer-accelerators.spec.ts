@@ -9,7 +9,7 @@ async function application(page: Page, company: string) {
 	return (await response.json()) as string;
 }
 
-async function offer(page: Page, applicationId: string, base = 85000, period = "year") {
+async function offer(page: Page, applicationId: string, base: number | null = 85000, period = "year") {
 	const response = await page.request.post("/api/openapi/career/offers", {
 		data: { applicationId, currency: "EUR", period, base, variable: null },
 	});
@@ -46,7 +46,9 @@ test("heading edits save a new version and Delete Undo preserves both versions",
 		.first()
 		.click();
 	await page.getByRole("menuitem", { name: "Delete offer", exact: true }).click();
+	await expect(page.getByText("€90,000 a year", { exact: true })).toHaveCount(0);
 	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await expect(page.getByText("€90,000 a year", { exact: true })).toBeVisible();
 	await page.reload();
 	expect((await offers(page)).map((row) => row.id).sort()).toEqual([original.id, saved.id].sort());
 });
@@ -84,6 +86,9 @@ test("percentage bonus persists as a percentage and reopens without becoming an 
 	expect((await offers(page))[0]?.data).toMatchObject({ base: 85000, variable: null, variablePercent: 10 });
 	await page.reload();
 	await expect(page.getByText("10% of base (€8,500)", { exact: true })).toBeVisible();
+	await expect(
+		page.getByRole("listitem").filter({ hasText: "Is there a bonus, and what does it depend on?" }),
+	).toBeVisible();
 	await page.getByRole("main").screenshot({ path: info.outputPath("offers-percentage.png"), animations: "disabled" });
 	await page.getByRole("button", { name: /Northwind Labs.*Written offer/ }).click();
 	await page.getByRole("menuitem", { name: "Edit terms", exact: true }).click();
@@ -97,4 +102,40 @@ test("different pay periods show bounded arithmetic without a money judgement", 
 	await expect(page.getByText("Different pay period, not compared", { exact: true })).toHaveCount(2);
 	await expect(page.getByText("≈ €84,000 a year (12 × €7,000)", { exact: true })).toBeVisible();
 	await expect(page.getByText("€6,000 more", { exact: true })).toHaveCount(0);
+});
+
+test("a known monthly base still shows arithmetic against an unknown yearly base", async ({ authPage: page }) => {
+	const monthly = await offer(page, await application(page, "Lumen Health"), 7000, "month");
+	const yearly = await offer(page, await application(page, "Canopy Systems"), null);
+	await page.goto(`/dashboard/career/offers?a=${monthly.id}&b=${yearly.id}`);
+	await expect(page.getByText("≈ €84,000 a year (12 × €7,000)", { exact: true })).toBeVisible();
+	await expect(page.getByText("Different pay period, not compared", { exact: true })).toHaveCount(1);
+});
+
+test("retrying a lost new-version response returns the single committed version", async ({ authPage: page }) => {
+	const original = await offer(page, await application(page, "Northwind Labs"));
+	await page.goto(`/dashboard/career/offers?a=${original.id}`);
+	await page.getByRole("button", { name: /Northwind Labs.*Written offer/ }).click();
+	await page.getByRole("menuitem", { name: "Edit terms", exact: true }).click();
+	await page.getByLabel("Base salary", { exact: true }).fill("90000");
+	const requests: string[] = [];
+	await page.route("**/api/rpc/career/updateOffer", async (route) => {
+		requests.push(route.request().postData() ?? "");
+		if (requests.length > 1) return route.continue();
+		const response = await route.fetch();
+		expect(response.status()).toBe(200);
+		await route.abort("failed");
+	});
+	await page.getByRole("button", { name: "Save offer", exact: true }).click();
+	await expect(page.getByText("Couldn't save the offer. Your draft is still here. Try again.")).toBeVisible();
+	const committed = (await offers(page)).find((row) => row.id !== original.id);
+	if (!committed) throw new Error("The discarded response must have committed a version.");
+	await page.getByRole("button", { name: "Save offer", exact: true }).click();
+	await expect(page.getByRole("heading", { name: "Edit offer terms", exact: true })).toHaveCount(0);
+	await expect(page).toHaveURL(new RegExp(`a=${committed.id}`));
+	expect(requests).toHaveLength(2);
+	expect(requests[1]).toBe(requests[0]);
+	expect((await offers(page)).map((row) => row.id).sort()).toEqual([original.id, committed.id].sort());
+	await page.reload();
+	await expect(page.getByText("€90,000 a year", { exact: true })).toBeVisible();
 });
