@@ -240,13 +240,21 @@ function ContactList({ contacts, disabled, onChange, removing, onRemove }: Conta
 					{field("name", t`Name`)}
 					<div className="grid grid-cols-2 gap-2">
 						{field("role", t`Role (optional)`)}
-						<Input
-							aria-label={t`Label`}
-							placeholder={t`Label, e.g. Recruiter`}
-							list={`${id}-types`}
-							value={draft.type}
-							onChange={(event) => setDraft((current) => ({ ...current, type: event.target.value }))}
-						/>
+						<div className="relative">
+							<Input
+								aria-label={t`Label`}
+								placeholder={t`Label, e.g. Recruiter`}
+								list={`${id}-types`}
+								value={draft.type}
+								className="pe-8 [&::-webkit-calendar-picker-indicator]:opacity-0"
+								onChange={(event) => setDraft((current) => ({ ...current, type: event.target.value }))}
+							/>
+							<Icon
+								name="caret-down"
+								size={16}
+								className="pointer-events-none absolute inset-e-3 top-1/2 -translate-y-1/2 text-ink-3"
+							/>
+						</div>
 					</div>
 					<div className="grid grid-cols-2 gap-2">
 						{field("email", t`Email (optional)`, "email")}
