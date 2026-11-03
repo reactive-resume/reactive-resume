@@ -178,7 +178,9 @@ export function Facts({ children, onRefresh }: FactsProps) {
 				options={[{ value: "all", label: t`All` }, ...factCategories()]}
 			/>
 			<ResumeFacts />
-			{facts.data?.length ? <Button label={t`Add a fact`} onPress={() => setEditor({ fact: null })} /> : null}
+			{facts.data?.length || facts.isPending || facts.isError ? (
+				<Button label={t`Add a fact`} onPress={() => setEditor({ fact: null })} />
+			) : null}
 			<SwitchRow label={t`Show forgotten`} value={showForgotten} onValueChange={setShowForgotten} />
 			{showForgotten ? <ForgottenFacts /> : null}
 			<LoadState query={facts} />

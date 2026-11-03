@@ -306,7 +306,10 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const terms = {
 		...draft,
 		currency: offer || currencyTyped ? draft.currency : (hint?.currency ?? previousCurrency ?? preferred ?? ""),
-		period: offer || periodTyped ? draft.period : (hint?.period ?? profile?.minBase.period ?? "year"),
+		period:
+			offer || periodTyped
+				? draft.period
+				: (hint?.period ?? (hint?.base != null ? "year" : (profile?.minBase.period ?? "year"))),
 	};
 	const [more, setMore] = useState(Boolean(offer));
 	const [submitted, setSubmitted] = useState(false);
@@ -516,6 +519,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						className="w-full justify-start font-normal"
 						onChange={(currency) => {
 							setCurrencyTyped(true);
+							touch("currency");
 							change({ currency });
 						}}
 					/>

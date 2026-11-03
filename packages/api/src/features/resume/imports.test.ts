@@ -827,3 +827,18 @@ it.each([undefined, "ar-SA"] as const)(
 		expect(original.metadata.page.locale).toBe("de-DE");
 	},
 );
+
+it.each([undefined, "ar-SA"] as const)("uses interface language for a locale-less JSON Resume: %s", async (locale) => {
+	create.mockClear();
+	const file = new File([JSON.stringify({ basics: { name: "Fictional portfolio" } })], "Resume.json", {
+		type: "application/json",
+	});
+	await call(
+		importResumeFile,
+		{ file, format: "JSON_RESUME", ...(locale ? { locale } : {}) },
+		{ context: { locale: "de-DE", reqHeaders: new Headers() } },
+	);
+	const saved = create.mock.calls[0]?.[0] as { data: ResumeData };
+	expect(saved.data.metadata.page.locale).toBe(locale ?? "de-DE");
+	expect(saved.data.basics.name).toBe("Fictional portfolio");
+});

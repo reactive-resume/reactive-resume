@@ -1895,6 +1895,13 @@ const loadOfferEntry = () =>
 const { OfferEntry, OfferForm } = loadOfferEntry();
 reset();
 offerPreferences = { minBase: { amount: 8000, currency: "EUR", period: "month" } };
+const annualHintView = render(OfferForm, {
+	application: { id: "annual-job", company: "Fictional Salary", role: "Engineer", salary: "$120k–140k" },
+	onClose() {},
+});
+assert.equal(control(annualHintView, "Pay period").value, "year");
+assert.equal(control(annualHintView, "Base salary").value, "120000");
+reset();
 const defaultPeriodView = () =>
 	render(OfferForm, { application: { id: "period-job", company: "Fictional Labs", role: "Engineer" }, onClose() {} });
 assert.equal(
@@ -2096,16 +2103,26 @@ searchParams = {};
 console.log("PASS native percentage entry and immutable offer-version action");
 
 // Native Save must stay reachable for validation, then focus the actual missing input.
+let storyReadState = {};
 const { Stories } = load("features/career/stories.tsx", {
 	"@reactive-resume/schema/career": careerSchema,
 	"./hooks": {
-		useCareerQueries: () => ({ stories: { data: [] }, facts: { data: [] } }),
+		useCareerQueries: () => ({ stories: { data: [], ...storyReadState }, facts: { data: [] } }),
 		useUndoRows: () => ({ hidden: [] }),
 		useCareerAction: () => ({ pending: false, run: (save) => save() }),
 		client: { career: { saveStory: (payload) => calls.push({ story: payload }) } },
 	},
 	"./shared": { Actions: "Actions", EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
 });
+reset();
+for (const state of [{ isPending: true }, { isError: true }]) {
+	storyReadState = state;
+	reset();
+	const tree = render(Stories, {});
+	control(tree, "Add a story").onPress();
+	assert.ok(nodes(render(Stories, {})).some((node) => typeof node.type === "function" && node.props.story === null));
+}
+storyReadState = {};
 reset();
 const emptyStory = nodes(render(Stories, {})).find((node) => node.props.title === "No stories yet");
 assert.ok(emptyStory);
@@ -3894,6 +3911,7 @@ const { useCareerAction: memoryAction } = load("features/career/hooks.ts", {
 	"@/auth/session": memorySession,
 	"@/features/settings/queries": {},
 });
+let factsReadState = {};
 const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
 	"@tanstack/react-query": {},
 	"@reactive-resume/schema/career": careerSchema,
@@ -3914,7 +3932,7 @@ const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
 	"expo-crypto": {},
 	"./hooks": {
 		client: memoryApi,
-		useCareerQueries: () => ({ facts: { data: [] }, profile: { data: memoryProfile } }),
+		useCareerQueries: () => ({ facts: { data: [], ...factsReadState }, profile: { data: memoryProfile } }),
 		useCareerAction: memoryAction,
 		useCareerTime: () => ({ when() {}, profile: { data: memoryAccount } }),
 		useUndoRows: () => ({ hidden: [] }),
@@ -3925,6 +3943,18 @@ const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
 const factsHeader = () =>
 	nodes(render(KnowledgeFacts, { onRefresh: async () => {} })).find((node) => node.type === "LegendList").props
 		.ListHeaderComponent;
+reset();
+for (const state of [{ isPending: true }, { isError: true }]) {
+	factsReadState = state;
+	reset();
+	control(factsHeader(), "Add a fact").onPress();
+	assert.ok(
+		nodes(render(KnowledgeFacts, { onRefresh: async () => {} })).some(
+			(node) => typeof node.type === "function" && node.props.fact === null,
+		),
+	);
+}
+factsReadState = {};
 reset();
 for (const memoryMode of ["ask", "auto", "off"]) {
 	let header = factsHeader();
@@ -5130,6 +5160,34 @@ const { Composer: PasteComposer } = load(
 	polishBoundaries,
 	";module.exports.Composer=Composer;",
 );
+reset();
+let recoveredSend;
+const recoveredProps = {
+	scope: "polish-account",
+	initialAttachments: [{ id: "recovered", filename: "Fictional native draft.txt", mediaType: "text/plain", size: 64 }],
+	draft: "Review recovered file",
+	disabled: false,
+	streaming: false,
+	privacy: "Explicit Send only",
+	ensureThread: async () => "paste-thread",
+	onSend: (text, files) => {
+		recoveredSend = { text, files };
+		return true;
+	},
+	onStop() {},
+};
+const recoveredTree = render(PasteComposer, recoveredProps);
+assert.ok(JSON.stringify(recoveredTree).includes("Fictional native draft.txt"));
+assert.equal(recoveredSend, undefined);
+nodes(recoveredTree)
+	.find((node) => node.props.accessibilityLabel === "Send")
+	.props.onPress();
+await settle();
+assert.deepEqual(recoveredSend, {
+	text: "Review recovered file",
+	files: [{ id: "recovered", filename: "Fictional native draft.txt", mediaType: "text/plain" }],
+});
+assert.equal(JSON.stringify(render(PasteComposer, recoveredProps)).includes("Fictional native draft.txt"), false);
 for (const scenario of ["success", "failure", "changed"]) {
 	reset();
 	let finish;
@@ -5168,10 +5226,48 @@ for (const scenario of ["success", "failure", "changed"]) {
 	);
 	assert.equal(pasteFiles.size, 0, "Own temporary file must be deleted on success or failure");
 }
-const { Coverage: GapCoverage, RememberMessage: RememberAnswer } = load(
+const {
+	Coverage: GapCoverage,
+	RememberMessage: RememberAnswer,
+	ToolPartView: NativeQuestionPart,
+} = load(
 	"features/assistant/messages.tsx",
 	polishBoundaries,
-	";module.exports.Coverage=Coverage;module.exports.RememberMessage=RememberMessage;",
+	";module.exports.Coverage=Coverage;module.exports.RememberMessage=RememberMessage;module.exports.ToolPartView=ToolPartView;",
+);
+reset();
+const nativeQuestion = render(NativeQuestionPart, {
+	part: { type: "tool-ask_user_question", state: "output-available", output: "Fictional answer" },
+	message: { id: "question", role: "assistant", parts: [] },
+	streaming: false,
+	readOnly: false,
+	answerable: true,
+	proposals: [],
+	onAnswer() {},
+});
+for (const node of nodes(nativeQuestion).filter((node) => node.type === "View")) {
+	assert.ok(
+		node.props.children.flat(Infinity).every((child) => typeof child !== "string" && typeof child !== "number"),
+		"Native View children must not contain raw text",
+	);
+}
+reset();
+const repeatedRequirements = ["missing", "unassessed"].map((status) => ({
+	text: "Repeated requirement",
+	status,
+	evidence: [],
+}));
+let repeatedGaps = nodes(render(GapCoverage, { requirements: repeatedRequirements, factText: () => null })).filter(
+	(node) => node.props.accessibilityRole === "checkbox",
+);
+assert.equal(repeatedGaps.length, 2);
+repeatedGaps[0].props.onPress();
+repeatedGaps = nodes(render(GapCoverage, { requirements: repeatedRequirements, factText: () => null })).filter(
+	(node) => node.props.accessibilityRole === "checkbox",
+);
+assert.deepEqual(
+	repeatedGaps.map((node) => node.props.accessibilityState.checked),
+	[true, false],
 );
 reset();
 const requirements = [{ text: "Accessibility audits", status: "missing", evidence: [] }];

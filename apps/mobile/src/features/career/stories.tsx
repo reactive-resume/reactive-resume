@@ -51,7 +51,9 @@ export function Stories() {
 	return (
 		<View style={{ gap: space.s4 }}>
 			<Text color="ink3">{t`Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank.`}</Text>
-			{rows.length || editor ? <Button label={t`Add a story`} onPress={() => setEditor({ story: null })} /> : null}
+			{rows.length || editor || stories.isPending || stories.isError ? (
+				<Button label={t`Add a story`} onPress={() => setEditor({ story: null })} />
+			) : null}
 			<LoadState query={stories} />
 			<LoadState query={facts} />
 			{!stories.isError && !stories.isPending && !rows.length && !editor ? (

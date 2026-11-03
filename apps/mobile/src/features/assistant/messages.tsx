@@ -378,7 +378,6 @@ function ToolPartView({
 		case "tool-ask_user_question":
 			return (
 				<View style={{ gap: space.s2 }}>
-					{" "}
 					<QuestionCard
 						part={part}
 						readOnly={readOnly || !answerable}
@@ -1229,7 +1228,7 @@ function Coverage({ requirements, factText }: { requirements: readonly Requireme
 	const labels = useReviewLabels();
 	const gaps = requirements.filter((item) => item.status === "missing" || item.status === "unassessed").length;
 	const [open, setOpen] = useState(gaps > 0);
-	const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+	const [selected, setSelected] = useState<ReadonlySet<number>>(new Set());
 
 	return (
 		<View
@@ -1256,24 +1255,24 @@ function Coverage({ requirements, factText }: { requirements: readonly Requireme
 			</Pressable>
 			{open ? (
 				<>
-					{requirements.map((item) => (
-						<View key={item.text} style={{ gap: 2 }}>
+					{requirements.map((item, index) => (
+						<View key={index} style={{ gap: 2 }}>
 							{item.status === "missing" || item.status === "unassessed" ? (
 								<Pressable
 									accessibilityRole="checkbox"
 									accessibilityLabel={item.text}
-									accessibilityState={{ checked: selected.has(item.text) }}
+									accessibilityState={{ checked: selected.has(index) }}
 									onPress={() =>
 										setSelected((previous) => {
 											const next = new Set(previous);
-											if (next.has(item.text)) next.delete(item.text);
-											else next.add(item.text);
+											if (next.has(index)) next.delete(index);
+											else next.add(index);
 											return next;
 										})
 									}
 									style={{ minHeight: 44, flexDirection: "row", alignItems: "center", gap: space.s2 }}
 								>
-									<Icon name={selected.has(item.text) ? "check-square" : "square"} size={20} color={colors.ink2} />
+									<Icon name={selected.has(index) ? "check-square" : "square"} size={20} color={colors.ink2} />
 									<Text variant="caption" style={{ flex: 1 }}>
 										{item.text}
 									</Text>

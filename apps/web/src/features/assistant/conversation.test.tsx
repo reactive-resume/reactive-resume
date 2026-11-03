@@ -835,3 +835,30 @@ it("does not save a reviewed answer after its account has changed", () => {
 	fireEvent.click(screen.getByRole("button", { name: "Remember" }));
 	expect(mocks.saveFact).not.toHaveBeenCalled();
 });
+
+it("restores owned unsent files as visible chips and waits for explicit Send", () => {
+	const send = vi.fn();
+	const files = [{ id: "recovered", filename: "Fictional draft.txt", mediaType: "text/plain" }];
+	render(
+		<I18nProvider i18n={i18n}>
+			<Composer
+				document={document}
+				context={{ document: false, posting: false }}
+				onContextChange={() => {}}
+				providerLabel="Local"
+				streaming={false}
+				disabled={false}
+				threadId="original-thread"
+				initialAttachments={files}
+				onSend={send}
+				onStop={() => {}}
+			/>
+		</I18nProvider>,
+	);
+	expect(screen.getByText("Fictional draft.txt")).toBeDefined();
+	expect(send).not.toHaveBeenCalled();
+	fireEvent.change(screen.getByRole("textbox"), { target: { value: "Review this recovered file" } });
+	fireEvent.click(screen.getByRole("button", { name: "Send" }));
+	expect(send).toHaveBeenCalledWith("Review this recovered file", files);
+	expect(screen.queryByText("Fictional draft.txt")).toBeNull();
+});

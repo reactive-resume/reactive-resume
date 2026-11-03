@@ -227,7 +227,10 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const terms = {
 		...draft,
 		currency: offer || currencyTyped ? draft.currency : (hint?.currency ?? previousCurrency ?? preferred ?? ""),
-		period: offer || periodTyped ? draft.period : (hint?.period ?? careerProfile?.minBase.period ?? "year"),
+		period:
+			offer || periodTyped
+				? draft.period
+				: (hint?.period ?? (hint?.base != null ? "year" : (careerProfile?.minBase.period ?? "year"))),
 	};
 	const currencies = useMemo(() => getCurrencyOptions(locale, terms.currency), [locale, terms.currency]);
 	const [more, setMore] = useState(Boolean(offer));

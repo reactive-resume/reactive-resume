@@ -9,7 +9,7 @@ vi.mock("../store", () => ({ useEditorStore: () => () => {} }));
 vi.mock("./proposals", () => ({ acceptResumeProposals: () => {} }));
 vi.mock("@/features/resume/builder/draft", () => ({ useIsResumeLocked: () => false }));
 
-import { ChangeSet } from "./proposal-list";
+import { ChangeSet, Coverage } from "./proposal-list";
 
 afterEach(cleanup);
 
@@ -214,4 +214,26 @@ it("lets the user tick a posting gap without changing evidence, status or accept
 	// Base UI dispatches its backing input click; happy-dom does not reproduce that browser dispatch.
 	fireEvent.click(input);
 	expect(gap.getAttribute("aria-checked")).toBe("false");
+});
+
+it("checks identical posting gaps independently", () => {
+	i18n.loadAndActivate({ locale: "en", messages: {} });
+	const requirements = ["missing", "unassessed"].map((status) => ({
+		text: "Accessibility audits",
+		status: status as "missing" | "unassessed",
+		evidence: [],
+	}));
+	render(
+		<I18nProvider i18n={i18n}>
+			<Coverage requirements={requirements} factText={() => null} />
+		</I18nProvider>,
+	);
+	const [first, second] = screen.getAllByRole("checkbox", { name: "Accessibility audits" });
+	if (!first || !second) throw new Error("Both requirements must render");
+	const input = first.parentElement?.querySelector("input");
+	if (!input) throw new Error("First checkbox input missing");
+	fireEvent.click(input);
+	expect(first.getAttribute("aria-checked")).toBe("true");
+	expect(second.getAttribute("aria-checked")).toBe("false");
+	expect(requirements.map((item) => item.status)).toEqual(["missing", "unassessed"]);
 });

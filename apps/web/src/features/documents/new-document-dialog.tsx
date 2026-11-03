@@ -104,6 +104,7 @@ function useResumeImport(
 	applicationId?: string,
 	locale?: Locale,
 ) {
+	const { i18n } = useLingui();
 	const queryClient = useQueryClient();
 	const markNew = useNewDocumentsStore((state) => state.markNew);
 	const providerState = useHasUsableAiProvider();
@@ -187,6 +188,7 @@ function useResumeImport(
 				onRead: (note) => advance(1, note),
 			});
 			if (!current()) return;
+			if (kind !== "reactive-resume-json") resume.metadata.page.locale = locale ?? localeSchema.parse(i18n.locale);
 			// A PDF or Word file is read by a model or a heuristic: the user sees what came in, and what didn't,
 			// before anything is created. Structured files (JSON, LinkedIn) come in as they are.
 			if (kind === "pdf" || kind === "docx") {

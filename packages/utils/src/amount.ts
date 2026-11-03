@@ -49,14 +49,23 @@ const currencyCodes = (
 	"VUV WST XAF XCD XCG XDR XOF XPF XSU YER ZAR ZMW ZWG ZWL"
 ).split(" ");
 
+const currencyOptionsByLocale = new Map<string, { value: string; label: string }[]>();
+
+function currencyOption(locale: string, value: string) {
+	const symbol = new Intl.NumberFormat(locale, { style: "currency", currency: value })
+		.formatToParts(0)
+		.find((part) => part.type === "currency")?.value;
+	return { value, label: symbol && symbol !== value ? `${value} · ${symbol}` : value };
+}
+
 /** Codes disambiguate shared symbols; a previously saved code remains selectable. */
 export function getCurrencyOptions(locale: string, current = "") {
-	const codes =
-		/^[A-Z]{3}$/.test(current) && !currencyCodes.includes(current) ? [...currencyCodes, current] : currencyCodes;
-	return codes.map((value) => {
-		const symbol = new Intl.NumberFormat(locale, { style: "currency", currency: value })
-			.formatToParts(0)
-			.find((part) => part.type === "currency")?.value;
-		return { value, label: symbol && symbol !== value ? `${value} · ${symbol}` : value };
-	});
+	let options = currencyOptionsByLocale.get(locale);
+	if (!options) {
+		options = currencyCodes.map((value) => currencyOption(locale, value));
+		currencyOptionsByLocale.set(locale, options);
+	}
+	return /^[A-Z]{3}$/.test(current) && !currencyCodes.includes(current)
+		? [...options, currencyOption(locale, current)]
+		: [...options];
 }
