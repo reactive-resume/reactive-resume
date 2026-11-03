@@ -4,6 +4,7 @@ import { estimateTokenCount as estimateTextTokenCount } from "tokenx";
 import { getVisibleResumeStructure } from "@reactive-resume/resume/markdown";
 import { resumeEntryTypeSchema } from "@reactive-resume/resume/structural-proposals";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
+import { translationView } from "./translation";
 
 // Pure model-context pruning, wired into the agent loop via prepareStep so it runs before every
 // step. Tier 0 always runs (a stale resume snapshot is actively harmful — shifted array indexes);
@@ -137,6 +138,9 @@ function projectDocumentResults(messages: ModelMessage[]): ModelMessage[] {
 								})
 							: [],
 						...(structure.success ? { structure: getVisibleResumeStructure(structure.data) } : {}),
+						...(structure.success && typeof data.pageLocale === "string"
+							? translationView(getVisibleResumeStructure(structure.data), data.pageLocale)
+							: {}),
 						entryTemplates: Object.fromEntries(
 							resumeEntryTypeSchema.options.filter((type) => type in templates).map((type) => [type, templates[type]]),
 						),

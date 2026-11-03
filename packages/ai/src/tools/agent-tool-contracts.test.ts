@@ -1,6 +1,23 @@
 import type { UIMessage } from "ai";
 import { expect, it } from "vite-plus/test";
-import { agentApprovalRequests, agentWebSources } from "./agent-tool-contracts";
+import { agentApprovalRequests, agentWebSources, proposeResumeEditsInputSchema } from "./agent-tool-contracts";
+
+it("translations reject blank replacements without trimming meaningful rich-text spacing", () => {
+	const input = (text: string) => ({
+		title: "German copy",
+		changes: [
+			{
+				kind: "translation",
+				locale: "de-DE",
+				why: "Translation",
+				fields: [{ id: "/summary/content@3:9", before: "Built ", text }],
+			},
+		],
+	});
+	for (const blank of [" ", "\t\n", "\u00a0"])
+		expect(proposeResumeEditsInputSchema.safeParse(input(blank)).success).toBe(false);
+	expect(proposeResumeEditsInputSchema.parse(input(" Aufgebaute "))).toEqual(input(" Aufgebaute "));
+});
 
 it("shows exact approved content only for structured pending requests", () => {
 	const message: UIMessage = {

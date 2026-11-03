@@ -209,6 +209,8 @@ function stableJson(value: unknown): string {
 function normalizedSnapshot(value: string, data: ResumeData) {
 	try {
 		const snapshot = JSON.parse(value);
+		// Language-copy reviews bind their text to the page language; other structural reviews remain locale-neutral.
+		if (snapshot.locale !== undefined && snapshot.locale !== data.metadata.page.locale) return value;
 		return resumeStructureSnapshot({
 			...data,
 			basics: snapshot.basics,

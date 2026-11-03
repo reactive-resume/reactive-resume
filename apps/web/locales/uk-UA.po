@@ -3775,6 +3775,7 @@ msgstr "ID клієнта"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/assistant/translate-resume.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -4832,7 +4833,6 @@ msgstr "Не вдалося вилучити із Заявок. Спробуйт
 msgid "Couldn't remove the passkey. Try again."
 msgstr "Не вдалося видалити ключ доступу. Спробуйте знову."
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "Не вдалося перейменувати документ. Спробуйте ще раз."
@@ -5314,6 +5314,10 @@ msgstr "Створіть і відкрийте"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Create key"
 msgstr "Створити ключ"
+
+#: src/features/assistant/translate-resume.tsx
+msgid "Create language copy"
+msgstr "Створити копію іншою мовою"
 
 #: src/features/auth/email-text.ts
 msgid "Create new password"
@@ -7734,10 +7738,6 @@ msgstr "Угорська"
 msgid "Hyphenation"
 msgstr "Розділення слів"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "I can edit your summary, bullets and text fields, and add entries and sections. Review each set before accepting it together. Some fields still need Write. I can't translate a whole resume."
-msgstr ""
-
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
@@ -8589,6 +8589,7 @@ msgid "Landscape"
 msgstr "Альбомна орієнтація"
 
 #. Menu item that opens language selection submenu
+#: src/features/assistant/translate-resume.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/language.tsx
 #: src/features/resume/editor/design/style-groups.tsx
@@ -13271,6 +13272,10 @@ msgstr "Переглянути чернетку"
 msgid "Review each section before using this resume."
 msgstr "Перегляньте кожен розділ перед використанням цього резюме."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Review each set before accepting it together. Some fields still need Write."
+msgstr "Перевірте кожен набір змін перед прийняттям цілком. Деякі поля все ще потрібно редагувати в розділі «Написання»."
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Review for this application"
 msgstr ""
@@ -13634,6 +13639,7 @@ msgstr "Зберегти ці умови пропозиції для порів�
 msgid "Save these somewhere safe. Each works once, and they won't be shown again."
 msgstr ""
 
+#: src/features/assistant/translate-resume.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
@@ -15959,6 +15965,10 @@ msgstr "Оригінальне посилання залишається з ці
 msgid "The original stays in the history."
 msgstr "Оригінал залишається в історії."
 
+#: src/features/assistant/translate-resume.tsx
+msgid "The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated."
+msgstr "Оригінал залишається без змін. Надішліть копію, щоб отримати переклади для перевірки. Прихований вміст не перекладається."
+
 #: src/components/layout/not-found-screen.tsx
 msgid "The page you're looking for may have been moved or no longer exists."
 msgstr "Можливо, сторінку, яку ви шукаєте, було перенесено або вона більше не існує."
@@ -16779,6 +16789,12 @@ msgstr "Стенограму скопійовано"
 #: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "Перекласти"
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/assistant/translate-resume.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Translate into…"
+msgstr "Перекласти на…"
 
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"

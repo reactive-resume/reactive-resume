@@ -35,7 +35,7 @@ const { crudRouter } = await import("./crud");
 
 describe("resume write route validation", () => {
 	beforeEach(() => {
-		vi.clearAllMocks();
+		vi.resetAllMocks();
 		mocks.create.mockResolvedValue("resume-id");
 		mocks.getById.mockResolvedValue({
 			id: "resume-id",
@@ -198,5 +198,22 @@ describe("resume write route validation", () => {
 			code: "NOT_FOUND",
 			status: 404,
 		});
+	});
+	it("passes an explicit copy language to creation without modifying the source data", async () => {
+		const source = structuredClone(defaultResumeData);
+		mocks.getById.mockResolvedValueOnce({ id: "resume-id", name: "Original", tags: [], data: source });
+		const client = createRouterClient(crudRouter, {
+			context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "owner" } } as never,
+		});
+		await client.duplicate({ id: "resume-id", name: "German copy", pageLocale: "de-DE" });
+		expect(mocks.getById).toHaveBeenCalledWith({ id: "resume-id", userId: "owner" });
+		expect(mocks.create).toHaveBeenCalledWith(
+			expect.objectContaining({ userId: "owner", locale: "de-DE", name: "German copy" }),
+		);
+		expect(source).toEqual(defaultResumeData);
+		await expect(client.duplicate({ id: "resume-id", pageLocale: "invalid" as never })).rejects.toMatchObject({
+			code: "BAD_REQUEST",
+		});
+		expect(mocks.create).toHaveBeenCalledTimes(1);
 	});
 });

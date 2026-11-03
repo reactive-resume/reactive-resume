@@ -14,6 +14,7 @@ import { takeAssistantHandoff } from "./handoff";
 import { publishProposals } from "./proposals";
 import { ConnectionNotice, ModelButton, ModelSheet, ProviderGate, useConversationProvider } from "./provider";
 import { PastConversations } from "./threads";
+import { TranslateResume } from "./translate-resume";
 import { client } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 import { useLetterStore, useResumeStore } from "@/draft";
@@ -116,6 +117,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 	const [prepare, setPrepare] = useState(props.prepare ?? false);
 	const [view, setView] = useState<"thread" | "history">("thread");
 	const [modelOpen, setModelOpen] = useState(false);
+	const [translating, setTranslating] = useState(false);
 	const [context, setContext] = useState<MessageContext>({ document: true, posting: true });
 	const [draftKey, setDraftKey] = useState(0);
 
@@ -356,10 +358,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 				{props.kind === "resume" ? (
 					<View style={{ gap: space.s2, padding: space.s3, borderBottomWidth: 1, borderColor: colors.line }}>
 						<Text variant="caption" color="ink2">
-							<Trans>
-								I can edit your summary, bullets and text fields, and add entries and sections. Review each set before
-								accepting it together. Some fields still need Write. I can't translate a whole resume.
-							</Trans>
+							<Trans>Review each set before accepting it together. Some fields still need Write.</Trans>
 						</Text>
 						<Button
 							variant="link"
@@ -371,8 +370,12 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 								})
 							}
 						/>
+						<Button variant="link" label={t`Translate into…`} onPress={() => setTranslating(true)} />
 					</View>
 				) : null}
+				{translating && props.kind === "resume" && (
+					<TranslateResume resumeId={props.documentId} onClose={() => setTranslating(false)} />
+				)}
 				{gate}
 
 				<ModelSheet

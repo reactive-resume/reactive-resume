@@ -3775,6 +3775,7 @@ msgstr "Kliënt-ID"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/assistant/translate-resume.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -4832,7 +4833,6 @@ msgstr "Kon dit nie uit Aansoeke verwyder nie. Probeer weer."
 msgid "Couldn't remove the passkey. Try again."
 msgstr "Kon nie die wagwoord verwyder nie. Probeer weer."
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "Kon nie die dokument hernoem nie. Probeer weer."
@@ -5314,6 +5314,10 @@ msgstr "Skep en maak oop"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Create key"
 msgstr "Skep sleutel"
+
+#: src/features/assistant/translate-resume.tsx
+msgid "Create language copy"
+msgstr "Skep taalkopie"
 
 #: src/features/auth/email-text.ts
 msgid "Create new password"
@@ -7734,10 +7738,6 @@ msgstr "Hongaars"
 msgid "Hyphenation"
 msgstr "Aapstreep"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "I can edit your summary, bullets and text fields, and add entries and sections. Review each set before accepting it together. Some fields still need Write. I can't translate a whole resume."
-msgstr ""
-
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
@@ -8589,6 +8589,7 @@ msgid "Landscape"
 msgstr "Landskap"
 
 #. Menu item that opens language selection submenu
+#: src/features/assistant/translate-resume.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/language.tsx
 #: src/features/resume/editor/design/style-groups.tsx
@@ -13271,6 +13272,10 @@ msgstr "Hersien konsep"
 msgid "Review each section before using this resume."
 msgstr "Hersien elke afdeling voordat u hierdie CV gebruik."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Review each set before accepting it together. Some fields still need Write."
+msgstr "Gaan elke stel na voordat jy dit saam aanvaar. Sommige velde moet steeds in Skryf gewysig word."
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Review for this application"
 msgstr ""
@@ -13634,6 +13639,7 @@ msgstr "Bewaar hierdie aanbodvoorwaardes om te vergelyk"
 msgid "Save these somewhere safe. Each works once, and they won't be shown again."
 msgstr ""
 
+#: src/features/assistant/translate-resume.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
@@ -15959,6 +15965,10 @@ msgstr "Die oorspronklike skakel bly by hierdie werk."
 msgid "The original stays in the history."
 msgstr "Die oorspronklike bly in die geskiedenis."
 
+#: src/features/assistant/translate-resume.tsx
+msgid "The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated."
+msgstr "Die oorspronklike bly onveranderd. Stuur die kopie vir vertalings om na te gaan. Versteekte inhoud bly onvertaal."
+
 #: src/components/layout/not-found-screen.tsx
 msgid "The page you're looking for may have been moved or no longer exists."
 msgstr "Die bladsy waarna jy soek, is dalk geskuif of bestaan nie meer nie."
@@ -16779,6 +16789,12 @@ msgstr "Transkripsie gekopieer"
 #: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "Vertaal"
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/assistant/translate-resume.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Translate into…"
+msgstr "Vertaal na…"
 
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"

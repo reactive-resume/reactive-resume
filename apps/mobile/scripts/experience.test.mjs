@@ -2640,6 +2640,7 @@ state = {
 };
 const menuStore = Object.assign(() => state, { getState: () => state });
 const { DocumentMenu: BuilderDocumentMenu } = load("features/document-menu/index.tsx", {
+	"@/features/assistant/translate-resume": { TranslateResume: "TranslateResume" },
 	react: { ...react, useEffect() {} },
 	"react-native-enriched-html": { EnrichedTextInput: "EnrichedTextInput" },
 	"@reactive-resume/resume/sharing": {},
@@ -2718,6 +2719,20 @@ assert.equal(control(menuView(), "Save").disabled, true);
 control(menuView(), "Back").onPress();
 assert.equal(tagsAction().disabled, true);
 console.log("PASS native builder tags use draft flush, retain body, and respect tag limits and locks");
+
+control(menuView(), "Document options").onPress();
+nodes(menuView())
+	.find((node) => node.type === "ListRow" && node.props.title === "Translate into…")
+	.props.onPress();
+const menuLanguagePicker = nodes(menuView()).find((node) => node.type === "TranslateResume");
+assert.ok(menuLanguagePicker, "Document menu opens the language picker");
+assert.equal(menuLanguagePicker.props.resumeId, "menu-tags");
+menuLanguagePicker.props.onClose();
+assert.equal(
+	nodes(menuView()).some((node) => node.type === "TranslateResume"),
+	false,
+);
+console.log("PASS native document menu opens the language picker for its owned resume and closes it");
 
 // Native CSV executes the shared parser; only picker, RPC and sharing cross platform boundaries here.
 const csvDomain = load("../../../packages/schema/src/applications/csv.ts", { "./data": applicationData });

@@ -3775,6 +3775,7 @@ msgstr "క్లయింట్ ID"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/assistant/translate-resume.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -4832,7 +4833,6 @@ msgstr "దరఖాస్తుల నుండి దాన్ని తీస
 msgid "Couldn't remove the passkey. Try again."
 msgstr "పాస్‌కీని తీసివేయడం సాధ్యపడలేదు. మళ్లీ ప్రయత్నించండి."
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "పత్రం పేరు మార్చడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -5314,6 +5314,10 @@ msgstr "సృష్టించండి మరియు తెరవండి"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Create key"
 msgstr "కీని సృష్టించండి"
+
+#: src/features/assistant/translate-resume.tsx
+msgid "Create language copy"
+msgstr "భాషా ప్రతిని సృష్టించు"
 
 #: src/features/auth/email-text.ts
 msgid "Create new password"
@@ -7734,10 +7738,6 @@ msgstr "హంగేరియన్"
 msgid "Hyphenation"
 msgstr "సంధి విచ్ఛిన్నం"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "I can edit your summary, bullets and text fields, and add entries and sections. Review each set before accepting it together. Some fields still need Write. I can't translate a whole resume."
-msgstr ""
-
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
@@ -8589,6 +8589,7 @@ msgid "Landscape"
 msgstr "ల్యాండ్‌స్కేప్"
 
 #. Menu item that opens language selection submenu
+#: src/features/assistant/translate-resume.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/language.tsx
 #: src/features/resume/editor/design/style-groups.tsx
@@ -13271,6 +13272,10 @@ msgstr "డ్రాఫ్ట్‌ను సమీక్షించు"
 msgid "Review each section before using this resume."
 msgstr "ఈ రెజ్యూమ్‌ని ఉపయోగించే ముందు ప్రతి విభాగాన్ని సమీక్షించండి."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Review each set before accepting it together. Some fields still need Write."
+msgstr "ప్రతి మార్పుల సమూహాన్ని కలిపి అంగీకరించే ముందు సమీక్షించండి. కొన్ని ఫీల్డ్‌లను ఇంకా రాయండి విభాగంలో సవరించాలి."
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Review for this application"
 msgstr ""
@@ -13634,6 +13639,7 @@ msgstr "పోల్చడానికి ఈ ఆఫర్ నిబంధనల
 msgid "Save these somewhere safe. Each works once, and they won't be shown again."
 msgstr ""
 
+#: src/features/assistant/translate-resume.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
@@ -15959,6 +15965,10 @@ msgstr "అసలు లింక్ ఈ ఉద్యోగంతో ఉంట�
 msgid "The original stays in the history."
 msgstr "అసలుది చరిత్రలో ఉంటుంది."
 
+#: src/features/assistant/translate-resume.tsx
+msgid "The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated."
+msgstr "అసలు పత్రం మారదు. సమీక్షించగల అనువాదాల కోసం ప్రతిని పంపండి. దాచిన కంటెంట్ అనువదించబడదు."
+
 #: src/components/layout/not-found-screen.tsx
 msgid "The page you're looking for may have been moved or no longer exists."
 msgstr "మీరు వెతుకుతున్న పేజీ తరలించబడి ఉండవచ్చు లేదా ఇకపై అందుబాటులో లేకపోవచ్చు."
@@ -16779,6 +16789,12 @@ msgstr "ట్రాన్స్క్రిప్ట్ కాపీ చేయ�
 #: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "అనువదించు"
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/assistant/translate-resume.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Translate into…"
+msgstr "ఈ భాషలోకి అనువదించు…"
 
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"
