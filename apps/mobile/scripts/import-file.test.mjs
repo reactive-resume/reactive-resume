@@ -34,6 +34,7 @@ for (const scenario of [
 	"local",
 	"partial AI",
 	"partial local",
+	"scanned local",
 	"older AI",
 	"older local",
 	"malformed AI",
@@ -102,6 +103,8 @@ for (const scenario of [
 					if (scenario === "changed during source") scope = "new-account";
 					if (scenario === "canceled during source") controller.abort();
 					if (scenario.startsWith("older")) return new Response("", { status: 404 });
+					if (scenario === "scanned local")
+						return Response.json({ data: null, source: { lines: [], links: [], partial: false } });
 					return Response.json(
 						scenario.startsWith("malformed")
 							? { data: "invalid" }
@@ -135,6 +138,12 @@ for (const scenario of [
 		if (scenario === "partial local") {
 			await assert.rejects(reading, /Check that all pages have readable text, or try a smaller file\./);
 			assert.equal(saved, 0);
+			return;
+		}
+		if (scenario === "scanned local") {
+			await assert.rejects(reading, /This PDF is a scanned image\./);
+			assert.equal(saved, 0);
+			assert.equal(modelCalls, 0);
 			return;
 		}
 		if (scenario === "older local") {
