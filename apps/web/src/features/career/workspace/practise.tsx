@@ -25,7 +25,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { cn } from "@reactive-resume/utils/style";
 import { useCoachKnowledge } from "../coach-thread";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useSessionDraft } from "../hooks";
-import { CollapseRow, PrivacyLine, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
+import { CollapseRow, PrivacyLine, useCareerTime, useNow, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import {
 	acceptAudioFile,
@@ -74,9 +74,35 @@ function practiceQuestions(
 	return questions.length > 0 ? questions : fallbacks.map((text) => ({ text, origin: "simulated" as const }));
 }
 
-export function PractiseTab({ application, version, interview, speak, story, warmup, now, go }: WorkspaceTabProps) {
-	const saved = useSavedItems(application.id);
-	const knowledge = useCoachKnowledge(application.id);
+type PractiseProps = Omit<WorkspaceTabProps, "application"> & { application: WorkspaceTabProps["application"] | null };
+
+type StoryPracticeProps = { storyId: string };
+
+export function StoryPractice({ storyId }: StoryPracticeProps) {
+	const saved = useSavedItems(null);
+	const [versionId, setVersionId] = useState<string>();
+	const now = useNow();
+	return (
+		<div className="grid gap-3">
+			<p className="text-sm text-ink-2">
+				<Trans>Practice without an application</Trans>
+			</p>
+			<PractiseTab
+				application={null}
+				version={saved.data?.find((item) => item.id === versionId && item.evidence.storyIds.includes(storyId))}
+				interview={undefined}
+				speak={true}
+				story={storyId}
+				now={now}
+				go={(_tab, search) => setVersionId(search?.version)}
+			/>
+		</div>
+	);
+}
+
+export function PractiseTab({ application, version, interview, speak, story, warmup, now, go }: PractiseProps) {
+	const saved = useSavedItems(application?.id ?? null);
+	const knowledge = useCoachKnowledge(application?.id ?? null);
 	const voice = useVoiceSettings();
 	if (warmup && !interview)
 		return (
@@ -85,7 +111,10 @@ export function PractiseTab({ application, version, interview, speak, story, war
 			</Notice>
 		);
 	const viewing = version && isAttempt(version) ? version : undefined;
-	const attempts = saved.data?.filter(isAttempt) ?? [];
+	const attempts =
+		saved.data
+			?.filter(isAttempt)
+			.filter((item) => application !== null || !story || item.evidence.storyIds.includes(story)) ?? [];
 	const selectedStory = story ? knowledge.stories.find((item) => item.id === story) : undefined;
 	const questions: Question[] = selectedStory
 		? [
@@ -94,7 +123,7 @@ export function PractiseTab({ application, version, interview, speak, story, war
 					origin: "simulated",
 				},
 			]
-		: practiceQuestions(saved.data, interview?.id, application.company, warmup);
+		: practiceQuestions(saved.data, interview?.id, application?.company ?? "", warmup);
 	if (story && knowledge.isError)
 		return (
 			<Notice icon="warning-circle">
@@ -120,8 +149,20 @@ export function PractiseTab({ application, version, interview, speak, story, war
 						<Trans>This story is unavailable or uses facts that are switched off.</Trans>
 					)}
 				</span>
-				<Button variant="secondary" onClick={() => go("practise")}>
-					<Trans>Practice another question</Trans>
+				{application && (
+					<Button variant="secondary" onClick={() => go("practise")}>
+						<Trans>Practice another question</Trans>
+					</Button>
+				)}
+			</Notice>
+		);
+
+	if (saved.isError)
+		return (
+			<Notice icon="warning-circle">
+				<Trans>Couldn't load this. Your saved data hasn't changed.</Trans>
+				<Button onClick={() => void saved.refetch()}>
+					<Trans>Try again</Trans>
 				</Button>
 			</Notice>
 		);
@@ -129,7 +170,14 @@ export function PractiseTab({ application, version, interview, speak, story, war
 	return (
 		<div className="grid items-start gap-5 @3xl:grid-cols-[minmax(0,1fr)_280px]">
 			{viewing ? (
-				<SavedAttempt item={viewing} />
+				<div className="grid gap-3">
+					{application === null && (
+						<Button variant="secondary" className="justify-self-start" onClick={() => go("practise")}>
+							<Trans context="Button: rehearse interview answers">Practice</Trans>
+						</Button>
+					)}
+					<SavedAttempt item={viewing} />
+				</div>
 			) : saved.isPending ? (
 				<div className="grid gap-4">
 					<Skeleton className="h-40 rounded-xl" />
@@ -137,9 +185,9 @@ export function PractiseTab({ application, version, interview, speak, story, war
 				</div>
 			) : (
 				<Session
-					key={`${application.id}:${interview?.id ?? "none"}:${story ?? "general"}:${warmup ? "three" : "all"}`}
+					key={`${application?.id ?? "shared"}:${interview?.id ?? "none"}:${story ?? "general"}:${warmup ? "three" : "all"}`}
 					application={application}
-					applicationId={application.id}
+					applicationId={application?.id ?? null}
 					interviewId={interview?.id ?? null}
 					questions={questions}
 					storyId={selectedStory?.id}
@@ -172,9 +220,13 @@ export function PractiseTab({ application, version, interview, speak, story, war
 					</ul>
 				)}
 				<p className="text-xs leading-[17px] text-ink-3">
-					<Trans>
-						Compare attempts to see what improved. Practice questions are simulated, not from {application.company}.
-					</Trans>
+					{application ? (
+						<Trans>
+							Compare attempts to see what improved. Practice questions are simulated, not from {application.company}.
+						</Trans>
+					) : (
+						<Trans>Compare attempts to see what improved. Practice questions are simulated.</Trans>
+					)}
 				</p>
 			</aside>
 		</div>
@@ -229,8 +281,8 @@ type Step =
 	| { name: "error" };
 
 type SessionProps = {
-	application: WorkspaceTabProps["application"];
-	applicationId: string;
+	application: WorkspaceTabProps["application"] | null;
+	applicationId: string | null;
 	interviewId: string | null;
 	questions: Question[];
 	storyId: string | undefined;
@@ -684,7 +736,11 @@ function Session({
 							{generate.isPending ? <Working steps={workingSteps("practice")} /> : <Trans>Get feedback</Trans>}
 						</Button>
 						<p className="text-xs text-ink-2">
-							<Trans>Compared with your stories and the posting.</Trans>
+							{application ? (
+								<Trans>Compared with your stories and the posting.</Trans>
+							) : (
+								<Trans>Compared with your stories.</Trans>
+							)}
 						</p>
 					</div>
 					<GenerateNotice generate={generate} onRetry={getFeedback} className="w-fit" />

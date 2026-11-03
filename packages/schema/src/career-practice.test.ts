@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { interviewPreparationDue, threePracticeQuestions } from "./career-practice";
+import { canUseCareerStory, interviewPreparationDue, threePracticeQuestions } from "./career-practice";
 
 it("offers immediate preparation only from the start of the 24-hour window through interview start", () => {
 	const now = new Date("2026-11-03T10:00:00Z");
@@ -28,4 +28,17 @@ it("keeps actual question origins and fills exactly three distinct questions wit
 		{ text: "Recalled question", origin: "recalled" },
 		{ text: "Fallback one", origin: "simulated" },
 	]);
+});
+
+it("allows only backed, unchanged stories and facts visible in the selected scope", () => {
+	const at = new Date("2026-11-01");
+	const fact = { id: "fact", applicationId: null, status: "active", updatedAt: at, revisions: [] };
+	const story = { applicationId: null, updatedAt: at, data: { factIds: [fact.id] } };
+	expect(canUseCareerStory(story, [fact], null)).toBe(true);
+	expect(canUseCareerStory({ ...story, data: { factIds: [] } }, [fact], null)).toBe(false);
+	expect(canUseCareerStory(story, [{ ...fact, status: "excluded" }], null)).toBe(false);
+	expect(canUseCareerStory(story, [{ ...fact, applicationId: "private" }], null)).toBe(false);
+	expect(canUseCareerStory(story, [{ ...fact, applicationId: "private" }], "private")).toBe(true);
+	expect(canUseCareerStory({ ...story, applicationId: "private" }, [fact], null)).toBe(false);
+	expect(canUseCareerStory(story, [{ ...fact, revisions: [{}], updatedAt: new Date("2026-11-02") }], null)).toBe(false);
 });
