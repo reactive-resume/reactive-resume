@@ -130,7 +130,14 @@ export const offerTermsSchema = z
 		base: z.number().nonnegative().nullable(),
 		variable: z.number().nonnegative().nullable(),
 		/** Percentage of base, in the base currency and pay period. Older amount records omit this. */
-		variablePercent: z.number().nonnegative().nullable().optional(),
+		variablePercent: z
+			.number()
+			.nonnegative()
+			.nullable()
+			.optional()
+			.describe(
+				"Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null.",
+			),
 		/** What the bonus depends on, or "" when unconditional or unknown. */
 		variableConditions: z.string().max(1000).default(""),
 		equity: z.string().max(1000).default(""),

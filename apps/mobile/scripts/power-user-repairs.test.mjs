@@ -326,6 +326,36 @@ assert.deepEqual(calls.find((call) => call?.offerParams)?.offerParams, {
 	highlight: "retained",
 });
 assert.equal(selection.useSavedOffer.getState().accounts[selectionScope], undefined);
+for (const [otherTerms, note] of [
+	[{ ...retainedTerms, variablePercent: 5 }, "€5,000 more"],
+	[{ ...retainedTerms, variable: 15000 }, "€5,000 less"],
+	[{ ...retainedTerms, currency: "USD", variablePercent: 5 }, null],
+	[{ ...retainedTerms, period: "month", variablePercent: 5 }, null],
+	[{ ...retainedTerms, base: null, variablePercent: 5 }, null],
+]) {
+	reset();
+	saved.data = [
+		{ ...saved.data[0], id: "percentage", data: { ...retainedTerms, variablePercent: 10 } },
+		{ ...saved.data[0], id: "comparison", applicationId: "other-job", data: otherTerms },
+	];
+	const compared = expand(render(OffersScreen));
+	const values = nodes(compared)
+		.filter((node) => node.type === "Text")
+		.flatMap((node) => node.props.children);
+	const bonus = values.find((value) => typeof value === "string" && value.startsWith("10% of base"));
+	assert.ok(bonus?.includes("€10,000"), "percentage stays visible alongside its amount");
+	if (note) assert.ok(bonus.includes(note), "native percentage bonus retains its money-difference note");
+	else assert.ok(!/more|less/.test(bonus), "incomparable or unknown bonus has no difference note");
+}
+reset();
+saved.data[0].data = { ...retainedTerms, base: null, variablePercent: 10 };
+const unknownBase = nodes(expand(render(OffersScreen)))
+	.filter((node) => node.type === "Text")
+	.flatMap((node) => node.props.children);
+assert.ok(
+	unknownBase.some((value) => value === "10% of base"),
+	"unknown base preserves the entered bonus rate",
+);
 saved.data = [];
 
 console.log("PASS native Offers loading/error/retry/persisted row and genuine-empty controls");

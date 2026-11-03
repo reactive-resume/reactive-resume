@@ -240,7 +240,8 @@ function OfferCard({ offer, highlight, other, profile, onEdit, onDelete }: Offer
 				: null;
 	const money = (key: "base" | "variable" | "learning") => {
 		const amount = key === "variable" ? bonusAmount(data) : data[key];
-		if (amount === null) return unknown;
+		if (amount === null)
+			return key === "variable" && data.variablePercent != null ? formatBonus(time.locale, data) : unknown;
 		const difference = other ? moneyDifference(data, other.data, key) : null;
 		const delta =
 			difference === null
@@ -255,7 +256,13 @@ function OfferCard({ offer, highlight, other, profile, onEdit, onDelete }: Offer
 					: difference > 0
 						? t`${formatMoney(time.locale, data.currency, difference)} more`
 						: t`${formatMoney(time.locale, data.currency, -difference)} less`;
-		return [formatMoney(time.locale, data.currency, amount), periodLabel(data.period), note]
+		return [
+			key === "variable" && data.variablePercent != null
+				? formatBonus(time.locale, data)
+				: formatMoney(time.locale, data.currency, amount),
+			periodLabel(data.period),
+			note,
+		]
 			.filter(Boolean)
 			.join(" · ");
 	};
@@ -271,11 +278,9 @@ function OfferCard({ offer, highlight, other, profile, onEdit, onDelete }: Offer
 			label: t`Bonus`,
 			// Old free-text conditions stay as written; only explicit percentage fields are calculated.
 			value:
-				data.variablePercent != null
-					? formatBonus(time.locale, data)
-					: data.variable === null && data.variableConditions
-						? t`${data.variableConditions} · No amount stated · value uncertain`
-						: money("variable"),
+				data.variablePercent == null && data.variable === null && data.variableConditions
+					? t`${data.variableConditions} · No amount stated · value uncertain`
+					: money("variable"),
 		},
 		{ label: t`Bonus conditions`, value: data.variableConditions || unknown },
 		{ label: t`Equity`, value: data.equity ? t`${data.equity} · Value uncertain` : unknown },
