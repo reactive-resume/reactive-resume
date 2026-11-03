@@ -3134,6 +3134,14 @@ msgstr "រ៉េឌីយ៉ូសគែម"
 msgid "Border width"
 msgstr "ទទឹងគែម"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "គណនីទាំងពីរមានប្រវត្តិរូបដាក់ពាក្យឯកជន។ មុនភ្ជាប់ សូមនាំចេញនិងលុបមួយនៅការកំណត់ → គណនី ដើម្បីកុំឱ្យសរសេរជាន់។"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "គណនីទាំងពីរមានចម្លើយដាក់ពាក្យដែលរក្សាទុកស្ទួនគ្នា។ មុនភ្ជាប់ សូមនាំចេញនិងលុបច្បាប់ចម្លងមួយ ដើម្បីកុំឱ្យសរសេរជាន់។"
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "បំបែកប្រវត្តិរូបសង្ខេបជាផ្នែកធម្មតា ដើម្បីឱ្យវាអាចត្រូវបានបែងចែក។"
@@ -4935,7 +4943,6 @@ msgstr "មិនអាចប្តូរឈ្មោះកូនសោកំណ
 msgid "Couldn't rename this conversation. Try again."
 msgstr "មិនអាចប្តូរឈ្មោះការសន្ទនានេះបានទេ។ ព្យាយាមម្តងទៀត។"
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "មិនអាចកំណត់ពាក្យសម្ងាត់របស់អ្នកឡើងវិញបានទេ។ ព្យាយាមម្តងទៀត។"
@@ -5089,7 +5096,6 @@ msgstr "មិនអាចកំណត់ពេលសម្ភាសន៍បា
 msgid "Couldn't send the email. Try again."
 msgstr "មិនអាចផ្ញើអ៊ីមែលបានទេ។ ព្យាយាមម្តងទៀត។"
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "មិនអាចផ្ញើអ៊ីមែលកំណត់ពាក្យសម្ងាត់ឡើងវិញបានទេ។ ព្យាយាមម្តងទៀត។"
@@ -5122,8 +5128,6 @@ msgstr "មិនអាចបង្ហាញការមើល PDF ជាមុ�
 msgid "Couldn't show the preview."
 msgstr "មិនអាចបង្ហាញការមើលជាមុនបានទេ។"
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5268,12 +5272,10 @@ msgstr "មិនអាចអាប់ឡូដរូបថតបានទេ។
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "មិនអាចផ្ទៀងផ្ទាត់កូដបានទេ។ បញ្ចូលកូដបច្ចុប្បន្នពីកម្មវិធីផ្ទៀងផ្ទាត់អត្តសញ្ញាណរបស់អ្នក។"
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "មិនអាចផ្ទៀងផ្ទាត់កូដបម្រុងទុករបស់អ្នកបានទេ។ ពិនិត្យកូដ ហើយព្យាយាមម្តងទៀត។"
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "មិនអាចផ្ទៀងផ្ទាត់កូដរបស់អ្នកបានទេ។ ពិនិត្យកូដ ហើយព្យាយាមម្តងទៀត។"
@@ -7632,6 +7634,10 @@ msgstr "ពាក្យស្វាគមន៍"
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
 msgstr "ក្រឡារៀបចំ"
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "ចំណូលចិត្តអាជីពរបស់ភ្ញៀវនិងគណនីខុសគ្នា។ ការងារភ្ញៀវរបស់អ្នកនៅដដែល។ សូមផ្គូផ្គងចំណូលចិត្តអាជីពនិងការកំណត់ការចងចាំចំណេះដឹងក្នុងគណនីទាំងពីរ រួចសាកល្បងម្ដងទៀត។"
 
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
@@ -10766,6 +10772,10 @@ msgstr "មិនបានរក្សាទុកទេ។"
 msgid "Not saved — this fact was forgotten before."
 msgstr "មិនបានរក្សាទុក — ការពិតនេះត្រូវបានបំភ្លេចពីមុនរួចហើយ។"
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "មិនបានរក្សាទុក · ចូលដើម្បីរក្សាទុក"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -13517,6 +13527,10 @@ msgstr "ប្រវត្តិរូបសង្ខេបតែងតែបង
 msgid "Resumes created"
 msgstr "ប្រវត្តិរូបសង្ខេបត្រូវបានបង្កើតឡើង"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "សូមបញ្ឈប់ជួរឈរពាក្យសុំដែលមិនប្រើមុនបញ្ចូលគណនី ព្រោះសរុបលើស 40 ជួរឈរសកម្ម។"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14458,6 +14472,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "ផ្ញើតំណថ្មី"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15000,6 +15018,10 @@ msgstr "របារចំហៀងត្រូវបានអានជាញឹ
 msgid "Sign in"
 msgstr "ចូល"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "ចូលម្ដងទៀត"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "ចូលគណនីពីកម្មវិធី AI របស់អ្នក ឬប្រើសោ API។"
@@ -15018,6 +15040,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "ចូលដើម្បីរក្សាទុក"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16078,6 +16104,10 @@ msgstr "អរគុណ Sam។ នេះជាឧទាហរណ៍មួយ៖ 
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "កូដមិនត្រូវគ្នា។ សូមពិនិត្យហើយសាកល្បងម្ដងទៀត។"
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16085,6 +16115,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "អ៊ីមែល ឈ្មោះអ្នកប្រើ ឬពាក្យសម្ងាត់មិនត្រូវគ្នា។ សូមពិនិត្យ ឬកំណត់ពាក្យសម្ងាត់ឡើងវិញ។"
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16911,6 +16945,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "តំណកំណត់ឡើងវិញនេះផុតកំណត់ ឬបានប្រើរួចហើយ។"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "តំណកំណត់ឡើងវិញនេះផុតកំណត់ ឬបានប្រើរួចហើយ។ ផ្ញើតំណថ្មី."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "ប្រវត្តិរូបសង្ខេបនេះត្រូវបានចាក់សោ។ ដោះសោវាពីម៉ឺនុយរបស់វា ដើម្បីកែសម្រួល។"
@@ -16999,6 +17041,10 @@ msgstr "ម៉ាស៊ីនមេនេះប្រើដំណាក់កា
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "ការព្យាយាមចូលនេះបានផុតកំណត់ ឬត្រូវបានប្រើរួចហើយ។ ព្យាយាមម្តងទៀត។"
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "ជំហានចូលនេះផុតកំណត់។ សូមចូលម្ដងទៀត។"
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17146,6 +17192,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "ស្រាលពេកសម្រាប់ក្បាលពណ៌ស។ វាអាចពិបាកអាន និងបោះពុម្ពតិចៗ។"
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "ព្យាយាមច្រើនពេក។ សូមរង់ចាំបន្តិចហើយសាកល្បងម្ដងទៀត។"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19225,6 +19275,10 @@ msgstr "ម៉ាស៊ីនមេរបស់អ្នកផ្តល់នូ
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "វគ្គរបស់អ្នកបានបញ្ចប់។ សូមចូលម្ដងទៀតដើម្បីបន្តការងារ។"
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19327,63 +19381,3 @@ msgstr "បង្រួម"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "គណនីទាំងពីរមានប្រវត្តិរូបដាក់ពាក្យឯកជន។ មុនភ្ជាប់ សូមនាំចេញនិងលុបមួយនៅការកំណត់ → គណនី ដើម្បីកុំឱ្យសរសេរជាន់។"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "គណនីទាំងពីរមានចម្លើយដាក់ពាក្យដែលរក្សាទុកស្ទួនគ្នា។ មុនភ្ជាប់ សូមនាំចេញនិងលុបច្បាប់ចម្លងមួយ ដើម្បីកុំឱ្យសរសេរជាន់។"
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "ចំណូលចិត្តអាជីពរបស់ភ្ញៀវនិងគណនីខុសគ្នា។ ការងារភ្ញៀវរបស់អ្នកនៅដដែល។ សូមផ្គូផ្គងចំណូលចិត្តអាជីពនិងការកំណត់ការចងចាំចំណេះដឹងក្នុងគណនីទាំងពីរ រួចសាកល្បងម្ដងទៀត។"
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "សូមបញ្ឈប់ជួរឈរពាក្យសុំដែលមិនប្រើមុនបញ្ចូលគណនី ព្រោះសរុបលើស 40 ជួរឈរសកម្ម។"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "ផ្ញើតំណថ្មី"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "ចូលម្ដងទៀត"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "ចូលដើម្បីរក្សាទុក"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "កូដមិនត្រូវគ្នា។ សូមពិនិត្យហើយសាកល្បងម្ដងទៀត។"
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "អ៊ីមែល ឈ្មោះអ្នកប្រើ ឬពាក្យសម្ងាត់មិនត្រូវគ្នា។ សូមពិនិត្យ ឬកំណត់ពាក្យសម្ងាត់ឡើងវិញ។"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "តំណកំណត់ឡើងវិញនេះផុតកំណត់ ឬបានប្រើរួចហើយ។"
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "ជំហានចូលនេះផុតកំណត់។ សូមចូលម្ដងទៀត។"
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "ព្យាយាមច្រើនពេក។ សូមរង់ចាំបន្តិចហើយសាកល្បងម្ដងទៀត។"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "វគ្គរបស់អ្នកបានបញ្ចប់។ សូមចូលម្ដងទៀតដើម្បីបន្តការងារ។"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "មិនបានរក្សាទុក · ចូលដើម្បីរក្សាទុក"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "តំណកំណត់ឡើងវិញនេះផុតកំណត់ ឬបានប្រើរួចហើយ។ ផ្ញើតំណថ្មី."

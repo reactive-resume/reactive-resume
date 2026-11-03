@@ -3134,6 +3134,14 @@ msgstr "شعاع حاشیه"
 msgid "Border width"
 msgstr "عرض حاشیه"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "هر دو حساب نمایهٔ خصوصی درخواست شغل دارند. پیش از پیوند، یک نمایه را در تنظیمات → حساب برون‌بری و حذف کنید تا هیچ‌کدام بازنویسی نشود."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "هر دو حساب پاسخ‌های ذخیره‌شدهٔ تکراری دارند. پیش از پیوند، یک نسخه را برون‌بری و حذف کنید تا هیچ‌کدام بازنویسی نشود."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "رزومه را به بخش‌های معمول تقسیم کنید تا قابل بخش‌بندی باشد."
@@ -4935,7 +4943,6 @@ msgstr "تغییر نام کلید عبور ممکن نشد. دوباره امت
 msgid "Couldn't rename this conversation. Try again."
 msgstr "تغییر نام این گفتگو ممکن نشد. دوباره امتحان کنید."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "بازنشانی گذرواژهٔ شما ممکن نشد. دوباره امتحان کنید."
@@ -5089,7 +5096,6 @@ msgstr "زمان‌بندی مصاحبه ممکن نشد. دوباره امتح�
 msgid "Couldn't send the email. Try again."
 msgstr "ایمیل ارسال نشد. دوباره امتحان کنید."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "ارسال ایمیل بازنشانی گذرواژه ممکن نشد. دوباره امتحان کنید."
@@ -5122,8 +5128,6 @@ msgstr "پیش‌نمایش PDF نمایش داده نشد. فایل را دوب
 msgid "Couldn't show the preview."
 msgstr "نمایش پیش‌نمایش ممکن نشد."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5268,12 +5272,10 @@ msgstr "بارگذاری عکس ممکن نشد. دوباره امتحان کن�
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "تأیید کد ممکن نشد. کد فعلی را از اپلیکیشن احراز هویت خود وارد کنید."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "تأیید کد پشتیبان شما ممکن نشد. کد را بررسی کنید و دوباره امتحان کنید."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "تأیید کد شما ممکن نشد. کد را بررسی کنید و دوباره امتحان کنید."
@@ -7632,6 +7634,10 @@ msgstr "خطاب"
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
 msgstr "جدول"
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "ترجیحات شغلی مهمان و حساب متفاوت است. کار مهمان شما محفوظ است. پیش از تلاش دوباره، ترجیحات شغلی و تنظیمات حافظهٔ دانش هر دو حساب را یکسان کنید."
 
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
@@ -10766,6 +10772,10 @@ msgstr "ذخیره نشده است"
 msgid "Not saved — this fact was forgotten before."
 msgstr "ذخیره نشد — این واقعیت پیش‌تر فراموش شده بود."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "ذخیره نشد · برای ذخیره وارد شوید"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -13517,6 +13527,10 @@ msgstr "رزومه ها همیشه روی کاغذ سفید ارائه می شو
 msgid "Resumes created"
 msgstr "رزومه ایجاد شد"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "پیش از ترکیب حساب‌ها ستون‌های درخواستِ بی‌استفاده را بازنشسته کنید؛ مجموع از ۴۰ ستون فعال بیشتر است."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14458,6 +14472,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "ارسال پیوند جدید"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15000,6 +15018,10 @@ msgstr "نوارهای کناری اغلب آخرین خوانده می شوند
 msgid "Sign in"
 msgstr "ورود"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "ورود دوباره"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "از برنامهٔ هوش مصنوعی خود وارد شوید یا از یک کلید API استفاده کنید."
@@ -15018,6 +15040,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "برای ذخیره وارد شوید"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16078,6 +16104,10 @@ msgstr "ممنون، Sam. یک نمونه: در Northwind Labs بازطراحی 
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "این کد مطابقت ندارد. آن را بررسی و دوباره تلاش کنید."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16085,6 +16115,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "ایمیل، نام کاربری یا گذرواژه مطابقت ندارد. آن‌ها را بررسی یا گذرواژه را بازنشانی کنید."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16911,6 +16945,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "این پیوند بازنشانی منقضی شده یا قبلاً استفاده شده است."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "این پیوند بازنشانی منقضی شده یا قبلاً استفاده شده است. ارسال پیوند جدید."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "این رزومه قفل است. برای ویرایش، قفل آن را از منوی آن باز کنید."
@@ -16999,6 +17041,10 @@ msgstr "این سرور از مرحله‌های استاندارد استفاد
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "این تلاش برای ورود منقضی شده یا قبلاً استفاده شده است. دوباره امتحان کنید."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "این مرحلهٔ ورود منقضی شده است. دوباره وارد شوید."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17146,6 +17192,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "برای سرفصل های روی سفید خیلی سبک است. ممکن است خواندن و چاپ کم رنگ آن سخت باشد."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "تلاش‌های بیش از حد. کمی صبر کنید و دوباره تلاش کنید."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19225,6 +19275,10 @@ msgstr "سرور شما جستجوی وب را در بخش درخواست‌ها
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "نشست شما پایان یافت. برای ادامهٔ کار دوباره وارد شوید."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19327,63 +19381,3 @@ msgstr "کوچک‌نمایی"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "زولو"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "هر دو حساب نمایهٔ خصوصی درخواست شغل دارند. پیش از پیوند، یک نمایه را در تنظیمات → حساب برون‌بری و حذف کنید تا هیچ‌کدام بازنویسی نشود."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "هر دو حساب پاسخ‌های ذخیره‌شدهٔ تکراری دارند. پیش از پیوند، یک نسخه را برون‌بری و حذف کنید تا هیچ‌کدام بازنویسی نشود."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "ترجیحات شغلی مهمان و حساب متفاوت است. کار مهمان شما محفوظ است. پیش از تلاش دوباره، ترجیحات شغلی و تنظیمات حافظهٔ دانش هر دو حساب را یکسان کنید."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "پیش از ترکیب حساب‌ها ستون‌های درخواستِ بی‌استفاده را بازنشسته کنید؛ مجموع از ۴۰ ستون فعال بیشتر است."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "ارسال پیوند جدید"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "ورود دوباره"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "برای ذخیره وارد شوید"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "این کد مطابقت ندارد. آن را بررسی و دوباره تلاش کنید."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "ایمیل، نام کاربری یا گذرواژه مطابقت ندارد. آن‌ها را بررسی یا گذرواژه را بازنشانی کنید."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "این پیوند بازنشانی منقضی شده یا قبلاً استفاده شده است."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "این مرحلهٔ ورود منقضی شده است. دوباره وارد شوید."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "تلاش‌های بیش از حد. کمی صبر کنید و دوباره تلاش کنید."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "نشست شما پایان یافت. برای ادامهٔ کار دوباره وارد شوید."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "ذخیره نشد · برای ذخیره وارد شوید"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "این پیوند بازنشانی منقضی شده یا قبلاً استفاده شده است. ارسال پیوند جدید."

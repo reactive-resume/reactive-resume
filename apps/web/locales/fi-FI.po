@@ -3134,6 +3134,14 @@ msgstr "Reunapyöristys"
 msgid "Border width"
 msgstr "Reunan leveys"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Molemmilla tileillä on yksityinen hakemusprofiili. Vie ja poista toinen profiili kohdassa Asetukset → Tili ennen yhdistämistä, jotta mitään ei korvata."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Molemmilla tileillä on samoja tallennettuja hakemusvastauksia. Vie ja poista toinen kopio ennen yhdistämistä, jotta mitään ei korvata."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "Jaa ansioluettelo tavanomaisiin osioihin, jotta se voidaan segmentoida."
@@ -4935,7 +4943,6 @@ msgstr "Passkeyta ei voitu nimetä uudelleen. Yritä uudelleen."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Tätä keskustelua ei voitu nimetä uudelleen. Yritä uudelleen."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Salasanaasi ei voitu palauttaa. Yritä uudelleen."
@@ -5089,7 +5096,6 @@ msgstr "Haastattelua ei voitu ajoittaa. Yritä uudelleen."
 msgid "Couldn't send the email. Try again."
 msgstr "Sähköpostia ei voitu lähettää. Yritä uudelleen."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Salasanan palautusviestiä ei voitu lähettää. Yritä uudelleen."
@@ -5122,8 +5128,6 @@ msgstr "PDF-esikatselua ei voitu näyttää. Lataa tiedosto uudelleen."
 msgid "Couldn't show the preview."
 msgstr "Esikatselua ei voitu näyttää."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5268,12 +5272,10 @@ msgstr "Kuvaa ei voitu ladata. Yritä uudelleen."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Koodia ei voitu vahvistaa. Syötä todennussovelluksesi nykyinen koodi."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Varmuuskoodiasi ei voitu vahvistaa. Tarkista koodi ja yritä uudelleen."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Koodiasi ei voitu vahvistaa. Tarkista koodi ja yritä uudelleen."
@@ -7632,6 +7634,10 @@ msgstr "Tervehdys"
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
 msgstr "Ruudukko"
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Vieraan ja tilin uratoiveet eroavat. Vierastyösi säilyy. Yhtenäistä molempien tilien uratoiveet ja Tiedot-osion muistiasetukset ja yritä uudelleen."
 
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
@@ -10766,6 +10772,10 @@ msgstr "Ei tallennettu"
 msgid "Not saved — this fact was forgotten before."
 msgstr "Ei tallennettu — tämä fakta on unohdettu aiemmin."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Ei tallennettu · Kirjaudu tallentaaksesi"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -13517,6 +13527,10 @@ msgstr "Ansioluettelot tehdään aina valkoiselle paperille teemasta riippumatta
 msgid "Resumes created"
 msgstr "ansioluettelot luotu"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Poista käyttämättömät hakemussarakkeet käytöstä ennen tilien yhdistämistä; yhteensä niitä on yli 40 aktiivista."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14458,6 +14472,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Lähetä uusi linkki"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15000,6 +15018,10 @@ msgstr "Sivupalkit luetaan usein viimeisenä tai sekoitetaan pääsarakkeeseen."
 msgid "Sign in"
 msgstr "Kirjaudu sisään"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Kirjaudu uudelleen"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Kirjaudu sisään tekoälyasiakasohjelmastasi tai käytä API-avainta."
@@ -15018,6 +15040,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Kirjaudu tallentaaksesi"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16078,6 +16104,10 @@ msgstr "Kiitos, Sam. Tässä yksi: Northwind Labsissa johdin aloitusprosessin uu
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Koodi ei täsmää. Tarkista se ja yritä uudelleen."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16085,6 +16115,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "Sähköposti, käyttäjänimi tai salasana ei täsmää. Tarkista tiedot tai vaihda salasana."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16911,6 +16945,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Tämä salasanan palautuslinkki on vanhentunut tai jo käytetty."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Tämä salasanan palautuslinkki on vanhentunut tai jo käytetty. Lähetä uusi linkki."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Tämä ansioluettelo on lukittu. Avaa lukitus sen valikosta muokataksesi."
@@ -16999,6 +17041,10 @@ msgstr "Tämä palvelin käyttää vakiovaiheita, joten tiedoston vaiheiden nimi
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Tämä kirjautumisyritys vanheni tai on jo käytetty. Yritä uudelleen."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Tämä kirjautumisvaihe on vanhentunut. Kirjaudu uudelleen."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17146,6 +17192,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Liian vaalea valkoisille otsikoille. Sitä voi olla vaikea lukea ja tulostaa heikosti."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Liian monta yritystä. Odota hetki ja yritä uudelleen."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19225,6 +19275,10 @@ msgstr "Palvelimesi tarjoaa verkkohaun Hakemukset-osiossa ja avustajalle. Yhdist
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Istuntosi päättyi. Kirjaudu uudelleen jatkaaksesi työskentelyä."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19327,63 +19381,3 @@ msgstr "Loitonna"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Molemmilla tileillä on yksityinen hakemusprofiili. Vie ja poista toinen profiili kohdassa Asetukset → Tili ennen yhdistämistä, jotta mitään ei korvata."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Molemmilla tileillä on samoja tallennettuja hakemusvastauksia. Vie ja poista toinen kopio ennen yhdistämistä, jotta mitään ei korvata."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Vieraan ja tilin uratoiveet eroavat. Vierastyösi säilyy. Yhtenäistä molempien tilien uratoiveet ja Tiedot-osion muistiasetukset ja yritä uudelleen."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Poista käyttämättömät hakemussarakkeet käytöstä ennen tilien yhdistämistä; yhteensä niitä on yli 40 aktiivista."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Lähetä uusi linkki"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Kirjaudu uudelleen"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Kirjaudu tallentaaksesi"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Koodi ei täsmää. Tarkista se ja yritä uudelleen."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "Sähköposti, käyttäjänimi tai salasana ei täsmää. Tarkista tiedot tai vaihda salasana."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Tämä salasanan palautuslinkki on vanhentunut tai jo käytetty."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Tämä kirjautumisvaihe on vanhentunut. Kirjaudu uudelleen."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Liian monta yritystä. Odota hetki ja yritä uudelleen."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Istuntosi päättyi. Kirjaudu uudelleen jatkaaksesi työskentelyä."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Ei tallennettu · Kirjaudu tallentaaksesi"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Tämä salasanan palautuslinkki on vanhentunut tai jo käytetty. Lähetä uusi linkki."

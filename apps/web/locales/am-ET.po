@@ -3134,6 +3134,14 @@ msgstr "የክልል እርዝመት"
 msgid "Border width"
 msgstr "የክልል ወፍራምነት"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "ሁለቱም መለያዎች የግል ማመልከቻ መገለጫ አላቸው። እንዳይተካ ከማገናኘትዎ በፊት አንዱን በቅንብሮች → መለያ ወደ ፋይል ያውጡና ይሰርዙ።"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "ሁለቱም መለያዎች ተደጋጋሚ የተቀመጡ የማመልከቻ መልሶች አላቸው። እንዳይተኩ ከማገናኘትዎ በፊት አንድ ቅጂ ወደ ፋይል ያውጡና ይሰርዙ።"
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "ለመከፋፈል እንዲያመች የስራ ልምድ ማስረጃውን ወደ መደበኛ ክፍሎች ይከፋፍሉት።"
@@ -4935,7 +4943,6 @@ msgstr "የይለፍ ቁልፉን እንደገና መሰየም አልተቻለ�
 msgid "Couldn't rename this conversation. Try again."
 msgstr "ይህን ውይይት እንደገና መሰየም አልተቻለም። እንደገና ይሞክሩ።"
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "የይለፍ ቃልዎን ዳግም ማስጀመር አልተቻለም። እንደገና ይሞክሩ።"
@@ -5089,7 +5096,6 @@ msgstr "ቃለ መጠይቁን መርሐግብር ማስያዝ አልተቻለ�
 msgid "Couldn't send the email. Try again."
 msgstr "ኢሜይሉን መላክ አልተቻለም። እንደገና ይሞክሩ።"
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "የይለፍ ቃል ዳግም ማስጀመሪያ ኢሜይሉን መላክ አልተቻለም። እንደገና ይሞክሩ።"
@@ -5122,8 +5128,6 @@ msgstr "የPDF ቅድመ እይታውን ማሳየት አልተቻለም። ፋ�
 msgid "Couldn't show the preview."
 msgstr "ቅድመ እይታውን ማሳየት አልተቻለም።"
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5268,12 +5272,10 @@ msgstr "ፎቶውን መስቀል አልተቻለም። እንደገና ይሞ�
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "ኮዱን ማረጋገጥ አልተቻለም። ከማረጋገጫ መተግበሪያዎ የአሁኑን ኮድ ያስገቡ።"
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "የመጠባበቂያ ኮድዎን ማረጋገጥ አልተቻለም። ኮዱን ይፈትሹ እና እንደገና ይሞክሩ።"
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "ኮድዎን ማረጋገጥ አልተቻለም። ኮዱን ይፈትሹ እና እንደገና ይሞክሩ።"
@@ -7632,6 +7634,10 @@ msgstr "ሰላምታ"
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
 msgstr "ግሪድ"
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "የእንግዳውና የመለያው የሙያ ምርጫዎች ይለያያሉ። የእንግዳ ሥራዎ ተጠብቋል። እንደገና ከመሞከርዎ በፊት በሁለቱም መለያዎች የሙያ ምርጫዎችንና የእውቀት ማስታወሻ ቅንብሮችን ያመሳስሉ።"
 
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
@@ -10766,6 +10772,10 @@ msgstr "አልተቀመጠም።"
 msgid "Not saved — this fact was forgotten before."
 msgstr "አልተቀመጠም — ይህ እውነታ ከዚህ በፊት ተረስቷል።"
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "አልተቀመጠም · ለማስቀመጥ ይግቡ"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -13517,6 +13527,10 @@ msgstr "ርእሶች ሁልጊዜ በነጭ ወረቀት ይሰጣሉ፣ ጭብ�
 msgid "Resumes created"
 msgstr "የትምህርት ማስረጃዎች ተፈጥረዋል።"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "መለያዎቹን ከማዋሃድዎ በፊት የማይጠቀሙባቸውን የማመልከቻ ዓምዶች ያቁሙ፤ ድምሩ ከ40 ንቁ ዓምዶች ይበልጣል።"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14458,6 +14472,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "አዲስ አገናኝ ላክ"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15000,6 +15018,10 @@ msgstr "የጎን አሞሌዎች ብዙውን ጊዜ በመጨረሻ ይነበ�
 msgid "Sign in"
 msgstr "ግባ"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "እንደገና ግባ"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "ከAI ደንበኛ መተግበሪያዎ ይግቡ፣ ወይም የAPI ቁልፍ ይጠቀሙ።"
@@ -15018,6 +15040,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "ለማስቀመጥ ይግቡ"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16078,6 +16104,10 @@ msgstr "አመሰግናለሁ Sam። አንድ ምሳሌ ይኸውና፦ በNort
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "ያ ኮድ አይዛመድም። ያረጋግጡና እንደገና ይሞክሩ።"
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16085,6 +16115,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "ኢሜይሉ፣ የተጠቃሚ ስሙ ወይም የይለፍ ቃሉ አይዛመድም። ያረጋግጡ ወይም የይለፍ ቃልዎን ዳግም ያስጀምሩ።"
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16911,6 +16945,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "ይህ የዳግም ማስጀመሪያ አገናኝ አብቅቷል ወይም አስቀድሞ ጥቅም ላይ ውሏል።"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "ይህ የዳግም ማስጀመሪያ አገናኝ አብቅቷል ወይም አስቀድሞ ጥቅም ላይ ውሏል። አዲስ አገናኝ ላክ."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "ይህ የስራ ልምድ ማስረጃ ተቆልፏል። ለማርትዕ ከምናሌው ይክፈቱት።"
@@ -16999,6 +17041,10 @@ msgstr "ይህ አገልጋይ መደበኛ ደረጃዎችን ይጠቀማል�
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "ይህ የመግቢያ ሙከራ ጊዜው አልፎበታል ወይም አስቀድሞ ጥቅም ላይ ውሏል። እንደገና ይሞክሩ።"
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "ይህ የመግቢያ ደረጃ አብቅቷል። እንደገና ይግቡ።"
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17146,6 +17192,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "በነጭ ላይ ላሉ ርእሶች በጣም ቀላል። በቀላሉ ለማንበብ እና ለማተም ከባድ ሊሆን ይችላል።"
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "በጣም ብዙ ሙከራዎች። ትንሽ ይጠብቁና እንደገና ይሞክሩ።"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19225,6 +19275,10 @@ msgstr "አገልጋይዎ በማመልከቻዎች ክፍል እና በረዳ�
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "ክፍለ ጊዜዎ ተጠናቋል። ሥራዎን ለመቀጠል እንደገና ይግቡ።"
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19327,63 +19381,3 @@ msgstr "አጉር"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ዙሉ"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "ሁለቱም መለያዎች የግል ማመልከቻ መገለጫ አላቸው። እንዳይተካ ከማገናኘትዎ በፊት አንዱን በቅንብሮች → መለያ ወደ ፋይል ያውጡና ይሰርዙ።"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "ሁለቱም መለያዎች ተደጋጋሚ የተቀመጡ የማመልከቻ መልሶች አላቸው። እንዳይተኩ ከማገናኘትዎ በፊት አንድ ቅጂ ወደ ፋይል ያውጡና ይሰርዙ።"
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "የእንግዳውና የመለያው የሙያ ምርጫዎች ይለያያሉ። የእንግዳ ሥራዎ ተጠብቋል። እንደገና ከመሞከርዎ በፊት በሁለቱም መለያዎች የሙያ ምርጫዎችንና የእውቀት ማስታወሻ ቅንብሮችን ያመሳስሉ።"
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "መለያዎቹን ከማዋሃድዎ በፊት የማይጠቀሙባቸውን የማመልከቻ ዓምዶች ያቁሙ፤ ድምሩ ከ40 ንቁ ዓምዶች ይበልጣል።"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "አዲስ አገናኝ ላክ"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "እንደገና ግባ"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "ለማስቀመጥ ይግቡ"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "ያ ኮድ አይዛመድም። ያረጋግጡና እንደገና ይሞክሩ።"
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "ኢሜይሉ፣ የተጠቃሚ ስሙ ወይም የይለፍ ቃሉ አይዛመድም። ያረጋግጡ ወይም የይለፍ ቃልዎን ዳግም ያስጀምሩ።"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "ይህ የዳግም ማስጀመሪያ አገናኝ አብቅቷል ወይም አስቀድሞ ጥቅም ላይ ውሏል።"
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "ይህ የመግቢያ ደረጃ አብቅቷል። እንደገና ይግቡ።"
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "በጣም ብዙ ሙከራዎች። ትንሽ ይጠብቁና እንደገና ይሞክሩ።"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "ክፍለ ጊዜዎ ተጠናቋል። ሥራዎን ለመቀጠል እንደገና ይግቡ።"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "አልተቀመጠም · ለማስቀመጥ ይግቡ"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "ይህ የዳግም ማስጀመሪያ አገናኝ አብቅቷል ወይም አስቀድሞ ጥቅም ላይ ውሏል። አዲስ አገናኝ ላክ."

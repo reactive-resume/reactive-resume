@@ -3134,6 +3134,14 @@ msgstr "角丸"
 msgid "Border width"
 msgstr "枠線の幅"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "両方のアカウントに非公開の応募プロフィールがあります。上書きを防ぐため、連携前に設定 → アカウントで片方をエクスポートして削除してください。"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "両方のアカウントに重複する応募回答が保存されています。上書きを防ぐため、連携前に片方をエクスポートして削除してください。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "履歴書を一般的なセクションに分けて、区分けできるようにしてください。"
@@ -4935,7 +4943,6 @@ msgstr "パスキーの名前を変更できませんでした。もう一度お
 msgid "Couldn't rename this conversation. Try again."
 msgstr "この会話の名前を変更できませんでした。もう一度お試しください。"
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "パスワードをリセットできませんでした。もう一度お試しください。"
@@ -5089,7 +5096,6 @@ msgstr "面接の予定を立てることができませんでした。もう一
 msgid "Couldn't send the email. Try again."
 msgstr "メールを送信できませんでした。もう一度やり直してください。"
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "パスワードリセットメールを送信できませんでした。もう一度お試しください。"
@@ -5122,8 +5128,6 @@ msgstr "PDFのプレビューを表示できませんでした。ファイルを
 msgid "Couldn't show the preview."
 msgstr "プレビューを表示できませんでした。"
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5268,12 +5272,10 @@ msgstr "写真をアップロードできませんでした。もう一度お試
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "コードを確認できませんでした。認証アプリに表示されている現在のコードを入力してください。"
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "バックアップコードを確認できませんでした。コードを確認して、もう一度お試しください。"
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "コードを確認できませんでした。コードを確認して、もう一度お試しください。"
@@ -7632,6 +7634,10 @@ msgstr "宛名の挨拶"
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
 msgstr "グリッド表示"
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "ゲストとアカウントのキャリア設定が異なります。ゲストの作業は保持されています。両方のキャリア設定とナレッジの記憶設定を揃えてから再試行してください。"
 
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
@@ -10766,6 +10772,10 @@ msgstr "保存されていません"
 msgid "Not saved — this fact was forgotten before."
 msgstr "保存されませんでした — この事実は以前に忘れさせています。"
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "未保存 · 保存するにはサインイン"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -13517,6 +13527,10 @@ msgstr "履歴書は、テーマが何であれ、常に白い紙にレンダリ
 msgid "Resumes created"
 msgstr "作成された履歴書"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "アカウントを統合する前に未使用の応募列を廃止してください。合計が有効な40列を超えます。"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14458,6 +14472,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "新しいリンクを送信"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15000,6 +15018,10 @@ msgstr "サイドバーは多くの場合、最後に読まれるか、メイン
 msgid "Sign in"
 msgstr "サインイン"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "再度サインイン"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "AIクライアントからログインするか、APIキーを使用してください。"
@@ -15018,6 +15040,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "保存するにはサインイン"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16078,6 +16104,10 @@ msgstr "ありがとうございます、Samさん。一例として、Northwind
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "コードが一致しません。確認して再試行してください。"
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16085,6 +16115,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "メール、ユーザー名、またはパスワードが一致しません。確認するか、パスワードをリセットしてください。"
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16911,6 +16945,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "このリセットリンクは期限切れか、すでに使用されています。"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "このリセットリンクは期限切れか、すでに使用されています。 新しいリンクを送信。"
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "このレジュメはロックされています。編集するには、メニューからロックを解除してください。"
@@ -16999,6 +17041,10 @@ msgstr "このサーバーは標準のステージを使うため、ファイル
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "このサインイン試行は期限切れか、すでに使用されています。もう一度お試しください。"
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "このサインイン手順の有効期限が切れました。再度サインインしてください。"
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17146,6 +17192,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "白の見出しには軽すぎます。薄く印刷すると読みにくい場合があります。"
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "試行回数が多すぎます。少し待ってから再試行してください。"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19225,6 +19275,10 @@ msgstr "サーバーは、応募 セクションおよびアシスタント用�
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "セッションが終了しました。作業を続けるには再度サインインしてください。"
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19327,63 +19381,3 @@ msgstr "ズームアウト"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ズールー語"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "両方のアカウントに非公開の応募プロフィールがあります。上書きを防ぐため、連携前に設定 → アカウントで片方をエクスポートして削除してください。"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "両方のアカウントに重複する応募回答が保存されています。上書きを防ぐため、連携前に片方をエクスポートして削除してください。"
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "ゲストとアカウントのキャリア設定が異なります。ゲストの作業は保持されています。両方のキャリア設定とナレッジの記憶設定を揃えてから再試行してください。"
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "アカウントを統合する前に未使用の応募列を廃止してください。合計が有効な40列を超えます。"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "新しいリンクを送信"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "再度サインイン"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "保存するにはサインイン"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "コードが一致しません。確認して再試行してください。"
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "メール、ユーザー名、またはパスワードが一致しません。確認するか、パスワードをリセットしてください。"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "このリセットリンクは期限切れか、すでに使用されています。"
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "このサインイン手順の有効期限が切れました。再度サインインしてください。"
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "試行回数が多すぎます。少し待ってから再試行してください。"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "セッションが終了しました。作業を続けるには再度サインインしてください。"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "未保存 · 保存するにはサインイン"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "このリセットリンクは期限切れか、すでに使用されています。 新しいリンクを送信。"

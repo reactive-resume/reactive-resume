@@ -3134,6 +3134,14 @@ msgstr "ബോർഡർ റേഡിയസ്"
 msgid "Border width"
 msgstr "ബോർഡർ വീതി"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "രണ്ട് അക്കൗണ്ടിലും സ്വകാര്യ അപേക്ഷാ പ്രൊഫൈലുണ്ട്. ഒന്നും മാറ്റിയെഴുതാതിരിക്കാൻ ബന്ധിപ്പിക്കും മുമ്പ് ക്രമീകരണങ്ങൾ → അക്കൗണ്ടിൽ നിന്ന് ഒരു പ്രൊഫൈൽ കയറ്റുമതി ചെയ്ത് ഇല്ലാതാക്കുക."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "രണ്ട് അക്കൗണ്ടിലും ഒരേ സംരക്ഷിച്ച അപേക്ഷാ മറുപടികളുണ്ട്. ഒന്നും മാറ്റിയെഴുതാതിരിക്കാൻ ബന്ധിപ്പിക്കും മുമ്പ് ഒരു പകർപ്പ് കയറ്റുമതി ചെയ്ത് ഇല്ലാതാക്കുക."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "വിഭജിക്കാൻ കഴിയുംവിധം റിസ്യൂമിനെ പതിവ് വിഭാഗങ്ങളായി തിരിക്കുക."
@@ -4935,7 +4943,6 @@ msgstr "പാസ്‌കീയുടെ പേര് മാറ്റാനാ�
 msgid "Couldn't rename this conversation. Try again."
 msgstr "ഈ സംഭാഷണത്തിന്റെ പേര് മാറ്റാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "നിങ്ങളുടെ പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
@@ -5089,7 +5096,6 @@ msgstr "അഭിമുഖം ഷെഡ്യൂൾ ചെയ്യാനായ�
 msgid "Couldn't send the email. Try again."
 msgstr "ഇമെയിൽ അയയ്ക്കാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "പാസ്‌വേഡ് റീസെറ്റ് ഇമെയിൽ അയയ്ക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
@@ -5122,8 +5128,6 @@ msgstr "PDF പ്രിവ്യൂ കാണിക്കാനായില്�
 msgid "Couldn't show the preview."
 msgstr "പ്രിവ്യൂ കാണിക്കാനായില്ല."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5268,12 +5272,10 @@ msgstr "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാനായ�
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "കോഡ് സ്ഥിരീകരിക്കാനായില്ല. നിങ്ങളുടെ ഓതന്റിക്കേറ്റർ ആപ്പിലെ നിലവിലെ കോഡ് നൽകുക."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "നിങ്ങളുടെ ബാക്കപ്പ് കോഡ് സ്ഥിരീകരിക്കാനായില്ല. കോഡ് പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "നിങ്ങളുടെ കോഡ് സ്ഥിരീകരിക്കാനായില്ല. കോഡ് പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
@@ -7632,6 +7634,10 @@ msgstr "അഭിസംബോധന"
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
 msgstr "ഗ്രിഡ്"
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "അതിഥിയുടെയും അക്കൗണ്ടിന്റെയും കരിയർ മുൻഗണനകൾ വ്യത്യസ്തമാണ്. അതിഥിയുടെ ജോലി സുരക്ഷിതമാണ്. വീണ്ടും ശ്രമിക്കും മുമ്പ് രണ്ട് അക്കൗണ്ടിലെയും കരിയർ മുൻഗണനകളും അറിവിന്റെ ഓർമ്മ ക്രമീകരണങ്ങളും ഒരുപോലെയാക്കുക."
 
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
@@ -10766,6 +10772,10 @@ msgstr "സംരക്ഷിച്ചിട്ടില്ല"
 msgid "Not saved — this fact was forgotten before."
 msgstr "സേവ് ചെയ്തില്ല — ഈ വസ്തുത മുമ്പ് മറന്നതാണ്."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "സംരക്ഷിച്ചില്ല · സംരക്ഷിക്കാൻ സൈൻ ഇൻ ചെയ്യുക"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -13517,6 +13527,10 @@ msgstr "തീം എന്തുതന്നെയായാലും റെസ�
 msgid "Resumes created"
 msgstr "റെസ്യൂമെകൾ സൃഷ്ടിച്ചു"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "അക്കൗണ്ടുകൾ കൂട്ടിച്ചേർക്കും മുമ്പ് ഉപയോഗിക്കാത്ത അപേക്ഷാ കോളങ്ങൾ നിർജ്ജീവമാക്കുക; ആകെ സജീവ കോളങ്ങൾ 40-ൽ കൂടുതലാണ്."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14458,6 +14472,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "പുതിയ ലിങ്ക് അയയ്ക്കുക"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15000,6 +15018,10 @@ msgstr "സൈഡ്‌ബാറുകൾ പലപ്പോഴും അവസ�
 msgid "Sign in"
 msgstr "സൈൻ ഇൻ"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "വീണ്ടും സൈൻ ഇൻ ചെയ്യുക"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "നിങ്ങളുടെ AI ക്ലയന്റിൽ നിന്ന് സൈൻ ഇൻ ചെയ്യുക, അല്ലെങ്കിൽ ഒരു API കീ ഉപയോഗിക്കുക."
@@ -15018,6 +15040,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "സംരക്ഷിക്കാൻ സൈൻ ഇൻ ചെയ്യുക"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16078,6 +16104,10 @@ msgstr "നന്ദി, Sam. ഒരു ഉദാഹരണം ഇതാ: Northwi
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "കോഡ് പൊരുത്തപ്പെടുന്നില്ല. പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16085,6 +16115,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "ഇമെയിൽ, ഉപയോക്തൃനാമം അല്ലെങ്കിൽ പാസ്‌വേഡ് പൊരുത്തപ്പെടുന്നില്ല. പരിശോധിക്കുക അല്ലെങ്കിൽ പാസ്‌വേഡ് പുനഃസജ്ജമാക്കുക."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16911,6 +16945,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "ഈ പുനഃസജ്ജീകരണ ലിങ്ക് കാലഹരണപ്പെട്ടു അല്ലെങ്കിൽ ഇതിനകം ഉപയോഗിച്ചു."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "ഈ പുനഃസജ്ജീകരണ ലിങ്ക് കാലഹരണപ്പെട്ടു അല്ലെങ്കിൽ ഇതിനകം ഉപയോഗിച്ചു. പുതിയ ലിങ്ക് അയയ്ക്കുക."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "ഈ റെസ്യൂമെ ലോക്ക് ചെയ്തിരിക്കുന്നു. എഡിറ്റ് ചെയ്യാൻ അതിന്റെ മെനുവിൽ നിന്ന് അൺലോക്ക് ചെയ്യുക."
@@ -16999,6 +17041,10 @@ msgstr "ഈ സർവർ സാധാരണ ഘട്ടങ്ങൾ ഉപയ�
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "ഈ സൈൻ-ഇൻ ശ്രമം കാലഹരണപ്പെട്ടു അല്ലെങ്കിൽ ഇതിനകം ഉപയോഗിച്ചു. വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "ഈ സൈൻ ഇൻ ഘട്ടം കാലഹരണപ്പെട്ടു. വീണ്ടും സൈൻ ഇൻ ചെയ്യുക."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17146,6 +17192,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "വെള്ള നിറത്തിലുള്ള തലക്കെട്ടുകൾക്ക് വളരെ ഭാരം കുറഞ്ഞതാണ്. വായിക്കാനും മങ്ങിയതായി പ്രിൻ്റ് ചെയ്യാനും ബുദ്ധിമുട്ടായിരിക്കാം."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "വളരെയധികം ശ്രമങ്ങൾ. അൽപ്പം കാത്തിരുന്ന് വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19225,6 +19275,10 @@ msgstr "നിങ്ങളുടെ സെർവർ അപേക്ഷകൾ വ
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "നിങ്ങളുടെ സെഷൻ അവസാനിച്ചു. ജോലി തുടരാൻ വീണ്ടും സൈൻ ഇൻ ചെയ്യുക."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19327,63 +19381,3 @@ msgstr "സൂം ഔട്ട് ചെയ്യുക"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "സൂളു"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "രണ്ട് അക്കൗണ്ടിലും സ്വകാര്യ അപേക്ഷാ പ്രൊഫൈലുണ്ട്. ഒന്നും മാറ്റിയെഴുതാതിരിക്കാൻ ബന്ധിപ്പിക്കും മുമ്പ് ക്രമീകരണങ്ങൾ → അക്കൗണ്ടിൽ നിന്ന് ഒരു പ്രൊഫൈൽ കയറ്റുമതി ചെയ്ത് ഇല്ലാതാക്കുക."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "രണ്ട് അക്കൗണ്ടിലും ഒരേ സംരക്ഷിച്ച അപേക്ഷാ മറുപടികളുണ്ട്. ഒന്നും മാറ്റിയെഴുതാതിരിക്കാൻ ബന്ധിപ്പിക്കും മുമ്പ് ഒരു പകർപ്പ് കയറ്റുമതി ചെയ്ത് ഇല്ലാതാക്കുക."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "അതിഥിയുടെയും അക്കൗണ്ടിന്റെയും കരിയർ മുൻഗണനകൾ വ്യത്യസ്തമാണ്. അതിഥിയുടെ ജോലി സുരക്ഷിതമാണ്. വീണ്ടും ശ്രമിക്കും മുമ്പ് രണ്ട് അക്കൗണ്ടിലെയും കരിയർ മുൻഗണനകളും അറിവിന്റെ ഓർമ്മ ക്രമീകരണങ്ങളും ഒരുപോലെയാക്കുക."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "അക്കൗണ്ടുകൾ കൂട്ടിച്ചേർക്കും മുമ്പ് ഉപയോഗിക്കാത്ത അപേക്ഷാ കോളങ്ങൾ നിർജ്ജീവമാക്കുക; ആകെ സജീവ കോളങ്ങൾ 40-ൽ കൂടുതലാണ്."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "പുതിയ ലിങ്ക് അയയ്ക്കുക"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "വീണ്ടും സൈൻ ഇൻ ചെയ്യുക"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "സംരക്ഷിക്കാൻ സൈൻ ഇൻ ചെയ്യുക"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "കോഡ് പൊരുത്തപ്പെടുന്നില്ല. പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "ഇമെയിൽ, ഉപയോക്തൃനാമം അല്ലെങ്കിൽ പാസ്‌വേഡ് പൊരുത്തപ്പെടുന്നില്ല. പരിശോധിക്കുക അല്ലെങ്കിൽ പാസ്‌വേഡ് പുനഃസജ്ജമാക്കുക."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "ഈ പുനഃസജ്ജീകരണ ലിങ്ക് കാലഹരണപ്പെട്ടു അല്ലെങ്കിൽ ഇതിനകം ഉപയോഗിച്ചു."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "ഈ സൈൻ ഇൻ ഘട്ടം കാലഹരണപ്പെട്ടു. വീണ്ടും സൈൻ ഇൻ ചെയ്യുക."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "വളരെയധികം ശ്രമങ്ങൾ. അൽപ്പം കാത്തിരുന്ന് വീണ്ടും ശ്രമിക്കുക."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "നിങ്ങളുടെ സെഷൻ അവസാനിച്ചു. ജോലി തുടരാൻ വീണ്ടും സൈൻ ഇൻ ചെയ്യുക."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "സംരക്ഷിച്ചില്ല · സംരക്ഷിക്കാൻ സൈൻ ഇൻ ചെയ്യുക"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "ഈ പുനഃസജ്ജീകരണ ലിങ്ക് കാലഹരണപ്പെട്ടു അല്ലെങ്കിൽ ഇതിനകം ഉപയോഗിച്ചു. പുതിയ ലിങ്ക് അയയ്ക്കുക."

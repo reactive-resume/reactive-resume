@@ -3134,6 +3134,14 @@ msgstr "सीमा त्रिज्या"
 msgid "Border width"
 msgstr "बॉर्डर चौड़ाई"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "दोनों खातों में निजी आवेदन प्रोफ़ाइल है। जोड़ने से पहले सेटिंग → खाता में एक प्रोफ़ाइल निर्यात करके हटाएँ, ताकि कोई अनजाने में बदली न जाए।"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "दोनों खातों में आवेदन के एक जैसे सहेजे गए उत्तर हैं। जोड़ने से पहले एक प्रति निर्यात करके हटाएँ, ताकि कोई अनजाने में बदली न जाए।"
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "बायोडाटा को सामान्य सेक्शन में बांटें ताकि इसे विभाजित किया जा सके।"
@@ -4935,7 +4943,6 @@ msgstr "पासकी का नाम नहीं बदला जा सक
 msgid "Couldn't rename this conversation. Try again."
 msgstr "इस बातचीत का नाम नहीं बदला जा सका। पुनः प्रयास करें।"
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "आपका पासवर्ड रीसेट नहीं हो सका। पुनः प्रयास करें।"
@@ -5089,7 +5096,6 @@ msgstr "साक्षात्कार शेड्यूल नहीं क
 msgid "Couldn't send the email. Try again."
 msgstr "ईमेल नहीं भेजा जा सका. पुनः प्रयास करें।"
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "पासवर्ड रीसेट ईमेल नहीं भेजा जा सका। पुनः प्रयास करें।"
@@ -5122,8 +5128,6 @@ msgstr "PDF पूर्वावलोकन नहीं दिखाया �
 msgid "Couldn't show the preview."
 msgstr "पूर्वावलोकन नहीं दिखाया जा सका।"
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5268,12 +5272,10 @@ msgstr "फ़ोटो अपलोड नहीं हो सकी। पु�
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "कोड सत्यापित नहीं हो सका। अपने ऑथेंटिकेटर ऐप से वर्तमान कोड दर्ज करें।"
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "आपका बैकअप कोड सत्यापित नहीं हो सका। कोड जाँचें और पुनः प्रयास करें।"
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "आपका कोड सत्यापित नहीं हो सका। कोड जाँचें और पुनः प्रयास करें।"
@@ -7632,6 +7634,10 @@ msgstr "अभिवादन"
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
 msgstr "ग्रिड"
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "अतिथि और खाते की करियर प्राथमिकताएँ अलग हैं। अतिथि का काम सुरक्षित है। दोबारा कोशिश से पहले दोनों खातों की करियर प्राथमिकताएँ और ज्ञान की स्मृति सेटिंग समान करें।"
 
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
@@ -10766,6 +10772,10 @@ msgstr "सहेजा नहीं गया"
 msgid "Not saved — this fact was forgotten before."
 msgstr "सहेजा नहीं गया — यह तथ्य पहले भुला दिया गया था।"
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "सहेजा नहीं गया · सहेजने के लिए साइन इन करें"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -13517,6 +13527,10 @@ msgstr "रिज्यूमे हमेशा सफेद कागज प�
 msgid "Resumes created"
 msgstr "बायोडाटा बनाया गया"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "खाते मिलाने से पहले अनुपयोगी आवेदन कॉलम निष्क्रिय करें; कुल सक्रिय कॉलम 40 से अधिक हैं।"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14458,6 +14472,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "नया लिंक भेजें"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15000,6 +15018,10 @@ msgstr "साइडबार को अक्सर सबसे आखिर �
 msgid "Sign in"
 msgstr "साइन इन"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "दोबारा साइन इन करें"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "अपने AI क्लाइंट से साइन इन करें, या API कुंजी का उपयोग करें।"
@@ -15018,6 +15040,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "सहेजने के लिए साइन इन करें"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16078,6 +16104,10 @@ msgstr "धन्यवाद, Sam। यह रहा एक उदाहरण
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "कोड मेल नहीं खाता। जाँचकर दोबारा कोशिश करें।"
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16085,6 +16115,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "ईमेल, उपयोगकर्ता नाम या पासवर्ड मेल नहीं खाता। जाँचें या पासवर्ड रीसेट करें।"
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16911,6 +16945,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "इस रीसेट लिंक की अवधि समाप्त हो गई है या इसका उपयोग हो चुका है।"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "इस रीसेट लिंक की अवधि समाप्त हो गई है या इसका उपयोग हो चुका है। नया लिंक भेजें."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "यह रेज़्यूमे लॉक है। संपादित करने के लिए इसके मेनू से इसे अनलॉक करें।"
@@ -16999,6 +17041,10 @@ msgstr "यह सर्वर मानक चरणों का उपयो�
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "यह साइन-इन प्रयास समाप्त हो गया या पहले ही उपयोग हो चुका है। पुनः प्रयास करें।"
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "इस साइन-इन चरण की अवधि समाप्त हो गई है। दोबारा साइन इन करें।"
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17146,6 +17192,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "सफ़ेद पर शीर्षकों के लिए बहुत हल्का. इसे पढ़ना और हल्का-सा प्रिंट करना कठिन हो सकता है।"
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "बहुत अधिक प्रयास। थोड़ा रुककर दोबारा कोशिश करें।"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19225,6 +19275,10 @@ msgstr "आपका सर्वर आवेदन अनुभाग मे�
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "आपका सत्र समाप्त हो गया। काम जारी रखने के लिए दोबारा साइन इन करें।"
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19327,63 +19381,3 @@ msgstr "ज़ूम आउट"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ज़ुलु"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "दोनों खातों में निजी आवेदन प्रोफ़ाइल है। जोड़ने से पहले सेटिंग → खाता में एक प्रोफ़ाइल निर्यात करके हटाएँ, ताकि कोई अनजाने में बदली न जाए।"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "दोनों खातों में आवेदन के एक जैसे सहेजे गए उत्तर हैं। जोड़ने से पहले एक प्रति निर्यात करके हटाएँ, ताकि कोई अनजाने में बदली न जाए।"
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "अतिथि और खाते की करियर प्राथमिकताएँ अलग हैं। अतिथि का काम सुरक्षित है। दोबारा कोशिश से पहले दोनों खातों की करियर प्राथमिकताएँ और ज्ञान की स्मृति सेटिंग समान करें।"
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "खाते मिलाने से पहले अनुपयोगी आवेदन कॉलम निष्क्रिय करें; कुल सक्रिय कॉलम 40 से अधिक हैं।"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "नया लिंक भेजें"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "दोबारा साइन इन करें"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "सहेजने के लिए साइन इन करें"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "कोड मेल नहीं खाता। जाँचकर दोबारा कोशिश करें।"
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "ईमेल, उपयोगकर्ता नाम या पासवर्ड मेल नहीं खाता। जाँचें या पासवर्ड रीसेट करें।"
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "इस रीसेट लिंक की अवधि समाप्त हो गई है या इसका उपयोग हो चुका है।"
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "इस साइन-इन चरण की अवधि समाप्त हो गई है। दोबारा साइन इन करें।"
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "बहुत अधिक प्रयास। थोड़ा रुककर दोबारा कोशिश करें।"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "आपका सत्र समाप्त हो गया। काम जारी रखने के लिए दोबारा साइन इन करें।"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "सहेजा नहीं गया · सहेजने के लिए साइन इन करें"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "इस रीसेट लिंक की अवधि समाप्त हो गई है या इसका उपयोग हो चुका है। नया लिंक भेजें."
