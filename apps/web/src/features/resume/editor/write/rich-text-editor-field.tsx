@@ -4,6 +4,7 @@ import type { Menu } from "@base-ui/react/menu";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Editor } from "@tiptap/react";
 import type { ReactNode } from "react";
+import { Toolbar } from "@base-ui/react/toolbar";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
@@ -329,7 +330,7 @@ export function RichTextEditor({
 	const toolbarButtons = (
 		<>
 			{actions.map((action, index) => (
-				<button
+				<Toolbar.Button
 					key={action.icon}
 					type="button"
 					aria-label={action.label}
@@ -346,7 +347,7 @@ export function RichTextEditor({
 					)}
 				>
 					<Icon name={action.icon} />
-				</button>
+				</Toolbar.Button>
 			))}
 			{editor && (
 				<FormattingMenus
@@ -357,7 +358,7 @@ export function RichTextEditor({
 					menus={menus}
 				/>
 			)}
-			<button
+			<Toolbar.Button
 				type="button"
 				aria-expanded={improving !== null}
 				disabled={ai.isUnavailable || (!state?.canImprove && improving === null)}
@@ -374,7 +375,7 @@ export function RichTextEditor({
 				<span className="@max-[24rem]:sr-only">
 					<Trans>Improve</Trans>
 				</span>
-			</button>
+			</Toolbar.Button>
 		</>
 	);
 
@@ -400,15 +401,14 @@ export function RichTextEditor({
 				!readOnlyTable &&
 				mobile &&
 				createPortal(
-					<div
+					<Toolbar.Root
 						ref={toolbar}
-						role="toolbar"
 						aria-label={t`Formatting`}
 						style={{ bottom: keyboardInset }}
 						className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
 					>
 						<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
-						<button
+						<Toolbar.Button
 							type="button"
 							onMouseDown={(event) => event.preventDefault()}
 							onClick={() => {
@@ -419,8 +419,8 @@ export function RichTextEditor({
 							className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
 						>
 							<Trans>Done</Trans>
-						</button>
-					</div>,
+						</Toolbar.Button>
+					</Toolbar.Root>,
 					toolbarHost ?? document.body,
 				)}
 
@@ -439,14 +439,13 @@ export function RichTextEditor({
 
 			{/* Under the text, so focusing the field never moves the line you clicked. */}
 			{editing && !readOnlyTable && !mobile && (
-				<div
+				<Toolbar.Root
 					ref={toolbar}
-					role="toolbar"
 					aria-label={t`Formatting`}
 					className="@container flex flex-wrap gap-0.5 border-t border-line px-1.5 py-1"
 				>
 					{toolbarButtons}
-				</div>
+				</Toolbar.Root>
 			)}
 
 			{editor && improving && (
@@ -518,13 +517,14 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 	return (
 		<>
 			<DropdownMenu {...menus.rootProps("align")}>
-				<DropdownMenuTrigger
+				<Toolbar.Button
+					render={<DropdownMenuTrigger />}
 					aria-label={t`Text alignment`}
 					title={t`Text alignment`}
 					className={cn(buttonClassName, "ms-1.5", formatting.align !== "left" && "bg-accent-soft text-accent-text")}
 				>
 					<Icon name={ALIGNMENT_ICONS[formatting.align]} />
-				</DropdownMenuTrigger>
+				</Toolbar.Button>
 				<DropdownMenuContent side={side} className="w-44" {...menus.contentProps}>
 					<DropdownMenuRadioGroup
 						value={formatting.align}
@@ -543,9 +543,14 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 			</DropdownMenu>
 
 			<DropdownMenu {...menus.rootProps("more")}>
-				<DropdownMenuTrigger aria-label={t`More formatting`} title={t`More formatting`} className={buttonClassName}>
+				<Toolbar.Button
+					render={<DropdownMenuTrigger />}
+					aria-label={t`More formatting`}
+					title={t`More formatting`}
+					className={buttonClassName}
+				>
 					<Icon name="dots-three" />
-				</DropdownMenuTrigger>
+				</Toolbar.Button>
 				<DropdownMenuContent side={side} className="w-56" {...menus.contentProps}>
 					<DropdownMenuCheckboxItem checked={formatting.strike} onCheckedChange={() => chain().toggleStrike().run()}>
 						<Icon name="text-strikethrough" />

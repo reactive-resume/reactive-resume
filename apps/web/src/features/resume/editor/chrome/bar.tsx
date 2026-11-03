@@ -5,6 +5,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
+import { cn } from "@reactive-resume/utils/style";
 import { AssistantButton } from "@/features/assistant/assistant-button";
 import { BackLink, DrawerControls } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -25,13 +26,18 @@ type EditorBarFrameProps = {
 
 /**
  * The 56px editor bar: back, the document's name and save state · the mode switch · Undo and Redo, History, the
- * assistant, Share and Download. The mode switch stays centered through a `1fr auto 1fr` grid.
+ * assistant, Share and Download. Desktop centers the modes; tablet actions take only their own width.
  */
 export function EditorBarFrame({ layout, pinnable, menu, modes, history, children }: EditorBarFrameProps) {
 	const setSheetTab = useEditorStore((state) => state.setSheetTab);
 
 	return (
-		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-line bg-surface px-3">
+		<header
+			className={cn(
+				"grid h-(--editor-bar) items-center gap-3 border-b border-line bg-surface px-3",
+				layout === "tablet" ? "grid-cols-[minmax(0,1fr)_auto_auto]" : "grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+			)}
+		>
 			<div className="flex min-w-0 items-center gap-1.5">
 				<BackLink />
 				{layout === "tablet" && <DrawerControls pinnable={pinnable} />}

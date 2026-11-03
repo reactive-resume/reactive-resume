@@ -363,7 +363,7 @@ function RouteComponent() {
 								type="search"
 								aria-keyshortcuts={characterShortcuts ? "/" : undefined}
 								aria-label={t`Search applications`}
-								placeholder={t`Search role, company, contact or tag`}
+								placeholder={t`Search`}
 								value={query}
 								className="ps-8"
 								onChange={(event) => setQuery(event.target.value)}
@@ -575,6 +575,19 @@ function RouteComponent() {
 					filtered={filteredFullApplications.filter((application) => closed || application.status !== "closed")}
 				/>
 				<ApplicationDetailSheet
+					returnFocus={(id) => {
+						if (editing || adding) return null;
+						const rows = Array.from(
+							pageRef.current?.querySelectorAll<HTMLElement>("[data-application-id] [data-application-open]") ?? [],
+						).filter((row) => row.getClientRects().length > 0);
+						const row =
+							rows.find((item) => item.closest<HTMLElement>("[data-application-id]")?.dataset.applicationId === id) ??
+							rows[0];
+						if (row) return row;
+						const heading = pageRef.current?.querySelector<HTMLElement>("h1") ?? null;
+						if (heading) heading.tabIndex = -1;
+						return heading;
+					}}
 					application={selected}
 					onOpenChange={(open) => !open && setSelectedId(null)}
 					onEditDetails={(application) => {
