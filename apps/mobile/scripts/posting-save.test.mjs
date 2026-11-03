@@ -228,6 +228,58 @@ test("native retry reconciles uncertain link before flushing newer edits, withou
 	assert.equal(f.calls.filter(([kind]) => kind === "link").length, 1);
 });
 
+test("native retries conditional linking when pre-link readback is unavailable", async () => {
+	const f = fixture();
+	f.setLink(async () => {
+		throw new Error("link unavailable");
+	});
+	f.setRead(async () => {
+		throw new Error("readback unavailable");
+	});
+	f.open();
+	f.fill();
+	f.button("Save and link this resume").props.onPress();
+	await settled();
+	f.setLink(async () => ({ id: "resume", applicationId: "new-job", updatedAt: new Date(1) }));
+	f.button("Save and link this resume").props.onPress();
+	await settled();
+	assert.equal(f.saved.length, 1);
+	assert.equal(f.calls.filter(([kind]) => kind === "create").length, 1);
+	const links = f.calls.filter(([kind]) => kind === "link");
+	assert.equal(links.length, 2);
+	assert.deepEqual(links[1][1], {
+		type: "resume",
+		id: "resume",
+		applicationId: "new-job",
+		expectedUpdatedAt: new Date(0),
+	});
+});
+
+test("native failed retry readback cannot bypass account, document, lock, unmount or abort", async () => {
+	for (const change of ["switchAccount", "switchDocument", "lock", "unmount", "abort"]) {
+		const f = fixture();
+		f.setLink(async () => {
+			throw new Error("link unavailable");
+		});
+		f.setRead(async () => {
+			throw new Error("readback unavailable");
+		});
+		f.open();
+		f.fill();
+		f.button("Save and link this resume").props.onPress();
+		await settled();
+		f.setRead(async () => {
+			if (change !== "abort") f[change]();
+			throw new DOMException("unavailable", change === "abort" ? "AbortError" : "NetworkError");
+		});
+		f.button("Save and link this resume").props.onPress();
+		await settled();
+		assert.equal(f.saved.length, 0, change);
+		assert.equal(f.calls.filter(([kind]) => kind === "create").length, 1, change);
+		assert.equal(f.calls.filter(([kind]) => kind === "link").length, 1, change);
+	}
+});
+
 test("native never confirms mismatched, locked or account-switched readback", async () => {
 	for (const change of ["application", "document", "locked", "account"]) {
 		const f = fixture();
@@ -254,7 +306,9 @@ test("native posting save requires confirmation, keeps snapshot, pins account an
 	const f = fixture();
 	f.open();
 	assert.equal(f.button("Save and link this resume").props.disabled, true);
+	f.fill();
 	f.button("Cancel").props.onPress();
+	await settled();
 	assert.deepEqual(f.calls, []);
 	f.open();
 	f.fill();

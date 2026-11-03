@@ -83,7 +83,12 @@ export function SavePosting({ posting, resumeId, disabled, onSaved }: SavePostin
 							: null;
 					};
 					if (created.current) {
-						const confirmed = await readLink();
+						const confirmed = await readLink().catch((error: unknown) => {
+							check();
+							request.signal.throwIfAborted();
+							if (error instanceof Error && error.name === "AbortError") throw error;
+							return null;
+						});
 						if (confirmed) return confirmed;
 					}
 					setSubmitted(true);

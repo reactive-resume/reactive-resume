@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 // @vitest-environment happy-dom
 import { i18n } from "@lingui/core";
@@ -112,6 +112,52 @@ it("rechecks an uncertain committed link before flushing pending edits on retry"
 	expect(mocks.link).toHaveBeenCalledOnce();
 });
 
+it("retries the conditional link when its pre-link readback is unavailable", async () => {
+	mocks.link.mockRejectedValueOnce(new Error("link unavailable"));
+	mocks.read.mockRejectedValue(new Error("readback unavailable"));
+	open();
+	fill();
+	submit();
+	await waitFor(() => expect(screen.getByRole("button", { name: "Save and link this resume" })).toBeEnabled());
+	submit();
+	await waitFor(() => expect(mocks.saved).toHaveBeenCalledOnce());
+	expect(mocks.create).toHaveBeenCalledOnce();
+	expect(mocks.link).toHaveBeenCalledTimes(2);
+	expect(mocks.link.mock.calls[1]?.[0]).toEqual({
+		type: "resume",
+		id: "resume",
+		applicationId: "new-job",
+		expectedUpdatedAt: new Date(0),
+	});
+});
+
+it.each(["account", "document", "locked", "abort", "signal"])(
+	"failed retry readback cannot link after %s changes",
+	async (change) => {
+		mocks.link.mockRejectedValueOnce(new Error("link unavailable"));
+		mocks.read.mockRejectedValue(new Error("readback unavailable"));
+		open();
+		fill();
+		submit();
+		await waitFor(() => expect(screen.getByRole("button", { name: "Save and link this resume" })).toBeEnabled());
+		const controller = new AbortController();
+		mocks.metadata.mockImplementationOnce(async (_id, write) => write(new Date(0), { signal: controller.signal }));
+		mocks.read.mockImplementationOnce(async () => {
+			if (change === "account") mocks.account = "other";
+			if (change === "document") mocks.resume = { id: "other", isLocked: false };
+			if (change === "locked") mocks.resume.isLocked = true;
+			if (change === "signal") controller.abort();
+			throw new DOMException("unavailable", change === "abort" ? "AbortError" : "NetworkError");
+		});
+		await act(async () => {
+			submit();
+		});
+		expect(mocks.create).toHaveBeenCalledOnce();
+		expect(mocks.link).toHaveBeenCalledOnce();
+		expect(mocks.saved).not.toHaveBeenCalled();
+	},
+);
+
 it.each(["other application", "other document", "locked", "account changed"])(
 	"never confirms readback for %s",
 	async (change) => {
@@ -136,8 +182,14 @@ it("cancel and empty fields create nothing; explicit confirmation saves plain sn
 	open();
 	expect(screen.getByRole("button", { name: "Save and link this resume" })).toBeDisabled();
 	expect(document.querySelector("script")).toBeNull();
-	fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+	fill();
+	await act(async () => {
+		fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+	});
+	expect(mocks.metadata).not.toHaveBeenCalled();
 	expect(mocks.create).not.toHaveBeenCalled();
+	expect(mocks.link).not.toHaveBeenCalled();
+	expect(mocks.saved).not.toHaveBeenCalled();
 	fireEvent.click(screen.getByRole("button", { name: "Save as a job…" }));
 	fill();
 	submit();

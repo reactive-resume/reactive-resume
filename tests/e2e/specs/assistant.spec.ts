@@ -129,6 +129,8 @@ for (const failure of ["uncommitted", "committed-lost"] as const)
 			await expect(action).toBeEnabled();
 			const calls = stub.requests.length;
 			await action.click();
+			await page.getByLabel("Company", { exact: true }).fill("Cancelled Fictional");
+			await page.getByLabel("Role", { exact: true }).fill("Cancelled Role");
 			await page.getByRole("button", { name: "Cancel", exact: true }).last().click();
 			expect(await (await page.request.get("/api/openapi/applications")).json()).toMatchObject([{ id: oldJobId }]);
 			expect(stub.requests).toHaveLength(calls);
@@ -148,6 +150,7 @@ for (const failure of ["uncommitted", "committed-lost"] as const)
 					writes.push({ path, account: request.headers()["x-account-id"], input: request.postDataJSON().json });
 			});
 			let attempts = 0;
+			let failedRetryReads = 0;
 			let committedVersion: string | null = null;
 			const pendingBodySave =
 				failure === "committed-lost"
@@ -184,6 +187,24 @@ for (const failure of ["uncommitted", "committed-lost"] as const)
 				).toBeVisible();
 				expect(JSON.parse(await resumeJson(page, resumeId)).applicationId).toBeNull();
 				expect(stub.requests).toHaveLength(calls);
+				await page.route("**/api/rpc/resume/getById", (route) => {
+					if (failedRetryReads === 0 && route.request().postDataJSON().json.id === resumeId) {
+						failedRetryReads++;
+						return route.fulfill({
+							status: 503,
+							contentType: "application/json",
+							body: JSON.stringify({
+								json: {
+									defined: false,
+									code: "SERVICE_UNAVAILABLE",
+									status: 503,
+									message: "Fixture: retry readback unavailable",
+								},
+							}),
+						});
+					}
+					return route.continue();
+				});
 				await page.getByRole("button", { name: "Save and link this resume", exact: true }).click();
 			}
 			await expect(page.getByText("Saved as a job and linked to this resume", { exact: true }).first()).toBeVisible();
@@ -195,6 +216,11 @@ for (const failure of ["uncommitted", "committed-lost"] as const)
 				"/api/rpc/documents/linkApplication",
 				...(failure === "uncommitted" ? ["/api/rpc/documents/linkApplication"] : []),
 			]);
+			if (failure === "uncommitted") {
+				expect(failedRetryReads).toBe(1);
+				const links = writes.filter((write) => write.path === "/api/rpc/documents/linkApplication");
+				expect(links[1]?.input).toEqual(links[0]?.input);
+			}
 			if (pendingBodySave) {
 				expect(suppressedEchoes).toBeGreaterThan(0);
 				const savedBody = await pendingBodySave;
@@ -249,7 +275,7 @@ for (const failure of ["uncommitted", "committed-lost"] as const)
 			expect(JSON.parse(await resumeJson(page, resumeId)).applicationId).toBe(id);
 			await info.attach("posting-save-HTTP-SQL.json", {
 				body: JSON.stringify(
-					{ retrieval: "seeded successful read_page output", failure, committedVersion, writes, row },
+					{ retrieval: "seeded successful read_page output", failure, failedRetryReads, committedVersion, writes, row },
 					null,
 					2,
 				),

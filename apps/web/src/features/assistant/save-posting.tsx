@@ -75,7 +75,11 @@ export function SavePosting({ posting, resumeId, disabled, onSaved }: SavePostin
 						return stored.id === resumeId && stored.applicationId === applicationId && !stored.isLocked ? stored : null;
 					};
 					if (applicationId) {
-						const confirmed = await readLink();
+						const confirmed = await readLink().catch((error: unknown) => {
+							if (!current() || options?.signal.aborted || (error instanceof Error && error.name === "AbortError"))
+								throw error;
+							return null;
+						});
 						if (confirmed) return confirmed;
 					}
 					setSubmitted(true);
