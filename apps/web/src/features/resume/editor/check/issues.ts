@@ -3,7 +3,7 @@ import type { AtsCategory, AtsFinding, AtsReport } from "@reactive-resume/resume
 import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { i18n } from "@lingui/core";
-import { t } from "@lingui/core/macro";
+import { ph, t } from "@lingui/core/macro";
 import { atsRuleCategory, mergeIntoPreviousEntry } from "@reactive-resume/resume/ats";
 import { formatList } from "@reactive-resume/utils/locale";
 import { describeEntry, findEntry, getSectionObject, resolveSection } from "../write/model";
@@ -275,7 +275,7 @@ function describeFinding(finding: AtsFinding, data: ResumeData, target: PageMapT
 			const name = getSectionName(data, section);
 			const columns = Number(finding.params?.columns ?? 2);
 			return {
-				title: t`${name} is split into ${columns} columns`,
+				title: t`${name} is split into ${ph({ columns: i18n.number(columns) })} columns`,
 				body: t`Columns can scramble the order text is read in.`,
 				fix: {
 					kind: "apply",
@@ -336,36 +336,36 @@ function describeFinding(finding: AtsFinding, data: ResumeData, target: PageMapT
 		case "SMALL_BODY_FONT":
 			return {
 				title: t`Body text is very small`,
-				body: t`Text under ${minimum} pt can be misread when a system re-renders it.`,
+				body: t`Text under ${ph({ minimum: i18n.number(minimum) })} pt can be misread when a system re-renders it.`,
 				fix: {
 					kind: "apply",
-					label: t`Use ${minimum} pt`,
+					label: t`Use ${ph({ minimum: i18n.number(minimum) })} pt`,
 					icon: "text-aa",
-					done: t`Body text set to ${minimum} pt`,
+					done: t`Body text set to ${ph({ minimum: i18n.number(minimum) })} pt`,
 					apply: (draft) => setAt(draft, finding.pointer, minimum),
 				},
 			};
 		case "TIGHT_LINE_HEIGHT":
 			return {
 				title: t`Lines are packed tightly`,
-				body: t`Lines this close can run together when read. Use at least ${minimum}.`,
+				body: t`Lines this close can run together when read. Use at least ${ph({ minimum: i18n.number(minimum) })}.`,
 				fix: {
 					kind: "apply",
-					label: t`Use ${minimum}`,
+					label: t`Use ${ph({ minimum: i18n.number(minimum) })}`,
 					icon: "sliders-horizontal",
-					done: t`Line height set to ${minimum}`,
+					done: t`Line height set to ${ph({ minimum: i18n.number(minimum) })}`,
 					apply: (draft) => setAt(draft, finding.pointer, minimum),
 				},
 			};
 		case "TIGHT_PAGE_MARGINS":
 			return {
 				title: t`Margins are very narrow`,
-				body: t`Text this close to the edge can be cut off. Use at least ${minimum} pt.`,
+				body: t`Text this close to the edge can be cut off. Use at least ${ph({ minimum: i18n.number(minimum) })} pt.`,
 				fix: {
 					kind: "apply",
-					label: t`Use ${minimum} pt margins`,
+					label: t`Use ${ph({ minimum: i18n.number(minimum) })} pt margins`,
 					icon: "sliders-horizontal",
-					done: t`Margins set to ${minimum} pt`,
+					done: t`Margins set to ${ph({ minimum: i18n.number(minimum) })} pt`,
 					apply: (draft) => setAt(draft, finding.pointer, minimum),
 				},
 			};

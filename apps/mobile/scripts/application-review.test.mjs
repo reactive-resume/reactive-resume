@@ -3,6 +3,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
+import { i18n } from "@lingui/core";
+
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const root = new URL("../../..", import.meta.url).pathname;
 const serverRequire = createRequire(root + "/apps/server/package.json");
@@ -44,7 +47,11 @@ const empty = { answers: [], checklist: [], questions: [], evidence: {}, ticks: 
 function load(data, overrides = {}) {
 	const saves = [];
 	const dependencies = {
-		"@lingui/core/macro": { plural: (n, forms) => forms.other.replace("#", String(n)) },
+		"@lingui/core": { i18n },
+		"@lingui/core/macro": {
+			ph: (named) => Object.values(named)[0],
+			plural: (n, forms) => forms.other.replace("#", String(n)),
+		},
 		"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
 		"@tanstack/react-query": { useQueryClient: () => ({}), useMutation: () => ({}) },
 		"expo-clipboard": {},

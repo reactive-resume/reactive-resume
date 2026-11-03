@@ -1,4 +1,5 @@
 import type { PdfAtsReport, PdfCategory, PdfCategoryScore } from "@reactive-resume/resume/ats-pdf";
+import { i18n } from "@lingui/core";
 import { Trans } from "@lingui/react/macro";
 import { useMemo } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@reactive-resume/ui/components/accordion";
@@ -45,7 +46,8 @@ export function AtsPdfReportView({ report, className }: ReportViewProps) {
 			{report.document.truncated && (
 				<p className="text-xs leading-normal text-ink-3">
 					<Trans>
-						Only the first {report.document.pageCount} pages were checked, so this report does not cover the whole file.
+						Only the first {i18n.number(report.document.pageCount)} pages were checked, so this report does not cover
+						the whole file.
 					</Trans>
 				</p>
 			)}
@@ -86,11 +88,11 @@ function CategorySection({ category, findings }: CategorySectionProps) {
 				<span className="flex min-w-0 flex-1 items-center gap-2 pe-2">
 					<span className="min-w-0 truncate">{getPdfCategoryLabel(category.category)}</span>
 					<Badge variant="neutral" className="shrink-0 tabular-nums">
-						<span className={categoryTone(category.score)}>{category.score}</span>
+						<span className={categoryTone(category.score)}>{i18n.number(category.score)}</span>
 					</Badge>
 					{findings.length > 0 && (
 						<span className="shrink-0 text-xs font-normal text-ink-3">
-							<Trans>{findings.length} to fix</Trans>
+							<Trans>{i18n.number(findings.length)} to fix</Trans>
 						</span>
 					)}
 				</span>
@@ -100,7 +102,7 @@ function CategorySection({ category, findings }: CategorySectionProps) {
 				<p className="text-xs leading-normal text-ink-3">
 					{getPdfCategoryDescription(category.category)}{" "}
 					<Trans>
-						{category.passedChecks} of {category.applicableChecks} applicable checks passed.
+						{i18n.number(category.passedChecks)} of {i18n.number(category.applicableChecks)} applicable checks passed.
 					</Trans>
 				</p>
 

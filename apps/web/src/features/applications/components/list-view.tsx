@@ -2,6 +2,7 @@ import type { ApplicationLane } from "../lanes";
 import type { OfferHint } from "../next-step";
 import type { ApplicationSummary } from "../types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -265,7 +266,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen, 
 											style={{ background: lane.color }}
 										/>
 										<span className="truncate">{getLaneLabel(lane)}</span>
-										<span className="font-mono text-xs font-normal text-ink-3">{rows.length}</span>
+										<span className="font-mono text-xs font-normal text-ink-3">{i18n.number(rows.length)}</span>
 									</button>
 								</th>
 							</tr>

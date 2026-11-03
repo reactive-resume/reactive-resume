@@ -6,7 +6,8 @@ import type { TranscriptLabels } from "@reactive-resume/ai/tools/transcript";
 import type { useQueryClient } from "@tanstack/react-query";
 import type { FileUIPart, UIMessage } from "ai";
 import { Chat, useChat } from "@ai-sdk/react";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
@@ -81,8 +82,8 @@ function transcriptLabels(names: TranscriptNames): TranscriptLabels {
 		edit: ({ number, location, before, after, status }) => {
 			const outcome = statusLabel[status];
 			return before.trim()
-				? t`Edit ${number} · ${location}: "${before}" → "${after}" (${outcome})`
-				: t`Edit ${number} · ${location}: added "${after}" (${outcome})`;
+				? t`Edit ${ph({ number: i18n.number(number) })} · ${location}: "${before}" → "${after}" (${outcome})`
+				: t`Edit ${ph({ number: i18n.number(number) })} · ${location}: added "${after}" (${outcome})`;
 		},
 		question: (question, answer) => (answer === null ? t`Q: ${question}` : `${t`Q: ${question}`}\n${t`A: ${answer}`}`),
 	};

@@ -7,7 +7,8 @@ import type {
 } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { KeyboardEvent, ReactNode } from "react";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useId, useMemo, useState } from "react";
 import { additionParts, getProposalState, needsConfirmation, passageLines } from "@reactive-resume/resume/proposals";
@@ -330,11 +331,11 @@ function ProposalItem(props: ProposalItemProps) {
 					aria-hidden="true"
 					className="grid size-5 shrink-0 place-items-center rounded-sm bg-sunken text-xs font-semibold text-ink-3"
 				>
-					{number}
+					{i18n.number(number)}
 				</span>
 				<span id={labelId} className="min-w-0 flex-1 truncate font-mono text-ink-3">
 					<span className="sr-only">
-						<Trans>Edit {number}:</Trans>{" "}
+						<Trans>Edit {ph({ number: i18n.number(number) })}:</Trans>{" "}
 					</span>
 					{proposal.location}
 				</span>
@@ -351,7 +352,7 @@ function ProposalItem(props: ProposalItemProps) {
 				<button
 					type="button"
 					aria-expanded={false}
-					aria-label={t`Show edit ${number}`}
+					aria-label={t`Show edit ${ph({ number: i18n.number(number) })}`}
 					className="touch-target relative shrink-0 text-ink-3 underline underline-offset-2 hover:text-ink"
 					onClick={() => setExpanded(true)}
 				>
@@ -374,11 +375,11 @@ function ProposalItem(props: ProposalItemProps) {
 					aria-hidden="true"
 					className="grid size-5 shrink-0 place-items-center rounded-sm bg-accent text-xs font-semibold text-on-accent"
 				>
-					{number}
+					{i18n.number(number)}
 				</span>
 				<span id={labelId} className="line-clamp-2 font-mono text-xs break-words text-ink-3">
 					<span className="sr-only">
-						<Trans>Edit {number}:</Trans>{" "}
+						<Trans>Edit {ph({ number: i18n.number(number) })}:</Trans>{" "}
 					</span>
 					{proposal.location}
 				</span>

@@ -2,7 +2,8 @@ import type { Kind, Lead, Schedule } from "./schedule-sheet";
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Ref } from "react";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouteContext, useRouter } from "@tanstack/react-router";
@@ -151,7 +152,7 @@ function SectionHeading({ id, title, count, note }: SectionHeadingProps) {
 			<h2 id={id} className="text-[17px] font-semibold">
 				{title}
 			</h2>
-			{count !== undefined && <span className="font-mono text-xs font-medium text-ink-3">{count}</span>}
+			{count !== undefined && <span className="font-mono text-xs font-medium text-ink-3">{i18n.number(count)}</span>}
 			{note && <span className="ms-auto text-xs text-ink-3">{note}</span>}
 		</div>
 	);
@@ -406,7 +407,7 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 										className="text-ink-2 underline underline-offset-3"
 										onClick={() => setShowRead(true)}
 									>
-										<Trans>Show {read.length} read</Trans>
+										<Trans>Show {i18n.number(read.length)} read</Trans>
 									</Button>
 								) : undefined
 							}
@@ -508,7 +509,7 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 		setSelected(failed);
 		setBulkStatus(
 			failed.length
-				? t`${done.length} updated; ${failed.length} failed. Failed roles remain selected. Refresh or retry.`
+				? t`${i18n.number(done.length)} updated; ${i18n.number(failed.length)} failed. Failed roles remain selected. Refresh or retry.`
 				: plural(done.length, { one: "# role updated.", other: "# roles updated." }),
 		);
 		await Promise.all([invalidateRoles(), queryClient.invalidateQueries({ queryKey: orpc.applications.key() })]);
@@ -603,7 +604,7 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 						>
 							<Trans>Select all roles</Trans>
 						</Button>
-						<span className="text-xs">{t`${selection.length} selected`}</span>
+						<span className="text-xs">{t`${i18n.number(selection.length)} selected`}</span>
 						<Button
 							variant="secondary"
 							disabled={!selection.length || bulkPending || track.isPending}
@@ -651,7 +652,7 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 					</AnimatePresence>
 					{visible.length > shown.length && (
 						<Button variant="ghost" size="sm" className="text-ink-2" onClick={() => setExpanded(true)}>
-							<Trans>Show {visible.length - shown.length} more</Trans>
+							<Trans>Show {i18n.number(visible.length - shown.length)} more</Trans>
 						</Button>
 					)}
 				</div>
@@ -999,7 +1000,7 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 					? t`Daily at ${clock} · next ${next}`
 					: days === 7
 						? t`Weekly at ${clock} · next ${next}`
-						: t`Every ${days} days at ${clock} · next ${next}`;
+						: t`Every ${ph({ days: i18n.number(days) })} days at ${clock} · next ${next}`;
 		} else if (row.kind === "prepare") {
 			const lead = row.lead === "2h" ? t`2 hours before` : row.lead === "morning" ? t`Morning of` : t`24 hours before`;
 			line = `${lead} · ${line}`;

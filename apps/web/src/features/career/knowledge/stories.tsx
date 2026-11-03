@@ -1,6 +1,7 @@
 import type { Fact, Story } from "../hooks";
 import type { CareerStoryData } from "@reactive-resume/schema/career";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -210,7 +211,7 @@ const StoryCard = memo(function StoryCard({ story, selected, changed }: StoryCar
 			>
 				<span className="text-sm leading-5 font-semibold">{story.data.title}</span>
 				<span className="text-xs text-ink-3">
-					<Trans>{filled} of 5 parts</Trans> ·{" "}
+					<Trans>{ph({ filled: i18n.number(filled) })} of 5 parts</Trans> ·{" "}
 					<span className={cn(factCount === 0 && "text-warn-text")}>
 						{plural(factCount, { one: "# fact", other: "# facts" })}
 					</span>

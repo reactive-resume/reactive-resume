@@ -64,19 +64,37 @@ describe("computeOutcomes", () => {
 			appliedAt: now,
 			activity: application.activity.map((entry) => ({ ...entry, at: now })),
 		}));
-		expect(computeTimeline(current, 1)[0]?.count).toBe(3);
+		expect(computeTimeline(current, "en-US", 1)[0]?.count).toBe(3);
 	});
 });
 
 it("labels the pipeline total and percentages using active applications", () => {
-	const insights = computeInsights([
-		{ status: "saved", count: 1 },
-		{ status: "applied", count: 2 },
-		{ status: "closed", count: 4 },
-	]);
+	const insights = computeInsights(
+		[
+			{ status: "saved", count: 1 },
+			{ status: "applied", count: 2 },
+			{ status: "closed", count: 4 },
+		],
+		"en-US",
+	);
 	expect(insights.total).toBe(3);
 	expect(insights.closed).toBe(4);
 	expect(insights.funnel[0]?.pct).toBe(100);
+});
+
+it("formats chart totals, conversion labels and week dates with interface numerals", () => {
+	const insights = computeInsights(
+		[
+			{ status: "saved", count: 1000 },
+			{ status: "applied", count: 2000 },
+		],
+		"ar-SA",
+	);
+	expect(insights.tiles[0]?.value).toBe("٣٬٠٠٠");
+	expect(insights.funnel[1]?.conv).toBe("٦٧%");
+	const [week] = computeTimeline([], "ar-SA", 1);
+	expect(week?.label).toMatch(/[٠-٩]/);
+	expect(week?.label).not.toMatch(/[0-9]/);
 });
 
 it.each(["closed", "applied"] as const)(

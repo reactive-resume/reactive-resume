@@ -212,7 +212,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 						<div className="flex items-baseline justify-between gap-2">
 							<strong className="text-sm font-semibold">
 								<Trans>
-									{result.found.length} of {result.total} posting terms appear
+									{i18n.number(result.found.length)} of {i18n.number(result.total)} posting terms appear
 								</Trans>
 							</strong>
 							<span className="text-xs text-ink-3">

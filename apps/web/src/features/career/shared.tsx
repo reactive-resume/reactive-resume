@@ -3,7 +3,8 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { PreparedRequest } from "@reactive-resume/utils/deferred-request";
 import type { QueryClient, QueryKey } from "@tanstack/react-query";
 import type { ComponentProps, ReactNode } from "react";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Link, useRouteContext } from "@tanstack/react-router";
@@ -524,7 +525,12 @@ export function CountdownChip({ at, now, className }: CountdownChipProps) {
 	const { relative } = useCareerTime();
 	const minutes = minutesUntil(at, now);
 	const soon = minutes <= 60;
-	const label = minutes <= 0 ? t`Started` : soon ? t`Starts in ${minutes} minutes` : relative(at, now);
+	const label =
+		minutes <= 0
+			? t`Started`
+			: soon
+				? t`Starts in ${ph({ minutes: i18n.number(minutes) })} minutes`
+				: relative(at, now);
 	return (
 		<span
 			className={cn(

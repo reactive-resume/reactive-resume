@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vite-plus/test";
-import { writeNumbersAsDigits } from "./recorder";
+import { clock, writeNumbersAsDigits } from "./recorder";
+
+it("formats elapsed time with locale digits and two-digit seconds", () => {
+	expect(clock(67, "en-US")).toBe("1:07");
+	expect(clock(67, "ar-SA")).toBe("١:٠٧");
+	expect(clock(0, "ar-SA")).toBe("٠:٠٠");
+});
 
 describe("writeNumbersAsDigits", () => {
 	it("rewrites spelled-out numbers and percentages, leaving everything else as it was", () => {

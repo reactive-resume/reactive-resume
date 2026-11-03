@@ -4,7 +4,7 @@ import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "../shell";
 import type { Application } from "@/features/applications/types";
 import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
-import { plural } from "@lingui/core/macro";
+import { ph, plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Storage from "expo-sqlite/kv-store";
@@ -341,7 +341,8 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 	return (
 		<Block title={t`This week: make your evidence easier to follow`}>
 			<Text variant="caption" color="ink3">
-				{t`${done} of ${count} done`} · {plural(minutes, { one: "# minute in total", other: "# minutes in total" })}
+				{t`${ph({ done: i18n.number(done) })} of ${ph({ count: i18n.number(count) })} done`} ·{" "}
+				{plural(minutes, { one: "# minute in total", other: "# minutes in total" })}
 			</Text>
 			{rows.map((row) => {
 				const length = row.minutes;
@@ -350,7 +351,7 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 					<CheckRow
 						key={row.key}
 						label={row.task}
-						detail={t`${day} · ${length}m`}
+						detail={t`${day} · ${ph({ length: i18n.number(length) })}m`}
 						checked={ticks.ticked.includes(row.key)}
 						disabled={readOnly}
 						onChange={(on) => ticks.toggle(row.key, on)}

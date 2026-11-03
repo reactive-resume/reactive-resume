@@ -1,4 +1,5 @@
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
@@ -145,7 +146,9 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 										/>
 									) : (
 										<OTPField
-											digitLabel={(position, total) => t`Digit ${position} of ${total}`}
+											digitLabel={(position, total) =>
+												t`Digit ${ph({ position: i18n.number(position) })} of ${ph({ total: i18n.number(total) })}`
+											}
 											length={6}
 											autoSubmit
 											name={field.name}

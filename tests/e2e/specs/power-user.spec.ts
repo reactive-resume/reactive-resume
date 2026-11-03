@@ -50,11 +50,12 @@ test("a large library's search is keyboard-complete across real pages", async ({
 	try {
 		const riotId = await seedLibrary(page, pool);
 		const reads = recordDocumentReads(page);
+		const total = (LIBRARY_SIZE + 1).toLocaleString("en-US");
 		await page.setViewportSize({ width: 1440, height: 900 });
 		await page.goto("/dashboard?view=list");
-		await expect(page.getByText(`1–100 of ${LIBRARY_SIZE + 1}`, { exact: true })).toBeVisible();
+		await expect(page.getByText(`1–100 of ${total}`, { exact: true })).toBeVisible();
 		await page.getByRole("button", { name: "Next", exact: true }).click();
-		await expect(page.getByText(`101–200 of ${LIBRARY_SIZE + 1}`, { exact: true })).toBeVisible();
+		await expect(page.getByText(`101–200 of ${total}`, { exact: true })).toBeVisible();
 
 		// "/" focuses the field; Enter right after typing waits for the typed search, then opens its top match.
 		await page.keyboard.press("/");
@@ -77,7 +78,7 @@ test("a large library's search is keyboard-complete across real pages", async ({
 		await page.keyboard.press("Escape");
 		await expect(search).toHaveValue("");
 		await expect(search).toBeFocused();
-		await expect(page.getByText(`1–100 of ${LIBRARY_SIZE + 1}`, { exact: true })).toBeVisible();
+		await expect(page.getByText(`1–100 of ${total}`, { exact: true })).toBeVisible();
 		await page.keyboard.press("Escape");
 		await expect(search).not.toBeFocused();
 		test

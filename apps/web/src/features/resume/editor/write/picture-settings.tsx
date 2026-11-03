@@ -1,5 +1,6 @@
 import type { Area } from "react-easy-crop";
 import type z from "zod";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
@@ -522,7 +523,9 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 						<FormLabel className="mb-0">
 							<Trans>Zoom</Trans>
 						</FormLabel>
-						<span className="text-xs text-ink-3 tabular-nums">{zoom.toFixed(1)}×</span>
+						<span className="text-xs text-ink-3 tabular-nums">
+							{i18n.number(zoom, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}×
+						</span>
 					</div>
 					<div className="flex items-center gap-x-3">
 						<Icon name="magnifying-glass-minus" size={16} className="shrink-0 text-ink-3" />

@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Link, useRouterState } from "@tanstack/react-router";
@@ -61,7 +62,7 @@ export function SceneCaption({ number, title, children, action, className }: Sce
 	return (
 		<div className={cn("flex flex-col gap-3", className)}>
 			<span className={cn(labelClass, "text-accent-text")}>
-				{number} / {title}
+				{i18n.number(Number(number), { minimumIntegerDigits: 2 })} / {title}
 			</span>
 			<p className="font-display text-base leading-[1.45] text-pretty text-ink min-[900px]:text-[clamp(17px,1.35vw,20px)]">
 				{children}

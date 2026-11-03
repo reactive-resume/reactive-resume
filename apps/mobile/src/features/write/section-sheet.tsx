@@ -1,4 +1,5 @@
 import type { LayoutColumn, WriteSection } from "./model";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
@@ -145,7 +146,7 @@ export function SectionSheet({ resumeId, section, open, onClose, onMove }: Secti
 								.map((column) =>
 									radio(
 										`${index}:${column}`,
-										column === "main" ? t`Page ${index + 1}` : t`Page ${index + 1} · Sidebar`,
+										column === "main" ? t`Page ${i18n.number(index + 1)}` : t`Page ${i18n.number(index + 1)} · Sidebar`,
 										placement?.page === index && placement.column === column,
 										() => edit((draft) => placeSection(draft, section.id, { page: index, column })),
 									),
@@ -212,8 +213,8 @@ export function SectionSheet({ resumeId, section, open, onClose, onMove }: Secti
 							subtitle={
 								placement
 									? placement.column === "main"
-										? t`Page ${placement.page + 1}`
-										: t`Page ${placement.page + 1} · Sidebar`
+										? t`Page ${i18n.number(placement.page + 1)}`
+										: t`Page ${i18n.number(placement.page + 1)} · Sidebar`
 									: undefined
 							}
 							leading="arrows-left-right"

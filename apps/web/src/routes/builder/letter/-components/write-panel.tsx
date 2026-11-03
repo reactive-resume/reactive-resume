@@ -2,6 +2,7 @@ import type { ApplicationSummary } from "@/features/applications/types";
 import type { LetterDraft } from "@/features/letters/store";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -802,7 +803,7 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 					</Button>
 					<span className="font-mono tabular-nums">
 						<Trans>
-							{index + 1} of {all.length}
+							{i18n.number(index + 1)} of {i18n.number(all.length)}
 						</Trans>
 					</span>
 					<Button

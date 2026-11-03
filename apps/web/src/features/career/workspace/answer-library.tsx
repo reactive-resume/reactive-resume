@@ -332,7 +332,7 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 									onChange={(event) => change(() => setAnswer(event.target.value))}
 								/>
 							</label>
-							<p className="text-xs">{t`${answer.split(/\s+/).filter(Boolean).length} words · ${[...answer].length} characters`}</p>
+							<p className="text-xs">{t`${i18n.number(answer.split(/\s+/).filter(Boolean).length)} words · ${i18n.number([...answer].length)} characters`}</p>
 							{mode === "reuse" && (
 								<div className="grid gap-2 text-sm text-ink-2">
 									{(facts.data ?? [])

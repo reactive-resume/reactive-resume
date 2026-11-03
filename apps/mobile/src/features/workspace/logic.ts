@@ -209,7 +209,8 @@ export const RECORDING_OPTIONS = {
 } as const;
 
 /** "0:47" */
-export const clock = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+export const clock = (seconds: number, locale: string) =>
+	`${new Intl.NumberFormat(locale, { useGrouping: false }).format(Math.floor(seconds / 60))}:${new Intl.NumberFormat(locale, { minimumIntegerDigits: 2, useGrouping: false }).format(seconds % 60)}`;
 
 /** The file extension for audio `voice.speak` returns, so the player recognises it. */
 export const speechExtension = (mediaType: string) =>

@@ -163,14 +163,14 @@ it.each([
 		const role = view === "grid" ? "article" : "row";
 		const count = view === "grid" ? 100 : 101;
 		expect(screen.getAllByRole(role)).toHaveLength(count);
-		if (!trashed) expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19500")).toBeVisible();
+		if (!trashed) expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19,500")).toBeVisible();
 		expect(screen.getByText("Document 0")).toBeVisible();
 		expect(screen.queryByText("Document 100")).toBeNull();
 		fireEvent.click(screen.getByRole("button", { name: "Next" }));
 		await waitFor(() => expect(screen.getByText("Document 100")).toBeVisible());
 		expect(screen.getAllByRole(role)).toHaveLength(count);
 		expect(screen.queryByText("Document 0")).toBeNull();
-		expect(screen.getByText("101–200 of 19500")).toBeVisible();
+		expect(screen.getByText("101–200 of 19,500")).toBeVisible();
 	},
 );
 
@@ -255,7 +255,7 @@ it("blocks raw-search debounce and failed-fetch actions while retaining controls
 	expect(search).toBeVisible();
 	expect(search).toHaveValue("new query");
 	expect(screen.getByRole("button", { name: "#design" })).toBeVisible();
-	expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19500")).toBeVisible();
+	expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19,500")).toBeVisible();
 	expect(screen.getByText("Document 0")).toBeVisible();
 	expect(screen.getByRole("checkbox", { name: "Select Document 0" })).toBeDisabled();
 	requests.load.mockResolvedValue(page(0));
@@ -295,7 +295,7 @@ it("retains rows, counts, tags and keyboard focus while the next page loads", as
 	await waitFor(() => expect(next).toHaveAttribute("aria-disabled", "true"));
 	expect(next).toHaveFocus();
 	expect(screen.getByText("Document 0")).toBeVisible();
-	expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19500")).toBeVisible();
+	expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19,500")).toBeVisible();
 	expect(screen.getByRole("button", { name: "#design" })).toBeVisible();
 	fireEvent.click(next);
 	expect(requests.load).toHaveBeenCalledTimes(1);

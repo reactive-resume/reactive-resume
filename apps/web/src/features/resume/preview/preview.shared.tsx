@@ -1,6 +1,8 @@
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties, ReactNode } from "react";
+import { i18n } from "@lingui/core";
+import { ph } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
@@ -69,14 +71,18 @@ export function ResumePreviewLoader({
 						{showPageNumbers ? (
 							<figcaption className="mb-1 text-[0.625rem] font-medium text-ink-3">
 								<Trans>
-									Page {pageNumber} of {pageCount}
+									Page {ph({ pageNumber: i18n.number(pageNumber) })} of {ph({ pageCount: i18n.number(pageCount) })}
 								</Trans>
 							</figcaption>
 						) : null}
 
 						<div
 							role={failure ? undefined : "img"}
-							aria-label={failure ? undefined : t`Loading resume page ${pageNumber} of ${pageCount}`}
+							aria-label={
+								failure
+									? undefined
+									: t`Loading resume page ${ph({ pageNumber: i18n.number(pageNumber) })} of ${ph({ pageCount: i18n.number(pageCount) })}`
+							}
 							style={pageSize}
 							className={cn(
 								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-white text-ink-3",

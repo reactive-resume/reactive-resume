@@ -1,7 +1,8 @@
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
 import type { QueryClient } from "@tanstack/react-query";
 import type { KeyboardEvent, Ref } from "react";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -308,15 +309,15 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							<TabsList variant="line" aria-label={t`Document type`}>
 								<TabsTrigger value="all">
 									<Trans>All</Trans>
-									<TabsCount>{counts.all}</TabsCount>
+									<TabsCount>{i18n.number(counts.all)}</TabsCount>
 								</TabsTrigger>
 								<TabsTrigger value="resume">
 									<Trans>Resumes</Trans>
-									<TabsCount>{counts.resume}</TabsCount>
+									<TabsCount>{i18n.number(counts.resume)}</TabsCount>
 								</TabsTrigger>
 								<TabsTrigger value="letter">
 									<Trans>Letters</Trans>
-									<TabsCount>{counts.letter}</TabsCount>
+									<TabsCount>{i18n.number(counts.letter)}</TabsCount>
 								</TabsTrigger>
 							</TabsList>
 						</Tabs>
@@ -822,7 +823,7 @@ function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTag
 			)}
 		>
 			<span className="px-2 text-sm font-semibold whitespace-nowrap" aria-live="polite">
-				<Trans>{count} selected</Trans>
+				<Trans>{ph({ count: i18n.number(count) })} selected</Trans>
 			</span>
 			{!allSelected && (
 				<Button variant="ghost" size="sm" onClick={onSelectAll} className="max-sm:hidden">

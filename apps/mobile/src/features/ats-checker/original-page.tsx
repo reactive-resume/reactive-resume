@@ -1,4 +1,5 @@
 import type { PageImage } from "../../../modules/pdf-pages";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { File } from "expo-file-system";
 import { Image } from "expo-image";
@@ -66,7 +67,7 @@ export function OriginalPage({ uri }: OriginalPageProps) {
 					>
 						<Image
 							source={{ uri: page.uri }}
-							accessibilityLabel={t`Page ${page.index + 1} of the uploaded PDF`}
+							accessibilityLabel={t`Page ${i18n.number(page.index + 1)} of the uploaded PDF`}
 							style={{ width, aspectRatio: page.width / page.height }}
 						/>
 					</View>

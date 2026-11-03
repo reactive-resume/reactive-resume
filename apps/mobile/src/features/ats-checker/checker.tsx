@@ -3,7 +3,8 @@ import type { IconName } from "@/ui";
 import type { PdfAtsReport, PdfCategory } from "@reactive-resume/resume/ats-pdf";
 import type { DocumentPickerAsset } from "expo-document-picker";
 import type { ReactNode } from "react";
-import { plural } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import * as DocumentPicker from "expo-document-picker";
 import { File, Paths } from "expo-file-system";
@@ -315,7 +316,7 @@ function issueRows(report: PdfAtsReport): Row[] {
 			return {
 				key: category,
 				title: getPdfCategoryLabel(category),
-				count: String(findings.length),
+				count: i18n.number(findings.length),
 				tone,
 				icon,
 				findings,
@@ -418,7 +419,7 @@ function Result({ result, uri, size, importError, onFix, onReset, onBlank }: Res
 					<Banner
 						tone="info"
 						icon="info"
-						title={t`Only the first ${report.document.pageCount} pages were checked.`}
+						title={t`Only the first ${i18n.number(report.document.pageCount)} pages were checked.`}
 						message={t`The rest of the file isn't in this report.`}
 					/>
 				) : null}
@@ -449,7 +450,7 @@ function Result({ result, uri, size, importError, onFix, onReset, onBlank }: Res
 								? accordion(
 										"posting",
 										t`Terms from the posting`,
-										`${report.jd.matchedCount}/${report.jd.totalTerms}`,
+										`${i18n.number(report.jd.matchedCount)}/${i18n.number(report.jd.totalTerms)}`,
 										"list-checks",
 										colors.warnText,
 										report.jd.totalTerms === 0 ? (
@@ -562,7 +563,7 @@ function Result({ result, uri, size, importError, onFix, onReset, onBlank }: Res
 						<Banner
 							tone="warn"
 							icon="warning"
-							title={t`This file is ${megabytes} MB. Imports take files up to 10 MB.`}
+							title={t`This file is ${ph({ megabytes: i18n.number(megabytes) })} MB. Imports take files up to 10 MB.`}
 							message={t`Export a smaller PDF and check it again, or start a blank resume and fix these there.`}
 						/>
 						<View style={{ flexDirection: "row", gap: space.s2 }}>
@@ -602,7 +603,7 @@ function ScoreRing({ score, color }: ScoreRingProps) {
 		<View
 			accessible
 			accessibilityRole="image"
-			accessibilityLabel={t`Readability score: ${score} out of 100`}
+			accessibilityLabel={t`Readability score: ${ph({ score: i18n.number(score) })} out of 100`}
 			style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
 		>
 			<Svg width={size} height={size} style={{ position: "absolute", transform: [{ rotate: "-90deg" }] }}>
@@ -619,7 +620,7 @@ function ScoreRing({ score, color }: ScoreRingProps) {
 					strokeDashoffset={circumference * (1 - Math.min(100, Math.max(0, score)) / 100)}
 				/>
 			</Svg>
-			<Text variant="heading">{String(score)}</Text>
+			<Text variant="heading">{i18n.number(score)}</Text>
 		</View>
 	);
 }
