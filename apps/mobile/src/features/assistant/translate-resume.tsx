@@ -25,7 +25,9 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 	const sourceLocale = useResumeStore((state) =>
 		state.document?.id === resumeId ? state.data?.metadata.page.locale : undefined,
 	);
-	const [locale, setLocale] = useState<Locale>(sourceLocale === "de-DE" ? "en-US" : "de-DE");
+	const [chosenLocale, setChosenLocale] = useState<Locale | null>(null);
+	const fallbackLocale: Locale = sourceLocale === "de-DE" ? "en-US" : "de-DE";
+	const locale = chosenLocale && chosenLocale !== sourceLocale ? chosenLocale : fallbackLocale;
 	const active = useRef(false);
 	const create = async () => {
 		if (active.current || !sourceLocale || locale === sourceLocale) return;
@@ -69,7 +71,7 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 							.map((code) => ({ value: code, label: i18n._(localeMap[code]) }))}
 						disabled={operations.busy}
 						searchable
-						onChange={setLocale}
+						onChange={setChosenLocale}
 					/>
 					<Button
 						label={t`Create language copy`}

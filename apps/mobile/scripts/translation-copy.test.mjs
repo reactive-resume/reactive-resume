@@ -13,7 +13,7 @@ function fixture(locale = "en-US") {
 	let state = [];
 	let cursor = 0;
 	let scope = "account-a";
-	let source = { id: "source", name: "Priya Raman", data: { metadata: { page: { locale } } } };
+	let source = locale === null ? null : { id: "source", name: "Priya Raman", data: { metadata: { page: { locale } } } };
 	const calls = [];
 	let release;
 	const saved = new Promise((resolve) => {
@@ -52,7 +52,7 @@ function fixture(locale = "en-US") {
 			},
 		},
 		"@/auth/session": { getAccountScope: () => scope },
-		"@/draft": { useResumeStore: (select) => select({ document: source, data: source.data }) },
+		"@/draft": { useResumeStore: (select) => select({ document: source, data: source?.data ?? null }) },
 		"./handoff": { handToAssistant: (...args) => calls.push(["handoff", ...args]) },
 		"@/features/documents/queries": {
 			useDocumentOperations: () => ({
@@ -121,7 +121,7 @@ function fixture(locale = "en-US") {
 		nodes,
 		release,
 		changeSourceLocale: (locale) => {
-			source = { ...source, data: { metadata: { page: { locale } } } };
+			source = { id: "source", name: "Priya Raman", data: { metadata: { page: { locale } } } };
 		},
 		changeAccount: () => {
 			scope = "account-b";
@@ -171,6 +171,24 @@ test("native language copy excludes the source locale and rechecks the saved loc
 	f.release();
 	await new Promise((resolve) => setImmediate(resolve));
 	assert.deepEqual(f.calls, [["flush", "source"]]);
+});
+
+test("native language selection follows a late-loaded source and retains only compatible user choices", () => {
+	const f = fixture(null);
+	const picker = () => f.nodes(f.render()).find((node) => node.type === "SelectSheet").props;
+	const button = () => f.nodes(f.render()).find((node) => node.type === "Button").props;
+	assert.equal(button().disabled, true);
+	f.changeSourceLocale("de-DE");
+	assert.equal(picker().value, "en-US");
+	assert.equal(button().disabled, false);
+	picker().onChange("fr-FR");
+	f.changeSourceLocale("en-US");
+	assert.equal(picker().value, "fr-FR");
+	f.changeSourceLocale("fr-FR");
+	assert.equal(picker().value, "de-DE");
+	assert.equal(button().disabled, false);
+	assert.ok(picker().options.every((option) => option.value !== "fr-FR"));
+	assert.deepEqual(f.calls, []);
 });
 
 test("an account change during a native copy prevents composer handoff and navigation", async () => {

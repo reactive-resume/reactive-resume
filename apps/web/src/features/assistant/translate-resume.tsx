@@ -35,7 +35,9 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 	const sourceLocale = useResumeStore((state) =>
 		state.resume?.id === resumeId ? state.resume.data.metadata.page.locale : undefined,
 	);
-	const [locale, setLocale] = useState<Locale>(sourceLocale === "de-DE" ? "en-US" : "de-DE");
+	const [chosenLocale, setChosenLocale] = useState<Locale | null>(null);
+	const fallbackLocale: Locale = sourceLocale === "de-DE" ? "en-US" : "de-DE";
+	const locale = chosenLocale && chosenLocale !== sourceLocale ? chosenLocale : fallbackLocale;
 	const [busy, setBusy] = useState(false);
 	const active = useRef(false);
 	const create = async () => {
@@ -88,7 +90,7 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 					id={languageId}
 					value={locale}
 					disabled={busy}
-					onChange={(event) => setLocale(event.target.value as Locale)}
+					onChange={(event) => setChosenLocale(event.target.value as Locale)}
 				>
 					{selectableLocales
 						.filter((code) => code !== sourceLocale)
