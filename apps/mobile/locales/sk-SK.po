@@ -845,6 +845,14 @@ msgstr "Typ {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# navrhnutá úprava na tejto strane · nič sa nezmení, kým ju neprijmete} few {# navrhnuté úpravy na tejto strane · nič sa nezmení, kým ich neprijmete} other {# navrhnutých úprav na tejto strane · nič sa nezmení, kým ich neprijmete}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} zo základnej mzdy"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} zo základnej mzdy ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -946,6 +954,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} ďalších"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} ročne ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2458,7 +2470,7 @@ msgstr "Tučné"
 msgid "Bonus"
 msgstr "Bonus"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3498,10 +3510,6 @@ msgstr "Opraviť fakt"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5234,6 +5242,14 @@ msgstr "Zadajte celé číslo od 0 do 52 alebo nechajte prázdne."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Zadajte adresu ako resume.example.org."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Zadajte sumu alebo percento základnej mzdy, napríklad 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Zadajte sumu alebo percento, napríklad 10%, alebo ponechajte prázdne."
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -7896,6 +7912,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "Nové kľúče majú spočiatku prístup iba na čítanie. Kľúče vytvoríte v nastaveniach účtu v prehliadači."
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "Nová verzia ponuky bola uložená"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8577,10 +8597,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10909,6 +10925,10 @@ msgstr "Uložiť pripojenie"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Uložte opravené podmienky ako novú verziu. Predchádzajúca verzia zostane dostupná. Žiadna požiadavka na AI sa neodosiela."
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

@@ -243,15 +243,15 @@ test("Apply is saved before a reload, and Undo reverses only what it set", async
 	});
 });
 
-test("offer terms are edited where they're compared, and a stale tab can't overwrite them", async ({
+test("offer edits create versions, and a stale draft cannot use terms corrected by another client", async ({
 	authPage: page,
 }) => {
 	const id = await createApplication(page, "Canopy Systems");
-	await expect(
-		await page.request.post("/api/openapi/career/offers", {
-			data: { applicationId: id, currency: "USD", period: "year", base: 120000, variable: null },
-		}),
-	).toBeOK();
+	const created = await page.request.post("/api/openapi/career/offers", {
+		data: { applicationId: id, currency: "USD", period: "year", base: 120000, variable: null },
+	});
+	await expect(created).toBeOK();
+	const original = (await created.json()) as { id: string; data: Record<string, unknown> };
 	const other = await page.context().newPage();
 	for (const tab of [page, other]) {
 		await tab.goto("/dashboard/career/offers");
@@ -269,20 +269,29 @@ test("offer terms are edited where they're compared, and a stale tab can't overw
 	await page.getByLabel("Equity", { exact: true }).fill("Later equity correction");
 	await page.getByRole("button", { name: "Save offer", exact: true }).click();
 	await expect(page.getByText("$125,000 a year", { exact: true })).toBeVisible();
+	// Older API clients still correct a version in place; an open UI draft must detect that change.
+	await expect(
+		await page.request.patch(`/api/openapi/career/offers/${original.id}`, {
+			data: { terms: { ...original.data, base: 123000 }, expected: original.data },
+		}),
+	).toBeOK();
 	await other.getByLabel("Base salary", { exact: true }).fill("1");
 	await other.getByRole("button", { name: "Save offer", exact: true }).click();
 	await expect(
 		other.getByText("This offer changed elsewhere. Review the latest terms before saving again."),
 	).toBeVisible();
 	// Refetch may update the comparison, but must not advance the open draft's expected snapshot.
-	await expect(other.getByText("$125,000 a year", { exact: true })).toBeVisible();
+	await expect(other.getByText("$123,000 a year", { exact: true })).toBeVisible();
 	const secondSave = other.waitForResponse((response) => response.url().includes("/career/updateOffer"));
 	await other.getByRole("button", { name: "Save offer", exact: true }).click();
 	expect((await secondSave).status()).toBe(409);
-	const [saved] = (await (await page.request.get("/api/openapi/career/saved?kind=offer")).json()) as Array<{
+	const rows = (await (await page.request.get("/api/openapi/career/saved?kind=offer")).json()) as Array<{
+		id: string;
 		data: Record<string, unknown>;
 	}>;
-	expect(saved?.data).toMatchObject({
+	expect(rows).toHaveLength(2);
+	expect(rows.find((row) => row.id === original.id)?.data.base).toBe(123000);
+	expect(rows.find((row) => row.id !== original.id)?.data).toMatchObject({
 		base: 125000,
 		equity: "Later equity correction",
 		origin: "manual",

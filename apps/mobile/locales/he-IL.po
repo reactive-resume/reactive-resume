@@ -845,6 +845,14 @@ msgstr "סוג {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# הצעת עריכה בעמוד זה · דבר לא משתנה עד שתאשר} other {# הצעות עריכה בעמוד זה · דבר לא משתנה עד שתאשר}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} משכר הבסיס"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} משכר הבסיס ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -946,6 +954,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} עוד"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} בשנה ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2458,7 +2470,7 @@ msgstr "מודגש"
 msgid "Bonus"
 msgstr "בונוס"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3498,10 +3510,6 @@ msgstr "תיקון עובדה"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5234,6 +5242,14 @@ msgstr "הזן מספר שלם מ-0 עד 52, או השאר ריק."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "הזן כתובת כגון resume.example.org."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "יש להזין סכום או אחוז משכר הבסיס, למשל 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "יש להזין סכום או אחוז כגון 10%, או להשאיר ריק."
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -7896,6 +7912,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "מפתחות חדשים מתחילים עם הרשאת קריאה בלבד. יש ליצור מפתחות בהגדרות החשבון בדפדפן."
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "נשמרה גרסה חדשה של ההצעה"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8577,10 +8597,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10909,6 +10925,10 @@ msgstr "שמור חיבור"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "שמרו את התנאים המתוקנים כגרסה חדשה. הגרסה הקודמת נשארת זמינה. לא נשלחת בקשה לבינה מלאכותית."
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

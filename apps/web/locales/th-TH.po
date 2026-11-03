@@ -985,6 +985,14 @@ msgstr "{passedRules} ของ {totalRules} ตรวจสอบผ่าน"
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# เสนอให้แก้ไขในหน้านี้ · ไม่มีอะไรเปลี่ยนแปลงจนกว่าคุณจะยอมรับ} other {# เสนอการแก้ไขในหน้านี้ · ไม่มีอะไรเปลี่ยนแปลงจนกว่าคุณจะยอมรับ}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} ของเงินเดือนพื้นฐาน"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} ของเงินเดือนพื้นฐาน ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# เสนอ} other {# เสนอ}}"
@@ -1170,6 +1178,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} ต่อปี ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3068,7 +3080,7 @@ msgstr "ตัวหนา"
 msgid "Bonus"
 msgstr "โบนัส"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4410,10 +4422,6 @@ msgstr "แก้ไขให้ถูกต้อง"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6587,6 +6595,14 @@ msgstr "ป้อนที่อยู่อีเมลที่ถูกต้
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "ป้อนที่อยู่เว็บ เช่น example.com"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "ป้อนจำนวนเงินหรือเปอร์เซ็นต์ของเงินเดือนพื้นฐาน เช่น 10%"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "ป้อนจำนวนเงินหรือเปอร์เซ็นต์ เช่น 10% หรือเว้นว่างไว้"
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -10033,6 +10049,10 @@ msgstr ""
 msgid "New key"
 msgstr "คีย์ใหม่"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "บันทึกข้อเสนอเวอร์ชันใหม่แล้ว"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10847,10 +10867,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13651,6 +13667,10 @@ msgstr "บันทึกการเปลี่ยนแปลง"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "บันทึกการเชื่อมต่อ"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "บันทึกเงื่อนไขที่แก้ไขเป็นเวอร์ชันใหม่ เวอร์ชันก่อนหน้ายังคงใช้ได้ ไม่มีการส่งคำขอ AI"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

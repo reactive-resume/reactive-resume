@@ -985,6 +985,14 @@ msgstr "Les contrôles {passedRules} sur {totalRules} sont réussis."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# modification proposée sur cette page · rien ne change jusqu'à ce que vous acceptiez} other {# modifications proposées sur cette page · rien ne change jusqu'à ce que vous acceptiez}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} du salaire de base"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} du salaire de base ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# proposé} other {# proposé}}"
@@ -1170,6 +1178,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr "<0>Les totaux ne sont volontairement pas additionnés.</0> La prime et les actions dépendent de conditions, et la valeur des actions est incertaine. Lisez les documents d'offre originaux avant de comparer des totaux."
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} par an ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3068,7 +3080,7 @@ msgstr "Gras"
 msgid "Bonus"
 msgstr "Prime"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4410,10 +4422,6 @@ msgstr "Corriger"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6587,6 +6595,14 @@ msgstr "Saisissez une adresse email valide."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Entrez une adresse Web, comme l'exemple .com"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Saisissez un montant ou un pourcentage du salaire de base, comme 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Saisissez un montant ou un pourcentage comme 10%, ou laissez vide."
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -10033,6 +10049,10 @@ msgstr ""
 msgid "New key"
 msgstr "Nouvelle clé"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "Nouvelle version de l’offre enregistrée"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10847,10 +10867,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13651,6 +13667,10 @@ msgstr "Enregistrer les modifications"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Enregistrer la connexion"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Enregistrez les conditions corrigées dans une nouvelle version. La version précédente reste disponible. Aucune requête n’est envoyée à l’IA."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

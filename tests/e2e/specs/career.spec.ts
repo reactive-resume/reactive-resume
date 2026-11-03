@@ -339,16 +339,19 @@ for (const linked of [true, false]) {
 		const calls = stub.requests.length;
 		await tailor.click();
 		if (!linked) {
-			const copy = page.getByRole("dialog");
+			const copy = page.getByRole("dialog", { name: "Copy a resume for a job", exact: true });
 			await expect(
 				copy.getByRole("button", { name: "Operations lead · Fictional Cedar", exact: true }),
 			).toHaveAttribute("aria-pressed", "true");
 			await copy.getByRole("button", { name: "Create and open", exact: true }).click();
+			await expect(copy).toBeHidden();
 		}
 		await expect(page).toHaveURL(/mode=check/);
 		await expect(page).toHaveURL(/checkTab=match/);
 		await expect(page.getByRole("tab", { name: /Job match/, selected: true })).toBeVisible();
-		await expect(page.getByText("Operations lead · Fictional Cedar", { exact: true })).toBeVisible();
+		await expect(
+			page.getByRole("tabpanel", { name: /Job match/ }).getByText("Operations lead · Fictional Cedar", { exact: true }),
+		).toBeVisible();
 		if (linked) {
 			await expect(page).toHaveURL(new RegExp(`/builder/${sourceId}`));
 			await expect(page.getByText("For this visit only", { exact: true })).toBeVisible();

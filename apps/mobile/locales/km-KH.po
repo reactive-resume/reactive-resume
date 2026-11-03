@@ -845,6 +845,14 @@ msgstr "ប្រភេទ {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {សំណើកែប្រែ # នៅលើទំព័រនេះ · មិនផ្លាស់ប្តូររហូតដល់អ្នកទទួលយក} other {សំណើកែប្រែ # នៅលើទំព័រនេះ · មិនផ្លាស់ប្តូររហូតដល់អ្នកទទួលយក}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} នៃប្រាក់ខែគោល"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} នៃប្រាក់ខែគោល ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -946,6 +954,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} ច្រើនទៀត"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} ក្នុងមួយឆ្នាំ ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2458,7 +2470,7 @@ msgstr "អក្សរ​ដិត"
 msgid "Bonus"
 msgstr "ប្រាក់រង្វាន់"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3498,10 +3510,6 @@ msgstr "កែការពិត"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5234,6 +5242,14 @@ msgstr "បញ្ចូលលេខទាំងមូលពី 0 ដល់ 52 �
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "បញ្ចូលអាសយដ្ឋានដូចជា resume.example.org។"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "បញ្ចូលចំនួនទឹកប្រាក់ ឬភាគរយនៃប្រាក់ខែគោល ដូចជា 10%។"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "បញ្ចូលចំនួនទឹកប្រាក់ ឬភាគរយដូចជា 10% ឬទុកចោល។"
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -7896,6 +7912,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "សោថ្មីចាប់ផ្តើមដោយមានសិទ្ធិអានតែប៉ុណ្ណោះ។ បង្កើតសោនៅក្នុងការកំណត់គណនីរបស់អ្នកក្នុងកម្មវិធីរុករក។"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "បានរក្សាទុកកំណែថ្មីនៃសំណើការងារ"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8577,10 +8597,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10909,6 +10925,10 @@ msgstr "រក្សាទុកការតភ្ជាប់"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "រក្សាទុកលក្ខខណ្ឌដែលបានកែជាកំណែថ្មី។ កំណែមុននៅតែអាចប្រើបាន។ មិនមានសំណើ AI ត្រូវបានផ្ញើទេ។"
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
