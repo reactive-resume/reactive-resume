@@ -13,7 +13,7 @@ import { atsReviewInputSchema, atsReviewOutputSchema, reviewResumeText } from ".
 import { improveInputSchema, improveLine, improveOutputSchema } from "./improve";
 import { reportAiContent } from "./reports";
 import { aiService, fileInputSchema } from "./service";
-import { createAiUsage, readWeeklyAiUsage } from "./usage";
+import { createAiUsage, readAiUsage, readWeeklyAiUsage } from "./usage";
 import { beginWritingReview, readWritingReview, saveWritingReview } from "./writing-review";
 
 /**
@@ -257,9 +257,14 @@ export const aiRouter = {
 				"Suggests a rewrite of one line of a resume or cover letter: a stronger verb, an added result, a shorter version, or the user's own request. Returns the new line, a short reason, and whether it states anything the input didn't, so the user can check it. Writes nothing. Requires authentication and AI credentials.",
 			successDescription: "The suggested line.",
 		})
-		.input(improveInputSchema)
+		.input(improveInputSchema.extend({ includeProvenance: z.boolean().optional() }))
 		.use(aiRequestRateLimit)
-		.output(improveOutputSchema)
+		.output(
+			improveOutputSchema.extend({
+				aiOperationIds: aiOperationIdsSchema.optional(),
+				aiUsage: aiUsageSummarySchema.nullable().optional(),
+			}),
+		)
 		.errors(aiErrors)
 		.handler(async ({ context, input, signal }) => {
 			try {
@@ -273,10 +278,11 @@ export const aiRouter = {
 				const posting = application?.jobDescription?.slice(0, 12_000);
 				signal?.throwIfAborted();
 
-				return await improveLine({
-					usage: createAiUsage(context.user.id, "improve", provider, async (tx) => {
-						if (application) await assertApplicationVersion(tx, context.user.id, application);
-					}),
+				const usage = createAiUsage(context.user.id, "improve", provider, async (tx) => {
+					if (application) await assertApplicationVersion(tx, context.user.id, application);
+				});
+				const result = await improveLine({
+					usage,
 					...input,
 					posting,
 					signal,
@@ -285,6 +291,13 @@ export const aiRouter = {
 					apiKey: provider.apiKey,
 					baseURL: provider.baseURL ?? "",
 				});
+				return input.includeProvenance
+					? {
+							...result,
+							aiOperationIds: [usage.operationId],
+							aiUsage: await readAiUsage(context.user.id, [usage.operationId]),
+						}
+					: result;
 			} catch (error) {
 				rethrowAiError(error, "The AI returned suggestions in the wrong format. Try again, or choose another model.");
 			}

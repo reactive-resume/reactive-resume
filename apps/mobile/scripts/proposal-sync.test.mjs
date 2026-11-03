@@ -41,6 +41,7 @@ let fail = false;
 let blocked = false;
 let scope = "https://review.invalid:alice";
 let responseGate = null;
+let requestDispatched = null;
 // The server's answer to an unchecked content save on a document an older app could edit wrongly.
 let refuseUnchecked = false;
 const { ORPCError } = await import("@orpc/client");
@@ -49,6 +50,7 @@ function network(kind) {
 		getById: async () => structuredClone(documents[kind]),
 		update: async (input) => {
 			requests.push(structuredClone({ kind, input }));
+			requestDispatched?.();
 			if (responseGate) await responseGate;
 			if (fail) throw new Error("offline");
 			if (refuseUnchecked && !input.proposalSafety)
@@ -102,6 +104,7 @@ function setup(kind) {
 	refuseUnchecked = false;
 	scope = "https://review.invalid:alice";
 	responseGate = null;
+	requestDispatched = null;
 	const now = new Date("2026-10-31T00:00:00Z");
 	const data = structuredClone(fixtures.defaultResumeData);
 	data.summary.content = proposal.before;
@@ -179,6 +182,76 @@ function accept(s, kind) {
 	);
 }
 for (const kind of ["resume", "letter"]) {
+	for (const sameWords of [false, true]) {
+		test(`${kind} reviewed Improve sources survive inflight Undo/Redo (same wording=${sameWords})`, async () => {
+			const { owner } = setup(kind);
+			documents[kind].aiOperationIds = ["original-source"];
+			const o = owner();
+			const s = o.store.getState;
+			await s().open(kind);
+			s().update(
+				(draft) => {
+					if (kind === "resume") draft.summary.content = sameWords ? proposal.before : proposal.after;
+					else draft.content = sameWords ? proposal.before : proposal.after;
+				},
+				{ newStep: true, aiOperationIds: ["reviewed-improve"] },
+			);
+			assert.deepEqual(s().document.aiOperationIds, ["original-source", "reviewed-improve"]);
+			let release;
+			responseGate = new Promise((resolve) => {
+				release = resolve;
+			});
+			const dispatched = new Promise((resolve) => {
+				requestDispatched = resolve;
+			});
+			const writing = s().flush();
+			await dispatched;
+			s().undo();
+			assert.deepEqual(s().document.aiOperationIds, ["original-source"]);
+			responseGate = null;
+			release();
+			await writing;
+			assert.deepEqual(
+				requests.map((r) => r.input.aiOperationIds),
+				[["original-source", "reviewed-improve"], ["original-source"]],
+			);
+			assert.deepEqual(documents[kind].aiOperationIds, ["original-source"]);
+			assert.equal(kind === "resume" ? documents[kind].data.summary.content : documents[kind].content, proposal.before);
+			s().redo();
+			await s().flush();
+			assert.deepEqual(documents[kind].aiOperationIds, ["original-source", "reviewed-improve"]);
+			assert.equal(
+				kind === "resume" ? documents[kind].data.summary.content : documents[kind].content,
+				sameWords ? proposal.before : proposal.after,
+			);
+		});
+		test(`${kind} failed Improve save recovers sources with content (same wording=${sameWords})`, async () => {
+			const { owner } = setup(kind);
+			documents[kind].aiOperationIds = ["original-source"];
+			const first = owner();
+			await first.store.getState().open(kind);
+			first.store.getState().update(
+				(draft) => {
+					if (kind === "resume") draft.summary.content = sameWords ? proposal.before : proposal.after;
+					else draft.content = sameWords ? proposal.before : proposal.after;
+				},
+				{ newStep: true, aiOperationIds: ["reviewed-improve"] },
+			);
+			fail = true;
+			await first.store.getState().flush();
+			await first.store.getState().close();
+			const reopened = owner();
+			await reopened.store.getState().open(kind);
+			assert.deepEqual(reopened.store.getState().document.aiOperationIds, ["original-source", "reviewed-improve"]);
+			fail = false;
+			await reopened.store.getState().flush();
+			assert.deepEqual(documents[kind].aiOperationIds, ["original-source", "reviewed-improve"]);
+			assert.equal(
+				kind === "resume" ? documents[kind].data.summary.content : documents[kind].content,
+				sameWords ? proposal.before : proposal.after,
+			);
+		});
+	}
 	test(`${kind} refresh must honor newer remote Undo receipt`, async () => {
 		const { owner } = setup(kind);
 		const o = owner();

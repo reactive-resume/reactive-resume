@@ -209,7 +209,7 @@ function IconAndColor({ entry, write }: FieldSetProps) {
 function Roles({ entry, write, page }: FieldSetProps) {
 	const roles = valuesOf(entry).roles ?? [];
 
-	const writeRoles = (key: string, mutate: (roles: RoleItem[]) => void, options?: { newStep?: boolean }) =>
+	const writeRoles = (key: string, mutate: (roles: RoleItem[]) => void, options?: Parameters<EntryWriter>[2]) =>
 		write(
 			`roles:${key}`,
 			(target) => {

@@ -3,11 +3,12 @@ import type { Editor } from "@tiptap/react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { AiResultUsage } from "@/features/ai/usage";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -36,7 +37,7 @@ type ImprovePanelProps = {
 	where: string;
 	onClose: () => void;
 	/** Applies the accepted text as its own editor/app history event. */
-	onAccept: (text: string) => void;
+	onAccept: (text: string, aiOperationIds?: string[]) => void;
 	kind?: ImproveKind | undefined;
 };
 
@@ -55,6 +56,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 	// The last request sent, with its words, so Try again and Try another send exactly that again.
 	const [last, setLast] = useState<{ action: Action; words: string } | null>(null);
 	const [changed, setChanged] = useState(false);
+	const replaced = useRef(false);
 	const improve = useMutation(orpc.ai.improve.mutationOptions());
 	const resultId = useId();
 
@@ -82,6 +84,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 		setLast({ action, words });
 		improve.mutate({
 			aiProviderId: provider.id,
+			includeProvenance: true,
 			action,
 			line: line.text,
 			where,
@@ -98,9 +101,11 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 	};
 
 	const replace = (text: string) => {
+		if (replaced.current) return;
 		const current = editor.state.doc.textBetween(line.from, line.to);
 		if (current !== line.text) return setChanged(true);
-		onAccept(text);
+		replaced.current = true;
+		onAccept(text, improve.data?.aiOperationIds);
 		onClose();
 	};
 
@@ -155,6 +160,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 						{improve.data.why}
 						{improve.data.addsFacts && <> {t`Check it's accurate.`}</>}
 					</p>
+					<AiResultUsage usage={improve.data.aiUsage} />
 					{changed && (
 						<p role="alert" className="text-xs text-danger-text">
 							<Trans>The line changed since you asked, so it wasn't replaced.</Trans>

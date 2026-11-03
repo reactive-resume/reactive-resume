@@ -1782,6 +1782,109 @@ describe("concurrent receipt ownership", () => {
 		vi.useRealTimers();
 	});
 	const s = () => useResumeStore.getState();
+	it("editor Undo removes only its Improve source and saves it alongside the restored wording", async () => {
+		const initial = makeResume("improve-editor-undo");
+		initial.aiOperationIds = ["import-source", "reviewed-improve", "other-field-source"];
+		initial.data.summary.content = "<p>Improved</p>";
+		s().initialize(initial);
+		orpcMocks.updateResume.mockImplementation(async (input) => ({
+			...initial,
+			data: input.data,
+			aiOperationIds: input.aiOperationIds,
+		}));
+		s().updateResumeData(
+			(data) => {
+				data.summary.content = "<p>Original</p>";
+			},
+			{
+				newStep: true,
+				removedAiOperationIds: ["reviewed-improve"],
+			},
+		);
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0]).toMatchObject({
+			data: { summary: { content: "<p>Original</p>" } },
+			aiOperationIds: ["import-source", "other-field-source"],
+		});
+		expect(s().resume?.aiOperationIds).toEqual(["import-source", "other-field-source"]);
+	});
+	it.each([false, true])(
+		"pairs Improve sources through inflight Undo and Redo, including unchanged wording=%s",
+		async (sameWords) => {
+			const initial = makeResume(`improve-inflight-${sameWords}`);
+			initial.aiOperationIds = ["import-source"];
+			initial.data.summary.content = "<p>Original</p>";
+			s().initialize(initial);
+			const accepted = deferred<Resume>();
+			orpcMocks.updateResume
+				.mockImplementationOnce(() => accepted.promise)
+				.mockImplementation(async (input) => ({
+					...initial,
+					data: input.data,
+					aiOperationIds: input.aiOperationIds,
+					updatedAt: new Date(initial.updatedAt.getTime() + 2),
+				}));
+			s().updateResumeData(
+				(data) => {
+					data.summary.content = sameWords ? initial.data.summary.content : "<p>Improved</p>";
+				},
+				{ newStep: true, aiOperationIds: ["improve-source"] },
+			);
+			await vi.advanceTimersByTimeAsync(500);
+			expect(orpcMocks.updateResume).toHaveBeenCalledOnce();
+			s().undo();
+			await vi.advanceTimersByTimeAsync(500);
+			accepted.resolve({
+				...initial,
+				data: {
+					...initial.data,
+					summary: { ...initial.data.summary, content: sameWords ? initial.data.summary.content : "<p>Improved</p>" },
+				},
+				aiOperationIds: ["import-source", "improve-source"],
+				updatedAt: new Date(initial.updatedAt.getTime() + 1),
+			});
+			await flushMicrotasks();
+			await vi.advanceTimersByTimeAsync(0);
+			expect(orpcMocks.updateResume.mock.calls.map(([input]) => input.aiOperationIds)).toEqual([
+				["import-source", "improve-source"],
+				["import-source"],
+			]);
+			expect(s().resume?.aiOperationIds).toEqual(["import-source"]);
+			expect(s().resume?.data.summary.content).toBe(initial.data.summary.content);
+			s().redo();
+			await vi.advanceTimersByTimeAsync(500);
+			expect(s().resume?.aiOperationIds).toEqual(["import-source", "improve-source"]);
+			expect(orpcMocks.updateResume.mock.lastCall?.[0].aiOperationIds).toEqual(["import-source", "improve-source"]);
+		},
+	);
+	it.each([false, true])(
+		"recovers unsaved Improve sources with their content, including unchanged wording=%s",
+		async (sameWords) => {
+			const initial = makeResume(`improve-recovery-${sameWords}`);
+			initial.aiOperationIds = ["import-source"];
+			s().initialize(initial);
+			orpcMocks.updateResume.mockRejectedValue(new Error("offline"));
+			s().updateResumeData(
+				(data) => {
+					if (!sameWords) data.summary.content = "<p>Improved</p>";
+				},
+				{ newStep: true, aiOperationIds: ["improve-source"] },
+			);
+			await vi.advanceTimersByTimeAsync(500);
+			clearResumeDrafts();
+			orpcMocks.updateResume.mockReset().mockImplementation(async (input) => ({
+				...initial,
+				data: input.data,
+				aiOperationIds: input.aiOperationIds,
+				updatedAt: new Date(initial.updatedAt.getTime() + 1),
+			}));
+			s().initialize(initial);
+			expect(s().resume?.aiOperationIds).toEqual(["import-source", "improve-source"]);
+			expect(s().resume?.data.summary.content).toBe(sameWords ? initial.data.summary.content : "<p>Improved</p>");
+			await flushMicrotasks();
+			expect(orpcMocks.updateResume.mock.lastCall?.[0].aiOperationIds).toEqual(["import-source", "improve-source"]);
+		},
+	);
 	it("newer remote Undo must supersede clean local acceptance, including after restart", async () => {
 		const initial = makeResume("remote-undo");
 		initial.data.summary.content = "<p>Old</p>";

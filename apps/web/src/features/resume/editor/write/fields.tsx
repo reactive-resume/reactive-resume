@@ -1,4 +1,5 @@
 import type { Entry } from "./model";
+import type { UpdateResumeDataOptions } from "@/features/resume/builder/draft";
 import type { Website } from "@reactive-resume/schema/resume/data";
 import type { ComponentProps, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
@@ -11,7 +12,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { cn } from "@reactive-resume/utils/style";
 import { findEntry } from "./model";
 import { URLInput } from "@/components/input/url-input";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 
 /** One entry of a section, re-rendering only when that entry changes; null once it's deleted. */
 export const useEntry = (sectionId: string, entryId: string) =>
@@ -20,7 +21,7 @@ export const useEntry = (sectionId: string, entryId: string) =>
 export type EntryWriter = (
 	key: string,
 	mutate: (entry: Record<string, unknown>) => void,
-	options?: { newStep?: boolean },
+	options?: Pick<UpdateResumeDataOptions, "newStep" | "aiOperationIds" | "removedAiOperationIds">,
 ) => void;
 
 /**
@@ -32,6 +33,8 @@ export function useEntryWriter(sectionId: string, entryId: string): EntryWriter 
 
 	return useCallback(
 		(key, mutate, options) => {
+			const current = useResumeStore.getState().resume;
+			if (!current || !findEntry(current.data, sectionId, entryId)) return;
 			updateResumeData(
 				(draft) => {
 					const entry = findEntry(draft, sectionId, entryId);
