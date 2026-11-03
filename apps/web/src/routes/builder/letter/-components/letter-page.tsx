@@ -1,5 +1,5 @@
 import type { PageMap } from "@reactive-resume/pdf/page-map";
-import { t } from "@lingui/core/macro";
+import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -153,7 +153,7 @@ export function LetterPage() {
 							</figcaption>
 						) : (
 							<figcaption className="mb-2.5 text-center text-xs font-medium text-ink-3">
-								<Trans>Page {pageNumber}</Trans>
+								<Trans>Page {ph({ pageNumber: i18n.number(pageNumber) })}</Trans>
 							</figcaption>
 						)
 					}

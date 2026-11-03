@@ -89,8 +89,8 @@ msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of y
 msgstr "{0, plural, one {«{1}» មានម្តងក្នុងប្រកាសការងារ។ ប្រសិនបើវាឆ្លុះបញ្ចាំងពីបទពិសោធន៍របស់អ្នក សូមបន្ថែមនៅកន្លែងសមស្រប។} other {«{2}» មាន # ដងក្នុងប្រកាសការងារ។ ប្រសិនបើវាឆ្លុះបញ្ចាំងពីបទពិសោធន៍របស់អ្នក សូមបន្ថែមនៅកន្លែងសមស្រប។}}"
 
 #. placeholder {0}: report.totalRules
-#. placeholder {1}: report.passedRules
-#. placeholder {2}: report.passedRules
+#. placeholder {1}: i18n.number(report.passedRules)
+#. placeholder {2}: i18n.number(report.passedRules)
 #: src/features/check/score.tsx
 msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
 msgstr "{0, plural, one {{1} ក្នុងចំណោមការពិនិត្យ # បានជាប់។} other {{2} ក្នុងចំណោមការពិនិត្យ # បានជាប់។}}"
@@ -103,15 +103,15 @@ msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}
 msgstr "{0, plural, one {បានទទួលយក {1} ក្នុងចំណោមការកែសម្រួល #} other {បានទទួលយក {2} ក្នុងចំណោមការកែសម្រួល #}}"
 
 #. placeholder {0}: value.report.applicableChecks
-#. placeholder {1}: value.report.passedChecks
-#. placeholder {2}: value.report.passedChecks
+#. placeholder {1}: i18n.number(value.report.passedChecks)
+#. placeholder {2}: i18n.number(value.report.passedChecks)
 #: src/features/check/parser.tsx
 msgid "{0, plural, one {{1} of # exported PDF check passes.} other {{2} of # exported PDF checks pass.}}"
 msgstr "{0, plural, one {ការពិនិត្យ PDF ដែលបាននាំចេញ៖ ជាប់ {1} ក្នុងចំណោម #។} other {ការពិនិត្យ PDF ដែលបាននាំចេញ៖ ជាប់ {2} ក្នុងចំណោម #។}}"
 
 #. placeholder {0}: match.total
-#. placeholder {1}: match.found.length
-#. placeholder {2}: match.found.length
+#. placeholder {1}: i18n.number(match.found.length)
+#. placeholder {2}: i18n.number(match.found.length)
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {បានបញ្ចូលពាក្យគន្លឹះ {1} ក្នុងចំណោម # ពីប្រកាសការងារ} other {បានបញ្ចូលពាក្យគន្លឹះ {2} ក្នុងចំណោម # ពីប្រកាសការងារ}}"
@@ -470,8 +470,8 @@ msgstr "{0} (របស់ខ្ញុំ)"
 
 #. placeholder {0}: labelOf(from.status)
 #. placeholder {1}: labelOf(step.status)
-#. placeholder {2}: step.reached
-#. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
+#. placeholder {2}: i18n.number(step.reached)
+#. placeholder {3}: step.conversion === null ? "" : ` (${i18n.number(step.conversion)}%)`
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
@@ -505,7 +505,7 @@ msgid "{0} interview · {1}"
 msgstr "សំភាសន៍ {0} · {1}"
 
 #. placeholder {0}: interviewTypeLabel(event.interview.kind)
-#. placeholder {1}: event.interview.durationMinutes
+#. placeholder {1}: i18n.number(event.interview.durationMinutes)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "{0} interview · {1} min"
 msgstr "សំភាសន៍ {0} · {1} នាទី"
@@ -525,34 +525,34 @@ msgstr "ច្រើនជាង {0}"
 msgid "{0} new comments"
 msgstr ""
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/features/letters/write.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATES.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATES.length)
 #: src/features/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "{0} នៃ {1} បានបង្ហាញ"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{0} នៃ {1} ពាក្យសុំការងារដែលបានកែសម្រួលបានទទួលការឆ្លើយតប។ {2} នៃ {3} បានផ្ញើជាមួយនឹងប្រវត្តិរូបសង្ខេបផ្សេងទៀត។"
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -567,38 +567,38 @@ msgstr "{0} តែប៉ុណ្ណោះ"
 msgid "{0} posting"
 msgstr "ការប្រកាសការងារ {0}"
 
-#. placeholder {0}: selectedIds.length
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selectedIds.length)
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "{0} បានជ្រើសរើស"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
-#. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
-#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: displayed?.total ?? page.total
-#. placeholder {2}: pending.length
+#. placeholder {0}: i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))
+#. placeholder {0}: i18n.number(recoveryStart + 1)
+#. placeholder {1}: i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))
+#. placeholder {1}: i18n.number(Math.min(recoveryStart + 100, pending.length))
+#. placeholder {2}: i18n.number(displayed?.total ?? page.total)
+#. placeholder {2}: i18n.number(pending.length)
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: row.index + 1
-#. placeholder {2}: row.count
+#. placeholder {1}: i18n.number(row.index + 1)
+#. placeholder {2}: i18n.number(row.count)
 #: src/features/write/outline.tsx
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, ធាតុ {1} នៃ {2}"
@@ -608,13 +608,13 @@ msgstr "{0}, ធាតុ {1} នៃ {2}"
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: Math.round(zoom * 100)
+#. placeholder {0}: i18n.number(Math.round(zoom * 100))
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
 msgid "{0}%"
 msgstr "{0}%"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/messages.tsx
 msgid "{accepted} of {0} applied"
 msgstr "{accepted} នៃ {0} បានអនុវត្ត"
@@ -946,7 +946,7 @@ msgstr "{words, plural, one {ពាក្យ #} other {# ពាក្យ}}"
 msgid "{words} of {shownLimit} words"
 msgstr ""
 
-#. placeholder {0}: items.length - MAX_PER_DAY
+#. placeholder {0}: i18n.number(items.length - MAX_PER_DAY)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} ច្រើនទៀត"
@@ -1441,7 +1441,7 @@ msgstr "បន្ថែមមួយជាមួយលេខកូដប្រទ
 msgid "Add page"
 msgstr "បន្ថែមទំព័រ"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/preview/page.tsx
 msgid "Add page {0}"
 msgstr ""
@@ -1746,7 +1746,7 @@ msgstr "Albanian"
 msgid "All"
 msgstr "ទាំងអស់។"
 
-#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
+#. placeholder {0}: i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "ទាំងអស់ ({0})"
@@ -1874,7 +1874,7 @@ msgstr ""
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
 msgstr ""
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/application-detail/sections.tsx
 msgid "and {0} more"
 msgstr "និង {0} ច្រើនទៀត"
@@ -4313,7 +4313,7 @@ msgstr "រចនាប័ទ្មផ្ទាល់ខ្លួនមិនត
 msgid "Czech"
 msgstr "Czech"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/share/link.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "ការមើលប្រចាំថ្ងៃលើសពី 30 ថ្ងៃ កំពូល {0}"
@@ -4563,12 +4563,12 @@ msgstr "លុបកំណែ"
 msgid "Deleted"
 msgstr "បានលុប"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0}. Refresh to see what remains."
 msgstr ""
@@ -4613,7 +4613,7 @@ msgstr "សេចក្ដី​ពិពណ៌នា"
 msgid "Description is clipped to 20,000 characters. Review it before preparing."
 msgstr "ការពិពណ៌នាត្រូវបានកាត់ជា 20,000 តួអក្សរ។ ពិនិត្យមើលវាមុនពេលរៀបចំ។"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Description of role {0}"
 msgstr "ការពិពណ៌នាអំពីតួនាទី {0}"
@@ -5003,7 +5003,7 @@ msgstr "កែសម្រួល"
 msgid "Edit {0}"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
@@ -5471,7 +5471,7 @@ msgstr ""
 msgid "Feedback links"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/basics-screen.tsx
 msgid "Field {0}"
 msgstr "វាល {0}"
@@ -6409,13 +6409,13 @@ msgstr "តើមានប្រាក់រង្វាន់ទេ ហើយ�
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/check/page.tsx
 msgid "Issue {0} of {1}"
 msgstr "ចេញផ្សាយ {0} នៃ {1}"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -6923,7 +6923,7 @@ msgstr "តួអក្សរ"
 msgid "Letter page"
 msgstr "ទំព័រសំបុត្រ"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/letters/page.tsx
 msgid "Letter page {0}"
 msgstr "ទំព័រលិខិត {0}"
@@ -6996,12 +6996,12 @@ msgstr "បន្ទាត់បិទនេះអាចដំណើរការ
 msgid "Link"
 msgstr "តំណភ្ជាប់"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -7750,8 +7750,8 @@ msgstr "ផ្លាស់ទីឡើងលើ"
 msgid "Move your email and phone number to the top of page one."
 msgstr "ផ្លាស់ទីអ៊ីមែល និងលេខទូរស័ព្ទរបស់អ្នកទៅផ្នែកខាងលើនៃទំព័រទីមួយ។"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "បានផ្លាស់ទី {0} នៃ {1} ទៅធុងសំរាម។ ឯកសារចាក់សោត្រូវបានរំលង។ ផ្ទុកឡើងវិញ ហើយព្យាយាមម្តងទៀតនូវការបរាជ័យណាមួយ។"
@@ -7804,7 +7804,7 @@ msgstr "ឈ្មោះ"
 msgid "Name and contact details weren't found. Add them in Basics."
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
 msgstr "ឈ្មោះរបស់មនុស្សទី {0}"
@@ -8715,7 +8715,7 @@ msgstr "មានតែអ្នកផ្តល់សេវាដែលឆ្ល
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "មានតែទំព័រ {0} ដំបូងប៉ុណ្ណោះដែលត្រូវបានពិនិត្យ។"
@@ -8977,7 +8977,7 @@ msgstr "អត្ថប្រយោជន៍ផ្សេងទៀត"
 msgid "Other concern"
 msgstr "កង្វល់ផ្សេងទៀត។"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/threads.tsx
 msgid "Other documents · {0}"
 msgstr "ឯកសារផ្សេងៗ · {0}"
@@ -9006,8 +9006,8 @@ msgstr "ទំព័រ"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: 1
-#. placeholder {0}: index + 1
-#. placeholder {0}: item.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(item.page + 1)
 #: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
@@ -9018,29 +9018,29 @@ msgstr "ទំព័រ"
 msgid "Page {0}"
 msgstr "ទំព័រ {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/history/history.tsx
 msgid "Page {0} · read-only"
 msgstr "ទំព័រ {0} · បានតែអានប៉ុណ្ណោះ។"
 
-#. placeholder {0}: index + 1
-#. placeholder {0}: placement.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(placement.page + 1)
 #: src/features/write/section-sheet.tsx
 msgid "Page {0} · Sidebar"
 msgstr "ទំព័រ {0} · របារចំហៀង"
 
-#. placeholder {0}: pageIndex + 1
-#. placeholder {1}: preview.result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
+#. placeholder {1}: i18n.number(preview.result?.pageCount ?? 1)
 #: src/features/check/page.tsx
 msgid "Page {0} of {1}"
 msgstr "ទំព័រ {0} នៃ {1}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/ats-checker/original-page.tsx
 msgid "Page {0} of the uploaded PDF"
 msgstr "ទំព័រ {0} នៃ PDF ដែលបានផ្ទុកឡើង"
 
-#. placeholder {0}: result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(result?.pageCount ?? 1)
 #: src/preview/page.tsx
 msgid "Page {currentPage} of {0}"
 msgstr "ទំព័រ {currentPage} នៃ {0}"
@@ -10014,7 +10014,7 @@ msgstr "ធ្វើឡើងវិញ"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -10188,7 +10188,7 @@ msgstr "លុប​វាល"
 msgid "Remove file"
 msgstr "យកឯកសារចេញ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -10197,7 +10197,7 @@ msgstr ""
 msgid "Remove password"
 msgstr "ដកពាក្យសម្ងាត់ចេញ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "ដកមនុស្សទី {0} ចេញ"
@@ -10211,7 +10211,7 @@ msgstr "លុបរូបថត"
 msgid "Remove question"
 msgstr "ដកសំណួរចេញ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -10477,12 +10477,12 @@ msgstr "បានស្ដារ \"{0}\""
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -10554,7 +10554,7 @@ msgstr "ភាសានៃប្រវត្តិរូប"
 msgid "Resume options"
 msgstr ""
 
-#. placeholder {0}: pageIndex + 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/check/page.tsx
 msgid "Resume page {0}"
 msgstr "ទំព័រ ប្រវត្តិរូបសង្ខេប {0}"
@@ -10778,7 +10778,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "ការសរសេរឡើងវិញ"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/check/writing.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -10826,7 +10826,7 @@ msgstr "មុខតំណែង"
 msgid "Role (optional)"
 msgstr "តួនាទី (ស្រេចចិត្ត)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "តួនាទី {0}"
@@ -11366,12 +11366,12 @@ msgstr "ជ្រើសរើសទាំងអស់"
 msgid "Select all roles"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
 msgstr "ជ្រើសរើសធាតុនៅលើទំព័រ {0}"
 
-#. placeholder {0}: entry + 1
+#. placeholder {0}: i18n.number(entry + 1)
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "ជ្រើសរើសធាតុ {0}"
@@ -11715,7 +11715,7 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "បង្ហាញ “បង្កើតដោយ Reactive Resume”"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
 #: src/features/applications-board/board-screen.tsx
 msgid "Show {0} more"
 msgstr "បង្ហាញ {0} ទៀត"
@@ -12326,8 +12326,8 @@ msgstr ""
 msgid "Stay in Documents"
 msgstr "ស្នាក់នៅក្នុងឯកសារ"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -13976,7 +13976,7 @@ msgstr "ធ្វើបច្ចុប្បន្នភាពម៉ាស៊ី
 msgid "Updated"
 msgstr "បានធ្វើបច្ចុប្បន្នភាព"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Updated {completed} of {0}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures."
 msgstr "បានធ្វើបច្ចុប្បន្នភាព {completed} នៃ {0} ។ ឯកសារជាប់សោ និងលិខិតអមសម្រាប់តំណភ្ជាប់សាធារណៈត្រូវបានរំលង។ ផ្ទុកឡើងវិញ ហើយព្យាយាមម្តងទៀតនូវការបរាជ័យណាមួយ។"
@@ -14308,7 +14308,7 @@ msgstr "កំណែដែលបានរក្សាទុក"
 msgid "Version sent {date}"
 msgstr "កំណែដែលបានផ្ញើ {date}"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "កំណែដែលបានផ្ញើ {date} · ពិនិត្យ {0}"

@@ -1,4 +1,5 @@
 import type { JdMatchReport } from "@reactive-resume/resume/ats-pdf";
+import { i18n } from "@lingui/core";
 import { Trans } from "@lingui/react/macro";
 import { Badge } from "@reactive-resume/ui/components/badge";
 
@@ -33,7 +34,7 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 			<div className="space-y-1">
 				<p className="text-sm leading-none font-medium">
 					<Trans>
-						{jd.matchedCount} of {jd.totalTerms} terms found
+						{i18n.number(jd.matchedCount)} of {i18n.number(jd.totalTerms)} terms found
 					</Trans>
 				</p>
 				<p className="text-xs leading-normal text-ink-3">

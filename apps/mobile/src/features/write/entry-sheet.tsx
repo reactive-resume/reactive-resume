@@ -68,7 +68,7 @@ export function EntrySheet({ resumeId, section, entryId, open, onClose, onGone }
 							<ListRow
 								key={id}
 								title={titleOf(id)}
-								subtitle={t`Page ${pageIndex + 1}`}
+								subtitle={t`Page ${i18n.number(pageIndex + 1)}`}
 								leading="file-text"
 								onPress={() => move({ type: "section", sectionId: id })}
 							/>
@@ -76,7 +76,7 @@ export function EntrySheet({ resumeId, section, entryId, open, onClose, onGone }
 						<ListRow
 							key={`new-${pageIndex}`}
 							title={t`New section`}
-							subtitle={t`Page ${pageIndex + 1}`}
+							subtitle={t`Page ${i18n.number(pageIndex + 1)}`}
 							leading="plus"
 							onPress={() => move({ type: "new-section", pageIndex, title: sourceTitle })}
 						/>,

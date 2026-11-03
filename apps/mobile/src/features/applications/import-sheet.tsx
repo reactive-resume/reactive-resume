@@ -1,5 +1,6 @@
 import type { CsvField } from "@reactive-resume/schema/applications/csv";
-import { plural } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { getDocumentAsync } from "expo-document-picker";
@@ -367,7 +368,7 @@ function CsvImport({ open, onClose, server, scope }: CsvImportProps) {
 						<Text color="ink2">{t`This server uses the standard stages, so stage names in the file aren't kept.`}</Text>
 					)}
 					{overflow > 0 && (
-						<Text color="warnText">{t`Only the first ${MAX_IMPORT} rows import at once, leaving out ${overflow}. Split the file to import the rest.`}</Text>
+						<Text color="warnText">{t`Only the first ${ph({ MAX_IMPORT: i18n.number(MAX_IMPORT) })} rows import at once, leaving out ${ph({ overflow: i18n.number(overflow) })}. Split the file to import the rest.`}</Text>
 					)}
 				</View>
 			)}

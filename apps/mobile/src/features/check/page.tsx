@@ -1,6 +1,7 @@
 import type { CheckIssue } from "./issues";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { ScrollViewInstance } from "react-native";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -92,7 +93,7 @@ export function CheckPage({
 			{issue && (
 				<View style={{ flexDirection: "row", alignItems: "center", gap: space.s1 }}>
 					<IconButton icon="x" label={t`Close`} onPress={() => onSelect(null)} />
-					<Text style={{ flex: 1 }}>{t`Issue ${issue.number} of ${issues.length}`}</Text>
+					<Text style={{ flex: 1 }}>{t`Issue ${i18n.number(issue.number)} of ${i18n.number(issues.length)}`}</Text>
 					<IconButton icon="caret-left" label={t`Previous issue`} onPress={() => step(-1)} />
 					<IconButton icon="caret-right" label={t`Next issue`} onPress={() => step(1)} />
 				</View>
@@ -133,7 +134,9 @@ export function CheckPage({
 								setPageIndex((value) => value - 1);
 							}}
 						/>
-						<Text style={{ flex: 1 }}>{t`Page ${pageIndex + 1} of ${preview.result?.pageCount ?? 1}`}</Text>
+						<Text
+							style={{ flex: 1 }}
+						>{t`Page ${i18n.number(pageIndex + 1)} of ${i18n.number(preview.result?.pageCount ?? 1)}`}</Text>
 						<IconButton
 							icon="caret-right"
 							label={t`Next page`}
@@ -151,7 +154,7 @@ export function CheckPage({
 									source={{ uri: page.uri }}
 									style={{ width, height: page.height * preview.displayScale }}
 									transition={reduced ? 0 : motion.d2}
-									accessibilityLabel={t`Resume page ${pageIndex + 1}`}
+									accessibilityLabel={t`Resume page ${i18n.number(pageIndex + 1)}`}
 								/>
 								{highlights
 									.filter((node) => node.page === pageIndex)
@@ -186,7 +189,7 @@ export function CheckPage({
 										>
 											<Pressable
 												accessibilityRole="button"
-												accessibilityLabel={t`Issue ${issue.number}: ${issue.title}`}
+												accessibilityLabel={t`Issue ${i18n.number(issue.number)}: ${issue.title}`}
 												accessibilityState={{ selected: issue.key === selected }}
 												onPress={() => onSelect(issue.key)}
 												style={{
@@ -202,7 +205,7 @@ export function CheckPage({
 												}}
 											>
 												<Text color="warnText" variant="label">
-													{issue.number}
+													{i18n.number(issue.number)}
 												</Text>
 											</Pressable>
 										</View>

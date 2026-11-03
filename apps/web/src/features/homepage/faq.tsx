@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -82,7 +83,7 @@ const underlinePath = "M2 7C30 4 58 9 96 6S160 3 196 7S262 9 298 5";
 type FaqItemProps = { item: Question; index: number };
 
 function FaqItem({ item, index }: FaqItemProps) {
-	const number = String(index + 1).padStart(2, "0");
+	const number = i18n.number(index + 1, { minimumIntegerDigits: 2 });
 	const linkClass =
 		"mt-3 inline-flex items-center gap-1 font-medium font-ui text-[14px] text-[oklch(0.42_0.1_150)] underline underline-offset-[3px] transition-colors hover:text-[oklch(0.32_0.1_150)]";
 

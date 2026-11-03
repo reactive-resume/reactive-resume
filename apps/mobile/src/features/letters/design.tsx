@@ -2,6 +2,7 @@ import type { FontPairingId, MarginId } from "./design-presets";
 import type { LetterDocument } from "@/draft/types";
 import type { WritableDraft } from "immer";
 import type { ReactNode } from "react";
+import { ph } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -172,7 +173,10 @@ function OwnDesign({ letter, disabled }: { letter: LetterDocument; disabled: boo
 						disabled={textSize <= TEXT_SIZE.min}
 						onPress={() => step(-1)}
 					/>
-					<Text variant="mono" accessibilityLiveRegion="polite">{t`${textSize} pt`}</Text>
+					<Text
+						variant="mono"
+						accessibilityLiveRegion="polite"
+					>{t`${ph({ textSize: i18n.number(textSize) })} pt`}</Text>
 					<IconButton
 						icon="plus"
 						variant="secondary"

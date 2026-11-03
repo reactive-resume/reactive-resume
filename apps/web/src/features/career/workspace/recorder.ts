@@ -195,7 +195,8 @@ export function speakAloud(text: string, lang: string, onEnd?: () => void) {
 }
 
 /** "0:47" */
-export const clock = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+export const clock = (seconds: number, locale: string) =>
+	`${new Intl.NumberFormat(locale, { useGrouping: false }).format(Math.floor(seconds / 60))}:${new Intl.NumberFormat(locale, { minimumIntegerDigits: 2, useGrouping: false }).format(seconds % 60)}`;
 
 // ---- "Write numbers as digits" ----
 

@@ -1,5 +1,6 @@
 import type { CsvField } from "@reactive-resume/schema/applications/csv";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -429,8 +430,8 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 								{overflow > 0 && (
 									<p className="text-xs text-warn-text">
 										<Trans>
-											Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import
-											the rest.
+											Only the first {ph({ MAX_IMPORT: i18n.number(MAX_IMPORT) })} rows import at once, leaving out{" "}
+											{ph({ overflow: i18n.number(overflow) })}. Split the file to import the rest.
 										</Trans>
 									</p>
 								)}

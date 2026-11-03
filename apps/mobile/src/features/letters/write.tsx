@@ -3,6 +3,7 @@ import type { LetterDocument } from "@/draft/types";
 import type { ApplicationSummary as Application } from "@/features/applications/types";
 import type { WritableDraft } from "immer";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
@@ -875,7 +876,7 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 						onPress={() => setPick({ operation: draft.operation, index: index - 1 })}
 					/>
 					<Text variant="mono" color="ink2">
-						{t`${index + 1} of ${all.length}`}
+						{t`${i18n.number(index + 1)} of ${i18n.number(all.length)}`}
 					</Text>
 					<IconButton
 						icon="caret-right"

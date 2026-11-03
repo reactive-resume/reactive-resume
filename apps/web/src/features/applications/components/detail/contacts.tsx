@@ -1,5 +1,6 @@
 import type { Contact } from "@reactive-resume/schema/applications/data";
 import type { RefObject } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useEffect, useId, useRef, useState } from "react";
@@ -39,13 +40,13 @@ export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
 					!primary
 						? t`Contact: none yet`
 						: others.length > 0
-							? t`Contact: ${primary.name} and ${others.length} more`
+							? t`Contact: ${primary.name} and ${i18n.number(others.length)} more`
 							: t`Contact: ${primary.name}`
 				}
 				className="grid min-w-0 rounded-md text-start hover:underline"
 			>
 				<span className="truncate text-sm font-medium">{primary ? primary.name : "—"}</span>
-				{others.length > 0 && <span className="text-xs text-ink-3">{t`and ${others.length} more`}</span>}
+				{others.length > 0 && <span className="text-xs text-ink-3">{t`and ${i18n.number(others.length)} more`}</span>}
 			</PopoverTrigger>
 			<PopoverContent align="start" className="grid w-80 gap-3 p-3">
 				<h3 className="text-sm font-semibold">

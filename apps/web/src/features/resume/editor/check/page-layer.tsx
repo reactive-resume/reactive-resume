@@ -2,6 +2,7 @@ import type { CheckIssue } from "./issues";
 import type { PageMap, PageMapNode, PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { getProposalState } from "@reactive-resume/resume/proposals";
@@ -174,7 +175,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 						<button
 							type="button"
 							data-issue-pin={issue.key}
-							aria-label={t`Issue ${issue.number}: ${issue.title}`}
+							aria-label={t`Issue ${i18n.number(issue.number)}: ${issue.title}`}
 							aria-pressed={isSelected}
 							onClick={() => pickIssue(issue)}
 							style={marginStyle(node, page, stack, onPage)}
@@ -183,7 +184,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 								isSelected && "outline-2 outline-offset-1 outline-warn",
 							)}
 						>
-							{issue.number}
+							{i18n.number(issue.number)}
 						</button>
 					</div>
 				);
@@ -217,7 +218,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 					className="absolute grid size-5 place-items-center rounded-sm bg-accent text-xs font-semibold text-on-accent"
 					style={marginStyle(node, page, 0, onPage)}
 				>
-					{number}
+					{i18n.number(number)}
 				</span>
 			))}
 		</div>
@@ -284,7 +285,7 @@ export function IssueStepper() {
 				</button>
 				<span className="flex-1 text-center text-sm font-semibold">
 					<Trans>
-						Issue {issue.number} of {issues.length}
+						Issue {i18n.number(issue.number)} of {i18n.number(issues.length)}
 					</Trans>
 				</span>
 				<button
@@ -306,7 +307,7 @@ export function IssueStepper() {
 			</div>
 
 			<section
-				aria-label={t`Issue ${issue.number}`}
+				aria-label={t`Issue ${i18n.number(issue.number)}`}
 				className="absolute inset-x-3 bottom-3 z-10 grid gap-2 rounded-xl border border-line bg-surface p-3.5 shadow-e3"
 			>
 				<strong className="text-[15px] font-semibold">{issue.title}</strong>

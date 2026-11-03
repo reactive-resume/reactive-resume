@@ -1,5 +1,6 @@
 import type { Active, Announcements, DndContextProps, Over } from "@dnd-kit/core";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { DRAG_AUTO_SCROLL } from "./motion";
 
 /**
@@ -24,8 +25,14 @@ function placeOf(active: Active, over: Over) {
 		const total = sortable.items.length;
 		const group = target.group;
 		return group
-			? t({ message: `position ${position} of ${total}, ${group}`, comment: "Drag and drop: where an item is" })
-			: t({ message: `position ${position} of ${total}`, comment: "Drag and drop: where an item is" });
+			? t({
+					message: `position ${ph({ position: i18n.number(position) })} of ${ph({ total: i18n.number(total) })}, ${group}`,
+					comment: "Drag and drop: where an item is",
+				})
+			: t({
+					message: `position ${ph({ position: i18n.number(position) })} of ${ph({ total: i18n.number(total) })}`,
+					comment: "Drag and drop: where an item is",
+				});
 	}
 	return target?.group || nameOf(over);
 }

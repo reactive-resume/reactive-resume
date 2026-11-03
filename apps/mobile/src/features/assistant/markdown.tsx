@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { memo } from "react";
 import { Linking, View } from "react-native";
 import { Text, useTheme } from "@/ui";
@@ -145,7 +146,7 @@ export const AssistantMarkdown = memo(function AssistantMarkdown({ text }: { tex
 						<View key={key} style={{ gap: space.s1 }}>
 							{block.items.map((item, number) => (
 								<View key={`${number}`} style={{ flexDirection: "row", gap: space.s2, paddingStart: space.s1 }}>
-									<Text color="ink2">{block.ordered ? `${number + 1}.` : "•"}</Text>
+									<Text color="ink2">{block.ordered ? `${i18n.number(number + 1)}.` : "•"}</Text>
 									<Text selectable style={{ flex: 1 }}>
 										<Inline text={item} />
 									</Text>

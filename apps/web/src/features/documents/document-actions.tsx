@@ -1,7 +1,8 @@
 import type { DocumentsSearch } from "./documents-page";
 import type { DocumentSummary } from "./filter";
 import type { IconName } from "@reactive-resume/ui/components/icon";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -267,7 +268,7 @@ export function useBatchActions() {
 			description:
 				done === total
 					? plural(done, { one: "# document updated", other: "# documents updated" })
-					: t`Updated ${done} of ${total}. Locked documents, and letters for public links, were skipped.`,
+					: t`Updated ${ph({ done: i18n.number(done) })} of ${ph({ total: i18n.number(total) })}. Locked documents, and letters for public links, were skipped.`,
 		});
 
 	return {
@@ -302,7 +303,7 @@ export function useBatchActions() {
 				description:
 					done.length === documents.length
 						? plural(done.length, { one: "# document moved to Trash", other: "# documents moved to Trash" })
-						: t`Moved ${done.length} of ${documents.length} to Trash. Locked documents were skipped.`,
+						: t`Moved ${i18n.number(done.length)} of ${i18n.number(documents.length)} to Trash. Locked documents were skipped.`,
 				actionProps: {
 					children: t`Undo`,
 					// Confirmed like a single Undo when everything came back; otherwise how many did. The server counts only
@@ -321,7 +322,9 @@ export function useBatchActions() {
 							await refresh();
 							if (restored === done.length) return confirmUndone();
 							if (restored === 0 && failure) return toastError(failure, t`Couldn't restore them. Try again.`);
-							toast.add({ description: t`Restored ${restored} of ${done.length}.` });
+							toast.add({
+								description: t`Restored ${ph({ restored: i18n.number(restored) })} of ${i18n.number(done.length)}.`,
+							});
 						})(),
 				},
 			});
@@ -347,7 +350,7 @@ export function useBatchActions() {
 			else if (restored === 0 && failure) toastError(failure, t`Couldn't restore the selected documents. Try again.`);
 			else if (restored > 0)
 				toast.add({
-					description: t`Restored ${restored} of ${documents.length}. Refresh and retry any that remain in Trash.`,
+					description: t`Restored ${ph({ restored: i18n.number(restored) })} of ${i18n.number(documents.length)}. Refresh and retry any that remain in Trash.`,
 				});
 			else toast.add({ description: t`No selected documents were restored. Refresh to see what remains.` });
 			return restored === documents.length && !failure;
@@ -373,7 +376,7 @@ export function useBatchActions() {
 			else if (deleted === 0 && failure) toastError(failure, t`Couldn't delete the selected documents. Try again.`);
 			else if (deleted > 0)
 				toast.add({
-					description: t`Deleted ${deleted} of ${documents.length} forever. Refresh to see what remains.`,
+					description: t`Deleted ${ph({ deleted: i18n.number(deleted) })} of ${i18n.number(documents.length)} forever. Refresh to see what remains.`,
 				});
 			else toast.add({ description: t`No selected documents were deleted. Refresh to see what remains.` });
 			return deleted === documents.length && !failure;

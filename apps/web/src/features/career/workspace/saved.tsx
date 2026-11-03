@@ -2,6 +2,7 @@ import type { SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
 import type { SavedItemKind, WorkspaceTab } from "@reactive-resume/schema/career";
 import type { IconName } from "@reactive-resume/ui/components/icon";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -244,7 +245,7 @@ function summaryOf(item: SavedItem, locale: string): string {
 	switch (data.kind) {
 		case "fit": {
 			const count = (status: string) => data.requirements.filter((requirement) => requirement.status === status).length;
-			return t`${count("supported")} supported, ${count("partial")} partly supported, ${count("missing")} with no evidence yet. ${data.summary}`;
+			return t`${i18n.number(count("supported"))} supported, ${i18n.number(count("partial"))} partly supported, ${i18n.number(count("missing"))} with no evidence yet. ${data.summary}`;
 		}
 		case "briefing":
 			return [data.focus, data.honesty].filter(Boolean).join(" ");

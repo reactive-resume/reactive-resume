@@ -109,6 +109,8 @@ type BarItemProps = {
 
 /** One cell of a bottom bar: the app tab bar and the editor's Write / Page / Design / Check bar share it. */
 export function BarItem({ label, icon, focused, onPress, badge, badgeTone = "accent" }: BarItemProps) {
+	const { i18n } = useLingui();
+	const badgeText = typeof badge === "number" ? i18n.number(badge) : badge;
 	const { colors, radius, size, space } = useTheme();
 	const android = Platform.OS === "android";
 
@@ -116,7 +118,7 @@ export function BarItem({ label, icon, focused, onPress, badge, badgeTone = "acc
 		<Pressable
 			accessibilityRole={icon ? "tab" : "button"}
 			accessibilityState={icon ? { selected: focused } : {}}
-			accessibilityLabel={badge === undefined ? label : `${label}, ${badge}`}
+			accessibilityLabel={badgeText === undefined ? label : `${label}, ${badgeText}`}
 			onPress={() => {
 				if (icon && !focused) haptics.selection();
 				onPress();
@@ -137,7 +139,7 @@ export function BarItem({ label, icon, focused, onPress, badge, badgeTone = "acc
 			{icon ? (
 				<View style={{ height: size.newPill.height, alignItems: "center", justifyContent: "center" }}>
 					<Icon name={icon} filled={focused} color={focused ? colors.ink : colors.ink2} size={size.icon.bar} />
-					{badge === undefined ? null : <TabBadge value={badge} tone={badgeTone} />}
+					{badgeText === undefined ? null : <TabBadge value={badgeText} tone={badgeTone} />}
 				</View>
 			) : (
 				<View
@@ -313,13 +315,15 @@ function SidebarItem({
 	compact = false,
 	role = "tab",
 }: SidebarItemProps) {
+	const { i18n } = useLingui();
+	const badgeText = typeof badge === "number" ? i18n.number(badge) : badge;
 	const { colors, radius, size, space } = useTheme();
 
 	return (
 		<Pressable
 			accessibilityRole={role}
 			accessibilityState={{ selected: active }}
-			accessibilityLabel={badge === undefined ? label : `${label}, ${badge}`}
+			accessibilityLabel={badgeText === undefined ? label : `${label}, ${badgeText}`}
 			onPress={() => {
 				if (!active) haptics.selection();
 				onPress();
@@ -347,7 +351,7 @@ function SidebarItem({
 			</Text>
 			{badge === undefined ? null : quiet ? (
 				<Text variant="callout" color={active ? "ink2" : "ink3"}>
-					{badge}
+					{badgeText}
 				</Text>
 			) : (
 				<View
@@ -360,7 +364,7 @@ function SidebarItem({
 					}}
 				>
 					<Text variant="micro" color="onAccent">
-						{badge}
+						{badgeText}
 					</Text>
 				</View>
 			)}

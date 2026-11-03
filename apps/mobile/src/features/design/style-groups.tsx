@@ -322,7 +322,7 @@ export function TypeGroup({ data, write, disabled, onCustomFonts }: TypeGroupPro
 					min={TEXT_SIZE.min}
 					max={TEXT_SIZE.max}
 					step={TEXT_SIZE.step}
-					format={(value) => `${value} pt`}
+					format={(value) => `${i18n.number(value)} pt`}
 					disabled={disabled}
 					onChange={(value) => write("size", (draft) => applyTextSize(draft.metadata, value), true)}
 				/>
@@ -453,7 +453,7 @@ export function ColorGroup({ data, write, disabled }: GroupProps) {
 				{/* An unreadable value has no ratio: the one shown would be the old colour's. */}
 				{valid ? (
 					<Text variant="mono" color={tooLight ? "warnText" : "ink3"}>
-						{`${ratio.toFixed(1)}:1`}
+						{`${i18n.number(ratio, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}:${i18n.number(1)}`}
 					</Text>
 				) : null}
 			</View>

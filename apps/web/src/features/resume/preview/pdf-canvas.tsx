@@ -6,6 +6,7 @@ import type {
 	RenderTask,
 } from "pdfjs-dist/legacy/build/pdf.mjs";
 import type { ReactNode } from "react";
+import { ph } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useEffect, useRef, useState } from "react";
 import { isRTL } from "@reactive-resume/utils/locale";
@@ -206,7 +207,7 @@ export function PdfCanvasPage({
 				(showPageNumbers ? (
 					<figcaption className="mb-1 text-[0.625rem] font-medium text-ink-3">
 						<Trans>
-							Page {pageNumber} of {totalPages}
+							Page {ph({ pageNumber: i18n.number(pageNumber) })} of {ph({ totalPages: i18n.number(totalPages) })}
 						</Trans>
 					</figcaption>
 				) : null)}
@@ -215,7 +216,7 @@ export function PdfCanvasPage({
 			<div style={scaledPageSize} className={cn("relative aspect-page rounded-md", className)}>
 				<canvas
 					ref={canvasRef}
-					aria-label={t`Resume page ${pageNumber} of ${totalPages}`}
+					aria-label={t`Resume page ${ph({ pageNumber: i18n.number(pageNumber) })} of ${ph({ totalPages: i18n.number(totalPages) })}`}
 					className="block size-full rounded-[inherit]"
 				/>
 				{overlay}

@@ -13,6 +13,7 @@ import {
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useReducedMotion } from "motion/react";
@@ -195,7 +196,7 @@ function Column({ lane, applications, onOpen, onTagSelect }: ColumnProps) {
 				<span className="truncate" title={label}>
 					{label}
 				</span>
-				<span className="font-mono text-xs font-normal text-ink-3">{applications.length}</span>
+				<span className="font-mono text-xs font-normal text-ink-3">{i18n.number(applications.length)}</span>
 			</h2>
 			<div ref={setNodeRef} className="flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">
 				{shown.map((application) => (
@@ -207,7 +208,7 @@ function Column({ lane, applications, onOpen, onTagSelect }: ColumnProps) {
 						onClick={() => setVisible((count) => count + COLUMN_PAGE_SIZE)}
 						className="rounded-lg border border-dashed border-line py-2 text-xs text-ink-3 transition-colors hover:bg-hover"
 					>
-						{t`Show ${Math.min(remaining, COLUMN_PAGE_SIZE)} more`}
+						{t`Show ${i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))} more`}
 					</button>
 				)}
 			</div>

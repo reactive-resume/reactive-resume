@@ -146,8 +146,17 @@ type TestResult = { testStatus: string; testError: string | null };
  * What Test says after it runs: "Connected · 420 ms", with the round trip measured in the browser, or the provider's
  * own error so it can be fixed here.
  */
-export function describeTest(result: TestResult, milliseconds: number, labels: { connected: string; failed: string }) {
+export function describeTest(
+	result: TestResult,
+	milliseconds: number,
+	labels: { connected: string; failed: string },
+	locale: string,
+) {
 	if (result.testStatus === "success")
-		return { ok: true, label: `${labels.connected} · ${Math.round(milliseconds)} ms`, error: null };
+		return {
+			ok: true,
+			label: `${labels.connected} · ${new Intl.NumberFormat(locale).format(Math.round(milliseconds))} ms`,
+			error: null,
+		};
 	return { ok: false, label: labels.failed, error: result.testError?.trim() || null };
 }

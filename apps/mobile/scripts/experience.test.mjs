@@ -2,6 +2,10 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { mock } from "node:test";
+import { i18n } from "@lingui/core";
+
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
 const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
@@ -91,6 +95,7 @@ ui.listLayout = {};
 ui.useFirstAppearance = () => false;
 ui.useReducedMotion = () => false;
 const mocks = {
+	"@lingui/core": { i18n },
 	"@/shell/shortcut-help": {
 		ShortcutHelpButton: "ShortcutHelpButton",
 		CharacterShortcutSetting: "CharacterShortcutSetting",
@@ -104,8 +109,12 @@ const mocks = {
 		useLocalSearchParams: () => searchParams,
 		Stack: { Screen: "StackScreen" },
 	},
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
-	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en-US" } }) },
+	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
+		t: tag,
+		plural: (value, forms) => forms.other.replace("#", String(value)),
+	},
 	"@reactive-resume/ai/task-models": {
 		aiModelForTask: (provider, task) =>
 			(task === "capable" ? provider.capableModel : provider.fastModel) ?? provider.model,
@@ -406,10 +415,30 @@ const laneQuery = {
 };
 // Offer hints for Next step: none known unless a case sets them.
 let offerHint;
+let stageUndo;
+let stageToastScope = "fixture";
+const stageToastOwner = load("features/applications/stage-actions.ts", {
+	"./queries": { stageScope: () => stageToastScope },
+	"./lane-queries": laneQuery,
+	"./lanes": lanes,
+	"./stages": stages,
+	"@tanstack/react-query": {},
+	"@reactive-resume/schema/applications/stage-baselines": {},
+	"@/auth/session": {},
+	"@/features/applications/error": { applicationError: () => "Link unavailable" },
+	"@/features/career/hooks": {},
+	"@/features/career/undo": {},
+});
 const stageActionsStub = {
 	useOfferHints: () => undefined,
 	offerHintFor: () => offerHint,
-	useStageMovedToast: () => (moved, lane) => calls.push({ moved: moved.id, lane: lane.category }),
+	useStageMovedToast: () => {
+		const moved = stageToastOwner.useStageMovedToast();
+		return (...args) => {
+			moved(...args);
+			stageUndo = calls.at(-1).undo;
+		};
+	},
 	acceptedStage: () => null,
 };
 const nextSteps = load("features/applications/next-step.ts", {
@@ -441,6 +470,9 @@ const nativeInterviewCalendar = load("features/application-detail/calendar.ts", 
 let applicationDocuments = [];
 let rejectDocumentLink = false;
 let creatingApplicationLetter = false;
+let stageUpdate = (input) => calls.push(input);
+let stageUpdateAsync = (input) =>
+	new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
 const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/application-detail/sections.tsx", {
 	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
 	"@reactive-resume/schema/applications/document-suggestions": suggestionsDomain,
@@ -492,7 +524,13 @@ const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/app
 	"@/features/applications/stage-actions": stageActionsStub,
 	"@/features/applications/stages": stages,
 	"@/features/applications/queries": {
-		useApplicationMutations: () => ({ update: { isPending: false, mutate: (input) => calls.push(input) } }),
+		useApplicationMutations: () => ({
+			update: {
+				isPending: false,
+				mutate: (...args) => stageUpdate(...args),
+				mutateAsync: (...args) => stageUpdateAsync(...args),
+			},
+		}),
 	},
 	"./calendar": nativeInterviewCalendar,
 	"@/features/reminders": {
@@ -553,6 +591,195 @@ control(tree, "Change lane").onChange("applied");
 assert.deepEqual(calls, ["mark-applied"], "Explicit Saved → Applied still captures submission details");
 control(tree, "Change lane").onChange("interview");
 assert.deepEqual(calls.at(-1), { id: "job-a", status: "interview" });
+
+// Undo must report a rejected inverse, rather than dismissing the success toast in silence.
+reset();
+stageUpdate = (input, callbacks) => {
+	calls.push(input);
+	if (input.status === "interview") callbacks?.onSuccess?.();
+	else callbacks?.onError?.(new Error("Offline"));
+};
+tree = render(StageStepper, { application });
+control(tree, "Change lane").onChange("interview");
+assert.equal(typeof stageUndo, "function");
+await stageUndo();
+assert.deepEqual(calls.at(-1), { message: "Link unavailable" }, "Detail Undo failure remains visible");
+stageUpdate = (input) => calls.push(input);
+
+// A Move sheet can outlive its row snapshot. Resolve the inverse from the cache when its action dispatches.
+{
+	const { QueryClient, MutationObserver } = mobileRequire("@tanstack/react-query");
+	const queryClient = new QueryClient();
+	const listKey = ["applications", "stage-fixture"];
+	const queryBoundary = {
+		applicationsListQueryKey: () => listKey,
+		applicationDetailQueryKey: (id) => ["application", id],
+		useApplications: () => ({ data: [application], isPending: false, refetch: async () => {} }),
+		useApplicationMutations: () => ({
+			update: {
+				isPending: false,
+				mutate: (...args) => stageUpdate(...args),
+				mutateAsync: (...args) => stageUpdateAsync(...args),
+			},
+		}),
+	};
+	const stageActions = load("features/applications/stage-actions.ts", {
+		"./queries": queryBoundary,
+		"./lane-queries": laneQuery,
+		"./lanes": lanes,
+		"./stages": stages,
+		"@tanstack/react-query": { useQueryClient: () => queryClient },
+		"@reactive-resume/schema/applications/stage-baselines": {},
+		"@/auth/session": { getServer: () => "fixture" },
+		"@/features/applications/error": { applicationError: () => "Link unavailable" },
+		"@/features/career/hooks": {},
+		"@/features/career/undo": {},
+	});
+	const { BoardScreen } = load("features/applications-board/board-screen.tsx", {
+		"@tanstack/react-query": { useQueryClient: () => queryClient },
+		"react-native": { ...mocks["react-native"], useWindowDimensions: () => ({ width: 320 }) },
+		"react-native-gesture-handler": {},
+		"react-native-reanimated": {
+			...mocks["react-native-reanimated"],
+			createAnimatedComponent: () => "Animated.ScrollView",
+			useAnimatedReaction() {},
+			useAnimatedScrollHandler: () => () => {},
+			useFrameCallback: () => ({ setActive() {} }),
+		},
+		"react-native-worklets": {},
+		"./board": load("features/applications-board/board.ts"),
+		"./search": { useApplicationSearch: () => ({ search: "", needsYou: false }) },
+		"./views": { ApplicationsViewFrame: "ApplicationsViewFrame" },
+		"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => time },
+		"@/features/application-detail/sheets": { CloseSheet: "CloseSheet", MarkAppliedSheet: "MarkAppliedSheet" },
+		"@/features/applications/error": { applicationError: () => "Link unavailable" },
+		"@/features/applications/lane-queries": laneQuery,
+		"@/features/applications/lanes": lanes,
+		"@/features/applications/list": { filterApplications: (rows) => rows },
+		"@/features/applications/next-step": nextSteps,
+		"@/features/applications/queries": queryBoundary,
+		"@/features/applications/stage-actions": { ...stageActionsStub, listedApplication: stageActions.listedApplication },
+		"@/shell/use-is-tablet": { useIsTablet: () => false },
+	});
+	reset();
+	const board = BoardScreen().props.children[0].type;
+	let boardTree = render(board);
+	nodes(boardTree)
+		.find((node) => node.type?.name === "Column")
+		.props.onMove(application);
+	boardTree = render(board);
+	queryClient.setQueryData(listKey, [{ ...application, status: "closed", closedReason: "withdrew" }]);
+	stageUpdate = (input, callbacks) => {
+		calls.push(input);
+		if (input.status === "interview") callbacks?.onSuccess?.();
+		else callbacks?.onError?.(new Error("Offline"));
+	};
+	mock.timers.enable({ apis: ["setTimeout"] });
+	try {
+		nodes(boardTree)
+			.find((node) => node.type?.name === "MoveSheet")
+			.props.onPick("interview");
+		mock.timers.tick(1);
+	} finally {
+		mock.timers.reset();
+	}
+	await stageUndo();
+	assert.deepEqual(calls.filter((call) => call?.id === application.id).at(-1), {
+		id: application.id,
+		status: "closed",
+		closedReason: "withdrew",
+	});
+	assert.deepEqual(calls.at(-1), { message: "Link unavailable" }, "Board Undo failure remains visible");
+
+	// Real observer detachment models the useMutation subscription removed when either screen unmounts.
+	async function undoAfterUnmount(move, scenario) {
+		reset();
+		stageToastScope = "fixture";
+		stageUndo = undefined;
+		let pending;
+		let rejectUndo;
+		let started;
+		const undoStarted = new Promise((resolve) => (started = resolve));
+		const observer = new MutationObserver(queryClient, {
+			retry: false,
+			mutationFn: (input) =>
+				input.status === "interview"
+					? Promise.resolve(input)
+					: new Promise((_resolve, reject) => {
+							rejectUndo = reject;
+							started();
+						}),
+		});
+		const detach = observer.subscribe(() => {});
+		stageUpdate = (input, options) => {
+			calls.push(input);
+			pending = observer.mutate(input, options);
+			void pending.catch(() => {});
+		};
+		stageUpdateAsync = (input) => {
+			calls.push(input);
+			pending = observer.mutate(input);
+			return pending;
+		};
+		move();
+		if (scenario === "switch-forward") stageToastScope = "another-account";
+		await pending;
+		if (scenario === "switch-forward") {
+			assert.equal(stageUndo, undefined, "An old account's late move cannot show an actionable toast");
+			detach();
+			return;
+		}
+		assert.equal(typeof stageUndo, "function");
+		if (scenario === "switch-before") {
+			stageToastScope = "another-account";
+			const writes = calls.filter((call) => call?.id).length;
+			await stageUndo();
+			assert.equal(calls.filter((call) => call?.id).length, writes, "Old account's toast cannot dispatch Undo");
+			detach();
+			return;
+		}
+		const completion = stageUndo();
+		await undoStarted;
+		detach();
+		if (scenario === "switch-during") stageToastScope = "another-account";
+		rejectUndo(new Error("Offline"));
+		await pending.catch(() => {});
+		await completion;
+		assert.equal(
+			calls.filter((call) => call?.message === "Link unavailable").length,
+			scenario === "same-account" ? 1 : 0,
+			"Undo failure survives observer unmount, without leaking notices into another account",
+		);
+	}
+	for (const scenario of ["same-account", "switch-during", "switch-before", "switch-forward"]) {
+		await undoAfterUnmount(
+			() => control(render(StageStepper, { application }), "Change lane").onChange("interview"),
+			scenario,
+		);
+		await undoAfterUnmount(() => {
+			let view = render(board);
+			nodes(view)
+				.find((node) => node.type?.name === "Column")
+				.props.onMove(application);
+			view = render(board);
+			mock.timers.enable({ apis: ["setTimeout"] });
+			try {
+				nodes(view)
+					.find((node) => node.type?.name === "MoveSheet")
+					.props.onPick("interview");
+				mock.timers.tick(1);
+			} finally {
+				mock.timers.reset();
+			}
+		}, scenario);
+	}
+	stageToastScope = "fixture";
+	queryClient.clear();
+	stageUpdate = (input) => calls.push(input);
+	stageUpdateAsync = (input) =>
+		new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
+	console.log("PASS real mutation observers retain detail/board Undo errors after unmount and fence account changes");
+}
 
 for (const [resumeId, coverLetterId] of [
 	[null, null],
@@ -880,7 +1107,7 @@ const listLogic = load("features/applications/list.ts", {
 	"./lanes": lanes,
 });
 const { ApplicationsListScreen } = load("features/applications/list-screen.tsx", {
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en" } }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en" } }) },
 	"./add-sheet": { AddApplicationSheet: "AddApplicationSheet" },
 	"./error": { applicationError: String },
 	"./lane-queries": laneQuery,
@@ -1273,8 +1500,9 @@ let calendarRows = [
 const { CalendarScreen } = load("features/applications-board/calendar-screen.tsx", {
 	"@/features/applications/stage-actions": { useOfferHints: () => undefined },
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", RefreshControl: "RefreshControl" },
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-GB" } }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en-GB" } }) },
 	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
 		plural: (value, forms) => (forms[value] ?? forms[value === 1 ? "one" : "other"]).replace("#", String(value)),
 	},
 	"./calendar": nativeCalendar,
@@ -3677,6 +3905,7 @@ const csvReact = {
 const { ImportApplicationsSheet: NativeCsvImport } = load("features/applications/import-sheet.tsx", {
 	react: csvReact,
 	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
 		plural: (value, forms) => (value === 1 ? forms.one : forms.other).replaceAll("#", String(value)),
 	},
 	"@reactive-resume/schema/applications/csv": csvDomain,

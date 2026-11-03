@@ -682,10 +682,13 @@ export function Toaster() {
 						accessibilityLiveRegion="polite"
 						style={{
 							flexDirection: "row",
+							flexWrap: "wrap",
 							alignItems: "center",
+							justifyContent: "flex-end",
 							gap: space.s1 + space.s0,
 							minHeight: size.button,
-							maxWidth: size.formSheet,
+							width: size.formSheet,
+							maxWidth: "100%",
 							paddingStart: space.s4,
 							paddingEnd: action ? space.s1 + space.s0 : space.s4,
 							borderRadius: android ? radius.rSm : radius.rLg,
@@ -693,7 +696,7 @@ export function Toaster() {
 							boxShadow: (wide ? shadows.e2 : shadows.e3).boxShadow,
 						}}
 					>
-						<Text color="bg" style={{ flexShrink: 1, flexGrow: android ? 1 : 0, paddingVertical: space.s3 }}>
+						<Text color="bg" style={{ flexShrink: 1, width: action ? "100%" : undefined, paddingVertical: space.s3 }}>
 							{item.message}
 						</Text>
 						{controls.map((control) => (
@@ -713,6 +716,8 @@ export function Toaster() {
 									dismissToast(item.id);
 								}}
 								style={({ pressed }) => ({
+									flexShrink: 1,
+									maxWidth: "100%",
 									minHeight: size.hit,
 									justifyContent: "center",
 									paddingHorizontal: space.s2 + space.s0,

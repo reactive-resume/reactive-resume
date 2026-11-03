@@ -126,7 +126,7 @@ export function TypeGroup({ onCustomFonts }: TypeGroupProps) {
 					<span id={sizeLabelId} className="font-medium">
 						<Trans>Text size</Trans>
 					</span>
-					<span className="font-mono text-xs text-ink-2">{size} pt</span>
+					<span className="font-mono text-xs text-ink-2">{i18n.number(size)} pt</span>
 				</div>
 				<Slider
 					aria-labelledby={sizeLabelId}
@@ -236,7 +236,7 @@ export function ColorGroup() {
 				{/* An unreadable value has no ratio: the one shown would be the old colour's. */}
 				{valid && (
 					<span className={cn("shrink-0 font-mono text-xs", tooLight ? "text-warn-text" : "text-ink-3")}>
-						{ratio.toFixed(1)}:1
+						{i18n.number(ratio, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}:{i18n.number(1)}
 					</span>
 				)}
 			</div>

@@ -1,6 +1,7 @@
 import type { NewDocumentContext } from "@/features/documents/new-document-dialog";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
@@ -268,7 +269,7 @@ function NavLink({ item, current }: { item: NavItem; current: boolean }) {
 		>
 			<Icon name={item.icon} filled={current} />
 			<span className="flex-1">{item.label}</span>
-			{item.count ? <span className="font-mono text-xs text-ink-3">{item.count}</span> : null}
+			{item.count ? <span className="font-mono text-xs text-ink-3">{i18n.number(item.count)}</span> : null}
 		</Link>
 	);
 }
