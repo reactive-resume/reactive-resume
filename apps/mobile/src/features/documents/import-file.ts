@@ -189,7 +189,9 @@ export async function importDocument(
 		const preview = await previewPdf(file, signal, scope);
 		assertCurrent();
 		if (preview.source.partial)
-			throw new ImportError(t`Couldn't read the whole PDF. Split it into smaller files and try again.`);
+			throw new ImportError(
+				t`Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file.`,
+			);
 		if (!preview.data)
 			throw new ImportError(
 				t`This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in.`,

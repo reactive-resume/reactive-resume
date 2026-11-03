@@ -133,7 +133,7 @@ for (const scenario of [
 			return;
 		}
 		if (scenario === "partial local") {
-			await assert.rejects(reading, /whole PDF/);
+			await assert.rejects(reading, /Check that all pages have readable text, or try a smaller file\./);
 			assert.equal(saved, 0);
 			return;
 		}

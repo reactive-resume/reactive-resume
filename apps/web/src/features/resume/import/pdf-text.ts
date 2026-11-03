@@ -20,7 +20,9 @@ export async function readPdfSource(file: File) {
 export async function readPdfResume(file: File) {
 	const raw = await extractPdf(file, { operatorBudgetMs: 0 });
 	if (raw.truncated || raw.textReadFailed)
-		throw new ImportError(t`Couldn't read the whole PDF. Split it into smaller files and try again.`);
+		throw new ImportError(
+			t`Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file.`,
+		);
 	const doc = buildExtractedDocument(raw);
 	return doc.lines.length ? parsePdfResume(doc) : null;
 }
