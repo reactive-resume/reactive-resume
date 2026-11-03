@@ -72,15 +72,22 @@ for (const width of [1440, 390]) {
 		await page.getByRole("button", { name: "Summary", exact: true }).click();
 		const editor = page.getByRole("textbox", { name: "Summary", exact: true });
 		await expect(editor).toHaveText("Alpha Beta Gamma");
-		await editor.focus();
-		await editor.press("ControlOrMeta+A");
-		await page.keyboard.press("ArrowLeft");
-		for (let i = 0; i < 6; i++) await page.keyboard.press("ArrowRight");
-		for (let i = 0; i < 4; i++) await page.keyboard.press("Shift+ArrowRight");
-		await expect.poll(() => page.evaluate(() => getSelection()?.toString())).toBe("Beta");
 		const toolbar = page.getByRole("toolbar", { name: "Formatting" });
-		if (width === 1440) await page.keyboard.press("Tab");
-		else await toolbar.getByRole("button", { name: "Bold", exact: true }).focus();
+		await editor.focus();
+		// Keep selectionchange queued until focus has left, as a fast selection followed by Tab can do.
+		await editor.evaluate((element) => {
+			const bold = element.ownerDocument.querySelector<HTMLButtonElement>('[role="toolbar"] button[aria-label="Bold"]');
+			const text = element.ownerDocument.createTreeWalker(element, NodeFilter.SHOW_TEXT).nextNode();
+			if (!text || !bold) throw new Error("Missing editor fixture controls");
+			const range = element.ownerDocument.createRange();
+			range.setStart(text, 6);
+			range.setEnd(text, 10);
+			const selection = element.ownerDocument.getSelection();
+			selection?.removeAllRanges();
+			selection?.addRange(range);
+			element.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+			bold.focus();
+		});
 		await expect(toolbar.getByRole("button", { name: "Bold", exact: true })).toBeFocused();
 		await page.keyboard.press("ArrowRight");
 		await expect(toolbar.getByRole("button", { name: "Italic", exact: true })).toBeFocused();

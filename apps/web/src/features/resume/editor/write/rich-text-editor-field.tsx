@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { Toolbar } from "@base-ui/react/toolbar";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
+import { TextSelection } from "@tiptap/pm/state";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -232,7 +233,24 @@ export function RichTextEditor({
 		immediatelyRender: false,
 		shouldRerenderOnTransaction: false,
 		editorProps: {
-			handleKeyDown: (_view, event) => {
+			handleKeyDown: (view, event) => {
+				if (event.key === "Tab") {
+					// Commit the live range before focus leaves: the browser's selectionchange can still be queued.
+					const range = view.dom.ownerDocument.getSelection();
+					if (
+						range?.anchorNode &&
+						range.focusNode &&
+						view.dom.contains(range.anchorNode) &&
+						view.dom.contains(range.focusNode)
+					) {
+						const selection = TextSelection.between(
+							view.state.doc.resolve(view.posAtDOM(range.anchorNode, range.anchorOffset)),
+							view.state.doc.resolve(view.posAtDOM(range.focusNode, range.focusOffset)),
+						);
+						if (!selection.eq(view.state.selection)) view.dispatch(view.state.tr.setSelection(selection));
+					}
+					return false;
+				}
 				const mod = event.metaKey || event.ctrlKey;
 				if (!mod || event.altKey || event.shiftKey || event.key.toLowerCase() !== "k" || !linkShortcut.current)
 					return false;
