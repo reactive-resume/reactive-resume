@@ -25,6 +25,7 @@ async function prepare(id: string, origin: string, fullParity: boolean) {
 		isPublic: false,
 		isLocked: false,
 		showDownloadButtons: true,
+		allowWordDownload: false,
 		showInSearchEngines: false,
 		hideContactDetails: false,
 		isPrimary: false,

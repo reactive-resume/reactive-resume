@@ -42,6 +42,7 @@ export type PublicWebPage =
 			/** The verified custom domain this primary resume opens at, which search engines are pointed to. */
 			customDomain: string | null;
 			showDownloadButtons: boolean;
+			allowWordDownload: boolean;
 			hasPassword: boolean;
 			/** Listed in search engines: the owner allows it, no password guards it, and it isn't a preview. */
 			indexable: boolean;
@@ -72,6 +73,7 @@ export async function loadPublicWebPage(input: {
 			isPrimary: schema.resume.isPrimary,
 			passwordHash: schema.resume.password,
 			showDownloadButtons: schema.resume.showDownloadButtons,
+			allowWordDownload: schema.resume.allowWordDownload,
 			showInSearchEngines: schema.resume.showInSearchEngines,
 			hideContactDetails: schema.resume.hideContactDetails,
 			customDomain: verifiedDomainColumn(),
@@ -99,6 +101,7 @@ export async function loadPublicWebPage(input: {
 		isPrimary: resume.isPrimary,
 		customDomain: resume.isPrimary ? resume.customDomain : null,
 		showDownloadButtons: resume.showDownloadButtons,
+		allowWordDownload: resume.allowWordDownload,
 		hasPassword,
 		// A preview is never listed, whatever the switch says.
 		indexable: resume.showInSearchEngines && !hasPassword && !preview,

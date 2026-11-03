@@ -20,6 +20,7 @@ export const resume = pg.pgTable(
 		tags: pg.text("tags").array().notNull().default([]),
 		isPublic: pg.boolean("is_public").notNull().default(false),
 		showDownloadButtons: pg.boolean("show_download_buttons").notNull().default(true),
+		allowWordDownload: pg.boolean("allow_word_download").notNull().default(false),
 		// Share settings that decide who sees what. They live here, not in `data`, so a JSON patch, an import or a
 		// version restore can never change them.
 		showInSearchEngines: pg.boolean("show_in_search_engines").notNull().default(false),

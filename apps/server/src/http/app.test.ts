@@ -12,7 +12,7 @@ const mocks = vi.hoisted(() => ({
 	handleUpload: vi.fn(),
 	handleMcp: vi.fn(),
 	handleResumePdfDownload: vi.fn(),
-	handlePublicResumePdf: vi.fn(),
+	handlePublicResumeDownload: vi.fn(),
 	handleMcpServerCard: vi.fn(),
 	handleIntegrations: vi.fn(),
 	handleApiCatalog: vi.fn(),
@@ -93,8 +93,8 @@ vi.mock("./resume-pdf", () => ({
 	handleResumePdfDownload: mocks.handleResumePdfDownload,
 }));
 
-vi.mock("./public-resume-pdf", () => ({
-	handlePublicResumePdf: mocks.handlePublicResumePdf,
+vi.mock("./public-resume-download", () => ({
+	handlePublicResumeDownload: mocks.handlePublicResumeDownload,
 }));
 
 const transportEnv = (remoteAddress: string) =>
@@ -113,7 +113,7 @@ beforeEach(() => {
 	mocks.handleUpload.mockResolvedValue(new Response("upload"));
 	mocks.handleMcp.mockResolvedValue(new Response("mcp"));
 	mocks.handleResumePdfDownload.mockResolvedValue(new Response("pdf"));
-	mocks.handlePublicResumePdf.mockResolvedValue(new Response("public-pdf"));
+	mocks.handlePublicResumeDownload.mockResolvedValue(new Response("public-pdf"));
 	mocks.handleMcpServerCard.mockReturnValue(new Response("server-card"));
 	mocks.handleIntegrations.mockReturnValue(new Response("integrations"));
 	mocks.handleApiCatalog.mockReturnValue(new Response("api-catalog"));
@@ -188,8 +188,8 @@ describe("createApp", () => {
 		await app.fetch(rotated, env);
 
 		await expect(response.text()).resolves.toBe("public-pdf");
-		expect(mocks.handlePublicResumePdf).toHaveBeenNthCalledWith(1, first, "jane", "resume", "203.0.113.9");
-		expect(mocks.handlePublicResumePdf).toHaveBeenNthCalledWith(2, rotated, "jane", "resume", "203.0.113.9");
+		expect(mocks.handlePublicResumeDownload).toHaveBeenNthCalledWith(1, first, "jane", "resume", "203.0.113.9");
+		expect(mocks.handlePublicResumeDownload).toHaveBeenNthCalledWith(2, rotated, "jane", "resume", "203.0.113.9");
 		expect(mocks.handleResumePdfDownload).not.toHaveBeenCalled();
 		expect(mocks.serveWebDistStatic).not.toHaveBeenCalled();
 		expect(mocks.handleWebApp).not.toHaveBeenCalled();
