@@ -382,7 +382,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 					<CollectionHeader
 						title={trashed ? t`Trash` : t`Documents`}
 						searchLabel={t`Search documents`}
-						placeholder={t`Names, tags or applications`}
+						placeholder={t`Search`}
 						value={q}
 						maxLength={500}
 						onChangeText={(value) => setQ(value.slice(0, 500))}

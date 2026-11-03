@@ -71,6 +71,13 @@ test("contains phone entry focus and restores it without changing content", asyn
 	const addRole = dialog.getByRole("button", { name: "Add role", exact: true });
 	await description.focus();
 	await description.press("Tab");
+	const bold = dialog.getByRole("toolbar", { name: "Formatting" }).getByRole("button", { name: "Bold", exact: true });
+	await expect(bold).toBeFocused();
+	await bold.press("Shift+Tab");
+	await expect(description).toBeFocused();
+	await description.press("Tab");
+	await expect(bold).toBeFocused();
+	await bold.press("Tab");
 	await expect(addRole).toBeFocused();
 	await addRole.press("Tab");
 	await expect(back).toBeFocused();
