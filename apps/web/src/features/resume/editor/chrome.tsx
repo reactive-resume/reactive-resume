@@ -13,7 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { clampZoom, FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
-import { scrollAfterZoom, wheelZoom } from "./zoom-wheel";
+import { anchoredScroll, wheelZoom, type ZoomAnchor } from "./zoom-wheel";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { useResumeStore } from "@/features/resume/builder/draft";
@@ -75,6 +75,11 @@ export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
 		fitScaleRef.current = fitScale;
 	}, [fitScale]);
 
+	// A gesture's unrounded scale and the page point it holds under the pointer, kept between wheel events.
+	const wheelZoomRef = useRef<number | null>(null);
+	const zoomAnchorRef = useRef<ZoomAnchor | null>(null);
+	const zoomFrameRef = useRef<number | null>(null);
+
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
@@ -88,27 +93,67 @@ export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
 			event.preventDefault();
 
 			const { zoom, setZoom } = useEditorStore.getState();
-			const before = zoom === "fit" ? Math.max(0.25, fitScaleRef.current) : zoom;
-			const after = clampZoom(wheelZoom(before, event.deltaY, event.deltaMode, canvas.clientHeight));
-			if (after === before) return;
+			const stored = zoom === "fit" ? Math.max(0.25, fitScaleRef.current) : zoom;
+			// Keep the unrounded scale between events, so a slow trackpad pinch adds up instead of rounding away.
+			const accumulated = wheelZoomRef.current;
+			const before = accumulated !== null && clampZoom(accumulated) === stored ? accumulated : stored;
+			const raw = wheelZoom(before, event.deltaY, event.deltaMode, canvas.clientHeight);
+			const after = clampZoom(raw);
+			wheelZoomRef.current = raw;
 
-			const bounds = canvas.getBoundingClientRect();
-			const pointerX = event.clientX - bounds.left;
-			const pointerY = event.clientY - bounds.top;
-			const { scrollLeft, scrollTop } = canvas;
+			// Fit can sit below the explicit minimum on a small canvas: zooming out must not jump up to it.
+			if (raw < before && after > stored) return;
+			if (after === stored) return;
+
+			// The page, not its corner, is what stays under the pointer while it grows or shrinks.
+			const page = canvas.querySelector("canvas")?.parentElement ?? canvas.firstElementChild;
+			const pageBounds = page?.getBoundingClientRect();
+			if (page && pageBounds) {
+				const anchor = zoomAnchorRef.current;
+				if (anchor?.page === page) {
+					// Several wheel events can land before one frame: combine their scale changes on one anchor.
+					anchor.ratio *= after / stored;
+					anchor.pointerX = event.clientX;
+					anchor.pointerY = event.clientY;
+				} else {
+					zoomAnchorRef.current = {
+						page,
+						contentX: event.clientX - pageBounds.left,
+						contentY: event.clientY - pageBounds.top,
+						ratio: after / stored,
+						pointerX: event.clientX,
+						pointerY: event.clientY,
+					};
+				}
+
+				if (zoomFrameRef.current === null) {
+					zoomFrameRef.current = requestAnimationFrame(() => {
+						zoomFrameRef.current = null;
+						const anchor = zoomAnchorRef.current;
+						zoomAnchorRef.current = null;
+						if (!anchor?.page.isConnected) return;
+						const { left, top } = anchoredScroll(
+							anchor,
+							{ left: canvas.scrollLeft, top: canvas.scrollTop },
+							anchor.page.getBoundingClientRect(),
+						);
+						canvas.scrollLeft = left;
+						canvas.scrollTop = top;
+					});
+				}
+			}
 
 			setZoom(after);
-
-			// Zoom around the pointer, not the page's corner, once the new scale has been laid out.
-			requestAnimationFrame(() => {
-				if (!canvas.isConnected) return;
-				canvas.scrollLeft = scrollAfterZoom(scrollLeft, pointerX, before, after);
-				canvas.scrollTop = scrollAfterZoom(scrollTop, pointerY, before, after);
-			});
 		};
 
 		canvas.addEventListener("wheel", zoomByWheel, { passive: false });
-		return () => canvas.removeEventListener("wheel", zoomByWheel);
+		return () => {
+			canvas.removeEventListener("wheel", zoomByWheel);
+			if (zoomFrameRef.current !== null) cancelAnimationFrame(zoomFrameRef.current);
+			zoomFrameRef.current = null;
+			zoomAnchorRef.current = null;
+			wheelZoomRef.current = null;
+		};
 	}, [canvasRef]);
 
 	return { canvasRef, fitScale, pageScale };

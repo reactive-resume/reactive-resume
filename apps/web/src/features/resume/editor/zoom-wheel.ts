@@ -15,8 +15,24 @@ export function wheelZoom(current: number, deltaY: number, deltaMode = 0, viewpo
 	return current * Math.exp(-wheelDeltaPixels(deltaY, deltaMode, viewportHeight) * WHEEL_ZOOM_INTENSITY);
 }
 
-/** Where to scroll a canvas so the content point under the pointer stays there after a scale change. */
-export function scrollAfterZoom(scroll: number, pointer: number, before: number, after: number) {
-	const next = (scroll + pointer) * (after / before) - pointer;
-	return Number.isFinite(next) ? Math.max(0, next) : scroll;
+/** A page point held under the pointer while its scale changes, before the new layout is measured. */
+export type ZoomAnchor = {
+	page: Element;
+	contentX: number;
+	contentY: number;
+	ratio: number;
+	pointerX: number;
+	pointerY: number;
+};
+
+/** Scroll offsets that keep the anchored page point under the pointer after the scale change is laid out. */
+export function anchoredScroll(
+	anchor: ZoomAnchor,
+	scroll: { left: number; top: number },
+	pageBounds: { left: number; top: number },
+) {
+	return {
+		left: Math.max(0, scroll.left + pageBounds.left + anchor.contentX * anchor.ratio - anchor.pointerX),
+		top: Math.max(0, scroll.top + pageBounds.top + anchor.contentY * anchor.ratio - anchor.pointerY),
+	};
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { clampZoom } from "./store";
-import { scrollAfterZoom, wheelZoom } from "./zoom-wheel";
+import { anchoredScroll, wheelZoom } from "./zoom-wheel";
 
 describe("wheelZoom", () => {
 	it("zooms in when the wheel turns up and out when it turns down", () => {
@@ -19,13 +19,34 @@ describe("wheelZoom", () => {
 	});
 });
 
-describe("scrollAfterZoom", () => {
-	it("keeps the content point under the pointer", () => {
-		expect(scrollAfterZoom(0, 300, 1, 2)).toBe(300);
-		expect(scrollAfterZoom(200, 100, 1, 2)).toBe(500);
+describe("anchoredScroll", () => {
+	const anchor = (contentX: number, contentY: number, ratio: number, pointerX: number, pointerY: number) => ({
+		page: {} as Element,
+		contentX,
+		contentY,
+		ratio,
+		pointerX,
+		pointerY,
+	});
+
+	it("keeps the page point under the pointer, including the page's place on the canvas", () => {
+		expect(anchoredScroll(anchor(220, 200, 2, 400, 300), { left: 0, top: 0 }, { left: 180, top: 100 })).toEqual({
+			left: 220,
+			top: 200,
+		});
+	});
+
+	it("adds the change to the scroll already there", () => {
+		expect(anchoredScroll(anchor(220, 200, 2, 400, 300), { left: 100, top: 50 }, { left: 80, top: 50 })).toEqual({
+			left: 220,
+			top: 200,
+		});
 	});
 
 	it("never scrolls past the start of the canvas", () => {
-		expect(scrollAfterZoom(0, 0, 2, 1)).toBe(0);
+		expect(anchoredScroll(anchor(100, 100, 1, 400, 300), { left: 0, top: 0 }, { left: 180, top: 100 })).toEqual({
+			left: 0,
+			top: 0,
+		});
 	});
 });
