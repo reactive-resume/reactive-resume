@@ -388,6 +388,24 @@ const nextSteps = load("features/applications/next-step.ts", {
 const time = { locale: "en-US", timeZone: "UTC", when: String, time: String, day: String, utcDay: String };
 const outcomesDomain = load("../../../packages/schema/src/applications/outcomes.ts");
 const suggestionsDomain = load("../../../packages/schema/src/applications/document-suggestions.ts");
+const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
+const nativeIcs = load("features/reminders/ics.ts", {
+	"@reactive-resume/utils/ics": mobileRequire("@reactive-resume/utils/ics"),
+	"@reactive-resume/schema/applications/calendar": mobileRequire("@reactive-resume/schema/applications/calendar"),
+});
+let interviewScope = "fixture";
+const reminderSchedule = load("features/reminders/schedule.ts", {
+	"@reactive-resume/utils/timezone": mobileRequire("@reactive-resume/utils/timezone"),
+});
+const calendarBoundary = {
+	...nativeIcs,
+	zonedParts: reminderSchedule.zonedParts,
+	shareIcs: async (event, file, method) => calls.push({ event, file, method }),
+};
+const nativeInterviewCalendar = load("features/application-detail/calendar.ts", {
+	"@/auth/session": { getAccountScope: () => interviewScope },
+	"@/features/reminders": calendarBoundary,
+});
 let applicationDocuments = [];
 let rejectDocumentLink = false;
 let creatingApplicationLetter = false;
@@ -434,8 +452,9 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"@/features/applications/queries": {
 		useApplicationMutations: () => ({ update: { isPending: false, mutate: (input) => calls.push(input) } }),
 	},
+	"./calendar": nativeInterviewCalendar,
 	"@/features/reminders": {
-		...load("features/reminders/ics.ts"),
+		...nativeIcs,
 		zonedParts: () => ({ date: "2026-11-01" }),
 		shareIcs: async (event, file) => calls.push({ event, file }),
 	},
@@ -604,6 +623,187 @@ offerHint = undefined;
 console.log(
 	"PASS file-first sharing, single-flight/current-document/offline PDF export, fallback, explicit stage edits and state-aware next actions",
 );
+
+// Real interview form and calendar mapper; network, notifications, clock and system sharing stay at boundaries.
+let savedInterviewInput;
+let reminderOutcome;
+let saveInterviewError = false;
+let deleteInterviewError = false;
+let switchDuringSave = false;
+let switchDuringDelete = false;
+let reminderOffError = false;
+const nativeRound = {
+	id: "native-original-round",
+	type: "interview",
+	at: "2027-03-27T10:00:00Z",
+	kind: "technical",
+	durationMinutes: 60,
+	location: "Fictional office",
+	notes: "Portfolio",
+	timezone: "Europe/Berlin",
+	audience: "other",
+	participants: [{ name: "Maya Example", role: "Lead" }],
+};
+const nativeJob = { ...application, role: "Engineer", activity: [nativeRound] };
+const nativeQueryClient = {
+	setQueryData: (_key, update) => calls.push({ cachedActivity: update(nativeJob).activity }),
+};
+const nativeReminders = {
+	leadFor: () => 30,
+	turnOn: async () => {
+		if (reminderOutcome instanceof Error) throw reminderOutcome;
+		return reminderOutcome;
+	},
+	turnOff: async () => {
+		calls.push("reminder-off");
+		if (reminderOffError) throw new Error("Reminder unavailable");
+	},
+};
+const { InterviewSheet: NativeInterviewSheet } = load("features/application-detail/interview-sheet.tsx", {
+	"react-native": { View: "View", Linking: { openSettings: () => calls.push("settings") } },
+	"@tanstack/react-query": { useQueryClient: () => nativeQueryClient },
+	"@reactive-resume/schema/applications/data": mobileRequire("@reactive-resume/schema/applications/data"),
+	"@reactive-resume/utils/string": { generateId: () => "person-fixture" },
+	"@reactive-resume/utils/timezone": mobileRequire("@reactive-resume/utils/timezone"),
+	"./calendar": nativeInterviewCalendar,
+	"./date-field": { WallClockField: "WallClockField" },
+	"./hooks": {
+		useUserTime: () => ({ timeZone: "Europe/Berlin", when: String }),
+		isInterview: (entry) => entry.type === "interview",
+		interviewReminder: (_app, round) => round,
+		interviewTypeLabel: String,
+		leadLabel: String,
+		useDetailMutations: () => ({
+			addInterview: { isPending: false },
+			updateInterview: {
+				isPending: false,
+				mutateAsync: async (input) => {
+					savedInterviewInput = input;
+					if (switchDuringSave) interviewScope = "another-account";
+					if (saveInterviewError) throw new Error("Unavailable");
+					return { ...nativeJob, activity: [{ ...nativeRound, ...input, id: nativeRound.id }] };
+				},
+			},
+		}),
+	},
+	"@/api/client": {
+		client: {
+			applications: {
+				deleteTimelineEntry: async (input) => {
+					calls.push({ deleteRound: input });
+					if (switchDuringDelete) interviewScope = "another-account";
+					if (deleteInterviewError) throw new Error("Unavailable");
+				},
+			},
+		},
+	},
+	"@/auth/session": { getAccountScope: () => interviewScope },
+	"@/features/applications/queries": {
+		applicationDetailQueryKey: (id) => ["application", id],
+		useInvalidateApplications: () => () => calls.push("invalidate"),
+	},
+	"@/features/reminders": {
+		...reminderSchedule,
+		useReminders: () => nativeReminders,
+		holdReminder: (id) => calls.push({ held: id }),
+		releaseReminder: (id) => calls.push({ released: id }),
+	},
+	"@/lib/timezones": { timeZones: ["Europe/Berlin", "UTC"] },
+	"@/ui": { ...ui, EditorSheet: "EditorSheet", toastLifetime: (ms) => ms },
+});
+const nativeInterviewForm = NativeInterviewSheet({
+	open: true,
+	application: nativeJob,
+	interview: nativeRound,
+	onClose() {},
+}).type;
+const renderNativeInterview = () =>
+	render(nativeInterviewForm, { application: nativeJob, interview: nativeRound, onClose: () => calls.push("closed") });
+for (const outcome of [undefined, "denied", "passed", new Error("Reminder unavailable")]) {
+	reset();
+	interviewScope = "fixture";
+	reminderOutcome = outcome;
+	control(renderNativeInterview(), "Time · Europe/Berlin").onChange("13:00");
+	const view = renderNativeInterview();
+	await view.props.footer.props.onPress();
+	await settle();
+	assert.equal(savedInterviewInput.entryId, nativeRound.id);
+	assert.equal(savedInterviewInput.at, "2027-03-27T12:00:00.000Z");
+	const result = calls.filter((call) => call?.message).at(-1);
+	assert.equal(result.action.label, "Update your calendar", "reminder warning retains the update action");
+	result.action.onPress();
+	await settle();
+	const shared = calls.find((call) => call?.event);
+	assert.equal(shared.event.uid, nativeRound.id);
+	assert.equal(shared.event.start.toISOString(), savedInterviewInput.at);
+	assert.ok(shared.event.description.includes("Maya Example, Lead"));
+	assert.equal(shared.method, "PUBLISH");
+	interviewScope = "another-account";
+	calls.length = 0;
+	result.action.onPress();
+	assert.equal(calls.length, 0, "old account action cannot share");
+}
+for (const fails of [false, true]) {
+	reset();
+	interviewScope = "fixture";
+	switchDuringSave = true;
+	saveInterviewError = fails;
+	await renderNativeInterview().props.footer.props.onPress();
+	await settle();
+	assert.equal(calls.length, 0, "late save success/error cannot notify or close the next account");
+}
+switchDuringSave = saveInterviewError = false;
+const originalTimeout = globalThis.setTimeout;
+const originalClearTimeout = globalThis.clearTimeout;
+try {
+	for (const scenario of ["undo", "deleted", "reminder-failed", "delete-failed", "switch-before", "switch-during"]) {
+		reset();
+		interviewScope = "fixture";
+		deleteInterviewError = scenario === "delete-failed";
+		switchDuringDelete = scenario === "switch-during";
+		reminderOffError = scenario === "reminder-failed";
+		let commit;
+		globalThis.setTimeout = (callback, ms) => {
+			assert.equal(ms, 6000);
+			commit = callback;
+			return 1;
+		};
+		globalThis.clearTimeout = () => {
+			commit = null;
+		};
+		control(renderNativeInterview(), "Delete interview").onPress();
+		assert.equal(calls.find((call) => call?.message)?.action.label, "Undo");
+		assert.equal(calls.filter((call) => call?.event).length, 0);
+		if (scenario === "undo") calls.find((call) => call?.message).action.onPress();
+		if (scenario === "switch-before") interviewScope = "another-account";
+		commit?.();
+		await settle();
+		const cancellation = calls.find((call) => call?.action?.label === "Download cancellation");
+		if (scenario === "deleted" || scenario === "reminder-failed") {
+			assert.ok(cancellation, "only a committed server delete offers cancellation");
+			if (reminderOffError) assert.ok(cancellation.message.includes("Couldn't cancel its device reminder"));
+			cancellation.action.onPress();
+			await settle();
+			const shared = calls.find((call) => call?.event);
+			assert.equal(shared.event.uid, nativeRound.id);
+			assert.equal(shared.method, "CANCEL");
+		} else assert.equal(cancellation, undefined);
+		if (scenario === "undo" || scenario === "switch-before")
+			assert.equal(
+				calls.find((call) => call?.deleteRound),
+				undefined,
+			);
+		assert.ok(
+			calls.some((call) => call?.released === nativeRound.id),
+			"every completion releases the reminder hold",
+		);
+	}
+} finally {
+	globalThis.setTimeout = originalTimeout;
+	globalThis.clearTimeout = originalClearTimeout;
+}
+interviewScope = "fixture";
+console.log("PASS native calendar reschedule, reminder warnings, deferred deletion/Undo and account fences");
 
 // Applications empty states must offer an action that changes the visible collection.
 let applications = [];
@@ -1348,7 +1548,6 @@ assert.deepEqual(dateValue, { start: "2022-03", end: null, present: true });
 console.log("PASS native Japanese preset dates survive custom-mode round trip");
 
 reset();
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
 const sharedProposals = { exports: {} };
 new Function(
 	"require",

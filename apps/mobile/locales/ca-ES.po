@@ -3994,6 +3994,7 @@ msgstr "No s'han pogut compartir les respostes. Torneu-ho a provar."
 msgid "Couldn't share the calendar event. Try again."
 msgstr "No s'ha pogut compartir l'esdeveniment del calendari. Torneu-ho a provar."
 
+#: src/features/application-detail/calendar.ts
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "No s'ha pogut compartir el fitxer del calendari. Torneu-ho a provar."
@@ -4793,6 +4794,10 @@ msgstr ""
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
 msgstr "Baixa els dos PDF"
+
+#: src/features/application-detail/calendar.ts
+msgid "Download cancellation"
+msgstr "Descarrega la cancel·lació"
 
 #: src/features/application-detail/sections.tsx
 msgid "Download current PDF"
@@ -6294,13 +6299,24 @@ msgstr "Només interfície. Cada currículum estableix el seu propi llenguatge e
 msgid "Interview"
 msgstr "Entrevista"
 
+#. placeholder {0}: application.role
+#. placeholder {1}: application.company
+#: src/features/application-detail/calendar.ts
+msgid "Interview · {0}, {1}"
+msgstr "Entrevista · {0}, {1}"
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Interview debrief"
 msgstr "Balanç de l'entrevista"
 
+#: src/features/application-detail/calendar.ts
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview deleted"
 msgstr "S'ha suprimit l'entrevista"
+
+#: src/features/application-detail/interview-sheet.tsx
+msgid "Interview deleted. Couldn't cancel its device reminder."
+msgstr "S'ha suprimit l'entrevista. No s'ha pogut cancel·lar el recordatori del dispositiu."
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview is in another timezone"
@@ -6389,12 +6405,12 @@ msgid "It stops opening at once. Comments already left are kept. You can make a 
 msgstr ""
 
 #: src/features/application-detail/sections.tsx
-msgid "It's removed from the timeline and the calendar for good."
-msgstr ""
-
-#: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "S'ha eliminat definitivament de la línia de temps."
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from this application. Download a cancellation afterward to update your calendar."
+msgstr "S'elimina d'aquesta candidatura. Després, descarrega la cancel·lació per actualitzar el calendari."
 
 #: src/features/settings/locale-names.ts
 msgid "Italian"
@@ -13867,6 +13883,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update this story in Knowledge?"
 msgstr ""
+
+#: src/features/application-detail/calendar.ts
+msgid "Update your calendar"
+msgstr "Actualitza el calendari"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

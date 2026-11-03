@@ -50,3 +50,31 @@ describe("buildIcs", () => {
 		expect(summary[1]?.startsWith(" ")).toBe(true);
 	});
 });
+
+it("writes a cancellation for the original event identity, superseding a same-second publish without an alarm", () => {
+	const event = {
+		uid: "original-round",
+		title: "Panel",
+		start: new Date("2027-03-27T10:00:00Z"),
+		end: new Date("2027-03-27T11:00:00Z"),
+		alarmMinutes: 60,
+	};
+	const now = new Date("2026-11-03T12:00:00Z");
+	const published = buildIcs(event, now);
+	const canceled = buildIcs(event, now, "CANCEL");
+	const line = (ics: string, property: string) => ics.split("\r\n").find((value) => value.startsWith(property + ":"));
+	expect(line(canceled, "UID")).toBe(line(published, "UID"));
+	expect(canceled).toContain("METHOD:CANCEL\r\n");
+	expect(canceled).toContain("STATUS:CANCELLED\r\n");
+	expect(canceled).not.toContain("BEGIN:VALARM");
+	expect(Number(line(canceled, "SEQUENCE")?.split(":")[1])).toBeGreaterThan(
+		Number(line(published, "SEQUENCE")?.split(":")[1]),
+	);
+});
+
+it("folds international calendar text by UTF-8 octets without splitting code points", () => {
+	const title = "Résumé 会議 😀 ".repeat(20);
+	const ics = buildIcs({ uid: "unicode", title, start: new Date(0), end: new Date(0) });
+	for (const line of ics.split("\r\n")) expect(new TextEncoder().encode(line).byteLength).toBeLessThanOrEqual(75);
+	expect(ics.replace(/\r\n /g, "")).toContain(`SUMMARY:${title}\r\n`);
+});

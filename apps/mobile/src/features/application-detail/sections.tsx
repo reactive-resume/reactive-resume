@@ -16,6 +16,7 @@ import { AppState, Pressable, View } from "react-native";
 import { suggestApplicationDocuments } from "@reactive-resume/schema/applications/document-suggestions";
 import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { attachmentProblem } from "./attachment";
+import { showInterviewCancellation } from "./calendar";
 import {
 	followUpReminder,
 	interviewReminder,
@@ -28,7 +29,7 @@ import {
 import { createNotesQueue } from "./notes-queue";
 import { ContactsSheet, FollowUpSheet, ReminderSheet, TimelineEntrySheet } from "./sheets";
 import { client, orpc } from "@/api/client";
-import { getServer } from "@/auth/session";
+import { getAccountScope, getServer } from "@/auth/session";
 import { getDraftScope } from "@/draft";
 import { applicationError } from "@/features/applications/error";
 import { currentLaneEntry, laneSince } from "@/features/applications/history";
@@ -978,14 +979,24 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 				}
 				message={
 					deleting?.type === "interview"
-						? t`It's removed from the timeline and the calendar for good.`
+						? t`It's removed from this application. Download a cancellation afterward to update your calendar.`
 						: t`It's removed from the timeline for good.`
 				}
 				confirmLabel={deleting?.type === "interview" ? t`Delete interview` : t`Delete entry`}
 				destructive
 				onCancel={() => setDeleting(null)}
 				onConfirm={() => {
-					if (deleting) deleteEntry.mutate({ id: application.id, entryId: deleting.id }, { onError: failed });
+					const scope = getAccountScope();
+					if (deleting)
+						deleteEntry.mutate(
+							{ id: application.id, entryId: deleting.id },
+							{
+								onError: failed,
+								onSuccess: () => {
+									if (deleting.type === "interview") showInterviewCancellation(application, deleting, scope);
+								},
+							},
+						);
 					setDeleting(null);
 				}}
 			/>

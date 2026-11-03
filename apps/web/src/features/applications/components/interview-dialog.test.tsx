@@ -151,3 +151,11 @@ it("Delete then Undo restores the existing round without deleting or recreating 
 	expect(api.add).not.toHaveBeenCalled();
 	expect(api.update).not.toHaveBeenCalled();
 });
+
+it("offers Update your calendar only after a successful reschedule", async () => {
+	mount(true);
+	fireEvent.change(await screen.findByLabelText("Time · Europe/Berlin"), { target: { value: "13:00" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save interview" }));
+	expect(await screen.findByRole("button", { name: "Update your calendar" })).toBeVisible();
+	expect(api.update).toHaveBeenCalledWith(expect.objectContaining({ entryId: "original-round" }), expect.anything());
+});

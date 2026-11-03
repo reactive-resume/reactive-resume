@@ -18,11 +18,13 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { generateId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
+import { interviewCalendarAction, showInterviewCancellation } from "../calendar";
 import { dayKey, interviewTypeLabel } from "../interviews";
 import { applicationsListQueryKey } from "../queries";
 import { Combobox } from "@/components/ui/combobox";
 import { useCareerTime, withUndo } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { D2, EASE } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
@@ -246,6 +248,7 @@ export function InterviewDialog({
 		}));
 
 	const save = async () => {
+		const generation = getAccountGeneration();
 		if (!at || !canSave || !details.success) return;
 		const input = { id: draft.applicationId, at: at.toISOString(), ...details.data };
 		try {
@@ -254,6 +257,7 @@ export function InterviewDialog({
 		} catch {
 			return;
 		}
+		if (generation !== getAccountGeneration()) return;
 		invalidate(draft.applicationId);
 		onOpenChange(false);
 		// The server moves this interview's briefing schedule with it; say where it went.
@@ -265,8 +269,20 @@ export function InterviewDialog({
 		const schedule = schedules.find(
 			(item) => item.kind === "prepare" && item.interviewId === editing?.id && item.enabled,
 		);
+		if (generation !== getAccountGeneration()) return;
+		const savedApplication = application ?? applications.find((item) => item.id === draft.applicationId);
 		toast.add({
 			type: "success",
+			...(editing && savedApplication
+				? {
+						actionProps: interviewCalendarAction(
+							savedApplication,
+							{ ...editing, ...details.data, at },
+							"PUBLISH",
+							generation,
+						),
+					}
+				: {}),
 			description: schedule ? t`Interview saved · briefing moves to ${when(schedule.nextRunAt)}` : t`Interview saved`,
 		});
 	};
@@ -275,6 +291,8 @@ export function InterviewDialog({
 	const deleteInterview = () => {
 		if (!editing) return;
 		const applicationId = draft.applicationId;
+		const generation = getAccountGeneration();
+		const savedApplication = application ?? applications.find((item) => item.id === applicationId);
 		const drop = <T extends Pick<ApplicationSummary, "id" | "activity">>(item: T) =>
 			item.id === applicationId
 				? { ...item, activity: item.activity.filter((entry) => entry.id !== editing.id) }
@@ -289,8 +307,12 @@ export function InterviewDialog({
 			description: t`Interview deleted`,
 			onUndo: () => invalidate(applicationId),
 			commit: () => {
+				if (generation !== getAccountGeneration()) return;
 				void remove
 					.mutateAsync({ id: applicationId, entryId: editing.id })
+					.then(() => {
+						if (savedApplication) showInterviewCancellation(savedApplication, editing, generation);
+					})
 					.catch(() => undefined)
 					.finally(() => invalidate(applicationId));
 			},
