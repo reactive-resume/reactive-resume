@@ -30,6 +30,9 @@ If you are already signed in, the homepage's main buttons say **Go to dashboard*
 
 If you have turned on two-step verification, Reactive Resume asks for a code next. See [Enter a two-step code](#enter-a-two-step-code) below.
 
+If the email, username or password doesn't match, check what you typed or select **Forgot password?**. The recovery link
+is reachable by keyboard and keeps the page you were trying to open.
+
 <Frame caption="Sign in with a password or an available sign-in method">
   <img
     src="/images/guides/signing-in/sign-in-page.webp"
@@ -76,6 +79,16 @@ Resetting your password signs you out everywhere and removes your passkeys, API 
 got into your account loses access. Create new keys and reconnect apps afterwards. If you had never confirmed your email
 address, the reset also removes two-step sign-in and linked social accounts that were added before it.
 
+An expired or already-used link stays on the reset page with an explanation. Select **Send a new link** to request
+another email. If a two-step sign-in expires, you're returned to sign-in with an explanation; enter your password again.
+
+<Frame caption="Request another link when a reset link has expired">
+  <img
+    src="/images/guides/signing-in/expired-reset.png"
+    alt="Reset page explaining that the link expired or was already used, with Send a new link"
+  />
+</Frame>
+
 <Note>
   Password reset needs email delivery. On a self-hosted copy without email set up, **Forgot password?** says reset isn't
   available there; ask the person who runs it for help.
@@ -110,6 +123,20 @@ If you've lost your backup codes too, select **No backup codes either?** If you 
   <img
     src="/images/guides/signing-in/backup-code.webp"
     alt="Backup code sign-in at phone width with the empty code field focused and Trust this device for 30 days"
+  />
+</Frame>
+
+## When your session ends
+
+If your session ends while you're working, a notice offers **Sign in again** in another tab. Keep the original tab open:
+your forms and unsaved resume edits stay there. Sign in to the same account, return to the original tab and retry the
+save. The resume's save line says **Not saved · Sign in to save** until sign-in is restored. Signing in to a different
+account clears the previous account's open work so it cannot be saved under the wrong account.
+
+<Frame caption="Sign in again while keeping your original working tab open">
+  <img
+    src="/images/guides/signing-in/session-ended.png"
+    alt="Fictional Documents page with Your session ended notice and Sign in again action"
   />
 </Frame>
 
