@@ -223,7 +223,7 @@ export function Design() {
 				<h2
 					id="design-title"
 					aria-label={`${t`${templateCount} free resume templates.`} ${t`Make any of them yours.`}`}
-					className="pointer-events-none absolute inset-x-(--gutter) top-[10vh] bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none font-normal text-balance opacity-[calc(clamp(0,(var(--z)-.18)/.1,1)*(1-clamp(0,(var(--out)-.6)/.06,1)))] will-change-[transform,opacity] min-[900px]:bottom-[5vh] min-[900px]:text-[clamp(36px,4vw,72px)]"
+					className="pointer-events-none absolute inset-x-(--gutter) top-[10vh] bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none font-normal text-balance opacity-[calc(clamp(0,(var(--z)-.18)/.1,1)*(1-clamp(0,(var(--out,0)-.6)/.06,1)))] will-change-[transform,opacity] min-[900px]:bottom-[5vh] min-[900px]:text-[clamp(36px,4vw,72px)]"
 				>
 					<Link
 						ref={linkRef}
