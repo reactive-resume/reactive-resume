@@ -44323,7 +44323,8 @@
 															"items": {
 																"type": "string",
 																"minLength": 1,
-																"maxLength": 200
+																"maxLength": 200,
+																"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 															},
 															"default": []
 														},
@@ -44333,7 +44334,8 @@
 															"items": {
 																"type": "string",
 																"minLength": 1,
-																"maxLength": 200
+																"maxLength": 200,
+																"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 															},
 															"default": []
 														},
@@ -44431,7 +44433,16 @@
 																}
 															]
 														}
-													}
+													},
+													"required": [
+														"targetRoles",
+														"locations",
+														"priorities",
+														"minBase",
+														"maxOfficeDays",
+														"noticeWeeks",
+														"memoryMode"
+													]
 												},
 												"reviewedAnswers": {
 													"type": "array",
@@ -50226,7 +50237,8 @@
 											"items": {
 												"type": "string",
 												"minLength": 1,
-												"maxLength": 200
+												"maxLength": 200,
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
@@ -50236,7 +50248,8 @@
 											"items": {
 												"type": "string",
 												"minLength": 1,
-												"maxLength": 200
+												"maxLength": 200,
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
@@ -50334,7 +50347,16 @@
 												}
 											]
 										}
-									}
+									},
+									"required": [
+										"targetRoles",
+										"locations",
+										"priorities",
+										"minBase",
+										"maxOfficeDays",
+										"noticeWeeks",
+										"memoryMode"
+									]
 								}
 							}
 						}
@@ -50393,6 +50415,7 @@
 			"put": {
 				"operationId": "saveCareerProfile",
 				"summary": "Save career preferences",
+				"description": "Legacy full save: omitted memoryMode and searchRegions retain stored values; other omitted fields use their defaults.",
 				"tags": [
 					"Career"
 				],
@@ -50408,8 +50431,8 @@
 										"maxItems": 20,
 										"items": {
 											"type": "string",
-											"minLength": 1,
-											"maxLength": 200
+											"pattern": "\\S",
+											"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 										},
 										"default": []
 									},
@@ -50418,8 +50441,8 @@
 										"maxItems": 20,
 										"items": {
 											"type": "string",
-											"minLength": 1,
-											"maxLength": 200
+											"pattern": "\\S",
+											"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 										},
 										"default": []
 									},
@@ -50498,8 +50521,7 @@
 											"auto",
 											"off"
 										],
-										"type": "string",
-										"default": "ask"
+										"type": "string"
 									},
 									"searchRegions": {
 										"anyOf": [
@@ -50536,7 +50558,8 @@
 											"items": {
 												"type": "string",
 												"minLength": 1,
-												"maxLength": 200
+												"maxLength": 200,
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
@@ -50546,7 +50569,8 @@
 											"items": {
 												"type": "string",
 												"minLength": 1,
-												"maxLength": 200
+												"maxLength": 200,
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
@@ -50644,7 +50668,16 @@
 												}
 											]
 										}
-									}
+									},
+									"required": [
+										"targetRoles",
+										"locations",
+										"priorities",
+										"minBase",
+										"maxOfficeDays",
+										"noticeWeeks",
+										"memoryMode"
+									]
 								}
 							}
 						}
@@ -50697,6 +50730,317 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request PUT \"https://rxresu.me/api/openapi/career/profile\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
+				]
+			},
+			"patch": {
+				"operationId": "updateCareerProfile",
+				"summary": "Update career preferences",
+				"description": "Saves the supplied fields. Omitted fields keep their stored values.",
+				"tags": [
+					"Career"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"targetRoles": {
+										"type": "array",
+										"maxItems": 20,
+										"items": {
+											"type": "string",
+											"pattern": "\\S",
+											"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
+										}
+									},
+									"locations": {
+										"type": "array",
+										"maxItems": 20,
+										"items": {
+											"type": "string",
+											"pattern": "\\S",
+											"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
+										}
+									},
+									"priorities": {
+										"type": "string",
+										"maxLength": 4000
+									},
+									"minBase": {
+										"type": "object",
+										"properties": {
+											"amount": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"currency": {
+												"type": "string",
+												"pattern": "^[A-Z]{3}$"
+											},
+											"period": {
+												"enum": [
+													"hour",
+													"month",
+													"year"
+												],
+												"type": "string"
+											}
+										},
+										"required": [
+											"amount",
+											"currency",
+											"period"
+										]
+									},
+									"maxOfficeDays": {
+										"anyOf": [
+											{
+												"type": "integer",
+												"minimum": 0,
+												"maximum": 5
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"noticeWeeks": {
+										"anyOf": [
+											{
+												"type": "integer",
+												"minimum": 0,
+												"maximum": 52
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"memoryMode": {
+										"enum": [
+											"ask",
+											"auto",
+											"off"
+										],
+										"type": "string"
+									},
+									"searchRegions": {
+										"anyOf": [
+											{
+												"type": "array",
+												"maxItems": 3,
+												"items": {
+													"type": "string",
+													"pattern": "^[A-Z]{2}$"
+												},
+												"uniqueItems": true
+											},
+											{
+												"type": "null"
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"targetRoles": {
+											"type": "array",
+											"maxItems": 20,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 200,
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
+											},
+											"default": []
+										},
+										"locations": {
+											"type": "array",
+											"maxItems": 20,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 200,
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
+											},
+											"default": []
+										},
+										"priorities": {
+											"type": "string",
+											"maxLength": 4000,
+											"default": ""
+										},
+										"minBase": {
+											"type": "object",
+											"properties": {
+												"amount": {
+													"anyOf": [
+														{
+															"type": "number",
+															"minimum": 0
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"currency": {
+													"type": "string",
+													"pattern": "^[A-Z]{3}$"
+												},
+												"period": {
+													"enum": [
+														"hour",
+														"month",
+														"year"
+													],
+													"type": "string"
+												}
+											},
+											"required": [
+												"amount",
+												"currency",
+												"period"
+											],
+											"default": {
+												"amount": null,
+												"currency": "USD",
+												"period": "year"
+											}
+										},
+										"maxOfficeDays": {
+											"anyOf": [
+												{
+													"type": "integer",
+													"minimum": 0,
+													"maximum": 5
+												},
+												{
+													"type": "null"
+												}
+											],
+											"default": null
+										},
+										"noticeWeeks": {
+											"anyOf": [
+												{
+													"type": "integer",
+													"minimum": 0,
+													"maximum": 52
+												},
+												{
+													"type": "null"
+												}
+											],
+											"default": null
+										},
+										"memoryMode": {
+											"enum": [
+												"ask",
+												"auto",
+												"off"
+											],
+											"type": "string",
+											"default": "ask"
+										},
+										"searchRegions": {
+											"anyOf": [
+												{
+													"type": "array",
+													"maxItems": 3,
+													"items": {
+														"type": "string",
+														"pattern": "^[A-Z]{2}$"
+													},
+													"uniqueItems": true
+												},
+												{
+													"type": "null"
+												}
+											]
+										}
+									},
+									"required": [
+										"targetRoles",
+										"locations",
+										"priorities",
+										"minBase",
+										"maxOfficeDays",
+										"noticeWeeks",
+										"memoryMode"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/career/profile\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}

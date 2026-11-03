@@ -13,6 +13,7 @@ import {
 	careerWorkspaceSchema,
 	EMPTY_WORKSPACE,
 	type CareerProfileData,
+	type CareerProfileUpdate,
 	type CareerWorkspace,
 	type careerFactInputSchema,
 	type careerOfferInputSchema,
@@ -47,12 +48,10 @@ const ownedFact = (id: string, userId: string) =>
 		and(eq(tables.careerFact.userId, userId), availableApplicationContext(userId, tables.careerFact.applicationId)),
 	);
 
-/**
- * A profile save is a whole-object PUT, and older clients drop fields they don't know. A save that
- * leaves searchRegions out keeps the stored value; an explicit [] or null replaces it.
- */
-export function mergeCareerProfile(stored: CareerProfileData, input: CareerProfileData): CareerProfileData {
-	return input.searchRegions === undefined ? { ...input, searchRegions: stored.searchRegions } : input;
+/** Independent Facts and Preferences controls must not overwrite fields they don't own. */
+export function mergeCareerProfile(stored: CareerProfileData, input: CareerProfileUpdate): CareerProfileData {
+	const supplied = Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined));
+	return careerProfileDataSchema.parse({ ...stored, ...supplied });
 }
 
 export async function requireCareerApplication(input: Owned & { interviewId?: string | null | undefined }) {
@@ -531,7 +530,7 @@ export const careerService = {
 				.onConflictDoUpdate({ target: tables.careerProfile.userId, set: { data, updatedAt: new Date() } });
 			return data;
 		}),
-	saveProfile: (userId: string, input: CareerProfileData) =>
+	saveProfile: (userId: string, input: CareerProfileUpdate) =>
 		db.transaction(async (tx) => {
 			await lockUser(tx, userId);
 			const [row] = await tx

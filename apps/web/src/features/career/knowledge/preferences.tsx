@@ -26,7 +26,7 @@ import { client, orpc } from "@/libs/orpc/client";
 
 const saveFailed = (error: unknown) => toastError(error, t`Couldn't save your preferences. Try again.`);
 
-/** The Preferences profile, saved whole. The cache updates at once; a failed save puts the server copy back. */
+/** The cache updates at once; a failed save puts the server copy back. */
 export function useProfile() {
 	const queryClient = useQueryClient();
 	const { session } = useRouteContext({ strict: false });
@@ -36,15 +36,21 @@ export function useProfile() {
 	const queryKey = orpc.career.profile.queryKey();
 	const query = useQuery(orpc.career.profile.queryOptions());
 	const profile = query.data;
+	const mutationKey = [...orpc.career.updateProfile.key(), owner];
 	const mutation = useMutation({
-		...orpc.career.saveProfile.mutationOptions({ context: owner ? { accountId: owner } : {} }),
+		...orpc.career.updateProfile.mutationOptions({ context: owner ? { accountId: owner } : {} }),
+		mutationKey,
+		scope: { id: `career-memory:${owner}` },
 		onError: (error) => {
-			void queryClient.invalidateQueries({ queryKey });
+			// A failed earlier choice must not overwrite the next queued choice's optimistic cache.
+			if (queryClient.isMutating({ mutationKey }) === 1) void queryClient.invalidateQueries({ queryKey });
 			saveFailed(error);
 		},
 	});
-	const save = (next: CareerProfileData) => {
-		queryClient.setQueryData(queryKey, next);
+	const save = (next: Partial<CareerProfileData>) => {
+		queryClient.setQueryData(queryKey, (current: CareerProfileData | undefined) =>
+			current ? { ...current, ...next } : current,
+		);
 		mutation.mutate(next);
 	};
 	return { profile, save, isError: query.isError, retry: () => void query.refetch() };
@@ -96,13 +102,17 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 		setStatus((current) => ({ ...current, saving: true, failed: false }));
 		const operation = saves.current.then(() => {
 			if (generation.current !== getAccountGeneration()) throw new Error("Account changed");
-			return client.career.saveProfile(next);
+			// A recovered Preferences draft must not restore an old Facts memory choice.
+			return client.career.updateProfile({ ...next, memoryMode: undefined });
 		});
 		saves.current = operation.catch(() => undefined);
 		operation
 			.then(() => {
 				if (generation.current !== getAccountGeneration()) return;
-				queryClient.setQueryData(orpc.career.profile.queryKey(), next);
+				queryClient.setQueryData(orpc.career.profile.queryKey(), (current: CareerProfileData | undefined) => ({
+					...next,
+					memoryMode: current?.memoryMode ?? next.memoryMode,
+				}));
 				setSaved(next);
 				kept.clear(next);
 				setStatus({ saving: false, failed: false, at: Date.now() });
