@@ -75,9 +75,14 @@ export function useDocumentOperations(enabled = true) {
 	const partial = useRef(false);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const current = () => getServer() === session.server && getAccountScope() === accountScope;
+	const notifyCurrent = (options: Parameters<typeof showToast>[0]) => {
+		if (current()) showToast(options);
+	};
 	const fail = (message: string) => {
+		if (!current()) return false;
 		setError(message);
-		showToast({ message });
+		notifyCurrent({ message });
 		return false;
 	};
 	const run = async (task: () => Promise<unknown>) => {
@@ -91,21 +96,21 @@ export function useDocumentOperations(enabled = true) {
 		setBusy(true);
 		setError(null);
 		try {
-			if (session.status !== "signed-in" || getServer() !== session.server || getAccountScope() !== accountScope) {
+			if (session.status !== "signed-in" || !current()) {
 				return fail(t`Sign in to continue.`);
 			}
 			const network = await getNetworkStateAsync();
 			if (network.isConnected === false || network.isInternetReachable === false) {
 				return fail(t`You're offline. Try again when you reconnect.`);
 			}
-			if (getServer() !== session.server || getAccountScope() !== accountScope) return false;
+			if (!current()) return false;
 			await task();
-			return !partial.current;
+			return current() && !partial.current;
 		} catch (cause) {
 			return fail(documentError(cause));
 		} finally {
 			try {
-				await refresh();
+				if (current()) await refresh();
 			} finally {
 				active.current = false;
 				setBusy(false);
@@ -123,7 +128,7 @@ export function useDocumentOperations(enabled = true) {
 		// Sequential calls avoid overwhelming per-account mutation limits.
 		for (const document of documents) {
 			if (alreadyDone(document) || !applies(document)) continue;
-			if (getServer() !== session.server || getAccountScope() !== accountScope) break;
+			if (!current()) break;
 			try {
 				await task(document);
 				done.push(document);
@@ -131,6 +136,7 @@ export function useDocumentOperations(enabled = true) {
 				/* Remaining documents can still succeed. */
 			}
 		}
+		if (!current()) return done;
 		const completed = done.length + unchanged;
 		const message =
 			completed === documents.length
@@ -140,7 +146,7 @@ export function useDocumentOperations(enabled = true) {
 			partial.current = true;
 			setError(message);
 		}
-		if (notify) showToast({ message });
+		if (notify) notifyCurrent({ message });
 		return done;
 	};
 	const trash = async (documents: readonly DocumentSummary[]) => {
@@ -155,7 +161,7 @@ export function useDocumentOperations(enabled = true) {
 			if (done.length) await playDocumentEffect(accountScope, "trash", done);
 		});
 		if (attempted)
-			showToast({
+			notifyCurrent({
 				message:
 					done.length === documents.length
 						? plural(done.length, { one: "# document moved to Trash", other: "# documents moved to Trash" })
@@ -173,7 +179,7 @@ export function useDocumentOperations(enabled = true) {
 										run(async () => {
 											started = true;
 											for (const group of chunks(done)) {
-												if (getServer() !== session.server || getAccountScope() !== accountScope) break;
+												if (!current()) break;
 												try {
 													const result = await client.documents.restoreMany({ documents: group.map(documentRef) });
 													restored += result.restored;
@@ -187,9 +193,9 @@ export function useDocumentOperations(enabled = true) {
 									)
 									.then(() => {
 										// A run that couldn't start (offline, signed out) already said why.
-										if (!started) return;
+										if (!started || !current()) return;
 										if (restored === done.length) return confirmUndone();
-										showToast({ message: t`Restored ${restored} of ${done.length}.` });
+										notifyCurrent({ message: t`Restored ${restored} of ${done.length}.` });
 									});
 							},
 						}
@@ -204,7 +210,7 @@ export function useDocumentOperations(enabled = true) {
 		const success = await run(async () => {
 			attempted = true;
 			for (const group of chunks(documents)) {
-				if (getServer() !== session.server || getAccountScope() !== accountScope) break;
+				if (!current()) break;
 				try {
 					const result = await client.documents.restoreMany({ documents: group.map(documentRef) });
 					restored += result.restored;
@@ -214,13 +220,13 @@ export function useDocumentOperations(enabled = true) {
 					/* The remaining groups can still succeed. */
 				}
 			}
-			if (restored !== documents.length) {
+			if (current() && restored !== documents.length) {
 				partial.current = true;
 				setError(t`Restored ${restored} of ${documents.length}. Refresh and retry any that remain in Trash.`);
 			}
 		});
 		if (attempted && restored > 0)
-			showToast({
+			notifyCurrent({
 				message:
 					restored === documents.length
 						? plural(restored, { one: "# document restored", other: "# documents restored" })
@@ -235,7 +241,7 @@ export function useDocumentOperations(enabled = true) {
 		const success = await run(async () => {
 			attempted = true;
 			for (const group of chunks(documents)) {
-				if (getServer() !== session.server || getAccountScope() !== accountScope) break;
+				if (!current()) break;
 				try {
 					const result = await client.documents.purgeMany({ documents: group.map(documentRef) });
 					deleted += result.deleted;
@@ -244,13 +250,13 @@ export function useDocumentOperations(enabled = true) {
 					/* The remaining groups can still succeed. */
 				}
 			}
-			if (deleted !== documents.length) {
+			if (current() && deleted !== documents.length) {
 				partial.current = true;
 				setError(t`Deleted ${deleted} of ${documents.length}. Refresh to see what remains.`);
 			}
 		});
 		if (attempted && deleted > 0)
-			showToast({
+			notifyCurrent({
 				message:
 					deleted === documents.length
 						? plural(deleted, { one: "# document deleted forever", other: "# documents deleted forever" })
@@ -266,7 +272,7 @@ export function useDocumentOperations(enabled = true) {
 			if (deleted > 0) await playDocumentEffect(accountScope, "purge");
 		});
 		if (success)
-			showToast({
+			notifyCurrent({
 				message:
 					deleted === 0
 						? t`Trash was already empty`

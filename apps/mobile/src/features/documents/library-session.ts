@@ -9,20 +9,14 @@ export type OnDocumentEffect = (
 	documents?: readonly DocumentRef[],
 ) => void | Promise<void>;
 
-const useHistory = create<{ scope: string | null; hadDocuments: boolean }>(() => ({
-	scope: null,
-	hadDocuments: false,
-}));
+const useHistory = create<{ accounts: Record<string, true> }>(() => ({ accounts: {} }));
 
-/** Nonpersisted account history survives Documents/Trash remounts. */
+/** Nonpersisted account history survives Documents/Trash remounts and account switching. */
 export function useDocumentHistory(scope: string | null, hasDocuments: boolean) {
-	const hadDocuments = useHistory((state) => state.scope === scope && state.hadDocuments);
+	const hadDocuments = useHistory((state) => scope !== null && state.accounts[scope] === true);
 	useEffect(() => {
-		if (getAccountScope() !== scope) return;
-		useHistory.setState((state) => ({
-			scope,
-			hadDocuments: hasDocuments || (state.scope === scope && state.hadDocuments),
-		}));
+		if (!scope || !hasDocuments || getAccountScope() !== scope) return;
+		useHistory.setState((state) => ({ accounts: { ...state.accounts, [scope]: true } }));
 	}, [scope, hasDocuments]);
 	return hasDocuments || hadDocuments;
 }

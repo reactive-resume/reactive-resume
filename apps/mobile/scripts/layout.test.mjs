@@ -690,6 +690,14 @@ assert.equal(
 	"Let's start with what you have",
 	"Another empty account gets its own first-run guidance",
 );
+libraryAccountScope = "fixture:account-a";
+render(DocumentsLibrary);
+emptyLibrary = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+assert.equal(
+	emptyLibrary.props.ListEmptyComponent.props.title,
+	"No documents",
+	"Returning to the prior account preserves its own history",
+);
 libraryAccountScope = "fixture";
 documentQuery = originalDocumentQuery;
 hooks.length = 0;

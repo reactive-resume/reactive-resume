@@ -80,7 +80,7 @@ const tick = async () => {
 	for (let i = 0; i < 20; i++) await Promise.resolve();
 };
 
-function fixture(reduced = false) {
+function fixture(reduced = false, requests = {}) {
 	let blur;
 	const handlers = new Set();
 	const app = {
@@ -183,9 +183,18 @@ function fixture(reduced = false) {
 				documents: {
 					restoreMany: async ({ documents }) => {
 						writes.push("restore");
-						return { restored: documents.length };
+						return { restored: (await requests.restoreMany?.(documents)) ?? documents.length };
+					},
+					purgeMany: async ({ documents }) => {
+						await requests.purgeMany?.();
+						return { deleted: documents.length };
+					},
+					emptyTrash: async () => {
+						await requests.emptyTrash?.();
+						return { deleted: 1 };
 					},
 					trash: async ({ id }) => {
+						await requests.trash?.();
 						if (id === "failed") throw new Error("offline");
 						writes.push(id);
 					},
@@ -197,7 +206,7 @@ function fixture(reduced = false) {
 		},
 		"@/auth/session": session,
 		"./library-session": librarySession,
-		"@/lib/undone": { confirmUndone() {} },
+		"@/lib/undone": { confirmUndone: () => toasts.push({ message: "undone" }) },
 		"@/ui": { showToast: (toast) => toasts.push(toast) },
 	});
 	const operations = mount(() => api.useDocumentOperations(true)).value;
@@ -323,4 +332,91 @@ test("native stale Undo cannot restore into another account", async () => {
 	f.toasts.at(-1).action.onPress();
 	await tick();
 	assert.deepEqual(f.writes, ["one"]);
+});
+
+test("native partial Restore receipt cannot guess which selected row should fade", async () => {
+	const f = fixture(true, { restoreMany: async () => 1 });
+	f.collection.render({ scope: "account/trash", trashed: true });
+	f.frame.render({ itemKey: "resume:one", register: f.collection.value.register });
+	const pending = f.operations.restoreSelected([
+		{ type: "resume", id: "one" },
+		{ type: "resume", id: "two" },
+	]);
+	await tick();
+	assert.equal(f.animations.length, 0, "Partial counts contain no changed item IDs");
+	assert.equal(f.frame.value.props.style.at(-1).read().opacity, 1);
+	assert.equal(await pending, false);
+	assert.equal(f.refreshes, 4);
+});
+
+for (const method of ["trash", "restoreSelected", "purgeSelected", "emptyTrash"])
+	test(`native late ${method} receipt cannot notify another account`, async () => {
+		let release;
+		const receipt = new Promise((resolve) => {
+			release = resolve;
+		});
+		const request = method === "restoreSelected" ? "restoreMany" : method === "purgeSelected" ? "purgeMany" : method;
+		const f = fixture(true, {
+			[request]: async () => {
+				await receipt;
+			},
+		});
+		const pending = f.operations[method]([{ type: "resume", id: "one" }]);
+		await tick();
+		f.switchAccount();
+		release();
+		await pending;
+		assert.deepEqual(f.toasts, [], "An old account's result must not enter the new account's toast host");
+	});
+
+for (const batch of [false, true])
+	test(`native late failure stays with its original account (batch=${batch})`, async () => {
+		let release;
+		const receipt = new Promise((resolve) => {
+			release = resolve;
+		});
+		const f = fixture(true);
+		const task = async () => {
+			await receipt;
+			throw new Error("Old account request failed");
+		};
+		const pending = f.operations.run(() =>
+			batch ? f.operations.batch([{ type: "resume", id: "one" }], task) : task(),
+		);
+		await tick();
+		f.switchAccount();
+		release();
+		assert.equal(await pending, false);
+		assert.deepEqual(f.toasts, []);
+	});
+
+test("native current-account batch still reports its successful result", async () => {
+	const f = fixture(true);
+	assert.equal(await f.operations.run(() => f.operations.batch([{ type: "resume", id: "one" }], async () => {})), true);
+	assert.deepEqual(f.toasts, [{ message: "1 document updated" }]);
+	assert.equal(f.refreshes, 4);
+});
+
+test("native Undo completion cannot confirm into a different account", async () => {
+	let release;
+	const receipt = new Promise((resolve) => {
+		release = resolve;
+	});
+	const f = fixture(true, {
+		restoreMany: async () => {
+			await receipt;
+		},
+	});
+	const trash = f.operations.trash([{ type: "resume", id: "one" }]);
+	await tick();
+	f.animations.at(-1).finish();
+	await trash;
+	assert.equal(f.toasts.length, 1);
+	f.toasts[0].action.onPress();
+	await tick();
+	assert.deepEqual(f.writes, ["one", "restore"]);
+	f.switchAccount();
+	release();
+	await tick();
+	assert.equal(f.toasts.length, 1, "Neither success nor error from old Undo enters the current toast host");
 });

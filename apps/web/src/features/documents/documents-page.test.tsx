@@ -540,11 +540,11 @@ it("first run's Choose a file opens the file picker, then imports the chosen fil
 	act(() => useDialogStore.getState().closeDialog());
 });
 
-it("recovers first-run creation after a failed counts request", async () => {
+it.each([0, 1])("recovers the correct empty state after a failed counts request (trash=%i)", async (trash) => {
 	requests.load.mockReset().mockResolvedValue(page(0, 0));
 	requests.counts
 		.mockRejectedValueOnce(new Error("Counts unavailable"))
-		.mockResolvedValueOnce({ resume: 0, letter: 0, trash: 0 });
+		.mockResolvedValueOnce({ resume: 0, letter: 0, trash });
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
 	const input = {
@@ -572,5 +572,10 @@ it("recovers first-run creation after a failed counts request", async () => {
 	);
 	expect(await screen.findByRole("alert")).toBeVisible();
 	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
-	expect(await screen.findByRole("button", { name: "Choose a file" })).toBeVisible();
+	if (trash === 0) expect(await screen.findByRole("button", { name: "Choose a file" })).toBeVisible();
+	else {
+		expect(await screen.findByRole("heading", { name: "No documents" })).toBeVisible();
+		expect(await screen.findByText("Trash has 1 document.")).toBeVisible();
+		expect(screen.queryByRole("button", { name: "Choose a file" })).toBeNull();
+	}
 });
