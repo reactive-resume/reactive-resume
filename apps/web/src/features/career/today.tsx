@@ -5,9 +5,11 @@ import type { Ref } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouteContext, useRouter } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import { useRef, useState } from "react";
+import { latestOfferHints } from "@reactive-resume/schema/applications/next-step";
+import { upcomingApplicationEvents } from "@reactive-resume/schema/applications/upcoming";
 import { Button } from "@reactive-resume/ui/components/button";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -20,12 +22,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
 import { rollForward, ScheduleSheet, scheduleKind } from "./schedule-sheet";
 import { CollapseRow, Eyebrow, flash, InfoChip, Swap, useCareerTime, useNow, withUndo } from "./shared";
-import {
-	collectInterviews,
-	formatDuration,
-	interviewKindOf,
-	upcomingInterviews,
-} from "@/features/applications/interviews";
+import { formatDuration, interviewKindOf } from "@/features/applications/interviews";
 import {
 	compareNextStepSortKeys,
 	describeNextStep,
@@ -33,7 +30,7 @@ import {
 	needsAttention,
 	nextStepSortKey,
 } from "@/features/applications/next-step";
-import { offerHintFor, useOfferHints } from "@/features/applications/queries";
+import { offerHintFor, savedOffersQueryOptions, useOfferHints } from "@/features/applications/queries";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useSaveTimezone } from "@/features/settings/use-save-timezone";
 import { toastError } from "@/libs/error-message";
@@ -49,6 +46,7 @@ type TodayPageProps = { schedule: string | undefined; onScheduleChange: (schedul
  * Below 1024px it's one column: Coming up, Needs you, New roles, Schedules.
  */
 export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
+	const { session } = useRouteContext({ strict: false });
 	const now = useNow();
 	const rolesRef = useRef<HTMLElement>(null);
 	// Deleted schedules stay hidden locally until the Undo toast closes; any mutation refetches every query.
@@ -95,7 +93,12 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 				<ComingUp now={now} className="order-1 lg:order-none" />
 				<Schedules deleted={deleted} onOpenSchedule={onScheduleChange} className="order-4 lg:order-none" />
 			</div>
-			<ScheduleSheet schedule={schedule} onScheduleChange={onScheduleChange} onDelete={deleteSchedule} />
+			<ScheduleSheet
+				key={session?.user.id}
+				schedule={schedule}
+				onScheduleChange={onScheduleChange}
+				onDelete={deleteSchedule}
+			/>
 		</div>
 	);
 }
@@ -811,30 +814,43 @@ function RoleCard({ row, found, tracked, pending, selected, onSelect, onTrack, o
 
 type ComingUpProps = { now: Date; className?: string };
 
+/** Independent saved-item reads never block application dates; unavailable offer deadlines retain their own retry. */
 function ComingUp({ now, className }: ComingUpProps) {
-	const { format, time, when, relative, locale } = useCareerTime();
+	const { format, time, when, relative, locale, timeZone } = useCareerTime();
 	const applicationQuery = useQuery(applicationsListQueryOptions());
 	const applications = applicationQuery.data;
+	const offerQuery = useQuery(savedOffersQueryOptions());
 	const briefingQuery = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "briefing" } }));
 	const briefings = briefingQuery.data;
-	if (applicationQuery.isError || briefingQuery.isError)
+	if (applicationQuery.isError)
 		return (
 			<CareerLoadError
 				onRetry={() => {
 					void applicationQuery.refetch();
 					void briefingQuery.refetch();
+					void offerQuery.refetch();
 				}}
 			/>
 		);
-	if (applicationQuery.isPending || briefingQuery.isPending) return <Skeleton className="h-36 rounded-xl" />;
-	const open = (applications ?? []).filter((application) => application.status !== "closed");
-	// The next interview in full, then the two after it, so tomorrow's screening isn't hidden behind today's.
-	const [next, ...later] = upcomingInterviews(collectInterviews(open), now).slice(0, 3);
-	if (!next) return null;
+	if (applicationQuery.isPending) return <Skeleton className="h-36 rounded-xl" />;
+	const events = upcomingApplicationEvents(
+		applications ?? [],
+		offerQuery.data ? latestOfferHints(offerQuery.data) : undefined,
+		now,
+		timeZone,
+	);
+	const [next, ...later] = events.slice(0, 3);
+	const offerError = offerQuery.isError ? <CareerLoadError onRetry={() => void offerQuery.refetch()} /> : null;
+	if (!next) return offerError;
 
-	const { application, interview, start } = next;
-	const kind = interviewKindOf(interview.kind)?.label ?? interview.kind;
-	const ready = briefings?.some((item) => item.interviewId === interview.id);
+	const { application, at: start } = next;
+	const label = (item: (typeof events)[number]) =>
+		item.kind === "offer"
+			? t`Reply to the offer`
+			: item.kind === "follow-up"
+				? t`Follow-up reminder`
+				: t`${interviewKindOf(item.interview.kind)?.label ?? item.interview.kind} interview`;
+	const ready = next.kind === "interview" && briefings?.some((item) => item.interviewId === next.interview.id);
 
 	return (
 		<section
@@ -858,11 +874,18 @@ function ComingUp({ now, className }: ComingUpProps) {
 							className="size-2 shrink-0 rounded-sm"
 							style={{ backgroundColor: `var(--stage-${application.status})` }}
 						/>
-						{t`${kind} interview`}
+						{label(next)}
 					</p>
 					<p className="text-[13px] text-ink-2">
-						{[application.company, time(start), formatDuration(interview.durationMinutes, locale)].join(" · ")}
+						{[
+							application.company,
+							time(start),
+							next.kind === "interview" ? formatDuration(next.interview.durationMinutes, locale) : null,
+						]
+							.filter(Boolean)
+							.join(" · ")}
 					</p>
+					{next.kind === "follow-up" && next.note && <p className="text-sm break-words text-ink-2">{next.note}</p>}
 					<p className="text-xs text-ink-3">
 						{ready ? `${relative(start, now)} · ${t`Briefing ready`}` : relative(start, now)}
 					</p>
@@ -875,7 +898,8 @@ function ComingUp({ now, className }: ComingUpProps) {
 				render={
 					<Link
 						to="/dashboard/applications/$applicationId/{-$tab}"
-						params={{ applicationId: application.id, tab: "prepare" }}
+						params={{ applicationId: application.id, tab: next.kind === "interview" ? "prepare" : "messages" }}
+						search={next.kind === "interview" ? { round: next.interview.id } : {}}
 					/>
 				}
 			>
@@ -883,24 +907,24 @@ function ComingUp({ now, className }: ComingUpProps) {
 				<Icon name="arrow-right" size={18} className="rtl:-scale-x-100" />
 			</Button>
 			{later.length > 0 && (
-				<ul aria-label={t`Later interviews`} className="grid gap-1 border-t border-line pt-3">
+				<ul className="grid gap-1 border-t border-line pt-3">
 					{later.map((item) => (
-						<li key={item.interview.id}>
+						<li key={item.key}>
 							<Link
 								to="/dashboard/applications/$applicationId/{-$tab}"
-								params={{ applicationId: item.application.id, tab: "prepare" }}
-								search={{ round: item.interview.id }}
-								className="flex min-w-0 items-baseline gap-2 rounded-sm text-[13px] hover:underline"
+								params={{ applicationId: item.application.id, tab: item.kind === "interview" ? "prepare" : "messages" }}
+								search={item.kind === "interview" ? { round: item.interview.id } : {}}
+								className="grid min-h-11 min-w-0 gap-0.5 rounded-sm text-[13px] hover:underline"
 							>
-								<span className="shrink-0 text-ink-3">{when(item.start)}</span>
-								<span className="truncate text-ink-2">
-									{item.application.company} · {interviewKindOf(item.interview.kind)?.label ?? item.interview.kind}
-								</span>
+								<span className="text-ink-3">{when(item.at)}</span>
+								<span className="font-medium break-words text-ink-2">{label(item)}</span>
+								<span className="truncate text-ink-3">{item.application.company}</span>
 							</Link>
 						</li>
 					))}
 				</ul>
 			)}
+			{offerError}
 		</section>
 	);
 }

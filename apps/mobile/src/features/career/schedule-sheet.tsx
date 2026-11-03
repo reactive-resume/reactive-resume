@@ -6,6 +6,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Platform, View } from "react-native";
+import { defaultFollowUpNote } from "@reactive-resume/schema/applications/follow-up";
 import { careerScheduleInputSchema } from "@reactive-resume/schema/career";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { client, useCareerAction, useCareerQueries, useCareerTime, useNow } from "./hooks";
@@ -13,10 +14,10 @@ import { collectInterviews, firstLeadAhead, nextCareerRun, prepareRunAt, rollFor
 import { EditorSheet, LoadState, SwitchRow } from "./shared";
 import { orpc } from "@/api/client";
 import { useFlags } from "@/api/flags";
-import { useSession } from "@/auth/session";
+import { getAccountScope, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { SetUpWebAccess } from "@/features/ai/web-access";
-import { useApplications } from "@/features/applications/queries";
+import { useApplication, useApplications } from "@/features/applications/queries";
 import { Banner, Button, SelectSheet, Sheet, Text, TextField, useTheme } from "@/ui";
 
 type Input = RouterInput["career"]["saveSchedule"];
@@ -54,7 +55,7 @@ export function ScheduleSheet(props: ScheduleSheetProps) {
 	) : account.profile.data && career.profile.data && applications.data && web.data && flags.data ? (
 		<ScheduleForm
 			{...props}
-			key={session.server}
+			key={getAccountScope() ?? session.server}
 			timezone={props.schedule?.timezone ?? account.timeZone}
 			locale={account.locale}
 			profile={career.profile.data}
@@ -81,6 +82,7 @@ type FormProps = ScheduleSheetProps & {
 	verified: boolean;
 	ai: ReturnType<typeof useHasAIProvider>;
 };
+/** Untouched reminder notes wait for selected detail; authored blanks survive failed reads. */
 function ScheduleForm({
 	schedule,
 	kind: initialKind,
@@ -111,8 +113,8 @@ function ScheduleForm({
 		return {
 			kind: (schedule?.kind as Input["kind"]) ?? initialKind,
 			query:
-				schedule?.query ??
-				(initialKind === "follow-up" ? "" : [...profile.targetRoles, ...profile.locations].join(" · ")),
+				schedule?.kind === "discovery" ? schedule.query : [...profile.targetRoles, ...profile.locations].join(" · "),
+			followUpNote: schedule?.kind === "follow-up" ? schedule.query : null,
 			every: String(schedule?.intervalDays ?? 1),
 			...toZoned(at, timezone),
 			time: schedule ? toZoned(at, timezone).time : "08:00",
@@ -125,6 +127,11 @@ function ScheduleForm({
 		};
 	});
 	const [draft, setDraft] = useState(initial);
+	const prefill = draft.kind === "follow-up" && draft.followUpNote === null && Boolean(draft.applicationId);
+	const detail = useApplication(prefill ? draft.applicationId : "");
+	const selectedDetail = detail.data?.id === draft.applicationId ? detail.data : undefined;
+	const prefillBlocked = prefill && (detail.isPending || detail.isFetching || !selectedDetail);
+	const followUpNote = draft.followUpNote ?? (selectedDetail ? defaultFollowUpNote(selectedDetail) : "");
 	// A lead the person picked stays; until then it follows the chosen interview (web schedule sheet).
 	const [leadChosen, setLeadChosen] = useState(false);
 	const [picker, setPicker] = useState<"date" | "time" | null>(null);
@@ -151,13 +158,13 @@ function ScheduleForm({
 	const save = () => {
 		if (draft.kind === "discovery" && draft.query.trim().length < 3)
 			return setValidation(t`Add a role or company to look for.`);
-		if (blocked) return;
+		if (blocked || prefillBlocked) return;
 		if (!runAt) return setValidation(t`This date or time does not exist in your timezone. Choose another time.`);
 		if (draft.kind !== "prepare" && !unchangedFollowUp && runAt <= now) return setValidation(t`Pick a time after now.`);
 		const input: Input = {
 			...(schedule ? { id: schedule.id } : {}),
 			kind: draft.kind,
-			query: draft.kind !== "prepare" ? draft.query.trim() : "",
+			query: draft.kind === "follow-up" ? followUpNote.trim() : draft.kind === "discovery" ? draft.query.trim() : "",
 			applicationId:
 				draft.kind === "prepare"
 					? (interview?.application.id ?? null)
@@ -311,7 +318,12 @@ function ScheduleForm({
 							onChange={(applicationId) => set({ applicationId })}
 							options={open.map((row) => ({ value: row.id, label: `${row.company} · ${row.role}` }))}
 						/>
-						<TextField label={t`Follow-up note`} value={draft.query} onChangeText={(query) => set({ query })} />
+						<TextField
+							label={t`Follow-up note`}
+							value={followUpNote}
+							onChangeText={(followUpNote) => set({ followUpNote })}
+						/>
+						{prefill ? <LoadState query={detail} /> : null}
 						{!open.length ? <Banner tone="warn" message={t`Add an application first.`} /> : null}
 					</>
 				)}
@@ -359,7 +371,7 @@ function ScheduleForm({
 				/>
 				<Text color="ink3">{t`Always appears in Today. Email requires a verified address and server mail setup. No push notifications are sent.`}</Text>
 				{validation || action.error ? <Banner tone="danger" message={validation ?? action.error ?? ""} /> : null}
-				<Button label={t`Save schedule`} loading={action.pending} disabled={blocked} onPress={save} />
+				<Button label={t`Save schedule`} loading={action.pending} disabled={blocked || prefillBlocked} onPress={save} />
 				{schedule ? (
 					<Button
 						variant="danger"

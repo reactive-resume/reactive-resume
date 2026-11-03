@@ -28,6 +28,7 @@ import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
 import { TranslateResume } from "@/features/assistant/translate-resume";
 import { InlineNameInput } from "@/features/documents/inline-name-input";
+import { useExistingTags } from "@/features/documents/tag-suggestions";
 import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { savePendingChanges, saveResumeMetadata } from "@/features/resume/builder/draft";
 import { useCurrentResume, usePatchResume, useResumeStore } from "@/features/resume/builder/draft";
@@ -126,6 +127,7 @@ type BuilderTagsDialogProps = {
 function BuilderTagsDialog({ tags: current, locked, onSave, onClose }: BuilderTagsDialogProps) {
 	const [tags, setTags] = useState(current);
 	const commitTags = useRef<(() => string[]) | null>(null);
+	const suggestions = useExistingTags(["resume"]);
 	const save = useMutation({ mutationFn: onSave });
 	const invalid = tags.length > 20 || tags.some((tag) => !tag.trim() || tag.length > 40);
 	return (
@@ -152,7 +154,14 @@ function BuilderTagsDialog({ tags: current, locked, onSave, onClose }: BuilderTa
 					}}
 				>
 					<fieldset disabled={locked || save.isPending} className="grid gap-3">
-						<ChipInput commitRef={commitTags} value={tags} onChange={setTags} placeholder={t`Add a tag…`} />
+						<ChipInput
+							commitRef={commitTags}
+							value={tags}
+							onChange={setTags}
+							placeholder={t`Add a tag…`}
+							suggestions={suggestions}
+							suggestionsLabel={t`Your tags`}
+						/>
 						<p className="text-xs text-ink-3">
 							<Trans>Up to 20 tags per document, 40 characters per tag.</Trans>
 						</p>

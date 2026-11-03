@@ -74,7 +74,7 @@ describe("REST boundary", () => {
 				body: "{}",
 			});
 			expect(response.status).toBe(404);
-			expect(await response.json()).toMatchObject({ code: "NOT_FOUND", status: 404 });
+			expect(await response.json()).toMatchObject({ code: "NOT_FOUND", status: 404, message: "Not Found" });
 		},
 	);
 	it.each([

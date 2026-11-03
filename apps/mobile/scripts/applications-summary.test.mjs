@@ -907,6 +907,7 @@ queryClient.clear();
 		"@reactive-resume/utils/timezone": load("../../../packages/utils/src/timezone.ts", { zod }),
 	});
 	const stageActions = load("features/applications/stage-actions.ts", {
+		"@reactive-resume/schema/applications/next-step": domainNextStep,
 		"@lingui/core/macro": { t: String, plural: (value, forms) => forms.other.replace("#", String(value)) },
 		"@tanstack/react-query": { useQueryClient: () => client },
 		"expo-router": { useRouter: () => ({ push() {} }) },
@@ -1030,6 +1031,7 @@ queryClient.clear();
 		(id) => client.getQueryData(listKey)?.find((row) => row.id === id),
 	);
 	const stageActions = load("features/applications/stage-actions.ts", {
+		"@reactive-resume/schema/applications/next-step": domainNextStep,
 		"@lingui/core/macro": { t: String, plural: (value, forms) => forms.other.replace("#", String(value)) },
 		"@tanstack/react-query": { useQueryClient: () => client },
 		"expo-router": { useRouter: () => ({ push() {} }) },

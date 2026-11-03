@@ -177,6 +177,8 @@
 
 .landing [data-scene] {
 	--p: 0;
+	/* Pinned scenes replace this with their exit progress once the engine measures them. */
+	--out: 0;
 }
 
 /*
@@ -219,6 +221,15 @@
 		opacity: calc(0.8 * var(--doodle-fade, 1));
 		filter: brightness(0.92);
 	}
+}
+
+/*
+ * The template wall fades into the page above and below its middle, clearing the bands where Design's closing headline
+ * sits. Once the wall reaches its resting size those bands are empty anyway, so this only softens the oversized frames
+ * on the way in and stops the words from sitting on thumbnails at low contrast.
+ */
+@utility design-wall {
+	mask-image: linear-gradient(to bottom, transparent 18.5%, #000 20%, #000 81%, transparent 88%);
 }
 
 /* One of the hero's career fragments: it drifts from (--x, --y) to (--tx, --ty) as the page assembles (--e). */
