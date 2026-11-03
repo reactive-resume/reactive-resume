@@ -650,11 +650,6 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						</Trans>
 					</p>
 				)}
-				{parsed?.enrichmentWarning && (
-					<p className="text-xs text-warn-text" role="status">
-						<Trans>AI couldn't fill the details. The posting is retained; complete the fields manually.</Trans>
-					</p>
-				)}
 				{parsed?.postingSource.fallbackReason && (
 					<p className="text-xs text-warn-text" role="status">
 						<Trans>Enhanced reading was unavailable. The built-in reader retrieved this posting.</Trans>
@@ -686,7 +681,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						)}
 					</div>
 				)}
-				{initialCapture?.description && !read.error && !read.isPending ? null : providerState.isUnavailable && !link ? (
+				{initialCapture?.description &&
+				!read.error &&
+				!read.isPending &&
+				!parsed?.enrichmentWarning ? null : providerState.isUnavailable && !link ? (
 					<AiProviderLoadState state={providerState} />
 				) : (
 					<ReadStatus
@@ -921,7 +919,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						))}
 				</NativeSelect>
 			</div>
-			<DialogFooter>
+			<DialogFooter className="sticky bottom-0 z-10 bg-raised py-3">
 				<Button
 					type="button"
 					variant={forPicker || logsSentResume ? "primary" : "secondary"}
@@ -980,11 +978,17 @@ function ReadStatus({ link, readable, pending, error, parsed, ai, guessed = fals
 			</p>
 		);
 	}
-	if (parsed && (!parsed.role.trim() || !parsed.company.trim())) {
+	if (parsed?.enrichmentWarning || (parsed && (!parsed.role.trim() || !parsed.company.trim()))) {
 		return (
 			<p className={cn(base, "text-warn-text")} role="status">
 				<Icon name="warning-circle" size={16} className="shrink-0" />
-				<Trans>Some job details couldn't be read. Fill in the role and company, or paste one job's posting text.</Trans>
+				{parsed.enrichmentWarning ? (
+					<Trans>AI couldn't fill the details. The posting is retained; complete the fields manually.</Trans>
+				) : (
+					<Trans>
+						Some job details couldn't be read. Fill in the role and company, or paste one job's posting text.
+					</Trans>
+				)}
 			</p>
 		);
 	}
