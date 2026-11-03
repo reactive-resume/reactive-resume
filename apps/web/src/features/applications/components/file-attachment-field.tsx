@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import { useRef } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { AttachmentPreview } from "./attachment-preview";
 
 export type FileAttachment = { url: string; name: string };
 
@@ -39,31 +40,34 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 	return (
 		<>
 			{value ? (
-				<div className="flex items-center gap-3 rounded-lg border border-line p-2.5">
-					<span className="flex size-8 items-center justify-center rounded-md bg-accent/10 text-accent-text">
-						<Icon name="file-pdf" size={16} />
-					</span>
-					{value instanceof File ? (
-						<span className="min-w-0 flex-1 truncate text-sm">{value.name}</span>
-					) : (
-						<a
-							href={value.url}
-							target="_blank"
-							rel="noreferrer"
-							className="min-w-0 flex-1 truncate text-sm hover:underline"
+				<div className="grid gap-2 rounded-lg border border-line p-2.5">
+					<div className="flex items-center gap-3">
+						<span className="flex size-8 items-center justify-center rounded-md bg-accent/10 text-accent-text">
+							<Icon name="file-pdf" size={16} />
+						</span>
+						{value instanceof File ? (
+							<span className="min-w-0 flex-1 truncate text-sm">{value.name}</span>
+						) : (
+							<a
+								href={value.url}
+								target="_blank"
+								rel="noreferrer"
+								className="min-w-0 flex-1 truncate text-sm hover:underline"
+							>
+								{value.name}
+							</a>
+						)}
+						<button
+							type="button"
+							title={t`Remove file`}
+							disabled={disabled}
+							className="text-ink-3 hover:text-danger-text disabled:opacity-40"
+							onClick={() => onChange(null)}
 						>
-							{value.name}
-						</a>
-					)}
-					<button
-						type="button"
-						title={t`Remove file`}
-						disabled={disabled}
-						className="text-ink-3 hover:text-danger-text disabled:opacity-40"
-						onClick={() => onChange(null)}
-					>
-						<Icon name="x" size={16} />
-					</button>
+							<Icon name="x" size={16} />
+						</button>
+					</div>
+					<AttachmentPreview source={value instanceof File ? value : value.url} name={value.name} />
 				</div>
 			) : (
 				<button
