@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {¿Eliminar # candidatura?} other {¿Eliminar # candidaturas?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {Eliminar # candidatura} other {Eliminar # candidaturas}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "fecha de solicitud de empleo"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "solicitud de empleo eliminada"
 
@@ -2051,10 +2041,17 @@ msgstr "Vistas de candidaturas"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "Candidaturas"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "Las candidaturas y su historial se pueden restaurar desde la papelera."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "Candidaturas a lo largo del tiempo"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Candidaturas enviadas por semana (últimas 8 semanas)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "Las candidaturas permanecen en la papelera hasta que las elimines definitivamente."
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4411,14 +4412,6 @@ msgstr "Eliminar {0}"
 msgid "Delete account"
 msgstr "Eliminar cuenta"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "Eliminar candidatura"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "Eliminar candidatura…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "Eliminar conversación"
@@ -4457,7 +4450,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "Eliminar página"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "Eliminar permanentemente…"
@@ -4496,7 +4489,7 @@ msgstr "Eliminar historia"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "¿Eliminar esta candidatura?"
 
@@ -4685,6 +4678,7 @@ msgid "Document type"
 msgstr "Tipo de documento"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5992,6 +5986,7 @@ msgstr "Historial"
 msgid "hold ⋮⋮ to move"
 msgstr "mantén pulsado ⋮⋮ para mover"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "Mantén pulsado para eliminar"
@@ -6508,6 +6503,10 @@ msgstr "Mantener dominio"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "Seguir editando"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "Mantener en la basura"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7126,6 +7125,7 @@ msgstr "Cargando tu dirección pública…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7634,6 +7634,8 @@ msgstr "Pasar a {stage}"
 msgid "Move to stage"
 msgstr "Mover a etapa"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7675,6 +7677,10 @@ msgstr "Movido a {0}"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "Se ha movido a la papelera"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7861,6 +7867,7 @@ msgstr "Nueva sección"
 msgid "New STARR story"
 msgstr "Nueva historia STARR"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9405,6 +9412,7 @@ msgstr "Previsualizar página web"
 msgid "Previewing {0} · tap to apply"
 msgstr "Vista previa de {0} · toque para aplicar"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10312,6 +10320,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "Reiniciar para cambiar la dirección del texto"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "Restaurar"
@@ -10331,6 +10340,7 @@ msgstr "¿Restaurar esta versión?"
 msgid "Restore version"
 msgstr "Restaurar versión"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10466,6 +10476,7 @@ msgstr "Retirar etapa"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12960,10 +12971,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "Estos abren la configuración de la cuenta de su servidor en una pestaña del navegador dentro de la aplicación. Es posible que tengas que iniciar sesión allí."
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Buscan títulos como Experiencia, Educación y Habilidades."
@@ -13475,12 +13482,15 @@ msgstr "Transcripción copiada"
 msgid "Transcription model"
 msgstr "Modelo de transcripción"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "Papelera"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "la papelera esta vacia"

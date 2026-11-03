@@ -226,6 +226,8 @@ Mobile changes use JavaScript/copy and existing dependencies, so they are assess
 
 ## Keep product guides current
 
+Application removal uses durable Trash on web and native. `application.trashedAt` retains timeline, document/version links, workspace, scoped Knowledge, coach records and files. Active workflow queries use the application lifetime guard; full account exports intentionally include retained rows. Restore/permanent-delete controls carry the listed timestamp and serialize with owner writes. Application Trash has no automatic expiry; document Trash retains its existing 30-day policy. Update `managing-an-application` and `using-the-trash`, including fictional recovery captures, when changing this lifecycle.
+
 Update user-facing guides in the same change as the behavior they describe. Start with the changed screen or service below, then follow its guide's related links. The [overview](/guides/career-overview) explains the product, the [first application tutorial](/guides/first-career-application) teaches the starting flow, and the [reference](/guides/career-workspace-reference) records controls and limits.
 
 | When this changes                                        | Check these guides                                                                                                                       | Screenshot to refresh when the visible flow changes                                                          |

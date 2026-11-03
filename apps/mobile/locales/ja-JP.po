@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {# 件の応募を削除しますか？} other {# 件の応募を削除しますか？}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {# 件の応募を削除} other {# 件の応募を削除}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "求職応募日"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "求人応募が削除されました"
 
@@ -2051,10 +2041,17 @@ msgstr "応募ビュー"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "応募"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "応募とその履歴はゴミ箱から復元できます。"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "応募数の推移"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "週ごとの応募送信数（直近8週間）"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "応募は完全に削除するまでゴミ箱に残ります。"
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4411,14 +4412,6 @@ msgstr "{0}を削除"
 msgid "Delete account"
 msgstr "アカウントを削除する"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "応募を削除"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "応募を削除…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "会話を削除"
@@ -4457,7 +4450,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "ページを削除"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "完全に削除…"
@@ -4496,7 +4489,7 @@ msgstr "ストーリーを削除"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "この応募を削除しますか？"
 
@@ -4685,6 +4678,7 @@ msgid "Document type"
 msgstr "文書の種類"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5992,6 +5986,7 @@ msgstr "履歴"
 msgid "hold ⋮⋮ to move"
 msgstr "⋮ を押して移動します"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "長押しして削除"
@@ -6508,6 +6503,10 @@ msgstr "ドメインを保持"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "編集を続ける"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "ゴミ箱に入れておく"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7126,6 +7125,7 @@ msgstr "公開アドレスを読み込み中…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7634,6 +7634,8 @@ msgstr "{stage}に移動"
 msgid "Move to stage"
 msgstr "段階へ移動"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7675,6 +7677,10 @@ msgstr "{0} に移動しました"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "ゴミ箱に移動しました"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7861,6 +7867,7 @@ msgstr "新しいセクション"
 msgid "New STARR story"
 msgstr "新しい STARR のストーリー"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9405,6 +9412,7 @@ msgstr "Web ページをプレビュー"
 msgid "Previewing {0} · tap to apply"
 msgstr "{0} をプレビュー中 · タップして適用します"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10312,6 +10320,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "再起動してテキストの方向を変更します"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "復元する"
@@ -10331,6 +10340,7 @@ msgstr "このバージョンを復元しますか?"
 msgid "Restore version"
 msgstr "バージョンを復元"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10466,6 +10476,7 @@ msgstr "ステージを廃止"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12960,10 +12971,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "これらにより、アプリ内のブラウザー タブでサーバーのアカウント設定が開きます。そこにサインインする必要がある場合があります。"
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "経験、教育、スキルなどの見出しを探します。"
@@ -13475,12 +13482,15 @@ msgstr "トランスクリプトをコピーしました"
 msgid "Transcription model"
 msgstr "転写モデル"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "ゴミ箱"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "ゴミ箱が空です"

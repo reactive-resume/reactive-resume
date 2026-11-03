@@ -7,6 +7,78 @@ import { paginate, paginationShape } from "../../pagination";
 import { applicationService } from "./service";
 
 export const crudRouter = {
+	listTrash: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/applications/trash",
+			tags: ["Applications"],
+			operationId: "listTrashedApplications",
+			summary: "List applications in Trash",
+		})
+		.input(z.object(paginationShape).default({}))
+		.output(
+			z.object({
+				items: z.array(z.object({ id: z.string(), company: z.string(), role: z.string(), trashedAt: z.date() })),
+				total: z.number().int(),
+			}),
+		)
+		.handler(({ input, context }) =>
+			applicationService.listTrash({ userId: context.user.id, limit: input.limit ?? 100, offset: input.offset ?? 0 }),
+		),
+	restore: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/applications/{id}/restore",
+			tags: ["Applications"],
+			operationId: "restoreApplication",
+			summary: "Restore an application from Trash",
+			description:
+				"Restores the retained application, timeline and relationships. Requires the timestamp returned by listTrashedApplications; a stale Trash action is refused.",
+		})
+		.input(z.object({ id: z.string(), trashedAt: z.date() }))
+		.use(resumeMutationRateLimit)
+		.output(z.void())
+		.handler(({ input, context }) => applicationService.restore({ ...input, userId: context.user.id })),
+	purge: protectedProcedure
+		.route({
+			method: "DELETE",
+			path: "/applications/{id}/trash",
+			tags: ["Applications"],
+			operationId: "purgeApplication",
+			summary: "Permanently delete an application from Trash",
+			description:
+				"Permanently removes only the listed Trash generation. Refuses a restored or re-trashed application. Linked resumes and letters are kept.",
+		})
+		.input(z.object({ id: z.string(), trashedAt: z.date() }))
+		.use(resumeMutationRateLimit)
+		.output(z.void())
+		.handler(({ input, context }) => applicationService.purge({ ...input, userId: context.user.id })),
+	trash: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/applications/{id}/trash",
+			tags: ["Applications"],
+			operationId: "trashApplication",
+			summary: "Move an application to Trash",
+			description:
+				"Retains the timeline, relationships and files until explicitly permanently deleted. Restore from Trash after reload.",
+		})
+		.input(applicationDto.delete.input)
+		.use(resumeMutationRateLimit)
+		.output(applicationDto.delete.output)
+		.handler(({ input, context }) => applicationService.delete({ id: input.id, userId: context.user.id })),
+	bulkTrash: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/applications/trash",
+			tags: ["Applications"],
+			operationId: "trashApplications",
+			summary: "Move applications to Trash",
+		})
+		.input(applicationDto.bulkDelete.input)
+		.use(resumeMutationRateLimit)
+		.output(applicationDto.bulkDelete.output)
+		.handler(({ input, context }) => applicationService.bulkDelete({ ...input, userId: context.user.id })),
 	findPosting: protectedProcedure
 		.route({
 			method: "GET",
@@ -350,7 +422,8 @@ export const crudRouter = {
 			tags: ["Applications"],
 			operationId: "deleteApplication",
 			summary: "Delete a job application",
-			description: "Permanently deletes a job application. Requires authentication.",
+			description:
+				"Moves a job application to Trash, retaining its timeline, relationships and files. Restore from Trash after reload. Requires authentication.",
 			successDescription: "The application was deleted successfully.",
 		})
 		.input(applicationDto.delete.input)
@@ -381,7 +454,8 @@ export const crudRouter = {
 			tags: ["Applications"],
 			operationId: "bulkDeleteApplications",
 			summary: "Bulk delete applications",
-			description: "Permanently deletes multiple applications at once. Requires authentication.",
+			description:
+				"Moves multiple applications to Trash, retaining their timelines, relationships and files. Requires authentication.",
 			successDescription: "The number of applications deleted.",
 		})
 		.input(applicationDto.bulkDelete.input)

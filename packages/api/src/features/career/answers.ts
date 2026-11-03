@@ -17,19 +17,31 @@ import {
 	reviewedAnswerInputSchema,
 	reuseAnswerInputSchema as reuseSchema,
 } from "@reactive-resume/schema/application-answers";
+import { availableApplicationContext } from "../applications/access";
+import { activeApplications } from "../applications/access";
 import { lockUser } from "../documents/ownership";
 
 async function application(reader: DbOrTx, userId: string, id: string) {
 	const [row] = await reader
 		.select()
 		.from(tables.application)
-		.where(and(eq(tables.application.userId, userId), eq(tables.application.id, id)));
+		.where(and(activeApplications(userId), eq(tables.application.id, id)));
 	if (!row) throw new ORPCError("NOT_FOUND");
 	return row;
 }
 async function knowledge(reader: DbOrTx, userId: string) {
-	const facts = await reader.select().from(tables.careerFact).where(eq(tables.careerFact.userId, userId));
-	const stories = await reader.select().from(tables.careerStory).where(eq(tables.careerStory.userId, userId));
+	const facts = await reader
+		.select()
+		.from(tables.careerFact)
+		.where(
+			and(eq(tables.careerFact.userId, userId), availableApplicationContext(userId, tables.careerFact.applicationId)),
+		);
+	const stories = await reader
+		.select()
+		.from(tables.careerStory)
+		.where(
+			and(eq(tables.careerStory.userId, userId), availableApplicationContext(userId, tables.careerStory.applicationId)),
+		);
 	return { facts, stories };
 }
 const visible = (id: string | null, applicationId: string | null) => id === null || id === applicationId;
@@ -57,7 +69,12 @@ export const reviewedAnswers = {
 		const rows = await reader
 			.select()
 			.from(tables.careerAnswer)
-			.where(eq(tables.careerAnswer.userId, userId))
+			.where(
+				and(
+					eq(tables.careerAnswer.userId, userId),
+					availableApplicationContext(userId, tables.careerAnswer.applicationId),
+				),
+			)
 			.orderBy(desc(tables.careerAnswer.reviewedAt));
 		const current = await knowledge(reader, userId);
 		return rows.map((row) => {
@@ -75,7 +92,15 @@ export const reviewedAnswers = {
 				? await tx
 						.select()
 						.from(tables.careerAnswer)
-						.where(and(eq(tables.careerAnswer.id, input.id), eq(tables.careerAnswer.userId, userId)))
+						.where(
+							and(
+								eq(tables.careerAnswer.id, input.id),
+								and(
+									eq(tables.careerAnswer.userId, userId),
+									availableApplicationContext(userId, tables.careerAnswer.applicationId),
+								),
+							),
+						)
 				: [];
 			if (input.id && !existing) throw new ORPCError("NOT_FOUND");
 			if (existing && existing.revision !== input.expectedRevision)
@@ -120,7 +145,15 @@ export const reviewedAnswers = {
 			const [duplicate] = await tx
 				.select()
 				.from(tables.careerAnswer)
-				.where(and(eq(tables.careerAnswer.userId, userId), eq(tables.careerAnswer.duplicateKey, duplicateKey)));
+				.where(
+					and(
+						and(
+							eq(tables.careerAnswer.userId, userId),
+							availableApplicationContext(userId, tables.careerAnswer.applicationId),
+						),
+						eq(tables.careerAnswer.duplicateKey, duplicateKey),
+					),
+				);
 			if (duplicate && duplicate.id !== input.id)
 				throw new ORPCError("CONFLICT", {
 					message: "An answer for this question and scope already exists. Edit that saved answer instead.",
@@ -159,7 +192,15 @@ export const reviewedAnswers = {
 			const [row] = await tx
 				.select()
 				.from(tables.careerAnswer)
-				.where(and(eq(tables.careerAnswer.userId, userId), eq(tables.careerAnswer.id, input.id)));
+				.where(
+					and(
+						and(
+							eq(tables.careerAnswer.userId, userId),
+							availableApplicationContext(userId, tables.careerAnswer.applicationId),
+						),
+						eq(tables.careerAnswer.id, input.id),
+					),
+				);
 			if (!row) throw new ORPCError("NOT_FOUND");
 			if (row.revision !== input.expectedRevision)
 				throw new ORPCError("CONFLICT", { message: "This saved answer changed. Review its latest wording." });
@@ -181,7 +222,15 @@ export const reviewedAnswers = {
 			const [row] = await tx
 				.select()
 				.from(tables.careerAnswer)
-				.where(and(eq(tables.careerAnswer.userId, userId), eq(tables.careerAnswer.id, id)));
+				.where(
+					and(
+						and(
+							eq(tables.careerAnswer.userId, userId),
+							availableApplicationContext(userId, tables.careerAnswer.applicationId),
+						),
+						eq(tables.careerAnswer.id, id),
+					),
+				);
 			if (!row) throw new ORPCError("NOT_FOUND");
 			if (row.revision !== expectedRevision)
 				throw new ORPCError("CONFLICT", { message: "This saved answer changed. Reopen it before deleting." });

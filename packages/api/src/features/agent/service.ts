@@ -33,6 +33,7 @@ import { generateId } from "@reactive-resume/utils/string";
 import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
 import { extractDocxTextFromBytes, getAgentModel } from "../ai/service";
+import { availableApplicationContext } from "../applications/access";
 import { assertApplicationVersion } from "../applications/service";
 import { careerService, requireCareerApplication } from "../career/service";
 import { buildCareerTools, buildCareerInstructions } from "../career/tools";
@@ -518,7 +519,10 @@ async function getThread(input: { id: string; userId: string }) {
 		.where(
 			and(
 				eq(schema.agentThread.id, input.id),
-				eq(schema.agentThread.userId, input.userId),
+				and(
+					eq(schema.agentThread.userId, input.userId),
+					availableApplicationContext(input.userId, schema.agentThread.applicationId),
+				),
 				isNull(schema.agentThread.deletedAt),
 			),
 		)
@@ -634,7 +638,15 @@ function updateAssistantToolResultMessage(input: {
 		await tx
 			.update(schema.agentThread)
 			.set({ lastMessageAt: new Date() })
-			.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
+			.where(
+				and(
+					eq(schema.agentThread.id, input.threadId),
+					and(
+						eq(schema.agentThread.userId, input.userId),
+						availableApplicationContext(input.userId, schema.agentThread.applicationId),
+					),
+				),
+			);
 
 		return { message: mergedMessage, rowId: existingRow.id };
 	});
@@ -847,7 +859,15 @@ async function proposeEdits(input: {
 						}
 					: {}),
 			})
-			.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
+			.where(
+				and(
+					eq(schema.agentThread.id, input.threadId),
+					and(
+						eq(schema.agentThread.userId, input.userId),
+						availableApplicationContext(input.userId, schema.agentThread.applicationId),
+					),
+				),
+			);
 		const supersedes = await supersedeEarlierEdits(input, output.edits, loaded);
 		if (supersedes.length > 0) return { ...output, supersedes };
 	}
@@ -1173,7 +1193,15 @@ export const agentService = {
 				.leftJoin(schema.resume, eq(schema.agentThread.workingResumeId, schema.resume.id))
 				.leftJoin(schema.coverLetter, eq(schema.agentThread.coverLetterId, schema.coverLetter.id))
 				.leftJoin(schema.aiProvider, eq(schema.agentThread.aiProviderId, schema.aiProvider.id))
-				.where(and(eq(schema.agentThread.userId, input.userId), isNull(schema.agentThread.deletedAt)))
+				.where(
+					and(
+						and(
+							eq(schema.agentThread.userId, input.userId),
+							availableApplicationContext(input.userId, schema.agentThread.applicationId),
+						),
+						isNull(schema.agentThread.deletedAt),
+					),
+				)
 				.orderBy(desc(schema.agentThread.lastMessageAt));
 
 			return rows.map(toThreadSummary);
@@ -1323,7 +1351,15 @@ export const agentService = {
 			const [updated] = await db
 				.update(schema.agentThread)
 				.set({ ...(provider ? { aiProviderId: provider.id } : {}), ...(input.title ? { title: input.title } : {}) })
-				.where(and(eq(schema.agentThread.id, input.id), eq(schema.agentThread.userId, input.userId)))
+				.where(
+					and(
+						eq(schema.agentThread.id, input.id),
+						and(
+							eq(schema.agentThread.userId, input.userId),
+							availableApplicationContext(input.userId, schema.agentThread.applicationId),
+						),
+					),
+				)
 				.returning();
 			if (!updated) throw new ORPCError("NOT_FOUND");
 
@@ -1347,7 +1383,10 @@ export const agentService = {
 				.where(
 					and(
 						eq(schema.agentThread.id, input.id),
-						eq(schema.agentThread.userId, input.userId),
+						and(
+							eq(schema.agentThread.userId, input.userId),
+							availableApplicationContext(input.userId, schema.agentThread.applicationId),
+						),
 						isNull(schema.agentThread.deletedAt),
 					),
 				)
@@ -1575,7 +1614,15 @@ export const agentService = {
 						await db
 							.update(schema.agentThread)
 							.set({ title: buildThreadTitle(messageText(userMessage), thread.title, isCareer ? 47 : 60) })
-							.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
+							.where(
+								and(
+									eq(schema.agentThread.id, input.threadId),
+									and(
+										eq(schema.agentThread.userId, input.userId),
+										availableApplicationContext(input.userId, schema.agentThread.applicationId),
+									),
+								),
+							);
 					}
 				}
 
@@ -1696,7 +1743,10 @@ export const agentService = {
 								.where(
 									and(
 										eq(schema.agentThread.id, input.threadId),
-										eq(schema.agentThread.userId, input.userId),
+										and(
+											eq(schema.agentThread.userId, input.userId),
+											availableApplicationContext(input.userId, schema.agentThread.applicationId),
+										),
 										isNull(schema.agentThread.deletedAt),
 									),
 								)
@@ -2075,7 +2125,15 @@ export const agentService = {
 				const [thread] = await tx
 					.update(schema.agentThread)
 					.set({ editsAccepted: accepted })
-					.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)))
+					.where(
+						and(
+							eq(schema.agentThread.id, input.threadId),
+							and(
+								eq(schema.agentThread.userId, input.userId),
+								availableApplicationContext(input.userId, schema.agentThread.applicationId),
+							),
+						),
+					)
 					.returning({
 						editsProposed: schema.agentThread.editsProposed,
 						editsAccepted: schema.agentThread.editsAccepted,
@@ -2106,7 +2164,10 @@ export const agentService = {
 						.where(
 							and(
 								eq(schema.agentThread.id, input.threadId),
-								eq(schema.agentThread.userId, input.userId),
+								and(
+									eq(schema.agentThread.userId, input.userId),
+									availableApplicationContext(input.userId, schema.agentThread.applicationId),
+								),
 								eq(schema.agentThread.status, "active"),
 								isNull(schema.agentThread.deletedAt),
 							),

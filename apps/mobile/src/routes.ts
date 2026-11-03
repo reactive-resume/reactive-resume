@@ -21,6 +21,7 @@ export const routes = {
 	// (tabs)
 	documents: () => "/documents" as const,
 	trash: () => "/documents/trash" as const,
+	applicationTrash: () => "/applications/trash" as const,
 	applications: (view: ApplicationsView = "list") =>
 		view === "list" ? ("/applications" as const) : (`/applications/${view}` as const),
 	career: (pane: CareerPane = "today") => `/career/${pane}` as const,

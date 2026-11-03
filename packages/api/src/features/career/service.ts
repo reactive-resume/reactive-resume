@@ -26,6 +26,8 @@ import { countryForTimeZone } from "@reactive-resume/utils/region";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
 import { aiProvidersService } from "../ai-providers/service";
+import { availableApplicationContext } from "../applications/access";
+import { activeApplications } from "../applications/access";
 import { findTrackedPosting } from "../applications/duplicates";
 import { syncFollowUp } from "../applications/follow-up";
 import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "../applications/lanes";
@@ -41,7 +43,10 @@ const hash = (text: string) => createHash("sha256").update(text).digest("hex");
 const visible = (column: typeof tables.careerFact.applicationId, applicationId?: string | null) =>
 	applicationId ? or(isNull(column), eq(column, applicationId)) : isNull(column);
 const ownedFact = (id: string, userId: string) =>
-	and(eq(tables.careerFact.id, id), eq(tables.careerFact.userId, userId));
+	and(
+		eq(tables.careerFact.id, id),
+		and(eq(tables.careerFact.userId, userId), availableApplicationContext(userId, tables.careerFact.applicationId)),
+	);
 
 /** Independent Facts and Preferences controls must not overwrite fields they don't own. */
 export function mergeCareerProfile(stored: CareerProfileData, input: CareerProfileUpdate): CareerProfileData {
@@ -154,7 +159,10 @@ async function requireFacts(input: Owned, ids: string[], reader: DbOrTx = db) {
 		.from(tables.careerFact)
 		.where(
 			and(
-				eq(tables.careerFact.userId, input.userId),
+				and(
+					eq(tables.careerFact.userId, input.userId),
+					availableApplicationContext(input.userId, tables.careerFact.applicationId),
+				),
 				inArray(tables.careerFact.id, ids),
 				eq(tables.careerFact.status, "active"),
 				visible(tables.careerFact.applicationId, input.applicationId),
@@ -177,7 +185,12 @@ async function ownedFactIds(reader: DbOrTx, userId: string, answers: { factIds: 
 	const rows = await reader
 		.select({ id: tables.careerFact.id })
 		.from(tables.careerFact)
-		.where(and(eq(tables.careerFact.userId, userId), inArray(tables.careerFact.id, ids)));
+		.where(
+			and(
+				and(eq(tables.careerFact.userId, userId), availableApplicationContext(userId, tables.careerFact.applicationId)),
+				inArray(tables.careerFact.id, ids),
+			),
+		);
 	const owned = new Set(rows.map((row) => row.id));
 	return ids.filter((id) => owned.has(id));
 }
@@ -211,7 +224,7 @@ async function memoryVersion(userId: string, reader: DbOrTx = db) {
 		.from(tables.careerFact)
 		.where(
 			and(
-				eq(tables.careerFact.userId, userId),
+				and(eq(tables.careerFact.userId, userId), availableApplicationContext(userId, tables.careerFact.applicationId)),
 				or(sql`${tables.careerFact.status} <> 'active'`, sql`jsonb_array_length(${tables.careerFact.revisions}) > 0`),
 			),
 		)
@@ -257,7 +270,10 @@ async function knowledgeVersion(input: Owned, reader: DbOrTx = db) {
 			.from(tables.careerFact)
 			.where(
 				and(
-					eq(tables.careerFact.userId, input.userId),
+					and(
+						eq(tables.careerFact.userId, input.userId),
+						availableApplicationContext(input.userId, tables.careerFact.applicationId),
+					),
 					visible(tables.careerFact.applicationId, input.applicationId),
 					sql`${tables.careerFact.status} <> 'forgotten'`,
 				),
@@ -267,7 +283,10 @@ async function knowledgeVersion(input: Owned, reader: DbOrTx = db) {
 			.from(tables.careerStory)
 			.where(
 				and(
-					eq(tables.careerStory.userId, input.userId),
+					and(
+						eq(tables.careerStory.userId, input.userId),
+						availableApplicationContext(input.userId, tables.careerStory.applicationId),
+					),
 					input.applicationId
 						? or(isNull(tables.careerStory.applicationId), eq(tables.careerStory.applicationId, input.applicationId))
 						: isNull(tables.careerStory.applicationId),
@@ -341,7 +360,7 @@ async function submitAnswerSnapshot(
 	const [application] = await tx
 		.select()
 		.from(tables.application)
-		.where(and(eq(tables.application.id, applicationId), eq(tables.application.userId, userId)))
+		.where(and(eq(tables.application.id, applicationId), activeApplications(userId)))
 		.for("update");
 	if (!application) throw new ORPCError("NOT_FOUND");
 	if (
@@ -375,7 +394,10 @@ async function submitAnswerSnapshot(
 				.from(tables.careerArtifact)
 				.where(
 					and(
-						eq(tables.careerArtifact.userId, userId),
+						and(
+							eq(tables.careerArtifact.userId, userId),
+							availableApplicationContext(userId, tables.careerArtifact.applicationId),
+						),
 						eq(tables.careerArtifact.applicationId, applicationId),
 						eq(tables.careerArtifact.inputVersion, hash(JSON.stringify([applicationId, applied.at, sent]))),
 					),
@@ -474,7 +496,10 @@ export const careerService = {
 			.from(tables.careerFact)
 			.where(
 				and(
-					eq(tables.careerFact.userId, userId),
+					and(
+						eq(tables.careerFact.userId, userId),
+						availableApplicationContext(userId, tables.careerFact.applicationId),
+					),
 					or(sql`${tables.careerFact.status} <> 'active'`, sql`jsonb_array_length(${tables.careerFact.revisions}) > 0`),
 				),
 			)
@@ -528,7 +553,10 @@ export const careerService = {
 			.leftJoin(tables.application, eq(tables.application.id, tables.careerFact.applicationId))
 			.where(
 				and(
-					eq(tables.careerFact.userId, input.userId),
+					and(
+						eq(tables.careerFact.userId, input.userId),
+						availableApplicationContext(input.userId, tables.careerFact.applicationId),
+					),
 					input.all ? undefined : visible(tables.careerFact.applicationId, input.applicationId),
 					sql`${tables.careerFact.status} <> 'forgotten'`,
 					input.query?.trim()
@@ -544,7 +572,7 @@ export const careerService = {
 		}));
 	},
 	saveFact: async (userId: string, input: FactInput, automatic = false) => {
-		await requireCareerApplication({ userId, applicationId: input.applicationId });
+		const application = await requireCareerApplication({ userId, applicationId: input.applicationId });
 		if (automatic && (input.source.kind !== "user-message" || input.text !== input.source.quote))
 			throw new ORPCError("BAD_REQUEST", { message: "Automatic memory must quote the user's own words exactly." });
 		if (automatic && (await careerService.profile(userId)).memoryMode !== "auto") return null;
@@ -555,6 +583,7 @@ export const careerService = {
 		const sourceKey = hash(`${source.kind}:${source.id}:${source.quote.trim().toLocaleLowerCase()}`);
 		return db.transaction(async (tx) => {
 			await lockUser(tx, userId);
+			if (application) await assertApplicationVersion(tx, userId, application);
 			if (automatic) {
 				const [profile] = await tx.select().from(tables.careerProfile).where(eq(tables.careerProfile.userId, userId));
 				if (careerProfileDataSchema.parse(profile?.data ?? {}).memoryMode !== "auto") return null;
@@ -642,7 +671,10 @@ export const careerService = {
 			.from(tables.careerStory)
 			.where(
 				and(
-					eq(tables.careerStory.userId, input.userId),
+					and(
+						eq(tables.careerStory.userId, input.userId),
+						availableApplicationContext(input.userId, tables.careerStory.applicationId),
+					),
 					input.applicationId
 						? or(isNull(tables.careerStory.applicationId), eq(tables.careerStory.applicationId, input.applicationId))
 						: isNull(tables.careerStory.applicationId),
@@ -651,9 +683,10 @@ export const careerService = {
 			.orderBy(desc(tables.careerStory.updatedAt));
 	},
 	saveStory: async (userId: string, input: StoryInput, id?: string, expectedMemoryVersion?: string) => {
-		await requireCareerApplication({ userId, applicationId: input.applicationId });
+		const application = await requireCareerApplication({ userId, applicationId: input.applicationId });
 		return db.transaction(async (tx) => {
 			await lockUser(tx, userId);
+			if (application) await assertApplicationVersion(tx, userId, application);
 			if (expectedMemoryVersion && expectedMemoryVersion !== (await memoryVersion(userId, tx)))
 				throw new ORPCError("CONFLICT", { message: "Career memory changed. Start a fresh reply." });
 			await requireFacts({ userId, applicationId: input.applicationId }, input.factIds, tx);
@@ -662,7 +695,15 @@ export const careerService = {
 				? await tx
 						.update(tables.careerStory)
 						.set(values)
-						.where(and(eq(tables.careerStory.id, id), eq(tables.careerStory.userId, userId)))
+						.where(
+							and(
+								eq(tables.careerStory.id, id),
+								and(
+									eq(tables.careerStory.userId, userId),
+									availableApplicationContext(userId, tables.careerStory.applicationId),
+								),
+							),
+						)
 						.returning()
 				: await tx
 						.insert(tables.careerStory)
@@ -677,7 +718,15 @@ export const careerService = {
 			await lockUser(tx, userId);
 			await tx
 				.delete(tables.careerStory)
-				.where(and(eq(tables.careerStory.id, id), eq(tables.careerStory.userId, userId)));
+				.where(
+					and(
+						eq(tables.careerStory.id, id),
+						and(
+							eq(tables.careerStory.userId, userId),
+							availableApplicationContext(userId, tables.careerStory.applicationId),
+						),
+					),
+				);
 		});
 	},
 	context: async (input: Owned & { interviewId?: string | null | undefined }) => {
@@ -773,7 +822,10 @@ export const careerService = {
 			.from(tables.careerFact)
 			.where(
 				and(
-					eq(tables.careerFact.userId, input.userId),
+					and(
+						eq(tables.careerFact.userId, input.userId),
+						availableApplicationContext(input.userId, tables.careerFact.applicationId),
+					),
 					or(sql`${tables.careerFact.status} <> 'active'`, sql`jsonb_array_length(${tables.careerFact.revisions}) > 0`),
 				),
 			);
@@ -857,7 +909,10 @@ export const careerService = {
 			.leftJoin(tables.application, eq(tables.application.id, tables.careerArtifact.applicationId))
 			.where(
 				and(
-					eq(tables.careerArtifact.userId, input.userId),
+					and(
+						eq(tables.careerArtifact.userId, input.userId),
+						availableApplicationContext(input.userId, tables.careerArtifact.applicationId),
+					),
 					input.applicationId ? eq(tables.careerArtifact.applicationId, input.applicationId) : undefined,
 					input.kind ? sql`${tables.careerArtifact.data}->>'kind' = ${input.kind}` : undefined,
 				),
@@ -920,7 +975,15 @@ export const careerService = {
 			const [row] = await tx
 				.select()
 				.from(tables.careerArtifact)
-				.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)))
+				.where(
+					and(
+						eq(tables.careerArtifact.id, id),
+						and(
+							eq(tables.careerArtifact.userId, userId),
+							availableApplicationContext(userId, tables.careerArtifact.applicationId),
+						),
+					),
+				)
 				.for("update");
 			if (!row || row.data.kind !== "offer") throw new ORPCError("NOT_FOUND");
 			const { kind: _kind, origin, editedAt: _editedAt, ...current } = row.data;
@@ -964,7 +1027,7 @@ export const careerService = {
 			const [application] = await tx
 				.select()
 				.from(tables.application)
-				.where(and(eq(tables.application.id, input.applicationId), eq(tables.application.userId, input.userId)))
+				.where(and(eq(tables.application.id, input.applicationId), activeApplications(input.userId)))
 				.for("update");
 			if (!application) throw new ORPCError("NOT_FOUND");
 			if (input.jobId) {
@@ -1092,7 +1155,10 @@ export const careerService = {
 						.from(tables.careerFact)
 						.where(
 							and(
-								eq(tables.careerFact.userId, userId),
+								and(
+									eq(tables.careerFact.userId, userId),
+									availableApplicationContext(userId, tables.careerFact.applicationId),
+								),
 								visible(tables.careerFact.applicationId, knowledge.applicationId),
 								eq(tables.careerFact.status, "active"),
 							),
@@ -1102,7 +1168,10 @@ export const careerService = {
 						.from(tables.careerStory)
 						.where(
 							and(
-								eq(tables.careerStory.userId, userId),
+								and(
+									eq(tables.careerStory.userId, userId),
+									availableApplicationContext(userId, tables.careerStory.applicationId),
+								),
 								knowledge.applicationId
 									? or(
 											isNull(tables.careerStory.applicationId),
@@ -1140,7 +1209,15 @@ export const careerService = {
 	deleteSavedItem: async (userId: string, id: string) => {
 		await db
 			.delete(tables.careerArtifact)
-			.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)));
+			.where(
+				and(
+					eq(tables.careerArtifact.id, id),
+					and(
+						eq(tables.careerArtifact.userId, userId),
+						availableApplicationContext(userId, tables.careerArtifact.applicationId),
+					),
+				),
+			);
 	},
 	/** Applies the ticked changes of a read employer message. Reaching Applied goes through Mark as applied. */
 	applyReply: async (
@@ -1156,7 +1233,15 @@ export const careerService = {
 		const [saved] = await db
 			.select()
 			.from(tables.careerArtifact)
-			.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)));
+			.where(
+				and(
+					eq(tables.careerArtifact.id, id),
+					and(
+						eq(tables.careerArtifact.userId, userId),
+						availableApplicationContext(userId, tables.careerArtifact.applicationId),
+					),
+				),
+			);
 		if (!saved?.applicationId || saved.data.kind !== "reply") throw new ORPCError("NOT_FOUND");
 		const applicationId = saved.applicationId;
 		// A repeat saved no stage; acknowledging the current row could adopt another device's later move.
@@ -1167,13 +1252,21 @@ export const careerService = {
 			let [application] = await tx
 				.select()
 				.from(tables.application)
-				.where(and(eq(tables.application.id, applicationId), eq(tables.application.userId, userId)))
+				.where(and(eq(tables.application.id, applicationId), activeApplications(userId)))
 				.for("update");
 			if (!application) throw new ORPCError("NOT_FOUND");
 			const [item] = await tx
 				.select()
 				.from(tables.careerArtifact)
-				.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)))
+				.where(
+					and(
+						eq(tables.careerArtifact.id, id),
+						and(
+							eq(tables.careerArtifact.userId, userId),
+							availableApplicationContext(userId, tables.careerArtifact.applicationId),
+						),
+					),
+				)
 				.for("update");
 			if (!item?.applicationId || item.data.kind !== "reply") throw new ORPCError("NOT_FOUND");
 			const data = item.data;
@@ -1254,7 +1347,7 @@ export const careerService = {
 					followUpNote,
 					...(changes.some((change) => change.type === "follow-up") ? { followUpDateOnly: false } : {}),
 				})
-				.where(and(eq(tables.application.id, application.id), eq(tables.application.userId, userId)))
+				.where(and(eq(tables.application.id, application.id), activeApplications(userId)))
 				.returning();
 			if (!updated) throw new ORPCError("NOT_FOUND");
 			if (transition.canonicalTransition && !hasSubmitted(application)) await recordSentResume(updated, tx);
@@ -1277,7 +1370,15 @@ export const careerService = {
 			const [item] = await tx
 				.select()
 				.from(tables.careerArtifact)
-				.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)))
+				.where(
+					and(
+						eq(tables.careerArtifact.id, id),
+						and(
+							eq(tables.careerArtifact.userId, userId),
+							availableApplicationContext(userId, tables.careerArtifact.applicationId),
+						),
+					),
+				)
 				.for("update");
 			if (!item?.applicationId || item.data.kind !== "reply") throw new ORPCError("NOT_FOUND");
 			const { applied, ...data } = item.data;
@@ -1290,7 +1391,7 @@ export const careerService = {
 			const [application] = await tx
 				.select()
 				.from(tables.application)
-				.where(and(eq(tables.application.id, item.applicationId), eq(tables.application.userId, userId)))
+				.where(and(eq(tables.application.id, item.applicationId), activeApplications(userId)))
 				.for("update");
 			if (!application) throw new ORPCError("NOT_FOUND");
 			const changed = () =>
@@ -1302,14 +1403,30 @@ export const careerService = {
 				const [offer] = await tx
 					.select({ data: tables.careerArtifact.data })
 					.from(tables.careerArtifact)
-					.where(and(eq(tables.careerArtifact.id, offerId), eq(tables.careerArtifact.userId, userId)))
+					.where(
+						and(
+							eq(tables.careerArtifact.id, offerId),
+							and(
+								eq(tables.careerArtifact.userId, userId),
+								availableApplicationContext(userId, tables.careerArtifact.applicationId),
+							),
+						),
+					)
 					.for("update");
 				// An offer corrected since is the user's own; a deleted one has nothing left to undo.
 				if (offer?.data.kind === "offer" && offer.data.editedAt) throw changed();
 				if (offer)
 					await tx
 						.delete(tables.careerArtifact)
-						.where(and(eq(tables.careerArtifact.id, offerId), eq(tables.careerArtifact.userId, userId)));
+						.where(
+							and(
+								eq(tables.careerArtifact.id, offerId),
+								and(
+									eq(tables.careerArtifact.userId, userId),
+									availableApplicationContext(userId, tables.careerArtifact.applicationId),
+								),
+							),
+						);
 			}
 			const { values, transition } = await applicationTransitionValues(
 				tx,
@@ -1365,7 +1482,7 @@ export const careerService = {
 			const [application] = await tx
 				.select({ id: tables.application.id })
 				.from(tables.application)
-				.where(and(eq(tables.application.id, applicationId), eq(tables.application.userId, userId)))
+				.where(and(eq(tables.application.id, applicationId), activeApplications(userId)))
 				.for("update");
 			const [row] = await tx
 				.select({ data: tables.careerWorkspace.data })
@@ -1423,7 +1540,7 @@ export const careerService = {
 			const [application] = await tx
 				.select()
 				.from(tables.application)
-				.where(and(eq(tables.application.id, applicationId), eq(tables.application.userId, userId)))
+				.where(and(eq(tables.application.id, applicationId), activeApplications(userId)))
 				.for("update");
 			if (!application) throw new ORPCError("NOT_FOUND");
 			if (application.status === "saved")
@@ -1436,7 +1553,10 @@ export const careerService = {
 				.where(
 					and(
 						eq(tables.careerArtifact.applicationId, applicationId),
-						eq(tables.careerArtifact.userId, userId),
+						and(
+							eq(tables.careerArtifact.userId, userId),
+							availableApplicationContext(userId, tables.careerArtifact.applicationId),
+						),
 						sql`${tables.careerArtifact.data}->>'kind' = 'answers'`,
 					),
 				);

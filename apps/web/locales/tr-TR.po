@@ -20,8 +20,7 @@ msgstr ""
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -141,11 +140,6 @@ msgstr ""
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application closed} other {# applications closed}}"
 msgstr ""
-
-#. placeholder {0}: result.deleted
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
-msgstr "{0, plural, one {# başvuru silindi} other {# başvuru silindi}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -331,16 +325,6 @@ msgstr ""
 #: src/features/applications/use-application-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {# başvuru silinsin mi?} other {# başvuru silinsin mi?}}"
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {# başvuruyu sil} other {# başvuruyu sil}}"
 
 #. placeholder {0}: selection.length
 #: src/features/documents/trash-page.tsx
@@ -2514,7 +2498,7 @@ msgstr "Başvuru tarihi"
 msgid "Application date to"
 msgstr "Başvuru tarihi"
 
-#: src/features/applications/use-application-actions.ts
+#: src/features/applications/trash-page.tsx
 msgid "Application deleted"
 msgstr "iş başvurusu silindi"
 
@@ -2557,15 +2541,23 @@ msgid "Application updated"
 msgstr "Başvuru güncellendi"
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
 msgstr "Başvurular"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "Başvurular ve zaman çizelgeleri Çöp Kutusu’ndan geri yüklenebilir."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications over time"
@@ -2574,6 +2566,10 @@ msgstr "Zamana göre başvurular"
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Haftalık gönderilen başvurular (son 8 hafta)"
+
+#: src/features/applications/trash-page.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "Başvurular, siz kalıcı olarak silene kadar Çöp Kutusu’nda kalır."
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Applications to export"
@@ -4543,6 +4539,7 @@ msgstr ""
 msgid "Couldn't delete that story. Try again."
 msgstr "Bu hikaye silinemedi. Tekrar deneyin."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't delete the application. Try again."
 msgstr "Başvuru silinemedi. Tekrar deneyin."
@@ -5124,6 +5121,7 @@ msgstr "Paylaşım güncellenemedi. Tekrar deneyin."
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "Başvuru güncellenemedi. Hiçbir şey değiştirilmedi. Tekrar deneyin."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the application. Try again."
 msgstr "Başvuru güncellenemedi. Tekrar deneyin."
@@ -5581,11 +5579,6 @@ msgstr "{0}'yu sil"
 msgid "Delete account"
 msgstr "Hesabı sil"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Delete application"
-msgstr "Başvuruyu sil"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Delete conversation"
 msgstr "Konuşmayı sil"
@@ -5619,7 +5612,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "Sayfayı sil"
 
-#: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
 msgstr "Kalıcı olarak sil…"
@@ -5652,8 +5645,7 @@ msgstr "Hikayeyi sil"
 msgid "Delete the {kind} interview on {date}?"
 msgstr ""
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "Delete this application?"
 msgstr "Bu başvuru silinsin mi?"
 
@@ -5685,8 +5677,6 @@ msgstr "Hesabınız silinsin mi?"
 msgid "Delete your documents and account data."
 msgstr "Belgelerinizi ve hesap verilerinizi silin."
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
@@ -5899,8 +5889,10 @@ msgstr "Belge türü"
 msgid "Documentation"
 msgstr "Dökümantasyon"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -7663,6 +7655,7 @@ msgstr "İşe alma ekibi"
 msgid "History"
 msgstr "Geçmiş"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
@@ -8400,6 +8393,7 @@ msgstr "Alan adını koru"
 msgid "Keep editing"
 msgstr "Düzenlemeye devam et"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
@@ -9169,6 +9163,7 @@ msgstr "Çalışma alanı yükleniyor…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/share/feedback-links.tsx
@@ -9714,6 +9709,9 @@ msgstr "{stage} aşamasına taşı"
 msgid "Move to Interview"
 msgstr "Görüşme aşamasına taşı"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9741,6 +9739,11 @@ msgstr "E-posta ve telefon numaranızı birinci sayfanın en üstüne taşıyın
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1} belgeden {0} tanesi Çöp Kutusu'na taşındı. Kilitli belgeler atlandı."
 
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/list-view.tsx
+msgid "Moved {0} to Trash."
+msgstr "Çöp Kutusu’na taşındı ({0})."
+
 #. placeholder {0}: getLaneLabel(lane)
 #. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/list-view.tsx
@@ -9760,6 +9763,10 @@ msgstr "{label} aşamasına taşındı"
 #: src/features/career/workspace/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/applications/use-application-actions.ts
+msgid "Moved to Trash"
+msgstr "Çöp Kutusu’na taşındı"
 
 #. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
@@ -13004,6 +13011,7 @@ msgstr ""
 msgid "Responsible for the design system and helping other teams with their designs."
 msgstr "Tasarım sisteminden sorumlu olmak ve diğer ekiplere tasarımlarında yardımcı olmak."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Restore"
@@ -13013,6 +13021,7 @@ msgstr "Eski haline getirmek"
 msgid "Restore this version"
 msgstr "Bu sürümü geri yükle"
 
+#: src/features/applications/trash-page.tsx
 #: src/libs/undone.ts
 msgid "Restored"
 msgstr ""
@@ -16185,10 +16194,6 @@ msgstr ""
 msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
 msgstr ""
 
-#: src/features/applications/components/list-view.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/resume/editor/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Deneyim, Eğitim ve Beceri gibi başlıkları ararlar."
@@ -16787,14 +16792,19 @@ msgstr "{languageCount} dile çevrildi."
 msgid "Translations"
 msgstr "Çeviriler"
 
+#: src/features/applications/trash-page.tsx
+#: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/applications/index.tsx
+#: src/routes/dashboard/applications/trash.tsx
 #: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "Çöp Kutusu"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "Çöp kutusu boş"

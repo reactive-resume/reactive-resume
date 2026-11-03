@@ -41,7 +41,12 @@ beforeEach(() => {
 		mock.mockReset();
 	dbMock.transaction.mockImplementation(async (callback: (tx: unknown) => Promise<unknown>) =>
 		callback({
-			select: () => ({ from: () => ({ where: () => ({ for: async () => [{ id: "u1" }] }) }) }),
+			select: () => ({
+				from: () => ({
+					where: () =>
+						Object.assign(Promise.resolve([{ id: "a1", company: "Orbital" }]), { for: async () => [{ id: "u1" }] }),
+				}),
+			}),
 			update: dbMock.update,
 		}),
 	);

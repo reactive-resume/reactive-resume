@@ -147,3 +147,36 @@ async function renameInBuilder(page: Page, name: string) {
 	await input.press("Enter");
 	await expect(input).not.toBeVisible();
 }
+
+test("failed library rename retains one draft and retries through protected HTTP and SQL", async ({
+	authPage: page,
+}) => {
+	const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+	try {
+		const created = await page.request.post("/api/openapi/resumes", { data: { name: "Retry original", tags: [] } });
+		await expect(created).toBeOK();
+		const id: string = await created.json();
+		await page.goto("/dashboard?view=list");
+		await page.getByRole("button", { name: "Options for Retry original", exact: true }).click();
+		await page.getByRole("menuitem", { name: "Rename", exact: true }).click();
+		const input = page.getByRole("textbox", { name: "Name", exact: true });
+		await input.fill("Retained rename draft");
+		const url = "**/api/rpc/documents/rename";
+		await page.route(url, (route) => route.abort("failed"));
+		await input.press("Enter");
+		await expect(input).toHaveValue("Retained rename draft");
+		await expect(page.locator('[data-slot="toast"]')).toHaveCount(1);
+		await expect(input).toBeEnabled();
+		expect((await pool.query("select name from resume where id=$1", [id])).rows[0].name).toBe("Retry original");
+		await page.unroute(url);
+		const saved = page.waitForResponse((response) => response.url().endsWith("/documents/rename") && response.ok());
+		await input.press("Enter");
+		await saved;
+		await expect(input).not.toBeVisible();
+		expect((await pool.query("select name from resume where id=$1", [id])).rows[0].name).toBe("Retained rename draft");
+		await page.reload();
+		await expect(page.getByRole("link", { name: "Retained rename draft", exact: true })).toBeVisible();
+	} finally {
+		await pool.end();
+	}
+});

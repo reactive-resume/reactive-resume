@@ -22,6 +22,7 @@ vi.mock("@/libs/orpc/client", () => ({
 	client: { applications: { bulkUpdate: mocks.bulkUpdate } },
 	orpc: {
 		applications: {
+			key: () => ["applications"],
 			// The key oRPC gives the update mutation, which the stage follower recognises.
 			update: {
 				mutationOptions: () => ({
@@ -29,7 +30,7 @@ vi.mock("@/libs/orpc/client", () => ({
 					mutationFn: mocks.update,
 				}),
 			},
-			delete: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			trash: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			logFollowUp: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			stats: { queryKey: () => ["stats"] },
 			tags: { queryKey: () => ["tags"] },
@@ -42,7 +43,8 @@ vi.mock("@/libs/orpc/client", () => ({
 			},
 		},
 		documents: { key: () => ["documents"] },
-		career: { workspace: { queryKey: () => ["workspace"] } },
+		career: { key: () => ["career"], workspace: { queryKey: () => ["workspace"] } },
+		agent: { key: () => ["agent"] },
 	},
 }));
 vi.mock("./queries", () => ({

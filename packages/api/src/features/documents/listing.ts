@@ -35,7 +35,13 @@ function library(database: DbOrTx, input: ListInput) {
 			role: application.role,
 		})
 		.from(resume)
-		.leftJoin(application, and(eq(resume.applicationId, application.id), eq(application.userId, input.userId)))
+		.leftJoin(
+			application,
+			and(
+				eq(resume.applicationId, application.id),
+				and(eq(application.userId, input.userId), isNull(application.trashedAt)),
+			),
+		)
 		.where(
 			and(eq(resume.userId, input.userId), input.trashed ? gte(resume.trashedAt, cutoff) : isNull(resume.trashedAt)),
 		);
@@ -72,7 +78,10 @@ function library(database: DbOrTx, input: ListInput) {
 		.from(coverLetter)
 		.leftJoin(
 			application,
-			and(eq(coverLetter.sourceApplicationId, application.id), eq(application.userId, input.userId)),
+			and(
+				eq(coverLetter.sourceApplicationId, application.id),
+				and(eq(application.userId, input.userId), isNull(application.trashedAt)),
+			),
 		)
 		.where(
 			and(

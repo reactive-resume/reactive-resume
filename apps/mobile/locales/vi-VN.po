@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, other {Xóa # hồ sơ ứng tuyển?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, other {Xóa # hồ sơ ứng tuyển}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "ngày nộp đơn xin việc"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "đơn xin việc đã bị xóa"
 
@@ -2051,10 +2041,17 @@ msgstr "Chế độ xem hồ sơ ứng tuyển"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "Hồ sơ ứng tuyển"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "Có thể khôi phục đơn ứng tuyển và lịch sử của chúng từ Thùng rác."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "Đơn ứng tuyển theo thời gian"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Đơn ứng tuyển đã gửi mỗi tuần (8 tuần gần nhất)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "Đơn ứng tuyển được giữ trong Thùng rác cho đến khi bạn xóa vĩnh viễn."
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4411,14 +4412,6 @@ msgstr "Xóa {0}"
 msgid "Delete account"
 msgstr "Xóa tài khoản"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "Xóa hồ sơ ứng tuyển"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "Xóa hồ sơ ứng tuyển…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "Xóa cuộc trò chuyện"
@@ -4457,7 +4450,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "Xóa trang"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "Xóa vĩnh viễn…"
@@ -4496,7 +4489,7 @@ msgstr "Xóa câu chuyện"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "Xóa đơn ứng tuyển này?"
 
@@ -4685,6 +4678,7 @@ msgid "Document type"
 msgstr "Loại tài liệu"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5992,6 +5986,7 @@ msgstr "Lịch sử"
 msgid "hold ⋮⋮ to move"
 msgstr "giữ ⋮⋮ để di chuyển"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "Nhấn giữ để xóa"
@@ -6508,6 +6503,10 @@ msgstr "Giữ tên miền"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "Tiếp tục chỉnh sửa"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "Giữ trong Thùng rác"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7126,6 +7125,7 @@ msgstr "Đang tải địa chỉ công cộng của bạn…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7634,6 +7634,8 @@ msgstr "Chuyển sang {stage}"
 msgid "Move to stage"
 msgstr "Chuyển giai đoạn"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7675,6 +7677,10 @@ msgstr "Đã chuyển đến {0}"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "Đã chuyển vào Thùng rác"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7861,6 +7867,7 @@ msgstr "Phần mới"
 msgid "New STARR story"
 msgstr "Câu chuyện STARR mới"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9405,6 +9412,7 @@ msgstr "Xem trước trang web"
 msgid "Previewing {0} · tap to apply"
 msgstr "Xem trước {0} · nhấn để áp dụng"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10312,6 +10320,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "Khởi động lại để thay đổi hướng văn bản"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "Khôi phục"
@@ -10331,6 +10340,7 @@ msgstr "Khôi phục phiên bản này?"
 msgid "Restore version"
 msgstr "Khôi phục phiên bản"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10466,6 +10476,7 @@ msgstr "Ngừng sử dụng giai đoạn"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12960,10 +12971,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "Chúng mở cài đặt tài khoản máy chủ của bạn trong tab trình duyệt bên trong ứng dụng. Bạn có thể cần phải đăng nhập vào đó."
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Họ tìm kiếm các tiêu đề như Kinh nghiệm, Giáo dục và Kỹ năng."
@@ -13475,12 +13482,15 @@ msgstr "Đã sao chép bản chép lời"
 msgid "Transcription model"
 msgstr "Mô hình phiên âm"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "Thùng rác"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Thùng rác trống rỗng"

@@ -552,12 +552,12 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 		onError: () => toast.add({ type: "error", description: t`Couldn't update the applications. Try again.` }),
 	});
 	const bulkDelete = useMutation({
-		...orpc.applications.bulkDelete.mutationOptions(),
+		...orpc.applications.bulkTrash.mutationOptions(),
 		onSuccess: (result) => {
 			invalidate();
 			onDone();
 			toast.add({
-				description: plural(result.deleted, { one: "# application deleted", other: "# applications deleted" }),
+				description: t`Moved ${result.deleted} to Trash.`,
 			});
 		},
 		onError: () => toast.add({ type: "error", description: t`Couldn't delete the applications. Try again.` }),
@@ -671,20 +671,17 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 				disabled={disabled}
 				className="text-danger-text hover:bg-danger-soft"
 				onClick={async () => {
-					const confirmed = await confirm(
-						plural(ids.length, { one: "Delete # application?", other: "Delete # applications?" }),
-						{
-							description: t`They and their timelines are deleted permanently. Linked resumes and letters are kept.`,
-							confirmText: plural(ids.length, { one: "Delete # application", other: "Delete # applications" }),
-							cancelText: plural(ids.length, { one: "Keep application", other: "Keep applications" }),
-							variant: "danger",
-						},
-					);
+					const confirmed = await confirm(t`Move to Trash`, {
+						description: t`Applications and their timelines can be restored from Trash.`,
+						confirmText: t`Move to Trash`,
+						cancelText: plural(ids.length, { one: "Keep application", other: "Keep applications" }),
+						variant: "danger",
+					});
 					if (confirmed) bulkDelete.mutate({ ids });
 				}}
 			>
 				<Icon name="trash" />
-				<Trans>Delete permanently…</Trans>
+				<Trans>Move to Trash</Trans>
 			</Button>
 		</div>
 	);

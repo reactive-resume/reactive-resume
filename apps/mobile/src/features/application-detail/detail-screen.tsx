@@ -161,7 +161,7 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 					variant="danger"
 					fullWidth
 					icon="trash"
-					label={t`Delete application…`}
+					label={t`Move to Trash`}
 					disabled={remove.isPending}
 					onPress={() => setOverlay({ kind: "delete" })}
 				/>
@@ -188,9 +188,9 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 			<PostingSheet application={application} open={overlay?.kind === "posting"} onClose={close} />
 			<ConfirmDialog
 				open={overlay?.kind === "delete"}
-				title={t`Delete this application?`}
-				message={t`“${application.role} · ${application.company}” and its timeline are deleted permanently. Linked resumes and letters are kept.`}
-				confirmLabel={t`Delete application`}
+				title={t`Move to Trash`}
+				message={t`Applications and their timelines can be restored from Trash.`}
+				confirmLabel={t`Move to Trash`}
 				cancelLabel={t`Keep application`}
 				destructive
 				onCancel={close}
@@ -201,7 +201,7 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 						{
 							onSuccess: () => {
 								void syncReminders(application.id, []).catch(() => undefined);
-								showToast({ message: t`Application deleted` });
+								showToast({ message: t`Moved to Trash` });
 								router.replace(routes.applications());
 							},
 							onError: (error) => showToast({ message: applicationError(error) }),

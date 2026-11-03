@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {지원 #건을 삭제할까요?} other {지원 #건을 삭제할까요?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {지원 #건 삭제} other {지원 #건 삭제}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "입사지원일"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "채용 지원서가 삭제되었습니다."
 
@@ -2051,10 +2041,17 @@ msgstr "지원 목록 보기"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "지원 목록"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "지원서와 해당 기록은 휴지통에서 복원할 수 있습니다."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "시간별 지원 현황"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "주당 보낸 지원서 (최근 8주)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "지원서는 영구 삭제할 때까지 휴지통에 보관됩니다."
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4411,14 +4412,6 @@ msgstr "{0} 삭제"
 msgid "Delete account"
 msgstr "계정 삭제"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "지원 삭제"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "지원 삭제…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "대화 삭제"
@@ -4457,7 +4450,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "페이지 삭제"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "영구 삭제…"
@@ -4496,7 +4489,7 @@ msgstr "스토리 삭제"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "이 지원서를 삭제할까요?"
 
@@ -4685,6 +4678,7 @@ msgid "Document type"
 msgstr "문서 유형"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5992,6 +5986,7 @@ msgstr "기록"
 msgid "hold ⋮⋮ to move"
 msgstr "⋮⋮ 길게 눌러 이동"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "길게 눌러 삭제"
@@ -6508,6 +6503,10 @@ msgstr "도메인 유지"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "계속 편집"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "휴지통에 보관"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7126,6 +7125,7 @@ msgstr "공개 주소 로드 중…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7634,6 +7634,8 @@ msgstr "{stage} 단계로 이동"
 msgid "Move to stage"
 msgstr "단계로 이동"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7675,6 +7677,10 @@ msgstr "{0}로 이동했습니다."
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "휴지통으로 이동됨"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7861,6 +7867,7 @@ msgstr "새로운 섹션"
 msgid "New STARR story"
 msgstr "새로운 STARR 스토리"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9405,6 +9412,7 @@ msgstr "웹 페이지 미리 보기"
 msgid "Previewing {0} · tap to apply"
 msgstr "{0} 미리보기 중 · 적용하려면 탭하세요."
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10312,6 +10320,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "텍스트 방향을 변경하려면 다시 시작하세요."
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "복원하다"
@@ -10331,6 +10340,7 @@ msgstr "이 버전을 복원하시겠습니까?"
 msgid "Restore version"
 msgstr "버전 복원"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10466,6 +10476,7 @@ msgstr "단계 사용 중지"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12960,10 +12971,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "그러면 앱 내부의 브라우저 탭에서 서버의 계정 설정이 열립니다. 거기에 로그인해야 할 수도 있습니다."
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "그들은 경험, 교육, 기술과 같은 제목을 찾습니다."
@@ -13475,12 +13482,15 @@ msgstr "성적 증명서가 복사되었습니다."
 msgid "Transcription model"
 msgstr "전사 모델"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "휴지통"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "휴지통이 비어 있습니다."

@@ -36,7 +36,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 		});
 		fixture.db = drizzle({ client: pool });
 		await pool.query(`
-   CREATE TABLE application (id text PRIMARY KEY, user_id text, company text, role text);
+   CREATE TABLE application (id text PRIMARY KEY, user_id text, company text, role text, trashed_at timestamptz);
    CREATE TABLE resume (id text PRIMARY KEY, user_id text, name text, tags text[] DEFAULT '{}', is_locked boolean DEFAULT false,
     is_public boolean DEFAULT false, slug text DEFAULT 'resume', trashed_at timestamptz, created_at timestamptz DEFAULT '2026-01-01',
     updated_at timestamptz DEFAULT '2026-01-01', edited_at timestamptz, application_id text, password text);

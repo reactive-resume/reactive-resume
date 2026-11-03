@@ -382,7 +382,16 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 			</View>
 			{session.status === "signed-in" && (
 				<>
-					{trashed && <Text color="ink2">{t`Documents are deleted permanently after 30 days.`}</Text>}
+					{trashed && (
+						<>
+							<Button
+								variant="secondary"
+								label={t`Applications`}
+								onPress={() => router.push(routes.applicationTrash())}
+							/>
+							<Text color="ink2">{t`Documents are deleted permanently after 30 days.`}</Text>
+						</>
+					)}
 					{recoverable.length > 0 && (
 						<View style={{ gap: space.s2 }}>
 							<Text variant="title" accessibilityRole="header">{t`Unsynced on this device`}</Text>
