@@ -3994,6 +3994,7 @@ msgstr "उत्तरहरू साझा गर्न सकिएन। �
 msgid "Couldn't share the calendar event. Try again."
 msgstr "क्यालेन्डर कार्यक्रम साझा गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
 
+#: src/features/application-detail/calendar.ts
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "क्यालेन्डर फाइल साझा गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
@@ -4793,6 +4794,10 @@ msgstr ""
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
 msgstr "दुवै PDF डाउनलोड गर्नुहोस्"
+
+#: src/features/application-detail/calendar.ts
+msgid "Download cancellation"
+msgstr "रद्द गर्ने फाइल डाउनलोड गर्नुहोस्"
 
 #: src/features/application-detail/sections.tsx
 msgid "Download current PDF"
@@ -6294,13 +6299,24 @@ msgstr "इन्टरफेस मात्र। प्रत्येक र
 msgid "Interview"
 msgstr "अन्तर्वार्ता"
 
+#. placeholder {0}: application.role
+#. placeholder {1}: application.company
+#: src/features/application-detail/calendar.ts
+msgid "Interview · {0}, {1}"
+msgstr "अन्तर्वार्ता · {0}, {1}"
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Interview debrief"
 msgstr "अन्तर्वार्ता समीक्षा"
 
+#: src/features/application-detail/calendar.ts
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview deleted"
 msgstr "अन्तर्वार्ता मेटाइयो"
+
+#: src/features/application-detail/interview-sheet.tsx
+msgid "Interview deleted. Couldn't cancel its device reminder."
+msgstr "अन्तर्वार्ता मेटाइयो। यन्त्रमा यसको रिमाइन्डर रद्द गर्न सकिएन।"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview is in another timezone"
@@ -6389,12 +6405,12 @@ msgid "It stops opening at once. Comments already left are kept. You can make a 
 msgstr ""
 
 #: src/features/application-detail/sections.tsx
-msgid "It's removed from the timeline and the calendar for good."
-msgstr ""
-
-#: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "यो राम्रोको लागि टाइमलाइनबाट हटाइयो।"
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from this application. Download a cancellation afterward to update your calendar."
+msgstr "यो जागिरको आवेदनबाट हटाइनेछ। त्यसपछि क्यालेन्डर अद्यावधिक गर्न रद्द गर्ने फाइल डाउनलोड गर्नुहोस्।"
 
 #: src/features/settings/locale-names.ts
 msgid "Italian"
@@ -13867,6 +13883,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update this story in Knowledge?"
 msgstr ""
+
+#: src/features/application-detail/calendar.ts
+msgid "Update your calendar"
+msgstr "आफ्नो क्यालेन्डर अद्यावधिक गर्नुहोस्"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

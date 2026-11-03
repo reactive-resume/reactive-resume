@@ -3994,6 +3994,7 @@ msgstr "无法分享答案。请重试。"
 msgid "Couldn't share the calendar event. Try again."
 msgstr "无法共享日历活动。请重试。"
 
+#: src/features/application-detail/calendar.ts
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "无法共享日历文件。请重试。"
@@ -4793,6 +4794,10 @@ msgstr ""
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
 msgstr "下载两个 PDF"
+
+#: src/features/application-detail/calendar.ts
+msgid "Download cancellation"
+msgstr "下载取消文件"
 
 #: src/features/application-detail/sections.tsx
 msgid "Download current PDF"
@@ -6294,13 +6299,24 @@ msgstr "仅接口。每一份简历都有自己的设计语言。"
 msgid "Interview"
 msgstr "面试"
 
+#. placeholder {0}: application.role
+#. placeholder {1}: application.company
+#: src/features/application-detail/calendar.ts
+msgid "Interview · {0}, {1}"
+msgstr "面试 · {0}, {1}"
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Interview debrief"
 msgstr "面试复盘"
 
+#: src/features/application-detail/calendar.ts
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview deleted"
 msgstr "面试已删除"
+
+#: src/features/application-detail/interview-sheet.tsx
+msgid "Interview deleted. Couldn't cancel its device reminder."
+msgstr "面试已删除，但无法取消设备上的提醒。"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview is in another timezone"
@@ -6389,12 +6405,12 @@ msgid "It stops opening at once. Comments already left are kept. You can make a 
 msgstr ""
 
 #: src/features/application-detail/sections.tsx
-msgid "It's removed from the timeline and the calendar for good."
-msgstr ""
-
-#: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "它已从时间线中永久删除。"
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from this application. Download a cancellation afterward to update your calendar."
+msgstr "面试将从此求职申请中移除。之后请下载取消文件以更新日历。"
 
 #: src/features/settings/locale-names.ts
 msgid "Italian"
@@ -13867,6 +13883,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update this story in Knowledge?"
 msgstr ""
+
+#: src/features/application-detail/calendar.ts
+msgid "Update your calendar"
+msgstr "更新日历"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

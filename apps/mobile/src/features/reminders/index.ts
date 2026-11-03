@@ -129,13 +129,13 @@ export async function syncReminders(applicationId: string, targets: ReminderTarg
 }
 
 /** Shares one event as an .ics file through the system share sheet; no calendar permission is needed. */
-export async function shareIcs(event: CalendarEvent, fileName: string) {
+export async function shareIcs(event: CalendarEvent, fileName: string, method: "PUBLISH" | "CANCEL" = "PUBLISH") {
 	// The previous share's file can go now: recipients have read it once shareAsync resolved.
 	for (const entry of Paths.cache.list()) {
 		if (entry instanceof File && entry.name.endsWith(".ics")) entry.delete();
 	}
 	if (!(await Sharing.isAvailableAsync())) throw new Error("Sharing unavailable");
 	const file = new File(Paths.cache, fileName);
-	await file.write(buildIcs(event));
+	await file.write(buildIcs(event, new Date(), method));
 	await Sharing.shareAsync(file.uri, { mimeType: "text/calendar", UTI: "com.apple.ical.ics" });
 }

@@ -3994,6 +3994,7 @@ msgstr "មិនអាចចែករំលែកចម្លើយបានទ
 msgid "Couldn't share the calendar event. Try again."
 msgstr "មិនអាចចែករំលែកព្រឹត្តិការណ៍ប្រតិទិនបានទេ។ ព្យាយាមម្តងទៀត។"
 
+#: src/features/application-detail/calendar.ts
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "មិនអាចចែករំលែកឯកសារប្រតិទិនបានទេ។ ព្យាយាមម្តងទៀត។"
@@ -4793,6 +4794,10 @@ msgstr ""
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
 msgstr "ទាញយក PDF ទាំងពីរ"
+
+#: src/features/application-detail/calendar.ts
+msgid "Download cancellation"
+msgstr "ទាញយកឯកសារលុបចោល"
 
 #: src/features/application-detail/sections.tsx
 msgid "Download current PDF"
@@ -6294,13 +6299,24 @@ msgstr "ចំណុចប្រទាក់តែប៉ុណ្ណោះ។ �
 msgid "Interview"
 msgstr "សម្ភាសន៍"
 
+#. placeholder {0}: application.role
+#. placeholder {1}: application.company
+#: src/features/application-detail/calendar.ts
+msgid "Interview · {0}, {1}"
+msgstr "សម្ភាសន៍ · {0}, {1}"
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Interview debrief"
 msgstr "សង្ខេបក្រោយការសម្ភាសន៍"
 
+#: src/features/application-detail/calendar.ts
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview deleted"
 msgstr "បានលុបការសម្ភាសន៍"
+
+#: src/features/application-detail/interview-sheet.tsx
+msgid "Interview deleted. Couldn't cancel its device reminder."
+msgstr "បានលុបការសម្ភាសន៍។ មិនអាចបោះបង់ការរំលឹករបស់វានៅលើឧបករណ៍បានទេ។"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview is in another timezone"
@@ -6389,12 +6405,12 @@ msgid "It stops opening at once. Comments already left are kept. You can make a 
 msgstr ""
 
 #: src/features/application-detail/sections.tsx
-msgid "It's removed from the timeline and the calendar for good."
-msgstr ""
-
-#: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "វាត្រូវបានដកចេញពីបន្ទាត់ពេលវេលាសម្រាប់ល្អ។"
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from this application. Download a cancellation afterward to update your calendar."
+msgstr "វានឹងត្រូវបានដកចេញពីពាក្យសុំការងារនេះ។ បន្ទាប់មក ទាញយកឯកសារលុបចោល ដើម្បីធ្វើបច្ចុប្បន្នភាពប្រតិទិនរបស់អ្នក។"
 
 #: src/features/settings/locale-names.ts
 msgid "Italian"
@@ -13867,6 +13883,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update this story in Knowledge?"
 msgstr ""
+
+#: src/features/application-detail/calendar.ts
+msgid "Update your calendar"
+msgstr "ធ្វើបច្ចុប្បន្នភាពប្រតិទិនរបស់អ្នក"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

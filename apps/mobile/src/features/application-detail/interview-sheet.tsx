@@ -7,6 +7,7 @@ import { Linking, View } from "react-native";
 import { interviewDetailsSchema, nextInterviewKind } from "@reactive-resume/schema/applications/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
+import { interviewCalendarAction, showInterviewCancellation } from "./calendar";
 import { WallClockField } from "./date-field";
 import {
 	interviewReminder,
@@ -17,6 +18,7 @@ import {
 	useUserTime,
 } from "./hooks";
 import { client } from "@/api/client";
+import { getAccountScope } from "@/auth/session";
 import { applicationDetailQueryKey, useInvalidateApplications } from "@/features/applications/queries";
 import {
 	DEFAULT_LEAD,
@@ -188,21 +190,16 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 	const matchingZones = allZones.filter((zone) => zone.toLowerCase().includes(query));
 	const zones = matchingZones.slice(0, zoneLimit);
 
-	const applyReminder = async (saved: Application, entryId: string) => {
+	const applyReminder = (saved: Application, entryId: string) => {
 		const entry = saved.activity.filter(isInterview).find((item) => item.id === entryId);
 		if (!entry) return;
 		const target = interviewReminder(saved, entry);
 		if (!reminder.on) return existingLead !== null ? reminders.turnOff(target) : undefined;
-		const result = await reminders.turnOn(target, reminder.lead);
-		if (result === "denied")
-			showToast({
-				message: t`The interview is saved. To get a reminder, allow notifications in your device settings.`,
-				action: { label: t`Settings`, onPress: () => void Linking.openSettings() },
-			});
-		if (result === "passed") showToast({ message: t`Interview saved. The reminder time has already passed.` });
+		return reminders.turnOn(target, reminder.lead);
 	};
 
 	const save = async () => {
+		const scope = getAccountScope();
 		if (!at || !details.success || pending || saving.current) return;
 		saving.current = true;
 		const input = { id: application.id, at: at.toISOString(), ...details.data };
@@ -219,6 +216,7 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 			}
 		} catch {
 			saving.current = false;
+			if (!scope || scope !== getAccountScope()) return;
 			showToast({
 				message: interview
 					? t`Couldn't update the interview. Try again.`
@@ -226,12 +224,33 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 			});
 			return;
 		}
+		if (!scope || scope !== getAccountScope()) return;
 		onClose();
-		showToast({ message: t`Interview saved` });
+		const savedInterview = saved.activity.find(
+			(entry): entry is InterviewTimelineEntry => entry.type === "interview" && entry.id === entryId,
+		);
+		const calendar =
+			interview && savedInterview ? interviewCalendarAction(application, savedInterview, "PUBLISH", scope) : undefined;
+		showToast({ message: t`Interview saved`, ...(calendar ? { action: calendar } : {}) });
 		try {
-			if (entryId) await applyReminder(saved, entryId);
+			const result = entryId ? await applyReminder(saved, entryId) : undefined;
+			if (scope !== getAccountScope()) return;
+			if (result === "denied")
+				showToast({
+					message: t`The interview is saved. To get a reminder, allow notifications in your device settings.`,
+					action: calendar ?? { label: t`Settings`, onPress: () => void Linking.openSettings() },
+				});
+			if (result === "passed")
+				showToast({
+					message: t`Interview saved. The reminder time has already passed.`,
+					...(calendar ? { action: calendar } : {}),
+				});
 		} catch {
-			showToast({ message: t`Interview saved. Couldn't update its reminder. Edit the interview to try again.` });
+			if (scope === getAccountScope())
+				showToast({
+					message: t`Interview saved. Couldn't update its reminder. Edit the interview to try again.`,
+					...(calendar ? { action: calendar } : {}),
+				});
 		}
 	};
 
@@ -239,6 +258,7 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 	// ponytail: the commit lives in a JS timer; if the app is killed first, the interview simply stays.
 	const remove = () => {
 		if (!interview || saving.current) return;
+		const scope = getAccountScope();
 		const key = applicationDetailQueryKey(application.id);
 		queryClient.setQueryData<Application>(key, (current) =>
 			current ? { ...current, activity: current.activity.filter((entry) => entry.id !== interview.id) } : current,
@@ -249,13 +269,27 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 		const target = { kind: "interview", applicationId: application.id, entryId: interview.id } as const;
 		const timer = setTimeout(() => {
 			// The form is gone by now, so this calls the client directly rather than through a mounted mutation.
+			if (!scope || scope !== getAccountScope()) {
+				releaseReminder(interview.id);
+				return;
+			}
 			void client.applications
 				.deleteTimelineEntry({ id: application.id, entryId: interview.id })
-				.then(() => reminders.turnOff(target))
-				.catch(() => showToast({ message: t`Couldn't delete the interview. Try again.` }))
+				.then(async () => {
+					let message = t`Interview deleted`;
+					try {
+						if (scope === getAccountScope()) await reminders.turnOff(target);
+					} catch {
+						message = t`Interview deleted. Couldn't cancel its device reminder.`;
+					}
+					showInterviewCancellation(application, interview, scope, message);
+				})
+				.catch(() => {
+					if (scope === getAccountScope()) showToast({ message: t`Couldn't delete the interview. Try again.` });
+				})
 				.finally(() => {
 					releaseReminder(interview.id);
-					void invalidate();
+					if (scope === getAccountScope()) void invalidate();
 				});
 		}, toastLifetime(UNDO_MS));
 		showToast({
@@ -266,7 +300,7 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 				onPress: () => {
 					clearTimeout(timer);
 					releaseReminder(interview.id);
-					void invalidate();
+					if (scope === getAccountScope()) void invalidate();
 				},
 			},
 		});
