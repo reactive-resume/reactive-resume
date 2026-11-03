@@ -56,7 +56,7 @@ Boundaries: code/commits/PRs written normal.
 ## Commands
 
 ```sh
-pnpm check:affected                              # typecheck + tests of changed packages, boundaries, lint, format
+pnpm check:affected                              # changed packages: typecheck, tests (DB suites included), boundaries, lint, format
 pnpm test:db exec -- pnpm --filter @reactive-resume/api test   # DB suites on per-worktree databases, no silent skips
 pnpm test:e2e:local --build [spec]               # Playwright on a per-worktree DB, port and storage
 pnpm --filter mobile test                        # mobile host tests (node --test, not Vitest)
@@ -72,7 +72,8 @@ pnpm docs:gen                                    # regenerate the OpenAPI spec a
   from each `package.json`: apps are `web`, `server`, `mobile`; shared packages are `@reactive-resume/<name>`.
 - `--filter <pkg> exec vp test run <file> -t "<name>"` runs one test. Most scripts use `--passWithNoTests`, so a green
   run with zero tests proves nothing.
-- `check:affected` compares against `TURBO_SCM_BASE` (default `origin/main`); fetch first if `origin/main` is stale.
+- `check:affected` compares against `TURBO_SCM_BASE` (default `origin/main`; fetch first if stale) and needs the local
+  Postgres from `compose.dev.yml`, because it runs tests through `test:db exec`.
 - Send long-running output to a log file and read it with `tail` or `rg`; find background jobs with `pgrep -f <tag>`,
   not a full `ps` listing.
 
@@ -91,7 +92,7 @@ pnpm docs:gen                                    # regenerate the OpenAPI spec a
 | Server env validation                                      | `packages/env/src/server.ts`                                                                                                                               |
 | Resume, template and application schemas                   | `packages/schema` (fixtures: `defaultResumeData` in `packages/schema/src/resume/default.ts`, `sampleResumeData` in `packages/schema/src/resume/sample.ts`) |
 | Pure resume behaviour (JSON Patch, icons)                  | `packages/resume`                                                                                                                                          |
-| PDF rendering                                              | `packages/pdf` (templates through `src/forme`; shared filtering in `src/templates/shared/filtering.ts`)                                                    |
+| PDF rendering                                              | `packages/pdf` (templates through `src/forme`; shared filtering in `packages/pdf/src/templates/shared/filtering.ts`)                                       |
 | PDF.js viewer and canvas UI                                | `apps/web/src/features/resume/preview`, `apps/web/src/features/ats-checker`; never `packages/pdf`                                                          |
 | DOCX export                                                | `packages/docx`                                                                                                                                            |
 | MCP tools, prompts, server card                            | `packages/mcp` (tool annotation review: `packages/mcp/src/fixtures/tool-annotations.md`)                                                                   |

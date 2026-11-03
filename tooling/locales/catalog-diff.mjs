@@ -86,13 +86,22 @@ function signature(text) {
 	return { tokens, pluralKeys };
 }
 
+/** Whether the translation lacks `token` in `branch`, the plural form where the source uses it. */
+function lacks(translation, token, branch) {
+	const found = translation.tokens.get(token);
+	if (branch === "") return !found;
+	// Plural forms the language doesn't have are legitimately omitted; a token hoisted outside the plural still counts.
+	// Languages whose `one` also covers 21, 31… move the singular text to an exact `=1` branch.
+	if (!translation.pluralKeys.has(branch) || found?.has(branch) || found?.has("")) return false;
+	return !(branch === "one" && found?.has("=1"));
+}
+
 /** Arguments or tags the translation drops (outside plural forms it legitimately omits) or invents. */
 export function mismatch(source, translation) {
 	const expected = signature(source);
 	const actual = signature(translation);
 	const missing = [...expected.tokens]
-		.filter(([token]) => !actual.tokens.has(token))
-		.filter(([, branches]) => [...branches].some((branch) => branch === "" || actual.pluralKeys.has(branch)))
+		.filter(([token, branches]) => [...branches].some((branch) => lacks(actual, token, branch)))
 		.map(([token]) => token);
 	const extra = [...actual.tokens.keys()].filter((token) => !expected.tokens.has(token));
 	return [...missing.map((token) => `missing ${token}`), ...extra.map((token) => `extra ${token}`)].join(", ");

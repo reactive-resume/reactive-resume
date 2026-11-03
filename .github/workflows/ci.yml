@@ -221,13 +221,13 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      # Only app or shared-package changes can alter the bundle.
+      # App, shared-package and dependency-resolution changes can alter the bundle.
       - name: Detect mobile changes
         id: changes
         env:
           BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
         run: |
-          if git diff --quiet "$BASE_REF" HEAD -- apps/mobile/ packages/; then
+          if git diff --quiet "$BASE_REF" HEAD -- apps/mobile/ packages/ pnpm-lock.yaml pnpm-workspace.yaml patches/; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"

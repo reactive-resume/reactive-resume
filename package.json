@@ -29,7 +29,7 @@
 		"deploy:cloudflare": "pnpm build:cloudflare && wrangler deploy",
 		"check:cloudflare": "pnpm build:cloudflare && wrangler deploy --dry-run",
 		"check": "pnpm pdf:translations && pnpm lint:fix && pnpm format && pnpm lint",
-		"check:affected": "TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/main} turbo run typecheck --affected && TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/main} turbo run test --affected --concurrency=1 && turbo boundaries && pnpm lint:agent && pnpm format:check && pnpm check:agent-docs",
+		"check:affected": "TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/main} turbo run typecheck --affected && TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/main} node tooling/dev/test-db.mjs exec -- turbo run test --affected --concurrency=1 && turbo boundaries && pnpm lint:agent && pnpm format:check && pnpm check:agent-docs",
 		"check:agent-docs": "node tooling/agents/check-docs.mjs",
 		"docs:gen": "pnpm --filter server docs:gen",
 		"ci:logs": "node tooling/ci/failed-logs.mjs",

@@ -38,10 +38,10 @@ One pipeline: version bump → changelog entry → PR → squash-merge → tag �
    ```bash
    git checkout main && git pull
    git tag vX.Y.Z && git push origin vX.Y.Z
-   gh release create vX.Y.Z --title vX.Y.Z --notes-file <(BODY)
+   gh release create vX.Y.Z --title vX.Y.Z --notes-file release-notes.md
    ```
 
-   Release body = the new `<Update>` block's inner content (Highlights through Full Changelog line), without the `<Update>` wrapper.
+   Write the release body to `release-notes.md` first, and delete the file afterwards. The body is the new `<Update>` block's inner content (Highlights through Full Changelog line), without the `<Update>` wrapper.
 
 8. **Update the Cloudron package** once the release image is on GHCR: follow `cloudron/README.md` (manifest `version`, `CHANGELOG`, `npx cloudron versions add --image ghcr.io/reactive-resume/reactive-resume:v<version>`), then commit `cloudron/` to `main`.
 9. **Optional, on request**: screenshots for the changelog/docs (via agent-browser against the running app) and a LinkedIn/Reddit announcement draft based on the Highlights.

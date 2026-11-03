@@ -1,15 +1,18 @@
 import { execFileSync, spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { basename, resolve } from "node:path";
 import { Pool } from "pg";
 
 // Disposable, migrated databases for the real-database Vitest suites, named after this checkout so that
 // worktrees sharing the local compose PostgreSQL never share data. Mirrors the CI unit job's setup.
 export const root = resolve(import.meta.dirname, "../..");
-export const checkout = basename(root)
+const slug = basename(root)
 	.toLowerCase()
 	.replace(/[^a-z0-9]+/g, "_")
 	.replace(/^_+|_+$/g, "")
-	.slice(0, 48);
+	.slice(0, 36);
+// The path hash keeps same-named checkouts on separate databases, so `down` in one never drops another's.
+export const checkout = `${slug}_${createHash("sha256").update(root).digest("hex").slice(0, 8)}`;
 
 const adminUrl = new URL(process.env.TEST_DB_ADMIN_URL ?? "postgresql://postgres:postgres@localhost:5432/postgres");
 if (!["localhost", "127.0.0.1", "[::1]"].includes(adminUrl.hostname)) {

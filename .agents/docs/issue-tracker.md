@@ -13,7 +13,7 @@ description plus its comments and attachments. Public bug reports and feature re
 
 ```sh
 composio execute LINEAR_RUN_QUERY_OR_MUTATION --account <alias> -d '{
-  "query_or_mutation": "query { issue(id: \"RX-123\") { identifier title description state { name } labels { nodes { name } } branchName comments { nodes { body createdAt } } attachments { nodes { title url } } } }",
+  "query_or_mutation": "query { issue(id: \"RX-123\") { id identifier title description state { name } labels { nodes { name } } branchName comments { nodes { body createdAt } } attachments { nodes { title url } } } }",
   "variables": {}
 }'
 ```

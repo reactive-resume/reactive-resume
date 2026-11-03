@@ -22,4 +22,4 @@ worktree. `pnpm check:agent-docs` checks that repo paths named in these docs exi
   repository, in `~/Projects/reactive-resume-private/` on the maintainer's machine. Never commit them here.
 - **Repo skills**: `.agents/skills/<name>/SKILL.md`. Only skills allow-listed in `.gitignore` are tracked.
 
-New decision records take the next number: `decisions/NNNN-topic.md` with a `Status:` line and dated decision.
+New decision records take the next number: `decisions/<NNNN>-<topic>.md` with a `Status:` line and dated decision.

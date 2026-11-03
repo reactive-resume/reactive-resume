@@ -36,20 +36,29 @@ function isIgnored(path) {
 }
 
 function candidatePaths(markdown) {
-	const spans = [...markdown.matchAll(/```[^\n]*\n([\s\S]*?)```|`([^`\n]+)`/g)].map((match) => match[1] ?? match[2]);
-	const tokens = spans.flatMap((span) => span.split(/[\s"'(),=]+/));
-	return tokens
-		.map((token) =>
-			token
-				.replace(/[.,:;]+$/, "")
-				.replace(/#.*$/, "")
-				.replace(/:\d+(-\d+)?$/, ""),
-		)
-		.filter((token) => !/[*<>{}|…]|\.\.\./.test(token) && !token.startsWith("-"))
-		.filter((token) => {
-			const first = token.split("/")[0];
-			return topLevel.has(first) && (token.includes("/") || /\.[a-z]+$/i.test(token));
-		});
+	const spans = [...markdown.matchAll(/```[^\n]*\n([\s\S]*?)```|`([^`\n]+)`/g)].map((match) => ({
+		text: match[1] ?? match[2],
+		command: match[1] !== undefined,
+	}));
+	return spans.flatMap(({ text, command }) =>
+		text
+			.split(/[\s"'(),=]+/)
+			.map((token) =>
+				token
+					.replace(/[.,:;]+$/, "")
+					.replace(/#.*$/, "")
+					.replace(/:\d+(-\d+)?$/, ""),
+			)
+			.filter((token) => !/[*<>{}|…]|\.\.\./.test(token) && !token.startsWith("-"))
+			.filter((token) => {
+				const first = token.split("/")[0];
+				if (topLevel.has(first)) return token.includes("/") || /\.[a-z]+$/i.test(token);
+				// Inline file paths under a top-level folder that is gone, or relative to the doc's folder. Command blocks
+				// are skipped here: `pnpm --filter <pkg> exec …` arguments are relative to the package. URLs and package
+				// names never match.
+				return !command && token.includes("/") && /^[\w-]+$/.test(first) && /\.[a-z0-9]+$/i.test(token);
+			}),
+	);
 }
 
 function relativeLinks(markdown, doc) {
@@ -63,7 +72,8 @@ for (const doc of docs) {
 	const markdown = readFileSync(join(root, doc), "utf8");
 	const missing = new Set();
 	for (const path of [...candidatePaths(markdown), ...relativeLinks(markdown, doc)]) {
-		if (!existsSync(join(root, path)) && !isIgnored(path)) missing.add(path);
+		const found = existsSync(join(root, path)) || existsSync(join(root, dirname(doc), path));
+		if (!found && !isIgnored(path)) missing.add(path);
 	}
 	for (const path of missing) problems.push(`${doc}: names \`${path}\`, which doesn't exist`);
 }
