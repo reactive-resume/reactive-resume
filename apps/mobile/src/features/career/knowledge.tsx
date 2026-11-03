@@ -7,11 +7,12 @@ import { Preferences } from "./preferences";
 import { LoadState } from "./shared";
 import { Stories } from "./stories";
 import { useSession } from "@/auth/session";
-import { Screen, Segmented, Text, useTheme } from "@/ui";
+import { StoryPractice } from "@/features/workspace/tabs/practise";
+import { Screen, Segmented, Text, Button, useTheme } from "@/ui";
 
 export function KnowledgeScreen() {
 	const { t } = useLingui();
-	const params = useLocalSearchParams<{ tab?: string }>();
+	const params = useLocalSearchParams<{ tab?: string; practice?: string }>();
 	const router = useRouter();
 	const tab = params.tab === "preferences" || params.tab === "stories" ? params.tab : "facts";
 	const { fontScale } = useWindowDimensions();
@@ -35,6 +36,17 @@ export function KnowledgeScreen() {
 			/>
 		</>
 	);
+	if (params.practice)
+		return (
+			<Screen>
+				<Button
+					variant="ghost"
+					label={t`Back to stories`}
+					onPress={() => router.setParams({ practice: undefined, tab: "stories" })}
+				/>
+				<StoryPractice key={params.practice} storyId={params.practice} />
+			</Screen>
+		);
 	// Facts can run to hundreds, so that tab scrolls as a virtualized list with the intro as its header.
 	if (tab === "facts")
 		return (

@@ -358,15 +358,29 @@ export const careerRouter = {
 			tags: ["Career"],
 			operationId: "listCareerSavedItems",
 			summary: "List saved career work",
+			description:
+				"Lists all saved work by default, or one application. Use scope=shared without an applicationId for standalone practice attempts.",
 		})
 		.input(
-			z.object({
-				applicationId: z.string().min(1).optional(),
-				kind: z.enum(["fit", "briefing", "practice", "debrief", "answers", "reply", "offer"]).optional(),
-			}),
+			z
+				.object({
+					applicationId: z.string().min(1).optional(),
+					scope: z.enum(["all", "shared"]).optional(),
+					kind: z.enum(["fit", "briefing", "practice", "debrief", "answers", "reply", "offer"]).optional(),
+				})
+				.refine((input) => input.scope !== "shared" || !input.applicationId, {
+					message: "Shared work has no application.",
+					path: ["applicationId"],
+				}),
 		)
 		.output(z.array(savedItemOutput))
-		.handler(({ context, input }) => careerService.savedItems({ userId: context.user.id, ...input })),
+		.handler(({ context, input }) =>
+			careerService.savedItems({
+				userId: context.user.id,
+				...input,
+				...(input.scope === "shared" ? { applicationId: null } : {}),
+			}),
+		),
 	createOffer: protectedProcedure
 		.route({
 			method: "POST",
@@ -420,9 +434,22 @@ export const careerRouter = {
 			operationId: "generateCareerWork",
 			summary: "Generate AI work for an application",
 			description:
-				"Asks the default AI connection for one structured piece of work for an application (fit check, briefing, practice feedback, debrief review, employer message, answer draft). Everything but answer drafts is saved.",
+				"Asks the default AI connection for one structured piece of work for an application (fit check, briefing, practice feedback, debrief review, employer message, answer draft). Everything but answer drafts is saved. Practice with a shared story may use a null applicationId; other tasks require an application.",
 		})
-		.input(applicationInput.extend({ locale: z.string().max(20).default("en-US"), task: generateTaskSchema }))
+		.input(
+			applicationInput
+				.extend({
+					applicationId: z.string().min(1).nullable(),
+					locale: z.string().max(20).default("en-US"),
+					task: generateTaskSchema,
+				})
+				.refine(
+					(input) =>
+						input.applicationId !== null ||
+						(input.task.task === "practice" && Boolean(input.task.storyId) && !input.task.interviewId),
+					{ message: "Choose an application, or a shared story to practice.", path: ["applicationId"] },
+				),
+		)
 		.output(
 			z.object({
 				item: savedItemSchema.nullable(),

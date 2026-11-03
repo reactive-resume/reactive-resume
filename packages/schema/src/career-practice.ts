@@ -19,3 +19,37 @@ export function threePracticeQuestions(questions: readonly PracticeQuestion[], f
 	}
 	return selected;
 }
+
+type StoryForPractice = {
+	applicationId?: string | null;
+	updatedAt: Date | string;
+	data: { factIds: readonly string[] };
+};
+type FactForPractice = {
+	id: string;
+	applicationId: string | null;
+	status: string;
+	updatedAt: Date | string;
+	revisions: readonly unknown[];
+};
+
+/** The same backing-fact and scope check in Knowledge, practice and the server's generation context. */
+export function canUseCareerStory(
+	story: StoryForPractice,
+	facts: readonly FactForPractice[],
+	applicationId: string | null,
+) {
+	return (
+		(!story.applicationId || story.applicationId === applicationId) &&
+		story.data.factIds.length > 0 &&
+		story.data.factIds.every((id) =>
+			facts.some(
+				(fact) =>
+					fact.id === id &&
+					fact.status === "active" &&
+					(fact.applicationId === null || fact.applicationId === applicationId) &&
+					(fact.revisions.length === 0 || new Date(fact.updatedAt) <= new Date(story.updatedAt)),
+			),
+		)
+	);
+}

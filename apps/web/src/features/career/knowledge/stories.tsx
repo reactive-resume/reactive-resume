@@ -29,6 +29,7 @@ import { useSessionDraft } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
 import { useRemoving } from "../removing";
 import { CollapseRow, Eyebrow, Swap, useCareerTime, useNow, withQueryUndo } from "../shared";
+import { StoryPractice } from "../workspace/practise";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { toastError } from "@/libs/error-message";
@@ -63,9 +64,14 @@ const factChanged = (story: Story, facts: Map<string, Fact>) =>
 /** A new story started from an interview plan's step: its title, and the step's detail shown as a note. */
 type StoryStart = { title: string; note: string; plan: string };
 
-type StoriesPageProps = { storyId: string | undefined; edit: boolean; start?: StoryStart | undefined };
+type StoriesPageProps = {
+	storyId: string | undefined;
+	edit: boolean;
+	practice?: boolean;
+	start?: StoryStart | undefined;
+};
 
-export function StoriesPage({ storyId, edit, start: planStart }: StoriesPageProps) {
+export function StoriesPage({ storyId, edit, practice = false, start: planStart }: StoriesPageProps) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const storyQuery = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: null } }));
@@ -114,6 +120,17 @@ export function StoriesPage({ storyId, edit, start: planStart }: StoriesPageProp
 			},
 		});
 	};
+
+	if (practice && storyId)
+		return (
+			<div className="grid gap-4">
+				<Button variant="ghost" className="justify-self-start" onClick={() => open(storyId)}>
+					<Icon name="arrow-left" />
+					<Trans>Back to stories</Trans>
+				</Button>
+				<StoryPractice key={storyId} storyId={storyId} />
+			</div>
+		);
 
 	return (
 		<div className="grid items-start gap-5 lg:grid-cols-[300px_minmax(0,1fr)]">
@@ -379,9 +396,7 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 		? story?.data.factIds.length
 			? t`A fact this story uses is switched off or changed since. Edit the story to check it.`
 			: t`Link a fact to practice this story`
-		: upcoming.length === 0
-			? t`Add an interview first`
-			: null;
+		: null;
 	if (reason)
 		return (
 			<Tooltip>
@@ -408,6 +423,22 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 			params: { applicationId: item.application.id, tab: "practise" },
 			search: { speak: true, story: storyId, round: item.interview.id },
 		});
+	if (upcoming.length === 0)
+		return (
+			<Button
+				variant="ghost"
+				className="h-8 px-2.5 text-[13px] text-ink-2"
+				onClick={() =>
+					void navigate({
+						to: "/dashboard/career/knowledge/stories/{-$storyId}",
+						params: { storyId },
+						search: { practice: true },
+					})
+				}
+			>
+				{label}
+			</Button>
+		);
 	const [next] = upcoming;
 	if (upcoming.length === 1 && next)
 		return (

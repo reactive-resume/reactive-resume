@@ -24,6 +24,7 @@ import {
 	type OfferTerms,
 	type SavedItemData,
 } from "@reactive-resume/schema/career";
+import { canUseCareerStory } from "@reactive-resume/schema/career-practice";
 import { countryForTimeZone } from "@reactive-resume/utils/region";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
@@ -986,18 +987,7 @@ export const careerService = {
 			? (application?.activity.find((entry) => entry.type === "interview" && entry.id === input.interviewId) ?? null)
 			: null;
 		const activeFacts = facts.filter((fact) => fact.status === "active").map(modelFact);
-		const usableStories = stories.filter(
-			(story) =>
-				story.data.factIds.length > 0 &&
-				story.data.factIds.every((id) =>
-					facts.some(
-						(fact) =>
-							fact.id === id &&
-							fact.status === "active" &&
-							(fact.revisions.length === 0 || story.updatedAt >= fact.updatedAt),
-					),
-				),
-		);
+		const usableStories = stories.filter((story) => canUseCareerStory(story, facts, input.applicationId ?? null));
 		if (memoryRevision !== (await memoryVersion(input.userId)) || knowledgeRevision !== (await knowledgeVersion(input)))
 			throw new ORPCError("CONFLICT", { message: "Career memory changed while preparing context. Try again." });
 		const version = hash(
@@ -1032,7 +1022,7 @@ export const careerService = {
 		reader: DbOrTx = db,
 		contextOverride?: { version: string } | null,
 	) => {
-		const context = contextOverride ?? (input.applicationId ? await careerService.context(input) : null);
+		const context = contextOverride ?? (input.applicationId !== undefined ? await careerService.context(input) : null);
 		const rows = await reader
 			.select({
 				item: tables.careerArtifact,
@@ -1050,7 +1040,11 @@ export const careerService = {
 						eq(tables.careerArtifact.userId, input.userId),
 						availableApplicationContext(input.userId, tables.careerArtifact.applicationId),
 					),
-					input.applicationId ? eq(tables.careerArtifact.applicationId, input.applicationId) : undefined,
+					input.applicationId === null
+						? isNull(tables.careerArtifact.applicationId)
+						: input.applicationId
+							? eq(tables.careerArtifact.applicationId, input.applicationId)
+							: undefined,
 					input.kind ? sql`${tables.careerArtifact.data}->>'kind' = ${input.kind}` : undefined,
 				),
 			)
@@ -1197,7 +1191,7 @@ export const careerService = {
 		}),
 	saveSavedItem: (input: {
 		userId: string;
-		applicationId: string;
+		applicationId: string | null;
 		interviewId: string | null;
 		title: string;
 		data: SavedItemData;
@@ -1214,14 +1208,21 @@ export const careerService = {
 			const { expectedMemoryVersion, expectedKnowledgeVersion, expectedPipelineRevision, jobLease, ...values } = input;
 			// User → application → schedule → job. No key update permits unrelated FK inserts for this user.
 			await lockUser(tx, input.userId);
-			const [application] = await tx
-				.select()
-				.from(tables.application)
-				.where(and(eq(tables.application.id, input.applicationId), activeApplications(input.userId)))
-				.for("update");
-			if (!application) throw new ORPCError("NOT_FOUND");
+			if (input.applicationId === null && (input.data.kind !== "practice" || input.interviewId || input.jobId))
+				throw new ORPCError("BAD_REQUEST", {
+					message: "Only standalone practice can be saved without an application.",
+				});
+			const [application] =
+				input.applicationId === null
+					? []
+					: await tx
+							.select()
+							.from(tables.application)
+							.where(and(eq(tables.application.id, input.applicationId), activeApplications(input.userId)))
+							.for("update");
+			if (input.applicationId !== null && !application) throw new ORPCError("NOT_FOUND");
 			if (input.jobId) {
-				if (application.status === "closed") return null;
+				if (!application || application.status === "closed") return null;
 				// Match the schedule editor's lock order. Pausing and publishing cannot pass each other.
 				const [job] = await tx
 					.select()
