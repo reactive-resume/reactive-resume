@@ -61028,6 +61028,7 @@
 			"get": {
 				"operationId": "listCareerSavedItems",
 				"summary": "List saved career work",
+				"description": "Lists all saved work by default, or one application. Use scope=shared without an applicationId for standalone practice attempts.",
 				"tags": [
 					"Career"
 				],
@@ -61038,6 +61039,19 @@
 						"schema": {
 							"type": "string",
 							"minLength": 1
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "scope",
+						"in": "query",
+						"schema": {
+							"enum": [
+								"all",
+								"shared"
+							],
+							"type": "string"
 						},
 						"allowEmptyValue": true,
 						"allowReserved": true
@@ -65650,7 +65664,7 @@
 			"post": {
 				"operationId": "generateCareerWork",
 				"summary": "Generate AI work for an application",
-				"description": "Asks the default AI connection for one structured piece of work for an application (fit check, briefing, practice feedback, debrief review, employer message, answer draft). Everything but answer drafts is saved.",
+				"description": "Asks the default AI connection for one structured piece of work for an application (fit check, briefing, practice feedback, debrief review, employer message, answer draft). Everything but answer drafts is saved. Practice with a shared story may use a null applicationId; other tasks require an application.",
 				"tags": [
 					"Career"
 				],
@@ -65662,8 +65676,15 @@
 								"type": "object",
 								"properties": {
 									"applicationId": {
-										"type": "string",
-										"minLength": 1
+										"anyOf": [
+											{
+												"type": "string",
+												"minLength": 1
+											},
+											{
+												"type": "null"
+											}
+										]
 									},
 									"locale": {
 										"type": "string",

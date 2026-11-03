@@ -29,7 +29,7 @@ type Requirement = SavedData<"fit">["requirements"][number];
 
 type AiNoticeProps = {
 	task?: GenerateTask["task"];
-	application?: DisclosureApplication;
+	application?: DisclosureApplication | null;
 	interview?: boolean;
 	className?: string;
 };
@@ -43,11 +43,11 @@ export function AiNotice({ task, application, interview, className }: AiNoticePr
 	if (connection.isUnavailable) return <AiProviderLoadState state={connection} />;
 	if (!connection.provider) return <SetUpAi />;
 	// Without a task there is nothing to name; the provider states above still explain how to connect one.
-	if (!task || !application) return null;
+	if (!task) return null;
 	return (
 		<DisclosureText
 			task={task}
-			application={application}
+			application={application ?? null}
 			interview={Boolean(interview)}
 			providerLabel={connection.provider.label}
 			{...(className ? { className } : {})}

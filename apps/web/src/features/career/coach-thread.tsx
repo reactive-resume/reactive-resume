@@ -12,6 +12,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import z from "zod";
 import { AGENT_ATTACHMENT_TYPES } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
+import { canUseCareerStory } from "@reactive-resume/schema/career-practice";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
@@ -64,16 +65,7 @@ export function useCoachKnowledge(applicationId: string | null) {
 	const active = all.filter(
 		(fact) => fact.status === "active" && (fact.applicationId === null || fact.applicationId === applicationId),
 	);
-	const usable = (stories.data ?? []).filter(
-		(story) =>
-			story.data.factIds.length > 0 &&
-			story.data.factIds.every((id) =>
-				active.some(
-					(fact) =>
-						fact.id === id && (fact.revisions.length === 0 || new Date(fact.updatedAt) <= new Date(story.updatedAt)),
-				),
-			),
-	);
+	const usable = (stories.data ?? []).filter((story) => canUseCareerStory(story, active, applicationId));
 	return {
 		loaded: facts.isSuccess && stories.isSuccess,
 		/** Changes whenever Knowledge is read again, so what depends on it can be read again too. */
