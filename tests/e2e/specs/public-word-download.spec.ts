@@ -67,6 +67,11 @@ test("public Word downloads require owner opt-in, public visibility and current 
 		await owner
 			.locator("section[aria-labelledby=share-privacy-title]")
 			.screenshot({ path: test.info().outputPath("word-privacy.png") });
+		expect((await visitor.goto(publicPath))?.status()).toBe(200);
+		await visitor.locator("summary").filter({ hasText: "Download" }).click();
+		await expect(visitor.getByRole("link", { name: "Download PDF", exact: true })).toBeVisible();
+		await expect(visitor.getByRole("link", { name: "Download Word", exact: true })).toBeVisible();
+
 		// Older mobile bundles send this PDF flag but know nothing about Word. Omission preserves explicit consent.
 		await expect(await owner.request.put(api, { data: { showDownloadButtons: false } })).toBeOK();
 		expect((await (await owner.request.get(api)).json()).allowWordDownload).toBe(true);
@@ -155,7 +160,9 @@ test("public Word downloads require owner opt-in, public visibility and current 
 		expect((await visitor.request.get(wordUrl)).status()).toBe(404);
 		const currentWord = `/api/resumes/${account.username}/${newSlug}/docx`;
 		await expect(await visitor.request.get(currentWord)).toBeOK();
-		await expect(await owner.request.put(api, { data: { allowWordDownload: false } })).toBeOK();
+		await expect(await owner.request.put(api, { data: { isPublic: false } })).toBeOK();
+		expect((await visitor.request.get(currentWord)).status()).toBe(404);
+		await expect(await owner.request.put(api, { data: { isPublic: true, allowWordDownload: false } })).toBeOK();
 		expect((await visitor.request.get(currentWord)).status()).toBe(404);
 		await expect(await owner.request.put(api, { data: { allowWordDownload: true } })).toBeOK();
 
