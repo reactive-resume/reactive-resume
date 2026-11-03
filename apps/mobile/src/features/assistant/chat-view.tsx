@@ -271,6 +271,7 @@ function Session(props: SessionProps) {
 			<Conversation
 				{...props}
 				initialMessages={thread.data.messages as UIMessage[]}
+				initialAttachments={(thread.data.attachments ?? []).filter((file) => !file.messageId)}
 				activeRun={Boolean(thread.data.thread.activeRunId)}
 				readOnly={thread.data.isReadOnly}
 			/>
@@ -288,7 +289,12 @@ function Session(props: SessionProps) {
 	);
 }
 
-type ConversationProps = SessionProps & { initialMessages: UIMessage[]; activeRun: boolean; readOnly: boolean };
+type ConversationProps = SessionProps & {
+	initialMessages: UIMessage[];
+	initialAttachments?: Upload[];
+	activeRun: boolean;
+	readOnly: boolean;
+};
 
 function Conversation(props: ConversationProps) {
 	const pull = usePullRefresh(...(props.onRefresh ? [props.onRefresh] : []));
@@ -904,6 +910,7 @@ type Upload = ChatAttachment & { size: number; busy?: boolean };
 
 type ComposerProps = Pick<ScopedChatViewProps, "chips" | "notice" | "placeholder" | "scope" | "draft"> & {
 	privacy: string;
+	initialAttachments?: Upload[];
 	streaming: boolean;
 	disabled: boolean;
 	ensureThread: () => Promise<string>;
@@ -917,7 +924,7 @@ function Composer(props: ComposerProps) {
 	const { t } = useLingui();
 	const { colors, radius, size, space, type } = useTheme();
 	const [text, setText] = useState(props.draft ?? "");
-	const [attachments, setAttachments] = useState<Upload[]>([]);
+	const [attachments, setAttachments] = useState<Upload[]>(props.initialAttachments ?? []);
 	// Chips removed while their upload was still running: the finished upload is deleted, not kept.
 	const removedUploads = useRef(new Set<string>());
 	const uploading = attachments.some((attachment) => attachment.busy);

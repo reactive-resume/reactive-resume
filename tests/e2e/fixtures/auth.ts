@@ -1,5 +1,6 @@
 import type { E2EAccount } from "./data";
 import type { APIRequestContext, Browser, BrowserContext, Page } from "@playwright/test";
+import { request } from "@playwright/test";
 
 async function assertAuthResponse(response: Awaited<ReturnType<APIRequestContext["post"]>>) {
 	if (response.ok()) return;
@@ -67,4 +68,19 @@ export async function createAuthenticatedContext(
 		baseURL,
 		storageState: await request.storageState(),
 	});
+}
+
+/** A fresh authenticated reader keeps long UI flows independent of an expired idle API socket. */
+export async function readAuthenticatedJson(page: Page, path: string) {
+	const reader = await request.newContext({
+		baseURL: new URL(page.url()).origin,
+		storageState: await page.context().storageState(),
+	});
+	try {
+		const response = await reader.get(path);
+		if (!response.ok()) throw new Error(`Read failed with ${response.status()}: ${path}`);
+		return await response.json();
+	} finally {
+		await reader.dispose();
+	}
 }

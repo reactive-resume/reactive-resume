@@ -5130,6 +5130,34 @@ const { Composer: PasteComposer } = load(
 	polishBoundaries,
 	";module.exports.Composer=Composer;",
 );
+reset();
+let recoveredSend;
+const recoveredProps = {
+	scope: "polish-account",
+	initialAttachments: [{ id: "recovered", filename: "Fictional native draft.txt", mediaType: "text/plain", size: 64 }],
+	draft: "Review recovered file",
+	disabled: false,
+	streaming: false,
+	privacy: "Explicit Send only",
+	ensureThread: async () => "paste-thread",
+	onSend: (text, files) => {
+		recoveredSend = { text, files };
+		return true;
+	},
+	onStop() {},
+};
+const recoveredTree = render(PasteComposer, recoveredProps);
+assert.ok(JSON.stringify(recoveredTree).includes("Fictional native draft.txt"));
+assert.equal(recoveredSend, undefined);
+nodes(recoveredTree)
+	.find((node) => node.props.accessibilityLabel === "Send")
+	.props.onPress();
+await settle();
+assert.deepEqual(recoveredSend, {
+	text: "Review recovered file",
+	files: [{ id: "recovered", filename: "Fictional native draft.txt", mediaType: "text/plain" }],
+});
+assert.equal(JSON.stringify(render(PasteComposer, recoveredProps)).includes("Fictional native draft.txt"), false);
 for (const scenario of ["success", "failure", "changed"]) {
 	reset();
 	let finish;
@@ -5168,10 +5196,48 @@ for (const scenario of ["success", "failure", "changed"]) {
 	);
 	assert.equal(pasteFiles.size, 0, "Own temporary file must be deleted on success or failure");
 }
-const { Coverage: GapCoverage, RememberMessage: RememberAnswer } = load(
+const {
+	Coverage: GapCoverage,
+	RememberMessage: RememberAnswer,
+	ToolPartView: NativeQuestionPart,
+} = load(
 	"features/assistant/messages.tsx",
 	polishBoundaries,
-	";module.exports.Coverage=Coverage;module.exports.RememberMessage=RememberMessage;",
+	";module.exports.Coverage=Coverage;module.exports.RememberMessage=RememberMessage;module.exports.ToolPartView=ToolPartView;",
+);
+reset();
+const nativeQuestion = render(NativeQuestionPart, {
+	part: { type: "tool-ask_user_question", state: "output-available", output: "Fictional answer" },
+	message: { id: "question", role: "assistant", parts: [] },
+	streaming: false,
+	readOnly: false,
+	answerable: true,
+	proposals: [],
+	onAnswer() {},
+});
+for (const node of nodes(nativeQuestion).filter((node) => node.type === "View")) {
+	assert.ok(
+		node.props.children.flat(Infinity).every((child) => typeof child !== "string" && typeof child !== "number"),
+		"Native View children must not contain raw text",
+	);
+}
+reset();
+const repeatedRequirements = ["missing", "unassessed"].map((status) => ({
+	text: "Repeated requirement",
+	status,
+	evidence: [],
+}));
+let repeatedGaps = nodes(render(GapCoverage, { requirements: repeatedRequirements, factText: () => null })).filter(
+	(node) => node.props.accessibilityRole === "checkbox",
+);
+assert.equal(repeatedGaps.length, 2);
+repeatedGaps[0].props.onPress();
+repeatedGaps = nodes(render(GapCoverage, { requirements: repeatedRequirements, factText: () => null })).filter(
+	(node) => node.props.accessibilityRole === "checkbox",
+);
+assert.deepEqual(
+	repeatedGaps.map((node) => node.props.accessibilityState.checked),
+	[true, false],
 );
 reset();
 const requirements = [{ text: "Accessibility audits", status: "missing", evidence: [] }];

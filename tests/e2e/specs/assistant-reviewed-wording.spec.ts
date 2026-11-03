@@ -3,6 +3,8 @@ import { startAiStub } from "../fixtures/ai-stub";
 import { createSampleResumeFromDashboard } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
+test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs the isolated local AI stub URL flag.");
+
 let stub: Awaited<ReturnType<typeof startAiStub>>;
 test.beforeAll(async () => {
 	stub = await startAiStub();
