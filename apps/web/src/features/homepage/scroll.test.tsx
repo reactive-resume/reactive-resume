@@ -79,9 +79,10 @@ describe("scroll engine", () => {
 		expect(check.style.getPropertyValue("--out")).toBe("1.000");
 		expect(tailor.style.getPropertyValue("--out")).toBe("");
 
-		rects.set(String(SCENE.design), { top: 0, bottom: 300, height: 900 });
+		// Raw 0.6596 rounds to the same 0.660 the heading uses, so the link must already be exiting.
+		rects.set(String(SCENE.design), { top: 0, bottom: 306.36, height: 900 });
 		fireEvent.scroll(window);
-		await waitFor(() => expect(design.style.getPropertyValue("--out")).toBe("0.667"));
+		await waitFor(() => expect(design.style.getPropertyValue("--out")).toBe("0.660"));
 		expect(useLanding.getState().designExiting).toBe(true);
 
 		rects.set(String(SCENE.design), { top: 0, bottom: 600, height: 900 });

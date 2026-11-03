@@ -301,9 +301,9 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 				const pinned = section.dataset.pin !== undefined;
 				progress[index] = reduced ? 1 : sectionProgress(rect.top, rect.height, viewportHeight, pinned);
 				if (pinned) {
-					const exit = sectionExitProgress(rect.bottom, viewportHeight);
-					if (index === SCENE.design) designExiting = exit >= DESIGN_EXIT_AT;
-					const value = exit.toFixed(3);
+					// The heading's fade reads the rounded value, so the focus flag must use the same frame of reference.
+					const value = sectionExitProgress(rect.bottom, viewportHeight).toFixed(3);
+					if (index === SCENE.design) designExiting = Number(value) >= DESIGN_EXIT_AT;
 					if (writtenExit.get(section) !== value) exits.push({ section, value });
 				}
 				if (rect.top <= viewportHeight / 2 && rect.bottom > viewportHeight / 2) activeScene = index;
