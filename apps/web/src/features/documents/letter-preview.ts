@@ -57,7 +57,7 @@ function decodeEntities(text: string): string {
 export function letterBodyLines(content: string | null | undefined, max = LETTER_PREVIEW_LINES): string[] {
 	if (!content) return [];
 	const text = decodeEntities(
-		stripHtml(content.replace(/<\/(?:p|div|li|h[1-6])>|<br\s*\/?>/gi, "\n").replace(/\r/g, "")),
+		stripHtml(content.replace(/<\/(?:p|div|li|h[1-6])>|<br\b[^>]*>/gi, "\n").replace(/\r/g, "")),
 	).replace(/\u00a0/g, " ");
 	return text
 		.split("\n")

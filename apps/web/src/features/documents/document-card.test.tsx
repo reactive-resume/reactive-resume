@@ -111,6 +111,10 @@ it("shows a failed preview instead of an endless loading placeholder", async () 
 	renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
 
 	expect(await screen.findByText("Preview unavailable")).toBeTruthy();
+	const link = screen.getByRole("link", { name: "Untitled letter" });
+	expect(document.getElementById(link.getAttribute("aria-describedby") ?? "")?.textContent).toBe(
+		"Northwind Labs. Preview unavailable",
+	);
 });
 
 it("does not fetch letter content while the card is offscreen", () => {

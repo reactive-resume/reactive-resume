@@ -26,15 +26,18 @@ describe("fitLabel", () => {
 		expect(fitLabel("Recruiter call", 14)).toBe("Recruiter call");
 	});
 
-	it("ends a long label with an ellipsis within the limit", () => {
+	it("ends a long narrow label with an ellipsis within the width budget", () => {
 		expect(fitLabel("a".repeat(20), 18)).toBe(`${"a".repeat(17)}…`);
 	});
 
-	it("counts code points so an emoji is never cut in half", () => {
-		const label = "😀".repeat(20);
-		const fitted = fitLabel(label, 18);
-		expect(fitted).toBe(`${"😀".repeat(17)}…`);
-		expect([...fitted]).toHaveLength(18);
+	it("counts wide glyphs as twice a narrow one", () => {
+		expect(fitLabel("漢".repeat(20), 18)).toBe(`${"漢".repeat(8)}…`);
+		expect(fitLabel("😀".repeat(20), 18)).toBe(`${"😀".repeat(8)}…`);
+	});
+
+	it("keeps a multi-code-point emoji cluster whole", () => {
+		const family = "👨‍👩‍👧‍👦";
+		expect(fitLabel(family.repeat(10), 18)).toBe(`${family.repeat(8)}…`);
 	});
 });
 

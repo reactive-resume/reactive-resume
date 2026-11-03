@@ -22,6 +22,14 @@ describe("letterBodyLines", () => {
 		]);
 	});
 
+	it("splits lines at attributed break tags too", () => {
+		expect(letterBodyLines('<p>First<br class="tight">Second<br data-x="1" />Third</p>')).toEqual([
+			"First",
+			"Second",
+			"Third",
+		]);
+	});
+
 	it("decodes entities the stored letter HTML carries", () => {
 		expect(letterBodyLines("<p>R&amp;D &amp; design&nbsp;team</p>")).toEqual(["R&D & design team"]);
 		expect(letterBodyLines("<p>&lt;hello&gt; &#39;world&#39;</p>")).toEqual(["<hello> 'world'"]);
