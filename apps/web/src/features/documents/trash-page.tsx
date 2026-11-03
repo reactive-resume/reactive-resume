@@ -1,3 +1,4 @@
+import type { Ref } from "react";
 import { i18n } from "@lingui/core";
 import { ph, plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
@@ -9,6 +10,7 @@ import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
+import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
 import { cn } from "@reactive-resume/utils/style";
 import { useBatchActions } from "./document-actions";
 import { DocumentRow } from "./document-card";
@@ -35,6 +37,7 @@ export function TrashPage() {
 	const [busy, setBusy] = useState(false);
 	const confirm = useConfirm();
 	const resultsRef = useRef<HTMLTableElement>(null);
+	const { ref: selectionBarRef, space: selectionBarSpace } = useFloatingToolbarSpace();
 	const {
 		data: page,
 		isPending,
@@ -144,7 +147,10 @@ export function TrashPage() {
 	};
 
 	return (
-		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5">
+		<div
+			className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5"
+			style={{ paddingBottom: selecting ? selectionBarSpace : undefined }}
+		>
 			<PageHeader
 				back={
 					<Link
@@ -257,6 +263,7 @@ export function TrashPage() {
 				}}
 			/>
 			<TrashSelectionBar
+				ref={selectionBarRef}
 				selection={selection}
 				allSelected={allSelected}
 				busy={busy}
@@ -270,6 +277,7 @@ export function TrashPage() {
 }
 
 type TrashSelectionBarProps = {
+	ref: Ref<HTMLDivElement>;
 	selection: { type: string; id: string; name: string }[];
 	allSelected: boolean;
 	busy: boolean;
@@ -281,6 +289,7 @@ type TrashSelectionBarProps = {
 
 /** Floats over Trash while rows are selected: Restore or Delete permanently the selected loaded documents. */
 function TrashSelectionBar({
+	ref,
 	selection,
 	allSelected,
 	busy,
@@ -293,12 +302,13 @@ function TrashSelectionBar({
 
 	return (
 		<div
+			ref={ref}
 			role="toolbar"
 			aria-label={t`Selected documents in Trash`}
 			aria-hidden={count === 0}
 			inert={count === 0}
 			className={cn(
-				"fixed inset-x-0 bottom-6 z-30 mx-auto flex w-fit max-w-[calc(100vw-32px)] items-center gap-1 rounded-xl border border-line bg-raised p-1.5 shadow-e3 transition-[opacity,translate] duration-standard ease-enter max-sm:bottom-4",
+				"fixed inset-x-0 bottom-6 z-30 mx-auto flex w-fit max-w-[calc(100vw-32px)] items-center gap-1 rounded-xl border border-line bg-raised p-1.5 shadow-e3 transition-[opacity,translate] duration-standard ease-enter max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]",
 				count === 0 && "pointer-events-none translate-y-2 opacity-0",
 			)}
 		>

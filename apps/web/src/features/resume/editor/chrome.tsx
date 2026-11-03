@@ -11,12 +11,13 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
 import { cn } from "@reactive-resume/utils/style";
 import { clampZoom, FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
 import { anchoredScroll, wheelZoom, type ZoomAnchor } from "./zoom-wheel";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useLetterEditorStore } from "@/features/letters/store";
-import { useResumeStore } from "@/features/resume/builder/draft";
+import { usePreviewPausedStore, useResumeStore } from "@/features/resume/builder/draft";
 
 // The editor chrome resumes and letters share: the back link and drawer controls in the bar, the canvas width
 // and the zoom bar.
@@ -346,6 +347,8 @@ type ZoomBarProps = {
  */
 export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 	const { t } = useLingui();
+	const { ref } = useFloatingToolbarSpace();
+	const paused = usePreviewPausedStore((state) => state.paused);
 	const zoom = useEditorStore((state) => state.zoom);
 	const setZoom = useEditorStore((state) => state.setZoom);
 	const current = zoom === "fit" ? fitScale : zoom;
@@ -366,7 +369,10 @@ export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 		"touch-target relative flex size-8 items-center justify-center rounded-lg text-ink-2 transition-colors duration-quick hover:bg-hover disabled:text-ink-3 disabled:hover:bg-transparent";
 
 	return (
-		<div className="absolute bottom-[18px] left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-line bg-raised p-1 shadow-e2 pointer-coarse:gap-1.5">
+		<div
+			ref={paused ? undefined : ref}
+			className="absolute bottom-[18px] left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-line bg-raised p-1 shadow-e2 pointer-coarse:gap-1.5"
+		>
 			<button
 				type="button"
 				aria-label={t`Zoom out`}
