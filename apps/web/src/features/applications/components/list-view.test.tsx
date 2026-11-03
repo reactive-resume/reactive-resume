@@ -66,7 +66,7 @@ const application = (over: Partial<Application> = {}): Application =>
 		...over,
 	}) as Application;
 
-function renderList(applications: Application[], breakpoint = "desktop", onOpen = vi.fn()) {
+function renderList(applications: Application[], breakpoint = "desktop", onOpen = vi.fn(), onTagSelect = vi.fn()) {
 	mocks.breakpoint = breakpoint;
 	i18n.load("en", {});
 	i18n.activate("en");
@@ -75,7 +75,7 @@ function renderList(applications: Application[], breakpoint = "desktop", onOpen 
 	const tree = (rows: Application[]) => (
 		<QueryClientProvider client={client}>
 			<I18nProvider i18n={i18n}>
-				<ApplicationList applications={rows} showClosed selectedId={null} onOpen={onOpen} />
+				<ApplicationList applications={rows} showClosed selectedId={null} onOpen={onOpen} onTagSelect={onTagSelect} />
 			</I18nProvider>
 		</QueryClientProvider>
 	);
@@ -206,6 +206,50 @@ it("selects a row without opening it", () => {
 
 	expect(onOpen).not.toHaveBeenCalled();
 	expect(checkbox.getAttribute("aria-checked")).toBe("true");
+});
+
+it("filters by a tag chip without opening the row", () => {
+	const onOpen = vi.fn();
+	const onTagSelect = vi.fn();
+	renderList([application({ tags: ["remote", "design"] })], "desktop", onOpen, onTagSelect);
+
+	fireEvent.click(screen.getByRole("button", { name: "Filter by remote" }));
+
+	expect(onTagSelect).toHaveBeenCalledExactlyOnceWith("remote");
+	expect(onOpen).not.toHaveBeenCalled();
+});
+
+it("selects the visible rows from the header and shows an indeterminate state for a partial selection", () => {
+	renderList(twoApplications());
+	const all = screen.getByRole("checkbox", { name: "Select all visible applications" });
+	const product = screen.getByRole("checkbox", { name: "Select Product Designer at Initech" });
+
+	fireEvent.click(product);
+	expect(all).toHaveAttribute("aria-checked", "mixed");
+
+	fireEvent.click(all);
+	expect(all).toHaveAttribute("aria-checked", "true");
+	expect(product).toHaveAttribute("aria-checked", "true");
+	expect(screen.getByText("2 selected")).toBeTruthy();
+
+	fireEvent.click(all);
+	expect(all).toHaveAttribute("aria-checked", "false");
+	expect(product).toHaveAttribute("aria-checked", "false");
+	expect(screen.queryByText("2 selected")).toBeNull();
+});
+
+it("leaves collapsed groups out of the header selection", () => {
+	renderList([
+		application({ id: "app-1", role: "Alpha" }),
+		application({ id: "app-2", role: "Beta", status: "interview" }),
+	]);
+
+	fireEvent.click(screen.getByRole("button", { name: "Interview 1" }));
+	fireEvent.click(screen.getByRole("checkbox", { name: "Select all visible applications" }));
+	fireEvent.click(screen.getByRole("button", { name: "Interview 1" }));
+
+	expect(screen.getByRole("checkbox", { name: "Select Alpha at Globex" })).toHaveAttribute("aria-checked", "true");
+	expect(screen.getByRole("checkbox", { name: "Select Beta at Globex" })).toHaveAttribute("aria-checked", "false");
 });
 
 it.each(["desktop", "mobile"] as const)(

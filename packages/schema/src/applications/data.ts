@@ -51,14 +51,16 @@ export const applicationClosedReasonSchema = z.enum([
 
 export type ApplicationClosedReason = z.infer<typeof applicationClosedReasonSchema>;
 
-// Ordered stage metadata shared by the API (validation) and the web board (columns/colors).
+// Ordered stage metadata shared by the API (validation) and the web board (columns/colors). Colours are the design
+// system's stage tokens, not a palette of their own, so every surface (board, list, Insights and its exported PNG)
+// reads the same stage colour and follows the theme.
 export const STAGES = [
-	{ value: "saved", label: "Saved", color: "oklch(0.64 0.02 95)" },
-	{ value: "applied", label: "Applied", color: "oklch(0.64 0.11 250)" },
-	{ value: "screening", label: "Screening", color: "oklch(0.64 0.11 200)" },
-	{ value: "interview", label: "Interview", color: "oklch(0.64 0.11 80)" },
-	{ value: "offer", label: "Offer", color: "oklch(0.64 0.11 150)" },
-	{ value: "closed", label: "Closed", color: "oklch(0.64 0.11 27)" },
+	{ value: "saved", label: "Saved", color: "var(--stage-saved)" },
+	{ value: "applied", label: "Applied", color: "var(--stage-applied)" },
+	{ value: "screening", label: "Screening", color: "var(--stage-screening)" },
+	{ value: "interview", label: "Interview", color: "var(--stage-interview)" },
+	{ value: "offer", label: "Offer", color: "var(--stage-offer)" },
+	{ value: "closed", label: "Closed", color: "var(--stage-closed)" },
 ] as const satisfies ReadonlyArray<{ value: ApplicationStatus; label: string; color: string }>;
 
 export const contactSchema = z.object({

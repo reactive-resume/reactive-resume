@@ -29,7 +29,7 @@ export function Thumbnail({ document, visible, compact = false }: ThumbnailProps
 	const letter = useQuery({
 		queryKey: ["letter-thumbnail", server, document.id, document.updatedAt.getTime()],
 		queryFn: ({ signal }) => orpc.coverLetters.getById.call({ id: document.id }, { signal }),
-		select: ({ content }) => letterText(content ?? ""),
+		select: ({ content, greeting }) => [greeting?.trim(), letterText(content ?? "")].filter(Boolean).join("\n\n"),
 		enabled: signedIn && document.type === "letter",
 		staleTime: Number.POSITIVE_INFINITY,
 	});

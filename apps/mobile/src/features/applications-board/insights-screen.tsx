@@ -1,4 +1,5 @@
 import type { PipelineStep } from "./insights";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { ReactNode } from "react";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
@@ -14,10 +15,12 @@ import { useApplicationSearch } from "./search";
 import { ApplicationsViewFrame } from "./views";
 import { useDocuments, useNow, useUserTime } from "@/features/application-detail/hooks";
 import { applicationError } from "@/features/applications/error";
+import { useApplicationLanes } from "@/features/applications/lane-queries";
+import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import { filterApplications } from "@/features/applications/list";
 import { useApplications } from "@/features/applications/queries";
 import { useOfferHints } from "@/features/applications/stage-actions";
-import { getStageColor, getStageLabel } from "@/features/applications/stages";
+import { getStageColor } from "@/features/applications/stages";
 import { useIsTablet } from "@/shell/use-is-tablet";
 import { Banner, Button, Card, EmptyState, Skeleton, Text, showToast, useTheme } from "@/ui";
 import { usePullRefresh } from "@/ui/use-pull-refresh";
@@ -44,8 +47,10 @@ function ApplicationInsights() {
 	const { search, needsYou, clearFilters } = useApplicationSearch();
 	const offers = useOfferHints();
 	const documents = useDocuments();
+	const lanes = useApplicationLanes();
 	const { timeZone } = useUserTime();
 	const now = useNow();
+	const laneLabel = (status: ApplicationStatus) => getLaneLabel(resolveLane(lanes.lanes, { status }));
 
 	if (query.isError) {
 		return (
@@ -136,7 +141,7 @@ function ApplicationInsights() {
 					{outcomes.funnel.map((row) => (
 						<HorizontalBar
 							key={row.status}
-							label={getStageLabel(row.status)}
+							label={laneLabel(row.status)}
 							value={row.reached}
 							fraction={row.reached / widest}
 							colorOf={(colors) => getStageColor(row.status, colors)}
@@ -203,7 +208,7 @@ function ApplicationInsights() {
 					</Section>
 				</View>
 
-				<PipelineFlow active={pipeline.active} closed={pipeline.closed} steps={pipeline.steps} />
+				<PipelineFlow active={pipeline.active} closed={pipeline.closed} steps={pipeline.steps} labelOf={laneLabel} />
 			</ScrollView>
 		</>
 	);
@@ -330,7 +335,13 @@ function WeekBars({ counts, labels, max }: WeekBarsProps) {
 	);
 }
 
-type PipelineFlowProps = { active: number; closed: number; steps: PipelineStep[] };
+type PipelineFlowProps = {
+	active: number;
+	closed: number;
+	steps: PipelineStep[];
+	/** The owner's name for each stage's default lane. */
+	labelOf: (status: ApplicationStatus) => string;
+};
 
 // The flow chart's drawing units (web PipelineFlow): bars on a mid line, bands joining them.
 const FLOW = { width: 800, height: 340, padX: 40, midY: 190, maxBar: 150, bar: 34 } as const;
@@ -339,7 +350,7 @@ const FLOW = { width: 800, height: 340, padX: 40, midY: 190, maxBar: 150, bar: 3
  * Where active applications went, as a shareable picture (web "Pipeline flow"), with the stage totals as text for
  * screen readers. Share PNG renders the SVG to an image and opens the system share sheet.
  */
-function PipelineFlow({ active, closed, steps }: PipelineFlowProps) {
+function PipelineFlow({ active, closed, steps, labelOf }: PipelineFlowProps) {
 	const { t } = useLingui();
 	const { colors, fonts, space } = useTheme();
 	const svg = useRef<Svg>(null);
@@ -361,7 +372,7 @@ function PipelineFlow({ active, closed, steps }: PipelineFlowProps) {
 	const transitions = steps.slice(1).map((step, i) => {
 		const from = steps[i];
 		return from
-			? t`${getStageLabel(from.status)} → ${getStageLabel(step.status)}: ${step.reached}${step.conversion === null ? "" : ` (${step.conversion}%)`}`
+			? t`${labelOf(from.status)} → ${labelOf(step.status)}: ${step.reached}${step.conversion === null ? "" : ` (${step.conversion}%)`}`
 			: "";
 	});
 
@@ -464,7 +475,7 @@ function PipelineFlow({ active, closed, steps }: PipelineFlowProps) {
 								fontFamily={fonts.ui[500]}
 								fill={colors.ink2}
 							>
-								{getStageLabel(bar.status)}
+								{labelOf(bar.status)}
 							</SvgText>
 							{i > 0 && bar.conversion !== null ? (
 								<SvgText

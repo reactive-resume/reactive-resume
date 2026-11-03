@@ -2,8 +2,10 @@ import type { DocumentSummary } from "./filter";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useInView } from "motion/react";
+import { useRef, useState } from "react";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { ContextMenu, ContextMenuTrigger } from "@reactive-resume/ui/components/context-menu";
 import { DropdownMenu, DropdownMenuTrigger } from "@reactive-resume/ui/components/dropdown-menu";
@@ -13,10 +15,12 @@ import { cn } from "@reactive-resume/utils/style";
 import { DocumentMenuContent, useDocumentActions } from "./document-actions";
 import { daysLeftInTrash, documentKey } from "./filter";
 import { InlineNameInput } from "./inline-name-input";
+import { letterBodyLines, letterGreeting } from "./letter-preview";
 import { useNewDocumentsStore } from "./new-documents";
 import { ResumeThumbnail } from "./resume-thumbnail";
 import { formatRelativeTime } from "@/libs/locale";
 import { ENTER_CLASS, stagger } from "@/libs/motion";
+import { orpc } from "@/libs/orpc/client";
 
 export type DocumentItemProps = {
 	document: DocumentSummary;
@@ -91,22 +95,50 @@ function RenameInput({ document, onDone }: { document: DocumentSummary; onDone: 
 	return <InlineNameInput name={document.name} onSave={(value) => actions.rename(document, value)} onDone={onDone} />;
 }
 
-/** A letter's page, drawn from lines (letters have no thumbnail render), addressed to its recipient once there is one. */
-function LetterThumbnail({ name, recipient }: { name: string; recipient: string | null }) {
+/**
+ * A letter's page: its recipient and opening lines, so several letters can be told apart. The text is the owner's own
+ * letter, read only once the card nears the viewport and cached until the letter's content changes (`editedAt`).
+ */
+function LetterThumbnail({ document }: { document: DocumentSummary }) {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const isInView = useInView(containerRef, { amount: 0.1, margin: "240px" });
+	const options = orpc.coverLetters.getById.queryOptions({ input: { id: document.id } });
+	const letter = useQuery({
+		...options,
+		// A content edit moves `editedAt`, so the preview fetches the new letter instead of showing a stale one.
+		queryKey: [...options.queryKey, new Date(document.editedAt).getTime()],
+		enabled: document.type === "letter" && isInView,
+		staleTime: "static",
+	});
+	const recipient = document.recipient;
+	const greeting = letter.data ? letterGreeting(letter.data.greeting) : null;
+	const lines = letter.data ? letterBodyLines(letter.data.content) : [];
+	const empty = letter.isSuccess && !greeting && lines.length === 0;
+
 	return (
-		<div aria-hidden="true" className="flex size-full flex-col gap-1.5 bg-white p-[14%] text-[0]">
+		<div ref={containerRef} aria-hidden="true" className="flex size-full flex-col gap-1 bg-white p-[14%] text-[0]">
 			<span className="h-1.5 w-2/5 rounded-sm bg-[#c9c9c9]" />
 			{recipient ? (
-				<span className="mb-2 truncate text-[11px] leading-4 font-semibold text-[#3a3a3a]">{recipient}</span>
+				<span className="truncate text-[10px] leading-4 font-semibold text-[#3a3a3a]">{recipient}</span>
+			) : null}
+			{greeting ? <span className="truncate text-[9px] leading-3 text-[#3a3a3a]">{greeting}</span> : null}
+			{lines.length > 0 ? (
+				lines.map((line, index) => (
+					<span key={`${index}-${line}`} className="line-clamp-2 text-[9px] leading-3 text-[#6d6d6d]">
+						{line}
+					</span>
+				))
+			) : empty ? (
+				<span className="truncate text-[9px] leading-3 text-[#9a9a9a]">
+					<Trans>Empty letter</Trans>
+				</span>
 			) : (
-				<span className="mb-3 h-1 w-3/5 rounded-sm bg-[#e2e2e2]" />
+				// Loading, or content that couldn't be read: keep the page's shape rather than an empty frame.
+				Array.from({ length: 7 }, (_, index) => (
+					<span key={index} className={cn("h-1 rounded-sm bg-[#e6e6e6]", index % 3 === 2 ? "w-4/5" : "w-full")} />
+				))
 			)}
-			<span className="h-1 w-1/3 rounded-sm bg-[#d4d4d4]" />
-			{Array.from({ length: 7 }, (_, index) => (
-				<span key={index} className={cn("h-1 rounded-sm bg-[#e6e6e6]", index % 3 === 2 ? "w-4/5" : "w-full")} />
-			))}
-			<span className="mt-2 h-1 w-1/4 rounded-sm bg-[#d4d4d4]" />
-			<span className="sr-only">{name}</span>
+			<span className="sr-only">{document.name}</span>
 		</div>
 	);
 }
@@ -188,7 +220,7 @@ export function DocumentCard({
 						{document.type === "resume" ? (
 							<ResumeThumbnail resume={document} />
 						) : (
-							<LetterThumbnail name={document.name} recipient={document.recipient} />
+							<LetterThumbnail document={document} />
 						)}
 						{/* Bottom of the paper: its top is where every template prints the person's name. */}
 						<span className="absolute start-2 bottom-2 flex gap-1">

@@ -13,7 +13,15 @@ const FORWARD: ApplicationStatus[] = ["saved", "applied", "screening", "intervie
 export type Insights = {
 	total: number;
 	tiles: { label: string; value: string; sub: string }[];
-	funnel: { label: string; color: string; count: number; reached: number; pct: number; conv: string }[];
+	funnel: {
+		status: ApplicationStatus;
+		label: string;
+		color: string;
+		count: number;
+		reached: number;
+		pct: number;
+		conv: string;
+	}[];
 	closed: number;
 };
 
@@ -35,6 +43,7 @@ export function computeInsights(byStage: StageCount[]): Insights {
 		const reachedCount = reached[i] ?? 0;
 		const prev = i === 0 ? reachedCount : (reached[i - 1] ?? reachedCount);
 		return {
+			status,
 			label: stage?.label ?? status,
 			color: stage?.color ?? "var(--stage-saved)",
 			count: at(status),
