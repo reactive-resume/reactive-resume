@@ -8,7 +8,7 @@ import type {
 } from "@reactive-resume/schema/applications/data";
 import { useLingui } from "@lingui/react/macro";
 import { openBrowserAsync } from "expo-web-browser";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Linking, View } from "react-native";
 import { contactSchema } from "@reactive-resume/schema/applications/data";
 import { followUpInstant, isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
@@ -22,9 +22,10 @@ import { LaneNotice } from "@/features/applications/lane-notice";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, laneInput, resolveLane } from "@/features/applications/lanes";
 import { PriorNoResponse } from "@/features/applications/prior-no-response";
-import { useApplication, useApplicationMutations } from "@/features/applications/queries";
+import { applicationDetailQueryKey, useApplication, useApplicationMutations } from "@/features/applications/queries";
 import { useAcceptedPrompt } from "@/features/applications/stage-actions";
 import { CLOSED_REASONS, getClosedReasonLabel } from "@/features/applications/stages";
+import { client, prepareRpc, useUndoRows } from "@/features/career/hooks";
 import { DEFAULT_LEAD, REMINDER_LEADS, useReminders, zonedParts } from "@/features/reminders";
 import {
 	Banner,
@@ -489,18 +490,14 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 	const [error, setError] = useState("");
 	// The contact being corrected: its position, and what it said when the form opened (web contacts.tsx).
 	const [editing, setEditing] = useState<{ index: number; original: Contact } | null>(null);
-	// Undo reinserts into the list as it is then, not the list from before the removal.
-	const latest = useRef(application.contacts);
-	useEffect(() => {
-		latest.current = application.contacts;
-	}, [application.contacts]);
+	const undo = useUndoRows();
+	const contactId = (contact: Contact, index: number) => JSON.stringify([index, contactKey(contact)]);
+	const contacts = application.contacts.filter((contact, index) => !undo.hidden.includes(contactId(contact, index)));
 	const save = (contacts: Contact[], onSuccess = () => {}) =>
 		update.mutate(
 			{ id: application.id, contacts },
 			{
 				onSuccess: () => {
-					// The saved list is current at once, before the detail refetch lands, so Undo builds on it.
-					latest.current = contacts;
 					onSuccess();
 				},
 				onError: () => showToast({ message: t`Couldn't save the contacts. Try again.` }),
@@ -538,64 +535,63 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 			phone: contact.phone,
 		});
 	};
-	// Removing saves at once. Undo puts the contact back where it was in the list as it is then, so a contact added or
-	// edited after the removal survives.
 	const remove = (index: number) => {
 		const contact = application.contacts[index];
 		if (!contact) return;
-		// Identical contacts are allowed, so Undo compares how many match, not whether one does.
-		const matches = (list: Contact[]) => list.filter((item) => sameContact(item, contact)).length;
-		const before = matches(application.contacts);
 		if (editing) {
 			setEditing(null);
 			setDraft(EMPTY_CONTACT);
 			setError("");
 		}
-		save(
-			application.contacts.filter((_, i) => i !== index),
-			() =>
-				showToast({
-					message: t`Removed ${contact.name}`,
-					undo: () => {
-						const current = latest.current;
-						if (matches(current) >= before) return;
-						save([...current.slice(0, index), contact, ...current.slice(index)]);
-					},
-				}),
+		undo.remove(
+			contactId(contact, index),
+			t`Removed ${contact.name}`,
+			() => {
+				if (!application.contactsVersion) throw new Error(t`Couldn't save the contacts. Try again.`);
+				return prepareRpc(client.applications.deleteContact, {
+					id: application.id,
+					index,
+					expectedVersion: application.contactsVersion,
+				});
+			},
+			applicationDetailQueryKey(application.id),
 		);
 	};
 
 	return (
 		<Sheet open={open} onClose={onClose} detents={[0.9]} title={t`Contacts`}>
-			{application.contacts.length === 0 ? (
+			{contacts.length === 0 ? (
 				<Text color="ink3" style={{ paddingHorizontal: space.s4 }}>
 					{t`No contacts yet.`}
 				</Text>
 			) : null}
-			{application.contacts.map((contact, index) => (
-				<ListRow
-					key={`${contact.name}-${index}`}
-					title={contact.type ? `${contact.name} · ${contact.type}` : contact.name}
-					subtitle={[contact.role, contact.email, contact.phone].filter(Boolean).join(" · ") || undefined}
-					{...(contact.email ? { onPress: () => void Linking.openURL(`mailto:${contact.email}`) } : {})}
-					trailing={
-						<View style={{ flexDirection: "row" }}>
-							<IconButton
-								icon="pencil-simple"
-								label={t`Edit ${contact.name}`}
-								disabled={update.isPending}
-								onPress={() => edit(index)}
-							/>
-							<IconButton
-								icon="x"
-								label={t`Remove ${contact.name}`}
-								disabled={update.isPending}
-								onPress={() => remove(index)}
-							/>
-						</View>
-					}
-				/>
-			))}
+			{application.contacts.map(
+				(contact, index) =>
+					!undo.hidden.includes(contactId(contact, index)) && (
+						<ListRow
+							key={`${contact.name}-${index}`}
+							title={contact.type ? `${contact.name} · ${contact.type}` : contact.name}
+							subtitle={[contact.role, contact.email, contact.phone].filter(Boolean).join(" · ") || undefined}
+							{...(contact.email ? { onPress: () => void Linking.openURL(`mailto:${contact.email}`) } : {})}
+							trailing={
+								<View style={{ flexDirection: "row" }}>
+									<IconButton
+										icon="pencil-simple"
+										label={t`Edit ${contact.name}`}
+										disabled={update.isPending || undo.hidden.length > 0}
+										onPress={() => edit(index)}
+									/>
+									<IconButton
+										icon="x"
+										label={t`Remove ${contact.name}`}
+										disabled={update.isPending || undo.hidden.length > 0}
+										onPress={() => remove(index)}
+									/>
+								</View>
+							}
+						/>
+					),
+			)}
 			<View style={{ gap: space.s3, paddingHorizontal: space.s4, paddingTop: space.s3 }}>
 				<Text variant="label">{editing === null ? t`Add contact` : t`Edit contact`}</Text>
 				<TextField label={t`Name`} value={draft.name} onChangeText={set("name")} />
@@ -626,7 +622,7 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 					size="lg"
 					label={editing === null ? t`Add contact` : t`Save contact`}
 					loading={update.isPending}
-					disabled={!draft.name.trim()}
+					disabled={!draft.name.trim() || undo.hidden.length > 0}
 					onPress={add}
 				/>
 				{editing !== null ? (

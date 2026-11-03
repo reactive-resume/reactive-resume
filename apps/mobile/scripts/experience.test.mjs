@@ -966,7 +966,39 @@ const nativeRound = {
 	participants: [{ name: "Maya Example", role: "Lead" }],
 };
 const nativeJob = { ...application, role: "Engineer", activity: [nativeRound] };
+let pendingInterviewReady;
+let nativeFormCleanup;
+const nativeFormReact = {
+	...react,
+	useLayoutEffect: (run, deps) => {
+		const state = react.useRef({ deps: null });
+		if (!state.current.deps || deps.some((value, index) => value !== state.current.deps[index])) {
+			nativeFormCleanup?.();
+			state.current.deps = deps;
+			nativeFormCleanup = run();
+		}
+	},
+};
+const nativeInterviewListeners = new Set();
+const { prepareRequest: prepareInterviewRequest } = load("../../../packages/utils/src/deferred-request.ts");
+const nativeInterviewUndo = load("features/career/undo.ts", {
+	"@/auth/session": { getAccountScope: () => interviewScope },
+	"react-native": {
+		AppState: {
+			currentState: "active",
+			addEventListener: (_name, run) => {
+				nativeInterviewListeners.add(run);
+				return { remove: () => nativeInterviewListeners.delete(run) };
+			},
+		},
+	},
+	"@/ui": { ...ui, dismissToast() {}, toastLifetime: (value) => value },
+});
 const nativeQueryClient = {
+	cancelQueries: async () => {},
+	invalidateQueries: async () => {
+		calls.push("canonical-read");
+	},
 	setQueryData: (_key, update) => calls.push({ cachedActivity: update(nativeJob).activity }),
 };
 const nativeReminders = {
@@ -981,6 +1013,7 @@ const nativeReminders = {
 	},
 };
 const { InterviewSheet: NativeInterviewSheet } = load("features/application-detail/interview-sheet.tsx", {
+	react: nativeFormReact,
 	"react-native": { View: "View", Linking: { openSettings: () => calls.push("settings") } },
 	"@tanstack/react-query": { useQueryClient: () => nativeQueryClient },
 	"@reactive-resume/schema/applications/data": mobileRequire("@reactive-resume/schema/applications/data"),
@@ -1007,7 +1040,21 @@ const { InterviewSheet: NativeInterviewSheet } = load("features/application-deta
 			},
 		}),
 	},
+	"@/features/career/undo": nativeInterviewUndo,
 	"@/api/client": {
+		prepareRpc: (procedure, input) => {
+			const scope = interviewScope;
+			return prepareInterviewRequest(async (defer) => {
+				await pendingInterviewReady;
+				let saved;
+				await defer(async () => {
+					assert.equal(interviewScope, scope);
+					saved = await procedure(input);
+					return new Response();
+				});
+				return saved;
+			});
+		},
 		client: {
 			applications: {
 				deleteTimelineEntry: async (input) => {
@@ -1077,7 +1124,16 @@ switchDuringSave = saveInterviewError = false;
 const originalTimeout = globalThis.setTimeout;
 const originalClearTimeout = globalThis.clearTimeout;
 try {
-	for (const scenario of ["undo", "deleted", "reminder-failed", "delete-failed", "switch-before", "switch-during"]) {
+	for (const scenario of [
+		"undo",
+		"deleted",
+		"unmount-before-ready",
+		"background",
+		"reminder-failed",
+		"delete-failed",
+		"switch-before",
+		"switch-during",
+	]) {
 		reset();
 		interviewScope = "fixture";
 		deleteInterviewError = scenario === "delete-failed";
@@ -1092,15 +1148,35 @@ try {
 		globalThis.clearTimeout = () => {
 			commit = null;
 		};
+		let releaseReady;
+		pendingInterviewReady =
+			scenario === "unmount-before-ready"
+				? new Promise((resolve) => {
+						releaseReady = resolve;
+					})
+				: undefined;
 		control(renderNativeInterview(), "Delete interview").onPress();
+		if (scenario === "unmount-before-ready") {
+			nativeFormCleanup?.();
+			releaseReady();
+		}
+		await settle();
+		if (scenario === "unmount-before-ready")
+			assert.equal(calls.includes("closed"), false, "late deletion does not close the next editor");
 		assert.equal(calls.find((call) => call?.message)?.action.label, "Undo");
 		assert.equal(calls.filter((call) => call?.event).length, 0);
 		if (scenario === "undo") calls.find((call) => call?.message).action.onPress();
 		if (scenario === "switch-before") interviewScope = "another-account";
+		if (scenario === "background") for (const run of nativeInterviewListeners) run("background");
 		commit?.();
 		await settle();
 		const cancellation = calls.find((call) => call?.action?.label === "Download cancellation");
-		if (scenario === "deleted" || scenario === "reminder-failed") {
+		if (
+			scenario === "deleted" ||
+			scenario === "unmount-before-ready" ||
+			scenario === "background" ||
+			scenario === "reminder-failed"
+		) {
 			assert.ok(cancellation, "only a committed server delete offers cancellation");
 			if (reminderOffError) assert.ok(cancellation.message.includes("Couldn't cancel its device reminder"));
 			cancellation.action.onPress();
