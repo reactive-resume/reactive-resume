@@ -14,6 +14,7 @@ import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
 	AGENT_ATTACHMENT_TYPES,
 	agentKnowledgeUsed,
+	agentReadPostings,
 	agentWebSources,
 	citesKnowledge,
 	readPageOutputSchema,
@@ -41,6 +42,7 @@ import { attachmentPart, fileToBase64, transcriptOf } from "./chat";
 import { ChatComposer } from "./chat-chrome";
 import { AssistantMarkdown } from "./markdown";
 import { QuestionCard } from "./question-card";
+import { SavePosting } from "./save-posting";
 import { ToolApprovals } from "./tool-approvals";
 import { useAssistantChat } from "./use-assistant-chat";
 import { UsedChip } from "./used-chip";
@@ -91,9 +93,18 @@ type ConversationProps = {
 
 /** One conversation: the thread (role="log"), change sets and questions in it, and the composer. */
 export function Conversation(props: ConversationProps) {
-	const { threadId, document, readOnly } = props;
+	const { threadId, readOnly } = props;
+	const [savedPosting, setSavedPosting] = useState<AssistantDocument["posting"]>(null);
+	const document = useMemo(
+		() =>
+			savedPosting
+				? { ...props.document, posting: savedPosting, madeFor: savedPosting.id, jobCopy: true }
+				: props.document,
+		[props.document, savedPosting],
+	);
 	const queryClient = useQueryClient();
 	const [context, setContext] = useState<MessageContext>(props.initialContext);
+	if (savedPosting && props.document.posting?.id === savedPosting.id) setSavedPosting(null);
 	const [rejections, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
 	const writes = useRef(0);
 	const owners = useRef(new Map<string, { write: number; previous: EditStatus | undefined }>());
@@ -409,6 +420,7 @@ export function Conversation(props: ConversationProps) {
 											answerable={index === messages.length - 1}
 											enter={!initialIds.has(message.id)}
 											readOnly={readOnly || continuationBlocked || !receiptsReady}
+											canSavePosting={!readOnly}
 											localEditsLocked={(props.localEditsLocked ?? document.locked) || !receiptsReady}
 											statuses={statuses}
 											document={document}
@@ -416,6 +428,10 @@ export function Conversation(props: ConversationProps) {
 											onAnswer={answer}
 											onRecord={record}
 											onSaveWording={saveWording}
+											onPostingSaved={(posting) => {
+												setSavedPosting(posting);
+												setContext((previous) => ({ ...previous, posting: true, applicationId: posting.id }));
+											}}
 										/>
 										<ToolApprovals
 											message={message}
@@ -499,6 +515,8 @@ function toProposals(part: ToolPart, receipts: ReadonlyMap<string, Receipt>, doc
 }
 
 type MessageViewProps = {
+	canSavePosting?: boolean;
+	onPostingSaved?: (posting: { id: string; company: string; role: string }) => void;
 	message: UIMessage;
 	streaming: boolean;
 	/** A continuation or resume is in flight: questions in this message cannot accept a second answer. */
@@ -531,6 +549,8 @@ const MessageView = memo(function MessageView({
 	onAnswer,
 	onRecord,
 	onSaveWording,
+	onPostingSaved,
+	canSavePosting,
 }: MessageViewProps) {
 	if (message.role === "user") {
 		const text = message.parts.flatMap((part) => (part.type === "text" ? [part.text] : [])).join("\n");
@@ -549,6 +569,7 @@ const MessageView = memo(function MessageView({
 	}
 
 	const sources = agentWebSources(message);
+	const postings = agentReadPostings(message);
 	const knowledge = agentKnowledgeUsed(message);
 	const lastTextIndex = message.parts.findLastIndex((part) => part.type === "text");
 	// What this reply read, as the coach shows it: the document, and any facts and stories its Knowledge search found.
@@ -628,17 +649,30 @@ const MessageView = memo(function MessageView({
 					<span className="font-medium text-ink-3">
 						<Trans>Sources</Trans>
 					</span>
-					{sources.map((source) => (
-						<a
-							key={source.url}
-							href={source.url}
-							target="_blank"
-							rel="noreferrer"
-							className="truncate text-accent-text underline underline-offset-2"
-						>
-							{source.title?.trim() || source.url}
-						</a>
-					))}
+					{sources.map((source) => {
+						const posting = postings.find((item) => item.sourceUrl === source.url);
+						return (
+							<div key={source.url} className="grid gap-1">
+								<a
+									href={source.url}
+									target="_blank"
+									rel="noreferrer"
+									className="truncate text-accent-text underline underline-offset-2"
+								>
+									{source.title?.trim() || source.url}
+								</a>
+								{posting && document.kind === "resume" && onPostingSaved && (
+									<SavePosting
+										key={posting.postingSource.retrievedAt}
+										posting={posting}
+										resumeId={document.id}
+										disabled={!canSavePosting || busy || streaming || localEditsLocked}
+										onSaved={onPostingSaved}
+									/>
+								)}
+							</div>
+						);
+					})}
 				</div>
 			)}
 		</div>

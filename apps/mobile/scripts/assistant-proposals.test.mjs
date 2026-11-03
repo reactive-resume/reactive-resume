@@ -733,9 +733,10 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 				}),
 			},
 			"@tanstack/react-query": { useQueryClient: () => ({}) },
-			"./chat": { webSources: () => [] },
+			"./chat": { webSources: agentContracts.agentWebSources },
 			"./markdown": { AssistantMarkdown: "Markdown" },
 			"./page-fit": { ProposalPageFit: () => null },
+			"./save-posting": { SavePosting: "SavePosting" },
 			"./proposals": proposals,
 			"@/api/client": {},
 			"@orpc/client": mobileRequire("@orpc/client"),
@@ -820,4 +821,69 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 	await resumeStore.getState().flush();
 	assert.equal(render().find((b) => b.label === "Accept").disabled, false);
 	assert.equal(documents.useResumeAssistantDocument("resume").stateOf(currentProposal), "pending");
+
+	// A retained read gets the same confirmation component only in an owned resume conversation.
+	const onPostingSaved = () => {};
+	const read = {
+		id: "posting",
+		role: "assistant",
+		parts: [
+			{
+				type: "tool-read_page",
+				state: "output-available",
+				toolCallId: "read",
+				input: { url: "https://jobs.example/role" },
+				output: {
+					requestedUrl: "https://jobs.example/role",
+					content: "Fictional posting",
+					format: "text",
+					retrievedAt: "2026-11-03T00:00:00Z",
+					method: "builtin",
+					truncated: false,
+					completeness: "unknown",
+				},
+			},
+		],
+	};
+	const collect = (node) =>
+		Array.isArray(node)
+			? node.flatMap(collect)
+			: node && typeof node === "object"
+				? [node, ...collect(node.props?.children)]
+				: [];
+	for (const disabled of [false, true]) {
+		const tree = MessageView({
+			message: read,
+			streaming: false,
+			readOnly: disabled,
+			answerable: true,
+			onAnswer: null,
+			proposals: { resumeId: "resume", locked: false },
+			onPostingSaved,
+		});
+		const [save] = collect(tree).filter((node) => node.type === "SavePosting");
+		assert.equal(save.props.resumeId, "resume");
+		assert.equal(save.props.disabled, disabled);
+		assert.equal(save.props.onSaved, onPostingSaved);
+		assert.equal(save.props.posting.jobDescription, "Fictional posting");
+	}
+	for (const message of [
+		{ ...read, parts: [{ ...read.parts[0], state: "output-error" }] },
+		{ ...read, parts: [{ type: "source-url", url: "https://jobs.example/role" }] },
+	]) {
+		assert.equal(
+			collect(
+				MessageView({
+					message,
+					streaming: false,
+					readOnly: false,
+					answerable: true,
+					onAnswer: null,
+					proposals: { resumeId: "resume", locked: false },
+					onPostingSaved,
+				}),
+			).filter((node) => node.type === "SavePosting").length,
+			0,
+		);
+	}
 });

@@ -5,6 +5,7 @@ import type { UIDataTypes, UIMessage } from "ai";
 import z from "zod";
 import { UNSUPPORTED_CLAIM_KINDS } from "@reactive-resume/resume/proposals";
 import { resumeChangeSchema } from "@reactive-resume/resume/structural-proposals";
+import { postingSourceSchema } from "@reactive-resume/schema/applications/data";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
 
 export const askUserQuestionInputSchema = z.object({
@@ -177,6 +178,46 @@ export function agentWebSources(message: UIMessage): AgentWebSource[] {
 		}
 	}
 	return [...sources.values()];
+}
+
+export type AgentReadPosting = {
+	sourceUrl: string;
+	jobDescription: string;
+	postingSource: z.infer<typeof postingSourceSchema>;
+};
+
+/** Only successful page reads can become a posting; prose, search snippets and native citations cannot. */
+export function agentReadPostings(message: UIMessage): AgentReadPosting[] {
+	if (message.role !== "assistant") return [];
+	const postings = new Map<string, AgentReadPosting>();
+	for (const part of message.parts) {
+		const tool = part as { state?: string; output?: unknown };
+		if (part.type !== "tool-read_page" || tool.state !== "output-available") continue;
+		const parsed = readPageOutputSchema.safeParse(tool.output);
+		if (!parsed.success || !parsed.data.content.trim()) continue;
+		const { content, fallbackReason, ...source } = parsed.data;
+		const requestedUrl = publicSourceUrl(source.requestedUrl);
+		const resolvedUrl = source.resolvedUrl === undefined ? undefined : publicSourceUrl(source.resolvedUrl);
+		if (!requestedUrl || resolvedUrl === null || requestedUrl.length > 2_048 || (resolvedUrl?.length ?? 0) > 2_048)
+			continue;
+		const sourceUrl = resolvedUrl ?? requestedUrl;
+		const truncated = source.truncated || content.length > 20_000;
+		const knownReason = postingSourceSchema.shape.fallbackReason.safeParse(fallbackReason);
+		const postingSource = postingSourceSchema.parse({
+			...source,
+			requestedUrl,
+			...(resolvedUrl ? { resolvedUrl } : {}),
+			...(knownReason.success && knownReason.data ? { fallbackReason: knownReason.data } : {}),
+			truncated,
+			completeness: truncated ? "incomplete" : source.completeness,
+		});
+		postings.set(sourceUrl, {
+			sourceUrl,
+			jobDescription: content.slice(0, 20_000).replace(/[\uD800-\uDBFF]$/, ""),
+			postingSource,
+		});
+	}
+	return [...postings.values()];
 }
 
 /** File types the assistant can read from an attachment: text, Word, PDF, images and audio (the file pickers offer these). */
