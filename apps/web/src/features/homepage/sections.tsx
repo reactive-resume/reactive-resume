@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { isRTL, supportedLocales } from "@reactive-resume/utils/locale";
+import { getLanguageName, isRTL, supportedLocales } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
 import { CtaLink, Doodle, labelClass } from "./ui";
@@ -185,26 +185,6 @@ export function Languages() {
 	);
 }
 
-// Languages more than one locale shares are told apart by region or script; the rest go by the language alone.
-const nameVariants: Record<string, string> = { "zh-CN": "zh-Hans", "zh-TW": "zh-Hant" };
-const sharedLanguages = new Set(["en", "pt", "zh"]);
-// Chromium ships no locale data for these, so it would name them in English; the names are the platform's own (CLDR).
-const unlistedNames: Record<string, string> = { km: "ខ្មែរ", ne: "नेपाली", or: "ଓଡ଼ିଆ", sq: "shqip" };
-
-/**
- * A locale's name in its own language ("Deutsch", "日本語"), from the platform's locale data. `exact` tells locales of
- * one language apart ("British English"); without it, it's the language alone ("English").
- */
-function ownLanguageName(locale: string, exact = true) {
-	const language = locale.split("-")[0] ?? locale;
-	const code = exact && sharedLanguages.has(language) ? (nameVariants[locale] ?? locale) : language;
-	const name =
-		(Intl.DisplayNames.supportedLocalesOf([locale]).length === 0 ? unlistedNames[language] : undefined) ??
-		new Intl.DisplayNames([locale], { type: "language" }).of(code) ??
-		locale;
-	return name.charAt(0).toLocaleUpperCase(locale) + name.slice(1);
-}
-
 /**
  * The homepage in `locale`, back at the Languages scene, keeping the rest of the address. English is named too, so
  * it overrides a saved choice; the server points its canonical address at the plain one.
@@ -220,7 +200,7 @@ type LanguageDoorwayProps = { className?: string; nameClassName?: string };
 /** The current language, in its own name, leading to the Languages scene: the header's and the footer's way there. */
 export function LanguageDoorway({ className, nameClassName }: LanguageDoorwayProps) {
 	const { i18n } = useLingui();
-	const name = ownLanguageName(i18n.locale, false);
+	const name = getLanguageName(i18n.locale, i18n.locale, false);
 	return (
 		<a href="#languages" title={t`Change language`} className={cn("flex items-center", className)}>
 			<Icon name="translate" size={16} />
@@ -242,7 +222,7 @@ function LanguageIndex() {
 		<nav aria-labelledby="languages-title" className="max-w-[46em]">
 			<ul className="font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-balance text-ink-2">
 				{supportedLocales.map((locale, index) => {
-					const name = ownLanguageName(locale);
+					const name = getLanguageName(locale);
 					const dir = isRTL(locale) ? "rtl" : undefined;
 					return (
 						<li key={locale} className="inline">

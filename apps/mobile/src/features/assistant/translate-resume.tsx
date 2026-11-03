@@ -9,7 +9,7 @@ import { client } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
 import { useResumeStore } from "@/draft";
 import { useDocumentOperations } from "@/features/documents/queries";
-import { localeMap } from "@/features/settings/locale-names";
+import { getLocaleOptions, localeMap } from "@/features/settings/locale-names";
 import { flushResume } from "@/features/share/document";
 import { selectableLocales } from "@/i18n";
 import { routes } from "@/routes";
@@ -66,9 +66,7 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 					<SelectSheet
 						label={t`Language`}
 						value={locale}
-						options={selectableLocales
-							.filter((code) => code !== sourceLocale)
-							.map((code) => ({ value: code, label: i18n._(localeMap[code]) }))}
+						options={getLocaleOptions(i18n, selectableLocales).filter(({ value }) => value !== sourceLocale)}
 						disabled={operations.busy}
 						searchable
 						onChange={setChosenLocale}

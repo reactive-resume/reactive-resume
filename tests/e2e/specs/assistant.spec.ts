@@ -377,7 +377,7 @@ test("language copy keeps the source and waits for Send and review before saving
 	// Assistant discovery opens the same copy picker as the document menu; cancel creates/sends nothing.
 	await page.getByRole("button", { name: "Translate into…", exact: true }).click();
 	const dialog = page.getByRole("dialog", { name: "Translate into…" });
-	await expect(dialog.getByLabel("Language")).toHaveValue("de-DE");
+	await expect(dialog.getByLabel("Language")).toHaveText("Deutsch");
 	await dialog.getByRole("button", { name: "Close", exact: true }).click();
 	expect(stub.requests).toHaveLength(calls);
 	await page.getByRole("button", { name: "Close the assistant" }).click();
@@ -426,8 +426,11 @@ test("language copy keeps the source and waits for Send and review before saving
 	expect(JSON.parse(await resumeJson(page, copyId)).data.basics.name).toBe("Priya Raman");
 	expect(JSON.parse(await resumeJson(page, sourceId))).toEqual(source);
 	await page.getByRole("button", { name: "Translate into…", exact: true }).click();
-	await expect(dialog.getByLabel("Language")).toHaveValue("en-US");
-	await expect(dialog.getByLabel("Language").locator('option[value="de-DE"]')).toHaveCount(0);
+	await expect(dialog.getByLabel("Language")).toHaveText(/^(American English|English \(United States\))$/);
+	await dialog.getByLabel("Language").click();
+	await expect(page.getByRole("listbox")).toBeVisible();
+	await expect(page.getByRole("option", { name: /Deutsch/ })).toHaveCount(0);
+	await page.keyboard.press("Escape");
 	await dialog.getByRole("button", { name: "Close", exact: true }).click();
 });
 
