@@ -9,7 +9,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { getLanguageName, isRTL, supportedLocales } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
-import { CtaLink, Doodle, labelClass } from "./ui";
+import { CtaLink, SignInLink, Doodle, labelClass } from "./ui";
 import { RollingNumber } from "@/components/ui/rolling-number";
 import { localeMap } from "@/libs/locale";
 import { orpc } from "@/libs/orpc/client";
@@ -456,6 +456,7 @@ export function Closing() {
 				{t`Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime.`}
 			</p>
 			<CtaLink size="closing" />
+			<SignInLink />
 			{/* One quiet line, so the closing keeps a single action: the store names are the links. */}
 			<p className={cn(labelClass, "mt-1 text-ink-3")}>
 				<Trans>
