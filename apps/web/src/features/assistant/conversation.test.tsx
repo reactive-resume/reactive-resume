@@ -42,7 +42,8 @@ vi.mock("@/libs/orpc/client", () => ({
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn(), useSearch: () => ({}) }));
 vi.mock("./use-assistant-chat", () => ({ useAssistantChat: mocks.chat }));
-vi.mock("./chat", () => ({
+vi.mock("./chat", async (importOriginal) => ({
+	...(await importOriginal<typeof import("./chat")>()),
 	fileToBase64: async () => "Zm9v",
 	attachmentPart: (file: { id: string; filename: string; mediaType: string }) => ({
 		type: "file",

@@ -197,6 +197,15 @@ When you select **Interview prep** from an application's detail panel, the assis
 
 Select the paperclip in the message box to attach files, such as a job description PDF or your notes. You can attach them before your first message or later in the conversation. The file picker offers the types the assistant can read. Each file shows as a chip; select its **×** to remove it before sending, which also deletes the uploaded file.
 
+On the web, the file stays in the box until removal is confirmed. Sending and further file changes wait while removal is pending. If removal fails, your message and file stay available; select **×** again to retry. The same applies in Career and application coach conversations. Files already sent stay with their messages until you delete the conversation.
+
+<Frame caption="A failed web removal keeps the fictional job-notes file and unsent message available for retry.">
+  <img
+    src="/images/guides/using-the-assistant/attachment-removal.png"
+    alt="Web assistant showing a fictional attachment chip and typed message after a removal error."
+  />
+</Frame>
+
 - Plain text, Markdown, JSON and Word (`.docx`) files are read as text (up to the first 40,000 characters). A Word file's page headers and footers are read too. If a Word file is damaged or has no text, the step shows **Couldn't read the attachment**.
 - Images, PDFs and MP3 or WAV audio are passed to the model directly. Whether the model can use them depends on your provider.
 - You can attach up to 10 files per message, each up to 25 MB, 100 MB per conversation and 1 GB across all your conversations. When you reach a limit, the message names it.
