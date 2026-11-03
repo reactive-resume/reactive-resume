@@ -190,12 +190,9 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	const draft = form?.draft;
 	const prefill = Boolean(shown && draft?.kind === "follow-up" && draft.followUpNote === null && draft.applicationId);
 	const detail = useQuery({ ...applicationDetailQueryOptions(draft?.applicationId ?? ""), enabled: prefill });
-	const prefillPending = prefill && (detail.isPending || detail.isFetching);
-	const followUpNote =
-		draft?.followUpNote ??
-		(detail.isSuccess && !detail.isFetching && detail.data.id === draft?.applicationId
-			? defaultFollowUpNote(detail.data)
-			: "");
+	const selectedDetail = detail.data?.id === draft?.applicationId ? detail.data : undefined;
+	const prefillBlocked = prefill && (detail.isPending || detail.isFetching || !selectedDetail);
+	const followUpNote = draft?.followUpNote ?? (selectedDetail ? defaultFollowUpNote(selectedDetail) : "");
 	const set = (patch: Partial<Draft>) =>
 		setForm((current) => current && { ...current, draft: { ...current.draft, ...patch } });
 	const touch = (field: keyof Form["touched"]) =>
@@ -241,7 +238,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	const onSave = () => {
 		if (!form || !draft || !enteredAt) return;
 		setForm({ ...form, submitted: true });
-		if (errors.query || errors.when || blocked || needsWebSearch || prefillPending) return;
+		if (errors.query || errors.when || blocked || needsWebSearch || prefillBlocked) return;
 		save.mutate(
 			{
 				...(form.existing ? { id: form.existing.id } : {}),
@@ -648,7 +645,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 										<Trans>Set up web search in Settings</Trans>
 									</Button>
 								) : (
-									<Button disabled={!form || blocked || prefillPending} loading={save.isPending} onClick={onSave}>
+									<Button disabled={!form || blocked || prefillBlocked} loading={save.isPending} onClick={onSave}>
 										<Trans>Save schedule</Trans>
 									</Button>
 								)}

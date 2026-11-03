@@ -2277,6 +2277,36 @@ assert.equal(
 	"account changes remount the draft owner",
 );
 scheduleScope = "schedule-account";
+const failedPrefills = [];
+for (const data of [undefined, noteApplication]) {
+	reset();
+	scheduleWrites.length = 0;
+	scheduleDetail = { data, isPending: false, isFetching: false, isSuccess: false, isError: true };
+	const failed = render(ScheduleSheet, { schedule: null, kind: "follow-up", onClose() {}, onDelete() {} });
+	const view = () => render(failed.type, failed.props);
+	control(view(), "Remind me on (YYYY-MM-DD)").onChangeText("2030-01-05");
+	const note = control(view(), "Follow-up note").value;
+	const disabled = control(view(), "Save schedule").disabled;
+	control(view(), "Save schedule").onPress();
+	await settle();
+	failedPrefills.push({ cached: Boolean(data), note, disabled, saved: scheduleWrites.map((row) => row.query) });
+	if (!data) {
+		control(view(), "Follow-up note").onChangeText("");
+		assert.equal(control(view(), "Save schedule").disabled, false, "an intentional blank ends automatic prefill");
+		control(view(), "Save schedule").onPress();
+		await settle();
+		assert.equal(scheduleWrites.at(-1).query, "", "authored blanks remain saveable after an unavailable detail");
+	}
+}
+assert.deepEqual(failedPrefills, [
+	{ cached: false, note: "", disabled: true, saved: [] },
+	{
+		cached: true,
+		note: "Email Maya about the next round",
+		disabled: false,
+		saved: ["Email Maya about the next round"],
+	},
+]);
 console.log(
 	"PASS native Remind me full-detail prefill, late/selection guards, authored blanks, persistence and account key",
 );

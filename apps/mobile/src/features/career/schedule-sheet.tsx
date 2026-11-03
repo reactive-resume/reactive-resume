@@ -82,6 +82,7 @@ type FormProps = ScheduleSheetProps & {
 	verified: boolean;
 	ai: ReturnType<typeof useHasAIProvider>;
 };
+/** Untouched reminder notes wait for selected detail; authored blanks survive failed reads. */
 function ScheduleForm({
 	schedule,
 	kind: initialKind,
@@ -128,12 +129,9 @@ function ScheduleForm({
 	const [draft, setDraft] = useState(initial);
 	const prefill = draft.kind === "follow-up" && draft.followUpNote === null && Boolean(draft.applicationId);
 	const detail = useApplication(prefill ? draft.applicationId : "");
-	const prefillPending = prefill && (detail.isPending || detail.isFetching);
-	const followUpNote =
-		draft.followUpNote ??
-		(detail.isSuccess && !detail.isFetching && detail.data && detail.data.id === draft.applicationId
-			? defaultFollowUpNote(detail.data)
-			: "");
+	const selectedDetail = detail.data?.id === draft.applicationId ? detail.data : undefined;
+	const prefillBlocked = prefill && (detail.isPending || detail.isFetching || !selectedDetail);
+	const followUpNote = draft.followUpNote ?? (selectedDetail ? defaultFollowUpNote(selectedDetail) : "");
 	// A lead the person picked stays; until then it follows the chosen interview (web schedule sheet).
 	const [leadChosen, setLeadChosen] = useState(false);
 	const [picker, setPicker] = useState<"date" | "time" | null>(null);
@@ -160,7 +158,7 @@ function ScheduleForm({
 	const save = () => {
 		if (draft.kind === "discovery" && draft.query.trim().length < 3)
 			return setValidation(t`Add a role or company to look for.`);
-		if (blocked || prefillPending) return;
+		if (blocked || prefillBlocked) return;
 		if (!runAt) return setValidation(t`This date or time does not exist in your timezone. Choose another time.`);
 		if (draft.kind !== "prepare" && !unchangedFollowUp && runAt <= now) return setValidation(t`Pick a time after now.`);
 		const input: Input = {
@@ -373,7 +371,7 @@ function ScheduleForm({
 				/>
 				<Text color="ink3">{t`Always appears in Today. Email requires a verified address and server mail setup. No push notifications are sent.`}</Text>
 				{validation || action.error ? <Banner tone="danger" message={validation ?? action.error ?? ""} /> : null}
-				<Button label={t`Save schedule`} loading={action.pending} disabled={blocked || prefillPending} onPress={save} />
+				<Button label={t`Save schedule`} loading={action.pending} disabled={blocked || prefillBlocked} onPress={save} />
 				{schedule ? (
 					<Button
 						variant="danger"

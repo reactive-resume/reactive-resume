@@ -814,6 +814,7 @@ function RoleCard({ row, found, tracked, pending, selected, onSelect, onTrack, o
 
 type ComingUpProps = { now: Date; className?: string };
 
+/** Application dates stay available when optional briefing decorations cannot load. */
 function ComingUp({ now, className }: ComingUpProps) {
 	const { format, time, when, relative, locale, timeZone } = useCareerTime();
 	const applicationQuery = useQuery(applicationsListQueryOptions());
@@ -821,7 +822,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 	const offerQuery = useQuery(savedOffersQueryOptions());
 	const briefingQuery = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "briefing" } }));
 	const briefings = briefingQuery.data;
-	if (applicationQuery.isError || briefingQuery.isError || offerQuery.isError)
+	if (applicationQuery.isError || offerQuery.isError)
 		return (
 			<CareerLoadError
 				onRetry={() => {
@@ -831,8 +832,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 				}}
 			/>
 		);
-	if (applicationQuery.isPending || briefingQuery.isPending || offerQuery.isPending)
-		return <Skeleton className="h-36 rounded-xl" />;
+	if (applicationQuery.isPending || offerQuery.isPending) return <Skeleton className="h-36 rounded-xl" />;
 	const events = upcomingApplicationEvents(applications ?? [], latestOfferHints(offerQuery.data), now, timeZone);
 	const [next, ...later] = events.slice(0, 3);
 	if (!next) return null;

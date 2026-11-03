@@ -20,6 +20,112 @@ async function openReminder(page: Page, id: string) {
 	return sheet;
 }
 
+// Fault only the selected logical read; preserve real responses for physical-batch siblings.
+async function unavailableRead(page: Page, path: string, value: string) {
+	const state = { failing: true, failures: 0 };
+	await page.route("**/api/rpc/**", async (route) => {
+		const request = route.request();
+		const batch = new URL(request.url()).pathname.endsWith("/__batch__");
+		const entries: { url: string }[] = batch ? JSON.parse(request.postData() ?? "[]") : [{ url: request.url() }];
+		const targets = entries.flatMap((entry, index) =>
+			new URL(entry.url).pathname === `/api/rpc/${path}` &&
+			decodeURIComponent(JSON.stringify(entry) + (batch ? "" : (request.postData() ?? ""))).includes(value)
+				? [index]
+				: [],
+		);
+		if (!state.failing || !targets.length) return route.continue();
+		state.failures++;
+		const response = await route.fetch();
+		expect(response.status()).toBe(batch ? 207 : 200);
+		const failure = {
+			status: 503,
+			body: {
+				json: { defined: false, code: "SERVICE_UNAVAILABLE", status: 503, message: "Fictional read unavailable" },
+			},
+		};
+		const body = batch
+			? (await response.text())
+					.split("\n")
+					.map((line) => {
+						if (!line.startsWith("data: ")) return line;
+						const event = JSON.parse(line.slice(6));
+						return targets.includes(event.index) ? `data: ${JSON.stringify({ ...event, ...failure })}` : line;
+					})
+					.join("\n")
+			: JSON.stringify(failure.body);
+		await route.fulfill({
+			response,
+			status: batch ? 207 : 503,
+			body,
+			headers: { ...response.headers(), "content-length": String(Buffer.byteLength(body)) },
+		});
+	});
+	return state;
+}
+
+test("Coming up keeps dated application steps visible when optional briefing reads fail", async ({
+	authPage: page,
+}) => {
+	const created = await page.request.post("/api/openapi/applications", {
+		data: {
+			company: "Fictional Offline Briefing",
+			role: "Engineer",
+			status: "applied",
+			followUpAt: "2030-11-05T09:00:00Z",
+			followUpDateOnly: false,
+			followUpNote: "Email Maya",
+		},
+	});
+	await expect(created).toBeOK();
+	const fault = await unavailableRead(page, "career/savedItems", "briefing");
+	await page.goto("/dashboard/career");
+	await expect.poll(() => fault.failures).toBeGreaterThan(0);
+	const coming = page.getByRole("region", { name: "Coming up", exact: true });
+	await expect(coming).toContainText("Fictional Offline Briefing");
+	await expect(coming).toContainText("Email Maya");
+	await expect(coming.getByRole("link", { name: "Open workspace", exact: true })).toBeVisible();
+});
+
+for (const recovery of ["retry", "authored", "cleared"] as const) {
+	test(`failed automatic reminder prefill requires ${recovery} recovery before saving`, async ({ authPage: page }) => {
+		const id = await application(page, "Fictional Failed Detail");
+		await expect(
+			await page.request.post(`/api/openapi/applications/${id}/notes`, {
+				data: { text: "Email Maya about the next round" },
+			}),
+		).toBeOK();
+		for (let index = 0; index < 4; index++) await application(page, `Fictional Detail Boundary ${index}`);
+		await page.goto("/dashboard/career");
+		const fault = await unavailableRead(page, "applications/getById", id);
+		const sheet = await openReminder(page, id);
+		await expect(sheet.getByRole("alert")).toContainText("Couldn't load this", { timeout: 15000 });
+		await expect(sheet.getByRole("button", { name: "Save schedule", exact: true })).toBeDisabled();
+		const unchanged = await page.request.get(`/api/openapi/applications/${id}`);
+		await expect(unchanged).toBeOK();
+		expect((await unchanged.json()).followUpAt).toBeNull();
+		const note = sheet.getByLabel("Follow-up note", { exact: true });
+		if (recovery === "retry") {
+			fault.failing = false;
+			await sheet.getByRole("button", { name: "Try again", exact: true }).click();
+			await expect(note).toHaveValue("Email Maya about the next round");
+		} else {
+			await note.fill("Authored while offline");
+			if (recovery === "cleared") await note.fill("");
+		}
+		await sheet.getByRole("button", { name: "Save schedule", exact: true }).click();
+		await expect(sheet).toBeHidden();
+		const saved = await page.request.get(`/api/openapi/applications/${id}`);
+		await expect(saved).toBeOK();
+		expect((await saved.json()).followUpNote).toBe(
+			recovery === "retry"
+				? "Email Maya about the next round"
+				: recovery === "authored"
+					? "Authored while offline"
+					: null,
+		);
+	});
+}
+
 test("Coming up shows independent offer/follow-up dates without interviews on phone and desktop", async ({
 	authPage: page,
 }, info) => {
