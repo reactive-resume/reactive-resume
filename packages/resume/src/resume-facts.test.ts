@@ -4,7 +4,7 @@ import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { copyCoverLetterStyle, createCoverLetterResumeData } from "./cover-letter";
 import { buildMarkdown, resumeFactProposals } from "./markdown";
 
-it("proposes visible career excerpts, retaining exact evidence without contact, hidden or letter content", () => {
+it("retains visible excerpts while excluding header fields, hidden content and letters", () => {
 	const data = structuredClone(defaultResumeData);
 	data.basics.email = "private-contact@example.test";
 	data.summary.content = "<p>Built reliable tools with a team of twelve.</p>";
@@ -62,6 +62,20 @@ it("does not silently clip a long claim or propose contact-only documents", () =
 	data.basics.headline = "Contact-only headline";
 	expect(resumeFactProposals(data)).toEqual({ proposals: [], omitted: 0 });
 	data.summary.content = `<p>${"Long claim ".repeat(210)}</p>`;
+	expect(resumeFactProposals(data)).toEqual({ proposals: [], omitted: 1 });
+});
+
+it.each([
+	["ASCII", "A".repeat(2000)],
+	["astral", "A" + "😀".repeat(1999)],
+])("bounds %s excerpts by Unicode characters without clipping", (_kind, quote) => {
+	const data = structuredClone(defaultResumeData);
+	data.summary.content = `<p>${quote}</p>`;
+	expect(resumeFactProposals(data)).toEqual({
+		omitted: 0,
+		proposals: [{ text: quote, quote, category: "experience" }],
+	});
+	data.summary.content = `<p>${quote}x</p>`;
 	expect(resumeFactProposals(data)).toEqual({ proposals: [], omitted: 1 });
 });
 

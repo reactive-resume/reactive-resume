@@ -3,6 +3,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
+import { MAX_RESUME_FACT_CHARACTERS } from "@reactive-resume/schema/career";
 import { factCategories } from "./fact-categories";
 import { EditorSheet, LoadState, SwitchRow } from "./shared";
 import { client, orpc } from "@/api/client";
@@ -158,9 +159,12 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 								<TextArea
 									label={t`Fact`}
 									value={item.text}
-									maxLength={2000}
+									// Allow supplementary characters within the platform's UTF-16 capacity.
+									maxLength={MAX_RESUME_FACT_CHARACTERS * 2}
 									editable={!save.isPending}
-									onChangeText={(text) => change(index, { text })}
+									onChangeText={(text) => {
+										if (Array.from(text).length <= MAX_RESUME_FACT_CHARACTERS) change(index, { text });
+									}}
 								/>
 								<SelectSheet
 									label={t`Type`}

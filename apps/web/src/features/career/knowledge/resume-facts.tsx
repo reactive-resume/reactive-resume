@@ -4,6 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
+import { MAX_RESUME_FACT_CHARACTERS } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
@@ -195,8 +196,12 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 							<Textarea
 								id={`${id}-fact-${index}`}
 								value={item.text}
-								maxLength={2000}
-								onChange={(event) => change(index, { text: event.target.value })}
+								// HTML counts UTF-16 units; the handler enforces the Unicode character limit.
+								maxLength={MAX_RESUME_FACT_CHARACTERS * 2}
+								onChange={(event) => {
+									const text = event.target.value;
+									if (Array.from(text).length <= MAX_RESUME_FACT_CHARACTERS) change(index, { text });
+								}}
 							/>
 							<label htmlFor={`${id}-type-${index}`}>
 								<Trans>Type</Trans>

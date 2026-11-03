@@ -1,5 +1,6 @@
 import type { FactCategory } from "@reactive-resume/schema/career";
 import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import { MAX_RESUME_FACT_CHARACTERS } from "@reactive-resume/schema/career";
 import { assertResumeRenderBudget, assertRichTextComplexity } from "@reactive-resume/schema/resume/limits";
 import { toSafeLink } from "@reactive-resume/utils/link";
 import { isCoverLetterOnlyDocument } from "./export-sections";
@@ -36,7 +37,7 @@ export function buildMarkdown(data: ResumeData, resolveTitle?: SectionTitleResol
 		.trim()}\n`;
 }
 
-/** Visible resume excerpts only: no contact details, references, cover letters or inferred claims. */
+/** Visible career excerpts, excluding header fields, References and cover letters; no inferred claims or redaction. */
 export function resumeFactProposals(data: ResumeData) {
 	assertResumeRenderBudget(data);
 	const proposals: { text: string; category: FactCategory; quote: string }[] = [];
@@ -71,7 +72,7 @@ export function resumeFactProposals(data: ResumeData) {
 				const quote = excerpt.trim();
 				if (!quote || seen.has(quote)) continue;
 				seen.add(quote);
-				if (quote.length > 2000 || proposals.length >= 50) {
+				if (Array.from(quote).length > MAX_RESUME_FACT_CHARACTERS || proposals.length >= 50) {
 					omitted++;
 					continue;
 				}

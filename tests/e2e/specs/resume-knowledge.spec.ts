@@ -118,6 +118,39 @@ test("selected resume excerpts stay drafts until reviewed save, then retain edit
 	}
 });
 
+test("Unicode review keeps full excerpts and original quotations when fact text is edited", async ({
+	authPage: page,
+}) => {
+	const prefix = "Reach body-only@example.test at +1 202 555 0148. ";
+	const quote = prefix + "😀".repeat(2000 - prefix.length);
+	const text = "Reviewed " + "😀".repeat(1991);
+	const data = structuredClone(defaultResumeData);
+	data.basics.email = "header-only@example.test";
+	data.summary.content = `<p>${quote}</p>`;
+	const imported = await page.request.post("/api/openapi/resumes/import", { data: { data } });
+	await expect(imported).toBeOK();
+	const resumeId = (await imported.json()) as string;
+	await page.goto("/dashboard/career/knowledge/facts");
+	await page.getByRole("button", { name: "Pull facts from my resume", exact: true }).click();
+	await page.getByLabel("Resume", { exact: true }).selectOption(resumeId);
+	await page.getByRole("button", { name: "Review resume facts", exact: true }).click();
+	const field = page.getByRole("textbox", { name: "Fact", exact: true });
+	await expect(field).toHaveCount(1);
+	await expect(field).toHaveValue(quote);
+	await field.fill(text);
+	await expect(field).toHaveValue(text);
+	await field.fill("x".repeat(2001));
+	await expect(field).toHaveValue(text);
+	await page.getByRole("button", { name: "Save selected facts", exact: true }).click();
+	await expect(field).toHaveCount(0);
+	const response = await page.request.get("/api/openapi/career/facts");
+	await expect(response).toBeOK();
+	const facts = await response.json();
+	expect(facts).toMatchObject([{ text, applicationId: null, source: { kind: "resume", id: resumeId, quote } }]);
+	expect(facts).toHaveLength(1);
+	expect(JSON.stringify(facts)).not.toContain("header-only@example.test");
+});
+
 test("protected import rejects foreign, changed, trashed and forged sources atomically, preserving duplicates and exclusions", async ({
 	authPage: page,
 	browser,

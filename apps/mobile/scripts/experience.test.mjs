@@ -1596,6 +1596,7 @@ const knowledgeRequests = [];
 let replyFacts = async () => factReview;
 const mutations = [];
 const { ResumeFacts } = load("features/career/resume-facts.tsx", {
+	"@reactive-resume/schema/career": careerSchema,
 	"@tanstack/react-query": {
 		useQuery: () => ({ isSuccess: true, data: [{ id: "owned-resume", name: "Maya", type: "resume" }], refetch() {} }),
 		useQueryClient: () => ({ invalidateQueries() {} }),
@@ -1666,6 +1667,13 @@ assert.deepEqual(knowledgeRequests[0], {
 	options: { context: { scope: "alice@server-a" } },
 });
 const firstFact = nodes(factView()).find((node) => node.props.label === "Fact");
+const unicodeFact = "A" + "😀".repeat(1999);
+firstFact.props.onChangeText(unicodeFact);
+assert.equal(nodes(factView()).find((node) => node.props.label === "Fact").props.value, unicodeFact);
+nodes(factView())
+	.find((node) => node.props.label === "Fact")
+	.props.onChangeText("x".repeat(2001));
+assert.equal(nodes(factView()).find((node) => node.props.label === "Fact").props.value, unicodeFact);
 firstFact.props.onChangeText("Led twelve engineers delivering tools.");
 nodes(factView())
 	.filter((node) => node.props.label === "Save this fact")[1]

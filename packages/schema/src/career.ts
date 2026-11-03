@@ -63,7 +63,8 @@ export const careerFactInputSchema = careerScopeSchema.extend({
 });
 
 // Bound submitted input before normalization so runtime and published lengths agree.
-const resumeFactTextSchema = z.string().max(2000).trim().min(1).regex(/\S/);
+export const MAX_RESUME_FACT_CHARACTERS = 2000;
+const resumeFactTextSchema = z.string().max(MAX_RESUME_FACT_CHARACTERS).trim().min(1).regex(/\S/);
 
 export const resumeFactProposalSchema = careerFactInputSchema.pick({ text: true, category: true }).extend({
 	text: resumeFactTextSchema.describe(
