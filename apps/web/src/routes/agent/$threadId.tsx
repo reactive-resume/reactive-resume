@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { orpc } from "@/libs/orpc/client";
 
@@ -39,13 +40,33 @@ export const Route = createFileRoute("/agent/$threadId")({
 				params: { conversationId: params.threadId },
 				replace: true,
 			});
-		// An old link lands on Documents with the reason, instead of silently.
-		toast.add({
-			type: "error",
-			description: detail
-				? t`That conversation's document was deleted.`
-				: t`That conversation isn't available. It may have been deleted.`,
-		});
-		throw redirect({ to: "/dashboard", replace: true });
+		return { documentDeleted: detail !== null };
 	},
+	component: UnavailableConversation,
 });
+
+function UnavailableConversation() {
+	const { documentDeleted } = Route.useLoaderData();
+	const { threadId } = Route.useParams();
+	const navigate = Route.useNavigate();
+	const notified = useRef<string | null>(null);
+	useEffect(() => {
+		let active = true;
+		// The root toaster subscribes in a sibling mount effect; let those effects finish before notifying.
+		queueMicrotask(() => {
+			if (!active || notified.current === threadId) return;
+			notified.current = threadId;
+			toast.add({
+				type: "error",
+				description: documentDeleted
+					? t`That conversation's document was deleted.`
+					: t`That conversation isn't available. It may have been deleted.`,
+			});
+			void navigate({ to: "/dashboard", replace: true });
+		});
+		return () => {
+			active = false;
+		};
+	}, [documentDeleted, navigate, threadId]);
+	return null;
+}
