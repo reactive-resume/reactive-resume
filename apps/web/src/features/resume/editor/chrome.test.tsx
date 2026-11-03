@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 import { usePageScale } from "./chrome";
 import { useEditorStore } from "./store";
 
-function Canvas({ pages = 0 }: { pages?: number }) {
+function Canvas({ pages = 0, loaderPages = 0 }: { pages?: number; loaderPages?: number }) {
 	const { canvasRef } = usePageScale("a4");
 	return (
 		<section ref={canvasRef} data-testid="canvas">
@@ -13,6 +13,11 @@ function Canvas({ pages = 0 }: { pages?: number }) {
 				<div key={index} data-testid={`page-${index + 1}`}>
 					<canvas />
 				</div>
+			))}
+			{Array.from({ length: loaderPages }, (_, index) => (
+				<figure key={index} data-testid={`loader-page-${index + 1}`}>
+					<div />
+				</figure>
 			))}
 		</section>
 	);
@@ -117,6 +122,48 @@ describe("canvas zoom", () => {
 
 		expect(canvas.scrollLeft).toBeCloseTo(68.4, 5);
 		expect(canvas.scrollTop).toBeCloseTo(74, 5);
+	});
+
+	it("anchors to the loader's page while the preview is still loading", () => {
+		const frames: FrameRequestCallback[] = [];
+		vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => frames.push(callback));
+
+		const { getByTestId } = render(<Canvas loaderPages={1} />);
+		const canvas = getByTestId("canvas");
+		const page = getByTestId("loader-page-1").lastElementChild as HTMLElement;
+		canvas.getBoundingClientRect = () => bounds(0, 0);
+		page.getBoundingClientRect = () => bounds(180, 100);
+
+		wheel(canvas, { deltaY: -100, ctrlKey: true, clientX: 400, clientY: 300 });
+		act(() => {
+			for (const callback of frames.splice(0)) callback(0);
+		});
+
+		expect(canvas.scrollLeft).toBeCloseTo(48.4, 5);
+		expect(canvas.scrollTop).toBeCloseTo(44, 5);
+	});
+
+	it("drops a pending anchor when zoom changes elsewhere", () => {
+		const frames: FrameRequestCallback[] = [];
+		vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => frames.push(callback));
+		vi.stubGlobal("cancelAnimationFrame", () => {
+			frames.length = 0;
+		});
+
+		const { getByTestId } = render(<Canvas pages={1} />);
+		const canvas = getByTestId("canvas");
+		const page = getByTestId("page-1");
+		canvas.getBoundingClientRect = () => bounds(0, 0);
+		page.getBoundingClientRect = () => bounds(180, 100);
+
+		wheel(canvas, { deltaY: -100, ctrlKey: true, clientX: 400, clientY: 300 });
+		act(() => {
+			useEditorStore.setState({ zoom: 3 });
+		});
+
+		expect(frames).toHaveLength(0);
+		expect(canvas.scrollLeft).toBe(0);
+		expect(canvas.scrollTop).toBe(0);
 	});
 
 	it("keeps every pending scale change when the pointer moves to another page", () => {

@@ -62,10 +62,16 @@ function useCanvasWidth() {
  * the gap between pages gets the nearest page; while the preview is still loading, its only child.
  */
 function pageUnderPointer(canvas: HTMLElement, clientX: number, clientY: number) {
-	const pages = Array.from(canvas.querySelectorAll("canvas"))
-		.map((element) => element.parentElement)
-		.filter((element): element is HTMLElement => element !== null);
-	if (pages.length === 0) return canvas.firstElementChild;
+	// A rendered page is the canvas's box; the loading placeholder has a figure per page instead. Both keep the page
+	// itself last in the figure, after its caption.
+	const pages = new Set<HTMLElement>();
+	for (const element of canvas.querySelectorAll("canvas")) {
+		if (element.parentElement) pages.add(element.parentElement);
+	}
+	for (const figure of canvas.querySelectorAll("figure")) {
+		if (figure.lastElementChild instanceof HTMLElement) pages.add(figure.lastElementChild);
+	}
+	if (pages.size === 0) return canvas.firstElementChild;
 
 	let nearest: HTMLElement | null = null;
 	let nearestDistance = Number.POSITIVE_INFINITY;
@@ -105,6 +111,8 @@ export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
 	const wheelZoomRef = useRef<{ scale: number; stored: number } | null>(null);
 	const zoomAnchorRef = useRef<ZoomAnchor | null>(null);
 	const zoomFrameRef = useRef<number | null>(null);
+	/** The last zoom this handler set, so a change from Fit or the zoom bar can be told apart. */
+	const wheelAppliedRef = useRef<number | null>(null);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -181,16 +189,30 @@ export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
 				}
 			}
 
+			wheelAppliedRef.current = after;
 			setZoom(after);
 		};
 
+		// A zoom from Fit or the zoom bar replaces the gesture: its pending frame must not scroll the new layout by the
+		// old scale ratio.
+		const unsubscribe = useEditorStore.subscribe((state) => {
+			if (state.zoom === wheelAppliedRef.current) return;
+			wheelAppliedRef.current = null;
+			wheelZoomRef.current = null;
+			zoomAnchorRef.current = null;
+			if (zoomFrameRef.current !== null) cancelAnimationFrame(zoomFrameRef.current);
+			zoomFrameRef.current = null;
+		});
+
 		canvas.addEventListener("wheel", zoomByWheel, { passive: false });
 		return () => {
+			unsubscribe();
 			canvas.removeEventListener("wheel", zoomByWheel);
 			if (zoomFrameRef.current !== null) cancelAnimationFrame(zoomFrameRef.current);
 			zoomFrameRef.current = null;
 			zoomAnchorRef.current = null;
 			wheelZoomRef.current = null;
+			wheelAppliedRef.current = null;
 		};
 	}, [canvasRef]);
 
