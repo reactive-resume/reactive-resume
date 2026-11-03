@@ -48,11 +48,13 @@ const pageLabel = "font-martian font-medium text-[calc(var(--pw)*.045)] leading-
 export function Design() {
 	const step = useLanding((state) => state.designStep);
 	const zoomed = useLanding((state) => state.designZoomed);
+	const exiting = useLanding((state) => state.designExiting);
 	const active = useLanding((state) => state.activeScene === SCENE.design);
 	const design = t`Design`;
 	const templateCount = i18n.number(templateSchema.options.length);
 	const templateNames = sheetTemplates.map((template) => i18n._(template.name));
 	const railRef = useRef<HTMLDivElement>(null);
+	const linkRef = useRef<HTMLAnchorElement>(null);
 
 	// On narrow screens the tab rail scrolls; keep the current look in view.
 	useEffect(() => {
@@ -61,6 +63,11 @@ export function Design() {
 		if (!rail || !checked || rail.scrollWidth <= rail.clientWidth) return;
 		rail.scrollTo({ left: checked.offsetLeft - rail.clientWidth / 2 + checked.offsetWidth / 2, behavior: "smooth" });
 	}, [step]);
+
+	// The heading fades out as the scene leaves; release focus instead of leaving an outline on invisible text.
+	useEffect(() => {
+		if (exiting) linkRef.current?.blur();
+	}, [exiting]);
 
 	return (
 		<section
@@ -218,7 +225,12 @@ export function Design() {
 					aria-label={`${t`${templateCount} free resume templates.`} ${t`Make any of them yours.`}`}
 					className="pointer-events-none absolute inset-x-(--gutter) top-[10vh] bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none font-normal text-balance opacity-[calc(clamp(0,(var(--z)-.18)/.1,1)*(1-clamp(0,(var(--out)-.6)/.06,1)))] will-change-[transform,opacity] min-[900px]:bottom-[5vh] min-[900px]:text-[clamp(36px,4vw,72px)]"
 				>
-					<Link to="/resume-templates" inert={!zoomed} className="flex h-full flex-col justify-between">
+					<Link
+						ref={linkRef}
+						to="/resume-templates"
+						inert={!zoomed || exiting}
+						className="flex h-full flex-col justify-between"
+					>
 						<span className="font-anybody pointer-events-auto font-light tracking-[-.02em] text-ink">
 							{t`${templateCount} free resume templates.`}
 						</span>

@@ -34,6 +34,8 @@ type LandingState = {
 	designStep: number;
 	/** Design: zoomed out to the contact sheet, so the template tabs are gone. */
 	designZoomed: boolean;
+	/** Design: far enough into its exit that the closing heading is fading, so its link leaves the tab order. */
+	designExiting: boolean;
 	/** Check: the scan's progress, in 40 steps, which drives the score and the checklist. */
 	checkProgress: number;
 	/** Tailor: how many of the posting's four keywords are matched. */
@@ -57,6 +59,7 @@ export const useLanding = create<LandingState>()(() => ({
 	writeStep: 0,
 	designStep: 0,
 	designZoomed: false,
+	designExiting: false,
 	checkProgress: 0,
 	keywordCount: 0,
 	shareReady: false,
@@ -72,6 +75,9 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 const PREPARE_STEPS = [0.19, 0.36, 0.53, 0.7, 0.84];
 
 const smoothstep = (value: number) => value * value * (3 - 2 * value);
+
+/** Where Design's closing heading starts fading out of the scene, and where its link stops taking focus. */
+const DESIGN_EXIT_AT = 0.6;
 
 /**
  * How dark Share's sky is, from 0 to 1: night falls over the scene's first fifth and lifts into dawn over its last
@@ -284,7 +290,9 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 			const reduced = reducedMotion.matches;
 			const progress: number[] = [];
 			const nearby = new Set<number>();
+			const exits: { section: HTMLElement; value: string }[] = [];
 			let activeScene: number = SCENE.hero;
+			let designExiting = false;
 
 			for (const section of sections) {
 				const index = Number(section.dataset.scene);
@@ -293,11 +301,10 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 				const pinned = section.dataset.pin !== undefined;
 				progress[index] = reduced ? 1 : sectionProgress(rect.top, rect.height, viewportHeight, pinned);
 				if (pinned) {
-					const exit = sectionExitProgress(rect.bottom, viewportHeight).toFixed(3);
-					if (writtenExit.get(section) !== exit) {
-						section.style.setProperty("--out", exit);
-						writtenExit.set(section, exit);
-					}
+					const exit = sectionExitProgress(rect.bottom, viewportHeight);
+					if (index === SCENE.design) designExiting = exit >= DESIGN_EXIT_AT;
+					const value = exit.toFixed(3);
+					if (writtenExit.get(section) !== value) exits.push({ section, value });
 				}
 				if (rect.top <= viewportHeight / 2 && rect.bottom > viewportHeight / 2) activeScene = index;
 			}
@@ -316,6 +323,11 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 			}
 			const tailorSection = sectionAt(SCENE.tailor);
 			if (tailorSection && nearby.has(SCENE.tailor) && window.innerWidth >= 900) drawThreads(tailorSection);
+			// Every geometry read above is done, so the exit writes can't force a second layout mid-measure.
+			for (const { section, value } of exits) {
+				section.style.setProperty("--out", value);
+				writtenExit.set(section, value);
+			}
 			for (const section of sections) {
 				const value = (progress[Number(section.dataset.scene)] ?? 0).toFixed(4);
 				if (writtenProgress.get(section) === value) continue;
@@ -371,6 +383,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 				writeStep: at(SCENE.write) >= 0.84 ? 2 : at(SCENE.write) >= 0.4 ? 1 : 0,
 				designStep: stepsPassed(at(SCENE.design), [0.15, 0.31, 0.47, 0.63]),
 				designZoomed: at(SCENE.design) >= 0.84,
+				designExiting,
 				checkProgress: Math.round(scan * 40) / 40,
 				keywordCount: stepsPassed(at(SCENE.tailor), [0.19, 0.31, 0.43, 0.55]),
 				shareReady: at(SCENE.share) >= 0.66,

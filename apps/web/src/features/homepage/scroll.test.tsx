@@ -1,5 +1,8 @@
+// @vitest-environment happy-dom
+import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
-import { goToScene, sectionExitProgress, sectionProgress, useLanding } from "./scroll";
+import { useRef } from "react";
+import { goToScene, SCENE, sectionExitProgress, sectionProgress, useLanding, useScrollScenes } from "./scroll";
 
 describe("section progress", () => {
 	it("measures a pinned scene by how far its sticky stage has travelled", () => {
@@ -22,6 +25,63 @@ describe("scene exit", () => {
 		expect(sectionExitProgress(500, 1000)).toBe(0.5);
 		expect(sectionExitProgress(0, 1000)).toBe(1);
 		expect(sectionExitProgress(-400, 1000)).toBe(1);
+	});
+});
+
+describe("scroll engine", () => {
+	afterEach(() => {
+		cleanup();
+		vi.unstubAllGlobals();
+		vi.restoreAllMocks();
+		useLanding.setState({ designExiting: false });
+	});
+
+	it("writes exit progress on pinned scenes and reports when Design hands its heading off", async () => {
+		const rects = new Map<string, { top: number; bottom: number; height: number }>([
+			[String(SCENE.design), { top: 0, bottom: 300, height: 900 }],
+			[String(SCENE.check), { top: 0, bottom: 0, height: 900 }],
+		]);
+		vi.stubGlobal("innerHeight", 900);
+		vi.stubGlobal("matchMedia", () => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+			const rect = rects.get(this.dataset.scene ?? "") ?? { top: 0, bottom: 0, height: 0 };
+			return {
+				...rect,
+				left: 0,
+				right: 0,
+				width: 0,
+				x: 0,
+				y: 0,
+				toJSON: () => ({}),
+			} as DOMRect;
+		});
+
+		function Scenes() {
+			const root = useRef<HTMLDivElement>(null);
+			useScrollScenes(root);
+			return (
+				<div ref={root}>
+					<section data-scene={SCENE.design} data-pin />
+					<section data-scene={SCENE.check} data-pin />
+					<section data-scene={SCENE.tailor} />
+				</div>
+			);
+		}
+
+		render(<Scenes />);
+		const design = document.querySelector<HTMLElement>(`[data-scene="${SCENE.design}"]`);
+		const tailor = document.querySelector<HTMLElement>(`[data-scene="${SCENE.tailor}"]`);
+		if (!design || !tailor) throw new Error("The scene harness did not render.");
+
+		await waitFor(() => expect(design.style.getPropertyValue("--out")).toBe("0.667"));
+		expect(design.style.getPropertyValue("--out")).toBe("0.667");
+		expect(useLanding.getState().designExiting).toBe(true);
+		expect(tailor.style.getPropertyValue("--out")).toBe("");
+
+		rects.set(String(SCENE.design), { top: 0, bottom: 600, height: 900 });
+		fireEvent.scroll(window);
+		await waitFor(() => expect(design.style.getPropertyValue("--out")).toBe("0.333"));
+		expect(useLanding.getState().designExiting).toBe(false);
 	});
 });
 
