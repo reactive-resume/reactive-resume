@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "بررسی DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3845,6 +3841,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "PDF صادر شده خوانده نشد."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "خواندن PDF ممکن نشد. بررسی کنید که لایهٔ متن خوانا داشته باشد و با گذرواژه محافظت نشده باشد."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "خواندن کل PDF ممکن نشد. بررسی کنید که همهٔ صفحه‌ها متن خوانا داشته باشند، یا فایل کوچک‌تری را امتحان کنید."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8688,6 +8692,10 @@ msgstr "فقط یک عنوان بخش قابل تشخیص پیدا شد."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "تا الان فقط یک نسخه هر جلسه ویرایش به طور خودکار یک جلسه اضافه می کند."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "فقط بخشی از این فایل با محتوای واردشده قابل مقایسه بود. هر بخش را در ویرایشگر با فایل خود مقایسه کنید."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "فقط ارائه دهندگانی که آزمون خود را قبول می کنند می توانند روشن شوند."
@@ -13259,6 +13267,10 @@ msgstr "این فایل از فونت‌های Type 3 استفاده می‌کن
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "اندازه این فایل قابل خواندن نیست. PDF دیگری را انتخاب کنید."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "متن این فایل با محتوای واردشده قابل مقایسه نبود، بنابراین سطرهای جاافتاده فهرست نشده‌اند. هر بخش را در ویرایشگر با فایل خود مقایسه کنید."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "این یک PDF Portfolio است: صفحهٔ قابل مشاهده فقط یک روکش است."
@@ -13339,6 +13351,10 @@ msgstr "این قسمت تغییر کرد. دوباره بررسی را اجرا
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "این PDF لایه متنی ندارد، بنابراین تجزیه کننده چیزی از آن نمی خواند."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "این PDF یک تصویر اسکن شده است. متنی برای خواندن وجود ندارد نسخه Word را امتحان کنید یا بخش‌های خالی را شروع کنید و در آن جای‌گذاری کنید."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13918,6 +13934,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "تقویمتان را به‌روز کنید"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "پیش از وارد کردن PDF بدون هوش مصنوعی، سرور خود را به‌روز کنید."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

@@ -88,6 +88,10 @@ export type RawExtraction = {
 	pageCount: number;
 	/** True when only the first N pages were harvested. */
 	truncated: boolean;
+	/** A page's text could not be read; absent in older extraction receipts. */
+	textReadFailed?: boolean;
+	/** A page's links could not be read; absent in older extraction receipts. */
+	annotationReadFailed?: boolean;
 	pages: readonly RawPage[];
 	fonts: readonly RawFont[];
 	links: readonly RawLinkAnnotation[];

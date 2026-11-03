@@ -4824,8 +4824,8 @@ msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their 
 msgstr "Не вдалося прочитати дати в {entries}, тому вони залишаються в кінці. Виправте їхні дати й відсортуйте знову."
 
 #: src/features/resume/import/pdf-text.ts
-msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
-msgstr ""
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "Не вдалося прочитати весь PDF. Перевірте, чи всі сторінки містять читабельний текст, або спробуйте менший файл."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
@@ -10969,6 +10969,10 @@ msgstr "Знайдено лише один розпізнаваний загол
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Поки лише одна версія. Кожен сеанс редагування додає один автоматично."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "З імпортованим вмістом вдалося порівняти лише частину цього файлу. Порівняйте кожен розділ зі своїм файлом у редакторі."
+
 #: src/features/settings/ai/providers.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Можна ввімкнути лише постачальників, які пройшли перевірку."
@@ -16501,10 +16505,6 @@ msgstr "Цей файл великий для резюме."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "Цей файл більший, ніж приймають багато форм заявок."
-
-#: src/features/documents/new-document-dialog.tsx
-msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
-msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."

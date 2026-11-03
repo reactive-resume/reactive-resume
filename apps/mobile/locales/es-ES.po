@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Comprobar DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3845,6 +3841,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "No se pudo leer el PDF exportado."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "No se ha podido leer el PDF. Comprueba que tenga una capa de texto legible y que no esté protegido con contraseña."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "No se pudo leer todo el PDF. Comprueba que todas las páginas tengan texto legible o prueba con un archivo más pequeño."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8688,6 +8692,10 @@ msgstr "Solo se encontró un encabezado de sección reconocible."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Hasta el momento sólo hay una versión. Cada sesión de edición agrega uno automáticamente."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Solo se ha podido comparar parte de este archivo con el contenido importado. Compara cada sección con tu archivo en el editor."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Solo se pueden activar los proveedores que pasen la prueba."
@@ -13259,6 +13267,10 @@ msgstr "Este archivo utiliza fuentes Type 3, que contienen dibujos en lugar de c
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "No se pudo leer el tamaño de este archivo. Elija otro PDF."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "No se ha podido comparar el texto de este archivo con el contenido importado, por lo que no se muestran las líneas omitidas. Compara cada sección con tu archivo en el editor."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Esto es un PDF Portfolio: la página visible es solo una portada."
@@ -13339,6 +13351,10 @@ msgstr "Este pasaje cambió. Ejecute la revisión nuevamente."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Este PDF no tiene capa de texto, por lo que un analizador no lee nada de él."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Este PDF es una imagen escaneada. No hay texto para leer. Pruebe la versión Word o comience en blanco y pegue las secciones."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13918,6 +13934,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Actualiza tu calendario"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Actualiza tu servidor antes de importar un PDF sin IA."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

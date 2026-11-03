@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Zkontrolovat DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3845,6 +3841,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Exportovaný soubor PDF se nepodařilo přečíst."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF se nepodařilo přečíst. Zkontrolujte, zda obsahuje čitelnou textovou vrstvu a není chráněno heslem."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "Nepodařilo se přečíst celý PDF. Zkontrolujte, zda mají všechny stránky čitelný text, nebo zkuste menší soubor."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8688,6 +8692,10 @@ msgstr "Byl nalezen pouze jeden rozpoznatelný nadpis sekce."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Zatím jen jedna verze. Každá editační relace přidá jeden automaticky."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "S importovaným obsahem se podařilo porovnat jen část tohoto souboru. Porovnejte v editoru každou sekci se svým souborem."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Zapnout lze pouze poskytovatele, kteří projdou testem."
@@ -13259,6 +13267,10 @@ msgstr "Tento soubor používá písma typu 3, která obsahují kresby místo zn
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Velikost tohoto souboru nelze přečíst. Vyberte jiný PDF."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Text tohoto souboru se nepodařilo porovnat s importovaným obsahem, proto nejsou uvedeny vynechané řádky. Porovnejte v editoru každou sekci se svým souborem."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Toto je PDF Portfolio: viditelná stránka je pouze obálka."
@@ -13339,6 +13351,10 @@ msgstr "Tato pasáž se změnila. Spusťte kontrolu znovu."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Tento PDF nemá žádnou textovou vrstvu, takže z něj analyzátor nic nečte."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Tento PDF je naskenovaný obrázek. Není tu žádný text ke čtení. Vyzkoušejte verzi Word nebo začněte prázdné a vložte sekce."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13918,6 +13934,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Aktualizujte svůj kalendář"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Před importem PDF bez AI aktualizujte svůj server."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

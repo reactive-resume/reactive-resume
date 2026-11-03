@@ -176,7 +176,7 @@ function useResumeImport(
 					file,
 					data,
 					review: reviewImport(data, source?.lines),
-					comparison: !source ? "none" : source.partial ? "partial" : "full",
+					comparison: !source?.lines.length ? "none" : source.partial ? "partial" : "full",
 				});
 				return;
 			}
@@ -572,7 +572,8 @@ function ReviewStep({ step, onCreate, onChooseFile }: ReviewStepProps) {
 				<p className="text-[13px] leading-[19px] text-ink-2">
 					{step.comparison === "partial" ? (
 						<Trans>
-							This file is long, so only its first pages were compared with what came in. Check the rest in the editor.
+							Only part of this file could be compared with what came in. Check each section against your file in the
+							editor.
 						</Trans>
 					) : (
 						<Trans>

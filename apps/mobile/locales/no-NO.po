@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Sjekk DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3845,6 +3841,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Kunne ikke lese den eksporterte PDF."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "Kunne ikke lese PDF-filen. Kontroller at den har et lesbart tekstlag og ikke er passordbeskyttet."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "Kunne ikke lese hele PDF-filen. Kontroller at alle sider har lesbar tekst, eller prøv en mindre fil."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8688,6 +8692,10 @@ msgstr "Kun én gjenkjennelig seksjonsoverskrift ble funnet."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Bare én versjon så langt. Hver redigeringsøkt legger til en automatisk."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Bare en del av denne filen kunne sammenlignes med det importerte innholdet. Sammenlign hver seksjon med filen din i redigeringsverktøyet."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Bare leverandører som består testen kan slås på."
@@ -13259,6 +13267,10 @@ msgstr "Denne filen bruker Type 3-skrifter, som inneholder tegninger i stedet fo
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Denne filens størrelse kunne ikke leses. Velg en annen PDF."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Teksten i denne filen kunne ikke sammenlignes med det importerte innholdet, så utelatte linjer vises ikke. Sammenlign hver seksjon med filen din i redigeringsverktøyet."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Dette er en PDF-portefølje: den synlige siden er kun et omslag."
@@ -13339,6 +13351,10 @@ msgstr "Denne passasjen er endret. Kjør anmeldelsen på nytt."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Denne PDF har ikke noe tekstlag, så en parser leser ingenting fra den."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Denne PDF er et skannet bilde. Det er ingen tekst å lese. Prøv Word-versjonen, eller start tomme og lim inn seksjoner."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13918,6 +13934,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Oppdater kalenderen din"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Oppdater serveren din før du importerer en PDF uten KI."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

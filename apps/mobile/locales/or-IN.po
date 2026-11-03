@@ -2723,10 +2723,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "DNS ଯାଞ୍ଚ କରନ୍ତୁ"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3852,6 +3848,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "ରପ୍ତାନି ହୋଇଥିବା PDF ପଢ଼ାଯାଇପାରିଲା ନାହିଁ।"
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF ପଢ଼ିହେଲା ନାହିଁ। ଏଥିରେ ପଢ଼ିବାଯୋଗ୍ୟ ଟେକ୍ସଟ୍ ସ୍ତର ଅଛି ଏବଂ ଏହା ପାସୱାର୍ଡ ଦ୍ୱାରା ସୁରକ୍ଷିତ ନୁହେଁ ବୋଲି ଯାଞ୍ଚ କରନ୍ତୁ।"
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "ସମ୍ପୂର୍ଣ୍ଣ PDF ପଢ଼ିହେଲା ନାହିଁ। ସମସ୍ତ ପୃଷ୍ଠାରେ ପଢ଼ିବାଯୋଗ୍ୟ ପାଠ୍ୟ ଅଛି କି ନାହିଁ ଯାଞ୍ଚ କରନ୍ତୁ, କିମ୍ବା ଏକ ଛୋଟ ଫାଇଲ୍ ଚେଷ୍ଟା କରନ୍ତୁ।"
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8707,6 +8711,10 @@ msgstr "କେବଳ ଗୋଟିଏ ଚିହ୍ନଟଯୋଗ୍ୟ ବିଭ
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "ବର୍ତ୍ତମାନ ପର୍ଯ୍ୟନ୍ତ କେବଳ ଗୋଟିଏ ସଂସ୍କରଣ | ପ୍ରତ୍ୟେକ ଏଡିଟିଂ ଅଧିବେଶନ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ଗୋଟିଏ ଯୋଗ କରେ |"
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "ଏହି ଫାଇଲର କେବଳ କିଛି ଅଂଶକୁ ଆମଦାନୀ ହୋଇଥିବା ବିଷୟବସ୍ତୁ ସହ ତୁଳନା କରାଯାଇପାରିଲା। ଏଡିଟରରେ ପ୍ରତ୍ୟେକ ବିଭାଗକୁ ଆପଣଙ୍କ ଫାଇଲ ସହ ତୁଳନା କରନ୍ତୁ।"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "କେବଳ ପ୍ରଦାନକାରୀ ଯେଉଁମାନେ ସେମାନଙ୍କର ପରୀକ୍ଷାରେ ଉତ୍ତୀର୍ଣ୍ଣ ହୋଇପାରିବେ |"
@@ -13297,6 +13305,10 @@ msgstr "ଏହି ଫାଇଲ୍ Type 3 ଫଣ୍ଟ ବ୍ୟବହାର କ�
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "ଏହି ଫାଇଲ୍‌ର ଆକାର ପଢ଼ାଯାଇପାରିଲା ନାହିଁ। ଅନ୍ୟ PDF ବାଛନ୍ତୁ।"
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "ଏହି ଫାଇଲର ଟେକ୍ସଟ୍‌କୁ ଆମଦାନୀ ହୋଇଥିବା ବିଷୟବସ୍ତୁ ସହ ତୁଳନା କରିହେଲା ନାହିଁ, ତେଣୁ ଛାଡ଼ିଯାଇଥିବା ଧାଡ଼ିଗୁଡ଼ିକ ତାଲିକାରେ ନାହିଁ। ଏଡିଟରରେ ପ୍ରତ୍ୟେକ ବିଭାଗକୁ ଆପଣଙ୍କ ଫାଇଲ ସହ ତୁଳନା କରନ୍ତୁ।"
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "ଏହା ଏକ PDF ପୋର୍ଟଫୋଲିଓ: ଦୃଶ୍ୟମାନ ପୃଷ୍ଠା କେବଳ ଏକ କଭର।"
@@ -13377,6 +13389,10 @@ msgstr "ଏହି ଅଂଶ ବଦଳିଛି। ପୁଣି ସମୀକ୍�
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "ଏହି PDF ର କ text ଣସି ପାଠ୍ୟ ସ୍ତର ନାହିଁ, ତେଣୁ ଏକ ପାର୍ସର୍ ଏଥିରୁ କିଛି ପ read େ ନାହିଁ |"
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "ଏହି ପିଡିଏଫ୍‌ଟି ସ୍କାନ୍ କରାଯାଇଥିବା ଏକ ଛବି। ଏଥିରେ ପଢ଼ିବା ପାଇଁ କୌଣସି ପାଠ୍ୟ ନାହିଁ। ୱାର୍ଡ ସଂସ୍କରଣ ବ୍ୟବହାର କରନ୍ତୁ, କିମ୍ବା ଖାଲିରୁ ଆରମ୍ଭ କରି ବିଭାଗଗୁଡ଼ିକ ଲେପନ କରନ୍ତୁ।"
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13957,6 +13973,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "ଆପଣଙ୍କ କ୍ୟାଲେଣ୍ଡର ଅଦ୍ୟତନ କରନ୍ତୁ"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "AI ବିନା PDF ଆମଦାନୀ କରିବା ପୂର୍ବରୁ ଆପଣଙ୍କ ସର୍ଭର ଅପଡେଟ୍ କରନ୍ତୁ।"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

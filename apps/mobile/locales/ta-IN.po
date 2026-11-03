@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "DNS-ஐச் சரிபார்"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3845,6 +3841,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "ஏற்றுமதி செய்யப்பட்ட PDF ஐப் படிக்க முடியவில்லை."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF-ஐப் படிக்க முடியவில்லை. அதில் படிக்கக்கூடிய உரை அடுக்கு உள்ளதா, கடவுச்சொல் பாதுகாப்பு இல்லையா என்பதைச் சரிபார்க்கவும்."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "முழு PDF-ஐயும் படிக்க முடியவில்லை. எல்லாப் பக்கங்களிலும் படிக்கக்கூடிய உரை உள்ளதா எனச் சரிபார்க்கவும் அல்லது சிறிய கோப்பை முயற்சிக்கவும்."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8688,6 +8692,10 @@ msgstr "அடையாளம் காணக்கூடிய ஒரு பி
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "இதுவரை ஒரே ஒரு பதிப்பு மட்டுமே. ஒவ்வொரு எடிட்டிங் அமர்வும் தானாகவே ஒன்றைச் சேர்க்கிறது."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "இந்தக் கோப்பின் ஒரு பகுதியை மட்டுமே இறக்குமதி செய்யப்பட்ட உள்ளடக்கத்துடன் ஒப்பிட முடிந்தது. திருத்தியில் ஒவ்வொரு பகுதியையும் உங்கள் கோப்புடன் ஒப்பிடவும்."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "சோதனையில் தேர்ச்சி பெற்ற வழங்குநர்களை மட்டுமே இயக்க முடியும்."
@@ -13259,6 +13267,10 @@ msgstr "இந்தக் கோப்பு Type 3 எழுத்துரு
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "இந்தக் கோப்பின் அளவைப் படிக்க முடியவில்லை. மற்றொரு PDF ஐ தேர்வு செய்யவும்."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "இந்தக் கோப்பின் உரையை இறக்குமதி செய்யப்பட்ட உள்ளடக்கத்துடன் ஒப்பிட முடியவில்லை. எனவே விடுபட்ட வரிகள் பட்டியலிடப்படவில்லை. திருத்தியில் ஒவ்வொரு பகுதியையும் உங்கள் கோப்புடன் ஒப்பிடவும்."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "இது ஒரு PDF போர்ட்ஃபோலியோ: தெரியும் பக்கம் ஒரு அட்டை மட்டுமே."
@@ -13339,6 +13351,10 @@ msgstr "இந்தப் பத்தி மாற்றப்பட்டத�
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "இந்த PDF க்கு உரை அடுக்கு இல்லை, எனவே ஒரு பாகுபடுத்தி அதிலிருந்து எதையும் படிக்கவில்லை."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "இந்த PDF ஸ்கேன் செய்யப்பட்ட படம். படிக்க எந்த உரையும் இல்லை. Word பதிப்பை முயற்சிக்கவும் அல்லது காலியாகத் தொடங்கி பிரிவுகளை ஒட்டவும்."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13918,6 +13934,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "உங்கள் நாள்காட்டியைப் புதுப்பிக்கவும்"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "AI இல்லாமல் PDF-ஐ இறக்குமதி செய்வதற்கு முன் உங்கள் சேவையகத்தைப் புதுப்பிக்கவும்."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

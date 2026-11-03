@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Kontroleer DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3845,6 +3841,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Kon nie die uitgevoerde PDF lees nie."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "Kon nie die PDF lees nie. Maak seker dat dit 'n leesbare tekslaag het en nie met 'n wagwoord beskerm is nie."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "Kon nie die hele PDF lees nie. Maak seker dat alle bladsye leesbare teks het, of probeer ’n kleiner lêer."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8688,6 +8692,10 @@ msgstr "Slegs een herkenbare afdelingsopskrif is gevind."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Slegs een weergawe tot dusver. Elke redigeringsessie voeg outomaties een by."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Slegs ’n deel van hierdie lêer kon met die ingevoerde inhoud vergelyk word. Vergelyk elke afdeling met jou lêer in die redigeerder."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Slegs verskaffers wat hul toets slaag, kan aangeskakel word."
@@ -13259,6 +13267,10 @@ msgstr "Hierdie lêer gebruik Tipe 3-lettertipes, wat tekeninge eerder as karakt
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Hierdie lêer se grootte kon nie gelees word nie. Kies 'n ander PDF."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Die lêer se teks kon nie met die ingevoerde inhoud vergelyk word nie, dus word uitgelate reëls nie gelys nie. Vergelyk elke afdeling met jou lêer in die redigeerder."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Hierdie is 'n PDF-portefeulje: die sigbare bladsy is slegs 'n omslag."
@@ -13339,6 +13351,10 @@ msgstr "Hierdie gedeelte het verander. Begin die resensie weer."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Hierdie PDF het geen tekslaag nie, so 'n ontleder lees niks daaruit nie."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Hierdie PDF is 'n geskandeerde beeld. Daar is geen teks om te lees nie. Probeer die Word weergawe, of begin leë en plak afdelings in."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13918,6 +13934,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Werk jou kalender by"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Werk jou bediener by voordat jy 'n PDF sonder KI invoer."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
