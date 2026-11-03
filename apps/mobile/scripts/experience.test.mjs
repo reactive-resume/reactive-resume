@@ -4704,3 +4704,91 @@ assert.equal(
 	"Canonical question correction replaces an untouched native draft instead of autosaving the old wording",
 );
 console.log("PASS native canonical question wording updates an untouched draft");
+
+// Named letter restore labels use the same snapshot identity as the resume History consumer.
+const rx233Letter = { id: "birch-letter", isLocked: false };
+let rx233Versions = [];
+let rx233Current = true;
+let rx233Restore;
+const { LetterShareSheet: rx233Share } = load("features/letters/share.tsx", {
+	"./compose": {},
+	"./page": {},
+	"./queries": {},
+	"./save": {
+		restoreLetterVersion: async (...input) => {
+			rx233Restore = input;
+			return rx233Current;
+		},
+	},
+	"@/api/client": { client: {}, orpc: { coverLetters: { listVersions: { queryOptions: (options) => options } } } },
+	"@/draft": { useLetterStore: (select) => select({ document: rx233Letter }) },
+	"@/features/ai/usage": {},
+	"@/features/documents/queries": {
+		useDocumentOperations: () => ({
+			busy: false,
+			run: async (operation) => {
+				await operation();
+				return true;
+			},
+		}),
+	},
+	"@/features/share/files": {},
+	"@/features/share/letter": {},
+	"@/features/share/model": {},
+	"@reactive-resume/utils/file": {},
+	"expo-network": { useNetworkState: () => ({ isConnected: true, isInternetReachable: true }) },
+	"@tanstack/react-query": { useQuery: () => ({ data: rx233Versions, refetch: async () => undefined }) },
+});
+for (const name of ["Birch version A", null]) {
+	const version = { id: "birch-version", name, kind: name ? "named" : "auto", createdAt: new Date() };
+	rx233Versions = [version];
+	reset();
+	const sheet = render(rx233Share, { id: rx233Letter.id, open: true, onClose() {}, version: version.id });
+	const history = nodes(sheet).find((node) => node.type?.name === "LetterHistory");
+	assert.ok(history, "Letter share routes the selected version to History");
+	reset();
+	let tree = render(history.type, history.props);
+	control(tree, "Restore this version").onPress();
+	tree = render(history.type, history.props);
+	nodes(tree)
+		.find((node) => node.type === "ConfirmDialog")
+		.props.onConfirm();
+	await settle();
+	assert.deepEqual(rx233Restore.slice(0, 2), [rx233Letter.id, version.id]);
+	assert.equal(
+		calls.find((call) => call.message)?.message,
+		name
+			? `Restored “${name}”. Your previous state is saved as “Before restoring “${name}””.`
+			: "Version restored. Your previous state is saved as “Before restore”.",
+	);
+	rx233Versions = [
+		{ ...version, id: "before", kind: "before-restore" },
+		{ ...version, id: "restored", kind: "restored" },
+	];
+	tree = render(history.type, history.props);
+	assert.deepEqual(
+		nodes(tree)
+			.filter((node) => node.type === "ListRow" && node.props.leading === "clock-counter-clockwise")
+			.map((node) => node.props.title),
+		[name ? `Before restoring “${name}”` : "Before restore", name ? `Restored “${name}”` : "Restored a version"],
+	);
+}
+rx233Current = false;
+rx233Versions = [{ id: "birch-version", name: "Birch version A", kind: "named", createdAt: new Date() }];
+reset();
+const rx233Sheet = render(rx233Share, { id: rx233Letter.id, open: true, onClose() {}, version: "birch-version" });
+const rx233History = nodes(rx233Sheet).find((node) => node.type?.name === "LetterHistory");
+reset();
+let rx233Tree = render(rx233History.type, rx233History.props);
+control(rx233Tree, "Restore this version").onPress();
+rx233Tree = render(rx233History.type, rx233History.props);
+nodes(rx233Tree)
+	.find((node) => node.type === "ConfirmDialog")
+	.props.onConfirm();
+await settle();
+assert.equal(
+	calls.some((call) => call.message),
+	false,
+	"Late restore cannot notify a replacement editor",
+);
+console.log("PASS native letter named/unnamed History labels, restore notice and late-editor fence");
