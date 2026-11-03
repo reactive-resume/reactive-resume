@@ -3,12 +3,23 @@ import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
-import { type ComponentRef, useRef, useState } from "react";
+import { type ComponentRef, useMemo, useRef, useState } from "react";
 import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import Animated from "react-native-reanimated";
-import { client, useCareerAction, useCareerTime, useNow, useSaveTimezone, useTodayQueries, useUndoRows } from "./hooks";
+import { latestOfferHints } from "@reactive-resume/schema/applications/next-step";
+import { upcomingApplicationEvents } from "@reactive-resume/schema/applications/upcoming";
+import {
+	client,
+	useCareerAction,
+	useCareerTime,
+	useNow,
+	useOffers,
+	useSaveTimezone,
+	useTodayQueries,
+	useUndoRows,
+} from "./hooks";
 import { ScheduleSheet, scheduleTitle } from "./schedule-sheet";
-import { collectInterviews, rollForward } from "./scheduling";
+import { rollForward } from "./scheduling";
 import { Actions, LoadState, Section, SwitchRow } from "./shared";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
@@ -20,7 +31,7 @@ import {
 	nextStepSortKey,
 } from "@/features/applications/next-step";
 import { useApplications } from "@/features/applications/queries";
-import { offerHintFor, useOfferHints } from "@/features/applications/stage-actions";
+import { offerHintFor } from "@/features/applications/stage-actions";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -51,7 +62,8 @@ export function TodayScreen() {
 	const saveTimezone = useSaveTimezone();
 	const queries = useTodayQueries();
 	const applications = useApplications();
-	const hints = useOfferHints();
+	const offers = useOffers();
+	const hints = useMemo(() => (offers.data ? latestOfferHints(offers.data) : undefined), [offers.data]);
 	const action = useCareerAction();
 	const pull = usePullRefresh(action.refresh, applications.refetch, time.profile.refetch);
 	const undo = useUndoRows();
@@ -67,8 +79,19 @@ export function TodayScreen() {
 	const rolesY = useRef(0);
 	const groupY = useRef(0);
 	const columnY = useRef(0);
-	const interviews = collectInterviews(applications.data ?? [], now);
-	const next = interviews[0];
+	const events = upcomingApplicationEvents(applications.data ?? [], hints, now, time.timeZone);
+	const next = events[0];
+	const eventLabel = (item: (typeof events)[number]) =>
+		item.kind === "offer"
+			? t`Reply to the offer`
+			: item.kind === "follow-up"
+				? t`Follow-up reminder`
+				: describeNextStep(
+						{ kind: "interview", interview: item.interview, at: item.at },
+						item.application,
+						time.locale,
+						time.timeZone,
+					).title;
 	const schedules = (queries.schedules.data ?? []).filter((row) => !undo.hidden.includes(row.id));
 	const discovery =
 		schedules.find((row) => row.kind === "discovery" && row.enabled) ??
@@ -179,51 +202,60 @@ export function TodayScreen() {
 						<Section title={t`Coming up`}>
 							<LoadState query={applications} />
 							<LoadState query={queries.briefings} />
+							<LoadState query={offers} />
 							{next ? (
 								<Card style={{ gap: space.s3 }}>
 									<Text variant="title">
-										{next.application.company} ·{" "}
-										{next.interview.kind === "technical"
-											? t`Technical interview`
-											: next.interview.kind === "screening"
-												? t`Screening interview`
-												: next.interview.kind === "behavioral"
-													? t`Behavioral interview`
-													: next.interview.kind === "onsite"
-														? t`Onsite interview`
-														: t`Interview`}
+										{next.application.company} · {eventLabel(next)}
 									</Text>
-									<Text>{time.when(next.start)}</Text>
+									<Text>{time.when(next.at)}</Text>
+									{next.kind === "follow-up" && next.note ? <Text>{next.note}</Text> : null}
 									<Text color="ink3">
-										{getLaneLabel(resolveLane(lanes.lanes, next.application))} ·{" "}
-										{new Intl.NumberFormat(time.locale, { style: "unit", unit: "minute", unitDisplay: "short" }).format(
-											next.interview.durationMinutes,
-										)}
+										{getLaneLabel(resolveLane(lanes.lanes, next.application))}
+										{next.kind === "interview"
+											? ` · ${new Intl.NumberFormat(time.locale, { style: "unit", unit: "minute", unitDisplay: "short" }).format(next.interview.durationMinutes)}`
+											: ""}
 									</Text>
-									{queries.briefings.data?.some((row) => row.interviewId === next.interview.id) ? (
+									{next.kind === "interview" &&
+									queries.briefings.data?.some((row) => row.interviewId === next.interview.id) ? (
 										<Chip label={t`Briefing ready`} />
 									) : null}
 									<Button
 										variant="secondary"
 										label={t`Open workspace`}
-										onPress={() => router.push(routes.application(next.application.id, "prepare"))}
+										onPress={() =>
+											router.push(
+												routes.application(
+													next.application.id,
+													next.kind === "interview" ? "prepare" : "messages",
+													next.kind === "interview" ? next.interview.id : undefined,
+												),
+											)
+										}
 									/>
-									{/* The two after it, so tomorrow's screening isn't hidden behind today's. */}
-									{interviews.slice(1, 3).map((item) => (
+									{events.slice(1, 3).map((item) => (
 										<Pressable
-											key={item.interview.id}
+											key={item.key}
 											accessibilityRole="link"
-											onPress={() => router.push(routes.application(item.application.id, "prepare", item.interview.id))}
+											onPress={() =>
+												router.push(
+													routes.application(
+														item.application.id,
+														item.kind === "interview" ? "prepare" : "messages",
+														item.kind === "interview" ? item.interview.id : undefined,
+													),
+												)
+											}
 											style={{ minHeight: size.hit, justifyContent: "center" }}
 										>
 											<Text color="ink2">
-												{time.when(item.start)} · {item.application.company}
+												{time.when(item.at)} · {item.application.company} · {eventLabel(item)}
 											</Text>
 										</Pressable>
 									))}
 								</Card>
-							) : !applications.isPending && !applications.isError ? (
-								<Text color="ink3">{t`No upcoming interviews.`}</Text>
+							) : !applications.isPending && !applications.isError && !offers.isPending && !offers.isError ? (
+								<Text color="ink3">{t`Nothing scheduled yet.`}</Text>
 							) : null}
 						</Section>
 						<Section title={t`Needs you`}>

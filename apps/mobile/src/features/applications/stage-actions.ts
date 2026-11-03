@@ -7,6 +7,7 @@ import { plural, t } from "@lingui/core/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
+import { latestOfferHints } from "@reactive-resume/schema/applications/next-step";
 import { stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
 import { useApplicationLanes } from "./lane-queries";
 import { getLaneLabel, laneInput, resolveLane } from "./lanes";
@@ -127,14 +128,7 @@ export function useOfferHints(): ReadonlyMap<string, OfferHint> | undefined {
 	const { data } = useOffers();
 	return useMemo(() => {
 		if (!data) return undefined;
-		const hints = new Map<string, OfferHint & { at: number }>();
-		for (const item of data) {
-			if (item.data.kind !== "offer" || !item.applicationId) continue;
-			const at = new Date(item.createdAt).getTime();
-			const known = hints.get(item.applicationId);
-			if (!known || at > known.at) hints.set(item.applicationId, { respondBy: item.data.respondBy, at });
-		}
-		return hints;
+		return latestOfferHints(data);
 	}, [data]);
 }
 
