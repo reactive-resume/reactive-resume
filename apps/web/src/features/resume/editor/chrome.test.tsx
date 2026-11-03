@@ -5,11 +5,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 import { usePageScale } from "./chrome";
 import { useEditorStore } from "./store";
 
-function Canvas({ withPage = false }: { withPage?: boolean }) {
+function Canvas({ pages = 0 }: { pages?: number }) {
 	const { canvasRef } = usePageScale("a4");
 	return (
 		<section ref={canvasRef} data-testid="canvas">
-			{withPage && <div data-testid="page" />}
+			{Array.from({ length: pages }, (_, index) => (
+				<div key={index} data-testid={`page-${index + 1}`}>
+					<canvas />
+				</div>
+			))}
 		</section>
 	);
 }
@@ -98,19 +102,66 @@ describe("canvas zoom", () => {
 		const frames: FrameRequestCallback[] = [];
 		vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => frames.push(callback));
 
-		const { getByTestId } = render(<Canvas withPage />);
+		const { getByTestId } = render(<Canvas pages={1} />);
 		const canvas = getByTestId("canvas");
-		const page = getByTestId("page");
+		const page = getByTestId("page-1");
 		canvas.getBoundingClientRect = () => bounds(0, 0);
 		page.getBoundingClientRect = () => bounds(180, 100);
 
 		wheel(canvas, { deltaY: -100, ctrlKey: true, clientX: 400, clientY: 300 });
+		// Layout moves the page after the zoom; the scroll must follow its new position.
+		page.getBoundingClientRect = () => bounds(200, 130);
 		act(() => {
 			for (const callback of frames.splice(0)) callback(0);
 		});
 
-		expect(canvas.scrollLeft).toBeCloseTo(48.4, 5);
-		expect(canvas.scrollTop).toBeCloseTo(44, 5);
+		expect(canvas.scrollLeft).toBeCloseTo(68.4, 5);
+		expect(canvas.scrollTop).toBeCloseTo(74, 5);
+	});
+
+	it("keeps every pending scale change when the pointer moves to another page", () => {
+		const frames: FrameRequestCallback[] = [];
+		vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => frames.push(callback));
+
+		const { getByTestId } = render(<Canvas pages={2} />);
+		const canvas = getByTestId("canvas");
+		const first = getByTestId("page-1");
+		const second = getByTestId("page-2");
+		canvas.getBoundingClientRect = () => bounds(0, 0);
+		first.getBoundingClientRect = () => bounds(180, 100);
+		second.getBoundingClientRect = () => bounds(180, 900);
+
+		wheel(canvas, { deltaY: -100, ctrlKey: true, clientX: 400, clientY: 300 });
+		wheel(canvas, { deltaY: -100, ctrlKey: true, clientX: 400, clientY: 1000 });
+		act(() => {
+			for (const callback of frames.splice(0)) callback(0);
+		});
+
+		expect(canvas.scrollLeft).toBeCloseTo(107.8, 5);
+		expect(canvas.scrollTop).toBeCloseTo(49, 5);
+	});
+
+	it("leaves zoom on the first reverse notch after an overshoot at the maximum", () => {
+		useEditorStore.setState({ zoom: 3 });
+		const { getByTestId } = render(<Canvas />);
+		const canvas = getByTestId("canvas");
+
+		wheel(canvas, { deltaY: -100, ctrlKey: true });
+		expect(useEditorStore.getState().zoom).toBe(3);
+
+		wheel(canvas, { deltaY: 100, ctrlKey: true });
+		expect(useEditorStore.getState().zoom).toBe(2.46);
+	});
+
+	it("starts a fresh gesture when the zoom was set elsewhere", () => {
+		const { getByTestId } = render(<Canvas />);
+		const canvas = getByTestId("canvas");
+
+		wheel(canvas, { deltaY: -1, ctrlKey: true });
+		useEditorStore.setState({ zoom: 1.2 });
+		wheel(canvas, { deltaY: -1, ctrlKey: true });
+
+		expect(useEditorStore.getState().zoom).toBe(1.2);
 	});
 
 	it("keeps the zoom inside the editor's bounds, still without browser zoom", () => {

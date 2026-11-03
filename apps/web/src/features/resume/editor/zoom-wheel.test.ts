@@ -43,9 +43,9 @@ describe("anchoredScroll", () => {
 		});
 	});
 
-	it("never scrolls past the start of the canvas", () => {
+	it("keeps negative horizontal offsets for RTL canvases but never scrolls above the top", () => {
 		expect(anchoredScroll(anchor(100, 100, 1, 400, 300), { left: 0, top: 0 }, { left: 180, top: 100 })).toEqual({
-			left: 0,
+			left: -120,
 			top: 0,
 		});
 	});

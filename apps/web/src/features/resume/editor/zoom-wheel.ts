@@ -32,7 +32,9 @@ export function anchoredScroll(
 	pageBounds: { left: number; top: number },
 ) {
 	return {
-		left: Math.max(0, scroll.left + pageBounds.left + anchor.contentX * anchor.ratio - anchor.pointerX),
+		// No lower bound: RTL canvases scroll to negative `scrollLeft` values, and the browser clamps out-of-range
+		// writes on its own.
+		left: scroll.left + pageBounds.left + anchor.contentX * anchor.ratio - anchor.pointerX,
 		top: Math.max(0, scroll.top + pageBounds.top + anchor.contentY * anchor.ratio - anchor.pointerY),
 	};
 }

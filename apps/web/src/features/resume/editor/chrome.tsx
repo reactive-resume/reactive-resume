@@ -58,6 +58,32 @@ function useCanvasWidth() {
 }
 
 /**
+ * The rendered page under the pointer, so zoom holds the point on that page rather than the first page. A pointer in
+ * the gap between pages gets the nearest page; while the preview is still loading, its only child.
+ */
+function pageUnderPointer(canvas: HTMLElement, clientX: number, clientY: number) {
+	const pages = Array.from(canvas.querySelectorAll("canvas"))
+		.map((element) => element.parentElement)
+		.filter((element): element is HTMLElement => element !== null);
+	if (pages.length === 0) return canvas.firstElementChild;
+
+	let nearest: HTMLElement | null = null;
+	let nearestDistance = Number.POSITIVE_INFINITY;
+	for (const page of pages) {
+		const bounds = page.getBoundingClientRect();
+		const dx = clientX < bounds.left ? bounds.left - clientX : clientX > bounds.right ? clientX - bounds.right : 0;
+		const dy = clientY < bounds.top ? bounds.top - clientY : clientY > bounds.bottom ? clientY - bounds.bottom : 0;
+		const distance = dx + dy;
+		if (distance === 0) return page;
+		if (distance < nearestDistance) {
+			nearest = page;
+			nearestDistance = distance;
+		}
+	}
+	return nearest;
+}
+
+/**
  * The canvas ref, the fit scale for the page format, and the scale the page is drawn at (zoom, or fit). `covered` is
  * the canvas width something lies over (a sheet), which fit leaves out.
  */
@@ -75,8 +101,8 @@ export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
 		fitScaleRef.current = fitScale;
 	}, [fitScale]);
 
-	// A gesture's unrounded scale and the page point it holds under the pointer, kept between wheel events.
-	const wheelZoomRef = useRef<number | null>(null);
+	// A gesture's unrounded scale, the zoom it was last rounded to, and the page point it holds under the pointer.
+	const wheelZoomRef = useRef<{ scale: number; stored: number } | null>(null);
 	const zoomAnchorRef = useRef<ZoomAnchor | null>(null);
 	const zoomFrameRef = useRef<number | null>(null);
 
@@ -94,25 +120,37 @@ export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
 
 			const { zoom, setZoom } = useEditorStore.getState();
 			const stored = zoom === "fit" ? Math.max(0.25, fitScaleRef.current) : zoom;
-			// Keep the unrounded scale between events, so a slow trackpad pinch adds up instead of rounding away.
-			const accumulated = wheelZoomRef.current;
-			const before = accumulated !== null && clampZoom(accumulated) === stored ? accumulated : stored;
+			// Keep the unrounded scale between events, so a slow trackpad pinch adds up instead of rounding away. A
+			// zoom set anywhere else (Fit, the zoom bar) starts a fresh gesture.
+			const previous = wheelZoomRef.current;
+			const accumulated = previous?.stored === stored ? previous.scale : null;
+			const before = accumulated ?? stored;
 			const raw = wheelZoom(before, event.deltaY, event.deltaMode, canvas.clientHeight);
 			const after = clampZoom(raw);
-			wheelZoomRef.current = raw;
-
 			// Fit can sit below the explicit minimum on a small canvas: zooming out must not jump up to it.
-			if (raw < before && after > stored) return;
-			if (after === stored) return;
+			const changed = after !== stored && !(raw < before && after > stored);
+			// Hold a scale inside the bounds, so an overshoot does not swallow the first reverse notch. A Fit below the
+			// minimum keeps its own scale until a zoom-in raises it into range.
+			const retained = changed
+				? after
+				: raw < before && stored < ZOOM_MIN
+					? before
+					: Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, raw));
+			wheelZoomRef.current = { scale: retained, stored: changed ? after : stored };
+			if (!changed) return;
 
-			// The page, not its corner, is what stays under the pointer while it grows or shrinks.
-			const page = canvas.querySelector("canvas")?.parentElement ?? canvas.firstElementChild;
+			// The page under the pointer, not the canvas's corner, is what stays put while it grows or shrinks.
+			const page = pageUnderPointer(canvas, event.clientX, event.clientY);
 			const pageBounds = page?.getBoundingClientRect();
 			if (page && pageBounds) {
 				const anchor = zoomAnchorRef.current;
-				if (anchor?.page === page) {
-					// Several wheel events can land before one frame: combine their scale changes on one anchor.
+				if (anchor) {
+					// Several wheel events can land before one frame: keep every scale change, and follow the latest
+					// pointer and the page now under it.
 					anchor.ratio *= after / stored;
+					anchor.page = page;
+					anchor.contentX = event.clientX - pageBounds.left;
+					anchor.contentY = event.clientY - pageBounds.top;
 					anchor.pointerX = event.clientX;
 					anchor.pointerY = event.clientY;
 				} else {
