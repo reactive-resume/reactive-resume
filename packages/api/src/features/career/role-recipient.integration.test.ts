@@ -696,25 +696,13 @@ describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQ
 		}),
 	);
 
-	it("keeps Knowledge serialized while the final provider availability check waits", () =>
+	it("serializes Knowledge behind provider approval, then refuses changed evidence before dispatch", () =>
 		run(async () => {
 			const approved = await create();
 			const lock = await pool.connect();
 			await lock.query("BEGIN");
 			await lock.query("SELECT id FROM ai_providers WHERE id=$1 FOR UPDATE", [approved.id]);
 			const before = a.requests.filter((request) => request.roles).length;
-			let arrived!: () => void;
-			let release!: () => void;
-			const entered = new Promise<void>((resolve) => {
-				arrived = resolve;
-			});
-			const held = new Promise<void>((resolve) => {
-				release = resolve;
-			});
-			a.hold(async () => {
-				arrived();
-				await held;
-			});
 			const pending = client()
 				.career.suggestTargetRoles(input(approved))
 				.then(
@@ -742,14 +730,15 @@ describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQ
 				expect(committed).toBe(false);
 				expect(a.requests.filter((request) => request.roles)).toHaveLength(before);
 				await lock.query("COMMIT");
-				await entered;
 				await mutation;
 				expect(committed).toBe(true);
-				release();
 				expect((await pending).code).toBe("CONFLICT");
+				expect(a.requests.filter((request) => request.roles)).toHaveLength(before);
+				expect(
+					(await pool.query("SELECT id FROM ai_request WHERE user_id=$1 AND action='role-suggestions'", [user.id]))
+						.rows,
+				).toEqual([]);
 			} finally {
-				release();
-				a.hold(async () => {});
 				await lock.query("ROLLBACK");
 				lock.release();
 				await mutation;
