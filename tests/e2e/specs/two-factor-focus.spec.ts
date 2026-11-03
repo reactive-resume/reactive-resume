@@ -74,6 +74,10 @@ test("two-step and backup verification receive typing after sign-in navigation",
 		await expect(backup).toBeVisible();
 		await routeFocusSettled(page);
 		await expect(backup).toBeFocused();
+		await page.keyboard.press("Tab");
+		await expect(page.getByRole("checkbox")).toBeFocused();
+		await page.keyboard.press("Shift+Tab");
+		await expect(backup).toBeFocused();
 		await page.screenshot({ path: info.outputPath("backup-code-page.png"), animations: "disabled" });
 		await page.keyboard.type(backupCode.toLowerCase().replaceAll("-", ""));
 		await page.getByRole("button", { name: "Verify", exact: true }).click();

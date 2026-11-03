@@ -164,8 +164,11 @@ it("focuses the primary verification field instead of its heading", async () => 
 	await waitFor(() => expect(screen.getByRole("heading", { name: "Ordinary" })).toHaveFocus());
 	await act(() => router.navigate({ to: "/code" }));
 	await waitFor(() => expect(screen.getByRole("textbox", { name: "Code" })).toHaveFocus());
+	expect(screen.getByRole("textbox", { name: "Code" })).toHaveProperty("tabIndex", 0);
 	await act(() => router.navigate({ to: "/backup" }));
 	await waitFor(() => expect(screen.getByRole("textbox", { name: "Backup code" })).toHaveFocus());
+	expect(screen.getByRole("textbox", { name: "Backup code" })).toHaveProperty("tabIndex", 0);
 	await act(() => router.navigate({ to: "/ordinary" }));
 	await waitFor(() => expect(screen.getByRole("heading", { name: "Ordinary" })).toHaveFocus());
+	expect(screen.getByRole("heading", { name: "Ordinary" })).toHaveAttribute("tabindex", "-1");
 });
