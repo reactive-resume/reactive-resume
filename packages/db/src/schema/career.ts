@@ -1,6 +1,7 @@
 import type { AnswerEvidence } from "@reactive-resume/schema/application-answers";
 import type {
 	CareerNotice,
+	CareerFactRevision,
 	CareerProfileData,
 	CareerSource,
 	DiscoverySource,
@@ -54,7 +55,7 @@ export const careerFact = pg.pgTable(
 		source: pg.jsonb("source").notNull().$type<CareerSource>(),
 		sourceKey: pg.text("source_key").notNull(),
 		status: pg.text("status").notNull().default("active"),
-		revisions: pg.jsonb("revisions").notNull().$type<Array<{ text: string; at: string }>>().default([]),
+		revisions: pg.jsonb("revisions").notNull().$type<CareerFactRevision[]>().default([]),
 	},
 	(t) => [pg.index().on(t.userId, t.applicationId, t.status), pg.uniqueIndex().on(t.userId, t.sourceKey)],
 );

@@ -148,7 +148,7 @@ test("knowledge corrections persist and the workspace opens without an AI provid
 	await expect(page.getByText(original, { exact: true })).toBeVisible();
 	await page.getByRole("button", { name: "Correct", exact: true }).click();
 	await page.getByLabel("Correct this fact").fill(corrected);
-	const saved = page.waitForResponse((response) => response.url().includes("/career/updateFact") && response.ok());
+	const saved = page.waitForResponse((response) => response.url().includes("/career/correctFact") && response.ok());
 	await page.getByRole("button", { name: "Save correction" }).click();
 	await saved;
 	await page.reload();

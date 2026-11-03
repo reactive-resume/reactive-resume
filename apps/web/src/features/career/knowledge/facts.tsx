@@ -1,12 +1,12 @@
 import type { Fact } from "../hooks";
-import type { FactCategory, MemoryMode } from "@reactive-resume/schema/career";
+import type { CareerFactCorrection, FactCategory, MemoryMode } from "@reactive-resume/schema/career";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { KeyboardEvent } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, m } from "motion/react";
-import { memo, useDeferredValue, useEffect, useId, useRef, useState } from "react";
+import { memo, useCallback, useDeferredValue, useEffect, useId, useRef, useState } from "react";
 import { factCategorySchema } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
@@ -21,6 +21,7 @@ import { CollapseRow, FilterChip, flash, useCareerTime, withQueryUndo } from "..
 import { CATEGORIES, categoryLabel } from "./fact-categories";
 import { useProfile } from "./preferences";
 import { ResumeFacts } from "./resume-facts";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { toastError } from "@/libs/error-message";
 import { D2, EASE, EXIT } from "@/libs/motion";
 import { client, orpc, prepareRpc } from "@/libs/orpc/client";
@@ -40,6 +41,7 @@ export function FactsPage({ highlight }: FactsPageProps) {
 	const [search, setSearch] = useState("");
 	const [type, setType] = useState<FactCategory | null>(null);
 	const [hidden, setHidden] = useState<string[]>([]);
+	const [showForgotten, setShowForgotten] = useState(false);
 	const listRef = useRef<HTMLDivElement>(null);
 
 	const refresh = () => {
@@ -54,6 +56,11 @@ export function FactsPage({ highlight }: FactsPageProps) {
 	const { mutate: updateFact } = useMutation({
 		...orpc.career.updateFact.mutationOptions(),
 		onError: (error) => toastError(error, t`Couldn't save that change. Try again.`),
+		onSettled: refresh,
+	});
+	const { mutateAsync: correctFact } = useMutation({
+		...orpc.career.correctFact.mutationOptions(),
+		onError: (error) => toastError(error, t`Couldn't save that change. Try again.`, { allowServerMessage: true }),
 		onSettled: refresh,
 	});
 
@@ -77,10 +84,6 @@ export function FactsPage({ highlight }: FactsPageProps) {
 	const setStatus = (fact: Fact, status: "active" | "excluded") => {
 		patch(fact.id, { status });
 		updateFact({ id: fact.id, status });
-	};
-	const correct = (fact: Fact, text: string) => {
-		patch(fact.id, { text, revisions: [...fact.revisions, { text: fact.text, at: new Date().toISOString() }] });
-		updateFact({ id: fact.id, text });
 	};
 	const share = (fact: Fact) => {
 		patch(fact.id, { applicationId: null, company: null });
@@ -137,6 +140,10 @@ export function FactsPage({ highlight }: FactsPageProps) {
 
 			<ResumeFacts />
 			<AddFact onAdded={added} />
+			<FilterChip pressed={showForgotten} onClick={() => setShowForgotten((shown) => !shown)}>
+				<Trans>Show forgotten</Trans>
+			</FilterChip>
+			{showForgotten && <ForgottenFacts />}
 			{!facts && (factQuery.isError ? <CareerLoadError onRetry={() => void factQuery.refetch()} /> : <CareerLoading />)}
 
 			{facts && (
@@ -147,7 +154,7 @@ export function FactsPage({ highlight }: FactsPageProps) {
 								key={fact.id}
 								fact={fact}
 								onStatus={setStatus}
-								onCorrect={correct}
+								onCorrect={correctFact}
 								onShare={share}
 								onForget={forget}
 							/>
@@ -173,6 +180,27 @@ export function FactsPage({ highlight }: FactsPageProps) {
 					)}
 				</div>
 			)}
+		</div>
+	);
+}
+
+function ForgottenFacts() {
+	const history = useQuery({ ...orpc.career.forgottenFacts.queryOptions({ input: {} }), retry: false });
+	const { when } = useCareerTime();
+	if (history.isError) return <CareerLoadError onRetry={() => void history.refetch()} />;
+	if (!history.data) return <CareerLoading />;
+	return (
+		<div className="grid gap-2 rounded-xl border border-line bg-surface p-4" aria-live="polite">
+			{history.data.length === 0 && (
+				<p className="text-sm text-ink-3">
+					<Trans>No forgotten facts</Trans>
+				</p>
+			)}
+			{history.data.map(({ count, at }) => (
+				<p key={at.toISOString()} className="text-sm text-ink-3">
+					{plural(count, { one: "# fact forgotten", other: "# facts forgotten" })} · {when(at)}
+				</p>
+			))}
 		</div>
 	);
 }
@@ -329,7 +357,7 @@ function sourceLabel(fact: Fact) {
 type FactRowProps = {
 	fact: Fact;
 	onStatus: (fact: Fact, status: "active" | "excluded") => void;
-	onCorrect: (fact: Fact, text: string) => void;
+	onCorrect: (input: CareerFactCorrection) => Promise<unknown>;
 	onShare: (fact: Fact) => void;
 	onForget: (fact: Fact) => void;
 };
@@ -390,11 +418,11 @@ const FactRow = memo(function FactRow({ fact, onStatus, onCorrect, onShare, onFo
 
 					{correcting ? (
 						<Correction
-							text={fact.text}
+							fact={fact}
 							onCancel={() => setCorrecting(false)}
-							onSave={(text) => {
+							onSave={async (input) => {
+								await onCorrect(input);
 								setCorrecting(false);
-								if (text !== fact.text) onCorrect(fact, text);
 							}}
 						/>
 					) : (
@@ -470,36 +498,102 @@ const FactRow = memo(function FactRow({ fact, onStatus, onCorrect, onShare, onFo
 	);
 });
 
-type CorrectionProps = { text: string; onSave: (text: string) => void; onCancel: () => void };
+type CorrectionProps = { fact: Fact; onSave: (input: CareerFactCorrection) => Promise<unknown>; onCancel: () => void };
 
-function Correction({ text, onSave, onCancel }: CorrectionProps) {
-	const [draft, setDraft] = useState(text);
-	const save = () => draft.trim() && onSave(draft.trim());
+function Correction({ fact, onSave, onCancel }: CorrectionProps) {
+	const [before] = useState(() => ({ text: fact.text, category: fact.category, applicationId: fact.applicationId }));
+	const [draft, setDraft] = useState(before.text);
+	const [category, setCategory] = useState(before.category);
+	const [applicationId, setApplicationId] = useState(before.applicationId ?? "");
+	const [pending, setPending] = useState(false);
+	const applications = useQuery(applicationsListQueryOptions());
+	const focus = useCallback((element: HTMLTextAreaElement | null) => {
+		if (!element) return;
+		element.focus();
+		element.setSelectionRange(element.value.length, element.value.length);
+	}, []);
+	const changed =
+		draft.trim() !== before.text || category !== before.category || (applicationId || null) !== before.applicationId;
+	const save = async () => {
+		if (!draft.trim() || !changed || pending) return;
+		setPending(true);
+		try {
+			await onSave({
+				id: fact.id,
+				before,
+				...(draft.trim() !== before.text ? { text: draft.trim() } : {}),
+				...(category !== before.category ? { category: factCategorySchema.parse(category) } : {}),
+				...((applicationId || null) !== before.applicationId ? { applicationId: applicationId || null } : {}),
+			});
+		} catch {
+			// Mutation reports the error; keep the authored correction open.
+		} finally {
+			setPending(false);
+		}
+	};
 
 	return (
 		<div className="grid gap-2">
 			<Textarea
-				ref={(element) => {
-					// Focused with the cursor at the end, ready to fix the last few words.
-					if (!element || element === document.activeElement) return;
-					element.focus();
-					element.setSelectionRange(element.value.length, element.value.length);
-				}}
+				ref={focus}
 				aria-label={t`Correct this fact`}
 				rows={3}
 				maxLength={2000}
+				disabled={pending}
 				value={draft}
 				onChange={(event) => setDraft(event.target.value)}
 				onKeyDown={(event) => {
-					if (event.key === "Escape") onCancel();
+					if (event.key === "Escape" && !pending) onCancel();
 				}}
 				className="border-accent px-3 py-2.5 text-sm leading-[21px] shadow-[0_0_0_3px_var(--accent-soft)]"
 			/>
+			<div className="flex flex-wrap gap-2">
+				<NativeSelect
+					aria-label={t`Fact type`}
+					value={category}
+					disabled={pending}
+					onChange={(event) => setCategory(event.target.value)}
+				>
+					{!factCategorySchema.safeParse(before.category).success && (
+						<option value={before.category}>{before.category}</option>
+					)}
+					{CATEGORIES.map((option) => (
+						<option key={option} value={option}>
+							{categoryLabel(option)}
+						</option>
+					))}
+				</NativeSelect>
+				<NativeSelect
+					aria-label={t`Scope`}
+					value={applicationId}
+					disabled={pending || !applications.data}
+					onChange={(event) => setApplicationId(event.target.value)}
+				>
+					<option value="">{t`All applications`}</option>
+					{before.applicationId &&
+						!applications.data?.some((application) => application.id === before.applicationId) && (
+							<option value={before.applicationId}>{fact.company ?? t`Application`}</option>
+						)}
+					{applications.data?.map((application) => (
+						<option key={application.id} value={application.id}>
+							{application.company} · {application.role}
+						</option>
+					))}
+				</NativeSelect>
+			</div>
+			{applications.isError && <CareerLoadError onRetry={() => void applications.refetch()} />}
 			<div className="flex flex-wrap items-center gap-1.5">
-				<Button variant="secondary" size="sm" className="h-[30px] px-3" disabled={!draft.trim()} onClick={save}>
+				<Button
+					variant="secondary"
+					size="sm"
+					className="h-[30px] px-3"
+					disabled={!draft.trim() || !changed}
+					loading={pending}
+					onClick={() => void save()}
+				>
 					<Trans>Save correction</Trans>
 				</Button>
-				<Button variant="ghost" size="sm" className="h-[30px] text-ink-2" onClick={onCancel}>
+				<Button variant="ghost" size="sm" className="h-[30px] text-ink-2" disabled={pending} onClick={onCancel}>
 					<Trans>Cancel</Trans>
 				</Button>
 				<span className="text-xs text-ink-3">

@@ -972,6 +972,157 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		).rejects.toMatchObject({ code: "NOT_FOUND" });
 	});
 
+	it("atomically corrects type and scope, invalidates earlier coaching and preserves legacy correction history", async () => {
+		const saved = await fact("alice", "Fictional mentoring result");
+		const supporting = await service.saveStory("alice", story([saved.id]));
+		const previous = await service.context({ userId: "alice" });
+		const before = { text: saved.text, category: saved.category, applicationId: saved.applicationId };
+		await getDb()
+			.update(tables.application)
+			.set({ notes: "Fictional independent notes edit" })
+			.where(eq(tables.application.id, "alice-app"));
+		await service.updateFact("alice", { id: saved.id, before, category: "skill", applicationId: "alice-app" });
+		const [row] = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, saved.id));
+		expect(row).toMatchObject({
+			text: saved.text,
+			category: "skill",
+			applicationId: "alice-app",
+			status: "active",
+			source: saved.source,
+		});
+		expect(row?.revisions).toEqual([{ ...before, at: expect.any(String) }]);
+		const shared = await service.context({ userId: "alice" });
+		expect(shared.memoryVersion).not.toBe(previous.memoryVersion);
+		expect(await service.memoryCutoff("alice")).toEqual(row?.updatedAt);
+		expect(shared.facts).not.toContainEqual(expect.objectContaining({ id: saved.id }));
+		expect(shared.stories).not.toContainEqual(expect.objectContaining({ id: supporting.id }));
+		expect((await service.context({ userId: "alice", applicationId: "alice-app" })).facts).toContainEqual(
+			expect.objectContaining({ id: saved.id, category: "skill" }),
+		);
+		await expect(
+			service.saveStory("alice", story([saved.id]), undefined, previous.memoryVersion),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		await service.updateFact("alice", { id: saved.id, share: true });
+		await service.updateFact("alice", { id: saved.id, text: "Fictional corrected mentoring result" });
+		expect((await service.facts({ userId: "alice" })).find((entry) => entry.id === saved.id)).toMatchObject({
+			applicationId: null,
+			text: "Fictional corrected mentoring result",
+		});
+		await service.forgetFact("alice", saved.id);
+		expect((await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, saved.id)))[0]).toMatchObject(
+			{ text: "", revisions: [], source: { quote: "" }, status: "forgotten" },
+		);
+	});
+
+	it("rejects stale, foreign, trashed and forgotten corrections without partially writing text", async () => {
+		const saved = await fact("alice", "Fictional original");
+		const before = { text: saved.text, category: saved.category, applicationId: saved.applicationId };
+		const correction = { id: saved.id, before, text: "Fictional private correction", category: "skill" as const };
+		await expect(service.updateFact("alice", { ...correction, applicationId: "bob-app" })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await getDb()
+			.update(tables.application)
+			.set({ trashedAt: new Date() })
+			.where(eq(tables.application.id, "alice-other"));
+		await expect(service.updateFact("alice", { ...correction, applicationId: "alice-other" })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await expect(service.updateFact("bob", { ...correction, applicationId: "bob-app" })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		expect((await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, saved.id)))[0]).toEqual(
+			saved,
+		);
+		await service.updateFact("alice", { id: saved.id, text: "Fictional newer correction" });
+		const current = (await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, saved.id)))[0];
+		await expect(service.updateFact("alice", { ...correction, applicationId: "alice-app" })).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		expect((await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, saved.id)))[0]).toEqual(
+			current,
+		);
+		await service.forgetFact("alice", saved.id);
+		await expect(service.updateFact("alice", correction)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect((await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, saved.id)))[0]).toMatchObject(
+			{ text: "", revisions: [], status: "forgotten", source: { quote: "" } },
+		);
+	});
+
+	it("rechecks the correction scope after a concurrent application lifetime write without partial text", async () => {
+		const saved = await fact("alice", "Fictional original before lifetime race");
+		const concurrent = new Pool({ connectionString: databaseUrl, max: 2, options: `-c search_path=${schemaName}` });
+		const original = fixture.db;
+		const holder = await pool.connect();
+		let correcting: Promise<unknown> | undefined;
+		try {
+			await holder.query("BEGIN");
+			await holder.query("UPDATE application SET trashed_at=now() WHERE id=$1", ["alice-app"]);
+			const pid = (await holder.query<{ pid: number }>("SELECT pg_backend_pid() AS pid")).rows[0]?.pid;
+			if (!pid) throw new Error("Missing lock holder");
+			fixture.db = drizzle({ client: concurrent });
+			correcting = service
+				.updateFact("alice", {
+					id: saved.id,
+					before: { text: saved.text, category: saved.category, applicationId: null },
+					text: "Fictional private correction",
+					category: "skill",
+					applicationId: "alice-app",
+				})
+				.then(
+					() => "saved",
+					(error: unknown) => error,
+				);
+			await vi.waitFor(
+				async () => {
+					const result = await admin.query<{ query: string; blockers: number[] }>(
+						"SELECT query,pg_blocking_pids(pid) AS blockers FROM pg_stat_activity WHERE wait_event_type='Lock' AND datname=current_database()",
+					);
+					expect(result.rows.some((row) => row.blockers.includes(pid) && row.query.includes("application"))).toBe(true);
+				},
+				{ timeout: 5000, interval: 10 },
+			);
+			expect(
+				(await holder.query("SELECT text,category,application_id FROM career_fact WHERE id=$1", [saved.id])).rows[0],
+			).toEqual({ text: saved.text, category: saved.category, application_id: null });
+			await holder.query("COMMIT");
+			expect(await correcting).toMatchObject({ code: "NOT_FOUND" });
+			expect((await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, saved.id)))[0]).toEqual(
+				saved,
+			);
+		} finally {
+			await holder.query("ROLLBACK");
+			holder.release();
+			await Promise.allSettled([correcting]);
+			fixture.db = original;
+			await concurrent.end();
+		}
+	});
+
+	it("projects only forgotten counts and timestamps, including legacy rows, with account and lifetime isolation", async () => {
+		const at = new Date("2026-10-30T23:30:00Z");
+		const shared = await fact("alice", "Fictional legacy erased text");
+		const privateFact = await fact("alice", "Fictional legacy private text", "alice-app");
+		const trashed = await fact("alice", "Fictional trashed text", "alice-other");
+		const foreign = await fact("bob", "Fictional foreign text");
+		for (const entry of [shared, privateFact, trashed, foreign])
+			await getDb()
+				.update(tables.careerFact)
+				.set({
+					status: "forgotten",
+					updatedAt: at,
+					revisions: [{ text: "Fictional legacy revision", at: at.toISOString() }],
+				})
+				.where(eq(tables.careerFact.id, entry.id));
+		await getDb()
+			.update(tables.application)
+			.set({ trashedAt: new Date() })
+			.where(eq(tables.application.id, "alice-other"));
+		expect(await service.forgottenFacts("alice")).toEqual([{ count: 2, at }]);
+		expect(await service.forgottenFacts("bob")).toEqual([{ count: 1, at }]);
+		expect(await service.facts({ userId: "alice", all: true })).toEqual([]);
+	});
+
 	it("keeps stories and saved items through a correction, unlinks a forgotten fact, and blocks re-extraction", async () => {
 		const original = "I reduced recovery time by 40 percent";
 		const remembered = {

@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# унос} other {# уноси}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# заборављена чињеница} few {# заборављене чињенице} other {# заборављених чињеница}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# отворен проблем} few {# отворена проблема} other {# отворених проблема}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} пт"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# ред није имао компанију ни улогу и прескочен је.} few {# реда нису имала компанију ни улогу и прескочена су.} other {# редова није имало компанију ни улогу и прескочено је.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Дајте нам звездицу на GitHub-у, тренутно # звездица (отвара се у новој картици)} few {Дајте нам звездицу на GitHub-у, тренутно # звездице (отвара се у новој картици)} other {Дајте нам звездицу на GitHub-у, тренутно # звездица (отвара се у новој картици)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Системи за праћење кандидата претварају ваш PDF у обичан текст пре него што га неко прочита. Проверивач ради исто, са библиотеком PDF.js у вашем претраживачу, а затим оцењује колико је вашег резимеа преживело: 0 до 100, од ​​тога колико поуздано излази текст, а не од ваших шанси да добијете посао."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Промените га у дизајну."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Промени језик"
 
@@ -7557,7 +7557,6 @@ msgstr "Иди кући"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Иди на контролну таблу"
 
@@ -9432,10 +9431,6 @@ msgstr "Направљено са Reactive Resume, бесплатно и отв�
 msgid "Main"
 msgstr "Главно"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Главна навигација"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10395,6 +10390,10 @@ msgstr "Још нема чињеница за повезивање. Додајт
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Нема заборављених чињеница"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12443,10 +12442,6 @@ msgstr "Поново извезите са уграђеним фонтовима
 msgid "Re: Senior Product Designer"
 msgstr "Re: Сениор продукт дизајнер"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Реактивни Резиме - Иди на почетну страницу"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14132,6 +14127,10 @@ msgstr "Распореди"
 msgid "School"
 msgstr "Школа"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Опсег"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14819,6 +14818,10 @@ msgstr "Прикажи DNS записе"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Прикажи заборављене чињенице"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Прикажи наслов"
@@ -15085,6 +15088,7 @@ msgstr "Прескочи и отпреми"
 msgid "Skip to content"
 msgstr "Пређи на садржај"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15320,10 +15324,6 @@ msgstr "Стандардни наслови секција"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Звезда Reactive Resume на GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Дај нам звездицу на GitHub-у (отвара се у новом језичку)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15681,18 +15681,10 @@ msgstr "Промени модел"
 msgid "Switch to dark mode"
 msgstr "Пребаците се на тамни режим"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Пребаци на тамну тему"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Пребаците на светлосни режим"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Пребаци на светлу тему"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
