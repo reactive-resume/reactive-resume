@@ -3,7 +3,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -12,14 +12,15 @@ import { cn } from "@reactive-resume/utils/style";
 import { useBatchActions } from "./document-actions";
 import { DocumentRow } from "./document-card";
 import { LibrarySkeleton } from "./documents-page";
+import { documentKey } from "./filter";
 import { LibraryError } from "./library-error";
 import { PageNavigation } from "./page-navigation";
+import { useDocumentRemovalMotion } from "./removal-motion";
 import { PageHeader } from "@/components/layout/page-header";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
 
 const noop = () => undefined;
-const documentKey = (document: { type: string; id: string }) => `${document.type}:${document.id}`;
 
 /**
  * Trash: documents stay 30 days, then go for good. Rows can be selected for Restore or Delete permanently; Empty
@@ -31,7 +32,7 @@ export function TrashPage() {
 	const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
 	const [busy, setBusy] = useState(false);
 	const confirm = useConfirm();
-	const batch = useBatchActions();
+	const resultsRef = useRef<HTMLTableElement>(null);
 	const {
 		data: page,
 		isPending,
@@ -54,6 +55,14 @@ export function TrashPage() {
 		setOffset(Math.max(0, Math.floor((page.total - 1) / 100) * 100));
 		setSelected(new Set());
 	}
+	const onEffect = useDocumentRemovalMotion({
+		container: resultsRef,
+		scope: String(displayedOffset),
+		trashed: true,
+		data: displayed,
+		fetching: isFetching,
+	});
+	const batch = useBatchActions(onEffect);
 	const documents = displayed?.items;
 	const all = documents ?? [];
 	const selection = rowsCurrent ? all.filter((document) => selected.has(documentKey(document))) : [];
@@ -184,7 +193,7 @@ export function TrashPage() {
 					</p>
 				</div>
 			) : (
-				<table className="w-full table-fixed border-collapse">
+				<table ref={resultsRef} className="w-full table-fixed border-collapse">
 					<caption className="sr-only">
 						<Trans>Trash</Trans>
 					</caption>
@@ -223,6 +232,7 @@ export function TrashPage() {
 							<DocumentRow
 								key={documentKey(document)}
 								document={document}
+								onEffect={onEffect}
 								onTags={noop}
 								onLink={noop}
 								selected={rowsCurrent && selected.has(documentKey(document))}

@@ -14,7 +14,9 @@ const react = {
 	useState: (initial) => [initial, () => {}],
 	useSyncExternalStore: (_subscribe, getSnapshot) => getSnapshot(),
 };
-const animation = { duration: () => animation };
+const animation = {
+	duration: (duration) => ({ duration, reduceMotion: (policy) => ({ duration, policy }) }),
+};
 const theme = {
 	colors: {},
 	motion: { d1: 120, d2: 200 },
@@ -38,7 +40,9 @@ const mocks = {
 		View: "View",
 	},
 	"react-native-reanimated": {
+		__esModule: true,
 		default: { View: "Animated.View" },
+		ReduceMotion: { Never: "never" },
 		FadeIn: animation,
 		FadeInDown: animation,
 		FadeOut: animation,
@@ -85,6 +89,9 @@ const find = (node, type) => {
 
 let undos = 0;
 showToast({ message: "Section cleared", undo: () => undos++ });
+const toast = find(Toaster(), "Animated.View");
+assert.equal(toast.props.entering.policy, "never", "reduced-motion opacity entry still runs");
+assert.equal(toast.props.exiting.policy, "never", "reduced-motion opacity exit still runs");
 const action = find(Toaster(), "Pressable");
 assert.ok(action, "The toast renders its Undo action");
 action.props.onPress();

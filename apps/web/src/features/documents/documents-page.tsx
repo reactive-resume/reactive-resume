@@ -1,4 +1,5 @@
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
+import type { OnDocumentEffect } from "./removal-motion";
 import type { QueryClient } from "@tanstack/react-query";
 import type { KeyboardEvent, Ref } from "react";
 import { t } from "@lingui/core/macro";
@@ -30,9 +31,11 @@ import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-
 import { cn } from "@reactive-resume/utils/style";
 import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
+import { documentKey } from "./filter";
 import { LibraryError } from "./library-error";
 import { useNewDocumentsStore } from "./new-documents";
 import { PageNavigation } from "./page-navigation";
+import { useDocumentRemovalMotion } from "./removal-motion";
 import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { PageHeader } from "@/components/layout/page-header";
 import { useDialogStore } from "@/dialogs/store";
@@ -142,6 +145,14 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		viewSwitched &&
 		"transition-[opacity,translate] duration-standard ease-enter starting:translate-y-1 starting:opacity-0";
 
+	const onEffect = useDocumentRemovalMotion({
+		container: resultsRef,
+		scope: JSON.stringify([filterKey, displayedOffset, view]),
+		trashed: false,
+		data: displayed,
+		fetching: isFetching,
+	});
+
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	useHotkey(
 		"/",
@@ -167,8 +178,10 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const shown = displayed?.items ?? [];
 	const failed = isError && !displayed;
 	const filtered = search.type !== "all" || search.q.trim() !== "" || search.tags.length > 0 || search.public === true;
-	const firstRun = rowsCurrent && !filtered && offset === 0 && pageData?.total === 0;
-	const { data: libraryCounts } = useQuery(orpc.documents.counts.queryOptions());
+	const [hadDocuments, setHadDocuments] = useState(false);
+	if (!hadDocuments && shown.length > 0) setHadDocuments(true);
+	const firstRun = rowsCurrent && !filtered && offset === 0 && pageData?.total === 0 && !hadDocuments;
+	const { data: libraryCounts, isPending: countsPending } = useQuery(orpc.documents.counts.queryOptions());
 	const trashCount = libraryCounts?.trash ?? 0;
 	const tags = displayed?.tags ?? [];
 	const counts = {
@@ -205,6 +218,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		setSelected(new Set(on ? shown.map(documentKey) : []));
 	};
 	const itemProps = (document: DocumentSummary) => ({
+		onEffect,
 		onTags: (document: DocumentSummary) => {
 			if (rowsCurrent) setTagsFor([document]);
 		},
@@ -380,7 +394,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				</div>
 			)}
 
-			{failed ? null : firstRun ? (
+			{failed ? null : firstRun && trashCount === 0 && libraryCounts ? (
 				<FirstRun trashCount={trashCount} onFile={(file) => openDialog("document.new", { file })} />
 			) : (
 				<>
@@ -395,10 +409,24 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 						/>
 					)}
 
-					{isPending || (!rowsCurrent && !isError && shown.length === 0) ? (
+					{isPending || (firstRun && countsPending) || (!rowsCurrent && !isError && shown.length === 0) ? (
 						<LibrarySkeleton view={view} />
 					) : shown.length === 0 ? (
-						isError ? null : emptyType ? (
+						isError ? null : !filtered && offset === 0 ? (
+							<EmptyState
+								title={<Trans>No documents</Trans>}
+								description={
+									trashCount > 0 ? (
+										<Plural value={trashCount} one="Trash has # document." other="Trash has # documents." />
+									) : undefined
+								}
+								action={
+									<Button onClick={() => openDialog("document.new", undefined)}>
+										<Trans>New document</Trans>
+									</Button>
+								}
+							/>
+						) : emptyType ? (
 							<TypeEmpty type={emptyType} />
 						) : (
 							<div className="grid justify-items-center gap-2 py-16 text-center">
@@ -499,6 +527,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				onChange={changePage}
 			/>
 			<SelectionBar
+				onEffect={onEffect}
 				ref={selectionBarRef}
 				key={`selection:${filterKey}:${offset}`}
 				selection={selection}
@@ -521,8 +550,6 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		</div>
 	);
 }
-
-const documentKey = (document: DocumentSummary) => `${document.type}:${document.id}`;
 
 const VIEW_KEY = "documents-view";
 // Longest stagger (150ms) plus the D2 entrance (200ms), with room to spare: then the intro classes come off.
@@ -733,6 +760,7 @@ function TagFilter({ tags, active, onChange, showPublic, publicOnly, onPublicCha
 }
 
 type SelectionBarProps = {
+	onEffect: OnDocumentEffect;
 	ref: Ref<HTMLDivElement>;
 	selection: DocumentSummary[];
 	allSelected: boolean;
@@ -745,9 +773,9 @@ type SelectionBarProps = {
  * Floats over the library while documents are selected: tags, visibility, locking and Trash for all of them. On phones
  * it sits above the tab bar, as the Applications list's bar does.
  */
-function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTags }: SelectionBarProps) {
+function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTags, onEffect }: SelectionBarProps) {
 	const lettersOnly = selection.length > 0 && selection.every((document) => document.type === "letter");
-	const batch = useBatchActions();
+	const batch = useBatchActions(onEffect);
 	const [busy, setBusy] = useState(false);
 	const count = selection.length;
 	// Toasts sit bottom centre, where this bar is: lift them above it while it's on screen, so a result never hides it.

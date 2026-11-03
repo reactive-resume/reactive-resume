@@ -3,7 +3,7 @@ import * as Haptics from "expo-haptics";
 import Storage from "expo-sqlite/kv-store";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { AccessibilityInfo, useWindowDimensions } from "react-native";
-import { Easing, FadeInDown, FadeOut, LinearTransition, ReduceMotion } from "react-native-reanimated";
+import { Easing, FadeIn, FadeInDown, FadeOut, LinearTransition, ReduceMotion } from "react-native-reanimated";
 import { motion, size } from "./tokens";
 
 let reduceMotion = false;
@@ -17,8 +17,8 @@ void AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
 AccessibilityInfo.addEventListener("reduceMotionChanged", setReduceMotion);
 
 /**
- * iOS Reduce Motion or Android "Remove animations". Movement then takes 0 ms and slides become a `d1` cross-fade.
- * Reanimated and the bottom sheet already skip their animations on their own (`ReduceMotion.System`).
+ * iOS Reduce Motion or Android "Remove animations". App-owned content uses short opacity fades, without movement.
+ * Spatial/layout animations and native sheets keep the platform's `ReduceMotion.System` behavior.
  */
 export function useReducedMotion(): boolean {
 	return useSyncExternalStore(
@@ -95,12 +95,19 @@ const listEntering = (index: number) =>
 		.delay(Math.min(index, listStaggerCap) * listStagger)
 		.reduceMotion(ReduceMotion.System);
 
-/** A removed row fades out, faster than it came in. */
-const listExiting = FadeOut.duration(motion.d1).reduceMotion(ReduceMotion.System);
+/** Opacity is safe under reduced motion; the system still controls spatial/layout animations. */
+const reducedEntering = FadeIn.duration(motion.d1).reduceMotion(ReduceMotion.Never);
+const listExiting = FadeOut.duration(motion.d2 * 0.7).reduceMotion(ReduceMotion.Never);
 
-/** Spread on a row's `Animated.View`: staggers in on the screen's first appearance only, always fades out. */
-export const listItemMotion = (index: number, first: boolean) =>
-	first ? { entering: listEntering(index), exiting: listExiting } : { exiting: listExiting };
+/** First-appearance entry; document lists enable exits only for confirmed remove/restore actions. */
+export const listItemMotion = (
+	index: number,
+	first: boolean,
+	{ reduced = false, exiting = true }: { reduced?: boolean; exiting?: boolean } = {},
+) => ({
+	...(first ? { entering: reduced ? reducedEntering : listEntering(index) } : {}),
+	...(exiting ? { exiting: listExiting } : {}),
+});
 
 /** Rows sliding into the gap a removed or moved row leaves. */
 export const listLayout = LinearTransition.duration(motion.d2)

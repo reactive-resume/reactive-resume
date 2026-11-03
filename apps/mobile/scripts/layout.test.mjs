@@ -540,6 +540,10 @@ let libraryParams = {};
 const { DocumentsLibrary } = load("features/documents/library.tsx", {
 	"@legendapp/list/reanimated": { AnimatedLegendList: "FlatList" },
 	"./document-sheets": { DocumentSheets: "DocumentSheets" },
+	"./removal-motion": {
+		DocumentMotionFrame: "Animated.View",
+		useDocumentRemovalMotion: () => ({ register: () => () => {}, onEffect: async () => {} }),
+	},
 	"./filter": load("features/documents/filter.ts"),
 	"./new-documents": {},
 	"./pending": { usePendingDocuments: () => pendingDocuments },
@@ -591,6 +595,7 @@ const { DocumentsLibrary } = load("features/documents/library.tsx", {
 		listItemMotion: () => ({}),
 		listLayout: {},
 		useFirstAppearance: () => false,
+		useReducedMotion: () => false,
 	},
 });
 // A search continuation updates the already-mounted tab, clears its one-shot params, and preserves library paging ownership.

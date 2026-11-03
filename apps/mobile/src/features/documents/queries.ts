@@ -1,4 +1,5 @@
 import type { DocumentSummary } from "./filter";
+import type { OnDocumentEffect } from "./removal-motion";
 import { plural, t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -65,7 +66,7 @@ export function useDocumentRefresh() {
 }
 
 /** Serialize user actions; report partial batches and undo only successful Trash moves. */
-export function useDocumentOperations(enabled = true) {
+export function useDocumentOperations(enabled = true, onEffect?: OnDocumentEffect) {
 	const refresh = useDocumentRefresh();
 	const session = useSession();
 	const active = useRef(false);
@@ -150,6 +151,7 @@ export function useDocumentOperations(enabled = true) {
 				applies: (document) => !document.isLocked,
 				notify: false,
 			});
+			if (done.length) await onEffect?.("trash", done);
 		});
 		if (attempted)
 			showToast({
@@ -203,6 +205,8 @@ export function useDocumentOperations(enabled = true) {
 				try {
 					const result = await client.documents.restoreMany({ documents: group.map(documentRef) });
 					restored += result.restored;
+					// Partial receipts give no item IDs; refresh them without guessing which rows changed.
+					if (result.restored === group.length) await onEffect?.("restore", group);
 				} catch {
 					/* The remaining groups can still succeed. */
 				}
@@ -232,6 +236,7 @@ export function useDocumentOperations(enabled = true) {
 				try {
 					const result = await client.documents.purgeMany({ documents: group.map(documentRef) });
 					deleted += result.deleted;
+					if (result.deleted === group.length) await onEffect?.("purge", group);
 				} catch {
 					/* The remaining groups can still succeed. */
 				}
@@ -255,6 +260,7 @@ export function useDocumentOperations(enabled = true) {
 		let deleted = 0;
 		const success = await run(async () => {
 			deleted = (await client.documents.emptyTrash({})).deleted;
+			if (deleted > 0) await onEffect?.("purge");
 		});
 		if (success)
 			showToast({

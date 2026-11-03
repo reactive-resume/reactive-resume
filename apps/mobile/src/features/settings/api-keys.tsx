@@ -16,6 +16,7 @@ import {
 	listLayout,
 	showToast,
 	useFirstAppearance,
+	useReducedMotion,
 } from "@/ui";
 
 /** Keys without a permission statement predate access choices and can do everything. */
@@ -34,6 +35,7 @@ export function ApiKeys({ userId }: ApiKeysProps) {
 		orpc.auth.apiKeys.list.queryOptions({ queryKey: [...orpc.auth.apiKeys.list.key(), server, userId], retry: false }),
 	);
 	const firstAppearance = useFirstAppearance(!keys.isPending);
+	const reduced = useReducedMotion();
 	const revoke = useMutation({
 		mutationKey: ["settings", "revoke-key"],
 		mutationFn: async (keyId: string) => {
@@ -75,7 +77,7 @@ export function ApiKeys({ userId }: ApiKeysProps) {
 			) : null}
 			{keys.data?.apiKeys.length === 0 ? <EmptyState title={t`No keys yet.`} /> : null}
 			{keys.data?.apiKeys.map((key, index) => (
-				<Animated.View key={key.id} {...listItemMotion(index, firstAppearance)} layout={listLayout}>
+				<Animated.View key={key.id} {...listItemMotion(index, firstAppearance, { reduced })} layout={listLayout}>
 					<ListRow
 						title={key.name ?? t`Unnamed key`}
 						subtitle={`${isReadOnly(key.permissions) ? t`Read only` : t`Full access`} · ${t`Created ${date(key.createdAt)} · Last used ${date(key.lastRequest)} · Expires ${date(key.expiresAt)}`}`}

@@ -218,6 +218,7 @@ function Sidebar() {
 				{trash && <NavLink item={trash} current={isCurrent(trash.to)} />}
 				{/* Secondary, so each view's own primary action is the one accent button on screen. */}
 				<Button
+					data-document-new-trigger=""
 					variant="secondary"
 					aria-label={t`New`}
 					aria-keyshortcuts={characterShortcuts ? "N" : undefined}
@@ -320,7 +321,7 @@ function Rail() {
 					</RailTip>
 				)}
 				<RailTip label={t`New`} icon="plus">
-					<Button size="icon" aria-label={t`New`} onClick={openNew} />
+					<Button data-document-new-trigger="" size="icon" aria-label={t`New`} onClick={openNew} />
 				</RailTip>
 				<UserDropdownMenu>
 					{({ session }) => (
@@ -396,6 +397,7 @@ function MobileTabs() {
 			{tabs.slice(0, 2).map(link)}
 			<button
 				type="button"
+				data-document-new-trigger=""
 				onClick={openNew}
 				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>

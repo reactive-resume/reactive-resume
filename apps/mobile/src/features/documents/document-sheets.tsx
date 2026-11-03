@@ -1,4 +1,5 @@
 import type { DocumentSummary } from "./filter";
+import type { useDocumentOperations } from "./queries";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -6,7 +7,6 @@ import { useRef, useState } from "react";
 import { View } from "react-native";
 import { changedTags, documentRef, sharedTags } from "./filter";
 import { useNewDocuments } from "./new-documents";
-import { useDocumentOperations } from "./queries";
 import { client, orpc } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 import { AddApplicationSheet } from "@/features/applications/add-sheet";
@@ -20,18 +20,18 @@ export type DocumentSheet =
 	| { kind: "tags" | "sharing" | "lock"; documents: DocumentSummary[] };
 
 type DocumentSheetsProps = {
+	operations: ReturnType<typeof useDocumentOperations>;
 	value: DocumentSheet;
 	onClose: () => void;
 	onChange: (value: DocumentSheet) => void;
 	onSelect: (document: DocumentSummary) => void;
 };
 
-export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentSheetsProps) {
+export function DocumentSheets({ value, onClose, onChange, onSelect, operations }: DocumentSheetsProps) {
 	const router = useRouter();
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const session = useSession();
-	const operations = useDocumentOperations();
 	const first = value.documents[0];
 	const [name, setName] = useState(value.kind === "duplicate" ? value.name : (first?.name ?? ""));
 	const shared = sharedTags(value.documents);

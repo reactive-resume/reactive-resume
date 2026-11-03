@@ -21,6 +21,7 @@ import {
 	listItemMotion,
 	listLayout,
 	useFirstAppearance,
+	useReducedMotion,
 	useTheme,
 } from "@/ui";
 
@@ -45,6 +46,7 @@ export function Stories() {
 	const undo = useUndoRows();
 	const rows = (stories.data ?? []).filter((row) => !undo.hidden.includes(row.id));
 	const firstAppearance = useFirstAppearance(!stories.isPending);
+	const reduced = useReducedMotion();
 	return (
 		<View style={{ gap: space.s4 }}>
 			<Text color="ink3">{t`Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank.`}</Text>
@@ -65,7 +67,7 @@ export function Stories() {
 					return !fact || fact.status !== "active" || (revision && new Date(revision.at) > new Date(story.updatedAt));
 				});
 				return (
-					<Animated.View key={story.id} {...listItemMotion(index, firstAppearance)} layout={listLayout}>
+					<Animated.View key={story.id} {...listItemMotion(index, firstAppearance, { reduced })} layout={listLayout}>
 						<Card style={{ gap: space.s3 }}>
 							<Text variant="title">{story.data.title}</Text>
 							{changed ? <Banner tone="warn" message={t`A fact changed. Review this story.`} /> : null}

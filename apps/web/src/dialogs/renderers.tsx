@@ -6,7 +6,7 @@ import { SetPasswordDialog } from "./auth/set-password";
 import { ResumeDialog } from "./resume";
 import { NewDocumentDialog } from "@/features/documents/new-document-dialog";
 
-export const renderDialog = (dialog: DialogSchema) => {
+export const renderDialog = (dialog: DialogSchema, mobileSheet = false) => {
 	switch (dialog.type) {
 		case "auth.change-password":
 			return <ChangePasswordDialog />;
@@ -17,7 +17,7 @@ export const renderDialog = (dialog: DialogSchema) => {
 		case "auth.two-factor.disable":
 			return <DisableTwoFactorDialog />;
 		case "document.new":
-			return <NewDocumentDialog data={dialog.data} />;
+			return <NewDocumentDialog data={dialog.data} mobileSheet={mobileSheet} />;
 		case "resume.update":
 			return <ResumeDialog mode="update" data={dialog.data} />;
 		case "resume.duplicate":

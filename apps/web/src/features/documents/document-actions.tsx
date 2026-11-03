@@ -1,5 +1,6 @@
 import type { DocumentsSearch } from "./documents-page";
 import type { DocumentSummary } from "./filter";
+import type { OnDocumentEffect } from "./removal-motion";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -52,7 +53,7 @@ function useRefreshDocuments() {
 		]);
 }
 
-export function useDocumentActions() {
+export function useDocumentActions(onEffect?: OnDocumentEffect) {
 	const confirm = useConfirm();
 	const prompt = usePrompt();
 	const navigate = useNavigate();
@@ -66,11 +67,26 @@ export function useDocumentActions() {
 		}),
 	);
 	const setLocked = useMutation(orpc.documents.setLocked.mutationOptions({ onSettled: refresh }));
-	const trash = useMutation(orpc.documents.trash.mutationOptions({ onSettled: refresh }));
-	const restore = useMutation(orpc.documents.restore.mutationOptions({ onSettled: refresh }));
+	const trash = useMutation(
+		orpc.documents.trash.mutationOptions({
+			onSuccess: (_result, document) => onEffect?.("trash", [document]),
+			onSettled: refresh,
+		}),
+	);
+	const restore = useMutation(
+		orpc.documents.restore.mutationOptions({
+			onSuccess: (_result, document) => onEffect?.("restore", [document]),
+			onSettled: refresh,
+		}),
+	);
 	// Undo counts what it brought back: restoring one that's already back (another tab) or gone changes nothing.
 	const restoreMany = useMutation(orpc.documents.restoreMany.mutationOptions({ onSettled: refresh }));
-	const purge = useMutation(orpc.documents.purge.mutationOptions({ onSettled: refresh }));
+	const purge = useMutation(
+		orpc.documents.purge.mutationOptions({
+			onSuccess: (_result, document) => onEffect?.("purge", [document]),
+			onSettled: refresh,
+		}),
+	);
 	const duplicateResume = useMutation(orpc.resume.duplicate.mutationOptions({ onSettled: refresh }));
 	const duplicateLetter = useMutation(orpc.coverLetters.duplicate.mutationOptions({ onSettled: refresh }));
 
@@ -192,13 +208,29 @@ export function useDocumentActions() {
  * The selection bar's actions: each runs on every selected document it applies to, refreshes the library once and
  * says how many changed. Locked documents keep their visibility, tags and place; letters have no public link.
  */
-export function useBatchActions() {
+export function useBatchActions(onEffect?: OnDocumentEffect) {
 	const refresh = useRefreshDocuments();
 	const setLocked = useMutation(orpc.documents.setLocked.mutationOptions());
-	const trash = useMutation(orpc.documents.trash.mutationOptions());
-	const restoreMany = useMutation(orpc.documents.restoreMany.mutationOptions());
-	const purgeMany = useMutation(orpc.documents.purgeMany.mutationOptions());
-	const emptyTrash = useMutation(orpc.documents.emptyTrash.mutationOptions());
+	const trash = useMutation(
+		orpc.documents.trash.mutationOptions({ onSuccess: (_result, document) => onEffect?.("trash", [document]) }),
+	);
+	const restoreMany = useMutation(
+		orpc.documents.restoreMany.mutationOptions({
+			onSuccess: (result, input) =>
+				result.restored === input.documents.length ? onEffect?.("restore", input.documents) : undefined,
+		}),
+	);
+	const purgeMany = useMutation(
+		orpc.documents.purgeMany.mutationOptions({
+			onSuccess: (result, input) =>
+				result.deleted === input.documents.length ? onEffect?.("purge", input.documents) : undefined,
+		}),
+	);
+	const emptyTrash = useMutation(
+		orpc.documents.emptyTrash.mutationOptions({
+			onSuccess: (result) => (result.deleted > 0 ? onEffect?.("purge") : undefined),
+		}),
+	);
 	const updateResume = useMutation(orpc.resume.update.mutationOptions());
 
 	// The server accepts a large selection, but splitting it keeps one request's body bounded on old clients that
@@ -361,6 +393,7 @@ export function useBatchActions() {
 type MenuEntry = { icon: IconName; label: string; onSelect: () => void; disabled?: boolean; danger?: boolean };
 
 type DocumentMenuProps = {
+	onEffect?: OnDocumentEffect | undefined;
 	document: DocumentSummary;
 	onOpen: () => void;
 	onRename: () => void;
@@ -377,6 +410,7 @@ type DocumentMenuProps = {
  * application), Tags, Lock, then Move to Trash.
  */
 export function DocumentMenuContent({
+	onEffect,
 	document,
 	onOpen,
 	onRename,
@@ -385,7 +419,7 @@ export function DocumentMenuContent({
 	onSelect,
 	variant = "dropdown",
 }: DocumentMenuProps) {
-	const actions = useDocumentActions();
+	const actions = useDocumentActions(onEffect);
 	const navigate = useNavigate();
 	const { download, downloading } = useDocumentDownload();
 	const openDialog = useDialogStore((state) => state.openDialog);

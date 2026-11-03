@@ -116,14 +116,6 @@
 	--shadow-page: 0 1px 2px oklch(0 0 0 / 0.4), 0 12px 36px -12px oklch(0 0 0 / 0.6);
 }
 
-@media (prefers-reduced-motion: reduce) {
-	:root {
-		--d1: 1ms;
-		--d2: 1ms;
-		--d3: 1ms;
-	}
-}
-
 @theme {
 	/* Instrument Serif has one weight (400 and italic): never set it semibold or bold. */
 	--font-display: "Instrument Serif", Georgia, serif;
@@ -277,7 +269,54 @@
 		animation-duration: 0.01ms !important;
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.01ms !important;
+		transition-delay: 0ms !important;
+		animation-delay: 0ms !important;
 		scroll-behavior: auto !important;
+	}
+
+	/* Known state changes may fade; unknown/spatial effects still finish instantly. */
+	:is(
+			[data-slot="dialog-overlay"],
+			[data-slot="dialog-content"],
+			[data-slot="alert-dialog-overlay"],
+			[data-slot="alert-dialog-content"],
+			[data-slot="sheet-overlay"],
+			[data-slot="sheet-content"],
+			[data-slot="toast"],
+			[data-slot="popover-content"],
+			[data-slot="tooltip-content"],
+			[data-slot="dropdown-menu-content"],
+			[data-slot="dropdown-menu-sub-content"],
+			[data-slot="context-menu-content"],
+			[data-slot="combobox-content"],
+			.motion-fade
+		):not([data-instant]):not(.transition-none) {
+		transition-property: opacity !important;
+		transition-duration: var(--d1) !important;
+	}
+
+	:is([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+		scale: 1 !important;
+	}
+
+	/* Dialog centering is layout; only edge layers and small entrances lose their offsets. */
+	:is(
+		[data-slot="sheet-content"],
+		[data-slot="toast"],
+		[data-slot="popover-content"],
+		[data-slot="tooltip-content"],
+		[data-slot="dropdown-menu-content"],
+		[data-slot="dropdown-menu-sub-content"],
+		[data-slot="context-menu-content"],
+		[data-slot="combobox-content"],
+		.motion-fade
+	) {
+		translate: 0 0 !important;
+		scale: 1 !important;
+	}
+
+	[data-slot="sheet-content"]:is([data-starting-style], [data-ending-style]) {
+		opacity: 0;
 	}
 }
 
