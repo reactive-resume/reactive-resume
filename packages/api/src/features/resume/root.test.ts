@@ -14,6 +14,7 @@ const fixture = () => ({
 		isPublic: true,
 		isLocked: false,
 		showDownloadButtons: false,
+		allowWordDownload: false,
 		showInSearchEngines: false,
 		hideContactDetails: false,
 		isPrimary: false,
@@ -39,7 +40,7 @@ describe("configured root public resume", () => {
 			username: "owner",
 			slug: "current-slug",
 			canonicalUrl: "https://resume.example/",
-			resume: { showDownloadButtons: false, hasPassword: false },
+			resume: { showDownloadButtons: false, allowWordDownload: false, hasPassword: false },
 		});
 		expect(deps.findTarget).toHaveBeenCalledExactlyOnceWith("root-id");
 		expect(deps.getBySlug).toHaveBeenCalledExactlyOnceWith({

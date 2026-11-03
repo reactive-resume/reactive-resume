@@ -43,6 +43,9 @@ try {
 	compile(fileURLToPath(new URL("../src/features/applications/origin.ts", import.meta.url)), "origin");
 	compile(fileURLToPath(new URL("../src/features/workspace/logic.ts", import.meta.url)), "workspace-logic");
 	console.log("PASS: application origin and workspace logic compile with the app's Hermes compiler.");
+	compile(fileURLToPath(new URL("../src/features/share/link.tsx", import.meta.url)), "share-link");
+	compile(fileURLToPath(new URL("../src/features/share/web-page.tsx", import.meta.url)), "share-web-page");
+	console.log("PASS: native Share controls compile with the app's Hermes compiler.");
 } finally {
 	rmSync(dir, { recursive: true, force: true });
 }

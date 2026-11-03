@@ -132,6 +132,7 @@ export function SharePanel() {
 type ShareSettings = {
 	isPublic?: boolean;
 	showDownloadButtons?: boolean;
+	allowWordDownload?: boolean;
 	showInSearchEngines?: boolean;
 	hideContactDetails?: boolean;
 	isPrimary?: boolean;
@@ -356,6 +357,14 @@ function PrivacySettings({ setting: { update, isPending } }: ShareSettingProps) 
 				onCheckedChange={(checked) => void update({ showDownloadButtons: checked })}
 				label={t`Visitors can download the PDF`}
 				className="py-0"
+			/>
+			<SwitchRow
+				checked={resume.allowWordDownload === true}
+				disabled={disabled}
+				onCheckedChange={(checked) => void update({ allowWordDownload: checked })}
+				label={t`Visitors can download Word`}
+				description={t`Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified.`}
+				className="items-start py-0"
 			/>
 		</section>
 	);
