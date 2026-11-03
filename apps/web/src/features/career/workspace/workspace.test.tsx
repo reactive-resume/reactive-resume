@@ -17,6 +17,7 @@ import { DebriefTab } from "./debrief";
 import { MessagesTab } from "./messages";
 import { PractiseTab } from "./practise";
 import { SavedTab } from "./saved";
+import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-scope";
 
 const api = vi.hoisted(() => ({
 	data: {} as Record<string, unknown>,
@@ -24,6 +25,7 @@ const api = vi.hoisted(() => ({
 	submit: vi.fn(),
 	generate: vi.fn(),
 	apply: vi.fn(),
+	logReply: vi.fn(),
 	invalidate: vi.fn(),
 	speak: vi.fn(),
 	userId: "workspace-user",
@@ -47,6 +49,7 @@ vi.mock("@/libs/orpc/client", () => {
 				listSummary: endpoint("applications"),
 				list: endpoint("applications"),
 				update: endpoint("updateApplication"),
+				logReply: endpoint("logReply", api.logReply),
 				lanes: { get: endpoint("lanes") },
 			},
 			coverLetters: { create: endpoint("createLetter") },
@@ -71,7 +74,10 @@ vi.mock("@/libs/orpc/client", () => {
 				saveFact: endpoint("saveFact"),
 			},
 		},
-		client: { career: { generate: api.generate, voice: { speak: api.speak } } },
+		client: {
+			career: { generate: api.generate, voice: { speak: api.speak } },
+			applications: { logReply: api.logReply },
+		},
 	};
 });
 vi.mock("@tanstack/react-router", () => ({
@@ -224,6 +230,8 @@ beforeEach(() => {
 	api.knowledgeError = false;
 	api.save.mockResolvedValue(EMPTY_WORKSPACE);
 	api.submit.mockResolvedValue(undefined);
+	api.logReply.mockReset().mockResolvedValue(undefined);
+	setAccountScope("workspace-user");
 	sessionStorage.clear();
 	localStorage.clear();
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
@@ -333,6 +341,47 @@ it("retains edited replies across navigation while saved versions keep the gener
 	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue("My reply draft");
 	next.rerender(<MessagesTab {...props} version={savedReply} />);
 	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue("Original reply");
+});
+
+it("highlights localized reply placeholders without blocking Copy, and logs only the explicit action", async () => {
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	const editor = screen.getByRole("textbox", { name: "Suggested reply · edit before sending" });
+	fireEvent.change(editor, { target: { value: "Available [Datum und Uhrzeit 1] or [slot 2]." } });
+	expect(screen.getByRole("status")).toHaveTextContent("[Datum und Uhrzeit 1] · [slot 2]");
+	fireEvent.click(screen.getByRole("button", { name: "Copy reply" }));
+	await waitFor(() => expect(writeText).toHaveBeenCalledWith("Available [Datum und Uhrzeit 1] or [slot 2]."));
+	expect(api.logReply).not.toHaveBeenCalled();
+	fireEvent.change(editor, { target: { value: "Available Tuesday at 14:00." } });
+	expect(screen.queryByText("Replace these placeholders before sending:")).not.toBeInTheDocument();
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	await waitFor(() => expect(api.logReply).toHaveBeenCalledTimes(1));
+	expect(writeText).toHaveBeenLastCalledWith("Available Tuesday at 14:00.");
+	expect(api.logReply.mock.calls[0]?.[0]).toEqual({
+		id: application.id,
+		expectedVersion: '["2026-10-08T12:00:00.000Z","applied",null,null,null,false]',
+	});
+});
+
+it("does not log after failed clipboard access, duplicate presses or an account switch during copying", async () => {
+	const writeText = vi.fn().mockRejectedValueOnce(new Error("Denied"));
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	const button = screen.getByRole("button", { name: "Copy and log as replied" });
+	fireEvent.click(button);
+	await waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
+	expect(api.logReply).not.toHaveBeenCalled();
+	const pending = deferred<void>();
+	writeText.mockReturnValueOnce(pending.promise);
+	fireEvent.click(button);
+	fireEvent.click(button);
+	expect(writeText).toHaveBeenCalledTimes(2);
+	invalidateAccountScope();
+	await act(async () => pending.resolve());
+	expect(api.logReply).not.toHaveBeenCalled();
 });
 
 it("retains the practice answer after leaving, without exposing it to another signed-in account", () => {

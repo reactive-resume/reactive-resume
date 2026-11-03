@@ -38,6 +38,10 @@ const data = load(MOBILE + "/../../packages/schema/src/applications/data.ts", {
 	"@reactive-resume/utils/timezone": { timezoneSchema: zod.z.string() },
 });
 const tracker = load(MOBILE + "/../../packages/schema/src/applications/stage-baselines.ts", { "./data": data });
+const replyFields = load(MOBILE + "/../../packages/schema/src/applications/reply.ts", {
+	"./data": data,
+	"./follow-up": { isDateOnlyFollowUp: (row) => row.followUpDateOnly ?? false },
+});
 const state = load(MOBILE + "/src/features/workspace/state.ts", {});
 
 const tag = (strings, ...values) =>
@@ -53,6 +57,9 @@ function harness({ lifetime = 30 } = {}) {
 		applyCalls: 0,
 		undoReply: async () => undefined,
 		undoCalls: 0,
+		copy: async () => true,
+		copied: [],
+		logs: [],
 	};
 	const undo = load(MOBILE + "/src/features/career/undo.ts", {
 		"@lingui/core/macro": { t: tag },
@@ -79,18 +86,25 @@ function harness({ lifetime = 30 } = {}) {
 			"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
 			"@tanstack/react-query": { useQueryClient: () => queryClient },
 			"@orpc/client": { ORPCError },
-			"expo-clipboard": {},
+			"expo-clipboard": { setStringAsync: (text) => (env.copied.push(text), env.copy()) },
 			"expo-router": { useLocalSearchParams: () => ({}), useRouter: () => ({}) },
 			react: {
 				useState: (init) => [typeof init === "function" ? init() : init, () => {}],
+				useRef: (value) => ({ current: value }),
+				useEffect: () => {},
 				useSyncExternalStore: (_subscribe, get) => get(),
 			},
 			"react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "Fragment" },
 			"react-native": { View: "View" },
 			"@reactive-resume/schema/applications/stage-baselines": tracker,
+			"@reactive-resume/schema/applications/reply": replyFields,
 			"@reactive-resume/schema/career-offer": {},
 			"@reactive-resume/utils/timezone": {},
-			"../hooks": { useWorkspace: () => ({ data: { answers: [] }, current: () => ({ answers: [] }) }) },
+			"../hooks": {
+				useWorkspace: () => ({ data: { answers: [] }, current: () => ({ answers: [] }) }),
+				useDraft: (_key, value) => ({ value }),
+				useGenerate: () => ({}),
+			},
 			"../logic": {
 				needsSubmission: () => false,
 				isFixedChange: () => false,
@@ -101,6 +115,7 @@ function harness({ lifetime = 30 } = {}) {
 			"../state": state,
 			"@/api/client": {
 				client: {
+					applications: { logReply: async (...args) => env.logs.push(args) },
 					career: {
 						undoReply: (input) => {
 							env.undoCalls += 1;
@@ -114,9 +129,9 @@ function harness({ lifetime = 30 } = {}) {
 				},
 				orpc: { career: { savedItems: { key: () => ["savedItems"] }, schedules: { key: () => ["schedules"] } } },
 			},
-			"@/auth/session": { useSession: () => ({ server: "srv" }) },
+			"@/auth/session": { useSession: () => ({ server: "srv" }), getAccountScope: () => env.account },
 			"@/draft": { getDraftScope: async () => env.account },
-			"@/features/ai/providers": {},
+			"@/features/ai/providers": { useHasAIProvider: () => ({}) },
 			"@/features/application-detail/hooks": { useUserTime: () => ({ when: String, day: String, timeZone: "UTC" }) },
 			"@/features/applications/lane-queries": { useApplicationLanes: () => ({ lanes: [] }) },
 			"@/features/applications/lanes": { getLaneLabel: () => "Stage", resolveLane: () => ({}) },
@@ -132,6 +147,7 @@ function harness({ lifetime = 30 } = {}) {
 			},
 			"@/features/career/offer-compare": { formatMoney: String },
 			"@/features/career/offer-entry": { OfferEntry: "OfferEntry" },
+			"@/features/reminders": {},
 			"@/features/career/undo": undo,
 			"@/ui": {
 				Banner: "Banner",
@@ -141,21 +157,33 @@ function harness({ lifetime = 30 } = {}) {
 				Text: "Text",
 				TextArea: "TextArea",
 				showToast: (toast) => (toasts.push(toast), toasts.length),
-				useTheme: () => ({ space: {} }),
+				useTheme: () => ({ space: {}, colors: {} }),
 			},
 		},
-		";module.exports.ProposalCard = ProposalCard;",
+		";module.exports.ProposalCard = ProposalCard; module.exports.ReplyCard = ReplyCard;",
 	);
 	const reply = {
 		id: "reply-" + Math.random().toString(36).slice(2),
 		data: {
+			title: "Reply",
+			reply: "Available [Datum und Uhrzeit 1] or [slot 2].",
+			asks: [],
 			changes: [{ type: "stage", stage: "interview" }],
 			applied: null,
 			unconfirmed: [],
 			offer: null,
 		},
 	};
-	const application = { id: "app-1", status: "applied", contacts: [], followUpNote: null };
+	const application = {
+		id: "app-1",
+		status: "applied",
+		contacts: [],
+		activity: [],
+		followUpAt: null,
+		followUpNote: null,
+		updatedAt: new Date(0),
+	};
+	const replyTree = () => messages.ReplyCard({ reply, application, readOnly: false });
 	const press = () => {
 		const tree = messages.ProposalCard({ reply, application, now: new Date(), readOnly: false });
 		const find = (node) => {
@@ -176,8 +204,51 @@ function harness({ lifetime = 30 } = {}) {
 		return baselines.get("app-1");
 	};
 	const undoToast = () => toasts.find((toast) => toast.action?.label === "Undo");
-	return { env, press, bulkStart, undoToast, toasts };
+	return { env, press, bulkStart, undoToast, toasts, replyTree };
 }
+
+function buttonIn(node, label) {
+	if (!node || typeof node !== "object") return undefined;
+	if (Array.isArray(node)) return node.map((item) => buttonIn(item, label)).find(Boolean);
+	if (node.type === "Button" && node.props.label === label) return node;
+	return buttonIn(node.props?.children, label);
+}
+
+test("native reply copies placeholders normally; explicit logging binds the reviewed revision and account", async () => {
+	const h = harness();
+	const tree = h.replyTree();
+	assert.match(JSON.stringify(tree), /Replace these placeholders before sending/);
+	buttonIn(tree, "Copy reply").props.onPress();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.copied, ["Available [Datum und Uhrzeit 1] or [slot 2]."]);
+	assert.equal(h.env.logs.length, 0);
+	buttonIn(tree, "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.logs, [
+		[
+			{ id: "app-1", expectedVersion: '["1970-01-01T00:00:00.000Z","applied",null,null,null,false]' },
+			{ context: { scope: "acct-A" } },
+		],
+	]);
+});
+
+test("native reply does not log clipboard failure or a stale account, and ignores duplicate presses", async () => {
+	const h = harness();
+	const action = buttonIn(h.replyTree(), "Copy and log as replied");
+	h.env.copy = async () => false;
+	action.props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.logs.length, 0);
+	let resolveCopy;
+	h.env.copy = () => new Promise((resolve) => (resolveCopy = resolve));
+	action.props.onPress();
+	action.props.onPress();
+	assert.equal(h.env.copied.length, 2);
+	h.env.account = "acct-B";
+	resolveCopy(true);
+	await new Promise(setImmediate);
+	assert.equal(h.env.logs.length, 0);
+});
 
 const pendingFor = (promise, ms = 200) =>
 	Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve("still waiting"), ms))]);

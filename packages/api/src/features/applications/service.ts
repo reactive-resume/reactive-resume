@@ -18,6 +18,7 @@ import { latestStageEntryId } from "@reactive-resume/schema/applications/data";
 import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 import { isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
 import { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
+import { replyLogVersion } from "@reactive-resume/schema/applications/reply";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
@@ -1121,9 +1122,10 @@ export const applicationService = {
 		return stripUserId(updated);
 	},
 
-	/** Records contact within the locked current visit, preserving stage dates and authored reminders. */
-	logFollowUp: (input: { id: string; userId: string }) =>
+	/** Records contact within the locked visit; an explicit reply also clears the owned follow-up and its schedule. */
+	logFollowUp: (input: { id: string; userId: string; reply?: { expectedVersion: string } | undefined }) =>
 		db.transaction(async (tx) => {
+			if (input.reply) await lockUser(tx, input.userId);
 			const [existing] = await tx
 				.select()
 				.from(schema.application)
@@ -1132,8 +1134,10 @@ export const applicationService = {
 			if (!existing) throw new ORPCError("NOT_FOUND");
 			if (existing.status === "saved" || existing.status === "closed")
 				throw new ORPCError("BAD_REQUEST", { message: "Follow-ups can only be logged for open, sent applications." });
+			if (input.reply && replyLogVersion(existing) !== input.reply.expectedVersion)
+				throw new ORPCError("CONFLICT", { message: "The application changed. Reload it before logging your reply." });
 			const event: ApplicationTimelineEntry = {
-				...noteEntry("Followed up"),
+				...noteEntry(input.reply ? "Replied" : "Followed up"),
 				followedUp: {
 					stageEntryId: latestStageEntryId(
 						existing.activity.filter((entry) => entry.type === "stage" && entry.canonicalTransition !== false),
@@ -1142,10 +1146,14 @@ export const applicationService = {
 			};
 			const [updated] = await tx
 				.update(schema.application)
-				.set({ activity: sql`${schema.application.activity} || ${JSON.stringify([event])}::jsonb` })
+				.set({
+					activity: sql`${schema.application.activity} || ${JSON.stringify([event])}::jsonb`,
+					...(input.reply ? { followUpAt: null, followUpNote: null, followUpDateOnly: false } : {}),
+				})
 				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 				.returning();
 			if (!updated) throw new ORPCError("NOT_FOUND");
+			if (input.reply) await syncFollowUp(tx, updated);
 			return stripUserId(updated);
 		}),
 

@@ -882,7 +882,9 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 						text: entry.followedUp
 							? entry.text === "Followed up"
 								? t`Followed up`
-								: `${t`Followed up`} · ${entry.text}`
+								: entry.text === "Replied"
+									? t`Replied`
+									: `${t`Followed up`} · ${entry.text}`
 							: entry.text,
 					}
 				: {

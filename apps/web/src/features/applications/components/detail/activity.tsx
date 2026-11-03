@@ -109,7 +109,9 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 				text: entry.followedUp
 					? entry.text === "Followed up"
 						? t`Followed up`
-						: `${t`Followed up`} · ${entry.text}`
+						: entry.text === "Replied"
+							? t`Replied`
+							: `${t`Followed up`} · ${entry.text}`
 					: entry.text,
 			};
 		const kind = interviewKindOf(entry.kind);

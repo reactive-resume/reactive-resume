@@ -351,6 +351,28 @@ export const crudRouter = {
 		.output(applicationDto.logFollowUp.output)
 		.handler(({ input, context }) => applicationService.logFollowUp({ id: input.id, userId: context.user.id })),
 
+	logReply: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/applications/{id}/replies",
+			tags: ["Applications"],
+			operationId: "logApplicationReply",
+			summary: "Log an explicitly confirmed reply",
+			description:
+				"Records the user's confirmation of replying now, restarts the current stage's no-reply clock and clears the application's follow-up and its delivery schedule only at the reviewed revision. Sends no message. Keeps stage dates and interview reminders. Requires authentication.",
+			successDescription: "The updated application.",
+		})
+		.input(applicationDto.logReply.input)
+		.use(resumeMutationRateLimit)
+		.output(applicationDto.logReply.output)
+		.handler(({ input, context }) =>
+			applicationService.logFollowUp({
+				id: input.id,
+				userId: context.user.id,
+				reply: { expectedVersion: input.expectedVersion },
+			}),
+		),
+
 	addInterview: protectedProcedure
 		.route({
 			method: "POST",

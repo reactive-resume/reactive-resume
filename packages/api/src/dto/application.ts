@@ -279,6 +279,11 @@ export const applicationDto = {
 		output: applicationSchema.omit({ userId: true }),
 	},
 
+	logReply: {
+		input: z.object({ id: z.string(), expectedVersion: z.string().min(1) }),
+		output: applicationSchema.omit({ userId: true }),
+	},
+
 	updateTimelineEntry: {
 		input: z
 			.object({
