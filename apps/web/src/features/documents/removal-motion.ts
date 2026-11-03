@@ -3,7 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { D1, D2, EASE, EXIT } from "@/libs/motion";
 
 type DocumentRef = { type: string; id: string };
-export type DocumentEffect = "trash" | "restore" | "purge";
+type DocumentEffect = "trash" | "restore" | "purge";
 export type OnDocumentEffect = (effect: DocumentEffect, documents?: readonly DocumentRef[]) => void | Promise<void>;
 
 type RemovalMotionOptions = {
