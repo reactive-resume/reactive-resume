@@ -267,7 +267,7 @@ Pinned scenes contain a sticky `100svh` stage. Scroll progress is `p = clamp(0, 
 | ------- | ----------- | ---------- |
 | Hero    | 170vh       | 220vh      |
 | Write   | 280vh       | 330vh      |
-| Design  | 320vh       | 360vh      |
+| Design  | 280vh       | 320vh      |
 | Check   | 245vh       | 295vh      |
 | Tailor  | 260vh       | 300vh      |
 | Share   | 240vh       | 300vh      |
