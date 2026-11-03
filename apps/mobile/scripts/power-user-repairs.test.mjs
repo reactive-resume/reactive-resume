@@ -201,6 +201,12 @@ const { OffersScreen } = load("features/career/offers.tsx", {
 		useCareerQueries: () => ({ profile }),
 		useCareerTime: () => ({ locale: "en-US", timeZone: "UTC", when: String }),
 		useNow: () => new Date(),
+		useUndoRows: () => ({
+			hidden: [],
+			remove() {
+				throw new Error("Unexpected delete in loading test");
+			},
+		}),
 	},
 	"@reactive-resume/schema/career-offer": offerDomain,
 	"./offer-compare": load("features/career/offer-compare.ts", { "@reactive-resume/schema/career-offer": offerDomain }),

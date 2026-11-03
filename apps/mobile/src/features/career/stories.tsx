@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 import { type TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
-import { client, useCareerAction, useCareerQueries, useUndoRows } from "./hooks";
+import { client, prepareRpc, useCareerAction, useCareerQueries, useUndoRows } from "./hooks";
 import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
 import {
 	Banner,
@@ -90,7 +90,9 @@ export function Stories() {
 									label={t`Delete story`}
 									variant="ghost"
 									onPress={() =>
-										undo.remove(story.id, t`Story deleted`, () => client.career.deleteStory({ id: story.id }))
+										undo.remove(story.id, t`Story deleted`, () =>
+											prepareRpc(client.career.deleteStory, { id: story.id }),
+										)
 									}
 								/>
 							</Actions>
