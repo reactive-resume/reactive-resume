@@ -73,6 +73,7 @@ function harness({ lifetime = 30 } = {}) {
 		clearedReminders: [],
 	};
 	const undo = load(MOBILE + "/src/features/career/undo.ts", {
+		"@/auth/session": { getAccountScope: () => env.account },
 		"@lingui/core/macro": { t: tag },
 		"react-native": { AppState: { addEventListener: () => ({ remove() {} }) } },
 		"@/ui": {

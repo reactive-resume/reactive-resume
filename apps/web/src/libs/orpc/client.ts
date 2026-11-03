@@ -1,9 +1,11 @@
 import type { InferRouterInputs, InferRouterOutputs, RouterClient } from "@orpc/server";
 import type router from "@reactive-resume/api/routers";
+import type { DeferredFetch } from "@reactive-resume/utils/deferred-request";
 import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { BatchLinkPlugin } from "@orpc/client/plugins";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
+import { prepareRequest } from "@reactive-resume/utils/deferred-request";
 import { authorizeAiRequest } from "./ai-consent";
 import { rpcFetch } from "./fetch";
 import { getAccountId } from "@/libs/auth/account-scope";
@@ -15,6 +17,7 @@ import { getAccountId } from "@/libs/auth/account-scope";
  * The AI/web destination fields are the per-call consent context added by the AI consent owner.
  */
 export type ClientContext = {
+	defer?: DeferredFetch;
 	accountId?: string;
 	bound?: boolean;
 	aiDestination?: string;
@@ -39,7 +42,8 @@ export const client: RouterClient<typeof router, ClientContext> = createORPCClie
 				mode: "streaming",
 				groups: [{ condition: () => true, context: {} }],
 				// A consent-scoped AI call and an explicitly bound call must each keep their own request envelope.
-				exclude: ({ context }) => context.bound === true || Boolean(context.aiDestination || context.webDestination),
+				exclude: ({ context }) =>
+					context.bound === true || Boolean(context.defer || context.aiDestination || context.webDestination),
 			}),
 		],
 		interceptors: [
@@ -90,6 +94,16 @@ export const streamClient: RouterClient<typeof router, ClientContext> = createOR
 		],
 	}),
 );
+
+/** Capture the initiating account before asynchronous request preparation. */
+export function prepareRpc<Input, Output>(
+	procedure: (input: Input, options: { context: ClientContext }) => Promise<Output>,
+	input: Input,
+) {
+	const accountId = getAccountId();
+	if (!accountId) return Promise.reject(new DOMException("", "AbortError"));
+	return prepareRequest((defer) => procedure(input, { context: { accountId, defer } }));
+}
 
 export const orpc = createTanstackQueryUtils(client);
 

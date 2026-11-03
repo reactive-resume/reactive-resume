@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { i18n } from "@lingui/core";
+import { groupDocumentsByApplication, groupIsExpanded } from "@reactive-resume/schema/applications/document-groups";
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
@@ -576,6 +577,7 @@ const librarySession = load("features/documents/library-session.ts", {
 	"@/auth/session": { getAccountScope: () => libraryAccountScope },
 });
 const { DocumentsLibrary } = load("features/documents/library.tsx", {
+	"@reactive-resume/schema/applications/document-groups": { groupDocumentsByApplication, groupIsExpanded },
 	"./library-session": librarySession,
 	"@legendapp/list/reanimated": { AnimatedLegendList: "FlatList" },
 	"./document-sheets": { DocumentSheets: "DocumentSheets" },
@@ -737,7 +739,8 @@ const sheetDocument = { type: "resume", id: "restore-sheet", trashedAt: new Date
 documentQuery = { ...originalDocumentQuery, data: { ...originalDocumentQuery.data, items: [sheetDocument], total: 1 } };
 render(DocumentsLibrary, { trashed: true });
 let trashList = nodes(render(DocumentsLibrary, { trashed: true })).find((node) => node.type === "FlatList");
-const trashItem = trashList.props.renderItem({ item: sheetDocument, index: 0 });
+assert.equal(trashList.props.data[0].document, sheetDocument);
+const trashItem = trashList.props.renderItem({ item: trashList.props.data[0], index: 0 });
 // Row body is wrapped by the motion frame; its menu opens the sheet owned by DocumentsLibrary.
 nodes(trashItem)
 	.find((node) => typeof node.props.onMenu === "function")

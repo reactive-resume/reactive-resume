@@ -89,7 +89,7 @@ new Function(
 	}).outputFiles[0].text,
 )(httpModule, httpModule.exports);
 modules["@reactive-resume/utils/http"] = httpModule.exports;
-const { client, streamClient, rest } = load("src/api/client.ts");
+const { client, streamClient, rest, prepareRpc } = load("src/api/client.ts");
 async function waitForDialog() {
 	for (let step = 0; step < 100 && !dialog; step++) await new Promise((resolve) => setImmediate(resolve));
 	assert.ok(dialog, "sharing must require a dialog before transmission");
@@ -397,3 +397,36 @@ for (const cancel of [() => (account = "another-account"), (signal) => signal.ab
 	supportWait = undefined;
 }
 console.log("PASS no-AI posting reads through real client: no provider/consent, old server, long URL and cancellation");
+
+reset();
+const preparedForget = await prepareRpc(client.career.forgetFact, { id: "fictional-fact" });
+assert.deepEqual(calls, [], "preparation must not erase a fact");
+await client.career.profile();
+assert.deepEqual(calls, ["/api/rpc/career/profile"], "other requests remain independent of Undo");
+const sentForget = preparedForget.send();
+assert.deepEqual(
+	calls,
+	["/api/rpc/career/profile", "/api/rpc/career/forgetFact"],
+	"flush calls native transport synchronously",
+);
+await sentForget;
+await preparedForget.send();
+assert.equal(calls.length, 2, "repeated flush sends once");
+reset();
+const cancelledForget = await prepareRpc(client.career.forgetFact, { id: "fictional-fact" });
+cancelledForget.cancel();
+await assert.rejects(cancelledForget.send(), (error) => error.name === "AbortError");
+assert.deepEqual(calls, []);
+reset();
+const staleForget = await prepareRpc(client.career.forgetFact, { id: "fictional-fact" });
+account = "another-account";
+await assert.rejects(staleForget.send(), (error) => error.name === "SessionChangedError");
+assert.deepEqual(calls, [], "prepared credentials cannot dispatch after account switch");
+reset();
+const stalePreparation = prepareRpc(client.career.forgetFact, { id: "fictional-fact" });
+account = "another-account";
+await assert.rejects(stalePreparation, (error) => error.name === "SessionChangedError");
+assert.deepEqual(calls, [], "preflight cannot bind the old input to a new account");
+console.log(
+	"PASS prepared native RPC: actual pipeline, independent calls, synchronous dispatch, cancellation and account fences",
+);

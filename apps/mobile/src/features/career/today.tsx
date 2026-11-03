@@ -11,6 +11,7 @@ import { latestOfferHints } from "@reactive-resume/schema/applications/next-step
 import { upcomingApplicationEvents } from "@reactive-resume/schema/applications/upcoming";
 import {
 	client,
+	prepareRpc,
 	useCareerAction,
 	useCareerTime,
 	useNow,
@@ -344,7 +345,7 @@ export function TodayScreen() {
 													variant="ghost"
 													onPress={() =>
 														undo.remove(row.id, t`Marked as read`, () =>
-															client.career.markNotificationRead({ id: row.id }),
+															prepareRpc(client.career.markNotificationRead, { id: row.id }),
 														)
 													}
 												/>
@@ -477,9 +478,9 @@ export function TodayScreen() {
 												label={t`Track in Applications`}
 												disabled={action.pending}
 												onPress={() =>
-													undo.remove(row.id, t`Saved to Applications with the posting`, async () => {
-														await client.career.trackOpportunity({ id: row.id });
-													})
+													undo.remove(row.id, t`Saved to Applications with the posting`, () =>
+														prepareRpc(client.career.trackOpportunity, { id: row.id }),
+													)
 												}
 											/>
 											<Button
@@ -498,7 +499,7 @@ export function TodayScreen() {
 												disabled={action.pending}
 												onPress={() =>
 													undo.remove(row.id, t`Hidden from New roles`, () =>
-														client.career.dismissOpportunity({ id: row.id }),
+														prepareRpc(client.career.dismissOpportunity, { id: row.id }),
 													)
 												}
 											/>
@@ -578,7 +579,9 @@ export function TodayScreen() {
 					key={sheet.schedule?.id ?? "new"}
 					{...sheet}
 					onClose={() => setSheet(null)}
-					onDelete={(id) => undo.remove(id, t`Schedule deleted`, () => client.career.deleteSchedule({ id }))}
+					onDelete={(id) =>
+						undo.remove(id, t`Schedule deleted`, () => prepareRpc(client.career.deleteSchedule, { id }))
+					}
 				/>
 			) : null}
 		</Screen>

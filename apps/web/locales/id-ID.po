@@ -195,6 +195,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# dokumen dipindahkan ke Sampah} other {# dokumen dipindahkan ke Sampah}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -412,6 +417,12 @@ msgstr "{0, plural, other {dipakai di # item tersimpan}}"
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {Font yang Anda pilih tidak dapat menampilkan {list}. Karakter ini ditampilkan sebagai “?”. Di Desain, pilih font yang memilikinya.} other {Font yang Anda pilih tidak dapat menampilkan {list}. Karakter-karakter ini ditampilkan sebagai “?”. Di Desain, pilih font yang memilikinya.}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3056,6 +3067,10 @@ msgstr "Terbaik untuk melamar"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "Penghalang"
@@ -3875,6 +3890,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "Tertutup"
 
@@ -4330,6 +4346,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4569,11 +4589,6 @@ msgstr "Tidak dapat membuat dokumen. Coba lagi."
 msgid "Couldn't create the key. Try again."
 msgstr "Tidak dapat membuat kunci. Coba lagi."
 
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Tidak dapat membuat surat. Coba lagi."
-
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
 msgid "Couldn't create your account. Try again."
@@ -4766,6 +4781,7 @@ msgstr "Tahap Anda tidak dapat dimuat, jadi tahap standar ditampilkan. Coba lagi
 msgid "Couldn't load your stages."
 msgstr "Tahap Anda tidak dapat dimuat."
 
+#: src/features/career/shared.tsx
 #: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
@@ -4928,6 +4944,7 @@ msgid "Couldn't revoke this connection. Try again."
 msgstr "Tidak dapat mencabut koneksi ini. Coba lagi."
 
 #: src/features/career/hooks.ts
+#: src/features/career/workspace/saved.tsx
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Tidak dapat menyimpan perubahan itu. Periksa koneksi Anda dan coba lagi."
 
@@ -5287,12 +5304,6 @@ msgstr "Surat lamaran"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "Surat Lamaran"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Surat lamaran — {0}"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -13429,6 +13440,7 @@ msgstr "resume dibuat"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -15326,6 +15338,10 @@ msgstr "Mulai setiap poin dengan kata kerja yang konkret: membangun, memimpin, m
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "Mulai dari"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."

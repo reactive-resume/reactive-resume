@@ -6,22 +6,19 @@ import type { IconName } from "@/ui";
 import type { SavedItemKind, WorkspaceTab } from "@reactive-resume/schema/career";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { useFacts, useSavedItems } from "../hooks";
 import { Actions, Block, tabLabel } from "../parts";
 import { WorkspaceScreen } from "../shell";
-import { dispatchForOrigin } from "../state";
-import { client, orpc } from "@/api/client";
-import { getDraftScope } from "@/draft";
+import { client, prepareRpc } from "@/api/client";
 import { AiResultUsage } from "@/features/ai/usage";
 import { useUserTime } from "@/features/application-detail/hooks";
+import { useUndoRows } from "@/features/career/hooks";
 import { formatMoney } from "@/features/career/offer-compare";
-import { withUndo } from "@/features/career/undo";
 import { routes } from "@/routes";
-import { Button, Chip, EmptyState, Icon, IconButton, Skeleton, Text, showToast, useTheme } from "@/ui";
+import { Button, Chip, EmptyState, Icon, IconButton, Skeleton, Text, useTheme } from "@/ui";
 
 const KINDS: { kind: SavedItemKind; icon: IconName; tab: WorkspaceTab | null }[] = [
 	{ kind: "fit", icon: "list-checks", tab: "fit" },
@@ -51,16 +48,15 @@ export function SavedTab() {
 function Saved({ application, go }: WorkspaceTabProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
-	const queryClient = useQueryClient();
 	const saved = useSavedItems(application.id);
 	const [filter, setFilter] = useState<SavedItemKind | null>(null);
-	const [hidden, setHidden] = useState<string[]>([]);
+	const undo = useUndoRows();
 	const [expanded, setExpanded] = useState<string | null>(null);
 	const company = application.company;
 
 	if (saved.isPending) return <Skeleton height={space.s12 * 5} />;
 
-	const items = (saved.data ?? []).filter((item) => !hidden.includes(item.id));
+	const items = (saved.data ?? []).filter((item) => !undo.hidden.includes(item.id));
 	const present = KINDS.filter(({ kind }) => items.some((item) => item.data.kind === kind));
 	const shown = items.filter((item) => filter === null || item.data.kind === filter);
 
@@ -77,19 +73,7 @@ function Saved({ application, go }: WorkspaceTabProps) {
 
 	const onDelete = (item: SavedItem) => {
 		if (filter === item.data.kind && shown.length === 1) setFilter(null);
-		setHidden((ids) => [...ids, item.id]);
-		const origin = getDraftScope();
-		withUndo({
-			message: t`Deleted from Library`,
-			restore: () => setHidden((ids) => ids.filter((id) => id !== item.id)),
-			failed: () => showToast({ message: t`Couldn't delete it. It's back in Library.` }),
-			// Dropped if another account is signed in when the Undo window ends.
-			commit: () =>
-				dispatchForOrigin(origin, getDraftScope, async () => {
-					await client.career.deleteSavedItem({ id: item.id });
-					await queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
-				}),
-		});
+		undo.remove(item.id, t`Deleted from Library`, () => prepareRpc(client.career.deleteSavedItem, { id: item.id }));
 	};
 
 	return (
