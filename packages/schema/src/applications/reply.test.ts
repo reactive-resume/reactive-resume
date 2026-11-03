@@ -7,4 +7,6 @@ it("reports complete outer placeholders, deduplicates and preserves localized te
 		"[Zeitfenster]",
 	]);
 	expect(replyPlaceholders("[incomplete\n[valid] [] plain")).toEqual(["[valid]"]);
+	expect(replyPlaceholders("[unfinished [date] and [time] [date]")).toEqual(["[date]", "[time]"]);
+	expect(replyPlaceholders("[unfinished [date [timezone]]")).toEqual(["[date [timezone]]"]);
 });

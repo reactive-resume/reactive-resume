@@ -381,6 +381,42 @@ it("keeps Copy available and disables explicit logging on an older server", asyn
 	expect(api.logReply).not.toHaveBeenCalled();
 });
 
+it("disables empty-draft logging while preserving ordinary Copy", async () => {
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	const editor = screen.getByRole("textbox", { name: "Suggested reply · edit before sending" });
+	for (const text of ["", " \n\t"]) {
+		fireEvent.change(editor, { target: { value: text } });
+		const log = screen.getByRole("button", { name: "Copy and log as replied" });
+		expect(log).toBeDisabled();
+		fireEvent.click(log);
+		expect(api.logReply).not.toHaveBeenCalled();
+	}
+	expect(writeText).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Copy reply" }));
+	await waitFor(() => expect(writeText).toHaveBeenCalledWith(" \n\t"));
+	expect(api.logReply).not.toHaveBeenCalled();
+});
+
+it("explains a known reply-log refusal without inventing a conflict reason", async () => {
+	const { ORPCError } = await import("@orpc/client");
+	const { toast } = await import("@reactive-resume/ui/components/toast");
+	vi.stubGlobal("navigator", { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } });
+	api.logReply.mockRejectedValueOnce(new ORPCError("BAD_REQUEST"));
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	await waitFor(() =>
+		expect(toast.add).toHaveBeenCalledWith({
+			type: "error",
+			description: "Reply copied. Nothing was logged. Review the application before logging again.",
+		}),
+	);
+	expect(api.invalidate).toHaveBeenCalledWith(application.id);
+});
+
 it("explains a known reply-log conflict and refreshes the application", async () => {
 	const { ORPCError } = await import("@orpc/client");
 	const { toast } = await import("@reactive-resume/ui/components/toast");

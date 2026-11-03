@@ -212,7 +212,8 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
 	const copy = async (log = false) => {
-		if ((log && !application.replyVersion) || copying.current || account !== getAccountGeneration()) return;
+		if ((log && (!application.replyVersion || !text.trim())) || copying.current || account !== getAccountGeneration())
+			return;
 		copying.current = true;
 		setLogging(log);
 		let copied = false;
@@ -233,6 +234,13 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 				toast.add({
 					type: "error",
 					description: t`Reply copied. Nothing was logged because the application changed. Review it again before logging.`,
+				});
+				return;
+			}
+			if (copied && error instanceof ORPCError && error.code === "BAD_REQUEST") {
+				toast.add({
+					type: "error",
+					description: t`Reply copied. Nothing was logged. Review the application before logging again.`,
 				});
 				return;
 			}
@@ -307,7 +315,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 								variant="secondary"
 								size="sm"
 								loading={logging}
-								disabled={!application.replyVersion}
+								disabled={!application.replyVersion || !text.trim()}
 								onClick={() => void copy(true)}
 							>
 								<Trans>Copy and log as replied</Trans>

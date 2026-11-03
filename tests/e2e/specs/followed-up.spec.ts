@@ -135,6 +135,14 @@ test("reply placeholders keep normal Copy independent; explicit log persists con
 		await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(text);
 		expect((await read(page.request, id)).activity).toEqual(before.activity);
 		await page.screenshot({ path: info.outputPath("messages-reply-review.png"), animations: "disabled" });
+		await editor.fill("[unfinished [date]");
+		await expect(page.locator("mark")).toHaveText(["[date]"]);
+		for (const empty of ["", " \n\t"]) {
+			await editor.fill(empty);
+			await expect(page.getByRole("button", { name: "Copy and log as replied", exact: true })).toBeDisabled();
+		}
+		expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(text);
+		expect((await read(page.request, id)).activity).toEqual(before.activity);
 		await editor.fill("Thank you for the invitation. I am available Tuesday at 14:00 Berlin time.");
 		await expect(page.locator("mark")).toHaveCount(0);
 		await page.getByRole("button", { name: "Copy and log as replied", exact: true }).click();

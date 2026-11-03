@@ -1,18 +1,17 @@
 /** Outermost balanced draft fields, including nested and localized labels; never blocks copying. */
 export function replyPlaceholders(text: string): string[] {
-	const fields = new Set<string>();
-	let depth = 0;
-	let start = 0;
+	const opens: number[] = [];
+	const spans: [number, number][] = [];
 	for (let index = 0; index < text.length; index++) {
 		const char = text[index];
-		if (char === "\n" || char === "\r") depth = 0;
-		else if (char === "[") {
-			if (depth === 0) start = index;
-			depth++;
-		} else if (char === "]" && depth > 0) {
-			depth--;
-			if (depth === 0 && index > start + 1) fields.add(text.slice(start, index + 1));
+		if (char === "\n" || char === "\r") opens.length = 0;
+		else if (char === "[") opens.push(index);
+		else if (char === "]") {
+			const start = opens.pop();
+			if (start === undefined || index === start + 1) continue;
+			while ((spans.at(-1)?.[0] ?? -1) > start) spans.pop();
+			spans.push([start, index + 1]);
 		}
 	}
-	return [...fields];
+	return [...new Set(spans.map(([start, end]) => text.slice(start, end)))];
 }

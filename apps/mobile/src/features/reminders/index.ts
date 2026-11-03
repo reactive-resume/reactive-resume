@@ -32,6 +32,8 @@ const CHANNEL = "reminders";
 const queryKey = (applicationId: string) => ["reminders", applicationId] as const;
 const idOf = (target: ReminderTarget) => reminderId(target.kind, target.applicationId, target.entryId);
 const revisions = new Map<string, number>();
+// A failed replacement leaves the old reminder cancellable; only successful platform changes supersede it.
+const completed = new Map<string, number>();
 const changes = new Map<string, Promise<unknown>>();
 
 // The platform cannot compare-and-cancel: serialize mutations so a delayed retry cannot delete a replacement.
@@ -46,10 +48,12 @@ function changeReminder<T>(id: string, change: () => Promise<T>): Promise<T> {
 }
 
 function cancelReminder(id: string, expected?: number) {
+	const revision = (revisions.get(id) ?? 0) + 1;
+	revisions.set(id, revision);
 	return changeReminder(id, async () => {
-		if (expected !== undefined && (revisions.get(id) ?? 0) !== expected) return;
+		if (expected !== undefined && (completed.get(id) ?? 0) > expected) return;
 		await Notifications.cancelScheduledNotificationAsync(id);
-		revisions.set(id, (revisions.get(id) ?? 0) + 1);
+		completed.set(id, revision);
 	});
 }
 
@@ -91,8 +95,13 @@ async function scheduleNative(target: ReminderTarget, lead: number): Promise<Sch
 
 function schedule(target: ReminderTarget, lead: number): Promise<ScheduleResult> {
 	const id = idOf(target);
-	revisions.set(id, (revisions.get(id) ?? 0) + 1);
-	return changeReminder(id, () => scheduleNative(target, lead));
+	const revision = (revisions.get(id) ?? 0) + 1;
+	revisions.set(id, revision);
+	return changeReminder(id, async () => {
+		const result = await scheduleNative(target, lead);
+		completed.set(id, revision);
+		return result;
+	});
 }
 
 /** Reminders scheduled on this device for one application: notification identifier → lead minutes. */

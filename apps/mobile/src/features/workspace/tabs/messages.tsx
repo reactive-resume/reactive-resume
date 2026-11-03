@@ -189,7 +189,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 		id: application.id,
 		cancel: reminders.captureTurnOff({ kind: "follow-up", applicationId: application.id }),
 	});
-	const clearFollowUpReminder = async (cancel: () => Promise<void>): Promise<boolean> => {
+	const clearFollowUpReminder = async (cancel: () => Promise<void>, logged = false): Promise<boolean> => {
 		if (!scope || scope !== getAccountScope()) return false;
 		try {
 			await cancel();
@@ -197,21 +197,35 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 		} catch {
 			if (scope === getAccountScope())
 				showToast({
-					message: t`Couldn't clear the follow-up reminder. It may still notify you.`,
-					action: { label: t`Retry`, onPress: () => void clearFollowUpReminder(cancel) },
+					message: [
+						...(logged ? [t`Reply copied and logged as replied`] : []),
+						t`Couldn't clear the follow-up reminder. It may still notify you.`,
+					].join(". "),
+					action: { label: t`Retry`, onPress: () => void clearFollowUpReminder(cancel, logged) },
 				});
 			return false;
 		}
 	};
-	const clearReminder = useEffectEvent(() => {
+	const clearReminder = useEffectEvent(async (signal: AbortSignal) => {
 		if (application.followUpAt || reminderCancellation.current.id !== application.id)
 			reminderCancellation.current = {
 				id: application.id,
 				cancel: reminders.captureTurnOff({ kind: "follow-up", applicationId: application.id }),
 			};
-		if (!application.followUpAt) void clearFollowUpReminder(reminderCancellation.current.cancel);
+		if (application.followUpAt || !scope || scope !== getAccountScope()) return;
+		const cancel = reminderCancellation.current.cancel;
+		try {
+			const fresh = await client.applications.getById({ id: application.id }, { signal, context: { scope } });
+			if (!signal.aborted && scope === getAccountScope() && !fresh.followUpAt) await clearFollowUpReminder(cancel);
+		} catch {
+			// A failed refresh cannot confirm that a cached follow-up was cleared.
+		}
 	});
-	useEffect(() => clearReminder(), [application.id, application.followUpAt, scope]);
+	useEffect(() => {
+		const controller = new AbortController();
+		void clearReminder(controller.signal);
+		return () => controller.abort();
+	}, [application.id, application.followUpAt, scope]);
 	const generate = useGenerate(application.id);
 	const provider = useHasAIProvider().defaultProvider;
 	const draft = useDraft(`reply:${reply.id}`, reply.data.reply);
@@ -223,7 +237,13 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
 	const copy = async (log = false) => {
-		if ((log && !application.replyVersion) || copying.current || !scope || scope !== getAccountScope()) return;
+		if (
+			(log && (!application.replyVersion || !text.trim())) ||
+			copying.current ||
+			!scope ||
+			scope !== getAccountScope()
+		)
+			return;
 		copying.current = true;
 		const cancel = reminders.captureTurnOff({ kind: "follow-up", applicationId: application.id });
 		if (log) reminderCancellation.current = { id: application.id, cancel };
@@ -239,9 +259,10 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 					{ context: { scope } },
 				);
 				if (scope !== getAccountScope()) return;
-				const cleared = await clearFollowUpReminder(cancel);
+				const cleared = await clearFollowUpReminder(cancel, true);
 				if (scope !== getAccountScope()) return;
-				await invalidate();
+				// Logging is confirmed; query refresh failure must not change its receipt or replace a reminder warning.
+				await invalidate().catch(() => undefined);
 				if (!cleared || scope !== getAccountScope()) return;
 			}
 			showToast({ message: log ? t`Reply copied and logged as replied` : t`Reply copied` });
@@ -252,6 +273,10 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 				showToast({
 					message: t`Reply copied. Nothing was logged because the application changed. Review it again before logging.`,
 				});
+				return;
+			}
+			if (copied && error instanceof ORPCError && error.code === "BAD_REQUEST") {
+				showToast({ message: t`Reply copied. Nothing was logged. Review the application before logging again.` });
 				return;
 			}
 			showToast({
@@ -305,7 +330,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 								variant="secondary"
 								size="sm"
 								label={t`Copy and log as replied`}
-								disabled={!application.replyVersion}
+								disabled={!application.replyVersion || !text.trim()}
 								loading={logging}
 								onPress={() => void copy(true)}
 							/>

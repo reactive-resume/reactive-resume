@@ -61,6 +61,9 @@ function harness({ lifetime = 30 } = {}) {
 		copied: [],
 		logs: [],
 		logReply: async () => undefined,
+		getById: async () => ({ followUpAt: null }),
+		reads: [],
+		draft: undefined,
 		invalidations: 0,
 		invalidate: async () => undefined,
 		cancel: async () => undefined,
@@ -142,7 +145,7 @@ function harness({ lifetime = 30 } = {}) {
 			"@reactive-resume/utils/timezone": {},
 			"../hooks": {
 				useWorkspace: () => ({ data: { answers: [] }, current: () => ({ answers: [] }) }),
-				useDraft: (_key, value) => ({ value }),
+				useDraft: (_key, value) => ({ value: env.draft ?? value }),
 				useGenerate: () => ({}),
 			},
 			"../logic": {
@@ -156,6 +159,10 @@ function harness({ lifetime = 30 } = {}) {
 			"@/api/client": {
 				client: {
 					applications: {
+						getById: async (...args) => {
+							env.reads.push(args);
+							return env.getById(...args);
+						},
 						logReply: async (...args) => {
 							env.logs.push(args);
 							return env.logReply(...args);
@@ -361,6 +368,89 @@ test("native copied reply explains a known conflict without claiming an uncertai
 	assert.equal(h.env.invalidations, 1);
 });
 
+test("native empty reply disables and guards logging while preserving ordinary Copy", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	for (const text of ["", " \n\t"]) {
+		h.env.draft = text;
+		const tree = h.replyTree();
+		const log = buttonIn(tree, "Copy and log as replied");
+		assert.equal(log.props.disabled, true);
+		log.props.onPress();
+		await new Promise(setImmediate);
+		assert.deepEqual(h.env.copied, []);
+		assert.deepEqual(h.env.logs, []);
+		buttonIn(tree, "Copy reply").props.onPress();
+		await new Promise(setImmediate);
+		assert.equal(h.env.copied.pop(), text);
+	}
+	assert.deepEqual(h.env.cancelCalls, []);
+});
+
+test("native known logging refusal confirms no write without inventing a conflict reason", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	h.env.logReply = async () => {
+		throw new ORPCError("BAD_REQUEST");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(
+		h.toasts.at(-1).message,
+		"Reply copied. Nothing was logged. Review the application before logging again.",
+	);
+	assert.equal(h.env.invalidations, 1);
+	assert.deepEqual(h.env.cancelCalls, []);
+});
+
+test("native confirmed log stays confirmed if the later application refresh fails", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	let refreshes = 0;
+	h.env.invalidate = async () => {
+		if (++refreshes === 1) throw new ORPCError("BAD_REQUEST");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.logs.length, 1);
+	assert.equal(h.env.clearedReminders.length, 1);
+	assert.equal(h.toasts.at(-1).message, "Reply copied and logged as replied");
+});
+
+test("native cached cleared follow-up cannot cancel a server-confirmed replacement", async () => {
+	const h = harness();
+	h.env.getById = async () => ({ followUpAt: new Date("2030-03-15T09:00:00Z") });
+	h.replyTree();
+	await new Promise(setImmediate);
+	assert.equal(h.env.reads.length, 1);
+	assert.deepEqual(h.env.reads[0][0], { id: "app-1" });
+	assert.equal(h.env.reads[0][1].context.scope, "acct-A");
+	assert.deepEqual(h.env.cancelCalls, []);
+});
+
+for (const change of ["read-failure", "unmount", "replacement", "account"]) {
+	test(`native fresh cleared-follow-up check preserves reminder after ${change}`, async () => {
+		const h = harness();
+		let resolveRead;
+		let rejectRead;
+		h.env.getById = () =>
+			new Promise((resolve, reject) => {
+				resolveRead = resolve;
+				rejectRead = reject;
+			});
+		h.replyTree();
+		if (change === "read-failure") rejectRead(new Error("Offline"));
+		else {
+			if (change === "unmount") h.unmount();
+			if (change === "replacement") h.env.reminderVersion++;
+			if (change === "account") h.env.account = "acct-B";
+			resolveRead({ followUpAt: null });
+		}
+		await new Promise(setImmediate);
+		assert.deepEqual(h.env.cancelCalls, []);
+	});
+}
+
 test("native reply view cancels only the cleared follow-up reminder and ignores a stale account effect", async () => {
 	const h = harness();
 	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
@@ -410,11 +500,17 @@ test("native cancellation failure offers scoped retry without logging the reply 
 			throw new Error("Notification service unavailable");
 		}
 	};
+	h.env.invalidate = async () => {
+		throw new Error("Refresh unavailable");
+	};
 	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
 	await new Promise(setImmediate);
 	assert.equal(h.env.logs.length, 1);
 	assert.equal(h.env.invalidations, 1);
-	assert.equal(h.toasts.at(-1).message, "Couldn't clear the follow-up reminder. It may still notify you.");
+	assert.equal(
+		h.toasts.at(-1).message,
+		"Reply copied and logged as replied. Couldn't clear the follow-up reminder. It may still notify you.",
+	);
 	h.toasts.at(-1).action.onPress();
 	await new Promise(setImmediate);
 	assert.equal(h.env.cancelCalls.length, 2);
