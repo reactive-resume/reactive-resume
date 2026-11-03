@@ -1813,6 +1813,7 @@ export const agentService = {
 							throw new ORPCError("CONFLICT", { message: "Shared context changed. Start a new reply." });
 					},
 				);
+				const operationIds = [...new Set([...aiOperationIds(draftUiMessage.metadata), usage.operationId])];
 				const agent = createAgent({
 					authorize: async () => {
 						controller.signal.throwIfAborted();
@@ -1914,7 +1915,7 @@ export const agentService = {
 									...(draftUiMessage.metadata as Record<string, unknown> | undefined),
 									provider: runnableProvider.provider,
 									model: capableModel,
-									aiOperationIds: [...new Set([...aiOperationIds(draftUiMessage.metadata), usage.operationId])],
+									aiOperationIds: operationIds,
 								},
 							};
 							const upserted = await upsertAssistantUiMessage({
@@ -1942,16 +1943,18 @@ export const agentService = {
 								sendSources: true,
 								// Round-trips inside the persisted uiMessage jsonb — no migration needed.
 								messageMetadata: ({ part }) =>
-									part.type === "finish"
-										? {
-												usage: part.totalUsage,
-												model: capableModel,
-												aiOperationIds: [usage.operationId],
-												provider: runnableProvider.provider,
-												contextScope,
-												contextMessageId,
-											}
-										: undefined,
+									part.type === "start"
+										? { aiOperationIds: operationIds }
+										: part.type === "finish"
+											? {
+													usage: part.totalUsage,
+													model: capableModel,
+													aiOperationIds: operationIds,
+													provider: runnableProvider.provider,
+													contextScope,
+													contextMessageId,
+												}
+											: undefined,
 								onFinish: async ({ responseMessage: completedMessage, isAborted, outcome }) => {
 									let responseMessage = completedMessage;
 									let persistError: unknown;

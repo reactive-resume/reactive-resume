@@ -2933,10 +2933,19 @@ console.log(
 		"@reactive-resume/resume/markdown": { buildMarkdown: () => "Fictional original" },
 		"@reactive-resume/resume/proposals": {
 			collectPassages: () => [{ id: "p1", location: "Summary", text: "Fictional original" }],
+			getProposalState: () => "pending",
+			blockText: (text) => text,
 		},
 		"./actions": {},
 		"./issues": { getSectionName: () => "Summary" },
-		"./review": { mapWritingReview: () => ({ proposals: [], notes: [] }) },
+		"./review": {
+			mapWritingReview: () => ({
+				proposals: [
+					{ id: "saved-rewrite", before: "Fictional original", after: "Fictional rewrite", status: "pending" },
+				],
+				notes: [],
+			}),
+		},
 		"@/draft": { useResumeStore: (select) => select({ proposalApplications: {} }) },
 		"@/api/client": {
 			client: {
@@ -2986,6 +2995,7 @@ console.log(
 		passages: [],
 		review: { summary: "Latest saved", strengths: [], suggestions: [] },
 		reviewedAt: new Date("2030-01-01T00:00:02Z"),
+		aiOperationIds: ["saved-writing-source"],
 		aiUsage: {
 			requests: 2,
 			models: [{ providerId: "old-provider", label: "Recorded AI", provider: "openai", model: "recorded-model" }],
@@ -2993,6 +3003,7 @@ console.log(
 	};
 	render(Writing, writingProps);
 	assert.equal(publishedWriting.summary, "Latest saved");
+	assert.deepEqual(publishedWriting.proposals[0].aiOperationIds, ["saved-writing-source"]);
 	writingProps.review = publishedWriting;
 	assert.deepEqual(
 		nodes(render(Writing, writingProps)).find((node) => node.type === "ResultUsage").props.usage,
@@ -3001,11 +3012,18 @@ console.log(
 	resolveOld({ summary: "Older discarded response" });
 	await settle();
 	assert.equal(publishedWriting.summary, "Latest saved");
+	assert.deepEqual(publishedWriting.proposals[0].aiOperationIds, ["saved-writing-source"]);
 	assert.deepEqual(
 		calls,
 		[["writing", "resume-a"]],
 		"An unmounted canceled request cannot publish or invalidate a different document",
 	);
+	delete savedWriting.aiOperationIds;
+	savedWriting.reviewedAt = new Date("2030-01-01T00:00:03Z");
+	render(Writing, writingProps);
+	assert.equal(publishedWriting.proposals.length, 1);
+	assert.equal(publishedWriting.proposals[0].aiOperationIds, undefined, "Older source-less reviews remain usable");
+	assert.equal(writingRequest, 2, "Hydration never repeats generation");
 	console.log("PASS native Writing authoritative publication and unmounted request order");
 
 	reset();

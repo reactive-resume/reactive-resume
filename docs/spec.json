@@ -1838,6 +1838,15 @@
 													"format": "date-time",
 													"x-native-type": "date"
 												},
+												"aiOperationIds": {
+													"type": "array",
+													"maxItems": 1000,
+													"items": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 64
+													}
+												},
 												"aiUsage": {
 													"anyOf": [
 														{

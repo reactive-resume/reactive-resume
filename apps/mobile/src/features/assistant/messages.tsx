@@ -21,6 +21,7 @@ import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-na
 import { agentKnowledgeUsed, agentReadPostings, agentWebFailure } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { additionParts, blockText, needsConfirmation, proposalText } from "@reactive-resume/resume/proposals";
 import { wordDiff } from "@reactive-resume/resume/word-diff";
+import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 import { webSources } from "./chat";
 import { handToAssistant } from "./handoff";
 import { AssistantMarkdown } from "./markdown";
@@ -386,7 +387,7 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 					</Status>
 				);
 			if (!proposals) return null;
-			const list = toProposals(part, proposals.statuses);
+			const list = toProposals(part, proposals.statuses, aiOperationIds(message.metadata));
 			const skipped = skippedCount(part);
 			const requirements = requirementsOf(part);
 			const forJobCopy = proposals.forJobCopy(message, part);

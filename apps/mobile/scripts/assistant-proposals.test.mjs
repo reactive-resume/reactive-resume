@@ -91,7 +91,7 @@ function store(kind) {
 		return { ...state, update: suppressed ? () => {} : state.update };
 	};
 	useStore.subscribe = (listener) => runtime.store.subscribe(listener);
-	useStore.load = async (content, initialData) => {
+	useStore.load = async (content, initialData, aiOperationIds = []) => {
 		let document = {
 			id: kind,
 			name: kind,
@@ -100,6 +100,7 @@ function store(kind) {
 			isLocked: false,
 			revision: 1,
 			updatedAt: new Date(),
+			aiOperationIds,
 		};
 		storage = new Map();
 		adapter = {
@@ -115,7 +116,7 @@ function store(kind) {
 			version: (doc) => doc.revision,
 			parse: (doc) => ({ ...doc, updatedAt: new Date(doc.updatedAt) }),
 			save: async (doc, _baseline, _session, _force, owner, applications) => {
-				documentSaves.push({ kind, owner, applications });
+				documentSaves.push({ kind, owner, applications, aiOperationIds: doc.aiOperationIds });
 				if (failedSave) throw new Error("Offline");
 				document = { ...doc, revision: doc.revision + 1 };
 				return document;
@@ -155,8 +156,19 @@ function store(kind) {
 }
 const resumeStore = store("resume");
 const letterStore = store("letter");
+const aiUsage = evaluate(
+	buildSync({
+		entryPoints: [mobileRequire.resolve("@reactive-resume/schema/ai-usage")],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text,
+	{},
+);
 const dependencies = {
 	"@reactive-resume/ai/tools/agent-tool-contracts": agentContracts,
+	"@reactive-resume/schema/ai-usage": aiUsage,
 	react: { useMemo: (fn) => fn() },
 	immer: { produce },
 	zustand: {
@@ -251,6 +263,32 @@ for (const kind of ["resume", "letter"]) {
 		kind === "resume" ? documents.useResumeAssistantDocument("resume") : documents.useLetterAssistantDocument("letter");
 	const owner = kind === "resume" ? resumeStore : letterStore;
 	const current = () => owner.getState();
+	test(`${kind} pairs only applied proposal sources through offline recovery and Undo/Redo`, async () => {
+		await owner.load("<p>Old</p>", undefined, ["prior-source"]);
+		const rewrite = { ...edit("source-rewrite", "<p>Rewritten</p>"), aiOperationIds: ["rewrite-source"] };
+		const addition = {
+			...edit("source-addition", "<p>Old</p><p>Mentored two designers</p>"),
+			aiOperationIds: ["addition-source", "rewrite-source"],
+		};
+		const stale = { ...edit("source-stale", "<p>Conflict</p>"), aiOperationIds: ["stale-source"] };
+		assert.deepEqual(open().accept([rewrite, addition, stale]), { applied: [rewrite, addition], stale: [stale] });
+		const expected = ["prior-source", "rewrite-source", "addition-source"];
+		assert.deepEqual(current().document.aiOperationIds, expected, "Sources must be paired before any save");
+		assert.equal(documentSaves.length, 0);
+		current().undo();
+		assert.deepEqual(current().document.aiOperationIds, ["prior-source"]);
+		current().redo();
+		assert.deepEqual(current().document.aiOperationIds, expected);
+		failedSave = true;
+		await current().flush();
+		assert.equal(current().status, "error");
+		await owner.restart();
+		assert.deepEqual(current().document.aiOperationIds, expected);
+		failedSave = false;
+		await current().flush();
+		assert.equal(current().status, "saved");
+		assert.deepEqual(documentSaves.at(-1).aiOperationIds, expected);
+	});
 	test(`${kind} keeps real acceptance identity through refinements, save echoes and explicit Undo/Redo`, async () => {
 		const doc = open();
 		const rewrite = edit("rewrite", "<p>Rewritten</p>");
@@ -771,7 +809,7 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 			"@/ui": { ...dependencies["@/ui"], Button: "Button", Text: "Text", Icon: "Icon", useTheme: () => theme },
 		},
 	);
-	const proposal = edit("off-edit", "<p>Saved rewrite</p>");
+	const proposal = { ...edit("off-edit", "<p>Saved rewrite</p>"), aiOperationIds: ["model-forged-source"] };
 	const doc = documents.useResumeAssistantDocument("resume");
 	const part = {
 		type: "tool-propose_edits",
@@ -800,6 +838,7 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 				message: {
 					id: "off-message",
 					role: "assistant",
+					metadata: { aiOperationIds: ["saved-assistant-source"] },
 					parts: [
 						part,
 						{
@@ -830,6 +869,12 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 		return buttons;
 	};
 	const accept = render().find((b) => b.label === "Accept");
+	assert.deepEqual(currentProposal.aiOperationIds, ["saved-assistant-source"]);
+	assert.equal(
+		proposals.toProposals(part, new Map())[0].aiOperationIds,
+		undefined,
+		"Old messages cannot inherit model-forged sources",
+	);
 	assert.ok(accept);
 	assert.equal(accept.disabled, false);
 	assert.equal(
@@ -837,9 +882,12 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 		false,
 	);
 	accept.onPress();
+	assert.deepEqual(resumeStore.getState().document.aiOperationIds, ["saved-assistant-source"]);
 	await resumeStore.getState().flush();
+	assert.deepEqual(documentSaves.at(-1).aiOperationIds, ["saved-assistant-source"]);
 	assert.equal(documents.useResumeAssistantDocument("resume").stateOf(currentProposal), "accepted");
 	resumeStore.getState().undo();
+	assert.deepEqual(resumeStore.getState().document.aiOperationIds, []);
 	await resumeStore.getState().flush();
 	assert.equal(render().find((b) => b.label === "Accept").disabled, false);
 	assert.equal(documents.useResumeAssistantDocument("resume").stateOf(currentProposal), "pending");

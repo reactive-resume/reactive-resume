@@ -32,6 +32,7 @@ import {
 	tailoringAllows,
 } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { withEditedText } from "@reactive-resume/resume/proposals";
+import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 import { isNetworkError } from "@reactive-resume/utils/http";
 import { attachmentPart, refreshThreads, transcriptOf, useAssistantChat } from "./chat";
 import { FileChip, MessageView, Status } from "./messages";
@@ -547,7 +548,9 @@ function Conversation(props: ConversationProps) {
 		() =>
 			document && receiptsReady
 				? messages.flatMap((message) =>
-						message.parts.flatMap((part) => (isProposeEdits(part) ? toProposals(part, statuses) : [])),
+						message.parts.flatMap((part) =>
+							isProposeEdits(part) ? toProposals(part, statuses, aiOperationIds(message.metadata)) : [],
+						),
 					)
 				: [],
 		[messages, statuses, document, receiptsReady],

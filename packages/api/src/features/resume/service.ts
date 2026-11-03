@@ -285,12 +285,13 @@ async function applyResumePatchTx(
 		if (input.expectedUpdatedAt) throw resumeVersionConflict(existing.updatedAt);
 		throw new ORPCError("NOT_FOUND");
 	}
-	await saveProposalApplications(client, {
+	const sourceIds = await saveProposalApplications(client, {
 		userId: input.userId,
 		document: { kind: "resume", id: input.id },
 		applications: input.proposalApplications,
 		conflict: () => resumeVersionConflict(existing.updatedAt),
 	});
+	if (sourceIds !== undefined) resume.aiOperationIds = sourceIds;
 
 	// Checkpoint every patch (AI/API edit) atomically within the same transaction as the edit.
 	// ponytail: a multi-patch agent turn writes one row per patch; 90-day retention bounds it.
@@ -929,12 +930,13 @@ export const resumeService = {
 					.returning(resumeColumns);
 
 				if (!updated) throw new ORPCError("NOT_FOUND");
-				await saveProposalApplications(tx, {
+				const sourceIds = await saveProposalApplications(tx, {
 					userId: input.userId,
 					document: { kind: "resume", id: input.id },
 					applications: input.proposalApplications,
 					conflict: () => resumeVersionConflict(existing.updatedAt),
 				});
+				if (sourceIds !== undefined) updated.aiOperationIds = sourceIds;
 				return updated;
 			})
 			.catch(async (error: unknown) => {

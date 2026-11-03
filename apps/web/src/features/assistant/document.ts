@@ -151,6 +151,7 @@ export function useLetterAssistantDocument(): AssistantDocument | null {
 				const { letter: current, edit, changing, proposalApplications, sessionId } = useLetterEditorStore.getState();
 				if (!current || current.id !== letter.id || current.isLocked || changing) return { applied: [], stale: [] };
 				const before = current.content;
+				const beforeSources = current.aiOperationIds ?? [];
 				let content = before;
 				const result = applyProposals(
 					proposals,
@@ -177,7 +178,10 @@ export function useLetterAssistantDocument(): AssistantDocument | null {
 												!latest.letter.isLocked &&
 												!latest.changing
 											)
-												latest.edit({ content: before }, { restoreApplications: proposalApplications });
+												latest.edit(
+													{ content: before, aiOperationIds: beforeSources },
+													{ restoreApplications: proposalApplications },
+												);
 										},
 									},
 								}

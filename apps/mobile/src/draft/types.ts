@@ -32,7 +32,7 @@ export type DraftConflict<TDocument> = {
 export type UpdateOptions = {
 	aiOperationIds?: string[] | undefined;
 	/** Filled by the synchronous proposal recipe; travels with this undo step. */
-	applied?: readonly Pick<Proposal, "id" | "after" | "snapshot">[];
+	applied?: readonly Pick<Proposal, "id" | "after" | "snapshot" | "aiOperationIds">[];
 	/** The field being edited. Consecutive edits with the same key within 1 s merge into one undo step. */
 	coalesceKey?: string | undefined;
 	/** Always a step of its own (adding, moving or deleting). */
