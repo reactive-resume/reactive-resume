@@ -155,6 +155,27 @@ for (const entry of ["detail", "workspace", "api"] as const) {
 			}),
 		).toBeOK();
 		expect((await (await page.request.get(workspaceUrl)).json()).submissionReview).toEqual(receipt.submissionReview);
+		if (entry === "workspace") {
+			await expect(await page.request.put(`/api/openapi/applications/${id}`, { data: { status: "saved" } })).toBeOK();
+			const laterAnswers = receipt.answers.map((answer: { answer: string }) => ({
+				...answer,
+				answer: "Later submission answer",
+			}));
+			await expect(
+				await page.request.post(`${workspaceUrl}/submit`, {
+					data: { answers: laterAnswers, expectedAnswers: receipt.answers },
+				}),
+			).toBeOK();
+			expect((await (await page.request.get(workspaceUrl)).json()).submissionReview).toEqual(receipt.submissionReview);
+			const saved = await page.request.get(`/api/openapi/career/saved?applicationId=${id}&kind=answers`);
+			await expect(saved).toBeOK();
+			expect((await saved.json())[0].id).not.toBe(receipt.submissionReview.answerVersionId);
+			await page.goto(`/dashboard/applications/${id}/apply`);
+			await page.getByRole("button", { name: "View recorded answers", exact: true }).click();
+			await expect(page).toHaveURL(new RegExp(`version=${receipt.submissionReview.answerVersionId}`));
+			await expect(page.locator("#application-readiness")).toContainText("Review checks recorded at first submission.");
+			await expect(page.getByText("Later submission answer", { exact: true })).toHaveCount(0);
+		}
 		if (entry === "detail")
 			await page
 				.getByRole("heading", { name: "Review checks", exact: true })
@@ -243,5 +264,37 @@ test("Apply copies and downloads the first unsaved answer while offline, then hi
 		await expect(review.getByRole("button", { name: "Download", exact: true })).toHaveCount(0);
 	} finally {
 		await page.context().setOffline(false);
+	}
+});
+
+test("Imported sent stages keep unknown manual review history after reopening and resubmission", async ({
+	authPage: page,
+}) => {
+	for (const status of ["applied", "interview", "offer"]) {
+		const company = `Imported ${status}`;
+		await expect(
+			await page.request.post("/api/openapi/applications/import", {
+				data: { items: [{ company, role: "Historical engineer", status, applicationDate: "2020-01-10" }] },
+			}),
+		).toBeOK();
+		const listed = await page.request.get("/api/openapi/applications");
+		await expect(listed).toBeOK();
+		const application = (await listed.json()).find((row: { company: string }) => row.company === company);
+		expect(application).toBeDefined();
+		const path = `/api/openapi/career/workspace/${application.id}`;
+		const verify = async () => {
+			const workspace = await page.request.get(path);
+			await expect(workspace).toBeOK();
+			expect((await workspace.json()).submissionReview).toBeNull();
+			await page.goto(`/dashboard/applications/${application.id}/apply`);
+			await expect(page.locator("#application-readiness")).toContainText("Historical review checks unavailable.");
+			await expect(page.locator("#application-readiness").getByRole("checkbox")).toHaveCount(0);
+		};
+		await verify();
+		await expect(
+			await page.request.put(`/api/openapi/applications/${application.id}`, { data: { status: "saved" } }),
+		).toBeOK();
+		await expect(await page.request.post(`${path}/submit`, { data: { answers: [], expectedAnswers: [] } })).toBeOK();
+		await verify();
 	}
 });

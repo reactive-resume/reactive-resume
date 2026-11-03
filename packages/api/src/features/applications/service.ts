@@ -919,7 +919,7 @@ export const applicationService = {
 			}
 			const rows = await tx.insert(schema.application).values(values).returning();
 			for (const row of rows) {
-				await recordSentResume(row, tx);
+				await recordSentResume(row, tx, true);
 				if (row.followUpAt) await syncFollowUp(tx, row);
 				if (row.coverLetterId)
 					await linkLetterToApplication(tx, {

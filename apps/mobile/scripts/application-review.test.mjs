@@ -178,7 +178,7 @@ test("native first-submission review stays read-only and legacy/version history 
 	}
 });
 
-test("native Apply reacts to unsaved typing and copies the current draft before autosave returns", async () => {
+test("native Apply copies unsaved drafts and opens first-submission or legacy recorded answers", async () => {
 	const rootRequire = createRequire(root + "/package.json");
 	const React = rootRequire("react");
 	const { act } = React;
@@ -197,6 +197,7 @@ test("native Apply reacts to unsaved typing and copies the current draft before 
 		);
 	const values = new Map();
 	let copied;
+	let savedItems = [];
 	const data = { ...empty, answers: [{ id: "first", question: "Why?", answer: "", factIds: [] }] };
 	const { Apply, saves } = load(data, {
 		react: React,
@@ -225,7 +226,7 @@ test("native Apply reacts to unsaved typing and copies the current draft before 
 			},
 			useAutosave: (value, _saved, save) => ({ flush: () => save(value) }),
 			latest: () => undefined,
-			useSavedItems: () => ({ data: [] }),
+			useSavedItems: () => ({ data: savedItems }),
 			useFacts: () => ({ data: [] }),
 			useGenerate: () => ({}),
 		},
@@ -240,6 +241,7 @@ test("native Apply reacts to unsaved typing and copies the current draft before 
 			useWorking: (_pending, _steps, fallback) => fallback,
 			workingSteps: () => [],
 		},
+		"@/features/application-detail/sections": { WhatYouSent: () => null },
 		"../preparation": { Preparation: () => null },
 		"../answer-library": { AnswerLibrary: () => null },
 		"@/features/ai/providers": { useHasAIProvider: () => ({}) },
@@ -282,6 +284,35 @@ test("native Apply reacts to unsaved typing and copies the current draft before 
 		await act(async () => values.get("Why?")("   "));
 		assert.equal(find("Copy answers"), undefined);
 		assert.equal(find("Download"), undefined);
+		const first = { id: "first-version", submission: true, data: { kind: "answers", answers: [] } };
+		const later = { ...first, id: "later-version" };
+		savedItems = [later, first];
+		for (const kind of ["first receipt", "legacy"]) {
+			data.submissionReview =
+				kind === "legacy"
+					? null
+					: {
+							at: "2026-11-03T10:00:00Z",
+							checklist: [],
+							documents: false,
+							answers: true,
+							answerVersionId: first.id,
+						};
+			let destination;
+			await act(async () =>
+				owner.render(
+					React.createElement(Apply, {
+						key: kind,
+						application: { ...application, status: "applied" },
+						go: (...args) => {
+							destination = args;
+						},
+					}),
+				),
+			);
+			await act(async () => find("View recorded answers").click());
+			assert.deepEqual(destination, ["apply", { version: kind === "legacy" ? later.id : first.id }]);
+		}
 	} finally {
 		await act(async () => owner.unmount());
 		window.happyDOM.abort();

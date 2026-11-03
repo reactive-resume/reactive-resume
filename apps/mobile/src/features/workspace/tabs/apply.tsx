@@ -63,6 +63,8 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 	const facts = useFacts(application.id);
 	const readOnlyVersion = version?.data.kind === "answers" ? version.data : undefined;
 	const recorded = saved.data?.find((item) => item.submission && item.data.kind === "answers");
+	const reviewed =
+		saved.data?.find((item) => item.id === workspace.data?.submissionReview?.answerVersionId) ?? recorded;
 	const candidate = recorded ?? (!hasApplicationSubmission(application) ? latest(saved.data, "answers") : undefined);
 	const sentItem = candidate?.data.kind === "answers" ? { ...candidate, data: candidate.data } : undefined;
 	// Removed questions wait out their Undo here; the workspace drops them when the toast closes.
@@ -183,13 +185,13 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 				<Text variant="heading" accessibilityRole="header" style={{ flex: 1 }}>{t`Form answers`}</Text>
 				<Button variant="link" label={t`Edit profile`} onPress={() => router.push(routes.settings("profile"))} />
 				{!version && submitted ? (
-					recorded ? (
+					reviewed ? (
 						<Button
 							variant="link"
 							size="sm"
 							icon="clock-counter-clockwise"
 							label={t`View recorded answers`}
-							onPress={() => go("apply", { version: recorded.id })}
+							onPress={() => go("apply", { version: reviewed.id })}
 						/>
 					) : (
 						<Text variant="callout" color="ink3">{t`No recorded answers are available.`}</Text>

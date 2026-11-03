@@ -41,7 +41,7 @@ vi.mock("@/libs/orpc/client", () => {
 	});
 	return {
 		orpc: {
-			documents: { list: endpoint("documents") },
+			documents: { list: endpoint("documents"), linkApplication: endpoint("linkApplication") },
 			applications: {
 				getById: endpoint("application"),
 				listSummary: endpoint("applications"),
@@ -758,4 +758,28 @@ it("offers answer actions immediately for an unsaved draft and hides them when c
 	fireEvent.change(input, { target: { value: "   " } });
 	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
 	expect(screen.queryByRole("button", { name: "Download" })).toBeNull();
+});
+
+it.each(["first receipt", "legacy"] as const)("opens the correct recorded answers for %s", async (kind) => {
+	const first = {
+		...item("first", { kind: "answers", answers: [{ question: "Why?", answer: "First submission" }] }),
+		submission: true,
+	};
+	const later = {
+		...item("later", { kind: "answers", answers: [{ question: "Why?", answer: "Later submission" }] }),
+		submission: true,
+	};
+	api.data.savedItems = [later, first];
+	api.data.workspace = {
+		...EMPTY_WORKSPACE,
+		answers: [{ id: "draft", question: "Why?", answer: "Current draft", factIds: [] }],
+		submissionReview:
+			kind === "legacy"
+				? null
+				: { at: "2026-11-03T10:00:00Z", checklist: [1], documents: false, answers: true, answerVersionId: first.id },
+	};
+	const go = vi.fn();
+	mount(<ApplyTab {...props} application={{ ...application, status: "applied" }} go={go} />);
+	fireEvent.click(await screen.findByRole("button", { name: "View recorded answers" }));
+	expect(go).toHaveBeenCalledWith("apply", { version: kind === "legacy" ? later.id : first.id });
 });

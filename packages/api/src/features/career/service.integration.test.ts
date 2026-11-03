@@ -2038,6 +2038,35 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		},
 	);
 
+	it.each(["applied", "interview", "offer"] as const)(
+		"keeps imported %s review history unavailable",
+		async (status) => {
+			await applications.importMany({
+				userId: "alice",
+				items: [
+					{
+						company: "Imported history",
+						role: "Engineer",
+						status,
+						applicationDate: "2020-01-10",
+						resumeId: "shared-resume",
+					},
+				],
+			});
+			const [row] = await getDb()
+				.select()
+				.from(tables.application)
+				.where(eq(tables.application.company, "Imported history"));
+			if (!row) throw new Error("Missing imported application.");
+			expect(row.sentResumeVersionId).toEqual(expect.any(String));
+			expect(row.submittedAt).toBeInstanceOf(Date);
+			expect((await service.workspace("alice", row.id)).submissionReview).toBeNull();
+			await applications.update({ userId: "alice", id: row.id, status: "saved" });
+			await service.submitApplication("alice", row.id, [], []);
+			expect((await service.workspace("alice", row.id)).submissionReview).toBeNull();
+		},
+	);
+
 	it("does not invent legacy review history or accept a client replacement", async () => {
 		expect((await service.workspace("alice", "alice-app")).submissionReview).toBeNull();
 		await expect(

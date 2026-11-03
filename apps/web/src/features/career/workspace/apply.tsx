@@ -75,6 +75,8 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
 	const readOnlyVersion = version?.data.kind === "answers" ? version.data : undefined;
 	const recorded = saved.data?.find((item) => item.submission && item.data.kind === "answers");
+	const reviewed =
+		saved.data?.find((item) => item.id === workspace.data?.submissionReview?.answerVersionId) ?? recorded;
 	const candidate = recorded ?? (!hasApplicationSubmission(application) ? latest(saved.data, "answers") : undefined);
 	const sentItem = candidate?.data.kind === "answers" ? { ...candidate, data: candidate.data } : undefined;
 	// Removed questions wait out their Undo here; the workspace drops them when the toast closes.
@@ -211,12 +213,12 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 					</Link>
 					{!version &&
 						hasApplicationSubmission(application) &&
-						(recorded ? (
+						(reviewed ? (
 							<Button
 								size="sm"
 								variant="ghost"
 								className="-me-2.5"
-								onClick={() => go("apply", { version: recorded.id })}
+								onClick={() => go("apply", { version: reviewed.id })}
 							>
 								<Icon name="clock-counter-clockwise" size={16} />
 								<Trans>View recorded answers</Trans>
