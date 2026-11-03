@@ -369,7 +369,7 @@ function SalaryField({ id, locale, value, onChange }: SalaryFieldProps) {
 	const periods = { hour: t`/ hour`, month: t`/ month`, year: t`/ year` };
 
 	return (
-		<div className="grid gap-1.5">
+		<div className="grid gap-1.5 sm:col-span-2">
 			<label htmlFor={id} className="text-xs font-medium text-ink-2">
 				<Trans>Minimum base salary</Trans>
 			</label>

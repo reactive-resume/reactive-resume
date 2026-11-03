@@ -29,6 +29,9 @@ test("Preferences and offer currency choices save code and period without guessi
 	await chooseCurrency(page, "JPY");
 	await expect(page.getByRole("combobox", { name: "Currency", exact: true })).toContainText("JPY");
 	await page.getByLabel("Minimum base salary", { exact: true }).fill("7000");
+	expect(
+		await page.getByLabel("Minimum base salary", { exact: true }).evaluate((input) => input.clientWidth),
+	).toBeGreaterThan(80);
 	await page.getByRole("combobox", { name: "Pay period", exact: true }).selectOption("month");
 	await page.getByLabel("Notice period", { exact: true }).focus();
 	await page.getByLabel("Notice period", { exact: true }).blur();
@@ -107,8 +110,30 @@ test("offer Messages chooser only navigates and phone rows distinguish same-comp
 	};
 	const [engineer, lead] = applications;
 	if (!engineer || !lead) throw new Error("Both fictional applications must exist.");
+	await page.goto("/dashboard/career/offers");
+	await expect(page.getByRole("combobox", { name: "Messages", exact: true })).toBeVisible();
+	await page
+		.getByRole("main")
+		.screenshot({ path: info.outputPath("offer-guidance-empty.png"), animations: "disabled" });
+	const pending = page
+		.getByRole("region")
+		.filter({ has: page.getByRole("heading", { name: "In the Offer stage, terms not added", exact: true }) });
+	await pending
+		.getByRole("listitem")
+		.filter({ hasText: "Product engineer" })
+		.getByRole("button", { name: "Add offer", exact: true })
+		.click();
+	const stageForm = pending.getByRole("listitem").filter({ hasText: "Product engineer" });
+	await expect(stageForm.getByLabel("Application", { exact: true })).toHaveValue(engineer);
+	await expect(stageForm.getByLabel("Application", { exact: true })).toBeDisabled();
+	await stageForm.screenshot({ path: info.outputPath("offer-stage.png"), animations: "disabled" });
+	await stageForm.getByRole("button", { name: "Cancel", exact: true }).click();
 	await save(engineer);
+	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto(`/dashboard/career/offers?a=${offers[0]}`);
+	await page
+		.getByRole("main")
+		.screenshot({ path: info.outputPath("offer-guidance-one-phone.png"), animations: "disabled" });
 	await expect(page.getByRole("button", { name: "Swap", exact: true })).toBeDisabled();
 	await expect(page.getByRole("heading", { name: "Open questions", exact: true })).toBeVisible();
 	await expect(page.getByRole("heading", { name: "Not in either offer yet", exact: true })).toHaveCount(0);
