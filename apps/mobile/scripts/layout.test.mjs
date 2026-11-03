@@ -316,21 +316,47 @@ for (const width of [350, 620, 350]) {
 hooks.at(-1).cleanup?.();
 hooks.length = 0;
 const version = { id: "version", kind: "created", createdAt: new Date(0) };
+const currentUsage = {
+	requests: 2,
+	models: [{ label: "Current import", provider: "openai-compatible", model: "current-model", providerId: "current" }],
+};
+const historicalUsage = {
+	requests: 1,
+	models: [
+		{ label: "Original import", provider: "openai-compatible", model: "original-model", providerId: "original" },
+	],
+};
 const { HistoryPanel } = load("features/history/history.tsx", {
 	"@lingui/core/macro": { ph: (named) => Object.values(named)[0], t: tag },
 	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en-US" } }) },
-	"@tanstack/react-query": { useQuery: () => ({ data: [version] }) },
+	"@tanstack/react-query": {
+		useQuery: (options) => ({
+			data: options.queryKey?.[0] === "version" ? { ...version, data: {}, aiUsage: historicalUsage } : [version],
+		}),
+	},
 	"expo-image": { Image: "Image" },
 	"expo-router": { useLocalSearchParams: () => ({ version: version.id }) },
-	"@/api/client": { client: {}, orpc: { resume: { listVersions: { queryOptions: () => ({}) } } } },
+	"@/api/client": {
+		client: {},
+		orpc: {
+			resume: {
+				listVersions: { queryOptions: () => ({}) },
+				getVersion: { queryOptions: () => ({ queryKey: ["version"] }) },
+			},
+		},
+	},
 	"@/draft": { getDraftScope: async () => "fixture", useResumeStore: {} },
 	"@/features/documents/queries": { useDocumentOperations: () => ({ busy: false }) },
+	"@/features/ai/usage": { AiResultUsage: "AiResultUsage" },
 	"@/features/share/document": { flushResume: async () => {} },
 	"@/preview/usePreview": { usePreview: () => ({ result: null }) },
 });
 const history = () => {
 	cursor = 0;
-	return HistoryPanel({ resume: { id: "fictional", isLocked: false }, offline: false });
+	return HistoryPanel({
+		resume: { id: "fictional", isLocked: false, aiOperationIds: ["current-operation"], aiUsage: currentUsage },
+		offline: false,
+	});
 };
 let panel = history();
 for (const width of [650, 380, 650]) {
@@ -338,6 +364,17 @@ for (const width of [650, 380, 650]) {
 	panel = history();
 	assert.equal(panel.props.style.flexDirection, width >= 540 ? "row-reverse" : "column");
 }
+const historicalPage = nodes(panel).find((node) => typeof node.type === "function" && node.type.name === "VersionPage");
+assert.ok(historicalPage);
+nodes(panel)
+	.find((node) => node.props.title === "Now")
+	.props.onPress();
+panel = history();
+assert.deepEqual(nodes(panel).find((node) => node.type === "AiResultUsage").props.usage, currentUsage);
+hooks.length = 0;
+cursor = 0;
+const historicalTree = historicalPage.type(historicalPage.props);
+assert.deepEqual(nodes(historicalTree).find((node) => node.type === "AiResultUsage").props.usage, historicalUsage);
 
 // Large text must reflow chrome without taking scrolling content or row titles out of reach.
 const render = (component, props = {}) => {

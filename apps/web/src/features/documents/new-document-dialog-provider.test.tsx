@@ -53,10 +53,12 @@ vi.mock("@/libs/orpc/client", () => ({
 }));
 
 import { NewDocumentDialog } from "./new-document-dialog";
+import { setAccountScope, invalidateAccountScope } from "@/libs/auth/account-scope";
 
 let queryClient: QueryClient;
 beforeEach(() => {
 	vi.clearAllMocks();
+	setAccountScope("import-owner");
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 	api.listDocuments.mockResolvedValue([]);
@@ -102,13 +104,17 @@ it("imports a PDF through the local text reader when AI connection lookup fails"
 	await screen.findByRole("heading", { name: "Imported" });
 	expect(api.providers).toHaveBeenCalled();
 	expect(api.readPdfResume).toHaveBeenCalledWith(file);
-	expect(api.importResume).toHaveBeenCalledWith({
-		data: expect.objectContaining({
-			basics: expect.objectContaining({ name: "Alex Morgan" }),
-			// The unplaced line is kept, as the user chose by default.
-			customSections: [expect.objectContaining({ title: "More from your file" })],
-		}),
-	});
+	expect(api.importResume).toHaveBeenCalledWith(
+		{
+			aiOperationIds: [],
+			data: expect.objectContaining({
+				basics: expect.objectContaining({ name: "Alex Morgan" }),
+				// The unplaced line is kept, as the user chose by default.
+				customSections: [expect.objectContaining({ title: "More from your file" })],
+			}),
+		},
+		expect.objectContaining({ context: { accountId: "import-owner" } }),
+	);
 	expect(api.parsePdf).not.toHaveBeenCalled();
 	expect(api.parseDocx).not.toHaveBeenCalled();
 	expect(screen.getByRole("button", { name: "Open in editor" })).toBeEnabled();
@@ -136,6 +142,62 @@ it.each([false, true])("describes partial PDF comparison honestly when readable 
 	).toBeVisible();
 	expect(screen.queryByText("Fictional omitted paragraph") !== null).toBe(readable);
 	expect(api.importResume).not.toHaveBeenCalled();
+});
+
+it.each([
+	"with sources",
+	"older server",
+	"changed before reading",
+	"changed during parse",
+	"changed before Create",
+	"same-account new session",
+])("keeps AI import review and its request sources in the selecting account: %s", async (scenario) => {
+	api.providers.mockResolvedValue([
+		{ id: "fictional-provider", label: "Fictional provider", model: "fixture", enabled: true, testStatus: "success" },
+	]);
+	api.parsePdf.mockImplementation(async () => {
+		if (scenario === "changed during parse") setAccountScope("different-owner");
+		return {
+			...parseResumeText("Alex Morgan\nalex@example.test"),
+			...(scenario !== "older server" ? { aiOperationIds: ["actual-operation"] } : {}),
+		};
+	});
+	mount(new File(["%PDF-test"], "resume.pdf", { type: "application/pdf" }));
+	if (scenario === "changed before reading") {
+		const read = await screen.findByRole("button", { name: /^Read with AI$/ });
+		setAccountScope("different-owner");
+		await act(async () => fireEvent.click(read));
+		expect(api.parsePdf).not.toHaveBeenCalled();
+		expect(api.importResume).not.toHaveBeenCalled();
+		return;
+	}
+	fireEvent.click(await screen.findByRole("button", { name: /^Read with AI$/ }));
+	if (scenario === "changed during parse") {
+		await vi.waitFor(() => expect(api.parsePdf).toHaveResolved());
+		expect(screen.queryByRole("heading", { name: "Check what was found" })).toBeNull();
+		expect(api.importResume).not.toHaveBeenCalled();
+		return;
+	}
+	await screen.findByRole("heading", { name: "Check what was found" });
+	expect(api.importResume).not.toHaveBeenCalled();
+	if (scenario === "changed before Create") setAccountScope("different-owner");
+	if (scenario === "same-account new session") {
+		invalidateAccountScope();
+		setAccountScope("import-owner");
+	}
+	fireEvent.click(screen.getByRole("button", { name: "Create resume" }));
+	if (scenario.includes("Create") || scenario === "same-account new session") {
+		expect(api.importResume).not.toHaveBeenCalled();
+	} else {
+		await screen.findByRole("heading", { name: "Imported" });
+		const saved = api.importResume.mock.calls[0];
+		if (!saved) throw new Error("Missing reviewed import");
+		const [input, options] = saved;
+		expect(input.aiOperationIds).toEqual(scenario === "older server" ? [] : ["actual-operation"]);
+		expect(input.data).not.toHaveProperty("aiOperationIds");
+		expect(options.context.accountId).toBe("import-owner");
+	}
+	expect(api.parsePdf).toHaveBeenCalledTimes(1);
 });
 
 it("explains Word prerequisites before any upload and retains the file for in-place setup", async () => {

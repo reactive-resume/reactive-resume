@@ -323,7 +323,10 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		const { resumeService } = await import("../resume/service");
 		const client = createRouterClient(crudRouter, { context: { user: { id: "alice" } } as never });
 		await proposalThread("own", "alice", "resume", "alice-resume");
-		let current = { ...(await resumeService.getById({ id: "alice-resume", userId: "alice" })) };
+		let current: Awaited<ReturnType<typeof client.update>> = await resumeService.getById({
+			id: "alice-resume",
+			userId: "alice",
+		});
 		for (const [applied, content] of [
 			[true, "<p>Original</p><p>Added</p>"],
 			[false, "<p>Original</p>"],

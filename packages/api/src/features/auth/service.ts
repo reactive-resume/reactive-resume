@@ -88,6 +88,7 @@ export const authService = {
 				slug: schema.resume.slug,
 				tags: schema.resume.tags,
 				data: schema.resume.data,
+				aiOperationIds: schema.resume.aiOperationIds,
 				isPublic: schema.resume.isPublic,
 				showDownloadButtons: schema.resume.showDownloadButtons,
 				allowWordDownload: schema.resume.allowWordDownload,

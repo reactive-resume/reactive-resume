@@ -39,7 +39,13 @@ beforeEach(() => {
 
 describe("saveSessionVersion", () => {
 	const save = (sessionId?: string) =>
-		saveSessionVersion({ resumeId: "r1", userId: "u1", data: data(), ...(sessionId ? { sessionId } : {}) });
+		saveSessionVersion({
+			resumeId: "r1",
+			userId: "u1",
+			data: data(),
+			aiOperationIds: ["source-operation"],
+			...(sessionId ? { sessionId } : {}),
+		});
 
 	it("refreshes the session's one version after two minutes instead of adding another", async () => {
 		dbMock.select.mockReturnValueOnce(selectChain([{ id: "v1", createdAt: new Date(Date.now() - 3 * MINUTE) }]));
@@ -47,7 +53,9 @@ describe("saveSessionVersion", () => {
 
 		await save("visit");
 
-		expect(set).toHaveBeenCalledWith(expect.objectContaining({ createdAt: expect.any(Date) }));
+		expect(set).toHaveBeenCalledWith(
+			expect.objectContaining({ createdAt: expect.any(Date), aiOperationIds: ["source-operation"] }),
+		);
 		expect(dbMock.insert).not.toHaveBeenCalled();
 	});
 
@@ -57,7 +65,9 @@ describe("saveSessionVersion", () => {
 
 		await save("visit");
 
-		expect(values).toHaveBeenCalledWith(expect.objectContaining({ kind: "auto", sessionId: "visit" }));
+		expect(values).toHaveBeenCalledWith(
+			expect.objectContaining({ kind: "auto", sessionId: "visit", aiOperationIds: ["source-operation"] }),
+		);
 	});
 
 	it("without a session, adds an autosave only when the newest version is two minutes old", async () => {

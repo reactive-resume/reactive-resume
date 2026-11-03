@@ -1,4 +1,5 @@
 import type { Proposal, ProposalApplications, ProposalSnapshot } from "@reactive-resume/resume/proposals";
+import type { AiUsageSummary } from "@reactive-resume/schema/ai-usage";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { QueryClient, QueryKey } from "@tanstack/react-query";
 import type { WritableDraft } from "immer";
@@ -29,6 +30,8 @@ export type Resume = {
 	slug: string;
 	tags: string[];
 	data: ResumeData;
+	aiOperationIds?: string[] | undefined;
+	aiUsage?: AiUsageSummary | null | undefined;
 	isLocked: boolean;
 	createdAt: Date;
 	updatedAt: Date;
@@ -714,6 +717,8 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resume.showInSearchEngines = resume.showInSearchEngines;
 				state.resume.hideContactDetails = resume.hideContactDetails;
 				state.resume.isPrimary = resume.isPrimary;
+				if (resume.aiOperationIds !== undefined) state.resume.aiOperationIds = resume.aiOperationIds;
+				if (resume.aiUsage !== undefined) state.resume.aiUsage = resume.aiUsage;
 			});
 		},
 
@@ -794,7 +799,10 @@ export const useResumeStore = create<ResumeStore>()(
 			const options = { signal: runtime.abortController.signal };
 			try {
 				const name = t`${current.name} (mine)`.slice(0, 100);
-				runtime.copyId ??= await orpc.resume.import.call({ data: current.data }, options);
+				runtime.copyId ??= await orpc.resume.import.call(
+					{ data: current.data, ...(current.aiOperationIds ? { aiOperationIds: current.aiOperationIds } : {}) },
+					options,
+				);
 				await orpc.resume.update.call({ id: runtime.copyId, name, tags: current.tags, data: current.data }, options);
 				const remote = await orpc.resume.getById.call({ id: current.id }, options);
 				if (runtime.abortController.signal.aborted) return;

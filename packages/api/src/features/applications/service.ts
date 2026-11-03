@@ -291,6 +291,7 @@ export async function recordSentResume(
 			resumeId: row.resumeId,
 			userId: row.userId,
 			data: resume.data,
+			aiOperationIds: resume.aiOperationIds,
 			kind: "sent",
 			name: row.company,
 		});

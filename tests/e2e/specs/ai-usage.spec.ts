@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { strToU8, zipSync } from "fflate";
 import { approveLocalStubOperations } from "../fixtures/ai-consent";
 import { startAiStub } from "../fixtures/ai-stub";
 import { expect, test } from "../fixtures/test";
@@ -11,6 +13,80 @@ test.beforeEach(() => {
 });
 test.afterAll(async () => {
 	await stub?.close();
+});
+
+test("reviewed Word import retains its original request source in resume History after connection deletion", async ({
+	authPage: page,
+}, testInfo) => {
+	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs isolated local AI stub permission");
+	test.setTimeout(90_000);
+	await page.setViewportSize({ width: 1440, height: 1000 });
+	await approveLocalStubOperations(page);
+	const created = await page.request.post("/api/openapi/ai-providers", {
+		data: {
+			label: "Fictional Import AI",
+			provider: "openai-compatible",
+			model: "import-main",
+			fastModel: "import-fast",
+			baseURL: stub.baseURL,
+			apiKey: "stub-key",
+		},
+	});
+	await expect(created).toBeOK();
+	const { id: providerId } = await created.json();
+	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
+	const before = stub.requests.length;
+	const buffer = Buffer.from(
+		zipSync({
+			"word/document.xml": strToU8(
+				'<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Avery Morgan</w:t></w:r></w:p><w:p><w:r><w:t>Built fictional reliable services.</w:t></w:r></w:p></w:body></w:document>',
+			),
+		}),
+	);
+	await page.goto("/dashboard");
+	await page.getByRole("button", { name: "New", exact: true }).click();
+	const dialog = page.getByRole("dialog");
+	await dialog.getByLabel("Choose a file to import").setInputFiles({
+		name: "fictional.docx",
+		mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+		buffer,
+	});
+	await dialog.getByRole("button", { name: "Read with AI", exact: true }).click();
+	await expect(dialog.getByRole("heading", { name: "Check what was found" })).toBeVisible();
+	const resumesBefore = await (await page.request.get("/api/openapi/resumes")).json();
+	expect(resumesBefore).toEqual([]);
+	await dialog.getByRole("button", { name: "Create resume", exact: true }).click();
+	await dialog.getByRole("button", { name: "Open in editor", exact: true }).click();
+	await page.waitForURL(/\/builder\/.+/);
+	const id = page.url().split("/builder/")[1]?.split("?")[0];
+	const saved = await (await page.request.get(`/api/openapi/resumes/${id}`)).json();
+	expect(saved.aiOperationIds).toHaveLength(1);
+	expect(saved.aiUsage.requests).toBe(1);
+	expect(saved.data).not.toHaveProperty("aiOperationIds");
+	await expect(await page.request.delete(`/api/openapi/ai-providers/${providerId}`)).toBeOK();
+	await page.reload();
+	await page.getByRole("button", { name: "History", exact: true }).click();
+	const history = page.getByRole("dialog", { name: "Download & history" });
+	await expect(history.getByText("AI request attempts: 1", { exact: true })).toBeVisible();
+	await expect(
+		history.getByText("Fictional Import AI · openai-compatible · import-fast", { exact: true }),
+	).toBeVisible();
+	await history.getByRole("button", { name: /Imported/ }).click();
+	await expect(history.getByText("AI request attempts: 1", { exact: true })).toBeVisible();
+	expect(stub.requests.length - before).toBe(1);
+	await history.screenshot({ path: testInfo.outputPath("resume-import-ai-provenance.png"), animations: "disabled" });
+	await history.getByRole("tab", { name: "Download", exact: true }).click();
+	await history.getByRole("radio", { name: /^JSON/ }).click();
+	const downloading = page.waitForEvent("download");
+	await history.getByRole("button", { name: "Download JSON", exact: true }).click();
+	const download = await downloading;
+	const path = testInfo.outputPath("fictional-portable-resume.json");
+	await download.saveAs(path);
+	const portable = JSON.parse(await readFile(path, "utf8"));
+	expect(portable).not.toHaveProperty("aiOperationIds");
+	expect(portable).not.toHaveProperty("aiUsage");
+	expect(JSON.stringify(portable)).not.toContain("Fictional Import AI");
+	expect(stub.requests.length - before).toBe(1);
 });
 
 test("letter Improve reviews an owned posting paragraph through the canonical service", async ({
