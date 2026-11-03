@@ -27,6 +27,7 @@ export type ImportedDocument = { id: string; type: "resume" | "letter" };
 export type ImportToReview = {
 	type: "review";
 	data: ResumeData;
+	aiOperationIds?: string[];
 	review: ImportReview;
 	/** The selecting account/server still owns this unsaved review when Create is pressed. */
 	scope: string;
@@ -53,7 +54,10 @@ export async function createReviewedResume(pending: ImportToReview, keepLeftover
 		keepLeftovers && pending.review.notImported.length > 0
 			? withLeftoverSection(pending.data, pending.review.notImported, t`More from your file`)
 			: pending.data;
-	const id = await client.resume.import({ data }, { signal, context: { scope } });
+	const id = await client.resume.import(
+		{ data, ...(pending.aiOperationIds ? { aiOperationIds: pending.aiOperationIds } : {}) },
+		{ signal, context: { scope } },
+	);
 	if (getAccountScope() !== scope) throw new SessionChangedError();
 	return { id, type: "resume" as const };
 }
@@ -151,9 +155,9 @@ export async function importDocument(
 	if (format === "DOCX" || (format === "PDF" && aiPdf)) {
 		if (!aiAvailable)
 			throw new ImportError(t`Reading this file with AI needs a tested AI provider. Set one up, then retry.`);
-		const input = { file: { name: asset.name, data: await file.base64() } };
+		const input = { file: { name: asset.name, data: await file.base64() }, includeProvenance: true };
 		assertCurrent();
-		const data =
+		const { aiOperationIds, ...data } =
 			format === "DOCX"
 				? await client.ai.parseDocx(
 						{ ...input, mediaType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
@@ -179,6 +183,7 @@ export async function importDocument(
 		return {
 			type: "review",
 			scope,
+			aiOperationIds: aiOperationIds ?? [],
 			data: reconciled,
 			review: reviewImport(reconciled, compared ? source?.lines : undefined),
 			compared,

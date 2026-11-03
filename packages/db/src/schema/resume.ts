@@ -18,6 +18,8 @@ export const resume = pg.pgTable(
 		name: pg.text("name").notNull(),
 		slug: pg.text("slug").notNull(),
 		tags: pg.text("tags").array().notNull().default([]),
+		// Private request lineage stays outside portable resume data.
+		aiOperationIds: pg.text("ai_operation_ids").array().notNull().default([]),
 		isPublic: pg.boolean("is_public").notNull().default(false),
 		showDownloadButtons: pg.boolean("show_download_buttons").notNull().default(true),
 		allowWordDownload: pg.boolean("allow_word_download").notNull().default(false),
@@ -111,6 +113,7 @@ export const resumeVersion = pg.pgTable(
 			.references(() => user.id, { onDelete: "cascade" }),
 		// Snapshot of the resume data. A session's autosave is refreshed while the session lasts; the rest are immutable.
 		data: pg.jsonb("data").notNull().$type<ResumeData>(),
+		aiOperationIds: pg.text("ai_operation_ids").array().notNull().default([]),
 		kind: pg.text("kind", { enum: RESUME_VERSION_KINDS }).notNull().default("auto"),
 		// The user's name for a `named` version.
 		name: pg.text("name"),

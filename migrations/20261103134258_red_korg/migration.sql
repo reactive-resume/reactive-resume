@@ -1,0 +1,2 @@
+ALTER TABLE "resume" ADD COLUMN "ai_operation_ids" text[] DEFAULT '{}'::text[] NOT NULL;--> statement-breakpoint
+ALTER TABLE "resume_version" ADD COLUMN "ai_operation_ids" text[] DEFAULT '{}'::text[] NOT NULL;

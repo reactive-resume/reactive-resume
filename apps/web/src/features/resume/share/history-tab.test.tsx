@@ -25,6 +25,7 @@ vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: mocks.toa
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		resume: {
+			getVersion: { queryOptions: () => ({ queryKey: ["version"], queryFn: async () => ({ id: "version" }) }) },
 			listVersions: {
 				queryKey: () => ["versions"],
 				queryOptions: () => ({

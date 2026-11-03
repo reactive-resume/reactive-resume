@@ -155,6 +155,7 @@ const createResumeRow = (data: ResumeData, updatedAt = new Date()) => ({
 	slug: "resume",
 	tags: [],
 	data,
+	aiOperationIds: [],
 	isPublic: false,
 	isLocked: false,
 	updatedAt,
@@ -164,7 +165,10 @@ const createResumeRow = (data: ResumeData, updatedAt = new Date()) => ({
 const createRestoreHarness = (currentData: ResumeData, restoredData: ResumeData) => {
 	const currentRow = createResumeRow(currentData);
 	dbMock.select.mockReturnValueOnce(createSelectChain([currentRow]));
-	versionHistoryMock.getVersion.mockImplementationOnce(async () => ({ data: parseStoredResumeData(restoredData) }));
+	versionHistoryMock.getVersion.mockImplementationOnce(async () => ({
+		data: parseStoredResumeData(restoredData),
+		aiOperationIds: [],
+	}));
 
 	const lockedSelect = createLockedSelectChain([
 		{

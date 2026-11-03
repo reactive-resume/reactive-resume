@@ -139,7 +139,13 @@ function fileToBase64(file: File): Promise<string> {
 export async function readResumeFile(
 	file: File,
 	kind: Exclude<ImportKind, "cover-letter-json">,
-	options: { aiAvailable: boolean; signal?: AbortSignal; onRead?: (note: string) => void },
+	options: {
+		aiAvailable: boolean;
+		signal?: AbortSignal;
+		accountId?: string;
+		onRead?: (note: string) => void;
+		onProvenance?: (aiOperationIds: string[]) => void;
+	},
 ): Promise<ResumeData> {
 	options.signal?.throwIfAborted();
 	if (kind === "reactive-resume-json" || kind === "reactive-resume-v4-json" || kind === "json-resume-json") {
@@ -167,19 +173,29 @@ export async function readResumeFile(
 			file.type === "application/msword"
 				? ("application/msword" as const)
 				: ("application/vnd.openxmlformats-officedocument.wordprocessingml.document" as const);
-		return client.ai.parseDocx(
-			{ mediaType, file: { name: file.name, data: base64 } },
-			options.signal ? { signal: options.signal } : {},
+		const { aiOperationIds, ...data } = await client.ai.parseDocx(
+			{ mediaType, file: { name: file.name, data: base64 }, includeProvenance: true },
+			{
+				...(options.signal ? { signal: options.signal } : {}),
+				context: options.accountId ? { accountId: options.accountId } : {},
+			},
 		);
+		options.onProvenance?.(aiOperationIds ?? []);
+		return data;
 	}
 
 	if (options.aiAvailable) {
 		const base64 = await fileToBase64(file);
 		options.onRead?.(t`file read`);
-		return client.ai.parsePdf(
-			{ file: { name: file.name, data: base64 } },
-			options.signal ? { signal: options.signal } : {},
+		const { aiOperationIds, ...data } = await client.ai.parsePdf(
+			{ file: { name: file.name, data: base64 }, includeProvenance: true },
+			{
+				...(options.signal ? { signal: options.signal } : {}),
+				context: options.accountId ? { accountId: options.accountId } : {},
+			},
 		);
+		options.onProvenance?.(aiOperationIds ?? []);
+		return data;
 	}
 
 	const { readPdfResume } = await import("./pdf-text");

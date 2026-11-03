@@ -108,7 +108,12 @@ export const resumeAdapter: DraftAdapter<ResumeDocument, ResumeDocument["data"]>
 	}),
 	copy: async (document, copyId, remember, scope) => {
 		const name = t`${document.name} (mine)`.slice(0, 100);
-		const id = copyId ?? (await client.resume.import({ data: document.data }, { context: { scope } }));
+		const id =
+			copyId ??
+			(await client.resume.import(
+				{ data: document.data, ...(document.aiOperationIds ? { aiOperationIds: document.aiOperationIds } : {}) },
+				{ context: { scope } },
+			));
 		remember(id);
 		await client.resume.update({ id, name, tags: document.tags, data: document.data }, { context: { scope } });
 	},
