@@ -1,8 +1,9 @@
-import { File, Paths } from "expo-file-system";
+import { Directory, File, Paths } from "expo-file-system";
 
 /** Export files may outlive the share sheet; clear them on export, deletion and session transitions. */
 export function clearAccountExportCache() {
 	for (const entry of Paths.cache.list()) {
+		if (entry instanceof Directory && /^resume-export-\d+$/.test(entry.name)) entry.delete();
 		if (
 			entry instanceof File &&
 			(/^(?:reactive-resume|application-profile)-\d+\.(?:json|zip)$/.test(entry.name) ||

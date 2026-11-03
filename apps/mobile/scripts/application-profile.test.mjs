@@ -225,9 +225,11 @@ test("mobile export cleanup removes account/profile and workspace exports, prese
 			deleted.push(this.name);
 		}
 	}
+	class Directory extends File {}
 	const { clearAccountExportCache } = load(new URL("../src/features/settings/export-cache.ts", import.meta.url), {
 		"expo-file-system": {
 			File,
+			Directory,
 			Paths: {
 				cache: {
 					list: () => [
@@ -235,6 +237,8 @@ test("mobile export cleanup removes account/profile and workspace exports, prese
 						new File("reactive-resume-456.json"),
 						new File("workspace-reviewed-answers.json"),
 						new File("workspace-interview-notes.md"),
+						new Directory("resume-export-123"),
+						new Directory("keep-directory"),
 						new File("resume.pdf"),
 						{ name: "application-profile-789.json" },
 					],
@@ -248,6 +252,7 @@ test("mobile export cleanup removes account/profile and workspace exports, prese
 		"reactive-resume-456.json",
 		"workspace-reviewed-answers.json",
 		"workspace-interview-notes.md",
+		"resume-export-123",
 	]);
 });
 

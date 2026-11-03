@@ -281,6 +281,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 						{!application.resumeId && (
 							<Button
 								size="sm"
+								variant={application.resumeFileUrl ? "secondary" : "primary"}
 								disabled={busy}
 								onClick={() => openDialog("document.new", { step: "copy", applicationId: application.id })}
 							>
