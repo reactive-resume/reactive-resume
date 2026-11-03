@@ -63,7 +63,7 @@ export function ExportDataRow() {
 	return (
 		<ListRow
 			title={exportData.isPending ? t`Preparing export…` : t`Export everything`}
-			subtitle={t`Documents, version history and uploaded files in one zip. Check the file manifest for omissions.`}
+			subtitle={t`Documents, applications, Career data, version history and uploaded files in one zip. Check the file manifest for omissions.`}
 			leading="download-simple"
 			trailing={
 				exportData.isPending ? (
