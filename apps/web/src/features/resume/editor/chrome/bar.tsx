@@ -35,7 +35,9 @@ export function EditorBarFrame({ layout, pinnable, menu, modes, history, childre
 		<header
 			className={cn(
 				"grid h-(--editor-bar) items-center gap-3 border-b border-line bg-surface px-3",
-				layout === "tablet" ? "grid-cols-[minmax(0,1fr)_auto_auto]" : "grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+				layout === "tablet"
+					? "grid-cols-[minmax(0,1fr)_auto_auto] gap-2"
+					: "grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
 			)}
 		>
 			<div className="flex min-w-0 items-center gap-1.5">

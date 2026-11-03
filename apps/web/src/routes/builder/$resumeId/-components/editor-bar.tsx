@@ -106,7 +106,7 @@ function ModeTabs({ compact }: ModeTabsProps) {
 				<TabsTrigger
 					key={mode}
 					value={mode}
-					className={compact ? "relative px-2.5" : "px-4"}
+					className={compact ? "px-2" : "px-4"}
 					aria-keyshortcuts={characterShortcuts ? String(index + 1) : undefined}
 					title={
 						characterShortcuts

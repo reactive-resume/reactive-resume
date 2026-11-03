@@ -39,7 +39,9 @@ test("short landscape application header scrolls away while footer stays reachab
 });
 
 test("tablet mode icons leave space for the document title", async ({ authPage: page }, info) => {
-	const created = await page.request.post("/api/openapi/resumes", { data: { name: "Untitled resume", tags: [] } });
+	const created = await page.request.post("/api/openapi/resumes", {
+		data: { name: "Untitled resume", tags: [], withSampleData: true },
+	});
 	await expect(created).toBeOK();
 	const id = await created.json();
 	for (const width of [640, 717, 820, 1023]) {
@@ -52,6 +54,11 @@ test("tablet mode icons leave space for the document title", async ({ authPage: 
 		await expect(page.getByRole("tab", { name: /^Write/ })).toHaveAccessibleName(/Write/);
 	}
 	await page.setViewportSize({ width: 717, height: 1024 });
+	const show = page.getByRole("button", { name: "Show panel", exact: true });
+	if (await show.isVisible()) await show.click();
+	await expect(page.locator('[data-resume-preview-template][aria-hidden="false"] canvas').first()).toBeVisible();
+	await page.mouse.move(12, 60);
+	await expect(page.getByRole("tooltip")).toBeHidden();
 	await page.screenshot({ animations: "disabled", path: info.outputPath("tablet-title.png") });
 });
 
@@ -78,6 +85,9 @@ test("tablet long titles truncate and three-digit Check badges keep their own sp
 	if (!icon || !count) throw new Error("Missing Check badge geometry");
 	expect(count.x).toBeGreaterThanOrEqual(icon.x + icon.width);
 	expect((await title.boundingBox())?.x).toBeGreaterThanOrEqual(0);
+	const titleBox = await title.boundingBox();
+	if (!titleBox) throw new Error("Missing title geometry");
+	expect(titleBox.x + titleBox.width).toBeLessThanOrEqual(640);
 });
 
 for (const width of [1440, 390]) {

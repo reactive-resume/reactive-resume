@@ -43,8 +43,12 @@ it.each([false, true])(
 		await userEvent.keyboard("{Enter}");
 		expect(screen.getByRole("button", { name: "Italic" }).getAttribute("aria-pressed")).toBe("true");
 		await act(async () => {
-			screen.getByRole("button", { name: "Outside" }).focus();
+			editor.focus();
 		});
+		await userEvent.tab();
+		expect(toolbar.contains(document.activeElement)).toBe(true);
+		await userEvent.tab();
+		expect(screen.getByRole("button", { name: "Outside" })).toHaveFocus();
 		expect(screen.queryByRole("toolbar")).toBeNull();
 	},
 );
