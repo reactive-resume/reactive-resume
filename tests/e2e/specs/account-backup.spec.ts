@@ -4,10 +4,30 @@ import { strFromU8, unzipSync } from "fflate";
 import { Pool } from "pg";
 import { expect, test } from "../fixtures/test";
 
+async function applicationReceipts(ids: string[]) {
+	const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+	try {
+		return (
+			await pool.query<{ id: string; status: string; applied_at: Date; submitted_at: Date | null }>(
+				"select id, status, applied_at, submitted_at from application where id = any($1::text[])",
+				[ids],
+			)
+		).rows.map((row) => ({
+			id: row.id,
+			status: row.status,
+			appliedAt: row.applied_at.toISOString(),
+			submittedAt: row.submitted_at?.toISOString() ?? null,
+		}));
+	} finally {
+		await pool.end();
+	}
+}
+
 test("account ZIP carries submission receipts, uploaded bytes and history after account deletion", async ({
 	authPage: page,
 }, info) => {
 	const applicationIds: string[] = [];
+	const firstSubmissions = new Map<string, { appliedAt: string; submittedAt: string | null }>();
 	for (const status of ["never-sent", "saved", "closed", "applied"] as const) {
 		const response = await page.request.post("/api/openapi/applications", {
 			data: { company: `Fictional backup ${status}`, role: "Analyst", status: "saved" },
@@ -19,6 +39,10 @@ test("account ZIP carries submission receipts, uploaded bytes and history after 
 			await expect(
 				await page.request.put(`/api/openapi/applications/${applicationId}`, { data: { status: "applied" } }),
 			).toBeOK();
+			const [first] = await applicationReceipts([applicationId]);
+			expect(first?.submittedAt).toBeTruthy();
+			if (!first) throw new Error("First submission missing from SQL");
+			firstSubmissions.set(applicationId, first);
 			if (status !== "applied")
 				await expect(
 					await page.request.put(`/api/openapi/applications/${applicationId}`, { data: { status } }),
@@ -28,32 +52,19 @@ test("account ZIP carries submission receipts, uploaded bytes and history after 
 		await expect(ordinary).toBeOK();
 		expect(await ordinary.json()).not.toHaveProperty("submittedAt");
 	}
-	const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-	const applications = await (async () => {
-		try {
-			return (
-				await pool.query<{ id: string; status: string; applied_at: Date; submitted_at: Date | null }>(
-					"select id, status, applied_at, submitted_at from application where id = any($1::text[])",
-					[applicationIds],
-				)
-			).rows.map((row) => ({
-				id: row.id,
-				status: row.status,
-				appliedAt: row.applied_at.toISOString(),
-				submittedAt: row.submitted_at?.toISOString() ?? null,
-			}));
-		} finally {
-			await pool.end();
-		}
-	})();
+	const applications = await applicationReceipts(applicationIds);
 	expect(applications).toHaveLength(4);
 	expect(applications.find((row) => row.id === applicationIds[0])?.submittedAt).toBeNull();
-	for (const row of applications.filter((row) => row.id !== applicationIds[0])) expect(row.submittedAt).not.toBeNull();
+	for (const row of applications.filter((row) => row.id !== applicationIds[0])) {
+		const first = firstSubmissions.get(row.id);
+		expect(row.submittedAt).toBe(first?.submittedAt);
+		expect(row.appliedAt).toBe(first?.appliedAt);
+	}
 	const jsonExport = await page.request.get("/api/openapi/auth/account/export");
 	await expect(jsonExport).toBeOK();
 	const exported = await jsonExport.json();
 	await info.attach("SQL submission receipts and protected export", {
-		body: JSON.stringify({ applications, exported }, null, 2),
+		body: JSON.stringify({ firstSubmissions: Object.fromEntries(firstSubmissions), applications, exported }, null, 2),
 		contentType: "application/json",
 	});
 	for (const row of applications) expect(exported.applications).toContainEqual(expect.objectContaining(row));
