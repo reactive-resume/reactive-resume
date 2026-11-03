@@ -490,6 +490,37 @@ test("native reply completion clears its reminder after the view unmounts", asyn
 	assert.equal(h.env.invalidations, 1);
 });
 
+for (const outcome of ["cancel", "replacement", "cancel-failure"]) {
+	test(`native confirmed reply completes captured reminder cleanup after account switch (${outcome})`, async () => {
+		const h = harness();
+		h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+		let finish;
+		h.env.logReply = () =>
+			new Promise((resolve) => {
+				finish = resolve;
+			});
+		buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+		await new Promise(setImmediate);
+		assert.equal(h.env.logs.length, 1);
+		h.env.account = "acct-B";
+		h.unmount();
+		if (outcome === "replacement") h.env.reminderVersion++;
+		if (outcome === "cancel-failure")
+			h.env.cancel = async () => {
+				throw new Error("Notification service unavailable");
+			};
+		finish();
+		await new Promise(setImmediate);
+		assert.equal(h.env.cancelCalls.length, outcome === "replacement" ? 0 : 1);
+		assert.deepEqual(
+			h.env.clearedReminders,
+			outcome === "cancel" ? [{ kind: "follow-up", applicationId: "app-1" }] : [],
+		);
+		assert.equal(h.env.invalidations, 0);
+		assert.deepEqual(h.toasts, []);
+	});
+}
+
 test("native cancellation failure offers scoped retry without logging the reply twice", async () => {
 	const h = harness();
 	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");

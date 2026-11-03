@@ -258,7 +258,11 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 					{ id: application.id, expectedVersion: application.replyVersion },
 					{ context: { scope } },
 				);
-				if (scope !== getAccountScope()) return;
+				if (scope !== getAccountScope()) {
+					// The confirmed write owns this captured notification, but no longer owns the account's UI.
+					await cancel().catch(() => undefined);
+					return;
+				}
 				const cleared = await clearFollowUpReminder(cancel, true);
 				if (scope !== getAccountScope()) return;
 				// Logging is confirmed; query refresh failure must not change its receipt or replace a reminder warning.
