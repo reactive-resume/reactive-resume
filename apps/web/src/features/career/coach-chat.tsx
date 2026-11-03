@@ -10,7 +10,7 @@ import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { memo, useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 import z from "zod";
-import { agentWebSources, type AgentUIMessage } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { agentWebFailure, agentWebSources, type AgentUIMessage } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { careerSourceSchema, factCategorySchema } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -48,6 +48,7 @@ import { QuestionCard } from "@/features/assistant/question-card";
 import { ToolApprovals, type StoryEditorRender } from "@/features/assistant/tool-approvals";
 import { useAssistantChat } from "@/features/assistant/use-assistant-chat";
 import { UsedChip } from "@/features/assistant/used-chip";
+import { WebAccessAttention } from "@/features/settings/ai/web-access";
 import { getOrpcErrorMessage, isProviderFailure, toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -447,6 +448,8 @@ const MessageView = memo(function MessageView({
 	const parsedUsed = usedSchema.safeParse(question?.metadata);
 	const used = parsedUsed.success ? parsedUsed.data.context : null;
 	const sources = agentWebSources(message);
+	const failedWeb = message.parts.findLast((part) => agentWebFailure(part));
+	const webFailure = failedWeb && agentWebFailure(failedWeb);
 	const questions = partsOf(message).filter((part) => part.type === "tool-ask_user_question");
 	const stories = outputsOf(message, "save_story").flatMap((part) => {
 		const parsed = storySchema.safeParse(part.output);
@@ -459,6 +462,14 @@ const MessageView = memo(function MessageView({
 
 	return (
 		<div className={cn("grid min-w-0 gap-3", enter && ENTER_CLASS)}>
+			{failedWeb?.type === "tool-read_page" && "state" in failedWeb && failedWeb.state === "output-available" && (
+				<p className="text-xs text-ink-3">
+					<Trans>Enhanced reading unavailable; used the built-in reader.</Trans>
+				</p>
+			)}
+			{webFailure && (
+				<WebAccessAttention failure={webFailure} operation={failedWeb?.type === "tool-read_page" ? "read" : "search"} />
+			)}
 			{text && (
 				// min-w-0 lets a wide table scroll inside its own box instead of stretching the column.
 				<div className="min-w-0 text-[15px] text-ink">

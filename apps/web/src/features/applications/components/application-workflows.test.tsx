@@ -22,6 +22,8 @@ const api = vi.hoisted(() => ({
 	invalidate: vi.fn(),
 	confirm: vi.fn(),
 	moveWithUndo: vi.fn(),
+	searchPostings: vi.fn(),
+	webStatus: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => vi.fn(),
@@ -47,12 +49,12 @@ vi.mock("@/libs/orpc/client", () => ({
 			},
 			ai: {
 				parsePosting: { mutationOptions: () => ({ mutationFn: api.parsePosting }) },
-				searchPostings: { mutationOptions: () => ({ mutationFn: async () => [] }) },
+				searchPostings: { mutationOptions: () => ({ mutationFn: api.searchPostings }) },
 			},
 		},
 		career: { savedItems: { queryOptions: () => ({ queryKey: ["offers"], queryFn: async () => [] }) } },
 		webAccess: {
-			status: { queryOptions: () => ({ queryKey: ["web-access"], queryFn: async () => ({ search: false }) }) },
+			status: { queryOptions: () => ({ queryKey: ["web-access"], queryFn: api.webStatus }) },
 		},
 		documents: {
 			key: () => ["documents"],
@@ -138,10 +140,38 @@ beforeEach(() => {
 	api.confirm.mockResolvedValue(true);
 	api.findPosting.mockResolvedValue({ application: null });
 	api.bulkTrash.mockResolvedValue({ deleted: 1 });
+	api.webStatus.mockResolvedValue({ search: false });
+	api.searchPostings.mockResolvedValue([]);
 });
 afterEach(() => {
 	cleanup();
 	clients.splice(0).forEach((client) => client.clear());
+});
+
+it("refreshes a rejected search connection in place without losing the query", async () => {
+	const connection = { search: true, provider: "firecrawl", managed: false, canSave: true, searxng: false };
+	api.webStatus.mockResolvedValue(connection);
+	api.searchPostings.mockImplementation(async () => {
+		api.webStatus.mockResolvedValue({
+			...connection,
+			search: false,
+			testResult: { search: { success: false, error: "auth" }, read: { success: false, error: "auth" } },
+		});
+		throw new ORPCError("SEARCH_AUTH");
+	});
+	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	const query = await screen.findByRole("textbox", { name: "Search job postings" });
+	fireEvent.change(query, { target: { value: "Fictional engineer" } });
+	fireEvent.click(screen.getByRole("button", { name: /^Search$/ }));
+
+	expect(await screen.findByText(/The service rejected the API key/)).toBeTruthy();
+	expect(screen.getByRole("button", { name: "Set up web access" })).toBeTruthy();
+	expect((screen.getByRole("textbox", { name: "Search job postings" }) as HTMLInputElement).value).toBe(
+		"Fictional engineer",
+	);
+	await waitFor(() =>
+		expect((screen.getByRole("button", { name: /^Search$/ }) as HTMLButtonElement).disabled).toBe(true),
+	);
 });
 
 it("removes hidden closed applications from bulk selection before deleting visible rows", async () => {

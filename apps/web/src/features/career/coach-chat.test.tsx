@@ -36,6 +36,15 @@ vi.mock("@/libs/orpc/client", () => ({
 		career: { saveFact: mocks.saveFact, updateFact: mocks.updateFact, forgetFact: vi.fn() },
 	},
 	orpc: {
+		webAccess: {
+			status: {
+				key: () => ["web-access"],
+				queryOptions: () => ({
+					queryKey: ["web-access"],
+					queryFn: async () => ({ provider: "firecrawl", managed: false, searxng: false }),
+				}),
+			},
+		},
 		agent: {
 			threads: {
 				list: { key: () => ["threads"] },
@@ -60,6 +69,7 @@ import { ChatView } from "./coach-chat";
 import { Composer } from "./coach-thread";
 import { QuestionCard } from "@/features/assistant/question-card";
 import { useAssistantChat } from "@/features/assistant/use-assistant-chat";
+import { setAccountScope } from "@/libs/auth/account-scope";
 
 const knowledge = {
 	loaded: true,
@@ -191,6 +201,64 @@ it("trims a custom answer before sending it", async () => {
 	expect(mocks.send.mock.calls[0]?.[0].message.parts[0].output).toBe("Munich");
 });
 
+it.each(["finished", "account changed"])("refreshes saved web status after a reply: %s", async (outcome) => {
+	setAccountScope("web-search-owner");
+	const queryClient = new QueryClient();
+	queryClient.setQueryData(["web-access"], { search: true });
+	let release: (() => void) | undefined;
+	const held = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	mocks.send.mockImplementation(async () => {
+		await held;
+		return reply();
+	});
+	const { result } = renderHook(
+		() =>
+			useAssistantChat({
+				threadId: "web-search",
+				initialMessages: [],
+				resume: false,
+				context: { document: false, posting: false },
+				onFinish: () => {},
+			}),
+		{ wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider> },
+	);
+	let sending: Promise<void> | undefined;
+	act(() => {
+		sending = result.current.sendMessage({ text: "Find public roles." });
+	});
+	await waitFor(() => expect(mocks.send).toHaveBeenCalled());
+	if (outcome === "account changed") setAccountScope("different-owner");
+	await act(async () => {
+		release?.();
+		await sending;
+	});
+	expect(queryClient.getQueryState(["web-access"])?.isInvalidated).toBe(outcome === "finished");
+	queryClient.clear();
+	setAccountScope(null);
+});
+
+it("shows a recorded web failure with in-place repair instead of hiding the failed tool", async () => {
+	mount([
+		{
+			id: "failed-web",
+			role: "assistant",
+			parts: [
+				{
+					type: "tool-search_web",
+					toolCallId: "search",
+					state: "output-error",
+					input: { query: "Public roles" },
+					errorText: "Web access failed (auth).",
+				},
+			],
+		},
+	] as UIMessage[]);
+	expect(await screen.findByText(/firecrawl · .*rejected the API key/)).toBeTruthy();
+	expect(screen.getByRole("button", { name: "Set up web access" })).toBeTruthy();
+});
+
 it("does not offer an old unanswered question as actionable", () => {
 	mount([assistant(), userMessage("Never mind, another topic."), textMessage("New reply.")]);
 	expect(screen.queryByRole("button", { name: "Berlin" })).toBeNull();
@@ -280,14 +348,17 @@ it("keeps a newer resume locked when a superseded request settles late", async (
 	const release: Array<() => void> = [];
 	// A response can arrive after cancellation; it must not clear the newer request's busy state.
 	mocks.resume.mockImplementation(() => new Promise((resolve) => release.push(() => resolve(reply()))));
-	const { result } = renderHook(() =>
-		useAssistantChat({
-			threadId: "overlapping-resumes",
-			initialMessages: [assistant()],
-			resume: false,
-			context: { document: false, posting: false, memory: true },
-			onFinish: () => {},
-		}),
+	const queryClient = new QueryClient();
+	const { result } = renderHook(
+		() =>
+			useAssistantChat({
+				threadId: "overlapping-resumes",
+				initialMessages: [assistant()],
+				resume: false,
+				context: { document: false, posting: false, memory: true },
+				onFinish: () => {},
+			}),
+		{ wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider> },
 	);
 	let first: Promise<void> | undefined;
 	let second: Promise<void> | undefined;

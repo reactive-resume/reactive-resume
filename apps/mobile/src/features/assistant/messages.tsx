@@ -18,7 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { memo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-native";
-import { agentKnowledgeUsed, agentReadPostings } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { agentKnowledgeUsed, agentReadPostings, agentWebFailure } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { additionParts, blockText, needsConfirmation, proposalText } from "@reactive-resume/resume/proposals";
 import { wordDiff } from "@reactive-resume/resume/word-diff";
 import { webSources } from "./chat";
@@ -30,6 +30,7 @@ import { SavePosting } from "./save-posting";
 import { client, orpc } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
 import { ReportAiContent } from "@/features/ai/report-content";
+import { WebAccessAttention } from "@/features/ai/web-access";
 import { factCategories } from "@/features/career/fact-categories";
 import { useDocuments } from "@/features/documents/queries";
 import { routes } from "@/routes";
@@ -302,12 +303,15 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 		case "tool-search_web":
 		case "tool-read_page": {
 			const reading = part.type === "tool-read_page";
+			const failure = agentWebFailure(part);
 			if (working && !streaming)
 				return (
 					<Status status="pending">
 						{reading ? <Trans>Page reading didn't finish.</Trans> : <Trans>Web search didn't finish.</Trans>}
 					</Status>
 				);
+			if (part.state === "output-error" && failure)
+				return <WebAccessAttention failure={failure} operation={reading ? "read" : "search"} />;
 			if (part.state === "output-error")
 				return (
 					<Status status="error">
@@ -342,9 +346,12 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 						</Text>
 					) : null}
 					{page && typeof page.fallbackReason === "string" ? (
-						<Text variant="caption" color="ink3">
-							<Trans>Enhanced reading unavailable; used the built-in reader.</Trans>
-						</Text>
+						<>
+							<Text variant="caption" color="ink3">
+								<Trans>Enhanced reading unavailable; used the built-in reader.</Trans>
+							</Text>
+							{failure && <WebAccessAttention failure={failure} operation="read" />}
+						</>
 					) : null}
 				</View>
 			);

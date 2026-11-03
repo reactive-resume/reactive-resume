@@ -479,6 +479,7 @@ const nativeInterviewCalendar = load("features/application-detail/calendar.ts", 
 });
 let applicationDocuments = [];
 let rejectDocumentLink = false;
+let documentLinkPromise;
 let stageUpdate = (input) => calls.push(input);
 let stageUpdateAsync = (input) =>
 	new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
@@ -495,7 +496,11 @@ const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/app
 	"./notes-queue": { createNotesQueue: () => ({}) },
 	"./hooks": {
 		useDocuments: () => ({ data: applicationDocuments }),
-		useDetailMutations: () => ({ addNote: {}, updateEntry: {}, deleteEntry: {} }),
+		useDetailMutations: () => ({
+			addNote: {},
+			updateEntry: {},
+			deleteEntry: {},
+		}),
 		useNow: () => new Date(),
 		useUserTime: () => time,
 		followUpReminder: () => null,
@@ -512,6 +517,7 @@ const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/app
 				linkApplication: async (input) => {
 					calls.push({ documentLink: input });
 					if (rejectDocumentLink) throw new Error("Unavailable");
+					await documentLinkPromise;
 				},
 			},
 		},
@@ -872,6 +878,18 @@ for (const resumeId of [null, "resume-for-letter"]) {
 		"Letter creation opens the reusable document picker with this job and its linked resume",
 	);
 }
+let finishDocumentLink;
+documentLinkPromise = new Promise((resolve) => (finishDocumentLink = resolve));
+control(tree, "Use Fictional Cedar — Portfolio · Resume").onPress();
+tree = render(WhatYouSent, { application });
+assert.equal(control(tree, "Use Fictional Cedar — Portfolio · Resume").disabled, true);
+assert.equal(control(tree, "Use an existing letter").disabled, true);
+finishDocumentLink();
+await settle();
+documentLinkPromise = undefined;
+tree = render(WhatYouSent, { application });
+assert.equal(control(tree, "Use Fictional Cedar — Portfolio · Resume").disabled, false);
+assert.equal(control(tree, "Use an existing letter").disabled, false);
 applicationDocuments = [];
 console.log("PASS native company-matched resume/letter selection, revision guard, pending state and failed-link retry");
 
