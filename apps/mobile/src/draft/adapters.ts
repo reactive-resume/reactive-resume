@@ -4,6 +4,7 @@ import type { RouterInput } from "@/api/client";
 import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { produce } from "immer";
+import { aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { syncResumeDates } from "@reactive-resume/schema/resume/dates";
@@ -23,6 +24,7 @@ function resumeFields(document: ResumeDocument) {
 		isPublic: document.isPublic,
 		showDownloadButtons: document.showDownloadButtons,
 		data: document.data,
+		aiOperationIds: document.aiOperationIds ?? [],
 	};
 }
 
@@ -72,6 +74,7 @@ export const resumeAdapter: DraftAdapter<ResumeDocument, ResumeDocument["data"]>
 		...changedFields(resumeFields(current), resumeFields(submitted)),
 		// Keep authored data and its references stable across the server's normalized echo.
 		data: current.data,
+		...(JSON.stringify(saved.aiOperationIds) !== JSON.stringify(current.aiOperationIds) ? { aiUsage: null } : {}),
 	}),
 	parse: (value) => {
 		const document = dates(value) as ResumeDocument;
@@ -87,6 +90,10 @@ export const resumeAdapter: DraftAdapter<ResumeDocument, ResumeDocument["data"]>
 			!Number.isFinite(document.updatedAt.getTime())
 		)
 			throw new Error("Invalid stored resume.");
+		if (document.aiOperationIds !== undefined && !aiOperationIdsSchema.safeParse(document.aiOperationIds).success) {
+			delete document.aiOperationIds;
+			document.aiUsage = null;
+		}
 		return { ...document, data: resumeDataSchema.parse(document.data) };
 	},
 	save: async (document, baseline, sessionId, force, scope, proposalApplications, proposalSafety) => ({
@@ -95,6 +102,9 @@ export const resumeAdapter: DraftAdapter<ResumeDocument, ResumeDocument["data"]>
 			{
 				id: document.id,
 				...changedFields(resumeFields(document), resumeFields(baseline)),
+				...(JSON.stringify(document.aiOperationIds ?? []) !== JSON.stringify(baseline.aiOperationIds ?? [])
+					? { data: document.data }
+					: {}),
 				sessionId,
 				// Only for drafts this app kept (see the draft store's proposalSafety).
 				...(proposalSafety ? { proposalSafety } : {}),

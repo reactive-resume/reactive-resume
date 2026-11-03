@@ -18,6 +18,12 @@ const state = vi.hoisted(() => ({
 	sessionId: "session",
 	edit: vi.fn(),
 	start: vi.fn(),
+	changeBody: undefined as
+		| ((
+				html: string,
+				options?: { newStep?: boolean; aiOperationIds?: string[]; removedAiOperationIds?: string[] },
+		  ) => void)
+		| undefined,
 }));
 
 vi.mock("@/features/letters/store", () => ({
@@ -63,12 +69,23 @@ vi.mock("@/features/resume/editor/write/fields", async (importOriginal) => ({
 	validateEmail: () => null,
 }));
 vi.mock("@/features/resume/editor/write/rich-text-editor", () => ({
-	RichTextEditor: ({ label, disabled }: { label: ReactNode; disabled?: boolean }) => (
-		<label>
-			{label}
-			<textarea disabled={disabled} />
-		</label>
-	),
+	RichTextEditor: ({
+		label,
+		disabled,
+		onChange,
+	}: {
+		label: ReactNode;
+		disabled?: boolean;
+		onChange: typeof state.changeBody;
+	}) => {
+		if (label === "Letter body") state.changeBody = onChange;
+		return (
+			<label>
+				{label}
+				<textarea disabled={disabled} />
+			</label>
+		);
+	},
 }));
 vi.mock("@/features/settings/integrations/ai-provider-load-state", () => ({ AiProviderLoadState: () => null }));
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
@@ -118,6 +135,8 @@ beforeEach(() => {
 	state.draft = { phase: "idle" };
 	state.status = "saved";
 	state.changing = false;
+	state.sessionId = "session";
+	state.changeBody = undefined;
 });
 
 afterEach(cleanup);
@@ -182,4 +201,30 @@ it("shows original requested provider and model beside a saved letter body", () 
 	renderPanel();
 	expect(screen.getByText("AI request attempts: 2")).toBeTruthy();
 	expect(screen.getByText("Original connection · openai-compatible · original-model")).toBeTruthy();
+});
+
+it("accepted Improve contributes sources without dropping the letter draft's original sources", () => {
+	state.letter = { ...letter, aiOperationIds: ["original-operation"] };
+	renderPanel();
+	expect(state.changeBody).toBeTypeOf("function");
+	state.changeBody?.("<p>Reviewed paragraph</p>", { newStep: true, aiOperationIds: ["reviewed-improve"] });
+	expect(state.edit).toHaveBeenCalledExactlyOnceWith({
+		content: "<p>Reviewed paragraph</p>",
+		aiOperationIds: ["original-operation", "reviewed-improve"],
+	});
+	state.letter = { ...letter, aiOperationIds: ["original-operation", "reviewed-improve", "later-source"] };
+	state.edit.mockClear();
+	state.changeBody?.("<p>Saved</p>", { newStep: true, removedAiOperationIds: ["reviewed-improve"] });
+	expect(state.edit).toHaveBeenCalledExactlyOnceWith({
+		content: "<p>Saved</p>",
+		aiOperationIds: ["original-operation", "later-source"],
+	});
+});
+
+it("late Improve edit cannot write into another letter session", () => {
+	renderPanel();
+	const captured = state.changeBody;
+	state.sessionId = "another-session";
+	captured?.("<p>Wrong target</p>", { aiOperationIds: ["reviewed-improve"] });
+	expect(state.edit).not.toHaveBeenCalled();
 });

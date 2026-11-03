@@ -1,4 +1,5 @@
 import type { Entry, WriteSection } from "./model";
+import type { UpdateOptions } from "@/draft";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
 import { useLingui } from "@lingui/react/macro";
@@ -22,22 +23,26 @@ export const useEntry = (sectionId: string, entryId: string) =>
 export type EntryWriter = (
 	key: string,
 	mutate: (entry: Record<string, unknown>) => void,
-	options?: { newStep?: boolean },
+	options?: Pick<UpdateOptions, "newStep" | "aiOperationIds">,
 ) => void;
 
 /** Writes one field of an entry. Typing in one field folds into one undo step; another field starts a new one. */
 export function useEntryWriter(sectionId: string, entryId: string): EntryWriter {
 	const update = useResumeStore((state) => state.update);
+	const documentId = useResumeStore((state) => state.document?.id);
 	return useCallback(
-		(key, mutate, options) =>
+		(key, mutate, options) => {
+			const current = useResumeStore.getState().document;
+			if (!current || current.id !== documentId || !findEntry(current.data, sectionId, entryId)) return;
 			update(
 				(draft) => {
 					const entry = findEntry(draft, sectionId, entryId);
 					if (entry) mutate(entry as Entry & Record<string, unknown>);
 				},
 				{ coalesceKey: `${entryId}:${key}`, ...options },
-			),
-		[update, sectionId, entryId],
+			);
+		},
+		[update, documentId, sectionId, entryId],
 	);
 }
 

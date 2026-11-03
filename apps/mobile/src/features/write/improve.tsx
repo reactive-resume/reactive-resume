@@ -8,6 +8,7 @@ import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { isNetworkError } from "@reactive-resume/utils/http";
 import { orpc } from "@/api/client";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
+import { AiResultUsage } from "@/features/ai/usage";
 import { Button, ListRow, Text, TextField, useTheme } from "@/ui";
 
 type Action = "verb" | "result" | "shorter" | "posting" | "warmer" | "custom";
@@ -21,7 +22,7 @@ type ImprovePanelProps = {
 	letter?: { applicationId?: string | null | undefined } | undefined;
 	onClose: () => void;
 	/** Swaps the line; false when it changed since Improve was asked. */
-	onReplace: (text: string) => Promise<boolean>;
+	onReplace: (text: string, aiOperationIds?: string[]) => Promise<boolean>;
 };
 
 /**
@@ -67,6 +68,7 @@ export function ImprovePanel({ line, where, context, letter, onClose, onReplace 
 		setLast({ action, words });
 		improve.mutate({
 			aiProviderId: ai.defaultProvider.id,
+			includeProvenance: true,
 			action,
 			line: line.text,
 			where,
@@ -140,6 +142,7 @@ export function ImprovePanel({ line, where, context, letter, onClose, onReplace 
 						{improve.data.why}
 						{improve.data.addsFacts ? ` ${t`Check it's accurate.`}` : ""}
 					</Text>
+					<AiResultUsage usage={improve.data.aiUsage} />
 					{changed ? (
 						<Text variant="caption" color="dangerText" accessibilityLiveRegion="assertive">
 							{t`The line changed since you asked, so it wasn't replaced.`}
@@ -150,7 +153,9 @@ export function ImprovePanel({ line, where, context, letter, onClose, onReplace 
 							<Button
 								size="sm"
 								label={t`Replace`}
-								onPress={() => void onReplace(improve.data.text).then((done) => setChanged(!done))}
+								onPress={() =>
+									void onReplace(improve.data.text, improve.data.aiOperationIds).then((done) => setChanged(!done))
+								}
 							/>
 						) : null}
 						<Button size="sm" variant="secondary" label={t`Keep mine`} onPress={onClose} />

@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { strToU8, zipSync } from "fflate";
 import { approveLocalStubOperations } from "../fixtures/ai-consent";
 import { startAiStub } from "../fixtures/ai-stub";
+import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 let stub: Awaited<ReturnType<typeof startAiStub>>;
@@ -13,6 +14,66 @@ test.beforeEach(() => {
 });
 test.afterAll(async () => {
 	await stub?.close();
+});
+
+test("reviewed resume Improve sources follow editor Undo/Redo, save and reload after provider deletion", async ({
+	authPage: page,
+}, info) => {
+	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs isolated local AI stub permission");
+	await approveLocalStubOperations(page);
+	const created = await page.request.post("/api/openapi/ai-providers", {
+		data: {
+			label: "Fictional Improve AI",
+			provider: "openai-compatible",
+			model: "improve-main",
+			fastModel: "improve-fast",
+			baseURL: stub.baseURL,
+			apiKey: "stub-key",
+		},
+	});
+	await expect(created).toBeOK();
+	const { id: providerId } = await created.json();
+	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
+	await createSampleResumeFromDashboard(page, info);
+	const id = page.url().split("/builder/")[1]?.split("?")[0];
+	await openSidebarSection(page, "Summary");
+	const summary = page.getByRole("textbox", { name: "Summary", exact: true });
+	await summary.fill("Owned fictional delivery.");
+	await summary.press("End");
+	const before = stub.requests.length;
+	await page.getByRole("button", { name: "Improve", exact: true }).click();
+	await page.getByRole("button", { name: "Stronger verb", exact: true }).click();
+	await expect(page.getByText("Led fictional delivery work.", { exact: true })).toBeVisible();
+	await expect(
+		page.getByText("Fictional Improve AI · openai-compatible · improve-fast", { exact: true }),
+	).toBeVisible();
+	expect((await (await page.request.get(`/api/openapi/resumes/${id}`)).json()).aiOperationIds).toEqual([]);
+	await page.getByRole("button", { name: "Replace", exact: true }).click();
+	const read = async () => await (await page.request.get(`/api/openapi/resumes/${id}`)).json();
+	await expect.poll(read).toMatchObject({ aiOperationIds: [expect.any(String)], aiUsage: { requests: 1 } });
+	const accepted = await read();
+	expect(accepted.data.summary.content).toContain("Led fictional delivery work.");
+	await summary.press("ControlOrMeta+z");
+	await expect(summary).toHaveText("Owned fictional delivery.");
+	await expect.poll(read).toMatchObject({
+		aiOperationIds: [],
+		data: { summary: { content: expect.stringContaining("Owned fictional delivery.") } },
+	});
+	await summary.press("ControlOrMeta+Shift+z");
+	await expect.poll(read).toMatchObject({
+		aiOperationIds: accepted.aiOperationIds,
+		aiUsage: { requests: 1 },
+		data: { summary: { content: expect.stringContaining("Led fictional delivery work.") } },
+	});
+	await expect(await page.request.delete(`/api/openapi/ai-providers/${providerId}`)).toBeOK();
+	await page.reload();
+	await page.getByRole("button", { name: "History", exact: true }).click();
+	const history = page.getByRole("dialog", { name: "Download & history" });
+	await expect(history.getByText("AI request attempts: 1", { exact: true })).toBeVisible();
+	await expect(
+		history.getByText("Fictional Improve AI · openai-compatible · improve-fast", { exact: true }),
+	).toBeVisible();
+	expect(stub.requests.length - before).toBe(1);
 });
 
 test("reviewed Word import retains its original request source in resume History after connection deletion", async ({
@@ -127,6 +188,8 @@ test("letter Improve reviews an owned posting paragraph through the canonical se
 	const before = stub.requests.length;
 	await body.getByRole("button", { name: "Tie to the posting", exact: true }).click();
 	await expect(body.getByText("Led fictional delivery work.", { exact: true })).toBeVisible();
+	await expect(body.getByText("AI request attempts: 1", { exact: true })).toBeVisible();
+	await expect(body.getByText("Fictional Letter AI · openai-compatible · letter-fast", { exact: true })).toBeVisible();
 	expect(stub.requests.length - before).toBe(1);
 	const request = stub.requests.at(-1);
 	expect(request?.model).toBe("letter-fast");
@@ -142,6 +205,25 @@ test("letter Improve reviews an owned posting paragraph through the canonical se
 	await expect(body.getByRole("textbox", { name: "Letter body", exact: true })).toHaveText(
 		"Led fictional delivery work.",
 	);
+	const read = async () => await (await page.request.get(`/api/openapi/cover-letters/${id}`)).json();
+	await expect.poll(read).toMatchObject({ aiOperationIds: [expect.any(String)], aiUsage: { requests: 1 } });
+	const accepted = await read();
+	const editor = body.getByRole("textbox", { name: "Letter body", exact: true });
+	await editor.press("ControlOrMeta+z");
+	await expect(editor).toHaveText("I maintain reliable services.");
+	await expect
+		.poll(read)
+		.toMatchObject({ aiOperationIds: [], content: expect.stringContaining("I maintain reliable services.") });
+	await editor.press("ControlOrMeta+Shift+z");
+	await expect.poll(read).toMatchObject({
+		aiOperationIds: accepted.aiOperationIds,
+		aiUsage: { requests: 1 },
+		content: expect.stringContaining("Led fictional delivery work."),
+	});
+	await expect(await page.request.delete(`/api/openapi/ai-providers/${providerId}`)).toBeOK();
+	await page.reload();
+	await expect(body.getByText("Fictional Letter AI · openai-compatible · letter-fast", { exact: true })).toBeVisible();
+	expect(stub.requests.length - before).toBe(1);
 });
 
 test("letter Accept saves the displayed version's original model and request source", async ({

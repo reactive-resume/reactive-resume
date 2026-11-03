@@ -37,8 +37,12 @@ How undo behaves:
 - **Undo lasts while the resume is open.** Reloading the page or opening the resume again starts a fresh undo history.
   So does restoring a version, or a change arriving from somewhere else, such as another tab or an API client.
 
-The cover letter editor has no document-wide undo. Use <kbd>⌘</kbd> <kbd>Z</kbd> inside the text you're editing, or
-restore a version from History.
+On web, the cover letter editor has no document-wide undo. Use <kbd>⌘</kbd> <kbd>Z</kbd> inside the text you're editing, or
+restore a version from History. Native mobile uses its editor-bar Undo and Redo controls.
+
+An accepted **Improve** suggestion is a separate step. Undo and Redo restore its request references with its wording,
+including an accepted suggestion whose wording is unchanged. Earlier import or letter-draft sources stay attached.
+These actions do not send another AI request; weekly usage still includes the original attempt.
 
 <Tip>
   Changes that couldn't be saved, for example because you went offline or closed the tab, are kept on your device. The

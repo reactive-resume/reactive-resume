@@ -11483,6 +11483,9 @@
 									},
 									"applicationId": {
 										"type": "string"
+									},
+									"includeProvenance": {
+										"type": "boolean"
 									}
 								},
 								"required": [
@@ -11510,6 +11513,62 @@
 										},
 										"addsFacts": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -178045,6 +178104,9 @@
 									},
 									"applicationId": {
 										"type": "string"
+									},
+									"includeProvenance": {
+										"type": "boolean"
 									}
 								},
 								"required": [
@@ -178072,6 +178134,62 @@
 										},
 										"addsFacts": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
