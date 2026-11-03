@@ -7,7 +7,7 @@ import z from "zod";
 import { safetySystemPrompt } from "@reactive-resume/ai/prompts";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
-import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
+import { aiOperationIdsSchema, aiUsageSummarySchema } from "@reactive-resume/schema/ai-usage";
 import { postingSourceSchema } from "@reactive-resume/schema/applications/data";
 import { slugify } from "@reactive-resume/utils/slug";
 import { generateId } from "@reactive-resume/utils/string";
@@ -18,7 +18,8 @@ import { dataBlock } from "../ai/data-block";
 import { approvedAiProviderId, isNoAiDestination } from "../ai/destination";
 import { aiDeadline, generateJson as sharedGenerateJson } from "../ai/generate-json";
 import { getModel } from "../ai/service";
-import { createAiUsage } from "../ai/usage";
+import { createAiUsage, readAiUsage } from "../ai/usage";
+import { draftLetterBody } from "../cover-letters/draft";
 import { coverLetterService } from "../cover-letters/service";
 import { assertDocumentVersion } from "../documents/ownership";
 import { resumeService } from "../resume/service";
@@ -502,12 +503,20 @@ export const aiRouter = {
 			operationId: "aiDraftApplicationMessage",
 			summary: "Draft a message about this application",
 			description:
-				"Drafts a cover letter or follow-up message from the application's posting and linked resume using your AI provider. A cover letter is saved as a new letter and its ID returned; a follow-up is returned as text. Nothing is sent.",
+				"Drafts a cover letter or follow-up message using your AI provider. Cover-letter text is returned for review with a new empty linked letter's ID; reviewRequired means the body has not been saved. Save approved text through the letter update endpoint with its aiOperationIds. A follow-up is returned as text. Nothing is sent.",
 			...reserved,
 		})
 		.input(z.object({ id: z.string(), kind: z.enum(["cover-letter", "follow-up"]) }))
 		.use(aiRequestRateLimit)
-		.output(z.object({ text: z.string(), coverLetterId: z.string().optional() }))
+		.output(
+			z.object({
+				text: z.string(),
+				coverLetterId: z.string().optional(),
+				reviewRequired: z.literal(true).optional(),
+				aiOperationIds: aiOperationIdsSchema.optional(),
+				aiUsage: aiUsageSummarySchema.nullable().optional(),
+			}),
+		)
 		.errors(aiErrors)
 		.handler(async ({ context, input, signal }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
@@ -518,27 +527,48 @@ export const aiRouter = {
 				await assertApplicationVersion(tx, context.user.id, application);
 				if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
 			};
+			if (input.kind === "cover-letter") {
+				const draft = await draftLetterBody({
+					application,
+					resume,
+					userId: context.user.id,
+					variant: "draft",
+					includeProvenance: true,
+					signal,
+				});
+				let text = "";
+				const aiOperationIds: string[] = [];
+				for await (const part of draft) {
+					if (typeof part === "string") text += part;
+					else aiOperationIds.push(part.aiOperationId);
+				}
+				signal?.throwIfAborted();
+				const aiUsage = await readAiUsage(context.user.id, aiOperationIds);
+				const letter = await coverLetterService.create({
+					userId: context.user.id,
+					name: `${application.company} — ${application.role}`.slice(0, 100),
+					content: "",
+					applicationId: input.id,
+					...(resume ? { resumeId: resume.id } : {}),
+				});
+				return {
+					text: text.trim(),
+					coverLetterId: letter.id,
+					reviewRequired: true as const,
+					aiOperationIds,
+					aiUsage,
+				};
+			}
 			const { model, provider } = await resolveModel(context.user.id, "draft-message", "capable", check);
 
 			const context_ = `${dataBlock("POSTING", JSON.stringify({ role: application.role, company: application.company, location: application.location, description: application.jobDescription }))}${resume ? `\nCANDIDATE RESUME:\n${JSON.stringify(resume.data)}` : ""}`;
 
-			const prompt =
-				input.kind === "cover-letter"
-					? `Write a concise, specific cover letter (250-350 words, no placeholders like [Name]) for this application, drawing on the resume. Return only the letter text.\n\n${context_}`
-					: `Write a short, polite follow-up message (80-120 words) to a recruiter checking in on this application. Warm but not pushy. Return only the message text.\n\n${context_}`;
+			const prompt = `Write a short, polite follow-up message (80-120 words) to a recruiter checking in on this application. Warm but not pushy. Return only the message text.\n\n${context_}`;
 
 			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, check);
 			signal?.throwIfAborted();
 			const text = await generatePlainText(model, prompt, signal);
-			if (input.kind === "follow-up") return { text };
-			const letter = await coverLetterService.create({
-				userId: context.user.id,
-				name: `${application.company} — ${application.role}`.slice(0, 100),
-				content: coverLetterTextToHtml(text),
-				applicationId: input.id,
-				...(resume ? { resumeId: resume.id } : {}),
-			});
-			return { text, coverLetterId: letter.id };
+			return { text };
 		}),
 
 	// Create a tailored copy of the linked resume (job-specific summary) and link it to the application.

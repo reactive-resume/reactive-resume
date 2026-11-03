@@ -11,7 +11,7 @@ import { ORPCError } from "@orpc/client";
 import { and, asc, count, desc, eq, ilike, inArray, isNull, ne, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
+import { copyCoverLetterStyle, initialCoverLetterLocale } from "@reactive-resume/resume/cover-letter";
 import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 import {
 	coverLetterContentSchema,
@@ -560,15 +560,10 @@ export const coverLetterService = {
 		if (input.template) style.metadata.template = input.template;
 		// The letter is for an employer whose posting declared a language: start in it, so the body, greeting,
 		// sign-off and date all match. The user can change it in Design; existing letters are never rewritten.
-		const postingLanguage = application?.postingSource?.language;
-		if (postingLanguage) {
-			try {
-				const [canonical] = Intl.getCanonicalLocales(postingLanguage);
-				if (canonical) style.metadata.page.locale = canonical;
-			} catch {
-				// An unusable tag leaves the letter's own language alone.
-			}
-		}
+		style.metadata.page.locale = initialCoverLetterLocale(
+			application?.postingSource?.language,
+			style.metadata.page.locale,
+		);
 		const linked = Boolean(input.resumeId) && !input.template;
 		const letter = await db.transaction(async (tx) => {
 			await lockUser(tx, input.userId);

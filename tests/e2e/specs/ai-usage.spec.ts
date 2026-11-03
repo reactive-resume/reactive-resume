@@ -16,6 +16,84 @@ test.afterAll(async () => {
 	await stub?.close();
 });
 
+test("application message REST draft stays empty until approved and retains the canonical letter source", async ({
+	authPage: page,
+}, info) => {
+	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs isolated local AI stub permission");
+	await page.setViewportSize({ width: 1440, height: 1000 });
+	await approveLocalStubOperations(page);
+	const connection = await page.request.post("/api/openapi/ai-providers", {
+		data: {
+			label: "Fictional MCP Letter AI",
+			provider: "openai-compatible",
+			model: "letter-main",
+			capableModel: "letter-capable",
+			baseURL: stub.baseURL,
+			apiKey: "stub-key",
+		},
+	});
+	await expect(connection).toBeOK();
+	const { id: providerId } = await connection.json();
+	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
+	await createSampleResumeFromDashboard(page, info);
+	const resumeId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
+	const application = await page.request.post("/api/openapi/applications", {
+		data: {
+			company: "Fictional Cedar",
+			role: "Engineer",
+			resumeId,
+			jobDescription: "Build fictional reliable services.",
+		},
+	});
+	await expect(application).toBeOK();
+	const id = await application.json();
+	const before = stub.requests.length;
+	const response = await page.request.post(`/api/openapi/applications/${id}/ai/message-drafts`, {
+		data: { kind: "cover-letter" },
+	});
+	await expect(response).toBeOK();
+	const result = await response.json();
+	expect(result).toMatchObject({
+		text: expect.any(String),
+		coverLetterId: expect.any(String),
+		reviewRequired: true,
+		aiOperationIds: [expect.any(String)],
+		aiUsage: { requests: 1 },
+	});
+	const read = async () => await (await page.request.get(`/api/openapi/cover-letters/${result.coverLetterId}`)).json();
+	const blank = await read();
+	expect(blank.content).toBe("");
+	expect(blank.aiOperationIds).toEqual([]);
+	await page.goto(`/builder/letter/${blank.id}`);
+	const body = page.getByRole("region", { name: "Letter", exact: true });
+	await body.getByRole("button", { name: "Write it myself", exact: true }).click();
+	await expect(body.getByRole("textbox", { name: "Letter body", exact: true })).toHaveText("");
+	expect(stub.requests.length - before).toBe(1);
+	const content = result.text
+		.split(/\n\s*\n/)
+		.map(
+			(paragraph: string) =>
+				`<p>${paragraph.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</p>`,
+		)
+		.join("");
+	await expect(
+		await page.request.patch(`/api/openapi/cover-letters/${blank.id}`, {
+			data: { content, expectedRevision: blank.revision, aiOperationIds: result.aiOperationIds },
+		}),
+	).toBeOK();
+	await expect(await page.request.delete(`/api/openapi/ai-providers/${providerId}`)).toBeOK();
+	await page.reload();
+	await expect(body.getByRole("textbox", { name: "Letter body", exact: true })).toContainText(
+		result.text.split("\n")[0],
+	);
+	await expect(
+		body.getByText("Fictional MCP Letter AI · openai-compatible · letter-capable", { exact: true }),
+	).toBeVisible();
+	expect((await read()).aiUsage).toEqual(result.aiUsage);
+	expect(stub.requests.length - before).toBe(1);
+	await body.screenshot({ path: info.outputPath("mcp-letter-reviewed-source.png"), animations: "disabled" });
+});
+
 for (const kind of ["resume assistant", "letter assistant", "writing review"] as const)
 	test(`${kind} acceptance pairs original sources with saved content and Undo without generating again`, async ({
 		authPage: page,
