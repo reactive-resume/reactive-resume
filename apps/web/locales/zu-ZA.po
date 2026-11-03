@@ -472,9 +472,11 @@ msgstr ""
 msgid "{0} in {1} is {2} in your timezone ({preferredZone})."
 msgstr ""
 
+#. placeholder {0}: interviewKindOf(item.interview.kind)?.label ?? item.interview.kind
 #. placeholder {0}: interviewKindOf(upcoming.kind)?.label ?? ""
 #. placeholder {0}: kind?.label ?? entry.kind
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/career/today.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "{0} interview"
 msgstr ""
@@ -1575,6 +1577,11 @@ msgstr ""
 #. placeholder {0}: lane.label
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Add “{0}” as a new stage"
+msgstr ""
+
+#. Button that adds a suggested tag. Variable is the tag text.
+#: src/components/input/chip-input.tsx
+msgid "Add {suggestion}"
 msgstr ""
 
 #: src/features/career/knowledge/search-regions-field.tsx
@@ -4795,6 +4802,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr ""
 
+#: src/features/applications/components/attachment-preview.tsx
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
 msgstr ""
@@ -5982,6 +5990,7 @@ msgstr ""
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
@@ -6060,6 +6069,10 @@ msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Download them"
+msgstr ""
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Download Word"
 msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
@@ -7109,6 +7122,7 @@ msgid "Follow-up note"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr ""
 
@@ -8698,10 +8712,6 @@ msgstr ""
 msgid "Last used"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Later interviews"
-msgstr ""
-
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/offers.tsx
@@ -9217,6 +9227,7 @@ msgid "Loading workspace…"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/attachment-preview.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
@@ -10786,6 +10797,10 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/resume/share/feedback-links.tsx
 msgid "Off makes the link read-only."
 msgstr ""
@@ -11330,6 +11345,7 @@ msgstr ""
 msgid "Page {pageNumber} of {totalPages}"
 msgstr ""
 
+#: src/features/applications/components/attachment-preview.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
 msgstr ""
@@ -12111,6 +12127,10 @@ msgstr ""
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Provider"
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "Provider options"
 msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
@@ -12989,6 +13009,7 @@ msgid "Reply copied"
 msgstr ""
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -17803,6 +17824,10 @@ msgid "Visitors can download the PDF"
 msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
+msgid "Visitors can download Word"
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr ""
 
@@ -18951,6 +18976,12 @@ msgstr ""
 
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."
+msgstr ""
+
+#: src/dialogs/resume/index.tsx
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Your tags"
 msgstr ""
 
 #: src/features/homepage/sections.tsx

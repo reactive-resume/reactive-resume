@@ -2418,10 +2418,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "行動面接"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "行動面接"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "最低基本給を下回ります。"
@@ -3389,7 +3385,7 @@ msgstr "ブラウザで続行"
 
 #: app/(auth)/sign-in.tsx
 msgid "Continue in your browser"
-msgstr ""
+msgstr "ブラウザーで続行"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Conversation"
@@ -3827,6 +3823,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "そのファイルを読み取れませんでした。.csv ファイルを選んで、もう一度お試しください。"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -4003,6 +4000,7 @@ msgstr "カレンダーのイベントを共有できませんでした。もう
 msgid "Couldn't share the calendar file. Try again."
 msgstr "カレンダーファイルを共有できませんでした。もう一度お試しください。"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Couldn't share the file. Try again."
 msgstr "ファイルを共有できませんでした。もう一度お試しください。"
@@ -4493,6 +4491,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "プロバイダーを削除"
 
@@ -4535,6 +4534,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "このプロバイダーを削除しますか?"
 
@@ -5599,6 +5599,7 @@ msgid "Follow-up note"
 msgstr "フォローアップメモ"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "フォローアップのリマインダー"
 
@@ -6309,7 +6310,6 @@ msgstr "インターフェースのみ。各履歴書は、デザインにおい
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "面接"
 
@@ -6448,6 +6448,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "保存されているキーは削除されます。これを使用した会話には別のプロバイダーが必要です。"
 
@@ -6585,6 +6586,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "この履歴書に関する非公開のメモをここに残せます。他の人には見えません。"
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -7181,6 +7183,7 @@ msgstr "公開アドレスを読み込み中…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
@@ -8283,10 +8286,6 @@ msgstr "このファイルからテキストを読み取れませんでした。
 msgid "No timezone matches."
 msgstr "一致するタイムゾーンがありません。"
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "今後の面接はありません。"
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "職歴は示されない"
@@ -8544,6 +8543,10 @@ msgstr "オディア語"
 msgid "Off"
 msgstr "オフ"
 
+#: src/features/share/web-page.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details."
 msgstr "オフ。以下でこのカバーレターの情報を編集できます。オンにすると、レジュメの現在の情報に置き換わります。"
@@ -8742,10 +8745,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "対面"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
-msgstr "対面面接"
 
 #: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8978,9 +8977,10 @@ msgid "Page"
 msgstr "ページ"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: 1
 #. placeholder {0}: index + 1
 #. placeholder {0}: item.page + 1
-#. placeholder {0}: page.index + 1
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9144,10 +9144,6 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "PDF · Best for applying"
 msgstr "PDF · 応募に最適"
-
-#: src/features/application-detail/sections.tsx
-msgid "PDF · tap to preview"
-msgstr "PDF · タップしてプレビューします"
 
 #: src/features/check/parser.tsx
 msgid "PDF check canceled. Retry when ready."
@@ -9612,6 +9608,10 @@ msgstr "サーバーから提供されます: {connected}。ここでは誰で�
 #: src/features/ai/web-access.tsx
 msgid "Provider"
 msgstr "プロバイダー"
+
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
@@ -10312,6 +10312,7 @@ msgid "Reply copied"
 msgstr "返信をコピーしました"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -10959,6 +10960,7 @@ msgstr ""
 msgid "Save offer"
 msgstr "オファーを保存"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/share/files.ts
 msgid "Save or share file"
 msgstr "ファイルを保存または共有する"
@@ -11153,10 +11155,6 @@ msgstr "学校名"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "スクリーニング"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "選考面接"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12553,10 +12551,6 @@ msgstr "ティール"
 msgid "Technical"
 msgstr "技術"
 
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "技術面接"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
 msgstr "「{storyTitle}」について教えてください。あなたの役割は何でしたか、何をしましたか、そして何が変わりましたか？"
@@ -13640,6 +13634,7 @@ msgstr "{suggestion} をお試しください"
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
@@ -14329,6 +14324,10 @@ msgstr "訪問者"
 #: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "訪問者は PDF をダウンロードできます。"
+
+#: src/features/share/web-page.tsx
+msgid "Visitors can download Word"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
@@ -15172,6 +15171,11 @@ msgstr "あなたのストーリー"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "ストーリーを読み込めませんでした。"
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"

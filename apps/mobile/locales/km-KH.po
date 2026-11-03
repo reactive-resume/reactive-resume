@@ -2418,10 +2418,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "អាកប្បកិរិយា"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "កិច្ចសំភាសន៍"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "ក្រោមប្រាក់ខែគោលអប្បបរមារបស់អ្នក។"
@@ -3389,7 +3385,7 @@ msgstr "បន្តនៅក្នុងកម្មវិធីរុករក
 
 #: app/(auth)/sign-in.tsx
 msgid "Continue in your browser"
-msgstr ""
+msgstr "បន្តនៅក្នុងកម្មវិធីរុករករបស់អ្នក"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Conversation"
@@ -3827,6 +3823,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "មិនអាចអានឯកសារនោះបានទេ។ ជ្រើសរើសឯកសារ .csv ហើយព្យាយាមម្តងទៀត។"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -4003,6 +4000,7 @@ msgstr "មិនអាចចែករំលែកព្រឹត្តិកា
 msgid "Couldn't share the calendar file. Try again."
 msgstr "មិនអាចចែករំលែកឯកសារប្រតិទិនបានទេ។ ព្យាយាមម្តងទៀត។"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Couldn't share the file. Try again."
 msgstr "មិនអាចចែករំលែកឯកសារបានទេ។ សូមព្យាយាមម្ដងទៀត។"
@@ -4493,6 +4491,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "លុបអ្នកផ្តល់សេវា"
 
@@ -4535,6 +4534,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "លុបអ្នកផ្តល់សេវានេះ?"
 
@@ -5599,6 +5599,7 @@ msgid "Follow-up note"
 msgstr "កំណត់ចំណាំតាមដាន"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "ការរំលឹកតាមដាន"
 
@@ -6309,7 +6310,6 @@ msgstr "ចំណុចប្រទាក់តែប៉ុណ្ណោះ។ �
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "សម្ភាសន៍"
 
@@ -6448,6 +6448,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "សោដែលបានរក្សាទុករបស់វាត្រូវបានលុប។ ការសន្ទនាដោយប្រើវាត្រូវការអ្នកផ្តល់សេវាផ្សេងទៀត។"
 
@@ -6585,6 +6586,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "រក្សាទុកកំណត់ចំណាំឯកជនអំពីប្រវត្តិរូបសង្ខេបនេះនៅទីនេះ។ គ្មាននរណាម្នាក់ផ្សេងអាចមើលឃើញវាទេ។"
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -7181,6 +7183,7 @@ msgstr "កំពុងផ្ទុកអាសយដ្ឋានសាធារ
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
@@ -8283,10 +8286,6 @@ msgstr "មិនអាចអានអត្ថបទណាមួយពីឯក
 msgid "No timezone matches."
 msgstr "គ្មានតំបន់ពេលវេលាដែលត្រូវគ្នាទេ។"
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "គ្មានការសម្ភាសន៍នាពេលខាងមុខទេ។"
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "គ្មានបទពិសោធន៍ការងារបង្ហាញ"
@@ -8544,6 +8543,10 @@ msgstr "Odia"
 msgid "Off"
 msgstr "បិទ"
 
+#: src/features/share/web-page.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details."
 msgstr "បិទ។ កែសម្រួលព័ត៌មានរបស់លិខិតនេះខាងក្រោម។ ការបើកជម្រើសនេះនឹងជំនួសព័ត៌មានទាំងនេះដោយព័ត៌មានបច្ចុប្បន្នពីប្រវត្តិរូបសង្ខេប។"
@@ -8742,10 +8745,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "នៅទីតាំង"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
-msgstr "ការសម្ភាសន៍នៅនឹងកន្លែង"
 
 #: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8978,9 +8977,10 @@ msgid "Page"
 msgstr "ទំព័រ"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: 1
 #. placeholder {0}: index + 1
 #. placeholder {0}: item.page + 1
-#. placeholder {0}: page.index + 1
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9144,10 +9144,6 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "PDF · Best for applying"
 msgstr "PDF · ល្អបំផុតសម្រាប់ការដាក់ពាក្យ"
-
-#: src/features/application-detail/sections.tsx
-msgid "PDF · tap to preview"
-msgstr "PDF · ប៉ះដើម្បីមើលជាមុន"
 
 #: src/features/check/parser.tsx
 msgid "PDF check canceled. Retry when ready."
@@ -9612,6 +9608,10 @@ msgstr "ផ្តល់ដោយម៉ាស៊ីនមេរបស់អ្ន
 #: src/features/ai/web-access.tsx
 msgid "Provider"
 msgstr "អ្នកផ្តល់សេវា"
+
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
@@ -10312,6 +10312,7 @@ msgid "Reply copied"
 msgstr "បានចម្លងការឆ្លើយតប"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -10959,6 +10960,7 @@ msgstr ""
 msgid "Save offer"
 msgstr "រក្សាទុកសំណើការងារ"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/share/files.ts
 msgid "Save or share file"
 msgstr "រក្សាទុក ឬចែករំលែកឯកសារ"
@@ -11153,10 +11155,6 @@ msgstr "សាលា"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "ការជម្រុះដំបូង"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "ការសម្ភាសន៍បឋម"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12553,10 +12551,6 @@ msgstr "ពណ៌ខៀវបៃតង"
 msgid "Technical"
 msgstr "បច្ចេកទេស"
 
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "បទសម្ភាសន៍បច្ចេកទេស"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
 msgstr "ប្រាប់ខ្ញុំអំពី “{storyTitle}” ។ តើផ្នែករបស់អ្នកជាអ្វីដែលអ្នកបានធ្វើនិងអ្វីដែលបានផ្លាស់ប្តូរ?"
@@ -13640,6 +13634,7 @@ msgstr "សាកល្បង {suggestion}"
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
@@ -14329,6 +14324,10 @@ msgstr "អ្នកទស្សនា"
 #: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "អ្នកទស្សនាអាចទាញយក PDF"
+
+#: src/features/share/web-page.tsx
+msgid "Visitors can download Word"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
@@ -15172,6 +15171,11 @@ msgstr "រឿងរបស់អ្នក"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "មិនអាចផ្ទុករឿងរបស់អ្នកបានទេ។"
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"

@@ -2418,10 +2418,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "Gedragsgerig"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "Gedragsonderhoud"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "Onder jou minimum basissalaris."
@@ -3389,7 +3385,7 @@ msgstr "Gaan voort in blaaier"
 
 #: app/(auth)/sign-in.tsx
 msgid "Continue in your browser"
-msgstr ""
+msgstr "Gaan voort in jou blaaier"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Conversation"
@@ -3827,6 +3823,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "Kon nie daardie lêer lees nie. Kies 'n .csv-lêer en probeer weer."
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -4003,6 +4000,7 @@ msgstr "Kon nie die kalendergeleentheid deel nie. Probeer weer."
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Kon nie die kalenderlêer deel nie. Probeer weer."
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Couldn't share the file. Try again."
 msgstr "Kon nie die lêer deel nie. Probeer weer."
@@ -4493,6 +4491,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "Vee verskaffer uit"
 
@@ -4535,6 +4534,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "Vee hierdie verskaffer uit?"
 
@@ -5599,6 +5599,7 @@ msgid "Follow-up note"
 msgstr "Opvolgnota"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "Opvolgherinnering"
 
@@ -6309,7 +6310,6 @@ msgstr "Slegs koppelvlak. Elke CV stel sy eie taal in Ontwerp."
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "Onderhoud"
 
@@ -6448,6 +6448,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "Sy gestoorde sleutel word uitgevee. Gesprekke wat dit gebruik, benodig 'n ander verskaffer."
 
@@ -6585,6 +6586,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "Hou private notas oor hierdie CV hier. Niemand anders kan dit sien nie."
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -7181,6 +7183,7 @@ msgstr "Laai tans jou publieke adres …"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
@@ -8283,10 +8286,6 @@ msgstr "Geen teks kon uit hierdie lêer gelees word nie."
 msgid "No timezone matches."
 msgstr "Geen tydsone pas nie."
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "Geen komende onderhoude nie."
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "Geen werkservaring wys nie"
@@ -8544,6 +8543,10 @@ msgstr "Odia"
 msgid "Off"
 msgstr "Af"
 
+#: src/features/share/web-page.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details."
 msgstr "Af. Wysig hierdie brief se besonderhede hieronder. As jy dit aanskakel, word dit met die CV se huidige besonderhede vervang."
@@ -8742,10 +8745,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "Op perseel"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
-msgstr "Onderhoud ter plaatse"
 
 #: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8978,9 +8977,10 @@ msgid "Page"
 msgstr "Bladsy"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: 1
 #. placeholder {0}: index + 1
 #. placeholder {0}: item.page + 1
-#. placeholder {0}: page.index + 1
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9144,10 +9144,6 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "PDF · Best for applying"
 msgstr "PDF · Beste vir werksaansoeke"
-
-#: src/features/application-detail/sections.tsx
-msgid "PDF · tap to preview"
-msgstr "PDF · tik om voorbeskou"
 
 #: src/features/check/parser.tsx
 msgid "PDF check canceled. Retry when ready."
@@ -9612,6 +9608,10 @@ msgstr "Verskaf deur jou bediener: {connected}. Soek en lees is opgestel vir alm
 #: src/features/ai/web-access.tsx
 msgid "Provider"
 msgstr "Verskaffer"
+
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
@@ -10312,6 +10312,7 @@ msgid "Reply copied"
 msgstr "Antwoord gekopieer"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -10959,6 +10960,7 @@ msgstr ""
 msgid "Save offer"
 msgstr "Stoor werksaanbod"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/share/files.ts
 msgid "Save or share file"
 msgstr "Stoor of deel lêer"
@@ -11153,10 +11155,6 @@ msgstr "Skool"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "Sifting"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "Keuringsonderhoud"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12553,10 +12551,6 @@ msgstr "Blauwgroen"
 msgid "Technical"
 msgstr "Tegnies"
 
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "Tegniese onderhoud"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
 msgstr "Vertel my van “{storyTitle}”. Wat was jou deel, wat het jy gedoen en wat het verander?"
@@ -13640,6 +13634,7 @@ msgstr "Probeer {suggestion}"
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
@@ -14329,6 +14324,10 @@ msgstr "Besoekers"
 #: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Besoekers kan die PDF aflaai"
+
+#: src/features/share/web-page.tsx
+msgid "Visitors can download Word"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
@@ -15172,6 +15171,11 @@ msgstr "jou stories"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "Jou storie kon nie gelaai word nie."
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"

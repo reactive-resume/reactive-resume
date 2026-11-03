@@ -472,9 +472,11 @@ msgstr "{0} h"
 msgid "{0} in {1} is {2} in your timezone ({preferredZone})."
 msgstr "{0} in {1} is {2} in your timezone ({preferredZone})."
 
+#. placeholder {0}: interviewKindOf(item.interview.kind)?.label ?? item.interview.kind
 #. placeholder {0}: interviewKindOf(upcoming.kind)?.label ?? ""
 #. placeholder {0}: kind?.label ?? entry.kind
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/career/today.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "{0} interview"
 msgstr "{0} interview"
@@ -1576,6 +1578,11 @@ msgstr "Add “{0}”"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Add “{0}” as a new stage"
 msgstr "Add “{0}” as a new stage"
+
+#. Button that adds a suggested tag. Variable is the tag text.
+#: src/components/input/chip-input.tsx
+msgid "Add {suggestion}"
+msgstr "Add {suggestion}"
 
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
@@ -4797,6 +4804,7 @@ msgstr "Couldn't read {name}'s answer. Try again, or switch the default provider
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "Couldn't read that file. Choose a .csv file and try again."
 
+#: src/features/applications/components/attachment-preview.tsx
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
 msgstr "Couldn't read that file. Try again."
@@ -5984,6 +5992,7 @@ msgstr "Done · {0}"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
@@ -6063,6 +6072,10 @@ msgstr "Download sample PDF"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Download them"
 msgstr "Download them"
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Download Word"
+msgstr "Download Word"
 
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
@@ -7111,6 +7124,7 @@ msgid "Follow-up note"
 msgstr "Follow-up note"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "Follow-up reminder"
 
@@ -8700,10 +8714,6 @@ msgstr "Last updated: {0}"
 msgid "Last used"
 msgstr "Last used"
 
-#: src/features/career/today.tsx
-msgid "Later interviews"
-msgstr "Later interviews"
-
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/offers.tsx
@@ -9219,6 +9229,7 @@ msgid "Loading workspace…"
 msgstr "Loading workspace…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/attachment-preview.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
@@ -10788,6 +10799,10 @@ msgstr "Odia"
 msgid "Off"
 msgstr "Off"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+
 #: src/features/resume/share/feedback-links.tsx
 msgid "Off makes the link read-only."
 msgstr "Off makes the link read-only."
@@ -11332,6 +11347,7 @@ msgstr "Page {pageNumber} of {pageCount}"
 msgid "Page {pageNumber} of {totalPages}"
 msgstr "Page {pageNumber} of {totalPages}"
 
+#: src/features/applications/components/attachment-preview.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
 msgstr "Page 1"
@@ -12114,6 +12130,10 @@ msgstr "Provided by your server: {connectedProvider}."
 #: src/features/settings/ai/web-access.tsx
 msgid "Provider"
 msgstr "Provider"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Provider options"
+msgstr "Provider options"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
@@ -12991,6 +13011,7 @@ msgid "Reply copied"
 msgstr "Reply copied"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr "Reply to the offer"
 
@@ -17805,6 +17826,10 @@ msgid "Visitors can download the PDF"
 msgstr "Visitors can download the PDF"
 
 #: src/features/resume/share/share-panel.tsx
+msgid "Visitors can download Word"
+msgstr "Visitors can download Word"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Visitors enter it before they see the resume. Share it only with people you trust."
 
@@ -18954,6 +18979,12 @@ msgstr "your stories"
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "Your story couldn't be loaded."
+
+#: src/dialogs/resume/index.tsx
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Your tags"
+msgstr "Your tags"
 
 #: src/features/homepage/sections.tsx
 msgid "Your turn"

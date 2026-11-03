@@ -16,7 +16,11 @@ const resumeSchema = createSelectSchema(schema.resume, {
 	slug: z.string().trim().min(1).describe("The slug of the resume."),
 	tags: z.array(z.string()).describe("The tags of the resume."),
 	isPublic: z.boolean().describe("Whether the resume is public."),
-	showDownloadButtons: z.boolean().describe("Whether download buttons are shown on the public resume page."),
+	showDownloadButtons: z.boolean().describe("Whether visitors may download the public PDF."),
+	allowWordDownload: z
+		.boolean()
+		.default(false)
+		.describe("Whether visitors may download the public Word file. Off unless the owner opts in."),
 	showInSearchEngines: z
 		.boolean()
 		.describe("Whether search engines may list the resume's public web page. Off unless the owner turns it on."),
@@ -131,6 +135,7 @@ export const resumeDto = {
 				data: true,
 				isPublic: true,
 				showDownloadButtons: true,
+				allowWordDownload: true,
 				showInSearchEngines: true,
 				hideContactDetails: true,
 				isPrimary: true,
@@ -138,6 +143,8 @@ export const resumeDto = {
 			.partial()
 			.extend({
 				id: z.string(),
+				// A write from an older client must never reset the owner's Word opt-in.
+				allowWordDownload: z.boolean().optional(),
 				slug: slugSchema.optional(),
 				data: writableResumeDataSchema.optional(),
 				expectedUpdatedAt: z.coerce

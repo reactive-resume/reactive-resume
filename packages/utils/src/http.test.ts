@@ -1,5 +1,61 @@
 import { expect, it } from "vite-plus/test";
-import { contentDisposition } from "./http";
+import { contentDisposition, privateUploadUrl, readResponseBytes } from "./http";
+
+it("private uploads stay on the original server and upload route before credentials are added", () => {
+	expect(privateUploadUrl("/uploads/user/resume.pdf", "https://resume.test")).toBe(
+		"https://resume.test/uploads/user/resume.pdf",
+	);
+	expect(privateUploadUrl("https://resume.test/api/uploads/user/resume.pdf", "https://resume.test")).toBe(
+		"https://resume.test/api/uploads/user/resume.pdf",
+	);
+	for (const source of [
+		"https://other.test/uploads/a.pdf",
+		"//other.test/uploads/a.pdf",
+		"https://user:pass@resume.test/uploads/a.pdf",
+		"/api/auth/sign-out",
+		"/uploads/../api/auth",
+		"data:application/pdf;base64,AA==",
+	]) {
+		expect(() => privateUploadUrl(source, "https://resume.test")).toThrow();
+	}
+});
+
+it("reads exact bytes but rejects oversize streams even with missing or lying length", async () => {
+	expect(await readResponseBytes(new Response(new Uint8Array([1, 2, 3])), 3)).toEqual(new Uint8Array([1, 2, 3]));
+	for (const declared of [null, "1", "100"]) {
+		let canceled = false;
+		const response = new Response(
+			new ReadableStream({
+				start(controller) {
+					controller.enqueue(new Uint8Array([1, 2]));
+					controller.enqueue(new Uint8Array([3, 4]));
+				},
+				cancel() {
+					canceled = true;
+				},
+			}),
+			{ headers: declared ? { "content-length": declared } : {} },
+		);
+		await expect(readResponseBytes(response, 3)).rejects.toThrow("too large");
+		expect(canceled).toBe(true);
+	}
+});
+
+it("abort cancels an outstanding private stream without yielding its bytes", async () => {
+	let canceled = false;
+	const abort = new AbortController();
+	const response = new Response(
+		new ReadableStream({
+			cancel() {
+				canceled = true;
+			},
+		}),
+	);
+	const reading = readResponseBytes(response, 10, abort.signal);
+	abort.abort();
+	await expect(reading).rejects.toMatchObject({ name: "AbortError" });
+	expect(canceled).toBe(true);
+});
 
 const utf8Name = (header: string) => {
 	const encoded = header.match(/filename\*=UTF-8''([^;]+)$/)?.[1];

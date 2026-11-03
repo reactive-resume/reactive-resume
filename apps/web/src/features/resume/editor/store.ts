@@ -119,7 +119,8 @@ type EditorStore = {
 	reset: () => void;
 };
 
-const clampZoom = (zoom: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(zoom * 100) / 100));
+/** Keep an explicit scale inside the editor's zoom bounds, at whole percentage steps. */
+export const clampZoom = (zoom: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(zoom * 100) / 100));
 
 export const isSameSelection = (a: EditorSelection | null, b: EditorSelection | null) => {
 	if (!a || !b) return a === b;

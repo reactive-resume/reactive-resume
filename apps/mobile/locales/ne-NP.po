@@ -2418,10 +2418,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "व्यवहारगत"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "व्यवहारसम्बन्धी अन्तर्वार्ता"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "तपाईंको न्यूनतम आधार तलब तल।"
@@ -3389,7 +3385,7 @@ msgstr "ब्राउजरमा जारी राख्नुहोस्"
 
 #: app/(auth)/sign-in.tsx
 msgid "Continue in your browser"
-msgstr ""
+msgstr "आफ्नो ब्राउजरमा जारी राख्नुहोस्"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Conversation"
@@ -3827,6 +3823,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "त्यो फाइल पढ्न सकिएन। .csv फाइल छानेर पुन: प्रयास गर्नुहोस्।"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -4003,6 +4000,7 @@ msgstr "क्यालेन्डर कार्यक्रम साझा 
 msgid "Couldn't share the calendar file. Try again."
 msgstr "क्यालेन्डर फाइल साझा गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Couldn't share the file. Try again."
 msgstr "फाइल साझा गर्न सकिएन। फेरि प्रयास गर्नुहोस्।"
@@ -4493,6 +4491,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "प्रदायक मेटाउनुहोस्"
 
@@ -4535,6 +4534,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "यो प्रदायक मेट्ने हो?"
 
@@ -5599,6 +5599,7 @@ msgid "Follow-up note"
 msgstr "फलो-अप नोट"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "फलो-अप रिमाइन्डर"
 
@@ -6309,7 +6310,6 @@ msgstr "इन्टरफेस मात्र। प्रत्येक र
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "अन्तर्वार्ता"
 
@@ -6448,6 +6448,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "यसको सुरक्षित कुञ्जी मेटाइएको छ। यसलाई प्रयोग गरेर कुराकानी गर्न अर्को प्रदायक चाहिन्छ।"
 
@@ -6585,6 +6586,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "यो बायोडाटाबारे निजी टिप्पणीहरू यहाँ राख्नुहोस्। ती अरू कसैले देख्न सक्दैन।"
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -7181,6 +7183,7 @@ msgstr "तपाईंको सार्वजनिक ठेगाना ल
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
@@ -8283,10 +8286,6 @@ msgstr "यो फाइलबाट कुनै पाठ पढ्न सक�
 msgid "No timezone matches."
 msgstr "कुनै समय क्षेत्र मेल खाएन।"
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "कुनै आगामी अन्तर्वार्ता छैन।"
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "कामको अनुभव देखिँदैन"
@@ -8544,6 +8543,10 @@ msgstr "ओडिया"
 msgid "Off"
 msgstr "बन्द"
 
+#: src/features/share/web-page.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details."
 msgstr "बन्द छ। तल यस पत्रका विवरणहरू सम्पादन गर्नुहोस्। यसलाई चालु गर्दा ती विवरणहरू बायोडाटाका हालका विवरणहरूले प्रतिस्थापित हुन्छन्।"
@@ -8742,10 +8745,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "अनसाइट"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
-msgstr "कार्यस्थलमा अन्तर्वार्ता"
 
 #: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8978,9 +8977,10 @@ msgid "Page"
 msgstr "पृष्ठ"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: 1
 #. placeholder {0}: index + 1
 #. placeholder {0}: item.page + 1
-#. placeholder {0}: page.index + 1
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9144,10 +9144,6 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "PDF · Best for applying"
 msgstr "PDF · जागिरमा आवेदन दिन उत्तम"
-
-#: src/features/application-detail/sections.tsx
-msgid "PDF · tap to preview"
-msgstr "PDF · पूर्वावलोकन गर्न ट्याप गर्नुहोस्"
 
 #: src/features/check/parser.tsx
 msgid "PDF check canceled. Retry when ready."
@@ -9612,6 +9608,10 @@ msgstr "तपाईंको सर्भरद्वारा प्रदा�
 #: src/features/ai/web-access.tsx
 msgid "Provider"
 msgstr "प्रदाता (Provider)"
+
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
@@ -10312,6 +10312,7 @@ msgid "Reply copied"
 msgstr "प्रत्युत्तर प्रतिलिपि गरियो"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -10959,6 +10960,7 @@ msgstr ""
 msgid "Save offer"
 msgstr "जागिरको प्रस्ताव सेभ गर्नुहोस्"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/share/files.ts
 msgid "Save or share file"
 msgstr "फाइल बचत वा साझेदारी गर्नुहोस्"
@@ -11153,10 +11155,6 @@ msgstr "विद्यालय/शैक्षिक संस्था"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "स्क्रिनिङ"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "प्रारम्भिक छनोट अन्तर्वार्ता"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12553,10 +12551,6 @@ msgstr "निलो"
 msgid "Technical"
 msgstr "प्राविधिक"
 
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "प्राविधिक अन्तर्वार्ता"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
 msgstr "मलाई “{storyTitle}” बारे बताउनुहोस्। तपाईको भाग के थियो, तपाईले के गर्नुभयो र के परिवर्तन गर्नुभयो?"
@@ -13640,6 +13634,7 @@ msgstr "प्रयास गर्नुहोस् {suggestion}"
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
@@ -14329,6 +14324,10 @@ msgstr "आगन्तुकहरू"
 #: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "आगन्तुकहरूले PDF डाउनलोड गर्न सक्छन्"
+
+#: src/features/share/web-page.tsx
+msgid "Visitors can download Word"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
@@ -15172,6 +15171,11 @@ msgstr "तपाईंका कथाहरू"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "तपाईंको कथा लोड गर्न सकिएन।"
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"

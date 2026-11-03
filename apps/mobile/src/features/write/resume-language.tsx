@@ -1,10 +1,9 @@
-import type { Locale } from "@reactive-resume/utils/locale";
 import { useLingui } from "@lingui/react/macro";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { edit } from "./hooks";
 import { Picker } from "@/features/design/picker";
-import { localeMap } from "@/features/settings/locale-names";
+import { getLocaleOptions } from "@/features/settings/locale-names";
 import { selectableLocales } from "@/i18n";
 import { Icon, Sheet, Text, useTheme } from "@/ui";
 
@@ -18,7 +17,8 @@ export function ResumeLanguage({ locale, locked }: ResumeLanguageProps) {
 	const { t, i18n } = useLingui();
 	const { colors, space } = useTheme();
 	const [open, setOpen] = useState(false);
-	const languageName = (code: string) => (code in localeMap ? i18n._(localeMap[code as Locale]) : code);
+	const options = getLocaleOptions(i18n, selectableLocales);
+	const languageName = (code: string) => options.find((option) => option.value === code)?.label ?? code;
 	const label = t({
 		comment: "Label beside the picker for the language a resume's headings and dates print in",
 		message: "Resume language",
@@ -48,7 +48,7 @@ export function ResumeLanguage({ locale, locked }: ResumeLanguageProps) {
 					<Picker
 						title={label}
 						value={locale}
-						options={selectableLocales.map((code) => ({ value: code, label: languageName(code), detail: code }))}
+						options={options}
 						onPick={(next) =>
 							edit((draft) => {
 								draft.metadata.page.locale = next;

@@ -3,6 +3,7 @@ import type { Application, ApplicationSummary } from "./types";
 import type { QueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { latestOfferHints } from "@reactive-resume/schema/applications/next-step";
 import { orpc } from "@/libs/orpc/client";
 
 // A single source of truth for the lightweight applications list query so the query key stays identical
@@ -50,14 +51,7 @@ export function useOfferHints(enabled = true): ReadonlyMap<string, OfferHint> | 
 	const { data } = useQuery({ ...savedOffersQueryOptions(), enabled });
 	return useMemo(() => {
 		if (!data) return undefined;
-		const hints = new Map<string, OfferHint & { at: number }>();
-		for (const item of data) {
-			if (item.data.kind !== "offer" || !item.applicationId) continue;
-			const at = new Date(item.createdAt).getTime();
-			const known = hints.get(item.applicationId);
-			if (!known || at > known.at) hints.set(item.applicationId, { respondBy: item.data.respondBy, at });
-		}
-		return hints;
+		return latestOfferHints(data);
 	}, [data]);
 }
 

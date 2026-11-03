@@ -65,6 +65,7 @@ it("authorizes only the fixed application script, even if rendered content conta
 		indexable: false,
 		hasPassword: false,
 		showDownloadButtons: false,
+		allowWordDownload: false,
 		customDomain: null,
 	} as never);
 	const { serveResumePage } = await import("./resume-page");
@@ -122,6 +123,7 @@ it("still shows a shared resume whose owner's username looks like an app page", 
 		indexable: false,
 		hasPassword: false,
 		showDownloadButtons: false,
+		allowWordDownload: false,
 		customDomain: null,
 	} as never);
 	const { serveResumePage } = await import("./resume-page");

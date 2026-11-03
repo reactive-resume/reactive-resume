@@ -2418,10 +2418,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "인성"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "행동면접"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "최저 기본급보다 낮습니다."
@@ -3389,7 +3385,7 @@ msgstr "브라우저에서 계속"
 
 #: app/(auth)/sign-in.tsx
 msgid "Continue in your browser"
-msgstr ""
+msgstr "브라우저에서 계속"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Conversation"
@@ -3827,6 +3823,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "해당 파일을 읽을 수 없습니다. .csv 파일을 선택하고 다시 시도해 보세요."
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -4003,6 +4000,7 @@ msgstr "캘린더 일정을 공유할 수 없습니다. 다시 시도해 보세�
 msgid "Couldn't share the calendar file. Try again."
 msgstr "캘린더 파일을 공유할 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Couldn't share the file. Try again."
 msgstr "파일을 공유할 수 없습니다. 다시 시도하세요."
@@ -4493,6 +4491,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "제공자 삭제"
 
@@ -4535,6 +4534,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "이 제공업체를 삭제하시겠습니까?"
 
@@ -5599,6 +5599,7 @@ msgid "Follow-up note"
 msgstr "후속 조치 메모"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "후속 연락 알림"
 
@@ -6309,7 +6310,6 @@ msgstr "인터페이스 전용. 각 이력서는 디자인에서 고유한 언�
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "면접"
 
@@ -6448,6 +6448,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "저장된 키가 삭제됩니다. 이를 사용하는 대화에는 다른 공급자가 필요합니다."
 
@@ -6585,6 +6586,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "이 이력서에 대한 비공개 메모를 여기에 남기세요. 다른 사람은 볼 수 없습니다."
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -7181,6 +7183,7 @@ msgstr "공개 주소 로드 중…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
@@ -8283,10 +8286,6 @@ msgstr "이 파일에서 텍스트를 읽을 수 없습니다."
 msgid "No timezone matches."
 msgstr "일치하는 시간대가 없습니다."
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "다가오는 인터뷰가 없습니다."
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "경력이 표시되지 않습니다."
@@ -8544,6 +8543,10 @@ msgstr "오디아어"
 msgid "Off"
 msgstr "끄다"
 
+#: src/features/share/web-page.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details."
 msgstr "꺼짐. 아래에서 이 편지의 정보를 수정하세요. 켜면 이력서의 현재 정보로 교체됩니다."
@@ -8742,10 +8745,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "대면"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
-msgstr "대면 면접"
 
 #: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8978,9 +8977,10 @@ msgid "Page"
 msgstr "페이지"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: 1
 #. placeholder {0}: index + 1
 #. placeholder {0}: item.page + 1
-#. placeholder {0}: page.index + 1
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9144,10 +9144,6 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "PDF · Best for applying"
 msgstr "PDF · 입사 지원에 적합"
-
-#: src/features/application-detail/sections.tsx
-msgid "PDF · tap to preview"
-msgstr "PDF · 미리 보려면 탭하세요."
 
 #: src/features/check/parser.tsx
 msgid "PDF check canceled. Retry when ready."
@@ -9612,6 +9608,10 @@ msgstr "서버에서 제공: {connected}. 여기에 있는 모든 사람을 위�
 #: src/features/ai/web-access.tsx
 msgid "Provider"
 msgstr "제공자"
+
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
@@ -10312,6 +10312,7 @@ msgid "Reply copied"
 msgstr "답장이 복사되었습니다"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -10959,6 +10960,7 @@ msgstr ""
 msgid "Save offer"
 msgstr "오퍼 저장"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/share/files.ts
 msgid "Save or share file"
 msgstr "파일 저장 또는 공유"
@@ -11153,10 +11155,6 @@ msgstr "학교"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "스크리닝"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "사전 심사 면접"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12553,10 +12551,6 @@ msgstr "청록색"
 msgid "Technical"
 msgstr "기술"
 
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "기술면접"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
 msgstr "'{storyTitle}'에 대해 알려주세요. 당신의 역할은 무엇이고, 어떤 일을 했으며, 무엇이 바뀌었나요?"
@@ -13640,6 +13634,7 @@ msgstr "{suggestion}를 사용해 보세요"
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
@@ -14329,6 +14324,10 @@ msgstr "방문자"
 #: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "방문자는 PDF를 다운로드할 수 있습니다"
+
+#: src/features/share/web-page.tsx
+msgid "Visitors can download Word"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
@@ -15172,6 +15171,11 @@ msgstr "내 스토리"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "스토리를 불러올 수 없습니다."
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"

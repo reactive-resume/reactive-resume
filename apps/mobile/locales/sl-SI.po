@@ -2418,10 +2418,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "Vedenjski"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "Vedenjski intervju"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "Pod vašo minimalno osnovno plačo."
@@ -3389,7 +3385,7 @@ msgstr "Nadaljujte v brskalniku"
 
 #: app/(auth)/sign-in.tsx
 msgid "Continue in your browser"
-msgstr ""
+msgstr "Nadaljujte v brskalniku"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Conversation"
@@ -3827,6 +3823,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "Te datoteke ni bilo mogoče prebrati. Izberite datoteko .csv in poskusite znova."
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -4003,6 +4000,7 @@ msgstr "Koledarskega dogodka ni bilo mogoče deliti. Poskusite znova."
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Koledarske datoteke ni bilo mogoče deliti. Poskusite znova."
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Couldn't share the file. Try again."
 msgstr "Datoteke ni bilo mogoče deliti. Poskusite znova."
@@ -4493,6 +4491,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "Izbriši ponudnika"
 
@@ -4535,6 +4534,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "Želite izbrisati tega ponudnika?"
 
@@ -5599,6 +5599,7 @@ msgid "Follow-up note"
 msgstr "Nadaljnja opomba"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "Opomnik za nadaljnji stik"
 
@@ -6309,7 +6310,6 @@ msgstr "Samo vmesnik. Vsak življenjepis nastavi svoj jezik v Design."
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "Intervju"
 
@@ -6448,6 +6448,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "Njegov shranjeni ključ je izbrisan. Pogovori, ki ga uporabljajo, potrebujejo drugega ponudnika."
 
@@ -6585,6 +6586,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "Tukaj hranite zasebne zapiske o tem življenjepisu. Nihče drug jih ne vidi."
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -7181,6 +7183,7 @@ msgstr "Nalaganje vašega javnega naslova …"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
@@ -8283,10 +8286,6 @@ msgstr "Iz te datoteke ni bilo mogoče prebrati besedila."
 msgid "No timezone matches."
 msgstr "Noben časovni pas se ne ujema."
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "Ni prihajajočih intervjujev."
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "Delovne izkušnje niso prikazane"
@@ -8544,6 +8543,10 @@ msgstr "odijščina"
 msgid "Off"
 msgstr "Izključeno"
 
+#: src/features/share/web-page.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details."
 msgstr "Izklopljeno. Spodaj uredite podatke tega pisma. Z vklopom jih zamenjate s trenutnimi podatki iz življenjepisa."
@@ -8742,10 +8745,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "Na lokaciji"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
-msgstr "Razgovor na lokaciji"
 
 #: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8978,9 +8977,10 @@ msgid "Page"
 msgstr "Stran"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: 1
 #. placeholder {0}: index + 1
 #. placeholder {0}: item.page + 1
-#. placeholder {0}: page.index + 1
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9144,10 +9144,6 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "PDF · Best for applying"
 msgstr "PDF · Najboljši za prijave"
-
-#: src/features/application-detail/sections.tsx
-msgid "PDF · tap to preview"
-msgstr "PDF · tapnite za predogled"
 
 #: src/features/check/parser.tsx
 msgid "PDF check canceled. Retry when ready."
@@ -9612,6 +9608,10 @@ msgstr "Zagotovil vaš strežnik: {connected}. Iskanje in branje sta tu nastavlj
 #: src/features/ai/web-access.tsx
 msgid "Provider"
 msgstr "Ponudnik"
+
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
@@ -10312,6 +10312,7 @@ msgid "Reply copied"
 msgstr "Odgovor kopiran"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -10959,6 +10960,7 @@ msgstr ""
 msgid "Save offer"
 msgstr "Shrani ponudbo"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/share/files.ts
 msgid "Save or share file"
 msgstr "Shranite ali delite datoteko"
@@ -11153,10 +11155,6 @@ msgstr "Šola"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "Uvodni pogovor"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "Uvodni razgovor"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12553,10 +12551,6 @@ msgstr "Modrozelena"
 msgid "Technical"
 msgstr "Tehnični"
 
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "Tehnični intervju"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
 msgstr "Povej mi o »{storyTitle}«. Kakšna je bila vaša vloga, kaj ste počeli in kaj se je spremenilo?"
@@ -13640,6 +13634,7 @@ msgstr "Poskusite {suggestion}"
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
@@ -14329,6 +14324,10 @@ msgstr "Obiskovalci"
 #: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Obiskovalci lahko prenesejo PDF"
+
+#: src/features/share/web-page.tsx
+msgid "Visitors can download Word"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
@@ -15172,6 +15171,11 @@ msgstr "vaše zgodbe"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "Vaše zgodbe ni bilo mogoče naložiti."
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"

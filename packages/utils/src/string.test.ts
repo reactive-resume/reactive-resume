@@ -63,6 +63,14 @@ describe("filterOptions", () => {
 		expect(filterOptions(options, "d")).toEqual([]);
 	});
 
+	it("finds native language choices through hidden English and translated names", () => {
+		const french = { value: "fr-FR", label: "Français", keywords: ["French", "Französisch", "fr-FR"] };
+		for (const query of ["francais", "French", "franzosisch", "FR-FR"]) {
+			expect(filterOptions([french, ...options], query)).toContain(french);
+		}
+		expect(filterOptions([french], "Japanese")).toEqual([]);
+	});
+
 	it("matches independently of a Turkish runtime's default casing", () => {
 		const lower = String.prototype.toLocaleLowerCase;
 		const locale = vi.spyOn(String.prototype, "toLocaleLowerCase").mockImplementation(function (this: string) {

@@ -80,11 +80,19 @@ const fold = (text: string) =>
 		.replace(/[̀-ͯ]/g, "")
 		.toLowerCase();
 
-/** The options whose label contains the query, ignoring case and accents, or whose value is the whole query. */
-export function filterOptions<T extends { value: string; label: string }>(options: readonly T[], query: string): T[] {
+/** Match labels and hidden search keywords loosely, or a value exactly, ignoring case and accents. */
+export function filterOptions<T extends { value: string; label: string; keywords?: readonly string[] | undefined }>(
+	options: readonly T[],
+	query: string,
+): T[] {
 	const needle = fold(query.trim());
 	if (!needle) return [...options];
-	return options.filter((option) => fold(option.label).includes(needle) || fold(option.value) === needle);
+	return options.filter(
+		(option) =>
+			fold(option.label).includes(needle) ||
+			fold(option.value) === needle ||
+			option.keywords?.some((keyword) => fold(keyword).includes(needle)),
+	);
 }
 
 export function stripHtml(html: string | undefined): string {

@@ -19,11 +19,12 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { getLocaleOptions } from "@/features/locale/locale-options";
 import { useTheme } from "@/features/theme/provider";
 import { clearAccountData } from "@/libs/auth/clear-account-data";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
-import { changeLocale, localeMap, selectableLocales } from "@/libs/locale";
+import { changeLocale } from "@/libs/locale";
 import { isTheme } from "@/libs/theme";
 
 type Props = {
@@ -90,9 +91,9 @@ export function UserDropdownMenu({ children }: Props) {
 						</DropdownMenuSubTrigger>
 						<DropdownMenuSubContent className="max-h-[400px] overflow-y-auto">
 							<DropdownMenuRadioGroup value={i18n.locale} onValueChange={changeLocale}>
-								{selectableLocales.map((value) => (
+								{getLocaleOptions().map(({ value, label }) => (
 									<DropdownMenuRadioItem key={value} value={value}>
-										{i18n.t(localeMap[value])}
+										{label}
 									</DropdownMenuRadioItem>
 								))}
 							</DropdownMenuRadioGroup>

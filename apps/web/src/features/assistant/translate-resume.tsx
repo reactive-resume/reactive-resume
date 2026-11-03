@@ -15,12 +15,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
-import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { handToAssistant } from "./handoff";
+import { Combobox } from "@/components/ui/combobox";
+import { getLocaleOptions } from "@/features/locale/locale-options";
 import { savePendingChanges, useResumeStore } from "@/features/resume/builder/draft";
 import { getResumeErrorMessage } from "@/libs/error-message";
-import { localeMap, selectableLocales } from "@/libs/locale";
+import { localeMap } from "@/libs/locale";
 import { client, orpc } from "@/libs/orpc/client";
 
 type TranslateResumeProps = { resumeId: string; onClose: () => void };
@@ -86,20 +87,13 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 				<label htmlFor={languageId}>
 					<Trans>Language</Trans>
 				</label>
-				<NativeSelect
+				<Combobox
 					id={languageId}
 					value={locale}
 					disabled={busy}
-					onChange={(event) => setChosenLocale(event.target.value as Locale)}
-				>
-					{selectableLocales
-						.filter((code) => code !== sourceLocale)
-						.map((code) => (
-							<option key={code} value={code}>
-								{i18n._(localeMap[code])}
-							</option>
-						))}
-				</NativeSelect>
+					onValueChange={setChosenLocale}
+					options={getLocaleOptions().filter(({ value }) => value !== sourceLocale)}
+				/>
 				<DialogFooter>
 					<Button disabled={busy || !sourceLocale || locale === sourceLocale} onClick={() => void create()}>
 						<Trans>Create language copy</Trans>

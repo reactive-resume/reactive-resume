@@ -477,9 +477,11 @@ msgstr "{0} तास"
 msgid "{0} in {1} is {2} in your timezone ({preferredZone})."
 msgstr "{1} मधील {0} म्हणजे तुमच्या टाइमझोनमध्ये ({preferredZone}) {2}."
 
+#. placeholder {0}: interviewKindOf(item.interview.kind)?.label ?? item.interview.kind
 #. placeholder {0}: interviewKindOf(upcoming.kind)?.label ?? ""
 #. placeholder {0}: kind?.label ?? entry.kind
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/career/today.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "{0} interview"
 msgstr "{0} मुलाखत"
@@ -1581,6 +1583,11 @@ msgstr "\"{0}\" जोडा"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Add “{0}” as a new stage"
 msgstr "“{0}” हा नवीन टप्पा म्हणून जोडा"
+
+#. Button that adds a suggested tag. Variable is the tag text.
+#: src/components/input/chip-input.tsx
+msgid "Add {suggestion}"
+msgstr ""
 
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
@@ -4800,6 +4807,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "ती फाइल वाचता आली नाही. .csv फाइल निवडा आणि पुन्हा प्रयत्न करा."
 
+#: src/features/applications/components/attachment-preview.tsx
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
 msgstr "ती फाइल वाचता आली नाही. पुन्हा प्रयत्न करा."
@@ -5987,6 +5995,7 @@ msgstr "पूर्ण · {0}"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
@@ -6066,6 +6075,10 @@ msgstr "नमुना PDF डाउनलोड करा"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Download them"
 msgstr "ते डाउनलोड करा"
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Download Word"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
@@ -7114,6 +7127,7 @@ msgid "Follow-up note"
 msgstr "फॉलो-अप टीप"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "पाठपुरावा स्मरणपत्र"
 
@@ -8703,10 +8717,6 @@ msgstr ""
 msgid "Last used"
 msgstr "शेवटचे वापरले"
 
-#: src/features/career/today.tsx
-msgid "Later interviews"
-msgstr ""
-
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/offers.tsx
@@ -9222,6 +9232,7 @@ msgid "Loading workspace…"
 msgstr "वर्कस्पेस लोड करत आहे…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/attachment-preview.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
@@ -10791,6 +10802,10 @@ msgstr "ओडिया"
 msgid "Off"
 msgstr "बंद"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/resume/share/feedback-links.tsx
 msgid "Off makes the link read-only."
 msgstr ""
@@ -11335,6 +11350,7 @@ msgstr "{pageCount} पैकी पान {pageNumber}"
 msgid "Page {pageNumber} of {totalPages}"
 msgstr "{totalPages} पैकी पान {pageNumber}"
 
+#: src/features/applications/components/attachment-preview.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
 msgstr "पृष्ठ १"
@@ -12117,6 +12133,10 @@ msgstr "आपल्या सर्व्हरद्वारे प्रद�
 #: src/features/settings/ai/web-access.tsx
 msgid "Provider"
 msgstr "प्रोव्हायडर"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
@@ -12994,6 +13014,7 @@ msgid "Reply copied"
 msgstr "प्रत्युत्तर कॉपी केले"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -17808,6 +17829,10 @@ msgid "Visitors can download the PDF"
 msgstr "अभ्यागत PDF डाउनलोड करू शकतात"
 
 #: src/features/resume/share/share-panel.tsx
+msgid "Visitors can download Word"
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "अभ्यागत रेझ्युमे पाहण्यापूर्वी पासवर्ड टाकतात. तुमचा विश्वास असलेल्या लोकांसोबतच तो शेअर करा."
 
@@ -18957,6 +18982,12 @@ msgstr "तुमच्या कथा"
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "तुमची कथा लोड करता आली नाही."
+
+#: src/dialogs/resume/index.tsx
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/homepage/sections.tsx
 msgid "Your turn"

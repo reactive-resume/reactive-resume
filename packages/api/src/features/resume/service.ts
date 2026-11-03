@@ -178,6 +178,7 @@ const activeUnlockedResumeWhere = (id: string, userId: string) =>
 /** The fields a resume read or write returns to its owner. */
 /** The Share settings every read of a resume carries. */
 const shareColumns = {
+	allowWordDownload: schema.resume.allowWordDownload,
 	showInSearchEngines: schema.resume.showInSearchEngines,
 	hideContactDetails: schema.resume.hideContactDetails,
 	isPrimary: schema.resume.isPrimary,
@@ -443,6 +444,7 @@ function toSharedResumeResponse(
 		isPublic: boolean;
 		isLocked: boolean;
 		showDownloadButtons: boolean;
+		allowWordDownload: boolean;
 		showInSearchEngines: boolean;
 		hideContactDetails: boolean;
 		isPrimary: boolean;
@@ -461,6 +463,7 @@ function toSharedResumeResponse(
 		isPublic: resume.isPublic,
 		isLocked: resume.isLocked,
 		showDownloadButtons: resume.showDownloadButtons,
+		allowWordDownload: resume.allowWordDownload,
 		hasPassword,
 	};
 }
@@ -773,6 +776,7 @@ export const resumeService = {
 		data?: ResumeData;
 		isPublic?: boolean;
 		showDownloadButtons?: boolean;
+		allowWordDownload?: boolean;
 		showInSearchEngines?: boolean;
 		hideContactDetails?: boolean;
 		isPrimary?: boolean;
@@ -856,6 +860,7 @@ export const resumeService = {
 					...(normalizedData ? { data: normalizedData } : {}),
 					...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
 					...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
+					...(input.allowWordDownload !== undefined ? { allowWordDownload: input.allowWordDownload } : {}),
 					...(input.showInSearchEngines !== undefined ? { showInSearchEngines: input.showInSearchEngines } : {}),
 					...(input.hideContactDetails !== undefined ? { hideContactDetails: input.hideContactDetails } : {}),
 					...(input.isPrimary !== undefined ? { isPrimary: input.isPrimary } : {}),

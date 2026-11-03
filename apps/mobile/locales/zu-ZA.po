@@ -2412,10 +2412,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr ""
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr ""
@@ -3821,6 +3817,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr ""
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3997,6 +3994,7 @@ msgstr ""
 msgid "Couldn't share the calendar file. Try again."
 msgstr ""
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Couldn't share the file. Try again."
 msgstr ""
@@ -4487,6 +4485,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr ""
 
@@ -4529,6 +4528,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr ""
 
@@ -5593,6 +5593,7 @@ msgid "Follow-up note"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr ""
 
@@ -6303,7 +6304,6 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr ""
 
@@ -6442,6 +6442,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr ""
 
@@ -6579,6 +6580,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -7175,6 +7177,7 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
@@ -8277,10 +8280,6 @@ msgstr ""
 msgid "No timezone matches."
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr ""
@@ -8538,6 +8537,10 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
+#: src/features/share/web-page.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details."
 msgstr ""
@@ -8735,10 +8738,6 @@ msgstr ""
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
-msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
 msgstr ""
 
 #: src/features/applications/list-screen.tsx
@@ -8972,9 +8971,10 @@ msgid "Page"
 msgstr ""
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: 1
 #. placeholder {0}: index + 1
 #. placeholder {0}: item.page + 1
-#. placeholder {0}: page.index + 1
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9137,10 +9137,6 @@ msgstr ""
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "PDF · Best for applying"
-msgstr ""
-
-#: src/features/application-detail/sections.tsx
-msgid "PDF · tap to preview"
 msgstr ""
 
 #: src/features/check/parser.tsx
@@ -9605,6 +9601,10 @@ msgstr ""
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/web-access.tsx
 msgid "Provider"
+msgstr ""
+
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
 msgstr ""
 
 #: src/api/ai-consent.ts
@@ -10306,6 +10306,7 @@ msgid "Reply copied"
 msgstr ""
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -10953,6 +10954,7 @@ msgstr ""
 msgid "Save offer"
 msgstr ""
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/share/files.ts
 msgid "Save or share file"
 msgstr ""
@@ -11146,10 +11148,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
 msgid "Screening"
-msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
 msgstr ""
 
 #: app/_layout.tsx
@@ -12547,10 +12545,6 @@ msgstr ""
 msgid "Technical"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr ""
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
 msgstr ""
@@ -13634,6 +13628,7 @@ msgstr ""
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
@@ -14322,6 +14317,10 @@ msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
+msgstr ""
+
+#: src/features/share/web-page.tsx
+msgid "Visitors can download Word"
 msgstr ""
 
 #: src/features/share/web-page.tsx
@@ -15165,6 +15164,11 @@ msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
+msgstr ""
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
 msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx

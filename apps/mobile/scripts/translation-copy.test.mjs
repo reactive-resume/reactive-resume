@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
+import { filterOptions } from "@reactive-resume/utils/string";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 const serverRequire = createRequire(`${root}/apps/server/package.json`);
@@ -9,7 +10,7 @@ const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const jsx = (type, props) => ({ type, props });
 const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 
-function fixture(locale = "en-US") {
+function fixture(locale = "en-US", uiLocale = "en-US") {
 	let state = [];
 	let cursor = 0;
 	let scope = "account-a";
@@ -39,7 +40,19 @@ function fixture(locale = "en-US") {
 			},
 		},
 		"react-native": { View: "View" },
-		"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { _: (descriptor) => descriptor.message } }) },
+		"@lingui/react/macro": {
+			useLingui: () => ({
+				t: tag,
+				i18n: {
+					_: (descriptor) =>
+						uiLocale === "de-DE"
+							? ({ French: "Französisch", English: "Englisch", German: "Deutsch" }[descriptor.message] ??
+								descriptor.message)
+							: descriptor.message,
+				},
+			}),
+		},
+		"@lingui/core/macro": { msg: (parts, ...values) => ({ message: tag(parts, ...values) }) },
 		"expo-router": { useRouter: () => ({ replace: (href) => calls.push(["navigate", href]) }) },
 		"@/api/client": {
 			client: {
@@ -62,13 +75,6 @@ function fixture(locale = "en-US") {
 					return true;
 				},
 			}),
-		},
-		"@/features/settings/locale-names": {
-			localeMap: {
-				"en-US": { message: "English" },
-				"de-DE": { message: "German" },
-				"fr-FR": { message: "French" },
-			},
 		},
 		"@/features/share/document": {
 			flushResume: async (id) => {
@@ -171,6 +177,17 @@ test("native language copy excludes the source locale and rechecks the saved loc
 	f.release();
 	await new Promise((resolve) => setImmediate(resolve));
 	assert.deepEqual(f.calls, [["flush", "source"]]);
+});
+
+test("native translation picker shows the endonym and retains hidden search names", () => {
+	const f = fixture("en-US", "de-DE");
+	const picker = f.nodes(f.render()).find((node) => node.type === "SelectSheet").props;
+	const french = picker.options.find((option) => option.value === "fr-FR");
+	assert.equal(french.label, "Français");
+	assert.equal(french.description, "Französisch");
+	for (const query of ["Français", "French", "Französisch", "fr-FR"]) {
+		assert.deepEqual(filterOptions(picker.options, query), [french]);
+	}
 });
 
 test("native language selection follows a late-loaded source and retains only compatible user choices", () => {

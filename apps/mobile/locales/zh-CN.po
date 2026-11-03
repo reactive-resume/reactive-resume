@@ -2418,10 +2418,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "行为面试"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "行为面试"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "低于您的最低基本工资。"
@@ -3389,7 +3385,7 @@ msgstr "在浏览器中继续"
 
 #: app/(auth)/sign-in.tsx
 msgid "Continue in your browser"
-msgstr ""
+msgstr "在浏览器中继续"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Conversation"
@@ -3827,6 +3823,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "无法读取该文件。请选择 .csv 文件后重试。"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -4003,6 +4000,7 @@ msgstr "无法共享日历活动。请重试。"
 msgid "Couldn't share the calendar file. Try again."
 msgstr "无法共享日历文件。请重试。"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Couldn't share the file. Try again."
 msgstr "无法分享文件，请重试。"
@@ -4493,6 +4491,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "删除提供商"
 
@@ -4535,6 +4534,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "删除该提供商？"
 
@@ -5599,6 +5599,7 @@ msgid "Follow-up note"
 msgstr "跟进备注"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "跟进提醒"
 
@@ -6309,7 +6310,6 @@ msgstr "仅接口。每一份简历都有自己的设计语言。"
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "面试"
 
@@ -6448,6 +6448,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "其保存的密钥被删除。使用它的对话需要另一个提供者。"
 
@@ -6585,6 +6586,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "在这里记录关于这份简历的私人备注。其他人看不到。"
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -7181,6 +7183,7 @@ msgstr "正在加载您的公共地址…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
@@ -8283,10 +8286,6 @@ msgstr "无法从该文件中读取任何文本。"
 msgid "No timezone matches."
 msgstr "没有匹配的时区。"
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "没有即将到来的面试。"
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "没有工作经验显示"
@@ -8544,6 +8543,10 @@ msgstr "奥里亚语"
 msgid "Off"
 msgstr "离开"
 
+#: src/features/share/web-page.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details."
 msgstr "已关闭。在下方编辑这封求职信的信息。开启后，这些信息将被替换为简历中的当前信息。"
@@ -8741,10 +8744,6 @@ msgstr ""
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
-msgstr "现场面试"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
 msgstr "现场面试"
 
 #: src/features/applications/list-screen.tsx
@@ -8978,9 +8977,10 @@ msgid "Page"
 msgstr "页面"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: 1
 #. placeholder {0}: index + 1
 #. placeholder {0}: item.page + 1
-#. placeholder {0}: page.index + 1
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9144,10 +9144,6 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "PDF · Best for applying"
 msgstr "PDF · 最适合申请"
-
-#: src/features/application-detail/sections.tsx
-msgid "PDF · tap to preview"
-msgstr "PDF · 点击预览"
 
 #: src/features/check/parser.tsx
 msgid "PDF check canceled. Retry when ready."
@@ -9612,6 +9608,10 @@ msgstr "由您的服务器提供：{connected}。这里为大家设置了搜索�
 #: src/features/ai/web-access.tsx
 msgid "Provider"
 msgstr "服务提供商"
+
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
@@ -10312,6 +10312,7 @@ msgid "Reply copied"
 msgstr "回复已复制"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -10959,6 +10960,7 @@ msgstr ""
 msgid "Save offer"
 msgstr "保存录用通知"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/share/files.ts
 msgid "Save or share file"
 msgstr "保存或共享文件"
@@ -11153,10 +11155,6 @@ msgstr "学校"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "初筛"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "筛选面试"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12553,10 +12551,6 @@ msgstr "蓝绿色"
 msgid "Technical"
 msgstr "技术面试"
 
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "技术面试"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
 msgstr "告诉我有关“{storyTitle}”的信息。您的角色是什么，您做了什么，以及发生了什么变化？"
@@ -13640,6 +13634,7 @@ msgstr "尝试{suggestion}"
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
@@ -14329,6 +14324,10 @@ msgstr "访客"
 #: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "访客可以下载PDF"
+
+#: src/features/share/web-page.tsx
+msgid "Visitors can download Word"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
@@ -15172,6 +15171,11 @@ msgstr "您的故事"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "无法加载您的故事。"
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"

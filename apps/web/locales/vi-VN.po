@@ -477,9 +477,11 @@ msgstr "{0} giờ"
 msgid "{0} in {1} is {2} in your timezone ({preferredZone})."
 msgstr "{0} tại {1} là {2} theo múi giờ của bạn ({preferredZone})."
 
+#. placeholder {0}: interviewKindOf(item.interview.kind)?.label ?? item.interview.kind
 #. placeholder {0}: interviewKindOf(upcoming.kind)?.label ?? ""
 #. placeholder {0}: kind?.label ?? entry.kind
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/career/today.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "{0} interview"
 msgstr "Phỏng vấn {0}"
@@ -1581,6 +1583,11 @@ msgstr "Thêm “{0}”"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Add “{0}” as a new stage"
 msgstr "Thêm “{0}” làm giai đoạn mới"
+
+#. Button that adds a suggested tag. Variable is the tag text.
+#: src/components/input/chip-input.tsx
+msgid "Add {suggestion}"
+msgstr ""
 
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
@@ -4800,6 +4807,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "Không thể đọc tệp đó. Hãy chọn tệp .csv và thử lại."
 
+#: src/features/applications/components/attachment-preview.tsx
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
 msgstr "Không thể đọc tệp đó. Hãy thử lại."
@@ -5987,6 +5995,7 @@ msgstr "Xong · {0}"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
@@ -6066,6 +6075,10 @@ msgstr "Tải xuống bản PDF mẫu"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Download them"
 msgstr "Tải chúng xuống"
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Download Word"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
@@ -7114,6 +7127,7 @@ msgid "Follow-up note"
 msgstr "Ghi chú theo dõi"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "Lời nhắc theo dõi"
 
@@ -8703,10 +8717,6 @@ msgstr ""
 msgid "Last used"
 msgstr "Lần sử dụng cuối cùng"
 
-#: src/features/career/today.tsx
-msgid "Later interviews"
-msgstr ""
-
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/offers.tsx
@@ -9222,6 +9232,7 @@ msgid "Loading workspace…"
 msgstr "Đang tải không gian làm việc…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/attachment-preview.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
@@ -10791,6 +10802,10 @@ msgstr "Odia"
 msgid "Off"
 msgstr "Tắt"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/resume/share/feedback-links.tsx
 msgid "Off makes the link read-only."
 msgstr ""
@@ -11335,6 +11350,7 @@ msgstr "Trang {pageNumber} của {pageCount}"
 msgid "Page {pageNumber} of {totalPages}"
 msgstr "Trang {pageNumber} của {totalPages}"
 
+#: src/features/applications/components/attachment-preview.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
 msgstr "Trang 1"
@@ -12117,6 +12133,10 @@ msgstr "Được cung cấp bởi máy chủ của bạn: {connectedProvider}."
 #: src/features/settings/ai/web-access.tsx
 msgid "Provider"
 msgstr "Nhà cung cấp"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
@@ -12994,6 +13014,7 @@ msgid "Reply copied"
 msgstr "Đã sao chép thư trả lời"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -17808,6 +17829,10 @@ msgid "Visitors can download the PDF"
 msgstr "Khách truy cập có thể tải xuống PDF"
 
 #: src/features/resume/share/share-panel.tsx
+msgid "Visitors can download Word"
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Khách truy cập cần nhập mật khẩu trước khi xem sơ yếu lý lịch. Chỉ chia sẻ mật khẩu với những người bạn tin tưởng."
 
@@ -18957,6 +18982,12 @@ msgstr "các câu chuyện của bạn"
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "Không thể tải câu chuyện của bạn."
+
+#: src/dialogs/resume/index.tsx
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/homepage/sections.tsx
 msgid "Your turn"

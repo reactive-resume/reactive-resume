@@ -2418,10 +2418,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "Davranış"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "Davranış müsahibəsi"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "Minimum maaşınızdan aşağı."
@@ -3389,7 +3385,7 @@ msgstr "Brauzerdə davam edin"
 
 #: app/(auth)/sign-in.tsx
 msgid "Continue in your browser"
-msgstr ""
+msgstr "Brauzerinizdə davam edin"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Conversation"
@@ -3827,6 +3823,7 @@ msgstr ""
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "Həmin faylı oxumaq mümkün olmadı. .csv faylı seçin və yenidən cəhd edin."
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -4003,6 +4000,7 @@ msgstr "Təqvim tədbirini paylaşmaq mümkün olmadı. Yenidən cəhd edin."
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Təqvim faylını paylaşmaq mümkün olmadı. Yenidən cəhd edin."
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Couldn't share the file. Try again."
 msgstr "Faylı paylaşmaq mümkün olmadı. Yenidən cəhd edin."
@@ -4493,6 +4491,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "Provayderi silin"
 
@@ -4535,6 +4534,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "Bu provayder silinsin?"
 
@@ -5599,6 +5599,7 @@ msgid "Follow-up note"
 msgstr "Əlavə qeyd"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "İzləmə xatırlatması"
 
@@ -6309,7 +6310,6 @@ msgstr "Yalnız interfeys. Hər bir rezyume Dizaynda öz dilini təyin edir."
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "Müsahibə"
 
@@ -6448,6 +6448,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "Onun saxlanmış açarı silinir. Onu istifadə edən söhbətlər üçün başqa provayder lazımdır."
 
@@ -6585,6 +6586,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "Bu CV haqqında şəxsi qeydlərinizi burada saxlayın. Onları başqa heç kim görə bilməz."
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -7181,6 +7183,7 @@ msgstr "Ümumi ünvanınız yüklənir..."
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
@@ -8283,10 +8286,6 @@ msgstr "Bu fayldan heç bir mətn oxuna bilmədi."
 msgid "No timezone matches."
 msgstr "Uyğun saat qurşağı yoxdur."
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "Qarşıdan gələn müsahibələr yoxdur."
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "İş təcrübəsi göstərmir"
@@ -8544,6 +8543,10 @@ msgstr "Odiya"
 msgid "Off"
 msgstr "Söndür"
 
+#: src/features/share/web-page.tsx
+msgid "Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details."
 msgstr "Deaktivdir. Bu məktubun məlumatlarını aşağıda redaktə edin. Bunu aktiv etdikdə onlar CV-nin cari məlumatları ilə əvəz olunur."
@@ -8742,10 +8745,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "Ofisdə"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
-msgstr "Yerində müsahibə"
 
 #: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8978,9 +8977,10 @@ msgid "Page"
 msgstr "Səhifə"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: 1
 #. placeholder {0}: index + 1
 #. placeholder {0}: item.page + 1
-#. placeholder {0}: page.index + 1
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/entry-sheet.tsx
@@ -9144,10 +9144,6 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "PDF · Best for applying"
 msgstr "PDF · Müraciət üçün ən yaxşısı"
-
-#: src/features/application-detail/sections.tsx
-msgid "PDF · tap to preview"
-msgstr "PDF · önizləmə üçün toxunun"
 
 #: src/features/check/parser.tsx
 msgid "PDF check canceled. Retry when ready."
@@ -9612,6 +9608,10 @@ msgstr "Serveriniz tərəfindən təmin edilmişdir: {connected}. Axtarış və 
 #: src/features/ai/web-access.tsx
 msgid "Provider"
 msgstr "Provayder"
+
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
@@ -10312,6 +10312,7 @@ msgid "Reply copied"
 msgstr "Cavab kopyalandı"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -10959,6 +10960,7 @@ msgstr ""
 msgid "Save offer"
 msgstr "İş təklifini yadda saxla"
 
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/share/files.ts
 msgid "Save or share file"
 msgstr "Faylı saxla və ya paylaş"
@@ -11153,10 +11155,6 @@ msgstr "Məktəb"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "İlkin seçim"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "Skrininq müsahibəsi"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12553,10 +12551,6 @@ msgstr "Mavi-yaşıl"
 msgid "Technical"
 msgstr "Texniki"
 
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "Texniki müsahibə"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
 msgstr "Mənə “{storyTitle}” haqqında məlumat verin. Sizin rolunuz nə idi, nə etdiniz və nə dəyişdi?"
@@ -13640,6 +13634,7 @@ msgstr "{suggestion} cəhd edin"
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
+#: src/features/application-detail/attachment-preview.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
@@ -14329,6 +14324,10 @@ msgstr "Ziyarətçilər"
 #: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Ziyarətçilər PDF yükləyə bilərlər"
+
+#: src/features/share/web-page.tsx
+msgid "Visitors can download Word"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
@@ -15172,6 +15171,11 @@ msgstr "hekayələriniz"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "Hekayənizi yükləmək mümkün olmadı."
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"

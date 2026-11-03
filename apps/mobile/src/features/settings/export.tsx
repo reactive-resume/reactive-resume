@@ -21,7 +21,7 @@ export function ExportDataRow() {
 			const request = new AbortController();
 			exportRequest.current = request;
 			try {
-				clearAccountExportCache();
+				clearAccountExportCache("data");
 				if (!(await Sharing.isAvailableAsync())) throw new Error("Sharing unavailable");
 				const data = await client.auth.exportData(
 					{ includeUploads: true },
