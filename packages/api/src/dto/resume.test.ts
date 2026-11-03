@@ -62,6 +62,17 @@ describe("resume DTO output validation", () => {
 		});
 	});
 
+	it("accepts an explicit Word opt-in without adding one to legacy writes", () => {
+		expect(resumeDto.update.input.parse({ id: "r1", allowWordDownload: true })).toEqual({
+			id: "r1",
+			allowWordDownload: true,
+		});
+		expect(resumeDto.update.input.parse({ id: "r1", showDownloadButtons: false })).not.toHaveProperty(
+			"allowWordDownload",
+		);
+		expect(() => resumeDto.update.input.parse({ id: "r1", allowWordDownload: "true" })).toThrow();
+	});
+
 	it("does not fail output validation on existing legacy records with long slug", () => {
 		const legacyRecord = {
 			id: "r1",

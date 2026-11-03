@@ -19,6 +19,7 @@ type Device = "desktop" | "phone";
 type PreviewSettings = {
 	hideContactDetails: boolean;
 	showDownloadButtons: boolean;
+	allowWordDownload: boolean;
 };
 
 /** The page a visitor gets, from the draft: same renderer as the server, contact details hidden as they'd be. */
@@ -34,6 +35,7 @@ async function renderPreview(data: ResumeData, settings: PreviewSettings) {
 		messages: webPageMessages(visible.metadata.page.locale),
 		// The preview is inert (no scripts, no requests); these only decide which controls show.
 		downloadUrl: settings.showDownloadButtons ? "#" : undefined,
+		wordDownloadUrl: settings.allowWordDownload ? "#" : undefined,
 		creditUrl: data.metadata.web?.showCredit === false ? undefined : window.location.origin,
 	});
 }
@@ -50,6 +52,7 @@ export function WebPagePreview() {
 
 	const hideContactDetails = resume.hideContactDetails ?? false;
 	const showDownloadButtons = resume.showDownloadButtons !== false;
+	const allowWordDownload = resume.allowWordDownload === true;
 
 	// Typing renders once it pauses, not on every keystroke.
 	const [debouncedData] = useDebounceValue(data, 200);
@@ -57,7 +60,7 @@ export function WebPagePreview() {
 	useEffect(() => {
 		if (!debouncedData) return;
 		let current = true;
-		void renderPreview(debouncedData, { hideContactDetails, showDownloadButtons })
+		void renderPreview(debouncedData, { hideContactDetails, showDownloadButtons, allowWordDownload })
 			.then((html) => {
 				if (current) setDocument(html);
 			})
@@ -65,7 +68,7 @@ export function WebPagePreview() {
 		return () => {
 			current = false;
 		};
-	}, [debouncedData, hideContactDetails, showDownloadButtons]);
+	}, [debouncedData, hideContactDetails, showDownloadButtons, allowWordDownload]);
 
 	return (
 		<div className="flex h-full min-h-0 flex-col items-center gap-3 bg-sunken p-4">
