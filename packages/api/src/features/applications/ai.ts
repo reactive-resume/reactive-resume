@@ -541,7 +541,12 @@ export const aiRouter = {
 		),
 
 	proposeEvidence: protectedProcedure
-		.route({ method: "POST", path: "/applications/{id}/ai/evidence-proposal", ...reserved })
+		.route({
+			method: "POST",
+			path: "/applications/{id}/ai/evidence-proposal",
+			...reserved,
+			summary: "Propose reviewed resume edits from selected application evidence",
+		})
 		.input(z.object({ id: z.string(), factId: z.string() }))
 		.use(aiRequestRateLimit)
 		.output(applicationDto.tailorResume.output)

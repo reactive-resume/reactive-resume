@@ -190,7 +190,7 @@ const handoffOutputSchema = z.object({ url: z.url(), action: z.string(), require
 /** Where each settings page or group lives now. `authentication` is the old name for `security`, kept for clients. */
 const ACCOUNT_SETTINGS_PATHS = {
 	account: "/dashboard/settings/account",
-	profile: "/dashboard/settings/profile",
+	profile: "/dashboard/settings/account",
 	security: "/dashboard/settings/account#security",
 	authentication: "/dashboard/settings/account#security",
 	preferences: "/dashboard/settings/preferences",
@@ -202,7 +202,7 @@ const accountToolMeta = {
 	title: "Open account settings",
 	description:
 		"Open a settings page or group: account, profile, security, preferences, ai (AI providers and web access), api-keys or connected-applications. Authentication changes require the user's browser interaction.",
-	inputSchema: z.object({
+	inputSchema: z.strictObject({
 		page: z
 			.enum(
 				Object.keys(ACCOUNT_SETTINGS_PATHS) as [
