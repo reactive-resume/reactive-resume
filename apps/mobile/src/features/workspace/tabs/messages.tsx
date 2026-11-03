@@ -9,8 +9,9 @@ import { ORPCError } from "@orpc/client";
 import { useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 import { View } from "react-native";
+import { replyPlaceholders } from "@reactive-resume/schema/applications/reply";
 import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
 import { offerTermKeys } from "@reactive-resume/schema/career-offer";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
@@ -30,7 +31,7 @@ import {
 import { WorkspaceScreen } from "../shell";
 import { createPendingRegistry, dispatchForOrigin } from "../state";
 import { client, orpc } from "@/api/client";
-import { useSession } from "@/auth/session";
+import { getAccountScope, useSession } from "@/auth/session";
 import { getDraftScope } from "@/draft";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { useUserTime } from "@/features/application-detail/hooks";
@@ -41,6 +42,7 @@ import { stageScope, useInvalidateApplications } from "@/features/applications/q
 import { listedApplication, offerHintFor, useOfferHints } from "@/features/applications/stage-actions";
 import { formatBonus, formatMoney } from "@/features/career/offer-compare";
 import { OfferEntry } from "@/features/career/offer-entry";
+import { useReminders } from "@/features/reminders";
 import { Banner, Button, Icon, Sheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
@@ -178,18 +180,118 @@ type ReplyCardProps = { reply: ReplyItem; application: WorkspaceTabProps["applic
 function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const { t, i18n } = useLingui();
 	const { colors, space } = useTheme();
+	const [scope] = useState(getAccountScope);
+	const invalidate = useInvalidateApplications();
+	const copying = useRef(false);
+	const [logging, setLogging] = useState(false);
+	const reminders = useReminders(application.id);
+	const reminderCancellation = useRef({
+		id: application.id,
+		cancel: reminders.captureTurnOff({ kind: "follow-up", applicationId: application.id }),
+	});
+	const clearFollowUpReminder = async (cancel: () => Promise<void>, logged = false): Promise<boolean> => {
+		if (!scope || scope !== getAccountScope()) return false;
+		try {
+			await cancel();
+			return scope === getAccountScope();
+		} catch {
+			if (scope === getAccountScope())
+				showToast({
+					message: [
+						...(logged ? [t`Reply copied and logged as replied`] : []),
+						t`Couldn't clear the follow-up reminder. It may still notify you.`,
+					].join(". "),
+					action: { label: t`Retry`, onPress: () => void clearFollowUpReminder(cancel, logged) },
+				});
+			return false;
+		}
+	};
+	const clearReminder = useEffectEvent(async (signal: AbortSignal) => {
+		if (application.followUpAt || reminderCancellation.current.id !== application.id)
+			reminderCancellation.current = {
+				id: application.id,
+				cancel: reminders.captureTurnOff({ kind: "follow-up", applicationId: application.id }),
+			};
+		if (application.followUpAt || !scope || scope !== getAccountScope()) return;
+		const cancel = reminderCancellation.current.cancel;
+		try {
+			const fresh = await client.applications.getById({ id: application.id }, { signal, context: { scope } });
+			if (!signal.aborted && scope === getAccountScope() && !fresh.followUpAt) await clearFollowUpReminder(cancel);
+		} catch {
+			// A failed refresh cannot confirm that a cached follow-up was cleared.
+		}
+	});
+	useEffect(() => {
+		const controller = new AbortController();
+		void clearReminder(controller.signal);
+		return () => controller.abort();
+	}, [application.id, application.followUpAt, scope]);
 	const generate = useGenerate(application.id);
 	const provider = useHasAIProvider().defaultProvider;
 	const draft = useDraft(`reply:${reply.id}`, reply.data.reply);
 	const text = readOnly ? reply.data.reply : draft.value;
+	const placeholders = replyPlaceholders(text);
 	// The employer's language is the default; this is the explicit way back to the user's interface language.
 	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
 	const rewrite = () =>
 		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
-	const copy = async () => {
-		await Clipboard.setStringAsync(text);
-		showToast({ message: t`Reply copied` });
+	const copy = async (log = false) => {
+		if (
+			(log && (!application.replyVersion || !text.trim())) ||
+			copying.current ||
+			!scope ||
+			scope !== getAccountScope()
+		)
+			return;
+		copying.current = true;
+		const cancel = reminders.captureTurnOff({ kind: "follow-up", applicationId: application.id });
+		if (log) reminderCancellation.current = { id: application.id, cancel };
+		setLogging(log);
+		let copied = false;
+		try {
+			if (!(await Clipboard.setStringAsync(text))) throw new Error("Clipboard unavailable");
+			copied = true;
+			if (scope !== getAccountScope()) return;
+			if (log && application.replyVersion) {
+				await client.applications.logReply(
+					{ id: application.id, expectedVersion: application.replyVersion },
+					{ context: { scope } },
+				);
+				if (scope !== getAccountScope()) {
+					// The confirmed write owns this captured notification, but no longer owns the account's UI.
+					await cancel().catch(() => undefined);
+					return;
+				}
+				const cleared = await clearFollowUpReminder(cancel, true);
+				if (scope !== getAccountScope()) return;
+				// Logging is confirmed; query refresh failure must not change its receipt or replace a reminder warning.
+				await invalidate().catch(() => undefined);
+				if (!cleared || scope !== getAccountScope()) return;
+			}
+			showToast({ message: log ? t`Reply copied and logged as replied` : t`Reply copied` });
+		} catch (error) {
+			if (scope !== getAccountScope()) return;
+			if (copied) void invalidate();
+			if (copied && error instanceof ORPCError && error.code === "CONFLICT") {
+				showToast({
+					message: t`Reply copied. Nothing was logged because the application changed. Review it again before logging.`,
+				});
+				return;
+			}
+			if (copied && error instanceof ORPCError && error.code === "BAD_REQUEST") {
+				showToast({ message: t`Reply copied. Nothing was logged. Review the application before logging again.` });
+				return;
+			}
+			showToast({
+				message: copied
+					? t`Reply copied. Logging wasn't confirmed. Check the timeline before trying again.`
+					: t`Couldn't copy the reply. Nothing was logged. Try again.`,
+			});
+		} finally {
+			copying.current = false;
+			setLogging(false);
+		}
 	};
 
 	return (
@@ -215,8 +317,28 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 						maxLength={4000}
 						onChangeText={draft.setValue}
 					/>
+					{placeholders.length > 0 ? (
+						<View accessibilityLiveRegion="polite" style={{ gap: space.s1 }}>
+							<Text color="warnText">{t`Replace these placeholders before sending:`}</Text>
+							{placeholders.map((placeholder) => (
+								<Text key={placeholder} color="warnText" style={{ backgroundColor: colors.warnSoft }}>
+									{placeholder}
+								</Text>
+							))}
+						</View>
+					) : null}
 					<Actions>
 						<Button variant="secondary" size="sm" icon="copy" label={t`Copy reply`} onPress={() => void copy()} />
+						{!readOnly && application.status !== "saved" && application.status !== "closed" ? (
+							<Button
+								variant="secondary"
+								size="sm"
+								label={t`Copy and log as replied`}
+								disabled={!application.replyVersion || !text.trim()}
+								loading={logging}
+								onPress={() => void copy(true)}
+							/>
+						) : null}
 						{!readOnly && provider ? (
 							<Button
 								variant="ghost"
@@ -231,6 +353,14 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 					<Text variant="caption" color="ink3">
 						{t`You send it from your own email.`}
 					</Text>
+					{!readOnly && application.status !== "saved" && application.status !== "closed" ? (
+						<Text variant="caption" color="ink3">
+							{t`Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders.`}{" "}
+							{!application.replyVersion
+								? t`Update the server to enable reply logging. Copy reply is still available.`
+								: null}
+						</Text>
+					) : null}
 				</>
 			) : null}
 		</Block>
