@@ -90,6 +90,7 @@ export const authService = {
 				data: schema.resume.data,
 				isPublic: schema.resume.isPublic,
 				showDownloadButtons: schema.resume.showDownloadButtons,
+				allowWordDownload: schema.resume.allowWordDownload,
 				showInSearchEngines: schema.resume.showInSearchEngines,
 				hideContactDetails: schema.resume.hideContactDetails,
 				isPrimary: schema.resume.isPrimary,

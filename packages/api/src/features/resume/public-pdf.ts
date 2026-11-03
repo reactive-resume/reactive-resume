@@ -1,35 +1,19 @@
 import type { StorageService } from "../storage";
+import type { PublicResumeDownloadInput } from "./public-download";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { createHash } from "node:crypto";
-import { ORPCError } from "@orpc/server";
 import { and, eq, isNull } from "drizzle-orm";
-import { isbot } from "isbot";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 import { getDefaultFileName } from "@reactive-resume/utils/file";
 import { matchesIfNoneMatch } from "@reactive-resume/utils/http";
 import { lockUser } from "../documents/ownership";
-import {
-	assertCanView,
-	isOwner,
-	publicResumeData,
-	requiresPassword,
-	resolveViewer,
-	shouldCountForStatistics,
-} from "./access-policy";
+import { publicResumeData } from "./access-policy";
+import { authorizePublicResumeDownload } from "./public-download";
 import { publicRenderRateLimiter } from "./public-render-rate-limit";
-import { findResume } from "./slugs";
-import { countVisit } from "./view-dedup";
 
-export type CreatePublicResumePdfInput = {
-	username: string;
-	slug: string;
-	requestHeaders: Headers;
-	trustedClient: string;
-	/** A visitor's download (the web page's Download PDF), counted once an hour per visitor. */
-	countDownload?: boolean;
-};
+export type CreatePublicResumePdfInput = PublicResumeDownloadInput;
 
 // A cached file is re-rendered after a day, so template, font and engine fixes reach it without an edit.
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
@@ -45,36 +29,7 @@ export type PublicResumePdf = { body: File | null; filename: string; etag: strin
  * cached copy is current.
  */
 export async function createPublicResumePdf(input: CreatePublicResumePdfInput): Promise<PublicResumePdf> {
-	const resume = await findResume(
-		{ username: input.username, slug: input.slug },
-		{
-			id: schema.resume.id,
-			userId: schema.resume.userId,
-			data: schema.resume.data,
-			isPublic: schema.resume.isPublic,
-			hideContactDetails: schema.resume.hideContactDetails,
-			showDownloadButtons: schema.resume.showDownloadButtons,
-			passwordHash: schema.resume.password,
-		},
-	);
-	if (!resume) throw new ORPCError("NOT_FOUND");
-
-	const viewer = await resolveViewer(input.requestHeaders);
-	assertCanView(resume, viewer);
-	// With downloads off, the PDF is the owner's alone; the web page is what everyone else sees.
-	if (!resume.showDownloadButtons && !isOwner(resume, viewer)) throw new ORPCError("NOT_FOUND");
-	if (
-		requiresPassword(resume, viewer) &&
-		!(await import("./access")).hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash)
-	) {
-		throw new ORPCError("NEED_PASSWORD", {
-			status: 401,
-			data: { username: input.username, slug: input.slug },
-		});
-	}
-
-	if (input.countDownload && shouldCountForStatistics(resume, viewer) && !isbot(input.requestHeaders.get("user-agent")))
-		await countVisit({ kind: "download", resumeId: resume.id, trustedClient: input.trustedClient });
+	const resume = await authorizePublicResumeDownload(input, "pdf");
 
 	// Every visitor gets the anonymous view, so one cached file serves them all (hidden content never prints anyway).
 	const data = publicResumeData(resume);

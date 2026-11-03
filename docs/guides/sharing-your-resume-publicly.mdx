@@ -45,7 +45,7 @@ The **Share** mode publishes your resume as a web page that anyone you send the 
 
 - **On a computer**, the resume sits on the page like a sheet of paper, in your template.
 - **On a phone**, the same design narrows to the screen: your header first, then the main column, then the sidebar.
-- **Download PDF** and **Share** stay at the bottom of the screen. Download PDF only shows when visitors can download it, and saves the file under your full name, such as `李明-Resume.pdf`.
+- **Download PDF** and **Share** stay at the bottom of the screen. When you also allow Word, **Download** opens the available choices: **Download PDF** and **Download Word**. Each choice only appears when you allow that format. Files use your full name, such as `Morgan-Vale-Resume.docx`; Word has a simplified, editable layout.
 - **With a password**, visitors first see **This resume is password-protected**, enter the password you shared and select **Unlock**. The page stays unlocked for about 10 minutes.
 - **When the page isn't published**, or the resume is in Trash, visitors see **This resume isn't shared right now.** with a link to Reactive Resume's home. The page gives nothing away about you.
 
@@ -90,7 +90,7 @@ If another of your resumes already uses that address, the message names it and s
 
 ## Decide who can find it and what they see
 
-Everything under **Privacy** applies to the web page, its PDF, link previews and search results.
+Everything under **Privacy** applies to the web page, its public downloads, link previews and search results.
 
 | Setting                           | What it does                                                                                                                                                                                                |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -98,11 +98,26 @@ Everything under **Privacy** applies to the web page, its PDF, link previews and
 | **Hide contact details**          | Leaves out your email, phone, location and other header details, and references' phone numbers.                                                                                                             |
 | **Show in search engines**        | Off by default. Turn it on to let search engines such as Google list your page. It can take weeks to appear, and weeks to disappear after you turn it off. Not available while the resume needs a password. |
 | **Visitors can download the PDF** | On by default. Turn it off and the page has no Download PDF button.                                                                                                                                         |
+| **Visitors can download Word**    | Off by default. Turn it on to offer an editable Word file containing the same visible content as the page. This is independent of PDF downloads.                                                            |
 
 <Frame caption="This example hides contact details, keeps search indexing off and allows PDF downloads.">
   <img
     src="/images/guides/sharing-your-resume-publicly/share-privacy.png"
     alt="Privacy controls with Require a password off, Hide contact details on, Show in search engines off and Visitors can download the PDF on"
+  />
+</Frame>
+
+<Frame caption="Word downloads are an explicit opt-in on both the website and mobile apps. This capture uses a fictional resume on a local test installation.">
+  <img
+    src="/images/guides/sharing-your-resume-publicly/word-privacy.png"
+    alt="Privacy settings with Visitors can download the PDF and Visitors can download Word enabled, and a note that Word shares the page's visible content with simplified layout"
+  />
+</Frame>
+
+<Frame caption="After entering the resume's password, visitors can choose the allowed format. This fictional example allows Word and keeps PDF downloads off.">
+  <img
+    src="/images/guides/sharing-your-resume-publicly/public-word.png"
+    alt="Morgan Vale's public resume with an open Download choice offering Download Word and a separate Share button"
   />
 </Frame>
 
@@ -115,7 +130,7 @@ These controls apply to what visitors receive. **Hide contact details** removes 
 location and custom header fields, plus references' phone numbers. It doesn't find personal details you've typed
 inside summaries, descriptions or other free text. Review the web page before publishing it.
 
-Turning off PDF downloads also blocks visitors from fetching the public PDF directly. It doesn't prevent copying,
+Turning off either download format also blocks visitors from fetching that public file directly. Word downloads require the same public visibility and password access as the page; an expired unlock or a changed password requires visitors to unlock again. It doesn't prevent copying,
 screenshots or printing the visible web page, and it can't recall files someone already downloaded. Files you export
 from your editor are separate from the public page and can still include your contact details.
 
@@ -155,7 +170,7 @@ The bottom of Share shows **Visitors**. Only you see these numbers.
 | Number              | What it counts                                                        |
 | ------------------- | --------------------------------------------------------------------- |
 | **views · 30 days** | Visits to your web page in the last 30 days                           |
-| **downloads**       | PDFs visitors downloaded from the page in the last 30 days            |
+| **downloads**       | PDF or Word downloads from the page in the last 30 days               |
 | **since last view** | How long ago someone last opened the page, such as `5m`, `2h` or `3d` |
 
 - Your own visits and downloads don't count while you're signed in, and search engines and other bots never count.

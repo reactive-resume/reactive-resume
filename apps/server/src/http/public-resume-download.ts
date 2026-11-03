@@ -1,3 +1,4 @@
+import { createPublicResumeDocx } from "@reactive-resume/api/features/resume/public-download";
 import { createPublicResumePdf } from "@reactive-resume/api/features/resume/public-pdf";
 import { publicResumePath } from "@reactive-resume/resume/sharing";
 import { contentDisposition } from "@reactive-resume/utils/http";
@@ -21,22 +22,36 @@ const cacheHeaders = (etag: string) => ({
 	Vary: "Cookie, Authorization, X-Api-Key",
 });
 
-export async function handlePublicResumePdf(
+export async function handlePublicResumeDownload(
 	request: Request,
 	username: string,
 	slug: string,
 	trustedClient: string,
+	format: "pdf" | "docx" = "pdf",
 ): Promise<Response> {
 	// `?download` is the web page's Download PDF: saved as a file, and counted.
-	const download = new URL(request.url).searchParams.has("download");
+	const download = format === "docx" || new URL(request.url).searchParams.has("download");
 	try {
-		const result = await createPublicResumePdf({
+		const input = {
 			username,
 			slug,
 			requestHeaders: request.headers,
 			trustedClient,
 			countDownload: download,
-		});
+		};
+		if (format === "docx") {
+			const result = await createPublicResumeDocx(input);
+			return new Response(result.body, {
+				headers: {
+					...result.headers,
+					"Content-Type": result.body.type,
+					"Cache-Control": "private, no-store",
+					Vary: "Cookie, Authorization, X-Api-Key",
+					"X-Content-Type-Options": "nosniff",
+				},
+			});
+		}
+		const result = await createPublicResumePdf(input);
 
 		const headers = {
 			...cacheHeaders(result.etag),
@@ -53,7 +68,7 @@ export async function handlePublicResumePdf(
 		});
 	} catch (error) {
 		const status = errorStatus(error);
-		if (status === 500) console.error("Public resume PDF generation failed", error);
+		if (status === 500) console.error("Public resume download failed", error);
 		// A person following a shared PDF link gets the web page, which asks for the password or says it isn't shared.
 		const browser = (request.headers.get("accept") ?? "").includes("text/html");
 		if (browser && (status === 401 || status === 404))
@@ -65,8 +80,8 @@ export async function handlePublicResumePdf(
 			status === 401
 				? "This resume is password-protected. Open its web page to enter the password."
 				: status === 404
-					? "This resume's PDF isn't available."
-					: "Couldn't create the PDF. Try again in a minute.",
+					? "This resume's download isn't available."
+					: "Couldn't create the file. Try again in a minute.",
 			status,
 		);
 	}
