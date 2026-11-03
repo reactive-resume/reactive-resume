@@ -90,7 +90,8 @@ function loadWriteCaller(f) {
 	const store = (selector) => selector({ document: f.getDocument(), status: "saved" });
 	store.getState = () => ({
 		document: f.getDocument(),
-		update: (recipe) => {
+		update: (recipe, options) => {
+			f.lastUpdate = options;
 			const current = f.getDocument();
 			recipe(current);
 		},
@@ -246,4 +247,27 @@ test("native Stop retains partial request lineage through recovery without anoth
 	await f.draft.restoreLetterDraft(current.id);
 	assert.deepEqual(f.draft.useLetterDrafting.getState().draft.aiOperationIds, stopped.aiOperationIds);
 	assert.equal(f.paid(), 1);
+});
+
+test("letter body wires the shared Improve history step and owned posting into its draft store", () => {
+	const f = fixture();
+	const current = letter();
+	f.setDocument(current);
+	f.draft.useLetterDrafting.setState({ owner: f.draft.letterDraftOwner(current.id), draft: { phase: "idle" } });
+	const { BodySection } = loadWriteCaller(f);
+	const tree = BodySection({ letter: current, application: { id: "owned-application" }, disabled: false });
+	let field;
+	const walk = (node) => {
+		if (Array.isArray(node)) node.forEach(walk);
+		else if (node && typeof node === "object") {
+			if (node.props?.label === "Letter body") field = node;
+			walk(node.props?.children);
+		}
+	};
+	walk(tree);
+	assert.ok(field);
+	assert.equal(field.props.applicationId, "owned-application");
+	field.props.onChange("<p>Reviewed paragraph</p>", { newStep: true });
+	assert.equal(current.content, "<p>Reviewed paragraph</p>");
+	assert.deepEqual(f.lastUpdate, { coalesceKey: "content", newStep: true });
 });

@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# dokument przeniesiono do Kosza} few {# dokumenty przeniesiono do Kosza} many {# dokumentów przeniesiono do Kosza} other {# dokumentu przeniesiono do Kosza}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# dokument} few {# dokumenty} many {# dokumentów} other {# dokumentu}}"
@@ -2462,6 +2463,10 @@ msgstr "Bengalski"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Tablica"
@@ -2479,7 +2484,6 @@ msgstr "Treść jest bardzo mała"
 msgid "Body text set to {minimum} pt"
 msgstr "Treść ustawiona na {minimum} pkt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Pogrubienie"
@@ -2556,7 +2560,6 @@ msgstr "Bułgarski"
 msgid "bullet {n}"
 msgstr "wpis na liście {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Zamknięte"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Nie udało się zrealizować żądania. Sprawdź połączenie i spróbuj ponownie."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Nie można ukończyć tej akcji. Spróbuj ponownie."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Nie udało się skopiować transkrypcji. Spróbuj ponownie."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Nie udało się utworzyć listu. Spróbuj ponownie."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "List motywacyjny"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "List motywacyjny"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "List motywacyjny — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Wesprzyj na Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Odpowiedź w formularzu"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatowanie"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Popraw wybraną linię"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Popraw ten akapit"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Udoskonalanie…"
 
@@ -6493,7 +6489,6 @@ msgstr "Rozmowa zostanie usunięta z tej aplikacji o pracę. Następnie pobierz 
 msgid "Italian"
 msgstr "Włoski"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Kursywa"
@@ -8612,7 +8607,6 @@ msgstr "Powiadomienia są wyłączone"
 msgid "Now"
 msgstr "Teraz"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Lista numerowana"
@@ -10710,6 +10704,7 @@ msgstr "Wycofaj etap"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Wysyła ten akapit, resztę listu i Twoje instrukcje do {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Wysyła ten akapit, resztę listu, powiązane ogłoszenie o pracę i Twoje instrukcje do {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Wysyła to PDF do skonfigurowanego dostawcy AI zamiast czytać jego warstwę tekstową."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Skróć pytania do 2000 znaków, a odpowiedzi do 6000 znaków, zanim oznaczysz aplikację jako złożoną."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Krótszy"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Zacznij od"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Zacznij od tego, który masz i połącz aplikację o pracę."
 
@@ -12387,6 +12399,10 @@ msgstr "Zacznij od sekcji, które zawiera większość CV."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Zacznij od swojego imienia. Buduj stamtąd."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "W tym tygodniu: spraw, by Twoje dowody były łatwiejsze do śledzenia"
 msgid "This workspace couldn't be loaded."
 msgstr "Nie udało się wczytać tego obszaru roboczego."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Dostosuj do ogłoszenia"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Skróć"
@@ -13926,7 +13946,6 @@ msgstr "Ukraiński"
 msgid "Unavailable"
 msgstr "Niedostępne"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Podkreślenie"
@@ -14527,6 +14546,10 @@ msgstr "Czeka na Ciebie"
 msgid "Waiting to hear back"
 msgstr "Czekam na odpowiedź"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Bardziej serdecznie"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Pomoc w pisaniu, dopasowane sugestie i asystent. Domyślny dostawca jest
 msgid "Writing review"
 msgstr "Ocena tekstu"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Twój wstęp"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Twój wstęp, historie do opowiedzenia i pytania do zadania. 10 minut przed rozmową staje się Twoją listą kontrolną."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

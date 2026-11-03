@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# document naar de prullenbak verplaatst} other {# documenten naar de prullenbak verplaatst}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# document} other {# documenten}}"
@@ -2462,6 +2463,10 @@ msgstr "Bengaals"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Bord"
@@ -2479,7 +2484,6 @@ msgstr "De hoofdtekst is erg klein"
 msgid "Body text set to {minimum} pt"
 msgstr "Hoofdtekst ingesteld op {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Vet"
@@ -2556,7 +2560,6 @@ msgstr "Bulgaars"
 msgid "bullet {n}"
 msgstr "lijstitem {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Gesloten"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Kan het verzoek niet voltooien. Controleer uw verbinding en probeer het opnieuw."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Kan deze actie niet voltooien. Probeer het opnieuw."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Kan het transcript niet kopiëren. Probeer het opnieuw."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Kan de brief niet maken. Probeer het opnieuw."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Sollicitatiebrief"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Motivatiebrief"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Sollicitatiebrief — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Doneer via Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Formulierantwoord"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Opmaak"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Verbeter de geselecteerde lijn"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Deze alinea verbeteren"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Verbeteren…"
 
@@ -6493,7 +6489,6 @@ msgstr "Het gesprek wordt uit deze sollicitatie verwijderd. Download daarna een 
 msgid "Italian"
 msgstr "Italiaans"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Cursief"
@@ -8612,7 +8607,6 @@ msgstr "Meldingen staan uit"
 msgid "Now"
 msgstr "Nu"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Genummerde lijst"
@@ -10710,6 +10704,7 @@ msgstr "Fase buiten gebruik stellen"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Stuurt deze alinea, de rest van de brief en je instructies naar {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Stuurt deze alinea, de rest van de brief, de gekoppelde vacature en je instructies naar {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Stuurt deze PDF naar je geconfigureerde AI-provider in plaats van de tekstlaag ervan te lezen."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Kort vragen in tot 2.000 tekens en antwoorden tot 6.000 tekens voordat u dit als gesolliciteerd markeert."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Korter"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Begin vanaf"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Begin met degene die je hebt en koppel de sollicitatie."
 
@@ -12387,6 +12399,10 @@ msgstr "Begin met de secties die de meeste cv's hebben."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Begin met je naam. Bouw vanaf daar."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Deze week: maak uw bewijs makkelijker te volgen"
 msgid "This workspace couldn't be loaded."
 msgstr "Deze werkruimte kon niet worden geladen."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Afstemmen op de vacature"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Inkorten"
@@ -13926,7 +13946,6 @@ msgstr "Oekraïens"
 msgid "Unavailable"
 msgstr "Niet beschikbaar"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Onderstrepen"
@@ -14527,6 +14546,10 @@ msgstr "Wacht op u"
 msgid "Waiting to hear back"
 msgstr "Wachten om terug te horen"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Vriendelijker"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Schrijfhulp, afgestemde suggesties en de assistent. De standaardaanbiede
 msgid "Writing review"
 msgstr "Tekstbeoordeling"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Uw opening"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Uw opening, de verhalen om mee te nemen en vragen om te stellen. 10 minuten voor het gesprek wordt het uw checklist."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

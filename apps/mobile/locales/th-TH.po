@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {ย้ายเอกสาร # รายการไปที่ถังขยะแล้ว} other {ย้ายเอกสาร # รายการไปที่ถังขยะแล้ว}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# เอกสาร} other {# เอกสาร}}"
@@ -2462,6 +2463,10 @@ msgstr "เบงกาลี"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "บอร์ด"
@@ -2479,7 +2484,6 @@ msgstr "ข้อความเนื้อหามีขนาดเล็ก
 msgid "Body text set to {minimum} pt"
 msgstr "ตั้งค่าข้อความเนื้อหาเป็น {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "ตัวหนา"
@@ -2556,7 +2560,6 @@ msgstr "บัลแกเรีย"
 msgid "bullet {n}"
 msgstr "รายการ {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "ปิด"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "ดำเนินการตามคำขอไม่ได้ ตรวจสอบการเชื่อมต่อของคุณแล้วลองอีกครั้ง"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "ไม่สามารถดำเนินการนี้ให้เสร็จสิ้นได้ ลองอีกครั้ง"
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "คัดลอกข้อความถอดเสียงไม่ได้ ลองอีกครั้ง"
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "สร้างจดหมายไม่ได้ ลองอีกครั้ง"
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "จดหมายสมัครงาน"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "จดหมายสมัครงาน"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "จดหมายปะหน้า — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "บริจาคผ่าน Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "คำตอบในแบบฟอร์ม"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "การจัดรูปแบบ"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "ปรับปรุงบรรทัดที่เลือก"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "ปรับปรุงย่อหน้านี้"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "กำลังปรับปรุง..."
 
@@ -6493,7 +6489,6 @@ msgstr "รายการนี้จะถูกนำออกจากใบ
 msgid "Italian"
 msgstr "อิตาลี"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "ตัวเอียง"
@@ -8612,7 +8607,6 @@ msgstr "การแจ้งเตือนปิดอยู่"
 msgid "Now"
 msgstr "ตอนนี้"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "รายการลำดับเลข"
@@ -10710,6 +10704,7 @@ msgstr "เลิกใช้ขั้นตอน"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "ส่งย่อหน้านี้ ส่วนที่เหลือของจดหมาย และคำแนะนำของคุณไปยัง {0} · {1}"
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "ส่งย่อหน้านี้ ส่วนที่เหลือของจดหมาย ประกาศงานที่เชื่อมโยง และคำแนะนำของคุณไปยัง {0} · {1}"
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "ส่ง PDF นี้ไปยังผู้ให้บริการ AI ที่กำหนดค่าไว้ของคุณ แทนที่จะอ่านเลเยอร์ข้อความ"
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "ย่อคำถามให้ไม่เกิน 2,000 ตัวอักษร และคำตอบไม่เกิน 6,000 ตัวอักษร ก่อนทำเครื่องหมายว่าสมัครแล้ว"
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "สั้นลง"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "เริ่มจาก"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "เริ่มจากอันที่คุณมีและเชื่อมโยงการสมัครงาน"
 
@@ -12387,6 +12399,10 @@ msgstr "เริ่มต้นด้วยส่วนต่างๆ ที�
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "เริ่มต้นด้วยชื่อของคุณ สร้างจากที่นั่น"
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "สัปดาห์นี้: ทำให้หลักฐานข�
 msgid "This workspace couldn't be loaded."
 msgstr "โหลดพื้นที่ทำงานนี้ไม่ได้"
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "ปรับให้ตรงกับประกาศงาน"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "กระชับ"
@@ -13926,7 +13946,6 @@ msgstr "ยูเครน"
 msgid "Unavailable"
 msgstr "ไม่พร้อมใช้งาน"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "ขีดเส้นใต้"
@@ -14527,6 +14546,10 @@ msgstr "รอคุณอยู่"
 msgid "Waiting to hear back"
 msgstr "รอฟังกลับครับ"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "เป็นกันเองขึ้น"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "ความช่วยเหลือในการเขียน �
 msgid "Writing review"
 msgstr "ตรวจทานงานเขียน"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "การเปิดตัวของคุณ"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "การเปิดตัวของคุณ เรื่องราวที่ควรนำไป และคำถามที่ควรถาม จะกลายเป็นเช็กลิสต์ของคุณ 10 นาทีก่อนการโทร"
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

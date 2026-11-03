@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# ሰነድ ወደ መጣያ ተወስዷል} other {# ሰነዶች ወደ መጣያ ተወስደዋል}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# ሰነድ} other {# ሰነዶች}}"
@@ -2462,6 +2463,10 @@ msgstr "ቤንጋሊኛ"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "ሰሌዳ"
@@ -2479,7 +2484,6 @@ msgstr "የሰውነት ጽሑፍ በጣም ትንሽ ነው።"
 msgid "Body text set to {minimum} pt"
 msgstr "የሰውነት ጽሑፍ ወደ {minimum} ተቀናብሯል pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "ወፍራም"
@@ -2556,7 +2560,6 @@ msgstr "ቡልጋሪኛ"
 msgid "bullet {n}"
 msgstr "የዝርዝር ግቤት {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "ዝግ"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "ጥያቄውን ማጠናቀቅ አልተቻለም። ግንኙነትዎን ይፈትሹ እና እንደገና ይሞክሩ።"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "ይህን እርምጃ ማጠናቀቅ አልተቻለም። እንደገና ይሞክሩ።"
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "ግልባጩን መቅዳት አልተቻለም። እንደገና ይሞክሩ።"
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "ደብዳቤውን መፍጠር አልተቻለም። እንደገና ይሞክሩ።"
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "የሽፋን ደብዳቤ"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "ማመልከቻ ደብዳቤ"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "የሽፋን ደብዳቤ - {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "በOpen Collective ላይ ይለግሱ"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "የቅጽ መልስ"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "በመቅረጽ ላይ"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "የተመረጠውን መስመር አሻሽል።"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "ይህን አንቀጽ አሻሽል"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "በማሻሻል ላይ…"
 
@@ -6493,7 +6489,6 @@ msgstr "ከዚህ የሥራ ማመልከቻ ይወገዳል። ከዚያ የቀ�
 msgid "Italian"
 msgstr "ጣሊያንኛ"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "ግዕዝ"
@@ -8612,7 +8607,6 @@ msgstr "ማሳወቂያዎች ጠፍተዋል።"
 msgid "Now"
 msgstr "አሁን"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "ቁጥር ያለው ዝርዝር"
@@ -10710,6 +10704,7 @@ msgstr "ደረጃውን ከአገልግሎት ያውጡ"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "ይህን አንቀጽ፣ የቀረውን ደብዳቤ እና መመሪያዎትን ወደ {0} · {1} ይልካል።"
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "ይህን አንቀጽ፣ የቀረውን ደብዳቤ፣ የተገናኘውን የሥራ ማስታወቂያ እና መመሪያዎትን ወደ {0} · {1} ይልካል።"
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "ይህን PDF የጽሑፍ ንብርብሩን ከማንበብ ይልቅ ወደ የተዋቀረው የAI አቅራቢዎ ይልካል።"
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "ይህን እንደቀረበ ምልክት ከማድረግዎ በፊት ጥያቄዎችን ወደ 2,000 ቁምፊዎች፣ መልሶችን ደግሞ ወደ 6,000 ቁምፊዎች ያሳጥሩ።"
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "አጠር ያለ"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "ከ ጀምር"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "ካለህ ይጀምሩ እና የስራ ማመልከቻውን ያገናኙ።"
 
@@ -12387,6 +12399,10 @@ msgstr "በአብዛኛዎቹ የትምህርት ማስረጃዎች ካሉት �
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "በስምህ ጀምር። ከዚያ ይገንቡ።"
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "በዚህ ሳምንት፦ ማስረጃዎን ለመከተል ቀላል �
 msgid "This workspace couldn't be loaded."
 msgstr "ይህን የሥራ ቦታ መጫን አልተቻለም።"
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "ከሥራ ማስታወቂያው ጋር አዛምድ"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "አጥብቅ"
@@ -13926,7 +13946,6 @@ msgstr "ዩክሬንኛ"
 msgid "Unavailable"
 msgstr "አይገኝም"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "ከስር አስምር"
@@ -14527,6 +14546,10 @@ msgstr "እርስዎን በመጠበቅ ላይ"
 msgid "Waiting to hear back"
 msgstr "መልሶ ለመስማት በመጠበቅ ላይ"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "ይበልጥ ወዳጃዊ"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "የጽሑፍ እገዛ፣ የተበጁ ጥቆማዎች እና ረዳቱ�
 msgid "Writing review"
 msgstr "የጽሑፍ ግምገማ"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "የእርስዎ መክፈቻ"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "የእርስዎ መክፈቻ፣ የሚያመጧቸው ታሪኮች እና የሚጠይቋቸው ጥያቄዎች። ከጥሪው 10 ደቂቃ በፊት የማረጋገጫ ዝርዝርዎ ይሆናል።"
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

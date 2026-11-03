@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# പ്രമാണം ട്രാഷിലേക്ക് നീക്കി} other {# പ്രമാണങ്ങൾ ട്രാഷിലേക്ക് നീക്കി}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# പ്രമാണം} other {# പ്രമാണങ്ങൾ}}"
@@ -2462,6 +2463,10 @@ msgstr "ബെംഗാളി"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "ബോർഡ്"
@@ -2479,7 +2484,6 @@ msgstr "ബോഡി ടെക്സ്റ്റ് വളരെ ചെറുത
 msgid "Body text set to {minimum} pt"
 msgstr "ബോഡി ടെക്സ്റ്റ് {minimum} pt ആയി സജ്ജീകരിച്ചു"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "ബോൾഡ്"
@@ -2556,7 +2560,6 @@ msgstr "ബൾഗേറിയൻ"
 msgid "bullet {n}"
 msgstr "ലിസ്റ്റ് എൻട്രി {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "അടച്ചു"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "അഭ്യർത്ഥന പൂർത്തിയാക്കാനായില്ല. നിങ്ങളുടെ കണക്ഷൻ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "ഈ പ്രവർത്തനം പൂർത്തിയാക്കാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "ട്രാൻസ്ക്രിപ്റ്റ് പകർത്താനായില്ല. വീണ്ടും ശ്രമിക്കുക."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "കത്ത് സൃഷ്ടിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "കവർ ലെറ്റർ"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "കവർ ലെറ്റർ"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "കവർ ലെറ്റർ - {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Open Collective-ൽ സംഭാവന ചെയ്യുക"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "ഫോം മറുപടി"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "ഫോർമാറ്റിംഗ്"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "തിരഞ്ഞെടുത്ത ലൈൻ മെച്ചപ്പെടുത്തുക"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "ഈ ഖണ്ഡിക മെച്ചപ്പെടുത്തുക"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "മെച്ചപ്പെടുത്തുന്നു..."
 
@@ -6493,7 +6489,6 @@ msgstr "ഈ ജോലി അപേക്ഷയിൽ നിന്ന് ഇത�
 msgid "Italian"
 msgstr "ഇറ്റാലിയൻ"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "ഇറ്റാലിക്ക്"
@@ -8612,7 +8607,6 @@ msgstr "അറിയിപ്പുകൾ ഓഫാണ്"
 msgid "Now"
 msgstr "ഇപ്പോൾ"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "അക്കമിട്ട ലിസ്റ്റ്"
@@ -10710,6 +10704,7 @@ msgstr "ഘട്ടത്തിന്റെ ഉപയോഗം അവസാന�
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "ഈ ഖണ്ഡികയും കത്തിന്റെ ബാക്കി ഭാഗവും നിങ്ങളുടെ നിർദ്ദേശങ്ങളും {0} · {1}-ലേക്ക് അയയ്ക്കുന്നു."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "ഈ ഖണ്ഡികയും കത്തിന്റെ ബാക്കി ഭാഗവും ലിങ്ക് ചെയ്ത ജോലി പരസ്യവും നിങ്ങളുടെ നിർദ്ദേശങ്ങളും {0} · {1}-ലേക്ക് അയയ്ക്കുന്നു."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "ഈ PDF ടെക്സ്റ്റ് ലെയർ വായിക്കുന്നതിന് പകരം നിങ്ങളുടെ കോൺഫിഗർ ചെയ്‌ത AI ദാതാവിന് അയയ്‌ക്കുന്നു."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "ഇത് അപേക്ഷിച്ചതായി അടയാളപ്പെടുത്തുന്നതിന് മുമ്പ് ചോദ്യങ്ങൾ 2,000 അക്ഷരങ്ങളായും ഉത്തരങ്ങൾ 6,000 അക്ഷരങ്ങളായും ചുരുക്കുക."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "ചെറുത്"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "മുതൽ ആരംഭിക്കുക"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "നിങ്ങളുടെ പക്കലുള്ള ഒന്നിൽ നിന്ന് ആരംഭിച്ച് ജോലി അപേക്ഷ ലിങ്ക് ചെയ്യുക."
 
@@ -12387,6 +12399,10 @@ msgstr "മിക്ക റെസ്യൂമെകളിലും ഉള്ള 
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "നിങ്ങളുടെ പേരിൽ ആരംഭിക്കുക. അവിടെ നിന്ന് നിർമ്മിക്കുക."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "ഈ ആഴ്ച: നിങ്ങളുടെ തെളിവുകൾ �
 msgid "This workspace couldn't be loaded."
 msgstr "ഈ വർക്ക്‌സ്‌പേസ് ലോഡ് ചെയ്യാനായില്ല."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "ജോലി പരസ്യത്തിന് അനുയോജ്യമാക്കുക"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "ചുരുക്കുക"
@@ -13926,7 +13946,6 @@ msgstr "ഉക്രേനിയൻ"
 msgid "Unavailable"
 msgstr "ലഭ്യമല്ല"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "അടിവര"
@@ -14527,6 +14546,10 @@ msgstr "നിങ്ങൾക്കായി കാത്തിരിക്ക�
 msgid "Waiting to hear back"
 msgstr "തിരിച്ചു കേൾക്കാൻ കാത്തിരിക്കുന്നു"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "കൂടുതൽ ഹൃദ്യമായി"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "എഴുത്ത് സഹായം, ക്രമീകരിച്ച
 msgid "Writing review"
 msgstr "എഴുത്ത് അവലോകനം"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "നിങ്ങളുടെ ആമുഖം"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "നിങ്ങളുടെ ആമുഖം, കൊണ്ടുവരേണ്ട കഥകൾ, ചോദിക്കേണ്ട ചോദ്യങ്ങൾ. കോളിന് 10 മിനിറ്റ് മുമ്പ് ഇത് നിങ്ങളുടെ ചെക്ക്‌ലിസ്റ്റ് ആകും."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

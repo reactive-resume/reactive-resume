@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# asiakirja siirrettiin roskakoriin} other {# asiakirjaa siirrettiin roskakoriin}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# asiakirja} other {# asiakirjaa}}"
@@ -2462,6 +2463,10 @@ msgstr "bengali"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Taulu"
@@ -2479,7 +2484,6 @@ msgstr "Runkoteksti on hyvin pieni"
 msgid "Body text set to {minimum} pt"
 msgstr "Leipäteksti asetettu {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Lihavoitu"
@@ -2556,7 +2560,6 @@ msgstr "bulgaria"
 msgid "bullet {n}"
 msgstr "luettelomerkintä {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Suljettu"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Pyyntöä ei voitu suorittaa. Tarkista yhteytesi ja yritä uudelleen."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Tätä toimintoa ei voitu suorittaa. Yritä uudelleen."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Transkriptiota ei voitu kopioida. Yritä uudelleen."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Kirjettä ei voitu luoda. Yritä uudelleen."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Saatekirje"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Saatekirje"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Saatekirje — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Lahjoita Open Collectivessa"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Lomakevastaus"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Muotoilu"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Paranna valittua riviä"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Paranna tätä kappaletta"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Parannetaan…"
 
@@ -6493,7 +6489,6 @@ msgstr "Se poistetaan tästä työhakemuksesta. Lataa sen jälkeen peruutus päi
 msgid "Italian"
 msgstr "italia"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Kursiivi"
@@ -8612,7 +8607,6 @@ msgstr "Ilmoitukset eivät ole käytössä"
 msgid "Now"
 msgstr "Nyt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Numeroitu luettelo"
@@ -10710,6 +10704,7 @@ msgstr "Poista vaihe käytöstä"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Lähettää tämän kappaleen, muun kirjeen ja ohjeesi palveluun {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Lähettää tämän kappaleen, muun kirjeen, linkitetyn työpaikkailmoituksen ja ohjeesi palveluun {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Lähettää tämän PDF:n määritetylle tekoälypalveluntarjoajalle sen tekstikerroksen lukemisen sijaan."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Lyhennä kysymykset 2 000 merkkiin ja vastaukset 6 000 merkkiin ennen kuin merkitset hakemuksen haetuksi."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Lyhyempi"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Aloita alkaen"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Aloita omasta ja linkitä työhakemus."
 
@@ -12387,6 +12399,10 @@ msgstr "Aloita niistä osista, jotka useimmissa ansioluetteloissa on."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Aloita nimelläsi. Jatka siitä."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Tällä viikolla: tee näytöstäsi helpommin seurattavaa"
 msgid "This workspace couldn't be loaded."
 msgstr "Tätä työtilaa ei voitu ladata."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Sovita työpaikkailmoitukseen"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Tiivistä"
@@ -13926,7 +13946,6 @@ msgstr "ukraina"
 msgid "Unavailable"
 msgstr "Ei saatavilla"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Alleviivaus"
@@ -14527,6 +14546,10 @@ msgstr "Odottaa sinua"
 msgid "Waiting to hear back"
 msgstr "Odotetaan kuulemista"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Ystävällisempi"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Kirjoitusapu, räätälöidyt ehdotukset ja avustaja. Oletuspalveluntarj
 msgid "Writing review"
 msgstr "Tekstin arviointi"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Avauksesi"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Avauksesi, mukaan otettavat tarinat ja esitettävät kysymykset. Siitä tulee tarkistuslistasi 10 minuuttia ennen puhelua."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, zero {# dokumenti pārvietoti uz atkritni} one {# dokuments pārvietots uz atkritni} other {# dokumenti pārvietoti uz atkritni}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# dokuments} other {# dokumenti} zero {# dokumentu}}"
@@ -2462,6 +2463,10 @@ msgstr "Bengāļu"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Tāfele"
@@ -2479,7 +2484,6 @@ msgstr "Pamatteksts ir ļoti mazs"
 msgid "Body text set to {minimum} pt"
 msgstr "Pamatteksts iestatīts uz {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Treknraksts"
@@ -2556,7 +2560,6 @@ msgstr "Bulgāru"
 msgid "bullet {n}"
 msgstr "saraksta ieraksts {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Slēgts"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Nevarēja pabeigt pieprasījumu. Pārbaudiet savienojumu un mēģiniet vēlreiz."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Nevarēja pabeigt šo darbību. Mēģiniet vēlreiz."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Nevarēja nokopēt atšifrējumu. Mēģiniet vēlreiz."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Nevarēja izveidot vēstuli. Mēģiniet vēlreiz."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Motivācijas vēstule"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Motivācijas vēstule"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Pavadvēstule — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Ziedot Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Atbilde veidlapā"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatēšana"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Uzlabot atlasīto līniju"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Uzlabot šo rindkopu"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Notiek uzlabošana…"
 
@@ -6493,7 +6489,6 @@ msgstr "Tā tiek noņemta no šī darba pieteikuma. Pēc tam lejupielādējiet a
 msgid "Italian"
 msgstr "Itāļu"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Slīpraksts"
@@ -8612,7 +8607,6 @@ msgstr "Paziņojumi ir izslēgti"
 msgid "Now"
 msgstr "Tagad"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Numurēts saraksts"
@@ -10710,6 +10704,7 @@ msgstr "Pārtraukt izmantot posmu"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Nosūta šo rindkopu, pārējo vēstuli un jūsu norādījumus uz {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Nosūta šo rindkopu, pārējo vēstuli, saistīto darba sludinājumu un jūsu norādījumus uz {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Nosūta šo PDF jūsu konfigurētajam AI nodrošinātājam, nevis nolasa tā teksta slāni."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Pirms atzīmēšanas kā pieteiktu saīsiniet jautājumus līdz 2000 rakstzīmēm un atbildes līdz 6000 rakstzīmēm."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Īsāks"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Sāciet no"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Sāciet ar vienu, kas jums ir, un saistiet darba pieteikumu."
 
@@ -12387,6 +12399,10 @@ msgstr "Sāciet ar sadaļām, kas ir lielākajā daļā CV."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Sāciet ar savu vārdu. Turpiniet no turienes."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Šonedēļ: padariet savus pierādījumus vieglāk uztveramus"
 msgid "This workspace couldn't be loaded."
 msgstr "Šo darba telpu nevarēja ielādēt."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Pielāgot darba sludinājumam"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Saīsināt"
@@ -13926,7 +13946,6 @@ msgstr "Ukraiņu"
 msgid "Unavailable"
 msgstr "Nav pieejams"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Pasvītrots"
@@ -14527,6 +14546,10 @@ msgstr "Gaida jūs"
 msgid "Waiting to hear back"
 msgstr "Gaida atbildi"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Sirsnīgāk"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Palīdzība rakstīšanā, pielāgoti ieteikumi un asistents. Ja neizvē
 msgid "Writing review"
 msgstr "Rakstības pārskatīšana"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Jūsu ievads"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Jūsu ievads, stāsti, ko pieminēt, un jautājumi, ko uzdot. 10 minūtes pirms zvana tas kļūst par jūsu kontrolsarakstu."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

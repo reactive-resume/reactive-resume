@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# dokument u zhvendos në Kosh} other {# dokumente u zhvendosën në Kosh}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# dokument} other {# dokumente}}"
@@ -2462,6 +2463,10 @@ msgstr "Bengalisht"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Tabela"
@@ -2479,7 +2484,6 @@ msgstr "Teksti i trupit është shumë i vogël"
 msgid "Body text set to {minimum} pt"
 msgstr "Teksti i trupit u vendos në {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Të trasha"
@@ -2556,7 +2560,6 @@ msgstr "Bullgarisht"
 msgid "bullet {n}"
 msgstr "hyrje në listë {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Mbyllur"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Kërkesa nuk mund të përfundonte. Kontrolloni lidhjen dhe provoni përsëri."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Ky veprim nuk mund të përfundohej. Provo sërish."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Transkripti nuk mund të kopjohej. Provoni përsëri."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Letra nuk mund të krijohej. Provoni përsëri."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Letër motivuese"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Letër motivuese"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Letër motivuese — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Dhuroni në Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Përgjigje formulari"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatimi"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Përmirëso linjën e zgjedhur"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Përmirëso këtë paragraf"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Po përmirësohet…"
 
@@ -6493,7 +6489,6 @@ msgstr "Hiqet nga ky aplikim për punë. Më pas shkarko anulimin për të përd
 msgid "Italian"
 msgstr "Italisht"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Të pjerrëta"
@@ -8612,7 +8607,6 @@ msgstr "Njoftimet janë joaktive"
 msgid "Now"
 msgstr "Tani"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Lista e numëruar"
@@ -10710,6 +10704,7 @@ msgstr "Hiq fazën nga përdorimi"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Dërgon këtë paragraf, pjesën tjetër të letrës dhe udhëzimet tuaja te {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Dërgon këtë paragraf, pjesën tjetër të letrës, shpalljen e lidhur të punës dhe udhëzimet tuaja te {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Dërgon këtë PDF te ofruesi juaj i konfiguruar AI në vend që të lexojë shtresën e tij të tekstit."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Shkurtojini pyetjet në 2.000 karaktere dhe përgjigjet në 6.000 karaktere para se ta shënoni si të aplikuar."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Më e shkurtër"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Filloni nga"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Filloni nga ai që keni dhe lidhni aplikimin për punë."
 
@@ -12387,6 +12399,10 @@ msgstr "Filloni me seksionet që kanë shumica e rezymeve."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Filloni me emrin tuaj. Ndërtoni nga atje."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Këtë javë: bëjini provat tuaja më të lehta për t’u ndjekur"
 msgid "This workspace couldn't be loaded."
 msgstr "Kjo hapësirë pune nuk mund të ngarkohej."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Përshtate me shpalljen"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Shkurtoje"
@@ -13926,7 +13946,6 @@ msgstr "Ukrainisht"
 msgid "Unavailable"
 msgstr "E padisponueshme"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Nënvizim"
@@ -14527,6 +14546,10 @@ msgstr "Radha juaj"
 msgid "Waiting to hear back"
 msgstr "Në pritje për të dëgjuar përsëri"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Më miqësor"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Ndihmë për shkrimin, sugjerime të përshtatura dhe asistenti. Ofruesi
 msgid "Writing review"
 msgstr "Rishikim shkrimi"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Hyrja juaj"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Hyrja juaj, historitë që do të sillni dhe pyetjet për të bërë. 10 minuta para telefonatës bëhet lista juaj e kontrollit."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {已將 # 份文件移至垃圾箱} other {已將 # 份文件移至垃圾箱}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# 份文件} other {# 份文件}}"
@@ -2462,6 +2463,10 @@ msgstr "孟加拉語"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "看板"
@@ -2479,7 +2484,6 @@ msgstr "正文很小"
 msgid "Body text set to {minimum} pt"
 msgstr "正文設定為 {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "粗體"
@@ -2556,7 +2560,6 @@ msgstr "保加利亞語"
 msgid "bullet {n}"
 msgstr "清單條目 {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "關閉"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "無法完成要求。請檢查網路連線後再試一次。"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "無法完成此操作。再試一次。"
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "無法複製文字記錄。請再試一次。"
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "無法建立這封信。請再試一次。"
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "求職信"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "求職信"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "求職信 — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "透過 Open Collective 捐款"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "表單回答"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "格式化"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "改進選定的線路"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "改善此段落"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "改善…"
 
@@ -6493,7 +6489,6 @@ msgstr "面試將從此求職申請中移除。之後請下載取消檔案以更
 msgid "Italian"
 msgstr "義大利語"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "斜體"
@@ -8612,7 +8607,6 @@ msgstr "通知已關閉"
 msgid "Now"
 msgstr "現在"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "編號列表"
@@ -10710,6 +10704,7 @@ msgstr "停用階段"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "將此段落、信件其餘內容和您的指示傳送至 {0} · {1}。"
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "將此段落、信件其餘內容、連結的職缺資訊和您的指示傳送至 {0} · {1}。"
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "將此 PDF 傳送至您設定的 AI 供應商，而非讀取文字圖層。"
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "標記為已申請前，請將問題縮短至 2,000 個字元、回答縮短至 6,000 個字元。"
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "較短"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "開始於"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "從您擁有的一份工作申請開始並連結該工作申請。"
 
@@ -12387,6 +12399,10 @@ msgstr "從大多數履歷都有的部分開始。"
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "從您的姓名開始，逐步完成履歷。"
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "本週：讓您的證據更容易理解"
 msgid "This workspace couldn't be loaded."
 msgstr "無法載入此工作區。"
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "配合職缺要求"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "精簡"
@@ -13926,7 +13946,6 @@ msgstr "烏克蘭語"
 msgid "Unavailable"
 msgstr "無法使用"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "底線"
@@ -14527,6 +14546,10 @@ msgstr "等待您處理"
 msgid "Waiting to hear back"
 msgstr "等待回音"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "更親切"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "寫作協助、量身建議和助理。未另外選擇提供者的地方
 msgid "Writing review"
 msgstr "寫作審閱"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "您的開場白"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "您的開場白、要準備的故事和要提出的問題。通話前 10 分鐘，它會變成您的檢查清單。"
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

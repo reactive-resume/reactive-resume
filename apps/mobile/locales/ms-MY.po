@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# dokumen dialihkan ke Sampah} other {# dokumen dialihkan ke Sampah}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# dokumen} other {# dokumen}}"
@@ -2462,6 +2463,10 @@ msgstr "Bengali"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Papan"
@@ -2479,7 +2484,6 @@ msgstr "Teks badan sangat kecil"
 msgid "Body text set to {minimum} pt"
 msgstr "Teks isi ditetapkan kepada {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Tebal"
@@ -2556,7 +2560,6 @@ msgstr "Bulgarian"
 msgid "bullet {n}"
 msgstr "entri senarai {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "tertutup"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Tidak dapat melengkapkan permintaan. Semak sambungan anda dan cuba lagi."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Tidak dapat menyelesaikan tindakan ini. Cuba lagi."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Tidak dapat menyalin transkrip. Cuba lagi."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Tidak dapat mencipta surat. Cuba lagi."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Surat iringan"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Surat Iringan"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Surat lamaran — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Derma di Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Jawapan borang"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Memformat"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Perbaik baris yang dipilih"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Perbaik perenggan ini"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Meningkatkan…"
 
@@ -6493,7 +6489,6 @@ msgstr "Ia dialih keluar daripada permohonan kerja ini. Selepas itu, muat turun 
 msgid "Italian"
 msgstr "Itali"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Condong"
@@ -8612,7 +8607,6 @@ msgstr "Pemberitahuan dimatikan"
 msgid "Now"
 msgstr "Sekarang"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Senarai bernombor"
@@ -10710,6 +10704,7 @@ msgstr "Hentikan penggunaan peringkat"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Menghantar perenggan ini, baki surat dan arahan anda kepada {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Menghantar perenggan ini, baki surat, iklan kerja yang dipautkan dan arahan anda kepada {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Menghantar PDF ini kepada pembekal AI anda yang dikonfigurasikan dan bukannya membaca lapisan teksnya."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Pendekkan soalan kepada 2,000 aksara dan jawapan kepada 6,000 aksara sebelum menandakan ini sebagai dimohon."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Lebih pendek"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Mulakan dari"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Mulakan dari yang anda miliki dan pautkan permohonan kerja."
 
@@ -12387,6 +12399,10 @@ msgstr "Mulakan dengan bahagian yang ada pada kebanyakan resume."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Mulakan dengan nama anda. Bina dari situ."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Minggu ini: jadikan bukti anda lebih mudah difahami"
 msgid "This workspace couldn't be loaded."
 msgstr "Ruang kerja ini tidak dapat dimuatkan."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Sesuaikan dengan iklan kerja"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Ringkaskan"
@@ -13926,7 +13946,6 @@ msgstr "Ukraine"
 msgid "Unavailable"
 msgstr "Tidak tersedia"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Garis bawah"
@@ -14527,6 +14546,10 @@ msgstr "Menunggu anda"
 msgid "Waiting to hear back"
 msgstr "Menunggu untuk mendengar kembali"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Lebih mesra"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Bantuan menulis, cadangan yang disesuaikan dan penolong. Pembekal lalai 
 msgid "Writing review"
 msgstr "Semakan penulisan"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Pembukaan anda"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Pembukaan anda, cerita untuk dibawa dan soalan untuk ditanya. Ia menjadi senarai semak anda 10 minit sebelum panggilan."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

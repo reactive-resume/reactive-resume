@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# документ је премештен у Отпад} few {# документа су премештена у Отпад} other {# докумената је премештено у Отпад}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# документ} few {# документа} other {# докумената}}"
@@ -2462,6 +2463,10 @@ msgstr "Бенгалски"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Табла"
@@ -2479,7 +2484,6 @@ msgstr "Основни текст је веома мали"
 msgid "Body text set to {minimum} pt"
 msgstr "Основни текст постављен на {minimum} пт"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Подебљано"
@@ -2556,7 +2560,6 @@ msgstr "Бугарски"
 msgid "bullet {n}"
 msgstr "унос у листу {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Затворено"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Није могуће довршити захтев. Проверите везу и покушајте поново."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Довршавање ове радње није успело. Покушајте поново."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Није могуће копирати транскрипт. Покушајте поново."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Није могуће направити писмо. Покушајте поново."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Пропратно писмо"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Пропратно писмо"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Пропратно писмо — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Донирајте на Open Collective-у"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Одговор у обрасцу"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Форматирање"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Побољшајте изабрану линију"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Побољшај овај пасус"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Побољшање…"
 
@@ -6493,7 +6489,6 @@ msgstr "Уклања се из ове пријаве за посао. Затим
 msgid "Italian"
 msgstr "Италијански"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Курзив"
@@ -8612,7 +8607,6 @@ msgstr "Обавештења су искључена"
 msgid "Now"
 msgstr "Сада"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Нумерисана листа"
@@ -10710,6 +10704,7 @@ msgstr "Уклони фазу из употребе"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Шаље овај пасус, остатак писма и ваша упутства у {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Шаље овај пасус, остатак писма, повезани оглас за посао и ваша упутства у {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Шаље ово PDF вашем конфигурисаном АИ провајдеру уместо да чита његов текстуални слој."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Скратите питања на 2.000 знакова и одговоре на 6.000 знакова пре него што ово означите као пријављено."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Краће"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Почните од"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Почните од оне коју имате и повежите пријаву за посао."
 
@@ -12387,6 +12399,10 @@ msgstr "Почните са одељцима које већина резиме�
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Почните са својим именом. Градите одатле."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Ове недеље: учините своје доказе лакшим
 msgid "This workspace couldn't be loaded."
 msgstr "Овај радни простор није могао да се учита."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Прилагоди огласу"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Сажми"
@@ -13926,7 +13946,6 @@ msgstr "Украјински"
 msgid "Unavailable"
 msgstr "Недоступно"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Подвучено"
@@ -14527,6 +14546,10 @@ msgstr "Чека на вас"
 msgid "Waiting to hear back"
 msgstr "Чекам одговор"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Срдачније"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Помоћ при писању, прилагођени предлози 
 msgid "Writing review"
 msgstr "Преглед писања"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Ваш увод"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Ваш увод, приче које ћете донети и питања која ћете поставити. 10 минута пре позива постаје ваша контролна листа."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

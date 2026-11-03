@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {ឯកសារចំនួន # ត្រូវបានផ្លាស់ទីទៅធុងសំរាម} other {ឯកសារចំនួន # ត្រូវបានផ្លាស់ទីទៅធុងសំរាម}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {ឯកសារ #} other {ឯកសារ #}}"
@@ -2462,6 +2463,10 @@ msgstr "Bengali"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "ក្តារ"
@@ -2479,7 +2484,6 @@ msgstr "អត្ថបទតួគឺតូចណាស់។"
 msgid "Body text set to {minimum} pt"
 msgstr "អត្ថបទតួត្រូវបានកំណត់ទៅ {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "អក្សរ​ដិត"
@@ -2556,7 +2560,6 @@ msgstr "Bulgarian"
 msgid "bullet {n}"
 msgstr "បញ្ជីឈ្មោះ {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "បិទ"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "មិនអាចបំពេញសំណើបានទេ។ ពិនិត្យការតភ្ជាប់របស់អ្នក ហើយព្យាយាមម្តងទៀត។"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "មិនអាចបញ្ចប់សកម្មភាពនេះបានទេ។ ព្យាយាមម្តងទៀត។"
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "មិនអាចចម្លងប្រតិចារិកបានទេ។ ព្យាយាមម្តងទៀត។"
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "មិនអាចបង្កើតលិខិតបានទេ។ ព្យាយាមម្តងទៀត។"
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "លិខិតអម"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "លិខិតសម្រាប់ដាក់ពាក្យ"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "សំបុត្រគម្រប - {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "បរិច្ចាគនៅលើ Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "ចម្លើយក្នុងទម្រង់"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "ការធ្វើទ្រង់ទ្រាយ"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "កែលម្អបន្ទាត់ដែលបានជ្រើសរើស"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "កែលម្អកថាខណ្ឌនេះ"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "កំពុងកែលម្អ…"
 
@@ -6493,7 +6489,6 @@ msgstr "វានឹងត្រូវបានដកចេញពីពាក្
 msgid "Italian"
 msgstr "Italian"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "អក្សរ​ទ្រេត"
@@ -8612,7 +8607,6 @@ msgstr "ការជូនដំណឹងត្រូវបានបិទ"
 msgid "Now"
 msgstr "ឥឡូវនេះ"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "បញ្ជីលេខ"
@@ -10710,6 +10704,7 @@ msgstr "ឈប់ប្រើដំណាក់កាល"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "ផ្ញើកថាខណ្ឌនេះ ផ្នែកនៅសល់នៃលិខិត និងការណែនាំរបស់អ្នកទៅ {0} · {1}។"
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "ផ្ញើកថាខណ្ឌនេះ ផ្នែកនៅសល់នៃលិខិត ប្រកាសការងារដែលបានភ្ជាប់ និងការណែនាំរបស់អ្នកទៅ {0} · {1}។"
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "ផ្ញើ PDF នេះទៅអ្នកផ្តល់សេវា AI ដែលបានកំណត់រចនាសម្ព័ន្ធរបស់អ្នក ជំនួសឱ្យការអានស្រទាប់អត្ថបទរបស់វា។"
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "បង្រួមសំណួរឱ្យនៅ 2,000 តួអក្សរ និងចម្លើយឱ្យនៅ 6,000 តួអក្សរ មុនពេលសម្គាល់ថាបានដាក់ពាក្យ។"
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "ខ្លីជាង"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "ចាប់ផ្តើមពី"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "ចាប់ផ្តើមពីមួយដែលអ្នកមាន ហើយភ្ជាប់ពាក្យសុំការងារ។"
 
@@ -12387,6 +12399,10 @@ msgstr "ចាប់ផ្តើមជាមួយនឹងផ្នែកដែ
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "ចាប់ផ្តើមដោយឈ្មោះរបស់អ្នក។ សាងសង់ពីទីនោះ។"
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "សប្តាហ៍នេះ៖ ធ្វើឱ្យភស្តុ�
 msgid "This workspace couldn't be loaded."
 msgstr "មិនអាចផ្ទុកផ្ទៃការងារនេះបានទេ។"
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "កែសម្រួលតាមប្រកាសការងារ"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "បង្រួម"
@@ -13926,7 +13946,6 @@ msgstr "Ukrainian"
 msgid "Unavailable"
 msgstr "មិនអាចប្រើបាន"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "គូសបន្ទាត់ពីក្រោម"
@@ -14527,6 +14546,10 @@ msgstr "កំពុងរង់ចាំអ្នក"
 msgid "Waiting to hear back"
 msgstr "រង់ចាំស្តាប់ឡើងវិញ"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "ស្និទ្ធស្នាលជាងមុន"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "ជំនួយការសរសេរ ការណែនាំដែ�
 msgid "Writing review"
 msgstr "ពិនិត្យការសរសេរ"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "សេចក្ដីផ្ដើមរបស់អ្នក"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "សេចក្ដីផ្ដើមរបស់អ្នក រឿងដែលត្រូវយកមក និងសំណួរដែលត្រូវសួរ។ វាក្លាយជាបញ្ជីត្រួតពិនិត្យរបស់អ្នក 10 នាទីមុនការហៅ។"
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

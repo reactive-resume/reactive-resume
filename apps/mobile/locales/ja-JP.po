@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# 件の書類をゴミ箱に移動しました} other {# 件の書類をゴミ箱に移動しました}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {書類#件} other {書類#件}}"
@@ -2462,6 +2463,10 @@ msgstr "ベンガル語"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "ボード"
@@ -2479,7 +2484,6 @@ msgstr "本文の文字が非常に小さい"
 msgid "Body text set to {minimum} pt"
 msgstr "本文テキストを {minimum} pt に設定"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "太字"
@@ -2556,7 +2560,6 @@ msgstr "ブルガリア語"
 msgid "bullet {n}"
 msgstr "リストエントリ {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "閉店"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "リクエストを完了できませんでした。接続を確認して、もう一度お試しください。"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "このアクションを完了できませんでした。もう一度やり直してください。"
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "トランスクリプトをコピーできませんでした。もう一度お試しください。"
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "レターを作成できませんでした。もう一度お試しください。"
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "カバーレター"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "カバーレター"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "カバーレター — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Open Collectiveで寄付する"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "フォームの回答"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "書式設定"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "選択した行を改善します"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "この段落を改善"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "改善中…"
 
@@ -6493,7 +6489,6 @@ msgstr "この応募から削除されます。その後、キャンセルファ
 msgid "Italian"
 msgstr "イタリア語"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "斜体"
@@ -8612,7 +8607,6 @@ msgstr "通知はオフになっています"
 msgid "Now"
 msgstr "今"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "番号付きリスト"
@@ -10710,6 +10704,7 @@ msgstr "ステージを廃止"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "この段落、手紙の残りの部分、入力した指示を {0} · {1} に送信します。"
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "この段落、手紙の残りの部分、リンクされた求人情報、入力した指示を {0} · {1} に送信します。"
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "テキスト レイヤーを読み取る代わりに、この PDF を構成済みの AI プロバイダーに送信します。"
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "応募済みにする前に、質問を2,000文字以内、回答を6,000文字以内に短くしてください。"
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "短い"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "から開始"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "既存のものから始めて、応募をリンクしてください。"
 
@@ -12387,6 +12399,10 @@ msgstr "ほとんどの履歴書にあるセクションから始めます。"
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "まずはあなたの名前から始めましょう。そこから構築します。"
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "今週：根拠をわかりやすく伝える"
 msgid "This workspace couldn't be loaded."
 msgstr "このワークスペースを読み込めませんでした。"
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "求人内容に合わせる"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "簡潔にする"
@@ -13926,7 +13946,6 @@ msgstr "ウクライナ語"
 msgid "Unavailable"
 msgstr "利用不可"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "下線"
@@ -14527,6 +14546,10 @@ msgstr "あなたの対応待ち"
 msgid "Waiting to hear back"
 msgstr "返事を待っています"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "より親しみやすく"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "文章作成の支援、カスタマイズされた提案、アシスタ
 msgid "Writing review"
 msgstr "文章レビュー"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "あなたの冒頭トーク"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "冒頭トーク、持っていくストーリー、聞くべき質問。通話の10分前にチェックリストになります。"
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

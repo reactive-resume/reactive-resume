@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# document mogut a la paperera} other {# documents moguts a la paperera}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# document} other {# documents}}"
@@ -2462,6 +2463,10 @@ msgstr "Bengalí"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Tauler"
@@ -2479,7 +2484,6 @@ msgstr "El text del cos és molt petit"
 msgid "Body text set to {minimum} pt"
 msgstr "El text del cos s'ha definit en {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Negreta"
@@ -2556,7 +2560,6 @@ msgstr "Búlgar"
 msgid "bullet {n}"
 msgstr "entrada de llista {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Tancat"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "No s'ha pogut completar la sol·licitud. Comproveu la connexió i torneu-ho a provar."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "No s'ha pogut completar aquesta acció. Torna-ho a provar."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "No s'ha pogut copiar la transcripció. Torneu-ho a provar."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "No s'ha pogut crear la carta. Torneu-ho a provar."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Carta de presentació"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Carta de presentació"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Carta de presentació — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Feu una donació a Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Resposta del formulari"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatatge"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Millora la línia seleccionada"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Millora aquest paràgraf"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "S'està millorant…"
 
@@ -6493,7 +6489,6 @@ msgstr "S'elimina d'aquesta candidatura. Després, descarrega la cancel·lació 
 msgid "Italian"
 msgstr "Italià"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Cursiva"
@@ -8612,7 +8607,6 @@ msgstr "Les notificacions estan desactivades"
 msgid "Now"
 msgstr "Ara"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Llista numerada"
@@ -10710,6 +10704,7 @@ msgstr "Retira l'etapa"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Envia aquest paràgraf, la resta de la carta i les teves instruccions a {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Envia aquest paràgraf, la resta de la carta, l'oferta de feina vinculada i les teves instruccions a {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Envia aquest PDF al vostre proveïdor d'IA configurat en lloc de llegir la seva capa de text."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Escurceu les preguntes a 2.000 caràcters i les respostes a 6.000 caràcters abans de marcar-la com a enviada."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Més curt"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Comença des de"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Comenceu des del que tingueu i enllaceu la sol·licitud de feina."
 
@@ -12387,6 +12399,10 @@ msgstr "Comenceu per les seccions que tenen la majoria dels currículums."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Comença pel teu nom. Construeix a partir d'allà."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Aquesta setmana: feu que les vostres proves siguin més fàcils de segui
 msgid "This workspace couldn't be loaded."
 msgstr "No s'ha pogut carregar aquest espai de treball."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Adapta a l'oferta"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Condensa"
@@ -13926,7 +13946,6 @@ msgstr "Ucraïnès"
 msgid "Unavailable"
 msgstr "No disponible"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Subratllat"
@@ -14527,6 +14546,10 @@ msgstr "Us espera"
 msgid "Waiting to hear back"
 msgstr "A l'espera de rebre resposta"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Més proper"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Ajuda per escriure, suggeriments adaptats i l'assistent. El proveïdor p
 msgid "Writing review"
 msgstr "Revisió de redacció"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "La vostra presentació inicial"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "La vostra presentació inicial, les històries que cal portar i les preguntes que cal fer. 10 minuts abans de la trucada es converteix en la vostra llista de comprovació."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

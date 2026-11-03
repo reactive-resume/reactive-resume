@@ -423,6 +423,9 @@ const { RichTextField, RichTextToolbar } = load("features/write/rich-text-field.
 		...react,
 		useState: (initial) => react.useState(typeof initial === "function" ? initial() : initial),
 		useEffect() {},
+		useLayoutEffect(effect) {
+			effect();
+		},
 		useMemo: (compute) => compute(),
 		useSyncExternalStore: (_subscribe, snapshot) => snapshot(),
 	},
@@ -431,7 +434,8 @@ const { RichTextField, RichTextToolbar } = load("features/write/rich-text-field.
 	"./rich-text": richText,
 	"./improve": { ImprovePanel: "ImprovePanel" },
 	"./pickers": { PromptSheet: "PromptSheet" },
-	"@/draft": { resumeFieldFocus: { onFocus() {}, onBlur() {} } },
+	"@/auth/session": { getAccountScope: () => "layout-account" },
+	"@/draft": { resumeFieldFocus: { onFocus() {}, onBlur() {} }, letterFieldFocus: { onFocus() {}, onBlur() {} } },
 });
 for (const text of ["Existing line", ""]) {
 	hooks.length = 0;

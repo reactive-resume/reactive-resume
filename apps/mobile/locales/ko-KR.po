@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {서류 #개를 휴지통으로 이동했습니다} other {서류 #개를 휴지통으로 이동했습니다}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {문서 #개} other {문서 #개}}"
@@ -2462,6 +2463,10 @@ msgstr "벵골어"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "보드"
@@ -2479,7 +2484,6 @@ msgstr "본문 텍스트가 매우 작습니다."
 msgid "Body text set to {minimum} pt"
 msgstr "본문 텍스트가 {minimum} pt로 설정되었습니다."
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "굵게"
@@ -2556,7 +2560,6 @@ msgstr "불가리아어"
 msgid "bullet {n}"
 msgstr "목록 항목 {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "닫은"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "요청을 완료할 수 없습니다. 연결을 확인하고 다시 시도해 보세요."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "이 작업을 완료할 수 없습니다. 다시 시도해 보세요."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "대화 기록을 복사할 수 없습니다. 다시 시도해 보세요."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "레터를 만들 수 없습니다. 다시 시도해 보세요."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "커버레터"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "자기소개서"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "자기 소개서 — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Open Collective에서 후원하기"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "양식 답변"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "서식 지정"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "선택한 라인 개선"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "이 문단 개선"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "개선 중…"
 
@@ -6493,7 +6489,6 @@ msgstr "이 지원서에서 삭제됩니다. 그다음 취소 파일을 다운�
 msgid "Italian"
 msgstr "이탈리아어"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "기울임"
@@ -8612,7 +8607,6 @@ msgstr "알림이 꺼져 있습니다"
 msgid "Now"
 msgstr "지금"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "번호가 매겨진 목록"
@@ -10710,6 +10704,7 @@ msgstr "단계 사용 중지"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "이 문단, 편지의 나머지 내용 및 지시 사항을 {0} · {1}에 전송합니다."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "이 문단, 편지의 나머지 내용, 연결된 채용 공고 및 지시 사항을 {0} · {1}에 전송합니다."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "텍스트 레이어를 읽는 대신 이 PDF를 구성된 AI 공급자에게 보냅니다."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "지원 완료로 표시하기 전에 질문은 2,000자, 답변은 6,000자 이내로 줄이세요."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "더 짧게"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "다음에서 시작"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "가지고 있는 것부터 시작하여 입사 지원서를 연결하세요."
 
@@ -12387,6 +12399,10 @@ msgstr "대부분의 이력서에 있는 섹션부터 시작하세요."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "당신의 이름으로 시작하세요. 거기에서 빌드하십시오."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "이번 주: 근거를 더 따라가기 쉽게 만들기"
 msgid "This workspace couldn't be loaded."
 msgstr "이 워크스페이스를 불러올 수 없습니다."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "채용 공고에 맞추기"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "간결하게"
@@ -13926,7 +13946,6 @@ msgstr "우크라이나어"
 msgid "Unavailable"
 msgstr "이용 불가"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "밑줄"
@@ -14527,6 +14546,10 @@ msgstr "확인 대기 중"
 msgid "Waiting to hear back"
 msgstr "답장을 기다리는 중"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "더 친근하게"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "작성 도움, 맞춤 제안, 어시스턴트. 따로 선택하지 않�
 msgid "Writing review"
 msgstr "글쓰기 검토"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "내 오프닝"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "오프닝, 가져갈 스토리, 물어볼 질문. 통화 10분 전에는 체크리스트가 됩니다."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

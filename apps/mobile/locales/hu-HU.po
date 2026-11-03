@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# dokumentum a kukába került} other {# dokumentum a kukába került}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# dokumentum} other {# dokumentum}}"
@@ -2462,6 +2463,10 @@ msgstr "bangla"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Tábla"
@@ -2479,7 +2484,6 @@ msgstr "A törzsszöveg nagyon kicsi"
 msgid "Body text set to {minimum} pt"
 msgstr "Törzsszöveg beállítása {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Félkövér"
@@ -2556,7 +2560,6 @@ msgstr "bolgár"
 msgid "bullet {n}"
 msgstr "lista bejegyzés {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Zárt"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Nem sikerült teljesíteni a kérést. Ellenőrizd a kapcsolatot, és próbáld újra."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Ezt a műveletet nem sikerült végrehajtani. Próbáld újra."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Nem sikerült kimásolni az átiratot. Próbáld újra."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Nem sikerült létrehozni a levelet. Próbáld újra."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Motivációs levél"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Motivációs levél"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Kísérőlevél — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Adományozás az Open Collective-en"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Űrlapválasz"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formázás"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "A kiválasztott vonal javítása"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Bekezdés javítása"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Javuló…"
 
@@ -6493,7 +6489,6 @@ msgstr "Eltávolításra kerül ebből az álláspályázatból. Ezután töltse
 msgid "Italian"
 msgstr "olasz"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Dőlt"
@@ -8612,7 +8607,6 @@ msgstr "Az értesítések ki vannak kapcsolva"
 msgid "Now"
 msgstr "Jelenleg"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Számozott lista"
@@ -10710,6 +10704,7 @@ msgstr "Szakasz kivonása"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Elküldi ezt a bekezdést, a levél többi részét és az utasításait ide: {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Elküldi ezt a bekezdést, a levél többi részét, a kapcsolt álláshirdetést és az utasításait ide: {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Ezt a PDF üzenetet elküldi a beállított AI-szolgáltatónak, ahelyett, hogy a szövegrétegét olvasná."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Rövidítsd a kérdéseket 2000, a válaszokat 6000 karakterre, mielőtt beadottként jelölöd."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Rövidebb"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Kezdje innen"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Kezdje az egyikkel, és kapcsolja össze az álláspályázatot."
 
@@ -12387,6 +12399,10 @@ msgstr "Kezdje a legtöbb önéletrajzban található részekkel."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Kezdd a neveddel. Építsd onnan."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Ezen a héten: tedd könnyebben követhetővé a bizonyítékaidat"
 msgid "This workspace couldn't be loaded."
 msgstr "Ezt a munkateret nem sikerült betölteni."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Igazítás az álláshirdetéshez"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Tömörítés"
@@ -13926,7 +13946,6 @@ msgstr "ukrán"
 msgid "Unavailable"
 msgstr "Nem elérhető"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Aláhúzás"
@@ -14527,6 +14546,10 @@ msgstr "Rád vár"
 msgid "Waiting to hear back"
 msgstr "Várja a visszajelzést"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Barátságosabb"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Írássegítség, testreszabott javaslatok és az asszisztens. Ahol nem 
 msgid "Writing review"
 msgstr "Szövegértékelés"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "A nyitásod"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "A nyitásod, a magaddal viendő történetek és a felteendő kérdések. 10 perccel a hívás előtt ez lesz az ellenőrzőlistád."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."
