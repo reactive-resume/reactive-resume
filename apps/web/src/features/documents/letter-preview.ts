@@ -1,7 +1,7 @@
 import { stripHtml } from "@reactive-resume/utils/string";
 
 /** How many opening lines a thumbnail shows; enough to tell letters apart, few enough to stay a page miniature. */
-export const LETTER_PREVIEW_LINES = 3;
+const LETTER_PREVIEW_LINES = 3;
 
 /**
  * The opening lines of a letter's body as the page reads them: paragraph and line breaks become lines, markup is
