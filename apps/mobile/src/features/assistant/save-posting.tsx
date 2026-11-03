@@ -18,6 +18,7 @@ type SavePostingProps = {
 	onSaved: (posting: { id: string; company: string; role: string }) => void;
 };
 
+/** Confirms the link through the draft owner, including a committed write whose response was lost. */
 export function SavePosting({ posting, resumeId, disabled, onSaved }: SavePostingProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
@@ -63,23 +64,48 @@ export function SavePosting({ posting, resumeId, disabled, onSaved }: SavePostin
 		const key = `save-job:${scope}:${resumeId}:${JSON.stringify(job)}`;
 		try {
 			check();
-			await flushResume(resumeId);
+			// A retry may already be linked: reconcile its revision before flushing newer local edits.
+			if (!created.current) await flushResume(resumeId);
 			check();
 			const options = { signal: request.signal, context: { scope } };
-			await draftResume.writeMetadata(async (baseline) => {
-				check();
-				if (baseline.id !== resumeId) throw new SessionChangedError();
-				setSubmitted(true);
-				created.current ??= await client.applications.create({ ...job, newId: pendingRequestId(key) }, options);
-				check();
-				request.signal.throwIfAborted();
-				const linked = await client.documents.linkApplication(
-					{ type: "resume", id: resumeId, applicationId: created.current, expectedUpdatedAt: baseline.updatedAt },
-					options,
-				);
-				if (!linked) throw new Error(t`Couldn't link the application. Try again.`);
-				return { ...baseline, ...linked };
-			});
+			await draftResume.writeMetadata(
+				async (baseline) => {
+					check();
+					if (baseline.id !== resumeId) throw new SessionChangedError();
+					const readLink = async () => {
+						check();
+						request.signal.throwIfAborted();
+						const stored = await client.resume.getById({ id: resumeId }, options);
+						check();
+						request.signal.throwIfAborted();
+						return stored.id === resumeId && stored.applicationId === created.current && !stored.isLocked
+							? stored
+							: null;
+					};
+					if (created.current) {
+						const confirmed = await readLink();
+						if (confirmed) return confirmed;
+					}
+					setSubmitted(true);
+					created.current ??= await client.applications.create({ ...job, newId: pendingRequestId(key) }, options);
+					check();
+					request.signal.throwIfAborted();
+					try {
+						const linked = await client.documents.linkApplication(
+							{ type: "resume", id: resumeId, applicationId: created.current, expectedUpdatedAt: baseline.updatedAt },
+							options,
+						);
+						if (!linked) throw new Error(t`Couldn't link the application. Try again.`);
+						return { ...baseline, ...linked };
+					} catch (error) {
+						const confirmed = await readLink().catch(() => null);
+						if (!confirmed) throw error;
+						return confirmed;
+					}
+				},
+				// A readback is not a conditional write: another body's revision must not become this draft's own.
+				{ conditional: false },
+			);
 			check();
 			if (!created.current) return;
 			settleRequestId(key);

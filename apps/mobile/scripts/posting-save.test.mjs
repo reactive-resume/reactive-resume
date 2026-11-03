@@ -38,6 +38,7 @@ function fixture() {
 	let create = async () => "new-job";
 	let link = async () => ({ ...document, applicationId: "new-job" });
 	let flush = async () => document;
+	let read = async () => ({ ...document, applicationId: null });
 	const pending = new Map();
 	const dependencies = {
 		"react/jsx-runtime": { jsx, jsxs: jsx },
@@ -77,6 +78,12 @@ function fixture() {
 		"@/api/client": {
 			SessionChangedError: class extends Error {},
 			client: {
+				resume: {
+					getById: async (...args) => {
+						calls.push(["read", ...args]);
+						return read(...args);
+					},
+				},
 				applications: {
 					create: async (...args) => {
 						calls.push(["create", ...args]);
@@ -96,8 +103,8 @@ function fixture() {
 		"@/draft": { useResumeStore: { getState: () => ({ document, locked }) } },
 		"@/draft/runtime": {
 			resume: {
-				writeMetadata: async (work) => {
-					calls.push(["metadata"]);
+				writeMetadata: async (work, options) => {
+					calls.push(["metadata", options]);
 					document = await work(document);
 				},
 			},
@@ -155,6 +162,9 @@ function fixture() {
 		setCreate: (value) => {
 			create = value;
 		},
+		setRead: (value) => {
+			read = value;
+		},
 		setLink: (value) => {
 			link = value;
 		},
@@ -174,6 +184,71 @@ function fixture() {
 	};
 }
 const settled = () => new Promise(setImmediate);
+
+test("native confirms a committed link after its response is lost through an account-bound read", async () => {
+	const f = fixture();
+	f.setLink(async () => {
+		throw new Error("response lost after commit");
+	});
+	f.setRead(async () => ({ id: "resume", updatedAt: new Date(1), applicationId: "new-job", isLocked: false }));
+	f.open();
+	f.fill();
+	f.button("Save and link this resume").props.onPress();
+	await settled();
+	assert.equal(f.saved.length, 1);
+	assert.equal(f.calls.filter(([kind]) => kind === "create").length, 1);
+	assert.equal(f.calls.filter(([kind]) => kind === "link").length, 1);
+	assert.deepEqual(f.calls.find(([kind]) => kind === "read")[2].context, { scope: "owner" });
+	assert.deepEqual(f.calls.find(([kind]) => kind === "metadata")[1], { conditional: false });
+});
+
+test("native retry reconciles uncertain link before flushing newer edits, without a second write", async () => {
+	const f = fixture();
+	let reads = 0;
+	f.setLink(async () => {
+		throw new Error("lost response");
+	});
+	f.setRead(async () => {
+		if (++reads === 1) throw new Error("readback unavailable");
+		return { id: "resume", updatedAt: new Date(1), applicationId: "new-job", isLocked: false };
+	});
+	f.open();
+	f.fill();
+	f.button("Save and link this resume").props.onPress();
+	await settled();
+	assert.equal(f.saved.length, 0);
+	f.setFlush(async () => {
+		throw new Error("Old revision cannot flush newer edits");
+	});
+	f.button("Save and link this resume").props.onPress();
+	await settled();
+	assert.equal(f.saved.length, 1);
+	assert.equal(f.calls.filter(([kind]) => kind === "flush").length, 1);
+	assert.equal(f.calls.filter(([kind]) => kind === "create").length, 1);
+	assert.equal(f.calls.filter(([kind]) => kind === "link").length, 1);
+});
+
+test("native never confirms mismatched, locked or account-switched readback", async () => {
+	for (const change of ["application", "document", "locked", "account"]) {
+		const f = fixture();
+		f.setLink(async () => {
+			throw new Error("link failed");
+		});
+		f.setRead(async () => {
+			if (change === "account") f.switchAccount();
+			return {
+				id: change === "document" ? "other" : "resume",
+				applicationId: change === "application" ? "other" : "new-job",
+				isLocked: change === "locked",
+			};
+		});
+		f.open();
+		f.fill();
+		f.button("Save and link this resume").props.onPress();
+		await settled();
+		assert.equal(f.saved.length, 0, change);
+	}
+});
 
 test("native posting save requires confirmation, keeps snapshot, pins account and revision; double taps create once", async () => {
 	const f = fixture();

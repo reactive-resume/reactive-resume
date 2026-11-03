@@ -60,20 +60,43 @@ export function SavePosting({ posting, resumeId, disabled, onSaved }: SavePostin
 		const key = `save-job:${owner.accountId}:${resumeId}:${JSON.stringify(job)}`;
 		let applicationId: string | undefined;
 		try {
-			await saveResumeMetadata(resumeId, async (expectedUpdatedAt, options) => {
-				if (!current()) throw new DOMException("", "AbortError");
-				const bound = { ...options, context: { accountId } };
-				setSubmitted(true);
-				created.current ??= await client.applications.create({ ...job, newId: pendingRequestId(key) }, bound);
-				applicationId = created.current;
-				if (!current() || options?.signal.aborted) throw new DOMException("", "AbortError");
-				const linked = await client.documents.linkApplication(
-					{ type: "resume", id: resumeId, applicationId, expectedUpdatedAt },
-					bound,
-				);
-				if (!linked) throw new Error(t`Couldn't link the application. Try again.`);
-				return linked;
-			});
+			// Reconcile a possibly committed link before pending body edits use its old revision.
+			const retrying = created.current !== null;
+			await saveResumeMetadata(
+				resumeId,
+				async (expectedUpdatedAt, options) => {
+					if (!current()) throw new DOMException("", "AbortError");
+					const bound = { ...options, context: { accountId } };
+					applicationId = created.current ?? undefined;
+					const readLink = async () => {
+						if (!current() || options?.signal.aborted) throw new DOMException("", "AbortError");
+						const stored = await client.resume.getById({ id: resumeId }, bound);
+						if (!current() || options?.signal.aborted) throw new DOMException("", "AbortError");
+						return stored.id === resumeId && stored.applicationId === applicationId && !stored.isLocked ? stored : null;
+					};
+					if (applicationId) {
+						const confirmed = await readLink();
+						if (confirmed) return confirmed;
+					}
+					setSubmitted(true);
+					created.current ??= await client.applications.create({ ...job, newId: pendingRequestId(key) }, bound);
+					applicationId = created.current;
+					if (!current() || options?.signal.aborted) throw new DOMException("", "AbortError");
+					try {
+						const linked = await client.documents.linkApplication(
+							{ type: "resume", id: resumeId, applicationId, expectedUpdatedAt },
+							bound,
+						);
+						if (!linked) throw new Error(t`Couldn't link the application. Try again.`);
+						return linked;
+					} catch (error) {
+						const confirmed = await readLink().catch(() => null);
+						if (!confirmed) throw error;
+						return confirmed;
+					}
+				},
+				{ savePending: !retrying },
+			);
 			if (!current() || !applicationId) return;
 			const id = applicationId;
 			patchResume((resume) => {
