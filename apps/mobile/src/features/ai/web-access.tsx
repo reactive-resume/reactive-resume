@@ -304,9 +304,9 @@ export function SetUpWebAccess() {
 	);
 }
 
-type WebAccessAttentionProps = { failure?: string | undefined };
+type WebAccessAttentionProps = { failure?: string | undefined; operation?: "search" | "read" };
 
-export function WebAccessAttention({ failure }: WebAccessAttentionProps = {}) {
+export function WebAccessAttention({ failure, operation = "search" }: WebAccessAttentionProps = {}) {
 	const { t } = useLingui();
 	const session = useSession();
 	const options = orpc.webAccess.status.queryOptions();
@@ -318,16 +318,17 @@ export function WebAccessAttention({ failure }: WebAccessAttentionProps = {}) {
 	const status = query.data;
 	const failed = status?.testResult && (!status.testResult.search.success || !status.testResult.read.success);
 	if (!failure && !failed) return null;
-	const managedSearch = status?.managed || (failure && status?.searxng);
+	const serverSearch = operation === "search" && failure && status?.searxng;
+	const managedSearch = status?.managed || serverSearch;
 	return (
 		<View>
 			<Banner
 				tone="warn"
-				message={`${failure && status?.searxng ? "SearXNG" : (status?.provider ?? "")} · ${webTestFailure(failure ?? status?.testResult?.search.error ?? status?.testResult?.read.error)}`}
+				message={`${serverSearch ? "SearXNG" : (status?.provider ?? "")} · ${webTestFailure(failure ?? status?.testResult?.search.error ?? status?.testResult?.read.error)}`}
 			/>
 			<Text>{t`Paste the posting text or a public link to continue. The built-in reader remains available.`}</Text>
 			{managedSearch ? (
-				<Text>{t`Ask your server administrator to fix web search. You can still paste a posting or read a public link.`}</Text>
+				<Text>{t`Ask your server administrator to fix web access. You can still paste a posting or read a public link.`}</Text>
 			) : (
 				<SetUpWebAccess />
 			)}

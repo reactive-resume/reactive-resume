@@ -6,7 +6,7 @@ const serverRequire = createRequire(new URL("../../server/package.json", import.
 const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
 const { QueryClient, QueryObserver } = mobileRequire("@tanstack/react-query");
 const { ORPCError } = mobileRequire("@orpc/client");
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { transformSync, buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
 const tag = (parts, ...values) => parts.reduce((s, p, i) => s + p + (values[i] ?? ""), "");
 let hooks = [];
@@ -67,6 +67,7 @@ const ui = Object.fromEntries(
 		"ListRow",
 		"Segmented",
 		"SelectSheet",
+		"Sheet",
 		"Text",
 		"TextArea",
 		"TextField",
@@ -474,10 +475,82 @@ assert.ok(
 	nodes(managedNotice).some((node) =>
 		node.props.children
 			.flat()
-			.some((text) => typeof text === "string" && /Ask your server administrator to fix web search/.test(text)),
+			.some((text) => typeof text === "string" && /Ask your server administrator to fix web access/.test(text)),
 	),
 );
 assert.ok(!nodes(managedNotice).some((node) => node.type === webAccess.SetUpWebAccess));
+reset();
+const contractModule = { exports: {} };
+new Function(
+	"require",
+	"module",
+	"exports",
+	buildSync({
+		entryPoints: [new URL("../../../packages/ai/src/tools/agent-tool-contracts.ts", import.meta.url).pathname],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text,
+)(mobileRequire, contractModule, contractModule.exports);
+const contracts = contractModule.exports;
+const messageUi = { ...ui, Icon: "Icon", useTheme: () => ({ space: {}, colors: {}, radius: {}, size: {}, type: {} }) };
+const { MessageView } = load(source("features/assistant/messages.tsx"), {
+	react: { ...react, memo: (fn) => fn },
+	"@lingui/core": { i18n: { locale: "en-US" } },
+	"@lingui/core/macro": { t: tag, ph: (value) => value, plural: () => "" },
+	"@lingui/react/macro": { ...defaults["@lingui/react/macro"], Trans: "Trans" },
+	"@orpc/client": { ORPCError },
+	"@tanstack/react-query": { useQueryClient: () => ({}) },
+	"expo-router": { useRouter: () => ({}) },
+	"@reactive-resume/ai/tools/agent-tool-contracts": contracts,
+	"@reactive-resume/resume/proposals": {},
+	"@reactive-resume/resume/word-diff": {},
+	"./chat": { webSources: contracts.agentWebSources },
+	"./handoff": {},
+	"./markdown": {},
+	"./page-fit": {},
+	"./proposals": {},
+	"./save-posting": {},
+	"@/api/client": {},
+	"@/auth/session": auth,
+	"@/features/ai/report-content": {},
+	"@/features/ai/web-access": webAccess,
+	"@/features/career/fact-categories": {},
+	"@/features/documents/queries": {},
+	"@/routes": {},
+	"@/ui": messageUi,
+});
+const expand = (node) => {
+	if (!node || typeof node !== "object") return node;
+	if (Array.isArray(node)) return node.map(expand);
+	if (typeof node.type === "function") return expand(node.type(node.props));
+	if (node.type === "Sheet" && !node.props.open) return { ...node, props: { ...node.props, children: [] } };
+	return { ...node, props: { ...node.props, children: expand(node.props.children) } };
+};
+for (const type of ["tool-search_web", "tool-read_page"]) {
+	reset();
+	webStatus = { search: true, provider: "firecrawl", searxng: type === "tool-read_page", managed: false };
+	const message = {
+		id: "web-failure",
+		role: "assistant",
+		parts: [{ type, toolCallId: "web-call", state: "output-error", errorText: "Web access failed (auth)." }],
+	};
+	const result = expand(
+		render(MessageView, {
+			message,
+			streaming: false,
+			readOnly: false,
+			answerable: false,
+			proposals: null,
+			onAnswer: null,
+		}),
+	);
+	assert.ok(nodes(result).some((node) => /rejected the credentials/.test(node.props.message ?? "")));
+	assert.ok(nodes(result).some((node) => node.props.label === "Set up web access"));
+	assert.doesNotMatch(JSON.stringify(result), /Ask your server administrator/);
+}
+
 reset();
 render(IncomingPosting, {});
 payloads = [{ shareType: "text", value: "Pending" }];

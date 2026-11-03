@@ -1,6 +1,7 @@
 import { ORPCError } from "@orpc/client";
 import { AISDKError, APICallError, RetryError } from "ai";
 import { AGENT_REPLY_ERRORS } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { WebAccessError } from "../web-access/contracts";
 
 /**
  * What a failed reply tells the user. Provider bodies and SDK text are English, can echo request data and aren't
@@ -9,6 +10,7 @@ import { AGENT_REPLY_ERRORS } from "@reactive-resume/ai/tools/agent-tool-contrac
 export function replyErrorMessage(error: unknown): string {
 	if (error instanceof ORPCError && error.message) return error.message;
 	const cause = RetryError.isInstance(error) ? error.lastError : error;
+	if (cause instanceof WebAccessError) return new WebAccessError(cause.reason).message;
 	if (APICallError.isInstance(cause)) {
 		const status = cause.statusCode;
 		if (status === 401 || status === 403) return AGENT_REPLY_ERRORS.providerKey;

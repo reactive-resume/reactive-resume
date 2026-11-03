@@ -3,13 +3,12 @@ import type { MessageContext } from "./transport";
 import type { AgentMessagesApi } from "./transport";
 import type { RouterOutput } from "@/api/client";
 import type { TranscriptLabels } from "@reactive-resume/ai/tools/transcript";
-import type { useQueryClient } from "@tanstack/react-query";
 import type { FileUIPart, UIMessage } from "ai";
 import { Chat, useChat } from "@ai-sdk/react";
 import { i18n } from "@lingui/core";
 import { ph, t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { useLayoutEffect, useMemo, useRef } from "react";
 import { transcriptOf as sharedTranscriptOf } from "@reactive-resume/ai/tools/transcript";
@@ -134,6 +133,7 @@ export function useAssistantChat({
 	scope,
 	beforeSend,
 }: UseAssistantChatInput) {
+	const queryClient = useQueryClient();
 	const contextRef = useRef(context);
 	const onFinishRef = useRef(onFinish);
 	const beforeSendRef = useRef(beforeSend);
@@ -145,6 +145,9 @@ export function useAssistantChat({
 
 	// One Chat per conversation (the caller keys it by thread), so callers can hold it outside render (chat-view.tsx).
 	const instance = useMemo(() => {
+		const refreshWebAccess = () => {
+			if (getAccountScope() === scope) void queryClient.invalidateQueries({ queryKey: orpc.webAccess.status.key() });
+		};
 		const agentMessages: AgentMessagesApi = {
 			// The server validates the UI message; bind every request to this conversation's account.
 			send: (input, options) => streamClient.agent.messages.send(input as never, { ...options, context: { scope } }),
@@ -172,12 +175,16 @@ export function useAssistantChat({
 			sendAutomaticallyWhen: (input) =>
 				lastAssistantMessageIsCompleteWithToolCalls(input) ||
 				lastAssistantMessageIsCompleteWithApprovalResponses(input),
-			onFinish: () => onFinishRef.current(),
+			onFinish: () => {
+				refreshWebAccess();
+				onFinishRef.current();
+			},
+			onError: refreshWebAccess,
 		});
 		return chat;
 		// The initial messages are read once, when the chat is created.
 		// oxlint-disable-next-line react-hooks/exhaustive-deps -- the chat takes its messages once; it's keyed by thread
-	}, [threadId, scope]);
+	}, [threadId, scope, queryClient]);
 
 	return { ...useChat<UIMessage>({ chat: instance, throttle: 50 }), instance };
 }

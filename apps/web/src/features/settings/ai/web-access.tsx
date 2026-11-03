@@ -478,20 +478,21 @@ export function SetUpWebAccess() {
 }
 
 /** Failed saved credentials stay visible where search is used, with repair and manual fallbacks. */
-type WebAccessAttentionProps = { failure?: string | undefined };
+type WebAccessAttentionProps = { failure?: string | undefined; operation?: "search" | "read" };
 
-export function WebAccessAttention({ failure }: WebAccessAttentionProps = {}) {
+export function WebAccessAttention({ failure, operation = "search" }: WebAccessAttentionProps = {}) {
 	const { data: status } = useQuery(orpc.webAccess.status.queryOptions());
 	const failed = status?.testResult && (!status.testResult.search.success || !status.testResult.read.success);
 	if (!failure && !failed) return null;
-	const managedSearch = status?.managed || (failure && status?.searxng);
+	const serverSearch = operation === "search" && failure && status?.searxng;
+	const managedSearch = status?.managed || serverSearch;
 	return (
 		<div
 			role={failure ? "alert" : "status"}
 			className="grid justify-items-start gap-2 rounded-lg bg-warn-soft p-3 text-xs text-warn-text"
 		>
 			<span>
-				{failure && status?.searxng ? "SearXNG" : status?.provider} ·{" "}
+				{serverSearch ? "SearXNG" : status?.provider} ·{" "}
 				{testFailureMessage(failure ?? status?.testResult?.search.error ?? status?.testResult?.read.error)}
 			</span>
 			<span>
@@ -500,7 +501,7 @@ export function WebAccessAttention({ failure }: WebAccessAttentionProps = {}) {
 			{managedSearch ? (
 				<span>
 					<Trans>
-						Ask your server administrator to fix web search. You can still paste a posting or read a public link.
+						Ask your server administrator to fix web access. You can still paste a posting or read a public link.
 					</Trans>
 				</span>
 			) : (

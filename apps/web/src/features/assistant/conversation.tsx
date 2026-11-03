@@ -15,6 +15,7 @@ import {
 	AGENT_ATTACHMENT_TYPES,
 	agentKnowledgeUsed,
 	agentReadPostings,
+	agentWebFailure,
 	agentWebSources,
 	citesKnowledge,
 	readPageOutputSchema,
@@ -53,6 +54,7 @@ import { useResumeStore } from "@/features/resume/builder/draft";
 import { runFit } from "@/features/resume/editor/design/fit";
 import { ChangeSet, Coverage } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
+import { WebAccessAttention } from "@/features/settings/ai/web-access";
 import { getOrpcErrorMessage, isProviderFailure, toastError } from "@/libs/error-message";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -775,6 +777,7 @@ function ToolPartView({
 		case "tool-search_web":
 		case "tool-read_page": {
 			const reading = part.type === "tool-read_page";
+			const failure = agentWebFailure(part);
 			if (working && !streaming)
 				return (
 					<TraceLine status="pending">
@@ -786,6 +789,8 @@ function ToolPartView({
 						</TraceTitle>
 					</TraceLine>
 				);
+			if (part.state === "output-error" && failure)
+				return <WebAccessAttention failure={failure} operation={reading ? "read" : "search"} />;
 			if (part.state === "output-error")
 				return (
 					<TraceLine role="alert" status="error">
@@ -823,9 +828,12 @@ function ToolPartView({
 						</p>
 					)}
 					{page?.success && page.data.fallbackReason && (
-						<p className="text-xs text-ink-3">
-							<Trans>Enhanced reading unavailable; used the built-in reader.</Trans>
-						</p>
+						<>
+							<p className="text-xs text-ink-3">
+								<Trans>Enhanced reading unavailable; used the built-in reader.</Trans>
+							</p>
+							{failure && <WebAccessAttention failure={failure} operation="read" />}
+						</>
 					)}
 				</Trace>
 			);

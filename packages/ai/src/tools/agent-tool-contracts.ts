@@ -40,6 +40,31 @@ export const readPageOutputSchema = z.object({
 export type SearchWebOutput = z.infer<typeof searchWebOutputSchema>;
 export type ReadPageOutput = z.infer<typeof readPageOutputSchema>;
 
+const webFailurePartSchema = z.object({
+	type: z.enum(["tool-search_web", "tool-read_page"]),
+	state: z.enum(["output-error", "output-available"]),
+	errorText: z.string().optional(),
+	output: z.unknown().optional(),
+});
+
+/** A recorded web failure or successful built-in fallback, never a reason inferred from model prose. */
+export function agentWebFailure(part: unknown) {
+	const parsedPart = webFailurePartSchema.safeParse(part);
+	if (!parsedPart.success) return;
+	const tool = parsedPart.data;
+	const page =
+		tool.type === "tool-read_page" && tool.state === "output-available"
+			? readPageOutputSchema.safeParse(tool.output)
+			: null;
+	const reason = page?.success
+		? page.data.fallbackReason
+		: tool.state === "output-error"
+			? /^Web access failed \(([a-z-]+)\)\.$/.exec(tool.errorText ?? "")?.[1]
+			: undefined;
+	const parsed = postingSourceSchema.shape.fallbackReason.safeParse(reason);
+	return parsed.success ? parsed.data : undefined;
+}
+
 const approvalPartSchema = z.object({
 	type: z.enum(["tool-search_web", "tool-save_story"]),
 	state: z.literal("approval-requested"),
