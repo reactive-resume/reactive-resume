@@ -123,6 +123,8 @@ function ConnectForm({ choice }: ConnectFormProps) {
 		label: choice.label,
 		apiKey: "",
 		model: choice.model,
+		fastModel: "",
+		capableModel: "",
 		baseURL: "",
 	});
 	const [failure, setFailure] = useState<string | null>(null);
@@ -133,6 +135,8 @@ function ConnectForm({ choice }: ConnectFormProps) {
 				label: fields.label.trim() || choice.label,
 				provider: choice.provider,
 				model: fields.model.trim(),
+				fastModel: fields.fastModel.trim(),
+				capableModel: fields.capableModel.trim(),
 				apiKey: fields.apiKey.trim(),
 				...(fields.baseURL.trim() ? { baseURL: fields.baseURL.trim() } : {}),
 			};

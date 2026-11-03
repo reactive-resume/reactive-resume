@@ -127,6 +127,11 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 			<Text variant="callout" selectable>
 				{provider.model}
 			</Text>
+			{(provider.fastModel || provider.capableModel) && (
+				<Text variant="callout" color="ink3" selectable>
+					{t`Fast: ${provider.fastModel ?? provider.model} · Capable: ${provider.capableModel ?? provider.model}`}
+				</Text>
+			)}
 			{provider.apiKeyPreview && (
 				<Text variant="mono" color="ink3">
 					{keyEnding(provider.apiKeyPreview)}

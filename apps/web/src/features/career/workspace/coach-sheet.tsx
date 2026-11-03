@@ -7,6 +7,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -285,7 +286,7 @@ function CoachSheetBody({
 								}
 							}}
 						>
-							{item.label} · {item.model}
+							{item.label} · {aiModelForTask(item, "capable")}
 						</Button>
 					))}
 					<SetUpAi />

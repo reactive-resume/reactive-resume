@@ -77,6 +77,14 @@ const defaults = {
 	react,
 	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
 	"@lingui/core/macro": { t: tag },
+	"@reactive-resume/ai/task-models": {
+		aiModelForTask: (provider, task) =>
+			(task === "capable" ? provider.capableModel : provider.fastModel) ?? provider.model,
+		aiTaskForOperation: () => undefined,
+		aiConfiguredModels: (provider) => [
+			...new Set([provider.model, provider.fastModel, provider.capableModel].filter(Boolean)),
+		],
+	},
 	"react-native": { View: "View", Platform: { OS: "ios" } },
 };
 function load(path, extra = {}) {

@@ -12,7 +12,12 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { providerDefaults, providerLabel } from "./catalog";
 import { ProviderModel } from "./provider-model";
 
-export type ProviderFields = AIProviderSetupFields & { label: string };
+export type ProviderFields = AIProviderSetupFields & {
+	label: string;
+	/** Optional per-task overrides; empty keeps the main model. */
+	fastModel: string;
+	capableModel: string;
+};
 
 type ProviderFieldsProps = {
 	provider: AIProvider;
@@ -44,6 +49,7 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 	const [advanced, setAdvanced] = useState(
 		Boolean(!compatible && keyOptional && value.baseURL.trim() && value.baseURL.trim() !== defaults.baseURL),
 	);
+	const [taskModels, setTaskModels] = useState(Boolean(value.fastModel.trim() || value.capableModel.trim()));
 	const keyURL = AI_PROVIDER_KEY_URLS[provider];
 	const problem = getAIProviderSetupProblem(provider, value, Boolean(keyOptional && !keyAgain));
 	const explanation =
@@ -138,6 +144,40 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 				)}
 			</div>
 			<ProviderModel id={`${id}-model`} provider={provider} value={value.model} onChange={(model) => set({ model })} />
+			<div className="grid gap-3">
+				<Collapsible open={taskModels} onOpenChange={setTaskModels}>
+					<CollapsibleTrigger render={<Button type="button" variant="ghost" size="sm" className="group w-fit" />}>
+						<Trans>Task models (optional)</Trans>
+						<Icon name="caret-down" size={16} className="transition-transform group-aria-expanded:rotate-180" />
+					</CollapsibleTrigger>
+					<CollapsibleContent>
+						<div className="grid gap-3 pt-3">
+							<p className="text-xs leading-5 text-ink-3">
+								<Trans>
+									Leave either field empty to use the model above. Fast handles resume import, Improve and reading job
+									postings; capable handles the assistant and letter drafts.
+								</Trans>
+							</p>
+							<ProviderModel
+								id={`${id}-fast-model`}
+								label={t`Fast model`}
+								hint={false}
+								provider={provider}
+								value={value.fastModel}
+								onChange={(fastModel) => set({ fastModel })}
+							/>
+							<ProviderModel
+								id={`${id}-capable-model`}
+								label={t`Capable model`}
+								hint={false}
+								provider={provider}
+								value={value.capableModel}
+								onChange={(capableModel) => set({ capableModel })}
+							/>
+						</div>
+					</CollapsibleContent>
+				</Collapsible>
+			</div>
 			{compatible ? (
 				<>
 					{urlField}

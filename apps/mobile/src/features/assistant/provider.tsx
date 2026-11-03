@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { refreshThreads } from "./chat";
 import { ContextChip } from "./chat-view";
 import { client, orpc } from "@/api/client";
@@ -75,7 +76,7 @@ export function ModelSheet({ open, onClose, providers, currentId, onChoose }: Mo
 					<ListRow
 						key={item.id}
 						title={item.label}
-						subtitle={item.model}
+						subtitle={aiModelForTask(item, "capable")}
 						selected={item.id === currentId}
 						trailing={item.id === currentId ? <Icon name="check" color={colors.accentText} /> : null}
 						onPress={() => {
@@ -105,7 +106,7 @@ type ModelButtonProps = { current: UsableProvider | undefined; label: string; on
 export function ModelButton({ current, label: fallback, onPress }: ModelButtonProps) {
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
-	const label = current ? `${current.label} · ${current.model}` : fallback;
+	const label = current ? `${current.label} · ${aiModelForTask(current, "capable")}` : fallback;
 	return (
 		<Pressable
 			accessibilityRole="button"

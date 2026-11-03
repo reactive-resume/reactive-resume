@@ -9,6 +9,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { disclosureItemsFromPresence } from "@reactive-resume/schema/career-disclosure";
 import { formatList } from "@reactive-resume/utils/locale";
 import { useFacts, useStories } from "./hooks";
@@ -285,7 +286,7 @@ export function AiNotice({ task, application, interview = false, sends, centered
 				<AIProviderSetupSheet open={setup} onClose={() => setSetup(false)} />
 			</>
 		);
-	const label = `${provider.label} · ${provider.model}`;
+	const label = `${provider.label} · ${aiModelForTask(provider, "capable")}`;
 	const presence: Partial<Record<DisclosureItem, boolean>> = {
 		preferences: true,
 		posting: Boolean(application?.jobDescription?.trim()),

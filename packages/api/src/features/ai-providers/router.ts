@@ -67,6 +67,8 @@ export const aiProvidersRouter = {
 					label: input.label,
 					provider: input.provider,
 					model: input.model,
+					...(input.fastModel !== undefined ? { fastModel: input.fastModel } : {}),
+					...(input.capableModel !== undefined ? { capableModel: input.capableModel } : {}),
 					...(input.baseURL !== undefined ? { baseURL: input.baseURL } : {}),
 					apiKey: input.apiKey,
 				});
@@ -97,6 +99,8 @@ export const aiProvidersRouter = {
 					...(input.label !== undefined ? { label: input.label } : {}),
 					...(input.provider !== undefined ? { provider: input.provider } : {}),
 					...(input.model !== undefined ? { model: input.model } : {}),
+					...(input.fastModel !== undefined ? { fastModel: input.fastModel } : {}),
+					...(input.capableModel !== undefined ? { capableModel: input.capableModel } : {}),
 					...(input.baseURL !== undefined ? { baseURL: input.baseURL } : {}),
 					...(input.apiKey !== undefined ? { apiKey: input.apiKey } : {}),
 					...(input.enabled !== undefined ? { enabled: input.enabled } : {}),

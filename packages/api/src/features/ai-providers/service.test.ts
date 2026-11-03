@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 const { dbMock, queryMock, queryState } = vi.hoisted(() => {
@@ -7,6 +8,7 @@ const { dbMock, queryMock, queryState } = vi.hoisted(() => {
 		orderByArgs: [] as unknown[],
 		updateRows: undefined as unknown[] | undefined,
 		updateWhere: undefined as unknown,
+		insertValues: undefined as unknown,
 	};
 	const query = {
 		from: vi.fn(() => query),
@@ -32,6 +34,12 @@ const { dbMock, queryMock, queryState } = vi.hoisted(() => {
 
 	const db = {
 		select: vi.fn(() => query),
+		insert: vi.fn(() => ({
+			values: vi.fn((values: unknown) => {
+				state.insertValues = values;
+				return { returning: vi.fn(async () => state.updateRows ?? state.rows) };
+			}),
+		})),
 		update: vi.fn(() => update),
 		transaction: vi.fn(async (run: (tx: unknown) => Promise<unknown>) => run(db)),
 	};
@@ -53,6 +61,8 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		label: "ai_provider.label",
 		provider: "ai_provider.provider",
 		model: "ai_provider.model",
+		fastModel: "ai_provider.fast_model",
+		capableModel: "ai_provider.capable_model",
 		baseUrl: "ai_provider.base_url",
 		encryptedApiKey: "ai_provider.encrypted_api_key",
 		apiKeySalt: "ai_provider.api_key_salt",
@@ -98,6 +108,8 @@ function providerRow(overrides: Record<string, unknown> = {}) {
 		label: "OpenAI",
 		provider: "openai",
 		model: "gpt-5-mini",
+		fastModel: null,
+		capableModel: null,
 		baseUrl: null,
 		encryptedApiKey: "encrypted-key",
 		apiKeySalt: "salt",
@@ -123,6 +135,7 @@ describe("aiProvidersService", () => {
 		queryState.orderByArgs = [];
 		queryState.updateRows = undefined;
 		queryState.updateWhere = undefined;
+		queryState.insertValues = undefined;
 	});
 
 	it("prefers the default enabled and tested provider, then stable creation order", async () => {
@@ -181,15 +194,87 @@ describe("aiProvidersService", () => {
 			]),
 		});
 	});
+	it("keeps the main model for every task until a task model is saved", async () => {
+		queryState.rows = [providerRow()];
+		await expect(aiProvidersService.getDefaultRunnable({ userId: "user-1" })).resolves.toMatchObject({
+			model: "gpt-5-mini",
+			fastModel: null,
+			capableModel: null,
+		});
+	});
+
+	it("stores optional task models on create", async () => {
+		queryState.updateRows = [providerRow({ fastModel: "fast-model", capableModel: "capable-model" })];
+
+		await expect(
+			aiProvidersService.create({
+				userId: "user-1",
+				label: "OpenAI",
+				provider: "openai",
+				model: "gpt-5-mini",
+				fastModel: "fast-model",
+				capableModel: "capable-model",
+				apiKey: "key",
+			}),
+		).resolves.toMatchObject({ fastModel: "fast-model", capableModel: "capable-model" });
+		expect(queryState.insertValues).toMatchObject({ fastModel: "fast-model", capableModel: "capable-model" });
+	});
+
+	it("resets readiness when an optional task model changes", async () => {
+		queryState.rows = [providerRow()];
+		queryState.updateRows = [providerRow({ fastModel: "fast-model", testStatus: "untested", enabled: false })];
+
+		await aiProvidersService.update({ id: "provider-1", userId: "user-1", fastModel: "fast-model" });
+
+		expect(dbMock.update().set).toHaveBeenCalledWith(
+			expect.objectContaining({
+				fastModel: "fast-model",
+				enabled: false,
+				testStatus: "untested",
+			}),
+		);
+	});
+
+	it("tests every configured model and never reports readiness after a task model fails", async () => {
+		queryState.rows = [providerRow({ fastModel: "fast-model", capableModel: "capable-model" })];
+		queryState.updateRows = undefined;
+		vi.mocked(testConnection)
+			.mockResolvedValueOnce({ ok: true })
+			.mockResolvedValueOnce({ ok: false, kind: "model", message: "Fast model rejected." });
+
+		await aiProvidersService.test({ id: "provider-1", userId: "user-1" });
+
+		expect(testConnection).toHaveBeenNthCalledWith(1, expect.objectContaining({ model: "gpt-5-mini" }));
+		expect(testConnection).toHaveBeenNthCalledWith(2, expect.objectContaining({ model: "fast-model" }));
+		expect(testConnection).toHaveBeenCalledTimes(2);
+		expect(dbMock.update().set).toHaveBeenCalledWith(
+			expect.objectContaining({
+				enabled: false,
+				testStatus: "failure",
+				testError: expect.stringContaining('"fast-model"'),
+			}),
+		);
+	});
+
 	it("binds recipient version to owner, provider, model, full URL and encrypted credential revision", async () => {
 		queryState.rows = [providerRow()];
 		const original = await aiProvidersService.getDefaultRunnable({ userId: "user-1" });
 		expect(original?.recipientVersion).toMatch(/^[a-f0-9]{64}$/);
+		// Existing single-model connections keep the approval version they had before task models existed.
+		expect(original?.recipientVersion).toBe(
+			createHmac("sha256", "synthetic-test-auth-secret")
+				.update(
+					JSON.stringify(["ai-recipient-v1", "user-1", "provider-1", "openai", "gpt-5-mini", null, "encrypted-key"]),
+				)
+				.digest("hex"),
+		);
 		for (const change of [
 			{ id: "other" },
 			{ userId: "other" },
 			{ provider: "anthropic" },
 			{ model: "other" },
+			{ fastModel: "other-fast" },
+			{ capableModel: "other-capable" },
 			{ baseUrl: "https://other.example/v1" },
 			{ encryptedApiKey: "replacement" },
 		]) {

@@ -23,6 +23,7 @@ const { dbMock, dbState } = vi.hoisted(() => {
 	const db = {
 		select: () => selectChain,
 		transaction: async (run: (tx: unknown) => Promise<unknown>) => run(db),
+		execute: async () => undefined,
 		update: () => ({
 			set: (values: Record<string, unknown>) => ({
 				where: () => {
@@ -38,7 +39,13 @@ const { dbMock, dbState } = vi.hoisted(() => {
 
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
 vi.mock("@reactive-resume/db/schema", () => ({
-	aiProvider: { id: "ai_provider.id", userId: "ai_provider.user_id" },
+	aiProvider: {
+		id: "ai_provider.id",
+		userId: "ai_provider.user_id",
+		fastModel: "ai_provider.fast_model",
+		capableModel: "ai_provider.capable_model",
+		baseUrl: "ai_provider.base_url",
+	},
 	user: { id: "user.id" },
 }));
 vi.mock("drizzle-orm", () => ({
@@ -46,6 +53,7 @@ vi.mock("drizzle-orm", () => ({
 	asc: (value: unknown) => ({ value }),
 	desc: (value: unknown) => ({ value }),
 	eq: (left: unknown, right: unknown) => ({ left, right }),
+	isNull: (value: unknown) => ({ value }),
 	sql: () => ({}),
 }));
 
@@ -86,6 +94,8 @@ function seedProvider(overrides: Record<string, unknown> = {}) {
 			label: "My provider",
 			provider: "openai",
 			model: "gpt-4.1",
+			fastModel: null,
+			capableModel: null,
 			baseUrl: "https://api.openai.test/v1",
 			enabled: false,
 			isDefault: false,
@@ -142,6 +152,65 @@ describe("POST /ai-providers/{id}/test — end to end", () => {
 
 		expect(response.testError).not.toContain("sk-live-demo-key-1234");
 		expect(response.testError).toContain("***");
+	});
+
+	it("tests every configured task model before the connection becomes ready", async () => {
+		seedProvider({ fastModel: "gpt-4.1-mini", capableModel: "gpt-4.1" });
+		const testedModels: string[] = [];
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(async (_url: string, init?: RequestInit) => {
+				const body = JSON.parse(String(init?.body ?? "{}")) as { model?: string };
+				if (body.model) testedModels.push(body.model);
+				return new Response(
+					JSON.stringify({
+						id: "chatcmpl-test",
+						object: "chat.completion",
+						created: 0,
+						model: body.model,
+						choices: [{ index: 0, message: { role: "assistant", content: "1" }, finish_reason: "stop" }],
+					}),
+					{ status: 200, headers: { "Content-Type": "application/json" } },
+				);
+			}),
+		);
+
+		const response = await client.test({ id: "provider-1" });
+
+		expect(testedModels).toEqual(["gpt-4.1", "gpt-4.1-mini"]);
+		expect(response.testStatus).toBe("success");
+		expect(response.enabled).toBe(true);
+	});
+
+	it("keeps the connection off when a configured task model is unsupported", async () => {
+		seedProvider({ fastModel: "not-a-real-model" });
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(async (_url: string, init?: RequestInit) => {
+				const body = JSON.parse(String(init?.body ?? "{}")) as { model?: string };
+				if (body.model === "not-a-real-model")
+					return new Response(JSON.stringify({ error: { message: "The model does not exist." } }), {
+						status: 404,
+						headers: { "Content-Type": "application/json" },
+					});
+				return new Response(
+					JSON.stringify({
+						id: "chatcmpl-test",
+						object: "chat.completion",
+						created: 0,
+						model: body.model,
+						choices: [{ index: 0, message: { role: "assistant", content: "1" }, finish_reason: "stop" }],
+					}),
+					{ status: 200, headers: { "Content-Type": "application/json" } },
+				);
+			}),
+		);
+
+		const response = await client.test({ id: "provider-1" });
+
+		expect(response.testStatus).toBe("failure");
+		expect(response.enabled).toBe(false);
+		expect(response.testError).toContain('"not-a-real-model"');
 	});
 
 	it("still rejects with BAD_REQUEST when the base URL is not permitted", async () => {
