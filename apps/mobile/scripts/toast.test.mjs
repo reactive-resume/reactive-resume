@@ -14,9 +14,9 @@ const react = {
 	useState: (initial) => [initial, () => {}],
 	useSyncExternalStore: (_subscribe, getSnapshot) => getSnapshot(),
 };
-const animation = {
-	duration: (duration) => ({ duration, reduceMotion: (policy) => ({ duration, policy }) }),
-};
+const animation = (name) => ({
+	duration: (duration) => ({ duration, reduceMotion: (policy) => ({ name, duration, policy }) }),
+});
 const theme = {
 	colors: {},
 	motion: { d1: 120, d2: 200 },
@@ -43,10 +43,10 @@ const mocks = {
 		__esModule: true,
 		default: { View: "Animated.View" },
 		ReduceMotion: { Never: "never" },
-		FadeIn: animation,
-		FadeInDown: animation,
-		FadeOut: animation,
-		FadeOutDown: animation,
+		FadeIn: animation("FadeIn"),
+		FadeInDown: animation("FadeInDown"),
+		FadeOut: animation("FadeOut"),
+		FadeOutDown: animation("FadeOutDown"),
 	},
 	"react-native-worklets": {},
 	"@lingui/react/macro": { useLingui: () => ({ t: (parts) => parts.join("") }) },
@@ -92,6 +92,8 @@ showToast({ message: "Section cleared", undo: () => undos++ });
 const toast = find(Toaster(), "Animated.View");
 assert.equal(toast.props.entering.policy, "never", "reduced-motion opacity entry still runs");
 assert.equal(toast.props.exiting.policy, "never", "reduced-motion opacity exit still runs");
+assert.equal(toast.props.entering.name, "FadeIn", "reduced entry has no spatial movement");
+assert.equal(toast.props.exiting.name, "FadeOut", "reduced exit has no spatial movement");
 const action = find(Toaster(), "Pressable");
 assert.ok(action, "The toast renders its Undo action");
 action.props.onPress();

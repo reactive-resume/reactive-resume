@@ -1,4 +1,4 @@
-import type { DocumentSummary } from "./filter";
+import type { OnDocumentEffect } from "./library-session";
 import type { ComponentProps } from "react";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
@@ -11,34 +11,28 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import { registerDocumentEffect } from "./library-session";
+import { getAccountScope } from "@/auth/session";
 import { useReducedMotion } from "@/ui/motion";
 import { motion } from "@/ui/tokens";
 
-type DocumentRef = Pick<DocumentSummary, "type" | "id">;
-export type OnDocumentEffect = (
-	effect: "trash" | "restore" | "purge",
-	documents?: readonly DocumentRef[],
-) => void | Promise<void>;
 type Controls = { fade: () => Promise<void>; reset: () => void };
 type Register = (key: string, controls: Controls) => () => void;
 
 /** Only confirmed actions animate; recycled/unmounted rows never have an automatic exit. */
-export function useDocumentRemovalMotion(scope: string, trashed: boolean, data: unknown, fetching: boolean) {
+export function useDocumentRemovalMotion(
+	scope: string,
+	trashed: boolean,
+	data: unknown,
+	fetching: boolean,
+	failed: boolean,
+) {
 	const currentScope = useRef<string | null>(scope);
 	const focused = useRef(false);
 	const views = useRef(new Map<string, Controls>());
 	const reset = useCallback(() => {
 		for (const controls of views.current.values()) controls.reset();
 	}, []);
-	useFocusEffect(
-		useCallback(() => {
-			focused.current = true;
-			return () => {
-				focused.current = false;
-				reset();
-			};
-		}, [reset]),
-	);
 	useLayoutEffect(() => {
 		currentScope.current = scope;
 		return () => {
@@ -47,8 +41,8 @@ export function useDocumentRemovalMotion(scope: string, trashed: boolean, data: 
 		};
 	}, [scope, reset]);
 	useEffect(() => {
-		if (!fetching) reset();
-	}, [data, fetching, reset]);
+		if (!fetching && !failed) reset();
+	}, [data, fetching, failed, reset]);
 	useEffect(() => {
 		const subscription = AppState.addEventListener("change", (state) => {
 			if (state !== "active") reset();
@@ -69,7 +63,7 @@ export function useDocumentRemovalMotion(scope: string, trashed: boolean, data: 
 	const onEffect = useCallback<OnDocumentEffect>(
 		async (effect, documents) => {
 			if (!focused.current || currentScope.current !== scope) return;
-			if (!(trashed ? effect !== "trash" : effect === "trash")) return reset();
+			if (!(trashed ? effect !== "trash" : effect === "trash")) return;
 			if (AppState.currentState !== "active") return;
 			const ids = documents && new Set(documents.map((item) => `${scope}:${item.type}:${item.id}`));
 			try {
@@ -85,7 +79,19 @@ export function useDocumentRemovalMotion(scope: string, trashed: boolean, data: 
 		},
 		[scope, trashed, reset],
 	);
-	return { register, onEffect };
+	const accountScope = getAccountScope();
+	useFocusEffect(
+		useCallback(() => {
+			focused.current = true;
+			const unregister = registerDocumentEffect(accountScope, onEffect);
+			return () => {
+				unregister();
+				focused.current = false;
+				reset();
+			};
+		}, [accountScope, onEffect, reset]),
+	);
+	return { register };
 }
 
 type DocumentMotionFrameProps = ComponentProps<typeof Animated.View> & { itemKey: string; register: Register };

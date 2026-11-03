@@ -1,5 +1,4 @@
 import type { DocumentSummary } from "./filter";
-import type { OnDocumentEffect } from "./removal-motion";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -20,7 +19,6 @@ import { formatRelativeTime } from "@/libs/locale";
 import { ENTER_CLASS, stagger } from "@/libs/motion";
 
 export type DocumentItemProps = {
-	onEffect?: OnDocumentEffect | undefined;
 	document: DocumentSummary;
 	onTags: (document: DocumentSummary) => void;
 	onLink: (document: DocumentSummary) => void;
@@ -128,7 +126,6 @@ function PaperBadge({ icon, label }: PaperBadgeProps) {
 /** A 204px card: the real first page, title with ⋯, "Resume · Edited 2h ago" and the linked application. */
 export function DocumentCard({
 	document,
-	onEffect,
 	onTags,
 	onLink,
 	introIndex,
@@ -149,7 +146,6 @@ export function DocumentCard({
 	const meta = useDocumentMeta(document);
 	const recipient = document.recipient;
 	const menuProps = {
-		onEffect,
 		document,
 		onOpen: () => openDocument(document),
 		onRename: () => setRenaming(true),
@@ -280,7 +276,6 @@ export function DocumentCard({
 /** The list view's row: Name, Type, Application, Edited, ⋯. */
 export function DocumentRow({
 	document,
-	onEffect,
 	onTags,
 	onLink,
 	introIndex,
@@ -299,7 +294,6 @@ export function DocumentRow({
 	};
 	const isNew = useNewDocumentsStore((state) => state.ids.includes(document.id)) && !document.trashedAt;
 	const menuProps = {
-		onEffect,
 		document,
 		onOpen: () => openDocument(document),
 		onRename: () => setRenaming(true),

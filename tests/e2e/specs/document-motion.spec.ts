@@ -1,3 +1,5 @@
+import type { Page } from "@playwright/test";
+import { failRpcProcedure } from "../fixtures/rpc-failure";
 import { expect, test } from "../fixtures/test";
 
 type ExitProof = { opacity: unknown; scale: unknown; duration: unknown };
@@ -5,7 +7,28 @@ declare global {
 	interface Window {
 		documentExits: ExitProof[];
 		documentExitCanceled: boolean;
+		pageFades: { duration: string; delay: string }[];
 	}
+}
+
+async function recordDocumentExits(page: Page) {
+	await page.addInitScript(() => {
+		const original = Element.prototype.animate;
+		window.documentExits = [];
+		Element.prototype.animate = function (...args) {
+			const animation = original.apply(this, args);
+			if (this.matches("[data-document-key]")) {
+				const final = (animation.effect as KeyframeEffect).getKeyframes().at(-1);
+				if (String(final?.opacity) === "0")
+					window.documentExits.push({
+						opacity: final?.opacity,
+						scale: final?.scale,
+						duration: animation.effect?.getTiming().duration,
+					});
+			}
+			return animation;
+		};
+	});
 }
 
 test("phone New opens from the bottom, keeps its draft on resize and restores focus after every dismissal", async ({
@@ -54,6 +77,20 @@ test("phone New opens from the bottom, keeps its draft on resize and restores fo
 });
 
 test("reduced motion keeps a short dialog opacity fade with no scale transition", async ({ authPage: page }, info) => {
+	await page.addInitScript(() => {
+		const original = document.startViewTransition.bind(document);
+		window.pageFades = [];
+		document.startViewTransition = (options) => {
+			const transition = original(options);
+			void transition.ready
+				.then(() => {
+					const style = getComputedStyle(document.documentElement, "::view-transition-new(root)");
+					window.pageFades.push({ duration: style.animationDuration, delay: style.animationDelay });
+				})
+				.catch(() => undefined);
+			return transition;
+		};
+	});
 	await page.setViewportSize({ width: 1280, height: 900 });
 	await page.emulateMedia({ reducedMotion: "reduce" });
 	await page.goto("/dashboard");
@@ -75,6 +112,98 @@ test("reduced motion keeps a short dialog opacity fade with no scale transition"
 		.toContain("scale");
 	await page.emulateMedia({ reducedMotion: "reduce" });
 	await expect.poll(() => dialog.evaluate((element) => getComputedStyle(element).transitionProperty)).toBe("opacity");
+	await page.keyboard.press("Escape");
+	await expect(dialog).toBeHidden();
+	await page
+		.getByRole("complementary", { name: "App navigation" })
+		.getByRole("link", { name: "Applications", exact: true })
+		.click();
+	await expect.poll(() => page.evaluate(() => window.pageFades.length)).toBeGreaterThan(0);
+	const pageFade = await page.evaluate(() => window.pageFades.at(-1));
+	expect(Number.parseFloat(pageFade?.duration ?? "1")).toBeLessThanOrEqual(0.001);
+	expect(Number.parseFloat(pageFade?.delay ?? "1")).toBeLessThanOrEqual(0.001);
+});
+
+test("emptying Trash keeps the library quiet across navigation", async ({ authPage: page }) => {
+	const created = await page.request.post("/api/openapi/resumes", { data: { name: "History fixture", tags: [] } });
+	await expect(created).toBeOK();
+	const id: string = await created.json();
+	await expect(await page.request.delete(`/api/openapi/resumes/${id}`)).toBeOK();
+	await page.goto("/dashboard/trash");
+	await page.getByRole("button", { name: "Empty Trash…", exact: true }).click();
+	const dialog = page.getByRole("alertdialog");
+	await dialog.getByRole("button", { name: "Hold to delete", exact: true }).focus();
+	await page.keyboard.down("Space");
+	await expect(dialog).toBeHidden();
+	await page.keyboard.up("Space");
+	await expect(page.getByText("Trash is empty", { exact: true })).toBeVisible();
+	await page.getByRole("link", { name: "Back to documents", exact: true }).click();
+	await expect(page.getByRole("heading", { name: "No documents", exact: true })).toBeVisible();
+	await expect(page.getByText("Let's start with what you have", { exact: true })).toHaveCount(0);
+	const counts = await page.request.get("/api/openapi/documents/counts");
+	await expect(counts).toBeOK();
+	expect(await counts.json()).toEqual({ resume: 0, letter: 0, trash: 0 });
+});
+
+for (const batch of [false, true])
+	test(`Undo fades the restored Trash row after navigation (batch=${batch})`, async ({ authPage: page }) => {
+		const created = await page.request.post("/api/openapi/resumes", {
+			data: { name: "Motion Undo document", tags: [] },
+		});
+		await expect(created).toBeOK();
+		const id: string = await created.json();
+		await recordDocumentExits(page);
+		await page.goto("/dashboard");
+		if (batch) {
+			await page.getByRole("checkbox", { name: "Select Motion Undo document", exact: true }).check();
+			await page
+				.getByRole("toolbar", { name: "Selected documents" })
+				.getByRole("button", { name: "Move to Trash", exact: true })
+				.click();
+		} else {
+			await page.getByRole("button", { name: "Options for Motion Undo document", exact: true }).click();
+			await page.getByRole("menuitem", { name: "Move to Trash", exact: true }).click();
+		}
+		await expect(page.locator('[data-slot="toast"]').filter({ hasText: "moved to Trash" })).toBeVisible();
+		await page.getByRole("complementary", { name: "App navigation" }).locator('a[href="/dashboard/trash"]').click();
+		const row = page.locator(`[data-document-key="resume:${id}"]`);
+		await expect(row).toBeVisible();
+		await page.getByRole("button", { name: "Undo", exact: true }).click();
+		await expect.poll(() => page.evaluate(() => window.documentExits.length)).toBe(2);
+		await expect(row).toHaveCount(0);
+		const read = await page.request.get("/api/openapi/documents?trashed=false");
+		await expect(read).toBeOK();
+		expect(await read.json()).toEqual(expect.arrayContaining([expect.objectContaining({ id })]));
+	});
+
+test("an accepted removal stays faded and inert when refresh fails, then recovers on retry", async ({
+	authPage: page,
+}) => {
+	const created = await page.request.post("/api/openapi/resumes", {
+		data: { name: "Refresh failure fixture", tags: [] },
+	});
+	await expect(created).toBeOK();
+	const id: string = await created.json();
+	await page.goto("/dashboard");
+	await expect(page.getByRole("button", { name: "Options for Refresh failure fixture", exact: true })).toBeVisible();
+	let failing = true;
+	await page.route("**/api/rpc/**", async (route) => {
+		if (failing) await failRpcProcedure(route, "/api/rpc/documents/page", "Fixture: page refresh unavailable");
+		else await route.continue();
+	});
+	await page.getByRole("button", { name: "Options for Refresh failure fixture", exact: true }).click();
+	await page.getByRole("menuitem", { name: "Move to Trash", exact: true }).click();
+	await expect(page.getByRole("alert")).toBeVisible({ timeout: 15_000 });
+	const row = page.locator(`[data-document-key="resume:${id}"]`);
+	await expect(row).toHaveCSS("opacity", "0");
+	await expect(row).toHaveJSProperty("inert", true);
+	const read = await page.request.get("/api/openapi/documents?trashed=true");
+	await expect(read).toBeOK();
+	expect(await read.json()).toEqual(expect.arrayContaining([expect.objectContaining({ id })]));
+	failing = false;
+	await page.getByRole("button", { name: "Try again", exact: true }).click();
+	await expect(row).toHaveCount(0);
+	await expect(page.getByRole("alert")).toHaveCount(0);
 });
 
 for (const interruption of ["filter", "navigation", "animation failure"] as const)
@@ -143,25 +272,7 @@ for (const { view, reduced } of [
 		await expect(created).toBeOK();
 		const id: string = await created.json();
 		await page.emulateMedia({ reducedMotion: reduced ? "reduce" : "no-preference" });
-		// Record the real browser animation's computed frames; the platform still executes every animation.
-		await page.addInitScript(() => {
-			const original = Element.prototype.animate;
-			window.documentExits = [];
-			Element.prototype.animate = function (...args) {
-				const animation = original.apply(this, args);
-				if (this.matches("article,tr") && this.textContent?.includes("Motion retained document")) {
-					const frames = (animation.effect as KeyframeEffect).getKeyframes();
-					const final = frames.at(-1);
-					if (String(final?.opacity) === "0")
-						window.documentExits.push({
-							opacity: final?.opacity,
-							scale: final?.scale,
-							duration: animation.effect?.getTiming().duration,
-						});
-				}
-				return animation;
-			};
-		});
+		await recordDocumentExits(page);
 		await page.goto(`/dashboard?view=${view}`);
 		const search = page.getByRole("searchbox", { name: "Search documents", exact: true });
 		await search.fill("no matching document");

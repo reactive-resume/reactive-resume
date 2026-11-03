@@ -20,6 +20,7 @@ import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
 import { useDialogStore } from "@/dialogs/store";
 import { GuestBanner } from "@/features/auth/components/guest-banner";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
+import { DocumentLibraryProvider } from "@/features/documents/library-session";
 import { shortcutOverlayOpen } from "@/features/keyboard-shortcuts/blocking";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
@@ -167,7 +168,7 @@ export function AppShell({ children }: AppShellProps) {
 			{breakpoint !== "mobile" && (breakpoint === "tablet" ? <Rail /> : <Sidebar />)}
 			<main id="main-content" className="min-w-0">
 				<GuestBanner />
-				{children}
+				<DocumentLibraryProvider>{children}</DocumentLibraryProvider>
 			</main>
 			{tabs && <MobileTabs />}
 		</div>

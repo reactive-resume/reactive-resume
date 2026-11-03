@@ -12,6 +12,7 @@ import { RefreshControl, I18nManager, Platform, Pressable, ScrollView, View, use
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { DocumentSheets } from "./document-sheets";
 import { daysLeftInTrash, documentKey, documentRef } from "./filter";
+import { useDocumentHistory } from "./library-session";
 import { isNewDocument, useNewDocuments } from "./new-documents";
 import { usePendingDocuments } from "./pending";
 import { useDocumentOperations } from "./queries";
@@ -269,8 +270,9 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		trashed,
 		documents.data,
 		documents.isFetching,
+		documents.isError,
 	);
-	const operations = useDocumentOperations(rowsCurrent, removal.onEffect);
+	const operations = useDocumentOperations(rowsCurrent);
 	if (
 		page.filterKey !== filterKey ||
 		(documents.data && !documents.isPlaceholderData && offset > 0 && offset >= documents.data.total)
@@ -298,9 +300,13 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		!trashed && type !== "all" && !q && !tags.length && !publicOnly && offset === 0 && displayed?.counts[type] === 0
 			? type
 			: null;
-	const [hadDocuments, setHadDocuments] = useState(false);
-	if (!hadDocuments && (all.length > 0 || (counts.data?.trash ?? 0) > 0)) setHadDocuments(true);
-	const quietEmpty = hadDocuments || (counts.data?.trash ?? 0) > 0;
+	const quietEmpty = useDocumentHistory(
+		scope,
+		Boolean(
+			(!documents.isPlaceholderData && documents.data?.total) ||
+			(counts.data && counts.data.resume + counts.data.letter + counts.data.trash > 0),
+		),
+	);
 	const firstAppearance = useFirstAppearance(filtered.length > 0);
 	const reduced = useReducedMotion();
 	const selected = rowsCurrent ? filtered.filter((document) => selection.includes(documentKey(document))) : [];
@@ -737,11 +743,9 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 						busy={operations.busy}
 						onClose={() => setSheet(null)}
 						onRestore={(document) =>
-							void operations
-								.run(() => client.documents.restore(documentRef(document)))
-								.then((success) => {
-									if (success) setSheet(null);
-								})
+							void operations.restoreSelected([document]).then((success) => {
+								if (success) setSheet(null);
+							})
 						}
 						onDelete={(document) => {
 							setSheet(null);

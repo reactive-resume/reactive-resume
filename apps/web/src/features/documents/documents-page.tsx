@@ -1,5 +1,4 @@
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
-import type { OnDocumentEffect } from "./removal-motion";
 import type { QueryClient } from "@tanstack/react-query";
 import type { KeyboardEvent, Ref } from "react";
 import { t } from "@lingui/core/macro";
@@ -33,6 +32,7 @@ import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-a
 import { DocumentCard, DocumentRow } from "./document-card";
 import { documentKey } from "./filter";
 import { LibraryError } from "./library-error";
+import { useDocumentHistory } from "./library-session";
 import { useNewDocumentsStore } from "./new-documents";
 import { PageNavigation } from "./page-navigation";
 import { useDocumentRemovalMotion } from "./removal-motion";
@@ -145,12 +145,13 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		viewSwitched &&
 		"transition-[opacity,translate] duration-standard ease-enter starting:translate-y-1 starting:opacity-0";
 
-	const onEffect = useDocumentRemovalMotion({
+	useDocumentRemovalMotion({
 		container: resultsRef,
 		scope: JSON.stringify([filterKey, displayedOffset, view]),
 		trashed: false,
 		data: displayed,
 		fetching: isFetching,
+		failed: isError,
 	});
 
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
@@ -178,11 +179,18 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const shown = displayed?.items ?? [];
 	const failed = isError && !displayed;
 	const filtered = search.type !== "all" || search.q.trim() !== "" || search.tags.length > 0 || search.public === true;
-	const [hadDocuments, setHadDocuments] = useState(false);
-	if (!hadDocuments && shown.length > 0) setHadDocuments(true);
-	const firstRun = rowsCurrent && !filtered && offset === 0 && pageData?.total === 0 && !hadDocuments;
-	const { data: libraryCounts, isPending: countsPending } = useQuery(orpc.documents.counts.queryOptions());
+	const {
+		data: libraryCounts,
+		isPending: countsPending,
+		isError: countsError,
+		isFetching: countsFetching,
+		refetch: refetchCounts,
+	} = useQuery(orpc.documents.counts.queryOptions());
 	const trashCount = libraryCounts?.trash ?? 0;
+	const hadDocuments = useDocumentHistory(
+		shown.length > 0 || (libraryCounts ? libraryCounts.resume + libraryCounts.letter + libraryCounts.trash > 0 : false),
+	);
+	const firstRun = rowsCurrent && !filtered && offset === 0 && pageData?.total === 0 && !hadDocuments;
 	const tags = displayed?.tags ?? [];
 	const counts = {
 		all: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0),
@@ -218,7 +226,6 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		setSelected(new Set(on ? shown.map(documentKey) : []));
 	};
 	const itemProps = (document: DocumentSummary) => ({
-		onEffect,
 		onTags: (document: DocumentSummary) => {
 			if (rowsCurrent) setTagsFor([document]);
 		},
@@ -383,9 +390,15 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				)}
 			</PageHeader>
 
-			{isError && (
+			{(isError || countsError) && (
 				<div className="grid justify-items-start gap-2">
-					<LibraryError retrying={isFetching} onRetry={() => void refetch()} />
+					<LibraryError
+						retrying={isFetching || countsFetching}
+						onRetry={() => {
+							void refetch();
+							void refetchCounts();
+						}}
+					/>
 					{filtered && (
 						<Button variant="secondary" onClick={() => onSearchChange({ q: "", tags: [], type: "all", public: false })}>
 							<Trans>Clear search and filters</Trans>
@@ -527,7 +540,6 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				onChange={changePage}
 			/>
 			<SelectionBar
-				onEffect={onEffect}
 				ref={selectionBarRef}
 				key={`selection:${filterKey}:${offset}`}
 				selection={selection}
@@ -760,7 +772,6 @@ function TagFilter({ tags, active, onChange, showPublic, publicOnly, onPublicCha
 }
 
 type SelectionBarProps = {
-	onEffect: OnDocumentEffect;
 	ref: Ref<HTMLDivElement>;
 	selection: DocumentSummary[];
 	allSelected: boolean;
@@ -773,9 +784,9 @@ type SelectionBarProps = {
  * Floats over the library while documents are selected: tags, visibility, locking and Trash for all of them. On phones
  * it sits above the tab bar, as the Applications list's bar does.
  */
-function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTags, onEffect }: SelectionBarProps) {
+function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTags }: SelectionBarProps) {
 	const lettersOnly = selection.length > 0 && selection.every((document) => document.type === "letter");
-	const batch = useBatchActions(onEffect);
+	const batch = useBatchActions();
 	const [busy, setBusy] = useState(false);
 	const count = selection.length;
 	// Toasts sit bottom centre, where this bar is: lift them above it while it's on screen, so a result never hides it.

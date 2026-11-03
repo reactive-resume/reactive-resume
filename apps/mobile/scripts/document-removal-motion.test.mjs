@@ -112,8 +112,21 @@ function fixture(reduced = false) {
 			},
 		});
 	};
+	let accountScope = "account";
+	const session = {
+		useSession: () => ({ status: "signed-in", server: "local" }),
+		getServer: () => "local",
+		getAccountScope: () => accountScope,
+	};
+	const librarySession = load("features/documents/library-session.ts", {
+		react,
+		"zustand/react": { create: () => () => {} },
+		"@/auth/session": session,
+	});
 	const native = load("features/documents/removal-motion.tsx", {
 		react,
+		"./library-session": librarySession,
+		"@/auth/session": session,
 		"expo-router": {
 			useFocusEffect: (callback) =>
 				react.useEffect(() => {
@@ -137,11 +150,16 @@ function fixture(reduced = false) {
 		"@/ui/motion": { useReducedMotion: () => reduced },
 		"@/ui/tokens": { motion: { d1: 120, d2: 200 } },
 	});
-	const collection = mount(({ scope }) => native.useDocumentRemovalMotion(scope, false, null, false), {
-		scope: "account/library",
-	});
+	const collection = mount(
+		({ scope, trashed = false, fetching = false, failed = false, data = null }) =>
+			native.useDocumentRemovalMotion(scope, trashed, data, fetching, failed),
+		{
+			scope: "account/library",
+		},
+	);
 	const frame = mount(native.DocumentMotionFrame, { itemKey: "resume:one", register: collection.value.register });
 	const writes = [];
+	const toasts = [];
 	let refreshes = 0;
 	const api = load("features/documents/queries.ts", {
 		react,
@@ -163,6 +181,10 @@ function fixture(reduced = false) {
 		"@/api/client": {
 			client: {
 				documents: {
+					restoreMany: async ({ documents }) => {
+						writes.push("restore");
+						return { restored: documents.length };
+					},
 					trash: async ({ id }) => {
 						if (id === "failed") throw new Error("offline");
 						writes.push(id);
@@ -173,11 +195,12 @@ function fixture(reduced = false) {
 				["documents", "resume", "coverLetters", "applications"].map((key) => [key, { key: () => [key] }]),
 			),
 		},
-		"@/auth/session": { useSession: () => ({ status: "signed-in", server: "local" }), getServer: () => "local" },
-		"@/lib/undone": {},
-		"@/ui": { showToast() {} },
+		"@/auth/session": session,
+		"./library-session": librarySession,
+		"@/lib/undone": { confirmUndone() {} },
+		"@/ui": { showToast: (toast) => toasts.push(toast) },
 	});
-	const operations = mount(() => api.useDocumentOperations(true, collection.value.onEffect)).value;
+	const operations = mount(() => api.useDocumentOperations(true)).value;
 	return {
 		blur: () => blur?.(),
 		collection,
@@ -185,6 +208,10 @@ function fixture(reduced = false) {
 		operations,
 		animations,
 		writes,
+		toasts,
+		switchAccount: () => {
+			accountScope = "other";
+		},
 		get refreshes() {
 			return refreshes;
 		},
@@ -238,4 +265,62 @@ test("native animation failure cannot report an accepted write as failed", async
 	assert.equal(await f.operations.trash([{ type: "resume", id: "one", isLocked: false }]), true);
 	assert.deepEqual(f.writes, ["one"]);
 	assert.equal(f.refreshes, 4);
+});
+
+for (const count of [1, 2])
+	test(`native Undo of ${count} documents fades the currently focused Trash collection`, async () => {
+		const f = fixture(true);
+		const documents = Array.from({ length: count }, (_, index) => ({
+			type: "resume",
+			id: index ? "two" : "one",
+			isLocked: false,
+		}));
+		const trash = f.operations.trash(documents);
+		await tick();
+		f.animations.at(-1).finish();
+		assert.equal(await trash, true);
+		const undo = f.toasts.at(-1).action;
+		f.blur();
+		f.collection.render({ scope: "account/trash", trashed: true });
+		f.frame.render({ itemKey: "resume:one", register: f.collection.value.register });
+		const before = f.refreshes;
+		undo.onPress();
+		await tick();
+		assert.equal(f.animations.length, 2, "Restore targets the mounted Trash row");
+		assert.equal(f.refreshes, before, "Restore receipt waits for the current exit");
+		f.animations.at(-1).finish();
+		await tick();
+		assert.equal(f.refreshes, before + 4);
+	});
+
+test("native direct Restore waits for fade and failed refresh holds it until successful retry", async () => {
+	const f = fixture(true);
+	f.collection.render({ scope: "account/trash", trashed: true });
+	f.frame.render({ itemKey: "resume:one", register: f.collection.value.register });
+	const pending = f.operations.restoreSelected([{ type: "resume", id: "one" }]);
+	await tick();
+	assert.equal(f.refreshes, 0);
+	f.animations.at(-1).finish();
+	assert.equal(await pending, true);
+	f.collection.render({ scope: "account/trash", trashed: true, fetching: true });
+	f.collection.render({ scope: "account/trash", trashed: true, failed: true });
+	assert.equal(
+		f.frame.value.props.style.at(-1).read().opacity,
+		0,
+		"Accepted removal stays faded after refetch failure",
+	);
+	f.collection.render({ scope: "account/trash", trashed: true, data: {} });
+	assert.equal(f.frame.value.props.style.at(-1).read().opacity, 1, "Successful retry releases retained animation");
+});
+
+test("native stale Undo cannot restore into another account", async () => {
+	const f = fixture(true);
+	const pending = f.operations.trash([{ type: "resume", id: "one" }]);
+	await tick();
+	f.animations.at(-1).finish();
+	await pending;
+	f.switchAccount();
+	f.toasts.at(-1).action.onPress();
+	await tick();
+	assert.deepEqual(f.writes, ["one"]);
 });

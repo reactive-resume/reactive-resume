@@ -1,10 +1,8 @@
+import type { OnDocumentEffect } from "./library-session";
 import type { RefObject } from "react";
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef } from "react";
+import { DocumentLibraryContext } from "./library-session";
 import { D1, D2, EASE, EXIT } from "@/libs/motion";
-
-type DocumentRef = { type: string; id: string };
-type DocumentEffect = "trash" | "restore" | "purge";
-export type OnDocumentEffect = (effect: DocumentEffect, documents?: readonly DocumentRef[]) => void | Promise<void>;
 
 type RemovalMotionOptions = {
 	container: RefObject<HTMLElement | null>;
@@ -12,10 +10,12 @@ type RemovalMotionOptions = {
 	trashed: boolean;
 	data: unknown;
 	fetching: boolean;
+	failed: boolean;
 };
 
 /** Fade confirmed removals before refreshing; unmounting/filtering itself never starts an exit. */
-export function useDocumentRemovalMotion({ container, scope, trashed, data, fetching }: RemovalMotionOptions) {
+export function useDocumentRemovalMotion({ container, scope, trashed, data, fetching, failed }: RemovalMotionOptions) {
+	const session = useContext(DocumentLibraryContext);
 	const currentScope = useRef<string | null>(scope);
 	const active = useRef(new Map<Animation, { element: HTMLElement; inert: boolean }>());
 	const reset = useCallback(() => {
@@ -33,8 +33,8 @@ export function useDocumentRemovalMotion({ container, scope, trashed, data, fetc
 		};
 	}, [scope, reset]);
 	useEffect(() => {
-		if (!fetching) reset();
-	}, [data, fetching, reset]);
+		if (!fetching && !failed) reset();
+	}, [data, fetching, failed, reset]);
 	useEffect(() => {
 		const onVisibility = () => {
 			if (document.hidden) reset();
@@ -43,11 +43,11 @@ export function useDocumentRemovalMotion({ container, scope, trashed, data, fetc
 		return () => document.removeEventListener("visibilitychange", onVisibility);
 	}, [reset]);
 
-	return useCallback<OnDocumentEffect>(
+	const onEffect = useCallback<OnDocumentEffect>(
 		async (effect, documents) => {
 			if (currentScope.current !== scope) return;
 			const removes = trashed ? effect !== "trash" : effect === "trash";
-			if (!removes) return reset();
+			if (!removes) return;
 			if (document.hidden || !container.current) return;
 			const ids = documents && new Set(documents.map((item) => `${item.type}:${item.id}`));
 			const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -73,4 +73,6 @@ export function useDocumentRemovalMotion({ container, scope, trashed, data, fetc
 		},
 		[container, scope, trashed, reset],
 	);
+	const registerEffect = session?.registerEffect;
+	useLayoutEffect(() => registerEffect?.(onEffect), [registerEffect, onEffect]);
 }

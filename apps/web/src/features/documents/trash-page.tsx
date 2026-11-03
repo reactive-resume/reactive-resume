@@ -14,6 +14,7 @@ import { DocumentRow } from "./document-card";
 import { LibrarySkeleton } from "./documents-page";
 import { documentKey } from "./filter";
 import { LibraryError } from "./library-error";
+import { useDocumentHistory } from "./library-session";
 import { PageNavigation } from "./page-navigation";
 import { useDocumentRemovalMotion } from "./removal-motion";
 import { PageHeader } from "@/components/layout/page-header";
@@ -55,14 +56,16 @@ export function TrashPage() {
 		setOffset(Math.max(0, Math.floor((page.total - 1) / 100) * 100));
 		setSelected(new Set());
 	}
-	const onEffect = useDocumentRemovalMotion({
+	useDocumentRemovalMotion({
 		container: resultsRef,
 		scope: String(displayedOffset),
 		trashed: true,
 		data: displayed,
 		fetching: isFetching,
+		failed: isError,
 	});
-	const batch = useBatchActions(onEffect);
+	const batch = useBatchActions();
+	useDocumentHistory(Boolean(page && page.total > 0));
 	const documents = displayed?.items;
 	const all = documents ?? [];
 	const selection = rowsCurrent ? all.filter((document) => selected.has(documentKey(document))) : [];
@@ -232,7 +235,6 @@ export function TrashPage() {
 							<DocumentRow
 								key={documentKey(document)}
 								document={document}
-								onEffect={onEffect}
 								onTags={noop}
 								onLink={noop}
 								selected={rowsCurrent && selected.has(documentKey(document))}
