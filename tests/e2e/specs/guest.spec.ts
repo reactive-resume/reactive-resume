@@ -1,6 +1,7 @@
 import type { E2EAccount } from "../fixtures/data";
 import type { APIRequestContext, Browser, BrowserContext } from "@playwright/test";
 import { registerViaUi } from "../fixtures/auth";
+import { deleteE2EUser } from "../fixtures/db";
 import { createSampleResumeFromDashboard } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
@@ -36,6 +37,71 @@ async function signInGuest(browser: Browser, baseURL: string | undefined, origin
 	const signedIn = await context.request.post("/api/auth/sign-in/anonymous", { headers: { origin }, data: {} });
 	expect(signedIn.ok()).toBe(true);
 	return context;
+}
+
+for (const width of [390, 1280]) {
+	test(`conflicting guest Career preferences preserve both accounts and allow a safe retry at ${width}px`, async ({
+		browser,
+		authPage,
+		account,
+		baseURL,
+	}, testInfo) => {
+		const origin = String(baseURL);
+		const ownerProfile = { priorities: "Fictional existing account preference", memoryMode: "off" };
+		expect((await authPage.request.patch("/api/openapi/career/profile", { data: ownerProfile })).status()).toBe(200);
+		const owner = await (await authPage.request.get("/api/openapi/career/profile")).json();
+		const guest = await signInGuest(browser, baseURL, origin);
+		const guestSession = await (await guest.request.get("/api/auth/get-session")).json();
+		try {
+			const guestProfile = { priorities: "Fictional guest preference", memoryMode: "auto" };
+			expect((await guest.request.patch("/api/openapi/career/profile", { data: guestProfile })).status()).toBe(200);
+			const before = await (await guest.request.get("/api/openapi/career/profile")).json();
+			const factResponse = await guest.request.post("/api/openapi/career/facts", {
+				data: {
+					text: "Fictional guest led a migration.",
+					category: "experience",
+					source: { kind: "manual", id: "fictional-guest-fact", quote: "Fictional guest led a migration." },
+				},
+			});
+			expect(factResponse.status()).toBe(200);
+			const fact = await factResponse.json();
+			const page = await guest.newPage();
+			await page.setViewportSize({ width, height: 900 });
+			await page.goto("/auth/login");
+			await expect(page.getByText(/Different Career profiles stop sign-in and keep your guest work/)).toBeVisible();
+			await page.getByLabel("Email or username", { exact: true }).fill(account.email);
+			await page.getByLabel("Password", { exact: true }).fill(account.password);
+			const failed = page.waitForResponse((response) => response.url().includes("/sign-in/email"));
+			await page.getByRole("button", { name: "Sign in", exact: true }).click();
+			expect((await failed).status()).toBe(409);
+			await expect(page.getByText(/Guest and account Career preferences differ/)).toBeVisible();
+			await expect(page).toHaveURL(/\/auth\/login/);
+			const retainedSession = await (await guest.request.get("/api/auth/get-session")).json();
+			expect(retainedSession.user.id).toBe(guestSession.user.id);
+			expect(retainedSession.user.isAnonymous).toBe(true);
+			expect(await (await guest.request.get("/api/openapi/career/profile")).json()).toEqual(before);
+			expect(await (await authPage.request.get("/api/openapi/career/profile")).json()).toEqual(owner);
+			await page.getByLabel("Email or username", { exact: true }).fill("alex.morgan@example.test");
+			await page.getByLabel("Password", { exact: true }).fill("");
+			await expect(page.getByText(/Guest and account Career preferences differ/)).toBeVisible();
+			await page.screenshot({ path: testInfo.outputPath("guest-profile-conflict.png"), fullPage: true });
+			await page.reload();
+			await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeEnabled();
+			// An explicit edit aligns both settings; sign-in itself must never choose a consent mode.
+			expect((await guest.request.patch("/api/openapi/career/profile", { data: owner })).status()).toBe(200);
+			await page.getByLabel("Email or username", { exact: true }).fill(account.email);
+			await page.getByLabel("Password", { exact: true }).fill(account.password);
+			await page.getByRole("button", { name: "Sign in", exact: true }).click();
+			await expect(page).toHaveURL(/\/dashboard/);
+			expect((await (await guest.request.get("/api/auth/get-session")).json()).user.email).toBe(account.email);
+			expect(await (await authPage.request.get("/api/openapi/career/profile")).json()).toEqual(owner);
+			const facts = await (await authPage.request.get("/api/openapi/career/facts?all=true")).json();
+			expect(facts).toEqual(expect.arrayContaining([expect.objectContaining({ id: fact.id, text: fact.text })]));
+		} finally {
+			await deleteE2EUser({ ...account, email: guestSession.user.email, username: guestSession.user.username });
+			await guest.close();
+		}
+	});
 }
 
 /** Publishes a resume as the guest. The guest's first publish claims primary unless it declines it. */

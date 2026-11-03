@@ -7,6 +7,7 @@ import type {
 } from "better-auth/plugins";
 import type { JWTPayload } from "jose";
 import { AsyncLocalStorage } from "node:async_hooks";
+import { isDeepStrictEqual } from "node:util";
 import { apiKey } from "@better-auth/api-key";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { dash } from "@better-auth/infra";
@@ -310,6 +311,23 @@ export async function linkAnonymousAccount({
 				.for("no key update");
 			if (!owner) throw new APIError("NOT_FOUND", { message: "The account is unavailable." });
 		}
+
+		const careerProfiles = await tx
+			.select()
+			.from(schema.careerProfile)
+			.where(inArray(schema.careerProfile.userId, [fromUserId, toUserId]));
+		const guestCareerProfile = careerProfiles.find((profile) => profile.userId === fromUserId);
+		const accountCareerProfile = careerProfiles.find((profile) => profile.userId === toUserId);
+		// Neither authored preferences nor memory consent can be silently replaced during sign-in.
+		if (
+			guestCareerProfile &&
+			accountCareerProfile &&
+			!isDeepStrictEqual(guestCareerProfile.data, accountCareerProfile.data)
+		)
+			throw new APIError("CONFLICT", {
+				message:
+					"Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again.",
+			});
 
 		const profiles = await tx
 			.select()

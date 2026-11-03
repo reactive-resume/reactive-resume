@@ -152,6 +152,55 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 		await pool.query("DELETE FROM application_profile");
 	});
 
+	it.each([
+		[{ priorities: "Guest preference" }, { priorities: "Account preference" }],
+		[{ memoryMode: "off" }, { memoryMode: "auto" }],
+		[{ memoryMode: "auto" }, { memoryMode: "ask" }],
+	])("retains both accounts when Career preferences conflict: %j", async (guest, owner) => {
+		await pool.query(`INSERT INTO career_profile (user_id,data) VALUES ('link-guest',$1),('link-owner',$2)`, [
+			JSON.stringify(guest),
+			JSON.stringify(owner),
+		]);
+		await pool.query(
+			`INSERT INTO resume (id,name,slug,data,user_id) VALUES ('profile-conflict-resume','Guest','profile-conflict','{}','link-guest')`,
+		);
+		try {
+			await expect(
+				withDatabasePool(pool, () => linkAnonymousAccount({ fromUserId: "link-guest", toUserId: "link-owner" })),
+			).rejects.toThrow("Career preferences differ");
+			expect((await pool.query("SELECT user_id,data FROM career_profile ORDER BY user_id")).rows).toEqual([
+				{ user_id: "link-guest", data: guest },
+				{ user_id: "link-owner", data: owner },
+			]);
+			expect((await pool.query("SELECT user_id FROM resume WHERE id='profile-conflict-resume'")).rows).toEqual([
+				{ user_id: "link-guest" },
+			]);
+		} finally {
+			await pool.query("DELETE FROM career_profile");
+			await pool.query("DELETE FROM resume WHERE id='profile-conflict-resume'");
+		}
+	});
+
+	it("moves a guest Career profile into an empty account and accepts equal profiles with different key order", async () => {
+		const data = { priorities: "Guest preference", memoryMode: "off", locations: ["Remote"] };
+		await pool.query(`INSERT INTO career_profile (user_id,data) VALUES ('link-guest',$1)`, [JSON.stringify(data)]);
+		try {
+			await withDatabasePool(pool, () => linkAnonymousAccount({ fromUserId: "link-guest", toUserId: "link-owner" }));
+			expect((await pool.query("SELECT user_id,data FROM career_profile")).rows).toEqual([
+				{ user_id: "link-owner", data },
+			]);
+			await pool.query(`INSERT INTO career_profile (user_id,data) VALUES ('link-guest',$1)`, [
+				JSON.stringify({ locations: data.locations, memoryMode: data.memoryMode, priorities: data.priorities }),
+			]);
+			await withDatabasePool(pool, () => linkAnonymousAccount({ fromUserId: "link-guest", toUserId: "link-owner" }));
+			expect((await pool.query("SELECT data FROM career_profile WHERE user_id='link-owner'")).rows[0].data).toEqual(
+				data,
+			);
+		} finally {
+			await pool.query("DELETE FROM career_profile");
+		}
+	});
+
 	it("rolls back ownership and URLs when upload copying fails", async () => {
 		const data = { picture: "https://resume.example/api/uploads/failed-guest/pictures/a.png" };
 		await pool.query(
