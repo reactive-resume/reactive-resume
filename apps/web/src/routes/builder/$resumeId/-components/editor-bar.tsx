@@ -119,11 +119,7 @@ function ModeTabs({ compact }: ModeTabsProps) {
 				>
 					<Icon name={MODE_ICONS[mode]} size={18} />
 					<span className={compact ? "sr-only" : undefined}>{labels[mode]}</span>
-					{mode === "check" && (
-						<span className={compact ? "absolute -end-1 -top-1" : undefined}>
-							<CheckBadge count={issueCount} />
-						</span>
-					)}
+					{mode === "check" && <CheckBadge count={issueCount} />}
 					{mode === "share" && isPublic && (
 						<span className="size-1.5 rounded-sm bg-accent" aria-hidden="true" title={t`Public`} />
 					)}

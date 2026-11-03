@@ -7,10 +7,9 @@ import type { ReactNode } from "react";
 import { Toolbar } from "@base-ui/react/toolbar";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { TextSelection } from "@tiptap/pm/state";
+import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -243,11 +242,17 @@ export function RichTextEditor({
 						view.dom.contains(range.anchorNode) &&
 						view.dom.contains(range.focusNode)
 					) {
-						const selection = TextSelection.between(
-							view.state.doc.resolve(view.posAtDOM(range.anchorNode, range.anchorOffset)),
-							view.state.doc.resolve(view.posAtDOM(range.focusNode, range.focusOffset)),
-						);
-						if (!selection.eq(view.state.selection)) view.dispatch(view.state.tr.setSelection(selection));
+						const anchor = view.posAtDOM(range.anchorNode, range.anchorOffset);
+						const head = view.posAtDOM(range.focusNode, range.focusOffset);
+						const current = view.state.selection;
+						const sameNode =
+							current instanceof NodeSelection &&
+							Math.min(anchor, head) === current.from &&
+							Math.max(anchor, head) === current.to;
+						if (!sameNode) {
+							const selection = TextSelection.between(view.state.doc.resolve(anchor), view.state.doc.resolve(head));
+							if (!selection.eq(current)) view.dispatch(view.state.tr.setSelection(selection));
+						}
 					}
 					return false;
 				}
@@ -327,10 +332,6 @@ export function RichTextEditor({
 	}, [editor, focusRequest]);
 
 	const editing = focused || improving !== null || menus.open;
-	// Phones dock the toolbar above the keyboard. Inside a sheet it renders in that sheet, so Tab reaches it after the
-	// text (the sheet keeps focus within itself) instead of skipping it.
-	const [fieldElement, setFieldElement] = useState<HTMLDivElement | null>(null);
-	const toolbarHost = fieldElement?.closest<HTMLElement>('[role="dialog"]') ?? null;
 
 	const acceptImprove = (line: ImproveLine, text: string) => {
 		if (!editor) return;
@@ -399,7 +400,6 @@ export function RichTextEditor({
 
 	return (
 		<div
-			ref={setFieldElement}
 			onFocus={() => setFocused(true)}
 			onBlur={(event) => {
 				const next = event.relatedTarget;
@@ -414,34 +414,6 @@ export function RichTextEditor({
 				className,
 			)}
 		>
-			{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
-			{editing &&
-				!readOnlyTable &&
-				mobile &&
-				createPortal(
-					<Toolbar.Root
-						ref={toolbar}
-						aria-label={t`Formatting`}
-						style={{ bottom: keyboardInset }}
-						className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
-					>
-						<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
-						<Toolbar.Button
-							type="button"
-							onMouseDown={(event) => event.preventDefault()}
-							onClick={() => {
-								setImproving(null);
-								setFocused(false);
-								editor?.commands.blur();
-							}}
-							className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
-						>
-							<Trans>Done</Trans>
-						</Toolbar.Button>
-					</Toolbar.Root>,
-					toolbarHost ?? document.body,
-				)}
-
 			{readOnlyTable && (
 				<p role="status" className="border-b border-line px-3 py-2 text-xs text-ink-2">
 					<Trans>
@@ -451,6 +423,30 @@ export function RichTextEditor({
 			)}
 
 			<EditorContent editor={editor} />
+			{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
+			{editing && !readOnlyTable && mobile && (
+				<Toolbar.Root
+					ref={toolbar}
+					aria-label={t`Formatting`}
+					style={{ bottom: keyboardInset }}
+					className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
+				>
+					<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
+					<Toolbar.Button
+						type="button"
+						onMouseDown={(event) => event.preventDefault()}
+						onClick={() => {
+							setImproving(null);
+							setFocused(false);
+							editor?.commands.blur();
+						}}
+						className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
+					>
+						<Trans>Done</Trans>
+					</Toolbar.Button>
+				</Toolbar.Root>
+			)}
+
 			{editing && <AiProviderLoadState state={ai} />}
 			{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
 			{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}

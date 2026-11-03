@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { expect, it } from "vite-plus/test";
+import { Toast } from "@base-ui/react/toast";
 import {
 	createMemoryHistory,
 	createRootRoute,
@@ -12,6 +13,7 @@ import {
 } from "@tanstack/react-router";
 import { AlertDialog, AlertDialogContent, AlertDialogTitle } from "@reactive-resume/ui/components/alert-dialog";
 import { Dialog, DialogContent, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import { Toaster } from "@reactive-resume/ui/components/toast";
 import { NavigationFocus } from "./navigation-focus";
 import { getPageTitle } from "@/libs/seo";
 
@@ -55,18 +57,14 @@ it.each(["dialog", "alertdialog"] as const)("retains initial %s focus when its r
 it.each([false, true])(
 	"updates route focus despite a nonmodal toast (%s), retaining field focus for search changes",
 	async (toast) => {
+		const notifications = Toast.createToastManager();
 		const root = createRootRoute({
 			component: () => (
-				<>
+				<Toaster toastManager={notifications}>
 					<HeadContent />
-					{toast && (
-						<div role="dialog" aria-modal="false" data-slot="toast">
-							Account created
-						</div>
-					)}
 					<NavigationFocus />
 					<Outlet />
-				</>
+				</Toaster>
 			),
 		});
 		const one = createRoute({
@@ -96,6 +94,12 @@ it.each([false, true])(
 		});
 		render(<RouterProvider router={router} />);
 		await waitFor(() => expect(screen.getByRole("heading", { name: "One" })).toHaveFocus());
+		if (toast) {
+			act(() => {
+				notifications.add({ description: "Account created", timeout: 0 });
+			});
+			await screen.findByText("Account created");
+		}
 		await router.navigate({ to: "/two" });
 		await waitFor(() => expect(screen.getByRole("heading", { name: "Two" })).toHaveFocus());
 		expect(document.title).toBe("Two | Reactive Resume");

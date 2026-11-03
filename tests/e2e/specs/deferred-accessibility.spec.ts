@@ -55,6 +55,31 @@ test("tablet mode icons leave space for the document title", async ({ authPage: 
 	await page.screenshot({ animations: "disabled", path: info.outputPath("tablet-title.png") });
 });
 
+test("tablet long titles truncate and three-digit Check badges keep their own space", async ({ authPage: page }) => {
+	const name = "Fictional accessibility engineering resume with a deliberately long document title";
+	const created = await page.request.post("/api/openapi/resumes", { data: { name, tags: [] } });
+	await expect(created).toBeOK();
+	await page.setViewportSize({ width: 640, height: 1024 });
+	await page.goto(`/builder/${await created.json()}`);
+	const title = page.getByRole("button", { name: `Document menu: ${name}`, exact: true });
+	const label = title.locator(".truncate");
+	await expect(label).toHaveCSS("text-overflow", "ellipsis");
+	expect(await label.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+	await expect(title).toBeInViewport();
+	const check = page.getByRole("tab", { name: /^Check/ });
+	const badge = check.locator('span[aria-hidden="true"]').last();
+	await expect(badge).toBeVisible();
+	// Inflate only the visual count to exercise the largest badge geometry, independently of ATS rules.
+	await badge.evaluate((element) => {
+		element.textContent = "999";
+	});
+	const icon = await check.locator('[data-slot="icon"]').boundingBox();
+	const count = await badge.boundingBox();
+	if (!icon || !count) throw new Error("Missing Check badge geometry");
+	expect(count.x).toBeGreaterThanOrEqual(icon.x + icon.width);
+	expect((await title.boundingBox())?.x).toBeGreaterThanOrEqual(0);
+});
+
 for (const width of [1440, 390]) {
 	test(`formatting toolbar preserves selected text with arrow navigation at ${width}px`, async ({ authPage: page }) => {
 		const created = await page.request.post("/api/openapi/resumes", {
@@ -74,6 +99,10 @@ for (const width of [1440, 390]) {
 		await expect(editor).toHaveText("Alpha Beta Gamma");
 		const toolbar = page.getByRole("toolbar", { name: "Formatting" });
 		await editor.focus();
+		await page.keyboard.press("Tab");
+		await expect(toolbar.getByRole("button", { name: "Bold", exact: true })).toBeFocused();
+		await page.keyboard.press("Shift+Tab");
+		await expect(editor).toBeFocused();
 		// Keep selectionchange queued until focus has left, as a fast selection followed by Tab can do.
 		await editor.evaluate((element) => {
 			const bold = element.ownerDocument.querySelector<HTMLButtonElement>('[role="toolbar"] button[aria-label="Bold"]');
@@ -104,6 +133,35 @@ for (const width of [1440, 390]) {
 	});
 }
 
+for (const width of [1440, 390]) {
+	test(`Tab preserves a selected horizontal rule at ${width}px`, async ({ authPage: page }) => {
+		const created = await page.request.post("/api/openapi/resumes", {
+			data: { name: "Fictional rule selection", tags: [] },
+		});
+		await expect(created).toBeOK();
+		const id = await created.json();
+		await expect(
+			await page.request.patch(`/api/openapi/resumes/${id}`, {
+				data: { operations: [{ op: "replace", path: "/summary/content", value: "<p>Before</p><hr><p>After</p>" }] },
+			}),
+		).toBeOK();
+		await page.setViewportSize({ width, height: 900 });
+		await page.goto(`/builder/${id}`);
+		await page.getByRole("button", { name: "Summary", exact: true }).click();
+		const editor = page.getByRole("textbox", { name: "Summary", exact: true });
+		await editor.locator("hr").click();
+		const selection = () =>
+			editor.evaluate((element) => {
+				const field = element as HTMLElement & { editor: { state: { selection: { toJSON: () => { type: string } } } } };
+				return field.editor.state.selection.toJSON().type;
+			});
+		await expect.poll(selection).toBe("node");
+		await page.keyboard.press("Tab");
+		await expect(page.getByRole("toolbar").getByRole("button", { name: "Bold", exact: true })).toBeFocused();
+		expect(await selection()).toBe("node");
+	});
+}
+
 test("phone hero keeps decorative Latin punctuation isolated in Arabic", async ({ page }, info) => {
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto("/?locale=ar-SA");
@@ -129,4 +187,20 @@ test("deleting a URL-open application returns to the heading when no row survive
 	await page.getByRole("alertdialog").getByRole("button", { name: "Move to Trash", exact: true }).click();
 	await expect(sheet).toBeHidden();
 	await expect(page.getByRole("heading", { name: "Applications", exact: true })).toBeFocused();
+});
+
+test("deleting an application focuses the remaining visible row", async ({ authPage: page }) => {
+	for (const role of ["Delete this job", "Keep this job"]) {
+		await expect(
+			await page.request.post("/api/openapi/applications", { data: { role, company: "Fictional Workshop" } }),
+		).toBeOK();
+	}
+	await page.goto("/dashboard/applications");
+	await page.locator("[data-application-open]").filter({ hasText: "Delete this job" }).click();
+	const sheet = page.getByRole("dialog", { name: "Delete this job", exact: true });
+	await sheet.getByRole("button", { name: "Application options", exact: true }).click();
+	await page.getByRole("menuitem", { name: "Move to Trash", exact: true }).click();
+	await page.getByRole("alertdialog").getByRole("button", { name: "Move to Trash", exact: true }).click();
+	await expect(sheet).toBeHidden();
+	await expect(page.locator("[data-application-open]").filter({ hasText: "Keep this job" })).toBeFocused();
 });

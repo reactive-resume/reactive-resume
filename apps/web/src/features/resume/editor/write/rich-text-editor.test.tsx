@@ -34,11 +34,7 @@ it.each([false, true])(
 			editor.focus();
 		});
 		const bold = screen.getByRole("button", { name: "Bold" });
-		if (mobile)
-			await act(async () => {
-				bold.focus();
-			});
-		else await userEvent.tab();
+		await userEvent.tab();
 		expect(document.activeElement).toBe(bold);
 		const toolbar = screen.getByRole("toolbar", { name: "Formatting" });
 		expect(Array.from(toolbar.querySelectorAll("button")).filter((button) => button.tabIndex === 0).length).toBe(1);
