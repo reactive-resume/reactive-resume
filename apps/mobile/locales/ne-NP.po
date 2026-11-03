@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# स्तम्भ} other {# स्तम्भहरू}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# तथ्य बिर्सियो} other {# तथ्यहरू बिर्सिए}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {# परिवर्तन लागू गर्नुहोस्} other {# परिवर्तनहरू लागू गर्नुहोस्}}"
@@ -2013,6 +2017,7 @@ msgstr "एक पटक यो एक संगठन छ पृष्ठमा
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "यदि वेब पहुँच प्रयोग गरिएक�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "यदि वेब पहुँच प्रयोग गरिन्छ भने, खोज सर्तहरू तपाइँको सर्भरको खोज सेवामा जान्छन् र यसले प्रयोग गर्ने खोज इन्जिनहरू, र लिङ्कहरू पढ्ने साइटहरूमा जान्छन्।"
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "वेब पहुँचले कुञ्जी अस्वीकार गरे वा कोटा सकिएमा, यो AI जडानले आफ्नै खोज सेवाबाट फेरि खोज्न सक्छ। यसले थप AI अनुरोध र शुल्क निम्त्याउन सक्छ।"
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "बेवास्ता गर्नुहोस्"
@@ -8198,6 +8207,10 @@ msgstr "कुनै तथ्य मिलेको छैन"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "बिर्सिएका तथ्यहरू छैनन्"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "कुनै पनि आइकनहरू मेल खाँदैन।"
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "वेब पहुँचले कुञ्जी अस्वीकार गरे वा कोटा सकिएमा, यो AI जडानमा तपाईंको खोज प्रश्न र खोजिने देशहरू मात्र पठाइन्छन्। कागजात, ज्ञान वा जागिर आवेदनको सन्दर्भ थपिँदैन। प्रदायकको खोजमा शुल्क लाग्न सक्छ।"
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "बचत पुन: प्रयास गर्नुहोस्"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel} प्रयोग गरेर फेरि प्रयास गर्नुहोस्"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "कागजातहरू मा फर्कनुहोस् र यसलाई पुन: खोल्नुहोस्, वा जडान पुन: प्रयास गर्नुहोस्।"
@@ -11298,6 +11319,10 @@ msgstr "तालिकाहरू"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "विद्यालय/शैक्षिक संस्था"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "दायरा"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "DNS रेकर्डहरू देखाउनुहोस्"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "बिर्सिएका तथ्यहरू देखाउनुहोस्"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "यो सर्भरले फाइल सन्दर्भहरू
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "यो सर्भर एपको लागि धेरै पुरानो छ। यसलाई अद्यावधिक गर्न आफ्नो प्रशासकलाई सोध्नुहोस्।"
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "यो सर्भर वा AI जडानले प्रदायकको आफ्नै वेब खोजलाई समर्थन गर्दैन।"
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "यो सर्भरले तपाईंले प्रविष्ट गर्नुभएको भन्दा फरक ठेगाना रिपोर्ट गर्दछ। यसले प्रयोग गरेको ठेगाना प्रविष्ट गर्नुहोस्, वा आफ्नो प्रशासकलाई सोध्नुहोस्।"
@@ -14588,6 +14621,7 @@ msgstr "वेब पहुँच सेटिङहरू बचत गर्�
 msgid "Web page"
 msgstr "वेब पेज"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "वेब अनुसन्धान"

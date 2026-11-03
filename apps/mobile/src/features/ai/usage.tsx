@@ -15,6 +15,7 @@ export const aiActionLabel = (action: AiAction) =>
 		"writing-review": t`Writing review`,
 		improve: t`Improve`,
 		"parse-posting": t`Read posting`,
+		"web-search": t`Web research`,
 		"autofill-posting": t`Fill fields`,
 		"match-score": t`MCP match score`,
 		"tailor-resume": t`MCP tailoring`,
@@ -56,7 +57,7 @@ export function AiResultUsage({ usage }: AiResultUsageProps) {
 export function AiUsageSection() {
 	const { t, i18n } = useLingui();
 	const { space } = useTheme();
-	const query = useQuery(orpc.ai.usage.queryOptions());
+	const query = useQuery(orpc.ai.usage.queryOptions({ input: { includeWebSearch: true } }));
 	const report = query.data;
 	const date = (value: Date) => i18n.date(value, { dateStyle: "medium", timeZone: report?.timezone ?? "UTC" });
 	return (

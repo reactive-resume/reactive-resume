@@ -94,7 +94,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 	const summary = threads.data?.find((thread) => thread.id === threadId);
 	const { provider, stranded, label, choose } = useConversationProvider(providers, summary, threadId);
 	const title = useThreadTitle();
-	const web = useWebSearch();
+	const web = useWebSearch(provider);
 	const memory = useMemoryNote(chips.memory);
 
 	const context: MessageContext = {
@@ -103,7 +103,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 		posting: true,
 		application: chips.application,
 		memory: chips.memory,
-		// Web research needs a search service; a choice made before it went away doesn't count.
+		// The message still requires Web research on and per-operation destination approval.
 		web: chips.web && web.canSearch,
 		...(offerIds.length > 0 && chips.offers ? { offerIds } : {}),
 	};

@@ -65,7 +65,7 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 	const threadId = selected === "new" ? null : (selected ?? list[0]?.id ?? null);
 	const summary = list.find((thread) => thread.id === threadId);
 	const { provider, stranded, label, choose } = useConversationProvider(providers, summary, threadId);
-	const web = useWebSearch();
+	const web = useWebSearch(provider);
 	// The same choices as Career → Coach, for this sheet: Knowledge on, Web research off until turned on.
 	const [chips, setChips] = useState({ memory: true, web: false });
 	const memory = useMemoryNote(chips.memory);

@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# நெடுவரிசை} other {# நெடுவரிசைகள்}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# தகவல் மறக்கப்பட்டது} other {# தகவல்கள் மறக்கப்பட்டன}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {# மாற்றத்தைப் பயன்படுத்து} other {# மாற்றங்களைப் பயன்படுத்து}}"
@@ -2013,6 +2017,7 @@ msgstr "அது ஒரு அமைப்பைப் பெற்றவுட
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "இணைய அணுகல் பயன்படுத்தப்ப�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "இணைய அணுகல் பயன்படுத்தப்பட்டால், தேடல் சொற்கள் உங்கள் சேவையகத்தின் தேடல் சேவை மற்றும் அது பயன்படுத்தும் தேடுபொறிகளுக்குச் செல்லும், மேலும் இணைப்புகள் படிக்கப்படும் தளங்களுக்குச் செல்லும்."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "இணைய அணுகல் விசையை நிராகரித்தாலோ ஒதுக்கீடு தீர்ந்தாலோ, இந்த AI இணைப்பு தனது சொந்தத் தேடல் சேவை மூலம் மீண்டும் தேடலாம். இதனால் கூடுதல் AI கோரிக்கைகளும் கட்டணங்களும் ஏற்படலாம்."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "புறக்கணிக்கவும்"
@@ -8198,6 +8207,10 @@ msgstr "உண்மைகள் பொருந்தவில்லை"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "மறந்த தகவல்கள் இல்லை"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "ஐகான்கள் பொருந்தவில்லை."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "இணைய அணுகல் விசையை நிராகரித்தாலோ ஒதுக்கீடு தீர்ந்தாலோ, உங்கள் தேடல் வினவலும் தேட வேண்டிய நாடுகளும் மட்டுமே இந்த AI இணைப்பிற்கு அனுப்பப்படும். ஆவணங்கள், அறிவு அல்லது வேலை விண்ணப்பச் சூழல் சேர்க்கப்படாது. வழங்குநரின் தேடலுக்குக் கட்டணம் விதிக்கப்படலாம்."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "மீண்டும் சேமிக்க முயற்சிக்கவும்"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel} மூலம் மீண்டும் முயலவும்"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "ஆவணங்கள் க்கு திரும்பி அதை மீண்டும் திறக்கவும் அல்லது இணைப்பை மீண்டும் முயற்சிக்கவும்."
@@ -11298,6 +11319,10 @@ msgstr "அட்டவணைகள்"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "பள்ளி"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "வரம்பு"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "DNS பதிவுகளைக் காட்டு"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "மறந்த தகவல்களைக் காட்டு"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "இந்தச் சேவையகம் கோப்புக் க
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "இந்த சேவையகம் பயன்பாட்டிற்கு மிகவும் பழையது. அதைப் புதுப்பிக்க உங்கள் நிர்வாகியிடம் கேளுங்கள்."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "இந்தச் சேவையகம் அல்லது AI இணைப்பு வழங்குநரின் சொந்த இணையத் தேடலை ஆதரிக்கவில்லை."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "இந்த சேவையகம் நீங்கள் உள்ளிட்ட முகவரியிலிருந்து வேறுபட்ட முகவரியைப் புகாரளிக்கிறது. அது பயன்படுத்தும் முகவரியை உள்ளிடவும் அல்லது உங்கள் நிர்வாகியிடம் கேட்கவும்."
@@ -14588,6 +14621,7 @@ msgstr "இணைய அணுகல் அமைப்புகளைச் ச
 msgid "Web page"
 msgstr "வலைப்பக்கம்"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "இணைய ஆய்வு"

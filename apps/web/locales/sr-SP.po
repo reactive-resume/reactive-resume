@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# унос} other {# уноси}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# заборављена чињеница} few {# заборављене чињенице} other {# заборављених чињеница}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# отворен проблем} few {# отворена проблема} other {# отворених проблема}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} пт"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# ред није имао компанију ни улогу и прескочен је.} few {# реда нису имала компанију ни улогу и прескочена су.} other {# редова није имало компанију ни улогу и прескочено је.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Дајте нам звездицу на GitHub-у, тренутно # звездица (отвара се у новој картици)} few {Дајте нам звездицу на GitHub-у, тренутно # звездице (отвара се у новој картици)} other {Дајте нам звездицу на GitHub-у, тренутно # звездица (отвара се у новој картици)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Системи за праћење кандидата претварају ваш PDF у обичан текст пре него што га неко прочита. Проверивач ради исто, са библиотеком PDF.js у вашем претраживачу, а затим оцењује колико је вашег резимеа преживело: 0 до 100, од ​​тога колико поуздано излази текст, а не од ваших шанси да добијете посао."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Промените га у дизајну."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Промени језик"
 
@@ -7557,7 +7557,6 @@ msgstr "Иди кући"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Иди на контролну таблу"
 
@@ -7965,6 +7964,10 @@ msgstr "Ако се апликација није отворила, покуша
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Ако веб приступ одбије кључ или је квота потрошена, ова AI веза може поновити претрагу сопственом услугом. То може створити додатне AI захтеве и трошкове."
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Направљено са Reactive Resume, бесплатно и отв�
 msgid "Main"
 msgstr "Главно"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Главна навигација"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "Још нема чињеница за повезивање. Додајт
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Нема заборављених чињеница"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "Само ти, док то не поделиш. Резиме може д
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Ако веб приступ одбије кључ или је квота потрошена, овој AI вези шаљу се само упит и земље претраге. Документи, Знање и контекст пријаве за посао се не додају. Добављач може наплатити претрагу."
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "Поново извезите са уграђеним фонтовима
 msgid "Re: Senior Product Designer"
 msgstr "Re: Сениор продукт дизајнер"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Реактивни Резиме - Иди на почетну страницу"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Покушајте поново да сачувате"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Покушај поново преко {nativeSearchLabel}"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Поновни покушај…"
@@ -14118,6 +14126,10 @@ msgstr "Распореди"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "Школа"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Опсег"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "Прикажи DNS записе"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Прикажи заборављене чињенице"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Прикажи наслов"
@@ -15072,6 +15088,7 @@ msgstr "Прескочи и отпреми"
 msgid "Skip to content"
 msgstr "Пређи на садржај"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "Стандардни наслови секција"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Звезда Reactive Resume на GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Дај нам звездицу на GitHub-у (отвара се у новом језичку)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "Промени модел"
 msgid "Switch to dark mode"
 msgstr "Пребаците се на тамни режим"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Пребаци на тамну тему"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Пребаците на светлосни режим"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Пребаци на светлу тему"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "Овај сервер извози само референце на да
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Овај сервер не прихвата нове налоге. Пријавите се постојећим налогом."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Овај сервер или AI веза не подржава изворну веб претрагу добављача."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "Овај сервер користи стандардне фазе, па се називи фаза из датотеке не чувају."
@@ -18094,6 +18103,7 @@ msgstr "Веб-страница"
 msgid "Web page preview"
 msgstr "Преглед веб-странице"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Веб истраживање"

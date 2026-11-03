@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# girişi} other {# girişləri}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# fakt unudulub} other {# fakt unudulub}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# açıq problem} other {# açıq problem}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {Şirkəti və ya vəzifəsi olmayan # sətir ötürüldü.} other {Şirkəti və ya vəzifəsi olmayan # sətir ötürüldü.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {GitHub‑da bizə ulduz verin, hazırda # ulduz (yeni vərəqdə açılır)} other {GitHub‑da bizə ulduz verin, hazırda # ulduz (yeni vərəqdə açılır)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Ərizəçi izləmə sistemləri PDF-nu hər kəs oxumazdan əvvəl düz mətnə ​​çevirir. Yoxlayıcı eyni şeyi brauzerinizdəki PDF.js kitabxanası ilə edir, sonra rezyumenizin nə qədər sağ qaldığını qiymətləndirir: 0-dan 100-ə qədər, mətnin nə dərəcədə etibarlı çıxdığına görə, işə qəbul olma şansınıza görə."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Dizaynda dəyişdirin."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Dili dəyiş"
 
@@ -7557,7 +7557,6 @@ msgstr "Evə get"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "İdarə panelinə keç"
 
@@ -7965,6 +7964,10 @@ msgstr "Proqram açılmayıbsa, onun quraşdırıldığı cihazda yenidən cəhd
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Veb girişi açarı rədd edərsə və ya kvota bitərsə, bu süni intellekt bağlantısı öz axtarış xidməti ilə axtarışı təkrarlaya bilər. Bu, əlavə süni intellekt sorğularına və ödənişlərə səbəb ola bilər."
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Reactive Resume ilə hazırlanmış, pulsuz və açıq mənbə"
 msgid "Main"
 msgstr "Əsas"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Əsas naviqasiya"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "Hələ bağlanacaq fakt yoxdur. Onları Faktlar bölməsində əlavə ed
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Unudulmuş fakt yoxdur"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "Paylaşana qədər yalnız siz. CV məxfi qala bilər, ictimai linkdə y
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Veb girişi açarı rədd edərsə və ya kvota bitərsə, bu süni intellekt bağlantısına yalnız axtarış sorğunuz və axtarış ölkələri göndərilir. Sənədlər, Bilik və iş müraciəti konteksti əlavə edilmir. Təchizatçının axtarışı ödənişli ola bilər."
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "Şriftləri daxil edərək yenidən ixrac edin, sonra faylı açıb mət
 msgid "Re: Senior Product Designer"
 msgstr "Re: Baş məhsul dizayneri"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Ana səhifəyə keç"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Yadda saxlamağa yenidən cəhd edin"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel} ilə yenidən cəhd et"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Yenidən cəhd edilir..."
@@ -14118,6 +14126,10 @@ msgstr "Cədvəllər"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "Məktəb"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Əhatə dairəsi"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "DNS qeydlərini göstərin"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Unudulmuş faktları göstər"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Başlığı göstərin"
@@ -15072,6 +15088,7 @@ msgstr "Keç və yüklə"
 msgid "Skip to content"
 msgstr "Məzmuna keçin"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "Standart bölmə başlıqları"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "GitHub üzərində Reactive Resume ulduzu"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "GitHub‑da bizi bəyənin (yeni vərəqdə açılır)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "Modeli dəyişdirin"
 msgid "Switch to dark mode"
 msgstr "Qaranlıq rejimə keçin"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Tünd mövzuya keç"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "İşıq rejiminə keçin"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Açıq mövzuya keç"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "Bu server yalnız fayl istinadlarını ixrac edir. Yüklənmiş fayllar�
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Bu server yeni hesablar qəbul etmir. Mövcud hesabla daxil olun."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Bu server və ya süni intellekt bağlantısı təchizatçının öz veb axtarışını dəstəkləmir."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "Bu server standart mərhələlərdən istifadə etdiyi üçün fayldakı mərhələ adları saxlanılmır."
@@ -18094,6 +18103,7 @@ msgstr "Veb səhifə"
 msgid "Web page preview"
 msgstr "Veb səhifə önizləməsi"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Veb araşdırma"

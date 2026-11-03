@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# στήλη} other {# στήλες}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# στοιχείο ξεχάστηκε} other {# στοιχεία ξεχάστηκαν}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {Εφαρμογή # αλλαγής} other {Εφαρμογή # αλλαγών}}"
@@ -2013,6 +2017,7 @@ msgstr "Εμφανίζεται στη σελίδα μόλις έχει έναν 
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "Εάν χρησιμοποιείται πρόσβαση στον ιστό
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Εάν χρησιμοποιείται πρόσβαση στον ιστό, οι όροι αναζήτησης μεταβαίνουν στην υπηρεσία αναζήτησης του διακομιστή σας και στις μηχανές αναζήτησης που χρησιμοποιεί και οι σύνδεσμοι μεταβαίνουν στους ιστότοπους που διαβάζονται."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Αν η πρόσβαση στον ιστό απορρίψει το κλειδί ή εξαντληθεί το όριο, αυτή η σύνδεση AI μπορεί να επαναλάβει την αναζήτηση με τη δική της υπηρεσία. Αυτό μπορεί να προκαλέσει επιπλέον αιτήματα AI και χρεώσεις."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Αγνοώ"
@@ -8198,6 +8207,10 @@ msgstr "Δεν ταιριάζουν στοιχεία"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "Δεν υπάρχουν ξεχασμένα στοιχεία"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Δεν ταιριάζουν εικονίδια."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Αν η πρόσβαση στον ιστό απορρίψει το κλειδί ή εξαντληθεί το όριο, σε αυτή τη σύνδεση AI στέλνονται μόνο το ερώτημα και οι χώρες αναζήτησης. Δεν προστίθενται έγγραφα, Γνώσεις ή στοιχεία αιτήσεων εργασίας. Η αναζήτηση του παρόχου μπορεί να χρεώνεται."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Δοκιμάστε ξανά την αποθήκευση"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Δοκιμή ξανά με {nativeSearchLabel}"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Επιστρέψτε στα Έγγραφα και ανοίξτε το ξανά ή δοκιμάστε ξανά τη σύνδεση."
@@ -11298,6 +11319,10 @@ msgstr "Προγράμματα"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "Σχολείο"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "Πεδίο εφαρμογής"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "Εμφάνιση εγγραφών DNS"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "Εμφάνιση ξεχασμένων στοιχείων"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "Αυτός ο διακομιστής εξάγει μόνο αναφορ�
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Αυτός ο διακομιστής είναι πολύ παλιός για την εφαρμογή. Ζητήστε από τον διαχειριστή σας να το ενημερώσει."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Αυτός ο διακομιστής ή η σύνδεση AI δεν υποστηρίζει την εγγενή αναζήτηση ιστού του παρόχου."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Αυτός ο διακομιστής αναφέρει διαφορετική διεύθυνση από αυτή που καταχωρίσατε. Εισαγάγετε τη διεύθυνση που χρησιμοποιεί ή ρωτήστε τον διαχειριστή σας."
@@ -14588,6 +14621,7 @@ msgstr "Δεν ήταν δυνατή η αποθήκευση ή η φόρτωσ�
 msgid "Web page"
 msgstr "Ιστοσελίδα"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Έρευνα στον ιστό"

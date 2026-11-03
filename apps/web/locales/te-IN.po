@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# ఎంట్రీ} other {# ఎంట్రీలు}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# వాస్తవం మరచిపోయారు} other {# వాస్తవాలను మరచిపోయారు}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# పరిష్కరించని సమస్య} other {# పరిష్కరించని సమస్యలు}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# అడ్డువరుసలో కంపెనీ లేదా పాత్ర లేనందున దాటవేయబడింది.} other {# అడ్డువరుసలలో కంపెనీ లేదా పాత్ర లేనందున దాటవేయబడ్డాయి.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {GitHubలో మాకు స్టార్ ఇవ్వండి, ప్రస్తుతం # స్టార్ (కొత్త ట్యాబ్‌లో తెరుచుకుంటుంది)} other {GitHubలో మాకు స్టార్ ఇవ్వండి, ప్రస్తుతం # స్టార్‌లు (కొత్త ట్యాబ్‌లో తెరుచుకుంటుంది)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "దరఖాస్తుదారు ట్రాకింగ్ సిస్టమ్‌లు మీ PDFని ఎవరైనా చదవడానికి ముందే సాదా వచనంగా మారుస్తాయి. మీ బ్రౌజర్‌లోని PDF.js లైబ్రరీతో చెకర్ అదే పని చేస్తుంది, ఆపై మీ రెజ్యూమ్ ఎంతవరకు మనుగడలో ఉందో స్కోర్ చేస్తుంది: 0 నుండి 100 వరకు, టెక్స్ట్ ఎంత విశ్వసనీయంగా వస్తుంది, ఉద్యోగం పొందే అవకాశాల నుండి కాదు."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "దీన్ని డిజైన్‌లో మార్చండి."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "భాషను మార్చు"
 
@@ -7557,7 +7557,6 @@ msgstr "ఇంటికి వెళ్ళండి"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "డాష్‌బోర్డ్ కి వెళ్లండి"
 
@@ -7965,6 +7964,10 @@ msgstr "యాప్ తెరవబడకపోతే, అది ఇన్‌�
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "వెబ్ యాక్సెస్ కీని తిరస్కరించినా లేదా కోటా ముగిసినా, ఈ AI కనెక్షన్ తన సొంత శోధన సేవతో మళ్లీ శోధించవచ్చు. దీనివల్ల అదనపు AI అభ్యర్థనలు, ఛార్జీలు రావచ్చు."
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Reactive Resume, ఉచిత మరియు ఓపెన్ సోర�
 msgid "Main"
 msgstr "ప్రధానం"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "ముఖ్య నావిగేషన్"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "లింక్ చేయడానికి ఇంకా వాస్త
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "మరచిపోయిన వాస్తవాలు లేవు"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "మీరు మాత్రమే, మీరు భాగస్వా�
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "వెబ్ యాక్సెస్ కీని తిరస్కరించినా లేదా కోటా ముగిసినా, ఈ AI కనెక్షన్‌కు మీ శోధన ప్రశ్న, శోధించాల్సిన దేశాలు మాత్రమే పంపబడతాయి. పత్రాలు, జ్ఞానం లేదా ఉద్యోగ దరఖాస్తు సందర్భం జోడించబడదు. ప్రొవైడర్ శోధనకు ఛార్జీలు ఉండవచ్చు."
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "ఫాంట్‌లు ఎంబెడ్ చేసి తిరిగ
 msgid "Re: Senior Product Designer"
 msgstr "Re: సీనియర్ ప్రోడక్ట్ డిజైనర్"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - హోమ్‌పేజీకి వెళ్ళండి"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "సేవ్ చేయడానికి మళ్లీ ప్రయత్నించండి"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel}తో మళ్లీ ప్రయత్నించండి"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "మళ్లీ ప్రయత్నిస్తోంది..."
@@ -14118,6 +14126,10 @@ msgstr "షెడ్యూల్‌లు"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "పాఠశాల"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "పరిధి"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "DNS రికార్డ్‌లను చూపించు"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "మరచిపోయిన వాస్తవాలను చూపించు"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "శీర్షికను చూపు"
@@ -15072,6 +15088,7 @@ msgstr "తెరవండి మరియు అప్‌లోడ్ చేయ
 msgid "Skip to content"
 msgstr "కంటెంట్‌కి దాటవేయండి"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "ప్రామాణిక విభాగం శీర్షికల�
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "GitHubలో Reactive Resume నక్షత్రం"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "GitHub లో మాకు స్టార్ ఇవ్వండి (కొత్త ట్యాబ్‌లో తెరవబడుతుంది)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "మోడల్ మారండి"
 msgid "Switch to dark mode"
 msgstr "డార్క్ మోడ్‌కి మారండి"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "డార్క్ మోడ్‌కి స్విచ్ చేయండి"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "లైట్ మోడ్‌కి మారండి"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "లైట్ మోడ్‌కి స్విచ్ చేయండి"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "ఈ సర్వర్ ఫైల్ సూచనలను మాత్�
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "ఈ సర్వర్ కొత్త ఖాతాలను అంగీకరించడం లేదు. ఇప్పటికే ఉన్న ఖాతాతో సైన్ ఇన్ చేయండి."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "ఈ సర్వర్ లేదా AI కనెక్షన్ ప్రొవైడర్ సొంత వెబ్ శోధనకు మద్దతు ఇవ్వదు."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "ఈ సర్వర్ ప్రామాణిక దశలను ఉపయోగిస్తుంది కాబట్టి ఫైల్‌లోని దశల పేర్లు అలాగే ఉండవు."
@@ -18094,6 +18103,7 @@ msgstr "వెబ్ పేజీ"
 msgid "Web page preview"
 msgstr "వెబ్ పేజీ ప్రివ్యూ"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "వెబ్ పరిశోధన"

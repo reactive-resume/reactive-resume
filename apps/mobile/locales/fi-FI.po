@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# sarake} other {# saraketta}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# tieto unohdettu} other {# tietoa unohdettu}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {Tee # muutos} other {Tee # muutosta}}"
@@ -2013,6 +2017,7 @@ msgstr "Näkyy sivulla, kun sillä on organisaatio."
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "Jos käytetään verkkoyhteyttä, hakutermit menevät palvelimesi hakupa
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Jos käytetään verkkoyhteyttä, hakutermit menevät palvelimesi hakupalveluun ja sen käyttämiin hakukoneisiin, ja linkit menevät luettaville sivustoille."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Jos verkkopalvelu hylkää avaimen tai kiintiö loppuu, tämä tekoäly-yhteys voi uusia haun omalla hakupalvelullaan. Tästä voi syntyä lisää tekoälypyyntöjä ja kuluja."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Sivuuttaa"
@@ -8198,6 +8207,10 @@ msgstr "Ei vastaavia faktoja"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "Ei unohdettuja tietoja"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Yksikään kuvake ei täsmää."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Jos verkkopalvelu hylkää avaimen tai kiintiö loppuu, tälle tekoäly-yhteydelle lähetetään vain hakulauseke ja hakumaat. Asiakirjoja, Tietämystä tai hakemuksen tietoja ei lisätä. Palveluntarjoajan haku voi olla maksullinen."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Yritä tallentaa uudelleen"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Yritä uudelleen yhteydellä {nativeSearchLabel}"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Palaa kohtaan Asiakirjat ja avaa se uudelleen tai yritä muodostaa yhteys uudelleen."
@@ -11298,6 +11319,10 @@ msgstr "Ajastukset"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "Oppilaitos"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "Laajuus"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "Näytä DNS-tietueet"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "Näytä unohdetut tiedot"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "Tämä palvelin vie vain tiedostoviitteet. Päivitä se, jotta ladatut t
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Tämä palvelin on liian vanha sovellukselle. Pyydä järjestelmänvalvojaa päivittämään se."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Tämä palvelin tai tekoäly-yhteys ei tue palveluntarjoajan omaa verkkohakua."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Tämä palvelin ilmoittaa eri osoitteen kuin antamasi. Anna sen käyttämä osoite tai kysy järjestelmänvalvojaltasi."
@@ -14588,6 +14621,7 @@ msgstr "Verkkokäyttöasetuksia ei voitu tallentaa tai ladata."
 msgid "Web page"
 msgstr "Verkkosivu"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Verkkotutkimus"

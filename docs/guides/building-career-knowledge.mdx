@@ -104,7 +104,16 @@ Practice answers are not remembered as career facts. You can still add a real ac
 
 ## Correct an old fact
 
-Select **Correct** on the fact, update the text and save it. Its earlier text remains in correction history. Stories linked to that fact are flagged when the correction is newer than the story.
+Select **Correct** on the fact. Edit its text, **Fact type** (**Type** on native mobile), or **Scope**. Choose **All applications** for shared Knowledge, or an application to keep the fact private to that job. Select **Save correction** on web or **Save fact** on native mobile. The changes save together; earlier text remains in correction history. Type and scope corrections also flag linked stories for review.
+
+If another edit or removal happened while the correction was open, the save stops and your draft stays open. Close the correction, review the current fact, then reopen it to make the changes you still want. A failed connection also keeps the draft open for retry. Native asks before discarding changes to text, type or scope. Older self-hosted servers need an update before these correction controls can save; a failed correction does not fall back to saving only its text.
+
+<Frame caption="Correct the type or scope together with the wording before saving.">
+  <img
+    src="/images/guides/career/fact-correction.png"
+    alt="Fictional Cedar fact correction with Skill selected and its scope restricted to the Fictional Cedar application"
+  />
+</Frame>
 
 Open each flagged story, check the affected claims, edit them and save the story again. Review older drafts too; correcting Knowledge does not rewrite documents or messages you already sent.
 
@@ -114,7 +123,7 @@ A flagged story is excluded from new coaching until you review and save it. Unfi
 
 Application notes belong to that application. A debrief can also suggest remembering a detail **for that company only**, such as what an interviewer asked you to explain next time.
 
-Facts show their scope. Choose **Use for all applications** only when a private fact is useful beyond that job. This changes its scope, not its truth.
+Facts show their scope. **Correct → Scope** can restrict a shared fact to one job or move it to another application. Choose **Use for all applications** only when a private fact is useful beyond that job. This changes its scope, not its truth. Previously written documents and messages are not rewritten or recalled.
 
 ## Stop using or forget a fact
 
@@ -123,6 +132,15 @@ Switch **Used in coaching** off to keep the fact in your account while excluding
 Select **Forget** to remove the fact and its evidence links. Use **Undo** within the six-second notice if you change your mind. The original resume, file or message is not deleted, and copies already exported or sent to a provider remain outside this action. See [Your data](/guides/career-workspace-reference#your-data).
 
 The notice appears once the removal is ready. Leaving the page or putting the native app in the background ends the Undo window and starts the pending removal. Undo cancels that pending action; it cannot recover content already forgotten elsewhere. If the saved state cannot be checked, the fact stays hidden and **Retry** checks it again before showing anything.
+
+Turn on **Show forgotten** to confirm the recorded number of forgotten facts and when they were forgotten, in your account timezone. This view contains counts and timestamps only. It does not reveal earlier wording, source quotations or correction history, and it cannot restore a forgotten fact. Facts belonging to an application in Trash stay out of this view until that application is restored.
+
+<Frame caption="Confirm that facts were forgotten without revealing their erased content.">
+  <img
+    src="/images/guides/career/forgotten-facts.png"
+    alt="Knowledge with Show forgotten enabled and one fact forgotten shown only as a count and an account-local timestamp"
+  />
+</Frame>
 
 <Frame caption="A failed check keeps the forgotten fact hidden. Retry checks the saved state; it never recreates erased text.">
   <img

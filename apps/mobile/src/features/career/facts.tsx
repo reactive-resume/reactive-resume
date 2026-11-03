@@ -1,20 +1,22 @@
 import type { Fact } from "./hooks";
 import type { RouterInput } from "@/api/client";
-import type { FactCategory } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
 import { AnimatedLegendList } from "@legendapp/list/reanimated";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
 import * as Crypto from "expo-crypto";
 import { memo, useCallback, useDeferredValue, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { factCategorySchema } from "@reactive-resume/schema/career";
 import { categoryLabel, factCategories } from "./fact-categories";
 import { client, prepareRpc, useCareerAction, useCareerQueries, useCareerTime, useUndoRows } from "./hooks";
 import { ResumeFacts } from "./resume-facts";
 import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
 import { orpc } from "@/api/client";
-import { getServer, useSession } from "@/auth/session";
+import { getAccountScope, getServer, useSession } from "@/auth/session";
+import { useApplications } from "@/features/applications/queries";
 import {
 	Banner,
 	Button,
@@ -61,6 +63,7 @@ export function Facts({ children, onRefresh }: FactsProps) {
 	const [category, setCategory] = useState("all");
 	const [editor, setEditor] = useState<{ fact: Fact | null } | null>(null);
 	const [source, setSource] = useState<Fact | null>(null);
+	const [showForgotten, setShowForgotten] = useState(false);
 	const undo = useUndoRows();
 	const action = useCareerAction();
 	const memory = useCareerAction();
@@ -176,6 +179,8 @@ export function Facts({ children, onRefresh }: FactsProps) {
 			/>
 			<ResumeFacts />
 			<Button label={t`Add a fact`} onPress={() => setEditor({ fact: null })} />
+			<SwitchRow label={t`Show forgotten`} value={showForgotten} onValueChange={setShowForgotten} />
+			{showForgotten ? <ForgottenFacts /> : null}
 			<LoadState query={facts} />
 			{failed ? (
 				<Banner tone="danger" message={t`Couldn't save that change. Check your connection and try again.`} />
@@ -248,6 +253,30 @@ export function Facts({ children, onRefresh }: FactsProps) {
 	);
 }
 
+function ForgottenFacts() {
+	const { t } = useLingui();
+	const session = useSession();
+	const scope = getAccountScope();
+	const { when } = useCareerTime();
+	const history = useQuery({
+		...orpc.career.forgottenFacts.queryOptions({ input: {}, context: { scope: scope ?? undefined } }),
+		queryKey: [...orpc.career.forgottenFacts.key(), session.server, scope],
+		enabled: session.status === "signed-in",
+		retry: false,
+	});
+	return (
+		<Card>
+			<LoadState query={history} />
+			{history.data?.length === 0 ? <Text color="ink3">{t`No forgotten facts`}</Text> : null}
+			{history.data?.map(({ count, at }) => (
+				<Text key={at.toISOString()} color="ink3">
+					{plural(count, { one: "# fact forgotten", other: "# facts forgotten" })} · {when(at)}
+				</Text>
+			))}
+		</Card>
+	);
+}
+
 type FactRowProps = { fact: Fact; index: number; first: boolean; pending: boolean; actions: RowActions };
 
 // Memoized: the app has no React Compiler, and typing or one toggle shouldn't re-render every card.
@@ -304,38 +333,93 @@ type FactEditorProps = { fact: Fact | null; onClose: () => void };
 function FactEditor({ fact, onClose }: FactEditorProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
+	const [scope] = useState(getAccountScope);
+	const [before] = useState(() =>
+		fact ? { text: fact.text, category: fact.category, applicationId: fact.applicationId } : null,
+	);
 	const [text, setText] = useState(fact?.text ?? "");
-	const [category, setCategory] = useState<FactCategory>("accomplishment");
+	const [category, setCategory] = useState(fact?.category ?? "accomplishment");
+	const [applicationId, setApplicationId] = useState(fact?.applicationId ?? "");
+	const applications = useApplications(!!fact);
 	const action = useCareerAction();
+	const dirty =
+		text.trim() !== (before?.text ?? "") ||
+		category !== (before?.category ?? "accomplishment") ||
+		(applicationId || null) !== (before?.applicationId ?? null);
 	return (
 		<EditorSheet
-			dirty={text !== (fact?.text ?? "")}
+			dirty={dirty}
 			pending={action.pending}
 			onClose={onClose}
 			title={fact ? t`Correct fact` : t`Add a fact`}
 		>
 			<View style={{ padding: space.s4, gap: space.s4 }}>
-				<TextArea label={t`Fact`} value={text} maxLength={2000} onChangeText={setText} />
-				{!fact ? (
-					<SelectSheet label={t`Type`} value={category} onChange={setCategory} options={factCategories()} />
-				) : (
-					<Text color="ink3">{t`The original stays in correction history. Stories using it will need review.`}</Text>
-				)}
+				<TextArea label={t`Fact`} value={text} maxLength={2000} onChangeText={setText} editable={!action.pending} />
+				<SelectSheet
+					label={t`Type`}
+					value={category}
+					onChange={setCategory}
+					disabled={action.pending}
+					options={[
+						...(before && !factCategorySchema.safeParse(before.category).success
+							? [{ value: before.category, label: before.category }]
+							: []),
+						...factCategories(),
+					]}
+				/>
+				{fact ? (
+					<>
+						<SelectSheet
+							label={t`Scope`}
+							value={applicationId}
+							onChange={setApplicationId}
+							disabled={action.pending || !applications.data}
+							options={[
+								{ value: "", label: t`All applications` },
+								...(before?.applicationId &&
+								!applications.data?.some((application) => application.id === before.applicationId)
+									? [{ value: before.applicationId, label: fact.company ?? t`Application` }]
+									: []),
+								...(applications.data ?? []).map((application) => ({
+									value: application.id,
+									label: `${application.company} · ${application.role}`,
+								})),
+							]}
+						/>
+						<LoadState query={applications} />
+						<Text color="ink3">{t`The original stays in correction history. Stories using it will need review.`}</Text>
+					</>
+				) : null}
 				{action.error ? <Banner tone="danger" message={action.error} /> : null}
 				<Button
 					label={t`Save fact`}
 					loading={action.pending}
-					disabled={!text.trim() || text.trim() === fact?.text}
+					disabled={!text.trim() || !dirty}
 					onPress={() => {
 						void action.run(async () => {
-							if (fact) await client.career.updateFact({ id: fact.id, text: text.trim() });
+							if (fact && before)
+								await client.career.correctFact(
+									{
+										id: fact.id,
+										before,
+										...(text.trim() !== before.text ? { text: text.trim() } : {}),
+										...(category !== before.category ? { category: factCategorySchema.parse(category) } : {}),
+										...((applicationId || null) !== before.applicationId
+											? { applicationId: applicationId || null }
+											: {}),
+									},
+									{ context: { scope: scope ?? undefined } },
+								);
 							else
-								await client.career.saveFact({
-									text: text.trim(),
-									category,
-									applicationId: null,
-									source: { kind: "manual", id: Crypto.randomUUID(), quote: text.trim() },
-								});
+								await client.career.saveFact(
+									{
+										text: text.trim(),
+										category: factCategorySchema.parse(category),
+										applicationId: null,
+										source: { kind: "manual", id: Crypto.randomUUID(), quote: text.trim() },
+									},
+									{ context: { scope: scope ?? undefined } },
+								);
 						}, onClose);
 					}}
 				/>

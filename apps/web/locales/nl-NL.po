@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {#-invoer} other {#-invoer}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# feit vergeten} other {# feiten vergeten}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# openstaand probleem} other {# openstaande problemen}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# rij had geen bedrijf of functie en is overgeslagen.} other {# rijen hadden geen bedrijf of functie en zijn overgeslagen.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Geef ons een ster op GitHub, momenteel # ster (opent in nieuw tabblad)} other {Geef ons een ster op GitHub, momenteel # sterren (opent in nieuw tabblad)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Volgsystemen voor sollicitanten zetten uw PDF om in platte tekst voordat iemand deze leest. De checker doet hetzelfde, met de PDF.js-bibliotheek in uw browser, en beoordeelt vervolgens hoeveel van uw cv overleeft: 0 tot 100, op basis van hoe betrouwbaar de tekst eruit komt, niet op basis van uw kansen om de baan te krijgen."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Wijzig het in Ontwerp."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Taal wijzigen"
 
@@ -7557,7 +7557,6 @@ msgstr "Ga naar huis"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Ga naar het dashboard"
 
@@ -7965,6 +7964,10 @@ msgstr "Als de app niet is geopend, probeer het dan opnieuw op een apparaat waar
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Als webtoegang de sleutel weigert of het quotum op is, kan deze AI-verbinding de zoekopdracht via de eigen zoekdienst herhalen. Dit kan extra AI-verzoeken en kosten opleveren."
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Gemaakt met Reactive Resume, gratis en open source"
 msgid "Main"
 msgstr "Algemeen"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Hoofdnavigatie"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "Nog geen feiten om te koppelen. Voeg ze toe in Feiten."
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Geen vergeten feiten"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "Alleen jij, totdat je het deelt. Een cv kan privé blijven, live gaan vi
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Als webtoegang de sleutel weigert of het quotum op is, worden alleen je zoekopdracht en zoeklanden naar deze AI-verbinding gestuurd. Documenten, Kennis en sollicitatiecontext worden niet toegevoegd. De zoekdienst van de aanbieder kan kosten in rekening brengen."
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "Exporteer opnieuw met ingesloten lettertypen, open het bestand en contro
 msgid "Re: Senior Product Designer"
 msgstr "Re: Senior Product Designer"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Ga naar de startpagina"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Probeer opnieuw op te slaan"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Opnieuw proberen met {nativeSearchLabel}"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Opnieuw proberen..."
@@ -14118,6 +14126,10 @@ msgstr "Planningen"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "School"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Bereik"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "DNS-records tonen"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Vergeten feiten tonen"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Kop weergeven"
@@ -15072,6 +15088,7 @@ msgstr "Overslaan en uploaden"
 msgid "Skip to content"
 msgstr "Ga naar de inhoud"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "Standaard sectiekoppen"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Ster Reactive Resume op GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Geef ons een ster op GitHub (opent in nieuw tabblad)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "Wissel van model"
 msgid "Switch to dark mode"
 msgstr "Schakel over naar de donkere modus"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Overschakelen naar donker thema"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Schakel over naar de lichtmodus"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Overschakelen naar licht thema"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "Deze server exporteert alleen bestandsverwijzingen. Werk hem bij om geü
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Deze server accepteert geen nieuwe accounts. Log in met een bestaand account."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Deze server of AI-verbinding ondersteunt geen eigen webzoekdienst van de aanbieder."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "Deze server gebruikt de standaardfasen. Fasenamen uit het bestand blijven daarom niet bewaard."
@@ -18094,6 +18103,7 @@ msgstr "Webpagina"
 msgid "Web page preview"
 msgstr "Voorbeeld van webpagina"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Webonderzoek"

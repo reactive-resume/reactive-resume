@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# intrare} other {# intrări}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# fapt uitat} few {# fapte uitate} other {# de fapte uitate}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# problemă nerezolvată} few {# probleme nerezolvate} other {# de probleme nerezolvate}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pct"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# rând nu avea companie sau rol și a fost omis.} few {# rânduri nu aveau companie sau rol și au fost omise.} other {# de rânduri nu aveau companie sau rol și au fost omise.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Dă-ne o stea pe GitHub, în prezent # stea (se deschide într-o filă nouă)} few {Dă-ne o stea pe GitHub, în prezent # stele (se deschide într-o filă nouă)} other {Dă-ne o stea pe GitHub, în prezent # de stele (se deschide într-o filă nouă)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Sistemele de urmărire a solicitanților transformă PDF în text simplu înainte ca cineva să-l citească. Verificatorul face același lucru, cu biblioteca PDF.js din browser, apoi punctează cât de mult din CV-ul tău supraviețuiește: de la 0 la 100, din cât de fiabil iese textul, nu din șansele tale de a obține postul."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Schimbați-l în Design."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Schimbă limba"
 
@@ -7557,7 +7557,6 @@ msgstr "Du-te acasă"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Mergi la panoul de control"
 
@@ -7965,6 +7964,10 @@ msgstr "Dacă aplicația nu s-a deschis, încercați din nou pe un dispozitiv pe
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Dacă accesul web respinge cheia sau cota este epuizată, această conexiune IA poate repeta căutarea cu propriul serviciu. Aceasta poate genera cereri IA și costuri suplimentare."
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Realizat cu Reactive Resume, gratuit și open source"
 msgid "Main"
 msgstr "Principal"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Navigare principală"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "Încă nu există fapte de asociat. Adăugați-le în Fapte."
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Nu există fapte uitate"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "Doar tu, până când îl distribui. Un CV poate rămâne privat, poate 
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Dacă accesul web respinge cheia sau cota este epuizată, doar interogarea și țările de căutare sunt trimise acestei conexiuni IA. Nu se adaugă documente, Cunoștințe sau contextul candidaturilor. Căutarea furnizorului poate fi taxată."
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "Exportați din nou cu fonturile încorporate, apoi deschideți fișierul
 msgid "Re: Senior Product Designer"
 msgstr "Re: Senior Product Designer"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Mergi la pagina principală"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Reîncercați să salvați"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Reîncearcă folosind {nativeSearchLabel}"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Se reîncercă…"
@@ -14118,6 +14126,10 @@ msgstr "Programări"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "Școală"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Domeniu de aplicare"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "Arată înregistrările DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Arată faptele uitate"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Afișează titlul"
@@ -15072,6 +15088,7 @@ msgstr "Omite și încarcă"
 msgid "Skip to content"
 msgstr "Treci la conținut"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "Titluri de secțiuni standard"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Steaua Reactive Resume pe GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Adăugați o steluță pentru noi pe GitHub (se deschide într-o filă nouă)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "Schimbați modelul"
 msgid "Switch to dark mode"
 msgstr "Comutați la modul întunecat"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Comutați la tema întunecată"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Comutați în modul de lumină"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Comutați la tema deschisă"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "Acest server exportă doar referințe la fișiere. Actualizează-l pentr
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Acest server nu acceptă conturi noi. Autentifică-te cu un cont existent."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Acest server sau această conexiune IA nu acceptă căutarea web nativă a furnizorului."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "Acest server folosește etapele standard, așa că numele etapelor din fișier nu sunt păstrate."
@@ -18094,6 +18103,7 @@ msgstr "Pagină web"
 msgid "Web page preview"
 msgstr "Previzualizare pagină web"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Cercetare web"

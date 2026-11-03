@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# kolonne} other {# kolonner}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# glemt faktum} other {# glemte fakta}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {Utfør # endring} other {Utfør # endringer}}"
@@ -2013,6 +2017,7 @@ msgstr "Vises på siden når den har en organisasjon."
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "Hvis nettilgang brukes, går søkeord til serverens søketjeneste og sø
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Hvis nettilgang brukes, går søkeord til serverens søketjeneste og søkemotorene den bruker, og lenker går til nettstedene som leses."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Hvis nettilgang avviser nøkkelen eller kvoten er brukt opp, kan denne KI-tilkoblingen gjenta søket med sin egen søketjeneste. Dette kan medføre flere KI-forespørsler og kostnader."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Overse"
@@ -8198,6 +8207,10 @@ msgstr "Ingen fakta samsvar"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "Ingen glemte fakta"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Ingen ikoner samsvarer."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Hvis nettilgang avviser nøkkelen eller kvoten er brukt opp, sendes bare søket ditt og søkelandene til denne KI-tilkoblingen. Dokumenter, Kunnskap og søknadskontekst legges ikke til. Leverandørens søk kan koste penger."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Prøv å lagre på nytt"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Prøv igjen med {nativeSearchLabel}"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Gå tilbake til Dokumenter og åpne den på nytt, eller prøv tilkoblingen på nytt."
@@ -11298,6 +11319,10 @@ msgstr "Tidsplaner"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "Skole"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "Omfang"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "Vis DNS-poster"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "Vis glemte fakta"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "Denne serveren eksporterer bare filreferanser. Oppdater den for å ta me
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Denne serveren er for gammel for appen. Be administratoren om å oppdatere den."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Denne serveren eller KI-tilkoblingen støtter ikke leverandørens innebygde nettsøk."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Denne serveren rapporterer en annen adresse enn den du skrev inn. Skriv inn adressen den bruker, eller spør administratoren din."
@@ -14588,6 +14621,7 @@ msgstr "Innstillinger for nettilgang kunne ikke lagres eller lastes inn."
 msgid "Web page"
 msgstr "Nettside"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Nettsøk"

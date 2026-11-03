@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# column} other {# columns}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -2013,6 +2017,7 @@ msgstr "Appears on the page once it has an organization."
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "If web access is used, search terms go to your server's search service a
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Ignore"
@@ -8198,6 +8207,10 @@ msgstr "No facts match"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "No forgotten facts"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "No icons match."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Retry saving"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Retry with {nativeSearchLabel}"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Return to Documents and reopen it, or retry the connection."
@@ -11298,6 +11319,10 @@ msgstr "Schedules"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "School"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "Scope"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "Show DNS records"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "Show forgotten"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "This server exports file references only. Update it to include uploaded 
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "This server is too old for the app. Ask your administrator to update it."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "This server or AI connection doesn't support native web search."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
@@ -14588,6 +14621,7 @@ msgstr "Web access settings couldn't be saved or loaded."
 msgid "Web page"
 msgstr "Web page"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Web research"

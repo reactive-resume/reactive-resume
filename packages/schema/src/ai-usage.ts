@@ -7,6 +7,7 @@ export const aiActionSchema = z.enum([
 	"writing-review",
 	"improve",
 	"parse-posting",
+	"web-search",
 	"autofill-posting",
 	"match-score",
 	"tailor-resume",

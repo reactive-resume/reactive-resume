@@ -1386,7 +1386,17 @@
 				"tags": [
 					"AI"
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"name": "includeWebSearch",
+						"in": "query",
+						"schema": {
+							"type": "boolean"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -1426,6 +1436,7 @@
 															"writing-review",
 															"improve",
 															"parse-posting",
+															"web-search",
 															"autofill-posting",
 															"match-score",
 															"tailor-resume",
@@ -1685,11 +1696,15 @@
 										},
 										"explicitNoAi": {
 											"const": true
+										},
+										"nativeWebSearch": {
+											"const": 1
 										}
 									},
 									"required": [
 										"recipientApproval",
-										"explicitNoAi"
+										"explicitNoAi",
+										"nativeWebSearch"
 									]
 								}
 							}
@@ -36561,6 +36576,10 @@
 										"type": "string",
 										"minLength": 2,
 										"maxLength": 500
+									},
+									"aiProviderId": {
+										"type": "string",
+										"minLength": 1
 									}
 								},
 								"required": [
@@ -46536,6 +46555,19 @@
 																		},
 																		"at": {
 																			"type": "string"
+																		},
+																		"category": {
+																			"type": "string"
+																		},
+																		"applicationId": {
+																			"anyOf": [
+																				{
+																					"type": "string"
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
 																		}
 																	},
 																	"required": [
@@ -53261,6 +53293,19 @@
 														},
 														"at": {
 															"type": "string"
+														},
+														"category": {
+															"type": "string"
+														},
+														"applicationId": {
+															"anyOf": [
+																{
+																	"type": "string"
+																},
+																{
+																	"type": "null"
+																}
+															]
 														}
 													},
 													"required": [
@@ -53535,6 +53580,19 @@
 															},
 															"at": {
 																"type": "string"
+															},
+															"category": {
+																"type": "string"
+															},
+															"applicationId": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
 															}
 														},
 														"required": [
@@ -53614,6 +53672,97 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/facts\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"text\": \"<string>\",\n  \"category\": \"accomplishment\",\n  \"source\": {\n    \"kind\": \"user-message\",\n    \"id\": \"<string>\",\n    \"quote\": \"<string>\"\n  }\n}'"
+					}
+				]
+			}
+		},
+		"/career/facts/forgotten": {
+			"get": {
+				"operationId": "listForgottenCareerFactCounts",
+				"summary": "List redacted forgotten fact counts and timestamps",
+				"tags": [
+					"Career"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"count": {
+												"type": "integer",
+												"minimum": -9007199254740991,
+												"maximum": 9007199254740991,
+												"exclusiveMinimum": 0
+											},
+											"at": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											}
+										},
+										"required": [
+											"count",
+											"at"
+										]
+									}
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/career/facts/forgotten\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -54090,6 +54239,148 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/career/facts/<id>\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
+		"/career/facts/{id}/corrections": {
+			"post": {
+				"operationId": "correctCareerFact",
+				"summary": "Atomically correct a fact's text, type or scope",
+				"description": "Requires the reviewed text, category and scope. Rejects changed or forgotten facts and unavailable application scopes without saving any correction.",
+				"tags": [
+					"Career"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"before": {
+										"type": "object",
+										"properties": {
+											"text": {
+												"type": "string"
+											},
+											"category": {
+												"type": "string"
+											},
+											"applicationId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											}
+										},
+										"required": [
+											"text",
+											"category",
+											"applicationId"
+										]
+									},
+									"text": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 2000
+									},
+									"category": {
+										"enum": [
+											"accomplishment",
+											"experience",
+											"skill",
+											"preference"
+										],
+										"type": "string"
+									},
+									"applicationId": {
+										"anyOf": [
+											{
+												"type": "string",
+												"minLength": 1
+											},
+											{
+												"type": "null"
+											}
+										]
+									}
+								},
+								"required": [
+									"before"
+								],
+								"additionalProperties": false
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/facts/<id>/corrections\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"before\": {\n    \"text\": \"<string>\",\n    \"category\": \"<string>\",\n    \"applicationId\": \"<string>\"\n  }\n}'"
 					}
 				]
 			}
@@ -165021,6 +165312,10 @@
 										"type": "string",
 										"minLength": 2,
 										"maxLength": 500
+									},
+									"aiProviderId": {
+										"type": "string",
+										"minLength": 1
 									}
 								},
 								"required": [

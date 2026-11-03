@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {#-post} other {#-poster}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# bortglömt faktum} other {# bortglömda fakta}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# öppet problem} other {# öppna problem}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# rad saknade företag eller roll och hoppades över.} other {# rader saknade företag eller roll och hoppades över.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Ge oss en stjärna på GitHub, för närvarande # stjärna (öppnas i ny flik)} other {Ge oss en stjärna på GitHub, för närvarande # stjärnor (öppnas i ny flik)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Sökande spårningssystem förvandlar din PDF till vanlig text innan någon läser den. Checkaren gör detsamma, med PDF.js-biblioteket i din webbläsare, och poängsätter sedan hur mycket av ditt CV som överlever: 0 till 100, från hur tillförlitligt texten kommer ut, inte från dina chanser att få jobbet."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Ändra det i Design."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Byt språk"
 
@@ -7557,7 +7557,6 @@ msgstr "Gå hem"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Gå till dashboard"
 
@@ -7965,6 +7964,10 @@ msgstr "Om appen inte öppnades, försök igen på en enhet där den är install
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Om webbåtkomst avvisar nyckeln eller kvoten är slut kan denna AI-anslutning upprepa sökningen med sin egen söktjänst. Det kan medföra fler AI-anrop och extra avgifter."
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Tillverkad med Reactive Resume, gratis och öppen källkod"
 msgid "Main"
 msgstr "Huvud"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Huvudnavigering"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "Inga fakta att länka än. Lägg till dem under Fakta."
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Inga glömda fakta"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "Bara du, tills du delar den. En meritförteckning kan förbli privat, g�
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Om webbåtkomst avvisar nyckeln eller kvoten är slut skickas bara din sökfråga och sökländerna till denna AI-anslutning. Inga dokument, Kunskap eller ansökningsuppgifter läggs till. Leverantörens sökning kan kosta pengar."
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "Exportera på nytt med inbäddade typsnitt, öppna sedan filen och kontr
 msgid "Re: Senior Product Designer"
 msgstr "Sv: Senior produktdesigner"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Gå till startsida"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Försök att spara igen"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Försök igen med {nativeSearchLabel}"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Försöker igen..."
@@ -14118,6 +14126,10 @@ msgstr "Scheman"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "Skola"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Omfattning"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "Visa DNS-poster"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Visa glömda fakta"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Visa rubrik"
@@ -15072,6 +15088,7 @@ msgstr "Hoppa över och ladda upp"
 msgid "Skip to content"
 msgstr "Hoppa till innehållet"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "Standardavsnittsrubriker"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Stjärna Reactive Resume på GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Ge oss en stjärna på GitHub (öppnas i ny flik)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "Byt modell"
 msgid "Switch to dark mode"
 msgstr "Växla till mörkt läge"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Byt till mörkt tema"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Växla till ljusläge"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Byt till ljust tema"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "Den här servern exporterar bara filreferenser. Uppdatera den för att t
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Den här servern tar inte emot nya konton. Logga in med ett befintligt konto."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Denna server eller AI-anslutning stöder inte leverantörens inbyggda webbsökning."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "Den här servern använder standardfaserna, så fasnamnen i filen behålls inte."
@@ -18094,6 +18103,7 @@ msgstr "Webbsida"
 msgid "Web page preview"
 msgstr "Förhandsvisning av webbsida"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Webbresearch"

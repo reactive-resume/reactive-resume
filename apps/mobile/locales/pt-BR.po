@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# coluna} other {# colunas}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# fato esquecido} other {# fatos esquecidos}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {Aplicar # alteração} other {Aplicar # alterações}}"
@@ -2013,6 +2017,7 @@ msgstr "Aparece na página assim que tiver uma organização."
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "Se o acesso à web for usado, os termos de pesquisa vão para o serviço
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Se o acesso à web for usado, os termos de pesquisa vão para o serviço de pesquisa do seu servidor e para os mecanismos de pesquisa que ele usa, e os links vão para os sites que estão sendo lidos."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Se o acesso à web rejeitar a chave ou a cota acabar, esta conexão de IA poderá repetir a busca usando seu próprio serviço. Isso pode gerar solicitações de IA e cobranças adicionais."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Ignorar"
@@ -8198,6 +8207,10 @@ msgstr "Nenhum fato corresponde"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "Nenhum fato esquecido"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Nenhum ícone corresponde."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Se o acesso à web rejeitar a chave ou a cota acabar, somente sua consulta e os países de busca serão enviados a esta conexão de IA. Nenhum documento, Conhecimento ou contexto de candidatura será adicionado. A busca do provedor pode ser cobrada."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Tentar salvar novamente"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Tentar novamente com {nativeSearchLabel}"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Retorne ao Documentos e abra-o novamente ou tente novamente a conexão."
@@ -11298,6 +11319,10 @@ msgstr "Agendamentos"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "Escola"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "Escopo"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "Mostrar registros DNS"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "Mostrar fatos esquecidos"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "Este servidor exporta apenas referências a arquivos. Atualize-o para in
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Este servidor é muito antigo para o aplicativo. Peça ao seu administrador para atualizá-lo."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Este servidor ou esta conexão de IA não oferece suporte à busca web nativa do provedor."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Este servidor reporta um endereço diferente daquele que você digitou. Digite o endereço que ele usa ou pergunte ao seu administrador."
@@ -14588,6 +14621,7 @@ msgstr "As configurações de acesso à Web não puderam ser salvas ou carregada
 msgid "Web page"
 msgstr "Página web"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Pesquisa na web"

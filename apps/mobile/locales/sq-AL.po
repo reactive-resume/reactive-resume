@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# kolonë} other {# kolona}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# fakt i harruar} other {# fakte të harruara}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {Zbato # ndryshim} other {Zbato # ndryshime}}"
@@ -2013,6 +2017,7 @@ msgstr "Shfaqet në faqe pasi të ketë një organizatë."
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "Nëse përdoret aksesi në ueb, termat e kërkimit shkojnë te shërbimi
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Nëse përdoret aksesi në ueb, termat e kërkimit shkojnë në shërbimin e kërkimit të serverit tuaj dhe motorët e kërkimit që ai përdor, dhe lidhjet shkojnë në sajtet që lexohen."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Nëse qasja në ueb refuzon çelësin ose kuota shterohet, kjo lidhje IA mund ta përsërisë kërkimin me shërbimin e vet. Kjo mund të sjellë kërkesa IA dhe tarifa shtesë."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Injoro"
@@ -8198,6 +8207,10 @@ msgstr "Asnjë fakt nuk përputhet"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "Nuk ka fakte të harruara"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Asnjë ikonë nuk përputhet."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Nëse qasja në ueb refuzon çelësin ose kuota shterohet, te kjo lidhje IA dërgohen vetëm pyetja dhe shtetet e kërkimit. Nuk shtohen dokumente, Njohuri apo konteksti i aplikimit për punë. Kërkimi i ofruesit mund të ketë kosto."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Riprovoni ruajtjen"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Provo sërish me {nativeSearchLabel}"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Kthehuni te Dokumentet dhe rihapni atë, ose riprovoni lidhjen."
@@ -11298,6 +11319,10 @@ msgstr "Oraret"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "Shkolla"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "Fusha e zbatimit"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "Shfaq regjistrimet DNS"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "Shfaq faktet e harruara"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "Ky server eksporton vetëm referenca skedarësh. Përditësojeni për t�
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Ky server është shumë i vjetër për aplikacionin. Kërkojini administratorit tuaj ta përditësojë atë."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Ky server ose kjo lidhje IA nuk mbështet kërkimin origjinal në ueb të ofruesit."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Ky server raporton një adresë të ndryshme nga ajo që keni futur. Fut adresën që përdor ose pyet administratorin."
@@ -14588,6 +14621,7 @@ msgstr "Cilësimet e qasjes në ueb nuk mund të ruheshin ose ngarkoheshin."
 msgid "Web page"
 msgstr "Faqja e internetit"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Kërkimi në ueb"

@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# കോളം} other {# കോളങ്ങൾ}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# വസ്തുത മറന്നു} other {# വസ്തുതകൾ മറന്നു}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {# മാറ്റം പ്രയോഗിക്കുക} other {# മാറ്റങ്ങൾ പ്രയോഗിക്കുക}}"
@@ -2013,6 +2017,7 @@ msgstr "ഒരു സ്ഥാപനം ഉണ്ടായാൽ പേജിൽ
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "വെബ് ആക്സസ് ഉപയോഗിക്കുകയാ�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "വെബ് ആക്സസ് ഉപയോഗിക്കുകയാണെങ്കിൽ, തിരയൽ പദങ്ങൾ നിങ്ങളുടെ സെർവറിൻ്റെ തിരയൽ സേവനത്തിലേക്കും അത് ഉപയോഗിക്കുന്ന തിരയൽ എഞ്ചിനുകളിലേക്കും പോകുന്നു, കൂടാതെ ലിങ്കുകൾ വായിക്കുന്ന സൈറ്റുകളിലേക്കും പോകുന്നു."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "വെബ് ആക്സസ് കീ നിരസിക്കുകയോ ക്വോട്ട തീരുകയോ ചെയ്താൽ, ഈ AI കണക്ഷൻ സ്വന്തം തിരയൽ സേവനത്തിലൂടെ വീണ്ടും തിരഞ്ഞേക്കാം. ഇത് അധിക AI അഭ്യർത്ഥനകൾക്കും നിരക്കുകൾക്കും കാരണമായേക്കാം."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "അവഗണിക്കുക"
@@ -8198,6 +8207,10 @@ msgstr "വസ്തുതകളൊന്നും പൊരുത്തപ്�
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "മറന്ന വസ്തുതകളില്ല"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "ഐക്കണുകളൊന്നും പൊരുത്തപ്പെടുന്നില്ല."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "വെബ് ആക്സസ് കീ നിരസിക്കുകയോ ക്വോട്ട തീരുകയോ ചെയ്താൽ, നിങ്ങളുടെ തിരയൽ ചോദ്യവും തിരയേണ്ട രാജ്യങ്ങളും മാത്രമാണ് ഈ AI കണക്ഷനിലേക്ക് അയയ്ക്കുന്നത്. രേഖകളോ അറിവോ ജോലി അപേക്ഷയുടെ പശ്ചാത്തലമോ ചേർക്കില്ല. ദാതാവിന്റെ തിരയലിന് നിരക്ക് ഈടാക്കിയേക്കാം."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "സംരക്ഷിക്കാൻ വീണ്ടും ശ്രമിക്കുക"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel} ഉപയോഗിച്ച് വീണ്ടും ശ്രമിക്കുക"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "പ്രമാണങ്ങൾ എന്നതിലേക്ക് മടങ്ങുക, അത് വീണ്ടും തുറക്കുക അല്ലെങ്കിൽ കണക്ഷൻ വീണ്ടും ശ്രമിക്കുക."
@@ -11298,6 +11319,10 @@ msgstr "ഷെഡ്യൂളുകൾ"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "സ്കൂൾ"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "പരിധി"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "DNS റെക്കോർഡുകൾ കാണിക്കുക"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "മറന്ന വസ്തുതകൾ കാണിക്കുക"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "ഈ സെർവർ ഫയൽ റഫറൻസുകൾ മാത്ര�
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "ഈ സെർവർ ആപ്പിന് വളരെ പഴയതാണ്. ഇത് അപ്‌ഡേറ്റ് ചെയ്യാൻ നിങ്ങളുടെ അഡ്‌മിനിസ്‌ട്രേറ്ററോട് ആവശ്യപ്പെടുക."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "ഈ സെർവറോ AI കണക്ഷനോ ദാതാവിന്റെ സ്വന്തം വെബ് തിരയലിനെ പിന്തുണയ്ക്കുന്നില്ല."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "നിങ്ങൾ നൽകിയ വിലാസത്തിൽ നിന്ന് വ്യത്യസ്തമായ ഒരു വിലാസമാണ് ഈ സെർവർ റിപ്പോർട്ട് ചെയ്യുന്നത്. അത് ഉപയോഗിക്കുന്ന വിലാസം നൽകുക അല്ലെങ്കിൽ നിങ്ങളുടെ അഡ്മിനിസ്ട്രേറ്ററോട് ചോദിക്കുക."
@@ -14588,6 +14621,7 @@ msgstr "വെബ് ആക്‌സസ് ക്രമീകരണങ്ങൾ 
 msgid "Web page"
 msgstr "വെബ് പേജ്"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "വെബ് ഗവേഷണം"

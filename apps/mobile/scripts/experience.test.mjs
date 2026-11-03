@@ -390,6 +390,10 @@ assert.equal(
 
 const stages = load("features/applications/stages.ts");
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
+mocks["@reactive-resume/ai/types"] = load("../../../packages/ai/src/types.ts", {
+	zod,
+	"./defaults": load("../../../packages/ai/src/defaults.ts"),
+});
 const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
 const followUpDomain = load("../../../packages/schema/src/applications/follow-up.ts", {
 	"@reactive-resume/utils/timezone": timeParser,
@@ -1509,6 +1513,7 @@ const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 		orpc: {
 			applications: { findPosting: { queryOptions: () => ({ queryKey: ["posting-match"] }) } },
 			documents: { list: { queryOptions: () => ({ queryKey: ["documents"] }) } },
+			ai: { capabilities: { queryOptions: () => ({ queryKey: ["capabilities"] }) } },
 			webAccess: { status: { queryOptions: () => ({ queryKey: ["web"] }) } },
 		},
 	},
@@ -3626,6 +3631,7 @@ const memoryOrpc = Object.fromEntries(
 const memorySession = {
 	useSession: () => ({ status: "signed-in", server: "test" }),
 	getServer: () => memoryServer,
+	getAccountScope: () => JSON.stringify([memoryServer, memoryAccount?.id]),
 };
 const { useCareerAction: memoryAction } = load("features/career/hooks.ts", {
 	"@orpc/client": { ORPCError: Error },
@@ -3638,6 +3644,12 @@ const { useCareerAction: memoryAction } = load("features/career/hooks.ts", {
 	"@/features/settings/queries": {},
 });
 const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
+	"@tanstack/react-query": {},
+	"@reactive-resume/schema/career": careerSchema,
+	"@/features/applications/queries": {
+		useApplications: () => ({ data: [{ id: "cedar", company: "Fictional Cedar", role: "Engineer" }] }),
+	},
+	"@/api/client": { client: memoryApi, orpc: memoryOrpc },
 	"./fact-categories": load("features/career/fact-categories.ts"),
 	"./resume-facts": { ResumeFacts },
 	react: {
@@ -3656,7 +3668,7 @@ const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
 		useCareerTime: () => ({ when() {}, profile: { data: memoryAccount } }),
 		useUndoRows: () => ({ hidden: [] }),
 	},
-	"./shared": { LoadState: "LoadState" },
+	"./shared": { LoadState: "LoadState", EditorSheet: "EditorSheet" },
 	"@/auth/session": memorySession,
 });
 const factsHeader = () =>
@@ -3710,6 +3722,57 @@ assert.equal(
 	false,
 );
 console.log("PASS native Facts owns loaded memory consent with scoped writes, pending guard and failure recovery");
+
+reset();
+control(factsHeader(), "Add a fact").onPress();
+const nativeFactEditor = nodes(render(KnowledgeFacts, { onRefresh: async () => {} })).find(
+	(node) => typeof node.type === "function" && node.type.name === "FactEditor",
+).type;
+reset();
+memoryAccount = { id: "owner" };
+let finishCorrection;
+let failCorrection;
+memoryApi.career.correctFact = (input, options) => {
+	calls.push({ input, options });
+	return new Promise((resolve, reject) => {
+		finishCorrection = resolve;
+		failCorrection = reject;
+	});
+};
+const correctingFact = { id: "fact", text: "Fictional mentoring result", category: "experience", applicationId: null };
+const nativeCorrectionProps = { fact: correctingFact, onClose: () => calls.push("correction-closed") };
+const nativeCorrectionView = () => render(nativeFactEditor, nativeCorrectionProps);
+control(nativeCorrectionView(), "Type").onChange("skill");
+control(nativeCorrectionView(), "Scope").onChange("cedar");
+assert.equal(nativeCorrectionView().props.dirty, true, "metadata corrections participate in the dirty form guard");
+control(nativeCorrectionView(), "Save fact").onPress();
+control(nativeCorrectionView(), "Save fact").onPress();
+assert.deepEqual(
+	calls,
+	[
+		{
+			input: {
+				id: "fact",
+				before: { text: correctingFact.text, category: "experience", applicationId: null },
+				category: "skill",
+				applicationId: "cedar",
+			},
+			options: { context: { scope: JSON.stringify(["test", "owner"]) } },
+		},
+	],
+	"one atomic scoped metadata request; unchanged text is not overwritten",
+);
+failCorrection(new Error("Older server has no correction route"));
+await settle();
+assert.equal(control(nativeCorrectionView(), "Type").value, "skill");
+assert.equal(control(nativeCorrectionView(), "Scope").value, "cedar");
+assert.ok(nodes(nativeCorrectionView()).some((node) => node.type === "Banner"));
+assert.equal(calls.includes("correction-closed"), false, "failed correction retains the draft");
+control(nativeCorrectionView(), "Save fact").onPress();
+finishCorrection();
+await settle();
+assert.equal(calls.filter((entry) => entry === "correction-closed").length, 1);
+console.log("PASS native correction retains text, type and scope through failed atomic saves with scoped retries");
 
 const { Preferences: SavingPreferences } = load("features/career/preferences.tsx", {
 	react: { ...react, useLayoutEffect: (fn) => fn() },

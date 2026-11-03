@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# エントリ} other {# エントリ}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# 件の事実を忘れました} other {# 件の事実を忘れました}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# 件の未解決の問題} other {# 件の未解決の問題}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} ポイント"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# 行は会社名または職種がなかったため、スキップされました。} other {# 行は会社名または職種がなかったため、スキップされました。}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {GitHub でスターを付ける（現在 # スター、新しいタブで開きます）} other {GitHub でスターを付ける（現在 # スター、新しいタブで開きます）}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "応募者追跡システムは、誰かが読む前にあなたの PDF をプレーンテキストに変換します。チェッカーは、ブラウザの PDF.js ライブラリを使用して同様のことを行い、就職の可能性ではなく、履歴書がどれだけ残っているかを 0 から 100 までのスコアで評価します。これは、テキストがどれだけ確実に出力されるかによって決まります。"
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "デザインで変更します。"
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "言語を変更"
 
@@ -7557,7 +7557,6 @@ msgstr "家に帰れ"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "ダッシュボードへ移動"
 
@@ -7965,6 +7964,10 @@ msgstr "アプリが開かなかった場合は、アプリがインストール
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "ウェブアクセスでキーが拒否された場合や割り当てを使い切った場合、このAI接続は独自の検索サービスで再検索することがあります。AIリクエストや料金が追加で発生する可能性があります。"
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Reactive Resume で作成、無料かつオープンソース"
 msgid "Main"
 msgstr "メイン"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "メインナビゲーション"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "リンクできる事実がまだありません。「事実」で追加
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "忘れた事実はありません"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "あなたがそれを共有するまでは、あなただけです。履
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "ウェブアクセスでキーが拒否された場合や割り当てを使い切った場合、このAI接続には検索クエリと検索対象の国のみが送信されます。ドキュメント、ナレッジ、応募のコンテキストは追加されません。プロバイダーの検索には料金が発生する場合があります。"
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "フォントを埋め込んで再エクスポートしてからファイ
 msgid "Re: Senior Product Designer"
 msgstr "Re: Senior Product Designer"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - ホームページへ移動"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "保存を再試行してください"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel}で再試行"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "再試行中…"
@@ -14118,6 +14126,10 @@ msgstr "スケジュール"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "学校名"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "適用範囲"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "DNS レコードを表示"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "忘れた事実を表示"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "見出しを表示"
@@ -15072,6 +15088,7 @@ msgstr "スキップしてアップロード"
 msgid "Skip to content"
 msgstr "コンテンツにスキップ"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "標準セクション見出し"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "GitHub のスター Reactive Resume"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "GitHub でスターを付ける（新しいタブで開きます）"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "スイッチモデル"
 msgid "Switch to dark mode"
 msgstr "ダークモードに切り替える"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "ダークテーマに切り替え"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "ライトモードに切り替える"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "ライトテーマに切り替え"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "このサーバーはファイル参照のみをエクスポートしま
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "このサーバーでは新しいアカウントを受け付けていません。既存のアカウントでサインインしてください。"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "このサーバーまたはAI接続は、プロバイダー固有のウェブ検索に対応していません。"
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "このサーバーは標準のステージを使うため、ファイル内のステージ名は保持されません。"
@@ -18094,6 +18103,7 @@ msgstr "Web ページ"
 msgid "Web page preview"
 msgstr "Web ページのプレビュー"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "ウェブリサーチ"

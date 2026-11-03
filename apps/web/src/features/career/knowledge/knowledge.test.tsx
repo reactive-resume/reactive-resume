@@ -15,6 +15,7 @@ const api = vi.hoisted(() => ({
 	createOffer: vi.fn(),
 	saveStory: vi.fn(),
 	saveFact: vi.fn(),
+	correctFact: vi.fn(),
 	proposeResumeFacts: vi.fn(),
 	saveResumeFacts: vi.fn(),
 	userId: "knowledge-test-user",
@@ -40,9 +41,11 @@ vi.mock("@/libs/orpc/client", () => {
 					? api.createOffer
 					: name === "saveStory"
 						? api.saveStory
-						: name === "saveFact"
-							? api.saveFact
-							: api.saveProfile,
+						: name === "correctFact"
+							? api.correctFact
+							: name === "saveFact"
+								? api.saveFact
+								: api.saveProfile,
 		}),
 	});
 	return {
@@ -52,6 +55,7 @@ vi.mock("@/libs/orpc/client", () => {
 			career: Object.fromEntries(
 				[
 					"facts",
+					"forgottenFacts",
 					"stories",
 					"profile",
 					"savedItems",
@@ -60,6 +64,7 @@ vi.mock("@/libs/orpc/client", () => {
 					"saveFact",
 					"suggestTargetRoles",
 					"updateFact",
+					"correctFact",
 					"createOffer",
 					"updateOffer",
 				].map((name) => [name, endpoint(name)]),
@@ -164,6 +169,50 @@ afterEach(() => {
 	cleanup();
 	clients.splice(0).forEach((client) => client.clear());
 	vi.useRealTimers();
+});
+
+it("keeps the complete correction after a failed save and retries its reviewed type/scope atomically", async () => {
+	const fact = {
+		id: "correct-me",
+		text: "Fictional original",
+		category: "experience",
+		applicationId: null,
+		company: null,
+		status: "active",
+		source: { kind: "manual", quote: "Fictional original" },
+		revisions: [],
+		createdAt: new Date(),
+		usedBy: { stories: 0, savedItems: 0 },
+	};
+	api.data.facts = [fact];
+	api.data.applications = [{ id: "cedar", company: "Fictional Cedar", role: "Engineer" }];
+	api.correctFact
+		.mockRejectedValueOnce(new Error("Older server has no correction route"))
+		.mockResolvedValueOnce(undefined);
+	mount(<FactsPage highlight={undefined} />);
+	fireEvent.click(await screen.findByRole("button", { name: "Correct" }));
+	fireEvent.change(screen.getByLabelText("Correct this fact"), { target: { value: "Fictional private correction" } });
+	const type = screen.getAllByLabelText("Fact type").at(-1);
+	if (!type) throw new Error("Missing correction type control");
+	fireEvent.change(type, { target: { value: "skill" } });
+	await waitFor(() => expect(screen.getByLabelText("Scope")).not.toBeDisabled());
+	fireEvent.change(screen.getByLabelText("Scope"), { target: { value: "cedar" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save correction" }));
+	await waitFor(() => expect(api.correctFact).toHaveBeenCalledTimes(1));
+	await waitFor(() => expect(screen.getByRole("button", { name: "Save correction" })).not.toBeDisabled());
+	expect(screen.getByLabelText("Correct this fact")).toHaveValue("Fictional private correction");
+	expect(screen.getByLabelText("Scope")).toHaveValue("cedar");
+	fireEvent.click(screen.getByRole("button", { name: "Save correction" }));
+	await waitFor(() => expect(screen.queryByLabelText("Correct this fact")).not.toBeInTheDocument());
+	expect(api.correctFact.mock.calls.map(([input]) => input)).toEqual(
+		Array.from({ length: 2 }, () => ({
+			id: fact.id,
+			before: { text: fact.text, category: fact.category, applicationId: null },
+			text: "Fictional private correction",
+			category: "skill",
+			applicationId: "cedar",
+		})),
+	);
 });
 
 it("discards cancelled and old-account resume reviews without saving or exposing late excerpts", async () => {

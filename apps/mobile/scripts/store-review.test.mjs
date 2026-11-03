@@ -14,6 +14,8 @@ let dialog;
 let calls = [];
 let available = true;
 let headers = [];
+let nativeWebSearch;
+let webRevision = "web-a";
 const provider = {
 	id: "provider-a",
 	recipientVersion: "a".repeat(64),
@@ -51,11 +53,11 @@ const modules = {
 					? [provider]
 					: []
 				: url.includes("webAccess/status")
-					? { provider: "tavily", search: true, revision: "web-a" }
+					? { provider: "tavily", search: true, revision: webRevision }
 					: url.includes("agent/threads/get")
 						? { thread: { aiProviderId: provider.id } }
 						: url.includes("ai/capabilities")
-							? { explicitNoAi: true, recipientApproval: 1 }
+							? { explicitNoAi: true, recipientApproval: 1, nativeWebSearch }
 							: { id: "result" };
 			return new Response(JSON.stringify({ json: value }), { headers: { "content-type": "application/json" } });
 		},
@@ -350,6 +352,77 @@ dialog.buttons[1].onPress();
 await result;
 assert.deepEqual(sent(), [], "leaving voice context while approval is queued cannot upload recording");
 console.log("PASS canceled queued multipart approval makes zero REST uploads");
+
+// Native fallback permissions must survive the real consent interceptor and request headers.
+const originalSearchProvider = { ...provider };
+available = true;
+provider.baseURL = "https://api.openai.com/v1";
+nativeWebSearch = 1;
+reset();
+let nativeSearch = client.applications.ai.searchPostings({ query: "Fictional engineer", aiProviderId: provider.id });
+await waitForDialog();
+assert.deepEqual(sent(), [], "query waits for explicit paid-search approval");
+assert.match(dialog.message, /Only your search query and search countries/);
+assert.match(dialog.message, /No document, Knowledge or application context/);
+assert.match(dialog.message, /may charge/);
+dialog.buttons[1].onPress();
+await nativeSearch;
+assert.deepEqual(sent(), ["/api/rpc/applications/ai/searchPostings"]);
+assert.equal(headers.at(-1).get("x-ai-native-search"), "1");
+assert.equal(headers.at(-1).get("x-ai-destination"), JSON.stringify([provider.id, provider.recipientVersion]));
+for (const change of ["decline", "account", "provider", "web", "abort"]) {
+	reset();
+	webRevision = "web-a";
+	const controller = new AbortController();
+	const pending = client.applications.ai
+		.searchPostings({ query: "Fictional", aiProviderId: provider.id }, { signal: controller.signal })
+		.catch((error) => error);
+	await waitForDialog();
+	const recipient = provider.recipientVersion;
+	if (change === "account") account = "replacement";
+	if (change === "provider") provider.recipientVersion = "changed-recipient";
+	if (change === "web") webRevision = "web-b";
+	if (change === "abort") controller.abort();
+	dialog.buttons[change === "decline" ? 0 : 1].onPress();
+	assert.ok((await pending) instanceof Error, change);
+	assert.deepEqual(sent(), [], `${change} cannot transmit query or native-search permission`);
+	provider.recipientVersion = recipient;
+}
+for (const unsupported of ["old-server", "custom-endpoint"]) {
+	reset();
+	nativeWebSearch = unsupported === "old-server" ? undefined : 1;
+	provider.baseURL = unsupported === "custom-endpoint" ? "https://proxy.example.test/v1" : "https://api.openai.com/v1";
+	await assert.rejects(
+		client.applications.ai.searchPostings({ query: "Fictional", aiProviderId: provider.id }),
+		/doesn't support native/,
+	);
+	assert.deepEqual(sent(), []);
+	assert.equal(dialog, null);
+}
+provider.baseURL = "https://api.openai.com/v1";
+nativeWebSearch = 1;
+for (const web of [false, true]) {
+	reset();
+	const pending = client.agent.messages.send({ threadId: "thread", context: { web } });
+	await waitForDialog();
+	assert.equal(dialog.message.includes("This can add AI requests and charges"), web);
+	dialog.buttons[1].onPress();
+	await pending;
+	assert.equal(headers.at(-1).get("x-ai-native-search"), web ? "1" : null);
+}
+reset();
+const ordinarySearch = client.applications.ai.searchPostings({ query: "Fictional" });
+await waitForDialog();
+dialog.buttons[1].onPress();
+await ordinarySearch;
+assert.equal(headers.at(-1).get("x-ai-native-search"), null, "ordinary web approval grants no paid fallback");
+Object.assign(provider, originalSearchProvider);
+console.log(
+	"PASS native real-client search consent, exact headers, decline/account/provider/web/abort fences and old/custom compatibility",
+);
+
+nativeWebSearch = undefined;
+webRevision = "web-a";
 
 // Exercise the shipped interceptor, including callers that do not use the posting form.
 let supportError = false;

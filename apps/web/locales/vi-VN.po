@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Mục nhập #} other {Các mục #}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {Đã quên # dữ kiện} other {Đã quên # dữ kiện}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, other {# vấn đề chưa xử lý}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} điểm"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, other {# hàng không có công ty hoặc vai trò nên đã bị bỏ qua.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, other {Gắn sao cho chúng tôi trên GitHub, hiện có # sao (mở trong thẻ mới)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Hệ thống theo dõi người nộp đơn biến PDF của bạn thành văn bản thuần túy trước khi bất kỳ ai đọc nó. Trình kiểm tra cũng thực hiện tương tự, với thư viện PDF.js trong trình duyệt của bạn, sau đó chấm điểm số lượng hồ sơ của bạn tồn tại: 0 đến 100, dựa trên độ tin cậy của văn bản xuất hiện chứ không phải từ cơ hội nhận được công việc của bạn."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Thay đổi nó trong Thiết kế."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Đổi ngôn ngữ"
 
@@ -7557,7 +7557,6 @@ msgstr "Về nhà"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Đi đến bảng điều khiển"
 
@@ -7965,6 +7964,10 @@ msgstr "Nếu ứng dụng không mở được, hãy thử lại trên thiết 
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Nếu truy cập web từ chối khóa hoặc hết hạn mức, kết nối AI này có thể tìm lại bằng dịch vụ tìm kiếm riêng. Việc này có thể phát sinh thêm yêu cầu AI và phí."
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Được tạo bằng Reactive Resume, mã nguồn mở và miễn phí"
 msgid "Main"
 msgstr "Chính"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Điều hướng chính"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "Chưa có dữ kiện để liên kết. Hãy thêm trong Dữ kiện."
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Không có dữ kiện đã quên"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "Chỉ có bạn, cho đến khi bạn chia sẻ nó. Sơ yếu lý lịc
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Nếu truy cập web từ chối khóa hoặc hết hạn mức, chỉ truy vấn và các quốc gia tìm kiếm được gửi đến kết nối AI này. Không thêm tài liệu, Kiến thức hay ngữ cảnh hồ sơ ứng tuyển. Dịch vụ tìm kiếm của nhà cung cấp có thể tính phí."
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "Xuất lại với font đã nhúng, sau đó mở tệp và kiểm tra 
 msgid "Re: Senior Product Designer"
 msgstr "Re: Nhà thiết kế sản phẩm cao cấp"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Về trang chủ"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Thử lưu lại"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Thử lại với {nativeSearchLabel}"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Đang thử lại…"
@@ -14118,6 +14126,10 @@ msgstr "Lịch trình"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "Trường"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Phạm vi"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "Hiển thị bản ghi DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Hiện dữ kiện đã quên"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Hiển thị tiêu đề"
@@ -15072,6 +15088,7 @@ msgstr "Bỏ qua và tải lên"
 msgid "Skip to content"
 msgstr "Chuyển đến nội dung"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "Tiêu đề phần tiêu chuẩn"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Sao Reactive Resume trên GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Nhấn sao cho chúng tôi trên GitHub (mở ở tab mới)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "Chuyển đổi mô hình"
 msgid "Switch to dark mode"
 msgstr "Chuyển sang chế độ tối"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Chuyển sang giao diện tối"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Chuyển sang chế độ ánh sáng"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Chuyển sang giao diện sáng"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "Máy chủ này chỉ xuất tham chiếu tệp. Hãy cập nhật để
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Máy chủ này không nhận tài khoản mới. Hãy đăng nhập bằng tài khoản hiện có."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Máy chủ hoặc kết nối AI này không hỗ trợ tìm kiếm web tích hợp của nhà cung cấp."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "Máy chủ này dùng giai đoạn tiêu chuẩn nên tên giai đoạn trong tệp không được giữ lại."
@@ -18094,6 +18103,7 @@ msgstr "Trang web"
 msgid "Web page preview"
 msgstr "Bản xem trước trang web"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Nghiên cứu web"

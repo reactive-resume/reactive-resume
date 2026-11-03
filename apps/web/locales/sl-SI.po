@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Vnos #} other {Vnosi #}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# pozabljeno dejstvo} two {# pozabljeni dejstvi} few {# pozabljena dejstva} other {# pozabljenih dejstev}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# odprta težava} two {# odprti težavi} few {# odprte težave} other {# odprtih težav}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} tč"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# vrstica ni imela podjetja ali vloge in je bila preskočena.} two {# vrstici nista imeli podjetja ali vloge in sta bili preskočeni.} few {# vrstice niso imele podjetja ali vloge in so bile preskočene.} other {# vrstic ni imelo podjetja ali vloge in so bile preskočene.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Dodajte nam zvezdico na GitHubu, trenutno # zvezdica (odpre se v novem zavihku)} two {Dodajte nam zvezdico na GitHubu, trenutno # zvezdici (odpre se v novem zavihku)} few {Dodajte nam zvezdico na GitHubu, trenutno # zvezdice (odpre se v novem zavihku)} other {Dodajte nam zvezdico na GitHubu, trenutno # zvezdic (odpre se v novem zavihku)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Sistemi za sledenje prosilcem spremenijo vaš PDF v golo besedilo, preden ga kdo prebere. Preverjevalnik naredi enako s knjižnico PDF.js v vašem brskalniku, nato oceni, koliko vašega življenjepisa preživi: od 0 do 100, glede na to, kako zanesljivo je besedilo izpisano, ne glede na vaše možnosti, da dobite službo."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Spremenite ga v Design."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Spremeni jezik"
 
@@ -7557,7 +7557,6 @@ msgstr "Pojdi domov"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Pojdi na nadzorno ploščo"
 
@@ -7965,6 +7964,10 @@ msgstr "Če se aplikacija ni odprla, poskusite znova v napravi, kjer je namešč
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Če spletni dostop zavrne ključ ali je kvota porabljena, lahko ta povezava UI ponovi iskanje s svojo iskalno storitvijo. To lahko pomeni dodatne zahteve UI in stroške."
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Izdelano z Reactive Resume, brezplačno in odprtokodno"
 msgid "Main"
 msgstr "Glavna"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Glavna navigacija"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "Še ni dejstev za povezavo. Dodajte jih v Dejstvih."
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Ni pozabljenih dejstev"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "Samo vi, dokler tega ne delite. Življenjepis lahko ostane zaseben, se o
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Če spletni dostop zavrne ključ ali je kvota porabljena, se tej povezavi UI pošljejo samo iskalna poizvedba in države iskanja. Dokumenti, Znanje in kontekst prijav se ne dodajo. Ponudnik lahko iskanje zaračuna."
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "Izvozite znova z vdelanimi pisavami, nato odprite datoteko in preverite,
 msgid "Re: Senior Product Designer"
 msgstr "Re: Višji produktni oblikovalec"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - Pojdi na domačo stran"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Poskusite znova shraniti"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Poskusi znova z {nativeSearchLabel}"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Ponovni poskus ..."
@@ -14118,6 +14126,10 @@ msgstr "Urniki"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "Šola"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Obseg"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "Pokaži zapise DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Pokaži pozabljena dejstva"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Prikaži naslov"
@@ -15072,6 +15088,7 @@ msgstr "Preskoči in naloži"
 msgid "Skip to content"
 msgstr "Preskoči na vsebino"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "Standardni naslovi razdelkov"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Zvezdica Reactive Resume na GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Dajte nam zvezdico na GitHubu (odpre se v novem zavihku)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "Preklopni model"
 msgid "Switch to dark mode"
 msgstr "Preklopite v temni način"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Preklopi na temno temo"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Preklopite v svetlobni način"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Preklopi na svetlo temo"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "Ta strežnik izvaža le sklice na datoteke. Posodobite ga, da vključi n
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Ta strežnik ne sprejema novih računov. Prijavite se z obstoječim računom."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Ta strežnik ali povezava UI ne podpira ponudnikovega izvornega spletnega iskanja."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "Ta strežnik uporablja standardne stopnje, zato se imena stopenj iz datoteke ne ohranijo."
@@ -18094,6 +18103,7 @@ msgstr "Spletna stran"
 msgid "Web page preview"
 msgstr "Predogled spletne strani"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Spletno raziskovanje"

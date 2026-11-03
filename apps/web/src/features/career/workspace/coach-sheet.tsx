@@ -28,6 +28,7 @@ import {
 	titleFor,
 	useConversationDate,
 	WebResearchChip,
+	useWebSearch,
 	type ChatHistory,
 } from "../coach-thread";
 import { ContextChip, PrivacyLine, tabLabel } from "../shared";
@@ -140,7 +141,7 @@ function CoachSheetBody({
 	const threadId = summary?.id ?? null;
 	const usable = providers.usableProviders;
 	const tabName = tabLabel(tab);
-	const webAccess = useQuery(orpc.webAccess.status.queryOptions());
+
 	const [modelMenuOpen, setModelMenuOpen] = useState(false);
 	const [providerId, setProviderId] = useState<string | null>(null);
 	// The same choices as Career → Coach, for this sheet: Knowledge on, Web research off until the user turns it on.
@@ -151,6 +152,8 @@ function CoachSheetBody({
 	const provider = summary ? saved : (usable.find((item) => item.id === providerId) ?? usable[0]);
 	const label = provider?.label ?? summary?.providerLabel ?? t`Your AI`;
 	const connection = connectionName(label);
+	const web = useWebSearch(provider);
+	const webAccess = web.status;
 
 	const open = (next: CoachConversation) => {
 		setSession((current) => current + 1);
@@ -164,7 +167,7 @@ function CoachSheetBody({
 		posting: true,
 		application: true,
 		memory: chips.memory,
-		web: chips.web && webAccess.data?.search === true,
+		web: chips.web && web.canSearch,
 		tab,
 	};
 
@@ -333,6 +336,7 @@ function CoachSheetBody({
 						/>
 						<WebResearchChip
 							status={webAccess}
+							fallbackLabel={web.fallbackLabel}
 							pressed={chips.web}
 							onPressedChange={(web) => setChips({ ...chips, web })}
 						/>

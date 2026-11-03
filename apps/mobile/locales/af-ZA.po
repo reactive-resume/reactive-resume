@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# kolom} other {# kolomme}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# feit vergeet} other {# feite vergeet}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {Pas # verandering toe} other {Pas # veranderinge toe}}"
@@ -2013,6 +2017,7 @@ msgstr "Verskyn op die bladsy sodra dit 'n organisasie het."
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "As webtoegang gebruik word, gaan soekterme na jou bediener se soekdiens 
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "As webtoegang gebruik word, gaan soekterme na jou bediener se soekdiens en die soekenjins wat dit gebruik, en skakels gaan na die werwe wat gelees word."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "As webtoegang die sleutel weier of die kwota op is, kan hierdie KI-verbinding die soektog met sy eie soekdiens herhaal. Dit kan bykomende KI-versoeke en koste veroorsaak."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Ignoreer"
@@ -8198,6 +8207,10 @@ msgstr "Geen feite stem ooreen nie"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "Geen vergete feite"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Geen ikone pas nie."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "As webtoegang die sleutel weier of die kwota op is, word net jou soeknavraag en soeklande na hierdie KI-verbinding gestuur. Geen dokumente, Kennis of aansoekkonteks word bygevoeg nie. Die verskaffer se soektog kan koste hê."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Probeer weer stoor"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Probeer weer met {nativeSearchLabel}"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Keer terug na Dokumente en maak dit weer oop, of probeer weer die verbinding."
@@ -11298,6 +11319,10 @@ msgstr "Skedules"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "Skool"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "Omvang"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "Wys DNS-rekords"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "Wys vergete feite"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "Hierdie bediener voer net lêerverwysings uit. Werk dit by om opgelaaide
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Hierdie bediener is te oud vir die toepassing. Vra jou administrateur om dit op te dateer."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Hierdie bediener of KI-verbinding ondersteun nie die verskaffer se eie websoektog nie."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Hierdie bediener rapporteer 'n ander adres as die een wat jy ingevoer het. Voer die adres in wat dit gebruik, of vra jou administrateur."
@@ -14588,6 +14621,7 @@ msgstr "Webtoeganginstellings kon nie gestoor of gelaai word nie."
 msgid "Web page"
 msgstr "Webblad"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Webnavorsing"

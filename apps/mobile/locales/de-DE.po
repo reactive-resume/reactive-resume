@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {Spalte #} other {# Spalten}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# Fakt vergessen} other {# Fakten vergessen}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {# Änderung übernehmen} other {# Änderungen übernehmen}}"
@@ -2013,6 +2017,7 @@ msgstr "Erscheint auf der Seite, sobald eine Organisation vorhanden ist."
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "Wenn Webzugriff verwendet wird, werden Suchbegriffe an den Suchdienst Ih
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Wenn Webzugriff verwendet wird, werden Suchbegriffe an den Suchdienst Ihres Servers und die von ihm verwendeten Suchmaschinen weitergeleitet, und Links werden an die gelesenen Websites weitergeleitet."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Wenn der Webzugang den Schlüssel ablehnt oder das Kontingent erschöpft ist, kann diese KI-Verbindung die Suche über ihren eigenen Suchdienst wiederholen. Dabei können zusätzliche KI-Anfragen und Kosten entstehen."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Ignorieren"
@@ -8198,6 +8207,10 @@ msgstr "Es stimmen keine Fakten überein"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "Keine vergessenen Fakten"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Es stimmen keine Symbole überein."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Wenn der Webzugang den Schlüssel ablehnt oder das Kontingent erschöpft ist, werden nur deine Suchanfrage und Suchländer an diese KI-Verbindung gesendet. Dokumente, Wissen und Bewerbungskontext werden nicht hinzugefügt. Die Suche des Anbieters kann kostenpflichtig sein."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Speichern Sie erneut"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Mit {nativeSearchLabel} erneut versuchen"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Kehren Sie zu Unterlagen zurück und öffnen Sie es erneut oder versuchen Sie erneut, die Verbindung herzustellen."
@@ -11298,6 +11319,10 @@ msgstr "Zeitpläne"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "Schule"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "Geltungsbereich"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "DNS-Einträge anzeigen"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "Vergessene Fakten anzeigen"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "Dieser Server exportiert nur Dateiverweise. Ein Server-Update ermöglich
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Dieser Server ist zu alt für die App. Bitten Sie Ihren Administrator, ihn zu aktualisieren."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Dieser Server oder diese KI-Verbindung unterstützt keine anbietereigene Websuche."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Dieser Server meldet eine andere Adresse als die, die Sie eingegeben haben. Geben Sie die verwendete Adresse ein oder fragen Sie Ihren Administrator."
@@ -14588,6 +14621,7 @@ msgstr "Die Webzugriffseinstellungen konnten nicht gespeichert oder geladen werd
 msgid "Web page"
 msgstr "Webseite"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Webrecherche"

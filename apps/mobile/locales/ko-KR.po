@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {#열} other {#열}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {사실 #개를 잊었습니다} other {사실 #개를 잊었습니다}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, other {변경 사항 #개 적용}}"
@@ -2013,6 +2017,7 @@ msgstr "조직이 있으면 페이지에 표시됩니다."
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "웹 액세스를 사용하는 경우 검색어는 서버의 검색 서�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "웹 액세스를 사용하는 경우 검색어는 서버의 검색 서비스와 해당 서비스가 사용하는 검색 엔진으로 이동하고 링크는 읽고 있는 사이트로 이동합니다."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "웹 액세스에서 키가 거부되거나 할당량이 소진되면 이 AI 연결이 자체 검색 서비스로 다시 검색할 수 있습니다. 추가 AI 요청과 요금이 발생할 수 있습니다."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "무시하다"
@@ -8198,6 +8207,10 @@ msgstr "일치하는 사실이 없습니다."
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "잊은 사실 없음"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "일치하는 아이콘이 없습니다."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "웹 액세스에서 키가 거부되거나 할당량이 소진되면 이 AI 연결에는 검색어와 검색 대상 국가만 전송됩니다. 문서, 지식, 지원서 맥락은 추가되지 않습니다. 제공업체의 검색에는 요금이 부과될 수 있습니다."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "다시 저장해 보세요"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel}(으)로 다시 시도"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "서류로 돌아가서 다시 열거나 연결을 다시 시도하세요."
@@ -11298,6 +11319,10 @@ msgstr "스케줄"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "학교"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "적용 범위"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "DNS 레코드 보기"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "잊은 사실 표시"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "이 서버는 파일 참조만 내보냅니다. 업로드한 파일을 �
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "이 서버는 앱을 사용하기에는 너무 오래되었습니다. 관리자에게 업데이트를 요청하세요."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "이 서버 또는 AI 연결은 제공업체의 자체 웹 검색을 지원하지 않습니다."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "이 서버는 입력한 주소와 다른 주소를 보고합니다. 사용하는 주소를 입력하거나 관리자에게 문의하세요."
@@ -14588,6 +14621,7 @@ msgstr "웹 액세스 설정을 저장하거나 로드할 수 없습니다."
 msgid "Web page"
 msgstr "웹 페이지"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "웹 리서치"

@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# 항목} other {# 항목}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {사실 #개를 잊었습니다} other {사실 #개를 잊었습니다}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {미해결 문제 #개} other {미해결 문제 #개}}"
@@ -1025,10 +1029,6 @@ msgstr "{size}pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {회사나 직무가 없는 행 #개를 건너뛰었습니다.} other {회사나 직무가 없는 행 #개를 건너뛰었습니다.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {GitHub에서 별표 주기, 현재 별 #개 (새 탭에서 열림)} other {GitHub에서 별표 주기, 현재 별 #개 (새 탭에서 열림)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "지원자 추적 시스템은 누군가가 읽기 전에 PDF를 일반 텍스트로 변환합니다. 검사기는 브라우저에 있는 PDF.js 라이브러리를 사용하여 동일한 작업을 수행한 다음 이력서가 얼마나 남아 있는지 점수를 매깁니다. 즉, 취업 가능성이 아니라 텍스트가 얼마나 안정적으로 나오는지에 따라 0에서 100까지 점수를 매깁니다."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "디자인에서 바꿔보세요."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "언어 변경"
 
@@ -7557,7 +7557,6 @@ msgstr "집에 가세요"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "대시보드로 이동"
 
@@ -7965,6 +7964,10 @@ msgstr "앱이 열리지 않으면 앱이 설치된 기기에서 다시 시도�
 #: src/features/auth/email-text.ts
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "웹 액세스에서 키가 거부되거나 할당량이 소진되면 이 AI 연결이 자체 검색 서비스로 다시 검색할 수 있습니다. 추가 AI 요청과 요금이 발생할 수 있습니다."
 
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
@@ -9428,10 +9431,6 @@ msgstr "Reactive Resume로 제작되었으며 무료 오픈 소스입니다."
 msgid "Main"
 msgstr "메인"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "메인 내비게이션"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10392,6 +10391,10 @@ msgstr "연결할 사실이 아직 없습니다. 사실 탭에서 추가하세�
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "잊은 사실 없음"
+
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
 msgstr ""
@@ -11130,6 +11133,10 @@ msgstr "공유하기 전까지는 오직 당신뿐입니다. 이력서는 비공
 #: src/libs/orpc/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "웹 액세스에서 키가 거부되거나 할당량이 소진되면 이 AI 연결에는 검색어와 검색 대상 국가만 전송됩니다. 문서, 지식, 지원서 맥락은 추가되지 않습니다. 제공업체의 검색에는 요금이 부과될 수 있습니다."
 
 #: src/features/applications/interviews.ts
 msgid "Onsite"
@@ -12435,10 +12442,6 @@ msgstr "폰트를 임베드하여 다시 내보낸 뒤 파일을 열어 텍스�
 msgid "Re: Senior Product Designer"
 msgstr "Re: 시니어 프로덕트 디자이너"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume - 홈페이지로 이동"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -13490,6 +13493,11 @@ msgstr ""
 msgid "Retry saving"
 msgstr "다시 저장해 보세요"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel}(으)로 다시 시도"
+
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "재시도 중…"
@@ -14118,6 +14126,10 @@ msgstr "스케줄"
 #: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "학교"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "적용 범위"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
@@ -14806,6 +14818,10 @@ msgstr "DNS 레코드 보기"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "잊은 사실 표시"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "제목 표시"
@@ -15072,6 +15088,7 @@ msgstr "건너뛰고 업로드"
 msgid "Skip to content"
 msgstr "콘텐츠로 건너뛰기"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15307,10 +15324,6 @@ msgstr "표준 섹션 제목"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "GitHub의 스타 Reactive Resume"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "GitHub에서 Star 누르기(새 탭에서 열림)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15668,18 +15681,10 @@ msgstr "모델 전환"
 msgid "Switch to dark mode"
 msgstr "어두운 모드로 전환"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "다크 테마로 전환"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "조명 모드로 전환"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "라이트 테마로 전환"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"
@@ -16889,6 +16894,10 @@ msgstr "이 서버는 파일 참조만 내보냅니다. 업로드한 파일을 �
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "이 서버는 새 계정을 받지 않습니다. 기존 계정으로 로그인하세요."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "이 서버 또는 AI 연결은 제공업체의 자체 웹 검색을 지원하지 않습니다."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "이 서버는 기본 단계를 사용하므로 파일의 단계 이름은 유지되지 않습니다."
@@ -18094,6 +18103,7 @@ msgstr "웹 페이지"
 msgid "Web page preview"
 msgstr "웹 페이지 미리보기"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "웹 리서치"

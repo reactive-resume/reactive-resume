@@ -680,6 +680,10 @@ msgstr ""
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# stĺpec} few {# stĺpce} other {# stĺpcov}}"
 
+#: src/features/career/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# zabudnutý fakt} few {# zabudnuté fakty} other {# zabudnutých faktov}}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {Použiť # zmenu} few {Použiť # zmeny} many {Použiť # zmeny} other {Použiť # zmien}}"
@@ -2013,6 +2017,7 @@ msgstr "Zobrazí sa na stránke, keď má organizáciu."
 #: app/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/letters/write.tsx
@@ -6224,6 +6229,10 @@ msgstr "Ak sa používa webový prístup, hľadané výrazy smerujú na vyhľad�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Ak sa používa webový prístup, hľadané výrazy smerujú do vyhľadávacej služby vášho servera a vyhľadávacích nástrojov, ktoré používa, a odkazy smerujú na čítané stránky."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Ak webový prístup odmietne kľúč alebo sa vyčerpá kvóta, toto pripojenie AI môže zopakovať hľadanie vlastnou vyhľadávacou službou. Môže to znamenať ďalšie požiadavky AI a poplatky."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Ignorovať"
@@ -8198,6 +8207,10 @@ msgstr "Žiadne fakty sa nezhodujú"
 msgid "No facts yet"
 msgstr ""
 
+#: src/features/career/facts.tsx
+msgid "No forgotten facts"
+msgstr "Žiadne zabudnuté fakty"
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Žiadne ikony sa nezhodujú."
@@ -8830,6 +8843,10 @@ msgstr ""
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Ak webový prístup odmietne kľúč alebo sa vyčerpá kvóta, tomuto pripojeniu AI sa odošle iba dopyt a krajiny vyhľadávania. Dokumenty, Znalosti ani kontext žiadostí o prácu sa nepridávajú. Vyhľadávanie poskytovateľa môže byť spoplatnené."
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -10769,6 +10786,10 @@ msgstr ""
 msgid "Retry saving"
 msgstr "Skúste uložiť znova"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Skúsiť znova cez {nativeSearchLabel}"
+
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Vráťte sa na Dokumenty a znova ho otvorte alebo skúste znova pripojiť."
@@ -11298,6 +11319,10 @@ msgstr "Naplánované úlohy"
 #: src/features/write/fields.ts
 msgid "School"
 msgstr "Škola"
+
+#: src/features/career/facts.tsx
+msgid "Scope"
+msgstr "Rozsah"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
@@ -11871,6 +11896,10 @@ msgstr "Zobraziť záznamy DNS"
 #: src/features/assistant/messages.tsx
 msgid "Show edit {number}"
 msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Show forgotten"
+msgstr "Zobraziť zabudnuté fakty"
 
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
@@ -13588,6 +13617,10 @@ msgstr "Tento server exportuje iba odkazy na súbory. Aktualizujte ho, aby zahŕ
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Tento server je pre aplikáciu príliš starý. Požiadajte správcu, aby ho aktualizoval."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Tento server alebo pripojenie AI nepodporuje natívne webové vyhľadávanie poskytovateľa."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Tento server hlási inú adresu, ako ste zadali. Zadajte adresu, ktorú používa, alebo sa opýtajte svojho správcu."
@@ -14588,6 +14621,7 @@ msgstr "Nastavenia prístupu na web sa nepodarilo uložiť alebo načítať."
 msgid "Web page"
 msgstr "Webová stránka"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Webový prieskum"
