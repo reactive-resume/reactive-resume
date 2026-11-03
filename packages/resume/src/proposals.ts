@@ -53,6 +53,8 @@ export type Proposal = {
 	why: string;
 	status: "pending" | "accepted" | "rejected";
 	source: ProposalSource;
+	/** Private request references from the saved result that proposed this edit, outside resume content. */
+	aiOperationIds?: string[] | undefined;
 	/** The posting requirement the edit addresses, when tailoring to a job. */
 	requirement?: string | undefined;
 	/** What the assistant cited for the edit, unverified. */
@@ -320,6 +322,10 @@ export const appliedApplications = (
 	Object.fromEntries(
 		applied.map((proposal) => [proposal.id, proposal.snapshot ? `snapshot:${proposal.id}` : proposal.after]),
 	);
+
+export const proposalAiOperationIds = (applied: readonly Pick<Proposal, "aiOperationIds">[]): string[] => [
+	...new Set(applied.flatMap((proposal) => proposal.aiOperationIds ?? [])),
+];
 
 /** Recovery data is untrusted; only own decisions are restored. */
 export function readProposalApplications(value: unknown): ProposalApplications {

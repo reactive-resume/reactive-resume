@@ -81,7 +81,10 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 			entry.passages,
 		);
 		useEditorStore.setState({
-			proposals: next,
+			proposals: next.map((proposal) => ({
+				...proposal,
+				...(entry.aiOperationIds?.length ? { aiOperationIds: entry.aiOperationIds } : {}),
+			})),
 			writingReview: { summary: entry.review.summary, strengths: entry.review.strengths, notes },
 		});
 		setReviewInput(entry.inputText);

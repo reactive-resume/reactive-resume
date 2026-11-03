@@ -692,12 +692,13 @@ export const coverLetterService = {
 				changes.aiOperationIds = [...new Set(input.aiOperationIds)];
 			}
 			const updated = await updateRevision(input, changes, client, { proposalSafety: input.proposalSafety });
-			await saveProposalApplications(client, {
+			const sourceIds = await saveProposalApplications(client, {
 				userId: input.userId,
 				document: { kind: "letter", id: input.id },
 				applications: input.proposalApplications,
 				conflict: letterConflict,
 			});
+			if (sourceIds !== undefined) updated.aiOperationIds = sourceIds;
 			if (input.applicationId === null) {
 				await linkLetterApplication(client, {
 					userId: input.userId,

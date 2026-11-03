@@ -97,6 +97,7 @@ export const aiRouter = {
 					passages: z.array(z.object({ id: z.string(), where: z.string(), text: z.string() })),
 					review: atsReviewOutputSchema,
 					reviewedAt: z.date(),
+					aiOperationIds: aiOperationIdsSchema.optional(),
 					aiUsage: aiUsageSummarySchema.nullable().optional(),
 				})
 				.nullable(),

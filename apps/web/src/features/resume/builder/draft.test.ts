@@ -1,11 +1,13 @@
 // @vitest-environment happy-dom
 
 import type { Resume } from "./draft";
+import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, assert, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { ORPCError } from "@orpc/client";
+import { applyResumeProposals } from "@reactive-resume/resume/proposals";
 import { sortSectionItemsByPeriod } from "@reactive-resume/resume/section-sort";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
@@ -1782,6 +1784,50 @@ describe("concurrent receipt ownership", () => {
 		vi.useRealTimers();
 	});
 	const s = () => useResumeStore.getState();
+	it("pairs sources populated by the acceptance recipe with save, Undo and Redo, excluding stale edits", async () => {
+		const initial = makeResume("accepted-source-pairing");
+		initial.aiOperationIds = ["prior-source"];
+		initial.data.summary.content = "<p>Original</p>";
+		s().initialize(initial);
+		const proposal: Proposal = {
+			id: "accepted",
+			target: { sectionId: "summary", field: "content" },
+			location: "Summary",
+			why: "Clearer",
+			before: initial.data.summary.content,
+			after: "<p>Reviewed</p>",
+			status: "pending",
+			source: "assistant",
+			aiOperationIds: ["assistant-source"],
+		};
+		const stale = { ...proposal, id: "stale", after: "<p>Conflicting</p>", aiOperationIds: ["stale-source"] };
+		const applied: Proposal[] = [];
+		orpcMocks.updateResume.mockImplementation(async (input) => ({
+			...initial,
+			data: input.data,
+			aiOperationIds: input.aiOperationIds,
+			updatedAt: new Date(initial.updatedAt.getTime() + 1),
+		}));
+		s().updateResumeData(
+			(data) => {
+				applied.push(...applyResumeProposals(data, [proposal, stale]).applied);
+			},
+			{ newStep: true, applied },
+		);
+		expect(applied.map((p) => p.id)).toEqual([proposal.id]);
+		expect(s().resume?.aiOperationIds).toEqual(["prior-source", "assistant-source"]);
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].aiOperationIds).toEqual(["prior-source", "assistant-source"]);
+		s().undo();
+		expect(s().resume?.aiOperationIds).toEqual(["prior-source"]);
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].aiOperationIds).toEqual(["prior-source"]);
+		s().redo();
+		expect(s().resume?.aiOperationIds).toEqual(["prior-source", "assistant-source"]);
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].aiOperationIds).toEqual(["prior-source", "assistant-source"]);
+	});
 	it("editor Undo removes only its Improve source and saves it alongside the restored wording", async () => {
 		const initial = makeResume("improve-editor-undo");
 		initial.aiOperationIds = ["import-source", "reviewed-improve", "other-field-source"];

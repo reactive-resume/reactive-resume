@@ -105,6 +105,30 @@ it("applies ordered additions and a rewrite through the real letter store, retai
 	expect(result.current?.stateOf({ ...first, status: "accepted" })).toBe("accepted");
 });
 
+it("pairs accepted letter sources with saves and toast Undo, excluding stale proposals", async () => {
+	act(() => store().load({ ...letter, aiOperationIds: ["prior-source"] }));
+	const { result } = renderHook(useLetterAssistantDocument);
+	const rewrite = { ...edit("source-rewrite", "<p>Rewritten</p>"), aiOperationIds: ["assistant-source"] };
+	const conflict = { ...edit("source-stale", "<p>Conflict</p>"), aiOperationIds: ["stale-source"] };
+	act(() => {
+		expect(result.current?.accept([rewrite, conflict])).toEqual({ applied: [rewrite], stale: [conflict] });
+	});
+	expect(store().letter?.aiOperationIds).toEqual(["prior-source", "assistant-source"]);
+	expect(mocks.save).not.toHaveBeenCalled();
+	const undo = mocks.toast.mock.lastCall?.[0].actionProps.onClick;
+	await act(async () => {
+		await store().flush();
+	});
+	expect(mocks.save.mock.lastCall?.[0].aiOperationIds).toEqual(["prior-source", "assistant-source"]);
+	act(() => undo());
+	expect(store().letter?.content).toBe(letter.content);
+	expect(store().letter?.aiOperationIds).toEqual(["prior-source"]);
+	await act(async () => {
+		await store().flush();
+	});
+	expect(mocks.save.mock.lastCall?.[0].aiOperationIds).toEqual(["prior-source"]);
+});
+
 it("reports genuine stale edits and refuses old callbacks after switching or locking letters", () => {
 	const { result } = renderHook(useLetterAssistantDocument);
 	const doc = result.current;

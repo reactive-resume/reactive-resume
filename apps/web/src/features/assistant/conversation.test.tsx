@@ -571,6 +571,26 @@ it("accepts in the same turn as the click, with the decision left to the documen
 	expect(mocks.record).not.toHaveBeenCalled();
 });
 
+it.each([undefined, ["recorded-assistant-source"]])(
+	"accepts only stored message sources, including older source-less replies: %s",
+	(sources) => {
+		const base = proposing({ tailoredFor: "application-2" });
+		const part = base.parts[0];
+		const proposal = part?.output.edits[0];
+		if (!part || !proposal) throw new Error("Missing proposal fixture");
+		const message = {
+			...base,
+			metadata: { ...base.metadata, ...(sources ? { aiOperationIds: sources } : {}) },
+			parts: [
+				{ ...part, output: { ...part.output, edits: [{ ...proposal, aiOperationIds: ["model-forged-source"] }] } },
+			],
+		};
+		const { accept } = renderConversation([message]);
+		fireEvent.click(screen.getByRole("button", { name: "Accept" }));
+		expect(accept).toHaveBeenCalledWith([expect.objectContaining({ aiOperationIds: sources })]);
+	},
+);
+
 it("never accepts tailored or older sets into a resume that isn't the job's copy, whatever it's linked to now", () => {
 	// The base resume after copying moved its job link: no posting is linked any more.
 	const base = { jobCopy: true, madeFor: null, posting: null };

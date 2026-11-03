@@ -511,6 +511,10 @@ const { MessageView } = load(source("features/assistant/messages.tsx"), {
 	"@tanstack/react-query": { useQueryClient: () => ({}) },
 	"expo-router": { useRouter: () => ({}) },
 	"@reactive-resume/ai/tools/agent-tool-contracts": contracts,
+	"@reactive-resume/schema/ai-usage": load(
+		new URL("../../../packages/schema/src/ai-usage.ts", import.meta.url).pathname,
+		{ zod },
+	),
 	"@reactive-resume/resume/proposals": {},
 	"@reactive-resume/resume/word-diff": {},
 	"./chat": { webSources: contracts.agentWebSources },

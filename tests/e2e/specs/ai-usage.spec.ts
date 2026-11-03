@@ -16,6 +16,96 @@ test.afterAll(async () => {
 	await stub?.close();
 });
 
+for (const kind of ["resume assistant", "letter assistant", "writing review"] as const)
+	test(`${kind} acceptance pairs original sources with saved content and Undo without generating again`, async ({
+		authPage: page,
+	}, info) => {
+		test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs isolated local AI stub permission");
+		test.setTimeout(90_000);
+		await page.setViewportSize({ width: 1440, height: 1000 });
+		await approveLocalStubOperations(page);
+		const connection = await page.request.post("/api/openapi/ai-providers", {
+			data: {
+				label: "Fictional Review AI",
+				provider: "openai-compatible",
+				model: "review-main",
+				capableModel: "review-capable",
+				baseURL: stub.baseURL,
+				apiKey: "stub-key",
+			},
+		});
+		await expect(connection).toBeOK();
+		const { id: providerId } = await connection.json();
+		await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
+		let id: string;
+		if (kind === "letter assistant") {
+			const created = await page.request.post("/api/openapi/cover-letters", {
+				data: { name: "Fictional reviewed letter", content: "<p>Built fictional reliable services.</p>" },
+			});
+			await expect(created).toBeOK();
+			id = (await created.json()).id;
+			await page.goto(`/builder/letter/${id}`);
+		} else {
+			await createSampleResumeFromDashboard(page, info);
+			id = new URL(page.url()).pathname.split("/").at(-1) ?? "";
+		}
+		const read = async () =>
+			await (
+				await page.request.get(`/api/openapi/${kind === "letter assistant" ? "cover-letters" : "resumes"}/${id}`)
+			).json();
+		const original = await read();
+		const before = stub.requests.length;
+		if (kind === "writing review") {
+			await page.getByRole("tab", { name: /^Check/ }).click();
+			await page.getByRole("tab", { name: "Writing", exact: true }).click();
+			await page.getByRole("button", { name: "Review writing", exact: true }).click();
+			await expect(page.getByText("Fictional writing review retained after reload.")).toBeVisible();
+		} else {
+			await page.getByRole("button", { name: "Assistant", exact: true }).click();
+			await page.getByLabel("Message the assistant").fill("Tighten the first passage without adding facts.");
+			await page.getByRole("button", { name: "Send", exact: true }).last().click();
+		}
+		const edits = page.getByRole("list", { name: "Proposed edits" });
+		await expect(edits).toBeVisible({ timeout: 20_000 });
+		if (kind !== "writing review") await expect(page.getByRole("button", { name: "Stop", exact: true })).toBeHidden();
+		expect((await read()).aiOperationIds).toEqual([]);
+		const attempts = stub.requests.length - before;
+		expect(attempts).toBe(kind === "writing review" ? 1 : 3);
+		await edits.getByRole("button", { name: "Accept", exact: true }).click();
+		await expect.poll(read).toMatchObject({ aiOperationIds: [expect.any(String)], aiUsage: { requests: attempts } });
+		const accepted = await read();
+		await page.locator('[data-slot="toast"]').getByRole("button", { name: "Undo", exact: true }).click();
+		await expect.poll(read).toMatchObject({
+			aiOperationIds: [],
+			...(kind === "letter assistant" ? { content: original.content } : { data: original.data }),
+		});
+		await expect(edits.getByRole("button", { name: "Accept", exact: true })).toBeVisible();
+		await edits.getByRole("button", { name: "Accept", exact: true }).click();
+		await expect.poll(read).toMatchObject({ aiOperationIds: accepted.aiOperationIds, aiUsage: accepted.aiUsage });
+		await expect(await page.request.delete(`/api/openapi/ai-providers/${providerId}`)).toBeOK();
+		await page.reload();
+		expect((await read()).aiOperationIds).toEqual(accepted.aiOperationIds);
+		if (kind === "letter assistant") {
+			await expect(
+				page
+					.getByRole("region", { name: "Letter", exact: true })
+					.getByText("Fictional Review AI · openai-compatible · review-capable", { exact: true }),
+			).toBeVisible();
+		} else {
+			await page.getByRole("button", { name: "History", exact: true }).click();
+			const history = page.getByRole("dialog", { name: "Download & history" });
+			await expect(history.getByText(`AI request attempts: ${attempts}`, { exact: true })).toBeVisible();
+			await expect(
+				history.getByText(
+					`Fictional Review AI · openai-compatible · ${kind === "writing review" ? "review-main" : "review-capable"}`,
+					{ exact: true },
+				),
+			).toBeVisible();
+			await history.screenshot({ path: info.outputPath("accepted-review-sources.png"), animations: "disabled" });
+		}
+		expect(stub.requests.length - before).toBe(attempts);
+	});
+
 test("reviewed resume Improve sources follow editor Undo/Redo, save and reload after provider deletion", async ({
 	authPage: page,
 }, info) => {

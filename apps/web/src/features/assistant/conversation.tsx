@@ -23,6 +23,7 @@ import {
 } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { withEditedText } from "@reactive-resume/resume/proposals";
+import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
@@ -244,7 +245,9 @@ export function Conversation(props: ConversationProps) {
 	const proposals = useMemo(
 		() =>
 			(receiptsReady ? messages : []).flatMap((message) =>
-				message.parts.flatMap((part) => (isProposeEdits(part) ? toProposals(part, statuses, document) : [])),
+				message.parts.flatMap((part) =>
+					isProposeEdits(part) ? toProposals(part, statuses, document, aiOperationIds(message.metadata)) : [],
+				),
 			),
 		[messages, statuses, document, receiptsReady],
 	);
@@ -495,7 +498,12 @@ const isProposeEdits = (part: Part): part is ToolPart =>
 	part.type === "tool-propose_edits" && (part as ToolPart).state === "output-available";
 
 /** The edits in a result, with what the server's receipts say since: decisions, and the user's saved wording. */
-function toProposals(part: ToolPart, receipts: ReadonlyMap<string, Receipt>, document: AssistantDocument): Proposal[] {
+function toProposals(
+	part: ToolPart,
+	receipts: ReadonlyMap<string, Receipt>,
+	document: AssistantDocument,
+	sourceIds: string[] = [],
+): Proposal[] {
 	const output = part.output as ProposeEditsOutput | undefined;
 	return (output?.edits ?? []).map((streamed) => {
 		const receipt = receipts.get(streamed.id);
@@ -513,6 +521,7 @@ function toProposals(part: ToolPart, receipts: ReadonlyMap<string, Receipt>, doc
 			status: receipt?.status ?? edit.status,
 			...(receipt?.superseded ? { superseded: true } : {}),
 			source: "assistant",
+			aiOperationIds: sourceIds.length ? sourceIds : undefined,
 		};
 	});
 }
@@ -874,7 +883,7 @@ function ToolPartView({
 					</Status>
 				);
 			const output = part.output as ProposeEditsOutput;
-			const proposals = toProposals(part, statuses, document);
+			const proposals = toProposals(part, statuses, document, aiOperationIds(message.metadata));
 			const states = proposals.map(document.stateOf);
 			const pending = states.filter((state) => state === "pending").length;
 			const accepted = states.filter((state) => state === "accepted").length;
