@@ -14,6 +14,7 @@ import { formatBonus, formatMoney, matchingPlace, meetsMinimum, moneyDifference,
 import { OfferEntry, OfferForm } from "./offer-entry";
 import { consumeSavedOffer, useSavedOffer } from "./offer-selection";
 import { Actions, LoadState } from "./shared";
+import { orpc } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
 import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
@@ -38,7 +39,12 @@ export function OffersScreen() {
 	);
 	// Deleting waits out its Undo toast, as everywhere else saved work is deleted.
 	const remove = (offer: Offer) => {
-		undo.remove(offer.id, t`Offer deleted`, () => prepareRpc(client.career.deleteSavedItem, { id: offer.id }));
+		undo.remove(
+			offer.id,
+			t`Offer deleted`,
+			() => prepareRpc(client.career.deleteSavedItem, { id: offer.id }),
+			orpc.career.savedItems.key(),
+		);
 	};
 	const params = useLocalSearchParams<{ a?: string; b?: string; highlight?: string }>();
 	const focused = useIsFocused();

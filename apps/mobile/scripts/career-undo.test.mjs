@@ -75,6 +75,7 @@ function harness() {
 	const options = (preparing) => ({
 		message: "Fact forgotten",
 		prepare: () => preparing,
+		onReady: () => {},
 		commit: (result) => result,
 		restore: () => {
 			env.restored++;
@@ -248,11 +249,12 @@ async function rowsHarness() {
 			return (cells[i] ??= { current: initial });
 		},
 		useLayoutEffect: (run) => run(),
-		useEffect: (run) => {
+		useEffect: (run, deps) => {
 			const i = cursor++;
-			if (!(i in cells)) {
-				cells[i] = true;
-				cleanup.push(run());
+			if (!(i in cells) || deps.some((value, j) => value !== cells[i][j])) {
+				cleanup[i]?.();
+				cells[i] = deps;
+				cleanup[i] = run();
 			}
 		},
 	};
@@ -285,9 +287,10 @@ const drain = () => new Promise((resolve) => setImmediate(resolve));
 test("actual native row Undo waits for canonical readback; failed read keeps stale private text hidden until Retry", async () => {
 	const h = await rowsHarness();
 	const preparing = h.request();
-	h.render().remove("fact", "Fact forgotten", () => preparing);
-	assert.deepEqual(h.render().hidden, ["fact"]);
+	h.render().remove("fact", "Fact forgotten", () => preparing, h.key);
+	assert.deepEqual(h.render().hidden, []);
 	await preparing;
+	assert.deepEqual(h.render().hidden, ["fact"]);
 	h.env.canonical = [];
 	h.env.offline = true;
 	h.notices[0].action.onPress();
@@ -322,5 +325,45 @@ test("actual native row navigation flushes a prepared deletion synchronously and
 	h.unmount();
 	assert.equal(h.env.sent, 1);
 	await drain();
+	h.queryClient.clear();
+});
+
+test("actual native rows discard hidden IDs when account changes before commit, and returning account sees survivor", async () => {
+	const h = await rowsHarness();
+	const preparing = h.request();
+	h.render().remove("fact", "Fact forgotten", () => preparing, h.key);
+	await preparing;
+	assert.deepEqual(h.render().hidden, ["fact"]);
+	h.env.account = "bob";
+	h.render();
+	h.background();
+	await drain();
+	h.env.account = "alice";
+	h.render();
+	assert.deepEqual(h.render().hidden, []);
+	assert.equal(h.env.sent, 0);
+	assert.equal(h.queryClient.getQueryData(h.key)[0].id, "fact");
+	h.unmount();
+	h.queryClient.clear();
+});
+
+test("actual native Undo reveals canonical list even while an unrelated Career endpoint fails", async () => {
+	const h = await rowsHarness();
+	await h.queryClient
+		.fetchQuery({
+			queryKey: ["career", "stories"],
+			queryFn: () => {
+				throw new Error("unrelated unavailable");
+			},
+		})
+		.catch(() => {});
+	const preparing = h.request();
+	h.render().remove("fact", "Fact forgotten", () => preparing, h.key);
+	await preparing;
+	h.notices[0].action.onPress();
+	await drain();
+	assert.deepEqual(h.render().hidden, []);
+	assert.equal(h.env.sent, 0);
+	h.unmount();
 	h.queryClient.clear();
 });

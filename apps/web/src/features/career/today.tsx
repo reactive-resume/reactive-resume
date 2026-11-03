@@ -55,13 +55,13 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 	const [deleted, setDeleted] = useState<string[]>([]);
 
 	const deleteSchedule = (id: string) => {
-		setDeleted((current) => [...current, id]);
 		withQueryUndo({
 			queryClient,
 			queryKey: orpc.career.schedules.key(),
 			description: t`Schedule deleted`,
 			errorMessage: t`Couldn't delete this schedule. Try again.`,
 			prepare: () => prepareRpc(client.career.deleteSchedule, { id }),
+			hide: () => setDeleted((current) => [...current, id]),
 			restore: () => setDeleted((current) => current.filter((item) => item !== id)),
 		});
 	};
@@ -188,7 +188,7 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	const isUnread = (row: Notification) => !row.readAt && !pending.includes(row.id);
 	const unread = data?.filter(isUnread) ?? [];
 	const read = data?.filter((row) => !isUnread(row)) ?? [];
-	const rows = showRead ? (data ?? []) : unread;
+	const rows = showRead ? (data ?? []).filter((row) => !pending.includes(row.id)) : unread;
 	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
 	const attention = (applications ?? [])
 		.flatMap((application) => {
@@ -202,14 +202,16 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	// Hidden at once; the server hears about it when the toast closes. The cache edit drops the sidebar count too,
 	// while `pending` keeps the row hidden through any refetch.
 	const dismiss = (row: Notification) => {
-		setPending((current) => [...current, row.id]);
-		setReadAt(row.id, new Date());
 		withQueryUndo({
 			queryClient,
 			queryKey: orpc.career.notifications.key(),
 			description: t`Marked as read`,
 			errorMessage: t`Couldn't mark this as read. Try again.`,
 			prepare: () => prepareRpc(client.career.markNotificationRead, { id: row.id }),
+			hide: () => {
+				setPending((current) => [...current, row.id]);
+				setReadAt(row.id, new Date());
+			},
 			restore: () => setPending((current) => current.filter((id) => id !== row.id)),
 		});
 	};
@@ -520,13 +522,13 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 	const onUndoTrack = (applicationId: string) => untrack.mutate({ id: applicationId });
 
 	const onDismiss = (row: Opportunity) => {
-		setHidden((current) => [...current, row.id]);
 		withQueryUndo({
 			queryClient,
 			queryKey: orpc.career.opportunities.key(),
 			description: t`Hidden from New roles`,
 			errorMessage: t`Couldn't hide this role. Try again.`,
 			prepare: () => prepareRpc(client.career.dismissOpportunity, { id: row.id }),
+			hide: () => setHidden((current) => [...current, row.id]),
 			restore: () => setHidden((current) => current.filter((id) => id !== row.id)),
 		});
 	};

@@ -44,6 +44,17 @@ export function prepareRequest<T>(call: (defer: DeferredFetch) => Promise<T>): P
 			return response;
 		}),
 	);
-	void result.then(() => failed(new Error("Request was not prepared")), failed);
+	void result.then(
+		() => failed(new Error("Request was not prepared")),
+		(error) => {
+			if (state === "held") {
+				state = "cancelled";
+				reject(error);
+			}
+			failed(error);
+		},
+	);
+	// A callback may fail independently after handing over its transport.
+	void response.catch(() => {});
 	return ready;
 }

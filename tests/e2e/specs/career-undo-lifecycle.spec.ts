@@ -165,3 +165,62 @@ test("failed Undo readback keeps erased text hidden; Retry reads canonical data 
 	await expect(page.getByText(saved.text, { exact: true })).toHaveCount(0);
 	expect(await readFact(saved.id, account.email)).toEqual({ status: "forgotten", text: "", quote: "", revisions: [] });
 });
+
+test("Forget Undo reads its own canonical list when another Career endpoint fails", async ({
+	authPage: page,
+	account,
+}) => {
+	const saved = await fact(page);
+	await page.goto("/dashboard/career/knowledge/facts");
+	await expect(page.getByText(saved.text, { exact: true })).toBeVisible();
+	await page.getByRole("button", { name: "Forget", exact: true }).click();
+	await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
+	let failures = 0;
+	await page.route("**/api/rpc/**", async (route) => {
+		if (await failRpcProcedure(route, "/api/rpc/career/stories", "Fictional unrelated endpoint unavailable"))
+			failures++;
+	});
+	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await expect(page.getByText(saved.text, { exact: true })).toBeVisible();
+	await expect.poll(() => failures).toBeGreaterThan(0);
+	await expect(page.getByRole("button", { name: "Retry", exact: true })).toHaveCount(0);
+	expect(await readFact(saved.id, account.email)).toMatchObject({ status: "active", text: saved.text });
+});
+
+test("pending Mark as read stays out of Show read until canonical retry succeeds", async ({
+	authPage: page,
+	account,
+}) => {
+	const id = `notification-${Date.now()}`;
+	await database.query(
+		`insert into career_notification(id, user_id, key, notice) select $1, id, $1, $2::jsonb from "user" where email=$3`,
+		[id, JSON.stringify({ type: "briefing-paused" }), account.email],
+	);
+	await page.goto("/dashboard/career");
+	await page.getByRole("button", { name: "Mark as read", exact: true }).click();
+	await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
+	let failures = 0;
+	await page.route("**/api/rpc/**", async (route) => {
+		if (await failRpcProcedure(route, "/api/rpc/career/notifications", "Fictional read unavailable")) failures++;
+	});
+	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await expect.poll(() => failures).toBeGreaterThan(0);
+	await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeVisible();
+	// A successful focus refetch does not settle the failed Undo operation.
+	await page.unroute("**/api/rpc/**");
+	const refreshed = page.waitForResponse(
+		(response) =>
+			response.ok() &&
+			(response.url().includes("/career/notifications") ||
+				(response.url().includes("/__batch__") &&
+					(response.request().postData() ?? "").includes("career/notifications"))),
+	);
+	await page.evaluate(() => window.dispatchEvent(new Event("visibilitychange")));
+	await refreshed;
+	await page.getByRole("button", { name: "Show 1 read", exact: true }).click();
+	await expect(page.getByText("Interview briefing paused", { exact: true })).toHaveCount(0);
+	await page.getByRole("button", { name: "Retry", exact: true }).click();
+	await expect(page.getByText("Interview briefing paused", { exact: true })).toBeVisible();
+	const result = await database.query("select read_at from career_notification where id=$1", [id]);
+	expect(result.rows[0].read_at).toBeNull();
+});

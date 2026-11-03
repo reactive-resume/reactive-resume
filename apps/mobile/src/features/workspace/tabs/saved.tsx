@@ -12,7 +12,7 @@ import { Pressable, View } from "react-native";
 import { useFacts, useSavedItems } from "../hooks";
 import { Actions, Block, tabLabel } from "../parts";
 import { WorkspaceScreen } from "../shell";
-import { client, prepareRpc } from "@/api/client";
+import { client, orpc, prepareRpc } from "@/api/client";
 import { useUserTime } from "@/features/application-detail/hooks";
 import { useUndoRows } from "@/features/career/hooks";
 import { formatMoney } from "@/features/career/offer-compare";
@@ -72,7 +72,12 @@ function Saved({ application, go }: WorkspaceTabProps) {
 
 	const onDelete = (item: SavedItem) => {
 		if (filter === item.data.kind && shown.length === 1) setFilter(null);
-		undo.remove(item.id, t`Deleted from Library`, () => prepareRpc(client.career.deleteSavedItem, { id: item.id }));
+		undo.remove(
+			item.id,
+			t`Deleted from Library`,
+			() => prepareRpc(client.career.deleteSavedItem, { id: item.id }),
+			orpc.career.savedItems.key(),
+		);
 	};
 
 	return (

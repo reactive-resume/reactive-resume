@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryObserver } from "@tanstack/react-query";
 import { prepareRequest } from "@reactive-resume/utils/deferred-request";
 import { pendingCommits } from "./pending-commits";
 import { withQueryUndo } from "./shared";
@@ -44,7 +44,7 @@ async function scenario() {
 	const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 	clients.push(client);
 	const key = ["facts"];
-	const state = { canonical: [{ text: "Fictional private fact" }], offline: false, hidden: true, sent: 0 };
+	const state = { canonical: [{ text: "Fictional private fact" }], offline: false, hidden: false, sent: 0 };
 	await client.fetchQuery({
 		queryKey: key,
 		queryFn: () => {
@@ -64,6 +64,9 @@ async function scenario() {
 		description: "Fact forgotten",
 		errorMessage: "Try again",
 		prepare: () => preparing,
+		hide: () => {
+			state.hidden = true;
+		},
 		restore: () => {
 			state.hidden = false;
 		},
@@ -91,7 +94,7 @@ it("Undo waits for canonical readback; failed read cannot reveal cached erased t
 
 it("prepared page-close flush enters transport synchronously once", async () => {
 	const h = await scenario();
-	for (const flush of pendingCommits) flush();
+	window.dispatchEvent(new Event("pagehide"));
 	expect(h.state.sent).toBe(1);
 	expect(pendingCommits.size).toBe(0);
 	await vi.waitFor(() => expect(h.state.hidden).toBe(false));
@@ -114,4 +117,77 @@ it("a departed account cannot reveal rows after a pending canonical read", async
 	await Promise.resolve();
 	expect(h.state.hidden).toBe(true);
 	expect(h.state.sent).toBe(0);
+});
+
+it("does not hide a row or acknowledge Undo until its transport is ready", async () => {
+	const client = new QueryClient();
+	clients.push(client);
+	let release!: () => void;
+	const wait = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	let hidden = false;
+	const preparing = prepareRequest(async (defer) => {
+		await wait;
+		return defer(() => Promise.resolve(new Response()));
+	});
+	withQueryUndo({
+		queryClient: client,
+		queryKey: ["facts"],
+		description: "Fact forgotten",
+		errorMessage: "Try again",
+		prepare: () => preparing,
+		hide: () => {
+			hidden = true;
+		},
+		restore: () => {
+			hidden = false;
+		},
+	});
+	expect(hidden).toBe(false);
+	expect(notices).toHaveLength(0);
+	release();
+	await preparing;
+	expect(hidden).toBe(true);
+	expect(notices).toHaveLength(1);
+});
+
+it("prepared deletion refreshes dependent application state without unrelated failures blocking canonical reveal", async () => {
+	const h = await scenario();
+	const applicationKey = ["applications", "detail", "fictional-job"];
+	const reportKey = ["reports"];
+	h.client.setQueryData(applicationKey, { followUp: "old schedule" });
+	h.client.setQueryData(reportKey, { count: 1 });
+	h.client.setQueryData(["auth"], { id: "alice" });
+	h.client.setQueryData(["flags"], {});
+	const applicationObserver = new QueryObserver(h.client, {
+		queryKey: applicationKey,
+		queryFn: async () => ({ followUp: null }),
+		staleTime: Infinity,
+	});
+	let reportReads = 0;
+	const reportObserver = new QueryObserver(h.client, {
+		queryKey: reportKey,
+		queryFn: async () => {
+			reportReads++;
+			throw new Error("Unrelated report unavailable");
+		},
+		staleTime: Infinity,
+	});
+	const unsubscribeApplication = applicationObserver.subscribe(() => {});
+	const unsubscribeReport = reportObserver.subscribe(() => {});
+	try {
+		h.state.canonical = [];
+		notice(0).onClose?.();
+		await vi.waitFor(() => expect(h.state.hidden).toBe(false));
+		expect(h.client.getQueryData(h.key)).toEqual([]);
+		await vi.waitFor(() => expect(h.client.getQueryData(applicationKey)).toEqual({ followUp: null }));
+		expect(reportReads).toBe(1);
+		expect(notices).toHaveLength(1);
+		expect(h.client.getQueryState(["auth"])?.isInvalidated).toBe(false);
+		expect(h.client.getQueryState(["flags"])?.isInvalidated).toBe(false);
+	} finally {
+		unsubscribeApplication();
+		unsubscribeReport();
+	}
 });

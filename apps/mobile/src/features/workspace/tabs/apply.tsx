@@ -11,7 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
 import { randomUUID } from "expo-crypto";
 import { useRouter } from "expo-router";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
 import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
@@ -35,9 +35,8 @@ import { Actions, AiNotice, Block, CheckRow, SaveError, GenerateNotice, useWorki
 import { Preparation } from "../preparation";
 import { shareText } from "../share";
 import { WorkspaceScreen } from "../shell";
-import { dispatchForOrigin } from "../state";
-import { orpc } from "@/api/client";
-import { getDraftScope } from "@/draft";
+import { client, orpc, prepareRpc, SessionChangedError } from "@/api/client";
+import { getAccountScope } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { WhatYouSent } from "@/features/application-detail/sections";
 import { PriorNoResponse } from "@/features/applications/prior-no-response";
@@ -70,6 +69,20 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 	const sentItem = candidate?.data.kind === "answers" ? { ...candidate, data: candidate.data } : undefined;
 	// Removed questions wait out their Undo here; the workspace drops them when the toast closes.
 	const [removed, setRemoved] = useState<string[]>([]);
+	const accountScope = getAccountScope();
+	const [removedFor, setRemovedFor] = useState({ accountScope, applicationId: application.id });
+	if (removedFor.accountScope !== accountScope || removedFor.applicationId !== application.id) {
+		setRemovedFor({ accountScope, applicationId: application.id });
+		setRemoved([]);
+	}
+	const removals = useRef(new Map<string, ReturnType<typeof withUndo>>());
+	useEffect(() => {
+		const pending = removals.current;
+		return () => {
+			for (const operation of pending.values()) operation.flush();
+			pending.clear();
+		};
+	}, [application.id, accountScope]);
 	const [unit, setUnit] = useState<CountUnit>("words");
 	const [submitting, setSubmitting] = useState(false);
 	const [canSubmit, setCanSubmit] = useState(true);
@@ -124,22 +137,42 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 	};
 	const currentAnswers = () => shown.map((answer) => drafts.current.get(answer.id)?.() ?? answer);
 	const removeAnswer = (id: string) => {
-		setRemoved((ids) => [...ids, id]);
-		const origin = getDraftScope();
-		withUndo({
+		if (removals.current.has(id)) return;
+		const scope = getAccountScope();
+		const current = () => scope === getAccountScope();
+		const reconcile = async () => {
+			if (!current()) return;
+			await workspace.fetchConfirmed();
+			if (current()) setRemoved((ids) => ids.filter((item) => item !== id));
+			removals.current.delete(id);
+		};
+		const failed = () => {
+			if (!current()) return;
+			showToast({
+				message: t`Couldn't complete this action. Try again.`,
+				action: {
+					label: t`Retry`,
+					onPress: () => {
+						void reconcile().catch(failed);
+					},
+				},
+			});
+		};
+		const operation = withUndo({
 			message: t`Question removed`,
-			// `save` reports its own failure; rejecting here shows the question again.
-			commit: () =>
-				// Dropped if another account is signed in when the Undo window ends.
-				dispatchForOrigin(origin, getDraftScope, async () => {
-					const result = await workspace.save({
-						answers: workspace.current().answers.filter((answer) => answer.id !== id),
-					});
-					if (!result.ok) throw new Error("Not removed");
-				}),
-			restore: () => setRemoved((ids) => ids.filter((item) => item !== id)),
-			failed: () => undefined,
+			onReady: () => setRemoved((ids) => [...ids, id]),
+			prepare: async () => {
+				const value = await workspace.settled();
+				if (!current()) throw new SessionChangedError();
+				const expected = value.answers.find((answer) => answer.id === id);
+				if (!expected) throw new Error("Answer no longer available");
+				return prepareRpc(client.career.deleteWorkspaceAnswer, { applicationId: application.id, id, expected });
+			},
+			commit: (result) => result.then(reconcile).finally(() => removals.current.delete(id)),
+			restore: reconcile,
+			failed,
 		});
+		removals.current.set(id, operation);
 	};
 	const submitted = hasApplicationSubmission(application);
 
@@ -311,17 +344,22 @@ function AnswerCard({
 		before: { text: string; factIds: string[] };
 	} | null>(null);
 	// The answer as it reads now, for a toast's Undo that runs after later renders.
-	const current = useRef({ text, factIds: answer.factIds });
+	const current = useRef({ text, question, factIds: answer.factIds });
 	useLayoutEffect(() => {
-		current.current = { text, factIds: answer.factIds };
+		current.current = { text, question, factIds: answer.factIds };
 	});
-	const previousSaved = useRef(answer.answer);
+	const previousSaved = useRef({ text: answer.answer, question: answer.question });
 	useLayoutEffect(() => {
 		// A refetch is not a local edit to autosave. Keep only text the user changed since the last saved copy.
-		if (previousSaved.current !== answer.answer && current.current.text === previousSaved.current)
+		if (previousSaved.current.text !== answer.answer && current.current.text === previousSaved.current.text)
 			setText(answer.answer);
-		previousSaved.current = answer.answer;
-	}, [answer.answer, setText]);
+		if (
+			previousSaved.current.question !== answer.question &&
+			current.current.question === previousSaved.current.question
+		)
+			setQuestion(answer.question);
+		previousSaved.current = { text: answer.answer, question: answer.question };
+	}, [answer.answer, answer.question, setText, setQuestion]);
 	const generate = useGenerate(applicationId);
 	const provider = useHasAIProvider().defaultProvider;
 	const answerSave = useAutosave(

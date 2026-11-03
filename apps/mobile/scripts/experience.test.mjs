@@ -96,6 +96,16 @@ ui.useFirstAppearance = () => false;
 ui.useReducedMotion = () => false;
 const mocks = {
 	"@lingui/core": { i18n },
+	"@/api/client": {
+		orpc: {
+			career: Object.fromEntries(
+				["facts", "stories", "savedItems", "notifications", "opportunities", "schedules"].map((name) => [
+					name,
+					{ key: () => ["career", name] },
+				]),
+			),
+		},
+	},
 	"@/shell/shortcut-help": {
 		ShortcutHelpButton: "ShortcutHelpButton",
 		CharacterShortcutSetting: "CharacterShortcutSetting",
@@ -469,7 +479,6 @@ const nativeInterviewCalendar = load("features/application-detail/calendar.ts", 
 });
 let applicationDocuments = [];
 let rejectDocumentLink = false;
-let creatingApplicationLetter = false;
 let stageUpdate = (input) => calls.push(input);
 let stageUpdateAsync = (input) =>
 	new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
@@ -486,12 +495,7 @@ const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/app
 	"./notes-queue": { createNotesQueue: () => ({}) },
 	"./hooks": {
 		useDocuments: () => ({ data: applicationDocuments }),
-		useDetailMutations: () => ({
-			createLetter: { isPending: creatingApplicationLetter },
-			addNote: {},
-			updateEntry: {},
-			deleteEntry: {},
-		}),
+		useDetailMutations: () => ({ addNote: {}, updateEntry: {}, deleteEntry: {} }),
 		useNow: () => new Date(),
 		useUserTime: () => time,
 		followUpReminder: () => null,
@@ -856,11 +860,18 @@ assert.deepEqual(calls.filter((call) => call?.documentLink).at(-1).documentLink,
 	id: "existing-letter",
 	applicationId: "job-a",
 });
-creatingApplicationLetter = true;
-tree = render(WhatYouSent, { application });
-assert.equal(control(tree, "Use Fictional Cedar — Portfolio · Resume").disabled, true);
-assert.equal(control(tree, "Use an existing letter").disabled, true);
-creatingApplicationLetter = false;
+for (const resumeId of [null, "resume-for-letter"]) {
+	tree = render(WhatYouSent, { application: { ...application, resumeId } });
+	control(tree, "Write a letter").onPress();
+	assert.deepEqual(
+		calls.at(-1),
+		{
+			pathname: "/new",
+			params: { context: "letters", applicationId: "job-a", ...(resumeId ? { sourceResumeId: resumeId } : {}) },
+		},
+		"Letter creation opens the reusable document picker with this job and its linked resume",
+	);
+}
 applicationDocuments = [];
 console.log("PASS native company-matched resume/letter selection, revision guard, pending state and failed-link retry");
 

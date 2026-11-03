@@ -13,6 +13,7 @@ import { categoryLabel, factCategories } from "./fact-categories";
 import { client, prepareRpc, useCareerAction, useCareerQueries, useCareerTime, useUndoRows } from "./hooks";
 import { ResumeFacts } from "./resume-facts";
 import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
+import { orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import {
 	Banner,
@@ -107,8 +108,11 @@ export function Facts({ children, onRefresh }: FactsProps) {
 		onSource: setSource,
 		onCorrect: (fact) => setEditor({ fact }),
 		onForget: (fact) =>
-			latest.current.remove(fact.id, latest.current.forgotten, () =>
-				prepareRpc(client.career.forgetFact, { id: fact.id }),
+			latest.current.remove(
+				fact.id,
+				latest.current.forgotten,
+				() => prepareRpc(client.career.forgetFact, { id: fact.id }),
+				orpc.career.facts.key(),
 			),
 	}));
 	const renderItem = useCallback(

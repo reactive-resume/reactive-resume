@@ -1752,6 +1752,89 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		});
 	});
 
+	it("removes only the unchanged owned answer, retains other fields, and never recreates a removed answer", async () => {
+		const applicationId = "answer-remove-owned";
+		await getDb()
+			.insert(tables.application)
+			.values({ id: applicationId, userId: "alice", company: "Northwind", role: "Engineer" });
+		const answer = { id: "why", question: "Why Northwind?", answer: "Fictional reliability work.", factIds: [] };
+		const other = { ...answer, id: "other", question: "Another question" };
+		await service.saveWorkspace(
+			"alice",
+			applicationId,
+			{ answers: [answer, other], checklist: [1], message: "Keep this" },
+			{ answers: [], checklist: [], message: "" },
+		);
+		await expect(service.deleteWorkspaceAnswer("bob", applicationId, answer.id, answer)).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		expect((await service.workspace("alice", applicationId)).answers).toEqual([answer, other]);
+		await service.deleteWorkspaceAnswer("alice", applicationId, answer.id, answer);
+		await expect(
+			service.saveWorkspace("alice", applicationId, { answers: [answer, other] }, { answers: [answer, other] }),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		await service.deleteWorkspaceAnswer("alice", applicationId, answer.id, answer);
+		expect(await service.workspace("alice", applicationId)).toMatchObject({
+			answers: [other],
+			checklist: [1],
+			message: "Keep this",
+		});
+	});
+
+	it("refuses stale answer removal and preserves an independent concurrent workspace save", async () => {
+		const applicationId = "answer-remove-concurrent";
+		await getDb()
+			.insert(tables.application)
+			.values({ id: applicationId, userId: "alice", company: "Northwind", role: "Engineer" });
+		const answer = { id: "why", question: "Why Northwind?", answer: "Original answer", factIds: [] };
+		const updated = { ...answer, answer: "Newer answer" };
+		await service.saveWorkspace("alice", applicationId, { answers: [answer] }, { answers: [] });
+		await service.saveWorkspace("alice", applicationId, { answers: [updated] }, { answers: [answer] });
+		await expect(service.deleteWorkspaceAnswer("alice", applicationId, answer.id, answer)).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		await Promise.all([
+			service.deleteWorkspaceAnswer("alice", applicationId, answer.id, updated),
+			service.saveWorkspace("alice", applicationId, { checklist: [2] }, { checklist: [] }),
+		]);
+		expect(await service.workspace("alice", applicationId)).toMatchObject({ answers: [], checklist: [2] });
+	});
+
+	it("workspace answer removal preserves the immutable submitted answer, review receipt and stage history", async () => {
+		const applicationId = "answer-removal-review";
+		await getDb()
+			.insert(tables.application)
+			.values({ id: applicationId, userId: "alice", company: "Northwind", role: "Engineer" });
+		const answer = { id: "why", question: "Why Northwind?", answer: "Fictional submitted answer", factIds: [] };
+		await service.saveWorkspace(
+			"alice",
+			applicationId,
+			{ answers: [answer], checklist: [1, 3] },
+			{ answers: [], checklist: [] },
+		);
+		await service.submitApplication("alice", applicationId, [answer], [answer]);
+		const before = await applications.getById({ userId: "alice", id: applicationId });
+		const saved = await service.savedItems({ userId: "alice", applicationId, kind: "answers" });
+		const review = (await service.workspace("alice", applicationId)).submissionReview;
+		expect(review).toMatchObject({ checklist: [1, 3], answerVersionId: expect.any(String) });
+		const removed = await service.deleteWorkspaceAnswer("alice", applicationId, answer.id, answer);
+		expect(removed).toMatchObject({ answers: [], submissionReview: review });
+		const repeated = await service.deleteWorkspaceAnswer("alice", applicationId, answer.id, answer);
+		expect(repeated.submissionReview).toEqual(review);
+		expect(await service.workspace("alice", applicationId)).toMatchObject({ answers: [], submissionReview: review });
+		const [stored] = await getDb()
+			.select()
+			.from(tables.careerWorkspace)
+			.where(eq(tables.careerWorkspace.applicationId, applicationId));
+		expect(stored?.submissionReview).toEqual(review);
+		expect(stored?.data).not.toHaveProperty("submissionReview");
+		expect(await service.savedItems({ userId: "alice", applicationId, kind: "answers" })).toEqual(saved);
+		const after = await applications.getById({ userId: "alice", id: applicationId });
+		expect(after.activity).toEqual(before.activity);
+		expect(after.sentResumeVersionId).toBe(before.sentResumeVersionId);
+		expect(after.sentCoverLetterVersionId).toBe(before.sentCoverLetterVersionId);
+	});
+
 	it("adopts the device country on the first search without a Preferences visit", async () => {
 		const { searchScope } = await import("../web-access/regions");
 		await service.saveProfile("alice", careerProfileDataSchema.parse({ priorities: "Autonomy" }));

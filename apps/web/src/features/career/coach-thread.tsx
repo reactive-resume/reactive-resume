@@ -134,13 +134,13 @@ export function useConversationDate() {
  * the delete fails.
  */
 export function deleteConversation(queryClient: QueryClient, id: string, hide: () => void, restore: () => void) {
-	hide();
 	withQueryUndo({
 		queryClient,
 		queryKey: orpc.agent.threads.list.key(),
 		description: t`Conversation deleted`,
 		errorMessage: t`Couldn't delete this conversation. Try again.`,
 		prepare: () => prepareRpc(client.agent.threads.delete, { id }),
+		hide,
 		restore: () => {
 			const threads = queryClient.getQueryData(orpc.agent.threads.list.queryKey());
 			if (threads?.some((thread) => thread.id === id)) restore();

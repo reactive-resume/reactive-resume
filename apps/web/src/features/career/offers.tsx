@@ -131,13 +131,13 @@ export function OffersPage({ a, b, highlight }: OffersPageProps) {
 
 	// Deleting waits out its Undo toast, as everywhere else saved work is deleted.
 	const remove = (offer: Offer) => {
-		setHidden((ids) => [...ids, offer.id]);
 		withQueryUndo({
 			queryClient,
 			queryKey: orpc.career.savedItems.key(),
 			description: t`Offer deleted`,
 			errorMessage: t`Couldn't delete that offer. Try again.`,
 			prepare: () => prepareRpc(client.career.deleteSavedItem, { id: offer.id }),
+			hide: () => setHidden((ids) => [...ids, offer.id]),
 			restore: () => setHidden((ids) => ids.filter((id) => id !== offer.id)),
 		});
 	};

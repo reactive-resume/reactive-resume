@@ -24,10 +24,10 @@ vi.mock("@reactive-resume/ui/components/toast", () => ({
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: { agent: { threads: { list: { key: () => ["threads"], queryKey: () => ["threads"] } } } },
 	client: { agent: { threads: { delete: env.deleted } } },
-	prepareRpc: (procedure: () => Promise<unknown>) =>
+	prepareRpc: (procedure: (input: unknown) => Promise<unknown>, input: unknown) =>
 		prepareRequest((defer) =>
 			defer(async () => {
-				await procedure();
+				await procedure(input);
 				return new Response();
 			}),
 		),
@@ -55,8 +55,9 @@ async function scenario() {
 	const hide = vi.fn();
 	const restore = vi.fn();
 	deleteConversation(queryClient, "fictional-thread", hide, restore);
-	expect(hide).toHaveBeenCalledOnce();
+	expect(hide).not.toHaveBeenCalled();
 	await vi.waitFor(() => expect(env.notices).toHaveLength(1));
+	expect(hide).toHaveBeenCalledOnce();
 	return { queryClient, restore };
 }
 it("committed conversation deletion refreshes the list without reopening the deleted thread", async () => {
@@ -64,6 +65,7 @@ it("committed conversation deletion refreshes the list without reopening the del
 	for (const flush of pendingCommits) flush();
 	await vi.waitFor(() => expect(h.queryClient.getQueryData(["threads"])).toEqual([]));
 	expect(env.deleted).toHaveBeenCalledOnce();
+	expect(env.deleted).toHaveBeenCalledWith({ id: "fictional-thread" });
 	expect(h.restore).not.toHaveBeenCalled();
 });
 for (const erasedElsewhere of [false, true])

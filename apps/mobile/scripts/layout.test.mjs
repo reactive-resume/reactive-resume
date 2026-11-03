@@ -576,6 +576,9 @@ const librarySession = load("features/documents/library-session.ts", {
 	"@/auth/session": { getAccountScope: () => libraryAccountScope },
 });
 const { DocumentsLibrary } = load("features/documents/library.tsx", {
+	"@reactive-resume/schema/applications/document-groups": load(
+		"../../../packages/schema/src/applications/document-groups.ts",
+	),
 	"./library-session": librarySession,
 	"@legendapp/list/reanimated": { AnimatedLegendList: "FlatList" },
 	"./document-sheets": { DocumentSheets: "DocumentSheets" },
@@ -737,7 +740,7 @@ const sheetDocument = { type: "resume", id: "restore-sheet", trashedAt: new Date
 documentQuery = { ...originalDocumentQuery, data: { ...originalDocumentQuery.data, items: [sheetDocument], total: 1 } };
 render(DocumentsLibrary, { trashed: true });
 let trashList = nodes(render(DocumentsLibrary, { trashed: true })).find((node) => node.type === "FlatList");
-const trashItem = trashList.props.renderItem({ item: sheetDocument, index: 0 });
+const trashItem = trashList.props.renderItem({ item: trashList.props.data[0], index: 0 });
 // Row body is wrapped by the motion frame; its menu opens the sheet owned by DocumentsLibrary.
 nodes(trashItem)
 	.find((node) => typeof node.props.onMenu === "function")
