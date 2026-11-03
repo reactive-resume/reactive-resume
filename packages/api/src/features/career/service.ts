@@ -11,6 +11,7 @@ import { buildMarkdown, resumeFactProposals } from "@reactive-resume/resume/mark
 import {
 	careerProfileDataSchema,
 	careerWorkspaceSchema,
+	careerWorkspaceDataSchema,
 	EMPTY_WORKSPACE,
 	type CareerProfileData,
 	type CareerProfileUpdate,
@@ -450,23 +451,36 @@ async function submitAnswerSnapshot(
 		.where(eq(tables.application.id, applicationId))
 		.returning();
 	if (!submitted) throw new ORPCError("NOT_FOUND");
-	await recordSentResume(submitted, tx);
-	const data = { ...current, answers: parsed };
+	const data = careerWorkspaceDataSchema.parse({ ...current, answers: parsed });
 	await tx
 		.insert(tables.careerWorkspace)
 		.values({ applicationId, userId, data })
 		.onConflictDoUpdate({ target: tables.careerWorkspace.applicationId, set: { data, updatedAt: at } });
+	await recordSentResume(submitted, tx, hasSubmitted(application));
 	const sent = parsed.filter((answer) => answer.answer.trim());
-	if (sent.length)
-		await tx.insert(tables.careerArtifact).values({
-			userId,
-			applicationId,
-			interviewId: null,
-			title: "Application answers",
-			data: { kind: "answers", answers: sent },
-			evidence: { factIds: await ownedFactIds(tx, userId, sent), storyIds: [] },
-			inputVersion: hash(JSON.stringify([applicationId, at, sent])),
-		});
+	if (sent.length) {
+		const [snapshot] = await tx
+			.insert(tables.careerArtifact)
+			.values({
+				userId,
+				applicationId,
+				interviewId: null,
+				title: "Application answers",
+				data: { kind: "answers", answers: sent },
+				evidence: { factIds: await ownedFactIds(tx, userId, sent), storyIds: [] },
+				inputVersion: hash(JSON.stringify([applicationId, at, sent])),
+			})
+			.returning({ id: tables.careerArtifact.id });
+		if (snapshot && !hasSubmitted(application))
+			await tx
+				.update(tables.careerWorkspace)
+				.set({
+					submissionReview: sql`jsonb_set(${tables.careerWorkspace.submissionReview}, '{answerVersionId}', ${JSON.stringify(snapshot.id)}::jsonb)`,
+					updatedAt: sql`${tables.careerWorkspace.updatedAt}`,
+				})
+				.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
+	}
+
 	return { application: submitted, stages: [savedStageOf(submitted)] };
 }
 
@@ -1555,12 +1569,15 @@ export const careerService = {
 			return { stages: transition.changed ? [savedStageOf(updated)] : [] };
 		}),
 	workspace: async (userId: string, applicationId: string) => {
-		await requireCareerApplication({ userId, applicationId });
+		const application = await requireCareerApplication({ userId, applicationId });
 		const [row] = await db
-			.select({ data: tables.careerWorkspace.data })
+			.select()
 			.from(tables.careerWorkspace)
 			.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
-		return careerWorkspaceSchema.parse({ ...EMPTY_WORKSPACE, ...row?.data });
+		const data: CareerWorkspace = careerWorkspaceDataSchema.parse({ ...EMPTY_WORKSPACE, ...row?.data });
+		if (row?.submissionReview || (application && hasSubmitted(application)))
+			data.submissionReview = row?.submissionReview ?? null;
+		return data;
 	},
 	/** Each widget saves its whole key; keys it doesn't send keep their stored values. */
 	saveWorkspace: async (
@@ -1569,20 +1586,26 @@ export const careerService = {
 		patch: { [K in keyof CareerWorkspace]?: CareerWorkspace[K] | undefined },
 		expected: { [K in keyof CareerWorkspace]?: CareerWorkspace[K] | undefined },
 	) => {
+		if (Object.hasOwn(patch, "submissionReview") || Object.hasOwn(expected, "submissionReview"))
+			throw new ORPCError("BAD_REQUEST", { message: "Submission review is read-only." });
 		await requireCareerApplication({ userId, applicationId });
 		// The application row is the lock, so two saves to different keys can't read the same old copy.
 		return db.transaction(async (tx) => {
 			const [application] = await tx
-				.select({ id: tables.application.id })
+				.select()
 				.from(tables.application)
 				.where(and(eq(tables.application.id, applicationId), activeApplications(userId)))
 				.for("update");
 			const [row] = await tx
-				.select({ data: tables.careerWorkspace.data })
+				.select()
 				.from(tables.careerWorkspace)
 				.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
 			if (!application) throw new ORPCError("NOT_FOUND");
-			const current = careerWorkspaceSchema.parse({ ...EMPTY_WORKSPACE, ...row?.data });
+			const current: CareerWorkspace = careerWorkspaceDataSchema.parse({ ...EMPTY_WORKSPACE, ...row?.data });
+			if (hasSubmitted(application)) {
+				if (patch.checklist !== undefined && !isDeepStrictEqual(patch.checklist, current.checklist))
+					throw new ORPCError("CONFLICT", { message: "Review checks cannot change after submission." });
+			}
 			for (const key of Object.keys(patch) as (keyof CareerWorkspace)[]) {
 				if (patch[key] === undefined) continue;
 				if (!Object.hasOwn(expected, key))
@@ -1595,7 +1618,7 @@ export const careerService = {
 							"This workspace changed elsewhere. Your draft has not been saved. Review the latest version before trying again.",
 					});
 			}
-			const data = careerWorkspaceSchema.parse({
+			const data = careerWorkspaceDataSchema.parse({
 				...current,
 				...Object.fromEntries(Object.entries(patch).filter(([, value]) => value !== undefined)),
 			});
@@ -1603,7 +1626,12 @@ export const careerService = {
 				.insert(tables.careerWorkspace)
 				.values({ applicationId, userId, data })
 				.onConflictDoUpdate({ target: tables.careerWorkspace.applicationId, set: { data, updatedAt: new Date() } });
-			return data;
+			return {
+				...data,
+				...(row?.submissionReview || hasSubmitted(application)
+					? { submissionReview: row?.submissionReview ?? null }
+					: {}),
+			};
 		});
 	},
 	/** The submitted answers, document versions and stage are one committed action. */
@@ -1669,15 +1697,32 @@ export const careerService = {
 				throw new ORPCError("CONFLICT", {
 					message: "These answers changed after submission and cannot be recorded as sent.",
 				});
-			await tx.insert(tables.careerArtifact).values({
-				userId,
-				applicationId,
-				interviewId: null,
-				title: "Application answers",
-				data: { kind: "answers", answers },
-				evidence: { factIds: await ownedFactIds(tx, userId, answers), storyIds: [] },
-				inputVersion: hash(JSON.stringify(answers)),
-			});
+			const [snapshot] = await tx
+				.insert(tables.careerArtifact)
+				.values({
+					userId,
+					applicationId,
+					interviewId: null,
+					title: "Application answers",
+					data: { kind: "answers", answers },
+					evidence: { factIds: await ownedFactIds(tx, userId, answers), storyIds: [] },
+					inputVersion: hash(JSON.stringify(answers)),
+				})
+				.returning({ id: tables.careerArtifact.id });
+			if (
+				snapshot &&
+				workspace.submissionReview?.stageEntryId === applied.id &&
+				!workspace.submissionReview.answerVersionId
+			)
+				await tx
+					.update(tables.careerWorkspace)
+					.set({
+						submissionReview: { ...workspace.submissionReview, answerVersionId: snapshot.id },
+						updatedAt: sql`${tables.careerWorkspace.updatedAt}`,
+					})
+					.where(
+						and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)),
+					);
 		}),
 	/** Saves a discovered role to Applications at Saved, with the posting link and why it matched. */
 	trackOpportunity: (userId: string, id: string) => {

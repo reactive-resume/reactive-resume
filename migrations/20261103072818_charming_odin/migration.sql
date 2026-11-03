@@ -1,0 +1,1 @@
+ALTER TABLE "career_workspace" ADD COLUMN "submission_review" jsonb;

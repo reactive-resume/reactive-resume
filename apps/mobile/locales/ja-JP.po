@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: ja-JP\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: removing?.role
 #. placeholder {1}: removing?.company
@@ -139,8 +133,6 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, one {# 件の応募のうち {count} 件を変更しました。} other {# 件の応募のうち {count} 件を変更しました。}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, other {#件の回答}}"
@@ -630,6 +622,10 @@ msgstr "{0}件中{accepted}件を適用済み"
 #: src/features/applications-board/insights-screen.tsx
 msgid "{active, plural, one {# active application} other {# active applications}}"
 msgstr "{active, plural, one {進行中の応募#件} other {進行中の応募#件}}"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, other {#件の回答}}"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
@@ -6025,6 +6021,10 @@ msgstr "採用担当者"
 msgid "Hiring team"
 msgstr "採用チーム"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "過去の確認項目のチェックは利用できません。"
+
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
 #: src/features/share/export-screen.tsx
@@ -10662,8 +10662,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "初回の応募時に確認項目のチェックを記録しました。"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
