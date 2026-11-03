@@ -82,7 +82,8 @@ export function DataSection({ openDeletion = false }: DataSectionProps) {
 				title={<Trans>Export everything</Trans>}
 				description={
 					<Trans>
-						Documents, version history and uploaded files in one zip. Check the file manifest for omissions.
+						Documents, applications, Career data, version history and uploaded files in one zip. Check the file manifest
+						for omissions.
 					</Trans>
 				}
 			>
