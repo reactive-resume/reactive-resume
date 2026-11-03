@@ -30,7 +30,13 @@ export async function authorizeAiRequest(
 		!connectionTest &&
 		!rebind &&
 		!chat &&
-		!(path[0] === "ai" && path[1] !== "reportContent" && path[1] !== "capabilities" && path[1] !== "writingReview") &&
+		!(
+			path[0] === "ai" &&
+			path[1] !== "reportContent" &&
+			path[1] !== "capabilities" &&
+			path[1] !== "writingReview" &&
+			path[1] !== "usage"
+		) &&
 		!(path[0] === "applications" && path[1] === "ai") &&
 		operation !== "coverLetters.draft" &&
 		operation !== "career.generate" &&

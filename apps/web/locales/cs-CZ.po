@@ -2161,6 +2161,18 @@ msgstr "Poskytovatele AI se nepodařilo načíst. Znovu načtěte a zkuste to zn
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+#: src/features/settings/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Pokusy o požadavky AI: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Historie požadavků AI není pro tento výsledek dostupná."
+
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr ""
@@ -2168,6 +2180,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Využití AI se nepodařilo načíst. Obnovte zobrazení. Starší servery mohou vyžadovat aktualizaci."
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Využití AI tento týden"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2761,6 +2781,7 @@ msgstr ""
 msgid "Aspect ratio"
 msgstr "Poměr stran"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/assistant/conversation.tsx
@@ -3101,6 +3122,7 @@ msgstr "Rozdělte životopis do obvyklých sekcí, aby jej bylo možné segmento
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Rozděluje dlouhá slova mezi slabiky pomocí jazyka nastaveného na stránce."
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Briefing"
@@ -3267,6 +3289,10 @@ msgstr ""
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
 msgstr "Kariéra"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Kariérní chat"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Career coach"
@@ -5553,6 +5579,7 @@ msgstr "Vážený tým Fieldnote,"
 msgid "Dear hiring team,"
 msgstr "Vážený náborový tým,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -6990,6 +7017,7 @@ msgstr "soubor přečten"
 msgid "Files can be up to 25 MB."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "Vyplnit pole"
@@ -7058,6 +7086,7 @@ msgstr "Finština"
 msgid "First run"
 msgstr "První spuštění"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Fit"
@@ -7242,6 +7271,10 @@ msgstr "Zapomněli jste heslo?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "Zapomněli jste heslo?"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Odpověď ve formuláři"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Form answers"
@@ -8028,6 +8061,7 @@ msgstr "Import"
 msgid "Importing it into your new resume…"
 msgstr "Importuje se do vašeho nového životopisu…"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "zlepšit"
@@ -8916,6 +8950,10 @@ msgstr ""
 msgid "Letter details"
 msgstr "Podrobnosti dopisu"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Návrh dopisu"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Letter duplicated"
 msgstr "Dopis duplikován"
@@ -9246,6 +9284,10 @@ msgstr "Načítání editoru stylů…"
 msgid "Loading the total"
 msgstr "Načítání součtu"
 
+#: src/features/settings/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Načítání využití…"
+
 #: src/features/career/workspace/shell.tsx
 msgid "Loading workspace…"
 msgstr "Načítání pracovního prostoru…"
@@ -9564,9 +9606,21 @@ msgstr "Možná později"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "Skóre shody MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "Návrh zprávy MCP"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "Server MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "Přizpůsobení MCP"
 
 #: src/features/resume/editor/proposals/page-fit.tsx
 msgid "Measuring page fit…"
@@ -10159,6 +10213,10 @@ msgstr ""
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Tento týden nebyly zaznamenány žádné pokusy o požadavky AI."
 
 #: src/features/career/offers.tsx
 msgid "No amount stated · value uncertain"
@@ -11595,6 +11653,10 @@ msgstr "Výplatní období"
 msgid "Pay, deadline and conditions, so you can compare and decide"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "Import PDF"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "Styly PDF podporují podmnožinu CSS. Otočení, čárkované a tečkované okraje a některé vlastnosti rozvržení jsou ignorovány."
@@ -11837,6 +11899,7 @@ msgstr "Výrazy z inzerátu ve vašem životopise"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Practice"
@@ -12169,6 +12232,10 @@ msgstr ""
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Test poskytovatele"
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -12397,6 +12464,7 @@ msgstr "Přístup pouze pro čtení"
 msgid "Read only can't change or delete anything."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12711,6 +12779,10 @@ msgstr "Obnovit briefing 24 hodin předem"
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Obnovit briefing ráno v den pohovoru"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Obnovit využití"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Register at OlaCV"
@@ -13039,6 +13111,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Odpovězeno"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13074,6 +13147,10 @@ msgstr ""
 #: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "Nahlásit chybu"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Pokusy o požadavky zaznamenané tímto serverem, včetně neúspěšných a zrušených. Opakování a každé volání modelu ve smyčce nástrojů se počítají zvlášť; části proudu, samotné nástroje a ukládání se nepočítají."
 
 #: src/features/settings/profile.tsx
 msgid "Requested amount"
@@ -13542,6 +13619,10 @@ msgstr "Role {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "Pozice osoby {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Návrhy pozic"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Role, company or location"
@@ -16382,6 +16463,10 @@ msgstr "Chybí souhrnný odstavec."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/settings/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Jde o pokusy, nikoli vyúčtování, počty tokenů nebo náklady. Přerušený server může zaznamenat pokus před odesláním; tento přehled nepotvrzuje přijetí poskytovatelem."
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -17889,9 +17974,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Návštěvníci zadají heslo, než uvidí životopis. Sdílejte ho pouze s lidmi, kterým důvěřujete."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Přehrávání hlasu"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
 msgstr "Nastavení hlasu"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Přepis hlasu"
 
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -18007,6 +18100,10 @@ msgstr "Týdně v {clock} · další {next}"
 #: src/features/career/knowledge/preferences.tsx
 msgid "weeks"
 msgstr "týdnů"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Týden běží od pondělí do neděle v časovém pásmu účtu. Historie začíná, když server začne zaznamenávat; starší požadavky se zpětně nevytvářejí. Názvy připojení a modely zůstávají podle použití i po odebrání připojení."
 
 #: src/features/career/shared.tsx
 msgid "Weighing each requirement"
@@ -18322,6 +18419,10 @@ msgstr ""
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "Bez něj vyplníte příjemce sami a sepsání použije pouze váš životopis."
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Import Word"
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
 msgstr ""
@@ -18470,6 +18571,10 @@ msgstr "Píše se odpověď…"
 #: src/features/settings/ai/providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Pomoc s psaním, přizpůsobené návrhy a asistent. Výchozí poskytovatel se použije všude, kde žádného nevyberete. Vaše klíče zůstávají šifrované."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Kontrola psaní"
 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"

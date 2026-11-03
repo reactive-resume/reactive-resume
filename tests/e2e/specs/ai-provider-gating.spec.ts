@@ -92,7 +92,7 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 	await consent(page);
 	expect((await retest).ok()).toBe(true);
 	await expect(providerSection.getByRole("button", { name: "Test", exact: true })).toBeVisible();
-	await expect(providerSection.getByRole("status")).toHaveText(/^Connected · \d+ ms$/);
+	await expect(providerSection.getByRole("status")).toHaveText(/^Connected · \d{1,3}(?:,\d{3})* ms$/);
 	const after = await page.request.get("/api/openapi/ai-providers");
 	await expect
 		.poll(async () => (await (await page.request.get("/api/openapi/ai-providers")).json())[0].enabled)
@@ -194,6 +194,8 @@ test("Writing review survives reload and remains readable without a provider", a
 	await page.getByRole("button", { name: "Review writing", exact: true }).click();
 	await consent(page);
 	await expect(page.getByText("Fictional writing review retained after reload.")).toBeVisible();
+	await expect(page.getByText("AI request attempts: 1", { exact: true })).toBeVisible();
+	await expect(page.getByText("Fictional review connection · openai-compatible · stub", { exact: true })).toBeVisible();
 	const count = stub.requests.length;
 	await page.reload();
 	await page.getByRole("tab", { name: "Writing", exact: true }).click();
@@ -206,6 +208,9 @@ test("Writing review survives reload and remains readable without a provider", a
 	await page.getByRole("tab", { name: "Writing", exact: true }).click();
 	await expect(page.getByText("Fictional writing review retained after reload.")).toBeVisible();
 	await expect(page.getByRole("button", { name: "Set up AI", exact: true })).toBeVisible();
+	await expect(page.getByText("AI request attempts: 1", { exact: true })).toBeVisible();
+	await expect(page.getByText("Fictional review connection · openai-compatible · stub", { exact: true })).toBeVisible();
+	expect(stub.requests.length).toBe(count);
 	await page
 		.getByRole("tabpanel", { name: /^Check/ })
 		.screenshot({ path: info.outputPath("writing-review-saved.png") });

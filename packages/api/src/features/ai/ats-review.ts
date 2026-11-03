@@ -90,6 +90,7 @@ export const atsReviewOutputSchema = z.object({
 export type AtsReviewOutput = z.infer<typeof atsReviewOutputSchema>;
 
 type AtsReviewServiceInput = AtsReviewInput & {
+	usage: Parameters<typeof getModel>[0]["usage"];
 	signal?: AbortSignal | undefined;
 	provider: Parameters<typeof getModel>[0]["provider"];
 	model: string;

@@ -7,6 +7,18 @@ const envMock = vi.hoisted(() => ({
 }));
 
 vi.mock("@reactive-resume/env/server", () => ({ env: envMock }));
+vi.mock("@reactive-resume/db/client", () => {
+	const database = { insert: () => ({ values: async () => undefined }) };
+	return { db: { ...database, transaction: async (run: (tx: typeof database) => Promise<void>) => run(database) } };
+});
+vi.mock("../ai-providers/identity", async (original) => ({
+	...(await original<typeof import("../ai-providers/identity")>()),
+	assertProviderAvailable: async () => undefined,
+}));
+vi.mock("../documents/ownership", async (original) => ({
+	...(await original<typeof import("../documents/ownership")>()),
+	lockUser: async () => undefined,
+}));
 // Provider requests still reach the stubbed global fetch; fetchPublic's own network checks are tested in utils.
 const fetchPublicMock = vi.hoisted(() => vi.fn((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init)));
 vi.mock("@reactive-resume/utils/url-security.node", async (original) => ({
@@ -78,6 +90,14 @@ function stubOpenAIResponse() {
 }
 
 const { getAgentModel, testConnection } = await import("./service");
+const usage = {
+	userId: "user",
+	operationId: "test",
+	action: "provider-test" as const,
+	providerId: "connection",
+	label: "Test connection",
+	recipientVersion: "test-revision",
+};
 
 describe("AI chat service", () => {
 	it("tests OpenAI-compatible providers without requiring structured output", async () => {
@@ -85,6 +105,7 @@ describe("AI chat service", () => {
 
 		await expect(
 			testConnection({
+				usage,
 				provider: "openai-compatible",
 				model: "test-model",
 				apiKey: "test-key",
@@ -104,7 +125,7 @@ describe("AI chat service", () => {
 		vi.stubGlobal("AI_SDK_LOG_WARNINGS", warnings);
 
 		await expect(
-			testConnection({ provider: "openai", model: "gpt-6.1-sol", apiKey: "test-key", baseURL: "" }),
+			testConnection({ usage, provider: "openai", model: "gpt-6.1-sol", apiKey: "test-key", baseURL: "" }),
 		).resolves.toEqual({ ok: true });
 
 		expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -127,6 +148,7 @@ describe("AI chat service", () => {
 	])("uses $path for $model with function tools and reasoning", async ({ model, baseURL, path }) => {
 		const { fetchMock: request, getRequestBody } = stubOpenAIResponse();
 		const provider = {
+			usage,
 			provider: "openai" as const,
 			model,
 			apiKey: "test",

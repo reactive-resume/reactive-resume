@@ -128,7 +128,35 @@ export const authService = {
 				.select()
 				.from(schema.aiContentReport)
 				.where(eq(schema.aiContentReport.userId, input.userId)),
-			career: await careerService.exportData(input.userId),
+			// This existing backup section carries AI conversations; older archive clients preserve new fields here.
+			career: {
+				...(await careerService.exportData(input.userId)),
+				aiRequests: await db
+					.select({
+						id: schema.aiRequest.id,
+						operationId: schema.aiRequest.operationId,
+						action: schema.aiRequest.action,
+						providerId: schema.aiRequest.providerId,
+						label: schema.aiRequest.label,
+						provider: schema.aiRequest.provider,
+						model: schema.aiRequest.model,
+						createdAt: schema.aiRequest.createdAt,
+					})
+					.from(schema.aiRequest)
+					.where(eq(schema.aiRequest.userId, input.userId)),
+				writingReviews: await db
+					.select({
+						resumeId: schema.resumeWritingReview.resumeId,
+						inputText: schema.resumeWritingReview.inputText,
+						passages: schema.resumeWritingReview.passages,
+						review: schema.resumeWritingReview.review,
+						requestedAt: schema.resumeWritingReview.requestedAt,
+						reviewedAt: schema.resumeWritingReview.reviewedAt,
+						aiOperationId: schema.resumeWritingReview.aiOperationId,
+					})
+					.from(schema.resumeWritingReview)
+					.where(eq(schema.resumeWritingReview.userId, input.userId)),
+			},
 			applicationProfile: await applicationProfileService.get(input.userId),
 			feedback: await feedbackService.exportData(input.userId),
 		};

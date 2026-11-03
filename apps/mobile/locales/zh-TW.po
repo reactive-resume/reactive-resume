@@ -1724,6 +1724,17 @@ msgstr "無法載入 AI 提供者。請再試一次，或手動填寫詳細資�
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI 只會在您要求時讀取貼上的文字。連結可使用網頁自帶的職缺資料，不必使用 AI。"
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "AI 請求嘗試次數：{0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "此結果沒有可用的 AI 請求歷史。"
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "無法載入 AI 使用情況。請重新整理。舊版伺服器可能需要更新。"
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "本週 AI 使用情況"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "顯示比例"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "助理"
@@ -2498,6 +2518,7 @@ msgstr "把履歷拆分成常見的幾個部分，方便系統進行分段。"
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "使用 Page 中設定的語言在音節之間斷開長單字。"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "職涯"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "職涯聊天"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "親愛的{name}，"
 msgid "Dear hiring team,"
 msgstr "親愛的招募團隊，"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "手動填寫詳細信息"
 msgid "Fill empty fields with AI"
 msgstr "以 AI 填入空白欄位"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "填入欄位"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "從工作申請中填寫。問候語跟在名字之後。"
@@ -5554,6 +5584,7 @@ msgstr "第一報價"
 msgid "First run (YYYY-MM-DD)"
 msgstr "首次執行（YYYY-MM-DD）"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "忘記"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "忘記會將該事實與故事和儲存的項目解除連結。原始來源保持不變。"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "表單回答"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "從 {source} 匯入。"
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "將其匯入您的新簡歷中..."
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "提升"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "信體"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "信件草稿"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "信頁"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "正在載入已儲存的版本…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "正在載入使用情況…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "可能可註冊"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP 配對分數"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP 訊息草稿"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP伺服器"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP 調整"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "尚無AI供應商"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "本週未記錄 AI 請求嘗試。"
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · 最適合應徵工作"
 msgid "PDF check canceled. Retry when ready."
 msgstr "PDF 檢查已取消。準備好後請再試一次。"
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "匯入 PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "職缺發布來源"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "提供者的保留和使用遵循其隱私權政策。拒絕會阻止此操作並保留其他應用程式功能可用。"
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "供應商測試"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "閱讀授權條款"
 msgid "Read only"
 msgstr "唯讀"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "提前 24 小時更新簡報"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "當天早上更新簡報"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "重新整理使用情況"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "已回覆"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "回覆"
@@ -10393,6 +10471,10 @@ msgstr "回報問題"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "您的伺服器運營商收到的報告。謝謝。"
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "此伺服器記錄的請求嘗試，包含失敗或取消的嘗試。重試及工具迴圈中的每次模型呼叫分別計數；串流片段、工具本身及儲存不計數。"
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "職位（選填）"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "角色 {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "職位建議"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "沒有個人簡介段落。"
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "這些是嘗試次數，並非帳單、權杖數量或費用。伺服器中斷可能造成傳送前已記錄嘗試；此報告無法確認供應商是否收到請求。"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "訪客需要先輸入密碼才能查看履歷。請只與您信任的人分享密碼。"
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "語音播放"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "語音設定"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "語音轉錄"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "網路搜尋尋找這些國家的工作機會。最多選擇三個國家
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "個人網站"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "每週依帳戶時區從週一到週日計算。歷史從此伺服器開始記錄時起算；不會重建更早的請求。連線標籤和模型依使用時的狀態保留，移除連線後也不變。"
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "如果沒有，您需要自己填寫收件人，並且在起草時僅使
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "匯入 Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Word 匯入、改善、助理、求職信草稿、職涯教練與生成，以及語音練習都需要 AI 供應商。編輯、設計、可讀性檢查和下載則不需要。"
@@ -14844,6 +14950,10 @@ msgstr "文案"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "寫作協助、量身建議和助理。未另外選擇提供者的地方都會使用預設提供者。您的金鑰會加密保存。"
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "寫作審閱"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

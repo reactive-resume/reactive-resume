@@ -1,4 +1,5 @@
 import z from "zod";
+import { aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
 import { reviewedAnswerInputSchema, reuseAnswerInputSchema } from "@reactive-resume/schema/application-answers";
 import { protectedProcedure } from "../../context";
 import { reviewedAnswerSchema, reviewedAnswerViewSchema } from "../../dto/career";
@@ -36,7 +37,9 @@ export const answerRouter = {
 			summary: "Review a scoped answer and return an independent draft copy",
 		})
 		.input(reuseAnswerInputSchema)
-		.output(z.object({ text: z.string(), factIds: z.array(z.string()) }))
+		.output(
+			z.object({ text: z.string(), factIds: z.array(z.string()), aiOperationIds: aiOperationIdsSchema.optional() }),
+		)
 		.handler(({ context, input }) => reviewedAnswers.reuse(context.user.id, input)),
 	delete: protectedProcedure
 		.route({

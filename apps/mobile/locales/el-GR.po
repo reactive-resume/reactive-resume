@@ -1724,6 +1724,17 @@ msgstr "Δεν ήταν δυνατή η φόρτωση των παρόχων τ�
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "Το AI διαβάζει επικολλημένο κείμενο μόνο όταν το ζητάτε. Οι σύνδεσμοι μπορούν να χρησιμοποιούν τα δεδομένα εργασίας της σελίδας χωρίς το AI."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Απόπειρες αιτημάτων AI: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Το ιστορικό αιτημάτων AI δεν είναι διαθέσιμο για αυτό το αποτέλεσμα."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Δεν ήταν δυνατή η φόρτωση χρήσης AI. Ανανεώστε. Οι παλαιότεροι διακομιστές ίσως χρειάζονται ενημέρωση."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Χρήση AI αυτή την εβδομάδα"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "Αναλογία διαστάσεων"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "Βοηθός"
@@ -2498,6 +2518,7 @@ msgstr "Χωρίστε το βιογραφικό στις συνήθεις εν�
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Διαχωρίζει μεγάλες λέξεις μεταξύ συλλαβών, χρησιμοποιώντας τη γλώσσα που έχει οριστεί στη Σελίδα."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Καριέρα"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Συνομιλία σταδιοδρομίας"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "Αγαπητέ {name},"
 msgid "Dear hiring team,"
 msgstr "Αγαπητή ομάδα προσλήψεων,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "Συμπληρώστε τα στοιχεία χειροκίνητα"
 msgid "Fill empty fields with AI"
 msgstr "Συμπληρώστε τα κενά πεδία με AI"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Συμπλήρωση πεδίων"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Συμπληρώθηκε από την αίτηση εργασίας. Ο χαιρετισμός ακολουθεί το όνομα."
@@ -5554,6 +5584,7 @@ msgstr "Πρώτη προσφορά"
 msgid "First run (YYYY-MM-DD)"
 msgstr "Πρώτη εκτέλεση (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "Ξεχάστε"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "Η λήθη αποσυνδέει αυτό το γεγονός από ιστορίες και αποθηκευμένα αντικείμενα. Η αρχική πηγή παραμένει αμετάβλητη."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Απάντηση φόρμας"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "Εισήχθη από {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Εισαγωγή στο νέο σας βιογραφικό…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "Βελτιώ"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "Σώμα επιστολής"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Προσχέδιο επιστολής"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Σελίδα επιστολής"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Φόρτωση αποθηκευμένης έκδοσης…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Φόρτωση χρήσης…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "Ίσως διαθέσιμο"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "Βαθμολογία αντιστοίχισης MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "Προσχέδιο μηνύματος MCP"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "Διακομιστής MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "Προσαρμογή MCP"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "Δεν υπάρχει ακόμη πάροχος AI"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Δεν καταγράφηκαν απόπειρες αιτημάτων AI αυτή την εβδομάδα."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · Ιδανικό για υποβολή αίτησης"
 msgid "PDF check canceled. Retry when ready."
 msgstr "Ο έλεγχος PDF ακυρώθηκε. Δοκιμάστε ξανά όταν είστε έτοιμοι."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "Εισαγωγή PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "πηγή δημοσίευσης εργασίας"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "Η διατήρηση και η χρήση του παρόχου ακολουθεί την πολιτική απορρήτου του. Η απόρριψη αποτρέπει αυτήν τη λειτουργία και αφήνει διαθέσιμες άλλες λειτουργίες της εφαρμογής."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Δοκιμή παρόχου"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "Ανάγνωση άδειας"
 msgid "Read only"
 msgstr "Πρόσβαση μόνο για ανάγνωση"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "Ανανέωση του ενημερωτικού 24 ώρες πριν"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Ανανέωση του ενημερωτικού το πρωί της ημέρας"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Ανανέωση χρήσης"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Απαντήθηκε"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Απάντηση"
@@ -10393,6 +10471,10 @@ msgstr "Αναφορά προβλήματος"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Η αναφορά ελήφθη από τον χειριστή του διακομιστή σας. Σας ευχαριστώ."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Απόπειρες αιτημάτων που καταγράφει αυτός ο διακομιστής, μαζί με αποτυχημένες ή ακυρωμένες. Οι επαναλήψεις και κάθε κλήση μοντέλου σε βρόχο εργαλείων μετρούν χωριστά· τμήματα ροής, τα ίδια τα εργαλεία και η αποθήκευση δεν μετρούν."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "Ρόλος (προαιρετικό)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Ρόλος {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Προτάσεις θέσεων"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "Δεν υπάρχει παράγραφος περίληψης."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Πρόκειται για απόπειρες, όχι χρεώσεις, αριθμούς token ή κόστη. Διακοπή του διακομιστή μπορεί να καταγράψει απόπειρα πριν από την αποστολή· η αναφορά δεν επιβεβαιώνει παραλαβή από τον πάροχο."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Οι επισκέπτες εισάγουν τον κωδικό πρόσβασης πριν δουν το βιογραφικό. Μοιραστείτε τον μόνο με άτομα που εμπιστεύεστε."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Αναπαραγωγή φωνής"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Ρυθμίσεις φωνής"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Απομαγνητοφώνηση φωνής"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "Οι αναζητήσεις στον Ιστό αναζητούν θέσ�
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Ιστότοπος"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Οι εβδομάδες διαρκούν από Δευτέρα έως Κυριακή στη ζώνη ώρας του λογαριασμού. Το ιστορικό ξεκινά όταν ο διακομιστής αρχίζει την καταγραφή· παλαιότερα αιτήματα δεν ανακατασκευάζονται. Οι ετικέτες συνδέσεων και τα μοντέλα διατηρούνται όπως χρησιμοποιήθηκαν, ακόμη και μετά την αφαίρεση σύνδεσης."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "Χωρίς ένα, συμπληρώνετε μόνοι σας τον π�
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Εισαγωγή Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Η εισαγωγή Word, η Βελτίωση, ο βοηθός, τα προσχέδια γραμμάτων, η καθοδήγηση και η δημιουργία Καριέρας και η φωνητική εξάσκηση χρειάζονται έναν. Η επεξεργασία, ο Σχεδιασμός, οι έλεγχοι αναγνωσιμότητας και οι λήψεις λειτουργούν χωρίς αυτόν."
@@ -14844,6 +14950,10 @@ msgstr "Γραφή"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Βοήθεια γραφής, προσαρμοσμένες προτάσεις και ο βοηθός. Ο προεπιλεγμένος πάροχος χρησιμοποιείται όπου δεν επιλέγετε κάποιον. Τα κλειδιά σας παραμένουν κρυπτογραφημένα."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Έλεγχος γραφής"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

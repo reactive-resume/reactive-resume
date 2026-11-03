@@ -1724,6 +1724,17 @@ msgstr "AI ಪೂರೈಕೆದಾರರನ್ನು ಲೋಡ್ ಮಾಡಲ�
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "ನೀವು ಕೇಳಿದಾಗ ಮಾತ್ರ AI ಅಂಟಿಸಿದ ಪಠ್ಯವನ್ನು ಓದುತ್ತದೆ. ಲಿಂಕ್‌ಗಳು AI ಇಲ್ಲದೆಯೇ ಪುಟದ ಸ್ವಂತ ಉದ್ಯೋಗ ಡೇಟಾವನ್ನು ಬಳಸಬಹುದು."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "AI ವಿನಂತಿ ಪ್ರಯತ್ನಗಳು: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "ಈ ಫಲಿತಾಂಶಕ್ಕೆ AI ವಿನಂತಿ ಇತಿಹಾಸ ಲಭ್ಯವಿಲ್ಲ."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "AI ಬಳಕೆಯನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ರಿಫ್ರೆಶ್ ಮಾಡಿ. ಹಳೆಯ ಸರ್ವರ್‌ಗಳಿಗೆ ನವೀಕರಣ ಬೇಕಾಗಬಹುದು."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "ಈ ವಾರದ AI ಬಳಕೆ"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "ಆಕಾರ ಅನುಪಾತ"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "ಸಹಾಯಕ"
@@ -2498,6 +2518,7 @@ msgstr "ಇದನ್ನು ವಿಭಾಗಿಸಬಹುದಾಗುವಂತ�
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "ಪುಟದಲ್ಲಿ ಹೊಂದಿಸಲಾದ ಭಾಷೆಯನ್ನು ಬಳಸಿಕೊಂಡು ಉಚ್ಚಾರಾಂಶಗಳ ನಡುವೆ ಉದ್ದವಾದ ಪದಗಳನ್ನು ಒಡೆಯುತ್ತದೆ."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "ವೃತ್ತಿಜೀವನ"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "ವೃತ್ತಿ ಚಾಟ್"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "ಆತ್ಮೀಯ {name},"
 msgid "Dear hiring team,"
 msgstr "ಆತ್ಮೀಯ ನೇಮಕಾತಿ ತಂಡ,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "ವಿವರಗಳನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ �
 msgid "Fill empty fields with AI"
 msgstr "ಖಾಲಿ ಜಾಗಗಳನ್ನು AI ನೊಂದಿಗೆ ಭರ್ತಿ ಮಾಡಿ"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡು"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "ಉದ್ಯೋಗ ಅರ್ಜಿಯಿಂದ ಭರ್ತಿ ಮಾಡಲಾಗಿದೆ. ಶುಭಾಶಯವು ಹೆಸರನ್ನು ಅನುಸರಿಸುತ್ತದೆ."
@@ -5554,6 +5584,7 @@ msgstr "ಮೊದಲ ಆಫರ್"
 msgid "First run (YYYY-MM-DD)"
 msgstr "ಮೊದಲ ಓಟ (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "ಮರೆತುಬಿಡಿ"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "ಈ ಸಂಗತಿಯನ್ನು ಮರೆಯುವುದರಿಂದ ಕಥೆಗಳು ಮತ್ತು ಉಳಿಸಿದ ಐಟಂಗಳಿಂದ ಅನ್‌ಲಿಂಕ್ ಆಗುತ್ತದೆ. ಮೂಲ ಮೂಲವು ಬದಲಾಗದೆ ಉಳಿಯುತ್ತದೆ."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "ಫಾರ್ಮ್ ಉತ್ತರ"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "{source} ನಿಂದ ಆಮದು ಮಾಡಿಕೊಳ್ಳಲಾಗ�
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "ಅದನ್ನು ನಿಮ್ಮ ಹೊಸ ರೆಸ್ಯೂಮೆಗೆ ಆಮದು ಮಾಡಿಕೊಳ್ಳಲಾಗುತ್ತಿದೆ..."
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "ಸುಧಾರಿಸಿ"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "ಅಕ್ಷರದ ದೇಹ"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "ಪತ್ರದ ಕರಡು"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "ಪತ್ರ ಪುಟ"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "ಉಳಿಸಿದ ಆವೃತ್ತಿಯನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "ಬಳಕೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "ಲಭ್ಯವಿರಬಹುದು"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP ಹೊಂದಾಣಿಕೆ ಅಂಕ"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP ಸಂದೇಶ ಕರಡು"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP ಸರ್ವರ್"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP ಹೊಂದಾಣಿಕೆ"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "ಇನ್ನೂ AI ಪೂರೈಕೆದಾರರು ಇಲ್ಲ"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "ಈ ವಾರ ಯಾವುದೇ AI ವಿನಂತಿ ಪ್ರಯತ್ನ ದಾಖಲಾಗಿಲ್ಲ."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · ಉದ್ಯೋಗಕ್ಕೆ ಅರ್ಜಿ ಸಲ್ಲಿಸ
 msgid "PDF check canceled. Retry when ready."
 msgstr "PDF ಪರಿಶೀಲನೆ ರದ್ದುಗೊಳಿಸಲಾಗಿದೆ. ಸಿದ್ಧವಾದಾಗ ಮರುಪ್ರಯತ್ನಿಸಿ."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF ಆಮದು"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "ಉದ್ಯೋಗ ಪೋಸ್ಟ್ ಮಾಡುವ ಮೂಲ"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "ಪೂರೈಕೆದಾರರ ಧಾರಣ ಮತ್ತು ಬಳಕೆ ಅದರ ಗೌಪ್ಯತೆ ನೀತಿಯನ್ನು ಅನುಸರಿಸಿ. ನಿರಾಕರಿಸುವಿಕೆಯು ಈ ಕಾರ್ಯಾಚರಣೆಯನ್ನು ತಡೆಯುತ್ತದೆ ಮತ್ತು ಇತರ ಅಪ್ಲಿಕೇಶನ್ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಲಭ್ಯವಾಗುವಂತೆ ಮಾಡುತ್ತದೆ."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "ಪೂರೈಕೆದಾರರ ಪರೀಕ್ಷೆ"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "ಪರವಾನಗಿ ಓದಿ"
 msgid "Read only"
 msgstr "ಓದಲು-ಮಾತ್ರ ಪ್ರವೇಶ"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "24 ಗಂಟೆಗಳ ಮೊದಲು ಬ್ರೀಫಿಂಗ್ ರಿ
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "ಅದೇ ದಿನ ಬೆಳಿಗ್ಗೆ ಬ್ರೀಫಿಂಗ್ ರಿಫ್ರೆಶ್ ಮಾಡಿ"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "ಬಳಕೆ ರಿಫ್ರೆಶ್ ಮಾಡಿ"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "ಉತ್ತರಿಸಲಾಗಿದೆ"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "ಪ್ರತ್ಯುತ್ತರ"
@@ -10393,6 +10471,10 @@ msgstr "ಪ್ರಶ್ನೆಯನ್ನು ವರದಿ ಮಾಡಿ"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "ನಿಮ್ಮ ಸರ್ವರ್ ಆಪರೇಟರ್‌ನಿಂದ ವರದಿಯನ್ನು ಸ್ವೀಕರಿಸಲಾಗಿದೆ. ಧನ್ಯವಾದಗಳು."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "ಈ ಸರ್ವರ್ ದಾಖಲಿಸಿದ ವಿನಂತಿ ಪ್ರಯತ್ನಗಳು, ವಿಫಲ ಅಥವಾ ರದ್ದಾದ ಪ್ರಯತ್ನಗಳೂ ಸೇರಿ. ಮರುಪ್ರಯತ್ನಗಳು ಮತ್ತು ಟೂಲ್ ಲೂಪ್‌ನ ಪ್ರತಿ ಮಾದರಿ ಕರೆಯನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ ಎಣಿಸಲಾಗುತ್ತದೆ; ಸ್ಟ್ರೀಮ್ ಭಾಗಗಳು, ಟೂಲ್‌ಗಳು ಸ್ವತಃ ಮತ್ತು ಉಳಿಸುವುದನ್ನು ಎಣಿಸುವುದಿಲ್ಲ."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "ಪಾತ್ರ (ಐಚ್ಛಿಕ)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "ಪಾತ್ರ {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "ಹುದ್ದೆ ಸಲಹೆಗಳು"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "ಯಾವುದೇ ಸಾರಾಂಶ ಪ್ಯಾರಾಗ್ರಾಫ�
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "ಇವು ಪ್ರಯತ್ನಗಳು, ಬಿಲ್ಲಿಂಗ್, ಟೋಕನ್ ಸಂಖ್ಯೆಗಳು ಅಥವಾ ವೆಚ್ಚಗಳಲ್ಲ. ಸರ್ವರ್ ನಿಂತಾಗ ಕಳುಹಿಸುವ ಮುನ್ನವೇ ಪ್ರಯತ್ನ ದಾಖಲಾಗಬಹುದು; ಈ ವರದಿ ಪೂರೈಕೆದಾರರು ಸ್ವೀಕರಿಸಿದ್ದನ್ನು ದೃಢಪಡಿಸುವುದಿಲ್ಲ."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "ಸಂದರ್ಶಕರು ರೆಸ್ಯೂಮೆಯನ್ನು ನೋಡುವ ಮೊದಲು ಅದನ್ನು ನಮೂದಿಸುತ್ತಾರೆ. ನೀವು ನಂಬುವ ಜನರೊಂದಿಗೆ ಮಾತ್ರ ಹಂಚಿಕೊಳ್ಳಿ."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "ಧ್ವನಿ ಪ್ಲೇಬ್ಯಾಕ್"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "ಧ್ವನಿ ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "ಧ್ವನಿ ಲಿಪ್ಯಂತರ"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "ವೆಬ್ ಹುಡುಕಾಟಗಳು ಈ ದೇಶಗಳಲ್ಲ
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "ಜಾಲತಾಣ"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "ವಾರಗಳು ಖಾತೆಯ ಸಮಯ ವಲಯದಲ್ಲಿ ಸೋಮವಾರದಿಂದ ಭಾನುವಾರದವರೆಗೆ. ಈ ಸರ್ವರ್ ದಾಖಲಿಸಲು ಆರಂಭಿಸಿದಾಗ ಇತಿಹಾಸ ಆರಂಭವಾಗುತ್ತದೆ; ಹಿಂದಿನ ವಿನಂತಿಗಳನ್ನು ಮರುರಚಿಸುವುದಿಲ್ಲ. ಸಂಪರ್ಕ ತೆಗೆದ ಬಳಿಕವೂ ಸಂಪರ್ಕ ಹೆಸರುಗಳು ಮತ್ತು ಮಾದರಿಗಳು ಬಳಸಿದಂತೆಯೇ ಉಳಿಯುತ್ತವೆ."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "ಒಂದಿಲ್ಲದೇ, ನೀವು ಸ್ವೀಕರಿಸುವ
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word ಆಮದು"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Word ಆಮದು, ಸುಧಾರಿಸಿ, ಸಹಾಯಕ, ಪತ್ರದ ಕರಡುಗಳು, ವೃತ್ತಿ ತರಬೇತಿ ಮತ್ತು ರಚನೆ, ಹಾಗೂ ಧ್ವನಿ ಅಭ್ಯಾಸಕ್ಕೆ ಒಂದು ಅಗತ್ಯವಿದೆ. ಸಂಪಾದನೆ, ವಿನ್ಯಾಸ, ಓದುವಿಕೆ ಪರಿಶೀಲನೆಗಳು ಮತ್ತು ಡೌನ್‌ಲೋಡ್‌ಗಳು ಅದಿಲ್ಲದೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತವೆ."
@@ -14844,6 +14950,10 @@ msgstr "ಬರವಣಿಗೆ"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "ಬರವಣಿಗೆಯ ಸಹಾಯ, ಹೊಂದಿಸಿದ ಸಲಹೆಗಳು ಮತ್ತು ಸಹಾಯಕ. ನೀವು ಒಂದನ್ನು ಆರಿಸದ ಎಲ್ಲೆಡೆ ಡೀಫಾಲ್ಟ್ ಪೂರೈಕೆದಾರರನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ನಿಮ್ಮ ಕೀಗಳು ಎನ್‌ಕ್ರಿಪ್ಟ್ ಆಗಿಯೇ ಇರುತ್ತವೆ."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "ಬರವಣಿಗೆ ಪರಿಶೀಲನೆ"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

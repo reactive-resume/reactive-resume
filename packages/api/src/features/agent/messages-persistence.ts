@@ -5,6 +5,7 @@ import { and, asc, eq, max, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { blockText, withEditedText } from "@reactive-resume/resume/proposals";
+import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 
 // Crash-safe incremental persistence for the assistant message of an agent run.
 // A draft row is inserted before the stream starts, folded step-by-step in onStepEnd,
@@ -255,7 +256,9 @@ function addDetails(a: UsageDetails | undefined, b: UsageDetails | undefined): U
 export function withAccumulatedUsageMetadata(previous: UIMessage, next: UIMessage): UIMessage {
 	const previousUsage = (previous as MessageWithUsage).metadata?.usage;
 	const nextMetadata = (next as MessageWithUsage).metadata;
-	if (!previousUsage || !nextMetadata?.usage) return next;
+	const operations = [...new Set([...aiOperationIds(previous.metadata), ...aiOperationIds(next.metadata)])];
+	const accumulated = operations.length ? { ...next, metadata: { ...nextMetadata, aiOperationIds: operations } } : next;
+	if (!previousUsage || !nextMetadata?.usage) return accumulated;
 
 	const usage: UsageLike = {
 		inputTokens: addCounts(previousUsage.inputTokens, nextMetadata.usage.inputTokens),
@@ -265,7 +268,10 @@ export function withAccumulatedUsageMetadata(previous: UIMessage, next: UIMessag
 		outputTokenDetails: addDetails(previousUsage.outputTokenDetails, nextMetadata.usage.outputTokenDetails),
 	};
 
-	return { ...next, metadata: { ...nextMetadata, usage } } as UIMessage;
+	return {
+		...next,
+		metadata: { ...nextMetadata, ...(operations.length ? { aiOperationIds: operations } : {}), usage },
+	} as UIMessage;
 }
 
 export async function nextMessageSequence(threadId: string, database: AgentMessagesDb) {

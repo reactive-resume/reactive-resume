@@ -1724,6 +1724,17 @@ msgstr "Tekoälypalveluntarjoajia ei voitu ladata. Yritä uudelleen tai täytä 
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI lukee liitetyn tekstin vain pyynnöstäsi. Linkit voivat käyttää sivulle upotettuja työtietoja ilman AI:ää."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Tekoälypyyntöyritykset: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Tämän tuloksen tekoälypyyntöhistoria ei ole saatavilla."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Tekoälyn käyttöä ei voitu ladata. Päivitä näkymä. Vanhat palvelimet voivat tarvita päivityksen."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Tekoälyn käyttö tällä viikolla"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "Kuvasuhde"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "Avustaja"
@@ -2498,6 +2518,7 @@ msgstr "Jaa ansioluettelo tavanomaisiin osioihin, jotta se voidaan segmentoida."
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Katkaisee pitkiä sanoja tavujen väliin käyttämällä Page-kohdassa asetettua kieltä."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Ura"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Urachat"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "Hyvä {name},"
 msgid "Dear hiring team,"
 msgstr "Arvoisa rekrytointitiimi,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "Täytä tiedot manuaalisesti"
 msgid "Fill empty fields with AI"
 msgstr "Täytä tyhjät kentät AI:llä"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Täytä kentät"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Täytetty työhakemuksesta. Tervehdys seuraa nimeä."
@@ -5554,6 +5584,7 @@ msgstr "Ensimmäinen tarjous"
 msgid "First run (YYYY-MM-DD)"
 msgstr "Ensimmäinen ajo (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "Unohda"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "Tämän tosiasian unohtaminen poistaa sen linkit tarinoihin ja tallennettuihin esineisiin. Alkuperäinen lähde on ennallaan."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Lomakevastaus"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "Tuotu {source}:stä."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Tuodaan sitä uuteen ansioluetteloosi…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "Parantaa"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "Kirjeen runko"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Kirjeluonnos"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Kirjeen sivu"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Ladataan tallennettua versiota…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Ladataan käyttöä…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "Saattaa olla vapaana"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP-vastaavuuspisteet"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP-viestiluonnos"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP palvelin"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP-mukautus"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "Ei vielä tekoälypalveluntarjoajaa"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Tällä viikolla ei ole kirjattuja tekoälypyyntöyrityksiä."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · Paras työnhakuun"
 msgid "PDF check canceled. Retry when ready."
 msgstr "PDF-tarkistus peruttu. Yritä uudelleen, kun olet valmis."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF-tuonti"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "työpaikkailmoituslähde"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "Palveluntarjoajan säilyttäminen ja käyttö noudattavat sen tietosuojakäytäntöä. Hylkääminen estää tämän toiminnon ja jättää muut sovellusominaisuudet saataville."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Palveluntarjoajan testi"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "Lue lisenssi"
 msgid "Read only"
 msgstr "Vain luku -oikeus"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "Päivitä muistio 24 tuntia ennen"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Päivitä muistio samana aamuna"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Päivitä käyttö"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Vastattu"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Vastaus"
@@ -10393,6 +10471,10 @@ msgstr "Ilmoita ongelmasta"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Palvelinoperaattorisi vastaanottama raportti. Kiitos."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Tämän palvelimen kirjaamat pyyntöyritykset, myös epäonnistuneet ja peruutetut. Uusintayritykset ja jokainen mallikutsu työkalusilmukassa lasketaan erikseen; suoratoiston osia, työkaluja itsessään tai tallennuksia ei lasketa."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "Rooli (valinnainen)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Rooli {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Rooliehdotukset"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "Yhteenvetokappaletta ei ole."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Nämä ovat yrityksiä, eivät laskutus-, token- tai kustannustietoja. Keskeytynyt palvelin voi kirjata yrityksen ennen lähettämistä; raportti ei vahvista palveluntarjoajan vastaanottoa."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Vierailijat syöttävät sen ennen kuin he näkevät ansioluettelon. Jaa se vain luotettavien ihmisten kanssa."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Puhetoisto"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Ääniasetukset"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Puheen litterointi"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "Verkkohaulla etsitään töitä näistä maista. Valitse enintään kolm
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Verkkosivusto"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Viikko on maanantaista sunnuntaihin tilisi aikavyöhykkeellä. Historia alkaa, kun palvelin aloittaa kirjaamisen; aiempia pyyntöjä ei jälkikäteen muodosteta. Yhteysnimet ja mallit säilyvät käytön mukaisina myös yhteyden poistamisen jälkeen."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "Ilman sitä täytät vastaanottajan itse ja laadinnassa käytetään vai
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word-tuonti"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Word-tuonti, Paranna, avustaja, kirjeluonnokset, uravalmennus ja -luonti sekä puheharjoittelu tarvitsevat sellaisen. Muokkaus, Ulkoasu, luettavuustarkistukset ja lataukset toimivat ilman."
@@ -14844,6 +14950,10 @@ msgstr "Kirjoitus"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Kirjoitusapu, räätälöidyt ehdotukset ja avustaja. Oletuspalveluntarjoajaa käytetään aina, kun et valitse muuta. Avaimesi pysyvät salattuina."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Tekstin arviointi"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

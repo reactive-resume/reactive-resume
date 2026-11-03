@@ -66,7 +66,9 @@ beforeEach(() => {
 	api.facts = [];
 	api.stories = [];
 	api.save.mockReset().mockResolvedValue(saved);
-	api.reuse.mockReset().mockResolvedValue({ text: "Adapted for this role", factIds: [] });
+	api.reuse
+		.mockReset()
+		.mockResolvedValue({ text: "Adapted for this role", factIds: [], aiOperationIds: ["source-op"] });
 	api.remove.mockReset().mockResolvedValue(undefined);
 	api.use.mockReset();
 });
@@ -105,7 +107,12 @@ it("requires explicit review after adaptation before using an independent answer
 	await userEvent.click(review);
 	fireEvent.click(use);
 	await waitFor(() =>
-		expect(api.use).toHaveBeenCalledWith({ question: saved.question, answer: "Adapted for this role", factIds: [] }),
+		expect(api.use).toHaveBeenCalledWith({
+			question: saved.question,
+			answer: "Adapted for this role",
+			factIds: [],
+			aiOperationIds: ["source-op"],
+		}),
 	);
 	expect(api.reuse).toHaveBeenCalledWith(
 		{ id: "saved", applicationId: "second", expectedRevision: 1, answer: "Adapted for this role", reviewed: true },

@@ -16,6 +16,7 @@ import { WorkspaceScreen } from "../shell";
 import { dispatchForOrigin } from "../state";
 import { client, orpc } from "@/api/client";
 import { getDraftScope } from "@/draft";
+import { AiResultUsage } from "@/features/ai/usage";
 import { useUserTime } from "@/features/application-detail/hooks";
 import { formatMoney } from "@/features/career/offer-compare";
 import { withUndo } from "@/features/career/undo";
@@ -166,6 +167,7 @@ function SavedRow({ item, applicationId, expanded, onToggle, onOpen, onDelete }:
 					<Text variant="caption" color="ink3">
 						{subtitle}
 					</Text>
+					<AiResultUsage usage={item.aiUsage} />
 				</Pressable>
 				<IconButton icon="trash" label={t`Delete`} onPress={onDelete} />
 			</View>

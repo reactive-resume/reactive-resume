@@ -1724,6 +1724,17 @@ msgstr "Không thể tải nhà cung cấp AI. Hãy thử lại hoặc tự đi�
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI chỉ đọc văn bản được dán theo yêu cầu của bạn. Các liên kết có thể sử dụng dữ liệu công việc được nhúng trong trang mà không cần AI."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Số lần thử yêu cầu AI: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Không có lịch sử yêu cầu AI cho kết quả này."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Không tải được mức sử dụng AI. Hãy làm mới. Máy chủ cũ có thể cần cập nhật."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Mức sử dụng AI tuần này"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "Tỷ lệ khung hình"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "Trợ lý"
@@ -2498,6 +2518,7 @@ msgstr "Chia sơ yếu lý lịch thành các phần thông thường để có 
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Ngắt các từ dài giữa các âm tiết bằng cách sử dụng ngôn ngữ được đặt trong Trang."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Sự nghiệp"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Trò chuyện nghề nghiệp"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "Kính gửi {name},"
 msgid "Dear hiring team,"
 msgstr "Kính gửi đội ngũ tuyển dụng,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "Điền chi tiết thủ công"
 msgid "Fill empty fields with AI"
 msgstr "Điền vào các trường trống bằng AI"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Điền các trường"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Điền từ đơn xin việc. Lời chào theo sau tên."
@@ -5554,6 +5584,7 @@ msgstr "Ưu đãi đầu tiên"
 msgid "First run (YYYY-MM-DD)"
 msgstr "Lần chạy đầu tiên (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "Quên"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "Việc quên đi sự thật này sẽ loại bỏ các liên kết đến các câu chuyện và các mục đã lưu của nó. Nguồn gốc không thay đổi."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Câu trả lời biểu mẫu"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "Được nhập từ {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Nhập nó vào sơ yếu lý lịch mới của bạn…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "Cải thiện"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "Nội dung thư"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Bản nháp thư"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Trang thư"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Đang tải phiên bản đã lưu…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Đang tải mức sử dụng…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "Có thể còn trống"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "Điểm phù hợp MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "Bản nháp tin nhắn MCP"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "Máy chủ MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "Điều chỉnh MCP"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "Chưa có nhà cung cấp AI"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Chưa ghi nhận lần thử yêu cầu AI nào trong tuần này."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · Tốt nhất để ứng tuyển"
 msgid "PDF check canceled. Retry when ready."
 msgstr "Đã hủy kiểm tra PDF. Hãy thử lại khi sẵn sàng."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "Nhập PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "nguồn đăng tin tuyển dụng"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "Việc duy trì và sử dụng nhà cung cấp tuân theo chính sách bảo mật của nó. Việc từ chối sẽ ngăn hoạt động này và để lại các tính năng ứng dụng khác."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Kiểm tra nhà cung cấp"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "Đọc giấy phép"
 msgid "Read only"
 msgstr "Quyền truy cập chỉ đọc"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "Làm mới bản tóm tắt trước 24 giờ"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Làm mới bản tóm tắt vào sáng hôm đó"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Làm mới mức sử dụng"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Đã trả lời"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Thư trả lời"
@@ -10393,6 +10471,10 @@ msgstr "Báo cáo sự cố"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Nhà điều hành máy chủ của bạn đã nhận được báo cáo. Cảm ơn."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Các lần thử yêu cầu được máy chủ này ghi lại, kể cả thất bại hoặc bị hủy. Lần thử lại và mỗi lệnh gọi mô hình trong vòng lặp công cụ được tính riêng; đoạn luồng, bản thân công cụ và thao tác lưu không được tính."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "Vai trò (không bắt buộc)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Vai trò {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Gợi ý vị trí"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "Không có đoạn tóm tắt nào."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Đây là số lần thử, không phải hóa đơn, số token hay chi phí. Máy chủ bị gián đoạn có thể ghi nhận lần thử trước khi gửi; báo cáo không xác nhận nhà cung cấp đã nhận được."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Khách truy cập cần nhập mật khẩu trước khi xem sơ yếu lý lịch. Chỉ chia sẻ mật khẩu với những người bạn tin tưởng."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Phát giọng nói"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Cài đặt giọng nói"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Chuyển giọng nói thành văn bản"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "Tìm kiếm trên web tìm kiếm việc làm ở các quốc gia này. 
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Trang web"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Tuần kéo dài từ thứ Hai đến Chủ nhật theo múi giờ tài khoản. Lịch sử bắt đầu khi máy chủ này bắt đầu ghi lại; các yêu cầu trước đó không được dựng lại. Tên kết nối và mô hình được giữ như khi sử dụng, kể cả sau khi xóa kết nối."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "Nếu không có ai, bạn sẽ tự điền thông tin người nhận 
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Nhập Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Nhập Word, Cải thiện, trợ lý, bản nháp thư xin việc, tư vấn và tạo nội dung trong Sự nghiệp, cùng luyện trả lời bằng giọng nói cần nhà cung cấp AI. Chỉnh sửa, Thiết kế, kiểm tra khả năng đọc và tải xuống không cần AI."
@@ -14844,6 +14950,10 @@ msgstr "Văn phong"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Hỗ trợ viết, gợi ý được điều chỉnh và trợ lý. Nhà cung cấp mặc định được dùng ở bất cứ đâu bạn không chọn. Khóa của bạn luôn được mã hóa."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Đánh giá cách viết"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

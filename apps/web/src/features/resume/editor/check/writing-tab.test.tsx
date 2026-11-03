@@ -86,6 +86,10 @@ it("publishes only the document's saved review when an older unmounted request f
 		passages: [],
 		review: review("Latest saved review"),
 		reviewedAt: new Date("2030-01-01T00:00:02Z"),
+		aiUsage: {
+			requests: 2,
+			models: [{ providerId: "old-provider", label: "Recorded AI", provider: "openai", model: "recorded-model" }],
+		},
 	};
 	await act(async () => {
 		newer(review("Latest saved review"));
@@ -96,5 +100,7 @@ it("publishes only the document's saved review when an older unmounted request f
 	});
 	expect(useEditorStore.getState().writingReview?.summary).toBe("Latest saved review");
 	expect(screen.queryByText("Older discarded response")).toBeNull();
+	expect(screen.getByText("AI request attempts: 2")).toBeVisible();
+	expect(screen.getByText("Recorded AI · openai · recorded-model")).toBeVisible();
 	client.clear();
 });

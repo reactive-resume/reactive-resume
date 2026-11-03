@@ -29,7 +29,7 @@ type AnswerLibraryProps = {
 	company: string;
 	current?: Answer | undefined;
 	disabled: boolean;
-	onUse: (answer: Pick<Answer, "question" | "answer" | "factIds">) => void;
+	onUse: (answer: Pick<Answer, "question" | "answer" | "factIds" | "aiOperationIds">) => void;
 };
 type Mode = "list" | "save" | "edit" | "reuse" | "delete";
 const scopeLabel = (scope: SavedAnswer["scope"]) =>
@@ -97,13 +97,19 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 					answer,
 					reviewed: true,
 				});
-				onUse({ question: current?.question || selected.question, answer: result.text, factIds: result.factIds });
+				onUse({
+					question: current?.question || selected.question,
+					answer: result.text,
+					factIds: result.factIds,
+					aiOperationIds: result.aiOperationIds ?? [],
+				});
 			} else {
 				await save.mutateAsync({
 					...(mode === "edit" && selected ? { id: selected.id, expectedRevision: selected.revision } : {}),
 					applicationId,
 					question,
 					answer,
+					aiOperationIds: source === "manual" ? [] : (selected?.aiOperationIds ?? current?.aiOperationIds ?? []),
 					scope,
 					source,
 					factIds,

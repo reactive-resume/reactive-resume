@@ -14,6 +14,7 @@ import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { aiProvidersRouter } from "../ai-providers/router";
 import { aiProvidersService } from "../ai-providers/service";
 import { getModel } from "../ai/service";
+import { createAiUsage } from "../ai/usage";
 import { generateJson } from "../applications/ai";
 import { careerRouter } from "./router";
 import { careerService } from "./service";
@@ -829,7 +830,7 @@ describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQ
 		run(async () => {
 			const approved = await create();
 			const provider = await aiProvidersService.getRunnableById({ id: approved.id, userId: user.id });
-			const model = getModel(provider);
+			const model = getModel({ ...provider, usage: createAiUsage(user.id, "role-suggestions", provider) });
 			const before = a.requests.filter((request) => request.roles).length;
 			a.rejectNext();
 			const result = await generateJson(

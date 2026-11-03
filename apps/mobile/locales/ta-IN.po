@@ -1724,6 +1724,17 @@ msgstr "AI வழங்குநர்களை ஏற்ற முடியவ�
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "நீங்கள் கேட்கும்போது மட்டுமே AI ஒட்டிய உரையைப் படிக்கும். இணைப்புகள் AI இல்லாமல் பக்கத்தின் வேலைத் தரவைப் பயன்படுத்தலாம்."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "AI கோரிக்கை முயற்சிகள்: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "இந்த முடிவுக்கான AI கோரிக்கை வரலாறு கிடைக்கவில்லை."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "AI பயன்பாட்டை ஏற்ற முடியவில்லை. புதுப்பிக்கவும். பழைய சேவையகங்களுக்குப் புதுப்பிப்பு தேவைப்படலாம்."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "இந்த வார AI பயன்பாடு"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "விகிதாச்சாரம்"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "உதவியாளர்"
@@ -2498,6 +2518,7 @@ msgstr "பிரிக்கக்கூடிய வகையில் ரெ�
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "பக்கத்தில் உள்ள மொழியைப் பயன்படுத்தி, எழுத்துக்களுக்கு இடையில் நீண்ட சொற்களை உடைக்கிறது."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "தொழில் வாழ்க்கை"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "தொழில் உரையாடல்"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "அன்புள்ள {name},"
 msgid "Dear hiring team,"
 msgstr "அன்புள்ள பணியமர்த்தல் குழு,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "விவரங்களை கைமுறையாக நிரப்�
 msgid "Fill empty fields with AI"
 msgstr "AI உடன் காலியான புலங்களை நிரப்பவும்"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "புலங்களை நிரப்பு"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "வேலை விண்ணப்பத்தில் இருந்து நிரப்பப்பட்டது. வாழ்த்து பெயரைப் பின்பற்றுகிறது."
@@ -5554,6 +5584,7 @@ msgstr "முதல் சலுகை"
 msgid "First run (YYYY-MM-DD)"
 msgstr "முதல் ஓட்டம் (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "மறந்துவிடு"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "இந்த உண்மையை மறந்துவிட்டால், கதைகள் மற்றும் சேமித்த உருப்படிகளுக்கான இணைப்புகள் அகற்றப்படும். அசல் ஆதாரம் மாறாமல் உள்ளது."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "படிவப் பதில்"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "{source} இலிருந்து இறக்குமதி செ�
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "உங்கள் புதிய ரெஸ்யூமில் அதை இறக்குமதி செய்கிறது…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "மேம்படுத்து"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "கடித உடல்"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "கடித வரைவு"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "கடிதப் பக்கம்"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "சேமித்த பதிப்பை ஏற்றுகிறது…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "பயன்பாடு ஏற்றப்படுகிறது…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "கிடைக்கக்கூடும்"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP பொருத்த மதிப்பெண்"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP செய்தி வரைவு"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP சேவையகம்"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP தனிப்பயனாக்கம்"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "இன்னும் AI வழங்குநர் இல்லை"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "இந்த வாரம் AI கோரிக்கை முயற்சிகள் பதிவாகவில்லை."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · வேலைக்கு விண்ணப்பிக்கச�
 msgid "PDF check canceled. Retry when ready."
 msgstr "PDF சரிபார்ப்பு ரத்துசெய்யப்பட்டது. தயாரானதும் மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF இறக்குமதி"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "வேலை இடுகை ஆதாரம்"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "வழங்குநர் வைத்திருத்தல் மற்றும் பயன்பாடு அதன் தனியுரிமைக் கொள்கையைப் பின்பற்றுகிறது. நிராகரிப்பது இந்த செயல்பாட்டைத் தடுக்கிறது மற்றும் பிற பயன்பாட்டு அம்சங்களைக் கிடைக்கும்."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "வழங்குநர் சோதனை"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "உரிமத்தைப் படி"
 msgid "Read only"
 msgstr "படிக்க மட்டும் அணுகல்"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "24 மணி நேரத்திற்கு முன் சுரு
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "நேர்காணல் நாளன்று காலை சுருக்கக் குறிப்பைப் புதுப்பி"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "பயன்பாட்டைப் புதுப்பி"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "பதிலளிக்கப்பட்டது"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "மறுமொழி"
@@ -10393,6 +10471,10 @@ msgstr "ஒரு பிரச்சினையை அறிக்கையி�
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "உங்கள் சர்வர் ஆபரேட்டரால் அறிக்கை பெறப்பட்டது. நன்றி."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "இந்தச் சேவையகம் பதிவு செய்த கோரிக்கை முயற்சிகள், தோல்வி அல்லது ரத்து செய்யப்பட்டவையும் உட்பட. மறுமுயற்சிகளும் கருவிச் சுழற்சியின் ஒவ்வொரு மாதிரி அழைப்பும் தனித்தனியாக எண்ணப்படும்; ஸ்ட்ரீம் பகுதிகள், கருவிகளே மற்றும் சேமித்தல் எண்ணப்படாது."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "பங்கு (விரும்பினால்)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "பங்கு {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "பணிப் பரிந்துரைகள்"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "சுருக்கப் பத்தி எதுவும் இல
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "இவை முயற்சிகள்; கட்டணப் பட்டியல், டோக்கன் எண்ணிக்கை அல்லது செலவுகள் அல்ல. சேவையகம் தடைப்பட்டால் அனுப்பும் முன்பே முயற்சி பதிவாகலாம்; வழங்குநர் பெற்றதை இந்த அறிக்கை உறுதிப்படுத்தாது."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "பார்வையாளர்கள் ரெஸ்யூமைப் பார்ப்பதற்கு முன் கடவுச்சொல்லை உள்ளிடுவார்கள். நீங்கள் நம்பும் நபர்களுடன் மட்டும் பகிரவும்."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "குரல் இயக்கம்"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "குரல் அமைப்புகள்"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "குரல் எழுத்துப்பெயர்ப்பு"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "வலைத் தேடல்கள் இந்த நாடுகள
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "இணையதளம்"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "வாரங்கள் கணக்கின் நேர மண்டலத்தில் திங்கள் முதல் ஞாயிறு வரை. இந்தச் சேவையகம் பதிவு செய்யத் தொடங்கும்போது வரலாறு தொடங்குகிறது; முந்தைய கோரிக்கைகள் மீளுருவாக்கப்படாது. இணைப்பை அகற்றிய பின்னும் இணைப்புப் பெயர்களும் மாதிரிகளும் பயன்படுத்தியபடி வைக்கப்படும்."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "ஒன்று இல்லாமல், பெறுநரை நீ�
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word இறக்குமதி"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Word இறக்குமதி, மேம்படுத்து, உதவியாளர், கவர் கடித வரைவுகள், தொழில் வாழ்க்கை பயிற்சி மற்றும் உள்ளடக்க உருவாக்கம், குரல் பயிற்சி ஆகியவற்றுக்கு AI வழங்குநர் தேவை. திருத்துதல், வடிவமைப்பு, வாசிப்புத்திறன் சரிபார்ப்புகள் மற்றும் பதிவிறக்கங்கள் வழங்குநர் இல்லாமலும் இயங்கும்."
@@ -14844,6 +14950,10 @@ msgstr "எழுத்து நடை"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "எழுத்து உதவி, ஏற்ப மாற்றிய பரிந்துரைகள், உதவியாளர். நீங்கள் தேர்ந்தெடுக்காத இடங்களில் இயல்புநிலை வழங்குநர் பயன்படுத்தப்படும். உங்கள் விசைகள் குறியாக்கம் செய்யப்பட்டே இருக்கும்."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "எழுத்து மதிப்பாய்வு"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

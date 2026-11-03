@@ -2161,6 +2161,18 @@ msgstr "Az AI-szolgáltatókat nem sikerült betölteni. Töltse be újra az új
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+#: src/features/settings/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "MI-kéréskísérletek: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Ehhez az eredményhez nem érhető el MI-kéréselőzmény."
+
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr ""
@@ -2168,6 +2180,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Az MI-használat nem tölthető be. Frissítsd a nézetet. Régebbi szerverek frissítést igényelhetnek."
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "E heti MI-használat"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2761,6 +2781,7 @@ msgstr ""
 msgid "Aspect ratio"
 msgstr "Méretarány"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/assistant/conversation.tsx
@@ -3101,6 +3122,7 @@ msgstr "Bontsd az önéletrajzot a megszokott szakaszokra, hogy szegmentálható
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "A hosszú szavakat szótagok közé bontja a Page-ben beállított nyelv használatával."
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Briefing"
@@ -3267,6 +3289,10 @@ msgstr ""
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
 msgstr "Karrier"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Karriercsevegés"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Career coach"
@@ -5553,6 +5579,7 @@ msgstr "Kedves Fieldnote csapat!"
 msgid "Dear hiring team,"
 msgstr "Kedves felvételi csapat!"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -6990,6 +7017,7 @@ msgstr "fájl beolvasása"
 msgid "Files can be up to 25 MB."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "Mezők kitöltése"
@@ -7058,6 +7086,7 @@ msgstr "finn"
 msgid "First run"
 msgstr "Első futás"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Fit"
@@ -7242,6 +7271,10 @@ msgstr "Elfelejtetted a jelszavad?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "Elfelejtette a jelszavát?"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Űrlapválasz"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Form answers"
@@ -8028,6 +8061,7 @@ msgstr "Importálás"
 msgid "Importing it into your new resume…"
 msgstr "Importálása az új önéletrajzába…"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "Javítani"
@@ -8916,6 +8950,10 @@ msgstr ""
 msgid "Letter details"
 msgstr "Levél részletei"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Levélvázlat"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Letter duplicated"
 msgstr "Levél duplikálva"
@@ -9246,6 +9284,10 @@ msgstr "Stíluslapszerkesztő betöltése…"
 msgid "Loading the total"
 msgstr "Összeg betöltése"
 
+#: src/features/settings/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Használat betöltése…"
+
 #: src/features/career/workspace/shell.tsx
 msgid "Loading workspace…"
 msgstr "Munkatér betöltése…"
@@ -9564,9 +9606,21 @@ msgstr "Talán később"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP-egyezési pontszám"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP-üzenetvázlat"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "MCP szerver"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP-testreszabás"
 
 #: src/features/resume/editor/proposals/page-fit.tsx
 msgid "Measuring page fit…"
@@ -10159,6 +10213,10 @@ msgstr ""
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Ezen a héten nincs rögzített MI-kéréskísérlet."
 
 #: src/features/career/offers.tsx
 msgid "No amount stated · value uncertain"
@@ -11595,6 +11653,10 @@ msgstr "Fizetési időszak"
 msgid "Pay, deadline and conditions, so you can compare and decide"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF-importálás"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "A PDF stílusok támogatják a CSS egy részhalmazát. A rendszer figyelmen kívül hagyja az elforgatást, a szaggatott és pontozott szegélyeket, valamint egyes elrendezési tulajdonságokat."
@@ -11837,6 +11899,7 @@ msgstr "álláshirdetés feltételeit az önéletrajzában"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Practice"
@@ -12169,6 +12232,10 @@ msgstr ""
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Szolgáltató tesztelése"
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -12397,6 +12464,7 @@ msgstr "Csak olvasási hozzáférés"
 msgid "Read only can't change or delete anything."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12711,6 +12779,10 @@ msgstr "Eligazítás frissítése 24 órával előtte"
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Eligazítás frissítése aznap reggel"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Használat frissítése"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Register at OlaCV"
@@ -13039,6 +13111,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Megválaszolva"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13074,6 +13147,10 @@ msgstr ""
 #: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "Hiba bejelentése"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "A szerver által rögzített kéréskísérletek, a sikertelenek és megszakítottak is. Az újrapróbálkozások és az eszközciklus minden modellhívása külön számít; az adatfolyam részei, maguk az eszközök és a mentés nem számítanak."
 
 #: src/features/settings/profile.tsx
 msgid "Requested amount"
@@ -13542,6 +13619,10 @@ msgstr "Szerep {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "{0}. személy szerepe"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Munkakörjavaslatok"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Role, company or location"
@@ -16382,6 +16463,10 @@ msgstr "Nincs összefoglaló bekezdés."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/settings/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Ezek kísérletek, nem számlázási adatok, tokenszámok vagy költségek. A megszakadó szerver a küldés előtt rögzíthet egy kísérletet; a jelentés nem igazolja a szolgáltató általi átvételt."
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -17889,9 +17974,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "A látogatók az önéletrajz megtekintése előtt megadják a jelszót. Csak olyanokkal ossza meg, akikben megbízik."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Beszédlejátszás"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
 msgstr "Hangbeállítások"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Beszédátírás"
 
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -18007,6 +18100,10 @@ msgstr "Hetente {clock}-kor · következő: {next}"
 #: src/features/career/knowledge/preferences.tsx
 msgid "weeks"
 msgstr "hét"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "A hetek hétfőtől vasárnapig tartanak a fiók időzónájában. Az előzmény akkor kezdődik, amikor a szerver elkezdi a rögzítést; korábbi kéréseket nem állít vissza. A kapcsolatnevek és modellek a használatkori állapotban maradnak meg, a kapcsolat eltávolítása után is."
 
 #: src/features/career/shared.tsx
 msgid "Weighing each requirement"
@@ -18322,6 +18419,10 @@ msgstr ""
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "Enélkül saját maga tölti ki a címzettet, és a tervezet csak az önéletrajzát használja fel."
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word-importálás"
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
 msgstr ""
@@ -18470,6 +18571,10 @@ msgstr "Válasz írása…"
 #: src/features/settings/ai/providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Írássegítség, testreszabott javaslatok és az asszisztens. Ahol nem választasz szolgáltatót, ott az alapértelmezettet használjuk. A kulcsaid titkosítva maradnak."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Szövegértékelés"
 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"

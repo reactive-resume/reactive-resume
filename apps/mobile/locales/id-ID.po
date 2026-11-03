@@ -1724,6 +1724,17 @@ msgstr "Penyedia AI tidak dapat dimuat. Coba lagi atau isi detailnya secara manu
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI membaca teks yang ditempel hanya saat Anda memintanya. Tautan dapat menggunakan data pekerjaan halaman itu sendiri tanpa AI."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Percobaan permintaan AI: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Riwayat permintaan AI tidak tersedia untuk hasil ini."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Penggunaan AI gagal dimuat. Coba muat ulang. Server lama mungkin perlu diperbarui."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Penggunaan AI minggu ini"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "Rasio aspek"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "Asisten"
@@ -2498,6 +2518,7 @@ msgstr "Pecah resume menjadi bagian-bagian umum agar dapat disegmentasi."
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Memisahkan kata-kata panjang antar suku kata, menggunakan bahasa yang diatur di Halaman."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Karier"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Obrolan karier"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "{name} yang terhormat,"
 msgid "Dear hiring team,"
 msgstr "Tim perekrutan yang terhormat,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "Isi rincian secara manual"
 msgid "Fill empty fields with AI"
 msgstr "Isi kolom kosong dengan AI"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Isi kolom"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Diisi dari lamaran pekerjaan. Salam mengikuti namanya."
@@ -5554,6 +5584,7 @@ msgstr "Penawaran pertama"
 msgid "First run (YYYY-MM-DD)"
 msgstr "Jalankan pertama kali (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "Lupakan"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "Lupa akan membatalkan tautan fakta ini dari cerita dan item yang disimpan. Sumber aslinya tetap tidak berubah."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Jawaban formulir"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "Diimpor dari {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Mengimpornya ke resume baru Anda…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "Memperbaiki"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "Badan surat"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Draf surat"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Halaman surat"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Memuat versi tersimpan…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Memuat penggunaan…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "Mungkin tersedia"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "Skor kecocokan MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "Draf pesan MCP"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "Server MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "Penyesuaian MCP"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "Belum ada penyedia AI"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Tidak ada percobaan permintaan AI yang tercatat minggu ini."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · Terbaik untuk melamar kerja"
 msgid "PDF check canceled. Retry when ready."
 msgstr "Pemeriksaan PDF dibatalkan. Coba lagi saat siap."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "Impor PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "sumber postingan pekerjaan"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "Retensi dan penggunaan penyedia mengikuti kebijakan privasinya. Penolakan akan mencegah operasi ini dan membuat fitur aplikasi lainnya tetap tersedia."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Uji penyedia"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "Baca lisensi"
 msgid "Read only"
 msgstr "Akses hanya baca"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "Segarkan briefing 24 jam sebelumnya"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Segarkan briefing pada pagi harinya"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Muat ulang penggunaan"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Sudah dibalas"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Balasan"
@@ -10393,6 +10471,10 @@ msgstr "Laporkan masalah"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Laporan diterima oleh operator server Anda. Terima kasih."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Percobaan permintaan yang dicatat server ini, termasuk yang gagal atau dibatalkan. Percobaan ulang dan setiap panggilan model dalam siklus alat dihitung terpisah; potongan aliran, alat itu sendiri, dan penyimpanan tidak dihitung."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "Peran (opsional)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Peran {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Saran peran"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "Tidak ada paragraf ringkasan."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Ini adalah percobaan, bukan tagihan, jumlah token, atau biaya. Server yang terputus dapat mencatat percobaan sebelum dikirim; laporan ini tidak memastikan penyedia menerimanya."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Pengunjung memasukkannya sebelum mereka melihat resume. Bagikan hanya dengan orang yang Anda percayai."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Pemutaran suara"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Pengaturan suara"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Transkripsi suara"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "Penelusuran web mencari pekerjaan di negara-negara ini. Pilih hingga tig
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Situs Web"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Minggu berlangsung Senin hingga Minggu dalam zona waktu akun. Riwayat dimulai saat server ini mulai mencatat; permintaan sebelumnya tidak direkonstruksi. Label koneksi dan model tetap seperti saat digunakan, bahkan setelah koneksi dihapus."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "Tanpanya, Anda mengisi sendiri penerimanya dan penyusunannya hanya mengg
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Impor Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Impor Word, Perbaiki, asisten, draf surat, pelatihan dan pembuatan konten Karier, serta latihan suara memerlukan penyedia AI. Pengeditan, Desain, pemeriksaan keterbacaan, dan unduhan berfungsi tanpanya."
@@ -14844,6 +14950,10 @@ msgstr "Tulisan"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Bantuan menulis, saran yang disesuaikan, dan asisten. Penyedia default dipakai di mana pun Anda tidak memilihnya. Kunci Anda tetap terenkripsi."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Tinjauan tulisan"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

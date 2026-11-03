@@ -2161,6 +2161,18 @@ msgstr "Nie udało się wczytać dostawców AI. Załaduj ponownie, aby spróbowa
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+#: src/features/settings/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Próby żądań AI: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Historia żądań AI jest niedostępna dla tego wyniku."
+
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr ""
@@ -2168,6 +2180,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Nie udało się wczytać użycia AI. Odśwież widok. Starsze serwery mogą wymagać aktualizacji."
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Użycie AI w tym tygodniu"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2761,6 +2781,7 @@ msgstr ""
 msgid "Aspect ratio"
 msgstr "Proporcje obrazu"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/assistant/conversation.tsx
@@ -3101,6 +3122,7 @@ msgstr "Podziel CV na typowe sekcje, aby można je było posegmentować."
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Dzieli długie słowa pomiędzy sylabami, używając języka ustawionego w Page."
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Briefing"
@@ -3267,6 +3289,10 @@ msgstr ""
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
 msgstr "Kariera"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Czat kariery"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Career coach"
@@ -5553,6 +5579,7 @@ msgstr "Drogi zespole Fieldnote,"
 msgid "Dear hiring team,"
 msgstr "Drogi zespole rekrutacyjnym,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -6990,6 +7017,7 @@ msgstr "plik przeczytany"
 msgid "Files can be up to 25 MB."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "Wypełnij pola"
@@ -7058,6 +7086,7 @@ msgstr "Fiński"
 msgid "First run"
 msgstr "Pierwsze uruchomienie"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Fit"
@@ -7242,6 +7271,10 @@ msgstr "Nie pamiętasz hasła?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "Nie pamiętasz hasła?"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Odpowiedź w formularzu"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Form answers"
@@ -8028,6 +8061,7 @@ msgstr "Importowanie"
 msgid "Importing it into your new resume…"
 msgstr "Importowanie go do nowego CV…"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "Poprawić"
@@ -8916,6 +8950,10 @@ msgstr ""
 msgid "Letter details"
 msgstr "Szczegóły listu"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Szkic listu"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Letter duplicated"
 msgstr "Zduplikowano list"
@@ -9246,6 +9284,10 @@ msgstr "Wczytywanie edytora arkuszy stylów…"
 msgid "Loading the total"
 msgstr "Ładuję całość"
 
+#: src/features/settings/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Wczytywanie użycia…"
+
 #: src/features/career/workspace/shell.tsx
 msgid "Loading workspace…"
 msgstr "Wczytywanie obszaru roboczego…"
@@ -9564,9 +9606,21 @@ msgstr "Może później"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "Wynik dopasowania MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "Szkic wiadomości MCP"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "Serwer MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "Dostosowanie MCP"
 
 #: src/features/resume/editor/proposals/page-fit.tsx
 msgid "Measuring page fit…"
@@ -10159,6 +10213,10 @@ msgstr ""
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "W tym tygodniu nie zapisano prób żądań AI."
 
 #: src/features/career/offers.tsx
 msgid "No amount stated · value uncertain"
@@ -11595,6 +11653,10 @@ msgstr "Okres płatności"
 msgid "Pay, deadline and conditions, so you can compare and decide"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "Import PDF"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "Style PDF obsługują podzbiór CSS. Obrót, obramowania przerywane i kropkowane oraz niektóre właściwości układu są ignorowane."
@@ -11837,6 +11899,7 @@ msgstr "Terminy z ogłoszenia w Twoim CV"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Practice"
@@ -12169,6 +12232,10 @@ msgstr ""
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Test dostawcy"
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -12397,6 +12464,7 @@ msgstr "Dostęp tylko do odczytu"
 msgid "Read only can't change or delete anything."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12711,6 +12779,10 @@ msgstr "Odśwież briefing 24 godziny przed"
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Odśwież briefing rano w dniu rozmowy"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Odśwież użycie"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Register at OlaCV"
@@ -13039,6 +13111,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Odpowiedziano"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13074,6 +13147,10 @@ msgstr ""
 #: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "Zgłoś błąd"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Próby żądań zapisane przez ten serwer, także nieudane lub anulowane. Ponowienia i każde wywołanie modelu w pętli narzędzi są liczone oddzielnie; fragmenty strumienia, same narzędzia i zapisywanie nie są liczone."
 
 #: src/features/settings/profile.tsx
 msgid "Requested amount"
@@ -13542,6 +13619,10 @@ msgstr "Rola {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "Rola osoby {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Propozycje stanowisk"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Role, company or location"
@@ -16382,6 +16463,10 @@ msgstr "Brak akapitu podsumowania."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/settings/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "To próby, a nie rozliczenia, liczby tokenów ani koszty. Przerwany serwer może zapisać próbę przed wysłaniem; raport nie potwierdza odbioru przez dostawcę."
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -17889,9 +17974,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Odwiedzający wpisują hasło, zanim zobaczą CV. Udostępniaj je tylko zaufanym osobom."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Odtwarzanie głosu"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
 msgstr "Ustawienia głosu"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Transkrypcja głosu"
 
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -18007,6 +18100,10 @@ msgstr "Co tydzień o {clock} · następnie {next}"
 #: src/features/career/knowledge/preferences.tsx
 msgid "weeks"
 msgstr "tyg."
+
+#: src/features/settings/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Tydzień trwa od poniedziałku do niedzieli w strefie czasowej konta. Historia zaczyna się, gdy serwer rozpoczyna rejestrowanie; wcześniejsze żądania nie są odtwarzane. Nazwy połączeń i modele pozostają takie jak w chwili użycia, również po usunięciu połączenia."
 
 #: src/features/career/shared.tsx
 msgid "Weighing each requirement"
@@ -18322,6 +18419,10 @@ msgstr ""
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "Bez niego samodzielnie wpisujesz odbiorcę, a do redagowania wykorzystywane jest wyłącznie Twoje CV."
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Import Word"
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
 msgstr ""
@@ -18470,6 +18571,10 @@ msgstr "Pisanie odpowiedzi…"
 #: src/features/settings/ai/providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Pomoc w pisaniu, dopasowane sugestie i asystent. Domyślny dostawca jest używany wszędzie tam, gdzie nie wybierzesz innego. Twoje klucze pozostają zaszyfrowane."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Ocena tekstu"
 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"

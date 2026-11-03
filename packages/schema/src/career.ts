@@ -1,6 +1,7 @@
 import z from "zod";
 import { searchRegionsSchema } from "@reactive-resume/utils/region";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
+import { aiOperationIdsSchema } from "./ai-usage";
 import { applicationClosedReasonSchema, applicationStatusSchema } from "./applications/data";
 
 /** The workspace tabs of one application, in the order a search happens. */
@@ -254,7 +255,9 @@ export const savedItemDataSchema = z.discriminatedUnion("kind", [
 	}),
 	z.object({
 		kind: z.literal("answers"),
-		answers: z.array(z.object({ question: text(), answer: text(6000) })).max(30),
+		answers: z
+			.array(z.object({ question: text(), answer: text(6000), aiOperationIds: aiOperationIdsSchema.optional() }))
+			.max(30),
 	}),
 	z.object({
 		kind: z.literal("reply"),
@@ -331,6 +334,7 @@ export const careerWorkspaceSchema = z.object({
 				question: text(),
 				answer: text(6000),
 				factIds: z.array(z.string()).max(10),
+				aiOperationIds: aiOperationIdsSchema.optional(),
 			}),
 		)
 		.max(30),

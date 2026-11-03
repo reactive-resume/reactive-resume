@@ -2161,6 +2161,18 @@ msgstr "AI ప్రొవైడర్‌లను లోడ్ చేయడం 
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+#: src/features/settings/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "AI అభ్యర్థన ప్రయత్నాలు: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "ఈ ఫలితానికి AI అభ్యర్థన చరిత్ర అందుబాటులో లేదు."
+
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr ""
@@ -2168,6 +2180,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "AI వినియోగాన్ని లోడ్ చేయలేకపోయాం. రిఫ్రెష్ చేయండి. పాత సర్వర్‌లకు నవీకరణ అవసరం కావచ్చు."
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "ఈ వారం AI వినియోగం"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2761,6 +2781,7 @@ msgstr ""
 msgid "Aspect ratio"
 msgstr "కారక నిష్పత్తి"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/assistant/conversation.tsx
@@ -3101,6 +3122,7 @@ msgstr "విభజించగలిగేలా రెజ్యూమ్‌�
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "పేజీలో సెట్ చేసిన భాషను ఉపయోగించి అక్షరాల మధ్య పొడవైన పదాలను విడదీస్తుంది."
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Briefing"
@@ -3267,6 +3289,10 @@ msgstr ""
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
 msgstr "కెరీర్"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "కెరీర్ చాట్"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Career coach"
@@ -5553,6 +5579,7 @@ msgstr "ప్రియమైన Fieldnote టీమ్,"
 msgid "Dear hiring team,"
 msgstr "ప్రియమైన నియామక బృందం,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -6990,6 +7017,7 @@ msgstr "ఫైల్ రీడ్"
 msgid "Files can be up to 25 MB."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "ఫీల్డ్‌లను నింపండి"
@@ -7058,6 +7086,7 @@ msgstr "ఫిన్నిష్"
 msgid "First run"
 msgstr "మొదటి రన్"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Fit"
@@ -7242,6 +7271,10 @@ msgstr "పాస్‌వర్డ్ మర్చిపోయారా?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "మీ పాస్‌వర్డ్ మర్చిపోయారా?"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "ఫారమ్ సమాధానం"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Form answers"
@@ -8028,6 +8061,7 @@ msgstr "దిగుమతి చేస్తోంది"
 msgid "Importing it into your new resume…"
 msgstr "దీన్ని మీ కొత్త రెజ్యూమేలోకి దిగుమతి చేస్తోంది..."
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "మెరుగుపరచండి"
@@ -8916,6 +8950,10 @@ msgstr ""
 msgid "Letter details"
 msgstr "లేఖ వివరాలు"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "లేఖ ముసాయిదా"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Letter duplicated"
 msgstr "లేఖ నకిలీ చేయబడింది"
@@ -9246,6 +9284,10 @@ msgstr "స్టైల్‌షీట్ ఎడిటర్ లోడ్ అవ
 msgid "Loading the total"
 msgstr "మొత్తం లోడ్ అవుతోంది"
 
+#: src/features/settings/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "వినియోగం లోడ్ అవుతోంది…"
+
 #: src/features/career/workspace/shell.tsx
 msgid "Loading workspace…"
 msgstr "వర్క్‌స్పేస్‌ను లోడ్ చేస్తోంది…"
@@ -9564,9 +9606,21 @@ msgstr "తర్వాత చూద్దాం"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP సరిపోలిక స్కోరు"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP సందేశ ముసాయిదా"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "MCP సర్వర్"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP అనుకూలీకరణ"
 
 #: src/features/resume/editor/proposals/page-fit.tsx
 msgid "Measuring page fit…"
@@ -10159,6 +10213,10 @@ msgstr ""
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "ఈ వారం AI అభ్యర్థన ప్రయత్నాలు నమోదు కాలేదు."
 
 #: src/features/career/offers.tsx
 msgid "No amount stated · value uncertain"
@@ -11595,6 +11653,10 @@ msgstr "చెల్లింపు వ్యవధి"
 msgid "Pay, deadline and conditions, so you can compare and decide"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF దిగుమతి"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "PDF శైలులు CSS యొక్క ఉపసమితికి మద్దతు ఇస్తాయి. భ్రమణం, గీతలు మరియు చుక్కల అంచులు మరియు కొన్ని లేఅవుట్ లక్షణాలు విస్మరించబడ్డాయి."
@@ -11837,6 +11899,7 @@ msgstr "మీ రెజ్యూమేలో ఉద్యోగ పోస్ట
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Practice"
@@ -12169,6 +12232,10 @@ msgstr ""
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "ప్రదాత పరీక్ష"
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -12397,6 +12464,7 @@ msgstr "చదవడానికి మాత్రమే యాక్సెస�
 msgid "Read only can't change or delete anything."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12711,6 +12779,10 @@ msgstr "24 గంటల ముందు బ్రీఫింగ్‌ను ర
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "ఇంటర్వ్యూ రోజు ఉదయం బ్రీఫింగ్‌ను రిఫ్రెష్ చేయి"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "వినియోగాన్ని రిఫ్రెష్ చేయండి"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Register at OlaCV"
@@ -13039,6 +13111,7 @@ msgstr ""
 msgid "Replied"
 msgstr "ప్రత్యుత్తరం ఇచ్చారు"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13074,6 +13147,10 @@ msgstr ""
 #: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "బగ్‌ను నివేదించండి"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "ఈ సర్వర్ నమోదు చేసిన అభ్యర్థన ప్రయత్నాలు, విఫలమైనవి లేదా రద్దైనవి కూడా. మళ్లీ ప్రయత్నాలు మరియు టూల్ లూప్‌లో ప్రతి మోడల్ కాల్ విడిగా లెక్కిస్తారు; స్ట్రీమ్ భాగాలు, టూల్స్ స్వయంగా మరియు సేవ్ చేయడం లెక్కించరు."
 
 #: src/features/settings/profile.tsx
 msgid "Requested amount"
@@ -13542,6 +13619,10 @@ msgstr "పాత్ర {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "వ్యక్తి {0} పాత్ర"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "ఉద్యోగ పాత్రల సూచనలు"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Role, company or location"
@@ -16382,6 +16463,10 @@ msgstr "సారాంశ పేరాగ్రాఫ్ లేదు."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/settings/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "ఇవి ప్రయత్నాలు, బిల్లింగ్, టోకెన్ సంఖ్యలు లేదా ఖర్చులు కావు. సర్వర్ ఆగితే పంపే ముందే ప్రయత్నం నమోదు కావచ్చు; ప్రదాత అందుకున్నట్లు ఈ నివేదిక నిర్ధారించదు."
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -17889,9 +17974,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "సందర్శకులు రెజ్యూమ్‌ని చూసే ముందు పాస్‌వర్డ్‌ను నమోదు చేస్తారు. మీరు విశ్వసించే వ్యక్తులతో మాత్రమే దీన్ని భాగస్వామ్యం చేయండి."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "వాయిస్ ప్లేబ్యాక్"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
 msgstr "వాయిస్ సెట్టింగులు"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "వాయిస్ లిప్యంతరీకరణ"
 
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -18007,6 +18100,10 @@ msgstr "ప్రతి వారం {clock}కి · తదుపరి {next}"
 #: src/features/career/knowledge/preferences.tsx
 msgid "weeks"
 msgstr "వారాలు"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "వారాలు ఖాతా సమయ మండలంలో సోమవారం నుంచి ఆదివారం వరకు. ఈ సర్వర్ నమోదు ప్రారంభించినప్పుడు చరిత్ర మొదలవుతుంది; గత అభ్యర్థనలు పునర్నిర్మించరు. కనెక్షన్ తొలగించిన తర్వాత కూడా కనెక్షన్ పేర్లు, మోడల్‌లు ఉపయోగించినట్లే ఉంచుతారు."
 
 #: src/features/career/shared.tsx
 msgid "Weighing each requirement"
@@ -18322,6 +18419,10 @@ msgstr ""
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "ఒకటి లేకుండా, మీరు స్వీకర్తను మీరే పూరించండి మరియు డ్రాఫ్టింగ్ మీ రెజ్యూమ్‌ను మాత్రమే ఉపయోగిస్తుంది."
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word దిగుమతి"
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
 msgstr ""
@@ -18470,6 +18571,10 @@ msgstr "సమాధానం రాస్తోంది…"
 #: src/features/settings/ai/providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "రాయడంలో సహాయం, అనుగుణమైన సూచనలు, సహాయకుడు. మీరు ఎంచుకోని చోట డిఫాల్ట్ ప్రొవైడర్ ఉపయోగించబడుతుంది. మీ కీలు ఎన్‌క్రిప్ట్ చేయబడే ఉంటాయి."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "రచన సమీక్ష"
 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"

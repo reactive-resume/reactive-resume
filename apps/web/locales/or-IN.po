@@ -2161,6 +2161,18 @@ msgstr "AI ପ୍ରଦାନକାରୀ ଲୋଡ୍ ହୋଇପାରିଲ�
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+#: src/features/settings/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "AI ଅନୁରୋଧ ପ୍ରୟାସ: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "ଏହି ଫଳାଫଳ ପାଇଁ AI ଅନୁରୋଧ ଇତିହାସ ଉପଲବ୍ଧ ନାହିଁ।"
+
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr ""
@@ -2168,6 +2180,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "AI ବ୍ୟବହାର ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ। ରିଫ୍ରେଶ୍ କରନ୍ତୁ। ପୁରୁଣା ସର୍ଭରକୁ ଅପଡେଟ୍ ଦରକାର ହୋଇପାରେ।"
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "ଏହି ସପ୍ତାହର AI ବ୍ୟବହାର"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2761,6 +2781,7 @@ msgstr ""
 msgid "Aspect ratio"
 msgstr "ଆସ୍ପେକ୍ଟ ଅନୁପାତ"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/assistant/conversation.tsx
@@ -3101,6 +3122,7 @@ msgstr "ରେଜ୍ୟୁମେକୁ ସାଧାରଣ ବିଭାଗଗୁ�
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "ପୃଷ୍ଠାରେ ଭାଷା ସେଟ୍ ବ୍ୟବହାର କରି ସିଲାବଲ୍ ମଧ୍ୟରେ ଲମ୍ବା ଶବ୍ଦ ଭାଙ୍ଗେ |"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Briefing"
@@ -3267,6 +3289,10 @@ msgstr ""
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
 msgstr "କ୍ୟାରିଅର୍"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "କ୍ୟାରିୟର ଚାଟ୍"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Career coach"
@@ -5553,6 +5579,7 @@ msgstr "ପ୍ରିୟ Fieldnote ଦଳ,"
 msgid "Dear hiring team,"
 msgstr "ପ୍ରିୟ ନିଯୁକ୍ତି ଦଳ,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -6990,6 +7017,7 @@ msgstr "ଫାଇଲ୍ ପ read ଼ନ୍ତୁ |"
 msgid "Files can be up to 25 MB."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "ଫିଲ୍ଡ ପୂରଣ କରନ୍ତୁ"
@@ -7058,6 +7086,7 @@ msgstr "ଫିନିଶ୍"
 msgid "First run"
 msgstr "ପ୍ରଥମ ଚାଲନ"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Fit"
@@ -7242,6 +7271,10 @@ msgstr "ପାସୱାର୍ଡ ଭୁଲିଗଲେ କି?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "ପାସୱାର୍ଡ ଭୁଲିଗଲେ କି?"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "ଫର୍ମର ଉତ୍ତର"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Form answers"
@@ -8029,6 +8062,7 @@ msgstr "ଆମଦାନି"
 msgid "Importing it into your new resume…"
 msgstr "ଏହାକୁ ତୁମର ନୂତନ ରେଜୁମ୍ ରେ ଆମଦାନି…"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "ଉନ୍ନତି କର |"
@@ -8917,6 +8951,10 @@ msgstr ""
 msgid "Letter details"
 msgstr "ଅକ୍ଷର ବିବରଣୀ"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "ଚିଠି ଖସଡ଼ା"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Letter duplicated"
 msgstr "ଚିଠି ଡୁପ୍ଲିକେଟ୍ ହେଲା"
@@ -9247,6 +9285,10 @@ msgstr "ଷ୍ଟାଇଲସିଟ୍ ଏଡିଟର୍ ଲୋଡ୍ ହେଉ
 msgid "Loading the total"
 msgstr "ସମୁଦାୟ ଲୋଡ୍ କରୁଛି |"
 
+#: src/features/settings/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "ବ୍ୟବହାର ଲୋଡ୍ ହେଉଛି…"
+
 #: src/features/career/workspace/shell.tsx
 msgid "Loading workspace…"
 msgstr "ୱାର୍କସ୍ପେସ୍ ଲୋଡ୍ ହେଉଛି…"
@@ -9565,9 +9607,21 @@ msgstr "ପରେ ହୁଏତ"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP ମେଳ ସ୍କୋର୍"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP ବାର୍ତ୍ତା ଖସଡ଼ା"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "MCP ସର୍ଭର |"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP ଅନୁକୂଳନ"
 
 #: src/features/resume/editor/proposals/page-fit.tsx
 msgid "Measuring page fit…"
@@ -10160,6 +10214,10 @@ msgstr ""
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "ଏହି ସପ୍ତାହରେ କୌଣସି AI ଅନୁରୋଧ ପ୍ରୟାସ ରେକର୍ଡ ହୋଇନାହିଁ।"
 
 #: src/features/career/offers.tsx
 msgid "No amount stated · value uncertain"
@@ -11597,6 +11655,10 @@ msgstr "ଦେୟ ଅବଧି"
 msgid "Pay, deadline and conditions, so you can compare and decide"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF ଆମଦାନି"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "PDF ଶ yles ଳୀ CSS ର ଏକ ଉପସେଟକୁ ସମର୍ଥନ କରେ | ଘୂର୍ଣ୍ଣନ, ଡ୍ୟାଶ୍ ଏବଂ ବିନ୍ଦୁ ସୀମା, ଏବଂ କିଛି ଲେଆଉଟ୍ ଗୁଣକୁ ଅଣଦେଖା କରାଯାଏ |"
@@ -11839,6 +11901,7 @@ msgstr "ଆପଣଙ୍କ ରେଜ୍ୟୁମେରେ ଚାକିରି ବ
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Practice"
@@ -12171,6 +12234,10 @@ msgstr ""
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "ପ୍ରଦାନକାରୀ ପରୀକ୍ଷା"
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -12399,6 +12466,7 @@ msgstr "କେବଳ ପଢ଼ିବା ଅନୁମତି"
 msgid "Read only can't change or delete anything."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12713,6 +12781,10 @@ msgstr "24 ଘଣ୍ଟା ପୂର୍ବରୁ ବ୍ରିଫିଂ ରିଫ
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "ସେହି ଦିନ ସକାଳେ ବ୍ରିଫିଂ ରିଫ୍ରେସ୍ କରନ୍ତୁ"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "ବ୍ୟବହାର ରିଫ୍ରେଶ୍ କରନ୍ତୁ"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Register at OlaCV"
@@ -13041,6 +13113,7 @@ msgstr ""
 msgid "Replied"
 msgstr "ଉତ୍ତର ଦିଆଯାଇଛି"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13076,6 +13149,10 @@ msgstr ""
 #: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "ଗୋଟିଏ ବଗ୍ ରିପୋର୍ଟ କରନ୍ତୁ"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "ଏହି ସର୍ଭରରେ ରେକର୍ଡ ହୋଇଥିବା ଅନୁରୋଧ ପ୍ରୟାସ, ବିଫଳ କିମ୍ବା ବାତିଲ ପ୍ରୟାସ ସହିତ। ପୁନଃପ୍ରୟାସ ଏବଂ ଟୁଲ୍ ଲୁପ୍‌ର ପ୍ରତ୍ୟେକ ମଡେଲ୍ କଲ୍ ଅଲଗା ଗଣାଯାଏ; ଷ୍ଟ୍ରିମ୍ ଅଂଶ, ଟୁଲ୍ ନିଜେ ଓ ସଂରକ୍ଷଣ ଗଣାଯାଏ ନାହିଁ।"
 
 #: src/features/settings/profile.tsx
 msgid "Requested amount"
@@ -13544,6 +13621,10 @@ msgstr "ଭୂମିକା {0} |"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "ବ୍ୟକ୍ତି {0}ଙ୍କ ଭୂମିକା"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "ପଦବୀ ପରାମର୍ଶ"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Role, company or location"
@@ -16384,6 +16465,10 @@ msgstr "କୌଣସି ସାରାଂଶ ଅନୁଚ୍ଛେଦ ନାହି
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/settings/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "ଏଗୁଡ଼ିକ ପ୍ରୟାସ, ବିଲ୍, ଟୋକେନ୍ ସଂଖ୍ୟା କିମ୍ବା ଖର୍ଚ୍ଚ ନୁହେଁ। ସର୍ଭର ବନ୍ଦ ହେଲେ ପଠାଇବା ପୂର୍ବରୁ ପ୍ରୟାସ ରେକର୍ଡ ହୋଇପାରେ; ଏହି ରିପୋର୍ଟ ପ୍ରଦାନକାରୀଙ୍କ ପ୍ରାପ୍ତି ନିଶ୍ଚିତ କରେନାହିଁ।"
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -17892,9 +17977,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "ପରିଦର୍ଶକମାନେ ରେଜୁମ୍ ଦେଖିବା ପୂର୍ବରୁ ପାସୱାର୍ଡ ପ୍ରବେଶ କରନ୍ତି | ଆପଣ କେବଳ ବିଶ୍ୱାସ କରୁଥିବା ଲୋକଙ୍କ ସହିତ ଏହାକୁ ଅଂଶୀଦାର କରନ୍ତୁ |"
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "ସ୍ୱର ଚଲାଇବା"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
 msgstr "ସ୍ୱର ସେଟିଂସ୍"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "ସ୍ୱରର ଲିପ୍ୟନ୍ତରଣ"
 
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -18010,6 +18103,10 @@ msgstr "ସାପ୍ତାହିକ {clock}ରେ · ପରବର୍ତ୍ତୀ
 #: src/features/career/knowledge/preferences.tsx
 msgid "weeks"
 msgstr "ସପ୍ତାହ"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "ସପ୍ତାହ ଆକାଉଣ୍ଟର ସମୟ ମଣ୍ଡଳରେ ସୋମବାରରୁ ରବିବାର ପର୍ଯ୍ୟନ୍ତ। ଏହି ସର୍ଭର ରେକର୍ଡ ଆରମ୍ଭ କଲେ ଇତିହାସ ଆରମ୍ଭ ହୁଏ; ପୂର୍ବ ଅନୁରୋଧ ପୁନଃତିଆରି ହୁଏନାହିଁ। ସଂଯୋଗ ହଟାଇବା ପରେ ମଧ୍ୟ ସଂଯୋଗ ନାମ ଓ ମଡେଲ୍ ବ୍ୟବହାର ବେଳର ପରି ରହେ।"
 
 #: src/features/career/shared.tsx
 msgid "Weighing each requirement"
@@ -18325,6 +18422,10 @@ msgstr ""
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "ଗୋଟିଏ ବିନା, ଆପଣ ନିଜେ ପ୍ରାପ୍ତକର୍ତ୍ତା ପୁରଣ କରନ୍ତି ଏବଂ ଡ୍ରାଫ୍ଟ କରିବା କେବଳ ଆପଣଙ୍କର ରେଜୁମ୍ ବ୍ୟବହାର କରେ |"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word ଆମଦାନି"
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
 msgstr ""
@@ -18473,6 +18574,10 @@ msgstr "ଏକ ଉତ୍ତର ଲେଖୁଛି…"
 #: src/features/settings/ai/providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "ଲେଖା ସାହାଯ୍ୟ, ଅନୁକୂଳିତ ପରାମର୍ଶ ଓ ସହକାରୀ। ଆପଣ ଯେଉଁଠି ପ୍ରଦାନକାରୀ ବାଛନ୍ତି ନାହିଁ, ସେଠାରେ ଡିଫଲ୍ଟ ପ୍ରଦାନକାରୀ ବ୍ୟବହୃତ ହୁଏ। ଆପଣଙ୍କ କି ଏନକ୍ରିପ୍ଟେଡ୍ ରହେ।"
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "ଲେଖନ ସମୀକ୍ଷା"
 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"

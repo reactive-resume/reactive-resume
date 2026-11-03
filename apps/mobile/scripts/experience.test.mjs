@@ -144,7 +144,7 @@ const mocks = {
 		withSpring: (value) => value,
 	},
 };
-function load(path, extra = {}) {
+function load(path, extra = {}, append = "") {
 	const module = { exports: {} };
 	const code = transformSync(readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8"), {
 		loader: path.endsWith(".tsx") ? "tsx" : "ts",
@@ -152,7 +152,7 @@ function load(path, extra = {}) {
 		jsx: "transform",
 	}).code;
 	const dependencies = { ...mocks, ...extra };
-	new Function("React", "require", "module", "exports", code)(
+	new Function("React", "require", "module", "exports", code + append)(
 		react,
 		(name) => {
 			assert.ok(name in dependencies, `Missing boundary: ${name}`);
@@ -1598,6 +1598,7 @@ console.log("PASS native calendar explains filtered-empty events and clears the 
 const amountParser = load("../../../packages/utils/src/amount.ts");
 const careerSchema = load("../../../packages/schema/src/career.ts", {
 	zod,
+	"./ai-usage": load("../../../packages/schema/src/ai-usage.ts", { zod }),
 	"./applications/data": load("../../../packages/schema/src/applications/data.ts", {
 		zod,
 		"@reactive-resume/utils/timezone": timeParser,
@@ -2811,6 +2812,7 @@ console.log(
 			}),
 		},
 		"@/features/ai/report-content": { ReportAiContent: "Report" },
+		"@/features/ai/usage": { AiResultUsage: "ResultUsage" },
 	});
 	const writingProps = {
 		id: "resume-a",
@@ -2837,9 +2839,18 @@ console.log(
 		passages: [],
 		review: { summary: "Latest saved", strengths: [], suggestions: [] },
 		reviewedAt: new Date("2030-01-01T00:00:02Z"),
+		aiUsage: {
+			requests: 2,
+			models: [{ providerId: "old-provider", label: "Recorded AI", provider: "openai", model: "recorded-model" }],
+		},
 	};
 	render(Writing, writingProps);
 	assert.equal(publishedWriting.summary, "Latest saved");
+	writingProps.review = publishedWriting;
+	assert.deepEqual(
+		nodes(render(Writing, writingProps)).find((node) => node.type === "ResultUsage").props.usage,
+		savedWriting.aiUsage,
+	);
 	resolveOld({ summary: "Older discarded response" });
 	await settle();
 	assert.equal(publishedWriting.summary, "Latest saved");
@@ -4356,3 +4367,99 @@ assert.deepEqual(triageBindings, []);
 console.log(
 	"PASS native triage explicit mode, displayed rows, identity, selection, shared stage/contact owners and hidden-row protection (host)",
 );
+
+// Request provenance travels with the accepted draft; Undo restores the prior content's sources.
+reset();
+let provenanceAnswer = {
+	id: "answer-provenance",
+	question: "What did you build?",
+	answer: "Original answer.",
+	factIds: [],
+	aiOperationIds: ["prior-op"],
+};
+const provenanceSaves = [];
+const { AnswerCard: NativeAnswerCard } = load(
+	"features/workspace/tabs/apply.tsx",
+	{
+		react: { ...react, useLayoutEffect: (effect) => effect() },
+		"@tanstack/react-query": {},
+		"expo-clipboard": {},
+		"expo-crypto": {},
+		"@reactive-resume/schema/application-answers": { answerLimit: () => null },
+		"@reactive-resume/schema/applications/data": {},
+		"@reactive-resume/schema/applications/preparation": {},
+		"@reactive-resume/schema/career": careerSchema,
+		"@reactive-resume/utils/string": { rewriteSummary: () => ({ words: 0, removed: 0, added: 0 }) },
+		"../answer-library": { AnswerLibrary: "AnswerLibrary" },
+		"../hooks": {
+			useDraft: (_key, value) => {
+				const [text, setText] = react.useState(value);
+				return { value: text, setValue: setText, clear() {}, restored: false };
+			},
+			useGenerate: () => ({
+				run: async () => ({ answer: { text: "Generated answer.", factIds: [], aiOperationIds: ["next-op"] } }),
+				isPending: false,
+			}),
+			useAutosave: () => ({ flush() {} }),
+		},
+		"../logic": {
+			countWords: (text) => text.split(/\s+/).length,
+			countCharacters: (text) => [...text].length,
+			diffWords: (_before, after) => [{ type: "added", text: after }],
+			shortLabel: (text) => text,
+		},
+		"../parts": {
+			Block: "Block",
+			Actions: "Actions",
+			GenerateNotice: "GenerateNotice",
+			SaveError: "SaveError",
+			workingSteps: () => [],
+			useWorking: (_busy, _steps, label) => label,
+		},
+		"../preparation": {},
+		"../share": {},
+		"../shell": {},
+		"../state": {},
+		"@/api/client": {},
+		"@/draft": {},
+		"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: { id: "fixture" } }) },
+		"@/features/application-detail/sections": {},
+		"@/features/applications/prior-no-response": {},
+		"@/features/applications/queries": {},
+		"@/features/career/undo": {},
+		"@/features/documents/queries": {},
+		"@/ui": { ...ui, Sheet: "Sheet" },
+	},
+	"\nmodule.exports.AnswerCard=AnswerCard;",
+);
+const provenanceView = () =>
+	render(NativeAnswerCard, {
+		answer: provenanceAnswer,
+		facts: [],
+		applicationId: "job-a",
+		company: "Fictional Harbor",
+		readOnly: false,
+		disabled: false,
+		registerDraft: () => () => {},
+		fetchServer: async () => provenanceAnswer,
+		onRemove() {},
+		unit: "words",
+		onToggleUnit() {},
+		onSave: async (patch, expected) => {
+			provenanceSaves.push({ patch, expected });
+			provenanceAnswer = { ...provenanceAnswer, ...patch };
+			return { ok: true };
+		},
+	});
+control(provenanceView(), "Tighten").onPress();
+await settle();
+control(provenanceView(), "Accept").onPress();
+await settle();
+assert.deepEqual(provenanceSaves[0].patch.aiOperationIds, ["prior-op", "next-op"]);
+provenanceView();
+const provenanceUndo = calls.findLast((call) => call?.message === "Answer replaced").action;
+await provenanceUndo.onPress();
+await settle();
+assert.deepEqual(provenanceSaves[1].patch.aiOperationIds, ["prior-op"]);
+assert.deepEqual(provenanceSaves[1].expected.aiOperationIds, ["prior-op", "next-op"]);
+console.log("PASS native answer Accept/Undo preserves actual request sources with the reviewed content");

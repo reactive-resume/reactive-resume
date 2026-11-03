@@ -1724,6 +1724,17 @@ msgstr "Ponudnikov AI ni bilo mogoče naložiti. Poskusite znova ali podrobnosti
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI prebere prilepljeno besedilo le, ko vprašate. Povezave lahko uporabljajo lastne podatke o delu strani brez AI."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Poskusi zahtev AI: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Zgodovina zahtev AI za ta rezultat ni na voljo."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Uporabe AI ni bilo mogoče naložiti. Osvežite prikaz. Starejši strežniki morda potrebujejo posodobitev."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Uporaba AI ta teden"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "Razmerje stranic"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "Pomočnik"
@@ -2498,6 +2518,7 @@ msgstr "Razdelite življenjepis na običajne razdelke, da ga je mogoče segmenti
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Prelomi dolge besede med zloge z uporabo jezika, nastavljenega v strani."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Kariera"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Karierni klepet"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "Spoštovani {name},"
 msgid "Dear hiring team,"
 msgstr "Spoštovana najemna ekipa,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "Ročno izpolnite podrobnosti"
 msgid "Fill empty fields with AI"
 msgstr "Izpolnite prazna polja z AI"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Izpolni polja"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Izpolnjeno iz prošnje za delo. Pozdrav sledi imenu."
@@ -5554,6 +5584,7 @@ msgstr "Prva ponudba"
 msgid "First run (YYYY-MM-DD)"
 msgstr "Prva izvedba (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "Pozabi"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "Pozabljanje loči to dejstvo od zgodb in shranjenih predmetov. Izvorni vir ostane nespremenjen."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Odgovor v obrazcu"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "Uvoženo iz {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Uvoz v vaš novi življenjepis ..."
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "izboljšati"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "Telo pisma"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Osnutek pisma"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Stran s pismom"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Nalaganje shranjene različice…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Nalaganje uporabe…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "Morda je prosta"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "Ocena ujemanja MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "Osnutek sporočila MCP"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "strežnik MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "Prilagoditev MCP"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "Ponudnika AI še ni"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Ta teden ni zabeleženih poskusov zahtev AI."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · Najboljši za prijave"
 msgid "PDF check canceled. Retry when ready."
 msgstr "Preverjanje PDF preklicano. Poskusite znova, ko boste pripravljeni."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "Uvoz PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "vir objave zaposlitve"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "Zadrževanje in uporaba ponudnika sledita njegovi politiki zasebnosti. Če zavrnete, preprečite to operacijo in druge funkcije aplikacije ostanejo na voljo."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Preizkus ponudnika"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "Preberi licenco"
 msgid "Read only"
 msgstr "Dostop samo za branje"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "Osveži povzetek 24 ur prej"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Osveži povzetek zjutraj na dan intervjuja"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Osveži uporabo"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Odgovorjeno"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Odgovor"
@@ -10393,6 +10471,10 @@ msgstr "Prijavi težavo"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Poročilo je prejel vaš operater strežnika. Hvala."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Poskusi zahtev, zabeleženi na tem strežniku, tudi neuspešni ali preklicani. Ponovitve in vsak klic modela v zanki orodij se štejejo ločeno; deli toka, sama orodja in shranjevanje se ne štejejo."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "Vloga (neobvezno)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Vloga {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Predlogi delovnih mest"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "Ni povzetka."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "To so poskusi, ne obračun, število žetonov ali stroški. Prekinjen strežnik lahko zabeleži poskus pred pošiljanjem; poročilo ne potrjuje prejema pri ponudniku."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Obiskovalci vnesejo geslo, preden vidijo življenjepis. Delite ga le z ljudmi, ki jim zaupate."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Predvajanje glasu"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Nastavitve glasu"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Prepis govora"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "Spletno iskanje išče službe v teh državah. Izberite do tri države."
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Spletna stran"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Tedni potekajo od ponedeljka do nedelje v časovnem pasu računa. Zgodovina se začne, ko strežnik začne beležiti; prejšnje zahteve se ne obnavljajo. Imena povezav in modeli ostanejo takšni kot ob uporabi, tudi po odstranitvi povezave."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "Brez njega prejemnika vnesete sami, pri pripravi osnutka pa bo uporablje
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Uvoz Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Uvoz Word, Izboljšava, pomočnik, osnutki pisem, karierno svetovanje in ustvarjanje ter glasovna vadba potrebujejo ponudnika AI. Urejanje, Oblikovanje, preverjanja berljivosti in prenosi delujejo brez njega."
@@ -14844,6 +14950,10 @@ msgstr "Besedilo"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Pomoč pri pisanju, prilagojeni predlogi in pomočnik. Privzeti ponudnik se uporabi povsod, kjer ga ne izberete. Vaši ključi ostanejo šifrirani."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Pregled besedila"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

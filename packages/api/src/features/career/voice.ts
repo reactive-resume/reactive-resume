@@ -1,3 +1,4 @@
+import type { AiUsage } from "../ai/usage";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createGroq } from "@ai-sdk/groq";
 import { createMistral } from "@ai-sdk/mistral";
@@ -15,14 +16,21 @@ import { careerTranscript } from "@reactive-resume/db/schema";
 import { protectedProcedure } from "../../context";
 import { aiVoiceRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
-import { aiTransport, resolveAiBaseUrl } from "../ai/url-policy";
+import { resolveAiBaseUrl } from "../ai/url-policy";
+import { createAiUsage, aiUsageTransport } from "../ai/usage";
 import { assertApplicationVersion } from "../applications/service";
 import { requireCareerApplication } from "./service";
 
 const procedure = protectedProcedure.use(aiVoiceRateLimit);
 
 /** The connection for one voice job, refused unless it offers that model (see `AI_VOICE_MODELS`). */
-async function voiceConnection(userId: string, id: string, kind: "transcription" | "speech", model: string) {
+async function voiceConnection(
+	userId: string,
+	id: string,
+	kind: "transcription" | "speech",
+	model: string,
+	check?: AiUsage["check"],
+) {
 	const provider = await aiProvidersService.getRunnableById({ userId, id, voice: { kind, model } });
 	if (provider.id !== id || !AI_VOICE_MODELS[provider.provider]?.[kind].includes(model))
 		throw new ORPCError("BAD_REQUEST", {
@@ -31,10 +39,16 @@ async function voiceConnection(userId: string, id: string, kind: "transcription"
 					? "Choose a connection that can transcribe speech."
 					: "Choose a connection that can read text aloud.",
 		});
+	const usage = createAiUsage(userId, kind, provider, check);
 	return {
+		usage,
 		provider: provider.provider,
 		captured: provider,
-		settings: { apiKey: provider.apiKey, baseURL: resolveAiBaseUrl(provider), ...aiTransport() },
+		settings: {
+			apiKey: provider.apiKey,
+			baseURL: resolveAiBaseUrl(provider),
+			...aiUsageTransport(usage, provider.provider, model),
+		},
 	};
 }
 
@@ -114,7 +128,15 @@ export const careerVoiceRouter = {
 				userId: context.user.id,
 				applicationId: input.applicationId,
 			});
-			const connection = await voiceConnection(context.user.id, input.providerId, "transcription", input.model);
+			const connection = await voiceConnection(
+				context.user.id,
+				input.providerId,
+				"transcription",
+				input.model,
+				async (tx) => {
+					if (application) await assertApplicationVersion(tx, context.user.id, application);
+				},
+			);
 			const model = transcriptionModel(connection, input.model);
 			if (!model) throw new ORPCError("BAD_REQUEST", { message: "Choose a connection that can transcribe speech." });
 			const audio = new Uint8Array(await input.audio.arrayBuffer());
@@ -140,6 +162,7 @@ export const careerVoiceRouter = {
 						original: text,
 						edited: text,
 						model: input.model,
+						aiOperationId: connection.usage.operationId,
 					})
 					.returning({ id: careerTranscript.id });
 				if (!row) throw new Error("Transcript was not saved.");

@@ -1724,6 +1724,17 @@ msgstr "โหลดผู้ให้บริการ AI ไม่ได้ �
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI อ่านข้อความที่วางเฉพาะเมื่อคุณถามเท่านั้น ลิงค์สามารถใช้ข้อมูลงานของเพจเองได้โดยไม่ต้องใช้ AI"
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "จำนวนครั้งที่พยายามส่งคำขอ AI: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "ไม่มีประวัติคำขอ AI สำหรับผลลัพธ์นี้"
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "โหลดการใช้งาน AI ไม่สำเร็จ ลองรีเฟรช เซิร์ฟเวอร์รุ่นเก่าอาจต้องอัปเดต"
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "การใช้งาน AI สัปดาห์นี้"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "อัตราส่วนภาพ"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "ผู้ช่วย"
@@ -2498,6 +2518,7 @@ msgstr "แบ่งเรซูเม่ออกเป็นส่วนตา
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "แบ่งคำยาวระหว่างพยางค์โดยใช้ภาษาที่ตั้งไว้ในเพจ"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "อาชีพ"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "แชตอาชีพ"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "เรียนคุณ {name}"
 msgid "Dear hiring team,"
 msgstr "เรียน ทีมงานผู้จ้างงาน"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "กรอกรายละเอียดด้วยตนเอง"
 msgid "Fill empty fields with AI"
 msgstr "กรอกข้อมูลในช่องว่างด้วย AI"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "กรอกข้อมูล"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "กรอกมาจากการสมัครงาน คำทักทายตามชื่อ"
@@ -5554,6 +5584,7 @@ msgstr "ข้อเสนอแรก"
 msgid "First run (YYYY-MM-DD)"
 msgstr "ทำงานครั้งแรก (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "ลืม"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "การลืมจะยกเลิกการเชื่อมโยงข้อเท็จจริงนี้กับเรื่องราวและรายการที่บันทึกไว้ แหล่งต้นฉบับจะไม่เปลี่ยนแปลง"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "คำตอบในแบบฟอร์ม"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "นำเข้าจาก {source}"
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "กำลังนำเข้าสู่เรซูเม่ใหม่ของคุณ..."
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "ทำให้ดีขึ้น"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "เนื้อจดหมาย"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "ร่างจดหมาย"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "หน้าจดหมาย"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "กำลังโหลดเวอร์ชันที่บันทึกไว้…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "กำลังโหลดการใช้งาน…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "อาจยังว่าง"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "คะแนนความตรงกัน MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "ร่างข้อความ MCP"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "เซิร์ฟเวอร์ MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "การปรับแต่ง MCP"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "ยังไม่มีผู้ให้บริการ AI"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "ไม่มีการบันทึกความพยายามส่งคำขอ AI ในสัปดาห์นี้"
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · เหมาะที่สุดสำหรับสมัค�
 msgid "PDF check canceled. Retry when ready."
 msgstr "การตรวจสอบ PDF ถูกยกเลิก ลองอีกครั้งเมื่อพร้อม"
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "นำเข้า PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "แหล่งประกาศรับสมัครงาน"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "การเก็บรักษาและการใช้งานของผู้ให้บริการเป็นไปตามนโยบายความเป็นส่วนตัว การปฏิเสธจะป้องกันการดำเนินการนี้และทำให้ฟีเจอร์อื่นๆ ของแอปใช้งานได้"
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "ทดสอบผู้ให้บริการ"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "อ่านสัญญาอนุญาต"
 msgid "Read only"
 msgstr "การเข้าถึงแบบอ่านอย่างเดียว"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "รีเฟรชสรุปย่อ 24 ชั่วโมงก่�
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "รีเฟรชสรุปย่อในเช้าวันสัมภาษณ์"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "รีเฟรชการใช้งาน"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "ตอบแล้ว"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "คำตอบกลับ"
@@ -10393,6 +10471,10 @@ msgstr "แจ้งปัญหา"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "รายงานที่ได้รับจากผู้ให้บริการเซิร์ฟเวอร์ของคุณ ขอบคุณ"
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "ความพยายามส่งคำขอที่เซิร์ฟเวอร์นี้บันทึก รวมครั้งที่ล้มเหลวหรือยกเลิก การลองใหม่และการเรียกโมเดลแต่ละครั้งในวงรอบเครื่องมือนับแยกกัน ส่วนย่อยของสตรีม ตัวเครื่องมือเอง และการบันทึกไม่นับ"
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "ตำแหน่ง (ไม่บังคับ)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "บทบาท {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "คำแนะนำตำแหน่งงาน"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "ไม่มีย่อหน้าสรุป"
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "นี่คือจำนวนครั้งที่พยายาม ไม่ใช่การเรียกเก็บเงิน จำนวนโทเค็น หรือค่าใช้จ่าย เซิร์ฟเวอร์ที่หยุดชะงักอาจบันทึกความพยายามก่อนส่ง รายงานนี้ยืนยันไม่ได้ว่าผู้ให้บริการได้รับแล้ว"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "ผู้เยี่ยมชมต้องป้อนรหัสผ่านก่อนจึงจะเห็นประวัติย่อ แชร์รหัสผ่านนี้เฉพาะกับคนที่คุณไว้วางใจเท่านั้น"
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "เล่นเสียง"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "การตั้งค่าเสียง"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "ถอดเสียง"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "การค้นหาเว็บหางานในประเท
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "เว็บไซต์"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "สัปดาห์เริ่มวันจันทร์ถึงวันอาทิตย์ตามเขตเวลาบัญชี ประวัติเริ่มเมื่อเซิร์ฟเวอร์นี้เริ่มบันทึก ไม่สร้างคำขอก่อนหน้านั้นย้อนหลัง ชื่อการเชื่อมต่อและโมเดลคงไว้ตามที่ใช้ แม้ลบการเชื่อมต่อแล้ว"
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "หากไม่มี คุณจะกรอกชื่อผู�
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "นำเข้า Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "การนำเข้า Word การปรับปรุง ผู้ช่วย ร่างจดหมาย การให้คำปรึกษาและสร้างเนื้อหาอาชีพ รวมถึงฝึกด้วยเสียง ต้องใช้ผู้ให้บริการ AI ส่วนการแก้ไข ออกแบบ ตรวจความสามารถในการอ่าน และดาวน์โหลดไม่ต้องใช้"
@@ -14844,6 +14950,10 @@ msgstr "งานเขียน"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "ความช่วยเหลือในการเขียน คำแนะนำที่ปรับให้เหมาะ และผู้ช่วย จะใช้ผู้ให้บริการเริ่มต้นในทุกที่ที่คุณไม่ได้เลือก คีย์ของคุณถูกเข้ารหัสไว้เสมอ"
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "ตรวจทานงานเขียน"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

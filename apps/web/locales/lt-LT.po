@@ -2161,6 +2161,18 @@ msgstr "AI teikėjų nepavyko įkelti. Įkelkite iš naujo ir bandykite dar kart
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+#: src/features/settings/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "DI užklausų bandymai: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Šio rezultato DI užklausų istorija nepasiekiama."
+
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr ""
@@ -2168,6 +2180,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Nepavyko įkelti DI naudojimo. Atnaujinkite rodinį. Senesnius serverius gali reikėti atnaujinti."
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "DI naudojimas šią savaitę"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2761,6 +2781,7 @@ msgstr ""
 msgid "Aspect ratio"
 msgstr "Kraštinių santykis"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/assistant/conversation.tsx
@@ -3101,6 +3122,7 @@ msgstr "Padalykite gyvenimo aprašymą į įprastus skyrius, kad jį būtų gali
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Pertraukia ilgus žodžius tarp skiemenų, naudojant Puslapyje nustatytą kalbą."
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Briefing"
@@ -3267,6 +3289,10 @@ msgstr ""
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
 msgstr "Karjera"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Karjeros pokalbis"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Career coach"
@@ -5553,6 +5579,7 @@ msgstr "Gerbiama Fieldnote komanda,"
 msgid "Dear hiring team,"
 msgstr "Miela nuomos komanda,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -6990,6 +7017,7 @@ msgstr "failo skaitymas"
 msgid "Files can be up to 25 MB."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "Užpildyti laukus"
@@ -7058,6 +7086,7 @@ msgstr "Suomių"
 msgid "First run"
 msgstr "Pirmas paleidimas"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Fit"
@@ -7242,6 +7271,10 @@ msgstr "Pamiršote slaptažodį?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "Pamiršote slaptažodį?"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Formos atsakymas"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Form answers"
@@ -8028,6 +8061,7 @@ msgstr "Importuojama"
 msgid "Importing it into your new resume…"
 msgstr "Importuojama į naują gyvenimo aprašymą…"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "Tobulinti"
@@ -8916,6 +8950,10 @@ msgstr ""
 msgid "Letter details"
 msgstr "Laiško detalės"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Laiško juodraštis"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Letter duplicated"
 msgstr "Laiškas dubliuotas"
@@ -9246,6 +9284,10 @@ msgstr "Įkeliamas stilių failo redaktorius…"
 msgid "Loading the total"
 msgstr "Įkeliama bendra suma"
 
+#: src/features/settings/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Įkeliamas naudojimas…"
+
 #: src/features/career/workspace/shell.tsx
 msgid "Loading workspace…"
 msgstr "Įkeliama darbo erdvė…"
@@ -9564,9 +9606,21 @@ msgstr "Galbūt vėliau"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP atitikties balas"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP žinutės juodraštis"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "MCP serveris"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP pritaikymas"
 
 #: src/features/resume/editor/proposals/page-fit.tsx
 msgid "Measuring page fit…"
@@ -10159,6 +10213,10 @@ msgstr ""
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Šią savaitę neužregistruota DI užklausų bandymų."
 
 #: src/features/career/offers.tsx
 msgid "No amount stated · value uncertain"
@@ -11595,6 +11653,10 @@ msgstr "Mokėjimo laikotarpis"
 msgid "Pay, deadline and conditions, so you can compare and decide"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF importavimas"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "PDF stiliai palaiko CSS poaibį. Nepaisoma sukimo, brūkšninių ir punktyrinių kraštinių bei kai kurių išdėstymo savybių."
@@ -11837,6 +11899,7 @@ msgstr "darbo skelbimo sąlygas savo gyvenimo aprašyme"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Practice"
@@ -12169,6 +12232,10 @@ msgstr ""
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Teikėjo testas"
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -12397,6 +12464,7 @@ msgstr "Tik skaitymo prieiga"
 msgid "Read only can't change or delete anything."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12711,6 +12779,10 @@ msgstr "Atnaujinti atmintinę likus 24 valandoms"
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Atnaujinti atmintinę tos dienos rytą"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Atnaujinti naudojimą"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Register at OlaCV"
@@ -13039,6 +13111,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Atsakyta"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13074,6 +13147,10 @@ msgstr ""
 #: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "Pranešti apie klaidą"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Šio serverio registruoti užklausų bandymai, įskaitant nesėkmingus ar atšauktus. Pakartotiniai bandymai ir kiekvienas modelio iškvietimas įrankių cikle skaičiuojami atskirai; srauto dalys, patys įrankiai ir išsaugojimas neskaičiuojami."
 
 #: src/features/settings/profile.tsx
 msgid "Requested amount"
@@ -13542,6 +13619,10 @@ msgstr "Vaidmuo {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "Asmens {0} pareigos"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Pareigų pasiūlymai"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Role, company or location"
@@ -16382,6 +16463,10 @@ msgstr "Nėra apibendrinančios pastraipos."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/settings/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Tai bandymai, o ne sąskaitos, žetonų skaičiai ar išlaidos. Nutrūkus serverio darbui bandymas gali būti užregistruotas prieš išsiunčiant; ataskaita nepatvirtina, kad teikėjas jį gavo."
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -17889,9 +17974,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Lankytojai įveda slaptažodį prieš pamatydami gyvenimo aprašymą. Dalinkitės juo tik su žmonėmis, kuriais pasitikite."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Balso atkūrimas"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
 msgstr "Balso nustatymai"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Kalbos transkripcija"
 
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -18007,6 +18100,10 @@ msgstr "Kas savaitę {clock} · kitas {next}"
 #: src/features/career/knowledge/preferences.tsx
 msgid "weeks"
 msgstr "savaitės"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Savaitė trunka nuo pirmadienio iki sekmadienio paskyros laiko juostoje. Istorija prasideda serveriui pradėjus registruoti; ankstesnės užklausos neatkuriamos. Ryšių pavadinimai ir modeliai išlieka tokie, kokie naudoti, net pašalinus ryšį."
 
 #: src/features/career/shared.tsx
 msgid "Weighing each requirement"
@@ -18322,6 +18419,10 @@ msgstr ""
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "Be jo, jūs pats užpildote gavėją, o rengiant naudojamas tik jūsų gyvenimo aprašymas."
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word importavimas"
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
 msgstr ""
@@ -18470,6 +18571,10 @@ msgstr "Rašomas atsakymas…"
 #: src/features/settings/ai/providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Pagalba rašant, pritaikyti pasiūlymai ir padėjėjas. Kur nepasirenkate teikėjo, naudojamas numatytasis. Jūsų raktai lieka užšifruoti."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Teksto peržiūra"
 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"

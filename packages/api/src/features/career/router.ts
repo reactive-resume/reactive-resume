@@ -1,4 +1,5 @@
 import z from "zod";
+import { aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
 import {
 	careerFactInputSchema,
 	resumeFactProposalSchema,
@@ -399,7 +400,12 @@ export const careerRouter = {
 			z.object({
 				item: savedItemSchema.nullable(),
 				answer: z
-					.object({ text: z.string(), factIds: z.array(z.string()), note: z.string().nullable().default(null) })
+					.object({
+						text: z.string(),
+						factIds: z.array(z.string()),
+						note: z.string().nullable().default(null),
+						aiOperationIds: aiOperationIdsSchema.optional(),
+					})
 					.nullable(),
 			}),
 		)

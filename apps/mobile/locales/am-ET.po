@@ -1724,6 +1724,17 @@ msgstr "AI አቅራቢዎችን መጫን አልተቻለም። እንደገና
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI የተለጠፈ ጽሑፍ የሚያነቡት ሲጠይቁ ብቻ ነው። አገናኞች ያለ AI የገጹን የስራ ውሂብ መጠቀም ይችላሉ።"
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "የAI ጥያቄ ሙከራዎች፦ {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "ለዚህ ውጤት የAI ጥያቄ ታሪክ አይገኝም።"
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "የAI አጠቃቀም ሊጫን አልቻለም። እንደገና ያድሱ። የቆዩ አገልጋዮች ዝማኔ ሊፈልጉ ይችላሉ።"
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "የዚህ ሳምንት የAI አጠቃቀም"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "የመገናኛ መጠን"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "ረዳት"
@@ -2498,6 +2518,7 @@ msgstr "ለመከፋፈል እንዲያመች የስራ ልምድ ማስረጃ�
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "በገጽ ላይ የተቀመጠውን ቋንቋ በመጠቀም ረዣዥም ቃላትን በሴላዎች መካከል ይሰብራል።"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "ሙያ"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "የሙያ ውይይት"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "ውድ {name}"
 msgid "Dear hiring team,"
 msgstr "ውድ የቅጥር ቡድን፣"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "ዝርዝሮችን በእጅ ይሙሉ"
 msgid "Fill empty fields with AI"
 msgstr "ባዶ መስኮችን በAI ሙላ"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "መስኮችን ሙላ"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "ከሥራ ማመልከቻው ተሞልቷል. ሰላምታው ስሙን ይከተላል።"
@@ -5554,6 +5584,7 @@ msgstr "የመጀመሪያ ቅናሽ"
 msgid "First run (YYYY-MM-DD)"
 msgstr "የመጀመሪያ ሩጫ (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "እርሳ"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "መርሳት ይህንን እውነታ ከተረቶች እና ከተቀመጡ እቃዎች ጋር ያለውን ግንኙነት ያቋርጣል። ዋናው ምንጭ ሳይለወጥ ይቆያል።"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "የቅጽ መልስ"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "ከ{source} ገብቷል።"
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "ወደ አዲሱ የትምህርት ማስረጃዎ በማስመጣት ላይ…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "አሻሽል።"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "የደብዳቤ አካል"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "የደብዳቤ ረቂቅ"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "የደብዳቤ ገጽ"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "የተቀመጠውን ስሪት በመጫን ላይ…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "አጠቃቀም እየተጫነ ነው…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "ሊገኝ ይችላል"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "የMCP ተዛማጅነት ነጥብ"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "የMCP መልዕክት ረቂቅ"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP አገልጋይ"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "የMCP ማስማማት"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "እስካሁን ምንም AI አቅራቢ የለም።"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "በዚህ ሳምንት የAI ጥያቄ ሙከራ አልተመዘገበም።"
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · ለስራ ማመልከቻ ምርጥ"
 msgid "PDF check canceled. Retry when ready."
 msgstr "የPDF ፍተሻ ተሰርዟል። ዝግጁ ሲሆኑ እንደገና ይሞክሩ።"
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF ማስገባት"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "የሥራ ማስታወቂያ ምንጭ"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "የአቅራቢ ማቆየት እና አጠቃቀም የግላዊነት መመሪያውን ይከተላል። አለመቀበል ይህን ክዋኔ ይከላከላል እና ሌሎች የመተግበሪያ ባህሪያትን ይተዋል."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "አቅራቢን መፈተሽ"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "ፈቃዱን አንብብ"
 msgid "Read only"
 msgstr "ተነባቢ-ብቻ መዳረሻ"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "አጭር መግለጫውን ከ24 ሰዓት በፊት አድስ"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "አጭር መግለጫውን በዕለቱ ማለዳ አድስ"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "አጠቃቀምን አድስ"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "ምላሽ ተሰጥቷል"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "ምላሽ"
@@ -10393,6 +10471,10 @@ msgstr "ችግኝት ሪፖርት አድርግ"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "በአገልጋይ ኦፕሬተርዎ የደረሰ ሪፖርት። አመሰግናለሁ።"
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "ይህ አገልጋይ የመዘገባቸው የጥያቄ ሙከራዎች፣ ያልተሳኩ ወይም የተሰረዙትንም ጨምሮ። ድጋሚ ሙከራዎችና በመሣሪያ ዑደት ውስጥ እያንዳንዱ የሞዴል ጥሪ ለየብቻ ይቆጠራሉ፤ የፍሰት ክፍሎች፣ መሣሪያዎቹ ራሳቸውና ማስቀመጥ አይቆጠሩም።"
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "ሚና (አማራጭ)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "ሚና {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "የሥራ ሚና ጥቆማዎች"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "ምንም የማጠቃለያ አንቀጽ የለም።"
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "እነዚህ ሙከራዎች ናቸው፣ ክፍያ፣ የቶከን ብዛት ወይም ወጪ አይደሉም። የተቋረጠ አገልጋይ ከመላኩ በፊት ሙከራን ሊመዘግብ ይችላል፤ ይህ ሪፖርት አቅራቢው መቀበሉን አያረጋግጥም።"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "ጎብኚዎች የትምህርት ማስረጃውን ከማየታቸው በፊት የይለፍ ቃሉን ያስገባሉ። ለምታምናቸው ሰዎች ብቻ አጋራ።"
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "የድምጽ መልሶ ማጫወት"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "የድምፅ ቅንብሮች"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "ድምጽን ወደ ጽሑፍ መቀየር"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "የድር ፍለጋዎች በእነዚህ አገሮች ውስጥ ሥራ�
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "ድር ገጽ"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "ሳምንቶች በመለያዎ የሰዓት ክልል ከሰኞ እስከ እሑድ ይቆያሉ። ታሪኩ ይህ አገልጋይ መመዝገብ ሲጀምር ይጀምራል፤ የቀድሞ ጥያቄዎች ዳግም አይገነቡም። የግንኙነት ስሞችና ሞዴሎች ግንኙነቱ ከተወገደም በኋላ እንደተጠቀሙባቸው ይቀመጣሉ።"
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "ያለ አንድ፣ ተቀባዩን እራስዎ ይሞሉ እና ማር
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word ማስገባት"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Word ማስመጣት፣ አሻሽል፣ ረዳቱ፣ የሽፋን ደብዳቤ ረቂቆች፣ የሙያ ምክርና ይዘት ማመንጨት እና የድምጽ ልምምድ የAI አቅራቢ ያስፈልጋቸዋል። ማርትዕ፣ ዲዛይን፣ የተነባቢነት ምርመራዎች እና ማውረድ ያለ እሱ ይሰራሉ።"
@@ -14844,6 +14950,10 @@ msgstr "አጻጻፍ"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "የጽሑፍ እገዛ፣ የተበጁ ጥቆማዎች እና ረዳቱ። አንድ ባልመረጡበት ቦታ ሁሉ ነባሪው አቅራቢ ጥቅም ላይ ይውላል። ቁልፎችዎ ተመስጥረው ይቆያሉ።"
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "የጽሑፍ ግምገማ"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

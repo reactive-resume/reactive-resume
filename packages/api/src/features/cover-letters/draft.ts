@@ -7,6 +7,7 @@ import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { aiProvidersService } from "../ai-providers/service";
 import { dataBlock } from "../ai/data-block";
 import { getModel } from "../ai/service";
+import { createAiUsage } from "../ai/usage";
 import { applicationService, assertApplicationVersion } from "../applications/service";
 import { assertDocumentVersion } from "../documents/ownership";
 import { resumeService } from "../resume/service";
@@ -72,6 +73,11 @@ export async function draftLetterBody(
 		application?.jobDescription?.trim() ||
 		(application?.requirements.length ? application.requirements.map((item) => `- ${item}`).join("\n") : undefined);
 	const model = getModel({
+		usage: createAiUsage(userId, "draft-letter", provider, async (tx) => {
+			await assertDocumentVersion(tx, userId, { kind: "letter", ...letter });
+			if (resume) await assertDocumentVersion(tx, userId, { kind: "resume", ...resume });
+			if (application) await assertApplicationVersion(tx, userId, application);
+		}),
 		provider: provider.provider,
 		model: aiModelForTask(provider, "capable"),
 		apiKey: provider.apiKey,

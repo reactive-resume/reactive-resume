@@ -1,5 +1,6 @@
 import type { WritingNote } from "../store";
 import type { CheckIssue } from "./issues";
+import type { AiUsageSummary } from "@reactive-resume/schema/ai-usage";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
@@ -18,6 +19,7 @@ import { useEditorStore } from "../store";
 import { describeEntry } from "../write/model";
 import { getSectionName } from "./issues";
 import { mapWritingReview } from "./review";
+import { AiResultUsage } from "@/features/ai/usage";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { useResumeStore } from "@/features/resume/builder/draft";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -48,6 +50,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 	const hydrated = useRef<string | null>(null);
 	const [reviewInput, setReviewInput] = useState<string | null>(null);
 	const [reviewedAt, setReviewedAt] = useState<Date | null>(null);
+	const [reviewUsage, setReviewUsage] = useState<AiUsageSummary | null>(null);
 	const providerState = useHasUsableAiProvider();
 	const { usableProviders, hasUsableProvider } = providerState;
 	const [providerOverride, setProviderOverride] = useState<string | null>(null);
@@ -83,6 +86,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 		});
 		setReviewInput(entry.inputText);
 		setReviewedAt(entry.reviewedAt);
+		setReviewUsage(entry.aiUsage ?? null);
 	}, [saved.data, inputText, passages, resumeId]);
 
 	const { mutate, isPending, error, reset } = useMutation({
@@ -247,6 +251,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 					<Trans>Reviewed {reviewedAt.toLocaleString(i18n.locale)}</Trans>
 				</p>
 			)}
+			{review && <AiResultUsage usage={reviewUsage} />}
 			{reviewInput !== null && reviewInput !== inputText && (
 				<p role="status" className="text-xs text-warn-text">
 					<Trans>Resume changed since this review. Review these suggestions as out of date or run again.</Trans>

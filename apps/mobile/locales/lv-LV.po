@@ -1724,6 +1724,17 @@ msgstr "AI pakalpojumu sniedzējus nevarēja ielādēt. Mēģiniet vēlreiz vai 
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI nolasa ielīmētu tekstu tikai pēc jūsu pieprasījuma. Saites var izmantot lapā iegultos darba datus bez AI."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "MI pieprasījumu mēģinājumi: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Šī rezultāta MI pieprasījumu vēsture nav pieejama."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Neizdevās ielādēt MI lietojumu. Atsvaidziniet. Vecākiem serveriem var būt vajadzīgs atjauninājums."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "MI lietojums šonedēļ"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2220,6 +2239,7 @@ msgid "Aspect ratio"
 msgstr "Malu attiecība"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "Asistents"
@@ -2498,6 +2518,7 @@ msgstr "Sadaliet CV ierastajās sadaļās, lai to varētu segmentēt."
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Sadala garus vārdus starp zilbēm, izmantojot valodu, kas iestatīta lapā Page."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2607,6 +2628,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Karjera"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Karjeras tērzēšana"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4397,6 +4422,7 @@ msgstr "Cien. {name}!"
 msgid "Dear hiring team,"
 msgstr "Cienījamā darbā pieņemšanas komanda!"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5522,6 +5548,10 @@ msgstr "Aizpildiet informāciju manuāli"
 msgid "Fill empty fields with AI"
 msgstr "Aizpildiet tukšos laukus ar AI"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Aizpildīt laukus"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Aizpildīts no darba pieteikuma. Sveiciens seko vārdam."
@@ -5554,6 +5584,7 @@ msgstr "Pirmais piedāvājums"
 msgid "First run (YYYY-MM-DD)"
 msgstr "Pirmais brauciens (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5718,6 +5749,10 @@ msgstr "Aizmirst"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "Aizmirstot šo faktu, tiek noņemtas saites uz stāstiem un saglabātajiem vienumiem. Sākotnējais avots ir nemainīgs."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Atbilde veidlapā"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6270,6 +6305,10 @@ msgstr "Importēts no {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Notiek tā importēšana jūsu jaunajā CV…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "Uzlabot"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6923,6 +6962,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "Burta pamatteksts"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Vēstules melnraksts"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Vēstules lapa"
@@ -7199,6 +7242,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Ielādē saglabāto versiju…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Ielādē lietojumu…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7502,10 +7549,22 @@ msgstr "Iespējams, pieejams"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP atbilstības vērtējums"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP ziņas melnraksts"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP serveris"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP pielāgošana"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8027,6 +8086,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "Vēl nav AI nodrošinātāja"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Šonedēļ nav reģistrētu MI pieprasījumu mēģinājumu."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9185,6 +9248,10 @@ msgstr "PDF · Vispiemērotākais darba pieteikumiem"
 msgid "PDF check canceled. Retry when ready."
 msgstr "PDF pārbaude atcelta. Mēģiniet vēlreiz, kad esat gatavs."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF importēšana"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9391,6 +9458,7 @@ msgstr "darba sludinājuma avots"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9653,6 +9721,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "Pakalpojumu sniedzēja saglabāšana un izmantošana ievēro tā privātuma politiku. Noraidot šo darbību, tiek novērsta šī darbība un paliek pieejamas citas lietotņu funkcijas."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Pakalpojuma sniedzēja pārbaude"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9812,6 +9884,7 @@ msgstr "Lasīt licenci"
 msgid "Read only"
 msgstr "Tikai lasīšanas piekļuve"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10056,6 +10129,10 @@ msgstr "Atjaunināt atgādni 24 stundas iepriekš"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Atjaunināt atgādni tās dienas rītā"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Atsvaidzināt lietojumu"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10347,6 +10424,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Atbildēts"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Atbilde"
@@ -10393,6 +10471,10 @@ msgstr "Ziņot par problēmu"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Jūsu servera operators saņēmis ziņojumu. Paldies."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Šī servera reģistrētie pieprasījumu mēģinājumi, arī neveiksmīgi vai atcelti. Atkārtojumi un katrs modeļa izsaukums rīku ciklā tiek skaitīti atsevišķi; straumes daļas, paši rīki un saglabāšana netiek skaitīti."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10838,6 +10920,10 @@ msgstr "Loma (neobligāti)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Loma {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Amatu ieteikumi"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13123,6 +13209,10 @@ msgstr "Nav kopsavilkuma rindkopas."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Tie ir mēģinājumi, nevis rēķini, tokenu skaits vai izmaksas. Pārtraukts serveris var reģistrēt mēģinājumu pirms nosūtīšanas; pārskats neapstiprina saņemšanu pie pakalpojuma sniedzēja."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14412,9 +14502,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Apmeklētāji to ievada, pirms viņi redz CV. Kopīgojiet to tikai ar cilvēkiem, kuriem uzticaties."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Balss atskaņošana"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Balss iestatījumi"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Runas transkripcija"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14488,6 +14586,10 @@ msgstr "Tīmeklī tiek meklēts darbs šajās valstīs. Izvēlieties līdz trim 
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Tīmekļa vietne"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Nedēļa ilgst no pirmdienas līdz svētdienai konta laika joslā. Vēsture sākas, kad serveris sāk reģistrēšanu; agrāki pieprasījumi netiek atjaunoti. Savienojumu nosaukumi un modeļi saglabājas tādi, kā lietoti, arī pēc savienojuma noņemšanas."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14719,6 +14821,10 @@ msgstr "Bez tā jūs pats aizpildāt adresātu, un sastādīšanai tiek izmantot
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word importēšana"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Word importēšanai, Uzlabot, asistentam, vēstuļu melnrakstiem, Karjeras konsultācijām un ģenerēšanai, kā arī balss treniņiem tas ir vajadzīgs. Rediģēšana, Dizains, lasāmības pārbaudes un lejupielādes darbojas arī bez tā."
@@ -14844,6 +14950,10 @@ msgstr "Teksts"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Palīdzība rakstīšanā, pielāgoti ieteikumi un asistents. Ja neizvēlaties nodrošinātāju, tiek izmantots noklusējuma. Jūsu atslēgas paliek šifrētas."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Rakstības pārskatīšana"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

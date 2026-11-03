@@ -1,0 +1,618 @@
+import type { AddressInfo } from "node:net";
+import { randomUUID } from "node:crypto";
+import { readdir, readFile } from "node:fs/promises";
+import { createServer } from "node:http";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
+import { createRouterClient } from "@orpc/server";
+import { generateText, stepCountIs, streamText, tool } from "ai";
+import { strFromU8, unzipSync } from "fflate";
+import { Pool } from "pg";
+import { z } from "zod";
+import { db, withDatabasePool } from "@reactive-resume/db/client";
+import * as tables from "@reactive-resume/db/schema";
+import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { buildAccountZip } from "@reactive-resume/utils/account-zip";
+import { aiProvidersService } from "../ai-providers/service";
+import { authRouter } from "../auth/router";
+import { authService } from "../auth/service";
+import { careerRouter } from "../career/router";
+import { assertDocumentVersion } from "../documents/ownership";
+import { aiRouter } from "./router";
+import { getModel } from "./service";
+import { createAiUsage, readAiUsage, readWeeklyAiUsage } from "./usage";
+
+vi.mock("@reactive-resume/env/server", async (original) => {
+	const actual = await original<typeof import("@reactive-resume/env/server")>();
+	return {
+		env: {
+			...actual.env,
+			AI_PROVIDER: undefined,
+			AI_MODEL: undefined,
+			AI_API_KEY: undefined,
+			AI_BASE_URL: undefined,
+			FLAG_ALLOW_UNSAFE_AI_BASE_URL: true,
+		},
+	};
+});
+
+const databaseUrl = process.env.INTEGRATIONS_TEST_DATABASE_URL;
+describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protected routers and PostgreSQL", () => {
+	const namespace = `rx207_usage_${randomUUID().replaceAll("-", "")}`;
+	const admin = new Pool({ connectionString: databaseUrl });
+	let pool: Pool;
+	let baseURL: string;
+	let user: typeof tables.user.$inferSelect;
+	let mode: "text" | "retry" | "tools" | "stream" | "failure" | "hold" | "reply" | "answer" | "writing";
+	let release = () => {};
+	let arrived = () => {};
+	let requests: { model: string; path: string }[] = [];
+	const server = createServer((req, res) => {
+		let raw = "";
+		req.on("data", (chunk) => {
+			raw += chunk;
+		});
+		req.on("end", () => {
+			void (async () => {
+				const body = JSON.parse(raw) as { model: string };
+				requests.push({ model: body.model, path: req.url ?? "" });
+				arrived();
+				if (mode === "hold")
+					await new Promise<void>((resolve) => {
+						release = resolve;
+					});
+				if (mode === "failure" || (mode === "retry" && requests.length === 1)) {
+					res.writeHead(503, { "content-type": "application/json", "retry-after": "0" });
+					res.end(JSON.stringify({ error: { message: "Synthetic provider failure" } }));
+					return;
+				}
+				if (mode === "stream") {
+					res.writeHead(200, { "content-type": "text/event-stream" });
+					for (let index = 0; index < 50; index++)
+						res.write(
+							`data: ${JSON.stringify({ id: "stream", created: 1, model: body.model, choices: [{ index: 0, delta: { content: "x" }, finish_reason: null }] })}\n\n`,
+						);
+					res.end(
+						`data: ${JSON.stringify({ id: "stream", created: 1, model: body.model, choices: [{ index: 0, delta: {}, finish_reason: "stop" }] })}\n\ndata: [DONE]\n\n`,
+					);
+					return;
+				}
+				const callsTool = mode === "tools" && requests.length === 1;
+				const text =
+					mode === "writing"
+						? JSON.stringify({
+								summary: "Fictional saved wording review",
+								strengths: [],
+								suggestions: [],
+								jdAlignment: null,
+							})
+						: mode === "answer"
+							? JSON.stringify({ text: "Built a fictional reporting workflow.", factIds: [], note: null })
+							: mode === "reply"
+								? JSON.stringify({
+										title: "Reply",
+										asks: [],
+										unconfirmed: [],
+										reply: "Thank you.",
+										changes: [],
+										offer: null,
+									})
+								: "done";
+				res.writeHead(200, { "content-type": "application/json" });
+				res.end(
+					JSON.stringify({
+						id: "fixture",
+						created: 1,
+						model: body.model,
+						choices: [
+							{
+								index: 0,
+								message: callsTool
+									? {
+											role: "assistant",
+											content: null,
+											tool_calls: [
+												{ id: "read-1", type: "function", function: { name: "read_owned", arguments: "{}" } },
+											],
+										}
+									: { role: "assistant", content: text },
+								finish_reason: callsTool ? "tool_calls" : "stop",
+							},
+						],
+					}),
+				);
+			})();
+		});
+	});
+	const run = (operation: () => Promise<void>) => withDatabasePool(pool, operation);
+	const client = (permissions: ("read" | "write" | "delete")[] = ["read", "write", "delete"]) =>
+		createRouterClient(
+			{ ai: aiRouter, auth: authRouter, career: careerRouter },
+			{
+				context: {
+					locale: "en-US",
+					reqHeaders: new Headers(),
+					authentication: { user, method: "apiKey", permissions },
+				},
+			},
+		);
+	const provider = async () => {
+		const created = await aiProvidersService.create({
+			userId: user.id,
+			label: "Fictional connection",
+			provider: "openai-compatible",
+			model: "main-model",
+			fastModel: "fast-model",
+			capableModel: "capable-model",
+			baseURL,
+			apiKey: "synthetic-key-207",
+		});
+		await pool.query("update ai_providers set enabled=true,test_status='success' where id=$1", [created.id]);
+		return aiProvidersService.getRunnableById({ userId: user.id, id: created.id });
+	};
+	beforeAll(async () => {
+		await admin.query(`create schema ${namespace}`);
+		pool = new Pool({
+			connectionString: databaseUrl,
+			options: `-c search_path=${namespace} -c statement_timeout=10000`,
+		});
+		const migrations = new URL("../../../../../migrations/", import.meta.url);
+		for (const directory of (await readdir(migrations)).filter((name) => /^\d+_/.test(name)).sort())
+			await pool.query(
+				(await readFile(new URL(`${directory}/migration.sql`, migrations), "utf8")).replaceAll('"public".', ""),
+			);
+		await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+		baseURL = `http://127.0.0.1:${(server.address() as AddressInfo).port}/v1`;
+	}, 30000);
+	beforeEach(async () => {
+		release();
+		arrived = () => {};
+		requests = [];
+		mode = "text";
+		await pool.query('truncate "user" cascade');
+		await withDatabasePool(pool, async () => {
+			const nonce = randomUUID().slice(0, 8);
+			const users = await db
+				.insert(tables.user)
+				.values([
+					{
+						id: "usage-alice",
+						name: "Alice Example",
+						email: "alice@example.test",
+						username: `${namespace}-${nonce}-alice`,
+						displayUsername: `${namespace}-${nonce}-alice`,
+						timezone: "Europe/Berlin",
+					},
+					{
+						id: "usage-bob",
+						name: "Bob Example",
+						email: "bob@example.test",
+						username: `${namespace}-${nonce}-bob`,
+						displayUsername: `${namespace}-${nonce}-bob`,
+						timezone: "UTC",
+					},
+				])
+				.returning();
+			const owner = users[0];
+			if (!owner) throw new Error("Missing fixture user");
+			user = owner;
+		});
+	});
+	afterAll(async () => {
+		release();
+		server.closeAllConnections();
+		await new Promise<void>((resolve) => server.close(() => resolve()));
+		await pool?.end();
+		await admin.query(`drop schema if exists ${namespace} cascade`);
+		await admin.end();
+	});
+
+	it("counts actual retries with selected model provenance, without request content or credentials", () =>
+		run(async () => {
+			const connection = await provider();
+			const usage = createAiUsage(user.id, "improve", connection);
+			mode = "retry";
+			const result = await generateText({
+				model: getModel({ ...connection, model: "fast-model", usage }),
+				prompt: "Private synthetic prompt marker",
+				maxRetries: 1,
+			});
+			expect(result.text).toBe("done");
+			expect(requests).toHaveLength(2);
+			expect(await readAiUsage(user.id, [usage.operationId, usage.operationId])).toEqual({
+				requests: 2,
+				models: [
+					{ providerId: connection.id, label: connection.label, provider: connection.provider, model: "fast-model" },
+				],
+			});
+			const records = (await pool.query("select * from ai_request")).rows;
+			expect(records).toHaveLength(2);
+			expect(JSON.stringify(records)).not.toMatch(
+				/Private synthetic|synthetic-key|api_key|base_url|recipient_version|tokens|cost/,
+			);
+		}));
+
+	it("counts each tool-loop dispatch and one streamed request, independent of chunks or repeat reads", () =>
+		run(async () => {
+			const connection = await provider();
+			const usage = createAiUsage(user.id, "assistant", connection);
+			mode = "tools";
+			let tools = 0;
+			await generateText({
+				model: getModel({ ...connection, model: "capable-model", usage }),
+				prompt: "Read owned fixture",
+				maxRetries: 0,
+				stopWhen: stepCountIs(3),
+				tools: {
+					read_owned: tool({
+						inputSchema: z.object({}),
+						execute: async () => {
+							tools++;
+							return "owned";
+						},
+					}),
+				},
+			});
+			expect(tools).toBe(1);
+			expect(requests).toHaveLength(2);
+			expect((await readAiUsage(user.id, [usage.operationId]))?.requests).toBe(2);
+			mode = "stream";
+			const streamedUsage = createAiUsage(user.id, "draft-letter", connection);
+			const streamed = streamText({
+				model: getModel({ ...connection, usage: streamedUsage }),
+				prompt: "Stream fixture",
+				maxRetries: 0,
+			});
+			expect(await streamed.text).toBe("x".repeat(50));
+			expect(await streamed.text).toBe("x".repeat(50));
+			expect(requests).toHaveLength(3);
+			expect((await readAiUsage(user.id, [streamedUsage.operationId]))?.requests).toBe(1);
+		}));
+
+	it("records failed and cancelled dispatches, but not an already aborted request", () =>
+		run(async () => {
+			const connection = await provider();
+			mode = "failure";
+			await expect(
+				generateText({
+					model: getModel({ ...connection, usage: createAiUsage(user.id, "fit", connection) }),
+					prompt: "Failure",
+					maxRetries: 0,
+				}),
+			).rejects.toThrow();
+			expect(requests).toHaveLength(1);
+			const abort = new AbortController();
+			mode = "hold";
+			const accepted = new Promise<void>((resolve) => {
+				arrived = resolve;
+			});
+			const pending = generateText({
+				model: getModel({ ...connection, usage: createAiUsage(user.id, "fit", connection) }),
+				prompt: "Cancellation",
+				maxRetries: 0,
+				abortSignal: abort.signal,
+			});
+			await accepted;
+			abort.abort();
+			await expect(pending).rejects.toThrow();
+			release();
+			mode = "text";
+			await expect(
+				generateText({
+					model: getModel({ ...connection, usage: createAiUsage(user.id, "fit", connection) }),
+					prompt: "Already stopped",
+					maxRetries: 0,
+					abortSignal: AbortSignal.abort(),
+				}),
+			).rejects.toThrow();
+			expect(requests).toHaveLength(2);
+			expect((await client().ai.usage({})).requests).toBe(2);
+		}));
+
+	it.each(["disabled", "untested", "foreign", "deleted-account"] as const)(
+		"refuses %s before recording or transmitting",
+		(kind) =>
+			run(async () => {
+				const connection = await provider();
+				const usage = createAiUsage(kind === "foreign" ? "usage-bob" : user.id, "improve", connection);
+				const model = getModel({ ...connection, usage });
+				if (kind === "disabled") await pool.query("update ai_providers set enabled=false where id=$1", [connection.id]);
+				if (kind === "untested")
+					await aiProvidersService.update({ userId: user.id, id: connection.id, model: "replacement" });
+				if (kind === "deleted-account") await pool.query('delete from "user" where id=$1', [user.id]);
+				await expect(generateText({ model, prompt: "Must not leave", maxRetries: 0 })).rejects.toThrow();
+				expect(requests).toEqual([]);
+				expect((await pool.query("select * from ai_request")).rows).toEqual([]);
+			}),
+	);
+
+	it("checks shared document versions at transport and fails closed when meter persistence fails", () =>
+		run(async () => {
+			const connection = await provider();
+			const [resume] = await db
+				.insert(tables.resume)
+				.values({ userId: user.id, name: "Fictional resume", slug: "fixture", data: sampleResumeData })
+				.returning();
+			if (!resume) throw new Error("Missing fixture resume");
+			const usage = createAiUsage(user.id, "assistant", connection, (reader) =>
+				assertDocumentVersion(reader, user.id, { kind: "resume", ...resume }),
+			);
+			const model = getModel({ ...connection, usage });
+			await pool.query("update resume set updated_at=updated_at+interval '1 millisecond' where id=$1", [resume.id]);
+			await expect(generateText({ model, prompt: "Stale document", maxRetries: 0 })).rejects.toThrow();
+			await pool.query("alter table ai_request add constraint reject_meter_fixture check(false)");
+			try {
+				await expect(
+					generateText({
+						model: getModel({ ...connection, usage: createAiUsage(user.id, "improve", connection) }),
+						prompt: "Meter unavailable",
+						maxRetries: 0,
+					}),
+				).rejects.toThrow();
+			} finally {
+				await pool.query("alter table ai_request drop constraint reject_meter_fixture");
+			}
+			expect(requests).toEqual([]);
+			expect((await pool.query("select * from ai_request")).rows).toEqual([]);
+		}));
+
+	it.each([
+		{ now: "2026-03-29T12:00:00Z", start: "2026-03-22T23:00:00Z", end: "2026-03-29T22:00:00Z", hours: 167 },
+		{ now: "2026-10-25T12:00:00Z", start: "2026-10-18T22:00:00Z", end: "2026-10-25T23:00:00Z", hours: 169 },
+	])(
+		"uses account-local Monday boundaries and isolates accounts across $hours-hour DST weeks",
+		({ now, start, end, hours }) =>
+			run(async () => {
+				const connection = await provider();
+				const common = {
+					operationId: "boundary",
+					action: "improve" as const,
+					providerId: connection.id,
+					label: connection.label,
+					provider: connection.provider,
+					model: "fast-model",
+				};
+				await db.insert(tables.aiRequest).values([
+					{ ...common, userId: user.id, createdAt: new Date(new Date(start).getTime() - 1) },
+					{ ...common, userId: user.id, createdAt: new Date(start) },
+					{
+						...common,
+						userId: user.id,
+						action: "assistant",
+						model: "capable-model",
+						createdAt: new Date(new Date(end).getTime() - 1),
+					},
+					{ ...common, userId: user.id, createdAt: new Date(end) },
+					{ ...common, userId: "usage-bob", createdAt: new Date(now) },
+				]);
+				const report = await readWeeklyAiUsage(user.id, new Date(now));
+				expect(report).toMatchObject({
+					start: new Date(start),
+					end: new Date(end),
+					timezone: "Europe/Berlin",
+					requests: 2,
+				});
+				expect((report.end.getTime() - report.start.getTime()) / 3_600_000).toBe(hours);
+				expect(report.groups).toEqual(
+					expect.arrayContaining([
+						expect.objectContaining({ action: "improve", model: "fast-model", requests: 1 }),
+						expect.objectContaining({ action: "assistant", model: "capable-model", requests: 1 }),
+					]),
+				);
+				expect(report.groups).toHaveLength(2);
+				expect((await readAiUsage("usage-bob", [common.operationId]))?.requests).toBe(1);
+			}),
+	);
+
+	it("keeps generated answer provenance through save, older-client edits and submitted snapshots", () =>
+		run(async () => {
+			const connection = await provider();
+			const [application] = await db
+				.insert(tables.application)
+				.values({ userId: user.id, company: "Fictional Harbor", role: "Engineer" })
+				.returning();
+			if (!application) throw new Error("Missing fixture application");
+			mode = "answer";
+			const generated = await client().career.generate({
+				applicationId: application.id,
+				locale: "en-US",
+				task: { task: "answer", question: "What did you build?", answer: "" },
+			});
+			expect(generated.answer).toMatchObject({ aiOperationIds: [expect.any(String)] });
+			const source = generated.answer as NonNullable<typeof generated.answer> & { aiOperationIds: string[] };
+			const before = await client().career.workspace({ applicationId: application.id });
+			const answer = {
+				id: "answer-1",
+				question: "What did you build?",
+				answer: source.text,
+				factIds: source.factIds,
+				aiOperationIds: source.aiOperationIds,
+			};
+			await db.insert(tables.aiRequest).values([
+				{
+					userId: "usage-bob",
+					operationId: "foreign-answer-op",
+					action: "answer",
+					providerId: connection.id,
+					label: connection.label,
+					provider: connection.provider,
+					model: connection.model,
+				},
+				{
+					userId: user.id,
+					operationId: "wrong-action-op",
+					action: "improve",
+					providerId: connection.id,
+					label: connection.label,
+					provider: connection.provider,
+					model: connection.model,
+				},
+			]);
+			for (const bad of ["foreign-answer-op", "wrong-action-op", "fabricated-op"]) {
+				await expect(
+					client().career.saveWorkspace({
+						applicationId: application.id,
+						answers: [{ ...answer, aiOperationIds: [bad] }],
+						expected: { answers: before.answers },
+					}),
+				).rejects.toMatchObject({ code: "BAD_REQUEST" });
+				expect((await client().career.workspace({ applicationId: application.id })).answers).toEqual(before.answers);
+			}
+			const saved = await client().career.saveWorkspace({
+				applicationId: application.id,
+				answers: [answer],
+				expected: { answers: before.answers },
+			});
+			await client().career.saveWorkspace({
+				applicationId: application.id,
+				checklist: [0, 2],
+				expected: { checklist: saved.checklist },
+			});
+			const review = {
+				applicationId: application.id,
+				question: answer.question,
+				answer: answer.answer,
+				scope: "reusable" as const,
+				source: "ai-assisted" as const,
+				factIds: [],
+				storyIds: [],
+				expectedEvidence: [],
+				reviewed: true as const,
+				noEmployerWording: true,
+				aiOperationIds: source.aiOperationIds,
+			};
+			const library = await client().career.answers.save(review);
+			const { aiOperationIds: _ids, ...oldReview } = review;
+			const updated = await client().career.answers.save({
+				...oldReview,
+				id: library.id,
+				expectedRevision: library.revision,
+				answer: answer.answer + " Reviewed in library.",
+			});
+			expect(updated.aiOperationIds).toEqual(source.aiOperationIds);
+			const [other] = await db
+				.insert(tables.application)
+				.values({ userId: user.id, company: "Fictional Cedar", role: "Builder" })
+				.returning();
+			if (!other) throw new Error("Missing second application");
+			const reused = await client().career.answers.reuse({
+				id: library.id,
+				expectedRevision: updated.revision,
+				applicationId: other.id,
+				answer: updated.answer,
+				reviewed: true,
+			});
+			expect(reused.aiOperationIds).toEqual(source.aiOperationIds);
+
+			const legacy = saved.answers.map(({ id, question, answer, factIds }) => ({ id, question, answer, factIds }));
+			const edited = await client().career.saveWorkspace({
+				applicationId: application.id,
+				answers: legacy.map((row) => ({ ...row, answer: row.answer + " Reviewed." })),
+				expected: { answers: legacy },
+			});
+			expect(edited.answers[0]).toMatchObject({ aiOperationIds: source.aiOperationIds });
+			const old = edited.answers.map(({ id, question, answer, factIds }) => ({ id, question, answer, factIds }));
+			await client().career.submitApplication({ applicationId: application.id, answers: old, expectedAnswers: old });
+			const snapshots = await client().career.savedItems({ applicationId: application.id, kind: "answers" });
+			expect(snapshots[0]?.aiUsage).toEqual({
+				requests: 1,
+				models: [
+					{ providerId: connection.id, label: connection.label, provider: connection.provider, model: "main-model" },
+				],
+			});
+			expect(snapshots[0]?.data).toMatchObject({
+				kind: "answers",
+				answers: [{ aiOperationIds: source.aiOperationIds }],
+			});
+			const submitted = await client().career.workspace({ applicationId: application.id });
+			expect(submitted.submissionReview).toMatchObject({
+				checklist: [0, 2],
+				answers: true,
+				answerVersionId: snapshots[0]?.id,
+			});
+			const afterLegacyEdit = await client().career.saveWorkspace({
+				applicationId: application.id,
+				answers: old.map((row) => ({ ...row, answer: row.answer + " Later draft." })),
+				expected: { answers: old },
+			});
+			expect(afterLegacyEdit.answers[0]?.aiOperationIds).toEqual(source.aiOperationIds);
+			expect(afterLegacyEdit.submissionReview).toEqual(submitted.submissionReview);
+			await expect(
+				client().career.saveWorkspace({
+					applicationId: application.id,
+					checklist: [1],
+					expected: { checklist: submitted.checklist },
+				}),
+			).rejects.toMatchObject({ code: "CONFLICT" });
+			expect((await client().career.workspace({ applicationId: application.id })).submissionReview).toEqual(
+				submitted.submissionReview,
+			);
+			expect(requests).toHaveLength(1);
+		}));
+
+	it("retains saved-result provenance after connection edits/removal, exports it to old archive clients and deletes account usage", () =>
+		run(async () => {
+			const connection = await provider();
+			const [application] = await db
+				.insert(tables.application)
+				.values({ userId: user.id, company: "Fictional Harbor", role: "Engineer", status: "applied" })
+				.returning();
+			if (!application) throw new Error("Missing fixture application");
+			mode = "reply";
+			const generated = await client().career.generate({
+				applicationId: application.id,
+				locale: "en-US",
+				task: { task: "reply", message: "When are you available?" },
+			});
+			expect(generated.item?.aiOperationId).toEqual(expect.any(String));
+			const saved = await client().career.savedItems({ applicationId: application.id });
+			expect(saved[0]?.aiUsage).toEqual({
+				requests: 1,
+				models: [
+					{ providerId: connection.id, label: connection.label, provider: connection.provider, model: "main-model" },
+				],
+			});
+			const [resume] = await db
+				.insert(tables.resume)
+				.values({
+					userId: user.id,
+					name: "Fictional writing resume",
+					slug: "writing",
+					data: sampleResumeData,
+				})
+				.returning();
+			if (!resume) throw new Error("Missing writing fixture resume");
+			mode = "writing";
+			await client().ai.atsReview({
+				resumeId: resume.id,
+				extractedText: "Fictional original",
+				findings: [],
+				passages: [],
+			});
+			const writing = await client(["read"]).ai.writingReview({ resumeId: resume.id });
+			expect(writing?.review.summary).toBe("Fictional saved wording review");
+			expect(writing?.aiUsage).toEqual(saved[0]?.aiUsage);
+			await aiProvidersService.update({ userId: user.id, id: connection.id, label: "Renamed", model: "replacement" });
+			await aiProvidersService.delete({ userId: user.id, id: connection.id });
+			expect((await client().career.savedItems({ applicationId: application.id }))[0]?.aiUsage).toEqual(
+				saved[0]?.aiUsage,
+			);
+			expect((await client(["read"]).ai.writingReview({ resumeId: resume.id }))?.aiUsage).toEqual(writing?.aiUsage);
+			const report = await client(["read"]).ai.usage({ userId: "usage-bob" } as {});
+			expect(report.requests).toBe(2);
+			expect(report.groups[0]).toMatchObject({ action: "reply", label: "Fictional connection", model: "main-model" });
+			const exported = await client(["read"]).auth.exportData({});
+			expect(exported.career.aiRequests).toHaveLength(2);
+			expect(exported.career.writingReviews).toHaveLength(1);
+			const archive = unzipSync(buildAccountZip(exported));
+			const careerFile = archive["career.json"];
+			if (!careerFile) throw new Error("Missing career export");
+			const career = JSON.parse(strFromU8(careerFile)) as { aiRequests: unknown[]; writingReviews: unknown[] };
+			expect(career.aiRequests).toHaveLength(2);
+			expect(career.writingReviews).toHaveLength(1);
+			expect(JSON.stringify(career.aiRequests)).not.toContain("synthetic-key-207");
+			await authService.deleteAccount({ userId: user.id });
+			expect((await pool.query("select * from ai_request")).rows).toEqual([]);
+			expect((await pool.query("select * from resume_writing_review")).rows).toEqual([]);
+			expect(requests).toHaveLength(2);
+		}));
+});
