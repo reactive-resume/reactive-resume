@@ -15,6 +15,7 @@ let hooks = [];
 let cursor = 0;
 const react = {
 	createElement: element,
+	useMemo: (make) => make(),
 	useCallback: (fn) => fn,
 	useImperativeHandle(ref, make) {
 		if (ref) ref.current = make();
@@ -98,6 +99,7 @@ const mocks = {
 	},
 	"@/routes": { routes },
 	"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
+	"@/features/documents/tag-suggestions": { useExistingTags: () => [] },
 	"@/ui": ui,
 	"@/shell/key-commands": {
 		supportsUnmodifiedCommands: true,
@@ -362,6 +364,10 @@ const domainNextStep = load("../../../packages/schema/src/applications/next-step
 		zod,
 		"@reactive-resume/utils/timezone": timeParser,
 	}),
+});
+mocks["@reactive-resume/schema/applications/next-step"] = domainNextStep;
+mocks["@reactive-resume/schema/applications/upcoming"] = load("../../../packages/schema/src/applications/upcoming.ts", {
+	"./follow-up": followUpDomain,
 });
 const history = load("features/applications/history.ts", {
 	"@reactive-resume/schema/applications/next-step": domainNextStep,
@@ -1941,6 +1947,10 @@ const discovered = ["Platform engineer", "Reliability engineer"].map((role, inde
 	lastSeenAt: new Date(),
 	discoverySource: null,
 }));
+let todayApplications = [];
+let todayOffers = [];
+let todayOfferState = { isPending: false, isError: false };
+let todayNow = new Date();
 const { TodayScreen } = load("features/career/today.tsx", {
 	"@/features/applications/stage-actions": { useOfferHints: () => undefined, offerHintFor: () => undefined },
 	"expo-web-browser": { openBrowserAsync: async () => {} },
@@ -1961,7 +1971,8 @@ const { TodayScreen } = load("features/career/today.tsx", {
 		useCareerAction: () => ({ pending: false, run: async (operation) => operation(), refresh: async () => {} }),
 		useCareerTime: () => ({ timeZone: "UTC", locale: "en-US", when: () => "31 Oct", profile: { refetch() {} } }),
 		useSaveTimezone: () => ({ isPending: false, mutate() {} }),
-		useNow: () => new Date(),
+		useNow: () => todayNow,
+		useOffers: () => ({ data: todayOffers, ...todayOfferState }),
 		useTodayQueries: () => ({
 			schedules: { data: [] },
 			opportunities: { data: discovered },
@@ -1975,8 +1986,17 @@ const { TodayScreen } = load("features/career/today.tsx", {
 	"./shared": { Actions: "Actions", LoadState: "LoadState", Section: "Section", SwitchRow: "SwitchRow" },
 	"@/features/applications/lane-queries": { useApplicationLanes: () => ({ lanes: [] }) },
 	"@/features/applications/lanes": { getLaneLabel: () => "Saved", resolveLane: () => null },
-	"@/features/applications/next-step": { getNextStep: () => ({ kind: "none" }) },
-	"@/features/applications/queries": { useApplications: () => ({ data: [], refetch() {} }) },
+	"@/features/applications/next-step": nextSteps,
+	"@/features/applications/queries": { useApplications: () => ({ data: todayApplications, refetch() {} }) },
+	"@/routes": {
+		routes: {
+			...routes,
+			application: (id, tab, round) => {
+				calls.push({ todayRoute: { id, tab, round } });
+				return routes.application(id, tab);
+			},
+		},
+	},
 });
 let triageTree = render(TodayScreen);
 control(triageTree, "Select all roles").onPress();
@@ -1994,6 +2014,66 @@ assert.equal(
 );
 assert.match(JSON.stringify(triageTree), /1 updated; 1 failed/);
 console.log("PASS native discovery serial bulk triage, partial-failure selection and success suppression");
+
+reset();
+todayNow = new Date("2030-01-03T10:00:00Z");
+todayApplications = [
+	{
+		...nativeJob,
+		status: "offer",
+		activity: [],
+		followUpAt: "2030-01-03T11:00:00Z",
+		followUpDateOnly: false,
+		followUpNote: "Email Maya",
+	},
+];
+todayOffers = [
+	{ applicationId: nativeJob.id, createdAt: "2030-01-02", data: { kind: "offer", respondBy: "2030-01-03T12:00:00Z" } },
+];
+const comingUpView = () =>
+	nodes(render(TodayScreen)).find((node) => node.type === "Section" && node.props.title === "Coming up");
+let comingUp = comingUpView();
+assert.ok(JSON.stringify(comingUp).includes("Follow-up reminder"));
+assert.ok(JSON.stringify(comingUp).includes("Email Maya"));
+assert.ok(JSON.stringify(comingUp).includes("Reply to the offer"));
+control(comingUp, "Open workspace").onPress();
+assert.deepEqual(calls.find((call) => call?.todayRoute).todayRoute, {
+	id: nativeJob.id,
+	tab: "messages",
+	round: undefined,
+});
+todayOffers = [
+	...todayOffers,
+	{ applicationId: nativeJob.id, createdAt: "2030-01-03", data: { kind: "offer", respondBy: null } },
+];
+assert.ok(!JSON.stringify(comingUpView()).includes("Reply to the offer"), "a newer offer clears its earlier deadline");
+for (const state of [
+	{ isPending: true, isError: false },
+	{ isPending: false, isError: true },
+]) {
+	todayOfferState = state;
+	todayOffers = undefined;
+	const partial = comingUpView();
+	assert.match(JSON.stringify(partial), /Email Maya/);
+	assert.doesNotMatch(JSON.stringify(partial), /Reply to the offer/);
+	assert.ok(control(partial, "Open workspace"));
+}
+todayOfferState = { isPending: false, isError: false };
+todayOffers = [];
+todayApplications = [{ ...todayApplications[0], activity: [{ ...nativeRound, at: "2030-01-03T09:30:00Z" }] }];
+calls.length = 0;
+comingUp = comingUpView();
+control(comingUp, "Open workspace").onPress();
+assert.deepEqual(calls.find((call) => call?.todayRoute).todayRoute, {
+	id: nativeJob.id,
+	tab: "prepare",
+	round: nativeRound.id,
+});
+todayApplications = [{ ...todayApplications[0], status: "closed" }];
+assert.ok(!JSON.stringify(comingUpView()).includes("Open workspace"));
+todayApplications = [];
+todayOffers = [];
+console.log("PASS native Today shows simultaneous dated steps, latest offer clearing and exact interview navigation");
 
 const { DraftConflictSheet } = load("draft/conflict-sheet.tsx", {
 	"./runtime": {},
@@ -2093,6 +2173,9 @@ const scheduleRow = {
 	email: false,
 };
 const ready = (data) => ({ data, isPending: false, isError: false });
+let scheduleScope = "schedule-account";
+let scheduleApplications = [{ ...application, status: "applied" }];
+let scheduleDetail = { isPending: false, isFetching: false, isSuccess: false };
 const scheduleTime = { timeZone: "UTC", locale: "en-US", profile: ready({ emailVerified: true }) };
 const scheduleCareer = { profile: ready({ targetRoles: [], locations: [] }) };
 const scheduleApi = { career: { saveSchedule: async (input) => scheduleWrites.push(input) } };
@@ -2119,12 +2202,18 @@ const { ScheduleSheet } = load("features/career/schedule-sheet.tsx", {
 	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
 	"@/api/client": { orpc: { webAccess: { status: { queryOptions: () => ({}), key: () => [] } } } },
 	"@/api/flags": { useFlags: () => ready({ careerSchedulingEnabled: true, smtpEnabled: false }) },
-	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "https://example.test" }) },
+	"@/auth/session": {
+		getAccountScope: () => scheduleScope,
+		useSession: () => ({ status: "signed-in", server: "https://example.test" }),
+	},
 	"@/features/ai/providers": {
 		AIProviderSetupSheet: "AIProviderSetupSheet",
 		useHasAIProvider: () => ({ usableProviders: [], defaultProvider: null, hasAIProvider: false }),
 	},
-	"@/features/applications/queries": { useApplications: () => ready([{ ...application, status: "applied" }]) },
+	"@/features/applications/queries": {
+		useApplications: () => ready(scheduleApplications),
+		useApplication: () => scheduleDetail,
+	},
 });
 const scheduleForm = render(ScheduleSheet, { schedule: scheduleRow, kind: "follow-up", onClose() {}, onDelete() {} });
 let scheduleTree = render(scheduleForm.type, scheduleForm.props);
@@ -2142,6 +2231,108 @@ await settle();
 assert.equal(scheduleWrites.length, 1, "changed past time must still be rejected");
 assert.match(JSON.stringify(render(scheduleForm.type, scheduleForm.props)), /Pick a time after now/);
 console.log("PASS native Today past note edit preserves exact seconds and changed-past-time guard");
+
+reset();
+const noteApplication = {
+	...application,
+	activity: [{ id: "note", type: "note", at: "2030-01-02", text: "Email Maya\n about the next round" }],
+};
+scheduleApplications = [
+	{ ...noteApplication, status: "applied" },
+	{ ...noteApplication, id: "second-application", company: "Second application", status: "applied" },
+];
+scheduleDetail = { data: noteApplication, isPending: false, isFetching: false, isSuccess: true };
+const newSchedule = render(ScheduleSheet, { schedule: null, kind: "follow-up", onClose() {}, onDelete() {} });
+const noteScheduleView = () => render(newSchedule.type, newSchedule.props);
+assert.equal(control(noteScheduleView(), "Follow-up note").value, "Email Maya about the next round");
+control(noteScheduleView(), "Application").onChange("second-application");
+assert.equal(
+	control(noteScheduleView(), "Follow-up note").value,
+	"",
+	"a different application's late result cannot prefill",
+);
+scheduleDetail = {
+	...scheduleDetail,
+	data: {
+		...noteApplication,
+		id: "second-application",
+		activity: [{ ...noteApplication.activity[0], text: "Call Priya" }],
+	},
+};
+assert.equal(control(noteScheduleView(), "Follow-up note").value, "Call Priya");
+control(noteScheduleView(), "Follow-up note").onChangeText("");
+scheduleDetail = {
+	...scheduleDetail,
+	data: { ...scheduleDetail.data, activity: [{ ...noteApplication.activity[0], text: "Later server note" }] },
+};
+assert.equal(control(noteScheduleView(), "Follow-up note").value, "", "deliberately cleared note stays blank");
+control(noteScheduleView(), "Application").onChange(application.id);
+assert.equal(control(noteScheduleView(), "Follow-up note").value, "", "selection changes retain an authored blank");
+control(noteScheduleView(), "What should run").onChange("discovery");
+control(noteScheduleView(), "What should run").onChange("follow-up");
+assert.equal(
+	control(noteScheduleView(), "Follow-up note").value,
+	"",
+	"kind changes retain the authored follow-up draft",
+);
+
+reset();
+scheduleDetail = { isPending: true, isFetching: true, isSuccess: false };
+let pendingSchedule = render(ScheduleSheet, { schedule: null, kind: "follow-up", onClose() {}, onDelete() {} });
+const pendingScheduleView = () => render(pendingSchedule.type, pendingSchedule.props);
+assert.equal(
+	control(pendingScheduleView(), "Save schedule").disabled,
+	true,
+	"automatic prefill waits for selected detail",
+);
+control(pendingScheduleView(), "Follow-up note").onChangeText("Authored before detail arrived");
+scheduleDetail = { data: noteApplication, isPending: false, isFetching: false, isSuccess: true };
+assert.equal(control(pendingScheduleView(), "Follow-up note").value, "Authored before detail arrived");
+assert.equal(control(pendingScheduleView(), "Save schedule").disabled, false);
+control(pendingScheduleView(), "Remind me on (YYYY-MM-DD)").onChangeText("2030-01-05");
+control(pendingScheduleView(), "Save schedule").onPress();
+await settle();
+assert.equal(scheduleWrites.at(-1).query, "Authored before detail arrived");
+scheduleScope = "different-account";
+assert.equal(
+	render(ScheduleSheet, { schedule: null, kind: "follow-up", onClose() {}, onDelete() {} }).props.key,
+	"different-account",
+	"account changes remount the draft owner",
+);
+scheduleScope = "schedule-account";
+const failedPrefills = [];
+for (const data of [undefined, noteApplication]) {
+	reset();
+	scheduleWrites.length = 0;
+	scheduleDetail = { data, isPending: false, isFetching: false, isSuccess: false, isError: true };
+	const failed = render(ScheduleSheet, { schedule: null, kind: "follow-up", onClose() {}, onDelete() {} });
+	const view = () => render(failed.type, failed.props);
+	control(view(), "Remind me on (YYYY-MM-DD)").onChangeText("2030-01-05");
+	const note = control(view(), "Follow-up note").value;
+	const disabled = control(view(), "Save schedule").disabled;
+	control(view(), "Save schedule").onPress();
+	await settle();
+	failedPrefills.push({ cached: Boolean(data), note, disabled, saved: scheduleWrites.map((row) => row.query) });
+	if (!data) {
+		control(view(), "Follow-up note").onChangeText("");
+		assert.equal(control(view(), "Save schedule").disabled, false, "an intentional blank ends automatic prefill");
+		control(view(), "Save schedule").onPress();
+		await settle();
+		assert.equal(scheduleWrites.at(-1).query, "", "authored blanks remain saveable after an unavailable detail");
+	}
+}
+assert.deepEqual(failedPrefills, [
+	{ cached: false, note: "", disabled: true, saved: [] },
+	{
+		cached: true,
+		note: "Email Maya about the next round",
+		disabled: false,
+		saved: ["Email Maya about the next round"],
+	},
+]);
+console.log(
+	"PASS native Remind me full-detail prefill, late/selection guards, authored blanks, persistence and account key",
+);
 {
 	// Writing publishes the persisted query, never a completed mutation's discarded response.
 	reset();
@@ -2334,7 +2525,10 @@ console.log("PASS native Today past note edit preserves exact seconds and change
 		"@reactive-resume/schema/career": {},
 		"@reactive-resume/utils/timezone": { fromZonedDateTime: () => new Date("2026-11-02T12:00:00Z") },
 		"./hooks": scheduleHooks,
-		"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+		"@/features/applications/queries": {
+			useApplications: () => ({ data: [] }),
+			useApplication: () => ({ isPending: false, isFetching: false, isSuccess: false }),
+		},
 		"./scheduling": {
 			collectInterviews: () => [],
 			firstLeadAhead: () => "24h",
@@ -2344,7 +2538,10 @@ console.log("PASS native Today past note edit preserves exact seconds and change
 		"./shared": { EditorSheet: "EditorSheet", SwitchRow: "SwitchRow" },
 		"@/api/client": { orpc: { webAccess: { status: { queryOptions: () => ({}), key: () => [] } } } },
 		"@/api/flags": { useFlags: () => ({ data: { careerSchedulingEnabled: true } }) },
-		"@/auth/session": { useSession: () => ({ status: "signed-in", server: "https://fictional.example" }) },
+		"@/auth/session": {
+			getAccountScope: () => "ai-schedule-account",
+			useSession: () => ({ status: "signed-in", server: "https://fictional.example" }),
+		},
 		"@/features/ai/providers": { useHasAIProvider: () => scheduleAi },
 		"@/features/ai/web-access": {},
 	});

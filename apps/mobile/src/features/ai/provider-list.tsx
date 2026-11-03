@@ -10,7 +10,19 @@ import { NextSteps } from "./next-steps";
 import { ProviderEditorSheet } from "./provider-editor";
 import { AIProviderSetupSheet, useHasAIProvider } from "./providers";
 import { client, orpc } from "@/api/client";
-import { Banner, Button, Card, EmptyState, Skeleton, Text, useTheme } from "@/ui";
+import {
+	Banner,
+	Button,
+	Card,
+	ConfirmDialog,
+	EmptyState,
+	IconButton,
+	ListRow,
+	Sheet,
+	Skeleton,
+	Text,
+	useTheme,
+} from "@/ui";
 
 export function ProviderList() {
 	const { t } = useLingui();
@@ -95,6 +107,8 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 	const [pending, setPending] = useState(false);
 	const [result, setResult] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
+	const [menu, setMenu] = useState(false);
+	const [confirmDelete, setConfirmDelete] = useState(false);
 	const testError =
 		failure ?? (result ? null : provider.testStatus === "failure" ? providerTestError(provider.testErrorKind) : null);
 	const run = async (action: "test" | "default") => {
@@ -116,6 +130,22 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 			setFailure(aiSettingsError(error, action === "test"));
 		} finally {
 			void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
+			busy.current = false;
+			setPending(false);
+		}
+	};
+	const remove = async () => {
+		if (busy.current) return;
+		setConfirmDelete(false);
+		busy.current = true;
+		setPending(true);
+		setFailure(null);
+		try {
+			await client.aiProviders.delete({ id: provider.id });
+			await queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
+		} catch (error) {
+			setFailure(aiSettingsError(error));
+		} finally {
 			busy.current = false;
 			setPending(false);
 		}
@@ -165,6 +195,12 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 								onPress={() => void run("default")}
 							/>
 						)}
+						<IconButton
+							icon="dots-three"
+							label={t`Provider options`}
+							disabled={pending}
+							onPress={() => setMenu(true)}
+						/>
 					</View>
 					{result && (
 						<Text accessibilityLiveRegion="polite" color="accentText">
@@ -176,6 +212,30 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 							{t`Failed`} · {testError}
 						</Text>
 					)}
+					<Sheet open={menu} onClose={() => setMenu(false)} title={provider.label} detents={[0.35]}>
+						<View style={{ paddingHorizontal: space.s4, gap: space.s2 }}>
+							<ListRow
+								title={t`Delete provider`}
+								leading="trash"
+								destructive
+								disabled={pending}
+								onPress={() => {
+									setMenu(false);
+									setConfirmDelete(true);
+								}}
+							/>
+						</View>
+					</Sheet>
+					<ConfirmDialog
+						open={confirmDelete}
+						title={t`Delete this provider?`}
+						message={t`Its saved key is deleted. Conversations using it need another provider.`}
+						confirmLabel={t`Delete provider`}
+						cancelLabel={t`Keep provider`}
+						destructive
+						onConfirm={() => void remove()}
+						onCancel={() => setConfirmDelete(false)}
+					/>
 				</>
 			)}
 		</Card>

@@ -51,7 +51,7 @@ export async function handleOpenApi(request: Request, trustedClient: string) {
 	resHeaders.set("X-Content-Type-Options", "nosniff");
 	if (!response)
 		return Response.json(
-			{ defined: false, code: "NOT_FOUND", status: 404, message: "Not found" },
+			{ defined: false, code: "NOT_FOUND", status: 404, message: "Not Found" },
 			{ status: 404, headers: resHeaders },
 		);
 	return mergeResponseHeaders(response, resHeaders);
