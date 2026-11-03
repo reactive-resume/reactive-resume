@@ -60,6 +60,8 @@ function harness({ lifetime = 30 } = {}) {
 		copy: async () => true,
 		copied: [],
 		logs: [],
+		logReply: async () => undefined,
+		invalidations: 0,
 		effects: [],
 		clearedReminders: [],
 	};
@@ -81,6 +83,14 @@ function harness({ lifetime = 30 } = {}) {
 		activity: [{ id: "e1", type: "stage", at: "2026-11-01T12:00:00.000Z", writeSequence: 1 }],
 	};
 	const jsx = (type, props) => ({ type, props });
+	const hooks = [];
+	let cursor = 0;
+	let renderingReply = false;
+	const hook = (initial) => {
+		if (!renderingReply) return initial();
+		const index = cursor++;
+		return (hooks[index] ??= initial());
+	};
 	const messages = load(
 		MOBILE + "/src/features/workspace/tabs/messages.tsx",
 		{
@@ -91,10 +101,31 @@ function harness({ lifetime = 30 } = {}) {
 			"expo-clipboard": { setStringAsync: (text) => (env.copied.push(text), env.copy()) },
 			"expo-router": { useLocalSearchParams: () => ({}), useRouter: () => ({}) },
 			react: {
-				useState: (init) => [typeof init === "function" ? init() : init, () => {}],
-				useRef: (value) => ({ current: value }),
-				useEffect: (effect) => env.effects.push(effect),
-				useEffectEvent: (effect) => effect,
+				useState: (init) => {
+					const cell = hook(() => ({ value: typeof init === "function" ? init() : init }));
+					return [
+						cell.value,
+						(value) => {
+							cell.value = typeof value === "function" ? value(cell.value) : value;
+						},
+					];
+				},
+				useRef: (value) => hook(() => ({ current: value })),
+				useEffect: (effect, dependencies) => {
+					const cell = hook(() => ({}));
+					if (!cell.dependencies || dependencies.some((value, index) => !Object.is(value, cell.dependencies[index]))) {
+						cell.dependencies = dependencies;
+						env.effects.push(() => {
+							cell.cleanup?.();
+							cell.cleanup = effect();
+						});
+					}
+				},
+				useEffectEvent: (effect) => {
+					const cell = hook(() => ({ current: effect }));
+					cell.current = effect;
+					return (cell.event ??= (...args) => cell.current(...args));
+				},
 				useSyncExternalStore: (_subscribe, get) => get(),
 			},
 			"react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "Fragment" },
@@ -118,7 +149,12 @@ function harness({ lifetime = 30 } = {}) {
 			"../state": state,
 			"@/api/client": {
 				client: {
-					applications: { logReply: async (...args) => env.logs.push(args) },
+					applications: {
+						logReply: async (...args) => {
+							env.logs.push(args);
+							return env.logReply(...args);
+						},
+					},
 					career: {
 						undoReply: (input) => {
 							env.undoCalls += 1;
@@ -141,7 +177,9 @@ function harness({ lifetime = 30 } = {}) {
 			"@/features/applications/next-step": { describeNextStep: () => ({ title: "x" }), getNextStep: () => null },
 			"@/features/applications/queries": {
 				stageScope: () => "srv:" + env.account,
-				useInvalidateApplications: () => async () => {},
+				useInvalidateApplications: () => async () => {
+					env.invalidations++;
+				},
 			},
 			"@/features/applications/stage-actions": {
 				listedApplication: () => listedRow,
@@ -188,7 +226,21 @@ function harness({ lifetime = 30 } = {}) {
 		followUpNote: null,
 		updatedAt: new Date(0),
 	};
-	const replyTree = () => messages.ReplyCard({ reply, application, readOnly: false });
+	const flushEffects = () => {
+		for (const effect of env.effects.splice(0)) effect();
+	};
+	const replyTree = (flush = true) => {
+		cursor = 0;
+		renderingReply = true;
+		let tree;
+		try {
+			tree = messages.ReplyCard({ reply, application, readOnly: false });
+		} finally {
+			renderingReply = false;
+		}
+		if (flush) flushEffects();
+		return tree;
+	};
 	const press = () => {
 		const tree = messages.ProposalCard({ reply, application, now: new Date(), readOnly: false });
 		const find = (node) => {
@@ -209,7 +261,7 @@ function harness({ lifetime = 30 } = {}) {
 		return baselines.get("app-1");
 	};
 	const undoToast = () => toasts.find((toast) => toast.action?.label === "Undo");
-	return { env, press, bulkStart, undoToast, toasts, replyTree };
+	return { env, press, bulkStart, undoToast, toasts, replyTree, application, flushEffects };
 }
 
 function buttonIn(node, label) {
@@ -255,15 +307,40 @@ test("native reply does not log clipboard failure or a stale account, and ignore
 	assert.equal(h.env.logs.length, 0);
 });
 
+test("native reply warns and refreshes when logging is uncertain after copying succeeds", async () => {
+	const h = harness();
+	h.env.logReply = async () => {
+		throw new Error("Lost response");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.copied, ["Available [Datum und Uhrzeit 1] or [slot 2]."]);
+	assert.equal(h.env.logs.length, 1);
+	assert.equal(h.env.invalidations, 1);
+	assert.equal(
+		h.toasts.at(-1).message,
+		"Reply copied. Logging wasn't confirmed. Check the timeline before trying again.",
+	);
+});
+
 test("native reply view cancels only the cleared follow-up reminder and ignores a stale account effect", async () => {
 	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
 	h.replyTree();
-	h.env.effects.shift()();
+	assert.deepEqual(h.env.clearedReminders, []);
+	h.application.followUpAt = null;
+	h.replyTree();
 	await new Promise(setImmediate);
 	assert.deepEqual(h.env.clearedReminders, [{ kind: "follow-up", applicationId: "app-1" }]);
+	// Unchanged props must not rerun the cancellation effect.
 	h.replyTree();
+	assert.equal(h.env.clearedReminders.length, 1);
+	h.application.followUpAt = new Date("2030-03-16T09:00:00Z");
+	h.replyTree();
+	h.application.followUpAt = null;
+	h.replyTree(false);
 	h.env.account = "acct-B";
-	h.env.effects.shift()();
+	h.flushEffects();
 	await new Promise(setImmediate);
 	assert.equal(h.env.clearedReminders.length, 1);
 });

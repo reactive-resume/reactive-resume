@@ -58,7 +58,7 @@ test("reply placeholders keep normal Copy independent; explicit log persists con
 	const id = await create(page.request, {
 		followUpAt: "2030-03-15T09:00:00Z",
 		followUpNote: "Reply with availability",
-		followUpDateOnly: false,
+		followUpDateOnly: true,
 	});
 	const sql = await database();
 	try {
@@ -86,7 +86,7 @@ test("reply placeholders keep normal Copy independent; explicit log persists con
 		const before = await read(page.request, id);
 		await sql.query(
 			`insert into career_schedule (id,user_id,application_id,kind,next_run_at,enabled)
-			 select $1,user_id,id,'prepare','2030-03-16T09:00:00Z',false from application where id=$2`,
+			 select $1,user_id,id,'prepare','2030-03-16T09:00:00Z',true from application where id=$2`,
 			[randomUUID(), id],
 		);
 		const schedules = (await sql.query("select * from career_schedule where application_id=$1", [id])).rows;
@@ -107,6 +107,7 @@ test("reply placeholders keep normal Copy independent; explicit log persists con
 		expect(after).toMatchObject({
 			followUpAt: null,
 			followUpNote: null,
+			followUpDateOnly: false,
 			status: before.status,
 			laneId: before.laneId,
 			appliedAt: before.appliedAt,

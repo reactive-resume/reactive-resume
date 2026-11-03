@@ -363,6 +363,26 @@ it("highlights localized reply placeholders without blocking Copy, and logs only
 		id: application.id,
 		expectedVersion: '["2026-10-08T12:00:00.000Z","applied",null,null,null,false]',
 	});
+	await waitFor(() => expect(api.invalidate).toHaveBeenCalledWith(application.id));
+});
+
+it("warns and refreshes the application when logging is uncertain after copying succeeds", async () => {
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.logReply.mockRejectedValueOnce(new Error("Lost response"));
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	const { toast } = await import("@reactive-resume/ui/components/toast");
+	await waitFor(() =>
+		expect(toast.add).toHaveBeenCalledWith({
+			type: "error",
+			description: "Reply copied. Logging wasn't confirmed. Check the timeline before trying again.",
+		}),
+	);
+	expect(writeText).toHaveBeenCalledWith("Original reply");
+	expect(api.logReply).toHaveBeenCalledTimes(1);
+	expect(api.invalidate).toHaveBeenCalledWith(application.id);
 });
 
 it("does not log after failed clipboard access, duplicate presses or an account switch during copying", async () => {
