@@ -133,8 +133,6 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, one {{count} of # application changed.} other {{count} of # applications changed.}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# answer} other {# answers}}"
@@ -625,6 +623,10 @@ msgstr "{accepted} of {0} applied"
 msgid "{active, plural, one {# active application} other {# active applications}}"
 msgstr "{active, plural, one {# active application} other {# active applications}}"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, one {# answer} other {# answers}}"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
@@ -839,6 +841,14 @@ msgstr "{pairing} type"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} of base"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} of base ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
@@ -940,6 +950,10 @@ msgstr "{words} of {shownLimit} words"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} more"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} a year ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2454,7 +2468,7 @@ msgstr "Bold"
 msgid "Bonus"
 msgstr "Bonus"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3495,10 +3509,6 @@ msgstr "Correct fact"
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
 msgstr "Correct the highlighted fields before saving."
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 
 #: src/features/ats-checker/messages.ts
 msgid "Correct the year, or write \"Present\" for ongoing work."
@@ -5231,6 +5241,14 @@ msgstr "Enter a whole number from 0 to 52, or leave blank."
 msgid "Enter an address like resume.example.org."
 msgstr "Enter an address like resume.example.org."
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Enter an amount or a percentage of base, such as 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Enter an amount or a percentage such as 10%, or leave blank."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
 msgstr "Enter an API key for this provider."
@@ -6016,6 +6034,10 @@ msgstr "Hiring manager"
 #: src/features/share/letter.ts
 msgid "Hiring team"
 msgstr "Hiring team"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "Historical review checks unavailable."
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
@@ -7892,6 +7914,10 @@ msgstr "New feedback link"
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "New keys start read-only. Create keys in your browser account settings."
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "New offer version saved"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8574,10 +8600,6 @@ msgstr "Offer saved. {0} moved to Offer."
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
 msgstr "Offer terms"
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
-msgstr "Offer terms updated"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/workspace/tabs/messages.tsx
@@ -10653,8 +10675,8 @@ msgid "Review checks"
 msgstr "Review checks"
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr "Review checks only reflect what you checked yourself."
+msgid "Review checks recorded at first submission."
+msgstr "Review checks recorded at first submission."
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -10905,6 +10927,10 @@ msgstr "Save connection"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr "Save contact"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Save corrected terms as a new version. The previous version stays available. No AI request is made."
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

@@ -15,7 +15,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
 import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
-import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
+import { applicationReviewChecks, nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
 import { rewriteSummary } from "@reactive-resume/utils/string";
 import { AnswerLibrary } from "../answer-library";
@@ -64,6 +64,8 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 	const facts = useFacts(application.id);
 	const readOnlyVersion = version?.data.kind === "answers" ? version.data : undefined;
 	const recorded = saved.data?.find((item) => item.submission && item.data.kind === "answers");
+	const reviewed =
+		saved.data?.find((item) => item.id === workspace.data?.submissionReview?.answerVersionId) ?? recorded;
 	const candidate = recorded ?? (!hasApplicationSubmission(application) ? latest(saved.data, "answers") : undefined);
 	const sentItem = candidate?.data.kind === "answers" ? { ...candidate, data: candidate.data } : undefined;
 	// Removed questions wait out their Undo here; the workspace drops them when the toast closes.
@@ -71,13 +73,20 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 	const [unit, setUnit] = useState<CountUnit>("words");
 	const [submitting, setSubmitting] = useState(false);
 	const [canSubmit, setCanSubmit] = useState(true);
+	const [writtenDrafts, setWrittenDrafts] = useState<ReadonlyMap<string, boolean>>(new Map());
 	const drafts = useRef(new Map<string, () => Answer>());
 	const registerDraft = useCallback((id: string, read: () => Answer) => {
 		drafts.current.set(id, read);
-		const updateValidity = () =>
-			setCanSubmit(
-				careerWorkspaceSchema.shape.answers.safeParse([...drafts.current.values()].map((value) => value())).success,
-			);
+		const updateValidity = () => {
+			const answers = [...drafts.current.values()].map((value) => value());
+			setCanSubmit(careerWorkspaceSchema.shape.answers.safeParse(answers).success);
+			setWrittenDrafts((previous) => {
+				const next = new Map(answers.map((answer) => [answer.id, Boolean(answer.answer.trim())]));
+				return next.size === previous.size && [...next].every(([key, value]) => previous.get(key) === value)
+					? previous
+					: next;
+			});
+		};
 		updateValidity();
 		return () => {
 			drafts.current.delete(id);
@@ -146,9 +155,14 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 
 			<Checklist
 				application={application}
-				answers={shown}
+				answerCount={
+					shown.filter((answer) =>
+						stored ? answer.answer.trim() : (writtenDrafts.get(answer.id) ?? Boolean(answer.answer.trim())),
+					).length
+				}
 				currentAnswers={currentAnswers}
 				readOnly={!!readOnlyVersion}
+				versionId={readOnlyVersion ? version?.id : undefined}
 				canSubmit={canSubmit}
 				submitting={submitting}
 				onSubmittingChange={setSubmitting}
@@ -172,13 +186,13 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 				<Text variant="heading" accessibilityRole="header" style={{ flex: 1 }}>{t`Form answers`}</Text>
 				<Button variant="link" label={t`Edit profile`} onPress={() => router.push(routes.settings("profile"))} />
 				{!version && submitted ? (
-					recorded ? (
+					reviewed ? (
 						<Button
 							variant="link"
 							size="sm"
 							icon="clock-counter-clockwise"
 							label={t`View recorded answers`}
-							onPress={() => go("apply", { version: recorded.id })}
+							onPress={() => go("apply", { version: reviewed.id })}
 						/>
 					) : (
 						<Text variant="callout" color="ink3">{t`No recorded answers are available.`}</Text>
@@ -284,8 +298,8 @@ function AnswerCard({
 	const setText = answerDraft.setValue;
 	const setQuestion = questionDraft.setValue;
 	useLayoutEffect(
-		() => registerDraft(answer.id, () => ({ ...answer, question, answer: text })),
-		[answer, question, text, registerDraft],
+		() => (readOnly ? undefined : registerDraft(answer.id, () => ({ ...answer, question, answer: text }))),
+		[answer, question, text, registerDraft, readOnly],
 	);
 	const [editingQuestion, setEditingQuestion] = useState(answer.question === "");
 	const [menu, setMenu] = useState(false);
@@ -608,9 +622,10 @@ function AnswerCard({
 
 type ChecklistProps = {
 	application: WorkspaceTabProps["application"];
-	answers: Answer[];
+	answerCount: number;
 	currentAnswers: () => Answer[];
 	readOnly: boolean;
+	versionId: string | undefined;
 	canSubmit: boolean;
 	submitting: boolean;
 	onSubmittingChange: (value: boolean) => void;
@@ -619,9 +634,10 @@ type ChecklistProps = {
 /** Manual content checks survive submission; submission actions follow the application record. */
 function Checklist({
 	application,
-	answers,
+	answerCount,
 	currentAnswers,
 	readOnly,
+	versionId,
 	canSubmit,
 	submitting,
 	onSubmittingChange,
@@ -634,17 +650,18 @@ function Checklist({
 	const submit = useMutation(orpc.career.submitApplication.mutationOptions());
 	const documents = useDocuments();
 	const [download, setDownload] = useState(false);
-	const submitted = hasApplicationSubmission(application);
-	// The review checks, by their persisted checklist index. Submitting yourself (3) is moot once a submission is recorded.
-	const items = [
+	const review = applicationReviewChecks(application, workspace.data);
+	const { submitted, checklist: ticked } = review;
+	const labels = [
 		t`Review the selected resume and cover letter in their editors.`,
 		t`Check every claim, date and result against your experience.`,
 		t`Review required form answers and remove unsupported claims.`,
 		t`Submit through the employer's application page yourself.`,
-	].slice(0, submitted ? 3 : 4);
-	const ticked = workspace.data.checklist;
-	const done = items.filter((_, index) => ticked.includes(index)).length;
-	const written = answers.filter((answer) => answer.answer.trim());
+	] as const;
+	const recordedVersion =
+		!readOnly || (versionId !== undefined && versionId === workspace.data.submissionReview?.answerVersionId);
+	const items = recordedVersion ? review.indices.map((index) => ({ index, label: labels[index] })) : [];
+	const done = items.filter(({ index }) => ticked.includes(index)).length;
 	const total = items.length;
 	const title = `${application.role} · ${application.company}`;
 	// Recording the submission is the one emphasised action only once preparation has nothing left to guide.
@@ -658,7 +675,7 @@ function Checklist({
 	const names = [resumeName, letterName].filter((name): name is string => name !== null);
 	const records = [
 		...(names.length > 0 ? names : [t`no documents`]),
-		plural(written.length, { one: "# answer", other: "# answers" }),
+		plural(answerCount, { one: "# answer", other: "# answers" }),
 	].join(" · ");
 
 	const toggle = (index: number, on: boolean) => {
@@ -698,7 +715,7 @@ function Checklist({
 				expectedAnswers: currentWorkspace.answers,
 				expectedDocuments: { resumeId: application.resumeId, coverLetterId: application.coverLetterId },
 			});
-			queryClient.setQueryData(workspace.queryKey, { ...currentWorkspace, answers: answersNow });
+			await queryClient.invalidateQueries({ queryKey: workspace.queryKey });
 			// The server confirmed these exact texts, so their device drafts can go (newer edits stay).
 			for (const answer of answersNow) {
 				clearDraft(`answer:${application.id}:${answer.id}:answer`, answer.answer);
@@ -718,25 +735,27 @@ function Checklist({
 		<Block
 			title={t`Review checks`}
 			trailing={
-				<Text
-					variant="callout"
-					color="ink2"
-				>{t`${ph({ done: i18n.number(done) })} of ${ph({ total: i18n.number(total) })}`}</Text>
+				!submitted && !readOnly ? (
+					<Text
+						variant="callout"
+						color="ink2"
+					>{t`${ph({ done: i18n.number(done) })} of ${ph({ total: i18n.number(total) })}`}</Text>
+				) : undefined
 			}
 		>
 			{!submitted && !readOnly ? <PriorNoResponse company={application.company} excludeId={application.id} /> : null}
 			<View>
-				{items.map((label, index) => (
+				{items.map(({ label, index }) => (
 					<CheckRow
 						key={label}
 						label={label}
 						checked={ticked.includes(index)}
-						disabled={readOnly || submitting}
+						disabled={readOnly || submitted || submitting}
 						onChange={(on) => toggle(index, on)}
 					/>
 				))}
 			</View>
-			{application.status === "saved" && !readOnly ? (
+			{application.status === "saved" && !submitted && !readOnly ? (
 				<View style={{ gap: space.s2, paddingTop: space.s2 }}>
 					<Button
 						fullWidth
@@ -757,27 +776,31 @@ function Checklist({
 					)}
 				</View>
 			) : null}
-			<Actions>
-				<Button
-					variant="secondary"
-					size="sm"
-					icon="copy"
-					label={t`Copy answers`}
-					disabled={written.length === 0}
-					onPress={() => void copy()}
-				/>
-				<Button
-					variant="ghost"
-					size="sm"
-					icon="download-simple"
-					label={t`Download`}
-					disabled={written.length === 0}
-					onPress={() => setDownload(true)}
-				/>
-			</Actions>
-			{submitted ? (
+			{answerCount > 0 ? (
+				<Actions>
+					<Button
+						variant="secondary"
+						size="sm"
+						icon="copy"
+						label={t`Copy answers`}
+						disabled={answerCount === 0}
+						onPress={() => void copy()}
+					/>
+					<Button
+						variant="ghost"
+						size="sm"
+						icon="download-simple"
+						label={t`Download`}
+						disabled={answerCount === 0}
+						onPress={() => setDownload(true)}
+					/>
+				</Actions>
+			) : null}
+			{submitted || readOnly ? (
 				<Text variant="caption" color="ink3">
-					{t`Review checks only reflect what you checked yourself.`}
+					{recordedVersion && review.recorded
+						? t`Review checks recorded at first submission.`
+						: t`Historical review checks unavailable.`}
 				</Text>
 			) : null}
 			<Sheet open={download} onClose={() => setDownload(false)} title={t`Download`}>

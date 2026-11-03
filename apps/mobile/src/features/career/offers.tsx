@@ -4,17 +4,19 @@ import type { CareerProfileData, OfferTerms } from "@reactive-resume/schema/care
 import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useIsFocused, useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { selectOfferPair } from "@reactive-resume/schema/career-offer";
+import { annualBaseHint, bonusAmount, selectOfferPair } from "@reactive-resume/schema/career-offer";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { useCareerQueries, useCareerTime, useNow, useOffers } from "./hooks";
 import { client } from "./hooks";
-import { formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
+import { formatBonus, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry, OfferForm } from "./offer-entry";
+import { consumeSavedOffer, useSavedOffer } from "./offer-selection";
 import { Actions, LoadState } from "./shared";
 import { withUndo } from "./undo";
+import { getAccountScope } from "@/auth/session";
 import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
 import { Banner, Button, Card, EmptyState, Screen, SelectSheet, Text, showToast, useTheme } from "@/ui";
@@ -46,16 +48,24 @@ export function OffersScreen() {
 			commit: () => client.career.deleteSavedItem({ id: offer.id }).then(() => query.refetch()),
 		});
 	};
-	const params = useLocalSearchParams<{ a?: string; b?: string }>();
-	const routeKey = JSON.stringify([params.a, params.b]);
-	const [selection, setSelection] = useState<{ route: string; ids: (string | undefined)[] }>({
-		route: routeKey,
-		ids: [],
-	});
-	if (selection.route !== routeKey) setSelection({ route: routeKey, ids: [] });
-	const selected = selection.route === routeKey ? selection.ids : [];
-	const setSelected = (ids: (string | undefined)[]) => setSelection({ route: routeKey, ids });
-	const pair = selectOfferPair(offers, { a: selected[0] ?? params.a, b: selected[1] ?? params.b });
+	const params = useLocalSearchParams<{ a?: string; b?: string; highlight?: string }>();
+	const focused = useIsFocused();
+	const scope = getAccountScope();
+	const saved = useSavedOffer((state) => (scope ? state.accounts[scope] : undefined));
+	useEffect(() => {
+		if (
+			!focused ||
+			!scope ||
+			getAccountScope() !== scope ||
+			!saved ||
+			!query.data?.some((offer) => offer.id === saved.id)
+		)
+			return;
+		router.setParams({ a: saved.id, b: params.b ?? saved.b, highlight: saved.id });
+		consumeSavedOffer(scope, saved.id);
+	}, [focused, scope, saved, query.data, params.b, router]);
+	const setSelected = ([a, b]: (string | undefined)[]) => router.setParams({ a, b });
+	const pair = selectOfferPair(offers, { a: params.a, b: params.b });
 	const a = offers.find((row) => row.id === pair.a);
 	const b = offers.find((row) => row.id === pair.b);
 	const sameApplication = !!a?.applicationId && a.applicationId === b?.applicationId;
@@ -134,6 +144,7 @@ export function OffersScreen() {
 								/>
 								{offer ? (
 									<OfferCard
+										highlight={params.highlight === offer?.id}
 										offer={offer}
 										other={side === 0 ? b : a}
 										profile={profile.data}
@@ -191,14 +202,22 @@ function OfferStageApplications({ offers, applications }: OfferStageApplications
 
 type OfferCardProps = {
 	offer: Offer;
+	highlight: boolean;
 	other: Offer | undefined;
 	profile: CareerProfileData | undefined;
 	onEdit: () => void;
 	onDelete: () => void;
 };
-function OfferCard({ offer, other, profile, onEdit, onDelete }: OfferCardProps) {
+function OfferCard({ offer, highlight, other, profile, onEdit, onDelete }: OfferCardProps) {
 	const { t } = useLingui();
-	const { space } = useTheme();
+	const { space, colors } = useTheme();
+	const [expiredHighlight, setExpiredHighlight] = useState<string | null>(null);
+	const highlighted = highlight && expiredHighlight !== offer.id;
+	useEffect(() => {
+		if (!highlight) return;
+		const timer = setTimeout(() => setExpiredHighlight(offer.id), 1200);
+		return () => clearTimeout(timer);
+	}, [highlight, offer.id]);
 	const time = useCareerTime();
 	const now = useNow();
 	const data = offer.data;
@@ -221,8 +240,9 @@ function OfferCard({ offer, other, profile, onEdit, onDelete }: OfferCardProps) 
 				? t`Entered by you`
 				: null;
 	const money = (key: "base" | "variable" | "learning") => {
-		const amount = data[key];
-		if (amount === null) return unknown;
+		const amount = key === "variable" ? bonusAmount(data) : data[key];
+		if (amount === null)
+			return key === "variable" && data.variablePercent != null ? formatBonus(time.locale, data) : unknown;
 		const difference = other ? moneyDifference(data, other.data, key) : null;
 		const delta =
 			difference === null
@@ -237,19 +257,29 @@ function OfferCard({ offer, other, profile, onEdit, onDelete }: OfferCardProps) 
 					: difference > 0
 						? t`${formatMoney(time.locale, data.currency, difference)} more`
 						: t`${formatMoney(time.locale, data.currency, -difference)} less`;
-		return [formatMoney(time.locale, data.currency, amount), periodLabel(data.period), note]
+		return [
+			key === "variable" && data.variablePercent != null
+				? formatBonus(time.locale, data)
+				: formatMoney(time.locale, data.currency, amount),
+			periodLabel(data.period),
+			note,
+		]
 			.filter(Boolean)
 			.join(" · ");
 	};
+	const annual = other ? annualBaseHint(data, other.data) : null;
+	const yearly = annual === null ? "" : formatMoney(time.locale, data.currency, annual);
+	const monthly = data.base === null ? "" : formatMoney(time.locale, data.currency, data.base);
+	const months = new Intl.NumberFormat(time.locale).format(12);
 	const minimum = profile ? meetsMinimum(data, profile.minBase) : null;
 	const deadline = data.respondBy ? new Date(data.respondBy).getTime() - now.getTime() : null;
 	const terms = [
 		{ label: t`Base salary`, value: money("base") },
 		{
 			label: t`Bonus`,
-			// A percentage or a condition without an amount is shown as written, never turned into money.
+			// Old free-text conditions stay as written; only explicit percentage fields are calculated.
 			value:
-				data.variable === null && data.variableConditions
+				data.variablePercent == null && data.variable === null && data.variableConditions
 					? t`${data.variableConditions} · No amount stated · value uncertain`
 					: money("variable"),
 		},
@@ -276,14 +306,14 @@ function OfferCard({ offer, other, profile, onEdit, onDelete }: OfferCardProps) 
 	];
 	const questions = [
 		data.base === null ? t`What is the base salary?` : null,
-		data.variable === null && !data.variableConditions ? t`Is there a bonus, and what does it depend on?` : null,
+		data.variable === null && !data.variableConditions.trim() ? t`Is there a bonus, and what does it depend on?` : null,
 		!data.equity ? t`What equity is included, and on what terms?` : null,
 		data.officeDays === null ? t`How many office days are expected?` : null,
 		!data.startDate ? t`When would you start?` : null,
 		!data.respondBy ? t`When do you need a decision?` : null,
 	].filter(Boolean);
 	return (
-		<Card style={{ gap: space.s3 }}>
+		<Card style={{ gap: space.s3, ...(highlighted ? { backgroundColor: colors.accentSoft } : {}) }}>
 			<Text variant="heading">{offer.application?.company ?? t`Deleted application`}</Text>
 			<Text>{offer.application?.role}</Text>
 			<Text>
@@ -306,6 +336,7 @@ function OfferCard({ offer, other, profile, onEdit, onDelete }: OfferCardProps) 
 			{other && !sameTerms(data, other.data) ? (
 				<Banner tone="warn" message={t`Different currencies or pay periods. No money difference is calculated.`} />
 			) : null}
+			{annual !== null ? <Text color="ink3">{t`≈ ${yearly} a year (${months} × ${monthly})`}</Text> : null}
 			{terms.map((term) => (
 				<View key={term.label} style={{ gap: space.s1 }}>
 					<Text variant="label">{term.label}</Text>
