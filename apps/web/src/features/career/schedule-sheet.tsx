@@ -9,6 +9,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { useId, useState } from "react";
+import { defaultFollowUpNote } from "@reactive-resume/schema/applications/follow-up";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -20,9 +21,10 @@ import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
+import { CareerLoadError } from "./load-state";
 import { PrivacyLine, Swap, useCareerTime, useNow } from "./shared";
 import { collectInterviews, interviewKindOf } from "@/features/applications/interviews";
-import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { applicationDetailQueryOptions, applicationsListQueryOptions } from "@/features/applications/queries";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { SetUpWebAccess } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -100,6 +102,7 @@ const prepareRunAt = (start: Date, lead: Lead, timeZone: string) =>
 type Draft = {
 	kind: Kind;
 	query: string;
+	followUpNote: string | null;
 	every: string;
 	date: string;
 	time: string;
@@ -169,7 +172,8 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 		const initial: Draft = {
 			kind: existing ? (existing.kind as Kind) : (KINDS.find((item) => item === kind) ?? "discovery"),
 			query:
-				existing?.query ?? (kind === "follow-up" ? "" : [...profile.targetRoles, ...profile.locations].join(" · ")),
+				existing?.kind === "discovery" ? existing.query : [...profile.targetRoles, ...profile.locations].join(" · "),
+			followUpNote: existing?.kind === "follow-up" ? existing.query : null,
 			every: String(existing?.intervalDays ?? 1),
 			...toZoned(at, timeZone),
 			interviewId: existing?.interviewId ?? upcoming[0]?.interview.id ?? "",
@@ -184,6 +188,14 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	}
 
 	const draft = form?.draft;
+	const prefill = Boolean(shown && draft?.kind === "follow-up" && draft.followUpNote === null && draft.applicationId);
+	const detail = useQuery({ ...applicationDetailQueryOptions(draft?.applicationId ?? ""), enabled: prefill });
+	const prefillPending = prefill && (detail.isPending || detail.isFetching);
+	const followUpNote =
+		draft?.followUpNote ??
+		(detail.isSuccess && !detail.isFetching && detail.data.id === draft?.applicationId
+			? defaultFollowUpNote(detail.data)
+			: "");
 	const set = (patch: Partial<Draft>) =>
 		setForm((current) => current && { ...current, draft: { ...current.draft, ...patch } });
 	const touch = (field: keyof Form["touched"]) =>
@@ -229,7 +241,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	const onSave = () => {
 		if (!form || !draft || !enteredAt) return;
 		setForm({ ...form, submitted: true });
-		if (errors.query || errors.when || blocked || needsWebSearch) return;
+		if (errors.query || errors.when || blocked || needsWebSearch || prefillPending) return;
 		save.mutate(
 			{
 				...(form.existing ? { id: form.existing.id } : {}),
@@ -240,7 +252,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 						: draft.kind === "follow-up"
 							? draft.applicationId || null
 							: null,
-				query: draft.kind !== "prepare" ? draft.query.trim() : "",
+				query: draft.kind === "follow-up" ? followUpNote.trim() : draft.kind === "discovery" ? draft.query.trim() : "",
 				interviewId: draft.kind === "prepare" ? draft.interviewId || null : null,
 				lead: draft.kind === "prepare" ? draft.lead : null,
 				enabled: draft.enabled,
@@ -485,9 +497,20 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 								<>
 									<Field label={t`Follow-up note`}>
 										{(props) => (
-											<Input {...props} value={draft.query} onChange={(event) => set({ query: event.target.value })} />
+											<Input
+												{...props}
+												value={followUpNote}
+												onChange={(event) => set({ followUpNote: event.target.value })}
+											/>
 										)}
 									</Field>
+									{prefill && detail.isError && (
+										<CareerLoadError
+											onRetry={() => {
+												void detail.refetch();
+											}}
+										/>
+									)}
 									<Field label={t`Application`} hint={open.length === 0 ? t`Add an application first` : undefined}>
 										{(props) => (
 											<NativeSelect
@@ -539,13 +562,15 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 										</Field>
 									</div>
 									<FieldError>{shownError("when")}</FieldError>
-									<p className="text-xs text-ink-3">
-										<Trans>
-											Repeats at this local time in the displayed timezone across clock changes. A skipped clock time
-											moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery
-											depends on the server runner.
-										</Trans>
-									</p>
+									{draft.kind === "discovery" && (
+										<p className="text-xs text-ink-3">
+											<Trans>
+												Repeats at this local time in the displayed timezone across clock changes. A skipped clock time
+												moves forward. Missed runs combine into one search. Results and failures appear in Today;
+												delivery depends on the server runner.
+											</Trans>
+										</p>
+									)}
 								</div>
 							)}
 						</Swap>
@@ -623,7 +648,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 										<Trans>Set up web search in Settings</Trans>
 									</Button>
 								) : (
-									<Button disabled={!form || blocked} loading={save.isPending} onClick={onSave}>
+									<Button disabled={!form || blocked || prefillPending} loading={save.isPending} onClick={onSave}>
 										<Trans>Save schedule</Trans>
 									</Button>
 								)}
