@@ -5,6 +5,7 @@ import { getRouteApi, Outlet } from "@tanstack/react-router";
 import { Suspense, useCallback, useEffect } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
+import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
 import { cn } from "@reactive-resume/utils/style";
 import { DownloadSheet } from "./download-sheet";
 import { EditorBar } from "./editor-bar";
@@ -196,10 +197,14 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 /** Phones: tapping a line on the page selects it and offers to edit that entry. Improve joins it in M10. */
 function SelectionBar({ onEdit }: { onEdit: () => void }) {
 	const selection = useEditorStore((state) => state.selection);
+	const { ref } = useFloatingToolbarSpace();
 	if (!selection) return null;
 
 	return (
-		<div className="absolute bottom-[76px] left-1/2 z-10 flex -translate-x-1/2 items-center rounded-xl bg-ink p-1 text-bg shadow-e3 transition-[opacity,translate] duration-standard ease-enter starting:translate-y-2 starting:opacity-0">
+		<div
+			ref={ref}
+			className="absolute bottom-[76px] left-1/2 z-10 flex -translate-x-1/2 items-center rounded-xl bg-ink p-1 text-bg shadow-e3 transition-[opacity,translate] duration-standard ease-enter starting:translate-y-2 starting:opacity-0"
+		>
 			<button
 				type="button"
 				className="flex h-10 items-center gap-1.5 rounded-lg px-3 text-[15px] font-semibold"

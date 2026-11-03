@@ -42,7 +42,7 @@ export function KeyboardShortcuts() {
 			<Button
 				id="keyboard-shortcuts-trigger"
 				variant="secondary"
-				className="fixed end-3 bottom-20 z-30 gap-2 sm:bottom-3 print:hidden"
+				className="fixed end-3 bottom-[max(5rem,var(--floating-toolbar-clearance,0px))] z-30 gap-2 sm:bottom-[max(0.75rem,var(--floating-toolbar-clearance,0px))] print:hidden"
 				onClick={() => showKeyboardShortcuts()}
 				aria-keyshortcuts={characterShortcuts ? "?" : undefined}
 			>
