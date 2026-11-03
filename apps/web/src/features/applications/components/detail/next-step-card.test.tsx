@@ -21,6 +21,30 @@ vi.mock("../../use-application-actions", () => ({ useInvalidateApplications: () 
 
 const { NextStepCard } = await import("./next-step-card");
 
+it.each(["closed", "applied"] as const)("labels %s applications with the matching heading and actions", (status) => {
+	i18n.loadAndActivate({ locale: "en", messages: {} });
+	const application = {
+		id: "outcome",
+		role: "Engineer",
+		company: "Example",
+		status,
+		closedReason: status === "closed" ? "accepted" : null,
+		appliedAt: new Date(),
+		activity: [],
+		followUpAt: null,
+		followUpNote: null,
+	} as unknown as Application;
+	render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={new QueryClient()}>
+				<NextStepCard application={application} onScheduleInterview={vi.fn()} />
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+	expect(screen.getByRole("heading", { name: status === "closed" ? "Outcome" : "Next step" })).toBeVisible();
+	expect(screen.queryByRole("button", { name: /^Edit$/ }) !== null).toBe(status !== "closed");
+});
+
 it("opens the follow-up with its saved date and note, then saves the edited note", async () => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 	const application = {

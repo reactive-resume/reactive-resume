@@ -92,7 +92,7 @@ export function NextStepCard({ application, onScheduleInterview }: NextStepCardP
 	return (
 		<section aria-labelledby="application-next-step" className="grid gap-2">
 			<h3 id="application-next-step" className="text-xs font-semibold text-ink-3">
-				<Trans>Next step</Trans>
+				{step.kind === "closed" ? <Trans>Outcome</Trans> : <Trans>Next step</Trans>}
 			</h3>
 			<div
 				className={cn(

@@ -224,7 +224,7 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 	};
 
 	return (
-		<Section title={t`Next step`}>
+		<Section title={step.kind === "closed" ? t`Outcome` : t`Next step`}>
 			<Card style={text.tone === "warn" ? { borderColor: colors.warn, backgroundColor: colors.warnSoft } : undefined}>
 				<View style={{ gap: space.s3 }}>
 					<View style={{ flexDirection: "row", gap: space.s3 }}>
