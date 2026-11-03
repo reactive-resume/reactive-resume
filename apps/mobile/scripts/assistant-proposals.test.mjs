@@ -491,12 +491,15 @@ test("native chat records real successes and explicit history changes, never ref
 			"@/ui/use-pull-refresh": { usePullRefresh: () => ({}) },
 		},
 	);
+	let transcript;
+	let latest;
 	const render = () => {
 		let list;
 		let passes = 0;
 		do {
 			dirty = false;
 			effects = [];
+			latest = undefined;
 			const visit = (node) => {
 				if (!node || typeof node !== "object") return;
 				if (Array.isArray(node)) {
@@ -513,6 +516,7 @@ test("native chat records real successes and explicit history changes, never ref
 					visit(node.type(node.props));
 				} else {
 					if (node.type === "LegendList") list = node;
+					if (node.props?.label === "Latest") latest = node;
 					visit(node.props?.children);
 				}
 			};
@@ -531,9 +535,22 @@ test("native chat records real successes and explicit history changes, never ref
 			assert.ok(++passes < 10, "Chat must settle");
 		} while (dirty);
 		assert.ok(list, "Mounted chat exposes its message list");
+		transcript = list;
 		return list.props.extraData.handlers;
 	};
 	let handlers = render();
+	assert.equal(latest, undefined, "Latest starts hidden at the live edge");
+	for (const [offset, visible] of [
+		[500, true],
+		[683, false],
+		[700, false],
+	]) {
+		transcript.props.onScroll({
+			nativeEvent: { contentOffset: { y: offset }, contentSize: { height: 1000 }, layoutMeasurement: { height: 300 } },
+		});
+		handlers = render();
+		assert.equal(!!latest, visible, `Latest visibility at ${700 - offset}px from the bottom`);
+	}
 	handlers.onAccept(message, part, part.output.edits);
 	handlers = render();
 	await resumeStore.getState().flush();

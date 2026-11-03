@@ -2721,6 +2721,13 @@ const scheduleTime = { timeZone: "UTC", locale: "en-US", profile: ready({ emailV
 const scheduleCareer = { profile: ready({ targetRoles: [], locations: [] }) };
 const scheduleApi = { career: { saveSchedule: async (input) => scheduleWrites.push(input) } };
 const scheduling = load("features/career/scheduling.ts", { "@reactive-resume/utils/timezone": timeParser });
+const { SetUpWebAccess: nativeWebSetup } = load("features/ai/web-access.tsx", {
+	"@orpc/client": {},
+	"@tanstack/react-query": {},
+	"./error": {},
+	"./providers": {},
+	"@/auth/session": {},
+});
 const { ScheduleSheet } = load("features/career/schedule-sheet.tsx", {
 	"@react-native-community/datetimepicker": { default: "DateTimePicker" },
 	"@tanstack/react-query": { useQuery: () => ready({ search: false, provider: null }) },
@@ -2751,6 +2758,7 @@ const { ScheduleSheet } = load("features/career/schedule-sheet.tsx", {
 		AIProviderSetupSheet: "AIProviderSetupSheet",
 		useHasAIProvider: () => ({ usableProviders: [], defaultProvider: null, hasAIProvider: false }),
 	},
+	"@/features/ai/web-access": { SetUpWebAccess: nativeWebSetup },
 	"@/features/applications/queries": {
 		useApplications: () => ready(scheduleApplications),
 		useApplication: () => scheduleDetail,
@@ -2772,6 +2780,32 @@ await settle();
 assert.equal(scheduleWrites.length, 1, "changed past time must still be rejected");
 assert.match(JSON.stringify(render(scheduleForm.type, scheduleForm.props)), /Pick a time after now/);
 console.log("PASS native Today past note edit preserves exact seconds and changed-past-time guard");
+
+reset();
+const discoveryForm = render(ScheduleSheet, { schedule: null, kind: "discovery", onClose() {}, onDelete() {} });
+const beforeDiscoverySetupWrites = scheduleWrites.length;
+const discoveryView = () => render(discoveryForm.type, discoveryForm.props);
+control(discoveryView(), "Look for").onChangeText("Platform engineer · Fictional Cedar");
+control(discoveryView(), "How often").onChange("3");
+control(discoveryView(), "First run (YYYY-MM-DD)").onChangeText("2030-12-21");
+control(discoveryView(), "Time (HH:mm)").onChangeText("09:35");
+const setupControl = nodes(discoveryView()).find((node) => node.type === nativeWebSetup);
+assert.ok(setupControl, "Discovery offers its in-place web setup");
+const discoveryState = hooks;
+hooks = [];
+const webSetupView = () => render(setupControl.type, setupControl.props);
+control(webSetupView(), "Set up web access").onPress();
+const setupSheet = nodes(webSetupView()).find((node) => node.props.title === "Web access");
+assert.equal(setupSheet.props.open, true);
+setupSheet.props.onClose();
+assert.equal(nodes(webSetupView()).find((node) => node.props.title === "Web access").props.open, false);
+hooks = discoveryState;
+assert.equal(control(discoveryView(), "Look for").value, "Platform engineer · Fictional Cedar");
+assert.equal(control(discoveryView(), "How often").value, "3");
+assert.equal(control(discoveryView(), "First run (YYYY-MM-DD)").value, "2030-12-21");
+assert.equal(control(discoveryView(), "Time (HH:mm)").value, "09:35");
+assert.equal(scheduleWrites.length, beforeDiscoverySetupWrites, "Opening and closing setup never saves a schedule");
+console.log("PASS native discovery retains its complete authored draft across actual in-place setup");
 
 reset();
 const noteApplication = {
