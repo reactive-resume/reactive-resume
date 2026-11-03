@@ -297,6 +297,9 @@ for (const action of ["contact", "interview"] as const)
 test("contact Undo reads canonical survivors and read-only Retry cannot restore externally erased text", async ({
 	authPage: page,
 }, info) => {
+	const undo = page
+		.getByRole("button", { name: "Undo", exact: true })
+		.and(page.locator("button:not([data-action-ran])"));
 	const created = await page.request.post("/api/openapi/applications", {
 		data: { company: "Fictional Cedar", role: "Fictional engineer", status: "applied" },
 	});
@@ -315,15 +318,15 @@ test("contact Undo reads canonical survivors and read-only Retry cannot restore 
 	await page.getByRole("button", { name: "Contact: Fictional Sam", exact: true }).click();
 	const remove = page.getByRole("button", { name: "Remove Fictional Sam", exact: true });
 	await remove.click();
-	await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
+	await expect(undo).toBeVisible();
 	await expect(remove).toHaveCount(0);
-	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await undo.click();
 	await expect(page.getByRole("button", { name: "Contact: Fictional Sam", exact: true })).toBeVisible();
 	await page.getByRole("button", { name: "Contact: Fictional Sam", exact: true }).click();
 	await expect(remove).toBeVisible();
 	expect((await database.query("select contacts from application where id=$1", [id])).rows[0].contacts).toHaveLength(1);
 	await remove.click();
-	await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
+	await expect(undo).toBeVisible();
 	await expect(await page.request.put(`/api/openapi/applications/${id}`, { data: { contacts: [] } })).toBeOK();
 	let failed = true;
 	let retryReads = 0;
@@ -338,7 +341,7 @@ test("contact Undo reads canonical survivors and read-only Retry cannot restore 
 			await route.continue();
 		}
 	});
-	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await undo.click();
 	await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeVisible();
 	await expect(remove).toHaveCount(0);
 	await expect(page.getByRole("button", { name: "Contact: none yet", exact: true })).toBeVisible();
