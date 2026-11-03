@@ -3781,6 +3781,7 @@ msgstr "Ügyfél-azonosító"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/assistant/translate-resume.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -4842,7 +4843,6 @@ msgstr "Nem sikerült eltávolítani a Jelentkezésekből. Próbáld újra."
 msgid "Couldn't remove the passkey. Try again."
 msgstr "Nem sikerült eltávolítani a jelszót. Próbáld újra."
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "Nem sikerült átnevezni a dokumentumot. Próbáld újra."
@@ -5324,6 +5324,10 @@ msgstr "Hozzon létre és nyissa meg"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Create key"
 msgstr "Kulcs létrehozása"
+
+#: src/features/assistant/translate-resume.tsx
+msgid "Create language copy"
+msgstr "Nyelvi másolat létrehozása"
 
 #: src/features/auth/email-text.ts
 msgid "Create new password"
@@ -7752,10 +7756,6 @@ msgstr "magyar"
 msgid "Hyphenation"
 msgstr "Szótagolás"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "I can edit your summary, bullets and text fields, and add entries and sections. Review each set before accepting it together. Some fields still need Write. I can't translate a whole resume."
-msgstr ""
-
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
@@ -8607,6 +8607,7 @@ msgid "Landscape"
 msgstr "Fekvő"
 
 #. Menu item that opens language selection submenu
+#: src/features/assistant/translate-resume.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/language.tsx
 #: src/features/resume/editor/design/style-groups.tsx
@@ -13303,6 +13304,10 @@ msgstr "Vázlat áttekintése"
 msgid "Review each section before using this resume."
 msgstr "Az önéletrajz használata előtt tekintse át az egyes részeket."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Review each set before accepting it together. Some fields still need Write."
+msgstr "Elfogadás előtt ellenőrizd az egyes módosításcsoportokat. Néhány mezőt továbbra is az Írás részen kell szerkeszteni."
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Review for this application"
 msgstr ""
@@ -13678,6 +13683,7 @@ msgstr ""
 msgid "Save this fact"
 msgstr "Tény mentése"
 
+#: src/features/assistant/translate-resume.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
@@ -16017,6 +16023,10 @@ msgstr "Az eredeti hivatkozás ennél a munkánál marad."
 msgid "The original stays in the history."
 msgstr "Az eredeti megmarad az előzményekben."
 
+#: src/features/assistant/translate-resume.tsx
+msgid "The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated."
+msgstr "Az eredeti változatlan marad. Küldd el a másolatot ellenőrizhető fordításokért. A rejtett tartalom nem lesz lefordítva."
+
 #: src/components/layout/not-found-screen.tsx
 msgid "The page you're looking for may have been moved or no longer exists."
 msgstr "Lehetséges, hogy a keresett oldal áthelyeződött, vagy már nem létezik."
@@ -16837,6 +16847,12 @@ msgstr "Átirat másolva"
 #: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "Fordítás"
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/assistant/translate-resume.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Translate into…"
+msgstr "Fordítás erre a nyelvre…"
 
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"

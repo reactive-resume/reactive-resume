@@ -3781,6 +3781,7 @@ msgstr "ID Klien"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/assistant/translate-resume.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -4842,7 +4843,6 @@ msgstr "Tidak dapat menghapusnya dari Lamaran. Coba lagi."
 msgid "Couldn't remove the passkey. Try again."
 msgstr "Tidak dapat menghapus kunci sandi. Coba lagi."
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "Tidak dapat mengganti nama dokumen. Coba lagi."
@@ -5324,6 +5324,10 @@ msgstr "Buat dan buka"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Create key"
 msgstr "Buat kunci"
+
+#: src/features/assistant/translate-resume.tsx
+msgid "Create language copy"
+msgstr "Buat salinan bahasa"
 
 #: src/features/auth/email-text.ts
 msgid "Create new password"
@@ -7752,10 +7756,6 @@ msgstr "Hungaria"
 msgid "Hyphenation"
 msgstr "Pemisahan kata dengan tanda hubung"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "I can edit your summary, bullets and text fields, and add entries and sections. Review each set before accepting it together. Some fields still need Write. I can't translate a whole resume."
-msgstr ""
-
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
@@ -8607,6 +8607,7 @@ msgid "Landscape"
 msgstr "Lanskap"
 
 #. Menu item that opens language selection submenu
+#: src/features/assistant/translate-resume.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/language.tsx
 #: src/features/resume/editor/design/style-groups.tsx
@@ -13303,6 +13304,10 @@ msgstr "Tinjau draf"
 msgid "Review each section before using this resume."
 msgstr "Tinjau setiap bagian sebelum menggunakan resume ini."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Review each set before accepting it together. Some fields still need Write."
+msgstr "Tinjau setiap kelompok sebelum menerimanya sekaligus. Beberapa kolom masih perlu diedit di Tulis."
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Review for this application"
 msgstr ""
@@ -13678,6 +13683,7 @@ msgstr ""
 msgid "Save this fact"
 msgstr "Simpan fakta ini"
 
+#: src/features/assistant/translate-resume.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
@@ -16017,6 +16023,10 @@ msgstr "Tautan asli tetap ada pada pekerjaan ini."
 msgid "The original stays in the history."
 msgstr "Versi asli tetap ada di riwayat."
 
+#: src/features/assistant/translate-resume.tsx
+msgid "The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated."
+msgstr "Dokumen asli tetap tidak berubah. Kirim salinan untuk mendapatkan terjemahan yang dapat ditinjau. Konten tersembunyi tidak diterjemahkan."
+
 #: src/components/layout/not-found-screen.tsx
 msgid "The page you're looking for may have been moved or no longer exists."
 msgstr "Halaman yang Anda cari mungkin telah dipindahkan atau sudah tidak ada lagi."
@@ -16837,6 +16847,12 @@ msgstr "Transkrip disalin"
 #: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "Menerjemahkan"
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/assistant/translate-resume.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Translate into…"
+msgstr "Terjemahkan ke…"
 
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"

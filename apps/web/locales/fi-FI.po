@@ -3781,6 +3781,7 @@ msgstr "Asiakastunnus"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/assistant/translate-resume.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -4842,7 +4843,6 @@ msgstr "Poistaminen hakemuksista epäonnistui. Yritä uudelleen."
 msgid "Couldn't remove the passkey. Try again."
 msgstr "Salasanaa ei voitu poistaa. Yritä uudelleen."
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "Asiakirjaa ei voitu nimetä uudelleen. Yritä uudelleen."
@@ -5324,6 +5324,10 @@ msgstr "Luo ja avaa"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Create key"
 msgstr "Luo avain"
+
+#: src/features/assistant/translate-resume.tsx
+msgid "Create language copy"
+msgstr "Luo kieliversio"
 
 #: src/features/auth/email-text.ts
 msgid "Create new password"
@@ -7752,10 +7756,6 @@ msgstr "unkari"
 msgid "Hyphenation"
 msgstr "Tavutus"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "I can edit your summary, bullets and text fields, and add entries and sections. Review each set before accepting it together. Some fields still need Write. I can't translate a whole resume."
-msgstr ""
-
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
@@ -8607,6 +8607,7 @@ msgid "Landscape"
 msgstr "Vaaka"
 
 #. Menu item that opens language selection submenu
+#: src/features/assistant/translate-resume.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/language.tsx
 #: src/features/resume/editor/design/style-groups.tsx
@@ -13303,6 +13304,10 @@ msgstr "Tarkista luonnos"
 msgid "Review each section before using this resume."
 msgstr "Tarkista jokainen osa ennen tämän ansioluettelon käyttöä."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Review each set before accepting it together. Some fields still need Write."
+msgstr "Tarkista kukin muutosjoukko ennen sen hyväksymistä kokonaisuutena. Joitakin kenttiä täytyy yhä muokata Kirjoita-osiossa."
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Review for this application"
 msgstr ""
@@ -13678,6 +13683,7 @@ msgstr ""
 msgid "Save this fact"
 msgstr "Tallenna tämä tieto"
 
+#: src/features/assistant/translate-resume.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
@@ -16017,6 +16023,10 @@ msgstr "Alkuperäinen linkki jää tähän työhön."
 msgid "The original stays in the history."
 msgstr "Alkuperäinen säilyy historiassa."
 
+#: src/features/assistant/translate-resume.tsx
+msgid "The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated."
+msgstr "Alkuperäinen säilyy ennallaan. Lähetä kopio saadaksesi tarkistettavat käännökset. Piilotettua sisältöä ei käännetä."
+
 #: src/components/layout/not-found-screen.tsx
 msgid "The page you're looking for may have been moved or no longer exists."
 msgstr "Etsimäsi sivu on ehkä siirretty tai sitä ei enää ole."
@@ -16837,6 +16847,12 @@ msgstr "Literaatti kopioitu"
 #: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "Kääntää"
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/assistant/translate-resume.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Translate into…"
+msgstr "Käännä kielelle…"
 
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"

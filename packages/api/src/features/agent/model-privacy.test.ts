@@ -173,6 +173,7 @@ it("keeps full UI snapshots while the actual SDK provider sees no hidden data in
 	const result = await agent.generate({ prompt: "Change my headline." });
 	expect(captures).toHaveLength(3);
 	expect(captures[1]).toContain("VISIBLE_EMPLOYER");
+	expect(captures[1]).toContain("translationFields");
 	expect(captures[2]).toContain("prepare");
 	if (!prepared?.edits[0]?.snapshot) throw Error("Expected full structural snapshot");
 	for (const marker of hidden) expect(prepared.edits[0].snapshot.before).toContain(marker);
@@ -183,6 +184,8 @@ it("keeps full UI snapshots while the actual SDK provider sees no hidden data in
 		...view,
 		data: {
 			...view.data,
+			// Historical field lists are untrusted too: derive them again from the visible structure.
+			translationFields: [{ id: "/metadata/notes", text: "PRIVATE_NOTES" }],
 			structure: {
 				basics: data.basics,
 				summary: data.summary,

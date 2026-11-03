@@ -6,6 +6,7 @@ import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { slugSchema } from "@reactive-resume/schema/resume/slug";
 import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
 import { templateSchema } from "@reactive-resume/schema/templates";
+import { localeSchema } from "@reactive-resume/utils/locale";
 import { paginationShape } from "../pagination";
 import { proposalApplicationsSchema, proposalSafetySchema } from "./proposals";
 
@@ -210,6 +211,9 @@ export const resumeDto = {
 
 	duplicate: {
 		input: resumeSchema.pick({ id: true }).extend({
+			pageLocale: localeSchema
+				.optional()
+				.describe("Set the copy's page language without changing the source or translating its text."),
 			name: resumeSchema.shape.name.optional(),
 			tags: resumeSchema.shape.tags.optional(),
 			slug: slugSchema

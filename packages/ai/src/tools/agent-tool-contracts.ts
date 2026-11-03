@@ -270,6 +270,30 @@ export const proposeEditsInputSchema = z.object({
 
 const [textChange, fieldChange, entryChange, sectionChange] = resumeChangeSchema.options;
 
+const translationChange = z.strictObject({
+	kind: z.literal("translation"),
+	locale: z.string().min(2).max(20),
+	fields: z
+		.array(
+			z.strictObject({
+				id: z.string().min(1).max(500),
+				before: z.string().max(100_000),
+				text: z
+					.string()
+					.min(1)
+					.max(100_000)
+					.refine((text) => Boolean(text.trim()), "Translated text cannot be blank."),
+			}),
+		)
+		.min(1)
+		.max(500),
+	why: z.string().trim().min(1).max(240),
+});
+
+/** Unsent composer draft shared by the web/native language-copy entry points. */
+export const languageCopyRequest = (locale: string) =>
+	`Translate every visible text field of this language copy into ${locale}. Read the resume and propose one complete translation set for review. Preserve proper names, figures, meaning and facts. Keep hidden content unchanged. Do not tailor to a posting.`;
+
 /** Typed resume changes (see resumeChangeSchema), each with the same review fields as a passage edit. */
 export const proposeResumeEditsInputSchema = z.strictObject({
 	title: z.string().trim().min(1).max(80),
@@ -280,6 +304,7 @@ export const proposeResumeEditsInputSchema = z.strictObject({
 				fieldChange.extend(reviewInput),
 				entryChange.extend(reviewInput),
 				sectionChange.extend(reviewInput),
+				translationChange,
 			]),
 		)
 		.min(1)

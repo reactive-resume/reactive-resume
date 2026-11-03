@@ -18,6 +18,7 @@ type HeldEdit = Pick<ProposedEdit, "id" | "after" | "target" | "snapshot">;
 export type DocumentReader = {
 	kind: ProposalDocument["kind"];
 	madeFor: string | null;
+	pageLocale?: string;
 	holds: (edit: HeldEdit) => boolean;
 };
 
@@ -33,7 +34,12 @@ export async function documentReader(
 			.where(and(eq(schema.resume.id, document.id), eq(schema.resume.userId, userId)));
 		if (!row) return null;
 		const data = parseStoredResumeData(row.data);
-		return { kind: "resume", madeFor: row.applicationId, holds: (edit) => holdsProposal(data, edit) };
+		return {
+			kind: "resume",
+			madeFor: row.applicationId,
+			pageLocale: data.metadata.page.locale,
+			holds: (edit) => holdsProposal(data, edit),
+		};
 	}
 	const [row] = await tx
 		.select({ content: schema.coverLetter.content })
@@ -67,6 +73,14 @@ export function acceptedEditAllowed(
 	reader: DocumentReader,
 	reviewed: string | true,
 ) {
+	if (reader.kind === "resume" && edit.snapshot) {
+		try {
+			const { locale } = JSON.parse(edit.snapshot.before);
+			if (locale !== undefined && locale !== reader.pageLocale) return false;
+		} catch {
+			return false;
+		}
+	}
 	return (
 		(reader.kind !== "resume" || tailoringAllows(message, output, reader.madeFor)) &&
 		(typeof reviewed === "string"
