@@ -66,6 +66,23 @@ describe("RPC fetch", () => {
 		expect(fetchMock.mock.calls[1]?.[1]?.keepalive).toBe(false);
 	});
 
+	it("lets an explicitly authorized AI request disconnect without changing ordinary write delivery", async () => {
+		fetchMock.mockResolvedValue(new Response("ok"));
+		const { rpcFetch } = await import("./fetch");
+		const controller = new AbortController();
+		await rpcFetch(
+			"https://resume.test/api/rpc/ai/parseDocx",
+			{ method: "POST", body: "fictional import", signal: controller.signal },
+			{ context: { aiDestination: "approved-destination" } },
+		);
+		const sent = fetchMock.mock.calls[0]?.[1];
+		expect(sent?.keepalive).toBe(false);
+		controller.abort();
+		expect(sent?.signal?.aborted).toBe(true);
+		await rpcFetch(rpcUrl, { method: "POST", body: "small draft" });
+		expect(fetchMock.mock.calls[1]?.[1]?.keepalive).toBe(true);
+	});
+
 	it("uploads large wire bytes to Blob, then sends a tiny reference to the original RPC", async () => {
 		queueStaging();
 		const { setAccountScope } = await import("@/libs/auth/account-scope");

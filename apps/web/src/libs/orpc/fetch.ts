@@ -8,7 +8,7 @@ let stagingUnavailable = false;
 export async function rpcFetch(
 	input: RequestInfo | URL,
 	init?: RequestInit,
-	options?: { context: { defer?: DeferredFetch } },
+	options?: { context: { defer?: DeferredFetch; aiDestination?: string } },
 ): Promise<Response> {
 	const defer = options?.context.defer;
 	const request = new Request(input, { ...init, credentials: "include" });
@@ -27,7 +27,8 @@ export async function rpcFetch(
 			method: "POST",
 			headers: request.headers,
 			body,
-			keepalive: body.byteLength <= 60 * 1024,
+			// Cancel must disconnect AI work; ordinary small writes still survive leaving the page.
+			keepalive: !options?.context.aiDestination && body.byteLength <= 60 * 1024,
 			credentials: "include",
 			signal: request.signal,
 		});
