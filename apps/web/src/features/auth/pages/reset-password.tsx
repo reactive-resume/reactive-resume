@@ -2,11 +2,13 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
+import { useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { authErrorMessage } from "../error";
 import { PasswordInput } from "@/components/input/password-input";
 import { clearAccountData } from "@/libs/auth/clear-account-data";
 import { authClient } from "@/libs/auth/client";
@@ -20,31 +22,30 @@ const formSchema = z.object({
 });
 
 type Props = {
-	token: string;
+	token: string | undefined;
 };
 
 export function ResetPasswordPage({ token }: Props) {
 	const navigate = useNavigate();
 	const router = useRouter();
 	const queryClient = useQueryClient();
+	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
+	const [invalidToken, setInvalidToken] = useState<string>();
 
 	const form = useAppForm({
 		defaultValues: { password: "" },
 		validators: { onSubmit: formSchema },
 		onSubmit: async ({ value }) => {
+			if (!token) return;
 			const toastId = toast.add({ type: "loading", description: t`Resetting your password…` });
 
 			const { error } = await authClient.resetPassword({ token, newPassword: value.password });
 
 			if (error) {
+				if (error.code === "INVALID_TOKEN") setInvalidToken(token);
 				toast.add({
 					type: "error",
-					description:
-						error.message ||
-						t({
-							comment: "Fallback toast when resetting password fails and no backend message is available",
-							message: "Couldn't reset your password. Try again.",
-						}),
+					description: authErrorMessage(error, t`Couldn't reset your password. Try again.`),
 					id: toastId,
 				});
 				return;
@@ -74,11 +75,28 @@ export function ResetPasswordPage({ token }: Props) {
 			// session and send the user to a dashboard that can no longer load.
 			clearAccountData(queryClient);
 			await router.invalidate();
-			void navigate({ to: "/auth/login", replace: true });
+			void navigate({ to: "/auth/login", search: { callbackURL, reauthenticate }, replace: true });
 		},
 	});
 
 	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
+	if (!token || invalidToken === token)
+		return (
+			<>
+				<h1 className="text-center text-[30px] leading-9">
+					<Trans>Reset your password</Trans>
+				</h1>
+				<p role="alert" className="text-center text-ink-2">
+					<Trans>This reset link expired or was already used.</Trans>
+				</p>
+				<Button
+					nativeButton={false}
+					render={<Link to="/auth/forgot-password" search={{ callbackURL, reauthenticate }} />}
+				>
+					<Trans>Send a new link</Trans>
+				</Button>
+			</>
+		);
 
 	return (
 		<>

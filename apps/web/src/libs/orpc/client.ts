@@ -1,7 +1,7 @@
 import type { InferRouterInputs, InferRouterOutputs, RouterClient } from "@orpc/server";
 import type router from "@reactive-resume/api/routers";
 import type { DeferredFetch } from "@reactive-resume/utils/deferred-request";
-import { createORPCClient, onError } from "@orpc/client";
+import { createORPCClient, onError, ORPCError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { BatchLinkPlugin } from "@orpc/client/plugins";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
@@ -9,6 +9,7 @@ import { prepareRequest } from "@reactive-resume/utils/deferred-request";
 import { authorizeAiRequest } from "./ai-consent";
 import { rpcFetch } from "./fetch";
 import { getAccountId } from "@/libs/auth/account-scope";
+import { reportSessionLoss } from "@/libs/auth/session-recovery";
 
 /**
  * The account a call belongs to. Captured when the call starts (before any await, batching or body staging), so a
@@ -64,8 +65,10 @@ export const client: RouterClient<typeof router, ClientContext> = createORPCClie
 				const destination = await authorizeAiRequest(options.path, options.input, client, options.signal);
 				return options.next({ ...options, context: { ...options.context, ...destination } });
 			},
-			onError((error) => {
+			onError((error, options) => {
 				if (error instanceof DOMException && error.name === "AbortError") return;
+				if (error instanceof ORPCError && error.code === "UNAUTHORIZED")
+					void reportSessionLoss(options.context.accountId);
 				console.warn("[oRPC client]", error);
 			}),
 		],
@@ -90,8 +93,10 @@ export const streamClient: RouterClient<typeof router, ClientContext> = createOR
 				const destination = await authorizeAiRequest(options.path, options.input, client, options.signal);
 				return options.next({ ...options, context: { ...options.context, ...destination } });
 			},
-			onError((error) => {
+			onError((error, options) => {
 				if (error instanceof DOMException && error.name === "AbortError") return;
+				if (error instanceof ORPCError && error.code === "UNAUTHORIZED")
+					void reportSessionLoss(options.context.accountId);
 				console.warn("[oRPC stream client]", error);
 			}),
 		],
