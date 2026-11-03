@@ -2172,6 +2172,18 @@ msgstr "AI プロバイダーを読み込めませんでした。リロードし
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+#: src/features/settings/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "AI リクエスト試行回数: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "この結果の AI リクエスト履歴は利用できません。"
+
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr ""
@@ -2179,6 +2191,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "AI 使用状況を読み込めませんでした。再読み込みしてください。古いサーバーは更新が必要な場合があります。"
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "今週の AI 使用状況"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2776,6 +2796,7 @@ msgstr ""
 msgid "Aspect ratio"
 msgstr "アスペクト比"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/assistant/conversation.tsx
@@ -3120,6 +3141,7 @@ msgstr "履歴書を一般的なセクションに分けて、区分けできる
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "ページで設定された言語を使用して、音節間の長い単語を分割します。"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Briefing"
@@ -3286,6 +3308,10 @@ msgstr ""
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
 msgstr "キャリア"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "キャリアチャット"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Career coach"
@@ -5569,6 +5595,7 @@ msgstr "Fieldnote チームの皆様"
 msgid "Dear hiring team,"
 msgstr "採用チームの皆様"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -7006,6 +7033,7 @@ msgstr "ファイルの読み取り"
 msgid "Files can be up to 25 MB."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "フィールドを入力"
@@ -7074,6 +7102,7 @@ msgstr "フィンランド語"
 msgid "First run"
 msgstr "初回実行"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Fit"
@@ -7258,6 +7287,10 @@ msgstr "パスワードをお忘れですか？"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "パスワードをお忘れですか？"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "フォームの回答"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Form answers"
@@ -8044,6 +8077,7 @@ msgstr "インポート中"
 msgid "Importing it into your new resume…"
 msgstr "新しい履歴書にインポートしています…"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "改善する"
@@ -8932,6 +8966,10 @@ msgstr ""
 msgid "Letter details"
 msgstr "手紙の詳細"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "手紙の下書き"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Letter duplicated"
 msgstr "レターを複製しました"
@@ -9262,6 +9300,10 @@ msgstr "スタイルシートエディタを読み込んでいます…"
 msgid "Loading the total"
 msgstr "合計をロードしています"
 
+#: src/features/settings/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "使用状況を読み込み中…"
+
 #: src/features/career/workspace/shell.tsx
 msgid "Loading workspace…"
 msgstr "ワークスペースを読み込み中…"
@@ -9580,9 +9622,21 @@ msgstr "また今度"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "MCP 一致スコア"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "MCP メッセージ下書き"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "MCPサーバー"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "MCP 調整"
 
 #: src/features/resume/editor/proposals/page-fit.tsx
 msgid "Measuring page fit…"
@@ -10175,6 +10229,10 @@ msgstr ""
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "今週は AI リクエストの試行が記録されていません。"
 
 #: src/features/career/offers.tsx
 msgid "No amount stated · value uncertain"
@@ -11611,6 +11669,10 @@ msgstr "支払い期間"
 msgid "Pay, deadline and conditions, so you can compare and decide"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "PDF インポート"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "PDF スタイルは、CSS のサブセットをサポートします。回転、破線と点線の境界線、および一部のレイアウト プロパティは無視されます。"
@@ -11853,6 +11915,7 @@ msgstr "履歴書の求人条件"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Practice"
@@ -12185,6 +12248,10 @@ msgstr ""
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "プロバイダーテスト"
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -12413,6 +12480,7 @@ msgstr "読み取り専用アクセス"
 msgid "Read only can't change or delete anything."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12727,6 +12795,10 @@ msgstr "24時間前にブリーフィングを更新"
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "当日の朝にブリーフィングを更新"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "使用状況を更新"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Register at OlaCV"
@@ -13055,6 +13127,7 @@ msgstr ""
 msgid "Replied"
 msgstr "返信済み"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13090,6 +13163,10 @@ msgstr ""
 #: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "バグを報告する"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "失敗やキャンセルを含む、このサーバーが記録したリクエストの試行です。再試行とツールループ内の各モデル呼び出しは個別に数えます。ストリームの断片、ツール自体、保存は数えません。"
 
 #: src/features/settings/profile.tsx
 msgid "Requested amount"
@@ -13559,6 +13636,10 @@ msgstr "役割 {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "{0}人目の役職"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "職種の提案"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Role, company or location"
@@ -16403,6 +16484,10 @@ msgstr "概要の段落がありません。"
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/settings/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "これは試行回数であり、請求、トークン数、費用ではありません。サーバーの中断により送信前に試行が記録されることがあります。このレポートではプロバイダーの受信を確認できません。"
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -17910,9 +17995,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "訪問者は履歴書を見る前にパスワードを入力します。信頼できる人とのみ共有してください。"
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "音声再生"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
 msgstr "音声設定"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "音声文字起こし"
 
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -18028,6 +18121,10 @@ msgstr "毎週{clock} · 次回 {next}"
 #: src/features/career/knowledge/preferences.tsx
 msgid "weeks"
 msgstr "週間"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "週はアカウントのタイムゾーンで月曜から日曜までです。履歴はこのサーバーの記録開始時からで、それ以前のリクエストは復元しません。接続名とモデルは使用時の状態で保持され、接続の削除後も変わりません。"
 
 #: src/features/career/shared.tsx
 msgid "Weighing each requirement"
@@ -18343,6 +18440,10 @@ msgstr ""
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "これがない場合は、宛先を自分で記入することになり、下書きには履歴書のみが使用されます。"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Word インポート"
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
 msgstr ""
@@ -18491,6 +18592,10 @@ msgstr "回答を作成中…"
 #: src/features/settings/ai/providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "文章作成の支援、カスタマイズされた提案、アシスタント。プロバイダーを選ばない場合はデフォルトのプロバイダーが使われます。キーは暗号化されたまま保存されます。"
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "文章レビュー"
 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"

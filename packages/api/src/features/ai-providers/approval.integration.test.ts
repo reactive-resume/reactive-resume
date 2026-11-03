@@ -457,6 +457,11 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)(
 				expect(requests).toHaveLength(1);
 				expect(requests[0]?.authorization).toBe("Bearer captured-a-key");
 				expect(JSON.parse(requests[0]?.body ?? "{}").model).toBe("stub");
+				const recorded = await pool.query("select provider_id,model from ai_request where user_id=$1 and action=$2", [
+					"alice",
+					"parse-posting",
+				]);
+				expect(recorded.rows).toEqual([{ provider_id: provider.id, model: "stub" }]);
 			} finally {
 				gate.release();
 				gate.restore();

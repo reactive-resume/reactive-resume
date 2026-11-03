@@ -2172,6 +2172,18 @@ msgstr "לא ניתן היה לטעון ספקי AI. טען מחדש כדי לנ
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+#: src/features/settings/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "ניסיונות בקשות AI: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "היסטוריית בקשות AI אינה זמינה לתוצאה זו."
+
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr ""
@@ -2179,6 +2191,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "לא ניתן לטעון את השימוש ב-AI. נסו לרענן. שרתים ישנים עשויים להזדקק לעדכון."
+
+#: src/features/settings/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "שימוש ב-AI השבוע"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2776,6 +2796,7 @@ msgstr ""
 msgid "Aspect ratio"
 msgstr "יחס גובה־רוחב"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/assistant/conversation.tsx
@@ -3120,6 +3141,7 @@ msgstr "פרק את קורות החיים למקטעים המקובלים כדי
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "שובר מילים ארוכות בין הברות, תוך שימוש בשפה שהוגדרה ב-Page."
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Briefing"
@@ -3286,6 +3308,10 @@ msgstr ""
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
 msgstr "קריירה"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "צ׳אט קריירה"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Career coach"
@@ -5569,6 +5595,7 @@ msgstr "צוות Fieldnote היקר,"
 msgid "Dear hiring team,"
 msgstr "צוות גיוס יקר,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -7006,6 +7033,7 @@ msgstr "קריאת קובץ"
 msgid "Files can be up to 25 MB."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "מילוי שדות"
@@ -7074,6 +7102,7 @@ msgstr "פינית"
 msgid "First run"
 msgstr "הרצה ראשונה"
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Fit"
@@ -7258,6 +7287,10 @@ msgstr "שכחת סיסמה?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "שכחת את הסיסמה שלך?"
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "תשובה לטופס"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Form answers"
@@ -8044,6 +8077,7 @@ msgstr "מייבא"
 msgid "Importing it into your new resume…"
 msgstr "מייבא אותו לקורות החיים החדשים שלך..."
 
+#: src/features/ai/usage.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "לְשַׁפֵּר"
@@ -8932,6 +8966,10 @@ msgstr ""
 msgid "Letter details"
 msgstr "פרטי מכתב"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "טיוטת מכתב"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Letter duplicated"
 msgstr "המכתב שוכפל"
@@ -9262,6 +9300,10 @@ msgstr "טוען את עורך גיליונות הסגנון…"
 msgid "Loading the total"
 msgstr "טוען את הסכום הכולל"
 
+#: src/features/settings/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "טעינת השימוש…"
+
 #: src/features/career/workspace/shell.tsx
 msgid "Loading workspace…"
 msgstr "טוען את סביבת העבודה…"
@@ -9580,9 +9622,21 @@ msgstr "אולי מאוחר יותר"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "ציון התאמה של MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "טיוטת הודעה של MCP"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "שרת MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "התאמה באמצעות MCP"
 
 #: src/features/resume/editor/proposals/page-fit.tsx
 msgid "Measuring page fit…"
@@ -10175,6 +10229,10 @@ msgstr ""
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr ""
+
+#: src/features/settings/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "לא נרשמו ניסיונות בקשות AI השבוע."
 
 #: src/features/career/offers.tsx
 msgid "No amount stated · value uncertain"
@@ -11611,6 +11669,10 @@ msgstr "תקופת תשלום"
 msgid "Pay, deadline and conditions, so you can compare and decide"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "ייבוא PDF"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "סגנונות PDF תומכים בקבוצת משנה של CSS. מתעלמים מסיבוב, גבולות מקווקו ומקווקו ומאפייני פריסה מסוימים."
@@ -11853,6 +11915,7 @@ msgstr "תנאי פרסום המשרה בקורות החיים שלך"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "Practice"
@@ -12185,6 +12248,10 @@ msgstr ""
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "בדיקת ספק"
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -12413,6 +12480,7 @@ msgstr "גישה לקריאה בלבד"
 msgid "Read only can't change or delete anything."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12727,6 +12795,10 @@ msgstr "רענן את התדריך 24 שעות לפני"
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "רענן את התדריך בבוקר יום הראיון"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "רענון השימוש"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Register at OlaCV"
@@ -13055,6 +13127,7 @@ msgstr ""
 msgid "Replied"
 msgstr "נענתה"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13090,6 +13163,10 @@ msgstr ""
 #: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "דווח על תקלה"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "ניסיונות בקשות שנרשמו בשרת זה, כולל ניסיונות שנכשלו או בוטלו. ניסיונות חוזרים וכל קריאה למודל בלולאת כלים נספרים בנפרד; חלקי זרם, הכלים עצמם ושמירה אינם נספרים."
 
 #: src/features/settings/profile.tsx
 msgid "Requested amount"
@@ -13559,6 +13636,10 @@ msgstr "תפקיד {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "תפקיד של אדם {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "הצעות לתפקידים"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Role, company or location"
@@ -16403,6 +16484,10 @@ msgstr "אין פסקת תקציר."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/settings/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "אלה ניסיונות, לא חיוב, מספרי אסימונים או עלויות. שרת שנקטע עשוי לרשום ניסיון לפני שליחתו; דוח זה אינו מאשר קבלה אצל הספק."
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -17910,9 +17995,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "המבקרים מזינים את הסיסמה לפני שהם רואים את קורות החיים. שתף אותה רק עם אנשים שאתה סומך עליהם."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "השמעת קול"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
 msgstr "הגדרות קול"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "תמלול קול"
 
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -18028,6 +18121,10 @@ msgstr "כל שבוע ב-{clock} · הבא {next}"
 #: src/features/career/knowledge/preferences.tsx
 msgid "weeks"
 msgstr "שבועות"
+
+#: src/features/settings/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "השבוע נמשך מיום שני עד יום ראשון באזור הזמן של החשבון. ההיסטוריה מתחילה כשהשרת מתחיל לרשום; בקשות קודמות אינן משוחזרות. שמות החיבורים והמודלים נשמרים כפי ששימשו, גם לאחר הסרת חיבור."
 
 #: src/features/career/shared.tsx
 msgid "Weighing each requirement"
@@ -18343,6 +18440,10 @@ msgstr ""
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "בלי אחד, אתה ממלא את הנמען בעצמך והניסוח משתמש רק בקורות החיים שלך."
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "ייבוא Word"
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
 msgstr ""
@@ -18491,6 +18592,10 @@ msgstr "כותב תשובה…"
 #: src/features/settings/ai/providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "עזרה בכתיבה, הצעות מותאמות והעוזר. ספק ברירת המחדל משמש בכל מקום שבו לא תבחר ספק. המפתחות שלך נשארים מוצפנים."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "סקירת כתיבה"
 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"

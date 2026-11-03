@@ -1724,6 +1724,17 @@ msgstr "Доставчиците на AI не можаха да бъдат за�
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI чете поставен текст само когато поискате. Връзките могат да използват собствените данни за работата на страницата без AI."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Опити за заявки към ИИ: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "Историята на заявките към ИИ не е налична за този резултат."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Използването на ИИ не можа да се зареди. Опреснете. По-старите сървъри може да се нуждаят от актуализация."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Използване на ИИ тази седмица"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2224,6 +2243,7 @@ msgid "Aspect ratio"
 msgstr "Съотношение на страните"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "Помощник"
@@ -2502,6 +2522,7 @@ msgstr "Разделете автобиографията на обичайни�
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Разделя дълги думи между срички, използвайки езика, зададен в Page."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2611,6 +2632,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Кариера"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Кариерен чат"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4389,6 +4414,7 @@ msgstr "Уважаеми {name},"
 msgid "Dear hiring team,"
 msgstr "Уважаеми екип по наемане,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5514,6 +5540,10 @@ msgstr "Попълнете детайлите ръчно"
 msgid "Fill empty fields with AI"
 msgstr "Попълнете празните полета с AI"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Попълване на полетата"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Попълва се от заявлението за работа. Поздравът следва името."
@@ -5546,6 +5576,7 @@ msgstr "Първа оферта"
 msgid "First run (YYYY-MM-DD)"
 msgstr "Първо изпълнение (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5710,6 +5741,10 @@ msgstr "Забравяне"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "Забравянето премахва връзката на този факт с историите и запазените елементи. Първоизточникът остава непроменен."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Отговор във формуляр"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6262,6 +6297,10 @@ msgstr "Внесено от {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Импортиране в новото ви резюме..."
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "Подобрете"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6915,6 +6954,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "Тяло на писмото"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Чернова на писмо"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Страница с писмо"
@@ -7191,6 +7234,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Зареждане на запазената версия…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Зареждане на използването…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7494,10 +7541,22 @@ msgstr "Може да е свободен"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "Оценка за съответствие MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "Чернова на съобщение MCP"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP сървър"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "Адаптиране MCP"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8019,6 +8078,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "Все още няма AI доставчик"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Тази седмица няма записани опити за заявки към ИИ."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9177,6 +9240,10 @@ msgstr "PDF · Най-подходящ за кандидатстване"
 msgid "PDF check canceled. Retry when ready."
 msgstr "Проверката на PDF е отменена. Опитайте отново, когато сте готови."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "Импортиране на PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9383,6 +9450,7 @@ msgstr "Източник на обявата"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9645,6 +9713,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "Задържането и използването на доставчика следва неговата политика за поверителност. Отказът предотвратява тази операция и оставя налични други функции на приложението."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Тест на доставчика"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9804,6 +9876,7 @@ msgstr "Прочитане на лиценза"
 msgid "Read only"
 msgstr "Достъп само за четене"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10048,6 +10121,10 @@ msgstr "Обновяване на брифинга 24 часа преди тов
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Обновяване на брифинга сутринта на деня"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Опресни използването"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10339,6 +10416,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Отговорено"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Отговор"
@@ -10385,6 +10463,10 @@ msgstr "Докладване на проблем"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Докладът е получен от оператора на вашия сървър. благодаря"
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Опити за заявки, записани от този сървър, включително неуспешни или отменени. Повторенията и всяко извикване на модел в цикъл с инструменти се броят отделно; частите на потока, самите инструменти и запазването не се броят."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10831,6 +10913,10 @@ msgstr "Роля (по избор)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Роля {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Предложения за длъжности"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13116,6 +13202,10 @@ msgstr "Няма абзац с резюме."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Това са опити, а не фактуриране, брой токени или разходи. Прекъснат сървър може да запише опит преди изпращането; отчетът не потвърждава получаване от доставчика."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14405,9 +14495,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Посетителите въвеждат паролата, преди да видят резюмето. Споделяйте я само с хора, на които имате доверие."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Гласово възпроизвеждане"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Настройки на гласа"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Гласова транскрипция"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14481,6 +14579,10 @@ msgstr "Уеб търсенията търсят работа в тези стр
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Уебсайт"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Седмицата е от понеделник до неделя в часовата зона на акаунта. Историята започва, когато сървърът започне да записва; предишни заявки не се възстановяват. Имената на връзките и моделите се пазят както са използвани, дори след премахване на връзка."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14712,6 +14814,10 @@ msgstr "Без такъв, вие сами попълвате получател
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Импортиране на Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Импортирането от Word, Подобряване, асистентът, черновите на писма, кариерните съвети и генерирането, както и гласовите упражнения изискват доставчик на AI. Редактирането, Дизайн, проверките за четливост и изтеглянията работят без него."
@@ -14837,6 +14943,10 @@ msgstr "Текст"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Помощ при писане, адаптирани предложения и помощникът. Доставчикът по подразбиране се използва навсякъде, където не изберете друг. Ключовете ви остават криптирани."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Преглед на текста"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

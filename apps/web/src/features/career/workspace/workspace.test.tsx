@@ -790,15 +790,19 @@ it("Tighten Undo keeps local typing and pins an unchanged inverse to accepted te
 		question: "Why this role?",
 		answer: "Original authored answer.",
 		factIds: ["old-proof"],
+		aiOperationIds: ["prior-op"],
 	};
 	api.data.workspace = { ...EMPTY_WORKSPACE, answers: [original] };
 	api.data.reviewedAnswers = [];
-	api.generate.mockResolvedValueOnce({ answer: { text: "Accepted answer.", factIds: ["accepted-proof"] } });
+	api.generate.mockResolvedValueOnce({
+		answer: { text: "Accepted answer.", factIds: ["accepted-proof"], aiOperationIds: ["next-op"] },
+	});
 	mount(<ApplyTab {...props} />);
 	fireEvent.click(screen.getByRole("button", { name: "Tighten" }));
 	await waitFor(() => expect(screen.getByRole("button", { name: "Accept" })).toBeVisible());
 	fireEvent.click(screen.getByRole("button", { name: "Accept" }));
 	await waitFor(() => expect(api.save).toHaveBeenCalled());
+	expect(api.save.mock.calls[0]?.[0]).toMatchObject({ answers: [{ aiOperationIds: ["prior-op", "next-op"] }] });
 	const undo = vi.mocked(toast.add).mock.calls.findLast(([value]) => value.description === "Answer replaced")?.[0]
 		.actionProps?.onClick;
 	expect(undo).toBeTypeOf("function");
@@ -813,7 +817,16 @@ it("Tighten Undo keeps local typing and pins an unchanged inverse to accepted te
 	await act(async () => undo?.({} as never));
 	expect(api.save.mock.calls[0]?.[0]).toMatchObject({
 		answers: [original],
-		expected: { answers: [{ ...original, answer: "Accepted answer.", factIds: ["accepted-proof"] }] },
+		expected: {
+			answers: [
+				{
+					...original,
+					answer: "Accepted answer.",
+					factIds: ["accepted-proof"],
+					aiOperationIds: ["prior-op", "next-op"],
+				},
+			],
+		},
 	});
 });
 

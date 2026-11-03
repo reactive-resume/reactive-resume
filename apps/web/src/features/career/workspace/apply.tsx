@@ -49,7 +49,7 @@ import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type Answer = CareerWorkspace["answers"][number];
-type AnswerSnapshot = Pick<Answer, "answer" | "factIds">;
+type AnswerSnapshot = Pick<Answer, "answer" | "factIds" | "aiOperationIds">;
 type CountUnit = "words" | "characters";
 
 const countWords = (text: string) => text.split(/\s+/).filter(Boolean).length;
@@ -128,7 +128,8 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 			accepted &&
 			(!current ||
 				current.answer !== accepted.answer ||
-				JSON.stringify(current.factIds) !== JSON.stringify(accepted.factIds))
+				JSON.stringify(current.factIds) !== JSON.stringify(accepted.factIds) ||
+				JSON.stringify(current.aiOperationIds ?? []) !== JSON.stringify(accepted.aiOperationIds ?? []))
 		) {
 			toast.add({ description: t`The answer changed since, so it wasn't restored.` });
 			return Promise.resolve(false);
@@ -355,12 +356,13 @@ function AnswerCard({
 		text: string;
 		factIds: string[];
 		note?: string | null;
-		before: { text: string; factIds: string[] };
+		aiOperationIds?: string[] | undefined;
+		before: { text: string; factIds: string[]; aiOperationIds: string[] };
 	} | null>(null);
 	// The answer as it reads now, for a toast's Undo that runs after later renders.
-	const current = useRef({ text, factIds: answer.factIds });
+	const current = useRef({ text, factIds: answer.factIds, aiOperationIds: answer.aiOperationIds ?? [] });
 	useLayoutEffect(() => {
-		current.current = { text, factIds: answer.factIds };
+		current.current = { text, factIds: answer.factIds, aiOperationIds: answer.aiOperationIds ?? [] };
 	});
 	const previousSaved = useRef(answer.answer);
 	useLayoutEffect(() => {
@@ -393,7 +395,7 @@ function AnswerCard({
 	const ask = async () => {
 		// Save the current question even when Draft is clicked before blur.
 		flushQuestion();
-		const before = { text, factIds: answer.factIds };
+		const before = { text, factIds: answer.factIds, aiOperationIds: answer.aiOperationIds ?? [] };
 		const result = await generate.run({ task: "answer", question: question.trim(), answer: text }).catch(() => null);
 		if (!result?.answer) return;
 		// Written from an older copy: offering it would replace what the user typed since.
@@ -407,7 +409,8 @@ function AnswerCard({
 	const accept = (chosen: NonNullable<typeof proposal>) => {
 		setText(chosen.text);
 		textDraft.accept();
-		const saved = onSave({ answer: chosen.text, factIds: chosen.factIds });
+		const aiOperationIds = [...new Set([...chosen.before.aiOperationIds, ...(chosen.aiOperationIds ?? [])])];
+		const saved = onSave({ answer: chosen.text, factIds: chosen.factIds, aiOperationIds });
 		setProposal(null);
 		void saved.then(
 			(ok) =>
@@ -424,8 +427,12 @@ function AnswerCard({
 								return;
 							}
 							const restored = await onSave(
-								{ answer: chosen.before.text, factIds: chosen.before.factIds },
-								{ answer: chosen.text, factIds: chosen.factIds },
+								{
+									answer: chosen.before.text,
+									factIds: chosen.before.factIds,
+									aiOperationIds: chosen.before.aiOperationIds,
+								},
+								{ answer: chosen.text, factIds: chosen.factIds, aiOperationIds },
 							);
 							if (restored && current.current.text === chosen.text) setText(chosen.before.text);
 						},

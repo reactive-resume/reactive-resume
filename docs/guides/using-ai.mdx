@@ -175,6 +175,25 @@ Select **Edit** on a provider's row.
   explicitly choose another destination. Documents and edits you already accepted aren't affected.
 </Warning>
 
+## See your AI usage
+
+Open **Settings → AI & developer → AI usage this week**. On native mobile, open **Settings → AI providers**. The report shows recorded request attempts for your account, grouped by connection, action and requested model. Select **Refresh usage** to read the latest totals. Weeks run from Monday through Sunday in your saved account timezone; the report shows its dates and timezone.
+
+One request attempt means one call to the provider transport after the server's authorization and context checks. A retry counts again. If an assistant calls a model, runs a tool, then calls the model again, that is two attempts. Stream chunks and running a tool do not add attempts. Copying, saving or reopening a result, deterministic checks, browser speech and actions refused before dispatch add none. Provider connection tests and scheduled AI work count too. Web search and page reading are separate services and are outside this AI report.
+
+<Frame caption="Two recorded attempts through a fictional connection: its test and a message review">
+  <img
+    src="/images/guides/using-ai/weekly-ai-usage.png"
+    alt="AI usage this week with two attempts for Fictional Cedar AI, one Provider test and one Reply using offer-fixture, and the account's UTC week dates"
+  />
+</Frame>
+
+Failed and cancelled transport attempts remain in history. These totals are not provider billing, token counts, costs or proof that the provider received a request. The server records an attempt before network I/O, so a server interruption can leave a recorded attempt unsent. Earlier requests are not reconstructed when recording first becomes available.
+
+Saved workspace **Library** results and **Check → Writing** reviews show their recorded attempt count, connection label, provider type and requested model. Reused AI answer sources keep their recorded lineage; saving or reusing them does not make another provider request. Older results say **AI request history unavailable for this result.** instead of guessing a count.
+
+Renaming, changing or deleting a connection does not rewrite its historical labels or models. Usage remains readable without an active AI provider. Account export includes usage history, and deleting the account removes it. An older server without reporting shows an update/retry notice.
+
 ## Which provider is used
 
 You can save several providers, for example one per account or one per model.

@@ -10,20 +10,28 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 import { createRouterClient } from "@orpc/server";
 
 const { dbMock, dbState } = vi.hoisted(() => {
-	const state = { rows: [] as Record<string, unknown>[] };
+	const state = { rows: [] as Record<string, unknown>[], requests: [] as Record<string, unknown>[] };
 
-	const selectChain = {
-		from: () => selectChain,
-		where: () => selectChain,
-		for: async () => state.rows,
-		orderBy: async () => state.rows,
-		limit: async () => state.rows,
+	const select = () => {
+		let rows = state.rows;
+		const chain = {
+			from: (table: { id?: unknown }) => {
+				rows = table.id === "user.id" ? [{ id: "user-1", email: "kaushik@example.test" }] : state.rows;
+				return chain;
+			},
+			where: () => chain,
+			for: async () => rows,
+			orderBy: async () => rows,
+			limit: async () => rows,
+		};
+		return chain;
 	};
 
 	const db = {
-		select: () => selectChain,
+		select,
 		transaction: async (run: (tx: unknown) => Promise<unknown>) => run(db),
 		execute: async () => undefined,
+		insert: () => ({ values: async (values: Record<string, unknown>) => void state.requests.push(values) }),
 		update: () => ({
 			set: (values: Record<string, unknown>) => ({
 				where: () => {
@@ -47,6 +55,7 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		baseUrl: "ai_provider.base_url",
 	},
 	user: { id: "user.id" },
+	aiRequest: {},
 }));
 vi.mock("drizzle-orm", () => ({
 	and: (...conditions: unknown[]) => ({ conditions }),
@@ -86,6 +95,7 @@ const client = createRouterClient(aiProvidersRouter, {
 
 function seedProvider(overrides: Record<string, unknown> = {}) {
 	const credential = encryptCredential("sk-live-demo-key-1234");
+	dbState.requests = [];
 
 	dbState.rows = [
 		{
@@ -143,6 +153,15 @@ describe("POST /ai-providers/{id}/test — end to end", () => {
 		expect(response.testError).toBe("OpenAI rejected the API key. Check the key and test again.");
 		expect(response.enabled).toBe(false);
 		expect(dbState.rows[0]?.testError).toBe("OpenAI rejected the API key. Check the key and test again.");
+		expect(dbState.requests).toEqual([
+			expect.objectContaining({
+				userId: "user-1",
+				providerId: "provider-1",
+				action: "provider-test",
+				provider: "openai",
+				model: "gpt-4.1",
+			}),
+		]);
 	});
 
 	it("never leaks the decrypted API key into the persisted error", async () => {
@@ -178,6 +197,7 @@ describe("POST /ai-providers/{id}/test — end to end", () => {
 		const response = await client.test({ id: "provider-1" });
 
 		expect(testedModels).toEqual(["gpt-4.1", "gpt-4.1-mini"]);
+		expect(dbState.requests.map((request) => request.model)).toEqual(testedModels);
 		expect(response.testStatus).toBe("success");
 		expect(response.enabled).toBe(true);
 	});

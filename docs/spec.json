@@ -1379,6 +1379,164 @@
 				]
 			}
 		},
+		"/ai/usage": {
+			"get": {
+				"operationId": "getWeeklyAiUsage",
+				"summary": "Get this week's AI provider request attempts",
+				"tags": [
+					"AI"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"start": {
+											"type": "string",
+											"format": "date-time",
+											"x-native-type": "date"
+										},
+										"end": {
+											"type": "string",
+											"format": "date-time",
+											"x-native-type": "date"
+										},
+										"timezone": {
+											"type": "string"
+										},
+										"requests": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										},
+										"groups": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"action": {
+														"enum": [
+															"provider-test",
+															"import-pdf",
+															"import-docx",
+															"writing-review",
+															"improve",
+															"parse-posting",
+															"autofill-posting",
+															"match-score",
+															"tailor-resume",
+															"draft-message",
+															"draft-letter",
+															"role-suggestions",
+															"fit",
+															"briefing",
+															"practice",
+															"debrief",
+															"reply",
+															"answer",
+															"assistant",
+															"career-chat",
+															"transcription",
+															"speech"
+														],
+														"type": "string"
+													},
+													"providerId": {
+														"type": "string"
+													},
+													"label": {
+														"type": "string"
+													},
+													"provider": {
+														"type": "string"
+													},
+													"model": {
+														"type": "string"
+													},
+													"requests": {
+														"type": "integer",
+														"minimum": 0,
+														"maximum": 9007199254740991
+													}
+												},
+												"required": [
+													"action",
+													"providerId",
+													"label",
+													"provider",
+													"model",
+													"requests"
+												]
+											}
+										}
+									},
+									"required": [
+										"start",
+										"end",
+										"timezone",
+										"requests",
+										"groups"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/ai/usage\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
 		"/ai/content-reports": {
 			"post": {
 				"operationId": "reportAiContent",
@@ -1679,6 +1837,53 @@
 													"type": "string",
 													"format": "date-time",
 													"x-native-type": "date"
+												},
+												"aiUsage": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"requests": {
+																	"type": "integer",
+																	"minimum": 0,
+																	"maximum": 9007199254740991
+																},
+																"models": {
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"providerId": {
+																				"type": "string"
+																			},
+																			"label": {
+																				"type": "string"
+																			},
+																			"provider": {
+																				"type": "string"
+																			},
+																			"model": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"providerId",
+																			"label",
+																			"provider",
+																			"model"
+																		]
+																	}
+																}
+															},
+															"required": [
+																"requests",
+																"models"
+															]
+														},
+														{
+															"type": "null"
+														}
+													]
 												}
 											},
 											"required": [
@@ -45396,6 +45601,157 @@
 										"career": {
 											"type": "object",
 											"properties": {
+												"aiRequests": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"operationId": {
+																"type": "string"
+															},
+															"action": {
+																"type": "string"
+															},
+															"providerId": {
+																"type": "string"
+															},
+															"label": {
+																"type": "string"
+															},
+															"provider": {
+																"type": "string"
+															},
+															"model": {
+																"type": "string"
+															},
+															"createdAt": {
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															}
+														},
+														"required": [
+															"id",
+															"operationId",
+															"action",
+															"providerId",
+															"label",
+															"provider",
+															"model",
+															"createdAt"
+														]
+													}
+												},
+												"writingReviews": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"resumeId": {
+																"type": "string"
+															},
+															"inputText": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"passages": {
+																"anyOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"id": {
+																					"type": "string"
+																				},
+																				"where": {
+																					"type": "string"
+																				},
+																				"text": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"id",
+																				"where",
+																				"text"
+																			]
+																		}
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"review": {
+																"anyOf": [
+																	{
+																		"type": "object",
+																		"propertyNames": {
+																			"type": "string"
+																		},
+																		"additionalProperties": {}
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"aiOperationId": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"requestedAt": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"format": "date-time",
+																		"x-native-type": "date"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"reviewedAt": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"format": "date-time",
+																		"x-native-type": "date"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															}
+														},
+														"required": [
+															"resumeId",
+															"inputText",
+															"passages",
+															"review",
+															"aiOperationId",
+															"requestedAt",
+															"reviewedAt"
+														]
+													}
+												},
 												"profile": {
 													"type": "object",
 													"properties": {
@@ -45552,6 +45908,15 @@
 															},
 															"answer": {
 																"type": "string"
+															},
+															"aiOperationIds": {
+																"type": "array",
+																"maxItems": 1000,
+																"items": {
+																	"type": "string",
+																	"minLength": 1,
+																	"maxLength": 64
+																}
 															},
 															"source": {
 																"enum": [
@@ -46413,6 +46778,15 @@
 																						"answer": {
 																							"type": "string",
 																							"maxLength": 6000
+																						},
+																						"aiOperationIds": {
+																							"type": "array",
+																							"maxItems": 1000,
+																							"items": {
+																								"type": "string",
+																								"minLength": 1,
+																								"maxLength": 64
+																							}
 																						}
 																					},
 																					"required": [
@@ -47075,6 +47449,63 @@
 															},
 															"inputVersion": {
 																"type": "string"
+															},
+															"aiOperationId": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"aiUsage": {
+																"anyOf": [
+																	{
+																		"type": "object",
+																		"properties": {
+																			"requests": {
+																				"type": "integer",
+																				"minimum": 0,
+																				"maximum": 9007199254740991
+																			},
+																			"models": {
+																				"type": "array",
+																				"items": {
+																					"type": "object",
+																					"properties": {
+																						"providerId": {
+																							"type": "string"
+																						},
+																						"label": {
+																							"type": "string"
+																						},
+																						"provider": {
+																							"type": "string"
+																						},
+																						"model": {
+																							"type": "string"
+																						}
+																					},
+																					"required": [
+																						"providerId",
+																						"label",
+																						"provider",
+																						"model"
+																					]
+																				}
+																			}
+																		},
+																		"required": [
+																			"requests",
+																			"models"
+																		]
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
 															}
 														},
 														"required": [
@@ -47976,6 +48407,16 @@
 															},
 															"model": {
 																"type": "string"
+															},
+															"aiOperationId": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
 															}
 														},
 														"required": [
@@ -47986,7 +48427,8 @@
 															"applicationId",
 															"original",
 															"edited",
-															"model"
+															"model",
+															"aiOperationId"
 														]
 													}
 												},
@@ -48028,6 +48470,15 @@
 																					"maxItems": 10,
 																					"items": {
 																						"type": "string"
+																					}
+																				},
+																				"aiOperationIds": {
+																					"type": "array",
+																					"maxItems": 1000,
+																					"items": {
+																						"type": "string",
+																						"minLength": 1,
+																						"maxLength": 64
 																					}
 																				}
 																			},
@@ -48734,6 +49185,15 @@
 											"answer": {
 												"type": "string"
 											},
+											"aiOperationIds": {
+												"type": "array",
+												"maxItems": 1000,
+												"items": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 64
+												}
+											},
 											"source": {
 												"enum": [
 													"manual",
@@ -48958,6 +49418,15 @@
 										"minLength": 1,
 										"maxLength": 6000
 									},
+									"aiOperationIds": {
+										"type": "array",
+										"maxItems": 1000,
+										"items": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 64
+										}
+									},
 									"source": {
 										"enum": [
 											"manual",
@@ -49073,6 +49542,15 @@
 										},
 										"answer": {
 											"type": "string"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
 										},
 										"source": {
 											"enum": [
@@ -49314,6 +49792,15 @@
 											"items": {
 												"type": "string"
 											}
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
 										}
 									},
 									"required": [
@@ -49542,6 +50029,16 @@
 											},
 											"model": {
 												"type": "string"
+											},
+											"aiOperationId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
 											}
 										},
 										"required": [
@@ -49552,7 +50049,8 @@
 											"applicationId",
 											"original",
 											"edited",
-											"model"
+											"model",
+											"aiOperationId"
 										]
 									}
 								}
@@ -54275,6 +54773,15 @@
 																		"answer": {
 																			"type": "string",
 																			"maxLength": 6000
+																		},
+																		"aiOperationIds": {
+																			"type": "array",
+																			"maxItems": 1000,
+																			"items": {
+																				"type": "string",
+																				"minLength": 1,
+																				"maxLength": 64
+																			}
 																		}
 																	},
 																	"required": [
@@ -54937,6 +55444,63 @@
 											},
 											"inputVersion": {
 												"type": "string"
+											},
+											"aiOperationId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"aiUsage": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"requests": {
+																"type": "integer",
+																"minimum": 0,
+																"maximum": 9007199254740991
+															},
+															"models": {
+																"type": "array",
+																"items": {
+																	"type": "object",
+																	"properties": {
+																		"providerId": {
+																			"type": "string"
+																		},
+																		"label": {
+																			"type": "string"
+																		},
+																		"provider": {
+																			"type": "string"
+																		},
+																		"model": {
+																			"type": "string"
+																		}
+																	},
+																	"required": [
+																		"providerId",
+																		"label",
+																		"provider",
+																		"model"
+																	]
+																}
+															}
+														},
+														"required": [
+															"requests",
+															"models"
+														]
+													},
+													{
+														"type": "null"
+													}
+												]
 											},
 											"application": {
 												"anyOf": [
@@ -55745,6 +56309,15 @@
 																			"answer": {
 																				"type": "string",
 																				"maxLength": 6000
+																			},
+																			"aiOperationIds": {
+																				"type": "array",
+																				"maxItems": 1000,
+																				"items": {
+																					"type": "string",
+																					"minLength": 1,
+																					"maxLength": 64
+																				}
 																			}
 																		},
 																		"required": [
@@ -56407,6 +56980,63 @@
 												},
 												"inputVersion": {
 													"type": "string"
+												},
+												"aiOperationId": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"aiUsage": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"requests": {
+																	"type": "integer",
+																	"minimum": 0,
+																	"maximum": 9007199254740991
+																},
+																"models": {
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"providerId": {
+																				"type": "string"
+																			},
+																			"label": {
+																				"type": "string"
+																			},
+																			"provider": {
+																				"type": "string"
+																			},
+																			"model": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"providerId",
+																			"label",
+																			"provider",
+																			"model"
+																		]
+																	}
+																}
+															},
+															"required": [
+																"requests",
+																"models"
+															]
+														},
+														{
+															"type": "null"
+														}
+													]
 												}
 											},
 											"required": [
@@ -57328,6 +57958,15 @@
 																	"answer": {
 																		"type": "string",
 																		"maxLength": 6000
+																	},
+																	"aiOperationIds": {
+																		"type": "array",
+																		"maxItems": 1000,
+																		"items": {
+																			"type": "string",
+																			"minLength": 1,
+																			"maxLength": 64
+																		}
 																	}
 																},
 																"required": [
@@ -57990,6 +58629,63 @@
 										},
 										"inputVersion": {
 											"type": "string"
+										},
+										"aiOperationId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -58872,6 +59568,15 @@
 																					"answer": {
 																						"type": "string",
 																						"maxLength": 6000
+																					},
+																					"aiOperationIds": {
+																						"type": "array",
+																						"maxItems": 1000,
+																						"items": {
+																							"type": "string",
+																							"minLength": 1,
+																							"maxLength": 64
+																						}
 																					}
 																				},
 																				"required": [
@@ -59534,6 +60239,63 @@
 														},
 														"inputVersion": {
 															"type": "string"
+														},
+														"aiOperationId": {
+															"anyOf": [
+																{
+																	"type": "string"
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"aiUsage": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"requests": {
+																			"type": "integer",
+																			"minimum": 0,
+																			"maximum": 9007199254740991
+																		},
+																		"models": {
+																			"type": "array",
+																			"items": {
+																				"type": "object",
+																				"properties": {
+																					"providerId": {
+																						"type": "string"
+																					},
+																					"label": {
+																						"type": "string"
+																					},
+																					"provider": {
+																						"type": "string"
+																					},
+																					"model": {
+																						"type": "string"
+																					}
+																				},
+																				"required": [
+																					"providerId",
+																					"label",
+																					"provider",
+																					"model"
+																				]
+																			}
+																		}
+																	},
+																	"required": [
+																		"requests",
+																		"models"
+																	]
+																},
+																{
+																	"type": "null"
+																}
+															]
 														}
 													},
 													"required": [
@@ -59579,6 +60341,15 @@
 																}
 															],
 															"default": null
+														},
+														"aiOperationIds": {
+															"type": "array",
+															"maxItems": 1000,
+															"items": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 64
+															}
 														}
 													},
 													"required": [
@@ -59714,6 +60485,15 @@
 															"items": {
 																"type": "string"
 															}
+														},
+														"aiOperationIds": {
+															"type": "array",
+															"maxItems": 1000,
+															"items": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 64
+															}
 														}
 													},
 													"required": [
@@ -59748,6 +60528,15 @@
 															"maxItems": 10,
 															"items": {
 																"type": "string"
+															}
+														},
+														"aiOperationIds": {
+															"type": "array",
+															"maxItems": 1000,
+															"items": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 64
 															}
 														}
 													},
@@ -60231,6 +61020,15 @@
 														"items": {
 															"type": "string"
 														}
+													},
+													"aiOperationIds": {
+														"type": "array",
+														"maxItems": 1000,
+														"items": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 64
+														}
 													}
 												},
 												"required": [
@@ -60471,6 +61269,15 @@
 													"items": {
 														"type": "string"
 													}
+												},
+												"aiOperationIds": {
+													"type": "array",
+													"maxItems": 1000,
+													"items": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 64
+													}
 												}
 											},
 											"required": [
@@ -60568,6 +61375,15 @@
 															"maxItems": 10,
 															"items": {
 																"type": "string"
+															}
+														},
+														"aiOperationIds": {
+															"type": "array",
+															"maxItems": 1000,
+															"items": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 64
 															}
 														}
 													},
@@ -60681,6 +61497,15 @@
 														"maxItems": 10,
 														"items": {
 															"type": "string"
+														}
+													},
+													"aiOperationIds": {
+														"type": "array",
+														"maxItems": 1000,
+														"items": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 64
 														}
 													}
 												},
@@ -60924,6 +61749,15 @@
 													"items": {
 														"type": "string"
 													}
+												},
+												"aiOperationIds": {
+													"type": "array",
+													"maxItems": 1000,
+													"items": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 64
+													}
 												}
 											},
 											"required": [
@@ -60958,6 +61792,15 @@
 													"maxItems": 10,
 													"items": {
 														"type": "string"
+													}
+												},
+												"aiOperationIds": {
+													"type": "array",
+													"maxItems": 1000,
+													"items": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 64
 													}
 												}
 											},

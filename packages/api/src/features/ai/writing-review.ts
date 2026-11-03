@@ -4,6 +4,7 @@ import { db } from "@reactive-resume/db/client";
 import { resume, resumeWritingReview } from "@reactive-resume/db/schema";
 import { lockUser } from "../documents/ownership";
 import { atsReviewOutputSchema } from "./ats-review";
+import { readAiUsage } from "./usage";
 
 async function requireReviewResume(userId: string, id: string) {
 	const [owned] = await db
@@ -26,6 +27,7 @@ export async function readWritingReview(userId: string, resumeId: string) {
 				passages: row.passages,
 				review: atsReviewOutputSchema.parse(row.review),
 				reviewedAt: row.reviewedAt,
+				aiUsage: row.aiOperationId ? await readAiUsage(userId, [row.aiOperationId]) : null,
 			}
 		: null;
 }

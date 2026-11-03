@@ -13,6 +13,7 @@ import { useFacts, useSavedItems } from "../hooks";
 import { Actions, Block, tabLabel } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { client, prepareRpc } from "@/api/client";
+import { AiResultUsage } from "@/features/ai/usage";
 import { useUserTime } from "@/features/application-detail/hooks";
 import { useUndoRows } from "@/features/career/hooks";
 import { formatMoney } from "@/features/career/offer-compare";
@@ -150,6 +151,7 @@ function SavedRow({ item, applicationId, expanded, onToggle, onOpen, onDelete }:
 					<Text variant="caption" color="ink3">
 						{subtitle}
 					</Text>
+					<AiResultUsage usage={item.aiUsage} />
 				</Pressable>
 				<IconButton icon="trash" label={t`Delete`} onPress={onDelete} />
 			</View>

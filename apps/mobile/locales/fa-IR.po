@@ -1724,6 +1724,17 @@ msgstr "ارائه دهندگان هوش مصنوعی بارگیری نشدند.
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI فقط به درخواست شما متن چسبانده‌شده را می‌خواند. برای لینک‌ها می‌توان داده‌های شغلی خود صفحه را بدون AI خواند."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "تلاش‌های درخواست هوش مصنوعی: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "تاریخچهٔ درخواست هوش مصنوعی برای این نتیجه در دسترس نیست."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "بارگذاری میزان استفاده از هوش مصنوعی ممکن نشد. تازه‌سازی کنید. سرورهای قدیمی شاید نیاز به به‌روزرسانی داشته باشند."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "استفاده از هوش مصنوعی در این هفته"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2224,6 +2243,7 @@ msgid "Aspect ratio"
 msgstr "نسبت تصویر"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "دستیار"
@@ -2502,6 +2522,7 @@ msgstr "رزومه را به بخش‌های معمول تقسیم کنید تا
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "با استفاده از زبان تنظیم شده در صفحه، کلمات طولانی را بین هجاها می شکند."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2611,6 +2632,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "مسیر شغلی"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "گفت‌وگوی شغلی"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4389,6 +4414,7 @@ msgstr "{name} عزیز،"
 msgid "Dear hiring team,"
 msgstr "تیم استخدامی محترم"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5514,6 +5540,10 @@ msgstr "جزئیات را به صورت دستی پر کنید"
 msgid "Fill empty fields with AI"
 msgstr "فیلدهای خالی را با AI پر کنید"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "پر کردن فیلدها"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "از درخواست کار پر شده است. سلام به دنبال نام است."
@@ -5546,6 +5576,7 @@ msgstr "پیشنهاد اول"
 msgid "First run (YYYY-MM-DD)"
 msgstr "اولین اجرا (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5710,6 +5741,10 @@ msgstr "فراموش کردن"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "فراموشی این واقعیت را از داستان ها و موارد ذخیره شده جدا می کند. منبع اصلی بدون تغییر باقی می ماند."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "پاسخ فرم"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6262,6 +6297,10 @@ msgstr "واردشده از {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "در حال وارد کردن آن به رزومه جدید…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "بهبود بخشد"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6915,6 +6954,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "بدن نامه"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "پیش‌نویس نامه"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "صفحه نامه"
@@ -7191,6 +7234,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "در حال بارگیری نسخهٔ ذخیره‌شده…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "در حال بارگذاری استفاده…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7494,10 +7541,22 @@ msgstr "احتمالاً قابل ثبت"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "امتیاز تطبیق MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "پیش‌نویس پیام MCP"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "سرور MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "سفارشی‌سازی MCP"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8019,6 +8078,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "هنوز ارائه دهنده AI وجود ندارد"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "این هفته تلاشی برای درخواست هوش مصنوعی ثبت نشده است."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9177,6 +9240,10 @@ msgstr "PDF · بهترین گزینه برای درخواست شغلی"
 msgid "PDF check canceled. Retry when ready."
 msgstr "بررسی PDF لغو شد. هر وقت آماده بودید دوباره امتحان کنید."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "ورود PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9383,6 +9450,7 @@ msgstr "منبع آگهی استخدام"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9645,6 +9713,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "حفظ و استفاده ارائه دهنده از خط مشی رازداری آن پیروی می کند. رد کردن از این عملیات جلوگیری می کند و سایر ویژگی های برنامه را در دسترس می گذارد."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "آزمایش ارائه‌دهنده"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9804,6 +9876,7 @@ msgstr "خواندن مجوز"
 msgid "Read only"
 msgstr "دسترسی فقط خواندنی"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10048,6 +10121,10 @@ msgstr "به‌روزرسانی گزارش توجیهی ۲۴ ساعت قبل"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "به‌روزرسانی گزارش توجیهی در صبح همان روز"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "تازه‌سازی استفاده"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10339,6 +10416,7 @@ msgstr ""
 msgid "Replied"
 msgstr "پاسخ داده شد"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "پاسخ"
@@ -10385,6 +10463,10 @@ msgstr "گزارش مشکل"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "گزارش دریافت شده توسط اپراتور سرور شما متشکرم."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "تلاش‌های درخواست ثبت‌شده توسط این سرور، شامل تلاش‌های ناموفق یا لغوشده. تلاش مجدد و هر فراخوانی مدل در حلقهٔ ابزار جداگانه شمرده می‌شود؛ بخش‌های جریان، خود ابزارها و ذخیره‌سازی شمرده نمی‌شوند."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10831,6 +10913,10 @@ msgstr "نقش (اختیاری)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "نقش {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "پیشنهادهای شغلی"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13116,6 +13202,10 @@ msgstr "هیچ پاراگراف خلاصه‌ای وجود ندارد."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "این‌ها تلاش هستند، نه صورت‌حساب، تعداد توکن یا هزینه. سرور متوقف‌شده ممکن است تلاش را پیش از ارسال ثبت کند؛ این گزارش دریافت توسط ارائه‌دهنده را تأیید نمی‌کند."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14405,9 +14495,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "بازدیدکنندگان پیش از دیدن رزومه رمز عبور را وارد می‌کنند. آن را فقط با افرادی که به آنها اعتماد دارید به اشتراک بگذارید."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "پخش صدا"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "تنظیمات صدا"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "رونویسی صدا"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14481,6 +14579,10 @@ msgstr "جستجوهای وب در این کشورها به دنبال شغل م
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "وب‌سایت"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "هفته از دوشنبه تا یکشنبه در منطقهٔ زمانی حساب است. تاریخچه از شروع ثبت در این سرور آغاز می‌شود؛ درخواست‌های قبلی بازسازی نمی‌شوند. نام اتصال‌ها و مدل‌ها همان‌طور که استفاده شده‌اند حفظ می‌شوند، حتی پس از حذف اتصال."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14712,6 +14814,10 @@ msgstr "بدون رزومه، شما شخص دریافت کننده را پر م
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "ورود Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "وارد کردن Word، بهبود، دستیار، پیش‌نویس نامه‌ها، مربی‌گری و تولید محتوای شغلی، و تمرین صوتی به آن نیاز دارند. ویرایش، طراحی، بررسی‌های خوانایی و دانلودها بدون آن کار می‌کنند."
@@ -14837,6 +14943,10 @@ msgstr "نوشتار"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "کمک در نوشتن، پیشنهادهای متناسب و دستیار. هر جا ارائه‌دهنده‌ای انتخاب نکنید، ارائه‌دهندهٔ پیش‌فرض استفاده می‌شود. کلیدهای شما رمزگذاری‌شده می‌مانند."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "بازبینی نوشتار"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

@@ -1,6 +1,7 @@
 import type { CheckIssue } from "./issues";
 import type { WritingNote } from "./review";
 import type { Proposal } from "@reactive-resume/resume/proposals";
+import type { AiUsageSummary } from "@reactive-resume/schema/ai-usage";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Dispatch, SetStateAction } from "react";
 import { i18n } from "@lingui/core";
@@ -23,6 +24,7 @@ import { client, orpc } from "@/api/client";
 import { useResumeStore } from "@/draft";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { ReportAiContent } from "@/features/ai/report-content";
+import { AiResultUsage } from "@/features/ai/usage";
 import { Banner, Button, Card, SelectSheet, Skeleton, Text, useTheme } from "@/ui";
 
 type WritingProps = {
@@ -45,6 +47,7 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 	const hydrated = useRef<string | null>(null);
 	const [reviewInput, setReviewInput] = useState<string | null>(null);
 	const [reviewedAt, setReviewedAt] = useState<Date | null>(null);
+	const [reviewUsage, setReviewUsage] = useState<AiUsageSummary | null>(null);
 	const providers = useHasAIProvider();
 	const [setup, setSetup] = useState(false);
 	const [providerId, setProviderId] = useState<string | null>(null);
@@ -75,6 +78,7 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 		});
 		setReviewInput(entry.inputText);
 		setReviewedAt(entry.reviewedAt);
+		setReviewUsage(entry.aiUsage ?? null);
 	}, [saved.data, inputText, passages, setReview, id]);
 
 	const run = async () => {
@@ -149,6 +153,7 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 			{reviewedAt && (
 				<Text variant="caption" color="ink3">{t`Reviewed ${reviewedAt.toLocaleString(i18n.locale)}`}</Text>
 			)}
+			{review && <AiResultUsage usage={reviewUsage} />}
 			{reviewInput !== null && reviewInput !== inputText && (
 				<Banner
 					tone="warn"

@@ -1,4 +1,6 @@
+import type { AiUsage } from "../ai/usage";
 import type { AiTask } from "@reactive-resume/ai/task-models";
+import type { AiAction } from "@reactive-resume/schema/ai-usage";
 import { ORPCError } from "@orpc/client";
 import { APICallError, generateText, RetryError } from "ai";
 import z from "zod";
@@ -15,6 +17,7 @@ import { dataBlock } from "../ai/data-block";
 import { isNoAiDestination } from "../ai/destination";
 import { aiDeadline, generateJson as sharedGenerateJson } from "../ai/generate-json";
 import { getModel } from "../ai/service";
+import { createAiUsage } from "../ai/usage";
 import { coverLetterService } from "../cover-letters/service";
 import { assertDocumentVersion } from "../documents/ownership";
 import { resumeService } from "../resume/service";
@@ -45,16 +48,19 @@ function canonicalLanguage(value: string): string {
 }
 
 // Resolve the user's default (tested + enabled) AI provider into a ready model instance.
-async function resolveModel(userId: string, task?: AiTask) {
+async function resolveModel(userId: string, action: AiAction, task?: AiTask, check?: AiUsage["check"]) {
 	const provider = await aiProvidersService.getDefaultRunnable({ userId });
 	if (!provider) {
 		throw new ORPCError("BAD_REQUEST", {
 			message: "No AI provider is set up. Add one in Settings → AI & developer to use AI features.",
 		});
 	}
+	const usage = createAiUsage(userId, action, provider, check);
 	return {
 		provider,
+		usage,
 		model: getModel({
+			usage,
 			provider: provider.provider,
 			model: task ? aiModelForTask(provider, task) : provider.model,
 			apiKey: provider.apiKey,
@@ -333,6 +339,7 @@ export const aiRouter = {
 				if (!provider) return fallback;
 
 				const model = getModel({
+					usage: createAiUsage(context.user.id, "parse-posting", provider),
 					provider: provider.provider,
 					model: aiModelForTask(provider, "fast"),
 					apiKey: provider.apiKey,
@@ -393,7 +400,7 @@ export const aiRouter = {
 		.output(autofillOutput)
 		.errors(aiErrors)
 		.handler(async ({ context, input, signal }) => {
-			const { model, provider } = await resolveModel(context.user.id, "fast");
+			const { model, provider } = await resolveModel(context.user.id, "autofill-posting", "fast");
 
 			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
 			signal?.throwIfAborted();
@@ -431,15 +438,13 @@ export const aiRouter = {
 				throw new ORPCError("BAD_REQUEST", { message: "Paste the job description into this application first." });
 			}
 
-			const [{ model, provider }, resume] = await Promise.all([
-				resolveModel(context.user.id),
-				resumeService.getById({ id: application.resumeId, userId: context.user.id }),
-			]);
-
-			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, async (tx) => {
+			const resume = await resumeService.getById({ id: application.resumeId, userId: context.user.id });
+			const check: AiUsage["check"] = async (tx) => {
 				await assertApplicationVersion(tx, context.user.id, application);
 				if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
-			});
+			};
+			const { model, provider, usage } = await resolveModel(context.user.id, "match-score", undefined, check);
+			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, check);
 			signal?.throwIfAborted();
 			const result = await generateJson(
 				model,
@@ -455,7 +460,7 @@ export const aiRouter = {
 				id: input.id,
 				userId: context.user.id,
 				matchScore: result.score,
-				aiMetadata: { matchScore: result },
+				aiMetadata: { matchScore: result, aiOperationId: usage.operationId },
 			});
 
 			return result;
@@ -478,10 +483,14 @@ export const aiRouter = {
 		.errors(aiErrors)
 		.handler(async ({ context, input, signal }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
-			const { model, provider } = await resolveModel(context.user.id, "capable");
 			const resume = application.resumeId
 				? await resumeService.getById({ id: application.resumeId, userId: context.user.id }).catch(() => null)
 				: null;
+			const check: AiUsage["check"] = async (tx) => {
+				await assertApplicationVersion(tx, context.user.id, application);
+				if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
+			};
+			const { model, provider } = await resolveModel(context.user.id, "draft-message", "capable", check);
 
 			const context_ = `${dataBlock("POSTING", JSON.stringify({ role: application.role, company: application.company, location: application.location, description: application.jobDescription }))}${resume ? `\nCANDIDATE RESUME:\n${JSON.stringify(resume.data)}` : ""}`;
 
@@ -490,10 +499,7 @@ export const aiRouter = {
 					? `Write a concise, specific cover letter (250-350 words, no placeholders like [Name]) for this application, drawing on the resume. Return only the letter text.\n\n${context_}`
 					: `Write a short, polite follow-up message (80-120 words) to a recruiter checking in on this application. Warm but not pushy. Return only the message text.\n\n${context_}`;
 
-			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, async (tx) => {
-				await assertApplicationVersion(tx, context.user.id, application);
-				if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
-			});
+			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, check);
 			signal?.throwIfAborted();
 			const text = await generatePlainText(model, prompt, signal);
 			if (input.kind === "follow-up") return { text };
@@ -530,15 +536,13 @@ export const aiRouter = {
 				throw new ORPCError("BAD_REQUEST", { message: "Paste the job description into this application first." });
 			}
 
-			const [{ model, provider }, resume] = await Promise.all([
-				resolveModel(context.user.id),
-				resumeService.getById({ id: application.resumeId, userId: context.user.id }),
-			]);
-
-			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, async (tx) => {
+			const resume = await resumeService.getById({ id: application.resumeId, userId: context.user.id });
+			const check: AiUsage["check"] = async (tx) => {
 				await assertApplicationVersion(tx, context.user.id, application);
 				if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
-			});
+			};
+			const { model, provider } = await resolveModel(context.user.id, "tailor-resume", undefined, check);
+			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, check);
 			signal?.throwIfAborted();
 			const { summary } = await generateJson(
 				model,

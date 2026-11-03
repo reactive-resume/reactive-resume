@@ -1,6 +1,5 @@
 import type { AIProvider, AiVoiceOperation } from "@reactive-resume/ai/types";
 import type { DbOrTx } from "@reactive-resume/db/client";
-import { createHmac } from "node:crypto";
 import { ORPCError } from "@orpc/client";
 import { and, asc, desc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
 import { aiConfiguredModels } from "@reactive-resume/ai/task-models";
@@ -12,7 +11,9 @@ import { assertCredentialEncryptionConfigured, decryptCredential, encryptCredent
 import { approvedAiProviderId, assertAiDestination } from "../ai/destination";
 import { testConnection } from "../ai/service";
 import { resolveAiBaseUrl } from "../ai/url-policy";
+import { createAiUsage } from "../ai/usage";
 import { lockUser } from "../documents/ownership";
+import { assertProviderAvailable, recipientVersion, serverProviderId } from "./identity";
 
 type AiProviderRecord = typeof schema.aiProvider.$inferSelect;
 
@@ -62,25 +63,6 @@ type UpdateAiProviderInput = {
 	apiKey?: string;
 	enabled?: boolean;
 };
-
-/** Stable across tests and usage; credential replacement requires fresh recipient approval. */
-function recipientVersion(row: AiProviderRecord, credentialRevision = row.encryptedApiKey) {
-	return createHmac("sha256", env.AUTH_SECRET)
-		.update(
-			JSON.stringify([
-				"ai-recipient-v1",
-				row.userId,
-				row.id,
-				row.provider,
-				row.model,
-				// Added only once a task model exists, so existing single-model approvals keep their version across deploy.
-				...(row.fastModel || row.capableModel ? [row.fastModel, row.capableModel] : []),
-				row.baseUrl,
-				credentialRevision,
-			]),
-		)
-		.digest("hex");
-}
 
 function toResponse(row: AiProviderRecord): AiProviderResponse {
 	const provider = aiProviderSchema.parse(row.provider);
@@ -135,8 +117,6 @@ async function getOwnedProvider(input: { id: string; userId: string }, reader: D
 
 	return provider;
 }
-
-const serverProviderId = (userId: string) => `server-ai:${userId}`;
 
 /** The caller holds the owner lock; revoke both future runs and work already claimed by a worker. */
 async function pauseProviderSchedules(tx: DbOrTx, input: { id: string; userId: string }) {
@@ -236,21 +216,7 @@ export const aiProvidersService = {
 	},
 
 	/** Checks availability of an already captured recipient without resolving new settings or credentials. */
-	assertAvailable: async (input: { id: string; userId: string }, reader: DbOrTx) => {
-		if (input.id === serverProviderId(input.userId)) {
-			if (!env.AI_PROVIDER || !env.AI_MODEL)
-				throw new ORPCError("BAD_REQUEST", { message: "AI is no longer configured on this server." });
-			return;
-		}
-		const [provider] = await reader
-			.select({ enabled: schema.aiProvider.enabled, testStatus: schema.aiProvider.testStatus })
-			.from(schema.aiProvider)
-			.where(and(eq(schema.aiProvider.id, input.id), eq(schema.aiProvider.userId, input.userId)))
-			.for("share");
-		if (!provider) throw new ORPCError("NOT_FOUND");
-		if (!provider.enabled || provider.testStatus !== "success")
-			throw new ORPCError("BAD_REQUEST", { message: "Test and turn on this AI provider before using it." });
-	},
+	assertAvailable: assertProviderAvailable,
 
 	getRunnableById: async (input: { id: string; userId: string; voice?: AiVoiceOperation }, reader: DbOrTx = db) => {
 		approvedAiProviderId();
@@ -473,6 +439,7 @@ export const aiProvidersService = {
 			let result: Awaited<ReturnType<typeof testConnection>> = { ok: true };
 			for (const model of models) {
 				result = await testConnection({
+					usage: createAiUsage(input.userId, "provider-test", toResponse(provider)),
 					provider: parsedProvider,
 					signal: input.signal,
 					model,

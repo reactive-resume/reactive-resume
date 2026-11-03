@@ -40,6 +40,7 @@ export const improveOutputSchema = z.object({
 export type ImproveOutput = z.infer<typeof improveOutputSchema>;
 
 type ImproveServiceInput = ImproveInput & {
+	usage: Parameters<typeof getModel>[0]["usage"];
 	signal?: AbortSignal | undefined;
 	provider: Parameters<typeof getModel>[0]["provider"];
 	model: string;
