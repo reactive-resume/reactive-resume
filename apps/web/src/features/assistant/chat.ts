@@ -19,6 +19,14 @@ export type MessageContext = {
 
 export type ChatAttachment = { id: string; filename: string; mediaType: string };
 
+/** Name the upload limit that was reached in every conversation composer. */
+export const attachmentErrorMessages = () => ({
+	AGENT_ATTACHMENT_LIMIT: t`Attach up to 10 files per message.`,
+	AGENT_ATTACHMENT_TOO_LARGE: t`Files can be up to 25 MB.`,
+	AGENT_THREAD_ATTACHMENTS_FULL: t`A conversation's files can total up to 100 MB. Start a new conversation.`,
+	AGENT_ACCOUNT_ATTACHMENTS_FULL: t`Your assistant files can total up to 1 GB. Delete conversations you no longer need.`,
+});
+
 export const attachmentPart = (attachment: ChatAttachment): FileUIPart => ({
 	type: "file",
 	url: `agent-attachment:${attachment.id}`,

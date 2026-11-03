@@ -38,13 +38,14 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Trace, TraceIcon, TraceLine, TraceTitle } from "@reactive-resume/ui/components/trace";
 import { cn } from "@reactive-resume/utils/style";
-import { attachmentPart, fileToBase64, transcriptOf } from "./chat";
+import { attachmentErrorMessages, attachmentPart, fileToBase64, transcriptOf } from "./chat";
 import { ChatComposer } from "./chat-chrome";
 import { AssistantMarkdown } from "./markdown";
 import { QuestionCard } from "./question-card";
 import { SavePosting } from "./save-posting";
 import { ToolApprovals } from "./tool-approvals";
 import { useAssistantChat } from "./use-assistant-chat";
+import { useAttachmentRemoval } from "./use-attachment-removal";
 import { UsedChip } from "./used-chip";
 import { useDialogStore } from "@/dialogs/store";
 import { ContextChip } from "@/features/career/shared";
@@ -1041,12 +1042,15 @@ export function Composer(props: ComposerProps) {
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const [text, setText] = useState(props.initialText ?? "");
 	const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
+	const removal = useAttachmentRemoval(`${document.kind}:${document.id}:${props.threadId ?? "draft"}`, (id) =>
+		setAttachments((current) => current.filter((item) => item.id !== id)),
+	);
 	const [uploading, setUploading] = useState(false);
 	const fileInput = useRef<HTMLInputElement>(null);
 	const hasText = text.trim().length > 0;
 
 	const submit = () => {
-		if (!hasText || streaming || disabled || uploading) return;
+		if (!hasText || streaming || disabled || uploading || removal.isPending) return;
 		props.onSend(text.trim(), attachments);
 		setText("");
 		setAttachments([]);
@@ -1162,7 +1166,7 @@ export function Composer(props: ComposerProps) {
 				value={text}
 				onValueChange={setText}
 				disabled={disabled}
-				sendDisabled={!hasText || disabled || uploading}
+				sendDisabled={!hasText || disabled || uploading || removal.isPending}
 				streaming={streaming}
 				onSend={submit}
 				onStop={props.onStop}
@@ -1209,7 +1213,8 @@ export function Composer(props: ComposerProps) {
 								label={attachment.filename}
 								maxWidth="max-w-[140px]"
 								removeLabel={t`Remove ${attachment.filename}`}
-								onRemove={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
+								disabled={disabled || streaming || uploading || removal.isPending}
+								onRemove={() => void removal.remove(attachment.id)}
 							/>
 						))}
 					</>
@@ -1222,7 +1227,7 @@ export function Composer(props: ComposerProps) {
 									icon="paperclip"
 									label={t`Attach a file`}
 									size="icon-sm"
-									disabled={disabled || uploading}
+									disabled={disabled || uploading || removal.isPending}
 									className="text-ink-2"
 									onClick={() => fileInput.current?.click()}
 								/>
@@ -1257,14 +1262,6 @@ export function Composer(props: ComposerProps) {
 	);
 }
 
-/** The upload limits by name: which one was reached, rather than "try again". */
-const attachmentErrorMessages = () => ({
-	AGENT_ATTACHMENT_LIMIT: t`Attach up to 10 files per message.`,
-	AGENT_ATTACHMENT_TOO_LARGE: t`Files can be up to 25 MB.`,
-	AGENT_THREAD_ATTACHMENTS_FULL: t`A conversation's files can total up to 100 MB. Start a new conversation.`,
-	AGENT_ACCOUNT_ATTACHMENTS_FULL: t`Your assistant files can total up to 1 GB. Delete conversations you no longer need.`,
-});
-
 type RemovableChipProps = {
 	icon: IconName;
 	label: string;
@@ -1272,9 +1269,10 @@ type RemovableChipProps = {
 	maxWidth: string;
 	removeLabel: string;
 	onRemove: () => void;
+	disabled?: boolean;
 };
 
-function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove }: RemovableChipProps) {
+function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove, disabled }: RemovableChipProps) {
 	return (
 		<span className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-xs text-ink-2">
 			<Icon name={icon} size={15} />
@@ -1283,6 +1281,7 @@ function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove }: Removab
 				type="button"
 				aria-label={removeLabel}
 				onClick={onRemove}
+				disabled={disabled}
 				className="touch-target relative grid size-5 place-items-center rounded text-ink-3 transition-colors hover:bg-hover hover:text-ink"
 			>
 				<Icon name="x" size={14} />

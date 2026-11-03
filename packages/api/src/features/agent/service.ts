@@ -2258,18 +2258,24 @@ export const agentService = {
 		delete: async (input: { id: string; userId: string }) => {
 			assertAgentEnvironment();
 
-			const [attachment] = await db
-				.select()
-				.from(schema.agentAttachment)
-				.where(and(eq(schema.agentAttachment.id, input.id), eq(schema.agentAttachment.userId, input.userId)))
-				.limit(1);
-
-			if (!attachment) return;
-
-			await getStorageService().delete(attachment.storageKey);
-			await db
-				.delete(schema.agentAttachment)
-				.where(and(eq(schema.agentAttachment.id, input.id), eq(schema.agentAttachment.userId, input.userId)));
+			await db.transaction(async (tx) => {
+				// Sending claims this same row; a sent file must never lose its bytes to a late Remove.
+				const [attachment] = await tx
+					.select()
+					.from(schema.agentAttachment)
+					.where(and(eq(schema.agentAttachment.id, input.id), eq(schema.agentAttachment.userId, input.userId)))
+					.limit(1)
+					.for("update");
+				if (!attachment) return;
+				if (attachment.messageId)
+					throw new ORPCError("CONFLICT", {
+						message: "This file was already sent. Delete its conversation to remove it.",
+					});
+				await getStorageService().delete(attachment.storageKey);
+				await tx
+					.delete(schema.agentAttachment)
+					.where(and(eq(schema.agentAttachment.id, input.id), eq(schema.agentAttachment.userId, input.userId)));
+			});
 		},
 	},
 };
