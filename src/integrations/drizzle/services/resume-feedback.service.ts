@@ -3,7 +3,7 @@
  * Handles all database operations for resume comments, checklists, and evaluations
  */
 
-import { and, desc, eq, gt, inArray, isNotNull, sql } from "drizzle-orm";
+import { and, desc, eq, gt, gte, inArray, isNotNull, isNull, ne, sql } from "drizzle-orm";
 import { DEFAULT_RESUME_USER_ORG_ID } from "@/integrations/auth/config";
 import { db } from "@/integrations/drizzle/client";
 import {
@@ -21,20 +21,26 @@ import {
 import { type CommentAnchor, type CommentSeverity, REVIEW_VERDICTS } from "@/schema/resume/comment-anchor";
 
 /**
- * CREATE: Add a comment to a resume
+ * The resume as the reviewer is seeing it, when this comment opens a new review round.
+ *
+ * The Changes tab and each comment's before/after compare against this copy, so exactly one
+ * comment per round carries it: the first one written since the student last edited. A reply
+ * never opens a round.
  */
-export async function createComment({
-	resumeId,
-	studentId,
-	tenantId,
-	authorId,
-	content,
-	scope = "INDIVIDUAL",
-	parentId,
-	anchor,
-	severity,
-	suggestion,
-}: {
+async function snapshotForNewRound(resumeId: string): Promise<typeof resume.$inferSelect.data | undefined> {
+	const [[current], [last]] = await Promise.all([
+		db.select({ data: resume.data, updatedAt: resume.updatedAt }).from(resume).where(eq(resume.id, resumeId)),
+		db
+			.select({ createdAt: resumeComment.createdAt })
+			.from(resumeComment)
+			.where(and(eq(resumeComment.resumeId, resumeId), isNotNull(resumeComment.snapshot)))
+			.orderBy(desc(resumeComment.createdAt))
+			.limit(1),
+	]);
+	return current && (!last || last.createdAt < current.updatedAt) ? current.data : undefined;
+}
+
+type NewComment = {
 	resumeId: string;
 	studentId: string;
 	tenantId: string;
@@ -45,55 +51,75 @@ export async function createComment({
 	anchor?: CommentAnchor;
 	severity?: CommentSeverity;
 	suggestion?: string;
-}) {
-	// A review round's first comment keeps the resume as the reviewer saw it; the Changes tab and each
-	// comment's before/after compare against it. Skipped while the resume is unchanged since the last copy.
-	let snapshot: typeof resume.$inferSelect.data | undefined;
-	if (!parentId) {
-		const [[current], [last]] = await Promise.all([
-			db.select({ data: resume.data, updatedAt: resume.updatedAt }).from(resume).where(eq(resume.id, resumeId)),
-			db
-				.select({ createdAt: resumeComment.createdAt })
-				.from(resumeComment)
-				.where(and(eq(resumeComment.resumeId, resumeId), isNotNull(resumeComment.snapshot)))
-				.orderBy(desc(resumeComment.createdAt))
-				.limit(1),
-		]);
-		if (current && (!last || last.createdAt < current.updatedAt)) snapshot = current.data;
-	}
+};
 
-	const result = await db
-		.insert(resumeComment)
-		.values({
-			id: crypto.randomUUID(),
-			resumeId,
-			studentId,
-			tenantId,
-			organisationId: DEFAULT_RESUME_USER_ORG_ID,
-			authorId,
-			content,
-			scope,
-			parentId,
-			anchor,
-			severity,
-			suggestion,
-			snapshot,
-			status: "OPEN",
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		})
-		.returning();
+/**
+ * CREATE: Add a comment to a resume
+ */
+export async function createComment(input: NewComment) {
+	const [created] = await createComments([input]);
+	return created;
+}
 
-	// If this is a reply (has parentId), and the parent is ADDRESSED/RESOLVED,
-	// we should probably re-open it because the feedback is ongoing.
-	if (parentId) {
-		await db
-			.update(resumeComment)
-			.set({ status: "OPEN", resolvedAt: null, updatedAt: new Date() })
-			.where(and(eq(resumeComment.id, parentId), eq(resumeComment.resumeId, resumeId)));
-	}
+/**
+ * CREATE: Add several comments in one round trip.
+ *
+ * A reviewer sending the standard feedback for a section ticks three or four lines and posts them
+ * together. They are separate rows rather than one merged comment so the student can mark each one
+ * addressed on its own, and each keeps the severity its checklist item carries.
+ *
+ * One transaction, because a half-written batch would leave the student with part of the feedback
+ * and the reviewer with no way to tell which part.
+ */
+export async function createComments(inputs: NewComment[]) {
+	if (inputs.length === 0) return [];
+	const { resumeId } = inputs[0];
 
-	return result[0];
+	// The snapshot belongs to the round, not to each comment: taken once, before anything is
+	// written, and carried by the first comment of the batch that is not a reply.
+	const snapshot = inputs.some((input) => !input.parentId) ? await snapshotForNewRound(resumeId) : undefined;
+	let snapshotTaken = false;
+
+	return db.transaction(async (tx) => {
+		const created = await tx
+			.insert(resumeComment)
+			.values(
+				inputs.map((input) => {
+					const carries = !!snapshot && !input.parentId && !snapshotTaken;
+					if (carries) snapshotTaken = true;
+					return {
+						id: crypto.randomUUID(),
+						resumeId: input.resumeId,
+						studentId: input.studentId,
+						tenantId: input.tenantId,
+						organisationId: DEFAULT_RESUME_USER_ORG_ID,
+						authorId: input.authorId,
+						content: input.content,
+						scope: input.scope ?? "INDIVIDUAL",
+						parentId: input.parentId,
+						anchor: input.anchor,
+						severity: input.severity,
+						suggestion: input.suggestion,
+						snapshot: carries ? snapshot : undefined,
+						status: "OPEN" as const,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					};
+				}),
+			)
+			.returning();
+
+		// A reply to a thread the student already closed re-opens it: the feedback is ongoing.
+		const parentIds = [...new Set(inputs.map((input) => input.parentId).filter((id): id is string => !!id))];
+		if (parentIds.length > 0) {
+			await tx
+				.update(resumeComment)
+				.set({ status: "OPEN", resolvedAt: null, updatedAt: new Date() })
+				.where(and(inArray(resumeComment.id, parentIds), eq(resumeComment.resumeId, resumeId)));
+		}
+
+		return created;
+	});
 }
 
 /**
@@ -188,20 +214,53 @@ export async function updateComment(
 }
 
 /**
- * DELETE: Soft delete a comment (set status to RESOLVED or add resolvedAt)
+ * DELETE: Remove a comment, and the thread hanging off it.
+ *
+ * A real delete, not a status change: a reviewer who posted on the wrong student wants it gone from
+ * the student's feedback list, and RESOLVED already means "the student fixed this". Only the author
+ * may call it — see the route — so a Placement Officer cannot quietly erase a faculty member's
+ * feedback.
+ *
+ * Two things have to be handled before the row goes:
+ *  - `parent_id` is a plain column with no cascade, so replies would survive as rows nothing links
+ *    to. They are deleted with the comment that started the thread.
+ *  - Exactly one comment per review round carries the `snapshot` the Changes tab and every
+ *    before/after diff compare against. If that is the comment being deleted, the copy is handed to
+ *    the oldest surviving comment of the round rather than lost — otherwise deleting one comment
+ *    silently blanks the diff for all the others.
  */
-export async function softDeleteComment(commentId: string) {
-	const result = await db
-		.update(resumeComment)
-		.set({
-			status: "RESOLVED",
-			resolvedAt: new Date(),
-			updatedAt: new Date(),
-		})
-		.where(eq(resumeComment.id, commentId))
-		.returning();
+export async function deleteComment(commentId: string) {
+	return db.transaction(async (tx) => {
+		const [doomed] = await tx.select().from(resumeComment).where(eq(resumeComment.id, commentId)).limit(1);
+		if (!doomed) return null;
 
-	return result[0];
+		if (doomed.snapshot && !doomed.parentId) {
+			const [heir] = await tx
+				.select({ id: resumeComment.id })
+				.from(resumeComment)
+				.where(
+					and(
+						eq(resumeComment.resumeId, doomed.resumeId),
+						isNull(resumeComment.parentId),
+						isNull(resumeComment.snapshot),
+						// At or after, not strictly after: a batch of standard feedback is inserted inside one
+						// millisecond, so the rest of the round shares this comment's timestamp to the precision
+						// `created_at` stores. `>` would find no heir and silently drop the round's baseline.
+						gte(resumeComment.createdAt, doomed.createdAt),
+						ne(resumeComment.id, doomed.id),
+					),
+				)
+				.orderBy(resumeComment.createdAt, resumeComment.id)
+				.limit(1);
+			if (heir) {
+				await tx.update(resumeComment).set({ snapshot: doomed.snapshot }).where(eq(resumeComment.id, heir.id));
+			}
+		}
+
+		await tx.delete(resumeComment).where(eq(resumeComment.parentId, commentId));
+		await tx.delete(resumeComment).where(eq(resumeComment.id, commentId));
+		return doomed;
+	});
 }
 
 /**

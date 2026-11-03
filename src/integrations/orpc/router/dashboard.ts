@@ -1419,7 +1419,11 @@ export const reviewResume = protectedProcedure
 	.input(z.object({ resumeId: z.string() }))
 	.handler(async ({ context, input }) => {
 		const { getEvaluationsByResumeId } = await import("@/integrations/drizzle/services/resume-feedback.service");
+		const { getEngLabsUserByEmail } = await import("@/integrations/eng-labs");
 		await assertReviewStaff(context.user, input.resumeId);
+		// The page shows a Delete button only on the viewer's own comments, and `author_id` is an
+		// eng-labs id — which the client has no other way to learn for the signed-in reviewer.
+		const viewerEngLabsId = (await getEngLabsUserByEmail(context.user.email))?.id ?? null;
 
 		const [resume, comments, evaluations, history] = await Promise.all([
 			db.select().from(schema.resume).where(eq(schema.resume.id, input.resumeId)).limit(1),
@@ -1472,6 +1476,7 @@ export const reviewResume = protectedProcedure
 			})),
 			evaluations: evaluations.slice(0, 5),
 			history,
+			viewerEngLabsId,
 		};
 	});
 

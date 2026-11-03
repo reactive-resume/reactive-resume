@@ -6,11 +6,13 @@ import {
 	ChatDotsIcon,
 	CheckCircleIcon,
 	ClockCounterClockwiseIcon,
+	DownloadSimpleIcon,
 	ExamIcon,
 	GitDiffIcon,
 	ListChecksIcon,
 	PlusMinusIcon,
 	ShootingStarIcon,
+	TrashIcon,
 	XIcon,
 } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -37,6 +39,7 @@ import {
 } from "@/components/resume/review-anchors";
 import { useResumeStore } from "@/components/resume/store/resume";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/integrations/orpc/client";
 import { anchorText, type CommentAnchor, changedAnchors } from "@/schema/resume/comment-anchor";
 import type { ResumeData } from "@/schema/resume/data";
@@ -44,6 +47,7 @@ import { getOrganisationUnits } from "@/utils/sso-context";
 import { cn } from "@/utils/style";
 import { getStatusBadgeClass } from "../../-components/score-helpers";
 import { StudentTimeline } from "../../-components/student-timeline";
+import { useResumeDownload } from "../../-components/use-resume-download";
 import { CommentComposer } from "./-comment-composer";
 
 const searchSchema = z.object({
@@ -115,6 +119,11 @@ function ReviewPage() {
 		);
 	}, [dashboard?.students]);
 
+	// The student this resume belongs to, for the download's filename. The dashboard query is already
+	// loaded for Prev/Next, so this costs nothing extra; a download before it settles falls back to
+	// the resume's own name.
+	const student = dashboard?.students?.find((s) => s.engLabsId === engLabsStudentId);
+
 	const currentIndex = navigationList.findIndex((r) => r.id === resumeId);
 	const prevResume = currentIndex > 0 ? navigationList[currentIndex - 1] : null;
 	const nextResume =
@@ -185,6 +194,51 @@ function ReviewPage() {
 			queryClient.invalidateQueries(reviewQueryKey);
 		},
 	});
+
+	const addCommentsMutation = useMutation({
+		...orpc.resume.comments.createMany.mutationOptions(),
+		onSuccess: () => {
+			setReplyTo(null);
+			setAnchor(null);
+			queryClient.invalidateQueries(reviewQueryKey);
+		},
+	});
+
+	const deleteCommentMutation = useMutation({
+		...orpc.resume.comments.delete.mutationOptions(),
+		onSuccess: () => {
+			setActiveCommentId(null);
+			queryClient.invalidateQueries(reviewQueryKey);
+		},
+		onError: (error) => {
+			toast.error(error instanceof Error ? error.message : t`Could not delete that comment.`);
+		},
+	});
+
+	const confirm = useConfirm();
+	const { download, isPending: isDownloading } = useResumeDownload();
+
+	/**
+	 * Whether a comment is the signed-in reviewer's own. `author_id` is an eng-labs id, which the
+	 * browser has no way to derive from the session, so the server sends the viewer's alongside the
+	 * comments. Unknown means no Delete button — never a guess.
+	 */
+	const isMine = (authorId: string) => !!data?.viewerEngLabsId && authorId === data.viewerEngLabsId;
+
+	/**
+	 * Deleting feedback is not undoable and the student may already have read it, so the dialog says
+	 * what actually disappears — including the replies, which go with the thread.
+	 */
+	const removeComment = async (comment: { id: string; content: string }, replyCount: number) => {
+		const ok = await confirm(t`Delete this comment?`, {
+			description:
+				replyCount > 0
+					? t`“${comment.content}” and the ${replyCount} replies under it will be removed from the student's feedback for good.`
+					: t`“${comment.content}” will be removed from the student's feedback for good.`,
+			confirmText: t`Delete`,
+		});
+		if (ok) deleteCommentMutation.mutate({ id: comment.id });
+	};
 
 	const updateResumeStatusMutation = useMutation({
 		...orpc.resume.dashboard.updateStatus.mutationOptions(),
@@ -353,6 +407,16 @@ function ReviewPage() {
 							<CaretRightIcon weight="bold" className="size-4" />
 						</button>
 					</div>
+					<button
+						type="button"
+						disabled={isDownloading}
+						onClick={() => download(resume.id, student?.rollNumber, student?.name ?? resume.data.basics.name)}
+						title={t`Download this resume as a PDF`}
+						className="flex items-center gap-1.5 rounded-xl bg-muted px-3 py-1.5 font-semibold text-muted-foreground text-xs transition-all hover:bg-border disabled:opacity-50"
+					>
+						<DownloadSimpleIcon weight="duotone" className="size-3.5" />
+						{isDownloading ? t`Preparing…` : t`Download`}
+					</button>
 					{!!baseline && (
 						<button
 							type="button"
@@ -612,7 +676,7 @@ function ReviewPage() {
 									onCancelReply={() => setReplyTo(null)}
 									inputRef={commentInputRef}
 									sentContents={sentContents}
-									isPending={addCommentMutation.isPending}
+									isPending={addCommentMutation.isPending || addCommentsMutation.isPending}
 									onSubmit={(input) =>
 										addCommentMutation.mutateAsync({
 											resumeId,
@@ -621,6 +685,14 @@ function ReviewPage() {
 											parentId: replyTo ?? undefined,
 											anchor: replyTo ? undefined : (anchor ?? undefined),
 											...input,
+										})
+									}
+									onSubmitMany={(comments) =>
+										addCommentsMutation.mutateAsync({
+											resumeId,
+											studentId: engLabsStudentId,
+											tenantId,
+											comments,
 										})
 									}
 								/>
@@ -740,6 +812,19 @@ function ReviewPage() {
 																			{t`Before / after`}
 																		</button>
 																	)}
+																	{/* Only on your own feedback: a Placement Officer outranks a faculty member on a
+																	    verdict, not on whether their written feedback ever happened. */}
+																	{isMine(c.authorId) && (
+																		<button
+																			type="button"
+																			disabled={deleteCommentMutation.isPending}
+																			onClick={() => void removeComment(c, replies.length)}
+																			className="flex items-center gap-1 font-bold text-[10px] text-muted-foreground hover:text-rose-600 hover:underline disabled:opacity-40"
+																		>
+																			<TrashIcon className="size-3" />
+																			{t`Delete`}
+																		</button>
+																	)}
 																</div>
 																<div className="flex items-center gap-2">
 																	{c.status === "OPEN" && (
@@ -851,6 +936,17 @@ function ReviewPage() {
 																				>
 																					{reply.status === "PUBLISHED" ? "OPEN" : reply.status}
 																				</div>
+																				{isMine(reply.authorId) && (
+																					<button
+																						type="button"
+																						aria-label={t`Delete this reply`}
+																						disabled={deleteCommentMutation.isPending}
+																						onClick={() => void removeComment(reply, 0)}
+																						className="rounded-md p-0.5 text-muted-foreground hover:bg-rose-50 hover:text-rose-600 disabled:opacity-40"
+																					>
+																						<TrashIcon className="size-3" />
+																					</button>
+																				)}
 																			</div>
 																		</div>
 																		<p

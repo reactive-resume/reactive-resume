@@ -39,3 +39,26 @@ export async function downloadFromUrl(url: string, filename: string) {
 
 	downloadWithAnchor(blob, filename);
 }
+
+/**
+ * The filename a reviewer's download gets: `23071A0501-RAHUL-KUMAR.pdf`.
+ *
+ * Roll number first, because a reviewer saves a whole section in one sitting and the folder then
+ * sorts itself into the order the college's own lists use. `generateFilename` above is the
+ * student's form — fifty students saving "My Resume" is fine on fifty machines, and useless in
+ * one reviewer's Downloads folder.
+ */
+export function reviewerPdfName(rollNumber: string | null | undefined, name: string | null | undefined) {
+	const clean = (value: string) =>
+		value
+			.normalize("NFKD")
+			.replace(/[^\w\s-]/g, "")
+			.trim()
+			.replace(/\s+/g, "-")
+			.toUpperCase();
+	const parts = [rollNumber, name]
+		.filter((part): part is string => !!part?.trim())
+		.map(clean)
+		.filter(Boolean);
+	return `${parts.join("-") || "RESUME"}.pdf`;
+}

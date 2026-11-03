@@ -2,6 +2,7 @@ import {
 	ArrowSquareOutIcon,
 	ChatDotsIcon,
 	ClockCounterClockwiseIcon,
+	DownloadSimpleIcon,
 	FileTextIcon,
 	PaperPlaneTiltIcon,
 	XIcon,
@@ -14,6 +15,7 @@ import { orpc } from "@/integrations/orpc/client";
 import { cn } from "@/utils/style";
 import { getEvaluationBadgeClass, getStatusBadgeClass } from "./score-helpers";
 import { StudentTimeline } from "./student-timeline";
+import { useResumeDownload } from "./use-resume-download";
 
 type StudentDetailPanelProps = {
 	student: {
@@ -41,6 +43,7 @@ export function StudentDetailPanel({ student, tenantId, open, onOpenChange }: St
 	const [activeTab, setActiveTab] = useState<"resumes" | "timeline">("resumes");
 	const [expandedResumeId, setExpandedResumeId] = useState<string | null>(null);
 	const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
+	const { download, isPending: isDownloading } = useResumeDownload();
 	const queryClient = useQueryClient();
 
 	const { data: detail, isLoading } = useQuery({
@@ -214,6 +217,17 @@ export function StudentDetailPanel({ student, tenantId, open, onOpenChange }: St
 													>
 														{statusBadge.label}
 													</span>
+
+													{/* Download */}
+													<button
+														type="button"
+														disabled={isDownloading}
+														onClick={() => void download(resume.id, student.rollNumber, student.name)}
+														className="flex h-8 w-8 items-center justify-center rounded-xl bg-muted text-muted-foreground transition-all hover:bg-primary/5 hover:text-primary disabled:opacity-50"
+														title="Download as PDF"
+													>
+														<DownloadSimpleIcon weight="duotone" className="size-4" />
+													</button>
 
 													{/* View */}
 													<Link

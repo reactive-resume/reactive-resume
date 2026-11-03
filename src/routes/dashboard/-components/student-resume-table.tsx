@@ -1,9 +1,16 @@
 import { t } from "@lingui/core/macro";
-import { CalendarBlankIcon, ChatDotsIcon, MagnifyingGlassIcon, UserIcon } from "@phosphor-icons/react";
+import {
+	CalendarBlankIcon,
+	ChatDotsIcon,
+	DownloadSimpleIcon,
+	MagnifyingGlassIcon,
+	UserIcon,
+} from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
 import { cn } from "@/utils/style";
 import { REVIEW_STAGES, reviewStageLabel, stageOf } from "./review-status";
 import { getEvaluationBadgeClass, getStatusBadgeClass } from "./score-helpers";
+import { useResumeDownload } from "./use-resume-download";
 
 type ResumeEntry = {
 	id: string;
@@ -38,6 +45,7 @@ type StudentResumeTableProps = {
 export function StudentResumeTable({ students, onReview, onStudentClick }: StudentResumeTableProps) {
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<"all" | string>("all");
+	const { download, isPending: isDownloading } = useResumeDownload();
 
 	// Only offer stages that are actually present, so the chips describe this cohort rather than the
 	// whole workflow, and every chip is guaranteed to return something.
@@ -203,6 +211,18 @@ export function StudentResumeTable({ students, onReview, onStudentClick }: Stude
 
 													{/* Spacer */}
 													<div className="flex-1" />
+
+													{/* Download — a reviewer collecting a section does not want to open each one */}
+													<button
+														type="button"
+														disabled={isDownloading}
+														onClick={() => void download(resume.id, student.rollNumber, student.name)}
+														title={t`Download as PDF`}
+														aria-label={t`Download ${student.name}'s resume as a PDF`}
+														className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary disabled:opacity-50"
+													>
+														<DownloadSimpleIcon weight="duotone" className="size-3.5" />
+													</button>
 
 													{/* Review action */}
 													{onReview && (

@@ -547,6 +547,87 @@ export const resumeRouter = {
 				});
 			}),
 
+		createMany: protectedProcedure
+			.route({
+				method: "POST",
+				path: "/resumes/{resumeId}/comments/batch",
+				tags: ["Resume Feedback"],
+				operationId: "createResumeComments",
+				summary: "Add several comments to a resume",
+				description:
+					"Posts the standard feedback a reviewer ticked for a section as one comment each, in a single transaction.",
+			})
+			.input(
+				z.object({
+					resumeId: z.string().describe("Resume ID"),
+					studentId: z.string().describe("eng-labs student ID"),
+					tenantId: z.string().describe("eng-labs tenant ID"),
+					comments: z
+						.array(
+							z.object({
+								content: z.string().min(1).max(5000),
+								anchor: commentAnchorSchema.optional(),
+								severity: commentSeveritySchema.optional(),
+								suggestion: z.string().min(1).max(2000).optional(),
+							}),
+						)
+						.min(1)
+						.max(20)
+						.describe("The comments to post, each becoming its own thread"),
+				}),
+			)
+			.output(z.array(commentOutputSchema))
+			.handler(async ({ context, input }) => {
+				const { createComments } = await import("@/integrations/drizzle/services/resume-feedback.service");
+
+				await assertReviewStaff(context.user, input.resumeId);
+				const { id: authorId, tenantId } = await resolveEngLabsActor(context.user.email);
+
+				return await createComments(
+					input.comments.map((comment) => ({
+						resumeId: input.resumeId,
+						studentId: input.studentId,
+						tenantId,
+						authorId,
+						content: comment.content,
+						anchor: comment.anchor,
+						severity: comment.severity,
+						suggestion: comment.anchor?.quote ? comment.suggestion : undefined,
+					})),
+				);
+			}),
+
+		delete: protectedProcedure
+			.route({
+				method: "DELETE",
+				path: "/resumes/comments/{id}",
+				tags: ["Resume Feedback"],
+				operationId: "deleteResumeComment",
+				summary: "Delete a comment",
+				description:
+					"Permanently removes a comment and any replies to it. Only the reviewer who wrote it can delete it.",
+			})
+			.input(z.object({ id: z.string() }))
+			.handler(async ({ context, input }) => {
+				const { deleteComment, getCommentById } = await import(
+					"@/integrations/drizzle/services/resume-feedback.service"
+				);
+
+				const comment = await getCommentById(input.id);
+				if (!comment) throw new ORPCError("NOT_FOUND", { message: "Comment not found." });
+
+				// Staff of the student's tenant first — so a stranger cannot probe which ids exist — then the
+				// author. Deleting feedback is the author's call alone: a Placement Officer outranks a faculty
+				// member on a verdict, but not on whether their written feedback ever happened.
+				await assertReviewStaff(context.user, comment.resumeId);
+				const { id: actorId } = await resolveEngLabsActor(context.user.email);
+				if (comment.authorId !== actorId) {
+					throw new ORPCError("FORBIDDEN", { message: "Only the reviewer who wrote a comment can delete it." });
+				}
+
+				await deleteComment(input.id);
+			}),
+
 		list: protectedProcedure
 			.route({
 				method: "GET",
