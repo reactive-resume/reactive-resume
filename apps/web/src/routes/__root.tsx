@@ -25,6 +25,7 @@ import { isRTL } from "@reactive-resume/utils/locale";
 import { BreakpointIndicator } from "@/components/layout/breakpoint-indicator";
 import { NavigationFocus } from "@/components/layout/navigation-focus";
 import { DialogManager } from "@/dialogs/manager";
+import { SessionRecovery } from "@/features/auth/components/session-recovery";
 import { CommandPalette } from "@/features/command-palette";
 import { useDocumentWebMcpTools } from "@/features/documents/webmcp";
 import { KeyboardShortcuts } from "@/features/keyboard-shortcuts";
@@ -104,6 +105,7 @@ function RootComponent() {
 												<ConfirmDialogProvider>
 													<NavigationFocus />
 													<Outlet />
+													<SessionRecovery />
 
 													{!isBuilder && (
 														<Suspense>

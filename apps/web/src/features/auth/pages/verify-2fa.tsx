@@ -13,6 +13,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { OTPField } from "@reactive-resume/ui/components/otp-field";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { authErrorMessage } from "../error";
 import { getAuthRedirectOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { authClient } from "@/libs/auth/client";
 import { sessionQueryKey } from "@/libs/root-context";
@@ -63,19 +64,18 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 			if (error) {
 				toast.add({
 					type: "error",
-					description:
-						error.message ||
-						(backupCode
-							? t({
-									comment: "Fallback toast when verifying a backup two-factor authentication code fails",
-									message: "Couldn't verify your backup code. Check the code and try again.",
-								})
-							: t({
-									comment: "Fallback toast when verifying a two-factor authentication code fails",
-									message: "Couldn't verify your code. Check the code and try again.",
-								})),
+					description: authErrorMessage(
+						error,
+						backupCode
+							? t`Couldn't verify your backup code. Check the code and try again.`
+							: t`Couldn't verify your code. Check the code and try again.`,
+					),
 					id: toastId,
 				});
+				if (error.code === "INVALID_TWO_FACTOR_COOKIE") {
+					void navigate({ to: "/auth/login", search: { callbackURL, reauthenticate: true }, replace: true });
+					return;
+				}
 				// A wrong code is cleared and the first box takes focus again, ready for the next try.
 				form.setFieldValue("code", "");
 				focusCode();

@@ -9,6 +9,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { authErrorMessage } from "../error";
 import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
@@ -67,7 +68,10 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 	const { callbackURL } = useSearch({ from: "/auth" });
 
 	const runSignIn = async (
-		fn: () => Promise<{ data?: unknown; error: { message?: string | undefined } | null }>,
+		fn: () => Promise<{
+			data?: unknown;
+			error: { code?: string | undefined; message?: string | undefined; status?: number | undefined } | null;
+		}>,
 		isPasskey = false,
 	) => {
 		const toastId = toast.add({ type: "loading", description: t`Signing in…` });
@@ -75,12 +79,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 		if (error) {
 			toast.add({
 				type: "error",
-				description:
-					error.message ||
-					t({
-						comment: "Fallback toast when sign-in fails without an error message",
-						message: "Couldn't sign in. Try again.",
-					}),
+				description: authErrorMessage(error, t`Couldn't sign in. Try again.`),
 				id: toastId,
 			});
 			return;

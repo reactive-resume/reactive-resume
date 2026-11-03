@@ -8,6 +8,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { useResumeStore } from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
+import { sessionSignInURL, useSessionRecovery } from "@/libs/auth/session-recovery";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 
@@ -18,6 +19,7 @@ export function SaveStatus() {
 	const reloadFromServer = useResumeStore((state) => state.reloadFromServer);
 	const confirm = useConfirm();
 	const [reloading, setReloading] = useState(false);
+	const sessionEnded = useSessionRecovery((state) => state.accountId !== null);
 
 	const reload = async () => {
 		if (
@@ -48,7 +50,9 @@ export function SaveStatus() {
 			: status === "offline"
 				? t`Offline · saved on this device`
 				: status === "error"
-					? t`Not saved`
+					? sessionEnded
+						? t`Not saved · Sign in to save`
+						: t`Not saved`
 					: status === "locked"
 						? t`Locked · unlock to save`
 						: status === "conflict"
@@ -89,14 +93,25 @@ export function SaveStatus() {
 					<Icon name="cloud-warning" size={16} />
 					<Trans>Not saved</Trans>
 					<span aria-hidden="true">·</span>
-					<button
-						type="button"
-						onClick={retrySave}
-						aria-label={t`Retry saving`}
-						className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
-					>
-						<Trans>Retry</Trans>
-					</button>
+					{sessionEnded ? (
+						<a
+							href={sessionSignInURL()}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
+						>
+							<Trans>Sign in to save</Trans>
+						</a>
+					) : (
+						<button
+							type="button"
+							onClick={retrySave}
+							aria-label={t`Retry saving`}
+							className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
+						>
+							<Trans>Retry</Trans>
+						</button>
+					)}
 				</span>
 			)}
 			{status === "locked" && (
