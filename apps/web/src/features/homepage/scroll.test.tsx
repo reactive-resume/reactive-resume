@@ -38,7 +38,7 @@ describe("scroll engine", () => {
 
 	it("writes exit progress on pinned scenes and reports when Design hands its heading off", async () => {
 		const rects = new Map<string, { top: number; bottom: number; height: number }>([
-			[String(SCENE.design), { top: 0, bottom: 300, height: 900 }],
+			[String(SCENE.design), { top: 0, bottom: 315, height: 900 }],
 			[String(SCENE.check), { top: 0, bottom: 0, height: 900 }],
 		]);
 		vi.stubGlobal("innerHeight", 900);
@@ -74,11 +74,15 @@ describe("scroll engine", () => {
 		const tailor = document.querySelector<HTMLElement>(`[data-scene="${SCENE.tailor}"]`);
 		if (!design || !check || !tailor) throw new Error("The scene harness did not render.");
 
-		await waitFor(() => expect(design.style.getPropertyValue("--out")).toBe("0.667"));
-		expect(design.style.getPropertyValue("--out")).toBe("0.667");
+		await waitFor(() => expect(design.style.getPropertyValue("--out")).toBe("0.650"));
+		expect(useLanding.getState().designExiting).toBe(false);
 		expect(check.style.getPropertyValue("--out")).toBe("1.000");
-		expect(useLanding.getState().designExiting).toBe(true);
 		expect(tailor.style.getPropertyValue("--out")).toBe("");
+
+		rects.set(String(SCENE.design), { top: 0, bottom: 300, height: 900 });
+		fireEvent.scroll(window);
+		await waitFor(() => expect(design.style.getPropertyValue("--out")).toBe("0.667"));
+		expect(useLanding.getState().designExiting).toBe(true);
 
 		rects.set(String(SCENE.design), { top: 0, bottom: 600, height: 900 });
 		fireEvent.scroll(window);

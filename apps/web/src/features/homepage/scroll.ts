@@ -76,8 +76,8 @@ const PREPARE_STEPS = [0.19, 0.36, 0.53, 0.7, 0.84];
 
 const smoothstep = (value: number) => value * value * (3 - 2 * value);
 
-/** Where Design's closing heading starts fading out of the scene, and where its link stops taking focus. */
-const DESIGN_EXIT_AT = 0.6;
+/** Where Design's closing heading has fully faded out of the scene, and where its link stops taking focus. */
+const DESIGN_EXIT_AT = 0.66;
 
 /**
  * How dark Share's sky is, from 0 to 1: night falls over the scene's first fifth and lifts into dawn over its last
