@@ -158,9 +158,9 @@ test("legacy profile saves preserve omitted memory consent and accept explicit c
 });
 
 test("profile writes normalize padded entries and preserve the normalized length limit", async ({ authPage: page }) => {
-	const value = "x".repeat(200);
 	const read = async () => await (await page.request.get("/api/openapi/career/profile")).json();
 	for (const method of ["put", "patch"] as const) {
+		const value = (method === "put" ? "x" : "y").repeat(200);
 		await expect(
 			await page.request[method]("/api/openapi/career/profile", {
 				data: { targetRoles: [` ${value} `], locations: [`\t${value}\n`] },
