@@ -184,6 +184,7 @@ const translatedLetterWords = {
 };
 let exportPath;
 const { exportFile } = load("features/share/files.ts", {
+	"@/auth/session": {},
 	"expo-file-system": {
 		Directory: class {},
 		File: class {
@@ -432,6 +433,7 @@ const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/app
 	"expo-sqlite/kv-store": {},
 	"expo-web-browser": {},
 	"./attachment": {},
+	"./attachment-preview": { AttachmentPreview: "AttachmentPreview" },
 	"./notes-queue": { createNotesQueue: () => ({}) },
 	"./hooks": {
 		useDocuments: () => ({ data: applicationDocuments }),

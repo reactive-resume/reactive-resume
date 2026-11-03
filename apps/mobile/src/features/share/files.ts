@@ -8,6 +8,7 @@ import { letterWords } from "./letter";
 import { getLostCharactersMessage } from "./messages";
 import { safeFileName } from "./model";
 import { client, rest } from "@/api/client";
+import { getAccountScope } from "@/auth/session";
 import { createPreviewPipeline } from "@/preview/pipeline";
 import { showToast } from "@/ui";
 
@@ -101,8 +102,12 @@ export async function exportFile({ directory, id, name, format, data, letter, le
 	return file;
 }
 
-export async function shareExport(file: File, format: ExportFormat) {
+export async function shareExport(file: File, format: ExportFormat, scope?: string) {
 	if (!(await Sharing.isAvailableAsync())) throw new Error(t`File sharing is unavailable on this device.`);
+	if (scope !== undefined && getAccountScope() !== scope) {
+		if (file.exists) file.delete();
+		throw new Error("The account changed before sharing.");
+	}
 	await Sharing.shareAsync(file.uri, { mimeType: mime[format], dialogTitle: t`Save or share file` });
 }
 

@@ -11,6 +11,7 @@ import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { fetch as expoFetch } from "expo/fetch";
+import { privateUploadUrl } from "@reactive-resume/utils/http";
 import { authorizeAiRequest } from "./ai-consent";
 import { getAccountScope, getCredentials, recoverFromUnauthorized, rejectCredentials } from "@/auth/session";
 
@@ -154,4 +155,26 @@ export async function rest(path: `/${string}`, init: RequestInit = {}, scope = g
 		});
 		return response as unknown as Response;
 	}, scope ?? undefined);
+}
+
+/** Private file reads share the session snapshot/refresh owner; never send a token to another host or a redirect. */
+export async function privateUpload(source: string, signal: AbortSignal, scope: string): Promise<Response> {
+	const response = await withCredentials(async (credentials) => {
+		if (getAccountScope() !== scope) throw new SessionChangedError();
+		return (await expoFetch(privateUploadUrl(source, credentials.server), {
+			headers: bearer(credentials, new Headers()),
+			redirect: "error",
+			credentials: "omit",
+			signal,
+		})) as unknown as Response;
+	}, scope);
+	if (getAccountScope() !== scope) {
+		await response.body?.cancel().catch(() => {});
+		throw new SessionChangedError();
+	}
+	if (!response.ok || response.redirected) {
+		await response.body?.cancel().catch(() => {});
+		throw new Error("Private file unavailable.");
+	}
+	return response;
 }

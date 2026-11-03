@@ -2,7 +2,7 @@ import type { ResumeRenderOptions } from "../context";
 import type { PageMap } from "../page-map";
 import type { ConvertedDocument } from "./to-forme";
 import type { ElementInfo, RenderWithLayoutResult } from "@formepdf/core";
-import type { FormeDocument } from "@formepdf/react";
+import type { FormeDocument, FormeNode, FormeStyle } from "@formepdf/react";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { Locale } from "@reactive-resume/utils/locale";
@@ -65,6 +65,69 @@ export function lostCharacters(warnings: readonly string[]): string[] | null {
 	);
 	if (lost.length === 0) return null;
 	return [...new Set(lost.flatMap((warning) => warning.match(/"[^"]*" \(U\+[0-9A-F]+\)/g) ?? []))];
+}
+
+const uncoveredCharacters = (warnings: readonly string[]) =>
+	new Set((lostCharacters(warnings) ?? []).map((character) => character.slice(1, character.lastIndexOf('"'))));
+
+/** Substitute in render-owned text only, asking the same engine which fonts actually need the replacement. */
+async function substituteMissingGlyphs(
+	document: FormeDocument,
+	characters: ReadonlySet<string>,
+	draw: (document: FormeDocument) => Promise<RenderWithLayoutResult>,
+	cache: Map<string, Set<string>>,
+) {
+	const groups = new Map<string, { style: FormeStyle; characters: Set<string>; text: { content: string }[] }>();
+	const collect = (text: { content: string }, inherited: FormeStyle) => {
+		const candidates = [...text.content].filter((character) => characters.has(character));
+		if (candidates.length === 0) return;
+		const style = {
+			fontFamily: inherited.fontFamily ?? "Helvetica",
+			fontWeight: inherited.fontWeight ?? 400,
+			fontStyle: inherited.fontStyle ?? "Normal",
+		};
+		const key = JSON.stringify(style);
+		let group = groups.get(key);
+		if (!group) groups.set(key, (group = { style, characters: new Set(), text: [] }));
+		for (const character of candidates) group.characters.add(character);
+		group.text.push(text);
+	};
+	const visit = (node: FormeNode, inherited: FormeStyle) => {
+		const style = { ...inherited, ...node.style };
+		const { kind } = node;
+		if (kind.type === "Text" || kind.type === "Heading") {
+			if (kind.runs?.length) for (const run of kind.runs) collect(run, { ...style, ...run.style });
+			else collect(kind, style);
+		}
+		for (const child of node.children) visit(child, style);
+	};
+	for (const child of document.children) visit(child, document.defaultStyle ?? {});
+	let changed = false;
+	for (const [key, group] of groups) {
+		const content = [...group.characters].sort().join("");
+		const cacheKey = `${key}:${content}`;
+		let missing = cache.get(cacheKey);
+		if (!missing) {
+			const probe = await draw({
+				...document,
+				children: [
+					{
+						kind: { type: "Page", config: document.defaultPage },
+						style: {},
+						children: [{ kind: { type: "Text", content }, style: group.style, children: [] }],
+					},
+				],
+			});
+			missing = uncoveredCharacters(probe.warnings);
+			cache.set(cacheKey, missing);
+		}
+		for (const text of group.text) {
+			const replacement = [...text.content].map((character) => (missing.has(character) ? "?" : character)).join("");
+			changed ||= replacement !== text.content;
+			text.content = replacement;
+		}
+	}
+	return changed;
 }
 
 /** Every character in the document's strings, sorted: its text, plus style values and links, which cost little. */
@@ -330,6 +393,9 @@ export async function renderResumeElement(
 	const presenceAheadNodes = new Map<string, number>();
 	// Every pass draws the same text, so the fonts are prepared once, from the first pass's document.
 	let formeFonts: typeof fonts | undefined;
+	const missingGlyphs = new Set<string>();
+	const missingGlyphWarnings = new Set<string>();
+	const glyphSubstitutions = new Map<string, Set<string>>();
 	const layOutOnce = async (keepNestedRowsWhole: boolean) => {
 		const convert = (freeFormHeights?: (number | undefined)[]) =>
 			toFormeDocument(tree, {
@@ -352,7 +418,21 @@ export async function renderResumeElement(
 						)
 					: fonts;
 			}
-			return engine.renderSerializedDocWithLayout({ ...document, fonts: formeFonts.map((font) => ({ ...font })) });
+			const preparedFonts = formeFonts;
+			const draw = (input: FormeDocument) =>
+				engine.renderSerializedDocWithLayout({ ...input, fonts: preparedFonts.map((font) => ({ ...font })) });
+			if (missingGlyphs.size) await substituteMissingGlyphs(document, missingGlyphs, draw, glyphSubstitutions);
+			let result = await draw(document);
+			const uncovered = uncoveredCharacters(result.warnings);
+			if (uncovered.size) {
+				for (const character of uncovered) missingGlyphs.add(character);
+				for (const warning of result.warnings)
+					if (uncoveredCharacters([warning]).size) missingGlyphWarnings.add(warning);
+				// shortcut: Forme 0.29 measures missing glyphs before substituting "?"; remove this retry when fixed upstream.
+				if (await substituteMissingGlyphs(document, missingGlyphs, draw, glyphSubstitutions))
+					result = await draw(document);
+			}
+			return result;
 		};
 		let converted = convert();
 		let result = await render(converted);
@@ -438,6 +518,8 @@ export async function renderResumeElement(
 		pageMap: extractPageMap(result.layout),
 		missingFonts: [...new Set(missing)],
 		layout: result.layout,
-		warnings: [...fontWarnings, ...imageWarnings, ...warnings, ...result.warnings],
+		warnings: [
+			...new Set([...fontWarnings, ...imageWarnings, ...warnings, ...result.warnings, ...missingGlyphWarnings]),
+		],
 	};
 }

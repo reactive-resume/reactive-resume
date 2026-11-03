@@ -27,6 +27,36 @@ test("explicit language wins and the saved choice survives navigation", async ({
 	await expect(page.locator("html")).toHaveAttribute("lang", "ja-JP");
 });
 
+test("a foreign-language picker shows endonyms and keeps translated names and codes searchable", async ({
+	page,
+	context,
+}, info) => {
+	await page.goto("/ats-checker?locale=de-DE&campaign=endonyms");
+	await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
+	await page.getByRole("combobox", { name: "Sprache ändern", exact: true }).click();
+	await expect(page.getByRole("listbox")).toBeVisible();
+	const french = page.getByRole("option").filter({ hasText: "Français" });
+	await expect(french).toHaveText(/Français\s*·\s*Französisch/);
+	await expect(french).not.toContainText("fr-FR");
+	await expect(french.locator('[lang="fr-FR"]')).toHaveText("Français");
+	await french.scrollIntoViewIfNeeded();
+	await page
+		.getByRole("listbox")
+		.screenshot({ path: info.outputPath("language-endonyms.png"), animations: "disabled" });
+	const search = page.getByRole("combobox").last();
+	for (const query of ["Français", "Französisch", "French", "fr-FR"]) {
+		await search.fill(query);
+		await expect(page.getByRole("option")).toHaveCount(1);
+		await expect(french).toBeVisible();
+	}
+	await french.click();
+	await expect(page.locator("html")).toHaveAttribute("lang", "fr-FR");
+	expect(new URL(page.url()).searchParams.get("campaign")).toBe("endonyms");
+	expect((await context.cookies()).find((cookie) => cookie.name === "locale")?.value).toBe("fr-FR");
+	await page.reload();
+	await expect(page.locator("html")).toHaveAttribute("lang", "fr-FR");
+});
+
 test("shared homepage HTML ignores Accept-Language while private unavailable pages honor explicit choice", async ({
 	request,
 }) => {
