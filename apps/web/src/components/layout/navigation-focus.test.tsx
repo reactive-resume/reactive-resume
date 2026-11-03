@@ -106,6 +106,9 @@ it.each([false, true])(
 		const field = screen.getByRole("textbox", { name: "Search" });
 		field.focus();
 		await router.navigate({ to: "/two", search: { q: "retained" } });
+		await act(
+			() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
+		);
 		expect(field).toHaveFocus();
 	},
 );
