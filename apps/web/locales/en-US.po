@@ -2145,8 +2145,8 @@ msgstr "AI providers aren't available on this server until ENCRYPTION_SECRET is 
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI providers couldn't be loaded. Reload to try again."
 
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#. placeholder {1}: providerState.usableProviders[0]?.model
+#. placeholder {0}: read?.label
+#. placeholder {1}: read?.model
 #: src/features/documents/new-document-dialog.tsx
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr "AI reading sends this file's content to {0} · {1}. Your provider may charge."
@@ -3239,6 +3239,10 @@ msgstr "Cancel"
 #: src/features/auth/pages/consent.tsx
 msgid "Cancel connection"
 msgstr "Cancel connection"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Capable model"
+msgstr "Capable model"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
@@ -6877,6 +6881,16 @@ msgstr "Failed · {0} · open to check it"
 msgid "Family name"
 msgstr "Family name"
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Fast model"
+msgstr "Fast model"
+
+#. placeholder {0}: provider.fastModel ?? provider.model
+#. placeholder {1}: provider.capableModel ?? provider.model
+#: src/features/settings/ai/providers.tsx
+msgid "Fast: {0} · Capable: {1}"
+msgstr "Fast: {0} · Capable: {1}"
+
 #: src/features/homepage/footer.tsx
 msgid "Features"
 msgstr "Features"
@@ -8739,6 +8753,10 @@ msgstr "Leave anyway"
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr "Leave at least half an inch around the page."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Leave either field empty to use the model above. Fast handles resume import, Improve and reading job postings; capable handles the assistant and letter drafts."
+msgstr "Leave either field empty to use the model above. Fast handles resume import, Improve and reading job postings; capable handles the assistant and letter drafts."
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
@@ -12447,8 +12465,8 @@ msgstr "Reading the text"
 msgid "Reading what you shared"
 msgstr "Reading what you shared"
 
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#. placeholder {1}: providerState.usableProviders[0]?.model
+#. placeholder {0}: readAI?.label
+#. placeholder {1}: readAI?.model
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Reading with AI sends this posting to {0} · {1}. Public links also go to the reader and the site being read. You can fill details manually."
 msgstr "Reading with AI sends this posting to {0} · {1}. Public links also go to the reader and the site being read. You can fill details manually."
@@ -14211,8 +14229,8 @@ msgstr "Sends only your selected resume and up to 20 active shared facts to this
 msgid "Sends the {0} posting to {1} to draft the body."
 msgstr "Sends the {0} posting to {1} to draft the body."
 
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#. placeholder {1}: providerState.usableProviders[0]?.model
+#. placeholder {0}: draft?.label
+#. placeholder {1}: draft?.model
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
 msgstr "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
@@ -14245,20 +14263,20 @@ msgstr "Sends this letter's resume and the {0} posting to {1} to draft the body.
 msgid "Sends this letter's resume to {0} to draft the body."
 msgstr "Sends this letter's resume to {0} to draft the body."
 
-#. placeholder {0}: provider.label
-#. placeholder {1}: provider.model
+#. placeholder {0}: improveProvider?.label
+#. placeholder {1}: improveProvider?.model
 #: src/features/resume/editor/write/improve.tsx
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr "Sends this line, surrounding field text and your instructions to {0} · {1}."
 
-#. placeholder {0}: provider.label
-#. placeholder {1}: provider.model
+#. placeholder {0}: improveProvider?.label
+#. placeholder {1}: improveProvider?.model
 #: src/features/resume/editor/write/improve.tsx
 msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
 msgstr "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
 
-#. placeholder {0}: provider.label
-#. placeholder {1}: provider.model
+#. placeholder {0}: improveProvider?.label
+#. placeholder {1}: improveProvider?.model
 #: src/features/resume/editor/write/improve.tsx
 msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
 msgstr "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
@@ -15581,6 +15599,10 @@ msgstr "Target roles"
 #: src/features/homepage/remember.tsx
 msgid "Task"
 msgstr "Task"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Task models (optional)"
+msgstr "Task models (optional)"
 
 #: src/features/resume/editor/design/presets.ts
 msgid "Teal"

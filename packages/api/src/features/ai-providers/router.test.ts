@@ -16,4 +16,18 @@ describe("AI provider router input", () => {
 	it("does not default baseURL on switch-only updates", () => {
 		expect(updateProviderInput.parse({ id: "provider-1", enabled: false })).not.toHaveProperty("baseURL");
 	});
+	it("accepts optional task models and allows clearing one", () => {
+		const input = {
+			label: "Local",
+			provider: "ollama" as const,
+			model: "llama3.2",
+			apiKey: "",
+			fastModel: "small",
+			capableModel: "large",
+		};
+		expect(providerInput.parse(input)).toMatchObject({ fastModel: "small", capableModel: "large" });
+		expect(updateProviderInput.parse({ id: "provider-1", capableModel: "" })).toMatchObject({
+			capableModel: "",
+		});
+	});
 });

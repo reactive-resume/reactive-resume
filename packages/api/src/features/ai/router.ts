@@ -1,6 +1,7 @@
 import { ORPCError } from "@orpc/client";
 import { AISDKError } from "ai";
 import { flattenError, ZodError, z } from "zod";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
@@ -109,7 +110,7 @@ export const aiRouter = {
 				signal?.throwIfAborted();
 				return await aiService.parsePdf({
 					provider: provider.provider,
-					model: provider.model,
+					model: aiModelForTask(provider, "fast"),
 					apiKey: provider.apiKey,
 					baseURL: provider.baseURL ?? "",
 					file: input.file,
@@ -151,7 +152,7 @@ export const aiRouter = {
 				signal?.throwIfAborted();
 				return await aiService.parseDocx({
 					provider: provider.provider,
-					model: provider.model,
+					model: aiModelForTask(provider, "fast"),
 					apiKey: provider.apiKey,
 					baseURL: provider.baseURL ?? "",
 					mediaType: input.mediaType,
@@ -246,7 +247,7 @@ export const aiRouter = {
 					posting,
 					signal,
 					provider: provider.provider,
-					model: provider.model,
+					model: aiModelForTask(provider, "fast"),
 					apiKey: provider.apiKey,
 					baseURL: provider.baseURL ?? "",
 				});

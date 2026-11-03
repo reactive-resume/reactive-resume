@@ -11,6 +11,10 @@ const mocks = {
 	"@lingui/react/macro": {
 		useLingui: () => ({ t: (parts, ...values) => parts.reduce((s, part, i) => s + part + (values[i] ?? ""), "") }),
 	},
+	"@reactive-resume/ai/task-models": {
+		aiModelForTask: (provider, task) =>
+			(task === "capable" ? provider.capableModel : provider.fastModel) ?? provider.model,
+	},
 	"@orpc/client": {},
 	"@tanstack/react-query": {},
 	"expo-router": {},
@@ -50,6 +54,10 @@ const { ModelButton } = module.exports;
 test("native chat model control names the selected connection and model, retaining a missing-connection fallback", () => {
 	for (const [current, expected] of [
 		[{ label: "Fictional Cedar AI", model: "test-model" }, "Fictional Cedar AI · test-model"],
+		[
+			{ label: "Fictional Cedar AI", model: "test-model", capableModel: "capable-model" },
+			"Fictional Cedar AI · capable-model",
+		],
 		[undefined, "Removed connection"],
 	]) {
 		let opens = 0;

@@ -1,6 +1,7 @@
 import type { client } from "./client";
 import type { AiVoiceOperation } from "@reactive-resume/ai/types";
 import { t } from "@lingui/core/macro";
+import { aiConfiguredModels, aiModelForTask, aiTaskForOperation } from "@reactive-resume/ai/task-models";
 import { aiDestination, NO_AI_DESTINATION } from "@reactive-resume/ai/types";
 import { confirmOperation } from "@/hooks/use-confirm";
 
@@ -127,8 +128,13 @@ export async function authorizeAiRequest(
 				: web
 					? t`Web destination: ${access?.searxng ? t`your server's search service` : (access?.provider ?? t`built-in reader`)}.`
 					: "";
+		const task = aiTaskForOperation(operation);
+		const disclosedModel = provider
+			? (voice?.model ??
+				(test ? aiConfiguredModels(provider).join(", ") : task ? aiModelForTask(provider, task) : provider.model))
+			: "";
 		const allowed = await confirmOperation(provider ? t`Share data with ${provider.label}?` : t`Use web access?`, {
-			description: `${provider ? `${provider.label} · ${voice?.model ?? provider.model} · ${provider.baseURL ?? provider.provider}` : t`No AI provider is used for this operation.`}\n\n${data}\n\n${webNotice} ${scheduled ? t`This allows recurring processing until you turn the schedule off.` : ""} ${t`Provider retention follows its own policy. Your provider may charge for this request.`}`,
+			description: `${provider ? `${provider.label} · ${disclosedModel} · ${provider.baseURL ?? provider.provider}` : t`No AI provider is used for this operation.`}\n\n${data}\n\n${webNotice} ${scheduled ? t`This allows recurring processing until you turn the schedule off.` : ""} ${t`Provider retention follows its own policy. Your provider may charge for this request.`}`,
 			confirmText: rebind ? t`Use this destination` : scheduled ? t`Allow scheduled sharing` : t`Allow this operation`,
 			cancelText: t`Don't share`,
 			...(signal ? { signal } : {}),

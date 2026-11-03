@@ -36,7 +36,7 @@ Personal **AI providers** settings show a billing reminder before and after you 
 
   </Step>
   <Step title="Save and test">
-    Select **Save and test**. Reactive Resume saves the provider, then sends it a tiny request to check that the key, model and address work. If the test passes, the dialog closes and the provider is ready to use.
+    Select **Save and test**. Reactive Resume saves the provider, then sends it a tiny request to check that the key, address and every model you configured work. If the test passes, the dialog closes and the provider is ready to use.
   </Step>
 </Steps>
 
@@ -61,13 +61,15 @@ If you have no resumes or applications yet, the pickers offer to create a resume
 
 ### The fields
 
-| Field        | What to enter                                                                                                                                                 |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Provider** | The company or service that runs the model.                                                                                                                   |
-| **API key**  | The key from your provider's dashboard. Required except for Ollama, where you can leave it empty for a local server that doesn't require authentication.      |
-| **Model**    | The model name exactly as your provider writes it. Required.                                                                                                  |
-| **Name**     | A label you'll recognize, such as "Work OpenAI". Under **Advanced** for named providers. If you leave it empty, the provider's name is used.                  |
-| **Base URL** | The address requests go to. Under **Advanced** for named providers; required and visible for OpenAI-compatible services. Changing it needs the API key again. |
+| Field             | What to enter                                                                                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Provider**      | The company or service that runs the model.                                                                                                                   |
+| **API key**       | The key from your provider's dashboard. Required except for Ollama, where you can leave it empty for a local server that doesn't require authentication.      |
+| **Model**         | The model name exactly as your provider writes it. Required.                                                                                                  |
+| **Fast model**    | Optional. The model for resume import, Improve and reading job postings. Leave it empty to use **Model**.                                                     |
+| **Capable model** | Optional. The model for the assistant and letter drafts. Leave it empty to use **Model**.                                                                     |
+| **Name**          | A label you'll recognize, such as "Work OpenAI". Under **Advanced** for named providers. If you leave it empty, the provider's name is used.                  |
+| **Base URL**      | The address requests go to. Under **Advanced** for named providers; required and visible for OpenAI-compatible services. Changing it needs the API key again. |
 
 ### Choosing a model
 
@@ -83,6 +85,24 @@ OpenAI starts with `gpt-6-luna`, a fast, lower-cost model for everyday work. Def
 </Frame>
 
 The built-in list is curated for text and tool use. Your endpoint and plan decide which models are available. You can enter any model ID your endpoint supports, including a private or custom model. Some providers have no built-in suggestions; their model field remains editable. Check tool-calling support with your provider when choosing a custom model for the assistant.
+
+### Task models (optional)
+
+For lower cost without changing your everyday model, expand **Task models (optional)** under **Model** on web or mobile and choose:
+
+- A **Fast model** for resume import, Improve and reading job postings.
+- A **Capable model** for the assistant and letter drafts.
+
+Leave either field empty to use the model above. A connection with one model therefore keeps working exactly as before, with the same key, provider and approval. Task models use that same connection; Reactive Resume never switches to another provider.
+
+**Save and test** checks every model you configured. If one is unavailable, the connection stays off until you correct or clear it, so an unsupported model is never used silently. Changing a task model also needs a fresh test, and pauses scheduled AI work until you re-enable each schedule. Each approval dialog names the model that will receive that action.
+
+<Frame caption="Optional fast and capable models on one tested connection">
+  <img
+    src="/images/guides/using-ai/task-models.webp"
+    alt="Add provider dialog with Task models (optional) expanded, showing empty Fast model and Capable model fields above collapsed Advanced settings"
+  />
+</Frame>
 
 ### Supported providers
 
@@ -115,7 +135,7 @@ The base URL must start with `https://` and point to a public address. On the ho
 
 ## Test a provider again
 
-Each saved provider appears as a row under **AI providers**, showing its name, model and the last four characters of the key. The row shows **Off** next to the name when the provider isn't in use.
+Each saved provider appears as a row under **AI providers**, showing its name, model and the last four characters of the key. When you set task models, the row also shows which model fast and capable tasks use. The row shows **Off** next to the name when the provider isn't in use.
 
 <Frame caption="A connected provider after a successful test">
   <img
@@ -137,7 +157,7 @@ Select **Edit** on a provider's row.
   />
 </Frame>
 
-- **Change the key, model, name or base URL**, then select **Save and test**. Leave **API key** empty to keep the saved key. Changing the key, model or base URL turns the provider off until the new test passes.
+- **Change the key, model, task models, name or base URL**, then select **Save and test**. Leave **API key** empty to keep the saved key. Changing the key, model, task models or base URL turns the provider off until the new test passes.
 - **Turn it on or off** with **Use this provider**. Only a provider that passed its test can be turned on. A provider that is off stays saved but isn't offered anywhere in the app.
 - **Delete it** with **Delete provider**, then confirm with the red **Delete provider** button. Choose **Cancel** to keep it. The provider and its stored key are removed only after confirmation.
 

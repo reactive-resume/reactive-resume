@@ -8,6 +8,7 @@ import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { readPastedPostingHeader } from "@reactive-resume/import/job-posting";
 import { postingReadReceipt } from "@reactive-resume/schema/applications/posting-source";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -215,6 +216,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const [reading, setReading] = keep("reading");
 	const providerState = useHasUsableAiProvider();
 	const { hasUsableProvider } = providerState;
+	const readProvider = providerState.usableProviders[0];
+	const readAI = readProvider ? { label: readProvider.label, model: aiModelForTask(readProvider, "fast") } : undefined;
 	const invalidate = useInvalidateApplications();
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const navigate = useNavigate();
@@ -414,9 +417,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			{hasUsableProvider && (
 				<p className="text-xs text-ink-3">
 					<Trans>
-						Reading with AI sends this posting to {providerState.usableProviders[0]?.label} ·{" "}
-						{providerState.usableProviders[0]?.model}. Public links also go to the reader and the site being read. You
-						can fill details manually.
+						Reading with AI sends this posting to {readAI?.label} · {readAI?.model}. Public links also go to the reader
+						and the site being read. You can fill details manually.
 					</Trans>
 				</p>
 			)}

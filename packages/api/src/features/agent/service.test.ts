@@ -371,6 +371,7 @@ describe("agentService.messages.send", () => {
 			id: "provider-1",
 			provider: "openai-compatible",
 			model: "stub",
+			capableModel: "capable-stub",
 			apiKey: "secret",
 			baseURL: "http://127.0.0.1:1/v1",
 		});
@@ -430,6 +431,8 @@ describe("agentService.messages.send", () => {
 		const { buildAgentInstructions, buildAgentTools } = await import("./tools");
 
 		await send();
+		const { getAgentModel } = await import("../ai/service");
+		expect(vi.mocked(getAgentModel).mock.calls.at(-1)?.[0]).toMatchObject({ model: "capable-stub" });
 		expect(JSON.stringify(vi.mocked(convertToModelMessages).mock.calls.at(-1)?.[0])).toContain(
 			"private-marker@example.test",
 		);

@@ -5,6 +5,8 @@ const providerFields = z.object({
 	label: z.string().trim().min(1),
 	provider: aiProviderSchema,
 	model: z.string().trim().min(1),
+	fastModel: z.string().trim().max(200).optional(),
+	capableModel: z.string().trim().max(200).optional(),
 	baseURL: z.string().trim().optional(),
 	apiKey: z.string().trim(),
 });

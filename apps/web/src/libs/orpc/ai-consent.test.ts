@@ -122,6 +122,23 @@ it.each([
 	});
 });
 
+it("discloses the task model that receives the data", async () => {
+	vi.mocked(confirmOperation).mockResolvedValue(true);
+	api.aiProviders.list.mockResolvedValue([{ ...provider, fastModel: "fast-model", capableModel: "capable-model" }]);
+
+	await authorizeAiRequest(["ai", "improve"], { line: "Fictional text" }, consentApi);
+	expect(confirmOperation).toHaveBeenLastCalledWith(
+		expect.any(String),
+		expect.objectContaining({ description: expect.stringContaining("fast-model") }),
+	);
+
+	await authorizeAiRequest(["coverLetters", "draft"], { id: "letter" }, consentApi);
+	expect(confirmOperation).toHaveBeenLastCalledWith(
+		expect.any(String),
+		expect.objectContaining({ description: expect.stringContaining("capable-model") }),
+	);
+});
+
 it("retains approved default A while default B becomes first during the dialog", async () => {
 	vi.mocked(confirmOperation).mockImplementation(async () => {
 		api.aiProviders.list.mockResolvedValue([

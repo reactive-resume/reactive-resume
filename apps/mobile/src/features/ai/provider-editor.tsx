@@ -91,6 +91,8 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 	const [fields, setFields] = useState({
 		label: saved?.label ?? "",
 		model: saved?.model ?? providerDefaults(provider).model,
+		fastModel: saved?.fastModel ?? "",
+		capableModel: saved?.capableModel ?? "",
 		baseURL: saved?.baseURL ?? providerDefaults(provider).baseURL,
 		apiKey: "",
 	});
@@ -115,6 +117,7 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 		),
 	);
 	const [urlTouched, setUrlTouched] = useState(false);
+	const [tasks, setTasks] = useState(Boolean(saved?.fastModel || saved?.capableModel));
 	const invalidate = () => queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
 	const set = (patch: Partial<typeof fields>) => setFields((previous) => ({ ...previous, ...patch }));
 	const baseline = saved ?? current;
@@ -138,6 +141,10 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 	const changes = {
 		...(fields.label.trim() && fields.label.trim() !== baseline?.label ? { label: fields.label.trim() } : {}),
 		...(fields.model.trim() && fields.model.trim() !== baseline?.model ? { model: fields.model.trim() } : {}),
+		...(fields.fastModel.trim() !== (baseline?.fastModel ?? "") ? { fastModel: fields.fastModel.trim() } : {}),
+		...(fields.capableModel.trim() !== (baseline?.capableModel ?? "")
+			? { capableModel: fields.capableModel.trim() }
+			: {}),
 		// The provider rides along so validation accepts Ollama's empty key.
 		...(newURL ? { provider, baseURL: fields.baseURL.trim() } : {}),
 		...(newURL || apiKey ? { apiKey } : {}),
@@ -157,6 +164,8 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 				provider,
 				label: fields.label.trim() || providerLabel(provider),
 				model: fields.model.trim(),
+				fastModel: fields.fastModel.trim(),
+				capableModel: fields.capableModel.trim(),
 				baseURL: fields.baseURL.trim(),
 			};
 			// Direct calls keep submitted keys out of TanStack's mutation cache.
@@ -261,7 +270,7 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 					setProvider(next);
 					setAdvanced(false);
 					setUrlTouched(false);
-					set({ ...providerDefaults(next), apiKey: "" });
+					set({ ...providerDefaults(next), apiKey: "", fastModel: "", capableModel: "" });
 				}}
 			/>
 			<TextField
@@ -309,6 +318,37 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 				<Text color="ink3">{t`Get an API key from your endpoint operator.`}</Text>
 			)}
 			<ProviderModel provider={provider} value={fields.model} onChange={(model) => set({ model })} disabled={pending} />
+			<Button
+				label={t`Task models (optional)`}
+				variant="ghost"
+				icon={tasks ? "caret-down" : "caret-right"}
+				expanded={tasks}
+				onPress={() => setTasks(!tasks)}
+				disabled={pending}
+			/>
+			{tasks && (
+				<View style={{ gap: space.s3 }}>
+					<Text color="ink3">
+						{t`Leave either field empty to use the model above. Fast handles resume import, Improve and reading job postings; capable handles the assistant and letter drafts.`}
+					</Text>
+					<ProviderModel
+						label={t`Fast model`}
+						hint={false}
+						provider={provider}
+						value={fields.fastModel}
+						onChange={(fastModel) => set({ fastModel })}
+						disabled={pending}
+					/>
+					<ProviderModel
+						label={t`Capable model`}
+						hint={false}
+						provider={provider}
+						value={fields.capableModel}
+						onChange={(capableModel) => set({ capableModel })}
+						disabled={pending}
+					/>
+				</View>
+			)}
 			{compatible && urlField}
 			{!compatible && (
 				<Button

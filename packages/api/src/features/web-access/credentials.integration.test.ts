@@ -73,6 +73,13 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 			)
 				await pool.query(statement);
 		}
+		const taskModels = await readFile(
+			new URL("../../../../../migrations/20261103031821_wooden_skullbuster/migration.sql", import.meta.url),
+			"utf8",
+		);
+		for (const statement of taskModels.split("--> statement-breakpoint")) {
+			if (statement.trim().startsWith('ALTER TABLE "ai_providers"')) await pool.query(statement);
+		}
 		web = (await import("./credentials")).webAccessService;
 		ai = (await import("../ai-providers/service")).aiProvidersService;
 	});

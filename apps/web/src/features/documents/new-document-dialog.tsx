@@ -9,6 +9,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { reviewImport, withLeftoverSection, withLinkTargets } from "@reactive-resume/import/review";
 import { Button } from "@reactive-resume/ui/components/button";
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
@@ -250,6 +251,8 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 	const navigate = useNavigate();
 	const providerState = useHasUsableAiProvider();
 	const { hasUsableProvider } = providerState;
+	const readProvider = providerState.usableProviders[0];
+	const read = readProvider ? { label: readProvider.label, model: aiModelForTask(readProvider, "fast") } : undefined;
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const markNew = useNewDocumentsStore((state) => state.markNew);
 	const [step, setStep] = useState<Step>({ name: data?.step ?? "choose" } as Step);
@@ -364,8 +367,7 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 						<>
 							<p className="text-sm text-ink-2">
 								<Trans>
-									AI reading sends this file's content to {providerState.usableProviders[0]?.label} ·{" "}
-									{providerState.usableProviders[0]?.model}. Your provider may charge.
+									AI reading sends this file's content to {read?.label} · {read?.model}. Your provider may charge.
 								</Trans>
 							</p>
 							<Button type="button" onClick={() => void importFile(step.file, "ai")}>

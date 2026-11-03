@@ -31,6 +31,9 @@ export const aiProvider = pg.pgTable(
 		label: pg.text("label").notNull(),
 		provider: pg.text("provider").notNull(),
 		model: pg.text("model").notNull(),
+		/** Optional overrides; a blank one keeps that task on `model` for existing and new connections. */
+		fastModel: pg.text("fast_model"),
+		capableModel: pg.text("capable_model"),
 		baseUrl: pg.text("base_url"),
 		encryptedApiKey: pg.text("encrypted_api_key").notNull(),
 		apiKeySalt: pg.text("api_key_salt").notNull(),

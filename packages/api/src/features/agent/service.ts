@@ -24,6 +24,7 @@ import {
 	wrapLanguageModel,
 } from "ai";
 import { and, asc, count, desc, eq, getColumns, gt, inArray, isNull, sql } from "drizzle-orm";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -1499,6 +1500,7 @@ export const agentService = {
 					userId: input.userId,
 				}),
 			]);
+			const capableModel = aiModelForTask(runnableProvider, "capable");
 			const runId = generateId();
 			const streamId = generateId();
 			const controller = new AbortController();
@@ -1859,13 +1861,13 @@ export const agentService = {
 					signal: controller.signal,
 					provider: {
 						provider: runnableProvider.provider,
-						model: runnableProvider.model,
+						model: capableModel,
 						apiKey: runnableProvider.apiKey,
 						baseURL: runnableProvider.baseURL ?? "",
 					},
 					model: getAgentModel({
 						provider: runnableProvider.provider,
-						model: runnableProvider.model,
+						model: capableModel,
 						apiKey: runnableProvider.apiKey,
 						baseURL: runnableProvider.baseURL ?? "",
 					}),

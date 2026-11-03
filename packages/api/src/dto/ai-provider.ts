@@ -7,6 +7,8 @@ export const aiProviderResponseSchema = z.object({
 	label: z.string(),
 	provider: aiProviderSchema,
 	model: z.string(),
+	fastModel: z.string().nullable(),
+	capableModel: z.string().nullable(),
 	baseURL: z.string().nullable(),
 	enabled: z.boolean(),
 	/** Used whenever no connection is chosen, while it's switched on and tested. */
