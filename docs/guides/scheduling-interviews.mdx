@@ -82,12 +82,19 @@ A date and time skipped by a daylight-saving change is rejected. Pick a valid lo
 
 To remove it, select **Delete** (**Delete interview** in the native app). The notice offers **Undo** for six seconds. Undo keeps the original round and its linked schedules. Removing an interview pauses its briefing schedules; rescheduling moves them to the new time. Check **Career → Today → Schedules** after a change.
 
-The notice appears once the pending deletion is ready. Reloading, closing the tab or putting the native app in the background sends that acknowledged deletion. Undo cancels it and reloads the current application; a round already deleted in another session is not recreated. If that read fails, use **Retry** to refresh it. Device reminders are canceled only after the deletion succeeds.
+The current application must load before the pending deletion is ready and its notice appears. Reloading, closing the tab or putting the native app in the background sends that acknowledged deletion. Undo cancels it and reloads the current application; a round already deleted in another session is not recreated. If that read fails, use **Retry** to refresh it. Device reminders are canceled only after the deletion succeeds.
 
 <Frame caption="Phone browser: the prepared interview deletion offers Undo">
   <img
     src="/images/guides/scheduling-interviews/interview-undo-ready.png"
     alt="Phone browser Calendar with no upcoming interviews and an Interview deleted notice offering Undo above the navigation tabs"
+  />
+</Frame>
+
+<Frame caption="If Undo cannot reload the interview, Retry checks again before showing it.">
+  <img
+    src="/images/guides/scheduling-interviews/interview-undo-retry.png"
+    alt="Phone browser Calendar keeps interviews hidden while a Couldn't load. Try again. notice offers Retry"
   />
 </Frame>
 

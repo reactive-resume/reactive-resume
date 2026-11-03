@@ -49,6 +49,7 @@ export type WorkspaceSearch = {
 	version?: string | undefined;
 	speak?: boolean | undefined;
 	story?: string | undefined;
+	warmup?: boolean | undefined;
 	/** Messages opens with the offer form ("Add the offer's terms"). */
 	offer?: "new" | undefined;
 	/** The interview round to work on, when a link names one (a later round of the same application). */
@@ -65,6 +66,7 @@ export type WorkspaceTabProps = {
 	/** Practise: open with Speak selected. */
 	speak: boolean;
 	story?: string | undefined;
+	warmup?: boolean | undefined;
 	now: Date;
 	go: (tab: WorkspaceTab, search?: WorkspaceSearch) => void;
 	/** Messages: open the offer form at once, then forget the request once it closes. */
@@ -156,7 +158,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 				(entry): entry is InterviewTimelineEntry => isInterview(entry) && entry.id === search.round,
 			)
 		: undefined;
-	const interview = named ?? currentInterview(application, now);
+	const interview = search.warmup && search.round ? named : (named ?? currentInterview(application, now));
 	const version = search.version ? saved.data?.find((item) => item.id === search.version) : undefined;
 	const archived = search.version !== undefined;
 	const archiveUnavailable = archived && (!version || version.data.kind !== archiveKinds[tab]);
@@ -194,6 +196,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 		go,
 		speak: search.speak === true,
 		story: search.story,
+		warmup: search.warmup === true,
 		offerForm: { open: search.offer === "new", onDone: () => setSearch({ offer: undefined }) },
 	};
 	// Messages shows the newest read message: it waits for a decision while its changes aren't applied.

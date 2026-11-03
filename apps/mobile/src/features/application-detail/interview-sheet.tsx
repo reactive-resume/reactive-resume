@@ -20,7 +20,11 @@ import {
 } from "./hooks";
 import { client, prepareRpc } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
-import { applicationDetailQueryKey, useInvalidateApplications } from "@/features/applications/queries";
+import {
+	applicationDetailQueryKey,
+	applicationDetailQueryOptions,
+	useInvalidateApplications,
+} from "@/features/applications/queries";
 import { withUndo } from "@/features/career/undo";
 import {
 	DEFAULT_LEAD,
@@ -288,6 +292,8 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 		withUndo({
 			message: t`Interview deleted`,
 			prepare: async () => {
+				// Register the canonical reader before offering Undo, including summary-only calendar entry points.
+				await queryClient.fetchQuery({ ...applicationDetailQueryOptions(application.id), staleTime: 0 });
 				const request = await prepareRpc(client.applications.deleteTimelineEntry, {
 					id: application.id,
 					entryId: interview.id,

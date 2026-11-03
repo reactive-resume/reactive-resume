@@ -11,6 +11,7 @@ import { AnimatePresence } from "motion/react";
 import { useRef, useState } from "react";
 import { latestOfferHints } from "@reactive-resume/schema/applications/next-step";
 import { upcomingApplicationEvents } from "@reactive-resume/schema/applications/upcoming";
+import { interviewPreparationDue } from "@reactive-resume/schema/career-practice";
 import { Button } from "@reactive-resume/ui/components/button";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -21,6 +22,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
+import { PrepareNow } from "./prepare-now";
 import { rollForward, ScheduleSheet, scheduleKind } from "./schedule-sheet";
 import { CollapseRow, Eyebrow, flash, InfoChip, Swap, useCareerTime, useNow, withQueryUndo } from "./shared";
 import { formatDuration, interviewKindOf } from "@/features/applications/interviews";
@@ -829,6 +831,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 		timeZone,
 	);
 	const [next, ...later] = events.slice(0, 3);
+	const preparation = events.find((item) => item.kind === "interview" && interviewPreparationDue(item.at, now));
 	const offerError = offerQuery.isError ? <CareerLoadError onRetry={() => void offerQuery.refetch()} /> : null;
 	if (!next) return offerError;
 
@@ -912,6 +915,14 @@ function ComingUp({ now, className }: ComingUpProps) {
 						</li>
 					))}
 				</ul>
+			)}
+			{preparation?.kind === "interview" && (
+				<PrepareNow
+					key={preparation.key}
+					applicationId={preparation.application.id}
+					interviewId={preparation.interview.id}
+					now={now}
+				/>
 			)}
 			{offerError}
 		</section>
