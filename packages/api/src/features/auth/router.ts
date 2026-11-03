@@ -351,7 +351,16 @@ export const authRouter = {
 						),
 					})
 					.optional(),
-				applications: z.array(applicationDto.getById.output),
+				applications: z.array(
+					applicationDto.getById.output.extend({
+						submittedAt: z
+							.date()
+							.nullable()
+							.describe(
+								"First recorded submission time, retained after later stage changes; null when no submission is recorded.",
+							),
+					}),
+				),
 				applicationPipeline: applicationPipelineSchema,
 				aiContentReports: z.array(createSelectSchema(schema.aiContentReport)),
 				career: z.object({
