@@ -3,6 +3,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useId } from "react";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -144,7 +145,7 @@ type ModelMenuProps = {
 
 export function ModelMenu({ open, onOpenChange, providers, current, label, onChoose, onConnect }: ModelMenuProps) {
 	const { t } = useLingui();
-	const text = current ? `${current.label} · ${current.model}` : label;
+	const text = current ? `${current.label} · ${aiModelForTask(current, "capable")}` : label;
 	return (
 		<DropdownMenu open={open} onOpenChange={onOpenChange}>
 			<DropdownMenuTrigger
@@ -164,7 +165,7 @@ export function ModelMenu({ open, onOpenChange, providers, current, label, onCho
 					<DropdownMenuItem key={item.id} onClick={() => onChoose(item.id)}>
 						<span className="grid min-w-0 flex-1">
 							<span className="truncate">{item.label}</span>
-							<span className="truncate text-xs text-ink-3">{item.model}</span>
+							<span className="truncate text-xs text-ink-3">{aiModelForTask(item, "capable")}</span>
 						</span>
 						{item.id === current?.id && <Icon name="check" size={16} />}
 					</DropdownMenuItem>

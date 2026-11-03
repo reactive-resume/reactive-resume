@@ -25,9 +25,13 @@ type ProviderModelProps = {
 	provider: AIProvider;
 	value: string;
 	onChange: (value: string) => void;
+	/** Defaults to the connection's main model label. */
+	label?: string;
+	/** The default/model guidance is only useful on the main field. */
+	hint?: boolean;
 };
 
-export function ProviderModel({ id, provider, value, onChange }: ProviderModelProps) {
+export function ProviderModel({ id, provider, value, onChange, label, hint = true }: ProviderModelProps) {
 	const anchor = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState("");
 	const [open, setOpen] = useState(false);
@@ -69,9 +73,7 @@ export function ProviderModel({ id, provider, value, onChange }: ProviderModelPr
 	};
 	return (
 		<div className="grid gap-1.5">
-			<Label htmlFor={id}>
-				<Trans>Model</Trans>
-			</Label>
+			<Label htmlFor={id}>{label ?? <Trans>Model</Trans>}</Label>
 			{models.length ? (
 				<ComboboxRoot
 					open={open && shown.length > 0}
@@ -114,7 +116,7 @@ export function ProviderModel({ id, provider, value, onChange }: ProviderModelPr
 				<Input {...inputProps} value={value} onChange={(event) => onChange(event.target.value)} />
 			)}
 			<div id={`${id}-hint`} className="grid gap-1 text-xs leading-5 text-ink-3">
-				{defaultModel && (
+				{hint && defaultModel && (
 					<p>
 						<Trans>
 							{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts

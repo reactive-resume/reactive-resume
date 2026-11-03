@@ -88,6 +88,14 @@ const mocks = {
 	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
 	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
 	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
+	"@reactive-resume/ai/task-models": {
+		aiModelForTask: (provider, task) =>
+			(task === "capable" ? provider.capableModel : provider.fastModel) ?? provider.model,
+		aiTaskForOperation: () => undefined,
+		aiConfiguredModels: (provider) => [
+			...new Set([provider.model, provider.fastModel, provider.capableModel].filter(Boolean)),
+		],
+	},
 	"@/routes": { routes },
 	"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
 	"@/ui": ui,

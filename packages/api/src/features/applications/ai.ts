@@ -1,7 +1,9 @@
+import type { AiTask } from "@reactive-resume/ai/task-models";
 import { ORPCError } from "@orpc/client";
 import { APICallError, generateText, RetryError } from "ai";
 import z from "zod";
 import { safetySystemPrompt } from "@reactive-resume/ai/prompts";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { postingSourceSchema } from "@reactive-resume/schema/applications/data";
 import { slugify } from "@reactive-resume/utils/slug";
@@ -43,7 +45,7 @@ function canonicalLanguage(value: string): string {
 }
 
 // Resolve the user's default (tested + enabled) AI provider into a ready model instance.
-async function resolveModel(userId: string) {
+async function resolveModel(userId: string, task?: AiTask) {
 	const provider = await aiProvidersService.getDefaultRunnable({ userId });
 	if (!provider) {
 		throw new ORPCError("BAD_REQUEST", {
@@ -54,7 +56,7 @@ async function resolveModel(userId: string) {
 		provider,
 		model: getModel({
 			provider: provider.provider,
-			model: provider.model,
+			model: task ? aiModelForTask(provider, task) : provider.model,
 			apiKey: provider.apiKey,
 			...(provider.baseURL ? { baseURL: provider.baseURL } : {}),
 		}),
@@ -332,7 +334,7 @@ export const aiRouter = {
 
 				const model = getModel({
 					provider: provider.provider,
-					model: provider.model,
+					model: aiModelForTask(provider, "fast"),
 					apiKey: provider.apiKey,
 					...(provider.baseURL ? { baseURL: provider.baseURL } : {}),
 				});
@@ -391,7 +393,7 @@ export const aiRouter = {
 		.output(autofillOutput)
 		.errors(aiErrors)
 		.handler(async ({ context, input, signal }) => {
-			const { model, provider } = await resolveModel(context.user.id);
+			const { model, provider } = await resolveModel(context.user.id, "fast");
 
 			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
 			signal?.throwIfAborted();
@@ -476,7 +478,7 @@ export const aiRouter = {
 		.errors(aiErrors)
 		.handler(async ({ context, input, signal }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
-			const { model, provider } = await resolveModel(context.user.id);
+			const { model, provider } = await resolveModel(context.user.id, "capable");
 			const resume = application.resumeId
 				? await resumeService.getById({ id: application.resumeId, userId: context.user.id }).catch(() => null)
 				: null;

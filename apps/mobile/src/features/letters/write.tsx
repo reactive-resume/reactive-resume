@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Keyboard, View, useWindowDimensions } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { coverLetterTextToHtml, defaultCoverLetterSignOff, greetingName } from "@reactive-resume/resume/cover-letter";
 import { useLetterWords } from "./compose";
 import { LetterLanguageField } from "./design";
@@ -693,6 +694,9 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const ai = useHasAIProvider();
+	const draftProvider = ai.defaultProvider
+		? { label: ai.defaultProvider.label, model: aiModelForTask(ai.defaultProvider, "capable") }
+		: undefined;
 	const [setup, setSetup] = useState(false);
 	const hasResume = !!letter.sourceResumeId;
 	const company = application?.company;
@@ -740,13 +744,13 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 				) : null}
 				<Button size="sm" variant="secondary" label={t`Write it myself`} disabled={disabled} onPress={onWrite} />
 			</View>
-			{canDraft && ai.defaultProvider ? (
+			{canDraft && draftProvider ? (
 				<Text variant="caption" color="ink3">
 					{application && hasResume
-						? t`Sends this letter's resume and the ${application.company} posting to ${ai.defaultProvider.label} · ${ai.defaultProvider.model} to draft the body. Your provider may charge.`
+						? t`Sends this letter's resume and the ${application.company} posting to ${draftProvider.label} · ${draftProvider.model} to draft the body. Your provider may charge.`
 						: application
-							? t`Sends the ${application.company} posting to ${ai.defaultProvider.label} · ${ai.defaultProvider.model} to draft the body. Your provider may charge.`
-							: t`Sends this letter's resume to ${ai.defaultProvider.label} · ${ai.defaultProvider.model} to draft the body. Your provider may charge.`}
+							? t`Sends the ${application.company} posting to ${draftProvider.label} · ${draftProvider.model} to draft the body. Your provider may charge.`
+							: t`Sends this letter's resume to ${draftProvider.label} · ${draftProvider.model} to draft the body. Your provider may charge.`}
 				</Text>
 			) : null}
 			{canDraft && ai.error ? (

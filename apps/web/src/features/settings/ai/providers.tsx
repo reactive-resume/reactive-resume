@@ -248,6 +248,13 @@ function ProviderRow({ provider, isDefault, onMakeDefault, makingDefault, onEdit
 						)}
 					</span>
 					<span className="text-xs break-all text-ink-2">{provider.model}</span>
+					{(provider.fastModel || provider.capableModel) && (
+						<span className="text-xs break-all text-ink-3">
+							<Trans>
+								Fast: {provider.fastModel ?? provider.model} · Capable: {provider.capableModel ?? provider.model}
+							</Trans>
+						</span>
+					)}
 					<span className="text-xs text-ink-3">
 						<Trans>Key ends in {keyEnding(provider.apiKeyPreview)}</Trans>
 					</span>
@@ -303,7 +310,13 @@ function AddProviderDialog({ open, onOpenChange, onConnected }: AddProviderDialo
 	const id = useId();
 	const queryClient = useQueryClient();
 	const [provider, setProvider] = useState<AIProvider>("openai");
-	const [fields, setFields] = useState<ProviderFields>({ label: "", apiKey: "", ...providerDefaults("openai") });
+	const [fields, setFields] = useState<ProviderFields>({
+		label: "",
+		apiKey: "",
+		fastModel: "",
+		capableModel: "",
+		...providerDefaults("openai"),
+	});
 	const [failure, setFailure] = useState<string | null>(null);
 	const create = useMutation(orpc.aiProviders.create.mutationOptions({ meta: { noInvalidate: true } }));
 	const update = useMutation(orpc.aiProviders.update.mutationOptions({ meta: { noInvalidate: true } }));
@@ -314,7 +327,7 @@ function AddProviderDialog({ open, onOpenChange, onConnected }: AddProviderDialo
 	const reset = () => {
 		createdId.current = null;
 		setProvider("openai");
-		setFields({ label: "", apiKey: "", ...providerDefaults("openai") });
+		setFields({ label: "", apiKey: "", fastModel: "", capableModel: "", ...providerDefaults("openai") });
 		setFailure(null);
 	};
 
@@ -326,6 +339,8 @@ function AddProviderDialog({ open, onOpenChange, onConnected }: AddProviderDialo
 			label: fields.label.trim() || providerLabel(provider),
 			provider,
 			model: fields.model.trim(),
+			fastModel: fields.fastModel.trim(),
+			capableModel: fields.capableModel.trim(),
 			baseURL: fields.baseURL.trim(),
 			apiKey: fields.apiKey.trim(),
 		};
@@ -408,7 +423,13 @@ function AddProviderDialog({ open, onOpenChange, onConnected }: AddProviderDialo
 							onValueChange={(next) => {
 								if (!next) return;
 								setProvider(next);
-								setFields((current) => ({ ...current, ...providerDefaults(next), apiKey: "" }));
+								setFields((current) => ({
+									...current,
+									...providerDefaults(next),
+									apiKey: "",
+									fastModel: "",
+									capableModel: "",
+								}));
 							}}
 						/>
 					</div>
@@ -461,6 +482,8 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 	const [fields, setFields] = useState<ProviderFields>({
 		label: provider.label,
 		model: provider.model,
+		fastModel: provider.fastModel ?? "",
+		capableModel: provider.capableModel ?? "",
 		baseURL: provider.baseURL ?? AI_PROVIDER_DEFAULT_BASE_URLS[provider.provider] ?? "",
 		apiKey: "",
 	});
@@ -480,6 +503,10 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 	const changes = {
 		...(fields.label.trim() && fields.label.trim() !== provider.label ? { label: fields.label.trim() } : {}),
 		...(fields.model.trim() && fields.model.trim() !== provider.model ? { model: fields.model.trim() } : {}),
+		...(fields.fastModel.trim() !== (provider.fastModel ?? "") ? { fastModel: fields.fastModel.trim() } : {}),
+		...(fields.capableModel.trim() !== (provider.capableModel ?? "")
+			? { capableModel: fields.capableModel.trim() }
+			: {}),
 		// The provider rides along so validation accepts Ollama's empty key.
 		...(newURL ? { provider: provider.provider, baseURL: fields.baseURL.trim() } : {}),
 		...(newURL || apiKey ? { apiKey } : {}),

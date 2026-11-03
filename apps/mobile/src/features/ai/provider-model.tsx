@@ -12,9 +12,13 @@ type ProviderModelProps = {
 	value: string;
 	onChange: (value: string) => void;
 	disabled?: boolean;
+	/** Defaults to the connection's main model label. */
+	label?: string;
+	/** The default/model guidance is only useful on the main field. */
+	hint?: boolean;
 };
 
-export function ProviderModel({ provider, value, onChange, disabled }: ProviderModelProps) {
+export function ProviderModel({ provider, value, onChange, disabled, label, hint = true }: ProviderModelProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const [open, setOpen] = useState(false);
@@ -50,7 +54,7 @@ export function ProviderModel({ provider, value, onChange, disabled }: ProviderM
 	return (
 		<>
 			<TextField
-				label={t`Model`}
+				label={label ?? t`Model`}
 				value={value}
 				onChangeText={onChange}
 				autoCapitalize="none"
@@ -71,7 +75,7 @@ export function ProviderModel({ provider, value, onChange, disabled }: ProviderM
 					) : null
 				}
 			/>
-			{defaultModel && (
+			{defaultModel && hint && (
 				<Text color="ink3">
 					{t`${defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice.`}
 				</Text>

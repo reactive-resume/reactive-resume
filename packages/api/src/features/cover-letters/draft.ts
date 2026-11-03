@@ -2,6 +2,7 @@ import type { CoverLetterDraftInput } from "../../dto/cover-letter";
 import { ORPCError } from "@orpc/client";
 import { streamText } from "ai";
 import { letterDraftSystemPrompt } from "@reactive-resume/ai/prompts";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { aiProvidersService } from "../ai-providers/service";
 import { dataBlock } from "../ai/data-block";
@@ -72,7 +73,7 @@ export async function draftLetterBody(
 		(application?.requirements.length ? application.requirements.map((item) => `- ${item}`).join("\n") : undefined);
 	const model = getModel({
 		provider: provider.provider,
-		model: provider.model,
+		model: aiModelForTask(provider, "capable"),
 		apiKey: provider.apiKey,
 		...(provider.baseURL ? { baseURL: provider.baseURL } : {}),
 	});

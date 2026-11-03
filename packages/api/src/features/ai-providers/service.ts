@@ -3,6 +3,7 @@ import type { DbOrTx } from "@reactive-resume/db/client";
 import { createHmac } from "node:crypto";
 import { ORPCError } from "@orpc/client";
 import { and, asc, desc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
+import { aiConfiguredModels } from "@reactive-resume/ai/task-models";
 import { aiProviderSchema } from "@reactive-resume/ai/types";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -21,6 +22,8 @@ export type AiProviderResponse = {
 	label: string;
 	provider: AIProvider;
 	model: string;
+	fastModel: string | null;
+	capableModel: string | null;
 	baseURL: string | null;
 	enabled: boolean;
 	isDefault: boolean;
@@ -41,6 +44,8 @@ type CreateAiProviderInput = {
 	label: string;
 	provider: AIProvider;
 	model: string;
+	fastModel?: string | null;
+	capableModel?: string | null;
 	baseURL?: string | null;
 	apiKey: string;
 };
@@ -51,6 +56,8 @@ type UpdateAiProviderInput = {
 	label?: string;
 	provider?: AIProvider;
 	model?: string;
+	fastModel?: string | null;
+	capableModel?: string | null;
 	baseURL?: string | null;
 	apiKey?: string;
 	enabled?: boolean;
@@ -60,7 +67,17 @@ type UpdateAiProviderInput = {
 function recipientVersion(row: AiProviderRecord, credentialRevision = row.encryptedApiKey) {
 	return createHmac("sha256", env.AUTH_SECRET)
 		.update(
-			JSON.stringify(["ai-recipient-v1", row.userId, row.id, row.provider, row.model, row.baseUrl, credentialRevision]),
+			JSON.stringify([
+				"ai-recipient-v1",
+				row.userId,
+				row.id,
+				row.provider,
+				row.model,
+				// Added only once a task model exists, so existing single-model approvals keep their version across deploy.
+				...(row.fastModel || row.capableModel ? [row.fastModel, row.capableModel] : []),
+				row.baseUrl,
+				credentialRevision,
+			]),
 		)
 		.digest("hex");
 }
@@ -74,6 +91,8 @@ function toResponse(row: AiProviderRecord): AiProviderResponse {
 		label: row.label,
 		provider,
 		model: row.model,
+		fastModel: row.fastModel,
+		capableModel: row.capableModel,
 		baseURL: row.baseUrl,
 		enabled: row.enabled,
 		isDefault: row.isDefault,
@@ -90,6 +109,8 @@ function toResponse(row: AiProviderRecord): AiProviderResponse {
 		updatedAt: row.updatedAt,
 	};
 }
+
+const normalizeTaskModel = (model: string | null | undefined) => model?.trim() || null;
 
 function normalizeBaseUrl(input: { provider: AIProvider; baseURL?: string | null }) {
 	const trimmed = input.baseURL?.trim() ?? "";
@@ -162,6 +183,8 @@ async function serverProvider(userId: string, reader: DbOrTx = db) {
 		label: "Server AI",
 		provider: env.AI_PROVIDER,
 		model: env.AI_MODEL,
+		fastModel: null,
+		capableModel: null,
 		baseUrl: env.AI_BASE_URL ?? null,
 		enabled: true,
 		isDefault: true,
@@ -297,6 +320,8 @@ export const aiProvidersService = {
 				label: input.label.trim(),
 				provider: input.provider,
 				model: input.model.trim(),
+				fastModel: normalizeTaskModel(input.fastModel),
+				capableModel: normalizeTaskModel(input.capableModel),
 				baseUrl: normalizeBaseUrl(input),
 				...encrypted,
 			})
@@ -320,8 +345,13 @@ export const aiProvidersService = {
 				? normalizeBaseUrl({ provider, baseURL: input.baseURL !== undefined ? input.baseURL : existing.baseUrl })
 				: existing.baseUrl;
 		const modelChanged = input.model !== undefined && input.model.trim() !== existing.model;
+		const fastModelChanged =
+			input.fastModel !== undefined && normalizeTaskModel(input.fastModel) !== existing.fastModel;
+		const capableModelChanged =
+			input.capableModel !== undefined && normalizeTaskModel(input.capableModel) !== existing.capableModel;
 		const baseUrlChanged = input.baseURL !== undefined && nextBaseUrl !== existing.baseUrl;
 		const hostChanged = providerChanged || baseUrlChanged;
+		const taskModelsChanged = fastModelChanged || capableModelChanged;
 
 		// The saved key only goes where it was saved for: a new provider or address needs the key sent with it.
 		if (hostChanged && nextApiKey === undefined) {
@@ -333,7 +363,7 @@ export const aiProvidersService = {
 		// On a new host the key is replaced even when empty (Ollama runs without one).
 		const encrypted = nextApiKey || hostChanged ? encryptCredential(nextApiKey ?? "") : {};
 		const credentialChanged = !!nextApiKey;
-		const runtimeChanged = credentialChanged || providerChanged || modelChanged || baseUrlChanged;
+		const runtimeChanged = credentialChanged || providerChanged || modelChanged || taskModelsChanged || baseUrlChanged;
 
 		if (input.enabled === true && existing.testStatus !== "success" && !runtimeChanged) {
 			throw new ORPCError("BAD_REQUEST", { message: "Test this AI provider before turning it on." });
@@ -347,6 +377,8 @@ export const aiProvidersService = {
 					...(input.label !== undefined ? { label: input.label.trim() } : {}),
 					...(input.provider !== undefined ? { provider: input.provider } : {}),
 					...(input.model !== undefined ? { model: input.model.trim() } : {}),
+					...(input.fastModel !== undefined ? { fastModel: normalizeTaskModel(input.fastModel) } : {}),
+					...(input.capableModel !== undefined ? { capableModel: normalizeTaskModel(input.capableModel) } : {}),
 					...(input.baseURL !== undefined || providerChanged ? { baseUrl: nextBaseUrl } : {}),
 					...(input.enabled !== undefined ? { userDisabled: !input.enabled } : {}),
 					...(input.enabled !== undefined && !runtimeChanged ? { enabled: input.enabled } : {}),
@@ -361,6 +393,12 @@ export const aiProvidersService = {
 						eq(schema.aiProvider.userId, input.userId),
 						eq(schema.aiProvider.provider, existing.provider),
 						eq(schema.aiProvider.model, existing.model),
+						existing.fastModel === null
+							? isNull(schema.aiProvider.fastModel)
+							: eq(schema.aiProvider.fastModel, existing.fastModel),
+						existing.capableModel === null
+							? isNull(schema.aiProvider.capableModel)
+							: eq(schema.aiProvider.capableModel, existing.capableModel),
 						existing.baseUrl === null
 							? isNull(schema.aiProvider.baseUrl)
 							: eq(schema.aiProvider.baseUrl, existing.baseUrl),
@@ -411,6 +449,12 @@ export const aiProvidersService = {
 			eq(schema.aiProvider.userId, input.userId),
 			eq(schema.aiProvider.provider, provider.provider),
 			eq(schema.aiProvider.model, provider.model),
+			provider.fastModel === null
+				? isNull(schema.aiProvider.fastModel)
+				: eq(schema.aiProvider.fastModel, provider.fastModel),
+			provider.capableModel === null
+				? isNull(schema.aiProvider.capableModel)
+				: eq(schema.aiProvider.capableModel, provider.capableModel),
 			provider.baseUrl === null ? isNull(schema.aiProvider.baseUrl) : eq(schema.aiProvider.baseUrl, provider.baseUrl),
 			eq(schema.aiProvider.encryptedApiKey, provider.encryptedApiKey),
 			eq(schema.aiProvider.userDisabled, provider.userDisabled),
@@ -425,13 +469,25 @@ export const aiProvidersService = {
 		});
 		input.signal?.throwIfAborted();
 		try {
-			const result = await testConnection({
-				provider: parsedProvider,
-				signal: input.signal,
-				model: provider.model,
-				apiKey,
-				baseURL: provider.baseUrl ?? "",
-			});
+			const models = aiConfiguredModels(provider);
+			let result: Awaited<ReturnType<typeof testConnection>> = { ok: true };
+			for (const model of models) {
+				result = await testConnection({
+					provider: parsedProvider,
+					signal: input.signal,
+					model,
+					apiKey,
+					baseURL: provider.baseUrl ?? "",
+				});
+				if (!result.ok) {
+					// A task model must pass on its own: readiness never falls back to the main model silently.
+					if (models.length > 1) {
+						const task = model === provider.model ? "main" : model === provider.fastModel ? "fast" : "capable";
+						result = { ...result, message: `The ${task} model "${model}" failed. ${result.message}` };
+					}
+					break;
+				}
+			}
 
 			// A provider that answers "no" is a completed test, not a failed request: it comes back as
 			// data so the client can show why, instead of a generic transport error.

@@ -3,6 +3,7 @@ import type { AiVoiceOperation } from "@reactive-resume/ai/types";
 import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { Alert } from "react-native";
+import { aiConfiguredModels, aiModelForTask, aiTaskForOperation } from "@reactive-resume/ai/task-models";
 import { aiDestination, NO_AI_DESTINATION } from "@reactive-resume/ai/types";
 import { getAccountScope, getServer } from "@/auth/session";
 
@@ -95,8 +96,17 @@ export async function authorizeAiRequest(
 		(!provider || fields.providerId !== provider.id || fields.recipientVersion !== provider.recipientVersion)
 	)
 		throw new Error(t`Your AI settings changed while you were deciding. Nothing was sent; try again.`);
+	const task = aiTaskForOperation(operation);
+	const disclosedModel = provider
+		? (voice?.model ??
+			(connectionTest
+				? aiConfiguredModels(provider).join(", ")
+				: task
+					? aiModelForTask(provider, task)
+					: provider.model))
+		: "";
 	const destination = provider
-		? `${provider.label} · ${voice?.model ?? provider.model} (${provider.provider}${provider.baseURL ? ` · ${new URL(provider.baseURL).origin}` : ""})`
+		? `${provider.label} · ${disclosedModel} (${provider.provider}${provider.baseURL ? ` · ${new URL(provider.baseURL).origin}` : ""})`
 		: t`No AI provider is used for this operation.`;
 	const web = path[0] === "applications" || chat || scheduled;
 	const webStatus = web ? await api.webAccess.status({}, options) : null;
