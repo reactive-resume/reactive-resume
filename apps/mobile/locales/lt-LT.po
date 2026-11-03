@@ -2713,10 +2713,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Tikrinti DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3841,6 +3837,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Nepavyko nuskaityti eksportuoto PDF."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "Nepavyko perskaityti PDF. Patikrinkite, ar jame yra skaitomas teksto sluoksnis ir ar jis neapsaugotas slaptažodžiu."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr "Nepavyko perskaityti viso PDF. Padalykite jį į mažesnius failus ir bandykite dar kartą."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -13233,6 +13237,10 @@ msgstr "Šis failas gyvenimo aprašymui yra didelis."
 msgid "This file is larger than many application forms accept."
 msgstr "Šis failas didesnis, nei priima daugelis paraiškų formų."
 
+#: src/features/documents/new-document.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "Šis failas ilgas, todėl su importuotu turiniu palyginti tik pirmieji puslapiai. Likusią dalį patikrinkite redaktoriuje."
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "Šiame faile naudojama daug skirtingų šriftų."
@@ -13244,6 +13252,10 @@ msgstr "Šiame faile naudojami Type 3 šriftai, kurie vietoje simbolių saugo pi
 #: src/features/application-detail/sections.tsx
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Nepavyko nuskaityti šio failo dydžio. Pasirinkite kitą PDF."
+
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Šio failo teksto nepavyko palyginti su importuotu turiniu, todėl praleistos eilutės nenurodytos. Redaktoriuje palyginkite kiekvieną skyrių su savo failu."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -13325,6 +13337,10 @@ msgstr "Ši ištrauka pasikeitė. Dar kartą paleiskite peržiūrą."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Šis PDF neturi teksto sluoksnio, todėl analizatorius iš jo nieko neskaito."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Šis PDF yra nuskaitytas vaizdas. Nėra teksto, kurį būtų galima skaityti. Išbandykite Word versiją arba pradėkite tuščias ir įklijuokite skyrius."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13904,6 +13920,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Atnaujinkite kalendorių"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Prieš importuodami PDF be DI, atnaujinkite serverį."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

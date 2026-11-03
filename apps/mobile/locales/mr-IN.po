@@ -2713,10 +2713,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "DNS तपासा"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3841,6 +3837,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "निर्यात केलेले PDF वाचू शकलो नाही."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF वाचता आली नाही. त्यात वाचता येणारा मजकूर स्तर आहे आणि ती पासवर्डने सुरक्षित केलेली नाही याची खात्री करा."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr "संपूर्ण PDF वाचता आली नाही. ती लहान फाइल्समध्ये विभागून पुन्हा प्रयत्न करा."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -13233,6 +13237,10 @@ msgstr "रेझ्युमेसाठी ही फाइल मोठी �
 msgid "This file is larger than many application forms accept."
 msgstr "अनेक अर्ज फॉर्म स्वीकारतात त्यापेक्षा ही फाइल मोठी आहे."
 
+#: src/features/documents/new-document.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "ही फाइल लांब असल्यामुळे केवळ सुरुवातीच्या पानांची आयात केलेल्या मजकुराशी तुलना केली आहे. उर्वरित भाग संपादकात तपासा."
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "ही फाइल अनेक वेगवेगळे फाँट्स वापरते."
@@ -13244,6 +13252,10 @@ msgstr "ही फाइल Type 3 फाँट्स वापरते, जे
 #: src/features/application-detail/sections.tsx
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "फाइलचा आकार वाचता आला नाही. दुसरा PDF निवडा."
+
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "या फाइलमधील मजकुराची आयात केलेल्या मजकुराशी तुलना करता आली नाही, त्यामुळे सुटलेल्या ओळी दाखवलेल्या नाहीत. संपादकात प्रत्येक विभागाची तुमच्या फाइलशी तुलना करा."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -13325,6 +13337,10 @@ msgstr "हा उतारा बदलला. पुनरावलोकन �
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "या PDF मध्ये मजकूर स्तर नाही, म्हणून पार्सर त्यातून काहीही वाचत नाही."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "ही PDF स्कॅन केलेली प्रतिमा आहे. वाचण्यासाठी मजकूर नाही. Word आवृत्ती वापरून पहा किंवा रिक्त सुरू करा आणि विभाग पेस्ट करा."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13904,6 +13920,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "तुमचे कॅलेंडर अद्ययावत करा"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "AI शिवाय PDF आयात करण्यापूर्वी तुमचा सर्व्हर अपडेट करा."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

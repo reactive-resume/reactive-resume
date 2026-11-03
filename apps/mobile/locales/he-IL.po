@@ -2713,10 +2713,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "בדיקת DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3841,6 +3837,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "לא ניתן היה לקרוא את ה-PDF המיוצא."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "לא ניתן לקרוא את ה-PDF. יש לבדוק שיש בו שכבת טקסט קריאה ושהוא אינו מוגן בסיסמה."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr "לא ניתן לקרוא את כל ה-PDF. יש לפצל אותו לקבצים קטנים יותר ולנסות שוב."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -13233,6 +13237,10 @@ msgstr "הקובץ הזה גדול עבור קורות חיים."
 msgid "This file is larger than many application forms accept."
 msgstr "הקובץ הזה גדול יותר ממה שטפסי הגשה רבים מקבלים."
 
+#: src/features/documents/new-document.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "הקובץ ארוך, ולכן רק העמודים הראשונים הושוו לתוכן שיובא. יש לבדוק את השאר בעורך."
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "הקובץ הזה משתמש בהרבה גופנים שונים."
@@ -13244,6 +13252,10 @@ msgstr "הקובץ הזה משתמש בגופני Type 3, שנושאים ציו�
 #: src/features/application-detail/sections.tsx
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "לא ניתן היה לקרוא את גודל הקובץ הזה. בחר PDF אחר."
+
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "לא ניתן היה להשוות את טקסט הקובץ לתוכן שיובא, ולכן שורות שהושמטו אינן מופיעות ברשימה. יש להשוות כל סעיף לקובץ שלך בעורך."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -13325,6 +13337,10 @@ msgstr "הקטע הזה השתנה. הפעל את הסקירה שוב."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "ל-PDF הזה אין שכבת טקסט, כך שמנתח לא קורא ממנה כלום."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "PDF זה הוא תמונה סרוקה. אין טקסט לקרוא. נסה את גרסת Word, או התחל ריקים והדבק קטעים."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13904,6 +13920,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "עדכון היומן שלך"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "יש לעדכן את השרת לפני ייבוא PDF ללא בינה מלאכותית."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

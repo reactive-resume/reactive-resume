@@ -40,15 +40,21 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
 
   </Step>
   <Step title="Choose local or AI reading">
-    On web, PDF offers **Read on this device (free)**. On mobile, the AI switch is off by default and the text layer is read on your server without an AI provider. Choose AI reading only if you want the complete PDF sent to the named provider. After you choose a Word file, the dialog explains that it needs AI and offers **Set up AI** without leaving your task. AI reading asks you to approve the destination before sending; Word sends extracted document text. JSON and LinkedIn imports stay local.
+    On web, PDF offers **Read on this device (free)**. On mobile, the AI switch is off by default and the text layer is read on your server without an AI provider. Choose AI reading only if you want the complete PDF sent to the named provider. After you choose a Word file, the dialog explains that it needs AI and offers **Set up AI** without leaving your task. AI reading asks you to approve the destination before sending; Word sends extracted document text. JSON and LinkedIn imports never use an AI provider.
   </Step>
   <Step title="Wait for the three steps">
     The dialog shows **Reading the file**, **Finding sections** and **Filling in entries**, with a note beside each as it finishes. JSON and LinkedIn files take a moment; PDF and Word files read by an AI provider can take longer. Select **Cancel** to stop.
   </Step>
   <Step title="Check what was found">
-    For PDF and Word files, nothing is created until you've seen what came in. The dialog lists each section it found with its number of entries. On web, and on mobile for Word files, it also lists any lines of your file that didn't land in a section, such as a Patents section or a reference. Keep **Add them as a section called “More from your file” to sort later** on to bring them in as one section you can move or delete, or turn it off to leave them out. If no name, email or phone came through, it says so: add them in Basics. Select **Create resume**, or **Choose another file**.
+    For PDF and Word files, nothing is created until you've seen what came in. The dialog lists each section it found with its number of entries. On web and mobile, it also lists any readable lines of your file that didn't land in a section, such as a Patents section or a reference. Keep **Add them as a section called “More from your file” to sort later** on to bring them in as one section you can move or delete, or turn it off to leave them out. If no name, email or phone came through, it says so: add them in Basics. Select **Create resume**, or **Choose another file**.
 
-    Word files are read with their page headers and footers, where many templates keep the name and contact details. For PDFs, a profile such as LinkedIn gets its address from the link behind its name, and an empty email from a mail link.
+    Word files are read with their page headers and footers, where many templates keep the name and contact details. For PDFs, a profile such as LinkedIn gets its address from the link behind its name, and an empty email from a mail link. Mobile reads this source text on your server without another AI request.
+
+    If only the first pages could be compared, the review names that limit even when it lists leftover lines. A scan, failed comparison or older server can leave no source text to compare after an AI reading; the review says so and asks you to check the file yourself. Reading a PDF without AI requires a server that supports previews and a complete readable text layer; update an older server or split a PDF longer than 30 pages before trying again. Nothing is saved until **Create resume**.
+
+    <Frame caption="Web review of a fictional PDF, before creating the resume">
+      <img src="/images/guides/importing-resumes/pdf-review.png" alt="Check what was found dialog for Avery-Morgan.pdf, listing two profile entries and one education entry, with Choose another file and Create resume controls" />
+    </Frame>
 
   </Step>
   <Step title="Open the new resume">

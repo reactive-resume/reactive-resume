@@ -2713,10 +2713,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "检查 DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3841,6 +3837,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "无法读取导出的 PDF。"
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "无法读取 PDF。请检查文件是否包含可读取的文本层，且未受密码保护。"
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr "无法读取整个 PDF。请将其拆分为较小的文件，然后重试。"
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -13233,6 +13237,10 @@ msgstr "作为一份简历来说，这个文件偏大。"
 msgid "This file is larger than many application forms accept."
 msgstr "该文件的大小超过了许多申请表单允许的上限。"
 
+#: src/features/documents/new-document.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "此文件较长，因此仅将前几页与导入的内容进行了比较。请在编辑器中检查其余部分。"
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "该文件使用了许多不同的字体。"
@@ -13244,6 +13252,10 @@ msgstr "该文件使用了 Type 3 字体，这种字体携带的是图形而非�
 #: src/features/application-detail/sections.tsx
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "无法读取该文件的大小。选择另一个PDF。"
+
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "无法将此文件的文本与导入的内容进行比较，因此未列出遗漏的行。请在编辑器中将每个部分与原文件进行核对。"
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -13325,6 +13337,10 @@ msgstr "这段话变了。再次运行审核。"
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "此 PDF 没有文本层，因此解析器不会从中读取任何内容。"
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "此 PDF 是扫描图像。没有文字可读。尝试 Word 版本，或开始空白并粘贴部分。"
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13904,6 +13920,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "更新日历"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "请先更新服务器，再导入不使用 AI 的 PDF。"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

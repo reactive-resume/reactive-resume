@@ -1,6 +1,15 @@
 import type { CustomSection, ResumeData } from "@reactive-resume/schema/resume/data";
+import z from "zod";
+import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { toHtml } from "./html";
+
+/** A bounded, unsaved PDF reading; shared by the server and native review boundary. */
+export const pdfImportPreviewSchema = z.object({
+	data: resumeDataSchema.nullable(),
+	source: z.object({ lines: z.array(z.string()), links: z.array(z.string()), partial: z.boolean() }),
+});
+export type PdfImportPreview = z.infer<typeof pdfImportPreviewSchema>;
 
 /** What an import found, to review before the resume is created. */
 export type ImportReview = {

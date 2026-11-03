@@ -2713,10 +2713,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Проверить DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3841,6 +3837,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Не удалось прочитать экспортированный PDF."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "Не удалось прочитать PDF. Проверьте, что в нём есть читаемый текстовый слой и он не защищён паролем."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr "Не удалось прочитать весь PDF. Разделите его на файлы поменьше и попробуйте снова."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -13233,6 +13237,10 @@ msgstr "Этот файл велик для резюме."
 msgid "This file is larger than many application forms accept."
 msgstr "Этот файл больше, чем допускают многие формы подачи заявок."
 
+#: src/features/documents/new-document.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "Этот файл длинный, поэтому с импортированным содержимым сравнили только первые страницы. Проверьте остальное в редакторе."
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "В этом файле используется много разных шрифтов."
@@ -13244,6 +13252,10 @@ msgstr "В этом файле используются шрифты Type 3, к�
 #: src/features/application-detail/sections.tsx
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Не удалось прочитать размер этого файла. Выберите другой PDF."
+
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Не удалось сравнить текст этого файла с импортированным содержимым, поэтому пропущенные строки не перечислены. Сравните каждый раздел с исходным файлом в редакторе."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -13325,6 +13337,10 @@ msgstr "Этот отрывок изменен. Запустите обзор е
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Этот PDF не имеет текстового слоя, поэтому парсер ничего из него не читает."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Этот PDF представляет собой отсканированное изображение. Нет текста для чтения. Попробуйте версию Word или начните с пустых разделов и вставьте их."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13904,6 +13920,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Обновите календарь"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Обновите сервер перед импортом PDF без ИИ."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

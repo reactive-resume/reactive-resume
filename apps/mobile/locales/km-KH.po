@@ -2713,10 +2713,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "ពិនិត្យ DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3841,6 +3837,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "មិនអាចអាន PDF ដែលបាននាំចេញទេ។"
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "មិនអាចអាន PDF បានទេ។ ពិនិត្យថាវាមានស្រទាប់អត្ថបទដែលអាចអានបាន និងមិនត្រូវបានការពារដោយពាក្យសម្ងាត់។"
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr "មិនអាចអាន PDF ទាំងមូលបានទេ។ បំបែកវាជាឯកសារតូចៗ ហើយព្យាយាមម្តងទៀត។"
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -13233,6 +13237,10 @@ msgstr "ឯកសារនេះធំសម្រាប់ជាប្រវត
 msgid "This file is larger than many application forms accept."
 msgstr "ឯកសារនេះធំជាងអ្វីដែលទម្រង់ដាក់ពាក្យជាច្រើនអនុញ្ញាត។"
 
+#: src/features/documents/new-document.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "ឯកសារនេះវែង ដូច្នេះមានតែទំព័រដំបូងៗប៉ុណ្ណោះដែលត្រូវបានប្រៀបធៀបជាមួយមាតិកាដែលបាននាំចូល។ ពិនិត្យផ្នែកដែលនៅសល់ក្នុងកម្មវិធីកែសម្រួល។"
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "ឯកសារនេះប្រើពុម្ពអក្សរផ្សេងគ្នាជាច្រើន។"
@@ -13244,6 +13252,10 @@ msgstr "ឯកសារនេះប្រើពុម្ពអក្សរ Type 
 #: src/features/application-detail/sections.tsx
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "ទំហំឯកសារនេះមិនអាចអានបានទេ។ ជ្រើសរើស PDF ផ្សេងទៀត។"
+
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "មិនអាចប្រៀបធៀបអត្ថបទរបស់ឯកសារនេះជាមួយមាតិកាដែលបាននាំចូលបានទេ ដូច្នេះបន្ទាត់ដែលខកខានមិនត្រូវបានរាយបញ្ជីទេ។ ប្រៀបធៀបផ្នែកនីមួយៗជាមួយឯកសាររបស់អ្នកក្នុងកម្មវិធីកែសម្រួល។"
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -13325,6 +13337,10 @@ msgstr "វគ្គនេះបានផ្លាស់ប្តូរ។ ដ�
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "PDF នេះមិនមានស្រទាប់អត្ថបទទេ ដូច្នេះអ្នកញែកមិនអានអ្វីពីវាទេ។"
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "PDF នេះគឺជារូបភាពដែលបានស្កែន។ មិនមានអត្ថបទដើម្បីអានទេ។ សាកល្បងកំណែ Word ឬចាប់ផ្តើមទទេ ហើយបិទភ្ជាប់ផ្នែកចូល។"
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13904,6 +13920,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "ធ្វើបច្ចុប្បន្នភាពប្រតិទិនរបស់អ្នក"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "ធ្វើបច្ចុប្បន្នភាពម៉ាស៊ីនមេរបស់អ្នក មុនពេលនាំចូល PDF ដោយមិនប្រើ AI។"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

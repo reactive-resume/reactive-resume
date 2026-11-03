@@ -378,11 +378,14 @@ export function NewDocument() {
 										/>
 									</View>
 								</>
-							) : !pending.compared ? (
-								<Text variant="caption" color="ink2">
-									{t`Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device.`}
-								</Text>
 							) : null}
+							{(!pending.compared || pending.partial) && (
+								<Text variant="caption" color="ink2">
+									{pending.partial
+										? t`This file is long, so only its first pages were compared with what came in. Check the rest in the editor.`
+										: t`This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor.`}
+								</Text>
+							)}
 							<Button label={t`Create resume`} loading={busy} onPress={() => void confirmImport(pending)} />
 							<Button
 								label={t`Choose another file`}

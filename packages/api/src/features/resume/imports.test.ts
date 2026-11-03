@@ -23,7 +23,42 @@ vi.mock("@reactive-resume/db/client", () => ({
 		}),
 	},
 }));
-const { importResumeFile } = await import("./imports");
+const { importResumeFile, previewPdfImport } = await import("./imports");
+
+it("previews actual PDF source and annotation targets without creating a resume", async () => {
+	create.mockClear();
+	const bytes = readFileSync(new URL("./fixtures/import-review.pdf", import.meta.url));
+	const resHeaders = new Headers();
+	const result = await call(
+		previewPdfImport,
+		{ file: new File([bytes], "Fictional-resume.pdf") },
+		{
+			context: { locale: "en-US", reqHeaders: new Headers(), resHeaders },
+		},
+	);
+	expect(result.data?.basics.name).toBe("Avery Morgan");
+	expect(result.source.lines.join("\n")).toContain("Completed independent research on accessible interfaces.");
+	expect(result.source.links).toContain("https://www.linkedin.com/in/fictional-avery-morgan-rx216/");
+	expect(result.source.partial).toBe(false);
+	expect(resHeaders.get("Cache-Control")).toBe("private, no-store");
+	expect(create).not.toHaveBeenCalled();
+});
+
+it("reports bounded source coverage without parsing or importing a partial PDF", async () => {
+	create.mockClear();
+	const bytes = readFileSync(new URL("./fixtures/import-review-long.pdf", import.meta.url));
+	const file = new File([bytes], "Fictional-long-resume.pdf");
+	const context = { locale: "en-US" as const, reqHeaders: new Headers() };
+	const preview = await call(previewPdfImport, { file }, { context });
+	expect(preview.source.partial).toBe(true);
+	expect(preview.source.lines.join("\n")).toContain("Fictional source page 30.");
+	expect(preview.source.lines.join("\n")).not.toContain("Fictional source page 31.");
+	expect(preview.data).toBeNull();
+	await expect(call(importResumeFile, { file, format: "PDF" }, { context })).rejects.toMatchObject({
+		code: "BAD_REQUEST",
+	});
+	expect(create).not.toHaveBeenCalled();
+});
 
 it.each([
 	{

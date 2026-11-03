@@ -1,8 +1,45 @@
 import { call, ORPCError } from "@orpc/server";
 import z from "zod";
+import { pdfImportPreviewSchema } from "@reactive-resume/import/review";
 import { protectedProcedure } from "../../context";
 import { storageUploadRateLimit } from "../../middleware/rate-limit";
 import { crudRouter } from "./crud";
+
+async function readPdfImport(file: File, signal?: AbortSignal) {
+	const [{ extractPdf }, { parsePdfResume }, { buildExtractedDocument }] = await Promise.all([
+		import("./pdf-analysis"),
+		import("@reactive-resume/import/pdf-lines"),
+		import("@reactive-resume/resume/ats-pdf"),
+	]);
+	const raw = await extractPdf(file, signal, 0);
+	const document = buildExtractedDocument(raw);
+	return {
+		data: !raw.truncated && document.lines.length ? parsePdfResume(document) : null,
+		source: {
+			lines: document.lines.map((line) => line.text),
+			links: raw.links.flatMap((link) => (link.url ? [link.url] : [])),
+			partial: raw.truncated,
+		},
+	};
+}
+
+export const previewPdfImport = protectedProcedure
+	.route({
+		method: "POST",
+		path: "/resumes/file-previews",
+		tags: ["Resumes"],
+		operationId: "previewPdfImport",
+		summary: "Read a PDF before creating a resume",
+		description:
+			"Returns unsaved resume data, source text and annotation targets without AI. Reads at most 30 pages and reports partial coverage. Stores nothing; requires authentication and write access.",
+	})
+	.input(z.object({ file: z.file().max(10 * 1024 * 1024) }))
+	.output(pdfImportPreviewSchema)
+	.use(storageUploadRateLimit)
+	.handler(({ input, context, signal }) => {
+		context.resHeaders?.set("Cache-Control", "private, no-store");
+		return readPdfImport(input.file, signal);
+	});
 
 export const importResumeFile = protectedProcedure
 	.route({
@@ -26,16 +63,10 @@ export const importResumeFile = protectedProcedure
 		let data;
 		try {
 			if (input.format === "PDF") {
-				const [{ extractPdf }, { parsePdfResume }, { buildExtractedDocument }] = await Promise.all([
-					import("./pdf-analysis"),
-					import("@reactive-resume/import/pdf-lines"),
-					import("@reactive-resume/resume/ats-pdf"),
-				]);
-				const raw = await extractPdf(input.file, signal, 0);
-				if (raw.truncated) throw new Error("The PDF has too many pages to import completely.");
-				const document = buildExtractedDocument(raw);
-				if (document.lines.length === 0) throw new Error("The PDF has no readable text layer.");
-				data = parsePdfResume(document);
+				const preview = await readPdfImport(input.file, signal);
+				if (preview.source.partial) throw new Error("The PDF has too many pages to import completely.");
+				if (!preview.data) throw new Error("The PDF has no readable text layer.");
+				data = preview.data;
 			} else if (input.format === "LINKEDIN") {
 				const { parseLinkedInExport } = await import("@reactive-resume/import/linkedin");
 				data = parseLinkedInExport(new Uint8Array(await input.file.arrayBuffer()));

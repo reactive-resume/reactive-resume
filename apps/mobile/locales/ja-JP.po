@@ -2713,10 +2713,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "DNS を確認"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3841,6 +3837,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "エクスポートされた PDF を読み取れませんでした。"
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDFを読み取れませんでした。読み取り可能なテキストレイヤーがあり、パスワードで保護されていないことを確認してください。"
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr "PDF全体を読み取れませんでした。小さいファイルに分割して、もう一度お試しください。"
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -13233,6 +13237,10 @@ msgstr "このファイルは履歴書としては大きすぎます。"
 msgid "This file is larger than many application forms accept."
 msgstr "このファイルは多くの応募フォームが受け付けるサイズより大きくなっています。"
 
+#: src/features/documents/new-document.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "このファイルは長いため、最初の数ページのみをインポートされた内容と比較しました。残りはエディターで確認してください。"
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "このファイルは多くの異なるフォントを使用しています。"
@@ -13244,6 +13252,10 @@ msgstr "このファイルはType 3フォントを使用しています。これ
 #: src/features/application-detail/sections.tsx
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "このファイルのサイズを読み取れませんでした。別の PDF を選択してください。"
+
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "このファイルのテキストをインポートされた内容と比較できなかったため、取り込まれなかった行は表示されません。エディターで各セクションを元のファイルと照合してください。"
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -13325,6 +13337,10 @@ msgstr "この一節が変わりました。レビューを再度実行します
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "この PDF にはテキスト レイヤーがないため、パーサーはテキスト レイヤーから何も読み取りません。"
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "このPDFはスキャンした画像です。読むテキストがありません。 Word バージョンを試すか、空白から始めてセクションを貼り付けます。"
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13904,6 +13920,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "カレンダーを更新"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "AIを使わずにPDFをインポートするには、先にサーバーを更新してください。"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

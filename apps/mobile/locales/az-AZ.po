@@ -2713,10 +2713,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "DNS-i yoxla"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3841,6 +3837,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Eksport edilmiş PDF faylını oxumaq mümkün olmadı."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF oxuna bilmədi. Oxuna bilən mətn qatının olduğuna və parolla qorunmadığına əmin olun."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr "PDF tam oxuna bilmədi. Onu daha kiçik fayllara bölüb yenidən cəhd edin."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -13233,6 +13237,10 @@ msgstr "Bu fayl CV üçün böyükdür."
 msgid "This file is larger than many application forms accept."
 msgstr "Bu fayl bir çox müraciət formasının qəbul etdiyindən böyükdür."
 
+#: src/features/documents/new-document.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "Bu fayl uzundur, ona görə yalnız ilk səhifələri idxal edilmiş məzmunla müqayisə olunub. Qalanını redaktorda yoxlayın."
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "Bu fayl çoxlu müxtəlif şrift istifadə edir."
@@ -13244,6 +13252,10 @@ msgstr "Bu fayl simvollar əvəzinə şəkillər daşıyan Type 3 şriftlərind�
 #: src/features/application-detail/sections.tsx
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Bu faylın ölçüsünü oxumaq mümkün olmadı. Başqa PDF seçin."
+
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Bu faylın mətni idxal edilmiş məzmunla müqayisə oluna bilmədi, ona görə buraxılmış sətirlər göstərilmir. Redaktorda hər bölməni faylınızla müqayisə edin."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -13325,6 +13337,10 @@ msgstr "Bu keçid dəyişdi. Yenidən nəzərdən keçirin."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Bu PDF-nun mətn qatı yoxdur, ona görə də təhlilçi ondan heç nə oxumur."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Bu PDF skan edilmiş şəkildir. Oxumaq üçün mətn yoxdur. Word versiyasını sınayın və ya boş başlayın və bölmələri daxil edin."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13904,6 +13920,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Təqviminizi yeniləyin"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "PDF-i süni intellekt olmadan idxal etməzdən əvvəl serverinizi yeniləyin."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

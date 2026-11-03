@@ -1,10 +1,15 @@
-import type { ImportReview } from "@reactive-resume/import/review";
+import type { ImportReview, PdfImportPreview } from "@reactive-resume/import/review";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { DocumentPickerAsset } from "expo-document-picker";
 import { t } from "@lingui/core/macro";
 import { File } from "expo-file-system";
 import { extractDocxText } from "@reactive-resume/import/docx-text";
-import { reviewImport, withLeftoverSection } from "@reactive-resume/import/review";
+import {
+	pdfImportPreviewSchema,
+	reviewImport,
+	withLeftoverSection,
+	withLinkTargets,
+} from "@reactive-resume/import/review";
 import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/data";
 import { client, rest, SessionChangedError } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
@@ -18,13 +23,16 @@ export type ImportFormat =
 	| "DOCX"
 	| "LETTER";
 export type ImportedDocument = { id: string; type: "resume" | "letter" };
-/** A file read with AI, waiting for the user to check what came in before the resume is created. */
+/** A file waiting for the user to check what came in before the resume is created. */
 export type ImportToReview = {
 	type: "review";
 	data: ResumeData;
 	review: ImportReview;
-	/** The file's own lines were compared with what came in (a Word file); a PDF read with AI isn't on the phone. */
+	/** The selecting account/server still owns this unsaved review when Create is pressed. */
+	scope: string;
+	/** A readable text layer was compared with what came in. */
 	compared: boolean;
+	partial: boolean;
 };
 
 /** The Word file's own lines, to list what the reader left out; null when they can't be read this way. */
@@ -39,7 +47,8 @@ async function wordLines(file: File) {
 /** Creates the reviewed resume, with what the reader couldn't place kept as a section when the user chose to. */
 export async function createReviewedResume(pending: ImportToReview, keepLeftovers: boolean, signal: AbortSignal) {
 	const scope = getAccountScope();
-	if (!scope) throw new SessionChangedError();
+	if (!scope || scope !== pending.scope) throw new SessionChangedError();
+	signal.throwIfAborted();
 	const data =
 		keepLeftovers && pending.review.notImported.length > 0
 			? withLeftoverSection(pending.data, pending.review.notImported, t`More from your file`)
@@ -50,6 +59,27 @@ export async function createReviewedResume(pending: ImportToReview, keepLeftover
 }
 
 export class ImportError extends Error {}
+async function previewPdf(file: File, signal: AbortSignal, scope: string): Promise<PdfImportPreview> {
+	const body = new FormData();
+	body.append("file", file);
+	const response = await rest("/resumes/file-previews", { method: "POST", body, signal }, scope);
+	if (getAccountScope() !== scope) throw new SessionChangedError();
+	signal.throwIfAborted();
+	if (!response.ok) {
+		if (response.status === 404) throw new ImportError(t`Update your server before importing a PDF without AI.`);
+		if (response.status === 401) throw new ImportError(t`Your session expired. Sign in again.`);
+		if (response.status === 429) throw new ImportError(t`Too many requests. Try again later.`);
+		throw new ImportError(
+			t`Couldn't read the PDF. Check that it has a readable text layer and isn't password protected.`,
+		);
+	}
+	const parsed = pdfImportPreviewSchema.safeParse(await response.json());
+	if (getAccountScope() !== scope) throw new SessionChangedError();
+	signal.throwIfAborted();
+	if (!parsed.success)
+		throw new ImportError(t`The server returned an invalid import result. Refresh Documents before retrying.`);
+	return parsed.data;
+}
 
 /** JSON formats share an extension; account exports can wrap resume data. */
 export function jsonImportFormat(value: unknown): ImportFormat | null {
@@ -131,11 +161,48 @@ export async function importDocument(
 					)
 				: await client.ai.parsePdf(input, options);
 		assertCurrent();
-		// A model's reading is checked before anything is created (web new-document dialog). The phone has no PDF
-		// text reader, so only a Word file's leftover lines are listed.
-		const lines = format === "DOCX" ? await wordLines(file) : null;
+		let source: PdfImportPreview["source"] | null = null;
+		if (format === "DOCX") {
+			const lines = await wordLines(file);
+			if (lines) source = { lines, links: [], partial: false };
+		} else {
+			try {
+				source = (await previewPdf(file, signal, scope)).source;
+			} catch {
+				// AI can read scans or older servers' files; review must say when comparison was unavailable.
+				assertCurrent();
+			}
+		}
 		assertCurrent();
-		return { type: "review", data, review: reviewImport(data, lines ?? undefined), compared: lines !== null };
+		const reconciled = source?.links.length ? withLinkTargets(data, source.links) : data;
+		const compared = Boolean(source?.lines.length);
+		return {
+			type: "review",
+			scope,
+			data: reconciled,
+			review: reviewImport(reconciled, compared ? source?.lines : undefined),
+			compared,
+			partial: source?.partial ?? false,
+		};
+	}
+	if (format === "PDF") {
+		const preview = await previewPdf(file, signal, scope);
+		assertCurrent();
+		if (preview.source.partial)
+			throw new ImportError(t`Couldn't read the whole PDF. Split it into smaller files and try again.`);
+		if (!preview.data)
+			throw new ImportError(
+				t`This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in.`,
+			);
+		const data = withLinkTargets(preview.data, preview.source.links);
+		return {
+			type: "review",
+			scope,
+			data,
+			review: reviewImport(data, preview.source.lines),
+			compared: true,
+			partial: false,
+		};
 	}
 	const body = new FormData();
 	if (json && typeof json === "object" && "data" in json && !("sections" in json) && !("metadata" in json)) {

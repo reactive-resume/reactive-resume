@@ -2713,10 +2713,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Kontrollo DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3841,6 +3837,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Nuk mund të lexohej PDF e eksportuar."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF-ja nuk u lexua dot. Kontrollo që ka një shtresë teksti të lexueshëm dhe nuk mbrohet me fjalëkalim."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr "E gjithë PDF-ja nuk u lexua dot. Ndaje në skedarë më të vegjël dhe provo përsëri."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -13233,6 +13237,10 @@ msgstr "Ky skedar është i madh për një CV."
 msgid "This file is larger than many application forms accept."
 msgstr "Ky skedar është më i madh sesa pranojnë shumë formularë aplikimi."
 
+#: src/features/documents/new-document.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "Ky skedar është i gjatë, ndaj vetëm faqet e para u krahasuan me përmbajtjen e importuar. Kontrollo pjesën tjetër në redaktues."
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "Ky skedar përdor shumë fonte të ndryshme."
@@ -13244,6 +13252,10 @@ msgstr "Ky skedar përdor fonte Type 3, të cilat mbajnë vizatime në vend të 
 #: src/features/application-detail/sections.tsx
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Madhësia e këtij skedari nuk mund të lexohej. Zgjidhni një tjetër PDF."
+
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Teksti i këtij skedari nuk u krahasua dot me përmbajtjen e importuar, ndaj rreshtat e lënë jashtë nuk renditen. Krahaso çdo seksion me skedarin tënd në redaktues."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -13325,6 +13337,10 @@ msgstr "Ky pasazh ndryshoi. Ekzekutoni përsëri rishikimin."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Ky PDF nuk ka shtresë teksti, kështu që një analizues nuk lexon asgjë prej tij."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Ky PDF është një imazh i skanuar. Nuk ka tekst për të lexuar. Provoni versionin Word ose filloni bosh dhe ngjitni seksionet në të."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13904,6 +13920,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Përditëso kalendarin"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Përditëso serverin përpara se të importosh një PDF pa IA."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
