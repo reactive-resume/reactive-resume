@@ -64,6 +64,10 @@ test("public Word downloads require owner opt-in, public visibility and current 
 		await owner.reload();
 		await openSidebarSection(owner, "Sharing");
 		await expect(wordSwitch).toBeChecked();
+		const backup = await owner.request.get("/api/openapi/auth/account/export");
+		await expect(backup).toBeOK();
+		const exported = (await backup.json()) as { resumes: { id: string; allowWordDownload?: boolean }[] };
+		expect(exported.resumes.find((resume) => resume.id === id)).toMatchObject({ allowWordDownload: true });
 		await owner
 			.locator("section[aria-labelledby=share-privacy-title]")
 			.screenshot({ path: test.info().outputPath("word-privacy.png") });
