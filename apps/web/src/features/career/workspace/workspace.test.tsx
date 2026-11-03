@@ -693,7 +693,7 @@ it("omits absent review subjects and empty answer actions without moving manual 
 	);
 });
 
-it.each(["recorded", "legacy", "saved version"] as const)(
+it.each(["recorded", "legacy", "first version", "saved version"] as const)(
 	"shows honest read-only %s review without unfinished progress",
 	async (kind) => {
 		const answers = [{ id: "answer", question: "Why?", answer: "Current draft", factIds: [] }];
@@ -702,24 +702,37 @@ it.each(["recorded", "legacy", "saved version"] as const)(
 			answers,
 			checklist: [0],
 			submissionReview:
-				kind === "legacy" ? null : { at: "2026-11-03T10:00:00Z", checklist: [1], documents: false, answers: true },
+				kind === "legacy"
+					? null
+					: {
+							at: "2026-11-03T10:00:00Z",
+							checklist: [1],
+							documents: false,
+							answers: true,
+							answerVersionId: "first answers",
+						},
 		};
 		mount(
 			<ApplyTab
 				{...props}
 				version={
-					kind === "saved version"
-						? item("old answers", { kind: "answers", answers: [{ question: "Why?", answer: "Old version" }] })
+					kind === "saved version" || kind === "first version"
+						? item(kind === "first version" ? "first answers" : "old answers", {
+								kind: "answers",
+								answers: [{ question: "Why?", answer: "Old version" }],
+							})
 						: undefined
 				}
 			/>,
 		);
 		await screen.findByText(
-			kind === "recorded" ? "Review checks recorded at first submission." : "Historical review checks unavailable.",
+			kind === "recorded" || kind === "first version"
+				? "Review checks recorded at first submission."
+				: "Historical review checks unavailable.",
 		);
 		const checks = within(document.querySelector("#application-readiness") as HTMLElement).queryAllByRole("checkbox");
-		expect(checks).toHaveLength(kind === "recorded" ? 2 : 0);
-		if (kind === "recorded") {
+		expect(checks).toHaveLength(kind === "recorded" || kind === "first version" ? 2 : 0);
+		if (kind === "recorded" || kind === "first version") {
 			expect((checks[0] as HTMLInputElement).getAttribute("aria-checked")).toBe("true");
 			for (const check of checks) expect(check.getAttribute("aria-disabled")).toBe("true");
 		}
@@ -727,3 +740,22 @@ it.each(["recorded", "legacy", "saved version"] as const)(
 		expect(document.querySelector("#application-readiness")?.textContent).not.toMatch(/\d+ of \d+/);
 	},
 );
+
+it("offers answer actions immediately for an unsaved draft and hides them when cleared", async () => {
+	const answers = [{ id: "first", question: "Why this role?", answer: "", factIds: [] }];
+	api.data.workspace = { ...EMPTY_WORKSPACE, answers };
+	const saving = deferred<CareerWorkspace>();
+	api.save.mockReturnValue(saving.promise);
+	mount(<ApplyTab {...props} />);
+	const input = await screen.findByRole("textbox", { name: "Why this role?" });
+	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
+	fireEvent.change(input, { target: { value: "First local answer" } });
+	expect(screen.getByRole("button", { name: "Copy answers" })).toBeEnabled();
+	expect(screen.getByRole("button", { name: "Download" })).toBeEnabled();
+	fireEvent.blur(input);
+	await waitFor(() => expect(api.save).toHaveBeenCalled());
+	// The pending network save never returned; visibility still follows local text.
+	fireEvent.change(input, { target: { value: "   " } });
+	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
+	expect(screen.queryByRole("button", { name: "Download" })).toBeNull();
+});

@@ -41,7 +41,7 @@ const application = {
 };
 const empty = { answers: [], checklist: [], questions: [], evidence: {}, ticks: {}, message: "" };
 
-function render(data, readOnly = false) {
+function load(data, overrides = {}) {
 	const saves = [];
 	const dependencies = {
 		"@lingui/core/macro": { plural: (n, forms) => forms.other.replace("#", String(n)) },
@@ -77,13 +77,19 @@ function render(data, readOnly = false) {
 		"@/routes": {},
 		"@/ui": { Button: "Button", Text: "Text", Sheet: "Sheet", ListRow: "ListRow", useTheme: () => ({ space: {} }) },
 	};
+	Object.assign(dependencies, overrides);
 	const code = transformSync(readFileSync(root + "/apps/mobile/src/features/workspace/tabs/apply.tsx", "utf8"), {
 		loader: "tsx",
 		format: "cjs",
 		jsx: "automatic",
 	}).code;
 	const module = { exports: {} };
-	new Function("require", "module", "exports", code + "\nmodule.exports.Checklist = Checklist;")(
+	new Function(
+		"require",
+		"module",
+		"exports",
+		code + "\nmodule.exports.Checklist = Checklist; module.exports.Apply = Apply;",
+	)(
 		(name) => {
 			assert.ok(name in dependencies, name);
 			return dependencies[name];
@@ -91,10 +97,16 @@ function render(data, readOnly = false) {
 		module,
 		module.exports,
 	);
-	const tree = module.exports.Checklist({
+	return { ...module.exports, saves };
+}
+
+function render(data, readOnly = false, versionId = undefined, currentAnswers = data.answers) {
+	const { Checklist, saves } = load(data);
+	const tree = Checklist({
 		application,
-		answers: data.answers,
-		currentAnswers: () => data.answers,
+		answerCount: currentAnswers.filter((answer) => answer.answer.trim()).length,
+		currentAnswers: () => currentAnswers,
+		versionId,
 		readOnly,
 		canSubmit: true,
 		submitting: false,
@@ -125,18 +137,24 @@ test("native absent subjects keep submission index 3 and omit empty answer actio
 });
 
 test("native first-submission review stays read-only and legacy/version history stays honest", () => {
-	for (const kind of ["recorded", "legacy", "version"]) {
+	for (const kind of ["recorded", "legacy", "first version", "version"]) {
 		const data = {
 			...empty,
 			checklist: [0],
 			submissionReview:
-				kind === "legacy" ? null : { at: "2026-11-03T10:00:00Z", checklist: [1], documents: false, answers: true },
+				kind === "legacy"
+					? null
+					: { at: "2026-11-03T10:00:00Z", checklist: [1], documents: false, answers: true, answerVersionId: "first" },
 		};
-		const { tree, nodes } = render(data, kind === "version");
+		const { tree, nodes } = render(
+			data,
+			kind === "version" || kind === "first version",
+			kind === "first version" ? "first" : "later",
+		);
 		assert.equal(tree.props.trailing, undefined);
 		const checks = nodes.filter((n) => n.type === "CheckRow");
-		assert.equal(checks.length, kind === "recorded" ? 2 : 0);
-		if (kind === "recorded") {
+		assert.equal(checks.length, kind === "recorded" || kind === "first version" ? 2 : 0);
+		if (kind === "recorded" || kind === "first version") {
 			assert.deepEqual(
 				checks.map((n) => n.props.checked),
 				[true, false],
@@ -152,10 +170,140 @@ test("native first-submission review stays read-only and legacy/version history 
 				(n) =>
 					n.type === "Text" &&
 					n.props.children ===
-						(kind === "recorded"
+						(kind === "recorded" || kind === "first version"
 							? "Review checks recorded at first submission."
 							: "Historical review checks unavailable."),
 			),
 		);
 	}
 });
+
+test("native Apply reacts to unsaved typing and copies the current draft before autosave returns", async () => {
+	const rootRequire = createRequire(root + "/package.json");
+	const React = rootRequire("react");
+	const { act } = React;
+	const { Window } = await import(rootRequire.resolve("happy-dom"));
+	const window = new Window();
+	globalThis.window = window;
+	globalThis.document = window.document;
+	globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+	const { createRoot } = rootRequire("react-dom/client");
+	const primitives = ({ children }) => React.createElement("div", null, children);
+	const button = ({ label, title, accessibilityLabel, onPress, disabled, children }) =>
+		React.createElement(
+			"button",
+			{ onClick: onPress, disabled, "aria-label": label ?? title ?? accessibilityLabel },
+			label ?? title ?? children,
+		);
+	const values = new Map();
+	let copied;
+	const data = { ...empty, answers: [{ id: "first", question: "Why?", answer: "", factIds: [] }] };
+	const { Apply, saves } = load(data, {
+		react: React,
+		"react/jsx-runtime": rootRequire("react/jsx-runtime"),
+		"react-native": { View: primitives, Pressable: button },
+		"expo-router": { useRouter: () => ({}) },
+		"expo-clipboard": {
+			setStringAsync: async (text) => {
+				copied = text;
+			},
+		},
+		"@reactive-resume/schema/career": bundle("/packages/schema/src/career.ts"),
+		"@reactive-resume/schema/application-answers": { answerLimit: () => null },
+		"../hooks": {
+			useWorkspace: () => ({
+				data,
+				current: () => data,
+				save: (patch) => {
+					saves.push(patch);
+					return new Promise(() => {});
+				},
+			}),
+			useDraft: (_key, initial) => {
+				const [value, setValue] = React.useState(initial);
+				return { value, setValue, clear: () => {} };
+			},
+			useAutosave: (value, _saved, save) => ({ flush: () => save(value) }),
+			latest: () => undefined,
+			useSavedItems: () => ({ data: [] }),
+			useFacts: () => ({ data: [] }),
+			useGenerate: () => ({}),
+		},
+		"../logic": bundle("/apps/mobile/src/features/workspace/logic.ts"),
+		"../parts": {
+			Block: ({ title, children, trailing }) => React.createElement("section", null, title, trailing, children),
+			CheckRow: primitives,
+			Actions: primitives,
+			AiNotice: () => null,
+			GenerateNotice: () => null,
+			SaveError: () => null,
+			useWorking: (_pending, _steps, fallback) => fallback,
+			workingSteps: () => [],
+		},
+		"../preparation": { Preparation: () => null },
+		"../answer-library": { AnswerLibrary: () => null },
+		"@/features/ai/providers": { useHasAIProvider: () => ({}) },
+		"@/features/applications/prior-no-response": { PriorNoResponse: () => null },
+		"@/ui": {
+			Button: button,
+			IconButton: button,
+			ListRow: button,
+			Chip: button,
+			Banner: () => null,
+			Skeleton: () => null,
+			Text: primitives,
+			Sheet: ({ open, children }) => (open ? React.createElement("div", null, children) : null),
+			TextArea: ({ label, value, onChangeText, onBlur }) => {
+				values.set(label, onChangeText);
+				return React.createElement("textarea", { "aria-label": label, value, readOnly: true, onBlur });
+			},
+			showToast: () => {},
+			useTheme: () => ({ space: {}, colors: {}, radius: {} }),
+		},
+	});
+	const container = window.document.createElement("div");
+	window.document.body.append(container);
+	const owner = createRoot(container);
+	const find = (name) =>
+		[...container.querySelectorAll("button")].find((node) => node.getAttribute("aria-label") === name);
+	try {
+		await act(async () => owner.render(React.createElement(Apply, { application })));
+		assert.equal(find("Copy answers"), undefined);
+		await act(async () => values.get("Why?")("First local answer"));
+		assert.ok(find("Copy answers"));
+		assert.ok(find("Download"));
+		assert.equal(saves.length, 0);
+		await act(async () => find("Copy answers").click());
+		assert.equal(copied, "Why?\nFirst local answer");
+		await act(async () =>
+			container.querySelector("textarea").dispatchEvent(new window.FocusEvent("focusout", { bubbles: true })),
+		);
+		assert.equal(saves.length, 1);
+		await act(async () => values.get("Why?")("   "));
+		assert.equal(find("Copy answers"), undefined);
+		assert.equal(find("Download"), undefined);
+	} finally {
+		await act(async () => owner.unmount());
+		window.happyDOM.abort();
+		delete globalThis.window;
+		delete globalThis.document;
+		delete globalThis.IS_REACT_ACT_ENVIRONMENT;
+	}
+});
+
+function bundle(path) {
+	const module = { exports: {} };
+	new Function(
+		"require",
+		"module",
+		"exports",
+		buildSync({
+			entryPoints: [root + path],
+			bundle: true,
+			platform: "node",
+			format: "cjs",
+			write: false,
+		}).outputFiles[0].text,
+	)(serverRequire, module, module.exports);
+	return module.exports;
+}

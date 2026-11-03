@@ -9,7 +9,12 @@ import { Pool } from "pg";
 import * as tables from "@reactive-resume/db/schema";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
 import { reviewedAnswerEvidence, reviewedAnswerInputSchema } from "@reactive-resume/schema/application-answers";
-import { careerOfferInputSchema, careerProfileDataSchema, savedItemDataSchema } from "@reactive-resume/schema/career";
+import {
+	careerOfferInputSchema,
+	careerProfileDataSchema,
+	careerWorkspaceDataSchema,
+	savedItemDataSchema,
+} from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { reviewedAnswers } from "./answers";
 
@@ -1991,7 +1996,36 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 				});
 			} else await applications.update({ userId: "alice", id: "review-job", status: "applied" });
 			const review = (await service.workspace("alice", "review-job")).submissionReview;
-			expect(review).toEqual({ at: expect.any(String), checklist, documents: false, answers: true });
+			expect(review).toEqual({
+				at: expect.any(String),
+				checklist,
+				documents: false,
+				answers: true,
+				stageEntryId: expect.any(String),
+				answerVersionId: entry === "apply" || entry === "reply" ? expect.any(String) : null,
+			});
+			const versions = await service.savedItems({ userId: "alice", applicationId: "review-job", kind: "answers" });
+			if (entry === "apply" || entry === "reply")
+				expect(versions.find((item) => item.id === review?.answerVersionId)?.data).toMatchObject({ answers });
+			// An old server parses only the six live keys, then replaces the entire JSON payload.
+			const [stored] = await getDb()
+				.select()
+				.from(tables.careerWorkspace)
+				.where(eq(tables.careerWorkspace.applicationId, "review-job"));
+			expect(stored?.data).not.toHaveProperty("submissionReview");
+			const oldData = careerWorkspaceDataSchema.parse({ ...stored?.data, message: "Older instance save" });
+			await getDb()
+				.insert(tables.careerWorkspace)
+				.values({ applicationId: "review-job", userId: "alice", data: oldData })
+				.onConflictDoUpdate({ target: tables.careerWorkspace.applicationId, set: { data: oldData } });
+			expect((await service.workspace("alice", "review-job")).submissionReview).toEqual(review);
+			expect(
+				(await service.exportData("alice")).workspaces.find((row) => row.applicationId === "review-job")
+					?.submissionReview,
+			).toEqual(review);
+			expect((await service.exportData("bob")).workspaces.some((row) => row.applicationId === "review-job")).toBe(
+				false,
+			);
 			await expect(
 				service.saveWorkspace("alice", "review-job", { checklist: [2] }, { checklist }),
 			).rejects.toMatchObject({ code: "CONFLICT" });
@@ -2012,6 +2046,8 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		await expect(service.saveWorkspace("alice", "alice-app", { submissionReview: null }, {})).rejects.toMatchObject({
 			code: "BAD_REQUEST",
 		});
+		expect((await service.workspace("alice", "alice-app")).submissionReview).toBeNull();
+		await service.submitApplication("alice", "alice-app", [], []);
 		expect((await service.workspace("alice", "alice-app")).submissionReview).toBeNull();
 	});
 
@@ -2128,6 +2164,14 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			vi.useRealTimers();
 		}
 		await service.snapshotAnswers("alice", "alice-app");
+		const first = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" });
+		const review = (await service.workspace("alice", "alice-app")).submissionReview;
+		expect(review?.answerVersionId).toBe(first[0]?.id);
+		expect(review?.stageEntryId).toBe(
+			(await applications.getById({ userId: "alice", id: "alice-app" })).activity.findLast(
+				(entry) => entry.type === "stage" && entry.stage === "applied",
+			)?.id,
+		);
 		await service.saveWorkspace(
 			"alice",
 			"alice-app",
@@ -2138,22 +2182,36 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect(await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" })).toMatchObject([
 			{ data: { answers }, submission: true },
 		]);
+		await applications.update({ userId: "alice", id: "alice-app", status: "saved" });
+		const later = answers.map((answer) => ({ ...answer, answer: "Later draft" }));
+		await service.submitApplication("alice", "alice-app", later, later);
+		expect((await service.workspace("alice", "alice-app")).submissionReview).toEqual(review);
+		const versions = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" });
+		expect(versions).toHaveLength(2);
+		expect(versions.filter((item) => item.id === review?.answerVersionId)).toMatchObject([{ data: { answers } }]);
 	});
 
-	it("never records answers written after an empty submission as sent", async () => {
+	it.each([0, 1000])("rejects late legacy answer capture at submission plus %i ms", async (offset) => {
 		await service.submitApplication("alice", "alice-app", [], []);
-		await service.saveWorkspace(
-			"alice",
-			"alice-app",
-			{
-				answers: [{ id: "later", question: "Later question", answer: "Later draft", factIds: [] }],
-			},
-			{ answers: [] },
+		const application = await applications.getById({ userId: "alice", id: "alice-app" });
+		const applied = application.activity.findLast(
+			(entry) => entry.type === "stage" && entry.stage === "applied" && entry.canonicalTransition !== false,
 		);
-		await getDb()
-			.update(tables.careerWorkspace)
-			.set({ updatedAt: new Date(Date.now() + 1000) })
-			.where(eq(tables.careerWorkspace.applicationId, "alice-app"));
+		if (!applied) throw new Error("Missing applied stage.");
+		vi.useFakeTimers({ toFake: ["Date"] });
+		try {
+			vi.setSystemTime(new Date(new Date(applied.at).getTime() + offset));
+			await service.saveWorkspace(
+				"alice",
+				"alice-app",
+				{
+					answers: [{ id: "later", question: "Later question", answer: "Later draft", factIds: [] }],
+				},
+				{ answers: [] },
+			);
+		} finally {
+			vi.useRealTimers();
+		}
 		await expect(service.snapshotAnswers("alice", "alice-app")).rejects.toMatchObject({ code: "CONFLICT" });
 		expect(await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" })).toEqual([]);
 	});

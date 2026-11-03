@@ -292,6 +292,16 @@ export const savedItemDataSchema = z.discriminatedUnion("kind", [
 export type SavedItemData = z.infer<typeof savedItemDataSchema>;
 export type SavedItemKind = SavedItemData["kind"];
 
+/** Immutable manual review, stored separately from mutable workspace data. */
+export const submissionReviewSchema = z.object({
+	at: z.iso.datetime({ offset: true }),
+	checklist: z.array(z.number().int().min(0).max(10)).max(10),
+	documents: z.boolean(),
+	answers: z.boolean(),
+	answerVersionId: z.string().nullable().optional(),
+	stageEntryId: z.string().nullable().optional(),
+});
+
 /**
  * Live, user-owned state of one application's workspace. Each widget owns one key and saves the whole value, so
  * the fields have no defaults: a partial save must not reset the keys it leaves out. Start from `EMPTY_WORKSPACE`.
@@ -310,15 +320,7 @@ export const careerWorkspaceSchema = z.object({
 	/** Indexes of the ticked "Before you submit" items. */
 	checklist: z.array(z.number().int().min(0).max(10)).max(10),
 	/** Server-owned first-submission review; null means historical checks were not recorded. */
-	submissionReview: z
-		.object({
-			at: z.iso.datetime({ offset: true }),
-			checklist: z.array(z.number().int().min(0).max(10)).max(10),
-			documents: z.boolean(),
-			answers: z.boolean(),
-		})
-		.nullable()
-		.optional(),
+	submissionReview: submissionReviewSchema.nullable().optional(),
 	/** Questions to ask, added from Fit or the coach. */
 	questions: z.array(z.object({ text: text(400), origin: text(60) })).max(20),
 	/** Fit requirements closed with "Add evidence": requirement text → the new fact's id. */
@@ -328,6 +330,7 @@ export const careerWorkspaceSchema = z.object({
 	/** The employer message pasted into Messages, kept with the application. */
 	message: text(20_000),
 });
+export const careerWorkspaceDataSchema = careerWorkspaceSchema.omit({ submissionReview: true });
 export type CareerWorkspace = z.infer<typeof careerWorkspaceSchema>;
 export const EMPTY_WORKSPACE: CareerWorkspace = {
 	answers: [],

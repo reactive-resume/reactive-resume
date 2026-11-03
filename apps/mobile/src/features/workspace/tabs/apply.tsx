@@ -70,13 +70,20 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 	const [unit, setUnit] = useState<CountUnit>("words");
 	const [submitting, setSubmitting] = useState(false);
 	const [canSubmit, setCanSubmit] = useState(true);
+	const [writtenDrafts, setWrittenDrafts] = useState<ReadonlyMap<string, boolean>>(new Map());
 	const drafts = useRef(new Map<string, () => Answer>());
 	const registerDraft = useCallback((id: string, read: () => Answer) => {
 		drafts.current.set(id, read);
-		const updateValidity = () =>
-			setCanSubmit(
-				careerWorkspaceSchema.shape.answers.safeParse([...drafts.current.values()].map((value) => value())).success,
-			);
+		const updateValidity = () => {
+			const answers = [...drafts.current.values()].map((value) => value());
+			setCanSubmit(careerWorkspaceSchema.shape.answers.safeParse(answers).success);
+			setWrittenDrafts((previous) => {
+				const next = new Map(answers.map((answer) => [answer.id, Boolean(answer.answer.trim())]));
+				return next.size === previous.size && [...next].every(([key, value]) => previous.get(key) === value)
+					? previous
+					: next;
+			});
+		};
 		updateValidity();
 		return () => {
 			drafts.current.delete(id);
@@ -145,9 +152,14 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 
 			<Checklist
 				application={application}
-				answers={shown}
+				answerCount={
+					shown.filter((answer) =>
+						stored ? answer.answer.trim() : (writtenDrafts.get(answer.id) ?? Boolean(answer.answer.trim())),
+					).length
+				}
 				currentAnswers={currentAnswers}
 				readOnly={!!readOnlyVersion}
+				versionId={readOnlyVersion ? version?.id : undefined}
 				canSubmit={canSubmit}
 				submitting={submitting}
 				onSubmittingChange={setSubmitting}
@@ -283,8 +295,8 @@ function AnswerCard({
 	const setText = answerDraft.setValue;
 	const setQuestion = questionDraft.setValue;
 	useLayoutEffect(
-		() => registerDraft(answer.id, () => ({ ...answer, question, answer: text })),
-		[answer, question, text, registerDraft],
+		() => (readOnly ? undefined : registerDraft(answer.id, () => ({ ...answer, question, answer: text }))),
+		[answer, question, text, registerDraft, readOnly],
 	);
 	const [editingQuestion, setEditingQuestion] = useState(answer.question === "");
 	const [menu, setMenu] = useState(false);
@@ -607,9 +619,10 @@ function AnswerCard({
 
 type ChecklistProps = {
 	application: WorkspaceTabProps["application"];
-	answers: Answer[];
+	answerCount: number;
 	currentAnswers: () => Answer[];
 	readOnly: boolean;
+	versionId: string | undefined;
 	canSubmit: boolean;
 	submitting: boolean;
 	onSubmittingChange: (value: boolean) => void;
@@ -618,9 +631,10 @@ type ChecklistProps = {
 /** Manual content checks survive submission; submission actions follow the application record. */
 function Checklist({
 	application,
-	answers,
+	answerCount,
 	currentAnswers,
 	readOnly,
+	versionId,
 	canSubmit,
 	submitting,
 	onSubmittingChange,
@@ -641,9 +655,10 @@ function Checklist({
 		t`Review required form answers and remove unsupported claims.`,
 		t`Submit through the employer's application page yourself.`,
 	] as const;
-	const items = readOnly ? [] : review.indices.map((index) => ({ index, label: labels[index] }));
+	const recordedVersion =
+		!readOnly || (versionId !== undefined && versionId === workspace.data.submissionReview?.answerVersionId);
+	const items = recordedVersion ? review.indices.map((index) => ({ index, label: labels[index] })) : [];
 	const done = items.filter(({ index }) => ticked.includes(index)).length;
-	const written = answers.filter((answer) => answer.answer.trim());
 	const total = items.length;
 	const title = `${application.role} · ${application.company}`;
 	// Recording the submission is the one emphasised action only once preparation has nothing left to guide.
@@ -657,7 +672,7 @@ function Checklist({
 	const names = [resumeName, letterName].filter((name): name is string => name !== null);
 	const records = [
 		...(names.length > 0 ? names : [t`no documents`]),
-		plural(written.length, { one: "# answer", other: "# answers" }),
+		plural(answerCount, { one: "# answer", other: "# answers" }),
 	].join(" · ");
 
 	const toggle = (index: number, on: boolean) => {
@@ -753,14 +768,14 @@ function Checklist({
 					)}
 				</View>
 			) : null}
-			{written.length > 0 ? (
+			{answerCount > 0 ? (
 				<Actions>
 					<Button
 						variant="secondary"
 						size="sm"
 						icon="copy"
 						label={t`Copy answers`}
-						disabled={written.length === 0}
+						disabled={answerCount === 0}
 						onPress={() => void copy()}
 					/>
 					<Button
@@ -768,14 +783,14 @@ function Checklist({
 						size="sm"
 						icon="download-simple"
 						label={t`Download`}
-						disabled={written.length === 0}
+						disabled={answerCount === 0}
 						onPress={() => setDownload(true)}
 					/>
 				</Actions>
 			) : null}
 			{submitted || readOnly ? (
 				<Text variant="caption" color="ink3">
-					{!readOnly && review.recorded
+					{recordedVersion && review.recorded
 						? t`Review checks recorded at first submission.`
 						: t`Historical review checks unavailable.`}
 				</Text>
