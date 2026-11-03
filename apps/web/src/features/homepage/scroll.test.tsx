@@ -70,11 +70,13 @@ describe("scroll engine", () => {
 
 		render(<Scenes />);
 		const design = document.querySelector<HTMLElement>(`[data-scene="${SCENE.design}"]`);
+		const check = document.querySelector<HTMLElement>(`[data-scene="${SCENE.check}"]`);
 		const tailor = document.querySelector<HTMLElement>(`[data-scene="${SCENE.tailor}"]`);
-		if (!design || !tailor) throw new Error("The scene harness did not render.");
+		if (!design || !check || !tailor) throw new Error("The scene harness did not render.");
 
 		await waitFor(() => expect(design.style.getPropertyValue("--out")).toBe("0.667"));
 		expect(design.style.getPropertyValue("--out")).toBe("0.667");
+		expect(check.style.getPropertyValue("--out")).toBe("1.000");
 		expect(useLanding.getState().designExiting).toBe(true);
 		expect(tailor.style.getPropertyValue("--out")).toBe("");
 
