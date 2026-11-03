@@ -1,4 +1,5 @@
 import type { Application } from "@/features/applications/types";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -156,7 +157,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 						variant="link"
 						size="sm"
 						icon={steps ? "caret-down" : "caret-right"}
-						label={t`Step ${stepIndex + 1} of ${STEPS.length}`}
+						label={t`Step ${i18n.number(stepIndex + 1)} of ${i18n.number(STEPS.length)}`}
 						accessibilityHint={steps ? t`Hides all steps` : t`Shows all steps`}
 						onPress={() => setSteps(!steps)}
 					/>
@@ -168,7 +169,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 									color={step === next ? "ink" : "ink2"}
 									weight={step === next ? 600 : undefined}
 									style={{ paddingStart: space.s4 }}
-								>{`${index + 1}. ${labels[step]}`}</Text>
+								>{`${i18n.number(index + 1)}. ${labels[step]}`}</Text>
 							))
 						: null}
 				</View>

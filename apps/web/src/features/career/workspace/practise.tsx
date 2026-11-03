@@ -2,7 +2,7 @@ import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
-import { t } from "@lingui/core/macro";
+import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { AnimatePresence, m } from "motion/react";
@@ -336,7 +336,7 @@ function Session({
 				onText: setHeard,
 				onStop: (text, seconds, atLimit) => {
 					recording.current = null;
-					setAnnouncement(t`Stopped at ${clock(seconds)}`);
+					setAnnouncement(t`Stopped at ${clock(seconds, i18n.locale)}`);
 					if (atLimit) toast.add({ description: t`Dictation stopped at the 2-minute limit.` });
 					if (!text) return setStep({ name: "failed", message: t`Nothing was heard. Try again, or type your answer.` });
 					setAnswer(text);
@@ -374,7 +374,7 @@ function Session({
 				onTick: (seconds) => setStep({ name: "recording", seconds }),
 				onStop: (file, seconds, atLimit) => {
 					recording.current = null;
-					setAnnouncement(t`Stopped at ${clock(seconds)}`);
+					setAnnouncement(t`Stopped at ${clock(seconds, i18n.locale)}`);
 					if (atLimit)
 						toast.add({ description: t`Recording stopped at the 2-minute limit. Transcribing what you said.` });
 					if (file) takeAudio(file, seconds);
@@ -434,7 +434,7 @@ function Session({
 	};
 
 	const recordingNow = step.name === "recording";
-	const elapsed = clock(recordingNow ? step.seconds : 0);
+	const elapsed = clock(recordingNow ? step.seconds : 0, i18n.locale);
 	const model = voice.settings.transcribe.model;
 	const position = (index % questions.length) + 1;
 	const total = questions.length;
@@ -457,7 +457,8 @@ function Session({
 			<section className="grid gap-3 rounded-xl border border-line bg-surface p-5">
 				<div className="flex flex-wrap items-center justify-between gap-2">
 					<p className="text-xs font-medium text-ink-2">
-						{t`Question ${position} of ${total}`} · {question.origin === "recalled" ? t`Recalled` : t`Practice`}
+						{t`Question ${ph({ position: i18n.number(position) })} of ${ph({ total: i18n.number(total) })}`} ·{" "}
+						{question.origin === "recalled" ? t`Recalled` : t`Practice`}
 					</p>
 					{canHear && (
 						<HearIt
@@ -506,7 +507,7 @@ function Session({
 						<p className="-mb-2 flex flex-wrap items-center gap-1.5 text-xs text-ink-3">
 							<Icon name="waveform" size={16} />
 							<Trans>Transcribed</Trans>
-							{spoken.seconds !== null && <span className="font-mono">· {clock(spoken.seconds)}</span>}
+							{spoken.seconds !== null && <span className="font-mono">· {clock(spoken.seconds, i18n.locale)}</span>}
 							<span>
 								· <Trans>check numbers and names before using it</Trans>
 							</span>
@@ -610,7 +611,7 @@ function Session({
 									aria-valuemin={0}
 									aria-valuemax={MAX_SECONDS}
 									aria-valuenow={step.seconds}
-									aria-valuetext={clock(step.seconds)}
+									aria-valuetext={clock(step.seconds, i18n.locale)}
 									className="h-1.5 w-[180px] max-w-full overflow-hidden rounded-sm bg-bg"
 								>
 									<div

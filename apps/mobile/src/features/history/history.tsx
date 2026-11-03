@@ -1,5 +1,6 @@
 import type { RouterOutput } from "@/api/client";
 import type { ResumeDocument } from "@/draft/types";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -314,7 +315,7 @@ function VersionPage({ resumeId, versionId, offline }: VersionPageProps) {
 					<Image
 						key={page.index}
 						source={{ uri: page.uri }}
-						accessibilityLabel={t`Page ${page.index + 1} · read-only`}
+						accessibilityLabel={t`Page ${i18n.number(page.index + 1)} · read-only`}
 						style={{ width, maxWidth: "100%", aspectRatio: page.width / page.height, backgroundColor: colors.paper }}
 						contentFit="contain"
 					/>

@@ -4,7 +4,8 @@ import type { Application } from "@/features/applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -258,14 +259,16 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 									<TabBadge tone={minutes <= 60 ? "warn" : "accent"}>
 										{/* Past two days, days: "113 h" beside "In 5 days" reads as two different times. */}
 										{minutes <= 60
-											? t`${minutes} min`
+											? t`${ph({ minutes: i18n.number(minutes) })} min`
 											: minutes < 48 * 60
-												? t`${Math.round(minutes / 60)} h`
+												? t`${i18n.number(Math.round(minutes / 60))} h`
 												: plural(Math.round(minutes / (24 * 60)), { one: "# day", other: "# days" })}
 									</TabBadge>
 								)}
-								{value === "messages" && unreadMessages > 0 && <TabBadge tone="info">{unreadMessages}</TabBadge>}
-								{value === "saved" && savedCount > 0 && <TabBadge tone="plain">{savedCount}</TabBadge>}
+								{value === "messages" && unreadMessages > 0 && (
+									<TabBadge tone="info">{i18n.number(unreadMessages)}</TabBadge>
+								)}
+								{value === "saved" && savedCount > 0 && <TabBadge tone="plain">{i18n.number(savedCount)}</TabBadge>}
 							</TabsTrigger>
 						))}
 					</TabsList>

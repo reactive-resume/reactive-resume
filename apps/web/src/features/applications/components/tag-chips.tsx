@@ -1,3 +1,4 @@
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { cn } from "@reactive-resume/utils/style";
 
@@ -39,7 +40,7 @@ export function TagChips({ tags, onSelect, className }: TagChipsProps) {
 					</span>
 				),
 			)}
-			{tags.length > 2 && <span className="text-xs leading-4 text-ink-3">+{tags.length - 2}</span>}
+			{tags.length > 2 && <span className="text-xs leading-4 text-ink-3">+{i18n.number(tags.length - 2)}</span>}
 		</span>
 	);
 }

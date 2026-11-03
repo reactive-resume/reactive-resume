@@ -14,6 +14,7 @@ import { getLaneLabel, laneInput, resolveLane } from "./lanes";
 import { applicationDetailQueryKey, applicationsListQueryKey, stageScope, useApplicationMutations } from "./queries";
 import { getClosedReasonLabel } from "./stages";
 import { getServer, useSession } from "@/auth/session";
+import { applicationError } from "@/features/applications/error";
 import { useOffers } from "@/features/career/hooks";
 import { withUndo } from "@/features/career/undo";
 import { routes } from "@/routes";
@@ -142,17 +143,30 @@ export const offerHintFor = (hints: ReadonlyMap<string, OfferHint> | undefined, 
  */
 export function useStageMovedToast() {
 	const router = useRouter();
+	const scope = stageScope();
 	// `onSchedule`: after a move to Interview, offer to schedule one (the caller passes it only when none is coming up).
 	// `onUndo`: moves it back; shown beside Schedule it or Add the offer's terms when those apply.
 	return (
 		application: Pick<ApplicationSummary, "id">,
 		lane: ApplicationLane,
 		onSchedule?: () => void,
-		onUndo?: () => void,
-	) =>
+		onUndo?: () => Promise<unknown>,
+	) => {
+		if (scope !== stageScope()) return;
 		showToast({
 			message: t`Moved to ${getLaneLabel(lane)}`,
-			...(onUndo ? { undo: onUndo } : {}),
+			...(onUndo
+				? {
+						undo: async () => {
+							if (scope !== stageScope()) return;
+							try {
+								await onUndo();
+							} catch (error) {
+								if (scope === stageScope()) showToast({ message: applicationError(error) });
+							}
+						},
+					}
+				: {}),
 			...(lane.category === "interview" && onSchedule
 				? { action: { label: t`Schedule it`, onPress: onSchedule } }
 				: {}),
@@ -166,6 +180,7 @@ export function useStageMovedToast() {
 					}
 				: {}),
 		});
+	};
 }
 
 /**

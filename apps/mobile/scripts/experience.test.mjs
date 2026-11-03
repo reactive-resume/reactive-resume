@@ -2,6 +2,10 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { mock } from "node:test";
+import { i18n } from "@lingui/core";
+
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
 const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
@@ -21,6 +25,7 @@ const react = {
 		if (ref) ref.current = make();
 	},
 	useEffect() {},
+	useLayoutEffect() {},
 	useState(initial) {
 		const index = cursor++;
 		if (!(index in hooks)) hooks[index] = typeof initial === "function" ? initial() : initial;
@@ -33,6 +38,7 @@ const react = {
 	},
 };
 const calls = [];
+let searchParams = {};
 let triageBindings = [];
 let triageEligible = true;
 const routes = {
@@ -43,7 +49,14 @@ const routes = {
 	newJob: () => "/applications?create=1",
 	career: (pane = "today") => `/career/${pane}`,
 };
-const router = { push: (href) => calls.push(href), back() {} };
+const router = {
+	push: (href) => calls.push(href),
+	setParams: (params) => {
+		searchParams = { ...searchParams, ...params };
+		calls.push({ params });
+	},
+	back() {},
+};
 const theme = {
 	space: { s0: 2, s1: 4, s2: 8, s3: 12, s4: 16, s12: 48 },
 	size: { sheetShare: 440 },
@@ -79,6 +92,7 @@ ui.listLayout = {};
 ui.useFirstAppearance = () => false;
 ui.useReducedMotion = () => false;
 const mocks = {
+	"@lingui/core": { i18n },
 	"@/shell/shortcut-help": {
 		ShortcutHelpButton: "ShortcutHelpButton",
 		CharacterShortcutSetting: "CharacterShortcutSetting",
@@ -86,9 +100,18 @@ const mocks = {
 	},
 	react,
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", Platform: { OS: "android" } },
-	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
-	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
+	"expo-router": {
+		useIsFocused: () => true,
+		useRouter: () => router,
+		useLocalSearchParams: () => searchParams,
+		Stack: { Screen: "StackScreen" },
+	},
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en-US" } }) },
+	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
+		t: tag,
+		plural: (value, forms) => forms.other.replace("#", String(value)),
+	},
 	"@reactive-resume/ai/task-models": {
 		aiModelForTask: (provider, task) =>
 			(task === "capable" ? provider.capableModel : provider.fastModel) ?? provider.model,
@@ -389,10 +412,30 @@ const laneQuery = {
 };
 // Offer hints for Next step: none known unless a case sets them.
 let offerHint;
+let stageUndo;
+let stageToastScope = "fixture";
+const stageToastOwner = load("features/applications/stage-actions.ts", {
+	"./queries": { stageScope: () => stageToastScope },
+	"./lane-queries": laneQuery,
+	"./lanes": lanes,
+	"./stages": stages,
+	"@tanstack/react-query": {},
+	"@reactive-resume/schema/applications/stage-baselines": {},
+	"@/auth/session": {},
+	"@/features/applications/error": { applicationError: () => "Link unavailable" },
+	"@/features/career/hooks": {},
+	"@/features/career/undo": {},
+});
 const stageActionsStub = {
 	useOfferHints: () => undefined,
 	offerHintFor: () => offerHint,
-	useStageMovedToast: () => (moved, lane) => calls.push({ moved: moved.id, lane: lane.category }),
+	useStageMovedToast: () => {
+		const moved = stageToastOwner.useStageMovedToast();
+		return (...args) => {
+			moved(...args);
+			stageUndo = calls.at(-1).undo;
+		};
+	},
 	acceptedStage: () => null,
 };
 const nextSteps = load("features/applications/next-step.ts", {
@@ -424,6 +467,9 @@ const nativeInterviewCalendar = load("features/application-detail/calendar.ts", 
 let applicationDocuments = [];
 let rejectDocumentLink = false;
 let creatingApplicationLetter = false;
+let stageUpdate = (input) => calls.push(input);
+let stageUpdateAsync = (input) =>
+	new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
 	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
 	"@reactive-resume/schema/applications/document-suggestions": suggestionsDomain,
@@ -466,7 +512,13 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"@/features/applications/stage-actions": stageActionsStub,
 	"@/features/applications/stages": stages,
 	"@/features/applications/queries": {
-		useApplicationMutations: () => ({ update: { isPending: false, mutate: (input) => calls.push(input) } }),
+		useApplicationMutations: () => ({
+			update: {
+				isPending: false,
+				mutate: (...args) => stageUpdate(...args),
+				mutateAsync: (...args) => stageUpdateAsync(...args),
+			},
+		}),
 	},
 	"./calendar": nativeInterviewCalendar,
 	"@/features/reminders": {
@@ -505,6 +557,195 @@ control(tree, "Change lane").onChange("applied");
 assert.deepEqual(calls, ["mark-applied"], "Explicit Saved → Applied still captures submission details");
 control(tree, "Change lane").onChange("interview");
 assert.deepEqual(calls.at(-1), { id: "job-a", status: "interview" });
+
+// Undo must report a rejected inverse, rather than dismissing the success toast in silence.
+reset();
+stageUpdate = (input, callbacks) => {
+	calls.push(input);
+	if (input.status === "interview") callbacks?.onSuccess?.();
+	else callbacks?.onError?.(new Error("Offline"));
+};
+tree = render(StageStepper, { application });
+control(tree, "Change lane").onChange("interview");
+assert.equal(typeof stageUndo, "function");
+await stageUndo();
+assert.deepEqual(calls.at(-1), { message: "Link unavailable" }, "Detail Undo failure remains visible");
+stageUpdate = (input) => calls.push(input);
+
+// A Move sheet can outlive its row snapshot. Resolve the inverse from the cache when its action dispatches.
+{
+	const { QueryClient, MutationObserver } = mobileRequire("@tanstack/react-query");
+	const queryClient = new QueryClient();
+	const listKey = ["applications", "stage-fixture"];
+	const queryBoundary = {
+		applicationsListQueryKey: () => listKey,
+		applicationDetailQueryKey: (id) => ["application", id],
+		useApplications: () => ({ data: [application], isPending: false, refetch: async () => {} }),
+		useApplicationMutations: () => ({
+			update: {
+				isPending: false,
+				mutate: (...args) => stageUpdate(...args),
+				mutateAsync: (...args) => stageUpdateAsync(...args),
+			},
+		}),
+	};
+	const stageActions = load("features/applications/stage-actions.ts", {
+		"./queries": queryBoundary,
+		"./lane-queries": laneQuery,
+		"./lanes": lanes,
+		"./stages": stages,
+		"@tanstack/react-query": { useQueryClient: () => queryClient },
+		"@reactive-resume/schema/applications/stage-baselines": {},
+		"@/auth/session": { getServer: () => "fixture" },
+		"@/features/applications/error": { applicationError: () => "Link unavailable" },
+		"@/features/career/hooks": {},
+		"@/features/career/undo": {},
+	});
+	const { BoardScreen } = load("features/applications-board/board-screen.tsx", {
+		"@tanstack/react-query": { useQueryClient: () => queryClient },
+		"react-native": { ...mocks["react-native"], useWindowDimensions: () => ({ width: 320 }) },
+		"react-native-gesture-handler": {},
+		"react-native-reanimated": {
+			...mocks["react-native-reanimated"],
+			createAnimatedComponent: () => "Animated.ScrollView",
+			useAnimatedReaction() {},
+			useAnimatedScrollHandler: () => () => {},
+			useFrameCallback: () => ({ setActive() {} }),
+		},
+		"react-native-worklets": {},
+		"./board": load("features/applications-board/board.ts"),
+		"./search": { useApplicationSearch: () => ({ search: "", needsYou: false }) },
+		"./views": { ApplicationsViewFrame: "ApplicationsViewFrame" },
+		"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => time },
+		"@/features/application-detail/sheets": { CloseSheet: "CloseSheet", MarkAppliedSheet: "MarkAppliedSheet" },
+		"@/features/applications/error": { applicationError: () => "Link unavailable" },
+		"@/features/applications/lane-queries": laneQuery,
+		"@/features/applications/lanes": lanes,
+		"@/features/applications/list": { filterApplications: (rows) => rows },
+		"@/features/applications/next-step": nextSteps,
+		"@/features/applications/queries": queryBoundary,
+		"@/features/applications/stage-actions": { ...stageActionsStub, listedApplication: stageActions.listedApplication },
+		"@/shell/use-is-tablet": { useIsTablet: () => false },
+	});
+	reset();
+	const board = BoardScreen().props.children[0].type;
+	let boardTree = render(board);
+	nodes(boardTree)
+		.find((node) => node.type?.name === "Column")
+		.props.onMove(application);
+	boardTree = render(board);
+	queryClient.setQueryData(listKey, [{ ...application, status: "closed", closedReason: "withdrew" }]);
+	stageUpdate = (input, callbacks) => {
+		calls.push(input);
+		if (input.status === "interview") callbacks?.onSuccess?.();
+		else callbacks?.onError?.(new Error("Offline"));
+	};
+	mock.timers.enable({ apis: ["setTimeout"] });
+	try {
+		nodes(boardTree)
+			.find((node) => node.type?.name === "MoveSheet")
+			.props.onPick("interview");
+		mock.timers.tick(1);
+	} finally {
+		mock.timers.reset();
+	}
+	await stageUndo();
+	assert.deepEqual(calls.filter((call) => call?.id === application.id).at(-1), {
+		id: application.id,
+		status: "closed",
+		closedReason: "withdrew",
+	});
+	assert.deepEqual(calls.at(-1), { message: "Link unavailable" }, "Board Undo failure remains visible");
+
+	// Real observer detachment models the useMutation subscription removed when either screen unmounts.
+	async function undoAfterUnmount(move, scenario) {
+		reset();
+		stageToastScope = "fixture";
+		stageUndo = undefined;
+		let pending;
+		let rejectUndo;
+		let started;
+		const undoStarted = new Promise((resolve) => (started = resolve));
+		const observer = new MutationObserver(queryClient, {
+			retry: false,
+			mutationFn: (input) =>
+				input.status === "interview"
+					? Promise.resolve(input)
+					: new Promise((_resolve, reject) => {
+							rejectUndo = reject;
+							started();
+						}),
+		});
+		const detach = observer.subscribe(() => {});
+		stageUpdate = (input, options) => {
+			calls.push(input);
+			pending = observer.mutate(input, options);
+			void pending.catch(() => {});
+		};
+		stageUpdateAsync = (input) => {
+			calls.push(input);
+			pending = observer.mutate(input);
+			return pending;
+		};
+		move();
+		if (scenario === "switch-forward") stageToastScope = "another-account";
+		await pending;
+		if (scenario === "switch-forward") {
+			assert.equal(stageUndo, undefined, "An old account's late move cannot show an actionable toast");
+			detach();
+			return;
+		}
+		assert.equal(typeof stageUndo, "function");
+		if (scenario === "switch-before") {
+			stageToastScope = "another-account";
+			const writes = calls.filter((call) => call?.id).length;
+			await stageUndo();
+			assert.equal(calls.filter((call) => call?.id).length, writes, "Old account's toast cannot dispatch Undo");
+			detach();
+			return;
+		}
+		const completion = stageUndo();
+		await undoStarted;
+		detach();
+		if (scenario === "switch-during") stageToastScope = "another-account";
+		rejectUndo(new Error("Offline"));
+		await pending.catch(() => {});
+		await completion;
+		assert.equal(
+			calls.filter((call) => call?.message === "Link unavailable").length,
+			scenario === "same-account" ? 1 : 0,
+			"Undo failure survives observer unmount, without leaking notices into another account",
+		);
+	}
+	for (const scenario of ["same-account", "switch-during", "switch-before", "switch-forward"]) {
+		await undoAfterUnmount(
+			() => control(render(StageStepper, { application }), "Change lane").onChange("interview"),
+			scenario,
+		);
+		await undoAfterUnmount(() => {
+			let view = render(board);
+			nodes(view)
+				.find((node) => node.type?.name === "Column")
+				.props.onMove(application);
+			view = render(board);
+			mock.timers.enable({ apis: ["setTimeout"] });
+			try {
+				nodes(view)
+					.find((node) => node.type?.name === "MoveSheet")
+					.props.onPick("interview");
+				mock.timers.tick(1);
+			} finally {
+				mock.timers.reset();
+			}
+		}, scenario);
+	}
+	stageToastScope = "fixture";
+	queryClient.clear();
+	stageUpdate = (input) => calls.push(input);
+	stageUpdateAsync = (input) =>
+		new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
+	console.log("PASS real mutation observers retain detail/board Undo errors after unmount and fence account changes");
+}
 
 for (const [resumeId, coverLetterId] of [
 	[null, null],
@@ -832,7 +1073,7 @@ const listLogic = load("features/applications/list.ts", {
 	"./lanes": lanes,
 });
 const { ApplicationsListScreen } = load("features/applications/list-screen.tsx", {
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en" } }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en" } }) },
 	"./add-sheet": { AddApplicationSheet: "AddApplicationSheet" },
 	"./error": { applicationError: String },
 	"./lane-queries": laneQuery,
@@ -1225,8 +1466,9 @@ let calendarRows = [
 const { CalendarScreen } = load("features/applications-board/calendar-screen.tsx", {
 	"@/features/applications/stage-actions": { useOfferHints: () => undefined },
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", RefreshControl: "RefreshControl" },
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-GB" } }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en-GB" } }) },
 	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
 		plural: (value, forms) => (forms[value] ?? forms[value === 1 ? "one" : "other"]).replace("#", String(value)),
 	},
 	"./calendar": nativeCalendar,
@@ -1334,38 +1576,101 @@ const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 	"@reactive-resume/utils/amount": amountParser,
 	"@reactive-resume/utils/timezone": timeParser,
 });
+let offerScope = "offer-account";
+let offerLocale = "en-US";
 let offerProfile = { isSuccess: false, isPending: true, isError: false };
 let savedOffers = [
 	{ createdAt: "2026-09-01T00:00:00Z", data: { kind: "offer", currency: "USD" } },
 	{ createdAt: "2026-10-01T00:00:00Z", data: { kind: "offer", currency: "GBP" } },
 ];
 let offerApplications = { data: [] };
-const { OfferEntry } = load("features/career/offer-entry.tsx", {
-	"@reactive-resume/schema/career": careerSchema,
-	"@reactive-resume/schema/career-offer": offerParser,
-	"./hooks": {
-		useCareerTime: () => ({ locale: "en-US", timeZone: "Europe/Berlin", profile: offerProfile }),
-		useCareerAction: () => ({
-			pending: false,
-			run: async (work, success) => {
-				await work();
-				success();
-			},
-		}),
-		client: { career: { createOffer: async (input) => calls.push(input) } },
-		useOffers: () => ({ data: savedOffers }),
-		useCareerQueries: () => ({ profile: { data: undefined } }),
+let loseOfferResponse = false;
+let offerFailures = 0;
+let holdOfferResponse = false;
+let heldOffer;
+let offerFocused = true;
+const offerLayouts = [];
+const offerStorage = new Map();
+const nativeOfferSelection = load("features/career/offer-selection.ts", {
+	"@/auth/session": { getAccountScope: () => offerScope },
+	"zustand/react": {
+		create: (initialize) => {
+			const store = createRequire(new URL("../../web/package.json", import.meta.url))("zustand/vanilla").createStore(
+				initialize,
+			);
+			return Object.assign((selector) => selector(store.getState()), store);
+		},
 	},
-	"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
-	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
-	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
-	"@/features/applications/lane-queries": laneQuery,
-	"@/features/applications/lanes": lanes,
-	"@/features/applications/stage-actions": {
-		useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
-	},
-	"@/features/applications/queries": { useApplications: () => offerApplications },
 });
+const loadOfferEntry = () =>
+	load("features/career/offer-entry.tsx", {
+		react: {
+			...react,
+			useLayoutEffect: (effect) => {
+				offerLayouts.push(effect);
+			},
+		},
+		"expo-router": { ...mocks["expo-router"], useIsFocused: () => offerFocused },
+		"expo-sqlite/kv-store": {
+			getItemSync: (key) => offerStorage.get(key) ?? null,
+			setItemSync: (key, value) => {
+				offerStorage.set(key, value);
+			},
+			removeItemSync: (key) => {
+				offerStorage.delete(key);
+			},
+		},
+		"./offer-selection": nativeOfferSelection,
+		"@reactive-resume/utils/string": load("../../../packages/utils/src/string.ts", { uuid: serverRequire("uuid") }),
+		"@/auth/session": { getAccountScope: () => offerScope },
+		"@reactive-resume/schema/career": careerSchema,
+		"@reactive-resume/schema/career-offer": offerParser,
+		"./hooks": {
+			useCareerTime: () => ({ locale: offerLocale, timeZone: "Europe/Berlin", profile: offerProfile }),
+			useCareerAction: () => ({
+				pending: false,
+				run: async (work, success) => {
+					try {
+						success(await work());
+					} catch {
+						offerFailures++;
+					}
+				},
+			}),
+			client: {
+				career: {
+					createOffer: async (input) => {
+						calls.push(input);
+						return { id: "new-offer", data: { kind: "offer", ...input } };
+					},
+					updateOffer: async (input) => {
+						calls.push(input);
+						if (loseOfferResponse) {
+							loseOfferResponse = false;
+							throw new Error("Response lost after commit");
+						}
+						if (holdOfferResponse) {
+							heldOffer = Promise.withResolvers();
+							await heldOffer.promise;
+						}
+						return { id: "new-version", data: { kind: "offer", ...input.terms } };
+					},
+				},
+			},
+			useOffers: () => ({ data: savedOffers }),
+			useCareerQueries: () => ({ profile: { data: undefined } }),
+		},
+		"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
+		"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
+		"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
+		"@/features/applications/lane-queries": laneQuery,
+		"@/features/applications/lanes": lanes,
+		"@/features/applications/stage-actions": {
+			useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
+		},
+		"@/features/applications/queries": { useApplications: () => offerApplications },
+	});
+const { OfferEntry, OfferForm } = loadOfferEntry();
 reset();
 offerApplications = { isPending: true };
 assert.equal(render(OfferEntry, {}).type, "LoadState", "unknown metadata offers no ready action");
@@ -1456,6 +1761,92 @@ assert.deepEqual(moved?.applications, [{ id: "job" }]);
 assert.equal(moved?.lane.category, "offer");
 assert.equal(moved?.message, "Offer saved. Fictional Labs moved to Offer.");
 console.log("PASS native offer validation, draft preservation, profile loading/failure and blank deadline");
+
+// RX-202: the real native form preserves the percentage and requests a new version, never an overwrite.
+reset();
+offerProfile = { isSuccess: true, isPending: false, isError: false };
+searchParams = { b: "pinned-offer" };
+const originalTerms = careerSchema.offerTermsSchema.parse({
+	currency: "EUR",
+	period: "year",
+	base: 85000,
+	variable: null,
+	variablePercent: 10,
+});
+let CurrentOfferForm = OfferForm;
+let offerCloses = 0;
+const correctedView = () =>
+	render(CurrentOfferForm, {
+		application: { id: "job", company: "Northwind Labs", role: "Engineer" },
+		offer: { id: "original-offer", data: originalTerms },
+		onClose() {
+			offerCloses++;
+		},
+	});
+assert.equal(control(correctedView(), "Bonus").value, "10%");
+assert.equal(control(correctedView(), "Bonus").keyboardType, "default", "percentage entry needs a percent key");
+control(correctedView(), "Bonus").onChangeText("12.5%");
+loseOfferResponse = true;
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.equal(offerFailures, 1);
+assert.equal(calls.length, 1, "lost response keeps the native form open without navigation");
+const firstAttempt = calls[0];
+CurrentOfferForm = loadOfferEntry().OfferForm;
+reset();
+control(correctedView(), "Bonus").onChangeText("12.5%");
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.deepEqual(calls[0], firstAttempt, "restart and re-entry retain the version receipt after a lost response");
+assert.match(calls[0].newId, /^[0-9a-f-]{36}$/);
+assert.equal(calls[0].id, "original-offer");
+assert.equal(calls[0].newVersion, true);
+assert.equal(calls[0].terms.variable, null);
+assert.equal(calls[0].terms.variablePercent, 12.5);
+assert.deepEqual(calls[0].expected, originalTerms);
+assert.deepEqual(nativeOfferSelection.useSavedOffer.getState().accounts[offerScope], {
+	id: "new-version",
+	b: "pinned-offer",
+});
+assert.ok(!calls.some((call) => call?.params), "form never writes selection to the focused route");
+assert.equal(offerCloses, 1);
+calls.length = 0;
+holdOfferResponse = true;
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.ok(heldOffer);
+offerFocused = false;
+correctedView();
+for (const effect of offerLayouts.splice(0)) effect();
+heldOffer.resolve();
+await settle();
+assert.equal(offerCloses, 1, "late success cannot close a form after leaving its screen");
+assert.ok(
+	!calls.some((call) => call?.params || call?.message),
+	"late success cannot change another route or toast there",
+);
+assert.equal(nativeOfferSelection.useSavedOffer.getState().accounts[offerScope].id, "new-version");
+holdOfferResponse = false;
+offerFocused = true;
+correctedView();
+for (const effect of offerLayouts.splice(0)) effect();
+calls.length = 0;
+offerScope = "another-account";
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.equal(calls.length, 0, "retired native offer form cannot write for the next account");
+offerScope = "offer-account";
+offerLocale = "ar-SA";
+reset();
+calls.length = 0;
+control(correctedView(), "Bonus").onChangeText("١٢٫٥٪\u061c");
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.equal(calls[0].terms.variablePercent, 12.5, "native localized percent signs reach the shared version contract");
+assert.equal(calls[0].terms.variable, null);
+offerLocale = "en-US";
+searchParams = {};
+console.log("PASS native percentage entry and immutable offer-version action");
 
 // Native Save must stay reachable for validation, then focus the actual missing input.
 const { Stories } = load("features/career/stories.tsx", {
@@ -3517,6 +3908,7 @@ const csvReact = {
 const { ImportApplicationsSheet: NativeCsvImport } = load("features/applications/import-sheet.tsx", {
 	react: csvReact,
 	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
 		plural: (value, forms) => (value === 1 ? forms.one : forms.other).replaceAll("#", String(value)),
 	},
 	"@reactive-resume/schema/applications/csv": csvDomain,

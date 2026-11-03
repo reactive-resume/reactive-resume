@@ -1,7 +1,8 @@
 import type { TranscriptLabels } from "@reactive-resume/ai/tools/transcript";
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
 import type { FileUIPart, UIMessage } from "ai";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { transcriptOf as sharedTranscriptOf } from "@reactive-resume/ai/tools/transcript";
 
 /** What a message shares with the model; each context chip turns one off. The career coach uses the last four. */
@@ -43,8 +44,8 @@ function transcriptLabels(names: TranscriptNames): TranscriptLabels {
 		edit: ({ number, location, before, after, status }) => {
 			const outcome = statusLabel[status];
 			return before.trim()
-				? t`Edit ${number} · ${location}: "${before}" → "${after}" (${outcome})`
-				: t`Edit ${number} · ${location}: added "${after}" (${outcome})`;
+				? t`Edit ${ph({ number: i18n.number(number) })} · ${location}: "${before}" → "${after}" (${outcome})`
+				: t`Edit ${ph({ number: i18n.number(number) })} · ${location}: added "${after}" (${outcome})`;
 		},
 		question: (question, answer) => (answer === null ? t`Q: ${question}` : `${t`Q: ${question}`}\n${t`A: ${answer}`}`),
 	};

@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
+import { i18n } from "@lingui/core";
+
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
 const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
@@ -67,7 +70,12 @@ test("native private profile sends explicit unknowns with owner scope, retains f
 	const dependencies = {
 		react,
 		"react-native": { View: "View" },
-		"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US", date: () => "Jan 1, 2030" } }) },
+		"@lingui/react/macro": {
+			useLingui: () => ({
+				t: tag,
+				i18n: { number: i18n.number.bind(i18n), locale: "en-US", date: () => "Jan 1, 2030" },
+			}),
+		},
 		"@tanstack/react-query": {
 			useQuery: () => ({ data: null, isPending: false }),
 			useQueryClient: () => ({ setQueryData() {} }),
@@ -273,6 +281,16 @@ test("mobile export cleanup removes account/profile and workspace exports, prese
 });
 
 test("native account export stays bound to its account through fetch and file writing", async () => {
+	const utilsRequire = createRequire(new URL("../../../packages/utils/package.json", import.meta.url));
+	const fflate = utilsRequire("fflate");
+	const slug = load(new URL("../../../packages/utils/src/slug.ts", import.meta.url), {
+		"@sindresorhus/slugify": utilsRequire("@sindresorhus/slugify"),
+		"unique-names-generator": utilsRequire("unique-names-generator"),
+	});
+	const accountZip = load(new URL("../../../packages/utils/src/account-zip.ts", import.meta.url), {
+		fflate,
+		"./slug": slug,
+	});
 	for (const switchDuring of ["fetch", "write", "write-cleanup", "unmount", null]) {
 		let scope = "account-A";
 		let mutation;
@@ -280,6 +298,7 @@ test("native account export stays bound to its account through fetch and file wr
 		let deletes = 0;
 		let shares = 0;
 		let unmount;
+		let archive;
 		const react = {
 			createElement: () => null,
 			useRef: () => ({ current: null }),
@@ -302,8 +321,9 @@ test("native account export stays bound to its account through fetch and file wr
 					Paths: { cache: {} },
 					File: class {
 						exists = true;
-						async write() {
+						async write(bytes) {
 							writes++;
+							archive = bytes;
 							if (switchDuring === "write") scope = "account-B";
 							if (switchDuring === "write-cleanup") {
 								scope = "account-B";
@@ -324,10 +344,7 @@ test("native account export stays bound to its account through fetch and file wr
 						assert.equal(kind, "data");
 					},
 				},
-				"@reactive-resume/utils/account-zip": {
-					buildAccountZip: () => new Uint8Array([80, 75]),
-					AccountExportLimitError: class extends Error {},
-				},
+				"@reactive-resume/utils/account-zip": accountZip,
 				"@/auth/session": { getAccountScope: () => scope },
 				"@/api/client": {
 					client: {
@@ -341,7 +358,20 @@ test("native account export stays bound to its account through fetch and file wr
 									unmount?.();
 									assert.ok(options.signal.aborted);
 								}
-								return { applicationProfile: { email: "private@example.test" } };
+								return {
+									exportedAt: "2030-01-02T00:00:00.000Z",
+									user: { id: "account-A" },
+									resumes: [],
+									coverLetters: [],
+									career: {},
+									aiContentReports: [],
+									applicationProfile: { email: "private@example.test" },
+									applications: [
+										{ id: "never-sent", status: "saved", submittedAt: null },
+										{ id: "sent-then-saved", status: "saved", submittedAt: new Date("2030-01-01T12:00:00.000Z") },
+										{ id: "older-server", status: "closed" },
+									],
+								};
 							},
 						},
 					},
@@ -355,5 +385,13 @@ test("native account export stays bound to its account through fetch and file wr
 		assert.equal(writes, switchDuring === "fetch" || switchDuring === "unmount" ? 0 : 1);
 		assert.equal(deletes, switchDuring === "write" ? 1 : 0);
 		assert.equal(shares, switchDuring === null ? 1 : 0);
+		if (archive) {
+			const files = fflate.unzipSync(archive);
+			assert.deepEqual(JSON.parse(fflate.strFromU8(files["applications.json"])), [
+				{ id: "never-sent", status: "saved", submittedAt: null },
+				{ id: "sent-then-saved", status: "saved", submittedAt: "2030-01-01T12:00:00.000Z" },
+				{ id: "older-server", status: "closed" },
+			]);
+		}
 	}
 });

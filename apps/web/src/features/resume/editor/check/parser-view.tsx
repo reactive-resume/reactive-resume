@@ -1,7 +1,8 @@
 import type { CheckIssue } from "./issues";
 import type { AtsRuleCode } from "@reactive-resume/resume/ats";
 import type { ExtractedDocument, ResumeSemantics } from "@reactive-resume/resume/ats-pdf";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
@@ -50,7 +51,7 @@ const issueOnLine = (issues: readonly CheckIssue[], line: string) =>
 function IssueChip({ issue }: { issue: CheckIssue }) {
 	return (
 		<span className="h-[18px] shrink-0 rounded-sm bg-warn-soft px-1.5 font-sans text-xs leading-[18px] font-semibold whitespace-nowrap text-warn-text">
-			<Trans>issue {issue.number}</Trans>
+			<Trans>issue {i18n.number(issue.number)}</Trans>
 		</span>
 	);
 }
@@ -124,8 +125,8 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 				semantics.dates.length === 0
 					? ""
 					: unreadable > 0
-						? t`${semantics.dates.length} found, ${unreadable} unreadable`
-						: t`${semantics.dates.length} found`,
+						? t`${i18n.number(semantics.dates.length)} found, ${ph({ unreadable: i18n.number(unreadable) })} unreadable`
+						: t`${i18n.number(semantics.dates.length)} found`,
 		},
 	];
 

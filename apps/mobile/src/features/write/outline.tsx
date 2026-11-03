@@ -1,5 +1,6 @@
 import type { FlatRow, OutlineRow, WriteSection } from "./model";
 import type { CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { Image } from "expo-image";
@@ -160,7 +161,7 @@ export function Outline({ resumeId, imported, initialSection }: OutlineProps) {
 							<Divider
 								label={
 									item.label === "page"
-										? t`Page ${item.page + 1}`
+										? t`Page ${i18n.number(item.page + 1)}`
 										: item.label === "sidebar"
 											? t`Sidebar`
 											: t`Hidden sections`
@@ -367,7 +368,7 @@ function SectionRow({ data, row, open, locked, lifted, onDrag, onToggle, onMove,
 						color="ink3"
 						accessibilityLabel={plural(entries.length, { one: "# entry", other: "# entries" })}
 					>
-						{entries.length}
+						{i18n.number(entries.length)}
 					</Text>
 				) : null}
 			</Pressable>
@@ -427,7 +428,7 @@ function EntryRow({ data, row, locked, lifted, onDrag, onOpen, onOptions }: Entr
 			<Handle label={t`Reorder ${title || t`Untitled`}`} disabled={locked} onDrag={onDrag} />
 			<Pressable
 				accessibilityRole="button"
-				accessibilityLabel={t`${title || t`Untitled`}, entry ${row.index + 1} of ${row.count}`}
+				accessibilityLabel={t`${title || t`Untitled`}, entry ${i18n.number(row.index + 1)} of ${i18n.number(row.count)}`}
 				onPress={onOpen}
 				style={{ flex: 1, gap: space.s0, paddingVertical: space.s2, minHeight: 44, justifyContent: "center" }}
 			>

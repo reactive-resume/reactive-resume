@@ -3,6 +3,7 @@ import type { Template } from "@reactive-resume/schema/templates";
 import type { FocusEvent, KeyboardEvent, PointerEvent } from "react";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useInView } from "motion/react";
@@ -134,7 +135,7 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 				))}
 				<span className="ms-auto text-xs text-ink-3">
 					<Trans>
-						{shown.length} of {TEMPLATE_IDS.length} shown
+						{i18n.number(shown.length)} of {i18n.number(TEMPLATE_IDS.length)} shown
 					</Trans>
 				</span>
 			</RadioGroup>
@@ -296,7 +297,7 @@ function SidebarPanel({ data, template }: SidebarPanelProps) {
 					<span id={widthId}>
 						<Trans>Width</Trans>
 					</span>
-					<span className="font-mono text-xs text-ink-2">{width}%</span>
+					<span className="font-mono text-xs text-ink-2">{i18n.number(width)}%</span>
 				</div>
 				<Slider
 					aria-labelledby={`${titleId} ${widthId}`}

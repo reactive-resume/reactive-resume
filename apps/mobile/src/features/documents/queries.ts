@@ -1,5 +1,6 @@
 import type { DocumentSummary } from "./filter";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getNetworkStateAsync } from "expo-network";
@@ -141,7 +142,7 @@ export function useDocumentOperations(enabled = true) {
 		const message =
 			completed === documents.length
 				? plural(completed, { one: "# document updated", other: "# documents updated" })
-				: t`Updated ${completed} of ${documents.length}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures.`;
+				: t`Updated ${ph({ completed: i18n.number(completed) })} of ${i18n.number(documents.length)}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures.`;
 		if (completed !== documents.length) {
 			partial.current = true;
 			setError(message);
@@ -165,7 +166,7 @@ export function useDocumentOperations(enabled = true) {
 				message:
 					done.length === documents.length
 						? plural(done.length, { one: "# document moved to Trash", other: "# documents moved to Trash" })
-						: t`Moved ${done.length} of ${documents.length} to Trash. Locked documents were skipped. Refresh and retry any failures.`,
+						: t`Moved ${i18n.number(done.length)} of ${i18n.number(documents.length)} to Trash. Locked documents were skipped. Refresh and retry any failures.`,
 				action: done.length
 					? {
 							label: t`Undo`,
@@ -195,7 +196,9 @@ export function useDocumentOperations(enabled = true) {
 										// A run that couldn't start (offline, signed out) already said why.
 										if (!started || !current()) return;
 										if (restored === done.length) return confirmUndone();
-										notifyCurrent({ message: t`Restored ${restored} of ${done.length}.` });
+										notifyCurrent({
+											message: t`Restored ${ph({ restored: i18n.number(restored) })} of ${i18n.number(done.length)}.`,
+										});
 									});
 							},
 						}
@@ -222,7 +225,9 @@ export function useDocumentOperations(enabled = true) {
 			}
 			if (current() && restored !== documents.length) {
 				partial.current = true;
-				setError(t`Restored ${restored} of ${documents.length}. Refresh and retry any that remain in Trash.`);
+				setError(
+					t`Restored ${ph({ restored: i18n.number(restored) })} of ${i18n.number(documents.length)}. Refresh and retry any that remain in Trash.`,
+				);
 			}
 		});
 		if (attempted && restored > 0)
@@ -230,7 +235,7 @@ export function useDocumentOperations(enabled = true) {
 				message:
 					restored === documents.length
 						? plural(restored, { one: "# document restored", other: "# documents restored" })
-						: t`Restored ${restored} of ${documents.length}. Refresh and retry any that remain in Trash.`,
+						: t`Restored ${ph({ restored: i18n.number(restored) })} of ${i18n.number(documents.length)}. Refresh and retry any that remain in Trash.`,
 			});
 		return success;
 	};
@@ -252,7 +257,9 @@ export function useDocumentOperations(enabled = true) {
 			}
 			if (current() && deleted !== documents.length) {
 				partial.current = true;
-				setError(t`Deleted ${deleted} of ${documents.length}. Refresh to see what remains.`);
+				setError(
+					t`Deleted ${ph({ deleted: i18n.number(deleted) })} of ${i18n.number(documents.length)}. Refresh to see what remains.`,
+				);
 			}
 		});
 		if (attempted && deleted > 0)
@@ -260,7 +267,7 @@ export function useDocumentOperations(enabled = true) {
 				message:
 					deleted === documents.length
 						? plural(deleted, { one: "# document deleted forever", other: "# documents deleted forever" })
-						: t`Deleted ${deleted} of ${documents.length} forever. Refresh to see what remains.`,
+						: t`Deleted ${ph({ deleted: i18n.number(deleted) })} of ${i18n.number(documents.length)} forever. Refresh to see what remains.`,
 			});
 		return success;
 	};

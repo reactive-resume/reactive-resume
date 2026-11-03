@@ -1,22 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-11-04 23:14+0100\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: pt\n"
-"Project-Id-Version: reactive-resume\n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-28 05:40\n"
-"Last-Translator: \n"
-"Language-Team: Portuguese\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: reactive-resume\n"
-"X-Crowdin-Project-ID: 503410\n"
-"X-Crowdin-Language: pt-PT\n"
-"X-Crowdin-File: /apps/web/locales/en-US.po\n"
-"X-Crowdin-File-ID: 545\n"
+"Language: pt-PT\n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -125,8 +114,6 @@ msgid "{0, plural, one {# active application} other {# active applications}}"
 msgstr "{0, plural, one {# candidatura ativa} other {# candidaturas ativas}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# resposta} other {# respostas}}"
@@ -445,7 +432,7 @@ msgstr ""
 msgid "{0} (mine)"
 msgstr ""
 
-#. placeholder {0}: insights.closed
+#. placeholder {0}: i18n.number(insights.closed)
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} fechado"
@@ -455,17 +442,17 @@ msgstr "{0} fechado"
 msgid "{0} didn't respond."
 msgstr ""
 
-#. placeholder {0}: semantics.dates.length
+#. placeholder {0}: i18n.number(semantics.dates.length)
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "{0} found"
 msgstr "{0} encontrado"
 
-#. placeholder {0}: semantics.dates.length
+#. placeholder {0}: i18n.number(semantics.dates.length)
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "{0} found, {unreadable} unreadable"
 msgstr "{0} encontrado, {unreadable} ilegível"
 
-#. placeholder {0}: Math.round(minutes / 60)
+#. placeholder {0}: i18n.number(Math.round(minutes / 60))
 #: src/features/career/workspace/shell.tsx
 msgid "{0} h"
 msgstr "{0} h"
@@ -494,7 +481,6 @@ msgid "{0} interview · {1}, {2}"
 msgstr ""
 
 #. placeholder {0}: i18n.number(row.minutes)
-#. placeholder {0}: row.minutes
 #: src/features/career/workspace/prepare.tsx
 #: src/features/homepage/prepare.tsx
 msgid "{0} min"
@@ -505,26 +491,26 @@ msgstr "{0} min"
 msgid "{0} more"
 msgstr "mais {0}"
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: report.passedChecks
-#. placeholder {1}: report.applicableChecks
+#. placeholder {0}: i18n.number(report.passedChecks)
+#. placeholder {1}: i18n.number(report.applicableChecks)
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} of {1} applicable checks passed"
 msgstr "{0} de {1} verificações aplicáveis aprovadas"
 
-#. placeholder {0}: category.passedChecks
-#. placeholder {1}: category.applicableChecks
+#. placeholder {0}: i18n.number(category.passedChecks)
+#. placeholder {1}: i18n.number(category.applicableChecks)
 #: src/features/ats-checker/report/report-view.tsx
 msgid "{0} of {1} applicable checks passed."
 msgstr "{0} de {1} verificações aplicáveis aprovadas."
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/career/workspace/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
@@ -535,34 +521,34 @@ msgstr ""
 msgid "{0} of {1} edits accepted"
 msgstr "Edições {0} de {1} aceites"
 
-#. placeholder {0}: result.found.length
-#. placeholder {1}: result.total
+#. placeholder {0}: i18n.number(result.found.length)
+#. placeholder {1}: i18n.number(result.total)
 #: src/features/resume/editor/check/job-match.tsx
 msgid "{0} of {1} posting terms appear"
 msgstr "{0} de {1} termos do anúncio aparecem"
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATE_IDS.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATE_IDS.length)
 #: src/features/resume/editor/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "{0} de {1} mostrado"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{0} de {1} candidaturas adaptadas obtiveram resposta; {2} de {3} foram enviadas com outro CV."
 
-#. placeholder {0}: jd.matchedCount
-#. placeholder {1}: jd.totalTerms
+#. placeholder {0}: i18n.number(jd.matchedCount)
+#. placeholder {1}: i18n.number(jd.totalTerms)
 #: src/features/ats-checker/report/jd-coverage.tsx
 msgid "{0} of {1} terms found"
 msgstr "{0} de {1} termos encontrados"
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/career/workspace/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -572,43 +558,43 @@ msgstr ""
 msgid "{0} posting"
 msgstr "Anúncio de emprego {0}"
 
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr ""
 
-#. placeholder {0}: report.skippedChecks
+#. placeholder {0}: i18n.number(report.skippedChecks)
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
 msgstr "{0} ignoradas"
 
-#. placeholder {0}: count("supported")
-#. placeholder {1}: count("partial")
-#. placeholder {2}: count("missing")
+#. placeholder {0}: i18n.number(count("supported"))
+#. placeholder {1}: i18n.number(count("partial"))
+#. placeholder {2}: i18n.number(count("missing"))
 #. placeholder {3}: data.summary
 #: src/features/career/workspace/saved.tsx
 msgid "{0} supported, {1} partly supported, {2} with no evidence yet. {3}"
 msgstr "{0} comprovados, {1} parcialmente comprovados, {2} ainda sem provas. {3}"
 
-#. placeholder {0}: findings.length
+#. placeholder {0}: i18n.number(findings.length)
 #: src/features/ats-checker/report/report-view.tsx
 msgid "{0} to fix"
 msgstr "{0} para corrigir"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/career/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: index + 1
+#. placeholder {1}: i18n.number(index + 1)
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "{0}, entry {1} of {count}"
 msgstr "{0}, entrada {1} de {count}"
@@ -628,7 +614,7 @@ msgstr "{0}. Problema resolvido."
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/conversation.tsx
 msgid "{accepted} of {0} applied"
 msgstr "{accepted} de {0} aplicado"
@@ -636,6 +622,10 @@ msgstr "{accepted} de {0} aplicado"
 #: src/features/career/workspace/apply.tsx
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, one {# resposta} other {# respostas}}"
 
 #: src/features/career/coach.tsx
 msgid "{attached, plural, one {# attached file} other {# attached files}}"
@@ -774,7 +764,7 @@ msgstr ""
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# documento atualizado} other {# documentos atualizados}}"
 
-#. placeholder {0}: items.length
+#. placeholder {0}: i18n.number(items.length)
 #: src/features/career/workspace/apply.tsx
 msgid "{done} of {0}"
 msgstr "{done} de {0}"
@@ -985,6 +975,14 @@ msgstr "As verificações {passedRules} de {totalRules} foram aprovadas."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# edição proposta nesta página · nada muda até que aceite} other {# edições propostas nesta página · nada muda até que aceite}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} do salário base"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} do salário base ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# proposto} other {# proposto}}"
@@ -1062,7 +1060,7 @@ msgstr "{title} eliminado"
 msgid "{title} is on · next {0}"
 msgstr "{title} ativado · próximo {0}"
 
-#. placeholder {0}: rows.length
+#. placeholder {0}: i18n.number(rows.length)
 #: src/features/resume/editor/write/outline.tsx
 msgid "{title} moved to position {position} of {0}"
 msgstr ""
@@ -1071,8 +1069,8 @@ msgstr ""
 msgid "{title} paused"
 msgstr "{title} em pausa"
 
-#. placeholder {0}: to + 1
-#. placeholder {1}: entryIds.length
+#. placeholder {0}: i18n.number(to + 1)
+#. placeholder {1}: i18n.number(entryIds.length)
 #: src/features/resume/editor/write/outline.tsx
 msgid "{title}, entry {0} of {1}"
 msgstr ""
@@ -1170,6 +1168,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr "<0>Os totais não são somados de propósito.</0> O bónus e a participação no capital dependem de condições, e o valor da participação é incerto. Leia os documentos originais das ofertas antes de comparar totais."
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} por ano ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1837,7 +1839,7 @@ msgstr "Adicione um com o código do país; alguns formulários de candidatura e
 msgid "Add page"
 msgstr "Adicionar página"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/features/resume/editor/design/fit.ts
 msgid "Add page {0}"
 msgstr ""
@@ -2329,7 +2331,7 @@ msgctxt "hero headline"
 msgid "and"
 msgstr "e"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "and {0} more"
 msgstr "e {0} mais"
@@ -3072,7 +3074,7 @@ msgstr "Negrito"
 msgid "Bonus"
 msgstr "Bónus"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4203,7 +4205,7 @@ msgid "Contact: {0}"
 msgstr ""
 
 #. placeholder {0}: primary.name
-#. placeholder {1}: others.length
+#. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
 msgstr ""
@@ -4414,10 +4416,6 @@ msgstr "Corrigir"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5467,7 +5465,7 @@ msgstr "Checo"
 msgid "Daily at {clock} · next {next}"
 msgstr "Diariamente às {clock} · próximo {next}"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "Visualizações diárias durante 30 dias, pico {0}"
@@ -5734,7 +5732,7 @@ msgstr "Eliminado “{0}”"
 msgid "Deleted “{title}”"
 msgstr "Eliminado “{title}”"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/document-actions.tsx
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
@@ -5771,7 +5769,7 @@ msgstr "Descreva a função"
 msgid "Description"
 msgstr "Descrição"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/resume/editor/write/entries.tsx
 msgid "Description of role {0}"
 msgstr "Descrição da função {0}"
@@ -6593,6 +6591,14 @@ msgstr "Introduza um endereço de email válido."
 msgid "Enter a web address, like example.com"
 msgstr "Introduza um endereço web, como exemplo.com"
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Introduza um valor ou uma percentagem do salário base, como 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Introduza um valor ou uma percentagem como 10%, ou deixe em branco."
+
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
 msgstr "Introduza uma chave API para este fornecedor."
@@ -6939,7 +6945,7 @@ msgstr ""
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
 msgstr "A redução de pedidos de suporte ainda não tem um número que a sustente. Apresente-a como algo que observou."
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Field {0}"
 msgstr "Campo {0}"
@@ -7720,6 +7726,10 @@ msgstr "Gestor de contratação"
 msgid "Hiring team"
 msgstr "Contratação de pessoal"
 
+#: src/features/career/workspace/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "As marcas de revisão anteriores não estão disponíveis."
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/download-sheet.tsx
@@ -8218,28 +8228,28 @@ msgstr "Há orçamento para formação?"
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "issue {0}"
 msgstr "emitir {0}"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0}"
 msgstr "Emitir {0}"
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0} of {1}"
 msgstr "Emitir {0} a partir de {1}"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Issue {0}:"
 msgstr "Emitir {0}:"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0}: {1}"
@@ -8980,12 +8990,12 @@ msgstr "Linhas tão próximas podem ficar juntas quando lidas. Utilize pelo meno
 msgid "Link"
 msgstr "Ligação"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -9810,8 +9820,8 @@ msgstr "Subir"
 msgid "Move your email and phone number to the top of page one."
 msgstr "Mova o seu email e número de telefone para o topo da primeira página."
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{0} de {1} movidos para a Lixeira. Os documentos bloqueados foram ignorados."
@@ -9891,7 +9901,7 @@ msgstr ""
 msgid "Name of {label}"
 msgstr "Nome de {label}"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Name of person {0}"
 msgstr "Nome da pessoa {0}"
@@ -10037,6 +10047,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "New key"
 msgstr "Nova chave"
+
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "Nova versão da oferta guardada"
 
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -10855,10 +10869,6 @@ msgid "Offer terms"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 msgid "Offer type"
 msgstr "Tipo de oferta de emprego"
@@ -10979,12 +10989,12 @@ msgstr "Apenas os fornecedores que passarem no teste podem ser ativados."
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Only the first {0} pages were checked, so this report does not cover the whole file."
 msgstr "Apenas as primeiras {0} páginas foram verificadas, pelo que este relatório não cobre o ficheiro inteiro."
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "Apenas as primeiras páginas {0} foram verificadas."
@@ -11285,7 +11295,7 @@ msgstr "Outros · Compatível com OpenAI"
 msgid "Other benefits"
 msgstr "Outros benefícios"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/assistant-panel.tsx
 msgid "Other documents · {0}"
 msgstr "Outros documentos · {0}"
@@ -11325,8 +11335,8 @@ msgstr "Página"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: evidence.page
-#. placeholder {0}: pageIndex + 1
-#. placeholder {0}: row.page + 1
+#. placeholder {0}: i18n.number(evidence.page)
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
@@ -11335,7 +11345,7 @@ msgstr "Página"
 msgid "Page {0}"
 msgstr "Página {0}"
 
-#. placeholder {0}: row.page + 1
+#. placeholder {0}: i18n.number(row.page + 1)
 #: src/features/resume/editor/write/outline.tsx
 msgid "Page {0}, sidebar"
 msgstr "Página {0}, barra lateral"
@@ -12079,7 +12089,7 @@ msgstr ""
 msgid "Profile link (optional)"
 msgstr "Link do perfil (opcional)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link of person {0}"
 msgstr "Link do perfil da pessoa {0}"
@@ -12460,7 +12470,7 @@ msgstr "Legibilidade"
 msgid "Readability does not guarantee an interview or a particular ATS result."
 msgstr "A legibilidade não garante uma entrevista ou um resultado ATS específico."
 
-#. placeholder {0}: report.score
+#. placeholder {0}: i18n.number(report.score)
 #: src/features/ats-checker/checker.tsx
 msgid "Readability score: {0} out of 100"
 msgstr "Pontuação de legibilidade: {0} de 100"
@@ -12654,7 +12664,7 @@ msgstr "Refazer alteração de currículo"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -12872,7 +12882,7 @@ msgstr "Remover campo"
 msgid "Remove file"
 msgstr "Remover ficheiro"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -12885,7 +12895,7 @@ msgstr "Remover chave de acesso"
 msgid "Remove password"
 msgstr "Remover senha"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Remove person {0}"
 msgstr "Remover pessoa {0}"
@@ -12899,7 +12909,7 @@ msgstr "Remover foto"
 msgid "Remove question"
 msgstr "Remover pergunta"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -13147,12 +13157,12 @@ msgstr "“{0}” restaurado"
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/document-actions.tsx
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/document-actions.tsx
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -13374,8 +13384,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "As marcas de revisão foram registadas no primeiro envio da candidatura."
 
 #: src/features/career/today.tsx
 msgid "Review draft"
@@ -13443,7 +13453,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "Escrita da revisão"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -13492,12 +13502,12 @@ msgstr "Cargo"
 msgid "Role (optional)"
 msgstr "Função (opcional)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/resume/editor/write/entries.tsx
 msgid "Role {0}"
 msgstr "Função {0}"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "Cargo da pessoa {0}"
@@ -13660,6 +13670,10 @@ msgstr "Guardar alterações"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Guardar conexão"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Guarde as condições corrigidas como uma nova versão. A versão anterior continua disponível. Não é enviado qualquer pedido à IA."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"
@@ -14588,14 +14602,14 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "Mostrar «Feito com Reactive Resume»"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
-#. placeholder {0}: visible.length - shown.length
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
+#. placeholder {0}: i18n.number(visible.length - shown.length)
 #: src/features/applications/components/board.tsx
 #: src/features/career/today.tsx
 msgid "Show {0} more"
 msgstr "Mostrar mais {0}"
 
-#. placeholder {0}: read.length
+#. placeholder {0}: i18n.number(read.length)
 #: src/features/career/today.tsx
 msgid "Show {0} read"
 msgstr "Mostrar {0} lidos"
@@ -15298,8 +15312,8 @@ msgstr "Estado"
 msgid "Stay here"
 msgstr "Fique aqui"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/career/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -15331,7 +15345,7 @@ msgstr "Parar gravação"
 msgid "Stop when you're done. Nothing is sent until then."
 msgstr "Pare quando terminar. Nada é enviado até lá."
 
-#. placeholder {0}: clock(seconds)
+#. placeholder {0}: clock(seconds, i18n.locale)
 #: src/features/career/workspace/practise.tsx
 msgid "Stopped at {0}"
 msgstr "Parou em {0}"
@@ -17748,7 +17762,7 @@ msgstr "A verificar código…"
 msgid "Version sent {date}"
 msgstr "Versão enviada {date}"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "Versão enviada {date} · Verificar {0}"

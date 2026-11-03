@@ -68,7 +68,7 @@ function CareerLayout() {
 			>
 				<Tabs
 					value={current?.to ?? null}
-					className="-mx-4 max-w-[100vw] [scrollbar-width:none] overflow-x-auto px-4 max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-24px),transparent)] sm:mx-0 sm:px-0 max-sm:rtl:[mask-image:linear-gradient(to_left,black_calc(100%-24px),transparent)]"
+					className="-mx-4 max-w-[100vw] [scrollbar-width:none] overflow-x-auto px-4 max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-24px),transparent)] max-sm:pe-7 sm:mx-0 sm:px-0 max-sm:rtl:[mask-image:linear-gradient(to_left,black_calc(100%-24px),transparent)]"
 				>
 					<TabsList variant="line" aria-label={t`Career`}>
 						{places.map((place) => (

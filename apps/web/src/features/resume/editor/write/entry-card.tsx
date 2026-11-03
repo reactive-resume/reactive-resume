@@ -5,7 +5,8 @@ import type { MessageDescriptor } from "@lingui/core";
 import type { KeyboardEvent, ReactNode, RefObject } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { msg, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { msg, ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMemo, useRef } from "react";
@@ -129,7 +130,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 					ref={triggerRef}
 					type="button"
 					aria-expanded={open}
-					aria-label={t`${title || t`Untitled`}, entry ${index + 1} of ${count}`}
+					aria-label={t`${title || t`Untitled`}, entry ${i18n.number(index + 1)} of ${ph({ count: i18n.number(count) })}`}
 					onClick={toggle}
 					onKeyDown={onTitleKeyDown}
 					className={cn(
@@ -360,7 +361,7 @@ function EntryMenu({ section, entry }: EntryMenuProps) {
 							<DropdownMenuSub key={pageIndex}>
 								<DropdownMenuSubTrigger>
 									<Icon name="file-text" />
-									<Trans>Page {pageIndex + 1}</Trans>
+									<Trans>Page {i18n.number(pageIndex + 1)}</Trans>
 								</DropdownMenuSubTrigger>
 								<DropdownMenuSubContent>
 									{sections.map(({ sectionId, sectionTitle }) => (

@@ -3,7 +3,8 @@ import type { CheckResult } from "./use-check";
 import type { AtsCategory, AtsReport } from "@reactive-resume/resume/ats";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { getRouteApi } from "@tanstack/react-router";
 import { useState } from "react";
@@ -65,13 +66,13 @@ export function CheckPanel() {
 				<TabsList aria-label={t`Check views`} className="h-[38px] w-full">
 					<TabsTrigger value="issues" className="gap-1.5">
 						<Trans>Issues</Trans>
-						<span className="font-mono text-xs text-ink-3">{check.issues.length}</span>
+						<span className="font-mono text-xs text-ink-3">{i18n.number(check.issues.length)}</span>
 					</TabsTrigger>
 					<TabsTrigger value="match" className="gap-1.5">
 						<Trans>Job match</Trans>
 						{match.result && (
 							<span className="font-mono text-xs text-ink-3">
-								{match.result.found.length}/{match.result.total}
+								{i18n.number(match.result.found.length)}/{i18n.number(match.result.total)}
 							</span>
 						)}
 					</TabsTrigger>
@@ -106,7 +107,7 @@ function ScoreSummary({ report }: { report: AtsReport }) {
 		<div className="flex items-center gap-4 rounded-xl border border-line p-4">
 			<div
 				role="img"
-				aria-label={t`Readability score: ${score} out of 100`}
+				aria-label={t`Readability score: ${ph({ score: i18n.number(score) })} out of 100`}
 				className="score-ring grid size-[84px] shrink-0 place-items-center rounded-full"
 				style={
 					{
@@ -124,7 +125,8 @@ function ScoreSummary({ report }: { report: AtsReport }) {
 				<strong className="text-[15px] font-semibold">{getVerdict(report)}</strong>
 				<span className="text-[13px] leading-[19px] text-ink-2">
 					<Trans>
-						{passedRules} of {totalRules} checks pass.
+						{ph({ passedRules: i18n.number(passedRules) })} of {ph({ totalRules: i18n.number(totalRules) })} checks
+						pass.
 					</Trans>{" "}
 					{open > 0 ? (
 						<Plural value={open} one="# thing to review." other="# things to review." />
@@ -225,13 +227,13 @@ function IssueCard({ issue, selected, locked, primary }: IssueCardProps) {
 					aria-hidden="true"
 					className="grid size-[22px] shrink-0 place-items-center rounded-sm bg-warn text-xs font-semibold text-warn-ink"
 				>
-					{issue.number}
+					{i18n.number(issue.number)}
 				</span>
 				<div className="grid min-w-0 gap-[3px]">
 					<span className="text-xs font-semibold text-ink-3">{getCategoryName(issue.category)}</span>
 					<h3 id={titleId} className="text-sm leading-5 font-semibold">
 						<span className="sr-only">
-							<Trans>Issue {issue.number}:</Trans>{" "}
+							<Trans>Issue {i18n.number(issue.number)}:</Trans>{" "}
 						</span>
 						{issue.title}
 					</h3>
@@ -321,7 +323,7 @@ function CategoryRows({ report }: { report: AtsReport }) {
 										<Plural value={failing} one="# to review" other="# to review" />
 									) : (
 										<Trans>
-											{passed} of {total}
+											{ph({ passed: i18n.number(passed) })} of {ph({ total: i18n.number(total) })}
 										</Trans>
 									)}
 								</span>

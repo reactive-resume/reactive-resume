@@ -1,4 +1,5 @@
 import type { AuthProvider } from "@reactive-resume/auth/types";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,7 +18,7 @@ import { getReadableErrorMessage } from "@/libs/error-message";
 
 const SOCIAL: AuthProvider[] = ["apple", "google", "github", "linkedin", "custom"];
 
-const monthYear = (date: Date) => date.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+const monthYear = (date: Date) => i18n.date(date, { month: "long", year: "numeric" });
 
 export function SecuritySection() {
 	const openDialog = useDialogStore((state) => state.openDialog);

@@ -300,7 +300,7 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 							maxLength={6000}
 							onChangeText={(value) => change(() => setAnswer(value))}
 						/>
-						<Text variant="caption">{t`${answer.split(/\s+/).filter(Boolean).length} words · ${[...answer].length} characters`}</Text>
+						<Text variant="caption">{t`${i18n.number(answer.split(/\s+/).filter(Boolean).length)} words · ${i18n.number([...answer].length)} characters`}</Text>
 						{mode === "reuse" ? (
 							<View style={{ gap: space.s2 }}>
 								{(facts.data ?? [])

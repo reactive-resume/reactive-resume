@@ -1,5 +1,6 @@
 import type { UpdateOptions } from "@/draft";
 import type { Basics, CustomField } from "@reactive-resume/schema/resume/data";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -193,7 +194,7 @@ export function CustomFields({ fields, locked, focusField, update }: CustomField
 					}}
 				>
 					<TextField
-						label={t`Field ${index + 1}`}
+						label={t`Field ${i18n.number(index + 1)}`}
 						value={field.text}
 						editable={!locked}
 						autoFocus={!locked && targeted?.id === field.id && part === "text"}

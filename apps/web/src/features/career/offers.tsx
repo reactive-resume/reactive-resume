@@ -3,12 +3,13 @@ import type { ApplicationSummary } from "@/features/applications/types";
 import type { CareerProfileData } from "@reactive-resume/schema/career";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { selectOfferPair } from "@reactive-resume/schema/career-offer";
+import { useEffect, useRef, useState } from "react";
+import { annualBaseHint, selectOfferPair } from "@reactive-resume/schema/career-offer";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -27,9 +28,9 @@ import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { CareerLoadError } from "./load-state";
-import { formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
+import { formatBonus, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry, OfferForm } from "./offer-entry";
-import { useCareerTime, useNow, withUndo } from "./shared";
+import { flash, useCareerTime, useNow, withUndo } from "./shared";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
@@ -108,15 +109,23 @@ function OfferStageApplications({ offers, applications }: OfferStageApplications
 	);
 }
 
-type OffersPageProps = { a: string | undefined; b: string | undefined };
+type OffersPageProps = { a: string | undefined; b: string | undefined; highlight?: string | undefined };
 
 /** C20: two saved offers side by side, in their own currency and pay period, against the user's requirements. */
-export function OffersPage({ a, b }: OffersPageProps) {
+export function OffersPage({ a, b, highlight }: OffersPageProps) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const query = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "offer" } }));
 	const profileQuery = useQuery(orpc.career.profile.queryOptions());
 	const applications = useQuery(applicationsListQueryOptions());
+	const flashed = useRef<string | null>(null);
+	useEffect(() => {
+		if (!highlight || !query.data?.some((offer) => offer.id === highlight) || flashed.current === highlight) return;
+		const element = document.querySelector(`[data-offer="${CSS.escape(highlight)}"]`);
+		if (!element) return;
+		flashed.current = highlight;
+		flash(element);
+	}, [highlight, query.data]);
 	const [hidden, setHidden] = useState<string[]>([]);
 	const [editing, setEditing] = useState<string | null>(null);
 	const offers = query.data?.filter((item): item is Offer => item.data.kind === "offer" && !hidden.includes(item.id));
@@ -507,6 +516,7 @@ function OfferHeader({ offer, offers, otherId, onChoose, onEdit, onDelete }: Off
 					offer ? (
 						<button
 							type="button"
+							data-offer={offer.id}
 							className="flex w-full items-center gap-3 px-[18px] py-4 text-start transition-colors duration-quick hover:bg-hover aria-expanded:bg-hover"
 						/>
 					) : (
@@ -526,9 +536,11 @@ function OfferHeader({ offer, offers, otherId, onChoose, onEdit, onDelete }: Off
 							)}
 							<span className="text-xs text-ink-3">
 								{versionLabel(offer)} · {t`saved ${when(offer.createdAt)}`} · {outcomeLabel(offer)} ·{" "}
-								{offers
-									.filter((item) => item.applicationId === offer.applicationId)
-									.findIndex((item) => item.id === offer.id) + 1}
+								{i18n.number(
+									offers
+										.filter((item) => item.applicationId === offer.applicationId)
+										.findIndex((item) => item.id === offer.id) + 1,
+								)}
 							</span>
 							{originLabel(offer) && <span className="text-xs text-ink-3">{originLabel(offer)}</span>}
 						</span>
@@ -551,7 +563,7 @@ function OfferHeader({ offer, offers, otherId, onChoose, onEdit, onDelete }: Off
 							{versions.map((item) => (
 								<DropdownMenuItem key={item.id} disabled={item.id === otherId} onClick={() => onChoose(item.id)}>
 									<span className="flex-1">
-										{versionLabel(item)} · {when(item.createdAt)} · {versions.indexOf(item) + 1}
+										{versionLabel(item)} · {when(item.createdAt)} · {i18n.number(versions.indexOf(item) + 1)}
 										{item.id === first.id ? ` · ${t`Latest`}` : ""}
 									</span>
 									{item.id === offer?.id && <Icon name="check" size={16} />}
@@ -602,6 +614,10 @@ function useCells() {
 			return { hour: t`${value} an hour`, month: t`${value} a month`, year: t`${value} a year` }[terms.period];
 		};
 		const better = (key: "base" | "variable" | "learning"): Note[] => {
+			const annual = other ? annualBaseHint(terms, other.data) : null;
+			const months = new Intl.NumberFormat(locale).format(12);
+			const yearly = annual === null ? "" : formatMoney(locale, terms.currency, annual);
+			const monthly = terms.base === null ? "" : formatMoney(locale, terms.currency, terms.base);
 			if (!other) return [];
 			const difference = moneyDifference(terms, other.data, key);
 			if (
@@ -616,7 +632,7 @@ function useCells() {
 			}
 			if (difference !== null && difference > 0)
 				return [{ icon: "arrow-up", tone: "better", text: t`${formatMoney(locale, terms.currency, difference)} more` }];
-			if (key === "base" && difference === null && other.data.base !== null && terms.base !== null)
+			if (key === "base" && difference === null && terms.base !== null && (other.data.base !== null || annual !== null))
 				return [
 					{
 						icon: "info",
@@ -626,6 +642,9 @@ function useCells() {
 								? t`Different pay period, not compared`
 								: t`Different currency, not compared`,
 					},
+					...(annual === null
+						? []
+						: [{ icon: "info", tone: "muted", text: t`≈ ${yearly} a year (${months} × ${monthly})` } as const]),
 				];
 			return [];
 		};
@@ -648,23 +667,33 @@ function useCells() {
 		return {
 			base: terms.base === null ? unknown : { value: money(terms.base), strong: true, notes: better("base") },
 			variable:
-				terms.variable === null
-					? terms.variableConditions.trim()
-						? // A percentage or a condition without an amount: shown as written, never turned into money.
-							{
-								value: terms.variableConditions,
-								notes: [{ icon: "question", tone: "warn", text: t`No amount stated · value uncertain` }],
-							}
-						: unknown
-					: {
-							value: money(terms.variable),
+				terms.variablePercent != null
+					? {
+							value: formatBonus(locale, terms),
 							notes: [
 								...better("variable"),
-								...(terms.variableConditions.trim()
+								...(terms.variableConditions
 									? [{ icon: "question", tone: "warn", text: terms.variableConditions } as const]
 									: []),
 							],
-						},
+						}
+					: terms.variable === null
+						? terms.variableConditions.trim()
+							? // A percentage or a condition without an amount: shown as written, never turned into money.
+								{
+									value: terms.variableConditions,
+									notes: [{ icon: "question", tone: "warn", text: t`No amount stated · value uncertain` }],
+								}
+							: unknown
+						: {
+								value: money(terms.variable),
+								notes: [
+									...better("variable"),
+									...(terms.variableConditions.trim()
+										? [{ icon: "question", tone: "warn", text: terms.variableConditions } as const]
+										: []),
+								],
+							},
 			equity: terms.equity.trim()
 				? {
 						value: terms.equity,
@@ -810,7 +839,7 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 					<ol className="grid gap-2">
 						{questions.map((item, index) => (
 							<li key={item.question} className="grid grid-cols-[20px_minmax(0,1fr)] text-sm leading-[21px]">
-								<span className="font-mono text-xs leading-[21px] text-ink-3">{index + 1}.</span>
+								<span className="font-mono text-xs leading-[21px] text-ink-3">{i18n.number(index + 1)}.</span>
 								<span>
 									{item.question} <span className="text-xs text-ink-3">· {item.ask}</span>
 								</span>

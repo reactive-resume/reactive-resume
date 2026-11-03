@@ -1,22 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-11-04 23:14+0100\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: mr\n"
-"Project-Id-Version: reactive-resume\n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-28 05:40\n"
-"Last-Translator: \n"
-"Language-Team: Marathi\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: reactive-resume\n"
-"X-Crowdin-Project-ID: 503410\n"
-"X-Crowdin-Language: mr\n"
-"X-Crowdin-File: /apps/web/locales/en-US.po\n"
-"X-Crowdin-File-ID: 545\n"
+"Language: mr-IN\n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -125,8 +114,6 @@ msgid "{0, plural, one {# active application} other {# active applications}}"
 msgstr "{0, plural, one {# सक्रिय अर्ज} other {# सक्रिय अर्ज}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# उत्तर} other {# उत्तरे}}"
@@ -445,7 +432,7 @@ msgstr ""
 msgid "{0} (mine)"
 msgstr ""
 
-#. placeholder {0}: insights.closed
+#. placeholder {0}: i18n.number(insights.closed)
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} बंद"
@@ -455,17 +442,17 @@ msgstr "{0} बंद"
 msgid "{0} didn't respond."
 msgstr ""
 
-#. placeholder {0}: semantics.dates.length
+#. placeholder {0}: i18n.number(semantics.dates.length)
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "{0} found"
 msgstr "{0} आढळले"
 
-#. placeholder {0}: semantics.dates.length
+#. placeholder {0}: i18n.number(semantics.dates.length)
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "{0} found, {unreadable} unreadable"
 msgstr "{0} आढळले, {unreadable} वाचनीय नाही"
 
-#. placeholder {0}: Math.round(minutes / 60)
+#. placeholder {0}: i18n.number(Math.round(minutes / 60))
 #: src/features/career/workspace/shell.tsx
 msgid "{0} h"
 msgstr "{0} तास"
@@ -494,7 +481,6 @@ msgid "{0} interview · {1}, {2}"
 msgstr ""
 
 #. placeholder {0}: i18n.number(row.minutes)
-#. placeholder {0}: row.minutes
 #: src/features/career/workspace/prepare.tsx
 #: src/features/homepage/prepare.tsx
 msgid "{0} min"
@@ -505,26 +491,26 @@ msgstr "{0} मि."
 msgid "{0} more"
 msgstr "{0} जास्त"
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: report.passedChecks
-#. placeholder {1}: report.applicableChecks
+#. placeholder {0}: i18n.number(report.passedChecks)
+#. placeholder {1}: i18n.number(report.applicableChecks)
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} of {1} applicable checks passed"
 msgstr "{0} पैकी {1} लागू तपासण्या उत्तीर्ण"
 
-#. placeholder {0}: category.passedChecks
-#. placeholder {1}: category.applicableChecks
+#. placeholder {0}: i18n.number(category.passedChecks)
+#. placeholder {1}: i18n.number(category.applicableChecks)
 #: src/features/ats-checker/report/report-view.tsx
 msgid "{0} of {1} applicable checks passed."
 msgstr "{0} पैकी {1} लागू तपासण्या उत्तीर्ण."
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/career/workspace/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
@@ -535,34 +521,34 @@ msgstr ""
 msgid "{0} of {1} edits accepted"
 msgstr "{0} पैकी {1} संपादने स्वीकारली"
 
-#. placeholder {0}: result.found.length
-#. placeholder {1}: result.total
+#. placeholder {0}: i18n.number(result.found.length)
+#. placeholder {1}: i18n.number(result.total)
 #: src/features/resume/editor/check/job-match.tsx
 msgid "{0} of {1} posting terms appear"
 msgstr "{0} पैकी {1} जॉब पोस्टिंग अटी दिसतात"
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATE_IDS.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATE_IDS.length)
 #: src/features/resume/editor/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "{1} चे {0} दाखवले आहे"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{0} च्या {1} रुपांतरित नोकरीच्या अर्जांना उत्तर मिळाले; {3} पैकी {2} दुसऱ्या रेझ्युमेसह पाठवले."
 
-#. placeholder {0}: jd.matchedCount
-#. placeholder {1}: jd.totalTerms
+#. placeholder {0}: i18n.number(jd.matchedCount)
+#. placeholder {1}: i18n.number(jd.totalTerms)
 #: src/features/ats-checker/report/jd-coverage.tsx
 msgid "{0} of {1} terms found"
 msgstr "{0} पैकी {1} संज्ञा सापडल्या"
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/career/workspace/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -572,43 +558,43 @@ msgstr ""
 msgid "{0} posting"
 msgstr "{0} जॉब पोस्टिंग"
 
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr ""
 
-#. placeholder {0}: report.skippedChecks
+#. placeholder {0}: i18n.number(report.skippedChecks)
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
 msgstr "{0} वगळले"
 
-#. placeholder {0}: count("supported")
-#. placeholder {1}: count("partial")
-#. placeholder {2}: count("missing")
+#. placeholder {0}: i18n.number(count("supported"))
+#. placeholder {1}: i18n.number(count("partial"))
+#. placeholder {2}: i18n.number(count("missing"))
 #. placeholder {3}: data.summary
 #: src/features/career/workspace/saved.tsx
 msgid "{0} supported, {1} partly supported, {2} with no evidence yet. {3}"
 msgstr "{0} समर्थित, {1} अंशतः समर्थित, {2} साठी अद्याप पुरावा नाही. {3}"
 
-#. placeholder {0}: findings.length
+#. placeholder {0}: i18n.number(findings.length)
 #: src/features/ats-checker/report/report-view.tsx
 msgid "{0} to fix"
 msgstr "{0} दुरुस्त करायचे"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/career/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: index + 1
+#. placeholder {1}: i18n.number(index + 1)
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "{0}, entry {1} of {count}"
 msgstr "{0}, {count} ची {1} प्रविष्टी"
@@ -628,7 +614,7 @@ msgstr "{0}. समस्या सोडवली."
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/conversation.tsx
 msgid "{accepted} of {0} applied"
 msgstr "{0} पैकी {accepted} लागू केले"
@@ -636,6 +622,10 @@ msgstr "{0} पैकी {accepted} लागू केले"
 #: src/features/career/workspace/apply.tsx
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, one {# उत्तर} other {# उत्तरे}}"
 
 #: src/features/career/coach.tsx
 msgid "{attached, plural, one {# attached file} other {# attached files}}"
@@ -774,7 +764,7 @@ msgstr ""
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# कागदपत्र अद्ययावत केले} other {# कागदपत्रे अद्ययावत केली}}"
 
-#. placeholder {0}: items.length
+#. placeholder {0}: i18n.number(items.length)
 #: src/features/career/workspace/apply.tsx
 msgid "{done} of {0}"
 msgstr "{0} पैकी {done}"
@@ -821,7 +811,7 @@ msgstr "{failing, plural, one {# पुनरावलोकन करण्य�
 
 #: src/features/career/knowledge/stories.tsx
 msgid "{filled} of 5 parts"
-msgstr "5 पैकी {filled} भाग"
+msgstr "५ पैकी {filled} भाग"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "{gaps, plural, one {· # gap} other {· # gaps}}"
@@ -918,7 +908,7 @@ msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
-msgstr "{name} पृष्ठ 1 वर जोडले"
+msgstr "{name} पृष्ठ १ वर जोडले"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} is split into {columns} columns"
@@ -985,6 +975,14 @@ msgstr "{passedRules} चे {totalRules} चे चेक पास."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {या पृष्ठावर # प्रस्तावित संपादन · तुम्ही स्वीकार करेपर्यंत काहीही बदलत नाही} other {या पृष्ठावरील # ने प्रस्तावित संपादने · तुम्ही स्वीकार करेपर्यंत काहीही बदलत नाही}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "मूळ वेतनाच्या {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "मूळ वेतनाच्या {percent} ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# प्रस्तावित} other {# प्रस्तावित}}"
@@ -1043,7 +1041,7 @@ msgstr "{templateCount} विनामूल्य CV टेम्पलेट�
 
 #: src/features/homepage/prepare.tsx
 msgid "{time} · Video call · 45 min"
-msgstr "{time} · व्हिडिओ कॉल · 45 मि."
+msgstr "{time} · व्हिडिओ कॉल · ४५ मि."
 
 #: src/features/ats-checker/checker.tsx
 msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
@@ -1062,7 +1060,7 @@ msgstr "{title} हटवले"
 msgid "{title} is on · next {0}"
 msgstr "{title} चालू आहे · पुढील {0}"
 
-#. placeholder {0}: rows.length
+#. placeholder {0}: i18n.number(rows.length)
 #: src/features/resume/editor/write/outline.tsx
 msgid "{title} moved to position {position} of {0}"
 msgstr ""
@@ -1071,8 +1069,8 @@ msgstr ""
 msgid "{title} paused"
 msgstr "{title} थांबवले"
 
-#. placeholder {0}: to + 1
-#. placeholder {1}: entryIds.length
+#. placeholder {0}: i18n.number(to + 1)
+#. placeholder {1}: i18n.number(entryIds.length)
 #: src/features/resume/editor/write/outline.tsx
 msgid "{title}, entry {0} of {1}"
 msgstr ""
@@ -1157,7 +1155,7 @@ msgstr "+{extra} अधिक"
 
 #: src/features/homepage/hero.tsx
 msgid "+13 pts activation"
-msgstr "+13 पॉइंट सक्रियकरण"
+msgstr "+१३ पॉइंट सक्रियकरण"
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "<0>Nothing to fix.</0> Every check passes."
@@ -1171,6 +1169,10 @@ msgstr ""
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ वर्षाला {yearly} ({months} × {monthly})"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 msgid "06/2017 – 2021"
@@ -1178,28 +1180,28 @@ msgstr "06/2017 – 2021"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "1 column, inline"
-msgstr "1 स्तंभ, इनलाइन"
+msgstr "१ स्तंभ, इनलाइन"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "10-minute briefing"
-msgstr "10 मिनिटांचे ब्रीफिंग"
+msgstr "१० मिनिटांचे ब्रीफिंग"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "10–11 recommended"
-msgstr "10-11 शिफारस केली आहे"
+msgstr "१०-११ शिफारस केली आहे"
 
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
-msgstr "2 फाइल्स"
+msgstr "२ फाइल्स"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/today.tsx
 msgid "2 hours before"
-msgstr "2 तास आधी"
+msgstr "२ तास आधी"
 
 #: src/features/resume/editor/write/summary-editor.tsx
 msgid "2–3 sentences reads best"
-msgstr "2-3 वाक्ये उत्तम वाचतात"
+msgstr "२-३ वाक्ये उत्तम वाचतात"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1221,23 +1223,23 @@ msgstr "2021 - आत्तापर्यंत"
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/today.tsx
 msgid "24 hours before"
-msgstr "24 तास आधी"
+msgstr "२४ तास आधी"
 
 #: src/features/homepage/prepare.tsx
 msgid "3 supported · 1 partly · 1 missing"
-msgstr "3 समर्थित · 1 अंशतः · 1 गहाळ"
+msgstr "३ समर्थित · १ अंशतः · १ गहाळ"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "30 days"
-msgstr "30 दिवस"
+msgstr "३० दिवस"
 
 #: src/features/homepage/hero.tsx
 msgid "40% faster reviews"
-msgstr "40% जलद पुनरावलोकने"
+msgstr "४०% जलद पुनरावलोकने"
 
 #: src/features/homepage/faq.tsx
 msgid "9 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr "सुरुवात करण्यापूर्वी लोक विचारतात त्या प्रश्नांची 9 छोटी उत्तरे. आणखी काही असल्यास <0>Discord</0> वर विचारा."
+msgstr "सुरुवात करण्यापूर्वी लोक विचारतात त्या प्रश्नांची ९ छोटी उत्तरे. आणखी काही असल्यास <0>Discord</0> वर विचारा."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -1313,7 +1315,7 @@ msgstr "तुम्ही नंतर विसरायला सांगि
 
 #: src/features/homepage/prepare.tsx
 msgid "A focused 30-minute plan"
-msgstr "30 मिनिटांची केंद्रित योजना"
+msgstr "३० मिनिटांची केंद्रित योजना"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "A focused plan for this round"
@@ -1423,7 +1425,7 @@ msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
 msgid "A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
-msgstr "वेळेनुसार योजना, तुमची सुरुवात, सोबत न्यायच्या कथा आणि विचारायचे प्रश्न. कॉलच्या 10 मिनिटे आधी ती तुमची चेकलिस्ट बनते."
+msgstr "वेळेनुसार योजना, तुमची सुरुवात, सोबत न्यायच्या कथा आणि विचारायचे प्रश्न. कॉलच्या १० मिनिटे आधी ती तुमची चेकलिस्ट बनते."
 
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
@@ -1443,7 +1445,7 @@ msgstr "या ॲपबद्दल"
 
 #: src/features/career/workspace/practise.tsx
 msgid "About 90 seconds when spoken"
-msgstr "बोलताना सुमारे 90 सेकंद"
+msgstr "बोलताना सुमारे ९० सेकंद"
 
 #: src/features/settings/root.tsx
 msgid "About Reactive Resume"
@@ -1545,15 +1547,15 @@ msgstr "क्रिया"
 
 #: src/features/homepage/remember.tsx
 msgid "Activation rose from 31% to 44% in one quarter, measured across new teams."
-msgstr "एका तिमाहीत ॲक्टिव्हेशन 31% वरून 44% पर्यंत वाढले, नवीन टीम्समध्ये मोजलेले."
+msgstr "एका तिमाहीत ॲक्टिव्हेशन ३१% वरून ४४% पर्यंत वाढले, नवीन टीम्समध्ये मोजलेले."
 
 #: src/features/homepage/remember.tsx
 msgid "Activation rose from 31% to 44% in one quarter."
-msgstr "एका तिमाहीत ॲक्टिव्हेशन 31% वरून 44% पर्यंत वाढले."
+msgstr "एका तिमाहीत ॲक्टिव्हेशन ३१% वरून ४४% पर्यंत वाढले."
 
 #: src/features/homepage/remember.tsx
 msgid "Activation rose from 31%…"
-msgstr "ॲक्टिव्हेशन 31% वरून…"
+msgstr "ॲक्टिव्हेशन ३१% वरून…"
 
 #: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/web-access.tsx
@@ -1802,7 +1804,7 @@ msgstr "स्वारस्य जोडा"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Add it to page 1"
-msgstr "ते पृष्ठ 1 वर जोडा"
+msgstr "ते पृष्ठ १ वर जोडा"
 
 #: src/components/input/chip-input.tsx
 msgid "Add keyword"
@@ -1837,7 +1839,7 @@ msgstr "देश कोडसह एक जोडा; काही अर्ज
 msgid "Add page"
 msgstr "पान जोडा"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/features/resume/editor/design/fit.ts
 msgid "Add page {0}"
 msgstr ""
@@ -2329,7 +2331,7 @@ msgctxt "hero headline"
 msgid "and"
 msgstr "आणि"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "and {0} more"
 msgstr "आणि {0} अधिक"
@@ -2464,7 +2466,7 @@ msgstr "Apple"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Applicant tracking systems turn your PDF into plain text before anyone reads it. The checker does the same, with the PDF.js library in your browser, then scores how much of your resume survives: 0 to 100, from how reliably the text comes out, not from your chances of getting the job."
-msgstr "अर्जदार ट्रॅकिंग सिस्टम तुमचा PDF कोणीही वाचण्यापूर्वी साध्या मजकुरात बदलतात. चेकर तुमच्या ब्राउझरमधील PDF.js लायब्ररीसह तेच करतो, त्यानंतर तुमचा रेझ्युमे किती टिकतो ते स्कोअर करतो: 0 ते 100, मजकूर किती विश्वासार्हपणे बाहेर येतो, नोकरी मिळण्याच्या तुमच्या शक्यतांवरून नाही."
+msgstr "अर्जदार ट्रॅकिंग सिस्टम तुमचा PDF कोणीही वाचण्यापूर्वी साध्या मजकुरात बदलतात. चेकर तुमच्या ब्राउझरमधील PDF.js लायब्ररीसह तेच करतो, त्यानंतर तुमचा रेझ्युमे किती टिकतो ते स्कोअर करतो: ० ते १००, मजकूर किती विश्वासार्हपणे बाहेर येतो, नोकरी मिळण्याच्या तुमच्या शक्यतांवरून नाही."
 
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/offer-entry.tsx
@@ -2572,7 +2574,7 @@ msgstr "काळानुसार अर्ज"
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications sent per week (last 8 weeks)"
-msgstr "दर आठवड्याला पाठवलेले अर्ज (मागील 8 आठवडे)"
+msgstr "दर आठवड्याला पाठवलेले अर्ज (मागील ८ आठवडे)"
 
 #: src/features/applications/trash-page.tsx
 msgid "Applications stay in Trash until you delete them permanently."
@@ -2628,7 +2630,7 @@ msgstr "अर्ज करा · तुम्ही नेतृत्व क�
 
 #: src/features/homepage/prepare.tsx
 msgid "Apply 1 change"
-msgstr "1 बदल लागू करा"
+msgstr "१ बदल लागू करा"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Approve and create packet"
@@ -2792,7 +2794,7 @@ msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "At Northwind Labs I led research for our onboarding redesign. I interviewed 14 customers, found three drop-off points, and we shipped a shorter setup. Activation rose from 31% to 44%."
-msgstr "Northwind Labs मध्ये मी आमच्या ऑनबोर्डिंग रीडिझाइनसाठी संशोधनाचे नेतृत्व केले. मी 14 ग्राहकांच्या मुलाखती घेतल्या, तीन ड्रॉप-ऑफ बिंदू शोधले आणि आम्ही लहान सेटअप आणला. ॲक्टिव्हेशन 31% वरून 44% पर्यंत वाढले."
+msgstr "Northwind Labs मध्ये मी आमच्या ऑनबोर्डिंग रीडिझाइनसाठी संशोधनाचे नेतृत्व केले. मी १४ ग्राहकांच्या मुलाखती घेतल्या, तीन ड्रॉप-ऑफ बिंदू शोधले आणि आम्ही लहान सेटअप आणला. ॲक्टिव्हेशन ३१% वरून ४४% पर्यंत वाढले."
 
 #: src/features/homepage/remember.tsx
 msgid "At Northwind Labs, most new teams stalled before they finished setup."
@@ -2865,7 +2867,7 @@ msgstr "स्वयं जतन"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
-msgstr "स्वयंचलित बचत सत्रानुसार गटबद्ध केली जाते आणि 90 दिवसांसाठी ठेवली जाते. नामांकित आवृत्त्या तुम्ही हटवल्याशिवाय ठेवल्या जातात. पुनर्संचयित केल्याने प्रथम वर्तमान स्थिती जतन होते."
+msgstr "स्वयंचलित बचत सत्रानुसार गटबद्ध केली जाते आणि ९० दिवसांसाठी ठेवली जाते. नामांकित आवृत्त्या तुम्ही हटवल्याशिवाय ठेवल्या जातात. पुनर्संचयित केल्याने प्रथम वर्तमान स्थिती जतन होते."
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Available"
@@ -3072,7 +3074,7 @@ msgstr "जाड (Bold)"
 msgid "Bonus"
 msgstr "बोनस"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3143,7 +3145,7 @@ msgstr "तुमचा रेझ्युमे तयार करा"
 
 #: src/features/homepage/sheet.tsx
 msgid "Built a shared design system used by six product teams, cutting UI review time by 40%."
-msgstr "UI पुनरावलोकन वेळ 40% ने कमी करून सहा उत्पादन संघांद्वारे वापरलेली सामायिक डिझाइन प्रणाली तयार केली."
+msgstr "UI पुनरावलोकन वेळ ४०% ने कमी करून सहा उत्पादन संघांद्वारे वापरलेली सामायिक डिझाइन प्रणाली तयार केली."
 
 #: src/features/homepage/prepare.tsx
 msgid "Built a shared design system used by six product teams."
@@ -3461,7 +3463,7 @@ msgstr "वापरण्यापूर्वी आकडे आणि ना
 
 #: src/features/homepage/check.tsx
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
-msgstr "तपासणी वैशिष्ट्य तुमचा रेझ्युमे रिक्रूटमेंट सॉफ्टवेअरच्या पद्धतीने वाचते आणि सोप्या शब्दात काय निराकरण करायचे ते स्पष्ट करते. ती तुमच्या ब्राउझरमध्ये चालते, त्यामुळे तुमची फाइल तुमच्या डिव्हाइसवर राहते: 0 अपलोड."
+msgstr "तपासणी वैशिष्ट्य तुमचा रेझ्युमे रिक्रूटमेंट सॉफ्टवेअरच्या पद्धतीने वाचते आणि सोप्या शब्दात काय निराकरण करायचे ते स्पष्ट करते. ती तुमच्या ब्राउझरमध्ये चालते, त्यामुळे तुमची फाइल तुमच्या डिव्हाइसवर राहते: ० अपलोड."
 
 #: src/features/career/workspace/apply.tsx
 msgid "Check that nothing you wrote yourself is lost."
@@ -3685,7 +3687,7 @@ msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 msgid "Choose up to 200 applications per bulk action."
-msgstr "एका सामूहिक कृतीसाठी जास्तीत जास्त 200 अर्ज निवडा."
+msgstr "एका सामूहिक कृतीसाठी जास्तीत जास्त २०० अर्ज निवडा."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -4203,7 +4205,7 @@ msgid "Contact: {0}"
 msgstr ""
 
 #. placeholder {0}: primary.name
-#. placeholder {1}: others.length
+#. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
 msgstr ""
@@ -4414,10 +4416,6 @@ msgstr "दुरुस्त करा"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5467,7 +5465,7 @@ msgstr "चेक"
 msgid "Daily at {clock} · next {next}"
 msgstr "दररोज {clock} वाजता · पुढील {next}"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "३० दिवसांहून अधिक दैनिक दृश्ये, शिखर {0}"
@@ -5734,7 +5732,7 @@ msgstr "\"{0}\" हटवले"
 msgid "Deleted “{title}”"
 msgstr "\"{title}\" हटवले"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/document-actions.tsx
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
@@ -5771,7 +5769,7 @@ msgstr "भूमिकेचे वर्णन करा"
 msgid "Description"
 msgstr "वर्णन"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/resume/editor/write/entries.tsx
 msgid "Description of role {0}"
 msgstr "भूमिकेचे वर्णन {0}"
@@ -5827,7 +5825,7 @@ msgstr "डिक्टेशन सुरू झाले"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Dictation stopped at the 2-minute limit."
-msgstr "2 मिनिटांच्या मर्यादेवर डिक्टेशन थांबले."
+msgstr "२ मिनिटांच्या मर्यादेवर डिक्टेशन थांबले."
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Didn't get it?"
@@ -5939,7 +5937,7 @@ msgstr "कागदपत्रे"
 
 #: src/features/documents/trash-page.tsx
 msgid "Documents are deleted permanently after 30 days."
-msgstr "दस्तऐवज 30 दिवसांनंतर कायमचे हटवले जातात."
+msgstr "दस्तऐवज ३० दिवसांनंतर कायमचे हटवले जातात."
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/shell.tsx
@@ -5948,7 +5946,7 @@ msgstr "या नोकरीसाठी कागदपत्रे"
 
 #: src/features/documents/trash-page.tsx
 msgid "Documents you move here stay for 30 days."
-msgstr "तुम्ही येथे हलवलेले दस्तऐवज 30 दिवस राहतात."
+msgstr "तुम्ही येथे हलवलेले दस्तऐवज ३० दिवस राहतात."
 
 #: src/features/settings/account/data.tsx
 msgid "Documents, version history and uploaded files in one zip. Check the file manifest for omissions."
@@ -6572,7 +6570,7 @@ msgstr "मॉडेल ID प्रविष्ट करा."
 
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
-msgstr "64 वर्णांपर्यंत नाव एंटर करा."
+msgstr "६४ वर्णांपर्यंत नाव एंटर करा."
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
@@ -6592,6 +6590,14 @@ msgstr "वैध ईमेल पत्ता प्रविष्ट कर�
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "एक वेब पत्ता प्रविष्ट करा, उदाहरणार्थ.com"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "रक्कम किंवा मूळ वेतनाची टक्केवारी लिहा, उदा. 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "रक्कम किंवा 10% सारखी टक्केवारी लिहा, किंवा रिकामे ठेवा."
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -6620,7 +6626,7 @@ msgstr "अटी स्वतः भरा. AI ला कोणतीही व
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter the 6-digit code."
-msgstr "6 अंकी कोड टाका."
+msgstr "६ अंकी कोड टाका."
 
 #: src/features/settings/ai/test-error.ts
 msgid "Enter the API base URL of your service and test again."
@@ -6709,7 +6715,7 @@ msgstr "दर {days} दिवसांनी {clock} वाजता · पु
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Every 3 days"
-msgstr "दर 3 दिवसांनी"
+msgstr "दर ३ दिवसांनी"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Every day"
@@ -6939,7 +6945,7 @@ msgstr ""
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
 msgstr "कमी सपोर्ट तिकिटांना अद्याप आकड्याचा आधार नाही. ते तुम्ही केलेले निरीक्षण म्हणून सांगा."
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Field {0}"
 msgstr "फील्ड {0}"
@@ -7578,15 +7584,15 @@ msgstr "शीर्षके"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 1"
-msgstr "शीर्षक 1"
+msgstr "शीर्षक १"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 2"
-msgstr "शीर्षक 2"
+msgstr "शीर्षक २"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 3"
-msgstr "शीर्षक 3"
+msgstr "शीर्षक ३"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Heading changed"
@@ -7720,6 +7726,10 @@ msgstr "नियुक्ती व्यवस्थापक"
 msgid "Hiring team"
 msgstr "कामावर घेणारी टीम"
 
+#: src/features/career/workspace/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "मागील पुनरावलोकनाच्या खुणा उपलब्ध नाहीत."
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/download-sheet.tsx
@@ -7826,7 +7836,7 @@ msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "I interviewed 14 customers, mapped three drop-off points and prototyped a shorter setup with engineering."
-msgstr "मी 14 ग्राहकांच्या मुलाखती घेतल्या, तीन ड्रॉप-ऑफ बिंदू मांडले आणि इंजिनिअरिंगसोबत लहान सेटअपचा प्रोटोटाइप बनवला."
+msgstr "मी १४ ग्राहकांच्या मुलाखती घेतल्या, तीन ड्रॉप-ऑफ बिंदू मांडले आणि इंजिनिअरिंगसोबत लहान सेटअपचा प्रोटोटाइप बनवला."
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "I removed employer-specific wording and reviewed reuse across employers."
@@ -8188,7 +8198,7 @@ msgstr "मुलाखतीचा टाइमझोन"
 
 #: src/features/homepage/remember.tsx
 msgid "Interviewed 14 customers, mapped three drop-off points and prototyped a shorter setup with engineering."
-msgstr "14 ग्राहकांच्या मुलाखती घेतल्या, तीन ड्रॉप-ऑफ बिंदू मांडले आणि इंजिनिअरिंगसोबत लहान सेटअपचा प्रोटोटाइप बनवला."
+msgstr "१४ ग्राहकांच्या मुलाखती घेतल्या, तीन ड्रॉप-ऑफ बिंदू मांडले आणि इंजिनिअरिंगसोबत लहान सेटअपचा प्रोटोटाइप बनवला."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Interviewer"
@@ -8218,28 +8228,28 @@ msgstr "शिक्षणासाठी बजेट आहे का?"
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "issue {0}"
 msgstr "{0} जारी करा"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0}"
 msgstr "{0} जारी करा"
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0} of {1}"
 msgstr "{1} चे {0} जारी करा"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Issue {0}:"
 msgstr "अंक {0}:"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0}: {1}"
@@ -8488,7 +8498,7 @@ msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
-msgstr "साधारणपणे प्रतिमा काढून किंवा लहान करून ते 2.5 MB पेक्षा कमी ठेवा."
+msgstr "साधारणपणे प्रतिमा काढून किंवा लहान करून ते २.५ MB पेक्षा कमी ठेवा."
 
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -8804,11 +8814,11 @@ msgstr "बाहेर सोडा"
 
 #: src/features/homepage/sheet.tsx
 msgid "Led <0>user research</0> for the onboarding redesign; activation rose from 31% to 44%."
-msgstr "नवीन वापरकर्त्यांच्या सुरुवातीच्या अनुभवाची पुनर्रचना करण्यासाठी <0>वापरकर्ता संशोधनाचे</0> नेतृत्व केले; सक्रिय होण्याचा दर 31% वरून 44% झाला."
+msgstr "नवीन वापरकर्त्यांच्या सुरुवातीच्या अनुभवाची पुनर्रचना करण्यासाठी <0>वापरकर्ता संशोधनाचे</0> नेतृत्व केले; सक्रिय होण्याचा दर ३१% वरून ४४% झाला."
 
 #: src/features/homepage/prepare.tsx
 msgid "Led research for the onboarding redesign; activation rose from 31% to 44%."
-msgstr "ऑनबोर्डिंग रीडिझाइनसाठी संशोधनाचे नेतृत्व केले; ॲक्टिव्हेशन 31% वरून 44% पर्यंत वाढले."
+msgstr "ऑनबोर्डिंग रीडिझाइनसाठी संशोधनाचे नेतृत्व केले; ॲक्टिव्हेशन ३१% वरून ४४% पर्यंत वाढले."
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Left"
@@ -8924,7 +8934,7 @@ msgstr "स्तर"
 #. Accessible label for skill/proficiency level indicator, where level is current value out of 5
 #: src/components/level/display.tsx
 msgid "Level {level} of 5"
-msgstr "5 पैकी {level}वा स्तर"
+msgstr "५ पैकी {level}वा स्तर"
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
@@ -8980,12 +8990,12 @@ msgstr "या क्लोज रेषा वाचल्यावर एक�
 msgid "Link"
 msgstr "दुवा"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -9149,7 +9159,7 @@ msgstr "{0} वर थेट"
 
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
-msgstr "थेट एकूण, दर 6 तासांनी ताजेतवाने."
+msgstr "थेट एकूण, दर ६ तासांनी ताजेतवाने."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Load your stages before importing named stages. Your CSV data is kept."
@@ -9714,7 +9724,7 @@ msgstr "Northwind Labs मधील बहुतेक नवीन टीम्
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Most recruiters read 180–320 words. The shaded band shows the range."
-msgstr "बहुतेक रिक्रूटर्स 180-320 शब्द वाचतात. छायांकित बँड श्रेणी दर्शविते."
+msgstr "बहुतेक रिक्रूटर्स १८०-३२० शब्द वाचतात. छायांकित बँड श्रेणी दर्शविते."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Most systems file candidates by email address."
@@ -9810,8 +9820,8 @@ msgstr "वर हलवा"
 msgid "Move your email and phone number to the top of page one."
 msgstr "तुमचा ईमेल आणि फोन नंबर पहिल्या पानाच्या वर हलवा."
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1} पैकी {0} कचऱ्यात हलवली. कुलूपबंद कागदपत्रे वगळली."
@@ -9891,7 +9901,7 @@ msgstr ""
 msgid "Name of {label}"
 msgstr "{label} चे नाव"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Name of person {0}"
 msgstr "व्यक्ती {0} चे नाव"
@@ -10037,6 +10047,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "New key"
 msgstr "नवीन की"
+
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "ऑफरची नवीन आवृत्ती जतन केली"
 
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -10855,10 +10869,6 @@ msgid "Offer terms"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 msgid "Offer type"
 msgstr "ऑफरचा प्रकार"
@@ -10979,12 +10989,12 @@ msgstr "केवळ त्यांची चाचणी उत्तीर्
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Only the first {0} pages were checked, so this report does not cover the whole file."
 msgstr "फक्त पहिली {0} पाने तपासली गेली, त्यामुळे हा अहवाल संपूर्ण फाइल कव्हर करत नाही."
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "फक्त पहिली {0} पृष्ठे तपासली गेली."
@@ -11285,14 +11295,14 @@ msgstr "इतर · OpenAI-सुसंगत"
 msgid "Other benefits"
 msgstr "इतर लाभ"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/assistant-panel.tsx
 msgid "Other documents · {0}"
 msgstr "इतर कागदपत्रे · {0}"
 
 #: src/features/ats-checker/report/score-header.tsx
 msgid "out of 100"
-msgstr "100 पैकी"
+msgstr "१०० पैकी"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Out of date: the text has changed since."
@@ -11325,8 +11335,8 @@ msgstr "पान"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: evidence.page
-#. placeholder {0}: pageIndex + 1
-#. placeholder {0}: row.page + 1
+#. placeholder {0}: i18n.number(evidence.page)
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
@@ -11335,7 +11345,7 @@ msgstr "पान"
 msgid "Page {0}"
 msgstr "पान {0}"
 
-#. placeholder {0}: row.page + 1
+#. placeholder {0}: i18n.number(row.page + 1)
 #: src/features/resume/editor/write/outline.tsx
 msgid "Page {0}, sidebar"
 msgstr "पान {0}, बाजूची पट्टी"
@@ -11368,7 +11378,7 @@ msgstr "पृष्ठ १"
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page 1 · {formatLabel}"
-msgstr "पृष्ठ 1 · {formatLabel}"
+msgstr "पृष्ठ १ · {formatLabel}"
 
 #. placeholder {0}: fit.data.before
 #. placeholder {1}: fit.data.after
@@ -11839,7 +11849,7 @@ msgstr "सराव करा"
 
 #: src/features/homepage/remember.tsx
 msgid "Practice · Your opening, about 40 seconds aloud"
-msgstr "सराव · तुमची सुरुवात, मोठ्याने सुमारे 40 सेकंद"
+msgstr "सराव · तुमची सुरुवात, मोठ्याने सुमारे ४० सेकंद"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Practice another question"
@@ -11875,7 +11885,7 @@ msgstr "सरावाचे प्रश्न सिम्युलेटे�
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
-msgstr "तुमच्या ओळखीचा एकदा सराव करा. ती सुमारे 90 सेकंदांची ठेवा."
+msgstr "तुमच्या ओळखीचा एकदा सराव करा. ती सुमारे ९० सेकंदांची ठेवा."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Practicing your story: {storyTitle}"
@@ -12079,7 +12089,7 @@ msgstr ""
 msgid "Profile link (optional)"
 msgstr "प्रोफाईल लिंक (ऐच्छिक)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link of person {0}"
 msgstr "व्यक्ती {0} ची प्रोफाईल लिंक"
@@ -12252,7 +12262,7 @@ msgstr "प्रश्न {total} पैकी {position}"
 
 #: src/features/homepage/prepare.tsx
 msgid "Question 1 of 4 · Practice"
-msgstr "प्रश्न 4 पैकी 1 · सराव"
+msgstr "प्रश्न ४ पैकी १ · सराव"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Question from the form"
@@ -12460,14 +12470,14 @@ msgstr "वाचनीयता"
 msgid "Readability does not guarantee an interview or a particular ATS result."
 msgstr "वाचनीयता मुलाखत किंवा विशिष्ट ATS निकालाची हमी देत ​​नाही."
 
-#. placeholder {0}: report.score
+#. placeholder {0}: i18n.number(report.score)
 #: src/features/ats-checker/checker.tsx
 msgid "Readability score: {0} out of 100"
-msgstr "वाचनीयता स्कोअर: 100 पैकी {0}"
+msgstr "वाचनीयता स्कोअर: १०० पैकी {0}"
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Readability score: {score} out of 100"
-msgstr "वाचनीयता स्कोअर: 100 पैकी {score}"
+msgstr "वाचनीयता स्कोअर: १०० पैकी {score}"
 
 #: src/features/assistant/conversation.tsx
 msgid "Reading page…"
@@ -12593,7 +12603,7 @@ msgstr "रेकॉर्डिंग सुरू झाले"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Recording stopped at the 2-minute limit. Transcribing what you said."
-msgstr "2 मिनिटांच्या मर्यादेवर रेकॉर्डिंग थांबले. तुम्ही जे बोललात ते ट्रान्सक्राइब करत आहे."
+msgstr "२ मिनिटांच्या मर्यादेवर रेकॉर्डिंग थांबले. तुम्ही जे बोललात ते ट्रान्सक्राइब करत आहे."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Recording time"
@@ -12654,7 +12664,7 @@ msgstr "रेझ्युमे बदल पुन्हा करा"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -12685,11 +12695,11 @@ msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing 2 hours before"
-msgstr "2 तास आधी ब्रीफिंग रिफ्रेश करा"
+msgstr "२ तास आधी ब्रीफिंग रिफ्रेश करा"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing 24 hours before"
-msgstr "24 तास आधी ब्रीफिंग रिफ्रेश करा"
+msgstr "२४ तास आधी ब्रीफिंग रिफ्रेश करा"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing on the morning of"
@@ -12872,7 +12882,7 @@ msgstr "फील्ड काढा"
 msgid "Remove file"
 msgstr "फाइल काढा"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -12885,7 +12895,7 @@ msgstr "पासकी काढा"
 msgid "Remove password"
 msgstr "पासवर्ड काढा"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Remove person {0}"
 msgstr "व्यक्ती {0} काढा"
@@ -12899,7 +12909,7 @@ msgstr "फोटो काढा"
 msgid "Remove question"
 msgstr "प्रश्न काढा"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -13147,12 +13157,12 @@ msgstr "\"{0}\" पुनर्संचयित केले"
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/document-actions.tsx
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/document-actions.tsx
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -13374,8 +13384,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "पहिल्यांदा अर्ज सादर करताना पुनरावलोकनाच्या खुणा नोंदवल्या आहेत."
 
 #: src/features/career/today.tsx
 msgid "Review draft"
@@ -13443,7 +13453,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "पुनरावलोकन लेखन"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -13492,12 +13502,12 @@ msgstr "पद"
 msgid "Role (optional)"
 msgstr "भूमिका (पर्यायी)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/resume/editor/write/entries.tsx
 msgid "Role {0}"
 msgstr "भूमिका {0}"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "व्यक्ती {0} ची भूमिका"
@@ -13660,6 +13670,10 @@ msgstr "बदल जतन करा"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "कनेक्शन जतन करा"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "सुधारित अटी नवीन आवृत्ती म्हणून जतन करा. मागील आवृत्ती उपलब्ध राहते. कोणतीही AI विनंती पाठवली जात नाही."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"
@@ -14496,7 +14510,7 @@ msgstr "शेअर करा"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
-msgstr "सार्वजनिक लिंक शेअर करा, पासवर्ड जोडा किंवा तो खाजगी ठेवा. 3 दृश्यमानता पर्यायांमधून निवडा. PDF किंवा Word वर निर्यात करा किंवा JSON म्हणून तुमचा सर्व डेटा तुमच्यासोबत घ्या."
+msgstr "सार्वजनिक लिंक शेअर करा, पासवर्ड जोडा किंवा तो खाजगी ठेवा. ३ दृश्यमानता पर्यायांमधून निवडा. PDF किंवा Word वर निर्यात करा किंवा JSON म्हणून तुमचा सर्व डेटा तुमच्यासोबत घ्या."
 
 #: src/features/resume/share/feedback-links.tsx
 msgid "Share application progress (optional)"
@@ -14567,7 +14581,7 @@ msgstr "या पृष्ठावर उपलब्ध शॉर्टकट
 
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
-msgstr "हे अर्ज केले म्हणून चिन्हांकित करण्यापूर्वी प्रश्न 2,000 अक्षरांपर्यंत आणि उत्तरे 6,000 अक्षरांपर्यंत लहान करा."
+msgstr "हे अर्ज केले म्हणून चिन्हांकित करण्यापूर्वी प्रश्न २,००० अक्षरांपर्यंत आणि उत्तरे ६,००० अक्षरांपर्यंत लहान करा."
 
 #: src/features/resume/editor/write/improve.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -14588,14 +14602,14 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ने बनवले” दाखवा"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
-#. placeholder {0}: visible.length - shown.length
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
+#. placeholder {0}: i18n.number(visible.length - shown.length)
 #: src/features/applications/components/board.tsx
 #: src/features/career/today.tsx
 msgid "Show {0} more"
 msgstr "{0} अधिक दाखवा"
 
-#. placeholder {0}: read.length
+#. placeholder {0}: i18n.number(read.length)
 #: src/features/career/today.tsx
 msgid "Show {0} read"
 msgstr "{0} वाचलेले दाखवा"
@@ -14947,7 +14961,7 @@ msgstr "लहान संख्या, परंतु लक्षात घ�
 
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
-msgstr "म्हणून मी 14 ग्राहकांशी संवाद साधला, लोक कुठल्या तीन ठिकाणी सोडून जात होते ते शोधले, आणि आम्ही लहान सेटअपचा प्रोटोटाइप बनवला."
+msgstr "म्हणून मी १४ ग्राहकांशी संवाद साधला, लोक कुठल्या तीन ठिकाणी सोडून जात होते ते शोधले, आणि आम्ही लहान सेटअपचा प्रोटोटाइप बनवला."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -15298,8 +15312,8 @@ msgstr "स्थिती"
 msgid "Stay here"
 msgstr "इथेच राहा"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/career/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -15331,7 +15345,7 @@ msgstr "रेकॉर्डिंग थांबवा"
 msgid "Stop when you're done. Nothing is sent until then."
 msgstr "पूर्ण झाल्यावर थांबवा. तोपर्यंत काहीही पाठवले जात नाही."
 
-#. placeholder {0}: clock(seconds)
+#. placeholder {0}: clock(seconds, i18n.locale)
 #: src/features/career/workspace/practise.tsx
 msgid "Stopped at {0}"
 msgstr "{0} वर थांबवले"
@@ -15375,7 +15389,7 @@ msgstr "कथा"
 
 #: src/features/homepage/remember.tsx
 msgid "Story · 5 of 5 parts"
-msgstr "कथा · 5 पैकी 5 भाग"
+msgstr "कथा · ५ पैकी ५ भाग"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Story deleted"
@@ -15433,7 +15447,7 @@ msgstr "सबरेडिट"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Success at 90 days · next step"
-msgstr "90 दिवसांतील यश · पुढील पाऊल"
+msgstr "९० दिवसांतील यश · पुढील पाऊल"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Suggest again"
@@ -15781,11 +15795,11 @@ msgstr "मजकूर एका वेळी एक अक्षर असा 
 
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "text layer ✓ · 1 column"
-msgstr "मजकूर स्तर ✓ · 1 स्तंभ"
+msgstr "मजकूर स्तर ✓ · १ स्तंभ"
 
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "text layer ✓ · 2 columns"
-msgstr "मजकूर स्तर ✓ · 2 स्तंभ"
+msgstr "मजकूर स्तर ✓ · २ स्तंभ"
 
 #: src/features/resume/import/read-file.ts
 msgid "text layer found"
@@ -15821,7 +15835,7 @@ msgstr "ते विनामूल्य ठेवल्याबद्दल 
 
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
-msgstr "धन्यवाद, Sam. हे एक उदाहरण: Northwind Labs मध्ये मी ऑनबोर्डिंग रीडिझाइनचे नेतृत्व केले, 14 ग्राहक मुलाखतींपासून लहान सेटअपपर्यंत."
+msgstr "धन्यवाद, Sam. हे एक उदाहरण: Northwind Labs मध्ये मी ऑनबोर्डिंग रीडिझाइनचे नेतृत्व केले, १४ ग्राहक मुलाखतींपासून लहान सेटअपपर्यंत."
 
 #. placeholder {0}: still.user.email
 #: src/features/auth/pages/reset-password.tsx
@@ -15842,7 +15856,7 @@ msgstr "ती फाइल PDF म्हणून वाचता आली न
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file is too large to check. PDFs up to 25 MB work."
-msgstr "ती फाइल तपासण्यासाठी खूप मोठी आहे. PDFs 25 MB पर्यंत कार्य."
+msgstr "ती फाइल तपासण्यासाठी खूप मोठी आहे. PDFs २५ MB पर्यंत कार्य."
 
 #: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
@@ -15867,7 +15881,7 @@ msgstr "तो प्रदाता सेटअप वैध नाही. ब
 
 #: src/features/career/workspace/practise.tsx
 msgid "That recording was empty or over 2 MB. Try a shorter answer."
-msgstr "ते रेकॉर्डिंग रिकामे होते किंवा 2 MB पेक्षा मोठे होते. लहान उत्तर वापरून पाहा."
+msgstr "ते रेकॉर्डिंग रिकामे होते किंवा २ MB पेक्षा मोठे होते. लहान उत्तर वापरून पाहा."
 
 #: src/routes/builder/$resumeId/route.tsx
 msgid "That resume isn't available. It may have been deleted."
@@ -15883,7 +15897,7 @@ msgstr "{label} फाइल व्युत्पन्न करता आल�
 
 #: src/features/homepage/prepare.tsx
 msgid "The 13-point activation lift. Knowledge has the before and after."
-msgstr "ॲक्टिव्हेशनमधील 13 अंकांची वाढ. ज्ञानसंग्रहात आधीचे आणि नंतरचे आकडे आहेत."
+msgstr "ॲक्टिव्हेशनमधील १३ अंकांची वाढ. ज्ञानसंग्रहात आधीचे आणि नंतरचे आकडे आहेत."
 
 #: src/libs/orpc/ai-consent.ts
 msgid "The account changed. Try again."
@@ -16319,7 +16333,7 @@ msgstr "थीम"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Then enter the 6-digit code from the app."
-msgstr "नंतर अॅपमधील 6 अंकी कोड टाका."
+msgstr "नंतर अॅपमधील ६ अंकी कोड टाका."
 
 #: src/features/ats-checker/messages.ts
 msgid "There is a gap between two dated roles."
@@ -16981,7 +16995,7 @@ msgstr "शब्द कमी करत आहे"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Trust this device for 30 days"
-msgstr "या डिव्हाइसवर 30 दिवस विश्वास ठेवा"
+msgstr "या डिव्हाइसवर ३० दिवस विश्वास ठेवा"
 
 #. placeholder {0}: result.suggestion
 #: src/features/resume/share/address-field.tsx
@@ -17321,15 +17335,15 @@ msgstr "शीर्षक नसलेला रेझ्युमे"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Or <0>choose an audio file</0> up to 2 MB."
-msgstr "2 मिनिटांपर्यंत. किंवा 2 MB पर्यंतची <0>ऑडिओ फाइल निवडा</0>."
+msgstr "२ मिनिटांपर्यंत. किंवा २ MB पर्यंतची <0>ऑडिओ फाइल निवडा</0>."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
-msgstr "2 मिनिटांपर्यंत. तुम्ही बोलता तसे तुमचे शब्द दिसतात."
+msgstr "२ मिनिटांपर्यंत. तुम्ही बोलता तसे तुमचे शब्द दिसतात."
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Up to 20 tags per document, 40 characters per tag."
-msgstr "प्रत्येक दस्तऐवजाला 20 पर्यंत टॅग, प्रत्येक टॅगला 40 वर्ण."
+msgstr "प्रत्येक दस्तऐवजाला २० पर्यंत टॅग, प्रत्येक टॅगला ४० वर्ण."
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
@@ -17431,7 +17445,7 @@ msgstr "{url} वापरा"
 
 #: src/features/settings/account/profile.tsx
 msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
-msgstr "3 ते 64 लॅटिन अक्षरे a–z, संख्या, ठिपके, हायफन आणि अंडरस्कोअर वापरा."
+msgstr "३ ते ६४ लॅटिन अक्षरे a–z, संख्या, ठिपके, हायफन आणि अंडरस्कोअर वापरा."
 
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
@@ -17441,7 +17455,7 @@ msgstr "3 ते 64 लॅटिन अक्षरे a–z, संख्या
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use 64 characters or fewer."
-msgstr "64 किंवा त्यापेक्षा कमी अक्षरे वापरा."
+msgstr "६४ किंवा त्यापेक्षा कमी अक्षरे वापरा."
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
@@ -17481,23 +17495,23 @@ msgstr ""
 
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
-msgstr "किमान 3 अक्षरे वापरा."
+msgstr "किमान ३ अक्षरे वापरा."
 
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
-msgstr "किमान 8 अक्षरे वापरा."
+msgstr "किमान ८ अक्षरे वापरा."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use at least 9pt."
-msgstr "किमान 9pt वापरा."
+msgstr "किमान ९pt वापरा."
 
 #: src/features/resume/share/address-field.tsx
 #: src/libs/error-message.ts
 msgid "Use at most 64 characters."
-msgstr "जास्तीत जास्त 64 अक्षरे वापरा."
+msgstr "जास्तीत जास्त ६४ अक्षरे वापरा."
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Use between 6 and 64 characters."
@@ -17748,7 +17762,7 @@ msgstr "कोडची पडताळणी करत आहे…"
 msgid "Version sent {date}"
 msgstr "आवृत्ती {date} पाठवली"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "आवृत्ती {date} पाठवली · {0} तपासा"
@@ -18263,7 +18277,7 @@ msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Within a quarter, activation went from 31% to 44%."
-msgstr "एका तिमाहीत, ॲक्टिव्हेशन 31% वरून 44% वर गेले."
+msgstr "एका तिमाहीत, ॲक्टिव्हेशन ३१% वरून ४४% वर गेले."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Without a fact, the coach and practice can't use this story."
@@ -18337,7 +18351,7 @@ msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
-msgstr "कथा एकदाच लिहा, तिच्यामागील तथ्यांसह, आणि कोच ती 3 ठिकाणी वापरतो. एखादे तथ्य बंद करा आणि मग काहीही त्यावर अवलंबून राहत नाही."
+msgstr "कथा एकदाच लिहा, तिच्यामागील तथ्यांसह, आणि कोच ती ३ ठिकाणी वापरतो. एखादे तथ्य बंद करा आणि मग काहीही त्यावर अवलंबून राहत नाही."
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Write and review form answers"
@@ -18501,7 +18515,7 @@ msgstr "तुम्ही संपादन करत राहू शकत�
 
 #: src/features/career/workspace/apply.tsx
 msgid "You can keep up to 30 application questions."
-msgstr "तुम्ही अर्जाचे 30 पर्यंत प्रश्न ठेवू शकता."
+msgstr "तुम्ही अर्जाचे ३० पर्यंत प्रश्न ठेवू शकता."
 
 #: src/features/settings/account/security.tsx
 msgid "You can no longer sign in with this passkey."
@@ -18822,7 +18836,7 @@ msgstr "तुमचे नाव"
 
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
-msgstr "तुमचे नाव हाच तुमचा पत्ता, .cv रजिस्ट्री असलेल्या OlaCV कडून. <0/> हा कोड पहिल्या वर्षी 50% सूट देतो."
+msgstr "तुमचे नाव हाच तुमचा पत्ता, .cv रजिस्ट्री असलेल्या OlaCV कडून. <0/> हा कोड पहिल्या वर्षी ५०% सूट देतो."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."
@@ -18847,7 +18861,7 @@ msgstr "तुमची सुरुवात"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
-msgstr "तुमची सुरुवात, सोबत न्यायच्या कथा आणि विचारायचे प्रश्न. कॉलच्या 10 मिनिटे आधी ती तुमची चेकलिस्ट बनते."
+msgstr "तुमची सुरुवात, सोबत न्यायच्या कथा आणि विचारायचे प्रश्न. कॉलच्या १० मिनिटे आधी ती तुमची चेकलिस्ट बनते."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your phone number changed on the resume. The letter updated too."

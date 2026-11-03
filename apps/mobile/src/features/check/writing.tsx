@@ -3,6 +3,7 @@ import type { WritingNote } from "./review";
 import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Dispatch, SetStateAction } from "react";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -145,7 +146,9 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 					action={{ label: t`Retry`, onPress: () => void saved.refetch() }}
 				/>
 			)}
-			{reviewedAt && <Text variant="caption" color="ink3">{t`Reviewed ${reviewedAt.toLocaleString()}`}</Text>}
+			{reviewedAt && (
+				<Text variant="caption" color="ink3">{t`Reviewed ${reviewedAt.toLocaleString(i18n.locale)}`}</Text>
+			)}
 			{reviewInput !== null && reviewInput !== inputText && (
 				<Banner
 					tone="warn"

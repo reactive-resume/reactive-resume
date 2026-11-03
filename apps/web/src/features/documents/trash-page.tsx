@@ -1,4 +1,5 @@
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
@@ -302,7 +303,7 @@ function TrashSelectionBar({
 			)}
 		>
 			<span className="px-2 text-sm font-semibold whitespace-nowrap" aria-live="polite">
-				<Trans>{count} selected</Trans>
+				<Trans>{ph({ count: i18n.number(count) })} selected</Trans>
 			</span>
 			{!allSelected && (
 				<Button variant="ghost" size="sm" disabled={busy} onClick={onSelectAll} className="max-sm:hidden">

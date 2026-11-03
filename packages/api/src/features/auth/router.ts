@@ -7,7 +7,12 @@ import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 import { applicationProfileRecordSchema } from "@reactive-resume/schema/application-profile";
 import { applicationPipelineSchema } from "@reactive-resume/schema/applications/lanes";
-import { careerProfileDataSchema, careerWorkspaceSchema, discoverySourceSchema } from "@reactive-resume/schema/career";
+import {
+	careerProfileDataSchema,
+	careerWorkspaceDataSchema,
+	submissionReviewSchema,
+	discoverySourceSchema,
+} from "@reactive-resume/schema/career";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { accountBackupLimits, accountUploadSkipReasons } from "@reactive-resume/utils/account-zip";
 import { localeSchema } from "@reactive-resume/utils/locale";
@@ -346,7 +351,16 @@ export const authRouter = {
 						),
 					})
 					.optional(),
-				applications: z.array(applicationDto.getById.output),
+				applications: z.array(
+					applicationDto.getById.output.extend({
+						submittedAt: z
+							.date()
+							.nullable()
+							.describe(
+								"First recorded submission time, retained after later stage changes; null when no submission is recorded.",
+							),
+					}),
+				),
 				applicationPipeline: applicationPipelineSchema,
 				aiContentReports: z.array(createSelectSchema(schema.aiContentReport)),
 				career: z.object({
@@ -370,7 +384,12 @@ export const authRouter = {
 					),
 					jobs: z.array(createSelectSchema(schema.careerJob)),
 					transcripts: z.array(createSelectSchema(schema.careerTranscript)),
-					workspaces: z.array(createSelectSchema(schema.careerWorkspace, { data: careerWorkspaceSchema })),
+					workspaces: z.array(
+						createSelectSchema(schema.careerWorkspace, {
+							data: careerWorkspaceDataSchema,
+							submissionReview: submissionReviewSchema.nullable(),
+						}),
+					),
 				}),
 				feedback: z
 					.object({

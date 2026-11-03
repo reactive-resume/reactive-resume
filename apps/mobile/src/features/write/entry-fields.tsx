@@ -3,6 +3,7 @@ import type { EntryWriter } from "./hooks";
 import type { Entry } from "./model";
 import type { CustomSectionType, RoleItem, Website } from "@reactive-resume/schema/resume/data";
 import type { DateFormat, ResumeDates } from "@reactive-resume/schema/resume/dates";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { useState } from "react";
 import { View } from "react-native";
@@ -275,7 +276,7 @@ function Roles({ entry, write, page, disabled, focusField }: FieldProps) {
 				>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
 						<Text variant="caption" color="ink2" style={{ flex: 1 }}>
-							{t`Role ${index + 1}`}
+							{t`Role ${i18n.number(index + 1)}`}
 						</Text>
 						<IconButton
 							icon="arrow-up"
@@ -326,7 +327,7 @@ function Roles({ entry, write, page, disabled, focusField }: FieldProps) {
 						}
 					/>
 					<RichTextField
-						label={t`Description of role ${index + 1}`}
+						label={t`Description of role ${i18n.number(index + 1)}`}
 						autoFocus={!disabled && focusField === `roles/${index}/description`}
 						value={role.description}
 						disabled={disabled}

@@ -3,7 +3,8 @@ import type { AssistantDocument } from "./document";
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
@@ -396,10 +397,10 @@ function tightenPrompt(overflow: Overflow) {
 	if (first && first.pages.length === 1 && first.lines) {
 		const page = first.authoredPage;
 		const lines = first.lines;
-		return t`Tighten to one page. Page ${page} runs over by about ${lines} lines.`;
+		return t`Tighten to one page. Page ${ph({ page: i18n.number(page) })} runs over by about ${ph({ lines: i18n.number(lines) })} lines.`;
 	}
 	const count = overflow.pageCount;
-	return t`Tighten to one page. It currently runs to ${count} pages.`;
+	return t`Tighten to one page. It currently runs to ${ph({ count: i18n.number(count) })} pages.`;
 }
 
 function suggestionsFor(document: AssistantDocument, prepare: boolean, overflow?: Overflow): Suggestion[] {
@@ -613,7 +614,7 @@ function PastConversations({ threads, document, currentId, onOpen }: PastConvers
 			{others.length > 0 && (
 				<section aria-labelledby="assistant-other-documents" className="grid gap-1">
 					<h3 id="assistant-other-documents" className="px-3 text-xs font-semibold text-ink-3">
-						<Trans>Other documents · {others.length}</Trans>
+						<Trans>Other documents · {i18n.number(others.length)}</Trans>
 					</h3>
 					<ul className="grid">
 						{others.map((thread, index) => (

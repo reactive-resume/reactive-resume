@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: bn-BD\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: removing?.role
 #. placeholder {1}: removing?.company
@@ -95,8 +89,8 @@ msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of y
 msgstr "{0, plural, one {“{1}” বিজ্ঞপ্তিতে একবার আছে। আপনার অভিজ্ঞতার অংশ হলে প্রাসঙ্গিক জায়গায় যোগ করুন।} other {“{2}” বিজ্ঞপ্তিতে # বার আছে। আপনার অভিজ্ঞতার অংশ হলে প্রাসঙ্গিক জায়গায় যোগ করুন।}}"
 
 #. placeholder {0}: report.totalRules
-#. placeholder {1}: report.passedRules
-#. placeholder {2}: report.passedRules
+#. placeholder {1}: i18n.number(report.passedRules)
+#. placeholder {2}: i18n.number(report.passedRules)
 #: src/features/check/score.tsx
 msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
 msgstr "{0, plural, one {#টি পরীক্ষার মধ্যে {1}টি পাস করেছে।} other {#টি পরীক্ষার মধ্যে {2}টি পাস করেছে।}}"
@@ -109,15 +103,15 @@ msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}
 msgstr "{0, plural, one {#টি পরিবর্তনের মধ্যে {1}টি গৃহীত} other {#টি পরিবর্তনের মধ্যে {2}টি গৃহীত}}"
 
 #. placeholder {0}: value.report.applicableChecks
-#. placeholder {1}: value.report.passedChecks
-#. placeholder {2}: value.report.passedChecks
+#. placeholder {1}: i18n.number(value.report.passedChecks)
+#. placeholder {2}: i18n.number(value.report.passedChecks)
 #: src/features/check/parser.tsx
 msgid "{0, plural, one {{1} of # exported PDF check passes.} other {{2} of # exported PDF checks pass.}}"
 msgstr "{0, plural, one {রপ্তানি করা PDF-এর #টি পরীক্ষার মধ্যে {1}টি সফল।} other {রপ্তানি করা PDF-এর #টি পরীক্ষার মধ্যে {2}টি সফল।}}"
 
 #. placeholder {0}: match.total
-#. placeholder {1}: match.found.length
-#. placeholder {2}: match.found.length
+#. placeholder {1}: i18n.number(match.found.length)
+#. placeholder {2}: i18n.number(match.found.length)
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {বিজ্ঞপ্তির #টি শব্দের মধ্যে {1}টি আছে} other {বিজ্ঞপ্তির #টি শব্দের মধ্যে {2}টি আছে}}"
@@ -139,8 +133,6 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, one {#টি আবেদনের মধ্যে {count}টি পরিবর্তিত হয়েছে।} other {#টি আবেদনের মধ্যে {count}টি পরিবর্তিত হয়েছে।}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {#টি উত্তর} other {#টি উত্তর}}"
@@ -478,8 +470,8 @@ msgstr "{0} (আমার)"
 
 #. placeholder {0}: labelOf(from.status)
 #. placeholder {1}: labelOf(step.status)
-#. placeholder {2}: step.reached
-#. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
+#. placeholder {2}: i18n.number(step.reached)
+#. placeholder {3}: step.conversion === null ? "" : ` (${i18n.number(step.conversion)}%)`
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
@@ -513,7 +505,7 @@ msgid "{0} interview · {1}"
 msgstr "{0} ইন্টারভিউ · {1}"
 
 #. placeholder {0}: interviewTypeLabel(event.interview.kind)
-#. placeholder {1}: event.interview.durationMinutes
+#. placeholder {1}: i18n.number(event.interview.durationMinutes)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "{0} interview · {1} min"
 msgstr "{0} ইন্টারভিউ · {1} মিনিট"
@@ -533,34 +525,34 @@ msgstr "{0} বেশি"
 msgid "{0} new comments"
 msgstr ""
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/features/letters/write.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATES.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATES.length)
 #: src/features/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "{1} এর {0} দেখানো হয়েছে"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{1}টি মানানসই আবেদনের মধ্যে {0}টি উত্তর পেয়েছে; অন্য জীবনবৃত্তান্ত দিয়ে পাঠানো {3}টির মধ্যে {2}টি।"
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -575,38 +567,38 @@ msgstr "শুধুমাত্র {0}"
 msgid "{0} posting"
 msgstr "{0} চাকরির পোস্টিং"
 
-#. placeholder {0}: selectedIds.length
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selectedIds.length)
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "{0} বেছে নেওয়া হয়েছে"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
-#. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
-#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: displayed?.total ?? page.total
-#. placeholder {2}: pending.length
+#. placeholder {0}: i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))
+#. placeholder {0}: i18n.number(recoveryStart + 1)
+#. placeholder {1}: i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))
+#. placeholder {1}: i18n.number(Math.min(recoveryStart + 100, pending.length))
+#. placeholder {2}: i18n.number(displayed?.total ?? page.total)
+#. placeholder {2}: i18n.number(pending.length)
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: row.index + 1
-#. placeholder {2}: row.count
+#. placeholder {1}: i18n.number(row.index + 1)
+#. placeholder {2}: i18n.number(row.count)
 #: src/features/write/outline.tsx
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, {2} এর মধ্যে {1} এন্ট্রি"
@@ -616,13 +608,13 @@ msgstr "{0}, {2} এর মধ্যে {1} এন্ট্রি"
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: Math.round(zoom * 100)
+#. placeholder {0}: i18n.number(Math.round(zoom * 100))
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
 msgid "{0}%"
 msgstr "{0}%"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/messages.tsx
 msgid "{accepted} of {0} applied"
 msgstr "{0}-এর {accepted} প্রয়োগ করা হয়েছে"
@@ -630,6 +622,10 @@ msgstr "{0}-এর {accepted} প্রয়োগ করা হয়েছে
 #: src/features/applications-board/insights-screen.tsx
 msgid "{active, plural, one {# active application} other {# active applications}}"
 msgstr "{active, plural, one {# সক্রিয় আবেদন} other {# সক্রিয় আবেদন}}"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, one {#টি উত্তর} other {#টি উত্তর}}"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
@@ -811,7 +807,7 @@ msgstr ""
 
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
-msgstr "{name} পৃষ্ঠা 1 এ যোগ করা হয়েছে"
+msgstr "{name} পৃষ্ঠা ১ এ যোগ করা হয়েছে"
 
 #: src/features/check/issues.ts
 msgid "{name} is split into {columns} columns"
@@ -844,6 +840,14 @@ msgstr "{pairing} প্রকার"
 #: src/features/assistant/page-marks.tsx
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {এই পৃষ্ঠায় #টি প্রস্তাবিত সম্পাদনা · আপনি গ্রহণ না করা পর্যন্ত কিছু বদলাবে না} other {এই পৃষ্ঠায় #টি প্রস্তাবিত সম্পাদনা · আপনি গ্রহণ না করা পর্যন্ত কিছু বদলাবে না}}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "মূল বেতনের {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "মূল বেতনের {percent} ({value})"
 
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
@@ -942,22 +946,26 @@ msgstr "{words, plural, one {# শব্দ} other {# শব্দ}}"
 msgid "{words} of {shownLimit} words"
 msgstr ""
 
-#. placeholder {0}: items.length - MAX_PER_DAY
+#. placeholder {0}: i18n.number(items.length - MAX_PER_DAY)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "আরও +{0}টি"
 
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ বছরে {yearly} ({months} × {monthly})"
+
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
-msgstr "1 কলাম, ইনলাইন"
+msgstr "১ কলাম, ইনলাইন"
 
 #: src/features/application-detail/hooks.ts
 msgid "1 day"
-msgstr "1 দিন"
+msgstr "১ দিন"
 
 #: src/features/application-detail/hooks.ts
 msgid "1 h"
-msgstr "1 ঘণ্টা"
+msgstr "১ ঘণ্টা"
 
 #: src/features/share/feedback.tsx
 msgid "1 new comment"
@@ -965,31 +973,31 @@ msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "10-minute briefing"
-msgstr "10 মিনিটের ব্রিফিং"
+msgstr "১০ মিনিটের ব্রিফিং"
 
 #: src/features/design/style-groups.tsx
 msgid "10–11 recommended"
-msgstr "10-11 প্রস্তাবিত"
+msgstr "১০-১১ প্রস্তাবিত"
 
 #: src/features/letters/share.tsx
 msgid "2 files"
-msgstr "2টি ফাইল"
+msgstr "২টি ফাইল"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "2 hours before"
-msgstr "2 ঘণ্টা আগে"
+msgstr "২ ঘণ্টা আগে"
 
 #: src/features/write/entry-screen.tsx
 msgid "2–3 sentences reads best"
-msgstr "2-3 বাক্য সবচেয়ে ভাল পড়া"
+msgstr "২-৩ বাক্য সবচেয়ে ভাল পড়া"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "24 hours before"
-msgstr "24 ঘণ্টা আগে"
+msgstr "২৪ ঘণ্টা আগে"
 
 #: src/features/share/feedback.tsx
 msgid "30 days"
-msgstr "30 দিন"
+msgstr "৩০ দিন"
 
 #: src/features/share/feedback.tsx
 msgid "7 days"
@@ -997,7 +1005,7 @@ msgstr ""
 
 #: src/features/share/feedback.tsx
 msgid "90 days"
-msgstr "90 দিন"
+msgstr "৯০ দিন"
 
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
@@ -1105,7 +1113,7 @@ msgstr "একটি সংক্ষিপ্ত ফলো-আপ সাধা�
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
-msgstr "সময় ধরে পরিকল্পনা, আপনার সূচনা বক্তব্য, যে গল্পগুলো বলবেন আর যে প্রশ্নগুলো করবেন। কলের 10 মিনিট আগে এটি আপনার চেকলিস্ট হয়ে যায়।"
+msgstr "সময় ধরে পরিকল্পনা, আপনার সূচনা বক্তব্য, যে গল্পগুলো বলবেন আর যে প্রশ্নগুলো করবেন। কলের ১০ মিনিট আগে এটি আপনার চেকলিস্ট হয়ে যায়।"
 
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
@@ -1121,7 +1129,7 @@ msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
-msgstr "বলতে প্রায় 90 সেকেন্ড লাগে"
+msgstr "বলতে প্রায় ৯০ সেকেন্ড লাগে"
 
 #: src/features/career/offers.tsx
 msgid "Above your office-day limit."
@@ -1399,7 +1407,7 @@ msgstr "আগ্রহ যোগ করুন"
 
 #: src/features/check/issues.ts
 msgid "Add it to page 1"
-msgstr "পৃষ্ঠা 1 এ যোগ করুন"
+msgstr "পৃষ্ঠা ১ এ যোগ করুন"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add lane"
@@ -1433,7 +1441,7 @@ msgstr "দেশের কোডসহ একটি যোগ করুন; ক
 msgid "Add page"
 msgstr "পৃষ্ঠা যোগ করুন"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/preview/page.tsx
 msgid "Add page {0}"
 msgstr ""
@@ -1738,7 +1746,7 @@ msgstr "আলবেনিয়ান"
 msgid "All"
 msgstr "সব"
 
-#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
+#. placeholder {0}: i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "সমস্ত ({0})"
@@ -1866,7 +1874,7 @@ msgstr ""
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
 msgstr ""
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/application-detail/sections.tsx
 msgid "and {0} more"
 msgstr "এবং {0} আরও"
@@ -2059,7 +2067,7 @@ msgstr "সময়ের সাথে আবেদন"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
-msgstr "প্রতি সপ্তাহে পাঠানো আবেদন (শেষ 8 সপ্তাহ)"
+msgstr "প্রতি সপ্তাহে পাঠানো আবেদন (শেষ ৮ সপ্তাহ)"
 
 #: src/features/applications/trash-screen.tsx
 msgid "Applications stay in Trash until you delete them permanently."
@@ -2248,7 +2256,7 @@ msgstr "একটি জীবনবৃত্তান্ত ফাইল সং
 
 #: src/features/assistant/chat-view.tsx
 msgid "Attach up to 10 files to a message."
-msgstr "একটি বার্তায় 10টি পর্যন্ত ফাইল সংযুক্ত করুন৷"
+msgstr "একটি বার্তায় ১০টি পর্যন্ত ফাইল সংযুক্ত করুন৷"
 
 #: src/features/assistant/messages.tsx
 #: src/features/career/facts.tsx
@@ -2261,7 +2269,7 @@ msgstr "সংযুক্তি"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Attachments can be up to 100 MB in all."
-msgstr "সংযুক্তিগুলি সব মিলিয়ে 100 MB পর্যন্ত হতে পারে৷"
+msgstr "সংযুক্তিগুলি সব মিলিয়ে ১০০ MB পর্যন্ত হতে পারে৷"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "audio file"
@@ -2278,7 +2286,7 @@ msgstr "স্বয়ংক্রিয়ভাবে"
 
 #: src/features/history/history.tsx
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
-msgstr "অটোসেভগুলি সেশন অনুসারে গোষ্ঠীবদ্ধ হয় এবং 90 দিনের জন্য রাখা হয়। নামযুক্ত সংস্করণগুলি রাখা হয় যতক্ষণ না আপনি সেগুলি মুছে ফেলবেন৷ পুনরুদ্ধার করা প্রথমে বর্তমান অবস্থা সংরক্ষণ করে।"
+msgstr "অটোসেভগুলি সেশন অনুসারে গোষ্ঠীবদ্ধ হয় এবং ৯০ দিনের জন্য রাখা হয়। নামযুক্ত সংস্করণগুলি রাখা হয় যতক্ষণ না আপনি সেগুলি মুছে ফেলবেন৷ পুনরুদ্ধার করা প্রথমে বর্তমান অবস্থা সংরক্ষণ করে।"
 
 #: src/features/share/custom-domain.tsx
 msgid "Available"
@@ -2462,7 +2470,7 @@ msgstr "বোল্ড"
 msgid "Bonus"
 msgstr "বোনাস"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -2858,12 +2866,12 @@ msgstr "একটি PDF ফাইল বেছে নিন। নির্ব�
 
 #: src/features/application-detail/sections.tsx
 msgid "Choose a PDF smaller than 10 MB. The selected file was not uploaded."
-msgstr "10 MB-এর চেয়ে ছোট একটি PDF চয়ন করুন৷ নির্বাচিত ফাইল আপলোড করা হয়নি."
+msgstr "১০ MB-এর চেয়ে ছোট একটি PDF চয়ন করুন৷ নির্বাচিত ফাইল আপলোড করা হয়নি."
 
 #: src/features/settings/profile.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Choose a photo smaller than 10 MB."
-msgstr "10 MB এর চেয়ে ছোট একটি ফটো চয়ন করুন৷"
+msgstr "১০ MB এর চেয়ে ছোট একটি ফটো চয়ন করুন৷"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Choose a replacement"
@@ -2961,7 +2969,7 @@ msgstr "সময় বেছে নিন"
 
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
-msgstr "বাল্ক অ্যাকশন প্রতি 200 আবেদন পর্যন্ত বেছে নিন।"
+msgstr "বাল্ক অ্যাকশন প্রতি ২০০ আবেদন পর্যন্ত বেছে নিন।"
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3498,10 +3506,6 @@ msgstr "এই তথ্যটি সংশোধন করুন"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -4096,7 +4100,7 @@ msgstr "ইন্টারভিউটি আপডেট করা যায়
 
 #: src/features/settings/profile.tsx
 msgid "Couldn't update the photo. Check camera permissions, choose a photo smaller than 10 MB, and try again."
-msgstr "ফটো আপডেট করা যায়নি. ক্যামেরা অনুমতি যাচাই করুন, 10 MB এর চেয়ে ছোট একটি ফটো চয়ন করুন এবং আবার চেষ্টা করুন৷"
+msgstr "ফটো আপডেট করা যায়নি. ক্যামেরা অনুমতি যাচাই করুন, ১০ MB এর চেয়ে ছোট একটি ফটো চয়ন করুন এবং আবার চেষ্টা করুন৷"
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't update the timeline. Try again."
@@ -4305,10 +4309,10 @@ msgstr "কাস্টম শৈলী প্রয়োগ করা হয�
 msgid "Czech"
 msgstr "চেক"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/share/link.tsx
 msgid "Daily views over 30 days, peak {0}"
-msgstr "30 দিনে দৈনিক ভিউ, সর্বোচ্চ {0}"
+msgstr "৩০ দিনে দৈনিক ভিউ, সর্বোচ্চ {0}"
 
 #: src/features/ai/report-content.tsx
 msgid "Dangerous or illegal advice"
@@ -4555,12 +4559,12 @@ msgstr "সংস্করণ মুছে ফেলুন"
 msgid "Deleted"
 msgstr "মুছে ফেলা হয়েছে"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0}. Refresh to see what remains."
 msgstr ""
@@ -4603,9 +4607,9 @@ msgstr "বিবরণ"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Description is clipped to 20,000 characters. Review it before preparing."
-msgstr "বর্ণনা 20,000 অক্ষরে ক্লিপ করা হয়েছে। প্রস্তুতির আগে এটি পর্যালোচনা করুন।"
+msgstr "বর্ণনা ২০,০০০ অক্ষরে ক্লিপ করা হয়েছে। প্রস্তুতির আগে এটি পর্যালোচনা করুন।"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Description of role {0}"
 msgstr "ভূমিকার বর্ণনা {0}"
@@ -4723,7 +4727,7 @@ msgstr "নথিপত্র"
 
 #: src/features/documents/library.tsx
 msgid "Documents are deleted permanently after 30 days."
-msgstr "নথিগুলো 30 দিন পর স্থায়ীভাবে মুছে ফেলা হয়।"
+msgstr "নথিগুলো ৩০ দিন পর স্থায়ীভাবে মুছে ফেলা হয়।"
 
 #: src/features/application-detail/sections.tsx
 msgid "Documents for this job"
@@ -4731,7 +4735,7 @@ msgstr "এই কাজের জন্য নথি"
 
 #: src/features/documents/library.tsx
 msgid "Documents you move here stay for 30 days."
-msgstr "আপনি এখানে যে নথিগুলো সরান সেগুলো 30 দিন থাকে।"
+msgstr "আপনি এখানে যে নথিগুলো সরান সেগুলো ৩০ দিন থাকে।"
 
 #: src/features/settings/export.tsx
 msgid "Documents, version history and uploaded files in one zip. Check the file manifest for omissions."
@@ -4995,7 +4999,7 @@ msgstr "সম্পাদনা"
 msgid "Edit {0}"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
@@ -5207,7 +5211,7 @@ msgstr "একটি মডেল ID লিখুন।"
 
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
-msgstr "একটি নাম লিখুন, 64টি অক্ষর পর্যন্ত।"
+msgstr "একটি নাম লিখুন, ৬৪টি অক্ষর পর্যন্ত।"
 
 #: src/features/write/date-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
@@ -5237,11 +5241,19 @@ msgstr "একটি ওয়েব ঠিকানা লিখুন, যে�
 
 #: src/features/career/preferences.tsx
 msgid "Enter a whole number from 0 to 52, or leave blank."
-msgstr "0 থেকে 52 পর্যন্ত একটি পূর্ণ সংখ্যা লিখুন, অথবা ফাঁকা রাখুন।"
+msgstr "০ থেকে ৫২ পর্যন্ত একটি পূর্ণ সংখ্যা লিখুন, অথবা ফাঁকা রাখুন।"
 
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org এর মতো একটি ঠিকানা লিখুন।"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "একটি পরিমাণ বা মূল বেতনের শতাংশ লিখুন, যেমন 10%।"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "একটি পরিমাণ বা 10%-এর মতো শতাংশ লিখুন, অথবা ফাঁকা রাখুন।"
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -5310,7 +5322,7 @@ msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Every 3 days"
-msgstr "প্রতি 3 দিনে"
+msgstr "প্রতি ৩ দিনে"
 
 #: src/features/check/screen.tsx
 msgid "Every check passes."
@@ -5455,7 +5467,7 @@ msgstr ""
 msgid "Feedback links"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/basics-screen.tsx
 msgid "Field {0}"
 msgstr "ক্ষেত্র {0}"
@@ -5479,7 +5491,7 @@ msgstr "ফাইল ফরম্যাট"
 
 #: src/features/documents/import-file.ts
 msgid "File is too large. Choose a file up to 10 MB."
-msgstr "ফাইলটি খুব বড়। 10 MB পর্যন্ত একটি ফাইল চয়ন করুন৷"
+msgstr "ফাইলটি খুব বড়। ১০ MB পর্যন্ত একটি ফাইল চয়ন করুন৷"
 
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -5492,7 +5504,7 @@ msgstr "এই ডিভাইসে ফাইল শেয়ারিং অ�
 
 #: src/features/assistant/chat-view.tsx
 msgid "Files can be up to 25 MB each."
-msgstr "ফাইল প্রতিটি 25 MB পর্যন্ত হতে পারে।"
+msgstr "ফাইল প্রতিটি ২৫ MB পর্যন্ত হতে পারে।"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Fill details manually"
@@ -6029,6 +6041,10 @@ msgstr "নিয়োগকারী ম্যানেজার"
 msgid "Hiring team"
 msgstr "নিয়োগকারী দল"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "আগের পর্যালোচনার টিকচিহ্নগুলি পাওয়া যাচ্ছে না।"
+
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
 #: src/features/share/export-screen.tsx
@@ -6389,13 +6405,13 @@ msgstr "বোনাস আছে কি, আর তা কিসের ওপ�
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/check/page.tsx
 msgid "Issue {0} of {1}"
 msgstr "{1}-এর {0} ইস্যু"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -6903,7 +6919,7 @@ msgstr "চিঠির শরীর"
 msgid "Letter page"
 msgstr "চিঠির পাতা"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/letters/page.tsx
 msgid "Letter page {0}"
 msgstr "চিঠির পৃষ্ঠা {0}"
@@ -6976,12 +6992,12 @@ msgstr "এই বন্ধ লাইনগুলি পড়ার সময�
 msgid "Link"
 msgstr "লিঙ্ক"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -7600,7 +7616,7 @@ msgstr "সকাল ০৮:০০ স্থানীয়"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Morning of runs at 08:00, or two hours before interviews starting before 10:00."
-msgstr "সকাল 08:00 এ, বা 10:00 এর আগে ইন্টারভিউ শুরু হওয়ার দুই ঘন্টা আগে।"
+msgstr "সকাল ০৮:০০ এ, বা ১০:০০ এর আগে ইন্টারভিউ শুরু হওয়ার দুই ঘন্টা আগে।"
 
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
@@ -7617,7 +7633,7 @@ msgstr "বেশিরভাগ এন্ট্রিতে কোনো তা
 
 #: src/features/letters/write.tsx
 msgid "Most recruiters read 180–320 words. The shaded band shows the range."
-msgstr "বেশিরভাগ নিয়োগকারী 180-320 শব্দ পড়েন। ছায়াযুক্ত ব্যান্ড পরিসীমা দেখায়।"
+msgstr "বেশিরভাগ নিয়োগকারী ১৮০-৩২০ শব্দ পড়েন। ছায়াযুক্ত ব্যান্ড পরিসীমা দেখায়।"
 
 #: src/features/check/issues.ts
 msgid "Most systems file candidates by email address."
@@ -7726,8 +7742,8 @@ msgstr "উপরে সরান"
 msgid "Move your email and phone number to the top of page one."
 msgstr "আপনার ইমেইল ও ফোন নম্বর প্রথম পৃষ্ঠার শীর্ষে নিয়ে যান।"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "{1}-এর {0}-কে ট্র্যাশে সরানো হয়েছে৷ লক করা নথি এড়িয়ে গেছে। রিফ্রেশ করুন এবং কোনো ব্যর্থতা পুনরায় চেষ্টা করুন."
@@ -7780,7 +7796,7 @@ msgstr "নাম"
 msgid "Name and contact details weren't found. Add them in Basics."
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
 msgstr "ব্যক্তি {0}-এর নাম"
@@ -7903,6 +7919,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "নতুন কীগুলো শুরুতে শুধু পড়ার অনুমতি পায়। ব্রাউজারে আপনার অ্যাকাউন্ট সেটিংস থেকে কী তৈরি করুন।"
+
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "অফারের নতুন সংস্করণ সংরক্ষিত হয়েছে"
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -8588,10 +8608,6 @@ msgid "Offer terms"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer type"
 msgstr "চাকরির অফারের ধরন"
@@ -8695,7 +8711,7 @@ msgstr "শুধুমাত্র তাদের পরীক্ষায় 
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "শুধুমাত্র প্রথম {0} পৃষ্ঠাগুলি পরীক্ষা করা হয়েছে৷"
@@ -8706,7 +8722,7 @@ msgstr "একবারে কেবল প্রথম {MAX_IMPORT}টি স�
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
-msgstr "শুধুমাত্র প্রথম 30 পৃষ্ঠা চেক করা হয়েছে."
+msgstr "শুধুমাত্র প্রথম ৩০ পৃষ্ঠা চেক করা হয়েছে."
 
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
@@ -8957,7 +8973,7 @@ msgstr "অন্যান্য সুবিধা"
 msgid "Other concern"
 msgstr "অন্যান্য উদ্বেগ"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/threads.tsx
 msgid "Other documents · {0}"
 msgstr "অন্যান্য নথি · {0}"
@@ -8986,8 +9002,8 @@ msgstr "পৃষ্ঠা"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: 1
-#. placeholder {0}: index + 1
-#. placeholder {0}: item.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(item.page + 1)
 #: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
@@ -8998,29 +9014,29 @@ msgstr "পৃষ্ঠা"
 msgid "Page {0}"
 msgstr "পৃষ্ঠা {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/history/history.tsx
 msgid "Page {0} · read-only"
 msgstr "পৃষ্ঠা {0} · শুধুমাত্র পঠনযোগ্য"
 
-#. placeholder {0}: index + 1
-#. placeholder {0}: placement.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(placement.page + 1)
 #: src/features/write/section-sheet.tsx
 msgid "Page {0} · Sidebar"
 msgstr "পৃষ্ঠা {0} · সাইডবার"
 
-#. placeholder {0}: pageIndex + 1
-#. placeholder {1}: preview.result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
+#. placeholder {1}: i18n.number(preview.result?.pageCount ?? 1)
 #: src/features/check/page.tsx
 msgid "Page {0} of {1}"
 msgstr "{1} এর পৃষ্ঠা {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/ats-checker/original-page.tsx
 msgid "Page {0} of the uploaded PDF"
 msgstr "আপলোড করা PDF এর পৃষ্ঠা {0}"
 
-#. placeholder {0}: result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(result?.pageCount ?? 1)
 #: src/preview/page.tsx
 msgid "Page {currentPage} of {0}"
 msgstr "{0} এর পৃষ্ঠা {currentPage}"
@@ -9847,7 +9863,7 @@ msgstr "পঠনযোগ্যতা স্কোর"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Readability score: {score} out of 100"
-msgstr "পঠনযোগ্যতার স্কোর: 100টির মধ্যে {score}"
+msgstr "পঠনযোগ্যতার স্কোর: ১০০টির মধ্যে {score}"
 
 #: src/features/assistant/messages.tsx
 msgid "Reading page…"
@@ -9944,7 +9960,7 @@ msgstr "রেকর্ডিং · {elapsed}"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Recording stopped at the 2-minute limit. Transcribing what you said."
-msgstr "2 মিনিটের সীমায় রেকর্ডিং থেমে গেছে। আপনি যা বলেছেন তা ট্রান্সক্রাইব করা হচ্ছে।"
+msgstr "২ মিনিটের সীমায় রেকর্ডিং থেমে গেছে। আপনি যা বলেছেন তা ট্রান্সক্রাইব করা হচ্ছে।"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Recording time"
@@ -9994,7 +10010,7 @@ msgstr "পুনরায় করুন"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -10019,11 +10035,11 @@ msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing 2 hours before"
-msgstr "2 ঘণ্টা আগে ব্রিফিং রিফ্রেশ করুন"
+msgstr "২ ঘণ্টা আগে ব্রিফিং রিফ্রেশ করুন"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing 24 hours before"
-msgstr "24 ঘণ্টা আগে ব্রিফিং রিফ্রেশ করুন"
+msgstr "২৪ ঘণ্টা আগে ব্রিফিং রিফ্রেশ করুন"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
@@ -10168,7 +10184,7 @@ msgstr "ক্ষেত্র সরান"
 msgid "Remove file"
 msgstr "ফাইল সরান"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -10177,7 +10193,7 @@ msgstr ""
 msgid "Remove password"
 msgstr "পাসওয়ার্ড সরান"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "ব্যক্তি {0}-কে সরান"
@@ -10191,7 +10207,7 @@ msgstr "ছবি সরান"
 msgid "Remove question"
 msgstr "প্রশ্ন সরান"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -10433,12 +10449,12 @@ msgstr "\"{0}\" পুনরুদ্ধার করা হয়েছে"
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -10510,7 +10526,7 @@ msgstr "জীবনবৃত্তান্তের ভাষা"
 msgid "Resume options"
 msgstr ""
 
-#. placeholder {0}: pageIndex + 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/check/page.tsx
 msgid "Resume page {0}"
 msgstr "জীবনবৃত্তান্ত পৃষ্ঠা {0}"
@@ -10669,8 +10685,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "প্রথমবার আবেদন জমা দেওয়ার সময় পর্যালোচনার টিকচিহ্নগুলি সংরক্ষিত হয়েছে।"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -10733,7 +10749,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "পর্যালোচনা লেখা"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/check/writing.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -10781,7 +10797,7 @@ msgstr "পদ"
 msgid "Role (optional)"
 msgstr "ভূমিকা (ঐচ্ছিক)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "ভূমিকা {0}"
@@ -10921,6 +10937,10 @@ msgstr "সংযোগ সংরক্ষণ করুন"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "সংশোধিত শর্তগুলো নতুন সংস্করণ হিসেবে সংরক্ষণ করুন। আগের সংস্করণ উপলব্ধ থাকবে। কোনো AI অনুরোধ পাঠানো হয় না।"
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
@@ -11317,12 +11337,12 @@ msgstr "সব নির্বাচন করুন"
 msgid "Select all roles"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
 msgstr "পৃষ্ঠায় একটি এন্ট্রি নির্বাচন করুন {0}"
 
-#. placeholder {0}: entry + 1
+#. placeholder {0}: i18n.number(entry + 1)
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "এন্ট্রি নির্বাচন করুন {0}"
@@ -11647,7 +11667,7 @@ msgstr "এই পাতায় উপলব্ধ শর্টকাট। �
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
-msgstr "এটি আবেদন করা হয়েছে বলে চিহ্নিত করার আগে প্রশ্নগুলো 2,000 অক্ষর এবং উত্তরগুলো 6,000 অক্ষরে ছোট করুন।"
+msgstr "এটি আবেদন করা হয়েছে বলে চিহ্নিত করার আগে প্রশ্নগুলো ২,০০০ অক্ষর এবং উত্তরগুলো ৬,০০০ অক্ষরে ছোট করুন।"
 
 #: src/features/letters/write.tsx
 msgid "Shorter"
@@ -11666,7 +11686,7 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume দিয়ে তৈরি” দেখান"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
 #: src/features/applications-board/board-screen.tsx
 msgid "Show {0} more"
 msgstr "আরও দেখুন {0}"
@@ -12277,8 +12297,8 @@ msgstr ""
 msgid "Stay in Documents"
 msgstr "নথিপত্রে থাকুন"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -12382,7 +12402,7 @@ msgstr "জমা দেওয়া সংযুক্ত জীবনবৃত
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Success at 90 days · next step"
-msgstr "90 দিনে সাফল্য · পরবর্তী ধাপ"
+msgstr "৯০ দিনে সাফল্য · পরবর্তী ধাপ"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Suggest target roles (optional AI)"
@@ -12680,7 +12700,7 @@ msgstr "সেই ফাইলটি PDF হিসাবে পড়া যা�
 
 #: src/features/ats-checker/check.ts
 msgid "That file is too large to check. PDFs up to 25 MB work."
-msgstr "এই ফাইলটি পরীক্ষা করার জন্য খুব বড়। PDFs 25 MB পর্যন্ত কাজ।"
+msgstr "এই ফাইলটি পরীক্ষা করার জন্য খুব বড়। PDFs ২৫ MB পর্যন্ত কাজ।"
 
 #: src/features/applications/error.ts
 msgid "That link couldn't be read. Paste the posting text instead."
@@ -12692,7 +12712,7 @@ msgstr "সেই প্রদানকারী সেটআপ বৈধ ন�
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "That recording was empty or over 2 MB. Try a shorter answer."
-msgstr "রেকর্ডিংটি খালি ছিল বা 2 MB-এর বেশি ছিল। একটি ছোট উত্তর চেষ্টা করুন।"
+msgstr "রেকর্ডিংটি খালি ছিল বা ২ MB-এর বেশি ছিল। একটি ছোট উত্তর চেষ্টা করুন।"
 
 #: src/features/application-detail/sheets.tsx
 msgid "That reminder time has already passed."
@@ -13225,7 +13245,7 @@ msgstr "এই ফাইলে কোনো অ্যাক্সেসিবি
 
 #: src/features/ats-checker/checker.tsx
 msgid "This file is {megabytes} MB. Imports take files up to 10 MB."
-msgstr "এই ফাইলটি {megabytes} MB। আমদানি 10 MB পর্যন্ত ফাইল নেয়।"
+msgstr "এই ফাইলটি {megabytes} MB। আমদানি ১০ MB পর্যন্ত ফাইল নেয়।"
 
 #: src/features/ats-checker/messages.ts
 msgid "This file is encrypted."
@@ -13879,16 +13899,16 @@ msgstr "শিরোনামহীন জীবনবৃত্তান্ত"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Up to 2 minutes · 2 MB maximum."
-msgstr "2 মিনিট পর্যন্ত · 2 এমবি সর্বোচ্চ।"
+msgstr "২ মিনিট পর্যন্ত · ২ এমবি সর্বোচ্চ।"
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Up to 20 tags per document, 40 characters per tag."
-msgstr "ডকুমেন্ট প্রতি 20টি ট্যাগ পর্যন্ত, ট্যাগ প্রতি 40টি অক্ষর।"
+msgstr "ডকুমেন্ট প্রতি ২০টি ট্যাগ পর্যন্ত, ট্যাগ প্রতি ৪০টি অক্ষর।"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Up to 25 MB · checked on the server and not stored"
-msgstr "25 MB পর্যন্ত · সার্ভারে চেক করা হয়েছে এবং সংরক্ষণ করা হয়নি"
+msgstr "২৫ MB পর্যন্ত · সার্ভারে চেক করা হয়েছে এবং সংরক্ষণ করা হয়নি"
 
 #: src/features/settings/application-profile.tsx
 msgid "Update"
@@ -13935,7 +13955,7 @@ msgstr "আবেদনের পর্যায় পরিচালনা ক
 msgid "Updated"
 msgstr "আপডেট করা হয়েছে"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Updated {completed} of {0}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures."
 msgstr "{0}-এর মধ্যে {completed} আপডেট করা হয়েছে। লক করা নথিপত্র, এবং সর্বজনীন লিঙ্কের চিঠিপত্র, এড়িয়ে গেছে। রিফ্রেশ করুন এবং কোনো ব্যর্থতা পুনরায় চেষ্টা করুন."
@@ -13992,11 +14012,11 @@ msgstr "{url} ব্যবহার করুন"
 
 #: src/features/settings/profile.tsx
 msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
-msgstr "3 থেকে 64 লাতিন অক্ষর a–z, সংখ্যা, বিন্দু, হাইফেন এবং আন্ডারস্কোর ব্যবহার করুন।"
+msgstr "৩ থেকে ৬৪ লাতিন অক্ষর a–z, সংখ্যা, বিন্দু, হাইফেন এবং আন্ডারস্কোর ব্যবহার করুন।"
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
-msgstr "6-64 অক্ষর ব্যবহার করুন।"
+msgstr "৬-৬৪ অক্ষর ব্যবহার করুন।"
 
 #: src/features/design/style-groups.tsx
 msgid "Use a darker shade"
@@ -14049,13 +14069,13 @@ msgstr "একটি http বা https লিঙ্ক ব্যবহার ক
 
 #: src/features/ats-checker/messages.ts
 msgid "Use at least 9pt."
-msgstr "কমপক্ষে 9pt ব্যবহার করুন।"
+msgstr "কমপক্ষে ৯pt ব্যবহার করুন।"
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/share/link.tsx
 msgid "Use at most 64 characters."
-msgstr "সর্বোচ্চ 64টি অক্ষর ব্যবহার করুন।"
+msgstr "সর্বোচ্চ ৬৪টি অক্ষর ব্যবহার করুন।"
 
 #: src/features/letters/write.tsx
 msgid "Use default"
@@ -14267,7 +14287,7 @@ msgstr "সংস্করণ সংরক্ষিত"
 msgid "Version sent {date}"
 msgstr "সংস্করণ {date} পাঠানো হয়েছে"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "সংস্করণ পাঠানো হয়েছে {date} · {0} চেক করুন"
@@ -14329,7 +14349,7 @@ msgstr "দেখা হচ্ছে {0} · শুধুমাত্র পড�
 
 #: src/features/share/link.tsx
 msgid "views · 30 days"
-msgstr "ভিউ · 30 দিন"
+msgstr "ভিউ · ৩০ দিন"
 
 #: src/features/ai/report-content.tsx
 msgid "Violence or abuse"
@@ -14828,7 +14848,7 @@ msgstr "আপনি সম্পাদনা চালিয়ে যেতে
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "You can keep up to 30 application questions."
-msgstr "আপনি সর্বোচ্চ 30টি আবেদনের প্রশ্ন রাখতে পারেন।"
+msgstr "আপনি সর্বোচ্চ ৩০টি আবেদনের প্রশ্ন রাখতে পারেন।"
 
 #: app/(auth)/sign-in.tsx
 msgid "You can sign in with an account you already have."
@@ -15049,7 +15069,7 @@ msgstr "আপনার নাম"
 
 #: src/features/share/custom-domain.tsx
 msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
-msgstr "ঠিকানা হিসেবে আপনার নাম, .cv রেজিস্ট্রি OlaCV থেকে। কোড {CODE} প্রথম বছরে 50% ছাড় দেয়।"
+msgstr "ঠিকানা হিসেবে আপনার নাম, .cv রেজিস্ট্রি OlaCV থেকে। কোড {CODE} প্রথম বছরে ৫০% ছাড় দেয়।"
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"
@@ -15066,7 +15086,7 @@ msgstr "আপনার সূচনা বক্তব্য"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
-msgstr "আপনার সূচনা বক্তব্য, যে গল্পগুলো বলবেন আর যে প্রশ্নগুলো করবেন। কলের 10 মিনিট আগে এটি আপনার চেকলিস্ট হয়ে যায়।"
+msgstr "আপনার সূচনা বক্তব্য, যে গল্পগুলো বলবেন আর যে প্রশ্নগুলো করবেন। কলের ১০ মিনিট আগে এটি আপনার চেকলিস্ট হয়ে যায়।"
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

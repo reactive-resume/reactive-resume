@@ -1,7 +1,8 @@
 import type { EditorSelection } from "@/features/resume/editor/store";
 import type { VersionSummary } from "@/features/resume/share/format";
 import type { Template } from "@reactive-resume/schema/templates";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -240,7 +241,7 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 		return (
 			<figcaption className="relative mb-2.5 border-t-[1.5px] border-dashed border-warn">
 				<span className="absolute end-0 -top-2.5 rounded bg-sunken px-1.5 text-xs font-semibold text-warn-text">
-					<Trans>Page {pageNumber}</Trans>
+					<Trans>Page {ph({ pageNumber: i18n.number(pageNumber) })}</Trans>
 				</span>
 			</figcaption>
 		);
@@ -248,7 +249,7 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 
 	return (
 		<figcaption className="mb-2.5 text-center text-xs font-medium text-ink-3">
-			<Trans>Page {pageNumber}</Trans>
+			<Trans>Page {ph({ pageNumber: i18n.number(pageNumber) })}</Trans>
 		</figcaption>
 	);
 }
@@ -262,7 +263,6 @@ type OverflowChipProps = NonNullable<ReturnType<typeof measureOverflow>>;
 function OverflowChip({ authored, spills, pageCount }: OverflowChipProps) {
 	const [fitting, setFitting] = useState(false);
 	const first = spills[0];
-	const page = first?.authoredPage;
 	const lines = first?.lines;
 	const next = authored + 1;
 	const data = useResumeData();
@@ -277,8 +277,8 @@ function OverflowChip({ authored, spills, pageCount }: OverflowChipProps) {
 			{first && first.pages.length === 1 && lines ? (
 				<Plural
 					value={lines}
-					one={`Page ${page} runs over by about # line`}
-					other={`Page ${page} runs over by about # lines`}
+					one={`Page ${ph({ page: i18n.number(first.authoredPage) })} runs over by about # line`}
+					other={`Page ${ph({ page: i18n.number(first.authoredPage) })} runs over by about # lines`}
 				/>
 			) : (
 				<Plural value={pageCount} one="Runs to # page" other="Runs to # pages" />

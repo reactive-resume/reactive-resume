@@ -1,22 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-11-04 23:14+0100\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: he\n"
-"Project-Id-Version: reactive-resume\n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-28 05:40\n"
-"Last-Translator: \n"
-"Language-Team: Hebrew\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n"
-"X-Crowdin-Project: reactive-resume\n"
-"X-Crowdin-Project-ID: 503410\n"
-"X-Crowdin-Language: he\n"
-"X-Crowdin-File: /apps/web/locales/en-US.po\n"
-"X-Crowdin-File-ID: 545\n"
+"Language: he-IL\n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -125,8 +114,6 @@ msgid "{0, plural, one {# active application} other {# active applications}}"
 msgstr "{0, plural, one {# מועמדות פעילה} other {# מועמדויות פעילות}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {תשובה אחת} two {שתי תשובות} other {# תשובות}}"
@@ -445,7 +432,7 @@ msgstr ""
 msgid "{0} (mine)"
 msgstr ""
 
-#. placeholder {0}: insights.closed
+#. placeholder {0}: i18n.number(insights.closed)
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} סגור"
@@ -455,17 +442,17 @@ msgstr "{0} סגור"
 msgid "{0} didn't respond."
 msgstr ""
 
-#. placeholder {0}: semantics.dates.length
+#. placeholder {0}: i18n.number(semantics.dates.length)
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "{0} found"
 msgstr "נמצאה {0}"
 
-#. placeholder {0}: semantics.dates.length
+#. placeholder {0}: i18n.number(semantics.dates.length)
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "{0} found, {unreadable} unreadable"
 msgstr "{0} נמצא, {unreadable} בלתי קריא"
 
-#. placeholder {0}: Math.round(minutes / 60)
+#. placeholder {0}: i18n.number(Math.round(minutes / 60))
 #: src/features/career/workspace/shell.tsx
 msgid "{0} h"
 msgstr "{0} ש׳"
@@ -494,7 +481,6 @@ msgid "{0} interview · {1}, {2}"
 msgstr ""
 
 #. placeholder {0}: i18n.number(row.minutes)
-#. placeholder {0}: row.minutes
 #: src/features/career/workspace/prepare.tsx
 #: src/features/homepage/prepare.tsx
 msgid "{0} min"
@@ -505,26 +491,26 @@ msgstr "{0} דק׳"
 msgid "{0} more"
 msgstr "{0} יותר"
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: report.passedChecks
-#. placeholder {1}: report.applicableChecks
+#. placeholder {0}: i18n.number(report.passedChecks)
+#. placeholder {1}: i18n.number(report.applicableChecks)
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} of {1} applicable checks passed"
 msgstr "{0} מתוך {1} בדיקות ישימות עברו"
 
-#. placeholder {0}: category.passedChecks
-#. placeholder {1}: category.applicableChecks
+#. placeholder {0}: i18n.number(category.passedChecks)
+#. placeholder {1}: i18n.number(category.applicableChecks)
 #: src/features/ats-checker/report/report-view.tsx
 msgid "{0} of {1} applicable checks passed."
 msgstr "{0} מתוך {1} בדיקות ישימות עברו."
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/career/workspace/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
@@ -535,34 +521,34 @@ msgstr ""
 msgid "{0} of {1} edits accepted"
 msgstr "התקבלו עריכות {0} מתוך {1}"
 
-#. placeholder {0}: result.found.length
-#. placeholder {1}: result.total
+#. placeholder {0}: i18n.number(result.found.length)
+#. placeholder {1}: i18n.number(result.total)
 #: src/features/resume/editor/check/job-match.tsx
 msgid "{0} of {1} posting terms appear"
 msgstr "מופיעים תנאי פרסום משרות {0} של {1}"
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATE_IDS.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATE_IDS.length)
 #: src/features/resume/editor/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "{0} של {1} מוצג"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{0} מתוך {1} מועמדויות מותאמות קיבלו תשובה; {2} מתוך {3} נשלחו עם קורות חיים אחרים."
 
-#. placeholder {0}: jd.matchedCount
-#. placeholder {1}: jd.totalTerms
+#. placeholder {0}: i18n.number(jd.matchedCount)
+#. placeholder {1}: i18n.number(jd.totalTerms)
 #: src/features/ats-checker/report/jd-coverage.tsx
 msgid "{0} of {1} terms found"
 msgstr "{0} מתוך {1} מונחים נמצאו"
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/career/workspace/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -572,43 +558,43 @@ msgstr ""
 msgid "{0} posting"
 msgstr "פרסום דרושים {0}"
 
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr ""
 
-#. placeholder {0}: report.skippedChecks
+#. placeholder {0}: i18n.number(report.skippedChecks)
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
 msgstr "{0} דולגו"
 
-#. placeholder {0}: count("supported")
-#. placeholder {1}: count("partial")
-#. placeholder {2}: count("missing")
+#. placeholder {0}: i18n.number(count("supported"))
+#. placeholder {1}: i18n.number(count("partial"))
+#. placeholder {2}: i18n.number(count("missing"))
 #. placeholder {3}: data.summary
 #: src/features/career/workspace/saved.tsx
 msgid "{0} supported, {1} partly supported, {2} with no evidence yet. {3}"
 msgstr "{0} נתמכות, {1} נתמכות חלקית, {2} עדיין ללא ראיות. {3}"
 
-#. placeholder {0}: findings.length
+#. placeholder {0}: i18n.number(findings.length)
 #: src/features/ats-checker/report/report-view.tsx
 msgid "{0} to fix"
 msgstr "{0} לתיקון"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/career/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: index + 1
+#. placeholder {1}: i18n.number(index + 1)
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "{0}, entry {1} of {count}"
 msgstr "{0}, ערך {1} של {count}"
@@ -628,7 +614,7 @@ msgstr "{0}. הבעיה נפתרה."
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/conversation.tsx
 msgid "{accepted} of {0} applied"
 msgstr "הוחלו {accepted} מתוך {0}"
@@ -636,6 +622,10 @@ msgstr "הוחלו {accepted} מתוך {0}"
 #: src/features/career/workspace/apply.tsx
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, one {תשובה אחת} two {שתי תשובות} other {# תשובות}}"
 
 #: src/features/career/coach.tsx
 msgid "{attached, plural, one {# attached file} other {# attached files}}"
@@ -774,7 +764,7 @@ msgstr ""
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# מסמך עודכן} other {# מסמכים עודכנו}}"
 
-#. placeholder {0}: items.length
+#. placeholder {0}: i18n.number(items.length)
 #: src/features/career/workspace/apply.tsx
 msgid "{done} of {0}"
 msgstr "{done} מתוך {0}"
@@ -985,6 +975,14 @@ msgstr "בדיקות {passedRules} של {totalRules} עוברות."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# הציע עריכה בדף זה · שום דבר לא משתנה עד שאתה מסכים} other {# הציע עריכות בדף זה · שום דבר לא משתנה עד שאתה מסכים}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} משכר הבסיס"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} משכר הבסיס ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# מוצע} other {# מוצע}}"
@@ -1062,7 +1060,7 @@ msgstr "{title} נמחק"
 msgid "{title} is on · next {0}"
 msgstr "{title} פעיל · הבא {0}"
 
-#. placeholder {0}: rows.length
+#. placeholder {0}: i18n.number(rows.length)
 #: src/features/resume/editor/write/outline.tsx
 msgid "{title} moved to position {position} of {0}"
 msgstr ""
@@ -1071,8 +1069,8 @@ msgstr ""
 msgid "{title} paused"
 msgstr "{title} מושהה"
 
-#. placeholder {0}: to + 1
-#. placeholder {1}: entryIds.length
+#. placeholder {0}: i18n.number(to + 1)
+#. placeholder {1}: i18n.number(entryIds.length)
 #: src/features/resume/editor/write/outline.tsx
 msgid "{title}, entry {0} of {1}"
 msgstr ""
@@ -1170,6 +1168,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} בשנה ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1837,7 +1839,7 @@ msgstr "הוסף מספר עם קידומת מדינה; חלק מטפסי ההג
 msgid "Add page"
 msgstr "הוספת עמוד"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/features/resume/editor/design/fit.ts
 msgid "Add page {0}"
 msgstr ""
@@ -2329,7 +2331,7 @@ msgctxt "hero headline"
 msgid "and"
 msgstr "וגם"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "and {0} more"
 msgstr "ועוד {0}"
@@ -3072,7 +3074,7 @@ msgstr "מודגש"
 msgid "Bonus"
 msgstr "בונוס"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4203,7 +4205,7 @@ msgid "Contact: {0}"
 msgstr ""
 
 #. placeholder {0}: primary.name
-#. placeholder {1}: others.length
+#. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
 msgstr ""
@@ -4414,10 +4416,6 @@ msgstr "תקן"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5467,7 +5465,7 @@ msgstr "צ׳כית"
 msgid "Daily at {clock} · next {next}"
 msgstr "כל יום ב-{clock} · הבא {next}"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "צפיות יומיות במשך 30 יום, שיא {0}"
@@ -5734,7 +5732,7 @@ msgstr "\"{0}\" נמחק"
 msgid "Deleted “{title}”"
 msgstr "\"{title}\" נמחק"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/document-actions.tsx
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
@@ -5771,7 +5769,7 @@ msgstr "תאר את התפקיד"
 msgid "Description"
 msgstr "תיאור"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/resume/editor/write/entries.tsx
 msgid "Description of role {0}"
 msgstr "תיאור התפקיד {0}"
@@ -6593,6 +6591,14 @@ msgstr "הזן כתובת אימייל חוקית."
 msgid "Enter a web address, like example.com"
 msgstr "הזן כתובת אינטרנט, כמו example.com"
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "יש להזין סכום או אחוז משכר הבסיס, למשל 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "יש להזין סכום או אחוז כגון 10%, או להשאיר ריק."
+
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
 msgstr "יש להזין מפתח API עבור ספק זה."
@@ -6939,7 +6945,7 @@ msgstr ""
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
 msgstr "הירידה בפניות לתמיכה עדיין לא מגובה במספר. הצג אותה כמשהו ששמת לב אליו."
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Field {0}"
 msgstr "שדה {0}"
@@ -7720,6 +7726,10 @@ msgstr "מנהל גיוס עובדים"
 msgid "Hiring team"
 msgstr "צוות גיוס"
 
+#: src/features/career/workspace/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "סימוני בדיקה קודמים אינם זמינים."
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/download-sheet.tsx
@@ -8218,28 +8228,28 @@ msgstr "האם יש תקציב ללמידה?"
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "issue {0}"
 msgstr "בעיה {0}"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0}"
 msgstr "גיליון {0}"
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0} of {1}"
 msgstr "הנפק {0} של {1}"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Issue {0}:"
 msgstr "גיליון {0}:"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0}: {1}"
@@ -8980,12 +8990,12 @@ msgstr "קווים קרובים כל כך יכולים לרוץ יחד בעת ק
 msgid "Link"
 msgstr "לְקַשֵׁר"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -9810,8 +9820,8 @@ msgstr "לזוז למעלה"
 msgid "Move your email and phone number to the top of page one."
 msgstr "הזז את הדוא״ל ומספר הטלפון שלך לראש העמוד הראשון."
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{0} מתוך {1} הועברו לאשפה. מסמכים נעולים דולגו."
@@ -9891,7 +9901,7 @@ msgstr ""
 msgid "Name of {label}"
 msgstr "השם של {label}"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Name of person {0}"
 msgstr "שם האדם {0}"
@@ -10037,6 +10047,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "New key"
 msgstr "מפתח חדש"
+
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "נשמרה גרסה חדשה של ההצעה"
 
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -10855,10 +10869,6 @@ msgid "Offer terms"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 msgid "Offer type"
 msgstr "סוג הצעת העבודה"
@@ -10979,12 +10989,12 @@ msgstr "ניתן להפעיל רק ספקים שעוברים את המבחן ש�
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Only the first {0} pages were checked, so this report does not cover the whole file."
 msgstr "רק {0} העמודים הראשונים נבדקו, כך שהדוח הזה אינו מכסה את הקובץ כולו."
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "רק דפי {0} הראשונים נבדקו."
@@ -11285,7 +11295,7 @@ msgstr "אחר · תואם OpenAI"
 msgid "Other benefits"
 msgstr "הטבות אחרות"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/assistant-panel.tsx
 msgid "Other documents · {0}"
 msgstr "מסמכים אחרים · {0}"
@@ -11325,8 +11335,8 @@ msgstr "עמוד"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: evidence.page
-#. placeholder {0}: pageIndex + 1
-#. placeholder {0}: row.page + 1
+#. placeholder {0}: i18n.number(evidence.page)
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
@@ -11335,7 +11345,7 @@ msgstr "עמוד"
 msgid "Page {0}"
 msgstr "עמוד {0}"
 
-#. placeholder {0}: row.page + 1
+#. placeholder {0}: i18n.number(row.page + 1)
 #: src/features/resume/editor/write/outline.tsx
 msgid "Page {0}, sidebar"
 msgstr "עמוד {0}, סרגל צד"
@@ -12079,7 +12089,7 @@ msgstr ""
 msgid "Profile link (optional)"
 msgstr "קישור לפרופיל (אופציונלי)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link of person {0}"
 msgstr "קישור לפרופיל של אדם {0}"
@@ -12460,7 +12470,7 @@ msgstr "קריאות"
 msgid "Readability does not guarantee an interview or a particular ATS result."
 msgstr "הקריאה אינה מבטיחה ראיון או תוצאת ATS מסוימת."
 
-#. placeholder {0}: report.score
+#. placeholder {0}: i18n.number(report.score)
 #: src/features/ats-checker/checker.tsx
 msgid "Readability score: {0} out of 100"
 msgstr "ציון קריאה: {0} מתוך 100"
@@ -12654,7 +12664,7 @@ msgstr "בצע מחדש את שינוי קורות החיים"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -12872,7 +12882,7 @@ msgstr "הסר שדה"
 msgid "Remove file"
 msgstr "הסר קובץ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -12885,7 +12895,7 @@ msgstr "הסרת מפתח גישה"
 msgid "Remove password"
 msgstr "הסרת סיסמה"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Remove person {0}"
 msgstr "הסר את אדם {0}"
@@ -12899,7 +12909,7 @@ msgstr "הסרת תמונה"
 msgid "Remove question"
 msgstr "הסר שאלה"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -13147,12 +13157,12 @@ msgstr "שוחזר \"{0}\""
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/document-actions.tsx
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/document-actions.tsx
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -13374,8 +13384,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "סימוני הבדיקה נשמרו בהגשה הראשונה של המועמדות."
 
 #: src/features/career/today.tsx
 msgid "Review draft"
@@ -13443,7 +13453,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "כתיבת ביקורת"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -13492,12 +13502,12 @@ msgstr "תפקיד"
 msgid "Role (optional)"
 msgstr "תפקיד (אופציונלי)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/resume/editor/write/entries.tsx
 msgid "Role {0}"
 msgstr "תפקיד {0}"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Role of person {0}"
 msgstr "תפקיד של אדם {0}"
@@ -13660,6 +13670,10 @@ msgstr "שמור שינויים"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "שמור חיבור"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "שמרו את התנאים המתוקנים כגרסה חדשה. הגרסה הקודמת נשארת זמינה. לא נשלחת בקשה לבינה מלאכותית."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"
@@ -14588,14 +14602,14 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "הצגת “נוצר באמצעות Reactive Resume”"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
-#. placeholder {0}: visible.length - shown.length
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
+#. placeholder {0}: i18n.number(visible.length - shown.length)
 #: src/features/applications/components/board.tsx
 #: src/features/career/today.tsx
 msgid "Show {0} more"
 msgstr "הצג עוד {0}"
 
-#. placeholder {0}: read.length
+#. placeholder {0}: i18n.number(read.length)
 #: src/features/career/today.tsx
 msgid "Show {0} read"
 msgstr "הצג {0} שנקראו"
@@ -15298,8 +15312,8 @@ msgstr "סטטוס"
 msgid "Stay here"
 msgstr "הישאר כאן"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/career/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -15331,7 +15345,7 @@ msgstr "עצור הקלטה"
 msgid "Stop when you're done. Nothing is sent until then."
 msgstr "עצור כשתסיים. שום דבר לא נשלח עד אז."
 
-#. placeholder {0}: clock(seconds)
+#. placeholder {0}: clock(seconds, i18n.locale)
 #: src/features/career/workspace/practise.tsx
 msgid "Stopped at {0}"
 msgstr "נעצר ב-{0}"
@@ -17748,7 +17762,7 @@ msgstr "מאמת קוד…"
 msgid "Version sent {date}"
 msgstr "הגרסה נשלחה {date}"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "הגרסה נשלחה {date} · בדוק {0}"

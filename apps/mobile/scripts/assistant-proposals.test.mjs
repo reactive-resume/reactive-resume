@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { beforeEach, test } from "node:test";
+import { i18n } from "@lingui/core";
+
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
@@ -163,10 +166,11 @@ const dependencies = {
 		},
 	},
 	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
 		plural: (n, forms) => (n === 1 ? (forms[1] ?? forms.one) : forms.other).replace("#", String(n)),
 		t: (parts) => parts.join(""),
 	},
-	"@lingui/core": { i18n: { locale: "en" } },
+	"@lingui/core": { i18n: { number: i18n.number.bind(i18n), locale: "en" } },
 	"@reactive-resume/resume/proposals": shared,
 	"@reactive-resume/resume/word-diff": wordDiffModule,
 	"@/auth/session": { getAccountScope: () => scope },

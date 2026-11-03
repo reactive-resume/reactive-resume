@@ -5,6 +5,7 @@ import { beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { strFromU8, unzipSync } from "fflate";
 import { AccountExportLimitError } from "@reactive-resume/utils/account-zip";
 
 const remove = vi.hoisted(() => vi.fn());
@@ -33,7 +34,11 @@ const backup = {
 	user: { id: "owner" },
 	resumes: [],
 	coverLetters: [],
-	applications: [],
+	applications: [
+		{ id: "never-sent", status: "saved", submittedAt: null },
+		{ id: "sent-then-saved", status: "saved", submittedAt: new Date("2030-01-01T12:00:00.000Z") },
+		{ id: "older-server", status: "closed" },
+	],
 	career: {},
 	aiContentReports: [],
 	uploads: { files: [], skipped: [] },
@@ -60,6 +65,13 @@ it("requests owned upload bytes and downloads the shared archive", async () => {
 	await waitFor(() => expect(exported.download).toHaveBeenCalledOnce());
 	expect(exported.request.mock.calls[0]?.[0]).toEqual({ includeUploads: true });
 	expect(exported.request.mock.calls[0]?.[1].context).toEqual({ accountId: "owner" });
+	const archive = exported.download.mock.calls[0]?.[0] as Blob;
+	const files = unzipSync(new Uint8Array(await archive.arrayBuffer()));
+	expect(JSON.parse(strFromU8(files["applications.json"] ?? new Uint8Array()))).toEqual([
+		{ id: "never-sent", status: "saved", submittedAt: null },
+		{ id: "sent-then-saved", status: "saved", submittedAt: "2030-01-01T12:00:00.000Z" },
+		{ id: "older-server", status: "closed" },
+	]);
 	expect(exported.toast).not.toHaveBeenCalled();
 });
 

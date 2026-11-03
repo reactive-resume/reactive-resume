@@ -1,5 +1,6 @@
 import type { ThreadSummary } from "./chat";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
@@ -122,7 +123,9 @@ export function PastConversations({ threads, isMine, currentId, onOpen, onDelete
 				)}
 			</Section>
 			{others.length > 0 ? (
-				<Section title={t`Other documents · ${others.length}`}>{others.map((thread) => row(thread, true))}</Section>
+				<Section title={t`Other documents · ${i18n.number(others.length)}`}>
+					{others.map((thread) => row(thread, true))}
+				</Section>
 			) : null}
 			{remove.dialog}
 		</ScrollView>

@@ -1,4 +1,5 @@
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Button } from "@reactive-resume/ui/components/button";
 
@@ -22,7 +23,7 @@ export function PageNavigation({ offset, total, busy, onChange }: PageNavigation
 			</Button>
 			<span className="text-sm text-ink-2" aria-live="polite">
 				<Trans>
-					{start}–{end} of {total}
+					{ph({ start: i18n.number(start) })}–{ph({ end: i18n.number(end) })} of {ph({ total: i18n.number(total) })}
 				</Trans>
 			</span>
 			<Button

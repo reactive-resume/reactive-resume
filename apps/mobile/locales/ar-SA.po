@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: ar-SA\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: removing?.role
 #. placeholder {1}: removing?.company
@@ -95,8 +89,8 @@ msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of y
 msgstr "{0, plural, one {تظهر «{1}» مرة واحدة في إعلان الوظيفة. إن كانت ضمن خبرتك، فأضفها في موضعها المناسب.} other {تظهر «{2}» # مرة في إعلان الوظيفة. إن كانت ضمن خبرتك، فأضفها في موضعها المناسب.} zero {تظهر «{2}» # مرة في إعلان الوظيفة. إن كانت ضمن خبرتك، فأضفها في موضعها المناسب.} two {تظهر «{2}» # مرة في إعلان الوظيفة. إن كانت ضمن خبرتك، فأضفها في موضعها المناسب.} few {تظهر «{2}» # مرات في إعلان الوظيفة. إن كانت ضمن خبرتك، فأضفها في موضعها المناسب.} many {تظهر «{2}» # مرة في إعلان الوظيفة. إن كانت ضمن خبرتك، فأضفها في موضعها المناسب.}}"
 
 #. placeholder {0}: report.totalRules
-#. placeholder {1}: report.passedRules
-#. placeholder {2}: report.passedRules
+#. placeholder {1}: i18n.number(report.passedRules)
+#. placeholder {2}: i18n.number(report.passedRules)
 #: src/features/check/score.tsx
 msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
 msgstr "{0, plural, one {نجح {1} من فحص واحد.} two {نجح {2} من فحصين.} few {نجح {2} من # فحوصات.} many {نجح {2} من # فحصًا.} other {نجح {2} من # فحص.}}"
@@ -109,15 +103,15 @@ msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}
 msgstr "{0, plural, one {تم قبول {1} من تعديل واحد} two {تم قبول {2} من تعديلين} few {تم قبول {2} من # تعديلات} many {تم قبول {2} من # تعديلًا} other {تم قبول {2} من # تعديل}}"
 
 #. placeholder {0}: value.report.applicableChecks
-#. placeholder {1}: value.report.passedChecks
-#. placeholder {2}: value.report.passedChecks
+#. placeholder {1}: i18n.number(value.report.passedChecks)
+#. placeholder {2}: i18n.number(value.report.passedChecks)
 #: src/features/check/parser.tsx
 msgid "{0, plural, one {{1} of # exported PDF check passes.} other {{2} of # exported PDF checks pass.}}"
 msgstr "{0, plural, one {فحوص PDF المصدّر الناجحة: {1} من #.} other {فحوص PDF المصدّر الناجحة: {2} من #.} zero {فحوص PDF المصدّر الناجحة: {2} من #.} two {فحوص PDF المصدّر الناجحة: {2} من #.} few {فحوص PDF المصدّر الناجحة: {2} من #.} many {فحوص PDF المصدّر الناجحة: {2} من #.}}"
 
 #. placeholder {0}: match.total
-#. placeholder {1}: match.found.length
-#. placeholder {2}: match.found.length
+#. placeholder {1}: i18n.number(match.found.length)
+#. placeholder {2}: i18n.number(match.found.length)
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {الكلمات المفتاحية المشمولة من الإعلان: {1} من #} other {الكلمات المفتاحية المشمولة من الإعلان: {2} من #} zero {الكلمات المفتاحية المشمولة من الإعلان: {2} من #} two {الكلمات المفتاحية المشمولة من الإعلان: {2} من #} few {الكلمات المفتاحية المشمولة من الإعلان: {2} من #} many {الكلمات المفتاحية المشمولة من الإعلان: {2} من #}}"
@@ -139,8 +133,6 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, one {تم تغيير {count} من طلب واحد.} two {تم تغيير {count} من طلبين.} few {تم تغيير {count} من # طلبات.} many {تم تغيير {count} من # طلبًا.} other {تم تغيير {count} من # طلب.}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, zero {لا إجابات} one {إجابة واحدة} two {إجابتان} few {# إجابات} many {# إجابة} other {# إجابة}}"
@@ -478,8 +470,8 @@ msgstr "{0} (لي)"
 
 #. placeholder {0}: labelOf(from.status)
 #. placeholder {1}: labelOf(step.status)
-#. placeholder {2}: step.reached
-#. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
+#. placeholder {2}: i18n.number(step.reached)
+#. placeholder {3}: step.conversion === null ? "" : ` (${i18n.number(step.conversion)}%)`
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
@@ -513,7 +505,7 @@ msgid "{0} interview · {1}"
 msgstr "مقابلة {0} · {1}"
 
 #. placeholder {0}: interviewTypeLabel(event.interview.kind)
-#. placeholder {1}: event.interview.durationMinutes
+#. placeholder {1}: i18n.number(event.interview.durationMinutes)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "{0} interview · {1} min"
 msgstr "مقابلة {0} · {1} دقيقة"
@@ -533,34 +525,34 @@ msgstr "{0} أكثر"
 msgid "{0} new comments"
 msgstr ""
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/features/letters/write.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATES.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATES.length)
 #: src/features/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "عرض {0} من {1}"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "حصلت {0} من {1} على رد على طلبات العمل المعدلة؛ تم إرسال {2} من {3} مع سيرة ذاتية أخرى."
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -575,38 +567,38 @@ msgstr "{0} فقط"
 msgid "{0} posting"
 msgstr "إعلان وظيفة {0}"
 
-#. placeholder {0}: selectedIds.length
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selectedIds.length)
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "تم تحديد {0}"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
-#. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
-#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: displayed?.total ?? page.total
-#. placeholder {2}: pending.length
+#. placeholder {0}: i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))
+#. placeholder {0}: i18n.number(recoveryStart + 1)
+#. placeholder {1}: i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))
+#. placeholder {1}: i18n.number(Math.min(recoveryStart + 100, pending.length))
+#. placeholder {2}: i18n.number(displayed?.total ?? page.total)
+#. placeholder {2}: i18n.number(pending.length)
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: row.index + 1
-#. placeholder {2}: row.count
+#. placeholder {1}: i18n.number(row.index + 1)
+#. placeholder {2}: i18n.number(row.count)
 #: src/features/write/outline.tsx
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}، الإدخال {1} من {2}"
@@ -616,13 +608,13 @@ msgstr "{0}، الإدخال {1} من {2}"
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: Math.round(zoom * 100)
+#. placeholder {0}: i18n.number(Math.round(zoom * 100))
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
 msgid "{0}%"
 msgstr "{0}%"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/messages.tsx
 msgid "{accepted} of {0} applied"
 msgstr "تم تطبيق {accepted} من {0}"
@@ -630,6 +622,10 @@ msgstr "تم تطبيق {accepted} من {0}"
 #: src/features/applications-board/insights-screen.tsx
 msgid "{active, plural, one {# active application} other {# active applications}}"
 msgstr "{active, plural, one {# طلب نشط} other {# طلب نشط} zero {# طلب نشط} two {طلبان (#) نشطان} few {# طلبات نشطة} many {# طلب نشط}}"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, zero {لا إجابات} one {إجابة واحدة} two {إجابتان} few {# إجابات} many {# إجابة} other {# إجابة}}"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
@@ -811,7 +807,7 @@ msgstr ""
 
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
-msgstr "تمت إضافة {name} إلى الصفحة 1"
+msgstr "تمت إضافة {name} إلى الصفحة ١"
 
 #: src/features/check/issues.ts
 msgid "{name} is split into {columns} columns"
@@ -844,6 +840,14 @@ msgstr "نوع {pairing}"
 #: src/features/assistant/page-marks.tsx
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق} other {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق} zero {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق} two {تعديلان (#) مقترحان في هذه الصفحة · لا يتغير شيء حتى توافق} few {# تعديلات مقترحة في هذه الصفحة · لا يتغير شيء حتى توافق} many {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق}}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} من الراتب الأساسي"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} من الراتب الأساسي ({value})"
 
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
@@ -942,10 +946,14 @@ msgstr "{words, plural, one {كلمة #} other {كلمات #}}"
 msgid "{words} of {shownLimit} words"
 msgstr ""
 
-#. placeholder {0}: items.length - MAX_PER_DAY
+#. placeholder {0}: i18n.number(items.length - MAX_PER_DAY)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} المزيد"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} سنويًا ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -957,7 +965,7 @@ msgstr "يوم واحد"
 
 #: src/features/application-detail/hooks.ts
 msgid "1 h"
-msgstr "1 ساعة"
+msgstr "١ ساعة"
 
 #: src/features/share/feedback.tsx
 msgid "1 new comment"
@@ -965,15 +973,15 @@ msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "10-minute briefing"
-msgstr "إحاطة في 10 دقائق"
+msgstr "إحاطة في ١٠ دقائق"
 
 #: src/features/design/style-groups.tsx
 msgid "10–11 recommended"
-msgstr "10-11 موصى به"
+msgstr "١٠-١١ موصى به"
 
 #: src/features/letters/share.tsx
 msgid "2 files"
-msgstr "2 ملفات"
+msgstr "٢ ملفات"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "2 hours before"
@@ -981,15 +989,15 @@ msgstr "قبل ساعتين"
 
 #: src/features/write/entry-screen.tsx
 msgid "2–3 sentences reads best"
-msgstr "2-3 جمل تقرأ بشكل أفضل"
+msgstr "٢-٣ جمل تقرأ بشكل أفضل"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "24 hours before"
-msgstr "قبل 24 ساعة"
+msgstr "قبل ٢٤ ساعة"
 
 #: src/features/share/feedback.tsx
 msgid "30 days"
-msgstr "30 يوما"
+msgstr "٣٠ يوما"
 
 #: src/features/share/feedback.tsx
 msgid "7 days"
@@ -997,7 +1005,7 @@ msgstr ""
 
 #: src/features/share/feedback.tsx
 msgid "90 days"
-msgstr "90 يوما"
+msgstr "٩٠ يوما"
 
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
@@ -1105,7 +1113,7 @@ msgstr "عادة ما تكون المتابعة القصيرة جيدة الآن
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
-msgstr "خطة موقوتة، وافتتاحيتك، والقصص التي ستحضرها والأسئلة التي ستطرحها. تصبح قائمة التحقق الخاصة بك قبل المكالمة بـ 10 دقائق."
+msgstr "خطة موقوتة، وافتتاحيتك، والقصص التي ستحضرها والأسئلة التي ستطرحها. تصبح قائمة التحقق الخاصة بك قبل المكالمة بـ ١٠ دقائق."
 
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
@@ -1121,7 +1129,7 @@ msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
-msgstr "نحو 90 ثانية عند قوله بصوت عالٍ"
+msgstr "نحو ٩٠ ثانية عند قوله بصوت عالٍ"
 
 #: src/features/career/offers.tsx
 msgid "Above your office-day limit."
@@ -1399,7 +1407,7 @@ msgstr "أضف الفائدة"
 
 #: src/features/check/issues.ts
 msgid "Add it to page 1"
-msgstr "أضفه إلى الصفحة 1"
+msgstr "أضفه إلى الصفحة ١"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add lane"
@@ -1433,7 +1441,7 @@ msgstr "أضف رقمًا برمز الدولة؛ فبعض نماذج التقد
 msgid "Add page"
 msgstr "إضافة صفحة"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/preview/page.tsx
 msgid "Add page {0}"
 msgstr ""
@@ -1738,7 +1746,7 @@ msgstr "الألبانية"
 msgid "All"
 msgstr "الجميع"
 
-#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
+#. placeholder {0}: i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "الكل ({0})"
@@ -1866,7 +1874,7 @@ msgstr "في الساعة"
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
 msgstr ""
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/application-detail/sections.tsx
 msgid "and {0} more"
 msgstr "و{0} أكثر"
@@ -2059,7 +2067,7 @@ msgstr "الطلبات بمرور الوقت"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
-msgstr "الطلبات المرسلة أسبوعيًا (آخر 8 أسابيع)"
+msgstr "الطلبات المرسلة أسبوعيًا (آخر ٨ أسابيع)"
 
 #: src/features/applications/trash-screen.tsx
 msgid "Applications stay in Trash until you delete them permanently."
@@ -2248,7 +2256,7 @@ msgstr "إرفاق ملف سيرة ذاتية (PDF)"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Attach up to 10 files to a message."
-msgstr "قم بإرفاق ما يصل إلى 10 ملفات بالرسالة."
+msgstr "قم بإرفاق ما يصل إلى ١٠ ملفات بالرسالة."
 
 #: src/features/assistant/messages.tsx
 #: src/features/career/facts.tsx
@@ -2261,7 +2269,7 @@ msgstr "المرفقات"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Attachments can be up to 100 MB in all."
-msgstr "يمكن أن يصل حجم المرفقات إلى 100 ميجابايت إجمالاً."
+msgstr "يمكن أن يصل حجم المرفقات إلى ١٠٠ ميجابايت إجمالاً."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "audio file"
@@ -2278,7 +2286,7 @@ msgstr "تلقائيًا"
 
 #: src/features/history/history.tsx
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
-msgstr "يتم تجميع عمليات الحفظ التلقائي حسب الجلسة ويتم الاحتفاظ بها لمدة 90 يومًا. يتم الاحتفاظ بالإصدارات المسماة حتى تقوم بحذفها. تؤدي عملية الاستعادة إلى حفظ الحالة الحالية أولاً."
+msgstr "يتم تجميع عمليات الحفظ التلقائي حسب الجلسة ويتم الاحتفاظ بها لمدة ٩٠ يومًا. يتم الاحتفاظ بالإصدارات المسماة حتى تقوم بحذفها. تؤدي عملية الاستعادة إلى حفظ الحالة الحالية أولاً."
 
 #: src/features/share/custom-domain.tsx
 msgid "Available"
@@ -2462,7 +2470,7 @@ msgstr "عريض"
 msgid "Bonus"
 msgstr "المكافأة"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -2858,12 +2866,12 @@ msgstr "اختر ملف PDF. لم يتم تحميل الملف المحدد."
 
 #: src/features/application-detail/sections.tsx
 msgid "Choose a PDF smaller than 10 MB. The selected file was not uploaded."
-msgstr "اختر PDF أصغر من 10 ميجابايت. لم يتم تحميل الملف المحدد."
+msgstr "اختر PDF أصغر من ١٠ ميجابايت. لم يتم تحميل الملف المحدد."
 
 #: src/features/settings/profile.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Choose a photo smaller than 10 MB."
-msgstr "اختر صورة أصغر من 10 ميجابايت."
+msgstr "اختر صورة أصغر من ١٠ ميجابايت."
 
 #: src/features/applications/lane-settings.tsx
 msgid "Choose a replacement"
@@ -2961,7 +2969,7 @@ msgstr "اختر الوقت"
 
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
-msgstr "اختر ما يصل إلى 200 طلب عمل لكل إجراء مجمع."
+msgstr "اختر ما يصل إلى ٢٠٠ طلب عمل لكل إجراء مجمع."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3498,10 +3506,6 @@ msgstr "تصحيح المعلومة"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -4096,7 +4100,7 @@ msgstr "تعذّر تحديث المقابلة. حاول مرة أخرى."
 
 #: src/features/settings/profile.tsx
 msgid "Couldn't update the photo. Check camera permissions, choose a photo smaller than 10 MB, and try again."
-msgstr "تعذّر تحديث الصورة. تحقّق من أذونات الكاميرا، واختر صورة أصغر من 10 MB، ثم حاول مجددًا."
+msgstr "تعذّر تحديث الصورة. تحقّق من أذونات الكاميرا، واختر صورة أصغر من ١٠ MB، ثم حاول مجددًا."
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't update the timeline. Try again."
@@ -4305,10 +4309,10 @@ msgstr "لا يتم تطبيق الأنماط المخصصة. قم بإصلاح 
 msgid "Czech"
 msgstr "التشيكية"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/share/link.tsx
 msgid "Daily views over 30 days, peak {0}"
-msgstr "المشاهدات اليومية على مدى 30 يومًا، الذروة {0}"
+msgstr "المشاهدات اليومية على مدى ٣٠ يومًا، الذروة {0}"
 
 #: src/features/ai/report-content.tsx
 msgid "Dangerous or illegal advice"
@@ -4555,12 +4559,12 @@ msgstr "حذف الإصدار"
 msgid "Deleted"
 msgstr "تم الحذف"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0}. Refresh to see what remains."
 msgstr ""
@@ -4603,9 +4607,9 @@ msgstr "الوصف"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Description is clipped to 20,000 characters. Review it before preparing."
-msgstr "يتم اقتطاع الوصف إلى 20000 حرف. قم بمراجعتها قبل التحضير للوظيفة."
+msgstr "يتم اقتطاع الوصف إلى ٢٠٠٠٠ حرف. قم بمراجعتها قبل التحضير للوظيفة."
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Description of role {0}"
 msgstr "وصف الدور {0}"
@@ -4723,7 +4727,7 @@ msgstr "وثائق"
 
 #: src/features/documents/library.tsx
 msgid "Documents are deleted permanently after 30 days."
-msgstr "يتم حذف المستندات نهائيًا بعد 30 يومًا."
+msgstr "يتم حذف المستندات نهائيًا بعد ٣٠ يومًا."
 
 #: src/features/application-detail/sections.tsx
 msgid "Documents for this job"
@@ -4731,7 +4735,7 @@ msgstr "المستندات الخاصة بهذه الوظيفة"
 
 #: src/features/documents/library.tsx
 msgid "Documents you move here stay for 30 days."
-msgstr "تبقى المستندات التي تنقلها إلى هنا لمدة 30 يومًا."
+msgstr "تبقى المستندات التي تنقلها إلى هنا لمدة ٣٠ يومًا."
 
 #: src/features/settings/export.tsx
 msgid "Documents, version history and uploaded files in one zip. Check the file manifest for omissions."
@@ -4995,7 +4999,7 @@ msgstr "تعديل"
 msgid "Edit {0}"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
@@ -5207,7 +5211,7 @@ msgstr "أدخل معرّف النموذج."
 
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
-msgstr "أدخل اسمًا يصل إلى 64 حرفًا."
+msgstr "أدخل اسمًا يصل إلى ٦٤ حرفًا."
 
 #: src/features/write/date-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
@@ -5237,11 +5241,19 @@ msgstr "أدخل عنوان ويب، مثل example.com"
 
 #: src/features/career/preferences.tsx
 msgid "Enter a whole number from 0 to 52, or leave blank."
-msgstr "أدخل رقمًا صحيحًا من 0 إلى 52، أو اتركه فارغًا."
+msgstr "أدخل رقمًا صحيحًا من ٠ إلى ٥٢، أو اتركه فارغًا."
 
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "أدخل عنوانًا مثل resume.example.org."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "أدخل مبلغًا أو نسبة من الراتب الأساسي، مثل 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "أدخل مبلغًا أو نسبة مثل 10%، أو اترك الحقل فارغًا."
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -5310,7 +5322,7 @@ msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Every 3 days"
-msgstr "كل 3 أيام"
+msgstr "كل ٣ أيام"
 
 #: src/features/check/screen.tsx
 msgid "Every check passes."
@@ -5455,7 +5467,7 @@ msgstr ""
 msgid "Feedback links"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/basics-screen.tsx
 msgid "Field {0}"
 msgstr "الحقل {0}"
@@ -5479,7 +5491,7 @@ msgstr "تنسيق الملف"
 
 #: src/features/documents/import-file.ts
 msgid "File is too large. Choose a file up to 10 MB."
-msgstr "ملف كبير جدًا. اختر ملفًا يصل حجمه إلى 10 ميغابايت."
+msgstr "ملف كبير جدًا. اختر ملفًا يصل حجمه إلى ١٠ ميغابايت."
 
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -5492,7 +5504,7 @@ msgstr "مشاركة الملفات غير متاحة على هذا الجهاز
 
 #: src/features/assistant/chat-view.tsx
 msgid "Files can be up to 25 MB each."
-msgstr "يمكن أن يصل حجم ملفات إلى 25 ميجابايت لكل منها."
+msgstr "يمكن أن يصل حجم ملفات إلى ٢٥ ميجابايت لكل منها."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Fill details manually"
@@ -5892,15 +5904,15 @@ msgstr "العناوين"
 
 #: src/features/write/rich-text-field.tsx
 msgid "Heading 1"
-msgstr "عنوان 1"
+msgstr "عنوان ١"
 
 #: src/features/write/rich-text-field.tsx
 msgid "Heading 2"
-msgstr "عنوان 2"
+msgstr "عنوان ٢"
 
 #: src/features/write/rich-text-field.tsx
 msgid "Heading 3"
-msgstr "عنوان 3"
+msgstr "عنوان ٣"
 
 #: src/features/check/issues.ts
 msgid "Heading changed"
@@ -6028,6 +6040,10 @@ msgstr "مدير التوظيف"
 #: src/features/share/letter.ts
 msgid "Hiring team"
 msgstr "فريق التوظيف"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "اختيارات المراجعة السابقة غير متاحة."
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
@@ -6389,13 +6405,13 @@ msgstr "هل هناك مكافأة، وعلامَ تعتمد؟"
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/check/page.tsx
 msgid "Issue {0} of {1}"
 msgstr "المشكلة {0} من {1}"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -6574,7 +6590,7 @@ msgstr "كن صادقًا"
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
-msgstr "أبقِه أقل من 2.5 ميغابايت، عادةً بحذف الصور أو تصغيرها."
+msgstr "أبقِه أقل من ٢٫٥ ميغابايت، عادةً بحذف الصور أو تصغيرها."
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6873,7 +6889,7 @@ msgstr "أقل"
 
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
-msgstr "متبقي أقل من 48 ساعة."
+msgstr "متبقي أقل من ٤٨ ساعة."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6903,7 +6919,7 @@ msgstr "جسم الرسالة"
 msgid "Letter page"
 msgstr "صفحة الرسالة"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/letters/page.tsx
 msgid "Letter page {0}"
 msgstr "صفحة الخطاب {0}"
@@ -6976,12 +6992,12 @@ msgstr "يمكن للأسطر القريبة من هذا أن تعمل معًا 
 msgid "Link"
 msgstr "الرابط"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -7596,11 +7612,11 @@ msgstr "يظهر أكثر من عنوان بريد إلكتروني واحد."
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Morning of · 08:00 local"
-msgstr "صباح المقابلة · 08:00 بالتوقيت المحلي"
+msgstr "صباح المقابلة · ٠٨:٠٠ بالتوقيت المحلي"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Morning of runs at 08:00, or two hours before interviews starting before 10:00."
-msgstr "يبدأ التذكير الصباحي في الساعة 08:00، أو قبل ساعتين من المقابلة إذا بدأت قبل الساعة 10:00."
+msgstr "يبدأ التذكير الصباحي في الساعة ٠٨:٠٠، أو قبل ساعتين من المقابلة إذا بدأت قبل الساعة ١٠:٠٠."
 
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
@@ -7617,7 +7633,7 @@ msgstr "معظم المدخلات بلا تواريخ."
 
 #: src/features/letters/write.tsx
 msgid "Most recruiters read 180–320 words. The shaded band shows the range."
-msgstr "يقرأ معظم القائمين على التوظيف ما بين 180 إلى 320 كلمة. يظهر الشريط المظلل النطاق."
+msgstr "يقرأ معظم القائمين على التوظيف ما بين ١٨٠ إلى ٣٢٠ كلمة. يظهر الشريط المظلل النطاق."
 
 #: src/features/check/issues.ts
 msgid "Most systems file candidates by email address."
@@ -7726,8 +7742,8 @@ msgstr "تحرك للأعلى"
 msgid "Move your email and phone number to the top of page one."
 msgstr "انقل بريدك الإلكتروني ورقم هاتفك إلى أعلى الصفحة الأولى."
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "تم نقل {0} من {1} إلى سلة المهملات. تم تخطي المستندات المقفلة. قم بالتحديث ثم أعد محاولة أي فشل."
@@ -7780,7 +7796,7 @@ msgstr "الاسم"
 msgid "Name and contact details weren't found. Add them in Basics."
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
 msgstr "اسم الشخص {0}"
@@ -7903,6 +7919,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "تبدأ المفاتيح الجديدة بصلاحية القراءة فقط. أنشئ المفاتيح من إعدادات حسابك في المتصفح."
+
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "تم حفظ نسخة جديدة من العرض"
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -8588,10 +8608,6 @@ msgid "Offer terms"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer type"
 msgstr "نوع العرض الوظيفي"
@@ -8695,7 +8711,7 @@ msgstr "يمكن تشغيل مقدمي الخدمة الذين اجتازوا ا
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "تم فحص الصفحات الأولى من {0} فقط."
@@ -8706,7 +8722,7 @@ msgstr "يُستورد أول {MAX_IMPORT} صف فقط في المرة الوا�
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
-msgstr "تم فحص أول 30 صفحة فقط."
+msgstr "تم فحص أول ٣٠ صفحة فقط."
 
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
@@ -8957,7 +8973,7 @@ msgstr "مزايا أخرى"
 msgid "Other concern"
 msgstr "قلق آخر"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/threads.tsx
 msgid "Other documents · {0}"
 msgstr "وثائق أخرى · {0}"
@@ -8986,8 +9002,8 @@ msgstr "صفحة"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: 1
-#. placeholder {0}: index + 1
-#. placeholder {0}: item.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(item.page + 1)
 #: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
@@ -8998,29 +9014,29 @@ msgstr "صفحة"
 msgid "Page {0}"
 msgstr "صفحة {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/history/history.tsx
 msgid "Page {0} · read-only"
 msgstr "صفحة {0} · للقراءة فقط"
 
-#. placeholder {0}: index + 1
-#. placeholder {0}: placement.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(placement.page + 1)
 #: src/features/write/section-sheet.tsx
 msgid "Page {0} · Sidebar"
 msgstr "صفحة {0} · الشريط الجانبي"
 
-#. placeholder {0}: pageIndex + 1
-#. placeholder {1}: preview.result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
+#. placeholder {1}: i18n.number(preview.result?.pageCount ?? 1)
 #: src/features/check/page.tsx
 msgid "Page {0} of {1}"
 msgstr "صفحة {0} من {1}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/ats-checker/original-page.tsx
 msgid "Page {0} of the uploaded PDF"
 msgstr "صفحة {0} الخاصة بـ PDF التي تم تحميلها"
 
-#. placeholder {0}: result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(result?.pageCount ?? 1)
 #: src/preview/page.tsx
 msgid "Page {currentPage} of {0}"
 msgstr "صفحة {currentPage} من {0}"
@@ -9847,7 +9863,7 @@ msgstr "درجة سهولة القراءة"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Readability score: {score} out of 100"
-msgstr "درجة سهولة القراءة: {score} من 100"
+msgstr "درجة سهولة القراءة: {score} من ١٠٠"
 
 #: src/features/assistant/messages.tsx
 msgid "Reading page…"
@@ -9994,7 +10010,7 @@ msgstr "إعادة"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -10023,7 +10039,7 @@ msgstr "حدّث الإحاطة قبل ساعتين"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing 24 hours before"
-msgstr "حدّث الإحاطة قبل 24 ساعة"
+msgstr "حدّث الإحاطة قبل ٢٤ ساعة"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
@@ -10168,7 +10184,7 @@ msgstr "إزالة الحقل"
 msgid "Remove file"
 msgstr "إزالة الملف"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -10177,7 +10193,7 @@ msgstr ""
 msgid "Remove password"
 msgstr "إزالة كلمة المرور"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "أزل الشخص {0}"
@@ -10191,7 +10207,7 @@ msgstr "إزالة الصورة"
 msgid "Remove question"
 msgstr "أزل السؤال"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -10433,12 +10449,12 @@ msgstr "تمت استعادة \"{0}\""
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -10510,7 +10526,7 @@ msgstr "لغة السيرة الذاتية"
 msgid "Resume options"
 msgstr ""
 
-#. placeholder {0}: pageIndex + 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/check/page.tsx
 msgid "Resume page {0}"
 msgstr "صفحة السيرة الذاتية {0}"
@@ -10669,8 +10685,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "سُجّلت اختيارات المراجعة عند تقديم الطلب لأول مرة."
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -10733,7 +10749,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "مراجعة الكتابة"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/check/writing.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -10781,7 +10797,7 @@ msgstr "الوظيفة"
 msgid "Role (optional)"
 msgstr "الدور (اختياري)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "الدور {0}"
@@ -10921,6 +10937,10 @@ msgstr "حفظ الاتصال"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "احفظ الشروط المصححة كنسخة جديدة. تظل النسخة السابقة متاحة. لا يُرسل أي طلب إلى الذكاء الاصطناعي."
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
@@ -11317,12 +11337,12 @@ msgstr "تحديد الكل"
 msgid "Select all roles"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
 msgstr "حدد إدخالاً في الصفحة {0}"
 
-#. placeholder {0}: entry + 1
+#. placeholder {0}: i18n.number(entry + 1)
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "حدد الإدخال {0}"
@@ -11647,7 +11667,7 @@ msgstr "الاختصارات المتاحة في هذه الصفحة. تتطلب
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
-msgstr "اختصر الأسئلة إلى 2,000 حرف والإجابات إلى 6,000 حرف قبل تحديد هذا الطلب كمُقدَّم."
+msgstr "اختصر الأسئلة إلى ٢,٠٠٠ حرف والإجابات إلى ٦,٠٠٠ حرف قبل تحديد هذا الطلب كمُقدَّم."
 
 #: src/features/letters/write.tsx
 msgid "Shorter"
@@ -11666,7 +11686,7 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "إظهار “مصنوع باستخدام Reactive Resume”"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
 #: src/features/applications-board/board-screen.tsx
 msgid "Show {0} more"
 msgstr "عرض {0} المزيد"
@@ -12277,8 +12297,8 @@ msgstr ""
 msgid "Stay in Documents"
 msgstr "ابق في وثائق"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -12382,7 +12402,7 @@ msgstr "تم إرسال السيرة الذاتية المرفقة: {0}"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Success at 90 days · next step"
-msgstr "النجاح بعد 90 يومًا · الخطوة التالية"
+msgstr "النجاح بعد ٩٠ يومًا · الخطوة التالية"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Suggest target roles (optional AI)"
@@ -12680,7 +12700,7 @@ msgstr "لا يمكن قراءة هذا الملف باعتباره PDF."
 
 #: src/features/ats-checker/check.ts
 msgid "That file is too large to check. PDFs up to 25 MB work."
-msgstr "هذا الملف كبير جدًا بحيث لا يمكن التحقق منه. PDFs حتى 25 عمل MB."
+msgstr "هذا الملف كبير جدًا بحيث لا يمكن التحقق منه. PDFs حتى ٢٥ عمل MB."
 
 #: src/features/applications/error.ts
 msgid "That link couldn't be read. Paste the posting text instead."
@@ -12692,7 +12712,7 @@ msgstr "إعداد الموفر هذا غير صالح. تحقق من المفت
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "That recording was empty or over 2 MB. Try a shorter answer."
-msgstr "كان ذلك التسجيل فارغًا أو أكبر من 2 MB. جرّب إجابة أقصر."
+msgstr "كان ذلك التسجيل فارغًا أو أكبر من ٢ MB. جرّب إجابة أقصر."
 
 #: src/features/application-detail/sheets.tsx
 msgid "That reminder time has already passed."
@@ -13225,7 +13245,7 @@ msgstr "لا يحتوي هذا الملف على وسوم إمكانية الو�
 
 #: src/features/ats-checker/checker.tsx
 msgid "This file is {megabytes} MB. Imports take files up to 10 MB."
-msgstr "حجم الملف {megabytes} MB. الحد الأقصى للاستيراد 10 MB."
+msgstr "حجم الملف {megabytes} MB. الحد الأقصى للاستيراد ١٠ MB."
 
 #: src/features/ats-checker/messages.ts
 msgid "This file is encrypted."
@@ -13879,16 +13899,16 @@ msgstr "سيرة ذاتية بدون عنوان"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Up to 2 minutes · 2 MB maximum."
-msgstr "ما يصل إلى دقيقتين · 2 ميجابايت كحد أقصى."
+msgstr "ما يصل إلى دقيقتين · ٢ ميجابايت كحد أقصى."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Up to 20 tags per document, 40 characters per tag."
-msgstr "ما يصل إلى 20 علامة لكل مستند، 40 حرفًا لكل علامة."
+msgstr "ما يصل إلى ٢٠ علامة لكل مستند، ٤٠ حرفًا لكل علامة."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Up to 25 MB · checked on the server and not stored"
-msgstr "ما يصل إلى 25 ميجابايت · تم فحصه على الخادم وعدم تخزينه"
+msgstr "ما يصل إلى ٢٥ ميجابايت · تم فحصه على الخادم وعدم تخزينه"
 
 #: src/features/settings/application-profile.tsx
 msgid "Update"
@@ -13935,7 +13955,7 @@ msgstr "حدّث خادمك لإدارة مراحل طلبات التوظيف. �
 msgid "Updated"
 msgstr "تم التحديث"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Updated {completed} of {0}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures."
 msgstr "تم تحديث {completed} من {0}. تُخطيت المستندات المقفلة، وخطابات التقديم للروابط العامة. حدّث ثم أعد محاولة ما فشل."
@@ -13992,11 +14012,11 @@ msgstr "استخدم {url}"
 
 #: src/features/settings/profile.tsx
 msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
-msgstr "استخدم من 3 إلى 64 حرفًا لاتينيًا a–z وأرقامًا ونقاطًا وواصلات وشرطات سفلية."
+msgstr "استخدم من ٣ إلى ٦٤ حرفًا لاتينيًا a–z وأرقامًا ونقاطًا وواصلات وشرطات سفلية."
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
-msgstr "استخدم 6-64 حرفًا."
+msgstr "استخدم ٦-٦٤ حرفًا."
 
 #: src/features/design/style-groups.tsx
 msgid "Use a darker shade"
@@ -14049,13 +14069,13 @@ msgstr "استخدم رابط http أو https."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use at least 9pt."
-msgstr "استخدم حجم خط 9 نقاط على الأقل."
+msgstr "استخدم حجم خط ٩ نقاط على الأقل."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/share/link.tsx
 msgid "Use at most 64 characters."
-msgstr "استخدم 64 حرفًا كحد أقصى."
+msgstr "استخدم ٦٤ حرفًا كحد أقصى."
 
 #: src/features/letters/write.tsx
 msgid "Use default"
@@ -14267,7 +14287,7 @@ msgstr "تم حفظ الإصدار"
 msgid "Version sent {date}"
 msgstr "تم إرسال الإصدار {date}"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "تم إرسال الإصدار {date} · تحقق من {0}"
@@ -14329,7 +14349,7 @@ msgstr "عرض {0} · للقراءة فقط"
 
 #: src/features/share/link.tsx
 msgid "views · 30 days"
-msgstr "المشاهدات · 30 يومًا"
+msgstr "المشاهدات · ٣٠ يومًا"
 
 #: src/features/ai/report-content.tsx
 msgid "Violence or abuse"
@@ -14828,7 +14848,7 @@ msgstr "يمكنك الاستمرار في التحرير. تتم مزامنة �
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "You can keep up to 30 application questions."
-msgstr "يمكنك الاحتفاظ بما يصل إلى 30 سؤالًا للطلب."
+msgstr "يمكنك الاحتفاظ بما يصل إلى ٣٠ سؤالًا للطلب."
 
 #: app/(auth)/sign-in.tsx
 msgid "You can sign in with an account you already have."
@@ -15049,7 +15069,7 @@ msgstr "اسمك"
 
 #: src/features/share/custom-domain.tsx
 msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
-msgstr "اسمك عنوانًا لك، من OlaCV، الجهة المشغّلة لنطاق .cv. يمنحك الرمز {CODE} خصمًا بنسبة 50% على السنة الأولى."
+msgstr "اسمك عنوانًا لك، من OlaCV، الجهة المشغّلة لنطاق .cv. يمنحك الرمز {CODE} خصمًا بنسبة ٥٠% على السنة الأولى."
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"
@@ -15066,7 +15086,7 @@ msgstr "افتتاحيتك"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
-msgstr "افتتاحيتك، والقصص التي ستحضرها والأسئلة التي ستطرحها. تصبح قائمة التحقق الخاصة بك قبل المكالمة بـ 10 دقائق."
+msgstr "افتتاحيتك، والقصص التي ستحضرها والأسئلة التي ستطرحها. تصبح قائمة التحقق الخاصة بك قبل المكالمة بـ ١٠ دقائق."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

@@ -1,5 +1,6 @@
 import type { CheckIssue } from "./issues";
 import type { WritingReview } from "./writing";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useNetworkState } from "expo-network";
@@ -151,7 +152,7 @@ export function CheckScreen({ id, applicationId: selectedApplicationId, initialT
 						>
 							<Card style={{ gap: space.s2 }}>
 								<Text variant="caption" color="ink3">
-									{issue.number} · {getCategoryName(issue.category)}
+									{i18n.number(issue.number)} · {getCategoryName(issue.category)}
 								</Text>
 								<Text variant="title">{issue.title}</Text>
 								<Text color="ink2">{issue.body}</Text>
@@ -191,7 +192,7 @@ export function CheckScreen({ id, applicationId: selectedApplicationId, initialT
 									subtitle={category === entry ? getCategoryDescription(entry) : undefined}
 									trailing={
 										<Text color={score.passed === score.total ? "accentText" : "warnText"}>
-											{score.passed}/{score.total}
+											{i18n.number(score.passed)}/{i18n.number(score.total)}
 										</Text>
 									}
 									onPress={() => setCategory(category === entry ? null : entry)}

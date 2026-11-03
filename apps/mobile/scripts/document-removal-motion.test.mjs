@@ -3,6 +3,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
+import { i18n } from "@lingui/core";
+
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const server = createRequire(new URL("../../server/package.json", import.meta.url));
 const { transformSync } = createRequire(server.resolve("tsx"))("esbuild");
@@ -162,8 +165,10 @@ function fixture(reduced = false, requests = {}) {
 	const toasts = [];
 	let refreshes = 0;
 	const api = load("features/documents/queries.ts", {
+		"@lingui/core": { i18n },
 		react,
 		"@lingui/core/macro": {
+			ph: (named) => Object.values(named)[0],
 			t: (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), ""),
 			plural: (n, options) => options[n === 1 ? "one" : "other"].replace("#", n),
 		},

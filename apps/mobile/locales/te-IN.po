@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: te-IN\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: removing?.role
 #. placeholder {1}: removing?.company
@@ -95,8 +89,8 @@ msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of y
 msgstr "{0, plural, one {జాబ్ పోస్టింగ్‌లో ఒకసారి “{1}” కనిపిస్తుంది. ఇది మీ అనుభవంలో భాగమైతే, అది ఎక్కడ ఉందో దానిని జోడించండి.} other {ఉద్యోగ పోస్టింగ్‌లో “{2}” # సార్లు కనిపిస్తుంది. ఇది మీ అనుభవంలో భాగమైతే, అది ఎక్కడ ఉందో దానిని జోడించండి.}}"
 
 #. placeholder {0}: report.totalRules
-#. placeholder {1}: report.passedRules
-#. placeholder {2}: report.passedRules
+#. placeholder {1}: i18n.number(report.passedRules)
+#. placeholder {2}: i18n.number(report.passedRules)
 #: src/features/check/score.tsx
 msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
 msgstr "{0, plural, one {# తనిఖీలో {1} ఉత్తీర్ణమైంది.} other {# తనిఖీలలో {2} ఉత్తీర్ణమయ్యాయి.}}"
@@ -109,15 +103,15 @@ msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}
 msgstr "{0, plural, one {# సవరణలో {1} ఆమోదించబడింది} other {# సవరణలలో {2} ఆమోదించబడ్డాయి}}"
 
 #. placeholder {0}: value.report.applicableChecks
-#. placeholder {1}: value.report.passedChecks
-#. placeholder {2}: value.report.passedChecks
+#. placeholder {1}: i18n.number(value.report.passedChecks)
+#. placeholder {2}: i18n.number(value.report.passedChecks)
 #: src/features/check/parser.tsx
 msgid "{0, plural, one {{1} of # exported PDF check passes.} other {{2} of # exported PDF checks pass.}}"
 msgstr "{0, plural, one {ఎగుమతి చేసిన PDF యొక్క # తనిఖీలో {1} ఉత్తీర్ణమైంది.} other {ఎగుమతి చేసిన PDF యొక్క # తనిఖీలలో {2} ఉత్తీర్ణమయ్యాయి.}}"
 
 #. placeholder {0}: match.total
-#. placeholder {1}: match.found.length
-#. placeholder {2}: match.found.length
+#. placeholder {1}: i18n.number(match.found.length)
+#. placeholder {2}: i18n.number(match.found.length)
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {ప్రకటనలోని # పదంలో {1} చేర్చబడింది} other {ప్రకటనలోని # పదాలలో {2} చేర్చబడ్డాయి}}"
@@ -139,8 +133,6 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, one {# దరఖాస్తులో {count} మార్చబడింది.} other {# దరఖాస్తులలో {count} మార్చబడ్డాయి.}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# సమాధానం} other {# సమాధానాలు}}"
@@ -478,8 +470,8 @@ msgstr "{0} (నాది)"
 
 #. placeholder {0}: labelOf(from.status)
 #. placeholder {1}: labelOf(step.status)
-#. placeholder {2}: step.reached
-#. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
+#. placeholder {2}: i18n.number(step.reached)
+#. placeholder {3}: step.conversion === null ? "" : ` (${i18n.number(step.conversion)}%)`
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
@@ -513,7 +505,7 @@ msgid "{0} interview · {1}"
 msgstr "{0} ఇంటర్వ్యూ · {1}"
 
 #. placeholder {0}: interviewTypeLabel(event.interview.kind)
-#. placeholder {1}: event.interview.durationMinutes
+#. placeholder {1}: i18n.number(event.interview.durationMinutes)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "{0} interview · {1} min"
 msgstr "{0} ఇంటర్వ్యూ · {1} నిమి"
@@ -533,34 +525,34 @@ msgstr "{0} ఎక్కువ"
 msgid "{0} new comments"
 msgstr ""
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/features/letters/write.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATES.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATES.length)
 #: src/features/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "{1} యొక్క {0} చూపబడింది"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "అనుకూలీకరించిన {1} దరఖాస్తుల్లో {0}కి ప్రత్యుత్తరం వచ్చింది; మరొక రెజ్యూమ్‌తో పంపిన {3}లో {2}కి."
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -575,38 +567,38 @@ msgstr "{0} మాత్రమే"
 msgid "{0} posting"
 msgstr "{0} జాబ్ పోస్టింగ్"
 
-#. placeholder {0}: selectedIds.length
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selectedIds.length)
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "{0} ఎంచుకోబడింది"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
-#. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
-#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: displayed?.total ?? page.total
-#. placeholder {2}: pending.length
+#. placeholder {0}: i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))
+#. placeholder {0}: i18n.number(recoveryStart + 1)
+#. placeholder {1}: i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))
+#. placeholder {1}: i18n.number(Math.min(recoveryStart + 100, pending.length))
+#. placeholder {2}: i18n.number(displayed?.total ?? page.total)
+#. placeholder {2}: i18n.number(pending.length)
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: row.index + 1
-#. placeholder {2}: row.count
+#. placeholder {1}: i18n.number(row.index + 1)
+#. placeholder {2}: i18n.number(row.count)
 #: src/features/write/outline.tsx
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, {2}లో {1} నమోదు"
@@ -616,13 +608,13 @@ msgstr "{0}, {2}లో {1} నమోదు"
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: Math.round(zoom * 100)
+#. placeholder {0}: i18n.number(Math.round(zoom * 100))
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
 msgid "{0}%"
 msgstr "{0}%"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/messages.tsx
 msgid "{accepted} of {0} applied"
 msgstr "{0}లో {accepted} వర్తింపజేయబడ్డాయి"
@@ -630,6 +622,10 @@ msgstr "{0}లో {accepted} వర్తింపజేయబడ్డాయి
 #: src/features/applications-board/insights-screen.tsx
 msgid "{active, plural, one {# active application} other {# active applications}}"
 msgstr "{active, plural, one {# క్రియాశీల దరఖాస్తు} other {# క్రియాశీల దరఖాస్తులు}}"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, one {# సమాధానం} other {# సమాధానాలు}}"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
@@ -845,6 +841,14 @@ msgstr "{pairing} రకం"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {ఈ పేజీలో # ప్రతిపాదిత సవరణ · మీరు అంగీకరించే వరకు ఏమీ మారదు} other {ఈ పేజీలో # ప్రతిపాదిత సవరణలు · మీరు అంగీకరించే వరకు ఏమీ మారదు}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "మూల వేతనంలో {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "మూల వేతనంలో {percent} ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -942,10 +946,14 @@ msgstr "{words, plural, one {# పదం} other {# పదాలు}}"
 msgid "{words} of {shownLimit} words"
 msgstr ""
 
-#. placeholder {0}: items.length - MAX_PER_DAY
+#. placeholder {0}: i18n.number(items.length - MAX_PER_DAY)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} మరిన్ని"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ సంవత్సరానికి {yearly} ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -1433,7 +1441,7 @@ msgstr "దాని దేశ కోడ్‌తో ఒకటి జోడి�
 msgid "Add page"
 msgstr "పేజీ జోడించండి"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/preview/page.tsx
 msgid "Add page {0}"
 msgstr ""
@@ -1738,7 +1746,7 @@ msgstr "అల్బేనియన్"
 msgid "All"
 msgstr "అన్నీ"
 
-#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
+#. placeholder {0}: i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "అన్నీ ({0})"
@@ -1866,7 +1874,7 @@ msgstr ""
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
 msgstr ""
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/application-detail/sections.tsx
 msgid "and {0} more"
 msgstr "మరియు {0} మరిన్ని"
@@ -2462,7 +2470,7 @@ msgstr "బోల్డ్"
 msgid "Bonus"
 msgstr "బోనస్"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3500,10 +3508,6 @@ msgstr "వాస్తవాన్ని సరిదిద్దండి"
 msgid "Correct the highlighted fields before saving."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "సంవత్సరాన్ని సరిచేయండి, లేదా కొనసాగుతున్న పనికి \"Present\" అని రాయండి."
@@ -4305,7 +4309,7 @@ msgstr "అనుకూల శైలులు వర్తించబడవు.
 msgid "Czech"
 msgstr "చెక్"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/share/link.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "30 రోజులలో రోజువారీ వీక్షణలు, గరిష్ట {0}"
@@ -4555,12 +4559,12 @@ msgstr "సంస్కరణను తొలగించండి"
 msgid "Deleted"
 msgstr "తొలగించబడింది"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0}. Refresh to see what remains."
 msgstr ""
@@ -4605,7 +4609,7 @@ msgstr "వివరణ"
 msgid "Description is clipped to 20,000 characters. Review it before preparing."
 msgstr "వివరణ 20,000 అక్షరాలకు క్లిప్ చేయబడింది. సిద్ధం చేయడానికి ముందు దాన్ని సమీక్షించండి."
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Description of role {0}"
 msgstr "{0} పాత్ర యొక్క వివరణ"
@@ -4995,7 +4999,7 @@ msgstr "సవరించు"
 msgid "Edit {0}"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
@@ -5243,6 +5247,14 @@ msgstr "0 నుండి 52 వరకు పూర్తి సంఖ్యన�
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org వంటి చిరునామాను నమోదు చేయండి."
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "మొత్తం లేదా మూల వేతనంలో శాతాన్ని నమోదు చేయండి, ఉదా. 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "మొత్తం లేదా 10% వంటి శాతాన్ని నమోదు చేయండి, లేదా ఖాళీగా ఉంచండి."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
 msgstr "ఈ ప్రొవైడర్ కోసం API కీని నమోదు చేయండి."
@@ -5455,7 +5467,7 @@ msgstr ""
 msgid "Feedback links"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/basics-screen.tsx
 msgid "Field {0}"
 msgstr "ఫీల్డ్ {0}"
@@ -6029,6 +6041,10 @@ msgstr "నియామక నిర్వాహకుడు"
 msgid "Hiring team"
 msgstr "నియామక బృందం"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "మునుపటి సమీక్ష గుర్తులు అందుబాటులో లేవు."
+
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
 #: src/features/share/export-screen.tsx
@@ -6389,13 +6405,13 @@ msgstr "బోనస్ ఉందా, అది దేనిపై ఆధార�
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/check/page.tsx
 msgid "Issue {0} of {1}"
 msgstr "{1} యొక్క {0} జారీ"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -6903,7 +6919,7 @@ msgstr "లెటర్ బాడీ"
 msgid "Letter page"
 msgstr "లేఖ పేజీ"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/letters/page.tsx
 msgid "Letter page {0}"
 msgstr "లెటర్ పేజీ {0}"
@@ -6976,12 +6992,12 @@ msgstr "చదివినప్పుడు ఈ దగ్గరగా ఉన్
 msgid "Link"
 msgstr "లింక్"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -7726,8 +7742,8 @@ msgstr "పైకి కదలండి"
 msgid "Move your email and phone number to the top of page one."
 msgstr "మీ ఇమెయిల్ మరియు ఫోన్ నంబర్‌ను మొదటి పేజీ పైభాగానికి తరలించండి."
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "{1}లో {0} ట్రాష్‌కు తరలించబడ్డాయి. లాక్ చేసిన పత్రాలు దాటవేయబడ్డాయి. రిఫ్రెష్ చేసి, విఫలమైన పనులను మళ్లీ ప్రయత్నించండి."
@@ -7780,7 +7796,7 @@ msgstr "పేరు"
 msgid "Name and contact details weren't found. Add them in Basics."
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
 msgstr "వ్యక్తి {0} పేరు"
@@ -7903,6 +7919,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "కొత్త కీలకు మొదట చదవడానికి మాత్రమే అనుమతి ఉంటుంది. మీ బ్రౌజర్‌లో ఖాతా సెట్టింగ్‌ల నుండి కీలను సృష్టించండి."
+
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "ఆఫర్ కొత్త వెర్షన్ సేవ్ అయింది"
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -8588,10 +8608,6 @@ msgid "Offer terms"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer type"
 msgstr "ఉద్యోగ ఆఫర్ రకం"
@@ -8695,7 +8711,7 @@ msgstr "వారి పరీక్షలో ఉత్తీర్ణులై�
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "మొదటి {0} పేజీలు మాత్రమే తనిఖీ చేయబడ్డాయి."
@@ -8957,7 +8973,7 @@ msgstr "ఇతర ప్రయోజనాలు"
 msgid "Other concern"
 msgstr "ఇతర ఆందోళన"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/threads.tsx
 msgid "Other documents · {0}"
 msgstr "ఇతర పత్రాలు · {0}"
@@ -8986,8 +9002,8 @@ msgstr "పేజ్"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: 1
-#. placeholder {0}: index + 1
-#. placeholder {0}: item.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(item.page + 1)
 #: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
@@ -8998,29 +9014,29 @@ msgstr "పేజ్"
 msgid "Page {0}"
 msgstr "పేజ్ {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/history/history.tsx
 msgid "Page {0} · read-only"
 msgstr "పేజీ {0} · చదవడానికి మాత్రమే"
 
-#. placeholder {0}: index + 1
-#. placeholder {0}: placement.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(placement.page + 1)
 #: src/features/write/section-sheet.tsx
 msgid "Page {0} · Sidebar"
 msgstr "పేజీ {0} · సైడ్‌బార్"
 
-#. placeholder {0}: pageIndex + 1
-#. placeholder {1}: preview.result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
+#. placeholder {1}: i18n.number(preview.result?.pageCount ?? 1)
 #: src/features/check/page.tsx
 msgid "Page {0} of {1}"
 msgstr "{1}లో {0} పేజీ"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/ats-checker/original-page.tsx
 msgid "Page {0} of the uploaded PDF"
 msgstr "అప్‌లోడ్ చేయబడిన PDFలో పేజీ {0}"
 
-#. placeholder {0}: result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(result?.pageCount ?? 1)
 #: src/preview/page.tsx
 msgid "Page {currentPage} of {0}"
 msgstr "{0}లో {currentPage} పేజీ"
@@ -9994,7 +10010,7 @@ msgstr "మళ్లీ చేయండి"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -10168,7 +10184,7 @@ msgstr "ఫీల్డ్‌ను తీసివేయండి"
 msgid "Remove file"
 msgstr "ఫైల్‌ను తీసివేయండి"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -10177,7 +10193,7 @@ msgstr ""
 msgid "Remove password"
 msgstr "పాస్‌వర్డ్‌ను తీసివేయండి"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "వ్యక్తి {0}ని తీసివేయి"
@@ -10191,7 +10207,7 @@ msgstr "ఫోటోను తీసివేయండి"
 msgid "Remove question"
 msgstr "ప్రశ్నను తీసివేయి"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -10433,12 +10449,12 @@ msgstr "\"{0}\" పునరుద్ధరించబడింది"
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -10510,7 +10526,7 @@ msgstr "రెజ్యూమె భాష"
 msgid "Resume options"
 msgstr ""
 
-#. placeholder {0}: pageIndex + 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/check/page.tsx
 msgid "Resume page {0}"
 msgstr "రెజ్యూమ్ పేజీ {0}"
@@ -10669,8 +10685,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "మొదటిసారి దరఖాస్తు సమర్పించినప్పుడు సమీక్ష గుర్తులు నమోదు చేయబడ్డాయి."
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -10733,7 +10749,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "సమీక్ష రాయడం"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/check/writing.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -10781,7 +10797,7 @@ msgstr "పదవి"
 msgid "Role (optional)"
 msgstr "పాత్ర (ఐచ్చికం)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "పాత్ర {0}"
@@ -10921,6 +10937,10 @@ msgstr "కనెక్షన్‌ని సేవ్ చేయండి"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "సరిచేసిన నిబంధనలను కొత్త వెర్షన్‌గా సేవ్ చేయండి. మునుపటి వెర్షన్ అందుబాటులో ఉంటుంది. AI అభ్యర్థన పంపబడదు."
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
@@ -11317,12 +11337,12 @@ msgstr "అన్నింటినీ ఎంచుకోండి"
 msgid "Select all roles"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
 msgstr "{0} పేజీలో ఒక ఎంట్రీని ఎంచుకోండి"
 
-#. placeholder {0}: entry + 1
+#. placeholder {0}: i18n.number(entry + 1)
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "ఎంట్రీని ఎంచుకోండి {0}"
@@ -11666,7 +11686,7 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resumeతో తయారు చేయబడింది” చూపించు"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
 #: src/features/applications-board/board-screen.tsx
 msgid "Show {0} more"
 msgstr "ఇంకా {0} చూపించు"
@@ -12277,8 +12297,8 @@ msgstr ""
 msgid "Stay in Documents"
 msgstr "పత్రాలులో ఉండండి"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -13935,7 +13955,7 @@ msgstr "దరఖాస్తు దశలను నిర్వహించడ�
 msgid "Updated"
 msgstr "నవీకరించబడింది"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Updated {completed} of {0}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures."
 msgstr "{0}లో {completed} నవీకరించబడ్డాయి. లాక్ చేసిన పత్రాలు, పబ్లిక్ లింక్‌ల కోసం లేఖలు దాటవేయబడ్డాయి. రిఫ్రెష్ చేసి విఫలమైన పనులను మళ్లీ ప్రయత్నించండి."
@@ -14267,7 +14287,7 @@ msgstr "సంస్కరణ సేవ్ చేయబడింది"
 msgid "Version sent {date}"
 msgstr "{date} వెర్షన్ పంపబడింది"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "{date} పంపిన సంస్కరణ · {0}ని తనిఖీ చేయండి"

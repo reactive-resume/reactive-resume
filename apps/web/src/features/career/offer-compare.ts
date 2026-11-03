@@ -1,4 +1,6 @@
 import type { CareerProfileData, OfferTerms } from "@reactive-resume/schema/career";
+import { t } from "@lingui/core/macro";
+import { bonusAmount } from "@reactive-resume/schema/career-offer";
 
 type Pay = Pick<OfferTerms, "currency" | "period">;
 
@@ -7,8 +9,8 @@ export const sameTerms = (a: Pay, b: Pay) => a.currency === b.currency && a.peri
 
 /** How much more `a` pays than `b` (negative when less), or null when it can't be told honestly. */
 export function moneyDifference(a: OfferTerms, b: OfferTerms, key: "base" | "variable" | "learning") {
-	const x = a[key];
-	const y = b[key];
+	const x = key === "variable" ? bonusAmount(a) : a[key];
+	const y = key === "variable" ? bonusAmount(b) : b[key];
 	if (x === null || y === null || !sameTerms(a, b)) return null;
 	return x - y;
 }
@@ -30,3 +32,15 @@ export const matchingPlace = (location: string, places: string[]) => {
 		return where.includes(wanted) || wanted.includes(where);
 	});
 };
+
+/** Percentage bonuses keep their entered rate, even when the base is unknown. */
+export function formatBonus(locale: string, terms: OfferTerms) {
+	if (terms.variablePercent == null)
+		return terms.variable === null ? null : formatMoney(locale, terms.currency, terms.variable);
+	const percent = new Intl.NumberFormat(locale, { style: "percent", maximumSignificantDigits: 21 }).format(
+		terms.variablePercent / 100,
+	);
+	const amount = bonusAmount(terms);
+	const value = amount === null ? null : formatMoney(locale, terms.currency, amount);
+	return value === null ? t`${percent} of base` : t`${percent} of base (${value})`;
+}

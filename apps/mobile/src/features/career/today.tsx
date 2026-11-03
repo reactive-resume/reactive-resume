@@ -1,4 +1,5 @@
 import type { Schedule } from "./hooks";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
@@ -121,7 +122,7 @@ export function TodayScreen() {
 			setSelected(failed);
 			setBulkStatus(
 				failed.length
-					? t`${done.length} updated; ${failed.length} failed. Failed roles remain selected. Refresh or retry.`
+					? t`${i18n.number(done.length)} updated; ${i18n.number(failed.length)} failed. Failed roles remain selected. Refresh or retry.`
 					: plural(done.length, { one: "# role updated.", other: "# roles updated." }),
 			);
 		});
@@ -411,7 +412,7 @@ export function TodayScreen() {
 											disabled={action.pending}
 											onPress={() => setSelected(selection.length === roles.length ? [] : roles.map((row) => row.id))}
 										/>
-										<Text>{t`${selection.length} selected`}</Text>
+										<Text>{t`${i18n.number(selection.length)} selected`}</Text>
 										<Button
 											variant="secondary"
 											label={t`Track selected`}

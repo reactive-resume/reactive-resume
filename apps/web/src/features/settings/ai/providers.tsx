@@ -1,6 +1,7 @@
 import type { ProviderFields } from "./provider-fields";
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { AIProvider } from "@reactive-resume/ai/types";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
@@ -187,6 +188,7 @@ function useProviderTest() {
 				{ ...tested, testError: tested.testStatus === "failure" ? providerTestError(tested.testErrorKind) : null },
 				performance.now() - started,
 				{ connected: t`Connected`, failed: t`Failed` },
+				i18n.locale,
 			);
 			setResult(next);
 			return next;

@@ -1,4 +1,5 @@
 import type { Basics, CustomField } from "@reactive-resume/schema/resume/data";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -195,7 +196,7 @@ export function CustomFields({ fields, locked, edit }: CustomFieldsProps) {
 					/>
 					<Input
 						disabled={locked}
-						aria-label={t`Field ${index + 1}`}
+						aria-label={t`Field ${i18n.number(index + 1)}`}
 						dir="auto"
 						value={field.text}
 						onChange={(event) =>

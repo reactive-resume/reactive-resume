@@ -1,8 +1,10 @@
-// Actual native screen and load-state owners; widgets and transport remain explicit host boundaries.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+// Actual native screen and load-state owners; widgets and transport remain explicit host boundaries.
+import { i18n } from "@lingui/core";
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 let hooks = [];
 let cursor = 0;
@@ -88,9 +90,19 @@ const common = {
 		Platform: { OS: "android" },
 		BackHandler: { addEventListener: () => ({ remove() {} }) },
 	},
-	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
-	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
-	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
+	"expo-router": {
+		useRouter: () => router,
+		useLocalSearchParams: () => ({}),
+		useIsFocused: () => true,
+		Stack: { Screen: "StackScreen" },
+	},
+	"@lingui/core": { i18n },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n }) },
+	"@lingui/core/macro": {
+		t: tag,
+		ph: (values) => Object.values(values)[0],
+		plural: (value, forms) => forms.other.replace("#", String(value)),
+	},
 	"@/ui": ui,
 	"@/routes": { routes },
 };
@@ -162,7 +174,27 @@ const offerDomain = load("../../../packages/schema/src/career-offer.ts", {
 	"@reactive-resume/utils/timezone": timeParser,
 });
 const shared = load("features/career/shared.tsx");
+let selectionScope = "offer-account";
+let offersFocused = true;
+const selection = load("features/career/offer-selection.ts", {
+	"@/auth/session": { getAccountScope: () => selectionScope },
+	"zustand/react": {
+		create: (initialize) => {
+			const store = createRequire(new URL("../../web/package.json", import.meta.url))("zustand/vanilla").createStore(
+				initialize,
+			);
+			return Object.assign((selector) => selector(store.getState()), store);
+		},
+	},
+});
 const { OffersScreen } = load("features/career/offers.tsx", {
+	"@/auth/session": { getAccountScope: () => selectionScope },
+	"./offer-selection": selection,
+	"expo-router": {
+		...common["expo-router"],
+		useIsFocused: () => offersFocused,
+		useRouter: () => ({ ...router, setParams: (params) => calls.push({ offerParams: params }) }),
+	},
 	"@reactive-resume/utils/timezone": timeParser,
 	"./hooks": {
 		useOffers: () => saved,
@@ -171,7 +203,7 @@ const { OffersScreen } = load("features/career/offers.tsx", {
 		useNow: () => new Date(),
 	},
 	"@reactive-resume/schema/career-offer": offerDomain,
-	"./offer-compare": load("features/career/offer-compare.ts"),
+	"./offer-compare": load("features/career/offer-compare.ts", { "@reactive-resume/schema/career-offer": offerDomain }),
 	"./offer-entry": { OfferEntry: "OfferEntry", OfferForm: "OfferForm" },
 	"./undo": {
 		withUndo: () => {
@@ -279,6 +311,58 @@ for (const mode of ["pending", "error"]) {
 	);
 	if (mode === "error") assert.ok(nodes(retained).some((node) => node.type === "Banner"));
 }
+selection.rememberSavedOffer(selectionScope, "retained", "pinned");
+saved.data.push({ ...saved.data[0], id: "pinned" });
+offersFocused = false;
+calls.length = 0;
+reset();
+render(OffersScreen);
+assert.ok(!calls.some((call) => call?.offerParams), "blurred Offers cannot mutate the current route");
+assert.equal(selection.useSavedOffer.getState().accounts[selectionScope].id, "retained");
+selectionScope = "another-account";
+offersFocused = true;
+reset();
+render(OffersScreen);
+assert.ok(!calls.some((call) => call?.offerParams), "another account cannot consume a saved selection");
+selectionScope = "offer-account";
+reset();
+render(OffersScreen);
+assert.deepEqual(calls.find((call) => call?.offerParams)?.offerParams, {
+	a: "retained",
+	b: "pinned",
+	highlight: "retained",
+});
+assert.equal(selection.useSavedOffer.getState().accounts[selectionScope], undefined);
+for (const [otherTerms, note] of [
+	[{ ...retainedTerms, variablePercent: 5 }, "€5,000 more"],
+	[{ ...retainedTerms, variable: 15000 }, "€5,000 less"],
+	[{ ...retainedTerms, currency: "USD", variablePercent: 5 }, null],
+	[{ ...retainedTerms, period: "month", variablePercent: 5 }, null],
+	[{ ...retainedTerms, base: null, variablePercent: 5 }, null],
+]) {
+	reset();
+	saved.data = [
+		{ ...saved.data[0], id: "percentage", data: { ...retainedTerms, variablePercent: 10 } },
+		{ ...saved.data[0], id: "comparison", applicationId: "other-job", data: otherTerms },
+	];
+	const compared = expand(render(OffersScreen));
+	const values = nodes(compared)
+		.filter((node) => node.type === "Text")
+		.flatMap((node) => node.props.children);
+	const bonus = values.find((value) => typeof value === "string" && value.startsWith("10% of base"));
+	assert.ok(bonus?.includes("€10,000"), "percentage stays visible alongside its amount");
+	if (note) assert.ok(bonus.includes(note), "native percentage bonus retains its money-difference note");
+	else assert.ok(!/more|less/.test(bonus), "incomparable or unknown bonus has no difference note");
+}
+reset();
+saved.data[0].data = { ...retainedTerms, base: null, variablePercent: 10 };
+const unknownBase = nodes(expand(render(OffersScreen)))
+	.filter((node) => node.type === "Text")
+	.flatMap((node) => node.props.children);
+assert.ok(
+	unknownBase.some((value) => value === "10% of base"),
+	"unknown base preserves the entered bonus rate",
+);
 saved.data = [];
 
 console.log("PASS native Offers loading/error/retry/persisted row and genuine-empty controls");

@@ -166,11 +166,11 @@ function ApplicationProfileForm({ initial }: ApplicationProfileFormProps) {
 				<SettingsSection title={<Trans>Links</Trans>} className="gap-4 [&>button]:justify-self-start">
 					{draft.links.map((link, index) => (
 						<div key={index} className="grid gap-3 border-b border-line pb-4 last:border-b-0 sm:grid-cols-2">
-							{field(t`Link ${index + 1} label`, link.label, (label) =>
+							{field(t`Link ${i18n.number(index + 1)} label`, link.label, (label) =>
 								patch({ links: draft.links.map((row, i) => (i === index ? { ...row, label } : row)) }),
 							)}
 							{field(
-								t`Link ${index + 1} URL`,
+								t`Link ${i18n.number(index + 1)} URL`,
 								link.url,
 								(url) => patch({ links: draft.links.map((row, i) => (i === index ? { ...row, url } : row)) }),
 								2000,
@@ -180,7 +180,7 @@ function ApplicationProfileForm({ initial }: ApplicationProfileFormProps) {
 								className="justify-self-start sm:col-span-2"
 								onClick={() => patch({ links: draft.links.filter((_, i) => i !== index) })}
 							>
-								<Trans>Remove link {index + 1}</Trans>
+								<Trans>Remove link {i18n.number(index + 1)}</Trans>
 							</Button>
 						</div>
 					))}
@@ -294,7 +294,7 @@ function ApplicationProfileForm({ initial }: ApplicationProfileFormProps) {
 					{draft.references.map((row, index) => (
 						<fieldset key={index} className="grid min-w-0 gap-3 border-b border-line pb-4">
 							<legend className="mb-3 font-medium">
-								<Trans>Reference {index + 1}</Trans>
+								<Trans>Reference {i18n.number(index + 1)}</Trans>
 							</legend>
 							<div className="grid gap-3 sm:grid-cols-2">
 								{Object.entries({
@@ -320,7 +320,7 @@ function ApplicationProfileForm({ initial }: ApplicationProfileFormProps) {
 								className="justify-self-start"
 								onClick={() => patch({ references: draft.references.filter((_, i) => i !== index) })}
 							>
-								<Trans>Remove reference {index + 1}</Trans>
+								<Trans>Remove reference {i18n.number(index + 1)}</Trans>
 							</Button>
 						</fieldset>
 					))}

@@ -2,7 +2,8 @@ import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
 import type { Application } from "@/features/applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
@@ -202,7 +203,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 					</div>
 					<span className="flex flex-wrap items-baseline gap-x-2 font-mono text-xs font-medium text-ink-3">
 						<Trans>
-							{doneMinutes} of {total} min
+							{ph({ doneMinutes: i18n.number(doneMinutes) })} of {ph({ total: i18n.number(total) })} min
 						</Trans>
 						{/* The interview, posting or Knowledge changed since it was planned: plan again on request. */}
 						{briefing.outdated && !readOnly && provider && interview && (
@@ -245,7 +246,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 								onCheckedChange={(checked) => ticks.toggle(String(index), checked)}
 							/>
 							<span className="font-mono text-xs leading-5 font-medium text-ink-3">
-								<Trans>{row.minutes} min</Trans>
+								<Trans>{i18n.number(row.minutes)} min</Trans>
 							</span>
 							<div className="col-start-2 grid gap-0.5 sm:col-start-auto">
 								<p
@@ -272,7 +273,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 							{questions.map((question, index) => (
 								<li key={`${question.text}-${index}`} className="flex gap-2.5 text-sm leading-5">
 									<span className="w-4 shrink-0 font-mono text-xs leading-5 font-medium text-accent-text">
-										{index + 1}
+										{i18n.number(index + 1)}
 									</span>
 									<span className="min-w-0 flex-1">{question.text}</span>
 									<span className="shrink-0 text-xs leading-5 text-ink-3">{question.origin}</span>
@@ -648,7 +649,7 @@ function Soon({ application, interview, briefing, now, go }: SoonProps) {
 									<span className="text-[13px] leading-[19px] text-ink-2">{row.detail}</span>
 								</span>
 								<span className="ms-auto font-mono text-xs font-medium whitespace-nowrap text-ink-3">
-									<Trans>{row.minutes} min</Trans>
+									<Trans>{i18n.number(row.minutes)} min</Trans>
 								</span>
 							</label>
 						);

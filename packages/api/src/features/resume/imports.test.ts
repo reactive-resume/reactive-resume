@@ -60,27 +60,32 @@ it("reports bounded source coverage without parsing or importing a partial PDF",
 	expect(create).not.toHaveBeenCalled();
 });
 
-it("keeps surviving text partial and refuses creation after a page text read failed", async () => {
-	create.mockClear();
-	const bytes = readFileSync(new URL("./fixtures/import-review.pdf", import.meta.url));
-	const file = new File([bytes], "Fictional-damaged-resume.pdf");
-	const extraction = await import("./pdf-analysis");
-	const raw = await extraction.extractPdf(file, undefined, 0);
-	const read = vi.spyOn(extraction, "extractPdf").mockResolvedValue({ ...raw, textReadFailed: true });
-	try {
-		const context = { locale: "en-US" as const, reqHeaders: new Headers() };
-		const preview = await call(previewPdfImport, { file }, { context });
-		expect(preview.source.lines.join("\n")).toContain("Completed independent research on accessible interfaces.");
-		expect(preview.source.partial).toBe(true);
-		expect(preview.data).toBeNull();
-		await expect(call(importResumeFile, { file, format: "PDF" }, { context })).rejects.toMatchObject({
-			code: "BAD_REQUEST",
-		});
-		expect(create).not.toHaveBeenCalled();
-	} finally {
-		read.mockRestore();
-	}
-});
+it.each(["textReadFailed", "annotationReadFailed"] as const)(
+	"keeps surviving source partial and refuses creation after %s",
+	async (failure) => {
+		create.mockClear();
+		const bytes = readFileSync(new URL("./fixtures/import-review.pdf", import.meta.url));
+		const file = new File([bytes], "Fictional-damaged-resume.pdf");
+		const extraction = await import("./pdf-analysis");
+		const raw = await extraction.extractPdf(file, undefined, 0);
+		const read = vi
+			.spyOn(extraction, "extractPdf")
+			.mockResolvedValue({ ...raw, [failure]: true, links: failure === "annotationReadFailed" ? [] : raw.links });
+		try {
+			const context = { locale: "en-US" as const, reqHeaders: new Headers() };
+			const preview = await call(previewPdfImport, { file }, { context });
+			expect(preview.source.lines.join("\n")).toContain("Completed independent research on accessible interfaces.");
+			expect(preview.source.partial).toBe(true);
+			expect(preview.data).toBeNull();
+			await expect(call(importResumeFile, { file, format: "PDF" }, { context })).rejects.toMatchObject({
+				code: "BAD_REQUEST",
+			});
+			expect(create).not.toHaveBeenCalled();
+		} finally {
+			read.mockRestore();
+		}
+	},
+);
 
 it.each([
 	{
