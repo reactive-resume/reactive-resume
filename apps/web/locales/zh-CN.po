@@ -477,9 +477,11 @@ msgstr "{0} 小时"
 msgid "{0} in {1} is {2} in your timezone ({preferredZone})."
 msgstr "{1} 的 {0} 即您所在时区（{preferredZone}）的 {2}。"
 
+#. placeholder {0}: interviewKindOf(item.interview.kind)?.label ?? item.interview.kind
 #. placeholder {0}: interviewKindOf(upcoming.kind)?.label ?? ""
 #. placeholder {0}: kind?.label ?? entry.kind
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/career/today.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "{0} interview"
 msgstr "{0}采访"
@@ -1593,6 +1595,11 @@ msgstr "添加“{0}”"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Add “{0}” as a new stage"
 msgstr "将“{0}”添加为新阶段"
+
+#. Button that adds a suggested tag. Variable is the tag text.
+#: src/components/input/chip-input.tsx
+msgid "Add {suggestion}"
+msgstr ""
 
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
@@ -7122,6 +7129,7 @@ msgid "Follow-up note"
 msgstr "跟进备注"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "跟进提醒"
 
@@ -8710,10 +8718,6 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "上次使用"
-
-#: src/features/career/today.tsx
-msgid "Later interviews"
-msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -12122,6 +12126,10 @@ msgstr "由您的服务器提供：{connectedProvider}。"
 msgid "Provider"
 msgstr "服务提供商"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Provider options"
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
@@ -12998,6 +13006,7 @@ msgid "Reply copied"
 msgstr "回复已复制"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -18962,6 +18971,12 @@ msgstr "您的故事"
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "无法加载您的故事。"
+
+#: src/dialogs/resume/index.tsx
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/homepage/sections.tsx
 msgid "Your turn"

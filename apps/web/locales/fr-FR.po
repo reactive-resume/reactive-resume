@@ -477,9 +477,11 @@ msgstr "{0} h"
 msgid "{0} in {1} is {2} in your timezone ({preferredZone})."
 msgstr "{0} ({1}) correspond à {2} dans votre fuseau horaire ({preferredZone})."
 
+#. placeholder {0}: interviewKindOf(item.interview.kind)?.label ?? item.interview.kind
 #. placeholder {0}: interviewKindOf(upcoming.kind)?.label ?? ""
 #. placeholder {0}: kind?.label ?? entry.kind
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/career/today.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "{0} interview"
 msgstr "Entretien {0}"
@@ -1593,6 +1595,11 @@ msgstr "Ajoutez « {0} »"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Add “{0}” as a new stage"
 msgstr "Ajouter « {0} » comme nouvelle étape"
+
+#. Button that adds a suggested tag. Variable is the tag text.
+#: src/components/input/chip-input.tsx
+msgid "Add {suggestion}"
+msgstr ""
 
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
@@ -7122,6 +7129,7 @@ msgid "Follow-up note"
 msgstr "Note de relance"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "Rappel de relance"
 
@@ -8710,10 +8718,6 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "Dernière utilisation"
-
-#: src/features/career/today.tsx
-msgid "Later interviews"
-msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -12122,6 +12126,10 @@ msgstr "Fourni par votre serveur : {connectedProvider}."
 msgid "Provider"
 msgstr "Fournisseur"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Provider options"
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "Provider retention follows its own policy. Your provider may charge for this request."
 msgstr ""
@@ -12998,6 +13006,7 @@ msgid "Reply copied"
 msgstr "Réponse copiée"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -18962,6 +18971,12 @@ msgstr "vos récits"
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "Impossible de charger votre récit."
+
+#: src/dialogs/resume/index.tsx
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/homepage/sections.tsx
 msgid "Your turn"

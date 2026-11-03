@@ -19,6 +19,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "../store";
 import { ChipInput } from "@/components/input/chip-input";
+import { useExistingTags } from "@/features/documents/tag-suggestions";
 import { saveResumeMetadata } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { getResumeErrorMessage } from "@/libs/error-message";
@@ -41,6 +42,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 	const commitTags = useRef<(() => string[]) | null>(null);
 	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
+	const suggestions = useExistingTags(["resume"]);
 
 	const updateOptions = orpc.resume.update.mutationOptions();
 	const update = useMutation({
@@ -156,6 +158,8 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 										onChange={(value) => {
 											field.handleChange(value);
 										}}
+										suggestions={suggestions}
+										suggestionsLabel={t`Your tags`}
 									/>
 								}
 							/>

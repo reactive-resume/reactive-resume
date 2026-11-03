@@ -2430,10 +2430,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "బిహేవియరల్"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "ప్రవర్తనా ఇంటర్వ్యూ"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "మీ కనీస మూల వేతనం క్రింద."
@@ -4501,6 +4497,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "ప్రొవైడర్‌ను తొలగించండి"
 
@@ -4543,6 +4540,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "ఈ ప్రొవైడర్‌ని తొలగించాలా?"
 
@@ -5615,6 +5613,7 @@ msgid "Follow-up note"
 msgstr "ఫాలో-అప్ గమనిక"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "ఫాలో-అప్ రిమైండర్"
 
@@ -6325,7 +6324,6 @@ msgstr "ఇంటర్ఫేస్ మాత్రమే. ప్రతి ర�
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "ఇంటర్వ్యూ"
 
@@ -6464,6 +6462,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "దాని సేవ్ చేయబడిన కీ తొలగించబడింది. దీన్ని ఉపయోగించే సంభాషణలకు మరొక ప్రొవైడర్ అవసరం."
 
@@ -6601,6 +6600,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "ఈ రెజ్యూమ్ గురించి మీ వ్యక్తిగత నోట్స్‌ను ఇక్కడ ఉంచుకోండి. వాటిని మరెవరూ చూడలేరు."
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -8303,10 +8303,6 @@ msgstr "ఈ ఫైల్ నుండి టెక్స్ట్ చదవల�
 msgid "No timezone matches."
 msgstr "ఏ టైమ్ జోన్ సరిపోలలేదు."
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "రాబోయే ఇంటర్వ్యూలు లేవు."
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "పని అనుభవం చూపడం లేదు"
@@ -8758,10 +8754,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "ఆన్‌సైట్"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
-msgstr "ఆన్‌సైట్ ఇంటర్వ్యూ"
 
 #: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
@@ -9629,6 +9621,10 @@ msgstr "మీ సర్వర్ ద్వారా అందించబడి
 msgid "Provider"
 msgstr "ప్రొవైడర్"
 
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "ప్రొవైడర్ నిలుపుదల మరియు ఉపయోగం దాని గోప్యతా విధానాన్ని అనుసరించండి. తగ్గింపు ఈ ఆపరేషన్‌ను నిరోధిస్తుంది మరియు ఇతర యాప్ ఫీచర్‌లను అందుబాటులో ఉంచుతుంది."
@@ -10328,6 +10324,7 @@ msgid "Reply copied"
 msgstr "ప్రత్యుత్తరం కాపీ చేయబడింది"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -11173,10 +11170,6 @@ msgstr "పాఠశాల"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "స్క్రీనింగ్"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "స్క్రీనింగ్ ఇంటర్వ్యూ"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12572,10 +12565,6 @@ msgstr "టీల్"
 #: src/features/applications/next-step.ts
 msgid "Technical"
 msgstr "టెక్నికల్"
-
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "సాంకేతిక ఇంటర్వ్యూ"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
@@ -15192,6 +15181,11 @@ msgstr "మీ కథలు"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "మీ కథను లోడ్ చేయడం సాధ్యపడలేదు."
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"

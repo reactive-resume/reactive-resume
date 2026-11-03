@@ -2430,10 +2430,6 @@ msgstr ""
 msgid "Behavioral"
 msgstr "អាកប្បកិរិយា"
 
-#: src/features/career/today.tsx
-msgid "Behavioral interview"
-msgstr "កិច្ចសំភាសន៍"
-
 #: src/features/career/offers.tsx
 msgid "Below your minimum base salary."
 msgstr "ក្រោមប្រាក់ខែគោលអប្បបរមារបស់អ្នក។"
@@ -4501,6 +4497,7 @@ msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete provider"
 msgstr "លុបអ្នកផ្តល់សេវា"
 
@@ -4543,6 +4540,7 @@ msgid "Delete this library answer? Application drafts and submitted copies are k
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Delete this provider?"
 msgstr "លុបអ្នកផ្តល់សេវានេះ?"
 
@@ -5615,6 +5613,7 @@ msgid "Follow-up note"
 msgstr "កំណត់ចំណាំតាមដាន"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/today.tsx
 msgid "Follow-up reminder"
 msgstr "ការរំលឹកតាមដាន"
 
@@ -6325,7 +6324,6 @@ msgstr "ចំណុចប្រទាក់តែប៉ុណ្ណោះ។ �
 #: src/features/applications-board/calendar-screen.tsx
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
-#: src/features/career/today.tsx
 msgid "Interview"
 msgstr "សម្ភាសន៍"
 
@@ -6464,6 +6462,7 @@ msgid "its requirements"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "សោដែលបានរក្សាទុករបស់វាត្រូវបានលុប។ ការសន្ទនាដោយប្រើវាត្រូវការអ្នកផ្តល់សេវាផ្សេងទៀត។"
 
@@ -6601,6 +6600,7 @@ msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "រក្សាទុកកំណត់ចំណាំឯកជនអំពីប្រវត្តិរូបសង្ខេបនេះនៅទីនេះ។ គ្មាននរណាម្នាក់ផ្សេងអាចមើលឃើញវាទេ។"
 
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "Keep provider"
 msgstr ""
 
@@ -8303,10 +8303,6 @@ msgstr "មិនអាចអានអត្ថបទណាមួយពីឯក
 msgid "No timezone matches."
 msgstr "គ្មានតំបន់ពេលវេលាដែលត្រូវគ្នាទេ។"
 
-#: src/features/career/today.tsx
-msgid "No upcoming interviews."
-msgstr "គ្មានការសម្ភាសន៍នាពេលខាងមុខទេ។"
-
 #: src/features/check/issues.ts
 msgid "No work experience shows"
 msgstr "គ្មានបទពិសោធន៍ការងារបង្ហាញ"
@@ -8758,10 +8754,6 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "នៅទីតាំង"
-
-#: src/features/career/today.tsx
-msgid "Onsite interview"
-msgstr "ការសម្ភាសន៍នៅនឹងកន្លែង"
 
 #: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
@@ -9629,6 +9621,10 @@ msgstr "ផ្តល់ដោយម៉ាស៊ីនមេរបស់អ្ន
 msgid "Provider"
 msgstr "អ្នកផ្តល់សេវា"
 
+#: src/features/ai/provider-list.tsx
+msgid "Provider options"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "ការរក្សាទុក និងប្រើប្រាស់របស់អ្នកផ្តល់សេវា អនុវត្តតាមគោលការណ៍ឯកជនភាពរបស់ខ្លួន។ ការធ្លាក់ចុះរារាំងប្រតិបត្តិការនេះ និងទុកឱ្យមុខងារកម្មវិធីផ្សេងទៀតមាន។"
@@ -10328,6 +10324,7 @@ msgid "Reply copied"
 msgstr "បានចម្លងការឆ្លើយតប"
 
 #: src/features/applications/next-step.ts
+#: src/features/career/today.tsx
 msgid "Reply to the offer"
 msgstr ""
 
@@ -11173,10 +11170,6 @@ msgstr "សាលា"
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "ការជម្រុះដំបូង"
-
-#: src/features/career/today.tsx
-msgid "Screening interview"
-msgstr "ការសម្ភាសន៍បឋម"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
@@ -12572,10 +12565,6 @@ msgstr "ពណ៌ខៀវបៃតង"
 #: src/features/applications/next-step.ts
 msgid "Technical"
 msgstr "បច្ចេកទេស"
-
-#: src/features/career/today.tsx
-msgid "Technical interview"
-msgstr "បទសម្ភាសន៍បច្ចេកទេស"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
@@ -15192,6 +15181,11 @@ msgstr "រឿងរបស់អ្នក"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
 msgstr "មិនអាចផ្ទុករឿងរបស់អ្នកបានទេ។"
+
+#: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
+msgid "Your tags"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"
