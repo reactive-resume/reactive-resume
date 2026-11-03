@@ -33,6 +33,7 @@ function library(database: DbOrTx, input: ListInput) {
 			applicationId: sql<string | null>`${application.id}`.as("application_id"),
 			company: application.company,
 			role: application.role,
+			status: application.status,
 		})
 		.from(resume)
 		.leftJoin(
@@ -74,6 +75,7 @@ function library(database: DbOrTx, input: ListInput) {
 			applicationId: sql<string | null>`${application.id}`.as("application_id"),
 			company: application.company,
 			role: application.role,
+			status: application.status,
 		})
 		.from(coverLetter)
 		.leftJoin(
@@ -128,10 +130,12 @@ async function readDocuments(database: DbOrTx, input: ListInput) {
 				.where(where)
 		: undefined;
 	return {
-		items: items.map(({ applicationId, company, role, legacyRecipient, ...row }): DocumentSummary => ({
+		items: items.map(({ applicationId, company, role, status, legacyRecipient, ...row }): DocumentSummary => ({
 			...row,
 			recipient: row.recipient ?? (coverLetterRecipientText(legacyRecipient ?? "") || null),
-			application: applicationId ? { id: applicationId, company: company ?? "", role: role ?? "" } : null,
+			application: applicationId
+				? { id: applicationId, company: company ?? "", role: role ?? "", status: status ?? "saved" }
+				: null,
 		})),
 		total: totals?.[0]?.total ?? items.length,
 	};

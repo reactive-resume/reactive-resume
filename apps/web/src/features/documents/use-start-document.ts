@@ -86,7 +86,7 @@ export function useStartDocument(applicationId?: string) {
 				toast.add({ description: t`Sample resume added. Delete it anytime.` });
 				void navigate({ to: "/builder/$resumeId", params: { resumeId } });
 			}),
-		newLetter: (resumeId: string | null = null) =>
+		newLetter: (resumeId: string | null = null, sourceLetterId: string | null = null) =>
 			start(async () => {
 				const base = t`Untitled letter`;
 				const letters = await client.documents.list({ type: "letter", q: base });
@@ -98,6 +98,8 @@ export function useStartDocument(applicationId?: string) {
 					recipient: "",
 					content: "",
 					...(resumeId ? { resumeId } : {}),
+					// The server copies the selected letter's body and keeps both letters' histories separate.
+					...(sourceLetterId ? { sourceLetterId } : {}),
 				};
 				const letter = await createLetter(input);
 				await created(letter.id, "letter");

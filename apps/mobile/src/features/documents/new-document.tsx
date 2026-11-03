@@ -35,6 +35,7 @@ export function NewDocument() {
 		context?: string;
 		step?: string;
 		sourceResumeId?: string;
+		sourceLetterId?: string;
 		applicationId?: string;
 		destination?: string;
 	}>();
@@ -49,6 +50,7 @@ export function NewDocument() {
 	const [step, setStep] = useState<Step>(params.step === "copy" ? "copy" : "choose");
 	const [sourceId, setSourceId] = useState<string | null>(params.sourceResumeId ?? null);
 	const [letterResumeId, setLetterResumeId] = useState(params.sourceResumeId ?? "");
+	const [letterSourceId, setLetterSourceId] = useState(params.sourceLetterId ?? "");
 	const [jobId, setJobId] = useState<string | null>(params.applicationId ?? null);
 	const [newJob, setNewJob] = useState<{ company: string; role: string; posting: string } | null>(null);
 	const [name, setName] = useState<string | null>(null);
@@ -73,6 +75,7 @@ export function NewDocument() {
 		enabled: step === "copy" && session.status === "signed-in",
 	});
 	const resumes = (documents.data ?? []).filter((document) => document.type === "resume");
+	const earlierLetters = (documents.data ?? []).filter((document) => document.type === "letter");
 	// A named resume (the editor's Copy for a job) is the only source until the list has it: never another resume.
 	const source = sourceId ? resumes.find((document) => document.id === sourceId) : defaultCopySource(resumes);
 	const jobs = (applications.data ?? []).filter(
@@ -166,6 +169,8 @@ export function NewDocument() {
 						content: "",
 						...(selected ? { resumeId: selected.id } : {}),
 						...(params.applicationId ? { applicationId: params.applicationId } : {}),
+						// The server copies the selected letter's body and keeps both letters' histories separate.
+						...(letterSourceId ? { sourceLetterId: letterSourceId } : {}),
 					},
 					{ signal },
 				);
@@ -476,6 +481,25 @@ export function NewDocument() {
 										onChange={setLetterResumeId}
 										disabled={busy}
 									/>
+									<SelectSheet
+										label={t`Start from an earlier letter`}
+										value={letterSourceId}
+										options={[
+											{ value: "", label: t`Blank letter`, description: t`Your own body, no earlier letter` },
+											...earlierLetters.map((letter) => ({
+												value: letter.id,
+												label: letter.name,
+												description: letter.application
+													? t`Written for ${letter.application.company}`
+													: t`Not linked to a job`,
+											})),
+										]}
+										onChange={setLetterSourceId}
+										disabled={busy}
+									/>
+									<Text variant="caption" color="ink3">
+										{t`Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history.`}
+									</Text>
 									<Button
 										label={letterFirst ? t`New cover letter` : t`New cover letter instead`}
 										icon="envelope-simple"

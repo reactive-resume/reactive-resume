@@ -297,7 +297,12 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 
 	const { startBlank, trySample, newLetter, creating } = useStartDocument(data?.applicationId);
 	const { data: letterResumes } = useQuery(orpc.resume.list.queryOptions());
+	const { data: sourceLetters } = useQuery(
+		orpc.documents.list.queryOptions({ input: { type: "letter", trashed: false } }),
+	);
 	const [letterResumeId, setLetterResumeId] = useState(data?.sourceResumeId ?? "");
+	const [letterSourceId, setLetterSourceId] = useState("");
+	const letterSourceFieldId = useId();
 
 	const chooseFile = () => inputRef.current?.click();
 
@@ -425,13 +430,32 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 							))}
 						</NativeSelect>
 					</label>
+					<label htmlFor={letterSourceFieldId} className="grid gap-1.5 text-sm">
+						<Trans>Start from an earlier letter</Trans>
+						<NativeSelect
+							id={letterSourceFieldId}
+							value={letterSourceId}
+							onChange={(event) => setLetterSourceId(event.target.value)}
+							disabled={creating}
+						>
+							<option value="">{t`Blank letter`}</option>
+							{sourceLetters?.map((letter) => (
+								<option key={letter.id} value={letter.id}>
+									{letter.application ? t`${letter.name} — ${letter.application.company}` : letter.name}
+								</option>
+							))}
+						</NativeSelect>
+						<span className="text-xs text-ink-3">
+							<Trans>Copies the body. The new letter keeps its own recipient, date and history.</Trans>
+						</span>
+					</label>
 					{context === "letters" && (
 						<ChoiceTile
 							icon="envelope-simple"
 							title={t`New cover letter`}
 							description={t`Start a letter for a job, or write one from scratch.`}
 							disabled={creating}
-							onClick={() => void newLetter(letterResumeId || null)}
+							onClick={() => void newLetter(letterResumeId || null, letterSourceId || null)}
 						/>
 					)}
 					{(context === "applications" || context === "career") && (
@@ -499,7 +523,7 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 								type="button"
 								className="flex items-center gap-1.5 text-ink-2 hover:text-ink disabled:opacity-60"
 								disabled={creating}
-								onClick={() => void newLetter(letterResumeId || null)}
+								onClick={() => void newLetter(letterResumeId || null, letterSourceId || null)}
 							>
 								<Icon name="envelope-simple" size={18} />
 								<Trans>New cover letter instead</Trans>

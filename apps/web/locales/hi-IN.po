@@ -208,6 +208,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# दस्तावेज़ ट्रैश में ले जाया गया} other {# दस्तावेज़ ट्रैश में ले जाए गए}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -425,6 +430,12 @@ msgstr "{0, plural, one {# सहेजे गए आइटम में उप�
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {आपका चुना गया फ़ॉन्ट {list} नहीं दिखा सकता। यह “?” के रूप में दिखता है। डिज़ाइन में ऐसा फ़ॉन्ट चुनें जिसमें यह हो।} other {आपका चुना गया फ़ॉन्ट {list} नहीं दिखा सकता। ये “?” के रूप में दिखते हैं। डिज़ाइन में ऐसा फ़ॉन्ट चुनें जिसमें ये हों।}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3033,6 +3044,10 @@ msgstr "आवेदन करने के लिए सर्वोत्त�
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "अवरोधक"
@@ -3847,6 +3862,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "बंद किया हुआ"
 
@@ -4302,6 +4318,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4536,11 +4556,6 @@ msgstr "दस्तावेज़ नहीं बनाया जा सक�
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "कुंजी नहीं बनाई जा सकी. पुनः प्रयास करें।"
-
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "पत्र नहीं बनाया जा सका। पुनः प्रयास करें।"
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
@@ -5254,12 +5269,6 @@ msgstr "कवर लेटर"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "कवर लेटर"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "कवर लेटर - {0}"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -15174,6 +15183,10 @@ msgstr "हर एक को एक ठोस क्रिया से शु�
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "से शुरु करें"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."

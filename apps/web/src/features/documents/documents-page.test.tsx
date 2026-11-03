@@ -579,3 +579,67 @@ it.each([0, 1])("recovers the correct empty state after a failed counts request 
 		expect(screen.queryByRole("button", { name: "Choose a file" })).toBeNull();
 	}
 });
+
+it("groups a job's resume and letter, keeping closed jobs collapsed until opened", async () => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
+	const input = {
+		trashed: false,
+		type: "all" as const,
+		q: "",
+		tags: [],
+		sort: "edited" as const,
+		public: false,
+		limit: 100,
+		offset: 0,
+	};
+	const base = page(0, 1).items[0];
+	if (!base) throw new Error("missing document fixture");
+	const document = (
+		id: string,
+		type: "resume" | "letter",
+		application: { id: string; company: string; role: string; status: "applied" | "closed" } | null,
+	) => ({
+		...base,
+		id,
+		type,
+		name: `${application?.company ?? "Loose"} ${type}`,
+		application,
+	});
+	client.setQueryData(orpc.documents.page.queryKey({ input }), {
+		...page(0, 4),
+		items: [
+			document("open-resume", "resume", { id: "open", company: "Open Co", role: "Engineer", status: "applied" }),
+			document("closed-resume", "resume", { id: "closed", company: "Closed Co", role: "Designer", status: "closed" }),
+			document("loose-letter", "letter", null),
+			document("open-letter", "letter", { id: "open", company: "Open Co", role: "Engineer", status: "applied" }),
+			document("closed-letter", "letter", { id: "closed", company: "Closed Co", role: "Designer", status: "closed" }),
+		],
+		total: 5,
+	});
+	render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={client}>
+				<DocumentLibraryProvider>
+					<DocumentsPage
+						search={{ type: "all", q: "", tags: [], sort: "edited", view: "list" }}
+						onSearchChange={vi.fn()}
+					/>
+				</DocumentLibraryProvider>
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+
+	const closed = await screen.findByRole("button", { name: /Closed Co/ });
+	expect(closed).toHaveAttribute("aria-expanded", "false");
+	expect(screen.getByText("Open Co resume")).toBeVisible();
+	expect(screen.getByText("Open Co letter")).toBeVisible();
+	expect(screen.queryByText("Closed Co resume")).toBeNull();
+	expect(screen.queryByText("Closed Co letter")).toBeNull();
+	expect(screen.getByText("Loose letter")).toBeVisible();
+
+	fireEvent.click(closed);
+	expect(closed).toHaveAttribute("aria-expanded", "true");
+	expect(await screen.findByText("Closed Co resume")).toBeVisible();
+	expect(screen.getByText("Closed Co letter")).toBeVisible();
+});

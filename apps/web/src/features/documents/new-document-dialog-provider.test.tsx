@@ -33,7 +33,16 @@ vi.mock("@/libs/orpc/client", () => ({
 		aiProviders: {
 			list: { queryOptions: () => ({ queryKey: ["providers"], queryFn: api.providers, retry: false }) },
 		},
-		documents: { key: () => ["documents"], list: { queryKey: () => ["documents", "list"] } },
+		documents: {
+			key: () => ["documents"],
+			list: {
+				queryKey: () => ["documents", "list"],
+				queryOptions: (options?: { input?: unknown }) => ({
+					queryKey: ["documents", "list", options?.input],
+					queryFn: () => api.listDocuments(options?.input),
+				}),
+			},
+		},
 		resume: {
 			create: { mutationOptions: () => ({ mutationFn: api.createResume }) },
 			list: { queryOptions: () => ({ queryKey: ["resume", "list"], queryFn: async () => [] }) },
@@ -132,6 +141,33 @@ it("creates one cover letter while a create is in flight, even across repeat cli
 	await act(async () => finish({ id: "letter-1" }));
 	fireEvent.click(screen.getByRole("button", { name: "New cover letter instead" }));
 	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledTimes(2));
+});
+
+it("starts a new letter from the explicitly selected earlier letter", async () => {
+	api.listDocuments.mockImplementation(async (input: { type?: string; q?: string }) =>
+		input.type === "letter" && !input.q
+			? [
+					{
+						id: "old-letter",
+						type: "letter",
+						name: "Northwind letter",
+						application: { id: "old-job", company: "Northwind Labs", role: "Engineer", status: "applied" },
+					},
+				]
+			: [],
+	);
+	api.createLetter.mockResolvedValue({ id: "new-letter" });
+	mount();
+	const select = await screen.findByLabelText(/Start from an earlier letter/);
+	await screen.findByRole("option", { name: "Northwind letter — Northwind Labs" });
+	fireEvent.change(select, { target: { value: "old-letter" } });
+	expect(select).toHaveValue("old-letter");
+	fireEvent.click(screen.getByRole("button", { name: "New cover letter instead" }));
+	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledOnce());
+	expect(api.createLetter.mock.calls[0]?.[0]).toMatchObject({
+		sourceLetterId: "old-letter",
+		content: "",
+	});
 });
 
 it("numbers a new letter while untitled ones exist, so the library can tell them apart", async () => {

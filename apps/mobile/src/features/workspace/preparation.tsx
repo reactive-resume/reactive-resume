@@ -42,10 +42,9 @@ export function Preparation({ application, disabled }: PreparationProps) {
 		onSuccess: () => void invalidate(),
 		onError: (error) => showToast({ message: workspaceError(error, t`Couldn't save that change. Try again.`) }),
 	});
-	const createLetter = useMutation(orpc.coverLetters.create.mutationOptions());
 	const next = nextPreparationStep(application, workspace.data, documents.data);
 	const editing = application.status === "saved" && next !== "submitted";
-	const busy = disabled || update.isPending || createLetter.isPending;
+	const busy = disabled || update.isPending;
 	const resumeId = application.resumeId;
 	const labels = {
 		posting: t`Save the job posting`,
@@ -67,19 +66,15 @@ export function Preparation({ application, disabled }: PreparationProps) {
 				...(resumeId ? { sourceResumeId: resumeId } : {}),
 			},
 		});
-	const writeLetter = async () => {
-		try {
-			const letter = await createLetter.mutateAsync({
-				name: t`Cover letter — ${application.company}`.slice(0, 100),
+	const writeLetter = () =>
+		router.push({
+			pathname: routes.new(),
+			params: {
+				context: "letters",
 				applicationId: application.id,
-				...(resumeId ? { resumeId } : {}),
-			});
-			void invalidate();
-			router.push(routes.letter(letter.id, "write", undefined, application.id));
-		} catch (error) {
-			showToast({ message: workspaceError(error, t`Couldn't create the letter. Try again.`) });
-		}
-	};
+				...(resumeId ? { sourceResumeId: resumeId } : {}),
+			},
+		});
 	const download = async (kind: "resume" | "letter", id: string, name: string) => {
 		setDownloading(id);
 		try {
