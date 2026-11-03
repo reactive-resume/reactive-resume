@@ -1510,7 +1510,7 @@ msgstr "Få tilgang til kontoen din gjennom API, inkludert lesing, endring og sl
 msgid "Accessibility"
 msgstr "Tilgjengelighet"
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Prestasjon"
 
@@ -3215,6 +3215,7 @@ msgstr ""
 #: src/features/assistant/save-posting.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -3595,6 +3596,7 @@ msgstr "Velg en PDF-fil."
 msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
 msgstr ""
 
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
 msgid "Choose a resume"
@@ -3603,6 +3605,10 @@ msgstr "Velg en CV"
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Velg en CV i Write for å matche designet. Inntil da har brevet sitt."
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Velg en CV og se gjennom utdragene. Ingenting sendes til en KI-leverandør. Bare valgte fakta lagres i Kunnskap for alle søknader."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -4675,6 +4681,10 @@ msgstr "Kunne ikke laste inn intervjuer. Prøv på nytt"
 msgid "Couldn't load letters. Try again."
 msgstr "Kunne ikke laste inn søknadsbrev. Prøv igjen."
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Kunne ikke laste inn eller lagre CV-fakta. Prøv igjen."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "Kunne ikke laste inn eller lagre innstillingene for nettilgang. Prøv igjen."
@@ -5331,6 +5341,10 @@ msgstr ""
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
 msgstr "Opprett en nå"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Opprett eller importer først en CV i Dokumenter."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create resume"
@@ -6712,7 +6726,7 @@ msgstr "Gå ut av fokusmodus"
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/write.tsx
@@ -6816,6 +6830,10 @@ msgstr "Uttrukket fra PDF på siden · leserekkefølge"
 msgctxt "Entry header layout"
 msgid "Eyebrow"
 msgstr "Overetikett"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Fact"
+msgstr "Faktum"
 
 #: src/features/homepage/remember.tsx
 msgid "Fact · Accomplishment"
@@ -10367,6 +10385,10 @@ msgstr "Ingen spesifikke begreper kunne hentes ut av den stillingsbeskrivelsen, 
 msgid "No stories yet"
 msgstr "Ingen historier ennå"
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Ingen støttede utdrag funnet. Legg til et faktum manuelt eller velg en annen CV."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -11795,7 +11817,7 @@ msgstr "Øver på historien din: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Foretrekk én kolonne, eller begrens sidekolonnen til korte, selvstendige lister."
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 msgid "Preference"
 msgstr "Preferanse"
 
@@ -12106,6 +12128,10 @@ msgstr ""
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
 msgstr "Utgiver"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Hent fakta fra CV-en min"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Purple"
@@ -13092,6 +13118,7 @@ msgstr "gjenoppta"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/feedback/review-page.tsx
@@ -13141,6 +13168,10 @@ msgstr "CV-innhold"
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Resume details"
 msgstr "CV detaljer"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Resume fact proposals"
+msgstr "Foreslåtte CV-fakta"
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
@@ -13217,6 +13248,7 @@ msgstr "Prøv på nytt"
 msgid "Retry AI connections"
 msgstr ""
 
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/role-suggestions.tsx
 msgid "Retry documents"
 msgstr ""
@@ -13299,6 +13331,10 @@ msgstr ""
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Se over obligatoriske skjemasvar og fjern påstander uten belegg."
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Se gjennom CV-fakta"
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -13616,6 +13652,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Lagre tidsplan"
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Lagre valgte fakta"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
@@ -13645,6 +13685,10 @@ msgstr "Lagre disse tilbudsvilkårene for å sammenligne"
 #: src/features/settings/account/backup-codes.tsx
 msgid "Save these somewhere safe. Each works once, and they won't be shown again."
 msgstr ""
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Lagre dette faktumet"
 
 #: src/features/assistant/translate-resume.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -13763,6 +13807,12 @@ msgstr "Lagret i Kunnskap, privat for denne søknaden."
 #: src/features/career/workspace/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Lagret: {0}. Hoppet over: {1}. Eksisterende, rettede eller deaktiverte fakta forblir uendret."
 
 #. placeholder {0}: new URL(url).host
 #: src/features/resume/share/address-field.tsx
@@ -14769,7 +14819,7 @@ msgstr "Seks produktteam"
 msgid "Size"
 msgstr "Størrelse"
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Skill"
 msgstr "Ferdighet"
@@ -14849,6 +14899,10 @@ msgstr "Noen jobbdetaljer kunne ikke leses. Fyll inn rolle og firma, eller lim i
 msgid "Some lines are stored out of reading order."
 msgstr "Enkelte linjer er lagret i feil leserekkefølge."
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "Noe CV-tekst ble utelatt. Legg til andre fakta manuelt."
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Noen systemer mishandler bilder, og bilder frarådes i noen land."
@@ -14897,6 +14951,10 @@ msgstr "Kildekode"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Kildesitat"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -17035,6 +17093,7 @@ msgid "Two-step verification turned on"
 msgstr "To-trinns bekreftelse er slått på"
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx

@@ -1171,7 +1171,7 @@ msgstr "ยอมรับข้อเสนออื่นแล้ว"
 msgid "Accepted offer"
 msgstr "ข้อเสนอที่ตอบรับแล้ว"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "ความสำเร็จ"
 
@@ -2870,12 +2870,17 @@ msgid "Choose a replacement"
 msgstr "เลือกขั้นตอนทดแทน"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "เลือกเรซูเม่"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "เลือกเรซูเม่ใน Write เพื่อให้ตรงกับดีไซน์ จนกระทั่งถึงตอนนั้นจดหมายก็มีเป็นของตัวเอง"
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "เลือกเรซูเม่แล้วตรวจสอบข้อความที่คัดมา ไม่มีการส่งข้อมูลให้ผู้ให้บริการ AI บันทึกเฉพาะข้อเท็จจริงที่เลือกไว้ในคลังความรู้สำหรับทุกใบสมัคร"
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3669,6 +3674,10 @@ msgstr "โหลดเอกสารไม่ได้ โปรดลอง�
 msgid "Couldn't load letter"
 msgstr "ไม่สามารถโหลดจดหมายสมัครงานได้"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "โหลดหรือบันทึกข้อเท็จจริงจากเรซูเม่ไม่ได้ ลองอีกครั้ง"
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "ไม่สามารถโหลด ประวัติย่อ สำหรับจดหมายสมัครงานใหม่ได้"
@@ -4200,6 +4209,10 @@ msgstr "สร้างสำเนาภาษาอื่น"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "สร้างหรือนำเข้า ประวัติย่อ ก่อน จากนั้นจึงกลับมาคัดลอกสำหรับงานนี้"
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "สร้างหรือนำเข้าเรซูเม่ในเอกสารก่อน"
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5322,7 +5335,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "ประสบการณ์"
@@ -5370,6 +5383,7 @@ msgid "Eyebrow"
 msgstr "หัวเรื่องด้านบน"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "ข้อเท็จจริง"
 
@@ -8210,6 +8224,10 @@ msgstr "ไม่สามารถดึงคำศัพท์เฉพาะ
 msgid "No stories yet"
 msgstr "ยังไม่มีเรื่องราว"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "ไม่พบข้อความที่รองรับ เพิ่มข้อเท็จจริงด้วยตนเองหรือเลือกเรซูเม่อื่น"
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9338,7 +9356,7 @@ msgstr "กำลังฝึกเรื่องราวของคุณ: {
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "ควรใช้คอลัมน์เดียว หรือให้คอลัมน์ด้านข้างมีเพียงรายการสั้น ๆ ที่สมบูรณ์ในตัวเอง"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "ความต้องการ"
 
@@ -9610,6 +9628,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "สำนักพิมพ์"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "ดึงข้อเท็จจริงจากเรซูเม่ของฉัน"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10398,6 +10420,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10633,6 +10656,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "ตรวจทานคำตอบที่จำเป็นในแบบฟอร์ม และนำข้อกล่าวอ้างที่ไม่มีหลักฐานออก"
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "ตรวจสอบข้อเท็จจริงจากเรซูเม่"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10910,6 +10937,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "บันทึกกำหนดการ"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "บันทึกข้อเท็จจริงที่เลือก"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10934,6 +10965,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "บันทึกเงื่อนไขข้อเสนอนี้เพื่อเปรียบเทียบ"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "บันทึกข้อเท็จจริงนี้"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11017,6 +11052,12 @@ msgstr "บันทึกลงคลังความรู้แล้ว �
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "บันทึกแล้ว: {0} ข้าม: {1} ข้อเท็จจริงเดิม ที่แก้ไข หรือที่ปิดไว้จะไม่เปลี่ยนแปลง"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11858,7 +11899,7 @@ msgid "Size"
 msgstr "ขนาด"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "ทักษะ"
 
@@ -11924,6 +11965,10 @@ msgstr "อักขระบางตัวไม่มีความหมา
 msgid "Some lines are stored out of reading order."
 msgstr "บางบรรทัดถูกจัดเก็บนอกลำดับการอ่าน"
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "ละข้อความบางส่วนของเรซูเม่ไว้ เพิ่มข้อเท็จจริงอื่นด้วยตนเอง"
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "บางระบบจัดการรูปภาพในทางที่ผิด และไม่สนับสนุนรูปภาพในบางประเทศ"
@@ -11986,6 +12031,10 @@ msgstr "ซอร์สโค้ดบน GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "ข้อความอ้างอิงจากแหล่งที่มา"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13653,6 +13702,7 @@ msgstr "การยืนยันแบบสองขั้นตอน"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

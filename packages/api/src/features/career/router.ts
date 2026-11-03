@@ -1,6 +1,8 @@
 import z from "zod";
 import {
 	careerFactInputSchema,
+	resumeFactProposalSchema,
+	resumeFactsReviewSchema,
 	careerOfferInputSchema,
 	careerProfileDataSchema,
 	careerProfileUpdateSchema,
@@ -214,6 +216,39 @@ export const careerRouter = {
 		)
 		.output(z.array(careerFactSchema))
 		.handler(({ context, input }) => careerService.facts({ userId: context.user.id, ...input })),
+	proposeResumeFacts: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/career/facts/resume/preview",
+			tags: ["Career"],
+			operationId: "proposeResumeFacts",
+			summary: "Review facts from an owned resume",
+			description: "Returns visible resume excerpts without saving facts or contacting an AI provider.",
+		})
+		.input(z.object({ resumeId: z.string().min(1) }))
+		.output(
+			z.object({
+				id: z.string(),
+				name: z.string(),
+				updatedAt: z.coerce.date(),
+				proposals: z.array(resumeFactProposalSchema).max(50),
+				omitted: z.number().int().nonnegative(),
+			}),
+		)
+		.handler(({ context, input }) => careerService.proposeResumeFacts(context.user.id, input.resumeId)),
+	saveResumeFacts: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/career/facts/resume/import",
+			tags: ["Career"],
+			operationId: "saveResumeFacts",
+			summary: "Save reviewed resume facts",
+			description:
+				"Atomically saves only selected facts as shared Knowledge, retaining their exact resume quotations. Rejects a changed or trashed source. Existing, corrected and switched-off Knowledge is preserved.",
+		})
+		.input(resumeFactsReviewSchema)
+		.output(z.object({ saved: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() }))
+		.handler(({ context, input }) => careerService.saveResumeFacts(context.user.id, input)),
 	saveFact: protectedProcedure
 		.route({
 			method: "POST",

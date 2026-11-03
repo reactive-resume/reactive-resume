@@ -1171,7 +1171,7 @@ msgstr "קיבל הצעה אחרת"
 msgid "Accepted offer"
 msgstr "הצעה התקבלה"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "הישג"
 
@@ -2870,12 +2870,17 @@ msgid "Choose a replacement"
 msgstr "בחירת חלופה"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "בחירת קורות חיים"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "בחרו קורות חיים ב-Write כדי להתאים לעיצוב שלו. עד אז, למכתב יש משלו."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "בחרו קורות חיים ובדקו את הקטעים. דבר לא נשלח לספק בינה מלאכותית. רק העובדות שנבחרו נשמרות בידע עבור כל המועמדויות."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3669,6 +3674,10 @@ msgstr "לא ניתן לטעון את המסמכים. נסו שוב."
 msgid "Couldn't load letter"
 msgstr "לא ניתן היה לטעון מכתב מקדים"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "לא ניתן לטעון או לשמור עובדות מקורות החיים. נסו שוב."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "לא ניתן היה לטעון קורות חיים למכתב מקדים חדש."
@@ -4200,6 +4209,10 @@ msgstr "יצירת עותק בשפה אחרת"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "צור או ייבא קורות חיים תחילה, ואז חזור כדי להעתיק אותם למשרה זו."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "תחילה צרו או ייבאו קורות חיים במסמכים."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5322,7 +5335,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "ניסיון"
@@ -5370,6 +5383,7 @@ msgid "Eyebrow"
 msgstr "כותרת מקדימה"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "עובדה"
 
@@ -8210,6 +8224,10 @@ msgstr "לא ניתן היה לחלץ מונחים מסוימים מתיאור �
 msgid "No stories yet"
 msgstr "אין עדיין סיפורים"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "לא נמצאו קטעים נתמכים. הוסיפו עובדה ידנית או בחרו קורות חיים אחרים."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9338,7 +9356,7 @@ msgstr "מתרגל את הסיפור שלך: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "עדיף עמודה אחת, או שמור על העמודה הצדדית לרשימות קצרות ועצמאיות."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "העדפה"
 
@@ -9610,6 +9628,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "מוציא לאור"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "שליפת עובדות מקורות החיים שלי"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10398,6 +10420,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10633,6 +10656,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "עבור על תשובות החובה בטופס והסר טענות לא מבוססות."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "בדיקת עובדות מקורות החיים"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10910,6 +10937,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "שמור תזמון"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "שמירת העובדות שנבחרו"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10934,6 +10965,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "שמור את תנאי ההצעה להשוואה"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "שמירת עובדה זו"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11017,6 +11052,12 @@ msgstr "נשמר במאגר הידע, פרטי למועמדות הזו."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "נשמרו: {0}. דולגו: {1}. עובדות קיימות, מתוקנות או כבויות נשארות ללא שינוי."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11858,7 +11899,7 @@ msgid "Size"
 msgstr "גודל"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "מיומנות"
 
@@ -11924,6 +11965,10 @@ msgstr "לחלק מהגליפים אין משמעות מחוץ לקובץ הזה
 msgid "Some lines are stored out of reading order."
 msgstr "חלק מהשורות מאוחסנות שלא בסדר הקריאה."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "חלק מטקסט קורות החיים הושמט. הוסיפו עובדות אחרות ידנית."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "מערכות מסוימות מטפלות בצורה לא נכונה בתמונות, ותמונות לא מעודדות במדינות מסוימות."
@@ -11986,6 +12031,10 @@ msgstr "קוד המקור ב-GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "ציטוט מהמקור"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13653,6 +13702,7 @@ msgstr "אימות דו-שלבי"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

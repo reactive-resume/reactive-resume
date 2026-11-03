@@ -1171,7 +1171,7 @@ msgstr "다른 제안을 수락함"
 msgid "Accepted offer"
 msgstr "오퍼 수락함"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "성과"
 
@@ -2870,12 +2870,17 @@ msgid "Choose a replacement"
 msgstr "대체 단계 선택"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "이력서 선택"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "디자인에 어울리는 이력서를 Write에서 선택하세요. 그때까지는 편지 자체가 있습니다."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "이력서를 선택하고 발췌문을 검토하세요. AI 제공업체에는 아무것도 전송되지 않습니다. 선택한 사실만 모든 지원에 사용할 수 있는 지식에 저장됩니다."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3669,6 +3674,10 @@ msgstr "문서를 불러오지 못했습니다. 다시 시도하세요."
 msgid "Couldn't load letter"
 msgstr "소개서를 로드할 수 없습니다."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "이력서 사실을 불러오거나 저장하지 못했습니다. 다시 시도하세요."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "새 커버레터에 사용할 이력서를 불러오지 못했습니다."
@@ -4200,6 +4209,10 @@ msgstr "다른 언어 사본 만들기"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "먼저 이력서를 작성하거나 가져온 다음 돌아와서 이 직무에 대한 사본을 작성하세요."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "먼저 문서에서 이력서를 만들거나 가져오세요."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5322,7 +5335,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "경력"
@@ -5370,6 +5383,7 @@ msgid "Eyebrow"
 msgstr "상단 라벨"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "사실"
 
@@ -8210,6 +8224,10 @@ msgstr "해당 직무 설명에서 특정 용어를 추출할 수 없습니다."
 msgid "No stories yet"
 msgstr "아직 스토리가 없습니다"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "지원되는 발췌문이 없습니다. 사실을 직접 추가하거나 다른 이력서를 선택하세요."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9338,7 +9356,7 @@ msgstr "이야기 연습 중: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "단일 열을 사용하거나, 사이드 열은 짧고 독립적인 목록으로만 유지하세요."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "선호 사항"
 
@@ -9610,6 +9628,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "발행인"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "내 이력서에서 사실 가져오기"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10398,6 +10420,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10633,6 +10656,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "필수 양식 답변을 검토하고 근거 없는 주장을 삭제하세요."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "이력서 사실 검토"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10910,6 +10937,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "스케줄 저장"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "선택한 사실 저장"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10934,6 +10965,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "비교할 수 있도록 이 오퍼 조건 저장"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "이 사실 저장"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11017,6 +11052,12 @@ msgstr "이 지원 건 전용으로 지식에 저장했습니다."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "저장됨: {0}. 건너뜀: {1}. 기존 사실, 수정된 사실 또는 비활성화된 사실은 변경되지 않습니다."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11858,7 +11899,7 @@ msgid "Size"
 msgstr "크기"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "기술"
 
@@ -11924,6 +11965,10 @@ msgstr "일부 글리프는 이 파일 밖에서는 의미가 없습니다."
 msgid "Some lines are stored out of reading order."
 msgstr "일부 줄이 읽는 순서와 다르게 저장되어 있습니다."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "일부 이력서 텍스트가 생략되었습니다. 다른 사실은 직접 추가하세요."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "일부 시스템에서는 이미지를 잘못 처리하고 일부 국가에서는 사진을 사용하지 않는 것이 좋습니다."
@@ -11986,6 +12031,10 @@ msgstr "GitHub 소스 코드"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "출처 인용문"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13653,6 +13702,7 @@ msgstr "2단계 인증"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

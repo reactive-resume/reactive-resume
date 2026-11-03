@@ -15,6 +15,9 @@ const api = vi.hoisted(() => ({
 	createOffer: vi.fn(),
 	saveStory: vi.fn(),
 	saveFact: vi.fn(),
+	proposeResumeFacts: vi.fn(),
+	saveResumeFacts: vi.fn(),
+	userId: "knowledge-test-user",
 	navigate: vi.fn(),
 	moveWithUndo: vi.fn(),
 }));
@@ -62,12 +65,18 @@ vi.mock("@/libs/orpc/client", () => {
 				].map((name) => [name, endpoint(name)]),
 			),
 		},
-		client: { career: { updateProfile: api.saveProfile } },
+		client: {
+			career: {
+				updateProfile: api.saveProfile,
+				proposeResumeFacts: api.proposeResumeFacts,
+				saveResumeFacts: api.saveResumeFacts,
+			},
+		},
 	};
 });
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => api.navigate,
-	useRouteContext: () => ({ session: { user: { id: "knowledge-test-user" } } }),
+	useRouteContext: () => ({ session: { user: { id: api.userId } } }),
 	Link: ({ children }: { children: ReactNode }) => <a href="#test-link">{children}</a>,
 }));
 vi.mock("../shared", () => ({
@@ -116,7 +125,9 @@ import { OfferEntry } from "../offer-entry";
 import { OffersPage } from "../offers";
 import { FactsPage } from "./facts";
 import { PreferencesPage } from "./preferences";
+import { ResumeFacts } from "./resume-facts";
 import { StoriesPage } from "./stories";
+import { setAccountScope } from "@/libs/auth/account-scope";
 
 const profile = (): CareerProfileData => ({
 	targetRoles: [],
@@ -140,6 +151,7 @@ const mount = (children: ReactNode) => {
 beforeEach(() => {
 	vi.clearAllMocks();
 	api.fail.clear();
+	api.userId = "knowledge-test-user";
 	api.data = { facts: [], stories: [], profile: profile(), savedItems: [] };
 	api.saveProfile.mockResolvedValue(profile());
 	sessionStorage.clear();
@@ -150,6 +162,55 @@ afterEach(() => {
 	cleanup();
 	clients.splice(0).forEach((client) => client.clear());
 	vi.useRealTimers();
+});
+
+it("discards cancelled and old-account resume reviews without saving or exposing late excerpts", async () => {
+	setAccountScope(api.userId);
+	api.data.documents = [{ id: "resume", type: "resume", name: "Private resume" }];
+	const review = {
+		id: "resume",
+		name: "Private resume",
+		updatedAt: new Date(),
+		omitted: 0,
+		proposals: [{ text: "Private career excerpt", quote: "Private career excerpt", category: "experience" }],
+	};
+	let finish: ((value: typeof review) => void) | undefined;
+	api.proposeResumeFacts.mockImplementationOnce(
+		() =>
+			new Promise((resolve) => {
+				finish = resolve;
+			}),
+	);
+	const view = mount(<ResumeFacts />);
+	fireEvent.click(screen.getByRole("button", { name: "Pull facts from my resume" }));
+	await waitFor(() => expect(screen.getByRole("combobox", { name: "Resume" })).toBeEnabled());
+	fireEvent.change(screen.getByRole("combobox", { name: "Resume" }), { target: { value: "resume" } });
+	fireEvent.click(screen.getByRole("button", { name: "Review resume facts" }));
+	await waitFor(() => expect(api.proposeResumeFacts).toHaveBeenCalledTimes(1));
+	fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+	fireEvent.click(screen.getByRole("button", { name: "Pull facts from my resume" }));
+	await act(async () => {
+		finish?.(review);
+	});
+	expect(screen.queryByDisplayValue("Private career excerpt")).toBeNull();
+	api.proposeResumeFacts.mockResolvedValue(review);
+	fireEvent.change(screen.getByRole("combobox", { name: "Resume" }), { target: { value: "resume" } });
+	fireEvent.click(screen.getByRole("button", { name: "Review resume facts" }));
+	await screen.findByDisplayValue("Private career excerpt");
+	api.userId = "another-account";
+	setAccountScope(api.userId);
+	const queryClient = clients[0];
+	if (!queryClient) throw new Error("Missing query client");
+	view.rerender(
+		<QueryClientProvider client={queryClient}>
+			<I18nProvider i18n={i18n}>
+				<ResumeFacts />
+			</I18nProvider>
+		</QueryClientProvider>,
+	);
+	expect(screen.queryByDisplayValue("Private career excerpt")).toBeNull();
+	expect(screen.getByRole("button", { name: "Review resume facts" })).toBeDisabled();
+	expect(api.saveResumeFacts).not.toHaveBeenCalled();
 });
 
 it("retries failed application refreshes even when an empty result remains cached", async () => {
