@@ -7,9 +7,9 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en-US\n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 
@@ -339,16 +339,6 @@ msgstr "{0, plural, one {Close it} other {Close all #}}"
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {Delete # application} other {Delete # applications}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2016,7 +2006,7 @@ msgstr "Application closed. Current drafts remain available."
 msgid "Application date"
 msgstr "Application date"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "Application deleted"
 
@@ -2047,10 +2037,17 @@ msgstr "Application views"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "Applications"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "Applications and their timelines can be restored from Trash."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2059,6 +2056,10 @@ msgstr "Applications over time"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Applications sent per week (last 8 weeks)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "Applications stay in Trash until you delete them permanently."
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4411,14 +4412,6 @@ msgstr "Delete {0}"
 msgid "Delete account"
 msgstr "Delete account"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "Delete application"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "Delete application…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "Delete conversation"
@@ -4457,7 +4450,7 @@ msgstr "Delete offer"
 msgid "Delete page"
 msgstr "Delete page"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "Delete permanently…"
@@ -4496,7 +4489,7 @@ msgstr "Delete story"
 msgid "Delete the {0} interview on {1}?"
 msgstr "Delete the {0} interview on {1}?"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "Delete this application?"
 
@@ -4685,6 +4678,7 @@ msgid "Document type"
 msgstr "Document type"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5992,6 +5986,7 @@ msgstr "History"
 msgid "hold ⋮⋮ to move"
 msgstr "hold ⋮⋮ to move"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "Hold to delete"
@@ -6504,6 +6499,10 @@ msgstr "Keep domain"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "Keep editing"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "Keep in Trash"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7123,6 +7122,7 @@ msgstr "Loading your public address…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7631,6 +7631,8 @@ msgstr "Move to {stage}"
 msgid "Move to stage"
 msgstr "Move to stage"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7672,6 +7674,10 @@ msgstr "Moved to {0}"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr "Moved to {stage}"
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "Moved to Trash"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7858,6 +7864,7 @@ msgstr "New section"
 msgid "New STARR story"
 msgstr "New STARR story"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr "Next"
@@ -9402,6 +9409,7 @@ msgstr "Preview web page"
 msgid "Previewing {0} · tap to apply"
 msgstr "Previewing {0} · tap to apply"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr "Previous"
@@ -10309,6 +10317,7 @@ msgstr "Responsibility"
 msgid "Restart to change text direction"
 msgstr "Restart to change text direction"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "Restore"
@@ -10328,6 +10337,7 @@ msgstr "Restore this version?"
 msgid "Restore version"
 msgstr "Restore version"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr "Restored"
@@ -10463,6 +10473,7 @@ msgstr "Retire lane"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12965,10 +12976,6 @@ msgstr "These edits use a job posting, so they go to a copy of this resume made 
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "They look for headings such as Experience, Education and Skills."
@@ -13486,12 +13493,15 @@ msgstr "Transcription model"
 msgid "Translate into…"
 msgstr "Translate into…"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "Trash"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Trash is empty"

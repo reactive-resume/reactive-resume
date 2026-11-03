@@ -20,8 +20,7 @@ msgstr ""
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -141,11 +140,6 @@ msgstr ""
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application closed} other {# applications closed}}"
 msgstr ""
-
-#. placeholder {0}: result.deleted
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
-msgstr "{0, plural, one {# దరఖాస్తు తొలగించబడింది} other {# దరఖాస్తులు తొలగించబడ్డాయి}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -331,16 +325,6 @@ msgstr ""
 #: src/features/applications/use-application-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {# దరఖాస్తును తొలగించాలా?} other {# దరఖాస్తులను తొలగించాలా?}}"
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {# దరఖాస్తును తొలగించండి} other {# దరఖాస్తులను తొలగించండి}}"
 
 #. placeholder {0}: selection.length
 #: src/features/documents/trash-page.tsx
@@ -2514,7 +2498,7 @@ msgstr "దరఖాస్తు తేదీ నుండి"
 msgid "Application date to"
 msgstr "దరఖాస్తు తేదీ వరకు"
 
-#: src/features/applications/use-application-actions.ts
+#: src/features/applications/trash-page.tsx
 msgid "Application deleted"
 msgstr "ఉద్యోగ దరఖాస్తు తొలగించబడింది"
 
@@ -2557,15 +2541,23 @@ msgid "Application updated"
 msgstr "దరఖాస్తు నవీకరించబడింది"
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
 msgstr "దరఖాస్తులు"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "దరఖాస్తులు మరియు వాటి సంఘటనల చరిత్రను ట్రాష్ నుండి పునరుద్ధరించవచ్చు."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications over time"
@@ -2574,6 +2566,10 @@ msgstr "కాలక్రమంలో దరఖాస్తులు"
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "వారానికి పంపిన దరఖాస్తులు (చివరి 8 వారాలు)"
+
+#: src/features/applications/trash-page.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "మీరు శాశ్వతంగా తొలగించే వరకు దరఖాస్తులు ట్రాష్‌లో ఉంటాయి."
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Applications to export"
@@ -4544,6 +4540,7 @@ msgstr ""
 msgid "Couldn't delete that story. Try again."
 msgstr "ఆ కథను తొలగించడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't delete the application. Try again."
 msgstr "దరఖాస్తును తొలగించడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -4836,7 +4833,6 @@ msgstr "దరఖాస్తుల నుండి దాన్ని తీస
 msgid "Couldn't remove the passkey. Try again."
 msgstr "పాస్‌కీని తీసివేయడం సాధ్యపడలేదు. మళ్లీ ప్రయత్నించండి."
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "పత్రం పేరు మార్చడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -5125,6 +5121,7 @@ msgstr "షేరింగ్‌ను నవీకరించడం సాధ�
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "దరఖాస్తును నవీకరించడం సాధ్యపడలేదు. ఏదీ మార్చబడలేదు. మళ్ళీ ప్రయత్నించండి."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the application. Try again."
 msgstr "దరఖాస్తును నవీకరించడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -5586,11 +5583,6 @@ msgstr "{0}ని తొలగించండి"
 msgid "Delete account"
 msgstr "ఖాతాను తొలగించండి"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Delete application"
-msgstr "దరఖాస్తును తొలగించండి"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Delete conversation"
 msgstr "సంభాషణను తొలగించండి"
@@ -5624,7 +5616,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "పేజీ తొలగించండి"
 
-#: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
 msgstr "శాశ్వతంగా తొలగించండి…"
@@ -5657,8 +5649,7 @@ msgstr "కథను తొలగించు"
 msgid "Delete the {kind} interview on {date}?"
 msgstr ""
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "Delete this application?"
 msgstr "ఈ దరఖాస్తును తొలగించాలా?"
 
@@ -5690,8 +5681,6 @@ msgstr "మీ ఖాతాను తొలగించాలా?"
 msgid "Delete your documents and account data."
 msgstr "మీ పత్రాలు మరియు ఖాతా డేటాను తొలగించండి."
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
@@ -5904,8 +5893,10 @@ msgstr "పత్రం రకం"
 msgid "Documentation"
 msgstr "డాక్యుమెంటేషన్"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -7668,6 +7659,7 @@ msgstr "నియామక బృందం"
 msgid "History"
 msgstr "చరిత్ర"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
@@ -8401,6 +8393,7 @@ msgstr "డొమైన్‌ను ఉంచండి"
 msgid "Keep editing"
 msgstr "సవరించడం కొనసాగించు"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
@@ -9171,6 +9164,7 @@ msgstr "వర్క్‌స్పేస్‌ను లోడ్ చేస్�
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/share/feedback-links.tsx
@@ -9716,6 +9710,9 @@ msgstr "{stage}కి తరలించు"
 msgid "Move to Interview"
 msgstr "ఇంటర్వ్యూకు తరలించు"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9743,6 +9740,11 @@ msgstr "మీ ఇమెయిల్ మరియు ఫోన్ నంబర�
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1} పత్రాలలో {0} ట్రాష్‌కి తరలించబడ్డాయి. లాక్ చేయబడిన పత్రాలు దాటవేయబడ్డాయి."
 
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/list-view.tsx
+msgid "Moved {0} to Trash."
+msgstr "ట్రాష్‌కు తరలించబడింది ({0})."
+
 #. placeholder {0}: getLaneLabel(lane)
 #. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/list-view.tsx
@@ -9762,6 +9764,10 @@ msgstr "{label}కు తరలించబడింది"
 #: src/features/career/workspace/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/applications/use-application-actions.ts
+msgid "Moved to Trash"
+msgstr "ట్రాష్‌కు తరలించబడింది"
 
 #. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
@@ -13006,6 +13012,7 @@ msgstr ""
 msgid "Responsible for the design system and helping other teams with their designs."
 msgstr "డిజైన్ సిస్టమ్‌కు బాధ్యత వహిస్తుంది మరియు ఇతర బృందాలకు వారి డిజైన్‌లతో సహాయం చేస్తుంది."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Restore"
@@ -13015,6 +13022,7 @@ msgstr "పునరుద్ధరించండి"
 msgid "Restore this version"
 msgstr "ఈ సంస్కరణను పునరుద్ధరించండి"
 
+#: src/features/applications/trash-page.tsx
 #: src/libs/undone.ts
 msgid "Restored"
 msgstr ""
@@ -16196,10 +16204,6 @@ msgstr ""
 msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
 msgstr ""
 
-#: src/features/applications/components/list-view.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/resume/editor/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "వారు అనుభవం, విద్య మరియు నైపుణ్యాలు వంటి శీర్షికల కోసం చూస్తారు."
@@ -16804,14 +16808,19 @@ msgstr "{languageCount} భాషల్లోకి అనువదించబ�
 msgid "Translations"
 msgstr "ทรాన్స్‌లేషన్స్"
 
+#: src/features/applications/trash-page.tsx
+#: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/applications/index.tsx
+#: src/routes/dashboard/applications/trash.tsx
 #: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "ట్రాష్"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "ట్రాష్ ఖాళీగా ఉంది"

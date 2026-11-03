@@ -16,11 +16,15 @@ let cursor = 0;
 const react = {
 	createElement: element,
 	useCallback: (fn) => fn,
+	useImperativeHandle(ref, make) {
+		if (ref) ref.current = make();
+	},
 	useEffect() {},
 	useState(initial) {
 		const index = cursor++;
 		if (!(index in hooks)) hooks[index] = typeof initial === "function" ? initial() : initial;
-		return [hooks[index], (value) => (hooks[index] = typeof value === "function" ? value(hooks[index]) : value)];
+		const owner = hooks;
+		return [owner[index], (value) => (owner[index] = typeof value === "function" ? value(owner[index]) : value)];
 	},
 	useRef(initial) {
 		const [value] = react.useState(() => ({ current: initial }));
@@ -2545,6 +2549,79 @@ assert.equal(calls.at(-1).params.applicationId, "selected-job", "assistant recei
 assert.equal(calls.at(-1).pathname, "/builder/base-retry/assistant");
 console.log("PASS native temporary Job match context protects linkage and follows the assistant handoff");
 
+// Shipped Trash controls pass the listed generation and captured account, and never purge after an account switch.
+reset();
+let trashScope = "account-a";
+const trashRequests = [];
+const trashItem = { id: "retained", company: "Fictional Cedar", role: "Lead", trashedAt: new Date("2030-01-01") };
+let trashTask = Promise.resolve();
+const trashKey = () => ["trash"];
+const { ApplicationTrashScreen } = load("features/applications/trash-screen.tsx", {
+	"./error": { applicationError: (error) => String(error) },
+	"@/auth/session": {
+		getAccountScope: () => trashScope,
+		useSession: () => ({ server: "https://fixture.test", status: "signed-in" }),
+	},
+	"@tanstack/react-query": {
+		useQuery: () => ({ data: { items: [trashItem], total: 1 } }),
+		useQueryClient: () => ({ invalidateQueries: async () => {} }),
+		useMutation: (options) => ({
+			mutate: (input) => {
+				trashTask = options
+					.mutationFn(input)
+					.then(() => options.onSuccess?.())
+					.finally(() => options.onSettled?.());
+			},
+		}),
+	},
+	"@/api/client": {
+		orpc: {
+			applications: {
+				key: trashKey,
+				listTrash: {
+					queryOptions: ({ input, context }) => {
+						assert.equal(context.scope, trashScope);
+						return { queryKey: ["trash", input] };
+					},
+				},
+			},
+			career: { key: trashKey },
+			documents: { key: trashKey },
+			agent: { key: trashKey },
+		},
+		client: {
+			applications: {
+				restore: async (input, options) => {
+					trashRequests.push({ action: "restore", input, scope: options.context.scope });
+				},
+				purge: async (input, options) => {
+					trashRequests.push({ action: "purge", input, scope: options.context.scope });
+				},
+			},
+		},
+	},
+});
+control(render(ApplicationTrashScreen), "Restore").onPress();
+await trashTask;
+assert.deepEqual(trashRequests, [
+	{ action: "restore", input: { id: "retained", trashedAt: trashItem.trashedAt }, scope: "account-a" },
+]);
+control(render(ApplicationTrashScreen), "Delete permanently…").onPress();
+let trashConfirmation = nodes(render(ApplicationTrashScreen)).find((node) => node.type === "ConfirmDialog").props;
+assert.equal(trashConfirmation.hold, true);
+trashScope = "account-b";
+trashConfirmation.onConfirm();
+assert.equal(trashRequests.length, 1, "old account confirmation never dispatches under a new account");
+trashScope = "account-a";
+trashConfirmation.onConfirm();
+await trashTask;
+assert.deepEqual(trashRequests.at(-1), {
+	action: "purge",
+	input: { id: "retained", trashedAt: trashItem.trashedAt },
+	scope: "account-a",
+});
+console.log("PASS native application Trash restore/purge preserve generation, account binding and held confirmation");
+
 // Builder tags use the existing draft/flush owner and leave resume content intact.
 reset();
 const tagSaves = [];
@@ -2587,13 +2664,37 @@ const { DocumentMenu: BuilderDocumentMenu } = load("features/document-menu/index
 	"@/shell/key-commands": { useKeyCommands() {} },
 	"@/ui": { ...ui, IconButton: "IconButton", Sheet: "Sheet" },
 });
+const { ChipInput: NativeTagInput } = load("ui/fields.tsx", {
+	"./theme": { useTheme: () => theme },
+	"./icon": {},
+	"./layout": {},
+	"./motion": {},
+	"./overlays": {},
+	"./switch": {},
+	"./text": {},
+	"@reactive-resume/utils/string": {},
+});
+let tagInputHooks = [];
 const menuView = () => render(BuilderDocumentMenu, { id: "menu-tags" });
+const menuTagInput = () => {
+	const props = control(menuView(), "Tags");
+	const parentHooks = hooks;
+	hooks = tagInputHooks;
+	try {
+		const tree = render(NativeTagInput, props);
+		tagInputHooks = hooks;
+		return tree;
+	} finally {
+		hooks = parentHooks;
+	}
+};
 const tagsAction = () =>
 	nodes(menuView()).find((node) => node.type === "ListRow" && node.props.title === "Tags…").props;
 control(menuView(), "Document options").onPress();
 assert.equal(tagsAction().disabled, false);
 tagsAction().onPress();
-control(menuView(), "Tags").onChange(["base", "portfolio"]);
+control(menuTagInput(), "Tags").onChangeText("portfolio");
+menuTagInput();
 control(menuView(), "Save").onPress();
 await settle();
 assert.deepEqual(
@@ -2603,8 +2704,14 @@ assert.deepEqual(
 assert.equal(tagSaves.at(-1).data.basics.headline, "Portfolio designer");
 control(menuView(), "Document options").onPress();
 tagsAction().onPress();
-control(menuView(), "Tags").onChange(["x".repeat(41)]);
+tagInputHooks = [];
+control(menuTagInput(), "Tags").onChangeText("x".repeat(41));
+menuTagInput();
+const beforeInvalidSave = tagSaves.length;
+control(menuView(), "Save").onPress();
+await settle();
 assert.equal(control(menuView(), "Save").disabled, true);
+assert.equal(tagSaves.length, beforeInvalidSave, "unfinished overlong tag cannot reach the draft");
 control(menuView(), "Tags").onChange(Array.from({ length: 21 }, (_, index) => `tag-${index}`));
 assert.equal(control(menuView(), "Save").disabled, true);
 state.document.isLocked = true;

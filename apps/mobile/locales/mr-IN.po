@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {# अर्ज हटवायचा?} other {# अर्ज हटवायचे?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {# अर्ज हटवा} other {# अर्ज हटवा}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "नोकरी अर्ज तारीख"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "नोकरी अर्ज हटवला"
 
@@ -2051,10 +2041,17 @@ msgstr "नोकरी अर्ज दृश्ये"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "अर्ज"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "अर्ज आणि त्यांचा घटनाक्रम कचरापेटीतून पुनर्संचयित करता येतो."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "काळानुसार अर्ज"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "दर आठवड्याला पाठवलेले अर्ज (मागील 8 आठवडे)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "तुम्ही कायमचे हटवेपर्यंत अर्ज कचरापेटीत राहतात."
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4415,14 +4416,6 @@ msgstr "{0} हटवा"
 msgid "Delete account"
 msgstr "खाते हटवा"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "अर्ज हटवा"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "अर्ज हटवा…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "संभाषण हटवा"
@@ -4461,7 +4454,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "पान हटवा"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "कायमचे हटवा…"
@@ -4500,7 +4493,7 @@ msgstr "कथा हटवा"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "हा अर्ज हटवायचा?"
 
@@ -4689,6 +4682,7 @@ msgid "Document type"
 msgstr "दस्तऐवज प्रकार"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5996,6 +5990,7 @@ msgstr "इतिहास"
 msgid "hold ⋮⋮ to move"
 msgstr "हलविण्यासाठी ⋮⋮ धरा"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "हटवण्यासाठी दाबून ठेवा"
@@ -6508,6 +6503,10 @@ msgstr "डोमेन ठेवा"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "संपादन सुरू ठेवा"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "कचरापेटीत ठेवा"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7127,6 +7126,7 @@ msgstr "सार्वजनिक पत्ता लोड करत आह�
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7635,6 +7635,8 @@ msgstr "{stage} मध्ये हलवा"
 msgid "Move to stage"
 msgstr "टप्प्यात हलवा"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7676,6 +7678,10 @@ msgstr "{0} वर हलवले"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "कचरापेटीत हलवले"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7862,6 +7868,7 @@ msgstr "नवीन विभाग"
 msgid "New STARR story"
 msgstr "नवीन STARR कथा"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9406,6 +9413,7 @@ msgstr "वेब पेजचे पूर्वावलोकन करा"
 msgid "Previewing {0} · tap to apply"
 msgstr "{0} चे पूर्वावलोकन · लागू करण्यासाठी टॅप करा"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10313,6 +10321,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "मजकुराची दिशा बदलण्यासाठी रीस्टार्ट करा"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "पुनर्संचयित करा"
@@ -10332,6 +10341,7 @@ msgstr "ही आवृत्ती पुनर्संचयित करा
 msgid "Restore version"
 msgstr "आवृत्ती पुनर्संचयित करा"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10467,6 +10477,7 @@ msgstr "टप्पा वापरातून काढा"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12969,10 +12980,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "ॲपमधील ब्राउझर टॅबमध्ये सर्व्हरच्या खाते सेटिंग्ज उघडतात. तिथे पुन्हा साइन इन करावे लागू शकते."
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "ते अनुभव, शिक्षण आणि कौशल्ये अशी शीर्षके शोधतात."
@@ -13490,12 +13497,15 @@ msgstr "लिप्यंतरण मॉडेल"
 msgid "Translate into…"
 msgstr "या भाषेत भाषांतर करा…"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "कचरा"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "कचरा रिकामा आहे"

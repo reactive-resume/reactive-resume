@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {# ಅರ್ಜಿಯನ್ನು ಅಳಿಸುವುದೇ?} other {# ಅರ್ಜಿಗಳನ್ನು ಅಳಿಸುವುದೇ?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {# ಅರ್ಜಿಯನ್ನು ಅಳಿಸಿ} other {# ಅರ್ಜಿಗಳನ್ನು ಅಳಿಸಿ}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "ಉದ್ಯೋಗ ಅರ್ಜಿ ದಿನಾಂಕ"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "ಉದ್ಯೋಗ ಅರ್ಜಿಯನ್ನು ಅಳಿಸಲಾಗಿದೆ"
 
@@ -2051,10 +2041,17 @@ msgstr "ಅರ್ಜಿ ವೀಕ್ಷಣೆಗಳು"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "ಅರ್ಜಿಗಳು"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "ಅರ್ಜಿಗಳು ಮತ್ತು ಅವುಗಳ ಘಟನೆಗಳ ಇತಿಹಾಸವನ್ನು ಕಸದ ಬುಟ್ಟಿಯಿಂದ ಮರುಸ್ಥಾಪಿಸಬಹುದು."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "ಕಾಲಕ್ರಮದಲ್ಲಿ ಅರ್ಜಿಗಳು"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "ಪ್ರತಿ ವಾರ ಕಳುಹಿಸಿದ ಅರ್ಜಿಗಳು (ಕೊನೆಯ 8 ವಾರಗಳು)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "ನೀವು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸುವವರೆಗೆ ಅರ್ಜಿಗಳು ಕಸದ ಬುಟ್ಟಿಯಲ್ಲಿರುತ್ತವೆ."
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4415,14 +4416,6 @@ msgstr "{0} ಅಳಿಸಿ"
 msgid "Delete account"
 msgstr "ಖಾತೆಯನ್ನು ಅಳಿಸಿ"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "ಅರ್ಜಿಯನ್ನು ಅಳಿಸಿ"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "ಅರ್ಜಿಯನ್ನು ಅಳಿಸಿ…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "ಸಂಭಾಷಣೆಯನ್ನು ಅಳಿಸಿ"
@@ -4461,7 +4454,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "ಪುಟವನ್ನು ಅಳಿಸಿ"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಿ…"
@@ -4500,7 +4493,7 @@ msgstr "ಕಥೆಯನ್ನು ಅಳಿಸಿ"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "ಈ ಅರ್ಜಿಯನ್ನು ಅಳಿಸುವುದೇ?"
 
@@ -4689,6 +4682,7 @@ msgid "Document type"
 msgstr "ಡಾಕ್ಯುಮೆಂಟ್ ಪ್ರಕಾರ"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5996,6 +5990,7 @@ msgstr "ಇತಿಹಾಸ"
 msgid "hold ⋮⋮ to move"
 msgstr "ಸರಿಸಲು ⋮⋮ ಹಿಡಿದುಕೊಳ್ಳಿ"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "ಅಳಿಸಲು ಒತ್ತಿ ಹಿಡಿಯಿರಿ"
@@ -6508,6 +6503,10 @@ msgstr "ಡೊಮೇನ್ ಉಳಿಸಿ"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "ಸಂಪಾದನೆ ಮುಂದುವರಿಸಿ"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "ಅನುಪಯುಕ್ತದಲ್ಲಿ ಇರಿಸಿ"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7127,6 +7126,7 @@ msgstr "ನಿಮ್ಮ ಸಾರ್ವಜನಿಕ ವಿಳಾಸವನ್ನ�
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7635,6 +7635,8 @@ msgstr "{stage} ಗೆ ಸರಿಸಿ"
 msgid "Move to stage"
 msgstr "ಹಂತಕ್ಕೆ ಸರಿಸಿ"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7676,6 +7678,10 @@ msgstr "{0} ಗೆ ಸರಿಸಲಾಗಿದೆ"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "ಕಸದ ಬುಟ್ಟಿಗೆ ಸರಿಸಲಾಗಿದೆ"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7862,6 +7868,7 @@ msgstr "ಹೊಸ ವಿಭಾಗ"
 msgid "New STARR story"
 msgstr "ಹೊಸ STARR ಕಥೆ"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9406,6 +9413,7 @@ msgstr "ವೆಬ್ ಪುಟವನ್ನು ಪೂರ್ವವೀಕ್ಷಿ�
 msgid "Previewing {0} · tap to apply"
 msgstr "ಪೂರ್ವವೀಕ್ಷಣೆ {0} · ಅನ್ವಯಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10313,6 +10321,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "ಪಠ್ಯದ ದಿಕ್ಕನ್ನು ಬದಲಾಯಿಸಲು ಮರುಪ್ರಾರಂಭಿಸಿ"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "ಮರುಸ್ಥಾಪಿಸಿ"
@@ -10332,6 +10341,7 @@ msgstr "ಈ ಆವೃತ್ತಿಯನ್ನು ಮರುಸ್ಥಾಪಿಸ�
 msgid "Restore version"
 msgstr "ಆವೃತ್ತಿಯನ್ನು ಮರುಸ್ಥಾಪಿಸಿ"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10467,6 +10477,7 @@ msgstr "ಹಂತದ ಬಳಕೆಯನ್ನು ನಿಲ್ಲಿಸಿ"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12969,10 +12980,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "ಇವುಗಳು ನಿಮ್ಮ ಸರ್ವರ್‌ನ ಖಾತೆ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಅಪ್ಲಿಕೇಶನ್‌ನ ಒಳಗಿನ ಬ್ರೌಸರ್ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ತೆರೆಯುತ್ತವೆ. ನೀವು ಅಲ್ಲಿ ಸೈನ್ ಇನ್ ಮಾಡಬೇಕಾಗಬಹುದು."
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "ಅವರು ಅನುಭವ, ಶಿಕ್ಷಣ ಮತ್ತು ಕೌಶಲ್ಯಗಳಂತಹ ಶೀರ್ಷಿಕೆಗಳನ್ನು ಹುಡುಕುತ್ತಾರೆ."
@@ -13490,12 +13497,15 @@ msgstr "ಪ್ರತಿಲೇಖನ ಮಾದರಿ"
 msgid "Translate into…"
 msgstr "ಈ ಭಾಷೆಗೆ ಅನುವಾದಿಸಿ…"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "ಅನುಪಯುಕ್ತ"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "ಕಸ ಖಾಲಿಯಾಗಿದೆ"

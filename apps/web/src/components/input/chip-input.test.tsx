@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, beforeAll, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { createRef } from "react";
 import { ChipInput } from "./chip-input";
 import { loadLocale } from "@/libs/locale";
 
@@ -96,4 +97,28 @@ it("announces keyword drags in German when German is the UI language", async () 
 		expect(liveRegion()?.textContent).toBe("Verschieben von Alpha abgebrochen. Nichts wurde verschoben."),
 	);
 	await loadLocale("en-US");
+});
+
+it("explicit Save commits an edited tag and preserves duplicate and Escape behavior", () => {
+	const commitRef = createRef<() => string[]>();
+	const saved = vi.fn();
+	render(
+		<I18nProvider i18n={i18n}>
+			<ChipInput defaultValue={["Alpha", "Beta"]} commitRef={commitRef} />
+			<button onClick={() => saved(commitRef.current?.())}>Save tags</button>
+		</I18nProvider>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Edit Alpha" }));
+	fireEvent.change(screen.getByRole("textbox"), { target: { value: " Revised " } });
+	fireEvent.click(screen.getByRole("button", { name: "Save tags" }));
+	expect(saved).toHaveBeenLastCalledWith(["Revised", "Beta"]);
+	fireEvent.click(screen.getByRole("button", { name: "Edit Revised" }));
+	fireEvent.change(screen.getByRole("textbox"), { target: { value: "Beta" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save tags" }));
+	expect(saved).toHaveBeenLastCalledWith(["Revised", "Beta"]);
+	fireEvent.click(screen.getByRole("button", { name: "Edit Revised" }));
+	fireEvent.change(screen.getByRole("textbox"), { target: { value: "Cancelled" } });
+	fireEvent.keyDown(screen.getByRole("textbox"), { key: "Escape" });
+	fireEvent.click(screen.getByRole("button", { name: "Save tags" }));
+	expect(saved).toHaveBeenLastCalledWith(["Revised", "Beta"]);
 });

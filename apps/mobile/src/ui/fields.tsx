@@ -2,7 +2,7 @@ import type { IconName } from "./icon";
 import type { ComponentRef, ReactNode, Ref } from "react";
 import type { TextInputProps } from "react-native";
 import { useLingui } from "@lingui/react/macro";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { I18nManager, Platform, Pressable, TextInput, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { filterOptions } from "@reactive-resume/utils/string";
@@ -512,6 +512,8 @@ export function Chip({ label, selected, onPress, icon, onRemove }: ChipProps) {
 }
 
 export type ChipInputProps = {
+	/** Explicit saves include unfinished text; ordinary Return/comma entry stays unchanged. */
+	commitRef?: Ref<() => string[]>;
 	label: string;
 	values: string[];
 	onChange: (values: string[]) => void;
@@ -533,6 +535,7 @@ export function ChipInput({
 	suggestions,
 	helper,
 	suggestionsLabel,
+	commitRef,
 }: ChipInputProps) {
 	const { space } = useTheme();
 	const [draft, setDraft] = useState("");
@@ -540,7 +543,13 @@ export function ChipInput({
 		const next = [...values];
 		for (const item of items.map((value) => value.trim())) if (item && !next.includes(item)) next.push(item);
 		if (next.length !== values.length) onChange(next);
+		return next;
 	};
+	useImperativeHandle(commitRef, () => () => {
+		const next = add([draft]);
+		setDraft("");
+		return next;
+	});
 	const query = draft.trim().toLocaleLowerCase();
 	const offered = (suggestions ?? []).filter(
 		(suggestion) => !values.includes(suggestion) && suggestion.toLocaleLowerCase().includes(query),

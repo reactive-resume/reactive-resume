@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {លុបពាក្យសុំ #?} other {លុបពាក្យសុំ #?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {លុបពាក្យសុំ #} other {លុបពាក្យសុំ #}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "កាលបរិច្ឆេទនៃការដាក់ពាក្យការងារ"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "ពាក្យសុំការងារត្រូវបានលុប"
 
@@ -2051,10 +2041,17 @@ msgstr "ទិដ្ឋភាពពាក្យសុំការងារ"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "ពាក្យសុំ"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "ពាក្យសុំការងារ និងប្រវត្តិព្រឹត្តិការណ៍របស់វាអាចស្ដារពីធុងសំរាមបាន។"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "ពាក្យសុំតាមពេលវេលា"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "ពាក្យសុំបានផ្ញើក្នុងមួយសប្តាហ៍ (៨ សប្តាហ៍ចុងក្រោយ)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "ពាក្យសុំការងារនៅក្នុងធុងសំរាមរហូតដល់អ្នកលុបវាជាអចិន្ត្រៃយ៍។"
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4415,14 +4416,6 @@ msgstr "លុប {0}"
 msgid "Delete account"
 msgstr "លុបគណនី"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "លុបពាក្យសុំ"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "លុបពាក្យសុំ…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "លុបការសន្ទនា"
@@ -4461,7 +4454,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "លុបទំព័រ"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "លុបជាអចិន្ត្រៃយ៍…"
@@ -4500,7 +4493,7 @@ msgstr "លុបរឿង"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "លុបពាក្យសុំនេះ?"
 
@@ -4689,6 +4682,7 @@ msgid "Document type"
 msgstr "ប្រភេទឯកសារ"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5996,6 +5990,7 @@ msgstr "ប្រវត្តិ"
 msgid "hold ⋮⋮ to move"
 msgstr "សង្កត់ ⋮⋮ ដើម្បីផ្លាស់ទី"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "ចុចឱ្យជាប់ដើម្បីលុប"
@@ -6508,6 +6503,10 @@ msgstr "រក្សាដែន"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "បន្តកែសម្រួល"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "ទុកក្នុងធុងសំរាម"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7127,6 +7126,7 @@ msgstr "កំពុងផ្ទុកអាសយដ្ឋានសាធារ
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7635,6 +7635,8 @@ msgstr "ផ្លាស់ទៅ {stage}"
 msgid "Move to stage"
 msgstr "ផ្លាស់ទីទៅដំណាក់កាល"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7676,6 +7678,10 @@ msgstr "បានផ្លាស់ទីទៅ {0}"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "បានផ្លាស់ទីទៅធុងសំរាម"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7862,6 +7868,7 @@ msgstr "ផ្នែកថ្មី។"
 msgid "New STARR story"
 msgstr "រឿង STARR ថ្មី។"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9406,6 +9413,7 @@ msgstr "មើលទំព័រវេបជាមុន"
 msgid "Previewing {0} · tap to apply"
 msgstr "ការមើល {0} · ប៉ះដើម្បីអនុវត្ត"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10313,6 +10321,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "ចាប់ផ្តើមឡើងវិញដើម្បីផ្លាស់ប្តូរទិសដៅអត្ថបទ"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "ស្ដារឡើងវិញ"
@@ -10332,6 +10341,7 @@ msgstr "ស្ដារកំណែនេះ?"
 msgid "Restore version"
 msgstr "ស្ដារកំណែ"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10467,6 +10477,7 @@ msgstr "ឈប់ប្រើដំណាក់កាល"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12969,10 +12980,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "ទាំងនេះបើកការកំណត់គណនីរបស់ម៉ាស៊ីនមេរបស់អ្នកនៅក្នុងផ្ទាំងកម្មវិធីរុករកខាងក្នុងកម្មវិធី។ អ្នកប្រហែលជាត្រូវចុះឈ្មោះនៅទីនោះ។"
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "ពួកគេស្វែងរកចំណងជើងដូចជា បទពិសោធន៍ ការអប់រំ និងជំនាញ។"
@@ -13490,12 +13497,15 @@ msgstr "គំរូប្រតិចារិក"
 msgid "Translate into…"
 msgstr "បកប្រែទៅជា…"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "ធុងសំរាម"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "ធុងសំរាមគឺទទេ"

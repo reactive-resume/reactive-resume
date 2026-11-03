@@ -9,7 +9,7 @@ import type {
 } from "@reactive-resume/schema/applications/data";
 import { createHash } from "node:crypto";
 import { ORPCError } from "@orpc/client";
-import { and, arrayContains, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, arrayContains, count, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
@@ -28,6 +28,7 @@ import { isRetriedCreate, lockUser, recordCreateRequest } from "../documents/own
 import { resumeService } from "../resume/service";
 import { writeVersion } from "../resume/version-history";
 import { getStorageService, uploadFile } from "../storage/service";
+import { activeApplications } from "./access";
 import { assertUntrackedPosting, findTrackedPosting } from "./duplicates";
 import { syncFollowUp } from "./follow-up";
 import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "./lanes";
@@ -177,7 +178,7 @@ async function requireOwned(id: string, userId: string) {
 	const [row] = await db
 		.select()
 		.from(schema.application)
-		.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)));
+		.where(and(eq(schema.application.id, id), activeApplications(userId)));
 	if (!row) throw new ORPCError("NOT_FOUND");
 	return row;
 }
@@ -190,7 +191,7 @@ export async function assertApplicationVersion(
 	const [current] = await reader
 		.select({ updatedAt: schema.application.updatedAt })
 		.from(schema.application)
-		.where(and(eq(schema.application.id, expected.id), eq(schema.application.userId, userId)))
+		.where(and(eq(schema.application.id, expected.id), activeApplications(userId)))
 		.for("share");
 	if (!current) throw new ORPCError("NOT_FOUND");
 	if (current.updatedAt.getTime() !== expected.updatedAt.getTime())
@@ -372,16 +373,86 @@ async function deleteApplicationAttachments(
 	await Promise.allSettled(keys.map((key) => storageService.delete(key)));
 }
 
-async function deleteApplicationCoaching(userId: string, applicationIds: string[]) {
-	if (!applicationIds.length) return;
-	const threads = await db
+function applicationThreads(reader: DbOrTx, userId: string, applicationIds: string[]) {
+	if (!applicationIds.length) return Promise.resolve([]);
+	return reader
 		.select({ id: schema.agentThread.id, runId: schema.agentThread.activeRunId })
 		.from(schema.agentThread)
 		.where(and(eq(schema.agentThread.userId, userId), inArray(schema.agentThread.applicationId, applicationIds)));
-	for (const thread of threads) {
-		if (thread.runId) await requestRunCancellation(thread.runId, "APPLICATION_DELETED");
-		await getStorageService().delete(`uploads/${userId}/agent/${thread.id}`);
-	}
+}
+
+/** Captured run IDs cannot cancel a newer conversation started after a restore. */
+async function stopApplicationRuns(threads: { runId: string | null }[]) {
+	await Promise.allSettled(
+		threads.flatMap((thread) => (thread.runId ? [requestRunCancellation(thread.runId, "APPLICATION_TRASHED")] : [])),
+	);
+}
+
+/** Preserve rows, foreign keys and files; serialize with application/document writers before hiding active work. */
+async function trashApplications(userId: string, ids: string[]) {
+	const result = await db.transaction(async (tx) => {
+		await lockUser(tx, userId);
+		const rows = await tx
+			.select()
+			.from(schema.application)
+			.where(and(activeApplications(userId), inArray(schema.application.id, ids)))
+			.orderBy(schema.application.id)
+			.for("update");
+		const threads = await applicationThreads(
+			tx,
+			userId,
+			rows.map((row) => row.id),
+		);
+		for (const row of rows) {
+			// Millisecond tokens stay distinct even when restore and re-trash occur within one clock tick.
+			const at = new Date(Math.max(Date.now(), row.updatedAt.getTime() + 1));
+			await tx
+				.update(schema.application)
+				.set({ trashedAt: at, updatedAt: at })
+				.where(and(eq(schema.application.id, row.id), activeApplications(userId)));
+		}
+		if (rows.length)
+			await tx
+				.update(schema.careerJob)
+				.set({ status: "canceled", lease: null, leaseUntil: null })
+				.where(
+					and(
+						eq(schema.careerJob.userId, userId),
+						inArray(
+							schema.careerJob.scheduleId,
+							tx
+								.select({ id: schema.careerSchedule.id })
+								.from(schema.careerSchedule)
+								.where(
+									and(
+										eq(schema.careerSchedule.userId, userId),
+										inArray(
+											schema.careerSchedule.applicationId,
+											rows.map((row) => row.id),
+										),
+									),
+								),
+						),
+						inArray(schema.careerJob.status, ["queued", "running"]),
+					),
+				);
+		return { deleted: rows.length, threads };
+	});
+	await stopApplicationRuns(result.threads);
+	return { deleted: result.deleted };
+}
+
+async function lockedTrash(tx: DbOrTx, input: { userId: string; id: string; trashedAt: Date }) {
+	await lockUser(tx, input.userId);
+	const [row] = await tx
+		.select()
+		.from(schema.application)
+		.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+		.for("update");
+	if (!row) throw new ORPCError("NOT_FOUND");
+	if (!row.trashedAt || row.trashedAt.getTime() !== input.trashedAt.getTime())
+		throw new ORPCError("CONFLICT", { message: "This application changed in Trash. Reload before trying again." });
+	return row;
 }
 
 /**
@@ -545,7 +616,7 @@ export const applicationService = {
 		offset?: number;
 	}) => {
 		const where = and(
-			eq(schema.application.userId, input.userId),
+			activeApplications(input.userId),
 			input.status ? eq(schema.application.status, input.status) : undefined,
 			input.laneId ? eq(schema.application.laneId, input.laneId) : undefined,
 			input.tags && input.tags.length > 0 ? arrayContains(schema.application.tags, input.tags) : undefined,
@@ -575,7 +646,7 @@ export const applicationService = {
 		includeInitialDetails?: number;
 	}) => {
 		const where = and(
-			eq(schema.application.userId, input.userId),
+			activeApplications(input.userId),
 			input.status ? eq(schema.application.status, input.status) : undefined,
 			input.laneId ? eq(schema.application.laneId, input.laneId) : undefined,
 			input.tags && input.tags.length > 0 ? arrayContains(schema.application.tags, input.tags) : undefined,
@@ -625,7 +696,7 @@ export const applicationService = {
 		const fullRows = await db
 			.select()
 			.from(schema.application)
-			.where(and(eq(schema.application.userId, input.userId), inArray(schema.application.id, [...candidateIds])));
+			.where(and(activeApplications(input.userId), inArray(schema.application.id, [...candidateIds])));
 		const details = new Map(fullRows.map((row) => [row.id, stripUserId(row)]));
 		return {
 			items: items.map((item) => {
@@ -676,7 +747,7 @@ export const applicationService = {
 			.from(schema.application)
 			.where(
 				and(
-					eq(schema.application.userId, input.userId),
+					activeApplications(input.userId),
 					sql`lower(regexp_replace(trim(${schema.application.company}), '\\s+', ' ', 'g')) = lower(regexp_replace(trim(${input.company}), '\\s+', ' ', 'g'))`,
 					input.excludeId ? sql`${schema.application.id} <> ${input.excludeId}` : undefined,
 					outcome,
@@ -890,7 +961,7 @@ export const applicationService = {
 				const [current] = await tx
 					.select()
 					.from(schema.application)
-					.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
+					.where(and(eq(schema.application.id, id), activeApplications(userId)))
 					.for("update");
 				if (!current) throw new ORPCError("NOT_FOUND");
 				if (fields.followUpAt !== undefined && fields.followUpDateOnly === undefined)
@@ -931,7 +1002,7 @@ export const applicationService = {
 						...uploadedFields,
 						...values,
 					})
-					.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
+					.where(and(eq(schema.application.id, id), activeApplications(userId)))
 					.returning();
 
 				if (!updated) throw new ORPCError("NOT_FOUND");
@@ -1029,7 +1100,7 @@ export const applicationService = {
 				...(input.matchScore !== undefined ? { matchScore: input.matchScore } : {}),
 				...(input.aiMetadata !== undefined ? { aiMetadata: input.aiMetadata } : {}),
 			})
-			.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+			.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 			.returning();
 
 		if (!updated) throw new ORPCError("NOT_FOUND");
@@ -1043,7 +1114,7 @@ export const applicationService = {
 		const [updated] = await db
 			.update(schema.application)
 			.set({ activity: sql`${schema.application.activity} || ${JSON.stringify([event])}::jsonb` })
-			.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+			.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 			.returning();
 
 		if (!updated) throw new ORPCError("NOT_FOUND");
@@ -1056,7 +1127,7 @@ export const applicationService = {
 			const [existing] = await tx
 				.select()
 				.from(schema.application)
-				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 				.for("update");
 			if (!existing) throw new ORPCError("NOT_FOUND");
 			if (existing.status === "saved" || existing.status === "closed")
@@ -1072,7 +1143,7 @@ export const applicationService = {
 			const [updated] = await tx
 				.update(schema.application)
 				.set({ activity: sql`${schema.application.activity} || ${JSON.stringify([event])}::jsonb` })
-				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 				.returning();
 			if (!updated) throw new ORPCError("NOT_FOUND");
 			return stripUserId(updated);
@@ -1085,7 +1156,7 @@ export const applicationService = {
 		const [updated] = await db
 			.update(schema.application)
 			.set({ activity: sql`${schema.application.activity} || ${JSON.stringify([event])}::jsonb` })
-			.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
+			.where(and(eq(schema.application.id, id), activeApplications(userId)))
 			.returning();
 
 		if (!updated) throw new ORPCError("NOT_FOUND");
@@ -1107,7 +1178,7 @@ export const applicationService = {
 			const [existing] = await tx
 				.select()
 				.from(schema.application)
-				.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
+				.where(and(eq(schema.application.id, id), activeApplications(userId)))
 				.for("update");
 			if (!existing) throw new ORPCError("NOT_FOUND");
 
@@ -1124,7 +1195,7 @@ export const applicationService = {
 			const [updated] = await tx
 				.update(schema.application)
 				.set({ activity })
-				.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
+				.where(and(eq(schema.application.id, id), activeApplications(userId)))
 				.returning();
 
 			if (!updated) throw new ORPCError("NOT_FOUND");
@@ -1146,7 +1217,7 @@ export const applicationService = {
 			const [existing] = await tx
 				.select()
 				.from(schema.application)
-				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 				.for("update");
 			if (!existing) throw new ORPCError("NOT_FOUND");
 
@@ -1188,7 +1259,7 @@ export const applicationService = {
 						? existing.appliedAt
 						: appliedAtFromTimeline(activity, existing.appliedAt),
 				})
-				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 				.returning();
 
 			if (!updated) throw new ORPCError("NOT_FOUND");
@@ -1201,7 +1272,7 @@ export const applicationService = {
 			const [existing] = await tx
 				.select()
 				.from(schema.application)
-				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 				.for("update");
 			if (!existing) throw new ORPCError("NOT_FOUND");
 
@@ -1226,7 +1297,7 @@ export const applicationService = {
 						? existing.appliedAt
 						: appliedAtFromTimeline(activity, existing.appliedAt),
 				})
-				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 				.returning();
 
 			if (!updated) throw new ORPCError("NOT_FOUND");
@@ -1236,17 +1307,69 @@ export const applicationService = {
 	},
 
 	delete: async (input: { id: string; userId: string }) => {
-		const existing = await requireOwned(input.id, input.userId);
-		await deleteApplicationCoaching(input.userId, [input.id]);
-		const result = await db.transaction(async (tx) => {
-			await lockUser(tx, input.userId);
-			return tx
+		const result = await trashApplications(input.userId, [input.id]);
+		if (!result.deleted) throw new ORPCError("NOT_FOUND");
+	},
+
+	listTrash: async (input: { userId: string; limit: number; offset: number }) => {
+		const scope = and(eq(schema.application.userId, input.userId), isNotNull(schema.application.trashedAt));
+		const [items, [total]] = await Promise.all([
+			db
+				.select({
+					id: schema.application.id,
+					company: schema.application.company,
+					role: schema.application.role,
+					trashedAt: schema.application.trashedAt,
+				})
+				.from(schema.application)
+				.where(scope)
+				.orderBy(desc(schema.application.trashedAt), schema.application.id)
+				.limit(input.limit)
+				.offset(input.offset),
+			db.select({ count: count() }).from(schema.application).where(scope),
+		]);
+		return {
+			items: items.flatMap((row) => (row.trashedAt ? [{ ...row, trashedAt: row.trashedAt }] : [])),
+			total: total?.count ?? 0,
+		};
+	},
+
+	restore: (input: { userId: string; id: string; trashedAt: Date }) =>
+		db.transaction(async (tx) => {
+			const row = await lockedTrash(tx, input);
+			await assertUntrackedPosting(tx, input.userId, row.sourceUrl, row.id);
+			await tx
+				.update(schema.application)
+				.set({ trashedAt: null, updatedAt: new Date(Math.max(Date.now(), row.updatedAt.getTime() + 1)) })
+				.where(
+					and(
+						eq(schema.application.id, input.id),
+						eq(schema.application.userId, input.userId),
+						eq(schema.application.trashedAt, input.trashedAt),
+					),
+				);
+		}),
+
+	purge: async (input: { userId: string; id: string; trashedAt: Date }) => {
+		const { row, threads } = await db.transaction(async (tx) => {
+			const row = await lockedTrash(tx, input);
+			const threads = await applicationThreads(tx, input.userId, [input.id]);
+			await tx
 				.delete(schema.application)
-				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
-				.returning({ id: schema.application.id });
+				.where(
+					and(
+						eq(schema.application.id, input.id),
+						eq(schema.application.userId, input.userId),
+						eq(schema.application.trashedAt, input.trashedAt),
+					),
+				);
+			return { row, threads };
 		});
-		if (result.length === 0) throw new ORPCError("NOT_FOUND");
-		await deleteApplicationAttachments(input.userId, [existing]);
+		await stopApplicationRuns(threads);
+		await Promise.allSettled(
+			threads.map((thread) => getStorageService().delete(`uploads/${input.userId}/agent/${thread.id}`)),
+		);
+		await deleteApplicationAttachments(input.userId, [row]);
 	},
 
 	bulkUpdate: (input: {
@@ -1269,7 +1392,7 @@ export const applicationService = {
 		db.transaction(async (tx) => {
 			await lockUser(tx, input.userId);
 			const pipeline = await ensureApplicationPipeline(tx, input.userId);
-			const scope = and(inArray(schema.application.id, input.ids), eq(schema.application.userId, input.userId));
+			const scope = and(inArray(schema.application.id, input.ids), activeApplications(input.userId));
 			const rows = await tx.select().from(schema.application).where(scope).for("update");
 			const expected = new Map(input.expectedStages?.map((stage) => [stage.id, stage]));
 			// Each moved row's stage as saved, so the client's next move of it can start from there.
@@ -1308,7 +1431,7 @@ export const applicationService = {
 				const [written] = await tx
 					.update(schema.application)
 					.set({ ...values, tags })
-					.where(and(eq(schema.application.id, row.id), eq(schema.application.userId, input.userId)))
+					.where(and(eq(schema.application.id, row.id), activeApplications(input.userId)))
 					.returning();
 				saved(written ?? row);
 				if (written && transition.canonicalTransition && !hasSubmitted(row)) await recordSentResume(written, tx);
@@ -1316,32 +1439,13 @@ export const applicationService = {
 			return { updated, stages };
 		}),
 
-	bulkDelete: async (input: { userId: string; ids: string[] }) => {
-		const existing = await db
-			.select()
-			.from(schema.application)
-			.where(and(inArray(schema.application.id, input.ids), eq(schema.application.userId, input.userId)));
-		await deleteApplicationCoaching(
-			input.userId,
-			existing.map((item) => item.id),
-		);
-		const rows = await db.transaction(async (tx) => {
-			await lockUser(tx, input.userId);
-			return tx
-				.delete(schema.application)
-				.where(and(inArray(schema.application.id, input.ids), eq(schema.application.userId, input.userId)))
-				.returning({ id: schema.application.id });
-		});
-		await deleteApplicationAttachments(
-			input.userId,
-			existing.filter((application) => rows.some((row) => row.id === application.id)),
-		);
-		return { deleted: rows.length };
+	bulkDelete: (input: { userId: string; ids: string[] }) => {
+		return trashApplications(input.userId, input.ids);
 	},
 
 	// Raw counts for Insights; funnel/sankey/tiles are derived client-side from these.
 	stats: async (input: { userId: string }) => {
-		const scope = eq(schema.application.userId, input.userId);
+		const scope = activeApplications(input.userId);
 
 		const byStage = await db
 			.select({ status: schema.application.status, count: sql<number>`count(*)::int` })
@@ -1370,7 +1474,7 @@ export const applicationService = {
 		const rows = await db
 			.select({ tag: sql<string>`distinct unnest(${schema.application.tags})` })
 			.from(schema.application)
-			.where(eq(schema.application.userId, input.userId));
+			.where(activeApplications(input.userId));
 
 		return rows.map((row) => row.tag).sort((a, b) => a.localeCompare(b));
 	},

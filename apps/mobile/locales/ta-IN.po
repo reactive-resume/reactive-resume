@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {# விண்ணப்பத்தை நீக்கவா?} other {# விண்ணப்பங்களை நீக்கவா?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {# விண்ணப்பத்தை நீக்கு} other {# விண்ணப்பங்களை நீக்கு}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "வேலை விண்ணப்ப தேதி"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "வேலை விண்ணப்பம் நீக்கப்பட்டது"
 
@@ -2051,10 +2041,17 @@ msgstr "விண்ணப்பக் காட்சிகள்"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "விண்ணப்பங்கள்"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "விண்ணப்பங்களையும் அவற்றின் நிகழ்வு வரலாற்றையும் குப்பையிலிருந்து மீட்டெடுக்கலாம்."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "காலப்போக்கில் விண்ணப்பங்�
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "வாரத்திற்கு அனுப்பப்பட்ட விண்ணப்பங்கள் (கடைசி 8 வாரங்கள்)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "நிரந்தரமாக நீக்கும் வரை விண்ணப்பங்கள் குப்பையில் இருக்கும்."
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4415,14 +4416,6 @@ msgstr "{0} ஐ நீக்கு"
 msgid "Delete account"
 msgstr "கணக்கை நீக்கு"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "விண்ணப்பத்தை நீக்கு"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "விண்ணப்பத்தை நீக்கு…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "உரையாடலை நீக்கு"
@@ -4461,7 +4454,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "பக்கத்தை நீக்கு"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "நிரந்தரமாக நீக்கவும்…"
@@ -4500,7 +4493,7 @@ msgstr "கதையை நீக்கு"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "இந்த விண்ணப்பத்தை நீக்கவா?"
 
@@ -4689,6 +4682,7 @@ msgid "Document type"
 msgstr "ஆவண வகை"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5996,6 +5990,7 @@ msgstr "வரலாறு"
 msgid "hold ⋮⋮ to move"
 msgstr "நகர்த்த ⋮⋮ ஐப் பிடிக்கவும்"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "நீக்க அழுத்திப் பிடிக்கவும்"
@@ -6508,6 +6503,10 @@ msgstr "டொமைனை வைத்திரு"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "தொடர்ந்து திருத்து"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "குப்பையில் வைக்கவும்"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7127,6 +7126,7 @@ msgstr "உங்கள் பொது முகவரியை ஏற்று
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7635,6 +7635,8 @@ msgstr "{stage} நிலைக்கு நகர்த்து"
 msgid "Move to stage"
 msgstr "நிலைக்கு நகர்த்து"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7676,6 +7678,10 @@ msgstr "{0} க்கு நகர்த்தப்பட்டது"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "குப்பைக்கு நகர்த்தப்பட்டது"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7862,6 +7868,7 @@ msgstr "புதிய பிரிவு"
 msgid "New STARR story"
 msgstr "புதிய STARR கதை"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9406,6 +9413,7 @@ msgstr "வலைப்பக்கத்தை முன்னோட்டம�
 msgid "Previewing {0} · tap to apply"
 msgstr "மாதிரிக்காட்சி {0} · விண்ணப்பிக்க தட்டவும்"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10313,6 +10321,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "உரை திசையை மாற்ற மறுதொடக்கம் செய்யவும்"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "மீட்டெடு"
@@ -10332,6 +10341,7 @@ msgstr "இந்தப் பதிப்பை மீட்டெடுக்�
 msgid "Restore version"
 msgstr "பதிப்பை மீட்டெடு"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10467,6 +10477,7 @@ msgstr "நிலையைப் பயன்பாட்டிலிருந�
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12969,10 +12980,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "இவை உங்கள் சர்வரின் கணக்கு அமைப்புகளை பயன்பாட்டிற்குள் உள்ள உலாவி தாவலில் திறக்கும். நீங்கள் அங்கு உள்நுழைய வேண்டியிருக்கலாம்."
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "அவர்கள் அனுபவம், கல்வி மற்றும் திறன்கள் போன்ற தலைப்புகளைத் தேடுகிறார்கள்."
@@ -13490,12 +13497,15 @@ msgstr "டிரான்ஸ்கிரிப்ஷன் மாடல்"
 msgid "Translate into…"
 msgstr "இந்த மொழியில் மொழிபெயர்…"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "குப்பை"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "குப்பை காலியாக உள்ளது"

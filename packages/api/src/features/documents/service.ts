@@ -1,9 +1,11 @@
 import type { EditableFields } from "../../dto/application";
 import type { DocumentFilters, DocumentSummary } from "../../dto/documents";
+import type { DbOrTx } from "@reactive-resume/db/client";
 import { ORPCError } from "@orpc/client";
 import { and, asc, count, eq, gte, inArray, isNotNull, isNull, lt, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { activeApplications } from "../applications/access";
 import { applicationService, insertApplication } from "../applications/service";
 import { coverLetterService } from "../cover-letters/service";
 import { resumeService, writeResumeFields } from "../resume/service";
@@ -30,8 +32,8 @@ function suggestCopyName(sourceName: string, company?: string) {
 	return (company ? `${base} — ${company}` : `${base} (copy)`).slice(0, 100);
 }
 
-async function assertOwnedApplication(userId: string, applicationId: string) {
-	const [application] = await db
+async function assertOwnedApplication(userId: string, applicationId: string, reader: DbOrTx = db) {
+	const [application] = await reader
 		.select({
 			id: schema.application.id,
 			company: schema.application.company,
@@ -40,7 +42,7 @@ async function assertOwnedApplication(userId: string, applicationId: string) {
 			sentResumeVersionId: schema.application.sentResumeVersionId,
 		})
 		.from(schema.application)
-		.where(and(eq(schema.application.id, applicationId), eq(schema.application.userId, userId)));
+		.where(and(eq(schema.application.id, applicationId), activeApplications(userId)));
 
 	if (!application)
 		throw new ORPCError("NOT_FOUND", { message: "This application no longer exists. Choose another application." });
@@ -60,6 +62,7 @@ type LetterChanges = Partial<typeof schema.coverLetter.$inferInsert>;
 async function update(ref: DocumentRef, resume: ResumeChanges, letter: LetterChanges = resume as LetterChanges) {
 	await db.transaction(async (tx) => {
 		await lockUser(tx, ref.userId);
+		if (resume.applicationId) await assertOwnedApplication(ref.userId, resume.applicationId, tx);
 		// A private resume's app-made address follows a new name, like a rename in the editor.
 		if (ref.type === "resume" && resume.name !== undefined)
 			await followNameWithSlug(tx, { userId: ref.userId, resumeId: ref.id, name: resume.name });
@@ -268,7 +271,10 @@ export const documentsService = {
 				unlockedOnly: true,
 				expectedUpdatedAt: input.expectedUpdatedAt,
 				mutation: "update",
-				before: (tx) => lockUser(tx, input.userId),
+				before: async (tx) => {
+					await lockUser(tx, input.userId);
+					if (input.applicationId) await assertOwnedApplication(input.userId, input.applicationId, tx);
+				},
 			});
 			if (application && !application.sentResumeVersionId && (!application.resumeId || application.status === "saved"))
 				await applicationService.update({ userId: input.userId, id: application.id, resumeId: input.id });
@@ -450,7 +456,13 @@ export const documentsService = {
 				.select({ applicationId: schema.createRequest.applicationId })
 				.from(schema.createRequest)
 				.where(and(eq(schema.createRequest.id, id), eq(schema.createRequest.userId, userId)));
-			if (!receipt?.applicationId || receipt.applicationId !== copy?.applicationId)
+			const [liveJob] = receipt?.applicationId
+				? await db
+						.select({ id: schema.application.id })
+						.from(schema.application)
+						.where(and(eq(schema.application.id, receipt.applicationId), activeApplications(userId)))
+				: [];
+			if (!liveJob || !receipt?.applicationId || receipt.applicationId !== copy?.applicationId)
 				throw new ORPCError("CONFLICT", {
 					message: "The job saved with this copy has since been deleted, unlinked or changed.",
 				});

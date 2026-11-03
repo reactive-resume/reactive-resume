@@ -7,7 +7,7 @@ import type { Passage, ProposalEvidence, ProposalTarget, RequirementCoverage } f
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { UIMessage } from "ai";
 import { ORPCError } from "@orpc/client";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import {
 	proposeEditsInputSchema,
 	proposeResumeEditsInputSchema,
@@ -205,7 +205,13 @@ export async function findPosting(
 			notes: table.notes,
 		})
 		.from(table)
-		.where(and(eq(table.userId, userId), selectedId ? eq(table.id, selectedId) : eq(table.resumeId, documentId)))
+		.where(
+			and(
+				eq(table.userId, userId),
+				isNull(table.trashedAt),
+				selectedId ? eq(table.id, selectedId) : eq(table.resumeId, documentId),
+			),
+		)
 		.orderBy(desc(table.updatedAt))
 		.limit(1);
 	if (!application) return null;

@@ -165,9 +165,9 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 	};
 
 	const onDelete = async () => {
-		const confirmed = await confirm(t`Delete this application?`, {
-			description: t`“${application.role} · ${application.company}” and its timeline are deleted permanently. Linked resumes and letters are kept.`,
-			confirmText: t`Delete application`,
+		const confirmed = await confirm(t`Move to Trash`, {
+			description: t`Applications and their timelines can be restored from Trash.`,
+			confirmText: t`Move to Trash`,
 			cancelText: t`Keep application`,
 			variant: "danger",
 		});
@@ -233,7 +233,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 								<DropdownMenuSeparator />
 								<DropdownMenuItem variant="destructive" onClick={onDelete}>
 									<Icon name="trash" size={18} />
-									<Trans>Delete…</Trans>
+									<Trans>Move to Trash</Trans>
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>

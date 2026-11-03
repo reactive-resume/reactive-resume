@@ -40,6 +40,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 	const [translating, setTranslating] = useState(false);
 	const [name, setName] = useState("");
 	const [tags, setTags] = useState<string[]>([]);
+	const commitTags = useRef<(() => string[]) | null>(null);
 	const [slug, setSlug] = useState("");
 	const helpRequested = useRef(false);
 	const menuTrigger = useRef<ComponentRef<typeof Pressable>>(null);
@@ -270,23 +271,26 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 						{panel === "tags" && (
 							<>
 								<View pointerEvents={operations.busy || resume.isLocked ? "none" : "auto"}>
-									<ChipInput label={t`Tags`} values={tags} onChange={setTags} />
+									<ChipInput commitRef={commitTags} label={t`Tags`} values={tags} onChange={setTags} />
 								</View>
 								<Text variant="caption" color="ink3">{t`Up to 20 tags per document, 40 characters per tag.`}</Text>
 								<Button
 									label={t`Save`}
 									loading={operations.busy}
 									disabled={resume.isLocked || tags.length > 20 || tags.some((tag) => !tag.trim() || tag.length > 40)}
-									onPress={() =>
+									onPress={() => {
+										if (operations.busy || resume.isLocked) return;
+										const next = commitTags.current?.() ?? tags;
+										if (next.length > 20 || next.some((tag) => !tag.trim() || tag.length > 40)) return;
 										void run(async () => {
 											await flushResume(id);
 											useResumeStore.getState().updateDocument((value) => {
 												if (value.id !== id) return;
-												value.tags = tags;
+												value.tags = next;
 											});
 											await flushResume(id);
-										})
-									}
+										});
+									}}
 								/>
 							</>
 						)}

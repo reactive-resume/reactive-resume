@@ -10,6 +10,8 @@ import { followUpInstant } from "@reactive-resume/schema/applications/follow-up"
 import { generateId } from "@reactive-resume/utils/string";
 import { STALE_AGENT_RUN_TTL_MS } from "../agent/runs";
 import { aiProvidersService } from "../ai-providers/service";
+import { availableApplicationContext } from "../applications/access";
+import { activeApplications } from "../applications/access";
 import { syncFollowUp } from "../applications/follow-up";
 import { readOpenPosting, searchJobPostings } from "../applications/posting";
 import { lockUser } from "../documents/ownership";
@@ -54,7 +56,12 @@ export const careerJobs = {
 		const rows = await db
 			.select()
 			.from(tables.careerSchedule)
-			.where(eq(tables.careerSchedule.userId, userId))
+			.where(
+				and(
+					eq(tables.careerSchedule.userId, userId),
+					availableApplicationContext(userId, tables.careerSchedule.applicationId),
+				),
+			)
 			.orderBy(desc(tables.careerSchedule.updatedAt), desc(tables.careerSchedule.id));
 		const applications = new Set<string>();
 		const listed = rows.filter((row) => {
@@ -147,7 +154,7 @@ export const careerJobs = {
 				const [ownedApplication] = await tx
 					.select()
 					.from(tables.application)
-					.where(and(eq(tables.application.id, input.applicationId), eq(tables.application.userId, userId)))
+					.where(and(eq(tables.application.id, input.applicationId), activeApplications(userId)))
 					.for("update");
 				if (!ownedApplication) throw new ORPCError("NOT_FOUND");
 				if (input.kind === "follow-up") {
@@ -159,7 +166,15 @@ export const careerJobs = {
 						const [owned] = await tx
 							.select()
 							.from(tables.careerSchedule)
-							.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)))
+							.where(
+								and(
+									eq(tables.careerSchedule.id, id),
+									and(
+										eq(tables.careerSchedule.userId, userId),
+										availableApplicationContext(userId, tables.careerSchedule.applicationId),
+									),
+								),
+							)
 							.for("update");
 						if (!owned || owned.kind !== "follow-up" || owned.applicationId !== input.applicationId)
 							throw new ORPCError("NOT_FOUND");
@@ -202,7 +217,15 @@ export const careerJobs = {
 				const [owned] = await tx
 					.select()
 					.from(tables.careerSchedule)
-					.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)))
+					.where(
+						and(
+							eq(tables.careerSchedule.id, id),
+							and(
+								eq(tables.careerSchedule.userId, userId),
+								availableApplicationContext(userId, tables.careerSchedule.applicationId),
+							),
+						),
+					)
 					.for("update");
 				if (!owned) throw new ORPCError("NOT_FOUND");
 				const ran = owned.lastQueuedAt && input.nextRunAt <= owned.lastQueuedAt ? owned.lastQueuedAt : null;
@@ -232,7 +255,15 @@ export const careerJobs = {
 				? await tx
 						.update(tables.careerSchedule)
 						.set({ ...values, aiProviderVersion, lastQueuedAt: keepQueuedAt })
-						.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)))
+						.where(
+							and(
+								eq(tables.careerSchedule.id, id),
+								and(
+									eq(tables.careerSchedule.userId, userId),
+									availableApplicationContext(userId, tables.careerSchedule.applicationId),
+								),
+							),
+						)
 						.returning()
 				: await tx
 						.insert(tables.careerSchedule)
@@ -248,13 +279,21 @@ export const careerJobs = {
 			const [found] = await tx
 				.select()
 				.from(tables.careerSchedule)
-				.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)));
+				.where(
+					and(
+						eq(tables.careerSchedule.id, id),
+						and(
+							eq(tables.careerSchedule.userId, userId),
+							availableApplicationContext(userId, tables.careerSchedule.applicationId),
+						),
+					),
+				);
 			if (!found) return;
 			if (found.kind === "follow-up" && found.applicationId) {
 				const [application] = await tx
 					.select()
 					.from(tables.application)
-					.where(and(eq(tables.application.id, found.applicationId), eq(tables.application.userId, userId)))
+					.where(and(eq(tables.application.id, found.applicationId), activeApplications(userId)))
 					.for("update");
 				if (!application) return;
 				const [updated] = await tx
@@ -266,14 +305,27 @@ export const careerJobs = {
 			} else
 				await tx
 					.delete(tables.careerSchedule)
-					.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)));
+					.where(
+						and(
+							eq(tables.careerSchedule.id, id),
+							and(
+								eq(tables.careerSchedule.userId, userId),
+								availableApplicationContext(userId, tables.careerSchedule.applicationId),
+							),
+						),
+					);
 		});
 	},
 	notifications: async (userId: string) => {
 		const rows = await db
 			.select()
 			.from(tables.careerNotification)
-			.where(eq(tables.careerNotification.userId, userId))
+			.where(
+				and(
+					eq(tables.careerNotification.userId, userId),
+					availableApplicationContext(userId, tables.careerNotification.applicationId),
+				),
+			)
 			.orderBy(desc(tables.careerNotification.createdAt));
 		return rows.map((row) => ({ ...row, ...noticeText(row.notice) }));
 	},
@@ -281,7 +333,15 @@ export const careerJobs = {
 		await db
 			.update(tables.careerNotification)
 			.set({ readAt: new Date() })
-			.where(and(eq(tables.careerNotification.id, id), eq(tables.careerNotification.userId, userId)));
+			.where(
+				and(
+					eq(tables.careerNotification.id, id),
+					and(
+						eq(tables.careerNotification.userId, userId),
+						availableApplicationContext(userId, tables.careerNotification.applicationId),
+					),
+				),
+			);
 	},
 	/** Each role with the preferences its posting matches and what it leaves out; the posting text stays here. */
 	opportunities: async (userId: string) => {
@@ -366,7 +426,7 @@ async function enqueue() {
 			.where(
 				and(
 					eq(tables.careerSchedule.enabled, true),
-					sql`(${tables.careerSchedule.applicationId} is null or exists (select 1 from application a where a.id = ${tables.careerSchedule.applicationId} and a.user_id = ${tables.careerSchedule.userId} and a.status <> 'closed'))`,
+					sql`(${tables.careerSchedule.applicationId} is null or exists (select 1 from application a where a.id = ${tables.careerSchedule.applicationId} and a.user_id = ${tables.careerSchedule.userId} and a.status <> 'closed' and a.trashed_at is null))`,
 					lte(tables.careerSchedule.nextRunAt, now),
 					or(
 						isNull(tables.careerSchedule.lastQueuedAt),
@@ -484,7 +544,10 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 		.where(
 			and(
 				eq(tables.careerSchedule.id, job.scheduleId),
-				eq(tables.careerSchedule.userId, job.userId),
+				and(
+					eq(tables.careerSchedule.userId, job.userId),
+					availableApplicationContext(job.userId, tables.careerSchedule.applicationId),
+				),
 				eq(tables.careerSchedule.enabled, true),
 			),
 		);
@@ -504,7 +567,10 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 				.where(
 					and(
 						eq(tables.careerSchedule.id, schedule.id),
-						eq(tables.careerSchedule.userId, job.userId),
+						and(
+							eq(tables.careerSchedule.userId, job.userId),
+							availableApplicationContext(job.userId, tables.careerSchedule.applicationId),
+						),
 						or(isNull(tables.careerSchedule.aiProviderId), isNull(tables.careerSchedule.aiProviderVersion)),
 					),
 				)
@@ -579,7 +645,7 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 			const [owned] = await tx
 				.select({ id: tables.application.id, status: tables.application.status })
 				.from(tables.application)
-				.where(and(eq(tables.application.id, schedule.applicationId), eq(tables.application.userId, job.userId)))
+				.where(and(eq(tables.application.id, schedule.applicationId), activeApplications(job.userId)))
 				.for("update");
 			if (!owned || owned.status === "closed") {
 				await tx
@@ -601,7 +667,15 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 			const [live] = await tx
 				.select()
 				.from(tables.careerSchedule)
-				.where(and(eq(tables.careerSchedule.id, schedule.id), eq(tables.careerSchedule.userId, job.userId)))
+				.where(
+					and(
+						eq(tables.careerSchedule.id, schedule.id),
+						and(
+							eq(tables.careerSchedule.userId, job.userId),
+							availableApplicationContext(job.userId, tables.careerSchedule.applicationId),
+						),
+					),
+				)
 				.for("update");
 			if (!live?.enabled || live.kind !== "follow-up") {
 				await tx
@@ -686,7 +760,10 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 				.set({ readAt: new Date() })
 				.where(
 					and(
-						eq(tables.careerNotification.userId, job.userId),
+						and(
+							eq(tables.careerNotification.userId, job.userId),
+							availableApplicationContext(job.userId, tables.careerNotification.applicationId),
+						),
 						sql`${tables.careerNotification.notice}->>'type' = 'opportunities'`,
 						isNull(tables.careerNotification.readAt),
 					),
@@ -730,7 +807,7 @@ async function sendPendingEmail() {
 					and(
 						eq(tables.careerJob.status, "completed"),
 						eq(tables.careerSchedule.email, true),
-						sql`(${tables.careerNotification.applicationId} is null or exists (select 1 from application a where a.id = ${tables.careerNotification.applicationId} and a.user_id = ${tables.careerNotification.userId} and a.status <> 'closed'))`,
+						sql`(${tables.careerNotification.applicationId} is null or exists (select 1 from application a where a.id = ${tables.careerNotification.applicationId} and a.user_id = ${tables.careerNotification.userId} and a.status <> 'closed' and a.trashed_at is null))`,
 						eq(tables.careerSchedule.enabled, true),
 						isNull(tables.careerNotification.emailedAt),
 						or(
@@ -767,12 +844,7 @@ async function sendPendingEmail() {
 				const [application] = await tx
 					.select({ status: tables.application.status })
 					.from(tables.application)
-					.where(
-						and(
-							eq(tables.application.id, notification.applicationId),
-							eq(tables.application.userId, notification.userId),
-						),
-					)
+					.where(and(eq(tables.application.id, notification.applicationId), activeApplications(notification.userId)))
 					.for("update");
 				if (!application || application.status === "closed") return null;
 			}

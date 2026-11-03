@@ -5,7 +5,7 @@ import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useRef, useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { publicResumeUrl } from "@reactive-resume/resume/sharing";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -63,7 +63,6 @@ export function useDocumentActions() {
 	const rename = useMutation(
 		orpc.documents.rename.mutationOptions({
 			onSettled: refresh,
-			onError: (error) => toastError(error, t`Couldn't rename the document. Try again.`),
 		}),
 	);
 	const setLocked = useMutation(orpc.documents.setLocked.mutationOptions({ onSettled: refresh }));
@@ -79,7 +78,7 @@ export function useDocumentActions() {
 		rename: (document: DocumentSummary, name: string) => {
 			const trimmed = name.trim();
 			if (!trimmed || trimmed === document.name) return;
-			rename.mutate({ ...ref(document), name: trimmed });
+			return rename.mutateAsync({ ...ref(document), name: trimmed });
 		},
 
 		duplicate: async (document: DocumentSummary) => {
@@ -511,12 +510,13 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 	// Closing keeps the documents' tags on screen until the dialog has faded out.
 	const [documents, onDocumentsOpenChangeComplete] = useClosingValue(requested);
 	const [tags, setTags] = useState<string[] | null>(null);
+	const commitTags = useRef<(() => string[]) | null>(null);
 	const setDocumentTags = useMutation(orpc.documents.setTags.mutationOptions());
 	const shared = documents ? sharedTags(documents) : [];
 
 	const save = async () => {
 		if (!documents) return;
-		const next = tags ?? shared;
+		const next = commitTags.current?.() ?? tags ?? shared;
 		const removed = shared.filter((tag) => !next.includes(tag));
 		const added = next.filter((tag) => !shared.includes(tag));
 		const results = await Promise.allSettled(
@@ -569,7 +569,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 						)}
 					</DialogDescription>
 				</DialogHeader>
-				<ChipInput value={tags ?? shared} onChange={setTags} placeholder={t`Add a tag…`} />
+				<ChipInput commitRef={commitTags} value={tags ?? shared} onChange={setTags} placeholder={t`Add a tag…`} />
 				<DialogFooter>
 					<Button onClick={() => void save()} disabled={setDocumentTags.isPending}>
 						<Trans>Save tags</Trans>
