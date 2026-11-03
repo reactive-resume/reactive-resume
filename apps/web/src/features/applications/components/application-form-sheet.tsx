@@ -197,7 +197,7 @@ function JobDescriptionAutofill({ value, onChange, onFill }: JobDescriptionAutof
 						onPaste={(event) => runAutofill(event.clipboardData.getData("text"))}
 					/>
 					<div className="flex items-center justify-between gap-2">
-						<p className="text-[11px] text-ink-3">
+						<p className="text-xs text-ink-3">
 							{autofill.isPending ? (
 								<Trans>Reading the posting…</Trans>
 							) : (
@@ -476,7 +476,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 									attachLabel={t`Or upload a resume PDF`}
 									onChange={(value) => set("resumeFile", value)}
 								/>
-								<p className="text-[11px] text-ink-3">
+								<p className="text-xs text-ink-3">
 									<Trans>Link a Reactive Resume to use a fit check against each requirement and tailoring.</Trans>
 								</p>
 							</div>

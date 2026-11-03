@@ -105,7 +105,7 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 						style={boxOf(node)}
 					>
 						{/* On the outline's lower end, clear of the section heading that sits right above an entry. */}
-						<div className="absolute end-1 -bottom-2 flex gap-1 text-[8px] leading-3 font-semibold">
+						<div className="absolute end-1 -bottom-2 flex gap-1 text-xs leading-4 font-semibold">
 							<span aria-hidden="true" className="rounded-md bg-accent px-1 text-on-accent">
 								<Trans>Editing</Trans>
 							</span>

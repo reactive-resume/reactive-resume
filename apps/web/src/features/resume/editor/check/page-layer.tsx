@@ -179,7 +179,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 							onClick={() => pickIssue(issue)}
 							style={marginStyle(node, page, stack, onPage)}
 							className={cn(
-								"pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-white bg-warn text-[11px] font-semibold text-[oklch(0.22_0.03_80)] shadow-[0_1px_3px_oklch(0_0_0/0.25)]",
+								"pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-paper bg-warn text-xs font-semibold text-warn-ink shadow-[0_1px_3px_oklch(0_0_0/0.25)]",
 								isSelected && "outline-2 outline-offset-1 outline-warn",
 							)}
 						>
@@ -203,7 +203,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 						title={getPdfFindingMessage(finding.code).title}
 						onClick={() => useEditorStore.setState({ exportReportOpen: true })}
 						style={marginStyle(box, page, 0, onPage)}
-						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-white bg-info-text text-bg shadow-[0_1px_3px_oklch(0_0_0/0.25)]"
+						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-paper bg-info-text text-bg shadow-[0_1px_3px_oklch(0_0_0/0.25)]"
 					>
 						<Icon name="file-pdf" size={13} />
 					</button>
@@ -214,7 +214,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				<span
 					key={`marker:${number}`}
 					aria-hidden="true"
-					className="absolute grid size-5 place-items-center rounded-sm bg-accent text-[11px] font-semibold text-on-accent"
+					className="absolute grid size-5 place-items-center rounded-sm bg-accent text-xs font-semibold text-on-accent"
 					style={marginStyle(node, page, 0, onPage)}
 				>
 					{number}

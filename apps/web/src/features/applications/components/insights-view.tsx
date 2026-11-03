@@ -184,7 +184,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 						{timeline.map((bucket, index) => (
 							<div key={bucket.label} className="flex flex-1 flex-col items-center gap-1">
 								<div className="flex h-28 w-full flex-col justify-end">
-									<span className="mb-1 text-center text-[10px] text-ink-3 tabular-nums">{bucket.count || ""}</span>
+									<span className="mb-1 text-center text-xs text-ink-3 tabular-nums">{bucket.count || ""}</span>
 									<div
 										className="w-full origin-bottom rounded-t bg-accent transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 starting:scale-y-0"
 										style={{
@@ -193,7 +193,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 										}}
 									/>
 								</div>
-								<span className="text-[10px] text-ink-3 tabular-nums">{bucket.label}</span>
+								<span className="text-xs text-ink-3 tabular-nums">{bucket.label}</span>
 							</div>
 						))}
 					</div>

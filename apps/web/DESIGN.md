@@ -24,6 +24,7 @@ colors:
     warn: "#D29922"
     warn-soft: "#FCEDCD"
     warn-text: "#81520A"
+    warn-ink: "#22190A"
     info-soft: "#E0F1FF"
     info-text: "#1D5B92"
   dark:
@@ -47,6 +48,7 @@ colors:
     warn: "#E4B750"
     warn-soft: "#3E2D10"
     warn-text: "#EFCC83"
+    warn-ink: "#22190A"
     info-soft: "#192F46"
     info-text: "#9DC9F7"
   paper: "#FFFFFF"
@@ -141,7 +143,7 @@ Resume templates retain their Pokémon names, fonts, and palettes. App typograph
 
 - **Surfaces:** `bg` for the app desk; `surface` for panels and cards; `raised` for menus, dialogs, and inputs; `sunken` for wells, tracks, and the page canvas.
 - **Text:** `ink` for primary text, `ink-2` for secondary text, and `ink-3` for metadata and placeholders. Use no lighter text token, and check contrast on tinted backgrounds.
-- **Signals:** `danger` for errors and irreversible actions; `warn` for issues to review; `info-soft` and `info-text` for neutral guidance. Success uses `accent-soft` and `accent-text`.
+- **Signals:** `danger` for errors and irreversible actions; `warn` for issues to review; `warn-ink` for text on a solid `warn` fill, such as issue-marker numbers; `info-soft` and `info-text` for neutral guidance. Success uses `accent-soft` and `accent-text`.
 - **Overlays:** `hover` and `press` are translucent interaction states; `scrim` and `scrim-sheet` dim the background behind layers.
 - **Paper:** `--paper` remains white in both themes. Switching the app theme must not invert documents.
 - **Stages:** `stage-saved`, `stage-applied`, `stage-screening`, `stage-interview`, `stage-offer`, and `stage-closed` identify application stages. Use small dots or stepper bars beside stage names.
