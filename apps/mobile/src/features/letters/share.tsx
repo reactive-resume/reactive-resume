@@ -262,9 +262,9 @@ function versionTitle(version: Version) {
 		case "auto":
 			return t`Editing session`;
 		case "before-restore":
-			return t`Before restore`;
+			return version.name ? t`Before restoring “${version.name}”` : t`Before restore`;
 		case "restored":
-			return t`Restored a version`;
+			return version.name ? t`Restored “${version.name}”` : t`Restored a version`;
 		case "sent":
 			return version.name ? t`Sent to ${version.name}` : t`Sent`;
 		default:
@@ -321,7 +321,11 @@ function LetterHistory({ letter, offline, version: openVersion }: LetterHistoryP
 			if (!current) return;
 			setSelected(null);
 			void list.refetch();
-			showToast({ message: t`Version restored. Your previous state is saved as “Before restore”.` });
+			showToast({
+				message: selected.name
+					? t`Restored “${selected.name}”. Your previous state is saved as “Before restoring “${selected.name}””.`
+					: t`Version restored. Your previous state is saved as “Before restore”.`,
+			});
 		}
 	};
 	const mutateVersion = async (remove: boolean) => {
