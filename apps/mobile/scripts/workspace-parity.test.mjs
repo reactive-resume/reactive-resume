@@ -26,6 +26,9 @@ function load(entry, dependencies = {}, external = []) {
 	return module.exports;
 }
 const logic = load(new URL("../src/features/workspace/logic.ts", import.meta.url).pathname);
+assert.equal(logic.clock(67, "en-US"), "1:07");
+assert.equal(logic.clock(67, "ar-SA"), "١:٠٧");
+assert.equal(logic.clock(0, "ar-SA"), "٠:٠٠");
 const disclosure = load(new URL("../../../packages/schema/src/career-disclosure.ts", import.meta.url).pathname);
 const routes = load(new URL("../src/routes.ts", import.meta.url).pathname, { "expo-router": {} });
 const origin = load(new URL("../src/features/applications/origin.ts", import.meta.url).pathname);

@@ -1,6 +1,7 @@
 import type { CalendarEvent } from "./calendar";
 import type { ApplicationSummary as Application } from "@/features/applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
@@ -302,7 +303,7 @@ function ApplicationCalendar() {
 											))}
 											{items.length > MAX_PER_DAY ? (
 												<Text variant="micro" color="ink3">
-													{t`+${items.length - MAX_PER_DAY} more`}
+													{t`+${i18n.number(items.length - MAX_PER_DAY)} more`}
 												</Text>
 											) : null}
 										</>
@@ -433,7 +434,7 @@ function EventCard({ event, onEdit }: EventCardProps) {
 	const when = event.kind === "interview" ? `${userTime.time(event.start)} – ${userTime.time(event.end)}` : "";
 	const title =
 		event.kind === "interview"
-			? t`${interviewTypeLabel(event.interview.kind)} interview · ${event.interview.durationMinutes} min`
+			? t`${interviewTypeLabel(event.interview.kind)} interview · ${i18n.number(event.interview.durationMinutes)} min`
 			: application.followUpNote || t`Follow up`;
 
 	return (

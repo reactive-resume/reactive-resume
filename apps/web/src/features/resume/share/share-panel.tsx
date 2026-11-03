@@ -527,7 +527,7 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 					</dl>
 					<div
 						role="img"
-						aria-label={t`Daily views over 30 days, peak ${summary.peak}`}
+						aria-label={t`Daily views over 30 days, peak ${i18n.number(summary.peak)}`}
 						className="flex h-14 items-end gap-[3px] pt-1"
 					>
 						{summary.bars.map((bar) => (
@@ -565,13 +565,16 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 	);
 }
 
-function Stat({ value, label }: { value: number | string; label: string }) {
+type StatProps = { value: number | string; label: string };
+
+function Stat({ value, label }: StatProps) {
+	const { i18n } = useLingui();
 	return (
 		<div className="flex flex-col-reverse gap-0.5">
 			<dt className="text-xs text-ink-3">{label}</dt>
 			{/* Lining figures: in the display face an old-style "1" reads as "l". */}
 			<dd className="font-display text-[26px] leading-[30px] tabular-nums [font-variant-numeric:lining-nums_tabular-nums]">
-				{value}
+				{typeof value === "number" ? i18n.number(value) : value}
 			</dd>
 		</div>
 	);

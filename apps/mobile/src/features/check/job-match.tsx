@@ -1,5 +1,6 @@
 import type { RouterInput } from "@/api/client";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
@@ -306,8 +307,8 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 					<>
 						<Text variant="title">
 							{plural(match.total, {
-								one: `${match.found.length} of # posting term covered`,
-								other: `${match.found.length} of # posting terms covered`,
+								one: `${i18n.number(match.found.length)} of # posting term covered`,
+								other: `${i18n.number(match.found.length)} of # posting terms covered`,
 							})}
 						</Text>
 						<Text color="ink3">{t`Job match isn't part of the readability score.`}</Text>

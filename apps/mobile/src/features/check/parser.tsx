@@ -1,5 +1,6 @@
 import type { CheckIssue } from "./issues";
 import type { AtsResult } from "@/features/ats-checker/check";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { File, Paths } from "expo-file-system";
@@ -137,8 +138,8 @@ function Parsed({ value, stale, issues, onSelect }: ParsedProps) {
 			<Text variant="caption">{t`Extracted from the PDF on the page · reading order`}</Text>
 			<Text>
 				{plural(value.report.applicableChecks, {
-					one: `${value.report.passedChecks} of # exported PDF check passes.`,
-					other: `${value.report.passedChecks} of # exported PDF checks pass.`,
+					one: `${i18n.number(value.report.passedChecks)} of # exported PDF check passes.`,
+					other: `${i18n.number(value.report.passedChecks)} of # exported PDF checks pass.`,
 				})}
 			</Text>
 			{value.report.document.truncated && <Banner tone="warn" message={t`Only the first 30 pages were checked.`} />}
@@ -164,7 +165,7 @@ function Parsed({ value, stale, issues, onSelect }: ParsedProps) {
 								{issue && (
 									<Button
 										variant="ghost"
-										label={t`Issue ${issue.number}: ${issue.title}`}
+										label={t`Issue ${i18n.number(issue.number)}: ${issue.title}`}
 										onPress={() => onSelect(issue.key)}
 									/>
 								)}

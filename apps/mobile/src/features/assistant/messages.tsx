@@ -11,7 +11,7 @@ import type { FactCategory } from "@reactive-resume/schema/career";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import { i18n } from "@lingui/core";
-import { plural, t } from "@lingui/core/macro";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -661,7 +661,7 @@ function ChangeSet({
 	// Worded from the undecided edits, as on the web: a locked set or one being rewritten still has edits to decide.
 	const count = states.some((state) => state === "pending")
 		? plural(proposals.length, { one: "# proposed edit", other: "# proposed edits" })
-		: t`${accepted} of ${proposals.length} applied`;
+		: t`${ph({ accepted: i18n.number(accepted) })} of ${i18n.number(proposals.length)} applied`;
 
 	return (
 		<View style={{ borderWidth: 1, borderColor: colors.line, borderRadius: radius.rLg, overflow: "hidden" }}>
@@ -749,14 +749,14 @@ function ChangeSet({
 								}}
 							>
 								<Text variant="micro" color="onAccent">
-									{index + 1}
+									{i18n.number(index + 1)}
 								</Text>
 							</View>
 							<Text
 								variant="caption"
 								color="ink3"
 								numberOfLines={2}
-								accessibilityLabel={t`Edit ${index + 1}: ${proposal.location}`}
+								accessibilityLabel={t`Edit ${i18n.number(index + 1)}: ${proposal.location}`}
 								style={{ flex: 1 }}
 							>
 								{proposal.location}
@@ -866,14 +866,14 @@ function SettledRow({ number, proposal, state, first, onShow, onRestore }: Settl
 				}}
 			>
 				<Text variant="micro" color="ink3">
-					{number}
+					{i18n.number(number)}
 				</Text>
 			</View>
 			<Text
 				variant="caption"
 				color="ink3"
 				numberOfLines={1}
-				accessibilityLabel={t`Edit ${number}: ${proposal.location}`}
+				accessibilityLabel={t`Edit ${ph({ number: i18n.number(number) })}: ${proposal.location}`}
 				style={{ flex: 1 }}
 			>
 				{proposal.location}
@@ -897,7 +897,7 @@ function SettledRow({ number, proposal, state, first, onShow, onRestore }: Settl
 			<Pressable
 				accessibilityRole="button"
 				accessibilityState={{ expanded: false }}
-				accessibilityLabel={t`Show edit ${number}`}
+				accessibilityLabel={t`Show edit ${ph({ number: i18n.number(number) })}`}
 				onPress={onShow}
 				hitSlop={12}
 			>

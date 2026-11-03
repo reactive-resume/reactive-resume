@@ -1,7 +1,8 @@
 import type { PipelineStep } from "./insights";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { ReactNode } from "react";
-import { plural } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { File, Paths } from "expo-file-system";
 import { useRouter } from "expo-router";
@@ -153,7 +154,7 @@ function ApplicationInsights() {
 
 				<View style={{ flexDirection: tablet ? "row" : "column", gap: space.s4 }}>
 					<Card style={half}>
-						<Text variant="display">{`${Math.round((outcomes.heardBack / outcomes.sent) * 100)}%`}</Text>
+						<Text variant="display">{`${i18n.number(Math.round((outcomes.heardBack / outcomes.sent) * 100))}%`}</Text>
 						<Text color="ink2">{t`heard back`}</Text>
 					</Card>
 					<Card style={half}>
@@ -172,7 +173,7 @@ function ApplicationInsights() {
 						{outcomes.tailored.sent >= 3 && outcomes.base.sent >= 3 ? (
 							<>
 								<Text color="ink2">
-									{t`${outcomes.tailored.replied} of ${outcomes.tailored.sent} tailored applications got a reply; ${outcomes.base.replied} of ${outcomes.base.sent} sent with another resume.`}
+									{t`${i18n.number(outcomes.tailored.replied)} of ${i18n.number(outcomes.tailored.sent)} tailored applications got a reply; ${i18n.number(outcomes.base.replied)} of ${i18n.number(outcomes.base.sent)} sent with another resume.`}
 								</Text>
 								{outcomes.tailored.sent + outcomes.base.sent < 10 ? (
 									<Text variant="callout" color="ink3">{t`Small numbers, but worth noticing.`}</Text>
@@ -255,7 +256,7 @@ function HorizontalBar({ label, value, fraction, colorOf, dot }: HorizontalBarPr
 	return (
 		<View
 			accessible
-			accessibilityLabel={`${label}: ${value}`}
+			accessibilityLabel={`${label}: ${i18n.number(value)}`}
 			style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}
 		>
 			<View style={{ width: space.s12 * 2, flexDirection: "row", alignItems: "center", gap: space.s1 }}>
@@ -279,7 +280,7 @@ function HorizontalBar({ label, value, fraction, colorOf, dot }: HorizontalBarPr
 				/>
 			</Svg>
 			<Text variant="label" align="right" style={{ minWidth: space.s6 }}>
-				{value}
+				{i18n.number(value)}
 			</Text>
 		</View>
 	);
@@ -294,13 +295,13 @@ function WeekBars({ counts, labels, max }: WeekBarsProps) {
 	return (
 		<View
 			accessible
-			accessibilityLabel={counts.map((count, i) => `${labels[i]}: ${count}`).join(", ")}
+			accessibilityLabel={counts.map((count, i) => `${labels[i]}: ${i18n.number(count)}`).join(", ")}
 			style={{ gap: space.s1 }}
 		>
 			<View style={{ flexDirection: "row" }}>
 				{counts.map((count, i) => (
 					<Text key={labels[i]} variant="micro" color="ink3" align="center" style={{ flex: 1 }}>
-						{count || ""}
+						{count ? i18n.number(count) : ""}
 					</Text>
 				))}
 			</View>
@@ -373,7 +374,7 @@ function PipelineFlow({ active, closed, steps, labelOf }: PipelineFlowProps) {
 	const transitions = steps.slice(1).map((step, i) => {
 		const from = steps[i];
 		return from
-			? t`${labelOf(from.status)} → ${labelOf(step.status)}: ${step.reached}${step.conversion === null ? "" : ` (${step.conversion}%)`}`
+			? t`${labelOf(from.status)} → ${labelOf(step.status)}: ${i18n.number(step.reached)}${step.conversion === null ? "" : ` (${i18n.number(step.conversion)}%)`}`
 			: "";
 	});
 
@@ -437,7 +438,7 @@ function PipelineFlow({ active, closed, steps, labelOf }: PipelineFlowProps) {
 								fontFamily={fonts.ui[400]}
 								fill={colors.ink2}
 							>
-								{t`${closed} closed`}
+								{t`${ph({ closed: i18n.number(closed) })} closed`}
 							</SvgText>
 						</>
 					) : null}
@@ -466,7 +467,7 @@ function PipelineFlow({ active, closed, steps, labelOf }: PipelineFlowProps) {
 								fontFamily={fonts.ui[700]}
 								fill={colors.ink}
 							>
-								{bar.reached}
+								{i18n.number(bar.reached)}
 							</SvgText>
 							<SvgText
 								x={bar.cx}
@@ -487,7 +488,7 @@ function PipelineFlow({ active, closed, steps, labelOf }: PipelineFlowProps) {
 									fontFamily={fonts.ui[400]}
 									fill={colors.ink3}
 								>
-									{`${bar.conversion}%`}
+									{`${i18n.number(bar.conversion)}%`}
 								</SvgText>
 							) : null}
 						</G>
@@ -502,7 +503,7 @@ function PipelineFlow({ active, closed, steps, labelOf }: PipelineFlowProps) {
 				))}
 				{closed > 0 ? (
 					<Text variant="callout" color="ink2">
-						{t`Closed: ${closed}`}
+						{t`Closed: ${ph({ closed: i18n.number(closed) })}`}
 					</Text>
 				) : null}
 			</View>

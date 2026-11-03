@@ -6,7 +6,10 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { ACCENTS, FONT_PAIRINGS } from "../editor/design/presets";
 import { PdfCanvasPage } from "./pdf-canvas";
 import { ResumePreviewLoader } from "./preview.shared";
+import { LevelDisplay } from "@/components/level/display";
 import { FindingRow } from "@/features/ats-checker/report/finding-row";
+import { JdCoverage } from "@/features/ats-checker/report/jd-coverage";
+import { getLocaleMessages } from "@/libs/locale";
 
 vi.mock("./pdfjs", () => ({
 	AnnotationMode: {},
@@ -75,4 +78,67 @@ it("translates ATS page badges without changing extracted evidence", () => {
 	expect(output).toContain("Seite 7");
 	expect(output).toContain("Fictional evidence");
 	expect(finding.evidence.page).toBe(7);
+});
+
+it("uses Arabic numerals in both loading and rendered page captions and names", () => {
+	i18n.loadAndActivate({ locale: "ar-SA", messages: {} });
+	const markup = (node: React.ReactNode) => renderToStaticMarkup(<I18nProvider i18n={i18n}>{node}</I18nProvider>);
+	expect(markup(<ResumePreviewLoader pageCount={3} showPageNumbers />)).toContain("Page ١ of ٣");
+	const rendered = markup(
+		<PdfCanvasPage
+			document={{} as never}
+			onLoadSuccess={() => {}}
+			pageNumber={2}
+			totalPages={3}
+			pageScale={1}
+			showPageNumbers
+		/>,
+	);
+	expect(rendered).toContain("Page ٢ of ٣");
+	expect(rendered).toContain('aria-label="Resume page ٢ of ٣"');
+});
+
+it("formats Arabic ATS evidence, keyword totals and skill names without changing domain values", () => {
+	i18n.loadAndActivate({ locale: "ar-SA", messages: {} });
+	const finding = {
+		code: "NO_TEXT_LAYER",
+		severity: "blocker",
+		category: "parseability",
+		evidence: { page: 7, snippet: "Fictional 2026 evidence" },
+	} as const;
+	const markup = renderToStaticMarkup(
+		<I18nProvider i18n={i18n}>
+			<FindingRow finding={finding} />
+			<JdCoverage
+				jd={{
+					matchedCount: 2,
+					totalTerms: 3,
+					terms: [],
+					matchedTerms: [],
+					missingTerms: [],
+					weightedCoverage: 2 / 3,
+					stuffedTerms: [],
+					documentHasHiddenText: false,
+				}}
+			/>
+			<LevelDisplay level={3} type="circle" icon="circle" />
+		</I18nProvider>,
+	);
+	expect(markup).toContain("Page ٧");
+	expect(markup).toContain("٢ of ٣ terms found");
+	expect(markup).toContain('aria-label="Level ٣ of 5"');
+	expect(markup).toContain("Fictional 2026 evidence");
+	expect(finding.evidence.page).toBe(7);
+});
+
+it("uses the Arabic catalog for both digits in the accessible level label", async () => {
+	const catalog = await getLocaleMessages("ar-SA");
+	expect(catalog.locale).toBe("ar-SA");
+	i18n.loadAndActivate(catalog);
+	const markup = renderToStaticMarkup(
+		<I18nProvider i18n={i18n}>
+			<LevelDisplay level={3} type="circle" icon="circle" />
+		</I18nProvider>,
+	);
+	expect(markup).toContain('aria-label="المستوى ٣ من ٥"');
 });

@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
+import { i18n } from "@lingui/core";
+
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
 const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
@@ -67,7 +70,12 @@ test("native private profile sends explicit unknowns with owner scope, retains f
 	const dependencies = {
 		react,
 		"react-native": { View: "View" },
-		"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US", date: () => "Jan 1, 2030" } }) },
+		"@lingui/react/macro": {
+			useLingui: () => ({
+				t: tag,
+				i18n: { number: i18n.number.bind(i18n), locale: "en-US", date: () => "Jan 1, 2030" },
+			}),
+		},
 		"@tanstack/react-query": {
 			useQuery: () => ({ data: null, isPending: false }),
 			useQueryClient: () => ({ setQueryData() {} }),

@@ -1,5 +1,6 @@
 import type { ApplicationLane } from "../lanes";
 import type { ApplicationSummary } from "../types";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -52,7 +53,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 	);
 
 	// Sending history includes applications that later closed, and excludes jobs never sent.
-	const timeline = computeTimeline(applications);
+	const timeline = computeTimeline(applications, i18n.locale);
 	const maxWeek = Math.max(1, ...timeline.map((bucket) => bucket.count));
 
 	const insights = computeInsights(
@@ -60,6 +61,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 			status,
 			count: applications.filter((application) => application.status === status).length,
 		})),
+		i18n.locale,
 	);
 	const sources = countSources(applications);
 	const maxSource = Math.max(1, ...sources.map((s) => s.count));
@@ -119,7 +121,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 										}}
 									/>
 								</span>
-								<span className="text-end font-display text-base tabular-nums">{row.reached}</span>
+								<span className="text-end font-display text-base tabular-nums">{i18n.number(row.reached)}</span>
 							</li>
 						);
 					})}
@@ -132,7 +134,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 			<div className="grid gap-4 sm:grid-cols-2">
 				<div className="rounded-xl border border-line p-5">
 					<div className="font-display text-[34px] leading-10">
-						{Math.round((outcomes.heardBack / outcomes.sent) * 100)}%
+						{i18n.number(Math.round((outcomes.heardBack / outcomes.sent) * 100))}%
 					</div>
 					<div className="text-sm text-ink-2">
 						<Trans>heard back</Trans>
@@ -161,8 +163,9 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 					{outcomes.tailored.sent >= 3 && outcomes.base.sent >= 3 ? (
 						<p className="text-sm leading-6 text-ink-2">
 							<Trans>
-								{outcomes.tailored.replied} of {outcomes.tailored.sent} tailored applications got a reply;{" "}
-								{outcomes.base.replied} of {outcomes.base.sent} sent with another resume.
+								{i18n.number(outcomes.tailored.replied)} of {i18n.number(outcomes.tailored.sent)} tailored applications
+								got a reply; {i18n.number(outcomes.base.replied)} of {i18n.number(outcomes.base.sent)} sent with another
+								resume.
 							</Trans>{" "}
 							{outcomes.tailored.sent + outcomes.base.sent < 10 && <Trans>Small numbers, but worth noticing.</Trans>}
 						</p>
@@ -189,7 +192,9 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 						{timeline.map((bucket, index) => (
 							<div key={bucket.label} className="flex flex-1 flex-col items-center gap-1">
 								<div className="flex h-28 w-full flex-col justify-end">
-									<span className="mb-1 text-center text-xs text-ink-3 tabular-nums">{bucket.count || ""}</span>
+									<span className="mb-1 text-center text-xs text-ink-3 tabular-nums">
+										{bucket.count ? i18n.number(bucket.count) : ""}
+									</span>
 									<div
 										className="w-full origin-bottom rounded-t bg-accent transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 starting:scale-y-0"
 										style={{
@@ -227,7 +232,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 											style={{ ...stagger(index), width: `${Math.max((row.count / maxSource) * 100, 3)}%` }}
 										/>
 									</div>
-									<span className="w-6 text-end text-ink-3">{row.count}</span>
+									<span className="w-6 text-end text-ink-3">{i18n.number(row.count)}</span>
 								</div>
 							))
 						)}
@@ -403,7 +408,7 @@ function PipelineFlow({
 						<g>
 							<circle cx={W - padX - 96} cy={54} r={4} fill={getStageColor("closed")} />
 							<text x={W - padX - 86} y={58} fontSize={12} fill="var(--ink-2)">
-								{t`${insights.closed} closed`}
+								{t`${i18n.number(insights.closed)} closed`}
 							</text>
 						</g>
 					)}
@@ -431,7 +436,7 @@ function PipelineFlow({
 						<g key={`bar-${bar.status}`}>
 							<rect x={bar.x} y={bar.yTop} width={barW} height={bar.h} rx={6} fill={bar.color} />
 							<text x={bar.cx} y={bar.yTop - 10} textAnchor="middle" fontSize={15} fontWeight={700} fill="var(--ink)">
-								{bar.reached}
+								{i18n.number(bar.reached)}
 							</text>
 							<text x={bar.cx} y={H - 42} textAnchor="middle" fontSize={12} fontWeight={500} fill="var(--ink-2)">
 								{fitLabel(bar.label, FLOW_LABEL_MAX)}

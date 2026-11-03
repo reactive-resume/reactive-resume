@@ -1,5 +1,6 @@
 import type { ApplicationSummary } from "../types";
 import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -469,14 +470,14 @@ export function InterviewDialog({
 						{draft.participants.map((participant, index) => (
 							<div key={participant.id} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_32px] gap-2">
 								<Input
-									aria-label={t`Name of person ${index + 1}`}
+									aria-label={t`Name of person ${i18n.number(index + 1)}`}
 									placeholder={t`Name`}
 									value={participant.name}
 									maxLength={200}
 									onChange={(event) => setParticipant(participant.id, { name: event.target.value })}
 								/>
 								<Input
-									aria-label={t`Role of person ${index + 1}`}
+									aria-label={t`Role of person ${i18n.number(index + 1)}`}
 									placeholder={t`Role`}
 									value={participant.role}
 									maxLength={200}
@@ -485,7 +486,7 @@ export function InterviewDialog({
 								<IconButton
 									icon="x"
 									iconSize={18}
-									label={t`Remove person ${index + 1}`}
+									label={t`Remove person ${i18n.number(index + 1)}`}
 									className="h-9 w-8 text-ink-2"
 									onClick={() =>
 										set(
@@ -496,7 +497,7 @@ export function InterviewDialog({
 								/>
 								<Input
 									type="url"
-									aria-label={t`Profile link of person ${index + 1}`}
+									aria-label={t`Profile link of person ${i18n.number(index + 1)}`}
 									placeholder={t`Profile link (optional)`}
 									className="col-span-2"
 									value={participant.profileUrl}

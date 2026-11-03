@@ -1,4 +1,6 @@
 import type { SavedProvider } from "./catalog";
+import { i18n } from "@lingui/core";
+import { ph } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -123,7 +125,8 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 			else {
 				const tested = await client.aiProviders.test({ id: provider.id });
 				const milliseconds = Math.round(performance.now() - start);
-				if (tested.testStatus === "success") setResult(t`Connected · ${milliseconds} ms`);
+				if (tested.testStatus === "success")
+					setResult(t`Connected · ${ph({ milliseconds: i18n.number(milliseconds) })} ms`);
 				else setFailure(providerTestError(tested.testErrorKind));
 			}
 		} catch (error) {

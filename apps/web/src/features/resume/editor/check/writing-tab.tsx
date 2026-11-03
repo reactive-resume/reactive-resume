@@ -1,6 +1,7 @@
 import type { WritingNote } from "../store";
 import type { CheckIssue } from "./issues";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -243,7 +244,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 		<div className="grid gap-3">
 			{reviewedAt && (
 				<p className="text-xs text-ink-3">
-					<Trans>Reviewed {reviewedAt.toLocaleString()}</Trans>
+					<Trans>Reviewed {reviewedAt.toLocaleString(i18n.locale)}</Trans>
 				</p>
 			)}
 			{reviewInput !== null && reviewInput !== inputText && (

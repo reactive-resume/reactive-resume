@@ -178,18 +178,18 @@ function ApplicationProfileForm({ initial, scope }: ApplicationProfileFormProps)
 				<Text variant="heading" accessibilityRole="header">{t`Links`}</Text>
 				{draft.links.map((link, index) => (
 					<View key={index} style={{ gap: space.s2 }}>
-						{field(t`Link ${index + 1} label`, link.label, (label) =>
+						{field(t`Link ${i18n.number(index + 1)} label`, link.label, (label) =>
 							patch({ links: draft.links.map((row, i) => (i === index ? { ...row, label } : row)) }),
 						)}
 						{field(
-							t`Link ${index + 1} URL`,
+							t`Link ${i18n.number(index + 1)} URL`,
 							link.url,
 							(url) => patch({ links: draft.links.map((row, i) => (i === index ? { ...row, url } : row)) }),
 							2000,
 						)}
 						<Button
 							variant="ghost"
-							label={t`Remove link ${index + 1}`}
+							label={t`Remove link ${i18n.number(index + 1)}`}
 							disabled={busy}
 							onPress={() => patch({ links: draft.links.filter((_, i) => i !== index) })}
 						/>
@@ -305,7 +305,7 @@ function ApplicationProfileForm({ initial, scope }: ApplicationProfileFormProps)
 				<Text variant="heading" accessibilityRole="header">{t`References`}</Text>
 				{draft.references.map((row, index) => (
 					<View key={index} style={{ gap: space.s3 }}>
-						<Text weight={600} accessibilityRole="header">{t`Reference ${index + 1}`}</Text>
+						<Text weight={600} accessibilityRole="header">{t`Reference ${i18n.number(index + 1)}`}</Text>
 						{Object.entries({
 							name: t`Name`,
 							relationship: t`Relationship`,
@@ -325,7 +325,7 @@ function ApplicationProfileForm({ initial, scope }: ApplicationProfileFormProps)
 						)}
 						<Button
 							variant="ghost"
-							label={t`Remove reference ${index + 1}`}
+							label={t`Remove reference ${i18n.number(index + 1)}`}
 							disabled={busy}
 							onPress={() => patch({ references: draft.references.filter((_, i) => i !== index) })}
 						/>

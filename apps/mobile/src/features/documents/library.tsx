@@ -2,6 +2,7 @@ import type { DocumentSheet } from "./document-sheets";
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
 import type { LegendListProps } from "@legendapp/list/react-native";
 import { AnimatedLegendList } from "@legendapp/list/reanimated";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -426,7 +427,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 							))}
 							{pending.length > 100 && (
 								<View style={{ gap: space.s2 }}>
-									<Text>{t`${recoveryStart + 1}–${Math.min(recoveryStart + 100, pending.length)} of ${pending.length}`}</Text>
+									<Text>{t`${i18n.number(recoveryStart + 1)}–${i18n.number(Math.min(recoveryStart + 100, pending.length))} of ${i18n.number(pending.length)}`}</Text>
 									<View style={{ flexDirection: "row", gap: space.s2 }}>
 										<Button
 											label={t`Previous unsynced drafts`}
@@ -469,7 +470,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 								options={[
 									{
 										value: "all",
-										label: t`All (${(displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)})`,
+										label: t`All (${i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))})`,
 									},
 									{
 										value: "resume",
@@ -698,7 +699,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 					<View style={{ gap: space.s3 }}>
 						{session.status === "signed-in" && (offset > 0 || (displayed?.total ?? page.total) > 100) && (
 							<View style={{ gap: space.s2 }}>
-								<Text accessibilityLiveRegion="polite">{t`${Math.min(displayedOffset + 1, displayed?.total ?? page.total)}–${Math.min(displayedOffset + 100, displayed?.total ?? page.total)} of ${displayed?.total ?? page.total}`}</Text>
+								<Text accessibilityLiveRegion="polite">{t`${i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))}–${i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))} of ${i18n.number(displayed?.total ?? page.total)}`}</Text>
 								<View style={{ flexDirection: "row", gap: space.s2 }}>
 									<Button
 										label={t`Previous`}

@@ -2,6 +2,7 @@ import type { DesignWrite } from "./draft";
 import type { TemplateFilter } from "./presets";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
@@ -110,7 +111,7 @@ export function TemplateGroup(props: TemplateGroupProps) {
 					/>
 				))}
 				<Text variant="caption" color="ink3" style={{ marginStart: "auto" }}>
-					{t`${shown.length} of ${TEMPLATES.length} shown`}
+					{t`${i18n.number(shown.length)} of ${i18n.number(TEMPLATES.length)} shown`}
 				</Text>
 			</View>
 			{layout === "strip" ? (
@@ -318,7 +319,7 @@ function SidebarCard({ data, write, disabled }: TemplateGroupProps) {
 					min={10}
 					max={50}
 					step={1}
-					format={(value) => `${value}%`}
+					format={(value) => `${i18n.number(value)}%`}
 					disabled={disabled}
 					onChange={(value) =>
 						write(

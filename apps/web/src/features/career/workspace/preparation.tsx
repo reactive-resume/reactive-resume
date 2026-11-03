@@ -1,5 +1,6 @@
 import type { Application } from "@/features/applications/types";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -165,7 +166,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 								size={14}
 								className="transition-transform duration-standard ease-enter group-open:rotate-90"
 							/>
-							{t`Step ${stepIndex + 1} of ${STEPS.length}`}
+							{t`Step ${i18n.number(stepIndex + 1)} of ${i18n.number(STEPS.length)}`}
 						</summary>
 						<ol className="mt-2 grid list-inside list-decimal gap-1 ps-5">
 							{STEPS.map((step) => (

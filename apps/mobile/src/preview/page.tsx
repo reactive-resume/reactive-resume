@@ -1,6 +1,7 @@
 import type { ResumeDraftStore } from "@/draft/types";
 import type { PageMapNode } from "@reactive-resume/pdf/page-map";
-import { plural } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -104,7 +105,6 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 	const authored = Math.max(1, data?.metadata.layout.pages.length ?? 1);
 	const overflow = data && result ? measureOverflow(data, result) : null;
 	const firstSpill = overflow?.spills[0];
-	const page = firstSpill?.authoredPage;
 	// The sections that spill off the last page go onto a new page: the other way out besides Fit.
 	// Only for the draft itself: with the Assistant's edits marked, the page shown isn't the one a new page would split.
 	const spilling =
@@ -219,7 +219,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 									);
 								}}
 							>
-								<Text variant="caption" color="ink3" align="center">{t`Page ${index + 1}`}</Text>
+								<Text variant="caption" color="ink3" align="center">{t`Page ${i18n.number(index + 1)}`}</Text>
 								{overflow?.spills.some((spill) => spill.pages.includes(index + 1)) ? (
 									<View style={{ borderTopWidth: 1.5, borderStyle: "dashed", borderColor: colors.warnText }} />
 								) : null}
@@ -228,15 +228,15 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 										<Text variant="callout" color="warnText">
 											{firstSpill && firstSpill.pages.length === 1 && firstSpill.lines
 												? plural(firstSpill.lines, {
-														one: `Page ${page} runs over by about # line`,
-														other: `Page ${page} runs over by about # lines`,
+														one: `Page ${ph({ page: i18n.number(firstSpill.authoredPage) })} runs over by about # line`,
+														other: `Page ${ph({ page: i18n.number(firstSpill.authoredPage) })} runs over by about # lines`,
 													})
 												: plural(overflow.pageCount, { one: "Runs to # page", other: "Runs to # pages" })}
 										</Text>
 										{spilling ? (
 											<Button
 												variant="secondary"
-												label={t`Add page ${authored + 1}`}
+												label={t`Add page ${i18n.number(authored + 1)}`}
 												disabled={draft.locked || preview.rendering || fitting}
 												onPress={addPage}
 											/>
@@ -262,10 +262,10 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 								>
 									<Pressable
 										accessibilityRole="button"
-										accessibilityLabel={t`Select an entry on page ${index + 1}`}
+										accessibilityLabel={t`Select an entry on page ${i18n.number(index + 1)}`}
 										accessibilityActions={(result?.pageMap.nodes ?? [])
 											.filter((node) => node.page === index && node.kind !== "section")
-											.map((node, entry) => ({ name: node.key, label: t`Select entry ${entry + 1}` }))}
+											.map((node, entry) => ({ name: node.key, label: t`Select entry ${i18n.number(entry + 1)}` }))}
 										onAccessibilityAction={(event) => {
 											const node = result?.pageMap.nodes.find(
 												(value) => value.key === event.nativeEvent.actionName && value.page === index,
@@ -327,7 +327,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 				<IconButton icon="minus" label={t`Zoom out`} disabled={(zoom ?? 1) <= 0.6} onPress={() => step(-0.1)} />
 				<Button
 					variant="ghost"
-					label={zoom === null ? t`Fit` : t`${Math.round(zoom * 100)}%`}
+					label={zoom === null ? t`Fit` : t`${i18n.number(Math.round(zoom * 100))}%`}
 					onPress={() => change(1)}
 				/>
 				<IconButton icon="plus" label={t`Zoom in`} disabled={(zoom ?? 1) >= 1.5} onPress={() => step(0.1)} />
@@ -335,7 +335,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 					variant="caption"
 					color="ink3"
 					accessibilityLiveRegion="polite"
-				>{t`Page ${currentPage} of ${result?.pageCount ?? 1}`}</Text>
+				>{t`Page ${ph({ currentPage: i18n.number(currentPage) })} of ${i18n.number(result?.pageCount ?? 1)}`}</Text>
 			</View>
 		</View>
 	);

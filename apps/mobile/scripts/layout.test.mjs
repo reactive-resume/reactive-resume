@@ -3,6 +3,9 @@
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { i18n } from "@lingui/core";
+
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
 const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
@@ -38,6 +41,7 @@ const routes = {
 	settings: (page) => `/settings/${page}`,
 };
 const mocks = {
+	"@lingui/core": { i18n },
 	"@/shell/shortcut-help": {
 		ShortcutHelpButton: "ShortcutHelpButton",
 		CharacterShortcutSetting: "CharacterShortcutSetting",
@@ -48,7 +52,7 @@ const mocks = {
 	"@/shell/key-commands": { useKeyCommands() {} },
 	"react-native": native,
 	"react-native-safe-area-context": safe,
-	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n }) },
 	"expo-router": {
 		useLocalSearchParams: () => ({}),
 		useRouter: () => router,
@@ -312,8 +316,8 @@ hooks.at(-1).cleanup?.();
 hooks.length = 0;
 const version = { id: "version", kind: "created", createdAt: new Date(0) };
 const { HistoryPanel } = load("features/history/history.tsx", {
-	"@lingui/core/macro": { t: tag },
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
+	"@lingui/core/macro": { ph: (named) => Object.values(named)[0], t: tag },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en-US" } }) },
 	"@tanstack/react-query": { useQuery: () => ({ data: [version] }) },
 	"expo-image": { Image: "Image" },
 	"expo-router": { useLocalSearchParams: () => ({ version: version.id }) },
@@ -421,7 +425,7 @@ const { RichTextField, RichTextToolbar } = load("features/write/rich-text-field.
 		useMemo: (compute) => compute(),
 		useSyncExternalStore: (_subscribe, snapshot) => snapshot(),
 	},
-	"@lingui/core/macro": { plural: () => "characters" },
+	"@lingui/core/macro": { ph: (named) => Object.values(named)[0], plural: () => "characters" },
 	"react-native-enriched-html": { EnrichedTextInput: "RichInput" },
 	"./rich-text": richText,
 	"./improve": { ImprovePanel: "ImprovePanel" },
@@ -507,6 +511,27 @@ const { Segmented } = load("ui/fields.tsx", {
 	"@reactive-resume/utils/string": { filterOptions: (options) => options },
 });
 const { BarItem } = load("shell/app-tabs.tsx", { "react-native-reanimated": animation });
+for (const locale of ["en-US", "ar-SA"]) {
+	i18n.loadAndActivate({ locale, messages: {} });
+	for (const badge of [1234, "new"]) {
+		const formatted = typeof badge === "number" ? new Intl.NumberFormat(locale).format(badge) : badge;
+		const item = expanded(BarItem({ label: "Applications", icon: "briefcase", focused: false, badge, onPress() {} }));
+		assert.equal(item.props.accessibilityLabel, `Applications, ${formatted}`);
+		assert.ok(nodes(item).some((node) => node.type === "Text" && node.props.children.includes(formatted)));
+		const countedProps = {
+			...props,
+			descriptors: {
+				...props.descriptors,
+				applications: { options: { title: "Applications", tabBarBadge: badge } },
+			},
+		};
+		const sidebar = expanded(AppSidebar(countedProps));
+		const action = nodes(sidebar).find((node) => node.props.accessibilityLabel === `Applications, ${formatted}`);
+		assert.ok(action, "Sidebar accessibility count follows the active locale");
+		assert.ok(nodes(action).some((node) => node.type === "Text" && node.props.children.includes(formatted)));
+	}
+}
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 let knowledgeParams = {};
 const { KnowledgeScreen } = load("features/career/knowledge.tsx", {
 	"expo-router": {
@@ -605,7 +630,10 @@ const { DocumentsLibrary } = load("features/documents/library.tsx", {
 			},
 		}),
 	},
-	"@lingui/core/macro": { plural: (count, options) => options[count === 1 ? "one" : "other"].replace("#", count) },
+	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
+		plural: (count, options) => options[count === 1 ? "one" : "other"].replace("#", count),
+	},
 	"react-native-gesture-handler/ReanimatedSwipeable": {},
 	"react-native-reanimated": { ...animation, FlatList: "FlatList" },
 	"@/ui": {
@@ -1135,3 +1163,68 @@ assert.deepEqual(picker.props.data, [""]);
 assert.ok(picker.props.ListFooterComponent);
 assert.deepEqual(pickerList({ ...pickerProps, open: false }).props.data, []);
 console.log("PASS wrapped empty-state titles and complete accessible searchable icon grid");
+
+const { InsightsScreen } = load("features/applications-board/insights-screen.tsx", {
+	"@lingui/core/macro": {
+		ph: (values) => Object.values(values)[0],
+		plural: (count, forms) => forms.other.replace("#", i18n.number(count)),
+	},
+	"expo-file-system": {},
+	"expo-sharing": {},
+	"react-native-svg": { __esModule: true, default: "Svg", Text: "SvgText", Rect: "Rect" },
+	"@reactive-resume/utils/string": { fitLabel: (label) => label },
+	"./calendar": { weekStartsOn: () => 0 },
+	"./insights": {
+		computeOutcomes: () => ({
+			sent: 6,
+			heardBack: 4,
+			medianDaysToReply: 1,
+			funnel: [],
+			tailored: { sent: 3, replied: 2 },
+			base: { sent: 3, replied: 2 },
+		}),
+		computePipeline: () => ({
+			active: 3000,
+			closed: 10,
+			steps: [
+				{ status: "saved", reached: 3000, conversion: 100 },
+				{ status: "applied", reached: 2000, conversion: 67 },
+			],
+		}),
+		computeTimeline: () => [{ start: "2026-11-01", count: 3000 }],
+		countSources: () => [{ source: "Fictional 2026", count: 3000 }],
+	},
+	"./search": { useApplicationSearch: () => ({ search: "", needsYou: false }) },
+	"./views": { ApplicationsViewFrame: "ApplicationsViewFrame" },
+	"@/features/application-detail/hooks": {
+		useDocuments: () => ({ data: [] }),
+		useNow: () => new Date("2026-11-03"),
+		useUserTime: () => ({ timeZone: "UTC" }),
+	},
+	"@/features/applications/error": {},
+	"@/features/applications/lane-queries": { useApplicationLanes: () => ({ lanes: [] }) },
+	"@/features/applications/lanes": { resolveLane: (_lanes, { status }) => status, getLaneLabel: (lane) => lane },
+	"@/features/applications/list": { filterApplications: (rows) => rows },
+	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+	"@/features/applications/stage-actions": { useOfferHints: () => ({}) },
+	"@/features/applications/stages": { getStageColor: () => theme.colors.accent },
+	"@/ui": { ...ui, useTheme: () => ({ ...theme, fonts: { ui: { 400: "Font", 500: "Font", 700: "Font" } } }) },
+});
+i18n.loadAndActivate({ locale: "ar-SA", messages: {} });
+hooks.length = 0;
+const insights = expanded(render(InsightsScreen));
+const chartText = nodes(insights)
+	.filter((node) => node.type === "SvgText" || node.type === "Text")
+	.flatMap((node) => node.props.children)
+	.filter((value) => typeof value === "string");
+assert.ok(chartText.includes("٣٬٠٠٠"));
+assert.ok(chartText.includes("٦٧%"));
+assert.ok(chartText.includes("Fictional 2026"), "Source names remain authored text");
+assert.ok(chartText.some((value) => value.includes("saved → applied: ٢٬٠٠٠ (٦٧%)")));
+assert.ok(nodes(insights).some((node) => node.props.accessibilityLabel === "Fictional 2026: ٣٬٠٠٠"));
+assert.ok(
+	nodes(insights).some(
+		(node) => node.props.accessibilityLabel?.includes("٣٬٠٠٠") && /١١/.test(node.props.accessibilityLabel),
+	),
+);
+i18n.loadAndActivate({ locale: "en-US", messages: {} });

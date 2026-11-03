@@ -347,7 +347,7 @@ function Statistics({ id, isPublic, offline }: StatisticsProps) {
 					<View
 						accessible
 						accessibilityRole="image"
-						accessibilityLabel={t`Daily views over 30 days, peak ${summary.peak}`}
+						accessibilityLabel={t`Daily views over 30 days, peak ${i18n.number(summary.peak)}`}
 					>
 						<Svg width="100%" height={size.hit * 1.5} viewBox="0 0 300 60" preserveAspectRatio="none">
 							{summary.bars.map((bar, index) => (

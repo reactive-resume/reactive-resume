@@ -28,7 +28,8 @@ export type Insights = {
 // Pure function of the raw per-stage counts, so it's trivially testable and shared by every
 // chart in the Insights view. "reached[i]" assumes the pipeline is monotonic for currently
 // active applications (an app at Interview has passed through Screening).
-export function computeInsights(byStage: StageCount[]): Insights {
+export function computeInsights(byStage: StageCount[], locale: string): Insights {
+	const format = new Intl.NumberFormat(locale);
 	const counts = new Map<ApplicationStatus, number>(byStage.map((row) => [row.status, row.count]));
 	const at = (status: ApplicationStatus) => counts.get(status) ?? 0;
 	const closed = at("closed");
@@ -49,7 +50,7 @@ export function computeInsights(byStage: StageCount[]): Insights {
 			count: at(status),
 			reached: reachedCount,
 			pct: total > 0 ? Math.round((reachedCount / total) * 100) : 0,
-			conv: prev > 0 ? `${Math.round((reachedCount / prev) * 100)}%` : "—",
+			conv: prev > 0 ? `${format.format(Math.round((reachedCount / prev) * 100))}%` : "—",
 		};
 	});
 
@@ -58,11 +59,11 @@ export function computeInsights(byStage: StageCount[]): Insights {
 	const responseRate = appliedOn > 0 ? Math.round(((reached[2] ?? 0) / appliedOn) * 100) : 0;
 
 	const tiles = [
-		{ label: "Total applications", value: String(total), sub: "in this view" },
-		{ label: "Applied", value: String(appliedOn), sub: "past saved" },
-		{ label: "Response rate", value: `${responseRate}%`, sub: "reached screening" },
-		{ label: "Interviews", value: String(interviews), sub: "interview or beyond" },
-		{ label: "Offers", value: String(offers), sub: closed > 0 ? `${closed} closed` : "so far" },
+		{ label: "Total applications", value: format.format(total), sub: "in this view" },
+		{ label: "Applied", value: format.format(appliedOn), sub: "past saved" },
+		{ label: "Response rate", value: `${format.format(responseRate)}%`, sub: "reached screening" },
+		{ label: "Interviews", value: format.format(interviews), sub: "interview or beyond" },
+		{ label: "Offers", value: format.format(offers), sub: closed > 0 ? `${format.format(closed)} closed` : "so far" },
 	];
 
 	return { total, tiles, funnel, closed };
@@ -72,7 +73,8 @@ export type TimelineBucket = { label: string; count: number };
 
 // Bucket application dates into the last `weeks` calendar weeks (Sunday-started) so the Insights
 // view can show application velocity over time — a dimension the funnel/tiles don't capture.
-export function computeTimeline(applications: readonly OutcomeSource[], weeks = 8): TimelineBucket[] {
+export function computeTimeline(applications: readonly OutcomeSource[], locale: string, weeks = 8): TimelineBucket[] {
+	const format = new Intl.DateTimeFormat(locale, { month: "numeric", day: "numeric" });
 	const msWeek = 7 * 86_400_000;
 	const startOfWeek = new Date();
 	startOfWeek.setHours(0, 0, 0, 0);
@@ -80,7 +82,7 @@ export function computeTimeline(applications: readonly OutcomeSource[], weeks = 
 
 	const buckets = Array.from({ length: weeks }, (_, i) => {
 		const start = new Date(startOfWeek.getTime() - (weeks - 1 - i) * msWeek);
-		return { start: start.getTime(), label: `${start.getMonth() + 1}/${start.getDate()}`, count: 0 };
+		return { start: start.getTime(), label: format.format(start), count: 0 };
 	});
 
 	const first = buckets[0]?.start ?? 0;

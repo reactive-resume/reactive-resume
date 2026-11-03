@@ -2,7 +2,8 @@ import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
 import type { Application } from "@/features/applications/types";
 import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
@@ -422,7 +423,8 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 					<Trans>This week: make your evidence easier to follow</Trans>
 				</h2>
 				<p className="text-xs text-ink-3">
-					{t`${done} of ${count} done`} · {plural(minutes, { one: "# minute in total", other: "# minutes in total" })}
+					{t`${ph({ done: i18n.number(done) })} of ${ph({ count: i18n.number(count) })} done`} ·{" "}
+					{plural(minutes, { one: "# minute in total", other: "# minutes in total" })}
 				</p>
 			</div>
 			<ul className="grid">
@@ -442,7 +444,7 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 								<span className="font-mono text-xs leading-4 font-medium text-ink-3">
 									{weekday}
 									<br />
-									{t`${length}m`}
+									{t`${ph({ length: i18n.number(length) })}m`}
 								</span>
 								<span
 									className={cn(

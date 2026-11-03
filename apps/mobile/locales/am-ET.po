@@ -89,8 +89,8 @@ msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of y
 msgstr "{0, plural, one {“{1}” በስራ ማስታወቂያው አንድ ጊዜ ይገኛል። ከልምድዎ ጋር የሚዛመድ ከሆነ በሚገባው ቦታ ያክሉት።} other {“{2}” በስራ ማስታወቂያው # ጊዜ ይገኛል። ከልምድዎ ጋር የሚዛመድ ከሆነ በሚገባው ቦታ ያክሉት።}}"
 
 #. placeholder {0}: report.totalRules
-#. placeholder {1}: report.passedRules
-#. placeholder {2}: report.passedRules
+#. placeholder {1}: i18n.number(report.passedRules)
+#. placeholder {2}: i18n.number(report.passedRules)
 #: src/features/check/score.tsx
 msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
 msgstr "{0, plural, one {ከ# ፍተሻ {1} አልፏል።} other {ከ# ፍተሻዎች {2} አልፈዋል።}}"
@@ -103,15 +103,15 @@ msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}
 msgstr "{0, plural, one {ከ# አርትዖት {1} ተቀባይነት አግኝቷል} other {ከ# አርትዖቶች {2} ተቀባይነት አግኝተዋል}}"
 
 #. placeholder {0}: value.report.applicableChecks
-#. placeholder {1}: value.report.passedChecks
-#. placeholder {2}: value.report.passedChecks
+#. placeholder {1}: i18n.number(value.report.passedChecks)
+#. placeholder {2}: i18n.number(value.report.passedChecks)
 #: src/features/check/parser.tsx
 msgid "{0, plural, one {{1} of # exported PDF check passes.} other {{2} of # exported PDF checks pass.}}"
 msgstr "{0, plural, one {ከ# ወደ ውጭ የተላከ PDF ምርመራዎች {1} አልፏል።} other {ከ# ወደ ውጭ የተላከ PDF ምርመራዎች {2} አልፈዋል።}}"
 
 #. placeholder {0}: match.total
-#. placeholder {1}: match.found.length
-#. placeholder {2}: match.found.length
+#. placeholder {1}: i18n.number(match.found.length)
+#. placeholder {2}: i18n.number(match.found.length)
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {ከ# የማስታወቂያ ቃላት {1} ተካትቷል} other {ከ# የማስታወቂያ ቃላት {2} ተካትተዋል}}"
@@ -470,8 +470,8 @@ msgstr "{0} (የእኔ)"
 
 #. placeholder {0}: labelOf(from.status)
 #. placeholder {1}: labelOf(step.status)
-#. placeholder {2}: step.reached
-#. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
+#. placeholder {2}: i18n.number(step.reached)
+#. placeholder {3}: step.conversion === null ? "" : ` (${i18n.number(step.conversion)}%)`
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}፡ {2}{3}"
@@ -505,7 +505,7 @@ msgid "{0} interview · {1}"
 msgstr "የ{0} ቃለ መጠይቅ · {1}"
 
 #. placeholder {0}: interviewTypeLabel(event.interview.kind)
-#. placeholder {1}: event.interview.durationMinutes
+#. placeholder {1}: i18n.number(event.interview.durationMinutes)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "{0} interview · {1} min"
 msgstr "የ{0} ቃለ መጠይቅ · {1} ደቂቃ"
@@ -525,34 +525,34 @@ msgstr "{0} ተጨማሪ"
 msgid "{0} new comments"
 msgstr ""
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/features/letters/write.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATES.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATES.length)
 #: src/features/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "{0} የ {1} ታይቷል።"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "ከ{1} የተስተካከሉ የሥራ ማመልከቻዎች {0} ምላሽ አግኝተዋል፤ ከሌላ የሥራ ልምድ ማስረጃ ጋር ከተላኩት {3} ውስጥ {2}።"
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -567,38 +567,38 @@ msgstr "{0} ብቻ"
 msgid "{0} posting"
 msgstr "የ{0} የሥራ ማስታወቂያ"
 
-#. placeholder {0}: selectedIds.length
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selectedIds.length)
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "{0} ተመርጧል"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
-#. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
-#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: displayed?.total ?? page.total
-#. placeholder {2}: pending.length
+#. placeholder {0}: i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))
+#. placeholder {0}: i18n.number(recoveryStart + 1)
+#. placeholder {1}: i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))
+#. placeholder {1}: i18n.number(Math.min(recoveryStart + 100, pending.length))
+#. placeholder {2}: i18n.number(displayed?.total ?? page.total)
+#. placeholder {2}: i18n.number(pending.length)
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: row.index + 1
-#. placeholder {2}: row.count
+#. placeholder {1}: i18n.number(row.index + 1)
+#. placeholder {2}: i18n.number(row.count)
 #: src/features/write/outline.tsx
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}፣ ግቤት {1} የ{2}"
@@ -608,13 +608,13 @@ msgstr "{0}፣ ግቤት {1} የ{2}"
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: Math.round(zoom * 100)
+#. placeholder {0}: i18n.number(Math.round(zoom * 100))
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
 msgid "{0}%"
 msgstr "{0}%"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/messages.tsx
 msgid "{accepted} of {0} applied"
 msgstr "ከ{0} ውስጥ {accepted} ተተግብረዋል"
@@ -946,7 +946,7 @@ msgstr "{words, plural, one {# ቃል} other {# ቃላት}}"
 msgid "{words} of {shownLimit} words"
 msgstr ""
 
-#. placeholder {0}: items.length - MAX_PER_DAY
+#. placeholder {0}: i18n.number(items.length - MAX_PER_DAY)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} ተጨማሪ"
@@ -1441,7 +1441,7 @@ msgstr "ከሀገር ኮዱ ጋር አንድ ይጨምሩ፤ አንዳንድ የ
 msgid "Add page"
 msgstr "ገጽ ያክሉ"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/preview/page.tsx
 msgid "Add page {0}"
 msgstr ""
@@ -1746,7 +1746,7 @@ msgstr "አልባኒኛ"
 msgid "All"
 msgstr "ሁሉም"
 
-#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
+#. placeholder {0}: i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "ሁሉም ({0})"
@@ -1874,7 +1874,7 @@ msgstr ""
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
 msgstr ""
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/application-detail/sections.tsx
 msgid "and {0} more"
 msgstr "እና {0} ተጨማሪ"
@@ -4301,7 +4301,7 @@ msgstr "ብጁ ቅጦች አልተተገበሩም። እነሱን ለመተግ�
 msgid "Czech"
 msgstr "ቼክኛ"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/share/link.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "ዕለታዊ እይታዎች ከ30 ቀናት በላይ፣ ከፍተኛው {0}"
@@ -4551,12 +4551,12 @@ msgstr "ስሪቱን ሰርዝ"
 msgid "Deleted"
 msgstr "ተሰርዟል።"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0}. Refresh to see what remains."
 msgstr ""
@@ -4601,7 +4601,7 @@ msgstr "መግለጫ"
 msgid "Description is clipped to 20,000 characters. Review it before preparing."
 msgstr "መግለጫው ወደ 20,000 ቁምፊዎች ተቆርጧል። ከመዘጋጀትዎ በፊት ይከልሱት።"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Description of role {0}"
 msgstr "ሚና {0} መግለጫ"
@@ -4991,7 +4991,7 @@ msgstr "አርትዕ"
 msgid "Edit {0}"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
@@ -5459,7 +5459,7 @@ msgstr ""
 msgid "Feedback links"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/basics-screen.tsx
 msgid "Field {0}"
 msgstr "መስክ {0}"
@@ -6397,13 +6397,13 @@ msgstr "ጉርሻ አለ? በምንስ ላይ ይመሠረታል?"
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/check/page.tsx
 msgid "Issue {0} of {1}"
 msgstr "የ{0} የ{1} እትም።"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -6911,7 +6911,7 @@ msgstr "የደብዳቤ አካል"
 msgid "Letter page"
 msgstr "የደብዳቤ ገጽ"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/letters/page.tsx
 msgid "Letter page {0}"
 msgstr "የደብዳቤ ገጽ {0}"
@@ -6984,12 +6984,12 @@ msgstr "ይህ የተጠጋ መስመሮች ሲነበቡ አብረው ሊሄዱ 
 msgid "Link"
 msgstr "አገናኝ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -7734,8 +7734,8 @@ msgstr "ወደ ላይ ተንቀሳቀስ"
 msgid "Move your email and phone number to the top of page one."
 msgstr "ኢሜልዎን እና ስልክ ቁጥርዎን ወደ ገጽ አንድ ላይኛ ክፍል ያንቀሳቅሱ።"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "{0} ከ{1} ወደ መጣያ ተንቀሳቅሷል። የተቆለፉ ሰነዶች ተዘለዋል. ማናቸውንም አለመሳካቶች ያድሱ እና እንደገና ይሞክሩ።"
@@ -7788,7 +7788,7 @@ msgstr "ስም"
 msgid "Name and contact details weren't found. Add them in Basics."
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
 msgstr "የሰው {0} ስም"
@@ -8699,7 +8699,7 @@ msgstr "ፈተናቸውን ያለፉ አቅራቢዎች ብቻ ሊበሩ ይች�
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "የመጀመሪያዎቹ {0} ገጾች ብቻ ተረጋግጠዋል።"
@@ -8961,7 +8961,7 @@ msgstr "ሌሎች ጥቅማ ጥቅሞች"
 msgid "Other concern"
 msgstr "ሌላ አሳሳቢ ጉዳይ"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/threads.tsx
 msgid "Other documents · {0}"
 msgstr "ሌሎች ሰነዶች · {0}"
@@ -8990,8 +8990,8 @@ msgstr "ገጽ"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: 1
-#. placeholder {0}: index + 1
-#. placeholder {0}: item.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(item.page + 1)
 #: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
@@ -9002,29 +9002,29 @@ msgstr "ገጽ"
 msgid "Page {0}"
 msgstr "ገጽ {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/history/history.tsx
 msgid "Page {0} · read-only"
 msgstr "ገጽ {0} · ተነባቢ-ብቻ"
 
-#. placeholder {0}: index + 1
-#. placeholder {0}: placement.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(placement.page + 1)
 #: src/features/write/section-sheet.tsx
 msgid "Page {0} · Sidebar"
 msgstr "ገጽ {0} · የጎን አሞሌ"
 
-#. placeholder {0}: pageIndex + 1
-#. placeholder {1}: preview.result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
+#. placeholder {1}: i18n.number(preview.result?.pageCount ?? 1)
 #: src/features/check/page.tsx
 msgid "Page {0} of {1}"
 msgstr "ገጽ {0} ከ {1}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/ats-checker/original-page.tsx
 msgid "Page {0} of the uploaded PDF"
 msgstr "ገጽ {0} የተሰቀለው PDF"
 
-#. placeholder {0}: result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(result?.pageCount ?? 1)
 #: src/preview/page.tsx
 msgid "Page {currentPage} of {0}"
 msgstr "ገጽ {currentPage} ከ {0}"
@@ -9998,7 +9998,7 @@ msgstr "ድገም"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -10172,7 +10172,7 @@ msgstr "መስክ አስወግድ"
 msgid "Remove file"
 msgstr "ፋይል አስወግድ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -10181,7 +10181,7 @@ msgstr ""
 msgid "Remove password"
 msgstr "የይለፍ ቃሉን አስወግድ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "ሰው {0}ን አስወግድ"
@@ -10195,7 +10195,7 @@ msgstr "ፎቶ አስወግድ"
 msgid "Remove question"
 msgstr "ጥያቄውን አስወግድ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -10437,12 +10437,12 @@ msgstr "\"{0}\" ወደነበረበት ተመልሷል"
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -10514,7 +10514,7 @@ msgstr "የሲቪ ቋንቋ"
 msgid "Resume options"
 msgstr ""
 
-#. placeholder {0}: pageIndex + 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/check/page.tsx
 msgid "Resume page {0}"
 msgstr "የየስራ ልምድ ማስረጃ ገፅ {0}"
@@ -10737,7 +10737,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "ጽሑፍን ይገምግሙ"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/check/writing.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -10785,7 +10785,7 @@ msgstr "የሥራ መደብ"
 msgid "Role (optional)"
 msgstr "ሚና (አማራጭ)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "ሚና {0}"
@@ -11325,12 +11325,12 @@ msgstr "ሁሉንም ይምረጡ"
 msgid "Select all roles"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
 msgstr "በገጽ {0} ላይ ግቤት ይምረጡ"
 
-#. placeholder {0}: entry + 1
+#. placeholder {0}: i18n.number(entry + 1)
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "ግቤት ይምረጡ {0}"
@@ -11674,7 +11674,7 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "“በReactive Resume የተሰራ” አሳይ"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
 #: src/features/applications-board/board-screen.tsx
 msgid "Show {0} more"
 msgstr "ተጨማሪ {0} አሳይ"
@@ -12285,8 +12285,8 @@ msgstr ""
 msgid "Stay in Documents"
 msgstr "በሰነዶች ውስጥ ይቆዩ"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -13931,7 +13931,7 @@ msgstr "የማመልከቻ ደረጃዎችን ለማስተዳደር አገልጋ
 msgid "Updated"
 msgstr "ተዘምኗል"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Updated {completed} of {0}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures."
 msgstr "የዘመነው {completed} ከ{0}። የተቆለፉ ሰነዶች እና የሽፋን ደብዳቤዎች ለህዝብ ግንኙነቶች ተዘለዋል. ማናቸውንም አለመሳካቶች ያድሱ እና እንደገና ይሞክሩ።"
@@ -14263,7 +14263,7 @@ msgstr "ስሪት ተቀምጧል"
 msgid "Version sent {date}"
 msgstr "ስሪት {date} ተልኳል።"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "ስሪት {date} ተልኳል · {0} ን ያረጋግጡ"

@@ -1,6 +1,7 @@
 import type { levelDesignSchema } from "@reactive-resume/schema/resume/data";
 import type z from "zod";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { cn } from "@reactive-resume/utils/style";
 
 type Props = z.infer<typeof levelDesignSchema> &
@@ -37,7 +38,7 @@ export function LevelDisplay({ icon, type, level, className, decorationSizePx, i
 			role="img"
 			aria-label={t({
 				comment: "Accessible label for skill/proficiency level indicator, where level is current value out of 5",
-				message: `Level ${level} of 5`,
+				message: `Level ${ph({ level: i18n.number(level) })} of 5`,
 			})}
 			className={cn("flex items-center gap-x-2", type === "progress-bar" && "gap-x-0", className)}
 			{...props}

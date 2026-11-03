@@ -1,4 +1,5 @@
 import type { EditorMode } from "@/features/resume/editor/store";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -143,7 +144,7 @@ function CheckBadge({ count }: { count: number }) {
 
 	return (
 		<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-sm bg-warn-soft px-[5px] text-xs font-semibold text-warn-text">
-			<span aria-hidden="true">{count}</span>
+			<span aria-hidden="true">{i18n.number(count)}</span>
 			<span className="sr-only">
 				<Plural value={count} one="# open issue" other="# open issues" />
 			</span>

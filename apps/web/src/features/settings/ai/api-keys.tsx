@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -54,8 +55,7 @@ function isReadOnly(permissions: unknown): boolean {
 	return Array.isArray(api) && !api.includes("write") && !api.includes("delete");
 }
 
-const shortDate = (date: Date) =>
-	date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+const shortDate = (date: Date) => i18n.date(date, { month: "short", day: "numeric", year: "numeric" });
 
 type ApiKeysSectionProps = { openNewKey?: boolean };
 
