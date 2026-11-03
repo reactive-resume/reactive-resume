@@ -1,6 +1,7 @@
 import type { Page } from "@playwright/test";
 import { approveLocalStubOperations } from "../fixtures/ai-consent";
 import { startAiStub } from "../fixtures/ai-stub";
+import { chooseCurrency } from "../fixtures/career";
 import { expect, test } from "../fixtures/test";
 
 test.beforeEach(async ({ authPage }) => {
@@ -216,7 +217,7 @@ test("manual offers save and compare without an AI provider", async ({ authPage:
 	await page.getByRole("heading", { name: "Product engineer" }).click();
 	await page.getByRole("main").screenshot({ path: testInfo.outputPath("messages.png") });
 	await page.getByRole("button", { name: "Add offer", exact: true }).click();
-	await page.getByLabel("Currency", { exact: true }).fill("EUR");
+	await chooseCurrency(page, "EUR");
 	await page.getByLabel("Base salary", { exact: true }).fill("95000");
 	const moreOptions = page.getByRole("button", { name: "More options", exact: true });
 	await expect(moreOptions).toHaveAttribute("aria-expanded", "false");
@@ -243,7 +244,7 @@ test("manual offers save and compare without an AI provider", async ({ authPage:
 	await page.goto("/dashboard/career/offers");
 	await page.getByRole("button", { name: "Add offer", exact: true }).click();
 	await page.getByLabel("Application", { exact: true }).selectOption(secondJob);
-	await page.getByLabel("Currency", { exact: true }).fill("USD");
+	await chooseCurrency(page, "USD");
 	await page.getByLabel("Pay period", { exact: true }).selectOption("month");
 	await page.getByLabel("Base salary", { exact: true }).fill("8000");
 	await moreOptions.click();

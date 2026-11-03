@@ -198,6 +198,11 @@ export function StoriesPage({ storyId, edit, practice = false, start: planStart 
 			) : (
 				<EmptyState
 					title={<Trans>No stories yet</Trans>}
+					action={
+						<Button onClick={() => open(undefined, true)}>
+							<Trans>Add a story</Trans>
+						</Button>
+					}
 					description={
 						<Trans>
 							Write one about something you did, in five parts. Leave Result and Reflection blank until you can support

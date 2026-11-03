@@ -4,7 +4,7 @@ import type { OfferTerms } from "@reactive-resume/schema/career";
 import { useLingui } from "@lingui/react/macro";
 import { useIsFocused, useLocalSearchParams, useRouter } from "expo-router";
 import Storage from "expo-sqlite/kv-store";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
 import {
@@ -14,6 +14,7 @@ import {
 	parseOfferEntry,
 	previousOfferCurrency,
 } from "@reactive-resume/schema/career-offer";
+import { getCurrencyOptions } from "@reactive-resume/utils/amount";
 import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { client, useCareerAction, useCareerQueries, useCareerTime, useOffers } from "./hooks";
 import { formatMoney } from "./offer-compare";
@@ -199,14 +200,14 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		learning: amount(offer?.data.learning),
 	}));
 	// What the job's salary filled in, so an untouched sheet isn't "changed" and choosing another job refills it.
-	const [seed, setSeed] = useState(() => ({ base: offer ? "" : amount(hint?.base), period: hint?.period ?? "year" }));
+	const [seed, setSeed] = useState(() => (offer ? "" : amount(hint?.base)));
+	const [periodTyped, setPeriodTyped] = useState(false);
 	const chooseApplication = (id: string) => {
 		setApplicationId(id);
 		if (offer) return;
 		const next = offerHintFromSalary(applications.data?.find((row) => row.id === id)?.salary);
-		const nextSeed = { base: amount(next.base), period: next.period ?? "year" };
-		if (amounts.base === seed.base) setAmounts((current) => ({ ...current, base: nextSeed.base }));
-		if (draft.period === seed.period) setTerms((current) => ({ ...current, period: nextSeed.period }));
+		const nextSeed = amount(next.base);
+		if (amounts.base === seed) setAmounts((current) => ({ ...current, base: nextSeed }));
 		setSeed(nextSeed);
 	};
 	const deadline = offer?.data.respondBy ? zonedFields(offer.data.respondBy, timeZone) : null;
@@ -223,8 +224,15 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	// A new offer starts in the last offer's currency, else the one the user's minimum salary is in (Preferences).
 	const careerProfile = useCareerQueries().profile.data;
 	const preferred = careerProfile?.minBase.amount === null ? undefined : careerProfile?.minBase.currency;
-	const terms =
-		offer || currencyTyped ? draft : { ...draft, currency: hint?.currency ?? previousCurrency ?? preferred ?? "" };
+	const terms = {
+		...draft,
+		currency: offer || currencyTyped ? draft.currency : (hint?.currency ?? previousCurrency ?? preferred ?? ""),
+		period:
+			offer || periodTyped
+				? draft.period
+				: (hint?.period ?? (hint?.base != null ? "year" : (careerProfile?.minBase.period ?? "year"))),
+	};
+	const currencies = useMemo(() => getCurrencyOptions(locale, terms.currency), [locale, terms.currency]);
 	const [more, setMore] = useState(Boolean(offer));
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
 	const [submitted, setSubmitted] = useState(false);
@@ -241,12 +249,12 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	});
 	const dirty = !!(
 		(currencyTyped && terms.currency) ||
-		amounts.base !== seed.base ||
+		amounts.base !== seed ||
 		amounts.variable ||
 		amounts.learning ||
 		date ||
 		terms.version !== "written" ||
-		terms.period !== seed.period ||
+		periodTyped ||
 		terms.officeDays !== null ||
 		terms.variableConditions ||
 		terms.equity ||
@@ -331,28 +339,27 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						) : null}
 					</>
 				)}
-				<TextField
+				<SelectSheet
 					label={t`Currency`}
 					value={terms.currency}
-					onBlur={() => touch("currency")}
-					autoCapitalize="characters"
-					maxLength={3}
-					// A hint, not a placeholder: a placeholder "EUR" reads as a currency already chosen.
-					helper={t`Enter a three-letter currency code.`}
-					onChangeText={(currency) => {
+					searchable
+					options={[{ value: "", label: t`Select…` }, ...currencies]}
+					onChange={(currency) => {
 						setCurrencyTyped(true);
-						change({ currency: currency.toUpperCase() });
+						touch("currency");
+						change({ currency });
 					}}
-					error={
-						(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency)
-							? t`Enter a three-letter currency code.`
-							: undefined
-					}
 				/>
+				{(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency) ? (
+					<Banner tone="warn" message={t`Enter a three-letter currency code.`} />
+				) : null}
 				<SelectSheet
 					label={t`Pay period`}
 					value={terms.period}
-					onChange={(period) => change({ period })}
+					onChange={(period) => {
+						setPeriodTyped(true);
+						change({ period });
+					}}
 					options={[
 						{ value: "year", label: t`Per year` },
 						{ value: "month", label: t`Per month` },
