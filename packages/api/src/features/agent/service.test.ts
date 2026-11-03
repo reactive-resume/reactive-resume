@@ -795,9 +795,10 @@ describe("agentService.messages.send", () => {
 	// Regression (defect 8): a question continuation streams into the SAME uiMessage id; onFinish
 	// must upsert the existing assistant row instead of inserting a duplicate row.
 	it.each([
-		{ provider: "openai", model: "gpt-5", capableModel: "gpt-6.1-sol" },
-		{ provider: "gemini", model: "gemini-3.8-flash", capableModel: "gemini-3.8-pro" },
-	])("continues one row and replays portable web evidence with correct $provider metadata", async (provider) => {
+		{ provider: "openai", model: "gpt-5", capableModel: "gpt-6.1-sol", replayModel: "gemini-3.8-flash" },
+		{ provider: "gemini", model: "gemini-3.8-flash", capableModel: "gemini-3.8-pro", replayModel: "gemini-3.8-pro" },
+		{ provider: "gemini", model: "gemini-3.8-flash", capableModel: "gemini-3.8-pro", replayModel: "gemini-3.8-flash" },
+	])("continues one row with portable evidence for $provider / $replayModel", async (provider) => {
 		const activeThread = buildActiveThread();
 		const userMessage = {
 			id: "message-user-1",
@@ -826,7 +827,7 @@ describe("agentService.messages.send", () => {
 			uiMessage: {
 				id: "ui-assistant-1",
 				role: "assistant",
-				metadata: { provider: "gemini", model: "gemini-3.8-flash", aiOperationIds: ["prior-operation"] },
+				metadata: { provider: "gemini", model: provider.replayModel, aiOperationIds: ["prior-operation"] },
 				parts: [
 					{
 						type: "tool-ask_user_question",
@@ -846,7 +847,7 @@ describe("agentService.messages.send", () => {
 		};
 		const answeredAssistantModelInput = {
 			...unansweredAssistantMessage.uiMessage,
-			metadata: { provider: "gemini", model: "gemini-3.8-flash", aiOperationIds: ["prior-operation"] },
+			metadata: { provider: "gemini", model: provider.replayModel, aiOperationIds: ["prior-operation"] },
 			parts: [
 				{
 					type: "tool-ask_user_question",
@@ -854,7 +855,7 @@ describe("agentService.messages.send", () => {
 					state: "output-available",
 					input: question,
 					output: "Only the header",
-					...(provider.provider === "gemini"
+					...(provider.provider === "gemini" && provider.replayModel === provider.capableModel
 						? {
 								callProviderMetadata: {
 									google: { thoughtSignature: "opaque-signature" },
@@ -963,7 +964,18 @@ describe("agentService.messages.send", () => {
 			message: answeredAssistantModelInput as any,
 		});
 
-		expect(updateSets).toContainEqual(expect.objectContaining({ uiMessage: answeredAssistantModelInput }));
+		expect(updateSets).toContainEqual(
+			expect.objectContaining({
+				uiMessage: {
+					...unansweredAssistantMessage.uiMessage,
+					parts: unansweredAssistantMessage.uiMessage.parts.map((part) => ({
+						...part,
+						state: "output-available",
+						output: "Only the header",
+					})),
+				},
+			}),
+		);
 		expect(convertToModelMessages).toHaveBeenCalledWith([
 			userMessage.uiMessage,
 			expect.objectContaining({
@@ -983,6 +995,12 @@ describe("agentService.messages.send", () => {
 			answeredAssistantModelInput,
 		]);
 		const replayed = vi.mocked(convertToModelMessages).mock.calls.at(-1)?.[0];
+		if (!replayed) throw new Error("Missing replay messages");
+		const sdk = await vi.importActual<typeof import("ai")>("ai");
+		const serialized = JSON.stringify(await sdk.convertToModelMessages(replayed));
+		expect(serialized.includes("opaque-signature")).toBe(
+			provider.provider === "gemini" && provider.replayModel === provider.capableModel,
+		);
 		expect(JSON.stringify(replayed)).not.toContain("provider-owned-payload");
 		expect(JSON.stringify(replayed)).not.toContain("ws_old");
 
