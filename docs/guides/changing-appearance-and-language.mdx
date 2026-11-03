@@ -44,7 +44,19 @@ The change applies at once. Reactive Resume remembers it in this browser for a y
 
 On your first visit, the website follows your browser's preferred languages. It uses a supported regional variant when an exact match is unavailable, or English if none matches. This automatic choice isn't saved: a language in the page address (`?locale=`) or a choice already saved in this browser takes priority. Automatic selection needs JavaScript; homepage language links also work without it.
 
-The Android and iPhone apps follow your device's preferred languages until you choose a language in Preferences.
+After sign-in on a browser or device without a language choice, Reactive Resume restores your account's saved language.
+If the account has none, it follows the browser or device. Automatic choices don't replace your account language or become a local override.
+
+The Android and iPhone apps also restore your account language on an unconfigured device. Choosing **System** in Preferences
+explicitly follows that device instead. A switch between left-to-right and right-to-left languages shows a restart notice;
+the language changes immediately, and restarting applies the layout direction.
+
+<Frame caption="Account language restored in a fresh browser">
+  <img
+    src="/images/guides/changing-appearance-and-language/account-language-restored.png"
+    alt="Fictional Maya Chen account in German Preferences, with Deutsch selected after opening a fresh English-language browser"
+  />
+</Frame>
 
 <Steps>
   <Step title="Open Preferences">

@@ -4,13 +4,20 @@ import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DevSettings, View, useWindowDimensions } from "react-native";
+import { isLocale } from "@reactive-resume/utils/locale";
 import { filterOptions } from "@reactive-resume/utils/string";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { client, orpc } from "@/api/client";
 import { SettingsGroup, SettingsPage } from "@/features/settings/layout";
 import { getLocaleOptions } from "@/features/settings/locale-names";
 import { useProfile } from "@/features/settings/queries";
-import { getDeviceLocale, getLocalePreference, selectableLocales, setLocalePreference } from "@/i18n";
+import {
+	getDeviceLocale,
+	getLocalePreference,
+	hasLocalePreference,
+	selectableLocales,
+	setLocalePreference,
+} from "@/i18n";
 import { timeZones } from "@/lib/timezones";
 import { CharacterShortcutSetting } from "@/shell/shortcut-help";
 import {
@@ -45,6 +52,11 @@ export default function PreferencesScreen() {
 	const profile = useProfile();
 	const queryClient = useQueryClient();
 	const [locale, setLocale] = useState(getLocalePreference);
+	const selectedLocale = hasLocalePreference()
+		? locale
+		: isLocale(profile.data?.locale) && selectableLocales.includes(profile.data.locale)
+			? profile.data.locale
+			: null;
 	const [picker, setPicker] = useState<"language" | "timezone" | null>(null);
 	const [search, setSearch] = useState("");
 	const [zoneLimit, setZoneLimit] = useState(40);
@@ -127,7 +139,7 @@ export default function PreferencesScreen() {
 			>
 				<ListRow
 					title={t`Language`}
-					subtitle={locale ? languageName(locale) : t`System`}
+					subtitle={selectedLocale ? languageName(selectedLocale) : t`System`}
 					leading="translate"
 					chevron
 					onPress={() => openPicker("language")}
@@ -174,7 +186,7 @@ export default function PreferencesScreen() {
 						<ListRow
 							title={t`System`}
 							subtitle={languageName(getDeviceLocale())}
-							selected={locale === null}
+							selected={selectedLocale === null}
 							disabled={changingLanguage}
 							onPress={() => void chooseLanguage(null)}
 						/>
@@ -183,7 +195,7 @@ export default function PreferencesScreen() {
 								key={value}
 								title={label}
 								subtitle={description}
-								selected={locale === value}
+								selected={selectedLocale === value}
 								disabled={changingLanguage}
 								onPress={() => void chooseLanguage(value)}
 							/>
