@@ -12,7 +12,8 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
+import { clampZoom, FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
+import { scrollAfterZoom, wheelZoom } from "./zoom-wheel";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { useResumeStore } from "@/features/resume/builder/draft";
@@ -67,6 +68,48 @@ export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
 	const gutter = isPhone ? CANVAS_GUTTER.narrow : CANVAS_GUTTER.wide;
 	const fitScale = canvasWidth > 0 ? Math.min(FIT_MAX, (canvasWidth - gutter - covered) / PAGE_WIDTH[format]) : 1;
 	const pageScale = zoom === "fit" ? Math.max(0.25, fitScale) : zoom;
+
+	// The wheel handler outlives renders: keep the current fit scale where it can read it.
+	const fitScaleRef = useRef(fitScale);
+	useEffect(() => {
+		fitScaleRef.current = fitScale;
+	}, [fitScale]);
+
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+
+		const zoomByWheel = (event: WheelEvent) => {
+			// Ctrl/Cmd+wheel is the browser's zoom gesture (a trackpad pinch sends it too): keep it on the canvas. Every
+			// other wheel is left alone, so the page scrolls normally, and the panel and the rest of the app are untouched.
+			if (!(event.ctrlKey || event.metaKey) || event.altKey || event.deltaY === 0) return;
+
+			// Even at a zoom limit the browser must not step in and zoom the whole app.
+			event.preventDefault();
+
+			const { zoom, setZoom } = useEditorStore.getState();
+			const before = zoom === "fit" ? Math.max(0.25, fitScaleRef.current) : zoom;
+			const after = clampZoom(wheelZoom(before, event.deltaY, event.deltaMode, canvas.clientHeight));
+			if (after === before) return;
+
+			const bounds = canvas.getBoundingClientRect();
+			const pointerX = event.clientX - bounds.left;
+			const pointerY = event.clientY - bounds.top;
+			const { scrollLeft, scrollTop } = canvas;
+
+			setZoom(after);
+
+			// Zoom around the pointer, not the page's corner, once the new scale has been laid out.
+			requestAnimationFrame(() => {
+				if (!canvas.isConnected) return;
+				canvas.scrollLeft = scrollAfterZoom(scrollLeft, pointerX, before, after);
+				canvas.scrollTop = scrollAfterZoom(scrollTop, pointerY, before, after);
+			});
+		};
+
+		canvas.addEventListener("wheel", zoomByWheel, { passive: false });
+		return () => canvas.removeEventListener("wheel", zoomByWheel);
+	}, [canvasRef]);
 
 	return { canvasRef, fitScale, pageScale };
 }
@@ -192,7 +235,10 @@ type ZoomBarProps = {
 	pageCount: number;
 };
 
-/** − · Fit · + and the page count, floating 18px above the bottom of the canvas. Zoom runs from 60% to 150%. */
+/**
+ * − · Fit · + and the page count, floating 18px above the bottom of the canvas. Zoom runs from 60% to 300%, and
+ * Ctrl/Cmd+wheel over the canvas zooms around the pointer.
+ */
 export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 	const { t } = useLingui();
 	const zoom = useEditorStore((state) => state.zoom);
