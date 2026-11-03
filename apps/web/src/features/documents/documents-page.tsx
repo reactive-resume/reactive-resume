@@ -966,7 +966,7 @@ function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTag
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={() => void run(() => batch.setLocked(selection, false))}>
 						<Icon name="lock-open" />
-						<Trans>Unlock</Trans>
+						<Trans>Unlock editing</Trans>
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
