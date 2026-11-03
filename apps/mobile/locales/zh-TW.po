@@ -476,8 +476,8 @@ msgstr "{0}（副本）"
 msgid "{0} (mine)"
 msgstr "{0}(我的)"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
 #. placeholder {2}: step.reached
 #. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
 #: src/features/applications-board/insights-screen.tsx
@@ -3594,14 +3594,6 @@ msgstr "無法複製文字記錄。請再試一次。"
 msgid "Couldn't create the letter. Try again."
 msgstr "無法建立這封信。請再試一次。"
 
-#: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Library."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Couldn't delete that offer. Try again."
-msgstr ""
-
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
 msgstr "無法刪除對話。請再試一次。"
@@ -3901,10 +3893,6 @@ msgstr ""
 #: src/features/workspace/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "無法儲存該變更。請檢查網路連線後重試。"
-
-#: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item is restored; try again."
-msgstr "無法儲存該變更。該項目已還原，請再試一次。"
 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
@@ -10563,6 +10551,7 @@ msgstr "停用階段"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/provider.tsx
+#: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
 #: src/features/check/job-match.tsx

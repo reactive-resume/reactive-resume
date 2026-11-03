@@ -10,7 +10,7 @@ import { memo, useCallback, useDeferredValue, useLayoutEffect, useMemo, useRef, 
 import { RefreshControl, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { categoryLabel, factCategories } from "./fact-categories";
-import { client, useCareerAction, useCareerQueries, useCareerTime, useUndoRows } from "./hooks";
+import { client, prepareRpc, useCareerAction, useCareerQueries, useCareerTime, useUndoRows } from "./hooks";
 import { ResumeFacts } from "./resume-facts";
 import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
 import { getServer, useSession } from "@/auth/session";
@@ -107,7 +107,9 @@ export function Facts({ children, onRefresh }: FactsProps) {
 		onSource: setSource,
 		onCorrect: (fact) => setEditor({ fact }),
 		onForget: (fact) =>
-			latest.current.remove(fact.id, latest.current.forgotten, () => client.career.forgetFact({ id: fact.id })),
+			latest.current.remove(fact.id, latest.current.forgotten, () =>
+				prepareRpc(client.career.forgetFact, { id: fact.id }),
+			),
 	}));
 	const renderItem = useCallback(
 		({ item, index }: { item: Fact; index: number }) => (

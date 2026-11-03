@@ -476,8 +476,8 @@ msgstr "{0}(복사본)"
 msgid "{0} (mine)"
 msgstr "{0} (광산)"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
 #. placeholder {2}: step.reached
 #. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
 #: src/features/applications-board/insights-screen.tsx
@@ -3594,14 +3594,6 @@ msgstr "대화 기록을 복사할 수 없습니다. 다시 시도해 보세요.
 msgid "Couldn't create the letter. Try again."
 msgstr "레터를 만들 수 없습니다. 다시 시도해 보세요."
 
-#: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Library."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Couldn't delete that offer. Try again."
-msgstr ""
-
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
 msgstr "대화를 삭제할 수 없습니다. 다시 시도해 보세요."
@@ -3901,10 +3893,6 @@ msgstr ""
 #: src/features/workspace/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "해당 변경 사항을 저장할 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요."
-
-#: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item is restored; try again."
-msgstr "해당 변경 사항을 저장할 수 없습니다. 항목이 복원되었습니다. 다시 시도해 보세요."
 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
@@ -10563,6 +10551,7 @@ msgstr "단계 사용 중지"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/provider.tsx
+#: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
 #: src/features/check/job-match.tsx

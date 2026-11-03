@@ -21,11 +21,11 @@ import { formatFileSize } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { useSessionDraft } from "./hooks";
 import { MemoryCard } from "./knowledge/facts";
-import { ContextChip, useCareerTime, useNow, withUndo } from "./shared";
+import { ContextChip, useCareerTime, useNow, withQueryUndo } from "./shared";
 import { fileToBase64 } from "@/features/assistant/chat";
 import { ChatComposer } from "@/features/assistant/chat-chrome";
 import { toastError } from "@/libs/error-message";
-import { client, orpc } from "@/libs/orpc/client";
+import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 // The open conversation (AI SDK, Markdown) loads once the coach is on screen, so pages that only use the helpers
 // here (the workspace) don't carry it.
@@ -134,19 +134,16 @@ export function useConversationDate() {
  */
 export function deleteConversation(queryClient: QueryClient, id: string, hide: () => void, restore: () => void) {
 	hide();
-	withUndo({
+	withQueryUndo({
+		queryClient,
+		queryKey: orpc.agent.threads.list.key(),
 		description: t`Conversation deleted`,
-		commit: async () => {
-			try {
-				await client.agent.threads.delete({ id });
-			} catch (error) {
-				restore();
-				toastError(error, t`Couldn't delete this conversation. Try again.`);
-			} finally {
-				void queryClient.invalidateQueries({ queryKey: orpc.agent.threads.list.key() });
-			}
+		errorMessage: t`Couldn't delete this conversation. Try again.`,
+		prepare: () => prepareRpc(client.agent.threads.delete, { id }),
+		restore: () => {
+			const threads = queryClient.getQueryData(orpc.agent.threads.list.queryKey());
+			if (threads?.some((thread) => thread.id === id)) restore();
 		},
-		onUndo: restore,
 	});
 }
 

@@ -1,12 +1,13 @@
 import type { RouterOutput } from "@/api/client";
+import type { PreparedRequest } from "@reactive-resume/utils/deferred-request";
 import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
 import { withUndo } from "./undo";
-import { client, orpc } from "@/api/client";
-import { getServer, useSession } from "@/auth/session";
+import { client, orpc, prepareRpc } from "@/api/client";
+import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { useProfile } from "@/features/settings/queries";
 import { showToast } from "@/ui";
 
@@ -181,6 +182,7 @@ export function useCareerAction() {
 
 export function useUndoRows() {
 	const { t } = useLingui();
+	const queryClient = useQueryClient();
 	const session = useSession();
 	const [hidden, setHidden] = useState<string[]>([]);
 	const pending = useRef(new Map<string, ReturnType<typeof withUndo>>());
@@ -199,31 +201,54 @@ export function useUndoRows() {
 			operations.clear();
 		};
 	}, [session.server]);
-	const remove = (id: string, message: string, commit: () => Promise<unknown>) => {
+	const remove = (id: string, message: string, prepare: () => Promise<PreparedRequest<unknown>>) => {
 		if (pending.current.has(id)) return;
 		const server = session.server;
+		const scope = getAccountScope();
+		const current = () =>
+			getAccountScope() === scope && getServer() === server && active.current.status === "signed-in";
 		setHidden((rows) => [...rows, id]);
-		const restore = () => {
-			setHidden((rows) => rows.filter((value) => value !== id));
-			pending.current.delete(id);
+		const reconcile = async () => {
+			try {
+				if (!current()) return;
+				await queryClient.cancelQueries({ queryKey: orpc.career.key() });
+				if (!current()) return;
+				await queryClient.invalidateQueries(
+					{ queryKey: orpc.career.key(), refetchType: "all" },
+					{ throwOnError: true },
+				);
+				if (current()) setHidden((rows) => rows.filter((value) => value !== id));
+			} finally {
+				pending.current.delete(id);
+			}
+		};
+		const failed = () => {
+			if (!current()) return;
+			showToast({
+				message: t`Couldn't save that change. Check your connection and try again.`,
+				action: {
+					label: t`Retry`,
+					onPress: () => {
+						void reconcile().catch(failed);
+					},
+				},
+			});
 		};
 		const operation = withUndo({
 			message,
-			restore,
-			failed: () => showToast({ message: t`Couldn't save that change. The item is restored; try again.` }),
-			commit: async () => {
-				try {
-					if (getServer() === server && active.current.status === "signed-in") await commit();
-					else restore();
-				} finally {
-					void action.refresh();
+			prepare,
+			restore: reconcile,
+			failed,
+			commit: (result) =>
+				result.finally(() => {
+					if (current()) void action.refresh();
 					pending.current.delete(id);
-				}
-			},
+				}),
 		});
 		pending.current.set(id, operation);
 	};
+
 	return { hidden, remove };
 }
 
-export { client };
+export { client, prepareRpc };

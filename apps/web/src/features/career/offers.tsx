@@ -29,10 +29,9 @@ import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { CareerLoadError } from "./load-state";
 import { formatBonus, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry, OfferForm } from "./offer-entry";
-import { flash, useCareerTime, useNow, withUndo } from "./shared";
+import { flash, useCareerTime, useNow, withQueryUndo } from "./shared";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
-import { toastError } from "@/libs/error-message";
-import { client, orpc } from "@/libs/orpc/client";
+import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 type Offer = SavedItem & { data: SavedData<"offer"> };
 type Side = "a" | "b";
@@ -132,17 +131,13 @@ export function OffersPage({ a, b, highlight }: OffersPageProps) {
 	// Deleting waits out its Undo toast, as everywhere else saved work is deleted.
 	const remove = (offer: Offer) => {
 		setHidden((ids) => [...ids, offer.id]);
-		withUndo({
+		withQueryUndo({
+			queryClient,
+			queryKey: orpc.career.savedItems.key(),
 			description: t`Offer deleted`,
-			onUndo: () => setHidden((ids) => ids.filter((id) => id !== offer.id)),
-			commit: () =>
-				client.career
-					.deleteSavedItem({ id: offer.id })
-					.catch((error: unknown) => {
-						setHidden((ids) => ids.filter((id) => id !== offer.id));
-						toastError(error, t`Couldn't delete that offer. Try again.`);
-					})
-					.finally(() => void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() })),
+			errorMessage: t`Couldn't delete that offer. Try again.`,
+			prepare: () => prepareRpc(client.career.deleteSavedItem, { id: offer.id }),
+			restore: () => setHidden((ids) => ids.filter((id) => id !== offer.id)),
 		});
 	};
 

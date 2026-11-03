@@ -21,7 +21,7 @@ import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
 import { rollForward, ScheduleSheet, scheduleKind } from "./schedule-sheet";
-import { CollapseRow, Eyebrow, flash, InfoChip, Swap, useCareerTime, useNow, withUndo } from "./shared";
+import { CollapseRow, Eyebrow, flash, InfoChip, Swap, useCareerTime, useNow, withQueryUndo } from "./shared";
 import { formatDuration, interviewKindOf } from "@/features/applications/interviews";
 import {
 	compareNextStepSortKeys,
@@ -34,7 +34,7 @@ import { offerHintFor, savedOffersQueryOptions, useOfferHints } from "@/features
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useSaveTimezone } from "@/features/settings/use-save-timezone";
 import { toastError } from "@/libs/error-message";
-import { client, orpc } from "@/libs/orpc/client";
+import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 type Notification = RouterOutput["career"]["notifications"][number];
 type Opportunity = RouterOutput["career"]["opportunities"][number];
@@ -49,21 +49,19 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 	const { session } = useRouteContext({ strict: false });
 	const now = useNow();
 	const rolesRef = useRef<HTMLElement>(null);
+	const queryClient = useQueryClient();
 	// Deleted schedules stay hidden locally until the Undo toast closes; any mutation refetches every query.
 	const [deleted, setDeleted] = useState<string[]>([]);
-	const remove = useMutation({
-		...orpc.career.deleteSchedule.mutationOptions(),
-		onError: (error, { id }) => {
-			setDeleted((current) => current.filter((item) => item !== id));
-			toastError(error, t`Couldn't delete this schedule. Try again.`, { allowServerMessage: true });
-		},
-	});
+
 	const deleteSchedule = (id: string) => {
 		setDeleted((current) => [...current, id]);
-		withUndo({
+		withQueryUndo({
+			queryClient,
+			queryKey: orpc.career.schedules.key(),
 			description: t`Schedule deleted`,
-			commit: () => remove.mutate({ id }),
-			onUndo: () => setDeleted((current) => current.filter((item) => item !== id)),
+			errorMessage: t`Couldn't delete this schedule. Try again.`,
+			prepare: () => prepareRpc(client.career.deleteSchedule, { id }),
+			restore: () => setDeleted((current) => current.filter((item) => item !== id)),
 		});
 	};
 
@@ -185,14 +183,6 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	const [pending, setPending] = useState<string[]>([]);
 	const setReadAt = (id: string, readAt: Date | null) =>
 		queryClient.setQueryData(queryKey, (current) => current?.map((row) => (row.id === id ? { ...row, readAt } : row)));
-	const markRead = useMutation({
-		...orpc.career.markNotificationRead.mutationOptions(),
-		onError: (error, { id }) => {
-			setPending((current) => current.filter((item) => item !== id));
-			setReadAt(id, null);
-			toastError(error, t`Couldn't mark this as read. Try again.`, { allowServerMessage: true });
-		},
-	});
 
 	const isUnread = (row: Notification) => !row.readAt && !pending.includes(row.id);
 	const unread = data?.filter(isUnread) ?? [];
@@ -213,13 +203,13 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	const dismiss = (row: Notification) => {
 		setPending((current) => [...current, row.id]);
 		setReadAt(row.id, new Date());
-		withUndo({
+		withQueryUndo({
+			queryClient,
+			queryKey: orpc.career.notifications.key(),
 			description: t`Marked as read`,
-			commit: () => markRead.mutate({ id: row.id }),
-			onUndo: () => {
-				setPending((current) => current.filter((id) => id !== row.id));
-				setReadAt(row.id, null);
-			},
+			errorMessage: t`Couldn't mark this as read. Try again.`,
+			prepare: () => prepareRpc(client.career.markNotificationRead, { id: row.id }),
+			restore: () => setPending((current) => current.filter((id) => id !== row.id)),
 		});
 	};
 
@@ -486,13 +476,6 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 		onError: (error) =>
 			toastError(error, t`Couldn't remove it from Applications. Try again.`, { allowServerMessage: true }),
 	});
-	const dismiss = useMutation({
-		...orpc.career.dismissOpportunity.mutationOptions(),
-		onError: (error, { id }) => {
-			setHidden((current) => current.filter((item) => item !== id));
-			toastError(error, t`Couldn't hide this role. Try again.`, { allowServerMessage: true });
-		},
-	});
 
 	const visible = (rows ?? [])
 		.filter((row) => !hidden.includes(row.id) && (!row.trackedApplicationId || tracked[row.id]))
@@ -537,10 +520,13 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 
 	const onDismiss = (row: Opportunity) => {
 		setHidden((current) => [...current, row.id]);
-		withUndo({
+		withQueryUndo({
+			queryClient,
+			queryKey: orpc.career.opportunities.key(),
 			description: t`Hidden from New roles`,
-			commit: () => dismiss.mutate({ id: row.id }),
-			onUndo: () => setHidden((current) => current.filter((id) => id !== row.id)),
+			errorMessage: t`Couldn't hide this role. Try again.`,
+			prepare: () => prepareRpc(client.career.dismissOpportunity, { id: row.id }),
+			restore: () => setHidden((current) => current.filter((id) => id !== row.id)),
 		});
 	};
 

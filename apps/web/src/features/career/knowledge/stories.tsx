@@ -27,11 +27,11 @@ import { useCoachKnowledge } from "../coach-thread";
 import { useSessionDraft } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
 import { useRemoving } from "../removing";
-import { CollapseRow, Eyebrow, Swap, useCareerTime, useNow, withUndo } from "../shared";
+import { CollapseRow, Eyebrow, Swap, useCareerTime, useNow, withQueryUndo } from "../shared";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { toastError } from "@/libs/error-message";
-import { client, orpc } from "@/libs/orpc/client";
+import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 type PartKey = "situation" | "task" | "action" | "result" | "reflection";
 
@@ -100,22 +100,13 @@ export function StoriesPage({ storyId, edit, start: planStart }: StoriesPageProp
 	const remove = (story: Story) => {
 		hide(story.id);
 		open(undefined);
-		withUndo({
+		withQueryUndo({
+			queryClient,
+			queryKey: orpc.career.key(),
 			description: t`Story deleted`,
-			onUndo: () => unhide(story.id),
-			commit: () =>
-				client.career
-					.deleteStory({ id: story.id })
-					.catch((error: unknown) => {
-						toastError(error, t`Couldn't delete that story. Try again.`);
-					})
-					.finally(async () => {
-						await Promise.all([
-							queryClient.invalidateQueries({ queryKey: orpc.career.stories.key() }),
-							queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() }),
-						]);
-						unhide(story.id);
-					}),
+			errorMessage: t`Couldn't delete that story. Try again.`,
+			prepare: () => prepareRpc(client.career.deleteStory, { id: story.id }),
+			restore: () => unhide(story.id),
 		});
 	};
 

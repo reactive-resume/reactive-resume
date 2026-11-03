@@ -1,5 +1,7 @@
 import type { GenerateTask, WorkspaceTab } from "@reactive-resume/schema/career";
 import type { IconName } from "@reactive-resume/ui/components/icon";
+import type { PreparedRequest } from "@reactive-resume/utils/deferred-request";
+import type { QueryClient, QueryKey } from "@tanstack/react-query";
 import type { ComponentProps, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -15,6 +17,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { cn } from "@reactive-resume/utils/style";
 import { pendingCommits } from "./pending-commits";
 import { deviceTimeZone } from "@/features/settings/use-save-timezone";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
+import { getOrpcErrorMessage } from "@/libs/error-message";
 import { D2, EASE, EXIT } from "@/libs/motion";
 
 // ---- Time: always in the user's timezone, "Thu 8 Oct, 17:58". Relative time is secondary text. ----
@@ -84,20 +88,62 @@ export function useCareerTime() {
 
 // ---- Undo over confirm: hide now, commit when the toast closes unless Undo was pressed. ----
 
-type UndoInput = {
+type LocalUndo = {
 	description: string;
-	/** Runs when the toast closes (after 6 seconds, or when another toast replaces it). */
 	commit: () => unknown;
-	/** Restores what was hidden. */
-	onUndo: () => void;
+	onUndo: () => unknown;
 };
 
-/**
- * Forget, delete, dismiss, apply: the caller hides or shows the change at once and this commits it when the toast
- * closes (after 6 seconds, when another toast replaces it, or when the page is hidden). Undo restores it instead.
- * ponytail: closing the tab outright can still beat the commit; the change then simply didn't happen.
- */
-export function withUndo({ description, commit, onUndo }: UndoInput) {
+type UndoInput<T> = { description: string; onUndo: () => unknown } & (
+	| { commit: () => unknown }
+	| {
+			prepare: () => Promise<PreparedRequest<T>>;
+			commit: (result: Promise<T>) => unknown;
+			onPrepareError: (error: unknown) => unknown;
+	  }
+);
+
+/** Network actions finish preparing before their Undo notice; erasure still waits until its window closes. */
+export function withUndo<T>(input: UndoInput<T>) {
+	if (!("prepare" in input)) {
+		showUndo(input);
+		return;
+	}
+	const generation = getAccountGeneration();
+	const current = () => generation === getAccountGeneration();
+	let preparing: Promise<PreparedRequest<T>>;
+	try {
+		preparing = input.prepare();
+	} catch (error) {
+		if (current()) void input.onPrepareError(error);
+		return;
+	}
+	void preparing.then(
+		(request) => {
+			if (!current()) {
+				request.cancel();
+				return;
+			}
+			const operation = showUndo({
+				description: input.description,
+				onUndo: () => {
+					request.cancel();
+					if (current()) void input.onUndo();
+				},
+				commit: () => {
+					if (current()) void input.commit(request.send());
+					else request.cancel();
+				},
+			});
+			if (document.visibilityState === "hidden") operation.flush();
+		},
+		(error) => {
+			if (current()) void input.onPrepareError(error);
+		},
+	);
+}
+
+function showUndo({ description, commit, onUndo }: LocalUndo) {
 	let settled = false;
 	const settle = (run: boolean) => {
 		if (settled) return false;
@@ -122,6 +168,60 @@ export function withUndo({ description, commit, onUndo }: UndoInput) {
 		onClose: () => settle(true),
 	});
 	pendingCommits.add(flush);
+	return { flush };
+}
+
+type QueryUndoOptions<T> = {
+	queryClient: QueryClient;
+	queryKey: QueryKey;
+	description: string;
+	errorMessage: string;
+	prepare: () => Promise<PreparedRequest<T>>;
+	restore: () => void;
+};
+
+/** Only canonical readback may reveal a hidden row; retry never writes erased text back. */
+export function withQueryUndo<T>({
+	queryClient,
+	queryKey,
+	description,
+	errorMessage,
+	prepare,
+	restore,
+}: QueryUndoOptions<T>) {
+	const generation = getAccountGeneration();
+	const current = () => generation === getAccountGeneration();
+	const reconcile = async () => {
+		if (!current()) return;
+		await queryClient.cancelQueries({ queryKey });
+		if (!current()) return;
+		await queryClient.invalidateQueries({ queryKey, refetchType: "all" }, { throwOnError: true });
+		if (current()) restore();
+	};
+	const report = (error: unknown, fallback = t`Couldn't load. Try again.`) => {
+		if (!current()) return;
+		toast.add({
+			type: "error",
+			description: getOrpcErrorMessage(error, { fallback }),
+			actionProps: {
+				children: t`Retry`,
+				onClick: () => {
+					void reconcile().catch(report);
+				},
+			},
+		});
+	};
+	const failed = (error: unknown) => {
+		report(error, errorMessage);
+		void reconcile().catch(report);
+	};
+	withUndo({
+		description,
+		prepare,
+		onPrepareError: failed,
+		onUndo: () => reconcile().catch(report),
+		commit: (result) => result.then(() => reconcile().catch(report), failed),
+	});
 }
 
 /** Tints a row accent-soft and fades it over 1.2s after navigating to it ("View", "Review"). */

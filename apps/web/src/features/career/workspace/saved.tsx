@@ -5,7 +5,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
@@ -19,8 +19,8 @@ import { useSavedItems } from "../hooks";
 import { CareerLoadError } from "../load-state";
 import { formatMoney } from "../offer-compare";
 import { useRemoving } from "../removing";
-import { CollapseRow, FilterChip, tabLabel, useCareerTime, withUndo } from "../shared";
-import { orpc } from "@/libs/orpc/client";
+import { CollapseRow, FilterChip, tabLabel, useCareerTime, withQueryUndo } from "../shared";
+import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 const KINDS: { kind: SavedItemKind; icon: IconName; tab: WorkspaceTab | null }[] = [
 	{ kind: "fit", icon: "list-checks", tab: "fit" },
@@ -48,7 +48,6 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 	const company = application.company;
 	const queryClient = useQueryClient();
 	const saved = useSavedItems(application.id);
-	const remove = useMutation(orpc.career.deleteSavedItem.mutationOptions());
 	const [filter, setFilter] = useState<SavedItemKind | null>(null);
 	const { add: hide, drop: unhide } = useRemoving.getState();
 	const [expanded, setExpanded] = useState<string | null>(null);
@@ -84,15 +83,13 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 	const onDelete = (item: SavedItem) => {
 		if (filter === item.data.kind && shown.length === 1) setFilter(null);
 		hide(item.id);
-		withUndo({
+		withQueryUndo({
+			queryClient,
+			queryKey: orpc.career.savedItems.key(),
 			description: t`Deleted from Library`,
-			onUndo: () => unhide(item.id),
-			commit: () =>
-				remove
-					.mutateAsync({ id: item.id })
-					.then(() => queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() }))
-					.catch(() => undefined)
-					.finally(() => unhide(item.id)),
+			errorMessage: t`Couldn't save that change. Check your connection and try again.`,
+			prepare: () => prepareRpc(client.career.deleteSavedItem, { id: item.id }),
+			restore: () => unhide(item.id),
 		});
 	};
 

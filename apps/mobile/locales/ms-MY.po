@@ -476,8 +476,8 @@ msgstr "{0} (salinan)"
 msgid "{0} (mine)"
 msgstr "{0} (lombong)"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
 #. placeholder {2}: step.reached
 #. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
 #: src/features/applications-board/insights-screen.tsx
@@ -3594,14 +3594,6 @@ msgstr "Tidak dapat menyalin transkrip. Cuba lagi."
 msgid "Couldn't create the letter. Try again."
 msgstr "Tidak dapat mencipta surat. Cuba lagi."
 
-#: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Library."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Couldn't delete that offer. Try again."
-msgstr ""
-
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
 msgstr "Tidak dapat memadam perbualan. Cuba lagi."
@@ -3901,10 +3893,6 @@ msgstr ""
 #: src/features/workspace/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Tidak dapat menyimpan perubahan itu. Semak sambungan anda dan cuba lagi."
-
-#: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item is restored; try again."
-msgstr "Tidak dapat menyimpan perubahan itu. Item telah dipulihkan; cuba lagi."
 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
@@ -10563,6 +10551,7 @@ msgstr "Hentikan penggunaan peringkat"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/provider.tsx
+#: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
 #: src/features/check/job-match.tsx

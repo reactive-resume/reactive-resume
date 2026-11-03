@@ -8,17 +8,15 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { annualBaseHint, bonusAmount, selectOfferPair } from "@reactive-resume/schema/career-offer";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
-import { useCareerQueries, useCareerTime, useNow, useOffers } from "./hooks";
-import { client } from "./hooks";
+import { client, prepareRpc, useCareerQueries, useCareerTime, useNow, useOffers, useUndoRows } from "./hooks";
 import { formatBonus, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry, OfferForm } from "./offer-entry";
 import { consumeSavedOffer, useSavedOffer } from "./offer-selection";
 import { Actions, LoadState } from "./shared";
-import { withUndo } from "./undo";
 import { getAccountScope } from "@/auth/session";
 import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
-import { Banner, Button, Card, EmptyState, Screen, SelectSheet, Text, showToast, useTheme } from "@/ui";
+import { Banner, Button, Card, EmptyState, Screen, SelectSheet, Text, useTheme } from "@/ui";
 
 type Offer = SavedItem & { data: Extract<SavedItem["data"], { kind: "offer" }> };
 const periodLabel = (value: OfferTerms["period"]) =>
@@ -32,20 +30,14 @@ export function OffersScreen() {
 	const query = useOffers();
 	const { profile } = useCareerQueries();
 	const applications = useApplications();
-	const [hidden, setHidden] = useState<string[]>([]);
+	const undo = useUndoRows();
 	const [editing, setEditing] = useState<Offer | null>(null);
 	const offers = (query.data ?? []).filter(
-		(item): item is Offer => item.data.kind === "offer" && !hidden.includes(item.id),
+		(item): item is Offer => item.data.kind === "offer" && !undo.hidden.includes(item.id),
 	);
 	// Deleting waits out its Undo toast, as everywhere else saved work is deleted.
 	const remove = (offer: Offer) => {
-		setHidden((ids) => [...ids, offer.id]);
-		withUndo({
-			message: t`Offer deleted`,
-			restore: () => setHidden((ids) => ids.filter((id) => id !== offer.id)),
-			failed: () => showToast({ message: t`Couldn't delete that offer. Try again.` }),
-			commit: () => client.career.deleteSavedItem({ id: offer.id }).then(() => query.refetch()),
-		});
+		undo.remove(offer.id, t`Offer deleted`, () => prepareRpc(client.career.deleteSavedItem, { id: offer.id }));
 	};
 	const params = useLocalSearchParams<{ a?: string; b?: string; highlight?: string }>();
 	const focused = useIsFocused();
