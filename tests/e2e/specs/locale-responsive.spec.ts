@@ -1,5 +1,30 @@
 import { expect, test } from "../fixtures/test";
 
+test("Arabic public checker keeps score geometry numeric while its label is localized", async ({ page }) => {
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	// Enter through a live client route so the prerender's upload input cannot be replaced during file selection.
+	await page.goto("/auth/login?locale=ar-SA");
+	await expect(page.getByRole("textbox").first()).toBeVisible();
+	await page.locator('a[href="/"], a[href="/?locale=ar-SA"]').first().click();
+	await page.locator('a[href^="/ats-checker"]').first().click();
+	await page.locator('input[type="file"]').setInputFiles("apps/web/public/templates/pdf/onyx.pdf");
+	const ring = page.locator(".score-ring");
+	await expect(ring).toBeVisible();
+	await expect(ring).toHaveAttribute("aria-label", /[٠-٩]+/);
+	await expect(ring).not.toHaveAttribute("aria-label", /[0-9]/);
+	await expect
+		.poll(() =>
+			ring.evaluate((element) => Number.parseFloat(getComputedStyle(element).getPropertyValue("--ring-value"))),
+		)
+		.toBeGreaterThan(0);
+	const value = await ring.evaluate((element) => (element as HTMLElement).style.getPropertyValue("--ring-value"));
+	expect(value).toMatch(/^\d+(?:\.\d+)?%$/);
+	expect(Number.parseFloat(value)).toBeGreaterThan(0);
+	await expect
+		.poll(() => ring.evaluate((element) => getComputedStyle(element).getPropertyValue("--ring-value")))
+		.toBe(value);
+});
+
 test("Arabic Insights localizes pipeline figures and weekly dates", async ({ authPage: page }) => {
 	for (const status of ["applied", "offer"] as const) {
 		await expect(

@@ -179,10 +179,7 @@ function Board() {
 				onSuccess: () => {
 					const from = resolveLane(laneQuery.lanes, before);
 					stageMoved(application, lane, undefined, () =>
-						update.mutate(
-							{ id: application.id, ...undoLaneInput(from, before, laneQuery.supported) },
-							{ onError: (error) => showToast({ message: applicationError(error) }) },
-						),
+						update.mutateAsync({ id: application.id, ...undoLaneInput(from, before, laneQuery.supported) }),
 					);
 				},
 				onError: (error) => {

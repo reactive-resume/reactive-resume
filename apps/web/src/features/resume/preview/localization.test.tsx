@@ -9,6 +9,7 @@ import { ResumePreviewLoader } from "./preview.shared";
 import { LevelDisplay } from "@/components/level/display";
 import { FindingRow } from "@/features/ats-checker/report/finding-row";
 import { JdCoverage } from "@/features/ats-checker/report/jd-coverage";
+import { getLocaleMessages } from "@/libs/locale";
 
 vi.mock("./pdfjs", () => ({
 	AnnotationMode: {},
@@ -128,4 +129,16 @@ it("formats Arabic ATS evidence, keyword totals and skill names without changing
 	expect(markup).toContain('aria-label="Level ٣ of 5"');
 	expect(markup).toContain("Fictional 2026 evidence");
 	expect(finding.evidence.page).toBe(7);
+});
+
+it("uses the Arabic catalog for both digits in the accessible level label", async () => {
+	const catalog = await getLocaleMessages("ar-SA");
+	expect(catalog.locale).toBe("ar-SA");
+	i18n.loadAndActivate(catalog);
+	const markup = renderToStaticMarkup(
+		<I18nProvider i18n={i18n}>
+			<LevelDisplay level={3} type="circle" icon="circle" />
+		</I18nProvider>,
+	);
+	expect(markup).toContain('aria-label="المستوى ٣ من ٥"');
 });

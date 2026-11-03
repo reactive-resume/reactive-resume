@@ -124,10 +124,7 @@ export function StageStepper({ application, onMarkApplied, onCloseLane, onSchedu
 						(entry) => entry.type === "interview" && new Date(entry.at).getTime() > Date.now(),
 					);
 					stageMoved(application, target, scheduled ? undefined : onSchedule, () =>
-						update.mutate(
-							{ id: application.id, ...undoLaneInput(lane, application, lanes.supported) },
-							{ onError: (error) => showToast({ message: applicationError(error) }) },
-						),
+						update.mutateAsync({ id: application.id, ...undoLaneInput(lane, application, lanes.supported) }),
 					);
 				},
 				onError: (error) => showToast({ message: applicationError(error) }),

@@ -417,7 +417,7 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 						className="score-ring score-ring-reveal grid size-[84px] shrink-0 place-items-center rounded-full"
 						style={
 							{
-								"--ring-value": `${i18n.number(report.score)}%`,
+								"--ring-value": `${report.score}%`,
 								"--ring-color": `var(--${tone})`,
 							} as CSSProperties
 						}

@@ -413,12 +413,28 @@ const laneQuery = {
 // Offer hints for Next step: none known unless a case sets them.
 let offerHint;
 let stageUndo;
+let stageToastScope = "fixture";
+const stageToastOwner = load("features/applications/stage-actions.ts", {
+	"./queries": { stageScope: () => stageToastScope },
+	"./lane-queries": laneQuery,
+	"./lanes": lanes,
+	"./stages": stages,
+	"@tanstack/react-query": {},
+	"@reactive-resume/schema/applications/stage-baselines": {},
+	"@/auth/session": {},
+	"@/features/applications/error": { applicationError: () => "Link unavailable" },
+	"@/features/career/hooks": {},
+	"@/features/career/undo": {},
+});
 const stageActionsStub = {
 	useOfferHints: () => undefined,
 	offerHintFor: () => offerHint,
-	useStageMovedToast: () => (moved, lane, _schedule, undo) => {
-		stageUndo = undo;
-		calls.push({ moved: moved.id, lane: lane.category });
+	useStageMovedToast: () => {
+		const moved = stageToastOwner.useStageMovedToast();
+		return (...args) => {
+			moved(...args);
+			stageUndo = calls.at(-1).undo;
+		};
 	},
 	acceptedStage: () => null,
 };
@@ -452,6 +468,8 @@ let applicationDocuments = [];
 let rejectDocumentLink = false;
 let creatingApplicationLetter = false;
 let stageUpdate = (input) => calls.push(input);
+let stageUpdateAsync = (input) =>
+	new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
 	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
 	"@reactive-resume/schema/applications/document-suggestions": suggestionsDomain,
@@ -494,7 +512,13 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"@/features/applications/stage-actions": stageActionsStub,
 	"@/features/applications/stages": stages,
 	"@/features/applications/queries": {
-		useApplicationMutations: () => ({ update: { isPending: false, mutate: (...args) => stageUpdate(...args) } }),
+		useApplicationMutations: () => ({
+			update: {
+				isPending: false,
+				mutate: (...args) => stageUpdate(...args),
+				mutateAsync: (...args) => stageUpdateAsync(...args),
+			},
+		}),
 	},
 	"./calendar": nativeInterviewCalendar,
 	"@/features/reminders": {
@@ -544,20 +568,26 @@ stageUpdate = (input, callbacks) => {
 tree = render(StageStepper, { application });
 control(tree, "Change lane").onChange("interview");
 assert.equal(typeof stageUndo, "function");
-stageUndo();
+await stageUndo();
 assert.deepEqual(calls.at(-1), { message: "Link unavailable" }, "Detail Undo failure remains visible");
 stageUpdate = (input) => calls.push(input);
 
 // A Move sheet can outlive its row snapshot. Resolve the inverse from the cache when its action dispatches.
 {
-	const { QueryClient } = mobileRequire("@tanstack/react-query");
+	const { QueryClient, MutationObserver } = mobileRequire("@tanstack/react-query");
 	const queryClient = new QueryClient();
 	const listKey = ["applications", "stage-fixture"];
 	const queryBoundary = {
 		applicationsListQueryKey: () => listKey,
 		applicationDetailQueryKey: (id) => ["application", id],
 		useApplications: () => ({ data: [application], isPending: false, refetch: async () => {} }),
-		useApplicationMutations: () => ({ update: { isPending: false, mutate: (...args) => stageUpdate(...args) } }),
+		useApplicationMutations: () => ({
+			update: {
+				isPending: false,
+				mutate: (...args) => stageUpdate(...args),
+				mutateAsync: (...args) => stageUpdateAsync(...args),
+			},
+		}),
 	};
 	const stageActions = load("features/applications/stage-actions.ts", {
 		"./queries": queryBoundary,
@@ -567,6 +597,7 @@ stageUpdate = (input) => calls.push(input);
 		"@tanstack/react-query": { useQueryClient: () => queryClient },
 		"@reactive-resume/schema/applications/stage-baselines": {},
 		"@/auth/session": { getServer: () => "fixture" },
+		"@/features/applications/error": { applicationError: () => "Link unavailable" },
 		"@/features/career/hooks": {},
 		"@/features/career/undo": {},
 	});
@@ -587,7 +618,7 @@ stageUpdate = (input) => calls.push(input);
 		"./views": { ApplicationsViewFrame: "ApplicationsViewFrame" },
 		"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => time },
 		"@/features/application-detail/sheets": { CloseSheet: "CloseSheet", MarkAppliedSheet: "MarkAppliedSheet" },
-		"@/features/applications/error": { applicationError: () => "Stage unavailable" },
+		"@/features/applications/error": { applicationError: () => "Link unavailable" },
 		"@/features/applications/lane-queries": laneQuery,
 		"@/features/applications/lanes": lanes,
 		"@/features/applications/list": { filterApplications: (rows) => rows },
@@ -618,15 +649,102 @@ stageUpdate = (input) => calls.push(input);
 	} finally {
 		mock.timers.reset();
 	}
-	stageUndo();
+	await stageUndo();
 	assert.deepEqual(calls.filter((call) => call?.id === application.id).at(-1), {
 		id: application.id,
 		status: "closed",
 		closedReason: "withdrew",
 	});
-	assert.deepEqual(calls.at(-1), { message: "Stage unavailable" }, "Board Undo failure remains visible");
+	assert.deepEqual(calls.at(-1), { message: "Link unavailable" }, "Board Undo failure remains visible");
+
+	// Real observer detachment models the useMutation subscription removed when either screen unmounts.
+	async function undoAfterUnmount(move, scenario) {
+		reset();
+		stageToastScope = "fixture";
+		stageUndo = undefined;
+		let pending;
+		let rejectUndo;
+		let started;
+		const undoStarted = new Promise((resolve) => (started = resolve));
+		const observer = new MutationObserver(queryClient, {
+			retry: false,
+			mutationFn: (input) =>
+				input.status === "interview"
+					? Promise.resolve(input)
+					: new Promise((_resolve, reject) => {
+							rejectUndo = reject;
+							started();
+						}),
+		});
+		const detach = observer.subscribe(() => {});
+		stageUpdate = (input, options) => {
+			calls.push(input);
+			pending = observer.mutate(input, options);
+			void pending.catch(() => {});
+		};
+		stageUpdateAsync = (input) => {
+			calls.push(input);
+			pending = observer.mutate(input);
+			return pending;
+		};
+		move();
+		if (scenario === "switch-forward") stageToastScope = "another-account";
+		await pending;
+		if (scenario === "switch-forward") {
+			assert.equal(stageUndo, undefined, "An old account's late move cannot show an actionable toast");
+			detach();
+			return;
+		}
+		assert.equal(typeof stageUndo, "function");
+		if (scenario === "switch-before") {
+			stageToastScope = "another-account";
+			const writes = calls.filter((call) => call?.id).length;
+			await stageUndo();
+			assert.equal(calls.filter((call) => call?.id).length, writes, "Old account's toast cannot dispatch Undo");
+			detach();
+			return;
+		}
+		const completion = stageUndo();
+		await undoStarted;
+		detach();
+		if (scenario === "switch-during") stageToastScope = "another-account";
+		rejectUndo(new Error("Offline"));
+		await pending.catch(() => {});
+		await completion;
+		assert.equal(
+			calls.filter((call) => call?.message === "Link unavailable").length,
+			scenario === "same-account" ? 1 : 0,
+			"Undo failure survives observer unmount, without leaking notices into another account",
+		);
+	}
+	for (const scenario of ["same-account", "switch-during", "switch-before", "switch-forward"]) {
+		await undoAfterUnmount(
+			() => control(render(StageStepper, { application }), "Change lane").onChange("interview"),
+			scenario,
+		);
+		await undoAfterUnmount(() => {
+			let view = render(board);
+			nodes(view)
+				.find((node) => node.type?.name === "Column")
+				.props.onMove(application);
+			view = render(board);
+			mock.timers.enable({ apis: ["setTimeout"] });
+			try {
+				nodes(view)
+					.find((node) => node.type?.name === "MoveSheet")
+					.props.onPick("interview");
+				mock.timers.tick(1);
+			} finally {
+				mock.timers.reset();
+			}
+		}, scenario);
+	}
+	stageToastScope = "fixture";
 	queryClient.clear();
 	stageUpdate = (input) => calls.push(input);
+	stageUpdateAsync = (input) =>
+		new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
+	console.log("PASS real mutation observers retain detail/board Undo errors after unmount and fence account changes");
 }
 
 for (const [resumeId, coverLetterId] of [

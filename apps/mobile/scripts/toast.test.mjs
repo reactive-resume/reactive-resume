@@ -125,17 +125,24 @@ retry.props.onPress();
 assert.equal(attempts, 2, "A synchronous failure permits retry");
 assert.equal(find(Toaster(), "Pressable"), undefined);
 
+let actionRuns = 0;
 showToast({
 	message: "Moved to Offer",
-	action: { label: "Add the offer's terms", onPress() {} },
+	action: { label: "Add the offer's terms", onPress: () => actionRuns++ },
 	undo() {},
 });
 const responsive = find(Toaster(), "Animated.View");
 assert.equal(responsive.props.style.maxWidth, "100%", "Toast is bounded by the available phone width");
 assert.equal(responsive.props.style.flexWrap, "wrap", "Enlarged controls can move onto another line");
 assert.equal(find(responsive, "Text").props.style.width, "100%", "Message leaves controls their own line");
-const responsiveControl = find(responsive, "Pressable").props.style({ pressed: false });
-assert.equal(responsiveControl.flexShrink, 1, "Long translated control text can wrap within its row");
-assert.equal(responsiveControl.maxWidth, "100%");
-assert.ok(responsiveControl.minHeight >= 44, "Wrapping retains the control's touch target");
-find(responsive, "Pressable").props.onPress();
+const responsiveControls = responsive.props.children.flat(Infinity).filter((node) => node?.type === "Pressable");
+assert.equal(responsiveControls.length, 2, "Both the action and Undo are visible");
+for (const control of responsiveControls) {
+	const style = control.props.style({ pressed: false });
+	assert.equal(style.flexShrink, 1, "Both controls let long translated text wrap within its row");
+	assert.equal(style.maxWidth, "100%");
+	assert.ok(style.minHeight >= 44, "Both controls retain their touch target when wrapping");
+}
+responsiveControls[0].props.onPress();
+responsiveControls[0].props.onPress();
+assert.equal(actionRuns, 1, "The action callback runs once, even before the toast re-renders");
