@@ -183,7 +183,10 @@ test("a letter starts in the posting's language and its Language control keeps t
 
 	await page.goto(`/builder/letter/${letter.id}?mode=design`);
 	await page.locator('section[aria-labelledby="letter-design-language"] button').first().click();
-	await page.getByRole("option", { name: /fr-FR/ }).click();
+	await expect(page.getByRole("listbox")).toBeVisible();
+	const french = page.getByRole("option", { name: /^Français/ });
+	await expect(french).not.toContainText("fr-FR");
+	await french.click();
 	await expect(async () => {
 		const after = await (await page.request.get(`/api/openapi/cover-letters/${letter.id}`)).json();
 		expect(after.style.metadata.page.locale).toBe("fr-FR");

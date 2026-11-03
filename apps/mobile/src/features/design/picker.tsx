@@ -3,7 +3,13 @@ import { useState } from "react";
 import { FlatList, Pressable, View } from "react-native";
 import { Icon, TextField, Text, useTheme } from "@/ui";
 
-export type PickerOption = { value: string; label: string; detail?: string | undefined };
+export type PickerOption = {
+	value: string;
+	label: string;
+	detail?: string | undefined;
+	description?: string | undefined;
+	keywords?: readonly string[] | undefined;
+};
 
 export type PickerSpec = {
 	title: string;
@@ -21,7 +27,11 @@ export function Picker({ title, value, options, onPick, onDone }: PickerProps) {
 	const [query, setQuery] = useState("");
 	const needle = query.trim().toLowerCase();
 	const shown = needle
-		? options.filter((option) => `${option.label} ${option.detail ?? ""}`.toLowerCase().includes(needle))
+		? options.filter((option) =>
+				`${option.label} ${option.description ?? ""} ${option.detail ?? ""} ${option.keywords?.join(" ") ?? ""}`
+					.toLowerCase()
+					.includes(needle),
+			)
 		: options;
 
 	return (
@@ -66,9 +76,16 @@ export function Picker({ title, value, options, onPick, onDone }: PickerProps) {
 								backgroundColor: pressed ? colors.press : selected ? colors.selectedFill : "transparent",
 							})}
 						>
-							<Text variant="body" numberOfLines={1} style={{ flex: 1 }}>
-								{item.label}
-							</Text>
+							<View style={{ flex: 1, minWidth: 0, gap: space.s0 }}>
+								<Text variant="body" numberOfLines={1}>
+									{item.label}
+								</Text>
+								{item.description ? (
+									<Text variant="callout" color="ink3">
+										{item.description}
+									</Text>
+								) : null}
+							</View>
 							{item.detail ? (
 								<Text variant="mono" color="ink3">
 									{item.detail}
