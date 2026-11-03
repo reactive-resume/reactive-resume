@@ -54,12 +54,11 @@ async function openWorkspace(page: Page, role: string) {
 	await expect(page.getByRole("heading", { name: "Review checks", exact: true })).toBeVisible();
 }
 
-async function bulkMove(page: Page, company: string, stage: string) {
+async function chooseBulkMove(page: Page, company: string, stage: string) {
 	await page.getByRole("link", { name: "Applications", exact: true }).click();
 	await page.getByRole("checkbox", { name: new RegExp(`at ${company}`) }).click();
 	await page.getByRole("button", { name: "Move to…" }).click();
 	await page.getByRole("menuitem", { name: stage }).click();
-	await expect(page.getByText(`1 application moved to ${stage}`)).toBeVisible();
 }
 
 const changedToast = (page: Page) =>
@@ -73,9 +72,12 @@ for (const outcome of ["continue", "fail"] as const)
 		await openWorkspace(page, "Platform lead");
 		const submit = await hold(page, "career/submitApplication");
 		await page.getByRole("button", { name: "Mark as applied", exact: true }).click();
-		await bulkMove(page, "Fir Co", "Interview");
+		await chooseBulkMove(page, "Fir Co", "Interview");
 		expect(submit.held()).toBe(1);
+		await expect(page.getByText("1 application moved to Interview")).toHaveCount(0);
 		submit.release(outcome);
+		await expect(page.getByText("1 application moved to Interview")).toBeVisible();
+		await page.mouse.move(0, 0);
 
 		await expect.poll(async () => (await read(page, id)).status, { timeout: 15_000 }).toBe("interview");
 		expect(await stages(page, id)).toEqual(
@@ -90,10 +92,13 @@ test("a move made elsewhere after Mark as applied still wins over the bulk move"
 	const submit = await hold(page, "career/submitApplication");
 	const bulk = await hold(page, "applications/bulkUpdate");
 	await page.getByRole("button", { name: "Mark as applied", exact: true }).click();
-	await bulkMove(page, "Gum Co", "Interview");
+	await chooseBulkMove(page, "Gum Co", "Interview");
+	await expect(page.getByText("1 application moved to Interview")).toHaveCount(0);
 	const answered = page.waitForResponse((response) => response.url().includes("/career/submitApplication"));
 	submit.release("continue");
 	await answered;
+	await expect(page.getByText("1 application moved to Interview")).toBeVisible();
+	await page.mouse.move(0, 0);
 	// Another device moves it away and back before the bulk move reaches the server.
 	await api(page, "put", `/applications/${id}`, { status: "screening" });
 	await api(page, "put", `/applications/${id}`, { status: "applied" });
@@ -138,8 +143,10 @@ for (const outcome of ["continue", "fail", "undo"] as const)
 			await page.getByRole("button", { name: "Undo", exact: true }).click();
 		}
 		await expect.poll(() => reply.held()).toBe(1);
-		await bulkMove(page, "Hazel Co", "Offer");
+		await chooseBulkMove(page, "Hazel Co", "Offer");
+		await expect(page.getByText("1 application moved to Offer")).toHaveCount(0);
 		reply.release(outcome === "fail" ? "fail" : "continue");
+		await expect(page.getByText("1 application moved to Offer")).toBeVisible();
 		// Keep the pointer outside notifications so a connection-error toast cannot pause the Undo countdown.
 		await page.mouse.move(0, 0);
 

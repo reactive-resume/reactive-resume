@@ -13,6 +13,7 @@ import { useApplicationLanes } from "./lane-queries";
 import { getLaneLabel, laneInput, resolveLane } from "./lanes";
 import { applicationDetailQueryKey, applicationsListQueryKey, stageScope, useApplicationMutations } from "./queries";
 import { getClosedReasonLabel } from "./stages";
+import { SessionChangedError } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { applicationError } from "@/features/applications/error";
 import { useOffers } from "@/features/career/hooks";
@@ -51,9 +52,11 @@ export const listedApplication = (queryClient: QueryClient, id: string, server =
 export function useMoveWithUndo() {
 	const queryClient = useQueryClient();
 	const session = useSession();
-	const { bulkUpdate } = useApplicationMutations();
+	const { prepareBulkUpdate } = useApplicationMutations();
 
 	return ({ applications, lane, supported, closedReason, message }: MoveWithUndoInput) => {
+		const scope = stageScope();
+		const current = () => scope === stageScope() && getServer() === session.server;
 		const ids = applications.map((application) => application.id);
 		if (ids.length === 0) return;
 		const reason = lane.category === "closed" ? (lane.closedReason ?? closedReason ?? null) : null;
@@ -68,7 +71,7 @@ export function useMoveWithUndo() {
 			before.set(id, { status: row.status, laneId: row.laneId, closedReason: row.closedReason });
 			listed.set(id, row);
 		}
-		const { baselines, settle } = stageBaselinesFor(queryClient).begin(stageScope(), listed);
+		const { baselines, settle, isLatest } = stageBaselinesFor(queryClient).begin(stageScope(), listed);
 		const input = {
 			ids,
 			...laneInput(lane, supported),
@@ -79,16 +82,20 @@ export function useMoveWithUndo() {
 		const showsMove = (row: Stage) =>
 			row.status === patch.status && (row.closedReason ?? null) === reason && row.laneId === patch.laneId;
 		const apply = <Row extends Stage & { id: string }>(row: Row): Row =>
-			selected.has(row.id) ? { ...row, ...patch } : row;
+			selected.has(row.id) && isLatest(row.id) ? { ...row, ...patch } : row;
 		const revert = <Row extends Stage & { id: string }>(row: Row): Row => {
 			const stage = before.get(row.id);
 			return stage && showsMove(row) ? { ...row, ...stage } : row;
 		};
 
-		queryClient.setQueryData<ApplicationSummary[]>(listKey, (current) => current?.map(apply));
-		for (const id of ids) queryClient.setQueryData<Application>(detailKey(id), (current) => current && apply(current));
+		const showMove = () => {
+			queryClient.setQueryData<ApplicationSummary[]>(listKey, (current) => current?.map(apply));
+			for (const id of ids)
+				queryClient.setQueryData<Application>(detailKey(id), (current) => current && apply(current));
+		};
 		const restore = () => {
 			settle([]);
+			if (!current()) return;
 			queryClient.setQueryData<ApplicationSummary[]>(listKey, (current) => current?.map(revert));
 			for (const id of ids)
 				queryClient.setQueryData<Application>(detailKey(id), (current) => current && revert(current));
@@ -97,15 +104,35 @@ export function useMoveWithUndo() {
 
 		withUndo({
 			message,
-			commit: async () => {
-				const expectedStages = await Promise.all(
-					[...baselines].map(async ([id, pending]) => {
-						const { laneId, ...baseline } = await pending;
-						return { id, ...baseline, ...(supported ? { laneId } : {}) };
-					}),
-				);
-				const { updated, stages } = await bulkUpdate.mutateAsync({ ...input, expectedStages });
+			prepare: async () => {
+				try {
+					const expectedStages = await Promise.all(
+						[...baselines].map(async ([id, pending]) => {
+							const baseline = await pending;
+							before.set(id, { status: baseline.status, laneId: baseline.laneId, closedReason: baseline.closedReason });
+							const { laneId, ...stage } = baseline;
+							return { id, ...stage, ...(supported ? { laneId } : {}) };
+						}),
+					);
+					if (!current()) throw new SessionChangedError();
+					const request = await prepareBulkUpdate({ ...input, expectedStages });
+					return {
+						send: request.send,
+						cancel: () => {
+							request.cancel();
+							settle([]);
+						},
+					};
+				} catch (error) {
+					settle([]);
+					throw error;
+				}
+			},
+			onReady: showMove,
+			commit: async (result) => {
+				const { updated, stages } = await result;
 				settle(stages ?? []);
+				if (!current()) return;
 				const kept = ids.length - updated;
 				if (kept > 0)
 					showToast({
