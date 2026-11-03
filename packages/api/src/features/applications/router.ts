@@ -19,6 +19,7 @@ export const applicationsRouter = {
 	create: crudRouter.create,
 	import: crudRouter.import,
 	update: crudRouter.update,
+	deleteContact: crudRouter.deleteContact,
 	attachDocument: crudRouter.attachDocument,
 	removeDocument: crudRouter.removeDocument,
 	addNote: crudRouter.addNote,

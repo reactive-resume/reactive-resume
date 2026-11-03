@@ -258,6 +258,21 @@ export const crudRouter = {
 			}),
 		),
 
+	deleteContact: protectedProcedure
+		.route({
+			method: "DELETE",
+			path: "/applications/{id}/contacts/{index}",
+			tags: ["Applications"],
+			operationId: "deleteApplicationContact",
+			summary: "Remove an application contact",
+			description:
+				"Read the full application and retain its contactsVersion as expectedVersion. Removes only the contact at the reviewed index. On CONFLICT (409), reload and review again; never retry automatically with a new version. Requires authentication and delete permission.",
+		})
+		.input(applicationDto.deleteContact.input)
+		.use(resumeMutationRateLimit)
+		.output(applicationDto.deleteContact.output)
+		.handler(({ input, context }) => applicationService.deleteContact({ ...input, userId: context.user.id })),
+
 	attachDocument: protectedProcedure
 		.route({
 			method: "POST",

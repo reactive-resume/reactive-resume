@@ -3,7 +3,7 @@ import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/sch
 import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Linking, View } from "react-native";
 import { interviewDetailsSchema, nextInterviewKind } from "@reactive-resume/schema/applications/data";
 import { generateId } from "@reactive-resume/utils/string";
@@ -18,9 +18,10 @@ import {
 	useDetailMutations,
 	useUserTime,
 } from "./hooks";
-import { client } from "@/api/client";
+import { client, prepareRpc } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
 import { applicationDetailQueryKey, useInvalidateApplications } from "@/features/applications/queries";
+import { withUndo } from "@/features/career/undo";
 import {
 	DEFAULT_LEAD,
 	holdReminder,
@@ -39,7 +40,6 @@ import {
 	ListRow,
 	Segmented,
 	showToast,
-	toastLifetime,
 	Switch,
 	Text,
 	TextArea,
@@ -49,7 +49,6 @@ import {
 
 const KINDS: InterviewKind[] = ["screening", "technical", "behavioral", "onsite", "other"];
 const LENGTHS = [30, 45, 60, 90];
-const UNDO_MS = 6000;
 
 type Participant = { id: string; name: string; role: string; profileUrl: string };
 
@@ -143,6 +142,14 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 	);
 	const [draft, setDraft] = useState(initial);
 	const saving = useRef(false);
+	const activeForm = useRef<symbol | null>(null);
+	useLayoutEffect(() => {
+		activeForm.current = Symbol();
+		return () => {
+			activeForm.current = null;
+		};
+	}, [application.id, interview?.id]);
+
 	const [zonePicker, setZonePicker] = useState(false);
 	const [zoneLimit, setZoneLimit] = useState(40);
 	const [zoneQuery, setZoneQuery] = useState("");
@@ -255,54 +262,68 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 		}
 	};
 
-	// Hidden at once and committed when the undo toast ends, so Undo keeps the round's identity and history.
-	// ponytail: the commit lives in a JS timer; if the app is killed first, the interview simply stays.
 	const remove = () => {
 		if (!interview || saving.current) return;
+		const form = activeForm.current;
+		saving.current = true;
 		const scope = getAccountScope();
+		const current = () => !!scope && scope === getAccountScope();
 		const key = applicationDetailQueryKey(application.id);
-		queryClient.setQueryData<Application>(key, (current) =>
-			current ? { ...current, activity: current.activity.filter((entry) => entry.id !== interview.id) } : current,
-		);
-		onClose();
-		// Its reminder stays scheduled through the undo window and is cancelled only once the delete commits.
-		holdReminder(interview.id);
-		const target = { kind: "interview", applicationId: application.id, entryId: interview.id } as const;
-		const timer = setTimeout(() => {
-			// The form is gone by now, so this calls the client directly rather than through a mounted mutation.
-			if (!scope || scope !== getAccountScope()) {
-				releaseReminder(interview.id);
-				return;
-			}
-			void client.applications
-				.deleteTimelineEntry({ id: application.id, entryId: interview.id })
-				.then(async () => {
+		const reconcile = async () => {
+			releaseReminder(interview.id);
+			if (!current()) return;
+			await queryClient.cancelQueries({ queryKey: key });
+			if (!current()) return;
+			await queryClient.invalidateQueries({ queryKey: key, refetchType: "all" }, { throwOnError: true });
+			if (current()) void invalidate();
+		};
+		const failed = () => {
+			saving.current = false;
+			if (current())
+				showToast({
+					message: t`Couldn't delete the interview. Try again.`,
+					action: { label: t`Retry`, onPress: () => void reconcile().catch(failed) },
+				});
+		};
+		withUndo({
+			message: t`Interview deleted`,
+			prepare: async () => {
+				const request = await prepareRpc(client.applications.deleteTimelineEntry, {
+					id: application.id,
+					entryId: interview.id,
+				});
+				return {
+					send: request.send,
+					cancel: () => {
+						request.cancel();
+						releaseReminder(interview.id);
+					},
+				};
+			},
+			onReady: () => {
+				holdReminder(interview.id);
+				queryClient.setQueryData<Application>(key, (row) =>
+					row ? { ...row, activity: row.activity.filter((entry) => entry.id !== interview.id) } : row,
+				);
+				if (form && activeForm.current === form) onClose();
+			},
+			restore: reconcile,
+			failed,
+			commit: async (result) => {
+				try {
+					await result;
 					let message = t`Interview deleted`;
+					const target = { kind: "interview", applicationId: application.id, entryId: interview.id } as const;
 					try {
-						if (scope === getAccountScope()) await reminders.turnOff(target);
+						if (current()) await reminders.turnOff(target);
 					} catch {
 						message = t`Interview deleted. Couldn't cancel its device reminder.`;
 					}
 					showInterviewCancellation(application, interview, scope, message);
-				})
-				.catch(() => {
-					if (scope === getAccountScope()) showToast({ message: t`Couldn't delete the interview. Try again.` });
-				})
-				.finally(() => {
+				} finally {
 					releaseReminder(interview.id);
-					if (scope === getAccountScope()) void invalidate();
-				});
-		}, toastLifetime(UNDO_MS));
-		showToast({
-			message: t`Interview deleted`,
-			duration: UNDO_MS,
-			action: {
-				label: t`Undo`,
-				onPress: () => {
-					clearTimeout(timer);
-					releaseReminder(interview.id);
-					if (scope === getAccountScope()) void invalidate();
-				},
+					if (current()) void invalidate();
+				}
 			},
 		});
 	};

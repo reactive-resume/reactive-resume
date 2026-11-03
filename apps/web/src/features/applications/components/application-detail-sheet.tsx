@@ -422,7 +422,7 @@ function Facts({ application, locale }: { application: Application; locale: stri
 				</dt>
 				<dd className="min-w-0">
 					<Contacts
-						contacts={application.contacts}
+						application={application}
 						disabled={update.isPending}
 						onChange={(contacts) => update.mutate({ id: application.id, contacts })}
 					/>

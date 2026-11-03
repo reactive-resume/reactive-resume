@@ -81,6 +81,7 @@ const existing = {
 	laneId: "application-lane:user-1:saved",
 	closedReason: null,
 	tags: [],
+	contacts: [],
 	activity: [{ id: "e0", type: "stage" as const, stage: "saved" as const, at: new Date("2026-07-01T12:00:00.000Z") }],
 	appliedAt: new Date("2026-07-01T12:00:00.000Z"),
 	createdAt: new Date("2026-07-01T12:00:00.000Z"),

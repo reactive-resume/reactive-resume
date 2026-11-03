@@ -224,3 +224,160 @@ test("pending Mark as read stays out of Show read until canonical retry succeeds
 	const result = await database.query("select read_at from career_notification where id=$1", [id]);
 	expect(result.rows[0].read_at).toBeNull();
 });
+
+for (const action of ["contact", "interview"] as const)
+	for (const exit of ["reload", "close"] as const)
+		test(`${action} deletion persists through ${exit} during Undo`, async ({ authPage: page }, info) => {
+			const created = await page.request.post("/api/openapi/applications", {
+				data: { company: "Fictional Cedar", role: "Fictional engineer", status: "applied" },
+			});
+			await expect(created).toBeOK();
+			const id: string = await created.json();
+			let entryId: string | undefined;
+			if (action === "contact") {
+				await expect(
+					await page.request.put(`/api/openapi/applications/${id}`, {
+						data: {
+							contacts: [
+								{ name: "Fictional Sam", role: "Recruiter", email: "sam@example.test", phone: "", type: "Recruiter" },
+							],
+						},
+					}),
+				).toBeOK();
+				await page.goto(`/dashboard/applications?applicationId=${id}`);
+				await page.getByRole("button", { name: "Contact: Fictional Sam", exact: true }).click();
+				await page.getByRole("button", { name: "Remove Fictional Sam", exact: true }).click();
+			} else {
+				await expect(
+					await page.request.post(`/api/openapi/applications/${id}/interviews`, {
+						data: { at: "2026-11-15T14:00:00Z", kind: "technical", durationMinutes: 60, timezone: "UTC" },
+					}),
+				).toBeOK();
+				const read = await page.request.get(`/api/openapi/applications/${id}`);
+				await expect(read).toBeOK();
+				entryId = (await read.json()).activity.find((entry: { type: string }) => entry.type === "interview").id;
+				await page.setViewportSize({ width: 375, height: 812 });
+				await page.goto("/dashboard/applications?view=calendar");
+				await page
+					.getByTestId("interview-agenda")
+					.getByRole("button")
+					.filter({ hasText: "Fictional Cedar" })
+					.first()
+					.click();
+				await page
+					.getByRole("dialog", { name: "Edit interview", exact: true })
+					.getByRole("button", { name: "Delete", exact: true })
+					.click();
+			}
+			await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
+			if (action === "interview" && exit === "reload") {
+				await expect(page.getByRole("dialog", { name: "Edit interview", exact: true })).toBeHidden();
+				await page.screenshot({ path: info.outputPath("interview-undo-ready.png"), animations: "disabled" });
+			}
+			const pending = (await database.query("select contacts, activity from application where id=$1", [id])).rows[0];
+			expect(
+				action === "contact"
+					? pending.contacts.length === 1
+					: pending.activity.some((entry: { id: string }) => entry.id === entryId),
+			).toBe(true);
+			await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
+			await leave(page, exit);
+			// No page is reopened before SQL proves the deletion reached storage.
+			await expect
+				.poll(async () => {
+					const row = (await database.query("select contacts, activity from application where id=$1", [id])).rows[0];
+					if (!row) return false;
+					return action === "contact"
+						? row.contacts.length === 0
+						: !row.activity.some((entry: { id: string }) => entry.id === entryId);
+				})
+				.toBe(true);
+		});
+
+test("contact Undo reads canonical survivors and read-only Retry cannot restore externally erased text", async ({
+	authPage: page,
+}, info) => {
+	const created = await page.request.post("/api/openapi/applications", {
+		data: { company: "Fictional Cedar", role: "Fictional engineer", status: "applied" },
+	});
+	await expect(created).toBeOK();
+	const id: string = await created.json();
+	await expect(
+		await page.request.put(`/api/openapi/applications/${id}`, {
+			data: {
+				contacts: [
+					{ name: "Fictional Sam", role: "Recruiter", email: "sam@example.test", phone: "", type: "Recruiter" },
+				],
+			},
+		}),
+	).toBeOK();
+	await page.goto(`/dashboard/applications?applicationId=${id}`);
+	await page.getByRole("button", { name: "Contact: Fictional Sam", exact: true }).click();
+	const remove = page.getByRole("button", { name: "Remove Fictional Sam", exact: true });
+	await remove.click();
+	await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
+	await expect(remove).toHaveCount(0);
+	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await expect(page.getByRole("button", { name: "Contact: Fictional Sam", exact: true })).toBeVisible();
+	await page.getByRole("button", { name: "Contact: Fictional Sam", exact: true }).click();
+	await expect(remove).toBeVisible();
+	expect((await database.query("select contacts from application where id=$1", [id])).rows[0].contacts).toHaveLength(1);
+	await remove.click();
+	await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
+	await expect(await page.request.put(`/api/openapi/applications/${id}`, { data: { contacts: [] } })).toBeOK();
+	let failed = true;
+	let retryReads = 0;
+	await page.route("**/api/rpc/**", async (route) => {
+		if (failed) await failRpcProcedure(route, "/api/rpc/applications/getById", "Fictional readback unavailable");
+		else {
+			const request = route.request();
+			const entries: { url: string }[] = new URL(request.url()).pathname.endsWith("/__batch__")
+				? JSON.parse(request.postData() ?? "[]")
+				: [{ url: request.url() }];
+			if (entries.some((entry) => new URL(entry.url).pathname === "/api/rpc/applications/getById")) retryReads++;
+			await route.continue();
+		}
+	});
+	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeVisible();
+	await expect(remove).toHaveCount(0);
+	await expect(page.getByRole("button", { name: "Contact: none yet", exact: true })).toBeVisible();
+	await page.getByRole("button", { name: "Contact: none yet", exact: true }).click();
+	await page.screenshot({ path: info.outputPath("contacts-readback-retry.png"), animations: "disabled" });
+	failed = false;
+	await page.getByRole("button", { name: "Retry", exact: true }).click();
+	// Empty UI was already hidden; prove Retry actually requests its canonical target.
+	await expect.poll(() => retryReads).toBeGreaterThan(0);
+	await expect(page.getByRole("button", { name: "Contact: none yet", exact: true })).toBeVisible();
+	await expect(remove).toHaveCount(0);
+	expect((await database.query("select contacts from application where id=$1", [id])).rows[0].contacts).toEqual([]);
+	await page.reload();
+	await page.locator(`tr[data-application-id="${id}"] [data-application-open]`).click();
+	await expect(page.getByRole("button", { name: "Contact: none yet", exact: true })).toBeVisible();
+});
+
+test("contact removal HTTP contract converts the reviewed path index and refuses replay", async ({
+	authPage: page,
+}) => {
+	const contact = { name: "Fictional Sam", role: "", type: "", email: "", phone: "" };
+	const created = await page.request.post("/api/openapi/applications", {
+		data: { company: "Fictional Cedar", role: "Engineer", contacts: [contact, contact] },
+	});
+	await expect(created).toBeOK();
+	const id: string = await created.json();
+	const read = await page.request.get(`/api/openapi/applications/${id}`);
+	await expect(read).toBeOK();
+	const reviewed = await read.json();
+	const input = { data: { expectedVersion: reviewed.contactsVersion } };
+	const removed = await page.request.delete(`/api/openapi/applications/${id}/contacts/1`, input);
+	await expect(removed).toBeOK();
+	expect(removed.status()).toBe(200);
+	expect(await removed.text()).toBe("");
+	const after = await page.request.get(`/api/openapi/applications/${id}`);
+	await expect(after).toBeOK();
+	expect((await after.json()).contacts).toEqual([contact]);
+	expect((await page.request.delete(`/api/openapi/applications/${id}/contacts/1`, input)).status()).toBe(409);
+	expect((await database.query("select contacts from application where id=$1", [id])).rows[0].contacts).toEqual([
+		contact,
+	]);
+});

@@ -57,7 +57,12 @@ describe.skipIf(!databaseUrl)("application Trash: real retained rows, storage an
 		fixture.directory = await mkdtemp(join(tmpdir(), "rr-application-trash-"));
 		admin = new Pool({ connectionString: databaseUrl });
 		await admin.query(`CREATE SCHEMA ${namespace}`);
-		pool = new Pool({ connectionString: databaseUrl, max: 4, options: `-c search_path=${namespace}` });
+		pool = new Pool({
+			connectionString: databaseUrl,
+			max: 4,
+			application_name: namespace,
+			options: `-c search_path=${namespace}`,
+		});
 		fixture.db = drizzle({ client: pool });
 		const migrations = new URL("../../../../../migrations/", import.meta.url);
 		for (const name of (await readdir(migrations)).filter((name) => /^\d+_/.test(name)).sort()) {
@@ -97,6 +102,90 @@ describe.skipIf(!databaseUrl)("application Trash: real retained rows, storage an
 	};
 	const contents = (row: Record<string, unknown>) =>
 		Object.fromEntries(Object.entries(row).filter(([key]) => !["trashed_at", "updated_at"].includes(key)));
+
+	it("removes only the reviewed contact and refuses stale, unauthorized or invalid removal", async () => {
+		const contact = {
+			name: "Fictional Sam",
+			role: "Recruiter",
+			type: "Recruiter",
+			email: "sam@example.test",
+			phone: "",
+		};
+		const contacts = [contact, contact, { ...contact, name: "Fictional Alex" }];
+		const id = await api().create({
+			company: "Fictional Cedar",
+			role: "Engineer",
+			contacts,
+			notes: "Fictional retained note",
+		});
+		const reviewed = await api().getById({ id });
+		if (!reviewed.contactsVersion) throw new Error("Missing review version");
+		const input = { id, index: 1, expectedVersion: reviewed.contactsVersion };
+		await expect(api("bob").deleteContact(input)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(api("alice", ["read", "write"]).deleteContact(input)).rejects.toMatchObject({ code: "FORBIDDEN" });
+		await expect(api().deleteContact({ ...input, index: -1 })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		await expect(api().deleteContact({ ...input, index: 8 })).rejects.toMatchObject({ code: "CONFLICT" });
+		await expect(api("alice", ["delete"]).deleteContact(input)).resolves.toBeUndefined();
+		await expect(api().deleteContact(input)).rejects.toMatchObject({ code: "CONFLICT" });
+		const saved = await api().getById({ id });
+		expect(saved.contacts).toEqual([contact, contacts[2]]);
+		expect(saved.notes).toBe(reviewed.notes);
+		expect(saved.activity).toEqual(reviewed.activity);
+		expect((await raw(id)).contacts).toEqual(saved.contacts);
+		await api().update({ id, contacts: [] });
+		await expect(api().deleteContact(input)).rejects.toMatchObject({ code: "CONFLICT" });
+		expect((await raw(id)).contacts).toEqual([]);
+	});
+
+	it("contact removal preserves a newer note without treating that unrelated edit as a contact conflict", async () => {
+		const contact = { name: "Fictional Sam", role: "", type: "", email: "", phone: "" };
+		const id = await api().create({ company: "Fictional Cedar", role: "Engineer", contacts: [contact] });
+		const reviewed = await api().getById({ id });
+		if (!reviewed.contactsVersion) throw new Error("Missing review version");
+		await api().update({ id, notes: "Fictional newer note" });
+		await api().deleteContact({ id, index: 0, expectedVersion: reviewed.contactsVersion });
+		const saved = await api().getById({ id });
+		expect(saved.contacts).toEqual([]);
+		expect(saved.notes).toBe("Fictional newer note");
+	});
+
+	it("serializes simultaneous removals at the reviewed version without deleting both duplicate contacts", async () => {
+		const contact = { name: "Fictional Sam", role: "", type: "", email: "", phone: "" };
+		const id = await api().create({ company: "Fictional Cedar", role: "Engineer", contacts: [contact, contact] });
+		const reviewed = await api().getById({ id });
+		if (!reviewed.contactsVersion) throw new Error("Missing review version");
+		const blocker = await pool.connect();
+		let requests: Promise<PromiseSettledResult<unknown>[]> | undefined;
+		try {
+			await blocker.query("BEGIN");
+			await blocker.query("SELECT id FROM application WHERE id=$1 FOR UPDATE", [id]);
+			const input = { id, index: 0, expectedVersion: reviewed.contactsVersion };
+			requests = Promise.allSettled([api().deleteContact(input), api().deleteContact(input)]);
+			await expect
+				.poll(async () =>
+					Number(
+						(
+							await admin.query(
+								"SELECT count(*) FROM pg_stat_activity WHERE application_name=$1 AND wait_event_type='Lock'",
+								[namespace],
+							)
+						).rows[0].count,
+					),
+				)
+				.toBe(2);
+			await blocker.query("COMMIT");
+			const outcomes = await requests;
+			expect(outcomes.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+			expect(outcomes.filter((result) => result.status === "rejected")).toEqual([
+				expect.objectContaining({ reason: expect.objectContaining({ code: "CONFLICT" }) }),
+			]);
+			expect((await raw(id)).contacts).toEqual([contact]);
+		} finally {
+			await blocker.query("ROLLBACK");
+			blocker.release();
+			await requests;
+		}
+	});
 
 	it("retains timeline, linked snapshots, workspace, facts, coach and real attachment bytes across reload/restore", async () => {
 		await getDb()

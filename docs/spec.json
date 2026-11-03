@@ -19994,6 +19994,12 @@
 												"minLength": 64,
 												"maxLength": 64,
 												"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+											},
+											"contactsVersion": {
+												"type": "string",
+												"minLength": 64,
+												"maxLength": 64,
+												"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 											}
 										},
 										"required": [
@@ -22464,6 +22470,12 @@
 														"minLength": 64,
 														"maxLength": 64,
 														"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+													},
+													"contactsVersion": {
+														"type": "string",
+														"minLength": 64,
+														"maxLength": 64,
+														"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 													}
 												},
 												"required": [
@@ -23281,6 +23293,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -24720,6 +24738,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -26231,6 +26255,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -26753,6 +26783,111 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/import\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"items\": [\n    {\n      \"company\": \"<string>\",\n      \"role\": \"<string>\"\n    }\n  ]\n}'"
+					}
+				]
+			}
+		},
+		"/applications/{id}/contacts/{index}": {
+			"delete": {
+				"operationId": "deleteApplicationContact",
+				"summary": "Remove an application contact",
+				"description": "Read the full application and retain its contactsVersion as expectedVersion. Removes only the contact at the reviewed index. On CONFLICT (409), reload and review again; never retry automatically with a new version. Requires authentication and delete permission.",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "index",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"expectedVersion": {
+										"type": "string",
+										"minLength": 64,
+										"maxLength": 64,
+										"description": "The contactsVersion of the contacts array reviewed before removal."
+									}
+								},
+								"required": [
+									"expectedVersion"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/applications/<id>/contacts/<index>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedVersion\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -27465,6 +27600,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -28233,6 +28374,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -29025,6 +29172,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -29794,6 +29947,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -30584,6 +30743,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -31445,6 +31610,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -32305,6 +32476,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -33162,6 +33339,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -33960,6 +34143,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -34735,6 +34924,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -35530,6 +35725,12 @@
 											"minLength": 64,
 											"maxLength": 64,
 											"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+										},
+										"contactsVersion": {
+											"type": "string",
+											"minLength": 64,
+											"maxLength": 64,
+											"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 										}
 									},
 									"required": [
@@ -45434,6 +45635,12 @@
 														"minLength": 64,
 														"maxLength": 64,
 														"description": "Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again."
+													},
+													"contactsVersion": {
+														"type": "string",
+														"minLength": 64,
+														"maxLength": 64,
+														"description": "Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."
 													},
 													"submittedAt": {
 														"anyOf": [
