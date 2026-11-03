@@ -246,6 +246,9 @@ test("a primary in Trash keeps the short link closed until Primary is switched o
 	authPage: page,
 	account,
 }, testInfo) => {
+	const flags = await page.request.get("/api/openapi/flags");
+	await expect(flags).toBeOK();
+	const { customDomains } = (await flags.json()) as { customDomains: boolean };
 	const primaryName = await createSampleResumeFromDashboard(page, testInfo);
 	await openSidebarSection(page, "Sharing");
 	await page.getByRole("button", { name: "Publish", exact: true }).click();
@@ -273,7 +276,11 @@ test("a primary in Trash keeps the short link closed until Primary is switched o
 	await page.reload();
 	await openSidebarSection(page, "Sharing");
 
-	await expect(addresses).toContainText(/Publish this resume to open it at your short link(?: and custom domain)?\./);
+	await expect(addresses).toContainText(
+		customDomains
+			? "Publish this resume to open it at your short link and custom domain."
+			: "Publish this resume to open it at your short link.",
+	);
 	await expect(addresses).toContainText("If another resume holds Primary, turn it on for this one instead.");
 	await expect(copy).toBeDisabled();
 	expect((await page.request.get(`/${account.username}`)).status()).toBe(404);

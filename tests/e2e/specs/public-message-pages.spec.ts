@@ -48,7 +48,7 @@ for (const width of [1440, 390])
 			await expect(
 				await owner.request.put(`${api}/password`, { data: { password: "fictional-message-password" } }),
 			).toBeOK();
-			const origin = process.env.APP_URL ?? "http://localhost:3000";
+			const origin = new URL(process.env.APP_URL ?? "http://localhost:3000").origin;
 			const url = `${origin}/${account.username}/fictional-message-page`;
 			const visitor = await browser.newPage({ viewport: { width, height: 900 }, colorScheme: theme });
 			const desk = theme === "dark" ? "rgb(16, 15, 12)" : "rgb(248, 247, 243)";
@@ -61,6 +61,10 @@ for (const width of [1440, 390])
 				expect((await appearance(visitor.locator("main > p"))).text).toBeGreaterThanOrEqual(4.5);
 				const input = await appearance(password);
 				expect(input.border).toBeGreaterThanOrEqual(3);
+				await expect(password).toHaveCSS("border-top-style", "solid");
+				await expect(password).toHaveCSS("border-top-width", "1px");
+				await expect(password).toHaveCSS("outline-style", "solid");
+				await expect(password).toHaveCSS("outline-width", "2px");
 				expect(input.focus).toBeGreaterThanOrEqual(3);
 				expect(input.radius).toBe("4px");
 				const unlock = visitor.getByRole("button", { name: "Unlock", exact: true });
@@ -75,6 +79,8 @@ for (const width of [1440, 390])
 				await visitor.keyboard.press("Tab");
 				await expect(unlock).toBeFocused();
 				expect((await appearance(unlock)).focus).toBeGreaterThanOrEqual(3);
+				await expect(unlock).toHaveCSS("outline-style", "solid");
+				await expect(unlock).toHaveCSS("outline-width", "2px");
 				await visitor.screenshot({ path: info.outputPath("password-error.png") });
 				await password.fill("fictional-message-password");
 				await unlock.click();
@@ -88,6 +94,8 @@ for (const width of [1440, 390])
 				await expect(home).toHaveAttribute("href", `${origin}/`);
 				await home.focus();
 				expect((await appearance(home)).focus).toBeGreaterThanOrEqual(3);
+				await expect(home).toHaveCSS("outline-style", "solid");
+				await expect(home).toHaveCSS("outline-width", "2px");
 				expect((await appearance(home)).text).toBeGreaterThanOrEqual(4.5);
 				const unavailable = await visitor.locator("main").innerText();
 				expect(unavailable).not.toContain("PRIVATE fictional message fixture");
