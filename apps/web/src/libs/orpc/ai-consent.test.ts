@@ -189,3 +189,78 @@ it("cancels queued voice approval before dispatch", async () => {
 		),
 	).rejects.toMatchObject({ name: "AbortError" });
 });
+
+const nativeProvider = { ...provider, provider: "openai", baseURL: "https://api.openai.com/v1" };
+it("grants paid native search only after naming its query-only destination and charges", async () => {
+	api.aiProviders.list.mockResolvedValue([nativeProvider]);
+	api.ai.capabilities.mockResolvedValue({ nativeWebSearch: 1 });
+	vi.mocked(confirmOperation).mockResolvedValue(true);
+	const approval = await authorizeAiRequest(
+		["applications", "ai", "searchPostings"],
+		{ query: "Fictional engineer", aiProviderId: provider.id },
+		consentApi,
+	);
+	expect(approval).toEqual({
+		aiDestination: JSON.stringify([provider.id, provider.recipientVersion]),
+		webDestination: "web-1",
+		nativeSearchFallback: true,
+	});
+	const description = vi.mocked(confirmOperation).mock.calls[0]?.[1]?.description;
+	expect(description).toContain("Only your search query and search countries");
+	expect(description).toContain("No document, Knowledge or application context");
+	expect(description).toContain("may charge");
+	expect(description).toContain(nativeProvider.baseURL);
+});
+it.each(["old-server", "custom-endpoint"])("refuses native retry for %s before asking approval", async (kind) => {
+	api.aiProviders.list.mockResolvedValue([kind === "custom-endpoint" ? provider : nativeProvider]);
+	api.ai.capabilities.mockResolvedValue(kind === "old-server" ? {} : { nativeWebSearch: 1 });
+	await expect(
+		authorizeAiRequest(
+			["applications", "ai", "searchPostings"],
+			{ query: "Fictional", aiProviderId: provider.id },
+			consentApi,
+		),
+	).rejects.toThrow(/doesn't support native/);
+	expect(confirmOperation).not.toHaveBeenCalled();
+});
+it.each(["decline", "account", "provider", "web", "abort"])(
+	"does not return native permission after %s",
+	async (change) => {
+		api.aiProviders.list.mockResolvedValue([nativeProvider]);
+		api.ai.capabilities.mockResolvedValue({ nativeWebSearch: 1 });
+		const abort = new AbortController();
+		vi.mocked(confirmOperation).mockImplementation(async () => {
+			if (change === "account") api.auth.getProfile.mockResolvedValue({ id: "other" });
+			if (change === "provider")
+				api.aiProviders.list.mockResolvedValue([{ ...nativeProvider, recipientVersion: "replacement" }]);
+			if (change === "web") api.webAccess.status.mockResolvedValue({ revision: "web-2" });
+			if (change === "abort") abort.abort();
+			return change !== "decline";
+		});
+		await expect(
+			authorizeAiRequest(
+				["applications", "ai", "searchPostings"],
+				{ query: "Fictional", aiProviderId: provider.id },
+				consentApi,
+				abort.signal,
+			),
+		).rejects.toThrow();
+	},
+);
+it.each([true, false, undefined])(
+	"chat native permission respects web context %s and discloses additional requests",
+	async (web) => {
+		api.aiProviders.list.mockResolvedValue([nativeProvider]);
+		api.ai.capabilities.mockResolvedValue({ nativeWebSearch: 1 });
+		api.agent.threads.get.mockResolvedValue({ thread: { aiProviderId: provider.id } });
+		vi.mocked(confirmOperation).mockResolvedValue(true);
+		const approval = await authorizeAiRequest(
+			["agent", "messages", "send"],
+			{ threadId: "thread", context: web === undefined ? {} : { web } },
+			consentApi,
+		);
+		expect(approval?.nativeSearchFallback).toBe(web === false ? undefined : true);
+		const description = vi.mocked(confirmOperation).mock.calls[0]?.[1]?.description ?? "";
+		expect(description.includes("This can add AI requests and charges")).toBe(web !== false);
+	},
+);

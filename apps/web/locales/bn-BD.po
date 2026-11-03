@@ -7966,6 +7966,10 @@ msgstr "অ্যাপটি না খুললে, এটি ইনস্ট�
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "ওয়েব অ্যাক্সেস কী প্রত্যাখ্যান করলে বা কোটা শেষ হলে, এই AI সংযোগ নিজস্ব সার্চ সেবা দিয়ে আবার অনুসন্ধান করতে পারে। এতে অতিরিক্ত AI অনুরোধ ও খরচ হতে পারে।"
+
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -11131,6 +11135,10 @@ msgstr "শুধুমাত্র আপনি, যতক্ষণ না আ�
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "ওয়েব অ্যাক্সেস কী প্রত্যাখ্যান করলে বা কোটা শেষ হলে, এই AI সংযোগে শুধু আপনার অনুসন্ধানের প্রশ্ন ও অনুসন্ধানের দেশগুলো পাঠানো হয়। কোনো নথি, জ্ঞান বা চাকরির আবেদনের প্রসঙ্গ যোগ করা হয় না। প্রদানকারীর অনুসন্ধানের জন্য খরচ হতে পারে।"
+
 #: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "অনসাইট"
@@ -13489,6 +13497,11 @@ msgstr ""
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry saving"
 msgstr "আবার সংরক্ষণ করার চেষ্টা করুন"
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel} দিয়ে আবার চেষ্টা করুন"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
@@ -16889,6 +16902,10 @@ msgstr "এই সার্ভার শুধু ফাইলের উল্�
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "এই সার্ভার নতুন অ্যাকাউন্ট গ্রহণ করছে না। একটি বিদ্যমান অ্যাকাউন্ট দিয়ে সাইন ইন করুন।"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "এই সার্ভার বা AI সংযোগ প্রদানকারীর নিজস্ব ওয়েব অনুসন্ধান সমর্থন করে না।"
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "এই সার্ভার সাধারণ পর্যায় ব্যবহার করে, তাই ফাইলে থাকা পর্যায়ের নাম রাখা হবে না।"
@@ -18094,6 +18111,7 @@ msgstr "ওয়েব পেজ"
 msgid "Web page preview"
 msgstr "ওয়েব পেজের প্রিভিউ"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "ওয়েব গবেষণা"

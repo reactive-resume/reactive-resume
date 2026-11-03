@@ -8,6 +8,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
+import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { refreshThreads } from "./chat";
 import { ContextChip } from "./chat-view";
 import { client, orpc } from "@/api/client";
@@ -226,15 +227,23 @@ export function ProviderGate({
 // ---- Coach composer parts (web: coach-thread.tsx) ----
 
 /** Whether web research can run: through the web connection, or the server's own search. */
-export function useWebSearch() {
+export function useWebSearch(provider: UsableProvider | undefined) {
 	const session = useSession();
 	const query = useQuery({
 		...orpc.webAccess.status.queryOptions(),
 		enabled: session.status === "signed-in",
 		queryKey: [...orpc.webAccess.status.key(), session.server],
 	});
+	const failure = query.data?.testResult?.search.error;
+	const eligible = !!provider && supportsNativeWebSearch(provider) && (failure === "auth" || failure === "quota");
+	const options = orpc.ai.capabilities.queryOptions();
+	const capabilities = useQuery({
+		...options,
+		queryKey: [...options.queryKey, session.server],
+		enabled: session.status === "signed-in" && eligible,
+	});
 	return {
-		canSearch: query.data?.search === true,
+		canSearch: query.data?.search === true || (eligible && capabilities.data?.nativeWebSearch === 1),
 		isPending: query.isPending,
 		isError: query.isError,
 		refetch: () => void query.refetch(),

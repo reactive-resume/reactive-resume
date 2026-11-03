@@ -90,6 +90,7 @@ const deps = {
 		client,
 		SessionChangedError,
 		orpc: {
+			ai: { capabilities: { queryOptions: () => ({ queryKey: ["capabilities"] }) } },
 			documents: { key: () => ["documents"], list: { queryOptions: () => ({ queryKey: ["documents"] }) } },
 			applications: { findPosting: { queryOptions: () => ({ queryKey: ["duplicate"] }) } },
 			webAccess: { status: { queryOptions: () => ({ queryKey: ["web"] }) } },

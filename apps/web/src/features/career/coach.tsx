@@ -40,6 +40,7 @@ import {
 	useCoachKnowledge,
 	useConversationDate,
 	WebResearchChip,
+	useWebSearch,
 	type ChatHistory,
 } from "./coach-thread";
 import { CareerLoadError } from "./load-state";
@@ -162,8 +163,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	const conversations = (threads.data ?? []).filter((thread) => thread.scope === "career" && !hidden.has(thread.id));
 	const summary = threads.data?.find((thread) => thread.id === threadId);
 	const usable = providers.usableProviders;
-	const webAccess = useQuery(orpc.webAccess.status.queryOptions());
-	const canSearch = webAccess.data?.search === true;
+
 	// A conversation runs on its own connection. One switched off or removed is never swapped silently: the user picks
 	// another before the next message goes anywhere. A new conversation starts on the default (listed first).
 	const saved = summary ? usable.find((item) => item.id === summary.aiProviderId) : undefined;
@@ -171,6 +171,8 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	const provider = summary ? saved : (usable.find((item) => item.id === providerId) ?? usable[0]);
 	const label = provider?.label ?? summary?.providerLabel ?? t`Your AI`;
 	const connection = connectionName(label);
+	const web = useWebSearch(provider);
+	const webAccess = web.status;
 
 	const context: MessageContext = {
 		// A career conversation has no document or posting to leave out.
@@ -178,8 +180,8 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		posting: true,
 		application: chips.application,
 		memory: chips.memory,
-		// Web research needs a search service; a choice saved before it went away doesn't count.
-		web: chips.web && canSearch,
+		// The message still requires Web research on and per-operation destination approval.
+		web: chips.web && web.canSearch,
 		...(offerIds.length > 0 && chips.offers ? { offerIds } : {}),
 	};
 
@@ -315,7 +317,12 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 						: t`Knowledge is off for this message: the coach doesn't read it or remember anything you say`
 				}
 			/>
-			<WebResearchChip status={webAccess} pressed={chips.web} onPressedChange={(web) => setChips({ ...chips, web })} />
+			<WebResearchChip
+				status={webAccess}
+				fallbackLabel={web.fallbackLabel}
+				pressed={chips.web}
+				onPressedChange={(web) => setChips({ ...chips, web })}
+			/>
 			{offerIds.length > 0 && (
 				<ContextChip
 					pressed={chips.offers}

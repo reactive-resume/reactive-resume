@@ -6224,6 +6224,10 @@ msgstr "As webtoegang gebruik word, gaan soekterme na jou bediener se soekdiens 
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "As webtoegang gebruik word, gaan soekterme na jou bediener se soekdiens en die soekenjins wat dit gebruik, en skakels gaan na die werwe wat gelees word."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "As webtoegang die sleutel weier of die kwota op is, kan hierdie KI-verbinding die soektog met sy eie soekdiens herhaal. Dit kan bykomende KI-versoeke en koste veroorsaak."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Ignoreer"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "As webtoegang die sleutel weier of die kwota op is, word net jou soeknavraag en soeklande na hierdie KI-verbinding gestuur. Geen dokumente, Kennis of aansoekkonteks word bygevoeg nie. Die verskaffer se soektog kan koste hê."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Probeer weer stoor"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Probeer weer met {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Hierdie bediener voer net lêerverwysings uit. Werk dit by om opgelaaide
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Hierdie bediener is te oud vir die toepassing. Vra jou administrateur om dit op te dateer."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Hierdie bediener of KI-verbinding ondersteun nie die verskaffer se eie websoektog nie."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Hierdie bediener rapporteer 'n ander adres as die een wat jy ingevoer het. Voer die adres in wat dit gebruik, of vra jou administrateur."
@@ -14588,6 +14604,7 @@ msgstr "Webtoeganginstellings kon nie gestoor of gelaai word nie."
 msgid "Web page"
 msgstr "Webblad"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Webnavorsing"

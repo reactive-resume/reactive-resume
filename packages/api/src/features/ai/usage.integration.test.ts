@@ -1,4 +1,5 @@
 import type { ProposeEditsOutput } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import type { UIMessage } from "ai";
 import type { AddressInfo } from "node:net";
 import { randomUUID } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
@@ -10,6 +11,7 @@ import { strFromU8, unzipSync, zipSync, strToU8 } from "fflate";
 import { Pool } from "pg";
 import { z } from "zod";
 import { letterDraftSystemPrompt } from "@reactive-resume/ai/prompts";
+import { aiDestination } from "@reactive-resume/ai/types";
 import { db, withDatabasePool } from "@reactive-resume/db/client";
 import * as tables from "@reactive-resume/db/schema";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
@@ -28,6 +30,7 @@ import { coverLettersRouter } from "../cover-letters/router";
 import { assertDocumentVersion } from "../documents/ownership";
 import { documentsRouter } from "../documents/router";
 import { resumeRouter } from "../resume/router";
+import { webAccessService } from "../web-access/credentials";
 import { aiRouter } from "./router";
 import { getModel } from "./service";
 import { createAiUsage, readAiUsage, readWeeklyAiUsage } from "./usage";
@@ -66,7 +69,8 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		| "resume"
 		| "agent"
 		| "letter"
-		| "improve";
+		| "improve"
+		| "native-search";
 	let agentChanges: unknown[] = [];
 	let agentStep = 0;
 	let release = () => {};
@@ -80,10 +84,96 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		});
 		req.on("end", () => {
 			void (async () => {
-				const body = JSON.parse(raw) as { model: string; messages?: unknown[]; stream?: boolean };
+				const body = JSON.parse(raw) as { model: string; messages?: unknown[]; stream?: boolean; input?: unknown };
 				requests.push({ model: body.model, path: req.url ?? "" });
 				requestMessages.push(body.messages ?? []);
 				arrived();
+				if (mode === "native-search") {
+					if (req.url === "/v1/firecrawl") {
+						res.writeHead(401, { "content-type": "application/json" });
+						res.end(JSON.stringify({ success: false, error: "Fictional rejected web key" }));
+						return;
+					}
+					if (!body.stream) {
+						res.writeHead(200, { "content-type": "application/json" });
+						res.end(
+							JSON.stringify({
+								id: "source",
+								object: "response",
+								created_at: 1,
+								model: body.model,
+								status: "completed",
+								output: [
+									{
+										type: "web_search_call",
+										id: "search",
+										status: "completed",
+										action: { type: "search", query: "Fictional engineer" },
+									},
+									{
+										type: "message",
+										id: "source-message",
+										role: "assistant",
+										status: "completed",
+										content: [
+											{
+												type: "output_text",
+												text: "Retrieved fictional role",
+												annotations: [
+													{
+														type: "url_citation",
+														url: "https://jobs.example.com/engineer",
+														title: "Fictional role",
+														start_index: 0,
+														end_index: 10,
+													},
+												],
+											},
+										],
+									},
+								],
+								usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },
+							}),
+						);
+						return;
+					}
+					const events: unknown[] = [
+						{ type: "response.created", response: { id: "chat", created_at: 1, model: body.model } },
+					];
+					if (!JSON.stringify(body.input).includes("function_call_output")) {
+						const args = JSON.stringify({ query: "Fictional engineer" });
+						const item = {
+							type: "function_call",
+							id: "fc-search",
+							call_id: "call-search",
+							name: "search_web",
+							arguments: "",
+						};
+						events.push(
+							{ type: "response.output_item.added", output_index: 0, item },
+							{ type: "response.function_call_arguments.delta", item_id: "fc-search", output_index: 0, delta: args },
+							{
+								type: "response.output_item.done",
+								output_index: 0,
+								item: { ...item, arguments: args, status: "completed" },
+							},
+						);
+					} else {
+						const item = { type: "message", id: "reply" };
+						events.push(
+							{ type: "response.output_item.added", output_index: 0, item },
+							{ type: "response.output_text.delta", item_id: "reply", output_index: 0, delta: "Research complete." },
+							{ type: "response.output_item.done", output_index: 0, item },
+						);
+					}
+					events.push({
+						type: "response.completed",
+						response: { usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 } },
+					});
+					res.writeHead(200, { "content-type": "text/event-stream" });
+					res.end(events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(""));
+					return;
+				}
 				if (mode === "hold")
 					await new Promise<void>((resolve) => {
 						release = resolve;
@@ -206,12 +296,12 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		createRouterClient(
 			{
 				ai: aiRouter,
+				agent: agentRouter,
 				auth: authRouter,
 				career: careerRouter,
 				letters: coverLettersRouter,
 				resume: resumeRouter,
 				documents: documentsRouter,
-				agent: agentRouter,
 				applicationAi: applicationAiRouter,
 			},
 			{
@@ -492,6 +582,129 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				expect((await readAiUsage("usage-bob", [common.operationId]))?.requests).toBe(1);
 			}),
 	);
+
+	it("authorizes and meters native search when an approved Coach tool runs before the next model step", () =>
+		run(async () => {
+			const connection = await aiProvidersService.create({
+				userId: user.id,
+				label: "Fictional direct connection",
+				provider: "openai",
+				model: "gpt-4.1-mini",
+				apiKey: "fictional-direct-key",
+			});
+			await pool.query("update ai_providers set enabled=true,test_status='success' where id=$1", [connection.id]);
+			const [current] = await aiProvidersService.list({ userId: user.id });
+			if (!current) throw new Error("Missing direct fixture connection");
+			await webAccessService.save(user.id, "firecrawl", "fictional-web-key");
+			const failedConnection = await webAccessService.resolve(user.id, true);
+			await webAccessService.recordTest(user.id, failedConnection, {
+				search: { success: false, error: "auth" },
+				read: { success: false, error: "auth" },
+			});
+			expect(await webAccessService.resolve(user.id)).toBeNull();
+			mode = "native-search";
+			const original = globalThis.fetch;
+			vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+				const request = new Request(input, init);
+				const url = new URL(request.url);
+				if (url.origin !== "https://api.openai.com" && url.origin !== "https://api.firecrawl.dev")
+					return original(input, init);
+				return original(url.origin === "https://api.firecrawl.dev" ? `${baseURL}/firecrawl` : `${baseURL}/responses`, {
+					method: request.method,
+					headers: request.headers,
+					body: await request.arrayBuffer(),
+					signal: request.signal,
+				});
+			});
+			try {
+				const api = client(
+					undefined,
+					new Headers({ "x-ai-native-search": "1", "x-ai-destination": aiDestination(current) }),
+				);
+				const thread = await api.agent.threads.start({ scope: "career", aiProviderId: current.id });
+				const send = async (message: UIMessage) => {
+					const stream = await api.agent.messages.send({
+						threadId: thread.id,
+						message,
+						context: { web: true, memory: true, application: true },
+					});
+					for await (const chunk of stream) expect(typeof chunk).toBe("string");
+					return api.agent.threads.get({ id: thread.id });
+				};
+				const pending = await send({
+					id: "query",
+					role: "user",
+					parts: [{ type: "text", text: "Find fictional engineer roles" }],
+				});
+				const approval = pending.messages.find((message) =>
+					message.parts.some((part) => part.type === "tool-search_web"),
+				);
+				if (!approval) throw new Error("Missing exact query approval");
+				expect(requests.map((request) => request.path)).toEqual(["/v1/responses"]);
+				const answered = structuredClone(approval) as UIMessage;
+				for (const part of answered.parts) {
+					const tool = part as typeof part & { state?: string; approval?: { id: string; approved?: boolean } };
+					if (tool.type === "tool-search_web" && tool.approval) {
+						tool.state = "approval-responded";
+						tool.approval.approved = true;
+					}
+				}
+				const completed = await send(answered);
+				expect(JSON.stringify(completed.messages)).toContain("https://jobs.example.com/engineer");
+				expect(requests.map((request) => request.path)).toEqual([
+					"/v1/responses",
+					"/v1/firecrawl",
+					"/v1/responses",
+					"/v1/responses",
+				]);
+				const report = await api.ai.usage({ includeWebSearch: true });
+				expect(report.groups).toEqual([expect.objectContaining({ action: "career-chat", requests: 3 })]);
+				expect((await webAccessService.status(user.id)).testResult?.search).toEqual({ success: false, error: "auth" });
+			} finally {
+				vi.unstubAllGlobals();
+			}
+		}));
+
+	it("aggregates native-search attempts compatibly for old clients and separates opted-in reports without losing account isolation", () =>
+		run(async () => {
+			const connection = await provider();
+			for (const action of ["assistant", "web-search", "web-search"] as const)
+				await generateText({
+					model: getModel({ ...connection, usage: createAiUsage(user.id, action, connection) }),
+					prompt: "Fictional query",
+					maxRetries: 0,
+				});
+			await db.insert(tables.aiRequest).values({
+				userId: "usage-bob",
+				operationId: "foreign-search",
+				action: "web-search",
+				providerId: connection.id,
+				label: connection.label,
+				provider: connection.provider,
+				model: connection.model,
+			});
+			const legacy = await client(["read"]).ai.usage({});
+			expect(legacy.requests).toBe(3);
+			expect(legacy.groups).toEqual([
+				expect.objectContaining({ action: "assistant", requests: 3, providerId: connection.id }),
+			]);
+			const detailed = await client(["read"]).ai.usage({ includeWebSearch: true });
+			expect(detailed.requests).toBe(3);
+			expect(detailed.groups).toHaveLength(2);
+			expect(detailed.groups).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({ action: "assistant", requests: 1 }),
+					expect.objectContaining({ action: "web-search", requests: 2 }),
+				]),
+			);
+			const exported = await client(["read"]).auth.exportData({});
+			expect(exported.career.aiRequests?.filter((row) => row.action === "web-search")).toHaveLength(2);
+			expect(JSON.stringify(exported)).not.toContain("foreign-search");
+			await authService.deleteAccount({ userId: user.id });
+			expect((await pool.query("select * from ai_request where user_id=$1", [user.id])).rows).toEqual([]);
+			expect((await pool.query("select * from ai_request where user_id=$1", ["usage-bob"])).rows).toHaveLength(1);
+			expect(requests).toHaveLength(3);
+		}));
 
 	it("keeps generated answer provenance through save, older-client edits and submitted snapshots", () =>
 		run(async () => {

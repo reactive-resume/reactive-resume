@@ -1386,7 +1386,17 @@
 				"tags": [
 					"AI"
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"name": "includeWebSearch",
+						"in": "query",
+						"schema": {
+							"type": "boolean"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -1426,6 +1436,7 @@
 															"writing-review",
 															"improve",
 															"parse-posting",
+															"web-search",
 															"autofill-posting",
 															"match-score",
 															"tailor-resume",
@@ -1685,11 +1696,15 @@
 										},
 										"explicitNoAi": {
 											"const": true
+										},
+										"nativeWebSearch": {
+											"const": 1
 										}
 									},
 									"required": [
 										"recipientApproval",
-										"explicitNoAi"
+										"explicitNoAi",
+										"nativeWebSearch"
 									]
 								}
 							}
@@ -36561,6 +36576,10 @@
 										"type": "string",
 										"minLength": 2,
 										"maxLength": 500
+									},
+									"aiProviderId": {
+										"type": "string",
+										"minLength": 1
 									}
 								},
 								"required": [
@@ -165080,6 +165099,10 @@
 										"type": "string",
 										"minLength": 2,
 										"maxLength": 500
+									},
+									"aiProviderId": {
+										"type": "string",
+										"minLength": 1
 									}
 								},
 								"required": [

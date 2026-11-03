@@ -211,6 +211,9 @@ let webRefetches = 0;
 let searchFailureCode = "SEARCH_AUTH";
 let searchWait;
 let searchRequestScope;
+let nativeConnection;
+let nativeDeclined = false;
+const nativeSearchRequests = [];
 const webQuery = () => ({
 	data: webStatus,
 	refetch: async () => {
@@ -231,6 +234,7 @@ const lanes = [{ id: "saved", category: "saved", label: "Saved" }];
 const timezoneHelpers = load(new URL("../../../packages/utils/src/timezone.ts", import.meta.url).pathname, { zod });
 const postingSource = load(schema("posting-source.ts"), { "@reactive-resume/utils/timezone": timezoneHelpers });
 const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx"), {
+	"@reactive-resume/ai/types": aiTypes,
 	"@reactive-resume/utils/timezone": timezoneHelpers,
 	"@reactive-resume/schema/applications/posting-source": postingSource,
 	"@reactive-resume/import/job-posting": { readPastedPostingHeader: () => null },
@@ -243,7 +247,16 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 				? webQuery()
 				: options.queryKey[0] === "posting-match" && duplicateLookupError
 					? duplicateObserver.getCurrentResult()
-					: { data: options.queryKey[0] === "posting-match" ? null : [], isPending: false, isError: false },
+					: {
+							data:
+								options.queryKey[0] === "capabilities"
+									? { nativeWebSearch: 1 }
+									: options.queryKey[0] === "posting-match"
+										? null
+										: [],
+							isPending: false,
+							isError: false,
+						},
 	},
 	"expo-router": { useRouter: () => ({ push() {} }) },
 	"./date": { parseDateOnly: () => new Date() },
@@ -273,6 +286,11 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 			applications: {
 				ai: {
 					searchPostings: async (_input, options) => {
+						if (_input.aiProviderId) {
+							nativeSearchRequests.push(_input);
+							if (nativeDeclined) throw new DOMException("Declined", "AbortError");
+							return [{ url: "https://jobs.example.com/designer", title: "Retrieved fictional role", description: "" }];
+						}
 						searchRequestScope = options.context?.scope;
 						await searchWait;
 						throw new ORPCError(searchFailureCode, { message: "private-key-material" });
@@ -305,6 +323,7 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 		orpc: {
 			applications: { findPosting: { queryOptions: () => ({ queryKey: ["posting-match"] }) } },
 			documents: { list: { queryOptions: () => ({ queryKey: [] }) } },
+			ai: { capabilities: { queryOptions: () => ({ queryKey: ["capabilities"] }) } },
 			webAccess: { status: { queryOptions: () => ({ queryKey: ["web-access"] }) } },
 		},
 	},
@@ -318,7 +337,7 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 	"@/features/documents/new-documents": { useNewDocuments: { getState: () => ({ markOpened() {} }) } },
 	"@/features/ai/providers": {
 		AIProviderSetupSheet: "AIProviderSetupSheet",
-		useHasAIProvider: () => ({ hasAIProvider: hasProvider }),
+		useHasAIProvider: () => ({ hasAIProvider: hasProvider, defaultProvider: nativeConnection }),
 	},
 	"@/features/ai/web-access": webAccess,
 	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
@@ -452,6 +471,37 @@ for (const [code, failure, message] of [
 	assert.ok(nodes(notice).some((node) => node.type === webAccess.SetUpWebAccess));
 	assert.doesNotMatch(JSON.stringify(notice), /private-key-material/);
 }
+reset();
+scope = "alice";
+webStatus = {
+	search: false,
+	configured: true,
+	provider: "firecrawl",
+	testResult: { search: { success: false, error: "auth" } },
+};
+nativeConnection = {
+	id: "direct-search",
+	label: "Fictional search connection",
+	provider: "openai",
+	baseURL: "https://api.openai.com/v1",
+};
+const retryForm = () => render(AddApplicationSheet, { onClose() {} });
+control(retryForm(), "Role, company or location").onChangeText("Fictional engineer");
+nativeDeclined = true;
+control(retryForm(), "Retry with Fictional search connection").onPress();
+await settle();
+assert.equal(control(retryForm(), "Role, company or location").value, "Fictional engineer");
+nativeDeclined = false;
+control(retryForm(), "Retry with Fictional search connection").onPress();
+await settle();
+assert.deepEqual(nativeSearchRequests, [
+	{ query: "Fictional engineer", aiProviderId: "direct-search" },
+	{ query: "Fictional engineer", aiProviderId: "direct-search" },
+]);
+assert.match(JSON.stringify(retryForm()), /Retrieved fictional role/);
+nativeConnection = undefined;
+console.log("PASS native persisted auth failure and declined fallback retain named retry and typed query");
+
 for (const change of ["account", "server", "cancellation", "unmount"]) {
 	reset();
 	scope = "alice";

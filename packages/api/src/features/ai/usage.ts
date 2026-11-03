@@ -128,7 +128,7 @@ export async function readAiUsage(
 	return combineAiUsage((await readAiUsages(userId, operationIds, reader)).values());
 }
 
-export async function readWeeklyAiUsage(userId: string, now = new Date()) {
+export async function readWeeklyAiUsage(userId: string, now = new Date(), includeWebSearch = false) {
 	const [owner] = await db.select({ timezone: user.timezone }).from(user).where(eq(user.id, userId));
 	if (!owner) throw new ORPCError("NOT_FOUND");
 	const timezone = owner.timezone ?? "UTC";
@@ -139,11 +139,15 @@ export async function readWeeklyAiUsage(userId: string, now = new Date()) {
 	const boundary = bounds.rows[0];
 	if (!boundary) throw new Error("AI_USAGE_WEEK_UNAVAILABLE");
 	const range = { start: new Date(boundary.start), end: new Date(boundary.end) };
+	// Older clients have a closed action map; current clients opt into the distinct search action.
+	const action = includeWebSearch
+		? aiRequest.action
+		: sql<AiAction>`case when ${aiRequest.action} = 'web-search' then 'assistant' else ${aiRequest.action} end`;
 	const groups = await db
-		.select({ action: aiRequest.action, ...selection(), requests: count() })
+		.select({ action, ...selection(), requests: count() })
 		.from(aiRequest)
 		.where(and(eq(aiRequest.userId, userId), gte(aiRequest.createdAt, range.start), lt(aiRequest.createdAt, range.end)))
-		.groupBy(aiRequest.action, aiRequest.providerId, aiRequest.label, aiRequest.provider, aiRequest.model)
-		.orderBy(aiRequest.label, aiRequest.action, aiRequest.model);
+		.groupBy(action, aiRequest.providerId, aiRequest.label, aiRequest.provider, aiRequest.model)
+		.orderBy(aiRequest.label, action, aiRequest.model);
 	return { ...range, timezone, requests: groups.reduce((sum, row) => sum + row.requests, 0), groups };
 }

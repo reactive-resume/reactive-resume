@@ -7966,6 +7966,10 @@ msgstr "యాప్ తెరవబడకపోతే, అది ఇన్‌�
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "వెబ్ యాక్సెస్ కీని తిరస్కరించినా లేదా కోటా ముగిసినా, ఈ AI కనెక్షన్ తన సొంత శోధన సేవతో మళ్లీ శోధించవచ్చు. దీనివల్ల అదనపు AI అభ్యర్థనలు, ఛార్జీలు రావచ్చు."
+
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -11131,6 +11135,10 @@ msgstr "మీరు మాత్రమే, మీరు భాగస్వా�
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "వెబ్ యాక్సెస్ కీని తిరస్కరించినా లేదా కోటా ముగిసినా, ఈ AI కనెక్షన్‌కు మీ శోధన ప్రశ్న, శోధించాల్సిన దేశాలు మాత్రమే పంపబడతాయి. పత్రాలు, జ్ఞానం లేదా ఉద్యోగ దరఖాస్తు సందర్భం జోడించబడదు. ప్రొవైడర్ శోధనకు ఛార్జీలు ఉండవచ్చు."
+
 #: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "ఆన్‌సైట్"
@@ -13489,6 +13497,11 @@ msgstr ""
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry saving"
 msgstr "సేవ్ చేయడానికి మళ్లీ ప్రయత్నించండి"
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel}తో మళ్లీ ప్రయత్నించండి"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
@@ -16889,6 +16902,10 @@ msgstr "ఈ సర్వర్ ఫైల్ సూచనలను మాత్�
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "ఈ సర్వర్ కొత్త ఖాతాలను అంగీకరించడం లేదు. ఇప్పటికే ఉన్న ఖాతాతో సైన్ ఇన్ చేయండి."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "ఈ సర్వర్ లేదా AI కనెక్షన్ ప్రొవైడర్ సొంత వెబ్ శోధనకు మద్దతు ఇవ్వదు."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "ఈ సర్వర్ ప్రామాణిక దశలను ఉపయోగిస్తుంది కాబట్టి ఫైల్‌లోని దశల పేర్లు అలాగే ఉండవు."
@@ -18094,6 +18111,7 @@ msgstr "వెబ్ పేజీ"
 msgid "Web page preview"
 msgstr "వెబ్ పేజీ ప్రివ్యూ"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "వెబ్ పరిశోధన"

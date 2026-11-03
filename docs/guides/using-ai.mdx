@@ -179,7 +179,7 @@ Select **Edit** on a provider's row.
 
 Open **Settings → AI & developer → AI usage this week**. On native mobile, open **Settings → AI providers**. The report shows recorded request attempts for your account, grouped by connection, action and requested model. Select **Refresh usage** to read the latest totals. Weeks run from Monday through Sunday in your saved account timezone; the report shows its dates and timezone.
 
-One request attempt means one call to the provider transport after the server's authorization and context checks. A retry counts again. If an assistant calls a model, runs a tool, then calls the model again, that is two attempts. Stream chunks and running a tool do not add attempts. Copying, saving or reopening a result, deterministic checks, browser speech and actions refused before dispatch add none. Provider connection tests and scheduled AI work count too. Web search and page reading are separate services and are outside this AI report.
+One request attempt means one call to the provider transport after the server's authorization and context checks. A retry counts again. If an assistant calls a model, runs a tool, then calls the model again, that is two attempts. Stream chunks and tools that make no AI request add none. A provider-native search fallback makes an AI request and counts as an additional attempt. Copying, saving or reopening a result, deterministic checks, browser speech and actions refused before dispatch add none. Provider connection tests and scheduled AI work count too. Ordinary web-service search and page reading are outside this AI report. Explicit Save-job AI search retries appear as **Web research**; chat fallbacks stay under that conversation’s action. Older app versions group standalone AI search retries under **Assistant**.
 
 <Frame caption="Two recorded attempts through a fictional connection: its test and a message review">
   <img
@@ -267,6 +267,8 @@ Career adds these uses:
 | Reading a practice question aloud | The question text, to the selected speech connection; browser speech can be used instead.                                                                                              |
 
 Workspace text actions use your default connection. **Voice settings** can use another speech-capable connection or browser speech. Speech usage can be billed separately from text coaching. Automatic role discovery uses your web search connection; it does not need an AI model. See [Career controls and data](/guides/career-workspace-reference#coach-context-and-ai-actions).
+
+A direct OpenAI, Anthropic or Google Gemini connection can retry search after the web service rejects its key or exhausts its quota, if you approve that possibility in the operation’s sharing dialog. The fallback receives the approved query and search country, without adding document or Knowledge context. It may add AI requests and charges. Custom endpoints and compatible gateways are not assumed to support it; individual models may still refuse. Scheduled discovery keeps using its web service.
 
 If web research fails in Coach or the document assistant, the message names a rejected key, exhausted quota or temporary request limit. **Set up web access** opens personal connection repair without losing your unsent message. A server-managed service directs you to the server administrator instead. If enhanced page reading fails and the built-in reader succeeds, the message says which reader was used; a working server search remains separate from your personal page reader.
 

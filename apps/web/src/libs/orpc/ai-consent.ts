@@ -2,7 +2,7 @@ import type { client } from "./client";
 import type { AiVoiceOperation } from "@reactive-resume/ai/types";
 import { t } from "@lingui/core/macro";
 import { aiConfiguredModels, aiModelForTask, aiTaskForOperation } from "@reactive-resume/ai/task-models";
-import { aiDestination, NO_AI_DESTINATION } from "@reactive-resume/ai/types";
+import { aiDestination, NO_AI_DESTINATION, supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { confirmOperation } from "@/hooks/use-confirm";
 
 type ConsentApi = Pick<typeof client, "aiProviders" | "agent" | "webAccess" | "ai" | "auth">;
@@ -14,7 +14,7 @@ export async function authorizeAiRequest(
 	input: unknown,
 	api: ConsentApi,
 	signal?: AbortSignal,
-): Promise<{ aiDestination?: string; webDestination?: string } | undefined> {
+): Promise<{ aiDestination?: string; webDestination?: string; nativeSearchFallback?: boolean } | undefined> {
 	const operation = path.join(".");
 	const fields = input && typeof input === "object" ? (input as Record<string, unknown>) : {};
 	const scheduled = operation === "career.saveSchedule" && fields.enabled !== false && fields.kind !== "follow-up";
@@ -41,7 +41,11 @@ export async function authorizeAiRequest(
 		operation !== "career.voice.transcribe"
 	)
 		return;
-	const webOnly = operation === "applications.ai.searchPostings" || (scheduled && fields.kind === "discovery");
+	const nativeSearchRequested =
+		operation === "applications.ai.searchPostings" && typeof fields.aiProviderId === "string";
+	const webOnly =
+		(operation === "applications.ai.searchPostings" && !nativeSearchRequested) ||
+		(scheduled && fields.kind === "discovery");
 	const optionalAi = operation === "applications.ai.parsePosting";
 	const voiceKind =
 		operation === "career.voice.speak"
@@ -84,8 +88,25 @@ export async function authorizeAiRequest(
 					t`This server cannot confirm reading without AI. Save the posting manually or update the server.`,
 				);
 		}
+		const messageContext =
+			fields.context && typeof fields.context === "object" ? (fields.context as Record<string, unknown>) : {};
+		const eligibleForNativeSearch =
+			provider &&
+			supportsNativeWebSearch(provider) &&
+			(nativeSearchRequested || (chat && messageContext.web !== false));
+		const nativeCapabilities = eligibleForNativeSearch
+			? await api.ai.capabilities({}, options).catch(() => null)
+			: null;
+		const nativeSearchFallback = eligibleForNativeSearch && nativeCapabilities?.nativeWebSearch === 1;
+		if (nativeSearchRequested && !nativeSearchFallback)
+			throw new Error(t`This server or AI connection doesn't support native web search.`);
+		const nativeSearchNotice =
+			nativeSearchFallback && chat
+				? t`If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges.`
+				: "";
 		const destination = provider ? aiDestination(provider, voice) : NO_AI_DESTINATION;
 		const web =
+			nativeSearchFallback ||
 			path[0] === "applications" ||
 			scheduled ||
 			(chat &&
@@ -119,7 +140,7 @@ export async function authorizeAiRequest(
 												: operation === "applications.ai.parsePosting"
 													? t`The posting text or retrieved page. Links also go to the reader and the site being read.`
 													: operation === "applications.ai.searchPostings"
-														? t`Your search terms. These also go to the configured search service.`
+														? t`Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge.`
 														: operation === "coverLetters.draft"
 															? t`The selected resume and this letter's recipient and posting information.`
 															: t`Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action.`;
@@ -140,7 +161,7 @@ export async function authorizeAiRequest(
 				(test ? aiConfiguredModels(provider).join(", ") : task ? aiModelForTask(provider, task) : provider.model))
 			: "";
 		const allowed = await confirmOperation(provider ? t`Share data with ${provider.label}?` : t`Use web access?`, {
-			description: `${provider ? `${provider.label} · ${disclosedModel} · ${provider.baseURL ?? provider.provider}` : t`No AI provider is used for this operation.`}\n\n${data}\n\n${webNotice} ${scheduled ? t`This allows recurring processing until you turn the schedule off.` : ""} ${t`Provider retention follows its own policy. Your provider may charge for this request.`}`,
+			description: `${provider ? `${provider.label} · ${disclosedModel} · ${provider.baseURL ?? provider.provider}` : t`No AI provider is used for this operation.`}\n\n${data}\n\n${webNotice} ${nativeSearchNotice} ${scheduled ? t`This allows recurring processing until you turn the schedule off.` : ""} ${t`Provider retention follows its own policy. Your provider may charge for this request.`}`,
 			confirmText: rebind ? t`Use this destination` : scheduled ? t`Allow scheduled sharing` : t`Allow this operation`,
 			cancelText: t`Don't share`,
 			...(signal ? { signal } : {}),
@@ -156,6 +177,7 @@ export async function authorizeAiRequest(
 		signal?.throwIfAborted();
 		return {
 			...(destination ? { aiDestination: destination } : {}),
+			...(nativeSearchFallback ? { nativeSearchFallback: true } : {}),
 			...(access ? { webDestination: access.revision } : {}),
 		};
 	});

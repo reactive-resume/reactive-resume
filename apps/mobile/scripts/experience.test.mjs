@@ -390,6 +390,10 @@ assert.equal(
 
 const stages = load("features/applications/stages.ts");
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
+mocks["@reactive-resume/ai/types"] = load("../../../packages/ai/src/types.ts", {
+	zod,
+	"./defaults": load("../../../packages/ai/src/defaults.ts"),
+});
 const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
 const followUpDomain = load("../../../packages/schema/src/applications/follow-up.ts", {
 	"@reactive-resume/utils/timezone": timeParser,
@@ -1509,6 +1513,7 @@ const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 		orpc: {
 			applications: { findPosting: { queryOptions: () => ({ queryKey: ["posting-match"] }) } },
 			documents: { list: { queryOptions: () => ({ queryKey: ["documents"] }) } },
+			ai: { capabilities: { queryOptions: () => ({ queryKey: ["capabilities"] }) } },
 			webAccess: { status: { queryOptions: () => ({ queryKey: ["web"] }) } },
 		},
 	},

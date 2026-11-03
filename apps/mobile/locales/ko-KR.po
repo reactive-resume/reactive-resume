@@ -6224,6 +6224,10 @@ msgstr "웹 액세스를 사용하는 경우 검색어는 서버의 검색 서�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "웹 액세스를 사용하는 경우 검색어는 서버의 검색 서비스와 해당 서비스가 사용하는 검색 엔진으로 이동하고 링크는 읽고 있는 사이트로 이동합니다."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "웹 액세스에서 키가 거부되거나 할당량이 소진되면 이 AI 연결이 자체 검색 서비스로 다시 검색할 수 있습니다. 추가 AI 요청과 요금이 발생할 수 있습니다."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "무시하다"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "웹 액세스에서 키가 거부되거나 할당량이 소진되면 이 AI 연결에는 검색어와 검색 대상 국가만 전송됩니다. 문서, 지식, 지원서 맥락은 추가되지 않습니다. 제공업체의 검색에는 요금이 부과될 수 있습니다."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "다시 저장해 보세요"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel}(으)로 다시 시도"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "이 서버는 파일 참조만 내보냅니다. 업로드한 파일을 �
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "이 서버는 앱을 사용하기에는 너무 오래되었습니다. 관리자에게 업데이트를 요청하세요."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "이 서버 또는 AI 연결은 제공업체의 자체 웹 검색을 지원하지 않습니다."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "이 서버는 입력한 주소와 다른 주소를 보고합니다. 사용하는 주소를 입력하거나 관리자에게 문의하세요."
@@ -14588,6 +14604,7 @@ msgstr "웹 액세스 설정을 저장하거나 로드할 수 없습니다."
 msgid "Web page"
 msgstr "웹 페이지"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "웹 리서치"

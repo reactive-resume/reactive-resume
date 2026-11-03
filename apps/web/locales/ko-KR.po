@@ -7966,6 +7966,10 @@ msgstr "앱이 열리지 않으면 앱이 설치된 기기에서 다시 시도�
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "웹 액세스에서 키가 거부되거나 할당량이 소진되면 이 AI 연결이 자체 검색 서비스로 다시 검색할 수 있습니다. 추가 AI 요청과 요금이 발생할 수 있습니다."
+
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -11131,6 +11135,10 @@ msgstr "공유하기 전까지는 오직 당신뿐입니다. 이력서는 비공
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "웹 액세스에서 키가 거부되거나 할당량이 소진되면 이 AI 연결에는 검색어와 검색 대상 국가만 전송됩니다. 문서, 지식, 지원서 맥락은 추가되지 않습니다. 제공업체의 검색에는 요금이 부과될 수 있습니다."
+
 #: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "대면"
@@ -13489,6 +13497,11 @@ msgstr ""
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry saving"
 msgstr "다시 저장해 보세요"
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel}(으)로 다시 시도"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
@@ -16889,6 +16902,10 @@ msgstr "이 서버는 파일 참조만 내보냅니다. 업로드한 파일을 �
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "이 서버는 새 계정을 받지 않습니다. 기존 계정으로 로그인하세요."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "이 서버 또는 AI 연결은 제공업체의 자체 웹 검색을 지원하지 않습니다."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "이 서버는 기본 단계를 사용하므로 파일의 단계 이름은 유지되지 않습니다."
@@ -18094,6 +18111,7 @@ msgstr "웹 페이지"
 msgid "Web page preview"
 msgstr "웹 페이지 미리보기"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "웹 리서치"

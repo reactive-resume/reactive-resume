@@ -6224,6 +6224,10 @@ msgstr "Hvis nettilgang brukes, går søkeord til serverens søketjeneste og sø
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Hvis nettilgang brukes, går søkeord til serverens søketjeneste og søkemotorene den bruker, og lenker går til nettstedene som leses."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Hvis nettilgang avviser nøkkelen eller kvoten er brukt opp, kan denne KI-tilkoblingen gjenta søket med sin egen søketjeneste. Dette kan medføre flere KI-forespørsler og kostnader."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Overse"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Hvis nettilgang avviser nøkkelen eller kvoten er brukt opp, sendes bare søket ditt og søkelandene til denne KI-tilkoblingen. Dokumenter, Kunnskap og søknadskontekst legges ikke til. Leverandørens søk kan koste penger."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Prøv å lagre på nytt"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Prøv igjen med {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Denne serveren eksporterer bare filreferanser. Oppdater den for å ta me
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Denne serveren er for gammel for appen. Be administratoren om å oppdatere den."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Denne serveren eller KI-tilkoblingen støtter ikke leverandørens innebygde nettsøk."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Denne serveren rapporterer en annen adresse enn den du skrev inn. Skriv inn adressen den bruker, eller spør administratoren din."
@@ -14588,6 +14604,7 @@ msgstr "Innstillinger for nettilgang kunne ikke lagres eller lastes inn."
 msgid "Web page"
 msgstr "Nettside"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Nettsøk"

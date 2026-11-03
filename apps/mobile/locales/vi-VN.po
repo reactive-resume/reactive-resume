@@ -6224,6 +6224,10 @@ msgstr "Nếu quyền truy cập web được sử dụng, các cụm từ tìm 
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Nếu quyền truy cập web được sử dụng, các cụm từ tìm kiếm sẽ chuyển tới dịch vụ tìm kiếm trên máy chủ của bạn và các công cụ tìm kiếm mà nó sử dụng, đồng thời các liên kết sẽ chuyển đến các trang web đang được đọc."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Nếu truy cập web từ chối khóa hoặc hết hạn mức, kết nối AI này có thể tìm lại bằng dịch vụ tìm kiếm riêng. Việc này có thể phát sinh thêm yêu cầu AI và phí."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Phớt lờ"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Nếu truy cập web từ chối khóa hoặc hết hạn mức, chỉ truy vấn và các quốc gia tìm kiếm được gửi đến kết nối AI này. Không thêm tài liệu, Kiến thức hay ngữ cảnh hồ sơ ứng tuyển. Dịch vụ tìm kiếm của nhà cung cấp có thể tính phí."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Thử lưu lại"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Thử lại với {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Máy chủ này chỉ xuất tham chiếu tệp. Hãy cập nhật để
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Máy chủ này quá cũ đối với ứng dụng. Hãy yêu cầu quản trị viên của bạn cập nhật nó."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Máy chủ hoặc kết nối AI này không hỗ trợ tìm kiếm web tích hợp của nhà cung cấp."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Máy chủ này báo cáo địa chỉ khác với địa chỉ bạn đã nhập. Nhập địa chỉ mà nó sử dụng hoặc hỏi quản trị viên của bạn."
@@ -14588,6 +14604,7 @@ msgstr "Không thể lưu hoặc tải cài đặt truy cập web."
 msgid "Web page"
 msgstr "Trang web"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Nghiên cứu web"

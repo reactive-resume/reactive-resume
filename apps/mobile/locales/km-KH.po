@@ -6224,6 +6224,10 @@ msgstr "ប្រសិនបើការចូលប្រើគេហទំព
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "ប្រសិនបើការចូលប្រើគេហទំព័រត្រូវបានប្រើ ពាក្យស្វែងរកទៅកាន់សេវាកម្មស្វែងរករបស់ម៉ាស៊ីនមេរបស់អ្នក និងម៉ាស៊ីនស្វែងរកដែលវាប្រើ ហើយតំណភ្ជាប់ទៅកាន់គេហទំព័រដែលកំពុងអាន។"
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "ប្រសិនបើការចូលប្រើវេបបដិសេធសោ ឬកូតាអស់ ការតភ្ជាប់ AI នេះអាចស្វែងរកឡើងវិញដោយប្រើសេវាស្វែងរកផ្ទាល់ខ្លួន។ វាអាចបន្ថែមសំណើ AI និងថ្លៃសេវា។"
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "មិនអើពើ"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "ប្រសិនបើការចូលប្រើវេបបដិសេធសោ ឬកូតាអស់ មានតែសំណួរស្វែងរក និងប្រទេសសម្រាប់ស្វែងរករបស់អ្នកប៉ុណ្ណោះដែលត្រូវបានផ្ញើទៅការតភ្ជាប់ AI នេះ។ មិនបន្ថែមឯកសារ ចំណេះដឹង ឬបរិបទពាក្យសុំការងារទេ។ ការស្វែងរករបស់អ្នកផ្តល់សេវាអាចគិតថ្លៃ។"
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "ព្យាយាមរក្សាទុកម្តងទៀត"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "សាកល្បងម្ដងទៀតជាមួយ {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "ម៉ាស៊ីនមេនេះនាំចេញតែឯកសា
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "ម៉ាស៊ីនមេនេះចាស់ពេកសម្រាប់កម្មវិធី។ សួរអ្នកគ្រប់គ្រងរបស់អ្នកដើម្បីធ្វើបច្ចុប្បន្នភាពវា។"
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "ម៉ាស៊ីនមេ ឬការតភ្ជាប់ AI នេះមិនគាំទ្រការស្វែងរកវេបផ្ទាល់របស់អ្នកផ្តល់សេវាទេ។"
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "ម៉ាស៊ីនមេនេះរាយការណ៍អាសយដ្ឋានខុសពីអាសយដ្ឋានដែលអ្នកបានបញ្ចូល។ បញ្ចូលអាសយដ្ឋានដែលវាប្រើ ឬសួរអ្នកគ្រប់គ្រងរបស់អ្នក។"
@@ -14588,6 +14604,7 @@ msgstr "ការកំណត់ការចូលប្រើគេហទំព
 msgid "Web page"
 msgstr "ទំព័រវេប"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "ការស្រាវជ្រាវតាមអ៊ីនធឺណិត"

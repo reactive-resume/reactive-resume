@@ -6224,6 +6224,10 @@ msgstr "যদি ওয়েব অ্যাক্সেস ব্যবহা
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "যদি ওয়েব অ্যাক্সেস ব্যবহার করা হয়, অনুসন্ধান শব্দগুলি আপনার সার্ভারের অনুসন্ধান পরিষেবা এবং এটি ব্যবহার করা অনুসন্ধান ইঞ্জিনগুলিতে যায় এবং লিঙ্কগুলি পঠিত সাইটগুলিতে যায়৷"
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "ওয়েব অ্যাক্সেস কী প্রত্যাখ্যান করলে বা কোটা শেষ হলে, এই AI সংযোগ নিজস্ব সার্চ সেবা দিয়ে আবার অনুসন্ধান করতে পারে। এতে অতিরিক্ত AI অনুরোধ ও খরচ হতে পারে।"
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "উপেক্ষা করুন"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "ওয়েব অ্যাক্সেস কী প্রত্যাখ্যান করলে বা কোটা শেষ হলে, এই AI সংযোগে শুধু আপনার অনুসন্ধানের প্রশ্ন ও অনুসন্ধানের দেশগুলো পাঠানো হয়। কোনো নথি, জ্ঞান বা চাকরির আবেদনের প্রসঙ্গ যোগ করা হয় না। প্রদানকারীর অনুসন্ধানের জন্য খরচ হতে পারে।"
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "আবার সংরক্ষণ করার চেষ্টা করুন"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel} দিয়ে আবার চেষ্টা করুন"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "এই সার্ভার শুধু ফাইলের উল্�
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "এই সার্ভারটি অ্যাপের জন্য খুবই পুরানো৷ আপনার প্রশাসককে এটি আপডেট করতে বলুন।"
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "এই সার্ভার বা AI সংযোগ প্রদানকারীর নিজস্ব ওয়েব অনুসন্ধান সমর্থন করে না।"
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "এই সার্ভারটি আপনার প্রবেশ করানো ঠিকানার চেয়ে একটি ভিন্ন ঠিকানা প্রতিবেদন করে৷ এটি যে ঠিকানাটি ব্যবহার করে তা লিখুন বা আপনার প্রশাসককে জিজ্ঞাসা করুন৷"
@@ -14588,6 +14604,7 @@ msgstr "ওয়েব অ্যাক্সেস সেটিংস সংর
 msgid "Web page"
 msgstr "ওয়েব পেজ"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "ওয়েব গবেষণা"

@@ -6224,6 +6224,10 @@ msgstr "ವೆಬ್ ಪ್ರವೇಶವನ್ನು ಬಳಸಿದರೆ, �
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "ವೆಬ್ ಪ್ರವೇಶವನ್ನು ಬಳಸಿದರೆ, ಹುಡುಕಾಟ ಪದಗಳು ನಿಮ್ಮ ಸರ್ವರ್‌ನ ಹುಡುಕಾಟ ಸೇವೆಗೆ ಮತ್ತು ಅದು ಬಳಸುವ ಹುಡುಕಾಟ ಎಂಜಿನ್‌ಗಳಿಗೆ ಹೋಗುತ್ತವೆ ಮತ್ತು ಲಿಂಕ್‌ಗಳು ಓದುತ್ತಿರುವ ಸೈಟ್‌ಗಳಿಗೆ ಹೋಗುತ್ತವೆ."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "ವೆಬ್ ಪ್ರವೇಶವು ಕೀಲಿಯನ್ನು ತಿರಸ್ಕರಿಸಿದರೆ ಅಥವಾ ಕೋಟಾ ಮುಗಿದರೆ, ಈ AI ಸಂಪರ್ಕವು ತನ್ನದೇ ಹುಡುಕಾಟ ಸೇವೆಯಿಂದ ಮತ್ತೆ ಹುಡುಕಬಹುದು. ಇದರಿಂದ ಹೆಚ್ಚುವರಿ AI ವಿನಂತಿಗಳು ಮತ್ತು ಶುಲ್ಕಗಳು ಉಂಟಾಗಬಹುದು."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "ನಿರ್ಲಕ್ಷಿಸಿ"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "ವೆಬ್ ಪ್ರವೇಶವು ಕೀಲಿಯನ್ನು ತಿರಸ್ಕರಿಸಿದರೆ ಅಥವಾ ಕೋಟಾ ಮುಗಿದರೆ, ಈ AI ಸಂಪರ್ಕಕ್ಕೆ ನಿಮ್ಮ ಹುಡುಕಾಟ ಪ್ರಶ್ನೆ ಮತ್ತು ಹುಡುಕಾಟದ ದೇಶಗಳನ್ನು ಮಾತ್ರ ಕಳುಹಿಸಲಾಗುತ್ತದೆ. ಯಾವುದೇ ದಾಖಲೆ, ಜ್ಞಾನ ಅಥವಾ ಉದ್ಯೋಗ ಅರ್ಜಿಯ ಸಂದರ್ಭವನ್ನು ಸೇರಿಸಲಾಗುವುದಿಲ್ಲ. ಪೂರೈಕೆದಾರರ ಹುಡುಕಾಟಕ್ಕೆ ಶುಲ್ಕ ಇರಬಹುದು."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "ಉಳಿಸಲು ಮರುಪ್ರಯತ್ನಿಸಿ"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel} ಮೂಲಕ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "ಈ ಸರ್ವರ್ ಫೈಲ್ ಉಲ್ಲೇಖಗಳನ್ನು
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "ಈ ಸರ್ವರ್ ಅಪ್ಲಿಕೇಶನ್‌ಗೆ ತುಂಬಾ ಹಳೆಯದಾಗಿದೆ. ಅದನ್ನು ನವೀಕರಿಸಲು ನಿಮ್ಮ ನಿರ್ವಾಹಕರನ್ನು ಕೇಳಿ."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "ಈ ಸರ್ವರ್ ಅಥವಾ AI ಸಂಪರ್ಕವು ಪೂರೈಕೆದಾರರ ಸ್ವಂತ ವೆಬ್ ಹುಡುಕಾಟವನ್ನು ಬೆಂಬಲಿಸುವುದಿಲ್ಲ."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "ಈ ಸರ್ವರ್ ನೀವು ನಮೂದಿಸಿದ ವಿಳಾಸಕ್ಕಿಂತ ಬೇರೆ ವಿಳಾಸವನ್ನು ವರದಿ ಮಾಡುತ್ತದೆ. ಅದು ಬಳಸುವ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ ಅಥವಾ ನಿಮ್ಮ ನಿರ್ವಾಹಕರನ್ನು ಕೇಳಿ."
@@ -14588,6 +14604,7 @@ msgstr "ವೆಬ್ ಪ್ರವೇಶ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ�
 msgid "Web page"
 msgstr "ವೆಬ್ ಪುಟ"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "ವೆಬ್ ಸಂಶೋಧನೆ"

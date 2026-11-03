@@ -8,7 +8,7 @@ import { orpc } from "@/libs/orpc/client";
 
 export function AiUsageSection() {
 	const { t, i18n } = useLingui();
-	const query = useQuery(orpc.ai.usage.queryOptions());
+	const query = useQuery(orpc.ai.usage.queryOptions({ input: { includeWebSearch: true } }));
 	const report = query.data;
 	const date = (value: Date) => i18n.date(value, { dateStyle: "medium", timeZone: report?.timezone ?? "UTC" });
 	return (

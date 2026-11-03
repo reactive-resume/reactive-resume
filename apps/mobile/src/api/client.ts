@@ -26,6 +26,7 @@ export type ClientContext = {
 	scope?: string | undefined;
 	aiDestination?: string | undefined;
 	webDestination?: string | undefined;
+	nativeSearchFallback?: boolean | undefined;
 };
 
 export class SessionChangedError extends Error {
@@ -98,6 +99,7 @@ const createLink = (label: string) =>
 		headers: ({ context }) => ({
 			...(context.aiDestination ? { "x-ai-destination": context.aiDestination } : {}),
 			...(context.webDestination ? { "x-web-destination": context.webDestination } : {}),
+			...(context.nativeSearchFallback ? { "x-ai-native-search": "1" } : {}),
 		}),
 		fetch: rpcFetch,
 		interceptors: [

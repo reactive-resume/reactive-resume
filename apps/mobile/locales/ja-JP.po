@@ -6224,6 +6224,10 @@ msgstr "Web アクセスが使用されている場合、検索用語はサー�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Web アクセスが使用されている場合、検索用語はサーバーの検索サービスとサーバーが使用する検索エンジンに移動し、リンクは読まれているサイトに移動します。"
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "ウェブアクセスでキーが拒否された場合や割り当てを使い切った場合、このAI接続は独自の検索サービスで再検索することがあります。AIリクエストや料金が追加で発生する可能性があります。"
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "無視する"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "ウェブアクセスでキーが拒否された場合や割り当てを使い切った場合、このAI接続には検索クエリと検索対象の国のみが送信されます。ドキュメント、ナレッジ、応募のコンテキストは追加されません。プロバイダーの検索には料金が発生する場合があります。"
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "保存を再試行してください"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "{nativeSearchLabel}で再試行"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "このサーバーはファイル参照のみをエクスポートしま
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "このサーバーはアプリには古すぎます。管理者に更新を依頼してください。"
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "このサーバーまたはAI接続は、プロバイダー固有のウェブ検索に対応していません。"
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "このサーバーは、入力したアドレスとは異なるアドレスを報告します。使用するアドレスを入力するか、管理者に問い合わせてください。"
@@ -14588,6 +14604,7 @@ msgstr "Web アクセス設定を保存またはロードできませんでし�
 msgid "Web page"
 msgstr "Web ページ"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "ウェブリサーチ"

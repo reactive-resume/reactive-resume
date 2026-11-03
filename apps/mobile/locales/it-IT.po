@@ -6224,6 +6224,10 @@ msgstr "Se viene utilizzato l'accesso al Web, i termini di ricerca vanno al serv
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Se viene utilizzato l'accesso al Web, i termini di ricerca vengono indirizzati al servizio di ricerca del server e ai motori di ricerca da esso utilizzati, mentre i collegamenti vengono indirizzati ai siti letti."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Se l’accesso web rifiuta la chiave o la quota è esaurita, questa connessione IA può ripetere la ricerca con il proprio servizio. Ciò può comportare richieste IA e costi aggiuntivi."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Ignorare"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Se l’accesso web rifiuta la chiave o la quota è esaurita, a questa connessione IA vengono inviati solo la query e i paesi di ricerca. Non vengono aggiunti documenti, Conoscenze o contesto delle candidature. La ricerca del fornitore può essere a pagamento."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Riprovare a salvare"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Riprova con {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Questo server esporta solo riferimenti ai file. Aggiornalo per includere
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Questo server è troppo vecchio per l'app. Chiedi al tuo amministratore di aggiornarlo."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Questo server o questa connessione IA non supporta la ricerca web nativa del fornitore."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Questo server riporta un indirizzo diverso da quello inserito. Inserisci l'indirizzo utilizzato o chiedi al tuo amministratore."
@@ -14588,6 +14604,7 @@ msgstr "Impossibile salvare o caricare le impostazioni di accesso Web."
 msgid "Web page"
 msgstr "Pagina web"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Ricerca web"
