@@ -1,11 +1,62 @@
 import type { Route } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { strFromU8, unzipSync } from "fflate";
+import { Pool } from "pg";
 import { expect, test } from "../fixtures/test";
 
-test("account ZIP carries uploaded photo bytes and history after the source account is deleted", async ({
+test("account ZIP carries submission receipts, uploaded bytes and history after account deletion", async ({
 	authPage: page,
 }, info) => {
+	const applicationIds: string[] = [];
+	for (const status of ["never-sent", "saved", "closed", "applied"] as const) {
+		const response = await page.request.post("/api/openapi/applications", {
+			data: { company: `Fictional backup ${status}`, role: "Analyst", status: "saved" },
+		});
+		await expect(response).toBeOK();
+		const applicationId = (await response.json()) as string;
+		applicationIds.push(applicationId);
+		if (status !== "never-sent") {
+			await expect(
+				await page.request.put(`/api/openapi/applications/${applicationId}`, { data: { status: "applied" } }),
+			).toBeOK();
+			if (status !== "applied")
+				await expect(
+					await page.request.put(`/api/openapi/applications/${applicationId}`, { data: { status } }),
+				).toBeOK();
+		}
+		const ordinary = await page.request.get(`/api/openapi/applications/${applicationId}`);
+		await expect(ordinary).toBeOK();
+		expect(await ordinary.json()).not.toHaveProperty("submittedAt");
+	}
+	const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+	const applications = await (async () => {
+		try {
+			return (
+				await pool.query<{ id: string; status: string; applied_at: Date; submitted_at: Date | null }>(
+					"select id, status, applied_at, submitted_at from application where id = any($1::text[])",
+					[applicationIds],
+				)
+			).rows.map((row) => ({
+				id: row.id,
+				status: row.status,
+				appliedAt: row.applied_at.toISOString(),
+				submittedAt: row.submitted_at?.toISOString() ?? null,
+			}));
+		} finally {
+			await pool.end();
+		}
+	})();
+	expect(applications).toHaveLength(4);
+	expect(applications.find((row) => row.id === applicationIds[0])?.submittedAt).toBeNull();
+	for (const row of applications.filter((row) => row.id !== applicationIds[0])) expect(row.submittedAt).not.toBeNull();
+	const jsonExport = await page.request.get("/api/openapi/auth/account/export");
+	await expect(jsonExport).toBeOK();
+	const exported = await jsonExport.json();
+	await info.attach("SQL submission receipts and protected export", {
+		body: JSON.stringify({ applications, exported }, null, 2),
+		contentType: "application/json",
+	});
+	for (const row of applications) expect(exported.applications).toContainEqual(expect.objectContaining(row));
 	const created = await page.request.post("/api/openapi/resumes", {
 		data: { name: "Fictional backup resume", tags: [], withSampleData: false },
 	});
@@ -54,6 +105,7 @@ test("account ZIP carries uploaded photo bytes and history after the source acco
 	await saved.saveAs(path);
 	const archive = await readFile(path);
 	const files = unzipSync(archive);
+	expect(JSON.parse(strFromU8(files["applications.json"] ?? new Uint8Array()))).toEqual(exported.applications);
 	expect(files[file.path]).toEqual(originalBytes);
 	expect(Object.keys(files).filter((key) => key.startsWith(`versions/resumes/${id}/`)).length).toBeGreaterThanOrEqual(
 		2,
