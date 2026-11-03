@@ -11,10 +11,13 @@ const serverRequire = createRequire(new URL("../../server/package.json", import.
 const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
 // Lingui's t: a tagged template, or a descriptor ({ message, comment }) for strings with translator notes.
-const tag = (parts, ...values) =>
-	Array.isArray(parts)
+const translatedMessages = new Map();
+const tag = (parts, ...values) => {
+	const text = Array.isArray(parts)
 		? parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "")
 		: (parts?.message ?? "");
+	return translatedMessages.get(text) ?? text;
+};
 let hooks = [];
 let cursor = 0;
 const react = {
@@ -470,7 +473,7 @@ let creatingApplicationLetter = false;
 let stageUpdate = (input) => calls.push(input);
 let stageUpdateAsync = (input) =>
 	new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
-const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
+const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/application-detail/sections.tsx", {
 	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
 	"@reactive-resume/schema/applications/document-suggestions": suggestionsDomain,
 	"@tanstack/react-query": { useQueryClient: () => ({ invalidateQueries: async () => {} }) },
@@ -483,13 +486,22 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"./notes-queue": { createNotesQueue: () => ({}) },
 	"./hooks": {
 		useDocuments: () => ({ data: applicationDocuments }),
-		useDetailMutations: () => ({ createLetter: { isPending: creatingApplicationLetter } }),
+		useDetailMutations: () => ({
+			createLetter: { isPending: creatingApplicationLetter },
+			addNote: {},
+			updateEntry: {},
+			deleteEntry: {},
+		}),
 		useNow: () => new Date(),
 		useUserTime: () => time,
 		followUpReminder: () => null,
 		interviewReminder: () => null,
 	},
-	"./sheets": { FollowUpSheet: "FollowUpSheet", ReminderSheet: "ReminderSheet" },
+	"./sheets": {
+		FollowUpSheet: "FollowUpSheet",
+		ReminderSheet: "ReminderSheet",
+		TimelineEntrySheet: "TimelineEntrySheet",
+	},
 	"@/api/client": {
 		client: {
 			documents: {
@@ -540,6 +552,28 @@ const application = {
 	sentResumeVersionId: null,
 	sentCoverLetterVersionId: null,
 };
+for (const [marker, text, expected, french] of [
+	[undefined, "Replied", "Replied"],
+	[{ stageEntryId: null }, "Replied", "Followed up · Replied"],
+	[{ stageEntryId: null, kind: "reply" }, "Custom contact note", "Replied · Custom contact note"],
+	[{ stageEntryId: null, kind: "reply" }, "Replied", "Replied"],
+	[{ stageEntryId: null, kind: "reply" }, "Réponse donnée", "Réponse donnée", true],
+]) {
+	reset();
+	if (french) translatedMessages.set("Replied", "Réponse donnée");
+	const view = render(Timeline, {
+		application: {
+			...application,
+			activity: [{ id: "contact", type: "note", at: "2030-01-02", text, followedUp: marker }],
+		},
+		onOpenInterview() {},
+	});
+	assert.ok(
+		nodes(view).some((node) => node.props.title === expected),
+		`Canonical native contact label: ${expected}`,
+	);
+}
+console.log("PASS native timeline labels preserve contact kind after note edits");
 reset();
 tree = render(StageStepper, { application, onMarkApplied: () => calls.push("mark-applied") });
 assert.equal(

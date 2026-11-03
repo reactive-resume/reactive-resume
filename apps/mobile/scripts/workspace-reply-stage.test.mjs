@@ -38,6 +38,10 @@ const data = load(MOBILE + "/../../packages/schema/src/applications/data.ts", {
 	"@reactive-resume/utils/timezone": { timezoneSchema: zod.z.string() },
 });
 const tracker = load(MOBILE + "/../../packages/schema/src/applications/stage-baselines.ts", { "./data": data });
+const replyFields = load(MOBILE + "/../../packages/schema/src/applications/reply.ts", {
+	"./data": data,
+	"./follow-up": { isDateOnlyFollowUp: (row) => row.followUpDateOnly ?? false },
+});
 const state = load(MOBILE + "/src/features/workspace/state.ts", {});
 
 const tag = (strings, ...values) =>
@@ -53,6 +57,20 @@ function harness({ lifetime = 30 } = {}) {
 		applyCalls: 0,
 		undoReply: async () => undefined,
 		undoCalls: 0,
+		copy: async () => true,
+		copied: [],
+		logs: [],
+		logReply: async () => undefined,
+		getById: async () => ({ followUpAt: null }),
+		reads: [],
+		draft: undefined,
+		invalidations: 0,
+		invalidate: async () => undefined,
+		cancel: async () => undefined,
+		cancelCalls: [],
+		reminderVersion: 0,
+		effects: [],
+		clearedReminders: [],
 	};
 	const undo = load(MOBILE + "/src/features/career/undo.ts", {
 		"@/auth/session": { getAccountScope: () => env.account },
@@ -73,6 +91,15 @@ function harness({ lifetime = 30 } = {}) {
 		activity: [{ id: "e1", type: "stage", at: "2026-11-01T12:00:00.000Z", writeSequence: 1 }],
 	};
 	const jsx = (type, props) => ({ type, props });
+	const hooks = [];
+	let cursor = 0;
+	let renderingReply = false;
+	let mounted = true;
+	const hook = (initial) => {
+		if (!renderingReply) return initial();
+		const index = cursor++;
+		return (hooks[index] ??= initial());
+	};
 	const messages = load(
 		MOBILE + "/src/features/workspace/tabs/messages.tsx",
 		{
@@ -80,18 +107,48 @@ function harness({ lifetime = 30 } = {}) {
 			"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
 			"@tanstack/react-query": { useQueryClient: () => queryClient },
 			"@orpc/client": { ORPCError },
-			"expo-clipboard": {},
+			"expo-clipboard": { setStringAsync: (text) => (env.copied.push(text), env.copy()) },
 			"expo-router": { useLocalSearchParams: () => ({}), useRouter: () => ({}) },
 			react: {
-				useState: (init) => [typeof init === "function" ? init() : init, () => {}],
+				useState: (init) => {
+					const cell = hook(() => ({ value: typeof init === "function" ? init() : init }));
+					return [
+						cell.value,
+						(value) => {
+							if (!mounted) return;
+							cell.value = typeof value === "function" ? value(cell.value) : value;
+						},
+					];
+				},
+				useRef: (value) => hook(() => ({ current: value })),
+				useEffect: (effect, dependencies) => {
+					const cell = hook(() => ({}));
+					if (!cell.dependencies || dependencies.some((value, index) => !Object.is(value, cell.dependencies[index]))) {
+						cell.dependencies = dependencies;
+						env.effects.push(() => {
+							cell.cleanup?.();
+							cell.cleanup = effect();
+						});
+					}
+				},
+				useEffectEvent: (effect) => {
+					const cell = hook(() => ({ current: effect }));
+					cell.current = effect;
+					return (cell.event ??= (...args) => cell.current(...args));
+				},
 				useSyncExternalStore: (_subscribe, get) => get(),
 			},
 			"react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "Fragment" },
 			"react-native": { View: "View" },
 			"@reactive-resume/schema/applications/stage-baselines": tracker,
+			"@reactive-resume/schema/applications/reply": replyFields,
 			"@reactive-resume/schema/career-offer": {},
 			"@reactive-resume/utils/timezone": {},
-			"../hooks": { useWorkspace: () => ({ data: { answers: [] }, current: () => ({ answers: [] }) }) },
+			"../hooks": {
+				useWorkspace: () => ({ data: { answers: [] }, current: () => ({ answers: [] }) }),
+				useDraft: (_key, value) => ({ value: env.draft ?? value }),
+				useGenerate: () => ({}),
+			},
 			"../logic": {
 				needsSubmission: () => false,
 				isFixedChange: () => false,
@@ -102,6 +159,16 @@ function harness({ lifetime = 30 } = {}) {
 			"../state": state,
 			"@/api/client": {
 				client: {
+					applications: {
+						getById: async (...args) => {
+							env.reads.push(args);
+							return env.getById(...args);
+						},
+						logReply: async (...args) => {
+							env.logs.push(args);
+							return env.logReply(...args);
+						},
+					},
 					career: {
 						undoReply: (input) => {
 							env.undoCalls += 1;
@@ -115,16 +182,19 @@ function harness({ lifetime = 30 } = {}) {
 				},
 				orpc: { career: { savedItems: { key: () => ["savedItems"] }, schedules: { key: () => ["schedules"] } } },
 			},
-			"@/auth/session": { useSession: () => ({ server: "srv" }) },
+			"@/auth/session": { useSession: () => ({ server: "srv" }), getAccountScope: () => env.account },
 			"@/draft": { getDraftScope: async () => env.account },
-			"@/features/ai/providers": {},
+			"@/features/ai/providers": { useHasAIProvider: () => ({}) },
 			"@/features/application-detail/hooks": { useUserTime: () => ({ when: String, day: String, timeZone: "UTC" }) },
 			"@/features/applications/lane-queries": { useApplicationLanes: () => ({ lanes: [] }) },
 			"@/features/applications/lanes": { getLaneLabel: () => "Stage", resolveLane: () => ({}) },
 			"@/features/applications/next-step": { describeNextStep: () => ({ title: "x" }), getNextStep: () => null },
 			"@/features/applications/queries": {
 				stageScope: () => "srv:" + env.account,
-				useInvalidateApplications: () => async () => {},
+				useInvalidateApplications: () => async () => {
+					env.invalidations++;
+					await env.invalidate();
+				},
 			},
 			"@/features/applications/stage-actions": {
 				listedApplication: () => listedRow,
@@ -133,6 +203,24 @@ function harness({ lifetime = 30 } = {}) {
 			},
 			"@/features/career/offer-compare": { formatMoney: String },
 			"@/features/career/offer-entry": { OfferEntry: "OfferEntry" },
+			"@/features/reminders": {
+				useReminders: () => ({
+					captureTurnOff: (target) => {
+						const version = env.reminderVersion;
+						return async () => {
+							if (version !== env.reminderVersion) return;
+							env.cancelCalls.push(target);
+							await env.cancel();
+							env.clearedReminders.push(target);
+						};
+					},
+					turnOff: async (target) => {
+						env.cancelCalls.push(target);
+						await env.cancel();
+						env.clearedReminders.push(target);
+					},
+				}),
+			},
 			"@/features/career/undo": undo,
 			"@/ui": {
 				Banner: "Banner",
@@ -142,21 +230,49 @@ function harness({ lifetime = 30 } = {}) {
 				Text: "Text",
 				TextArea: "TextArea",
 				showToast: (toast) => (toasts.push(toast), toasts.length),
-				useTheme: () => ({ space: {} }),
+				useTheme: () => ({ space: {}, colors: {} }),
 			},
 		},
-		";module.exports.ProposalCard = ProposalCard;",
+		";module.exports.ProposalCard = ProposalCard; module.exports.ReplyCard = ReplyCard;",
 	);
 	const reply = {
 		id: "reply-" + Math.random().toString(36).slice(2),
 		data: {
+			title: "Reply",
+			reply: "Available [Datum und Uhrzeit 1] or [slot 2].",
+			asks: [],
 			changes: [{ type: "stage", stage: "interview" }],
 			applied: null,
 			unconfirmed: [],
 			offer: null,
 		},
 	};
-	const application = { id: "app-1", status: "applied", contacts: [], followUpNote: null };
+	const application = {
+		id: "app-1",
+		status: "applied",
+		contacts: [],
+		activity: [],
+		followUpAt: null,
+		followUpNote: null,
+		replyVersion: "review-token",
+		updatedAt: new Date(0),
+	};
+	const flushEffects = () => {
+		for (const effect of env.effects.splice(0)) effect();
+	};
+	const replyTree = (flush = true) => {
+		assert.ok(mounted, "Cannot render an unmounted reply card");
+		cursor = 0;
+		renderingReply = true;
+		let tree;
+		try {
+			tree = messages.ReplyCard({ reply, application, readOnly: false });
+		} finally {
+			renderingReply = false;
+		}
+		if (flush) flushEffects();
+		return tree;
+	};
 	const press = () => {
 		const tree = messages.ProposalCard({ reply, application, now: new Date(), readOnly: false });
 		const find = (node) => {
@@ -177,8 +293,323 @@ function harness({ lifetime = 30 } = {}) {
 		return baselines.get("app-1");
 	};
 	const undoToast = () => toasts.find((toast) => toast.action?.label === "Undo");
-	return { env, press, bulkStart, undoToast, toasts };
+	const unmount = () => {
+		mounted = false;
+		env.effects.length = 0;
+		for (const cell of hooks) cell.cleanup?.();
+	};
+	return { env, press, bulkStart, undoToast, toasts, replyTree, application, flushEffects, unmount };
 }
+
+function buttonIn(node, label) {
+	if (!node || typeof node !== "object") return undefined;
+	if (Array.isArray(node)) return node.map((item) => buttonIn(item, label)).find(Boolean);
+	if (node.type === "Button" && node.props.label === label) return node;
+	return buttonIn(node.props?.children, label);
+}
+
+test("native reply copies placeholders normally; explicit logging binds the reviewed revision and account", async () => {
+	const h = harness();
+	const tree = h.replyTree();
+	assert.match(JSON.stringify(tree), /Replace these placeholders before sending/);
+	buttonIn(tree, "Copy reply").props.onPress();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.copied, ["Available [Datum und Uhrzeit 1] or [slot 2]."]);
+	assert.equal(h.env.logs.length, 0);
+	buttonIn(tree, "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.logs, [[{ id: "app-1", expectedVersion: "review-token" }, { context: { scope: "acct-A" } }]]);
+});
+
+test("native reply does not log clipboard failure or a stale account, and ignores duplicate presses", async () => {
+	const h = harness();
+	const action = buttonIn(h.replyTree(), "Copy and log as replied");
+	h.env.copy = async () => false;
+	action.props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.logs.length, 0);
+	let resolveCopy;
+	h.env.copy = () => new Promise((resolve) => (resolveCopy = resolve));
+	action.props.onPress();
+	action.props.onPress();
+	assert.equal(h.env.copied.length, 2);
+	h.env.account = "acct-B";
+	resolveCopy(true);
+	await new Promise(setImmediate);
+	assert.equal(h.env.logs.length, 0);
+});
+
+test("native reply warns and refreshes when logging is uncertain after copying succeeds", async () => {
+	const h = harness();
+	h.env.logReply = async () => {
+		throw new Error("Lost response");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.copied, ["Available [Datum und Uhrzeit 1] or [slot 2]."]);
+	assert.equal(h.env.logs.length, 1);
+	assert.equal(h.env.invalidations, 1);
+	assert.equal(
+		h.toasts.at(-1).message,
+		"Reply copied. Logging wasn't confirmed. Check the timeline before trying again.",
+	);
+});
+
+test("native copied reply explains a known conflict without claiming an uncertain log", async () => {
+	const h = harness();
+	h.env.logReply = async () => {
+		throw new ORPCError("CONFLICT");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(
+		h.toasts.at(-1).message,
+		"Reply copied. Nothing was logged because the application changed. Review it again before logging.",
+	);
+	assert.equal(h.env.invalidations, 1);
+});
+
+test("native empty reply disables and guards logging while preserving ordinary Copy", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	for (const text of ["", " \n\t"]) {
+		h.env.draft = text;
+		const tree = h.replyTree();
+		const log = buttonIn(tree, "Copy and log as replied");
+		assert.equal(log.props.disabled, true);
+		log.props.onPress();
+		await new Promise(setImmediate);
+		assert.deepEqual(h.env.copied, []);
+		assert.deepEqual(h.env.logs, []);
+		buttonIn(tree, "Copy reply").props.onPress();
+		await new Promise(setImmediate);
+		assert.equal(h.env.copied.pop(), text);
+	}
+	assert.deepEqual(h.env.cancelCalls, []);
+});
+
+test("native known logging refusal confirms no write without inventing a conflict reason", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	h.env.logReply = async () => {
+		throw new ORPCError("BAD_REQUEST");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(
+		h.toasts.at(-1).message,
+		"Reply copied. Nothing was logged. Review the application before logging again.",
+	);
+	assert.equal(h.env.invalidations, 1);
+	assert.deepEqual(h.env.cancelCalls, []);
+});
+
+test("native confirmed log stays confirmed if the later application refresh fails", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	let refreshes = 0;
+	h.env.invalidate = async () => {
+		if (++refreshes === 1) throw new ORPCError("BAD_REQUEST");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.logs.length, 1);
+	assert.equal(h.env.clearedReminders.length, 1);
+	assert.equal(h.toasts.at(-1).message, "Reply copied and logged as replied");
+});
+
+test("native cached cleared follow-up cannot cancel a server-confirmed replacement", async () => {
+	const h = harness();
+	h.env.getById = async () => ({ followUpAt: new Date("2030-03-15T09:00:00Z") });
+	h.replyTree();
+	await new Promise(setImmediate);
+	assert.equal(h.env.reads.length, 1);
+	assert.deepEqual(h.env.reads[0][0], { id: "app-1" });
+	assert.equal(h.env.reads[0][1].context.scope, "acct-A");
+	assert.deepEqual(h.env.cancelCalls, []);
+});
+
+for (const change of ["read-failure", "unmount", "replacement", "account"]) {
+	test(`native fresh cleared-follow-up check preserves reminder after ${change}`, async () => {
+		const h = harness();
+		let resolveRead;
+		let rejectRead;
+		h.env.getById = () =>
+			new Promise((resolve, reject) => {
+				resolveRead = resolve;
+				rejectRead = reject;
+			});
+		h.replyTree();
+		if (change === "read-failure") rejectRead(new Error("Offline"));
+		else {
+			if (change === "unmount") h.unmount();
+			if (change === "replacement") h.env.reminderVersion++;
+			if (change === "account") h.env.account = "acct-B";
+			resolveRead({ followUpAt: null });
+		}
+		await new Promise(setImmediate);
+		assert.deepEqual(h.env.cancelCalls, []);
+	});
+}
+
+test("native reply view cancels only the cleared follow-up reminder and ignores a stale account effect", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	h.replyTree();
+	assert.deepEqual(h.env.clearedReminders, []);
+	h.application.followUpAt = null;
+	h.replyTree();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.clearedReminders, [{ kind: "follow-up", applicationId: "app-1" }]);
+	// Unchanged props must not rerun the cancellation effect.
+	h.replyTree();
+	assert.equal(h.env.clearedReminders.length, 1);
+	h.application.followUpAt = new Date("2030-03-16T09:00:00Z");
+	h.replyTree();
+	h.application.followUpAt = null;
+	h.replyTree(false);
+	h.env.account = "acct-B";
+	h.flushEffects();
+	await new Promise(setImmediate);
+	assert.equal(h.env.clearedReminders.length, 1);
+});
+
+test("native reply completion clears its reminder after the view unmounts", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	let resolveLog;
+	h.env.logReply = () =>
+		new Promise((resolve) => {
+			resolveLog = resolve;
+		});
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	h.unmount();
+	resolveLog();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.clearedReminders, [{ kind: "follow-up", applicationId: "app-1" }]);
+	assert.equal(h.env.invalidations, 1);
+});
+
+for (const outcome of ["cancel", "replacement", "cancel-failure"]) {
+	test(`native confirmed reply completes captured reminder cleanup after account switch (${outcome})`, async () => {
+		const h = harness();
+		h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+		let finish;
+		h.env.logReply = () =>
+			new Promise((resolve) => {
+				finish = resolve;
+			});
+		buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+		await new Promise(setImmediate);
+		assert.equal(h.env.logs.length, 1);
+		h.env.account = "acct-B";
+		h.unmount();
+		if (outcome === "replacement") h.env.reminderVersion++;
+		if (outcome === "cancel-failure")
+			h.env.cancel = async () => {
+				throw new Error("Notification service unavailable");
+			};
+		finish();
+		await new Promise(setImmediate);
+		assert.equal(h.env.cancelCalls.length, outcome === "replacement" ? 0 : 1);
+		assert.deepEqual(
+			h.env.clearedReminders,
+			outcome === "cancel" ? [{ kind: "follow-up", applicationId: "app-1" }] : [],
+		);
+		assert.equal(h.env.invalidations, 0);
+		assert.deepEqual(h.toasts, []);
+	});
+}
+
+test("native cancellation failure offers scoped retry without logging the reply twice", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	let fail = true;
+	h.env.cancel = async () => {
+		if (fail) {
+			fail = false;
+			throw new Error("Notification service unavailable");
+		}
+	};
+	h.env.invalidate = async () => {
+		throw new Error("Refresh unavailable");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.logs.length, 1);
+	assert.equal(h.env.invalidations, 1);
+	assert.equal(
+		h.toasts.at(-1).message,
+		"Reply copied and logged as replied. Couldn't clear the follow-up reminder. It may still notify you.",
+	);
+	h.toasts.at(-1).action.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.cancelCalls.length, 2);
+	assert.equal(h.env.clearedReminders.length, 1);
+	assert.equal(h.env.logs.length, 1);
+});
+
+test("native failed reminder Retry preserves a newer authored follow-up", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	h.env.cancel = async () => {
+		throw new Error("Unavailable");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	const retry = h.toasts.at(-1).action;
+	h.env.reminderVersion++;
+	h.env.cancel = async () => {};
+	retry.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.clearedReminders.length, 0);
+	assert.equal(h.env.logs.length, 1);
+});
+
+test("native reminder Retry refuses dispatch after account replacement", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	h.env.cancel = async () => {
+		throw new Error("Notification service unavailable");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	const retry = h.toasts.at(-1).action;
+	h.env.account = "acct-B";
+	retry.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.cancelCalls.length, 1);
+	assert.equal(h.env.logs.length, 1);
+});
+
+test("native older-server reply keeps Copy and disables explicit logging", async () => {
+	const h = harness();
+	delete h.application.replyVersion;
+	const view = h.replyTree();
+	assert.equal(buttonIn(view, "Copy and log as replied").props.disabled, true);
+	assert.match(JSON.stringify(view), /Update the server to enable reply logging/);
+	buttonIn(view, "Copy reply").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.copied.length, 1);
+	assert.equal(h.env.logs.length, 0);
+});
+
+test("native reply cannot show a success toast to an account replaced during invalidation", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	let resolveInvalidation;
+	h.env.invalidate = () =>
+		new Promise((resolve) => {
+			resolveInvalidation = resolve;
+		});
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	h.env.account = "acct-B";
+	resolveInvalidation();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.toasts, []);
+});
 
 const pendingFor = (promise, ms = 200) =>
 	Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve("still waiting"), ms))]);

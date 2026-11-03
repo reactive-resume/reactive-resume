@@ -604,6 +604,10 @@ const stripUserId = <T extends { userId: string; activity?: ApplicationTimelineE
 	return rest.activity ? { ...rest, activity: sortTimeline(rest.activity) } : rest;
 };
 
+// Hash the stored snapshot before display sorting; a timestamp alone can collide within one millisecond.
+const applicationReplyVersion = (row: ApplicationRow) => createHash("sha256").update(JSON.stringify(row)).digest("hex");
+const applicationView = (row: ApplicationRow) => ({ ...stripUserId(row), replyVersion: applicationReplyVersion(row) });
+
 const applicationSummarySelect = {
 	id: schema.application.id,
 	userId: schema.application.userId,
@@ -665,7 +669,7 @@ export const applicationService = {
 			paged ? db.select({ total: count() }).from(schema.application).where(where) : undefined,
 		]);
 
-		return { items: rows.map(stripUserId), total: totals?.[0]?.total ?? rows.length };
+		return { items: rows.map(applicationView), total: totals?.[0]?.total ?? rows.length };
 	},
 
 	listSummary: async (input: {
@@ -729,7 +733,7 @@ export const applicationService = {
 			.select()
 			.from(schema.application)
 			.where(and(activeApplications(input.userId), inArray(schema.application.id, [...candidateIds])));
-		const details = new Map(fullRows.map((row) => [row.id, stripUserId(row)]));
+		const details = new Map(fullRows.map((row) => [row.id, applicationView(row)]));
 		return {
 			items: items.map((item) => {
 				const initialDetail = details.get(item.id);
@@ -790,7 +794,7 @@ export const applicationService = {
 	},
 
 	getById: async (input: { id: string; userId: string }) => {
-		return stripUserId(await requireOwned(input.id, input.userId));
+		return applicationView(await requireOwned(input.id, input.userId));
 	},
 
 	create: async (
@@ -1026,7 +1030,7 @@ export const applicationService = {
 					Object.values(fields).every((value) => value === undefined) &&
 					Object.keys(uploadedFields).length === 0
 				)
-					return stripUserId(current);
+					return applicationView(current);
 				const [updated] = await tx
 					.update(schema.application)
 					.set({
@@ -1082,7 +1086,7 @@ export const applicationService = {
 							applicationId: id,
 						});
 				}
-				return stripUserId(result);
+				return applicationView(result);
 			});
 			if (fields.resumeFileUrl !== undefined || fields.coverLetterUrl !== undefined || resumeFile || coverLetterFile) {
 				await deleteApplicationAttachments(userId, [existing]).catch(() => {});
@@ -1136,7 +1140,7 @@ export const applicationService = {
 			.returning();
 
 		if (!updated) throw new ORPCError("NOT_FOUND");
-		return stripUserId(updated);
+		return applicationView(updated);
 	},
 
 	addNote: async (input: { id: string; userId: string; text: string; date?: string | undefined }) => {
@@ -1150,12 +1154,13 @@ export const applicationService = {
 			.returning();
 
 		if (!updated) throw new ORPCError("NOT_FOUND");
-		return stripUserId(updated);
+		return applicationView(updated);
 	},
 
-	/** Records contact within the locked current visit, preserving stage dates and authored reminders. */
-	logFollowUp: (input: { id: string; userId: string }) =>
+	/** Records contact within the locked visit; an explicit reply also clears the owned follow-up and its schedule. */
+	logFollowUp: (input: { id: string; userId: string; reply?: { expectedVersion: string } | undefined }) =>
 		db.transaction(async (tx) => {
+			if (input.reply) await lockUser(tx, input.userId);
 			const [existing] = await tx
 				.select()
 				.from(schema.application)
@@ -1164,9 +1169,12 @@ export const applicationService = {
 			if (!existing) throw new ORPCError("NOT_FOUND");
 			if (existing.status === "saved" || existing.status === "closed")
 				throw new ORPCError("BAD_REQUEST", { message: "Follow-ups can only be logged for open, sent applications." });
+			if (input.reply && applicationReplyVersion(existing) !== input.reply.expectedVersion)
+				throw new ORPCError("CONFLICT", { message: "The application changed. Reload it before logging your reply." });
 			const event: ApplicationTimelineEntry = {
-				...noteEntry("Followed up"),
+				...noteEntry(input.reply ? "Replied" : "Followed up"),
 				followedUp: {
+					...(input.reply ? { kind: "reply" as const } : {}),
 					stageEntryId: latestStageEntryId(
 						existing.activity.filter((entry) => entry.type === "stage" && entry.canonicalTransition !== false),
 					),
@@ -1174,11 +1182,15 @@ export const applicationService = {
 			};
 			const [updated] = await tx
 				.update(schema.application)
-				.set({ activity: sql`${schema.application.activity} || ${JSON.stringify([event])}::jsonb` })
+				.set({
+					activity: sql`${schema.application.activity} || ${JSON.stringify([event])}::jsonb`,
+					...(input.reply ? { followUpAt: null, followUpNote: null, followUpDateOnly: false } : {}),
+				})
 				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
 				.returning();
 			if (!updated) throw new ORPCError("NOT_FOUND");
-			return stripUserId(updated);
+			if (input.reply) await syncFollowUp(tx, updated);
+			return applicationView(updated);
 		}),
 
 	addInterview: async (input: InterviewDetails & { id: string; userId: string; at: string }) => {
@@ -1192,7 +1204,7 @@ export const applicationService = {
 			.returning();
 
 		if (!updated) throw new ORPCError("NOT_FOUND");
-		return stripUserId(updated);
+		return applicationView(updated);
 	},
 
 	updateInterview: (
@@ -1234,7 +1246,7 @@ export const applicationService = {
 			// Only a new time moves briefings; re-saving the same time would cancel a briefing that's running.
 			const moved = at !== undefined && interviewAt(at).getTime() !== new Date(target.at).getTime();
 			if (moved) await followInterviewSchedules(tx, userId, id, entryId, interviewAt(at));
-			return stripUserId(updated);
+			return applicationView(updated);
 		});
 	},
 
@@ -1295,7 +1307,7 @@ export const applicationService = {
 				.returning();
 
 			if (!updated) throw new ORPCError("NOT_FOUND");
-			return stripUserId(updated);
+			return applicationView(updated);
 		});
 	},
 
@@ -1334,7 +1346,7 @@ export const applicationService = {
 
 			if (!updated) throw new ORPCError("NOT_FOUND");
 			if (entry.type === "interview") await followInterviewSchedules(tx, input.userId, input.id, entry.id, null);
-			return stripUserId(updated);
+			return applicationView(updated);
 		});
 	},
 
