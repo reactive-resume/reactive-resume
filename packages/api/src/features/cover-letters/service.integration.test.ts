@@ -54,6 +54,12 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			CREATE TABLE resume_version (id text PRIMARY KEY, resume_id text, user_id text, data jsonb, kind text, session_id text, name text, created_at timestamptz NOT NULL DEFAULT now());
 			CREATE UNIQUE INDEX resume_version_session_unique ON resume_version(resume_id,session_id) WHERE kind='auto'; CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz, resume_id text, status text DEFAULT 'saved', sent_resume_version_id text, posting_source jsonb, trashed_at timestamptz);`,
 		);
+		await fixture.pool.query(
+			await readFile(
+				new URL("../../../../../migrations/20261103134258_red_korg/migration.sql", import.meta.url),
+				"utf8",
+			),
+		);
 		// The migrations that shape the letter tables, in order.
 		for (const name of [
 			"20260905121445_cover_letter_library",
