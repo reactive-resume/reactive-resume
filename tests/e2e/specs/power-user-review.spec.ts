@@ -130,9 +130,13 @@ test("overlong palette search never selects a document matching only the truncat
 		await expect(dialog.locator('[data-selected="true"]')).toHaveAttribute("data-value", `ask ${question}`);
 		expect(truncatedReads).toEqual([]);
 		await page.keyboard.press("Enter");
-		await expect(
-			page.getByText("Choose a document; review your question before sending", { exact: true }),
-		).toBeVisible();
+		const setup = page.getByRole("dialog", { name: "Set up AI", exact: true });
+		await expect(setup.getByRole("heading", { name: "Connect an AI provider", exact: true })).toBeVisible();
+		await expect(page).toHaveURL(/\/dashboard\/applications$/);
+		await setup.getByRole("button", { name: "Close", exact: true }).click();
+		await page.clock.runFor(1000);
+		await expect(dialog.getByRole("combobox", { name: "Search commands" })).toHaveValue(question);
+		expect(truncatedReads).toEqual([]);
 	} finally {
 		await pool.end();
 	}

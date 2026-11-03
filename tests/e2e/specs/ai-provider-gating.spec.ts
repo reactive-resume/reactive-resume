@@ -233,6 +233,92 @@ test("palette Ask picks a document and retains an unsent composer draft", async 
 		.screenshot({ path: info.outputPath("palette-unsent-draft.png") });
 });
 
+for (const entry of ["library", "resume", "letter"] as const) {
+	test(`palette Ask keeps its question through in-place setup from ${entry}`, async ({ authPage: page }, info) => {
+		if (entry === "resume") await page.setViewportSize({ width: 390, height: 844 });
+		const resume = await page.request.post("/api/openapi/resumes", {
+			data: { name: "Fictional palette resume", tags: [], withSampleData: true },
+		});
+		await expect(resume).toBeOK();
+		const resumeId = (await resume.json()) as string;
+		const letter = await page.request.post("/api/openapi/cover-letters", {
+			data: { name: "Fictional palette letter" },
+		});
+		await expect(letter).toBeOK();
+		const { id: letterId } = (await letter.json()) as { id: string };
+		const path =
+			entry === "library"
+				? "/dashboard/applications"
+				: entry === "resume"
+					? `/builder/${resumeId}`
+					: `/builder/letter/${letterId}`;
+		await page.goto(path);
+		await expect(page.getByRole("button", { name: "Keyboard shortcuts", exact: true })).toBeVisible();
+		await page.keyboard.press("ControlOrMeta+k");
+		const palette = page.getByRole("dialog", { name: "Command palette", exact: true });
+		const question = "Tighten my fictional summary";
+		const input = palette.getByRole("combobox");
+		await input.fill(question);
+		const ask = palette.getByRole("option", { name: /Ask the assistant/ });
+		await expect(ask).toContainText("Connect an AI provider");
+		if (entry === "library") await palette.screenshot({ path: info.outputPath("palette-provider-needed.png") });
+		const before = stub.requests.length;
+		await ask.click();
+		const setup = page.getByRole("dialog", { name: "Set up AI", exact: true });
+		await expect(setup).toBeVisible();
+		await expect(page).toHaveURL(new RegExp(`${path}$`));
+		await page.keyboard.press("Escape");
+		await expect(setup).toBeHidden();
+		await expect(input).toHaveValue(question);
+		expect(stub.requests.length).toBe(before);
+		await ask.click();
+		await setup.getByRole("button", { name: "Other · OpenAI-compatible", exact: true }).click();
+		await setup.getByLabel("Base URL").fill(stub.baseURL);
+		await setup.getByLabel("Model", { exact: true }).fill("stub");
+		await setup.getByLabel("API key", { exact: true }).fill(entry === "library" ? "invalid-stub-key" : "stub-key");
+		await setup.getByRole("button", { name: "Connect", exact: true }).click();
+		await expect(page.getByRole("alertdialog")).toBeVisible();
+		expect(stub.requests.length).toBe(before);
+		await consent(page);
+		if (entry === "library") {
+			await expect(
+				setup.getByText("The key was rejected. Check the key and test again.", { exact: true }),
+			).toBeVisible();
+			await setup.getByRole("button", { name: "Close", exact: true }).click();
+			await expect(input).toHaveValue(question);
+			await expect(ask).toContainText("Connect an AI provider");
+			await ask.click();
+			await setup.getByRole("button", { name: "Edit", exact: true }).click();
+			const edit = page.getByRole("dialog", { name: "OpenAI-compatible", exact: true });
+			await edit.getByLabel("API key", { exact: true }).fill("stub-key");
+			await edit.getByRole("button", { name: "Save and test", exact: true }).click();
+			await consent(page);
+			await expect(edit).toBeHidden();
+			await setup.getByRole("button", { name: "Edit", exact: true }).click();
+			const enabled = edit.getByRole("switch", { name: "Use this provider", exact: true });
+			if (!(await enabled.isChecked())) await enabled.click();
+			await edit.getByRole("button", { name: "Close", exact: true }).click();
+		}
+		await expect(setup.getByText(/^(Ready|Connected ·)/)).toBeVisible();
+		await setup.getByRole("button", { name: "Close", exact: true }).click();
+		await expect(input).toHaveValue(question);
+		await expect(ask).not.toContainText("Connect an AI provider");
+		const afterTest = stub.requests.length;
+		if (entry === "library") await palette.screenshot({ path: info.outputPath("palette-provider-ready.png") });
+		await ask.click();
+		if (entry === "library") {
+			await expect(palette).toContainText("Choose a document");
+			await palette.getByRole("option", { name: "Fictional palette letter", exact: true }).click();
+			await expect(page).toHaveURL(new RegExp(`/builder/letter/${letterId}$`));
+		}
+		await expect(page.getByLabel("Message the assistant")).toHaveValue(question);
+		expect(stub.requests.length).toBe(afterTest);
+		const threads = await page.request.get("/api/openapi/agent/threads");
+		await expect(threads).toBeOK();
+		expect(await threads.json()).toEqual([]);
+	});
+}
+
 test("unavailable conversation keeps history and pending edits until an approved destination change", async ({
 	authPage: page,
 }, info) => {

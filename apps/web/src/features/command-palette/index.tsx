@@ -16,7 +16,6 @@ export function CommandPalette() {
 			options: { meta: { name: t`Command palette` }, requireReset: true },
 			callback: () => setOpen(!open),
 		},
-		{ hotkey: "Escape", options: { enabled: open, conflictBehavior: "allow" }, callback: () => setOpen(false) },
 	]);
 
 	return open ? (

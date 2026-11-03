@@ -29,6 +29,8 @@ export type AssistantScreenProps = {
 	threadId?: string | undefined;
 	/** A question to send in a new conversation as soon as the assistant can. */
 	ask?: string | undefined;
+	/** A question to review in the composer before sending. */
+	draft?: string | undefined;
 	/** Prepare for next step: the application's suggestions (fit, follow-up, interview). */
 	prepare?: boolean | undefined;
 	/** The application this resume was opened for. */
@@ -62,7 +64,7 @@ export function AssistantScreen(props: AssistantScreenProps) {
 	return (
 		<DocumentAssistantScreen
 			{...props}
-			key={`${getAccountScope()}:${props.resumeId}:${props.threadId}:${props.ask}:${props.prepare}`}
+			key={`${getAccountScope()}:${props.resumeId}:${props.threadId}:${props.ask}:${props.draft}:${props.prepare}`}
 			kind="resume"
 			documentId={props.resumeId}
 			document={document}
@@ -80,7 +82,7 @@ export function LetterAssistantScreen(props: LetterAssistantScreenProps) {
 	return (
 		<DocumentAssistantScreen
 			{...props}
-			key={`${getAccountScope()}:${props.letterId}:${props.threadId}:${props.ask}`}
+			key={`${getAccountScope()}:${props.letterId}:${props.threadId}:${props.ask}:${props.draft}`}
 			kind="letter"
 			documentId={props.letterId}
 			document={document}
@@ -117,7 +119,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 	);
 	// null: the document's latest conversation; "new": a new one.
 	const [selected, setSelected] = useState<string | null>(
-		props.ask || props.prepare || handed ? "new" : (props.threadId ?? null),
+		props.ask || props.draft || props.prepare || handed ? "new" : (props.threadId ?? null),
 	);
 	const [ask, setAsk] = useState(props.ask ?? null);
 	const [prepare, setPrepare] = useState(props.prepare ?? false);
@@ -129,6 +131,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 
 	const mine = document ? (threads.data ?? []).filter((thread) => belongsTo(thread, document)) : [];
 	const threadId = selected === "new" ? null : (selected ?? mine[0]?.id ?? null);
+	const draft = draftKey === 0 ? (props.draft ?? handed) : null;
 	const summary = mine.find((thread) => thread.id === threadId);
 	const { provider, stranded, label, choose } = useConversationProvider(providers, summary, threadId);
 
@@ -240,7 +243,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 				placeholder={t`Ask, or describe a change…`}
 				assistantName={t`Assistant`}
 				disabled={!provider}
-				{...(handed && threadId === null ? { draft: handed } : {})}
+				{...(draft && threadId === null ? { draft } : {})}
 				notice={
 					stranded ? (
 						<ConnectionNotice

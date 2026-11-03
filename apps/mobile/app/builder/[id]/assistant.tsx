@@ -1,11 +1,11 @@
 import { Stack, useLocalSearchParams } from "expo-router";
 import { AssistantScreen } from "@/features/assistant/assistant-screen";
 
-type Params = { id: string; thread?: string; ask?: string; prepare?: string; applicationId?: string };
+type Params = { id: string; thread?: string; ask?: string; draft?: string; prepare?: string; applicationId?: string };
 
-/** `?thread=` opens a conversation, `?ask=` sends a question in a new one, `?prepare=1` offers next-step starters. */
+/** `?thread=` opens a conversation, `?ask=` sends, `?draft=` prefills, `?prepare=1` offers next-step starters. */
 export default function AssistantRoute() {
-	const { id, thread, ask, prepare, applicationId } = useLocalSearchParams<Params>();
+	const { id, thread, ask, draft, prepare, applicationId } = useLocalSearchParams<Params>();
 	return (
 		<>
 			<Stack.Screen options={{ headerShown: false }} />
@@ -13,6 +13,7 @@ export default function AssistantRoute() {
 				resumeId={id}
 				threadId={thread}
 				ask={ask}
+				draft={draft}
 				prepare={prepare === "1"}
 				applicationId={applicationId}
 			/>

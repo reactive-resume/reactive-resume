@@ -8,9 +8,9 @@ import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, BackHandler, Platform, Pressable, ScrollView, TextInput, View } from "react-native";
 import { rank } from "./rank";
-import { client, orpc } from "@/api/client";
+import { orpc } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
-import { useHasAIProvider } from "@/features/ai/providers";
+import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
 import { useShortcutHelp } from "@/shell/shortcut-help";
@@ -93,6 +93,15 @@ export function SearchScreen() {
 	const signedIn = session.status === "signed-in";
 	const [query, setQuery] = useState("");
 	const [page, setPage] = useState<Page>("root");
+	const [setup, setSetup] = useState(false);
+	const scope = getAccountScope();
+	const [owner, setOwner] = useState(scope);
+	if (owner !== scope) {
+		setOwner(scope);
+		setSetup(false);
+		setQuery("");
+		setPage("root");
+	}
 	const typing = query.trim().length > 0;
 
 	const resumeQuery = useDocumentSearch(
@@ -301,35 +310,31 @@ export function SearchScreen() {
 	];
 	const available = actions.filter((action) => signedIn || !action.account);
 
-	const ask = async (question: string) => {
-		if (needsProvider) {
-			go(routes.settings("ai"));
-			return;
-		}
-		const scope = getAccountScope();
-		let latest: DocumentSummary | undefined;
-		try {
-			[latest] = await client.documents.list({
-				type: "all",
-				sort: "edited",
-				limit: 1,
-				offset: 0,
-				tags: [],
-				trashed: false,
-			});
-		} catch {
-			showToast({ message: t`Couldn't load this. Check your connection and try again.` });
-			return;
-		}
+	const ask = (question: string) => {
 		if (scope !== getAccountScope()) return;
+		if (ai.isUnavailable) {
+			ai.retry();
+			return;
+		}
+		if (needsProvider) {
+			setSetup(true);
+			return;
+		}
+		if (latestDocument.isPending) return;
+		if (latestDocument.isError) {
+			showToast({ message: t`Couldn't load this. Check your connection and try again.` });
+			void latestDocument.refetch();
+			return;
+		}
+		const latest = latestDocument.data?.[0];
 		if (!latest) {
 			showToast({ message: t`Create a resume first, then ask about it.` });
 			return;
 		}
-		// The assistant routes' `?ask=` sends the question in a new conversation.
+		// Search hands over a draft; the existing `ask` links still send their explicit tasks.
 		go({
 			pathname: latest.type === "letter" ? routes.letterAssistant(latest.id) : routes.assistant(latest.id),
-			params: { ask: question },
+			params: { draft: question },
 		});
 	};
 
@@ -582,17 +587,22 @@ export function SearchScreen() {
 						<ListRow
 							leading="sparkle"
 							title={
-								needsProvider
-									? t`Connect an AI provider to ask “${question}”`
-									: name
-										? t`Ask about “${name}”: ${question}`
-										: t`Ask the assistant “${question}”`
+								ai.isUnavailable
+									? ai.isLoading
+										? t`Loading providers…`
+										: t`Try again`
+									: needsProvider
+										? t`Connect an AI provider to ask “${question}”`
+										: name
+											? t`Ask about “${name}”: ${question}`
+											: t`Ask the assistant “${question}”`
 							}
 							onPress={() => ask(question)}
 						/>
 					</View>
 				) : null}
 			</ScrollView>
+			<AIProviderSetupSheet open={setup} onClose={() => setSetup(false)} />
 		</View>
 	);
 }
