@@ -23,11 +23,9 @@ describe("letterBodyLines", () => {
 	});
 
 	it("splits lines at attributed break tags too", () => {
-		expect(letterBodyLines('<p>First<br class="tight">Second<br data-x="1" />Third</p>')).toEqual([
-			"First",
-			"Second",
-			"Third",
-		]);
+		expect(
+			letterBodyLines('<p>First<br class="tight">Second<br data-x="1" />Third<br data-y="a>b">Fourth</p>', 4),
+		).toEqual(["First", "Second", "Third", "Fourth"]);
 	});
 
 	it("decodes entities the stored letter HTML carries", () => {
