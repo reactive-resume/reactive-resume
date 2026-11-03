@@ -108,11 +108,11 @@ export function FormatRadioGroup<Id extends string>({ formats, value, onChange }
 					<span className="grid min-w-0 flex-1 gap-0.5">
 						<span className="flex flex-wrap items-center gap-2">
 							<span className="text-sm font-semibold">{option.label}</span>
-							<span className="font-mono text-[11px] font-medium text-ink-3 group-data-checked/format:text-ink-2">
+							<span className="font-mono text-xs font-medium text-ink-3 group-data-checked/format:text-ink-2">
 								{option.extension}
 							</span>
 							{option.id === "pdf" && (
-								<span className="rounded bg-accent-soft px-1.5 text-[11px] leading-[18px] font-semibold text-accent-text">
+								<span className="rounded bg-accent-soft px-1.5 text-xs leading-[18px] font-semibold text-accent-text">
 									<Trans>Best for applying</Trans>
 								</span>
 							)}

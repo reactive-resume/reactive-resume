@@ -223,7 +223,7 @@ function IssueCard({ issue, selected, locked, primary }: IssueCardProps) {
 			<div className="flex items-start gap-2.5">
 				<span
 					aria-hidden="true"
-					className="grid size-[22px] shrink-0 place-items-center rounded-sm bg-warn text-[12px] font-semibold text-[oklch(0.22_0.03_80)]"
+					className="grid size-[22px] shrink-0 place-items-center rounded-sm bg-warn text-xs font-semibold text-warn-ink"
 				>
 					{issue.number}
 				</span>

@@ -240,7 +240,7 @@ function Sidebar() {
 						>
 							<Avatar className="size-7">
 								<AvatarImage src={session.user.image ?? undefined} />
-								<AvatarFallback className="text-[11px]">{getInitials(session.user.name)}</AvatarFallback>
+								<AvatarFallback>{getInitials(session.user.name)}</AvatarFallback>
 							</Avatar>
 							<span className="grid min-w-0">
 								<span className="truncate text-sm font-medium">{session.user.name}</span>
@@ -329,7 +329,7 @@ function Rail() {
 						<button type="button" aria-label={t`Account`} className="rounded-sm">
 							<Avatar className="size-8">
 								<AvatarImage src={session.user.image ?? undefined} />
-								<AvatarFallback className="text-[11px]">{getInitials(session.user.name)}</AvatarFallback>
+								<AvatarFallback>{getInitials(session.user.name)}</AvatarFallback>
 							</Avatar>
 						</button>
 					)}
@@ -385,7 +385,14 @@ function MobileTabs() {
 			>
 				{current && <MobileTabIndicator />}
 				<Icon name={icon} size={24} filled={current} />
-				<span className={cn("text-[11px]", current ? "font-semibold text-ink" : "text-ink-2")}>{label}</span>
+				<span
+					className={cn(
+						"text-center text-xs [overflow-wrap:anywhere]",
+						current ? "font-semibold text-ink" : "text-ink-2",
+					)}
+				>
+					{label}
+				</span>
 			</Link>
 		);
 	};
@@ -405,7 +412,7 @@ function MobileTabs() {
 				<span className="grid h-[26px] w-[34px] place-items-center rounded-sm bg-accent text-on-accent">
 					<Icon name="plus" size={20} />
 				</span>
-				<span className="text-[11px] text-ink-2">
+				<span className="text-center text-xs [overflow-wrap:anywhere] text-ink-2">
 					<Trans>New</Trans>
 				</span>
 			</button>

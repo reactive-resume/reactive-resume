@@ -386,7 +386,7 @@ function TabBadge({ tone, children }: { tone: "accent" | "warn" | "info" | "plai
 	return (
 		<span
 			className={cn(
-				"inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-sm px-1.5 font-mono text-[11px] font-medium",
+				"inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-sm px-1.5 font-mono text-xs font-medium",
 				tone === "accent" && "bg-accent-soft text-accent-text",
 				tone === "warn" && "bg-warn-soft text-warn-text",
 				tone === "info" && "bg-info-soft text-info-text",

@@ -244,7 +244,7 @@ function PartTiles({ story }: { story: Story }) {
 					key={part.key}
 					title={part.label}
 					className={cn(
-						"h-5 w-[22px] rounded-md text-center font-mono text-[11px] leading-5 font-semibold",
+						"h-5 w-[22px] rounded-md text-center font-mono text-xs leading-5 font-semibold",
 						story.data[part.key].trim() ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-3",
 					)}
 				>

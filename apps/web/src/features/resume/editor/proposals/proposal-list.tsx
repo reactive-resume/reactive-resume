@@ -328,7 +328,7 @@ function ProposalItem(props: ProposalItemProps) {
 			>
 				<span
 					aria-hidden="true"
-					className="grid size-5 shrink-0 place-items-center rounded-sm bg-sunken text-[11px] font-semibold text-ink-3"
+					className="grid size-5 shrink-0 place-items-center rounded-sm bg-sunken text-xs font-semibold text-ink-3"
 				>
 					{number}
 				</span>
@@ -372,7 +372,7 @@ function ProposalItem(props: ProposalItemProps) {
 			<div className="flex items-center gap-2">
 				<span
 					aria-hidden="true"
-					className="grid size-5 shrink-0 place-items-center rounded-sm bg-accent text-[11px] font-semibold text-on-accent"
+					className="grid size-5 shrink-0 place-items-center rounded-sm bg-accent text-xs font-semibold text-on-accent"
 				>
 					{number}
 				</span>
