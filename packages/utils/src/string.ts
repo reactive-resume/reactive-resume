@@ -1,4 +1,4 @@
-import { v7 as uuidv7 } from "uuid";
+import { validate as isUuid, v5 as uuidv5, v7 as uuidv7 } from "uuid";
 
 /**
  * Generates a unique ID using the UUIDv7 algorithm.
@@ -10,22 +10,38 @@ export function generateId() {
 
 const pendingRequestIds = new Map<string, string>();
 
+type RequestIdStorage = {
+	getItem: (key: string) => string | null;
+	setItem: (key: string, value: string) => void;
+	removeItem: (key: string) => unknown;
+};
+
+// Persist only an opaque fingerprint and UUID, never the request's private fields.
+const pendingRequestKey = (key: string) => `reactive-resume:pending-request:${uuidv5(key, uuidv5.URL)}`;
+
 /**
  * The ID a create request sends, the same one each time until it succeeds: a retry after a lost response, a second
  * press or a remounted screen then returns what the first attempt saved instead of saving it again. `key` names the
  * request by what it saves, so changing the input starts a new one. Call `settleRequestId` once it has succeeded.
  */
-export function pendingRequestId(key: string) {
-	let id = pendingRequestIds.get(key);
+export function pendingRequestId(key: string, storage?: RequestIdStorage) {
+	const storageKey = storage ? pendingRequestKey(key) : key;
+	let id = storage ? storage.getItem(storageKey) : pendingRequestIds.get(key);
+	if (storage && id && !isUuid(id)) throw new Error("Invalid pending request ID");
 	if (!id) {
 		id = generateId();
-		pendingRequestIds.set(key, id);
+		if (storage) storage.setItem(storageKey, id);
+		else pendingRequestIds.set(key, id);
 	}
 	return id;
 }
 
-export function settleRequestId(key: string) {
-	pendingRequestIds.delete(key);
+export function settleRequestId(key: string, storage?: RequestIdStorage, expectedId?: string) {
+	if (storage) {
+		const storageKey = pendingRequestKey(key);
+		if (expectedId !== undefined && storage.getItem(storageKey) !== expectedId) return;
+		storage.removeItem(storageKey);
+	} else pendingRequestIds.delete(key);
 }
 
 /**

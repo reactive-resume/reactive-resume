@@ -21,6 +21,7 @@ const react = {
 		if (ref) ref.current = make();
 	},
 	useEffect() {},
+	useLayoutEffect() {},
 	useState(initial) {
 		const index = cursor++;
 		if (!(index in hooks)) hooks[index] = typeof initial === "function" ? initial() : initial;
@@ -95,6 +96,7 @@ const mocks = {
 	react,
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", Platform: { OS: "android" } },
 	"expo-router": {
+		useIsFocused: () => true,
 		useRouter: () => router,
 		useLocalSearchParams: () => searchParams,
 		Stack: { Screen: "StackScreen" },
@@ -1355,52 +1357,91 @@ let savedOffers = [
 let offerApplications = { data: [] };
 let loseOfferResponse = false;
 let offerFailures = 0;
-const { OfferEntry, OfferForm } = load("features/career/offer-entry.tsx", {
-	"@reactive-resume/utils/string": load("../../../packages/utils/src/string.ts", { uuid: serverRequire("uuid") }),
+let holdOfferResponse = false;
+let heldOffer;
+let offerFocused = true;
+const offerLayouts = [];
+const offerStorage = new Map();
+const nativeOfferSelection = load("features/career/offer-selection.ts", {
 	"@/auth/session": { getAccountScope: () => offerScope },
-	"@reactive-resume/schema/career": careerSchema,
-	"@reactive-resume/schema/career-offer": offerParser,
-	"./hooks": {
-		useCareerTime: () => ({ locale: "en-US", timeZone: "Europe/Berlin", profile: offerProfile }),
-		useCareerAction: () => ({
-			pending: false,
-			run: async (work, success) => {
-				try {
-					success(await work());
-				} catch {
-					offerFailures++;
-				}
-			},
-		}),
-		client: {
-			career: {
-				createOffer: async (input) => {
-					calls.push(input);
-					return { id: "new-offer", data: { kind: "offer", ...input } };
-				},
-				updateOffer: async (input) => {
-					calls.push(input);
-					if (loseOfferResponse) {
-						loseOfferResponse = false;
-						throw new Error("Response lost after commit");
-					}
-					return { id: "new-version", data: { kind: "offer", ...input.terms } };
-				},
+	"zustand/react": {
+		create: (initialize) => {
+			const store = createRequire(new URL("../../web/package.json", import.meta.url))("zustand/vanilla").createStore(
+				initialize,
+			);
+			return Object.assign((selector) => selector(store.getState()), store);
+		},
+	},
+});
+const loadOfferEntry = () =>
+	load("features/career/offer-entry.tsx", {
+		react: {
+			...react,
+			useLayoutEffect: (effect) => {
+				offerLayouts.push(effect);
 			},
 		},
-		useOffers: () => ({ data: savedOffers }),
-		useCareerQueries: () => ({ profile: { data: undefined } }),
-	},
-	"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
-	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
-	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
-	"@/features/applications/lane-queries": laneQuery,
-	"@/features/applications/lanes": lanes,
-	"@/features/applications/stage-actions": {
-		useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
-	},
-	"@/features/applications/queries": { useApplications: () => offerApplications },
-});
+		"expo-router": { ...mocks["expo-router"], useIsFocused: () => offerFocused },
+		"expo-sqlite/kv-store": {
+			getItemSync: (key) => offerStorage.get(key) ?? null,
+			setItemSync: (key, value) => {
+				offerStorage.set(key, value);
+			},
+			removeItemSync: (key) => {
+				offerStorage.delete(key);
+			},
+		},
+		"./offer-selection": nativeOfferSelection,
+		"@reactive-resume/utils/string": load("../../../packages/utils/src/string.ts", { uuid: serverRequire("uuid") }),
+		"@/auth/session": { getAccountScope: () => offerScope },
+		"@reactive-resume/schema/career": careerSchema,
+		"@reactive-resume/schema/career-offer": offerParser,
+		"./hooks": {
+			useCareerTime: () => ({ locale: "en-US", timeZone: "Europe/Berlin", profile: offerProfile }),
+			useCareerAction: () => ({
+				pending: false,
+				run: async (work, success) => {
+					try {
+						success(await work());
+					} catch {
+						offerFailures++;
+					}
+				},
+			}),
+			client: {
+				career: {
+					createOffer: async (input) => {
+						calls.push(input);
+						return { id: "new-offer", data: { kind: "offer", ...input } };
+					},
+					updateOffer: async (input) => {
+						calls.push(input);
+						if (loseOfferResponse) {
+							loseOfferResponse = false;
+							throw new Error("Response lost after commit");
+						}
+						if (holdOfferResponse) {
+							heldOffer = Promise.withResolvers();
+							await heldOffer.promise;
+						}
+						return { id: "new-version", data: { kind: "offer", ...input.terms } };
+					},
+				},
+			},
+			useOffers: () => ({ data: savedOffers }),
+			useCareerQueries: () => ({ profile: { data: undefined } }),
+		},
+		"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
+		"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
+		"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
+		"@/features/applications/lane-queries": laneQuery,
+		"@/features/applications/lanes": lanes,
+		"@/features/applications/stage-actions": {
+			useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
+		},
+		"@/features/applications/queries": { useApplications: () => offerApplications },
+	});
+const { OfferEntry, OfferForm } = loadOfferEntry();
 reset();
 offerApplications = { isPending: true };
 assert.equal(render(OfferEntry, {}).type, "LoadState", "unknown metadata offers no ready action");
@@ -1503,11 +1544,15 @@ const originalTerms = careerSchema.offerTermsSchema.parse({
 	variable: null,
 	variablePercent: 10,
 });
+let CurrentOfferForm = OfferForm;
+let offerCloses = 0;
 const correctedView = () =>
-	render(OfferForm, {
+	render(CurrentOfferForm, {
 		application: { id: "job", company: "Northwind Labs", role: "Engineer" },
 		offer: { id: "original-offer", data: originalTerms },
-		onClose() {},
+		onClose() {
+			offerCloses++;
+		},
 	});
 assert.equal(control(correctedView(), "Bonus").value, "10%");
 assert.equal(control(correctedView(), "Bonus").keyboardType, "default", "percentage entry needs a percent key");
@@ -1517,21 +1562,45 @@ control(correctedView(), "Save offer").onPress();
 await settle();
 assert.equal(offerFailures, 1);
 assert.equal(calls.length, 1, "lost response keeps the native form open without navigation");
+const firstAttempt = calls[0];
+CurrentOfferForm = loadOfferEntry().OfferForm;
+reset();
+control(correctedView(), "Bonus").onChangeText("12.5%");
 control(correctedView(), "Save offer").onPress();
 await settle();
-assert.deepEqual(calls[1], calls[0], "retry uses the same version receipt after a lost response");
+assert.deepEqual(calls[0], firstAttempt, "restart and re-entry retain the version receipt after a lost response");
 assert.match(calls[0].newId, /^[0-9a-f-]{36}$/);
 assert.equal(calls[0].id, "original-offer");
 assert.equal(calls[0].newVersion, true);
 assert.equal(calls[0].terms.variable, null);
 assert.equal(calls[0].terms.variablePercent, 12.5);
 assert.deepEqual(calls[0].expected, originalTerms);
+assert.deepEqual(nativeOfferSelection.useSavedOffer.getState().accounts[offerScope], {
+	id: "new-version",
+	b: "pinned-offer",
+});
+assert.ok(!calls.some((call) => call?.params), "form never writes selection to the focused route");
+assert.equal(offerCloses, 1);
+calls.length = 0;
+holdOfferResponse = true;
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.ok(heldOffer);
+offerFocused = false;
+correctedView();
+for (const effect of offerLayouts.splice(0)) effect();
+heldOffer.resolve();
+await settle();
+assert.equal(offerCloses, 1, "late success cannot close a form after leaving its screen");
 assert.ok(
-	calls.some(
-		(call) =>
-			call?.params?.a === "new-version" && call.params.highlight === "new-version" && call.params.b === "pinned-offer",
-	),
+	!calls.some((call) => call?.params || call?.message),
+	"late success cannot change another route or toast there",
 );
+assert.equal(nativeOfferSelection.useSavedOffer.getState().accounts[offerScope].id, "new-version");
+holdOfferResponse = false;
+offerFocused = true;
+correctedView();
+for (const effect of offerLayouts.splice(0)) effect();
 calls.length = 0;
 offerScope = "another-account";
 control(correctedView(), "Save offer").onPress();

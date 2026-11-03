@@ -19,4 +19,6 @@ it("keeps monetary precision and safe bounds while accepting finite percentage d
 	for (const text of ["-1", "Infinity", "1e3", "1,23", "12."])
 		expect(parseDecimal(text, "en-US"), text).toBeUndefined();
 	expect(parseDecimal("9".repeat(400), "en-US")).toBeUndefined();
+	expect(parseDecimal(`0.${"0".repeat(323)}1`, "en-US")).toBeUndefined();
+	expect(parseDecimal(`0.${"0".repeat(323)}5`, "en-US")).toBe(Number.MIN_VALUE);
 });

@@ -3,7 +3,7 @@ import type { ApplicationSummary } from "@/features/applications/types";
 import type { CareerProfileData, OfferTerms } from "@reactive-resume/schema/career";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useIsFocused, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { annualBaseHint, bonusAmount, selectOfferPair } from "@reactive-resume/schema/career-offer";
@@ -12,8 +12,10 @@ import { useCareerQueries, useCareerTime, useNow, useOffers } from "./hooks";
 import { client } from "./hooks";
 import { formatBonus, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry, OfferForm } from "./offer-entry";
+import { consumeSavedOffer, useSavedOffer } from "./offer-selection";
 import { Actions, LoadState } from "./shared";
 import { withUndo } from "./undo";
+import { getAccountScope } from "@/auth/session";
 import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
 import { Banner, Button, Card, EmptyState, Screen, SelectSheet, Text, showToast, useTheme } from "@/ui";
@@ -46,6 +48,21 @@ export function OffersScreen() {
 		});
 	};
 	const params = useLocalSearchParams<{ a?: string; b?: string; highlight?: string }>();
+	const focused = useIsFocused();
+	const scope = getAccountScope();
+	const saved = useSavedOffer((state) => (scope ? state.accounts[scope] : undefined));
+	useEffect(() => {
+		if (
+			!focused ||
+			!scope ||
+			getAccountScope() !== scope ||
+			!saved ||
+			!query.data?.some((offer) => offer.id === saved.id)
+		)
+			return;
+		router.setParams({ a: saved.id, b: params.b ?? saved.b, highlight: saved.id });
+		consumeSavedOffer(scope, saved.id);
+	}, [focused, scope, saved, query.data, params.b, router]);
 	const setSelected = ([a, b]: (string | undefined)[]) => router.setParams({ a, b });
 	const pair = selectOfferPair(offers, { a: params.a, b: params.b });
 	const a = offers.find((row) => row.id === pair.a);

@@ -2,8 +2,9 @@ import type { SavedData } from "@/features/workspace/hooks";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { OfferTerms } from "@reactive-resume/schema/career";
 import { useLingui } from "@lingui/react/macro";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useIsFocused, useLocalSearchParams, useRouter } from "expo-router";
+import Storage from "expo-sqlite/kv-store";
+import { useLayoutEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
 import {
@@ -16,6 +17,7 @@ import {
 import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { client, useCareerAction, useCareerQueries, useCareerTime, useOffers } from "./hooks";
 import { formatMoney } from "./offer-compare";
+import { rememberSavedOffer } from "./offer-selection";
 import { EditorSheet, LoadState } from "./shared";
 import { getAccountScope } from "@/auth/session";
 import { WallClockField } from "@/features/application-detail/date-field";
@@ -47,6 +49,12 @@ type OfferSaved = { id: string; data: OfferTermsSaved };
 
 /** Stages before Offer: saving an offer for an application still at one of these moves it to Offer, with Undo. */
 const BEFORE_OFFER: readonly ApplicationStatus[] = ["saved", "applied", "screening", "interview"];
+
+const requestIds = {
+	getItem: (key: string) => Storage.getItemSync(key),
+	setItem: (key: string, value: string) => Storage.setItemSync(key, value),
+	removeItem: (key: string) => Storage.removeItemSync(key),
+};
 
 /**
  * Add offer, and the offer saved last for this application in view as a one-line summary, so saving doesn't make the
@@ -152,6 +160,14 @@ const zonedFields = (value: string, timeZone: string) => {
 
 export function OfferForm({ application, offer: initialOffer, onClose, onSaved }: OfferFormProps) {
 	const params = useLocalSearchParams<{ b?: string }>();
+	const focused = useIsFocused();
+	const active = useRef(focused);
+	useLayoutEffect(() => {
+		active.current = focused;
+		return () => {
+			active.current = false;
+		};
+	}, [focused]);
 	const [scope] = useState(getAccountScope);
 	// Draft and expected terms belong to the same edit session, even when saved offers refetch.
 	const [offer] = useState(initialOffer);
@@ -269,8 +285,9 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		const { applicationId: _applicationId, ...terms } = payload.data;
 		const input = { id: offer.id, terms, expected: offerTermsSchema.parse(offer.data), newVersion: true };
 		const key = JSON.stringify(["career:offer-version", scope, input]);
-		const result = await client.career.updateOffer({ ...input, newId: pendingRequestId(key) }, { context: { scope } });
-		settleRequestId(key);
+		const newId = pendingRequestId(key, requestIds);
+		const result = await client.career.updateOffer({ ...input, newId }, { context: { scope } });
+		settleRequestId(key, requestIds, newId);
 		return result;
 	};
 	return (
@@ -420,14 +437,14 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						if (payload.success)
 							void action.run(saveTerms, (result) => {
 								if (getAccountScope() !== scope) return;
+								if (result) rememberSavedOffer(scope, result.id, params.b);
 								if (offer) {
-									if (result) router.setParams({ a: result.id, b: params.b, highlight: result.id });
+									if (!active.current) return;
 									showToast({ message: t`New offer version saved` });
 									onClose();
 									return;
 								}
-								if (!application && result) router.setParams({ a: result.id, b: params.b, highlight: result.id });
-								if (result?.data.kind === "offer") onSaved?.({ id: result.id, data: result.data });
+								if (active.current && result?.data.kind === "offer") onSaved?.({ id: result.id, data: result.data });
 								const row = applications.data?.find((item) => item.id === payload.data.applicationId);
 								const target = application ?? row;
 								const status = application?.status ?? row?.status;
@@ -440,7 +457,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 										message: t`Offer saved. ${target.company} moved to Offer.`,
 									});
 								else showToast({ message: t`Offer saved` });
-								onClose();
+								if (active.current) onClose();
 							});
 					}}
 				/>

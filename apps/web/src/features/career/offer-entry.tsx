@@ -10,8 +10,8 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { useId, useState } from "react";
+import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
 import {
 	bonusEntry,
@@ -238,7 +238,17 @@ const zonedFields = (value: string, timeZone: string) => {
 export function OfferForm({ application, offer: initialOffer, onClose, onSaved }: OfferFormProps) {
 	// Draft and expected terms belong to the same edit session, even when the comparison refetches.
 	const [offer] = useState(initialOffer);
+	const mounted = useRef(true);
+	useLayoutEffect(() => {
+		mounted.current = true;
+		return () => {
+			mounted.current = false;
+		};
+	}, []);
 	const id = useId();
+	const router = useRouter();
+	const [pathname] = useState(() => router.state.location.pathname);
+	const currentView = () => mounted.current && router.state.location.pathname === pathname;
 	const navigate = useNavigate();
 	const search = useSearch({ strict: false });
 	const [owner] = useState(() => ({ id: getAccountId(), generation: getAccountGeneration() }));
@@ -339,7 +349,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		onSuccess: (offer, input) => {
 			if (!current()) return;
 			if (offer) rememberOffer(offer);
-			if (!application && offer)
+			if (!application && offer && currentView())
 				void navigate({ to: "/dashboard/career/offers", search: { a: offer.id, b: search.b, highlight: offer.id } });
 			const row = (
 				applications.data ?? queryClient.getQueryData<ApplicationSummary[]>(applicationsListQueryKey())
@@ -356,29 +366,29 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 			} else {
 				toast.add({ description: t`Offer saved` });
 			}
-			onSaved?.(
-				offer?.data.kind === "offer"
-					? { id: offer.id, data: offer.data, ...(target ? { application: { company: target.company } } : {}) }
-					: null,
-			);
-			if (!onSaved) onClose();
+			if (currentView())
+				onSaved?.(
+					offer?.data.kind === "offer"
+						? { id: offer.id, data: offer.data, ...(target ? { application: { company: target.company } } : {}) }
+						: null,
+				);
+			if (!onSaved && currentView()) onClose();
 		},
 	});
 	const update = useMutation({
 		...orpc.career.updateOffer.mutationOptions(),
 		mutationFn: async (input: Parameters<typeof client.career.updateOffer>[0]) => {
 			if (!current() || !owner.id) throw new Error("Account changed");
-			const key = JSON.stringify(["career:offer-version", owner.id, owner.generation, input]);
-			const result = await client.career.updateOffer(
-				{ ...input, newId: pendingRequestId(key) },
-				{ context: { accountId: owner.id } },
-			);
-			settleRequestId(key);
+			const key = JSON.stringify(["career:offer-version", owner.id, input]);
+			const newId = pendingRequestId(key, sessionStorage);
+			const result = await client.career.updateOffer({ ...input, newId }, { context: { accountId: owner.id } });
+			settleRequestId(key, sessionStorage, newId);
 			return result;
 		},
 		onSuccess: (offer) => {
 			if (!current()) return;
 			rememberOffer(offer);
+			if (!currentView()) return;
 			void navigate({ to: "/dashboard/career/offers", search: { a: offer.id, b: search.b, highlight: offer.id } });
 			toast.add({ description: t`New offer version saved` });
 			onClose();

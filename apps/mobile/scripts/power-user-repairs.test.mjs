@@ -88,7 +88,12 @@ const common = {
 		Platform: { OS: "android" },
 		BackHandler: { addEventListener: () => ({ remove() {} }) },
 	},
-	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
+	"expo-router": {
+		useRouter: () => router,
+		useLocalSearchParams: () => ({}),
+		useIsFocused: () => true,
+		Stack: { Screen: "StackScreen" },
+	},
 	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
 	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
 	"@/ui": ui,
@@ -162,7 +167,27 @@ const offerDomain = load("../../../packages/schema/src/career-offer.ts", {
 	"@reactive-resume/utils/timezone": timeParser,
 });
 const shared = load("features/career/shared.tsx");
+let selectionScope = "offer-account";
+let offersFocused = true;
+const selection = load("features/career/offer-selection.ts", {
+	"@/auth/session": { getAccountScope: () => selectionScope },
+	"zustand/react": {
+		create: (initialize) => {
+			const store = createRequire(new URL("../../web/package.json", import.meta.url))("zustand/vanilla").createStore(
+				initialize,
+			);
+			return Object.assign((selector) => selector(store.getState()), store);
+		},
+	},
+});
 const { OffersScreen } = load("features/career/offers.tsx", {
+	"@/auth/session": { getAccountScope: () => selectionScope },
+	"./offer-selection": selection,
+	"expo-router": {
+		...common["expo-router"],
+		useIsFocused: () => offersFocused,
+		useRouter: () => ({ ...router, setParams: (params) => calls.push({ offerParams: params }) }),
+	},
 	"@reactive-resume/utils/timezone": timeParser,
 	"./hooks": {
 		useOffers: () => saved,
@@ -279,6 +304,28 @@ for (const mode of ["pending", "error"]) {
 	);
 	if (mode === "error") assert.ok(nodes(retained).some((node) => node.type === "Banner"));
 }
+selection.rememberSavedOffer(selectionScope, "retained", "pinned");
+saved.data.push({ ...saved.data[0], id: "pinned" });
+offersFocused = false;
+calls.length = 0;
+reset();
+render(OffersScreen);
+assert.ok(!calls.some((call) => call?.offerParams), "blurred Offers cannot mutate the current route");
+assert.equal(selection.useSavedOffer.getState().accounts[selectionScope].id, "retained");
+selectionScope = "another-account";
+offersFocused = true;
+reset();
+render(OffersScreen);
+assert.ok(!calls.some((call) => call?.offerParams), "another account cannot consume a saved selection");
+selectionScope = "offer-account";
+reset();
+render(OffersScreen);
+assert.deepEqual(calls.find((call) => call?.offerParams)?.offerParams, {
+	a: "retained",
+	b: "pinned",
+	highlight: "retained",
+});
+assert.equal(selection.useSavedOffer.getState().accounts[selectionScope], undefined);
 saved.data = [];
 
 console.log("PASS native Offers loading/error/retry/persisted row and genuine-empty controls");

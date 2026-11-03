@@ -70,6 +70,51 @@ test("saved offer opens side A, flashes, and preserves pinned side B", async ({ 
 	await expect.poll(() => heading.evaluate((element) => element.getAnimations().length)).toBeGreaterThan(0);
 });
 
+test("Delete commits when its Undo toast closes and stays deleted after reload", async ({ authPage: page }) => {
+	const original = await offer(page, await application(page, "Northwind Labs"));
+	await page.goto(`/dashboard/career/offers?a=${original.id}`);
+	await page.getByRole("button", { name: /Northwind Labs.*Written offer/ }).click();
+	await page.getByRole("menuitem", { name: "Delete offer", exact: true }).click();
+	await expect(page.getByText("Offer deleted", { exact: true })).toBeVisible();
+	await expect(page.getByText("Offer deleted", { exact: true })).toBeHidden({ timeout: 15000 });
+	await expect.poll(() => offers(page)).toEqual([]);
+	await page.reload();
+	await expect(page.getByRole("heading", { name: "No offers to compare yet" })).toBeVisible();
+});
+
+test("a version save finishing after leaving the form keeps the destination route", async ({ authPage: page }) => {
+	const original = await offer(page, await application(page, "Northwind Labs"));
+	await page.goto(`/dashboard/career/offers?a=${original.id}`);
+	await page.getByRole("button", { name: /Northwind Labs.*Written offer/ }).click();
+	await page.getByRole("menuitem", { name: "Edit terms", exact: true }).click();
+	await page.getByLabel("Base salary", { exact: true }).fill("90000");
+	const arrived = Promise.withResolvers<void>();
+	const release = Promise.withResolvers<void>();
+	await page.route("**/api/rpc/career/updateOffer", async (route) => {
+		const response = await route.fetch();
+		expect(response.status()).toBe(200);
+		arrived.resolve();
+		await release.promise;
+		await route.fulfill({ response });
+	});
+	try {
+		const finished = page.waitForResponse((response) => response.url().includes("/career/updateOffer"));
+		await page.getByRole("button", { name: "Save offer", exact: true }).click();
+		await arrived.promise;
+		await page.getByRole("tab", { name: "Knowledge", exact: true }).click();
+		await expect(page).toHaveURL(/\/career\/knowledge/);
+		release.resolve();
+		await finished;
+		await page.evaluate(
+			() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
+		);
+		await expect(page).toHaveURL(/\/career\/knowledge/);
+		expect((await offers(page)).map((row) => row.data.base).sort()).toEqual([85000, 90000]);
+	} finally {
+		release.resolve();
+	}
+});
+
 test("percentage bonus persists as a percentage and reopens without becoming an amount", async ({
 	authPage: page,
 }, info) => {
@@ -112,7 +157,9 @@ test("a known monthly base still shows arithmetic against an unknown yearly base
 	await expect(page.getByText("Different pay period, not compared", { exact: true })).toHaveCount(1);
 });
 
-test("retrying a lost new-version response returns the single committed version", async ({ authPage: page }) => {
+test("retrying a lost new-version response after reload returns the single committed version", async ({
+	authPage: page,
+}) => {
 	const original = await offer(page, await application(page, "Northwind Labs"));
 	await page.goto(`/dashboard/career/offers?a=${original.id}`);
 	await page.getByRole("button", { name: /Northwind Labs.*Written offer/ }).click();
@@ -130,6 +177,13 @@ test("retrying a lost new-version response returns the single committed version"
 	await expect(page.getByText("Couldn't save the offer. Your draft is still here. Try again.")).toBeVisible();
 	const committed = (await offers(page)).find((row) => row.id !== original.id);
 	if (!committed) throw new Error("The discarded response must have committed a version.");
+	await page.reload();
+	await page
+		.getByRole("button", { name: /Northwind Labs.*Written offer/ })
+		.first()
+		.click();
+	await page.getByRole("menuitem", { name: "Edit terms", exact: true }).click();
+	await page.getByLabel("Base salary", { exact: true }).fill("90000");
 	await page.getByRole("button", { name: "Save offer", exact: true }).click();
 	await expect(page.getByRole("heading", { name: "Edit offer terms", exact: true })).toHaveCount(0);
 	await expect(page).toHaveURL(new RegExp(`a=${committed.id}`));

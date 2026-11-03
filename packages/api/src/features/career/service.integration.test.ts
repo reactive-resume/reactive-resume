@@ -1584,6 +1584,36 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			await expect(service.updateOffer("alice", fit.id, terms, terms)).rejects.toMatchObject({ code: "NOT_FOUND" });
 	});
 
+	it("keeps a saved offer version when Undo removes the offer extracted by a reply", async () => {
+		await applications.update({ userId: "alice", id: "alice-app", status: "applied" });
+		const reply = await savedItem("alice-app", {
+			kind: "reply",
+			message: "An offer from Fictional Labs",
+			title: "An offer",
+			asks: [],
+			unconfirmed: [],
+			reply: "",
+			changes: [{ type: "offer" }],
+			offer: { currency: "EUR", period: "year", base: 90000, variable: null },
+		});
+		await service.applyReply("alice", reply.id, [0]);
+		const [original] = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" });
+		if (original?.data.kind !== "offer") throw new Error("Expected extracted offer");
+		const expected = offerTermsSchema.parse(original.data);
+		const version = await service.updateOffer(
+			"alice",
+			original.id,
+			{ ...expected, base: 95000 },
+			expected,
+			true,
+			randomUUID(),
+		);
+		await service.undoReply("alice", reply.id);
+		const remaining = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" });
+		expect(remaining).toMatchObject([{ id: version.id, data: { base: 95000, origin: "message" } }]);
+		expect(remaining.map((row) => row.id)).not.toContain(original.id);
+	});
+
 	it("replays one receipted offer version without duplicating it or reviving a deleted version", async () => {
 		const input = careerOfferInputSchema.parse({
 			applicationId: "alice-app",
@@ -1606,13 +1636,18 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			service.updateOffer("alice", original.id, { ...terms, base: 1 }, expected, true, newId),
 		).rejects.toMatchObject({ code: "CONFLICT" });
 		await expect(service.updateOffer("bob", original.id, terms, expected, true, newId)).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		await expect(service.updateOffer("bob", original.id, terms, expected, true, randomUUID())).rejects.toMatchObject({
 			code: "NOT_FOUND",
 		});
 		await service.updateOffer("alice", original.id, { ...expected, base: 86000 }, expected);
 		expect((await save()).id).toBe(newId);
+		await service.deleteSavedItem("alice", original.id);
+		expect((await save()).id).toBe(newId);
 		await service.deleteSavedItem("alice", newId);
 		await expect(save()).rejects.toMatchObject({ code: "CONFLICT" });
-		expect(await service.savedItems({ userId: "alice", kind: "offer" })).toHaveLength(1);
+		expect(await service.savedItems({ userId: "alice", kind: "offer" })).toHaveLength(0);
 	});
 
 	it("names the messages no longer sent after Knowledge changes, and replies that ended early", async () => {

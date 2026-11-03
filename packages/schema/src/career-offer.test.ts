@@ -211,4 +211,5 @@ it("derives percentages only from their own base and round trips localized editi
 	expect(annualBaseHint(old, { ...yearly, currency: "USD" })).toBeNull();
 	expect(annualBaseHint(old, { ...yearly, period: "hour" })).toBeNull();
 	expect(annualBaseHint({ ...old, base: null }, yearly)).toBeNull();
+	expect(annualBaseHint(yearly, yearly)).toBeNull();
 });

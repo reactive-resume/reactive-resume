@@ -1026,21 +1026,6 @@ export const careerService = {
 	) =>
 		db.transaction(async (tx) => {
 			await lockUser(tx, userId);
-			const [row] = await tx
-				.select()
-				.from(tables.careerArtifact)
-				.where(
-					and(
-						eq(tables.careerArtifact.id, id),
-						and(
-							eq(tables.careerArtifact.userId, userId),
-							availableApplicationContext(userId, tables.careerArtifact.applicationId),
-						),
-					),
-				)
-				.for("update");
-			if (!row || row.data.kind !== "offer") throw new ORPCError("NOT_FOUND");
-			const { kind: _kind, origin, editedAt: _editedAt, ...current } = row.data;
 			const nextTerms = { ...offerTermsSchema.parse(terms), variablePercent: terms.variablePercent ?? null };
 			const expectedTerms = { ...offerTermsSchema.parse(expected), variablePercent: expected.variablePercent ?? null };
 			const request = { kind: "offer-version", id, terms: nextTerms, expected: expectedTerms };
@@ -1058,6 +1043,19 @@ export const careerService = {
 				if (!version || version.data.kind !== "offer") throw new ORPCError("NOT_FOUND");
 				return version;
 			}
+			const [row] = await tx
+				.select()
+				.from(tables.careerArtifact)
+				.where(
+					and(
+						eq(tables.careerArtifact.id, id),
+						eq(tables.careerArtifact.userId, userId),
+						availableApplicationContext(userId, tables.careerArtifact.applicationId),
+					),
+				)
+				.for("update");
+			if (!row || row.data.kind !== "offer") throw new ORPCError("NOT_FOUND");
+			const { kind: _kind, origin, editedAt: _editedAt, ...current } = row.data;
 			if (
 				!isDeepStrictEqual(
 					{ ...offerTermsSchema.parse(current), variablePercent: current.variablePercent ?? null },

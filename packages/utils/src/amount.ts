@@ -23,6 +23,7 @@ function parseLocalizedNumber(input: string, locale: string, maximumFractionDigi
 		if (whole !== normalized) return undefined;
 	}
 	const value = Number(`${ungrouped}.${fraction ?? "0"}`);
+	if (value === 0 && /[1-9]/.test(`${ungrouped}${fraction ?? ""}`)) return undefined;
 	return Number.isFinite(value) ? value : undefined;
 }
 
