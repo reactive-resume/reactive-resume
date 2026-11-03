@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:45+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "ஒரு நாட்டைச் சேர்க்கவும்"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "ஒரு உண்மையைச் சேர்க்கவும்"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "ஓர் உண்மையைச் சேர்க்கவும், எடுத்துக்காட்டாக “2025-இல் இரண்டு இணை PM-களுக்கு வழிகாட்டினேன்”"
 
@@ -3131,6 +3135,14 @@ msgstr "எல்லையின் வளைவு"
 msgid "Border width"
 msgstr "எல்லையின் அகலம்"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "இரு கணக்குகளிலும் தனிப்பட்ட விண்ணப்பச் சுயவிவரம் உள்ளது. இணைக்கும் முன் அமைப்புகள் → கணக்கு பகுதியில் ஒன்றை ஏற்றுமதி செய்து நீக்கவும்; எதுவும் மேலெழுதப்படாது."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "இரு கணக்குகளிலும் ஒரே சேமித்த விண்ணப்பப் பதில்கள் உள்ளன. இணைக்கும் முன் ஒரு நகலை ஏற்றுமதி செய்து நீக்கவும்; எதுவும் மேலெழுதப்படாது."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "பிரிக்கக்கூடிய வகையில் ரெஸ்யூமை வழக்கமான பிரிவுகளாகப் பிரிக்கவும்."
@@ -3615,6 +3627,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "நாணயத்தைத் தேர்ந்தெடுக்கவும்."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr ""
@@ -4014,6 +4030,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "என்ன மேம்பட்டது என்பதைக் காண முயற்சிகளை ஒப்பிடுங்கள். பயிற்சிக் கேள்விகள் உருவகப்படுத்தப்பட்டவை, {0}-இடமிருந்து வந்தவை அல்ல."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "முன்னேற்றத்தைக் காண முயற்சிகளை ஒப்பிடுங்கள். பயிற்சிக் கேள்விகள் உருவகப்படுத்தப்பட்டவை."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -4035,6 +4055,10 @@ msgstr "அவற்றின் அசல் நாணயம் மற்று
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "உங்கள் கதைகள் மற்றும் வேலை அறிவிப்புடன் ஒப்பிடப்பட்டது."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "உங்கள் கதைகளுடன் ஒப்பிடப்பட்டது."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4774,6 +4798,7 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "இதை ஏற்ற முடியவில்லை. நீங்கள் சேமித்த தரவு மாறவில்லை."
@@ -4933,7 +4958,6 @@ msgstr "பாஸ் கீயை மறுபெயரிட முடியவ
 msgid "Couldn't rename this conversation. Try again."
 msgstr "இந்த உரையாடலை மறுபெயரிட முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "உங்கள் கடவுச்சொல்லை மீட்டமைக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
@@ -5087,7 +5111,6 @@ msgstr "நேர்காணலைத் திட்டமிட முடி�
 msgid "Couldn't send the email. Try again."
 msgstr "மின்னஞ்சலை அனுப்ப முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "கடவுச்சொல் மீட்டமைப்பு மின்னஞ்சலை அனுப்ப முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
@@ -5120,8 +5143,6 @@ msgstr "PDF முன்னோட்டத்தைக் காட்ட மு
 msgid "Couldn't show the preview."
 msgstr "முன்னோட்டத்தைக் காட்ட முடியவில்லை."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5266,12 +5287,10 @@ msgstr "புகைப்படத்தைப் பதிவேற்ற ம�
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "குறியீட்டைச் சரிபார்க்க முடியவில்லை. உங்கள் அங்கீகாரச் செயலியிலிருந்து தற்போதைய குறியீட்டை உள்ளிடவும்."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "உங்கள் காப்புக் குறியீட்டைச் சரிபார்க்க முடியவில்லை. குறியீட்டைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "உங்கள் குறியீட்டைச் சரிபார்க்க முடியவில்லை. குறியீட்டைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்."
@@ -5459,7 +5478,6 @@ msgstr "CSV தரவு"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
-#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "நாணயம்"
 
@@ -6640,10 +6658,6 @@ msgstr "64 எழுத்துகள் வரை ஒரு பெயரை �
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "மூன்றெழுத்து நாணயக் குறியீட்டை உள்ளிடவும்."
-
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
@@ -7633,6 +7647,10 @@ msgstr "விளிப்பு"
 msgid "Grid"
 msgstr "கட்டம்"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "விருந்தினர் மற்றும் கணக்கின் தொழில் விருப்பங்கள் வேறுபடுகின்றன. விருந்தினர் வேலை மாறாமல் உள்ளது. மீண்டும் முயலும் முன் இரு கணக்குகளின் தொழில் விருப்பங்களையும் அறிவு நினைவக அமைப்புகளையும் பொருத்தவும்."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "நம் அழைப்பில் அதை விரிவாக விளக்க மகிழ்ச்சி."
@@ -8023,6 +8041,7 @@ msgid "Images cover most of the page."
 msgstr "படங்கள் பெரும்பாலான பக்கத்தை மறைக்கின்றன."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "இறக்குமதி செய்"
 
@@ -10768,6 +10787,10 @@ msgstr "சேமிக்கப்படவில்லை"
 msgid "Not saved — this fact was forgotten before."
 msgstr "சேமிக்கப்படவில்லை — இந்த உண்மை முன்பே மறக்கப்பட்டது."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "சேமிக்கப்படவில்லை · சேமிக்க உள்நுழைக"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -11442,6 +11465,7 @@ msgstr "100 இல்"
 msgid "Out of date: the text has changed since."
 msgstr "காலாவதியானது: உரை மாற்றப்பட்டது."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11981,6 +12005,7 @@ msgid "Practice"
 msgstr "பயிற்சி"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12029,6 +12054,10 @@ msgstr "பயிற்சி முன்னுரிமை:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "பயிற்சிக் கேள்விகள் உருவகப்படுத்தப்பட்டவை, Fieldnote-இடமிருந்து வந்தவை அல்ல."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "வேலை விண்ணப்பம் இல்லாமல் பயிற்சி செய்யுங்கள்"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -13520,6 +13549,10 @@ msgstr "கருப்பொருள் எதுவாக இருந்த�
 msgid "Resumes created"
 msgstr "ரெஸ்யூம்கள் உருவாக்கப்பட்டது"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "கணக்குகளை ஒன்றிணைக்கும் முன் பயன்படுத்தாத விண்ணப்ப நெடுவரிசைகளைச் செயல்நீக்கவும்; மொத்தம் 40 செயலில் உள்ள நெடுவரிசைகளை மீறுகிறது."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14461,6 +14494,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "புதிய இணைப்பை அனுப்பு"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15004,6 +15041,10 @@ msgstr "பக்கப்பட்டிகள் பெரும்பால�
 msgid "Sign in"
 msgstr "உள்நுழைக"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "மீண்டும் உள்நுழைக"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "உங்கள் AI கிளையன்டிலிருந்து உள்நுழையவும் அல்லது API விசையைப் பயன்படுத்தவும்."
@@ -15022,6 +15063,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "சேமிக்க உள்நுழைக"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16082,6 +16127,10 @@ msgstr "நன்றி Sam. இதோ ஒன்று: Northwind Labs-இல்
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "குறியீடு பொருந்தவில்லை. சரிபார்த்து மீண்டும் முயலவும்."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16089,6 +16138,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "மின்னஞ்சல், பயனர்பெயர் அல்லது கடவுச்சொல் பொருந்தவில்லை. சரிபார்க்கவும் அல்லது கடவுச்சொல்லை மீட்டமைக்கவும்."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16915,6 +16968,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "இந்த மீட்டமைப்பு இணைப்பு காலாவதியானது அல்லது ஏற்கெனவே பயன்படுத்தப்பட்டது."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "இந்த மீட்டமைப்பு இணைப்பு காலாவதியானது அல்லது ஏற்கெனவே பயன்படுத்தப்பட்டது. புதிய இணைப்பை அனுப்பு."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "இந்த ரெஸ்யூம் பூட்டப்பட்டுள்ளது. திருத்த, அதன் மெனுவிலிருந்து திறக்கவும்."
@@ -17003,6 +17064,10 @@ msgstr "இந்த சேவையகம் வழக்கமான நில
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "இந்த உள்நுழைவு முயற்சி காலாவதியானது அல்லது ஏற்கனவே பயன்படுத்தப்பட்டது. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "இந்த உள்நுழைவு படி காலாவதியானது. மீண்டும் உள்நுழைக."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17150,6 +17215,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "வெள்ளை நிறத்தில் உள்ள தலைப்புகளுக்கு மிகவும் இலகுவானது. படிக்கவும் மங்கலாக அச்சிடவும் கடினமாக இருக்கலாம்."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "மிக அதிக முயற்சிகள். சிறிது காத்திருந்து மீண்டும் முயலவும்."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19229,6 +19298,10 @@ msgstr "உங்கள் சர்வர் வலைத் தேடலை �
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "உங்கள் அமர்வு முடிந்தது. தொடர்ந்து வேலை செய்ய மீண்டும் உள்நுழைக."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19331,83 +19404,3 @@ msgstr "சிறிதாக்கு"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ஜூலு"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "இரு கணக்குகளிலும் தனிப்பட்ட விண்ணப்பச் சுயவிவரம் உள்ளது. இணைக்கும் முன் அமைப்புகள் → கணக்கு பகுதியில் ஒன்றை ஏற்றுமதி செய்து நீக்கவும்; எதுவும் மேலெழுதப்படாது."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "இரு கணக்குகளிலும் ஒரே சேமித்த விண்ணப்பப் பதில்கள் உள்ளன. இணைக்கும் முன் ஒரு நகலை ஏற்றுமதி செய்து நீக்கவும்; எதுவும் மேலெழுதப்படாது."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "விருந்தினர் மற்றும் கணக்கின் தொழில் விருப்பங்கள் வேறுபடுகின்றன. விருந்தினர் வேலை மாறாமல் உள்ளது. மீண்டும் முயலும் முன் இரு கணக்குகளின் தொழில் விருப்பங்களையும் அறிவு நினைவக அமைப்புகளையும் பொருத்தவும்."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "கணக்குகளை ஒன்றிணைக்கும் முன் பயன்படுத்தாத விண்ணப்ப நெடுவரிசைகளைச் செயல்நீக்கவும்; மொத்தம் 40 செயலில் உள்ள நெடுவரிசைகளை மீறுகிறது."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "புதிய இணைப்பை அனுப்பு"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "மீண்டும் உள்நுழைக"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "சேமிக்க உள்நுழைக"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "குறியீடு பொருந்தவில்லை. சரிபார்த்து மீண்டும் முயலவும்."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "மின்னஞ்சல், பயனர்பெயர் அல்லது கடவுச்சொல் பொருந்தவில்லை. சரிபார்க்கவும் அல்லது கடவுச்சொல்லை மீட்டமைக்கவும்."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "இந்த மீட்டமைப்பு இணைப்பு காலாவதியானது அல்லது ஏற்கெனவே பயன்படுத்தப்பட்டது."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "இந்த உள்நுழைவு படி காலாவதியானது. மீண்டும் உள்நுழைக."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "மிக அதிக முயற்சிகள். சிறிது காத்திருந்து மீண்டும் முயலவும்."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "உங்கள் அமர்வு முடிந்தது. தொடர்ந்து வேலை செய்ய மீண்டும் உள்நுழைக."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "சேமிக்கப்படவில்லை · சேமிக்க உள்நுழைக"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "இந்த மீட்டமைப்பு இணைப்பு காலாவதியானது அல்லது ஏற்கெனவே பயன்படுத்தப்பட்டது. புதிய இணைப்பை அனுப்பு."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "முன்னேற்றத்தைக் காண முயற்சிகளை ஒப்பிடுங்கள். பயிற்சிக் கேள்விகள் உருவகப்படுத்தப்பட்டவை."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compared with your stories."
-msgstr "உங்கள் கதைகளுடன் ஒப்பிடப்பட்டது."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practice without an application"
-msgstr "வேலை விண்ணப்பம் இல்லாமல் பயிற்சி செய்யுங்கள்"
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "ஒரு உண்மையைச் சேர்க்கவும்"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "முதலில் ஒரு நேர்காணலைச் சேர்க்கவும்"

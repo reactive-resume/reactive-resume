@@ -351,7 +351,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 					}}
 				/>
 				{(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency) ? (
-					<Banner tone="warn" message={t`Enter a three-letter currency code.`} />
+					<Banner tone="warn" message={t`Choose a currency.`} />
 				) : null}
 				<SelectSheet
 					label={t`Pay period`}

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:45+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Shto një shtet"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Shtoni një fakt"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Shtoni një fakt, për shembull “Në 2025 kam qenë mentor për dy menaxherë produkti fillestarë”"
 
@@ -3131,6 +3135,14 @@ msgstr "Rrezja e këndeve"
 msgid "Border width"
 msgstr "Gjerësia e kornizës"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Të dyja llogaritë kanë profil privat aplikimi. Eksportoni dhe fshini njërin te Cilësimet → Llogaria para lidhjes, që asnjëri të mos mbishkruhet."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Të dyja llogaritë kanë përgjigje të ruajtura aplikimi të dyfishuara. Eksportoni dhe fshini një kopje para lidhjes, që asnjëra të mos mbishkruhet."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "Ndajeni CV-në në seksionet e zakonshme që të mund të segmentohet."
@@ -3615,6 +3627,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Zgjidhni një monedhë."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr ""
@@ -4014,6 +4030,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Krahasoni përpjekjet për të parë çfarë u përmirësua. Pyetjet e ushtrimit janë të simuluara, jo nga {0}."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Krahasoni përpjekjet për të parë përparimin. Pyetjet e ushtrimit janë të simuluara."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -4035,6 +4055,10 @@ msgstr "Krahasuar në monedhën dhe periudhën e pagesës origjinale. Krahasimi 
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Krahasuar me historitë tuaja dhe shpalljen."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Krahasuar me historitë tuaja."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4774,6 +4798,7 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Kjo nuk mund të ngarkohej. Të dhënat tuaja të ruajtura nuk kanë ndryshuar."
@@ -4933,7 +4958,6 @@ msgstr "Çelësi i kalimit nuk mund të riemërtohej. Provoni përsëri."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Kjo bisedë nuk mund të riemërtohej. Provoni përsëri."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Fjalëkalimi nuk mund të rivendosej. Provoni përsëri."
@@ -5087,7 +5111,6 @@ msgstr "Intervista nuk mund të planifikohej. Provoni përsëri."
 msgid "Couldn't send the email. Try again."
 msgstr "Email-i nuk mund të dërgohej. Provo sërish."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Emaili për rivendosjen e fjalëkalimit nuk mund të dërgohej. Provoni përsëri."
@@ -5120,8 +5143,6 @@ msgstr "Pamja paraprake e PDF-së nuk mund të shfaqej. Ngarkojeni skedarin sër
 msgid "Couldn't show the preview."
 msgstr "Pamja paraprake nuk mund të shfaqej."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5266,12 +5287,10 @@ msgstr "Fotoja nuk mund të ngarkohej. Provoni përsëri."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Kodi nuk mund të verifikohej. Vendosni kodin aktual nga aplikacioni juaj i autentikimit."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Kodi rezervë nuk mund të verifikohej. Kontrolloni kodin dhe provoni përsëri."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Kodi juaj nuk mund të verifikohej. Kontrolloni kodin dhe provoni përsëri."
@@ -5459,7 +5478,6 @@ msgstr "Të dhënat CSV"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
-#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "Monedha"
 
@@ -6640,10 +6658,6 @@ msgstr "Futni një emër, deri në 64 karaktere."
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "Vendosni kodin e monedhës me tre shkronja."
-
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
@@ -7633,6 +7647,10 @@ msgstr "Përshëndetja"
 msgid "Grid"
 msgstr "Rrjetë"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Preferencat e karrierës së vizitorit dhe llogarisë ndryshojnë. Puna juaj si vizitor ruhet. Përputhni preferencat dhe cilësimet e kujtesës së Njohurive në të dyja llogaritë dhe provoni sërish."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Me kënaqësi jua shpjegoj gjatë telefonatës sonë."
@@ -8023,6 +8041,7 @@ msgid "Images cover most of the page."
 msgstr "Imazhet mbulojnë pjesën më të madhe të faqes."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "Importo"
 
@@ -10768,6 +10787,10 @@ msgstr "Nuk u ruajt"
 msgid "Not saved — this fact was forgotten before."
 msgstr "Nuk u ruajt — ky fakt ishte harruar më parë."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Nuk u ruajt · Hyni për ta ruajtur"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -11442,6 +11465,7 @@ msgstr "nga 100"
 msgid "Out of date: the text has changed since."
 msgstr "I vjetëruar: teksti ka ndryshuar që atëherë."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11981,6 +12005,7 @@ msgid "Practice"
 msgstr "Ushtrohu"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12029,6 +12054,10 @@ msgstr "Përparësia e ushtrimit:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Pyetjet e ushtrimit janë të simuluara, jo nga Fieldnote."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Ushtroni pa një aplikim pune"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -13520,6 +13549,10 @@ msgstr "rezymetë jepen gjithmonë në letër të bardhë, pavarësisht nga tema
 msgid "Resumes created"
 msgstr "rezymetë e krijuara"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Hiqni nga përdorimi kolonat e papërdorura të aplikimeve para bashkimit; totali kalon 40 kolona aktive."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14461,6 +14494,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Dërgo një lidhje të re"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15004,6 +15041,10 @@ msgstr "Shiritat anësor shpesh lexohen të fundit, ose të përziera në kolon�
 msgid "Sign in"
 msgstr "Kyçu"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Hyr sërish"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Hyni nga klienti juaj i IA-së ose përdorni një çelës API."
@@ -15022,6 +15063,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Hyr për ta ruajtur"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16082,6 +16127,10 @@ msgstr "Faleminderit, Sam. Ja një: në Northwind Labs udhëhoqa ridizajnimin e 
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Kodi nuk përputhet. Kontrollojeni dhe provoni sërish."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16089,6 +16138,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "Emaili, emri i përdoruesit ose fjalëkalimi nuk përputhet. Kontrollojini ose rivendosni fjalëkalimin."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16915,6 +16968,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Kjo lidhje rivendosjeje ka skaduar ose është përdorur."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Kjo lidhje rivendosjeje ka skaduar ose është përdorur. Dërgo një lidhje të re."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Kjo CV është e kyçur. Zhbllokojeni nga menyja e saj për ta redaktuar."
@@ -17003,6 +17064,10 @@ msgstr "Ky server përdor fazat standarde, ndaj emrat e fazave në skedar nuk ru
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Kjo përpjekje hyrjeje ka skaduar ose është përdorur tashmë. Provoni përsëri."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Ky hap hyrjeje ka skaduar. Hyni sërish."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17150,6 +17215,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Shumë i lehtë për titujt në të bardhë. Mund të jetë e vështirë të lexohet dhe të shtypet paksa."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Shumë përpjekje. Prisni pak dhe provoni sërish."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19229,6 +19298,10 @@ msgstr "Serveri juaj ofron kërkim në ueb në seksionin Aplikimet dhe për asis
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Sesioni juaj përfundoi. Hyni sërish për të vazhduar punën."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19331,83 +19404,3 @@ msgstr "Zvogëlo"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Të dyja llogaritë kanë profil privat aplikimi. Eksportoni dhe fshini njërin te Cilësimet → Llogaria para lidhjes, që asnjëri të mos mbishkruhet."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Të dyja llogaritë kanë përgjigje të ruajtura aplikimi të dyfishuara. Eksportoni dhe fshini një kopje para lidhjes, që asnjëra të mos mbishkruhet."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Preferencat e karrierës së vizitorit dhe llogarisë ndryshojnë. Puna juaj si vizitor ruhet. Përputhni preferencat dhe cilësimet e kujtesës së Njohurive në të dyja llogaritë dhe provoni sërish."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Hiqni nga përdorimi kolonat e papërdorura të aplikimeve para bashkimit; totali kalon 40 kolona aktive."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Dërgo një lidhje të re"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Hyr sërish"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Hyr për ta ruajtur"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Kodi nuk përputhet. Kontrollojeni dhe provoni sërish."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "Emaili, emri i përdoruesit ose fjalëkalimi nuk përputhet. Kontrollojini ose rivendosni fjalëkalimin."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Kjo lidhje rivendosjeje ka skaduar ose është përdorur."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Ky hap hyrjeje ka skaduar. Hyni sërish."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Shumë përpjekje. Prisni pak dhe provoni sërish."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Sesioni juaj përfundoi. Hyni sërish për të vazhduar punën."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Nuk u ruajt · Hyni për ta ruajtur"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Kjo lidhje rivendosjeje ka skaduar ose është përdorur. Dërgo një lidhje të re."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "Krahasoni përpjekjet për të parë përparimin. Pyetjet e ushtrimit janë të simuluara."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compared with your stories."
-msgstr "Krahasuar me historitë tuaja."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practice without an application"
-msgstr "Ushtroni pa një aplikim pune"
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "Shtoni një fakt"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Shtoni fillimisht një intervistë"

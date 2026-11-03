@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:45+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Afegeix un país"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Afegeix un fet"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Afegiu un fet, per exemple «El 2025 vaig fer mentoria a dos PM júnior»"
 
@@ -3131,6 +3135,14 @@ msgstr "Radi de la vora"
 msgid "Border width"
 msgstr "Amplada de la vora"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Tots dos comptes tenen un perfil de candidatura privat. Exporta i suprimeix un perfil a Configuració → Compte abans d’enllaçar-los perquè no se’n sobreescrigui cap."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Tots dos comptes tenen respostes de candidatura desades duplicades. Exporta i suprimeix una còpia abans d’enllaçar-los perquè no se’n sobreescrigui cap."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "Divideix el currículum en les seccions habituals perquè es pugui segmentar."
@@ -3615,6 +3627,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Tria una moneda."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr ""
@@ -4014,6 +4030,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Compareu els intents per veure què ha millorat. Les preguntes d'assaig són simulades, no provenen de {0}."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Compara els intents per veure el progrés. Les preguntes de pràctica són simulades."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -4035,6 +4055,10 @@ msgstr "Es comparen en la seva moneda i període de pagament originals. Comparar
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Comparat amb les vostres històries i l'anunci."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Comparat amb les teves històries."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4774,6 +4798,7 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "No s'ha pogut carregar. Les dades desades no han canviat."
@@ -4933,7 +4958,6 @@ msgstr "No s'ha pogut canviar el nom de la clau d'accés. Torneu-ho a provar."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "No s'ha pogut canviar el nom d'aquesta conversa. Torneu-ho a provar."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "No s'ha pogut restablir la contrasenya. Torneu-ho a provar."
@@ -5087,7 +5111,6 @@ msgstr "No s'ha pogut programar l'entrevista. Torneu-ho a provar."
 msgid "Couldn't send the email. Try again."
 msgstr "No s'ha pogut enviar el correu electrònic. Torna-ho a provar."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "No s'ha pogut enviar el correu per restablir la contrasenya. Torneu-ho a provar."
@@ -5120,8 +5143,6 @@ msgstr "No s'ha pogut mostrar la previsualització del PDF. Torneu a pujar el fi
 msgid "Couldn't show the preview."
 msgstr "No s'ha pogut mostrar la previsualització."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5266,12 +5287,10 @@ msgstr "No s'ha pogut pujar la fotografia. Torneu-ho a provar."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "No s'ha pogut verificar el codi. Introduïu el codi actual de l'aplicació d'autenticació."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "No s'ha pogut verificar el codi de seguretat. Comproveu el codi i torneu-ho a provar."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "No s'ha pogut verificar el codi. Comproveu el codi i torneu-ho a provar."
@@ -5459,7 +5478,6 @@ msgstr "Dades CSV"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
-#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "Moneda"
 
@@ -6640,10 +6658,6 @@ msgstr "Introduïu un nom, fins a 64 caràcters."
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "Introduïu un codi de moneda de tres lletres."
-
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
@@ -7633,6 +7647,10 @@ msgstr "Salutació"
 msgid "Grid"
 msgstr "Graella"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Les preferències professionals del convidat i del compte difereixen. La feina de convidat es conserva. Iguala les preferències i els ajustos de memòria de Coneixements als dos comptes i torna-ho a provar."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Us ho explico amb gust en la nostra trucada."
@@ -8023,6 +8041,7 @@ msgid "Images cover most of the page."
 msgstr "Les imatges cobreixen la major part de la pàgina."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "Importa"
 
@@ -10768,6 +10787,10 @@ msgstr "No desat"
 msgid "Not saved — this fact was forgotten before."
 msgstr "No s'ha desat — aquest fet ja s'havia oblidat."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Sense desar · Inicia la sessió per desar"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -11442,6 +11465,7 @@ msgstr "sobre 100"
 msgid "Out of date: the text has changed since."
 msgstr "Obsolet: el text ha canviat des de llavors."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11981,6 +12005,7 @@ msgid "Practice"
 msgstr "Assaig"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12029,6 +12054,10 @@ msgstr "Prioritat d'assaig:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Les preguntes d'assaig són simulades, no provenen de Fieldnote."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Practicar sense una candidatura"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -13520,6 +13549,10 @@ msgstr "Els currículums sempre es mostren en paper blanc, sigui quin sigui el t
 msgid "Resumes created"
 msgstr "currículums creats"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Retira les columnes de candidatures sense ús abans de combinar els comptes; el total supera les 40 columnes actives."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14461,6 +14494,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Envia un enllaç nou"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15004,6 +15041,10 @@ msgstr "Les barres laterals es llegeixen sovint per últim o es barregen a la co
 msgid "Sign in"
 msgstr "Inicia sessió"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Torna a iniciar la sessió"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Inicia la sessió des del teu client d'IA o utilitza una clau API."
@@ -15022,6 +15063,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Inicia la sessió per desar"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16082,6 +16127,10 @@ msgstr "Gràcies, Sam. Aquí en tens un: a Northwind Labs vaig dirigir el rediss
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "El codi no coincideix. Revisa’l i torna-ho a provar."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16089,6 +16138,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "El correu, l’usuari o la contrasenya no coincideix. Revisa’ls o restableix la contrasenya."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16915,6 +16968,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Aquest enllaç de restabliment ha caducat o ja s’ha utilitzat."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Aquest enllaç de restabliment ha caducat o ja s’ha utilitzat. Envia un enllaç nou."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Aquest currículum està bloquejat. Desbloquegeu-lo des del seu menú per editar-lo."
@@ -17003,6 +17064,10 @@ msgstr "Aquest servidor fa servir les etapes estàndard; per tant, no es conserv
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Aquest intent d'inici de sessió ha caducat o ja s'ha fet servir. Torneu-ho a provar."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Aquest pas d’inici de sessió ha caducat. Torna a iniciar la sessió."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17150,6 +17215,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Massa clar per als encapçalaments en blanc. Pot ser difícil llegir-lo i imprimir-lo dèbilment."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Massa intents. Espera un moment i torna-ho a provar."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19229,6 +19298,10 @@ msgstr "El vostre servidor proporciona cerca web a la secció Candidatures i per
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "La sessió s’ha acabat. Torna a iniciar-la per continuar treballant."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19331,83 +19404,3 @@ msgstr "Allunya"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulú"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Tots dos comptes tenen un perfil de candidatura privat. Exporta i suprimeix un perfil a Configuració → Compte abans d’enllaçar-los perquè no se’n sobreescrigui cap."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Tots dos comptes tenen respostes de candidatura desades duplicades. Exporta i suprimeix una còpia abans d’enllaçar-los perquè no se’n sobreescrigui cap."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Les preferències professionals del convidat i del compte difereixen. La feina de convidat es conserva. Iguala les preferències i els ajustos de memòria de Coneixements als dos comptes i torna-ho a provar."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Retira les columnes de candidatures sense ús abans de combinar els comptes; el total supera les 40 columnes actives."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Envia un enllaç nou"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Torna a iniciar la sessió"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Inicia la sessió per desar"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "El codi no coincideix. Revisa’l i torna-ho a provar."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "El correu, l’usuari o la contrasenya no coincideix. Revisa’ls o restableix la contrasenya."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Aquest enllaç de restabliment ha caducat o ja s’ha utilitzat."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Aquest pas d’inici de sessió ha caducat. Torna a iniciar la sessió."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Massa intents. Espera un moment i torna-ho a provar."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "La sessió s’ha acabat. Torna a iniciar-la per continuar treballant."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Sense desar · Inicia la sessió per desar"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Aquest enllaç de restabliment ha caducat o ja s’ha utilitzat. Envia un enllaç nou."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "Compara els intents per veure el progrés. Les preguntes de pràctica són simulades."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compared with your stories."
-msgstr "Comparat amb les teves històries."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practice without an application"
-msgstr "Practicar sense una candidatura"
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "Afegeix un fet"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Primer afegiu una entrevista"

@@ -529,7 +529,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						className={cn("flex items-start gap-1.5 text-xs", currencyInvalid ? "text-danger-text" : "text-ink-3")}
 					>
 						{currencyInvalid && <Icon name="warning-circle" />}
-						<span>{t`Enter a three-letter currency code.`}</span>
+						<span>{t`Choose a currency.`}</span>
 					</p>
 				</div>
 				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:45+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Voeg een land toe"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Voeg een feit toe"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Voeg een feit toe, bijvoorbeeld “Ik heb in 2025 twee associate PM's begeleid”"
 
@@ -3131,6 +3135,14 @@ msgstr "Afgeronde hoeken"
 msgid "Border width"
 msgstr "Lijndikte"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Beide accounts hebben een privé sollicitatieprofiel. Exporteer en verwijder één profiel via Instellingen → Account voordat je ze koppelt, zodat niets wordt overschreven."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Beide accounts hebben dubbele opgeslagen sollicitatieantwoorden. Exporteer en verwijder één kopie voordat je ze koppelt, zodat niets wordt overschreven."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "Verdeel het cv in de gebruikelijke secties, zodat het kan worden gesegmenteerd."
@@ -3615,6 +3627,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Kies een valuta."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr ""
@@ -4014,6 +4030,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Vergelijk pogingen om te zien wat er beter ging. Oefenvragen zijn gesimuleerd, niet afkomstig van {0}."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Vergelijk pogingen om je vooruitgang te zien. Oefenvragen zijn gesimuleerd."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -4035,6 +4055,10 @@ msgstr "Vergeleken in hun oorspronkelijke valuta en betalingsperiode. Vergelijke
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Vergeleken met uw verhalen en de vacature."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Vergeleken met je verhalen."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4774,6 +4798,7 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Kan dit niet laden. Uw opgeslagen gegevens zijn niet gewijzigd."
@@ -4933,7 +4958,6 @@ msgstr "Kan de naam van de passleutel niet wijzigen. Probeer het opnieuw."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Kan de naam van dit gesprek niet wijzigen. Probeer het opnieuw."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Kan uw wachtwoord niet opnieuw instellen. Probeer het opnieuw."
@@ -5087,7 +5111,6 @@ msgstr "Kan het sollicitatiegesprek niet plannen. Probeer het opnieuw."
 msgid "Couldn't send the email. Try again."
 msgstr "Kan de e-mail niet verzenden. Probeer het opnieuw."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Kan de e-mail voor het opnieuw instellen van het wachtwoord niet verzenden. Probeer het opnieuw."
@@ -5120,8 +5143,6 @@ msgstr "Het PDF-voorbeeld kon niet worden getoond. Upload het bestand opnieuw."
 msgid "Couldn't show the preview."
 msgstr "Kan het voorbeeld niet weergeven."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5266,12 +5287,10 @@ msgstr "Kan de foto niet uploaden. Probeer het opnieuw."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Kan de code niet verifiëren. Voer de huidige code uit uw authenticator-app in."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Kan uw back-upcode niet verifiëren. Controleer de code en probeer het opnieuw."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Kan uw code niet verifiëren. Controleer de code en probeer het opnieuw."
@@ -5459,7 +5478,6 @@ msgstr "CSV-gegevens"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
-#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "Valuta"
 
@@ -6640,10 +6658,6 @@ msgstr "Voer een naam in, maximaal 64 tekens."
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "Voer een valutacode van drie letters in."
-
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
@@ -7633,6 +7647,10 @@ msgstr "Aanhef"
 msgid "Grid"
 msgstr "Raster"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "De loopbaanvoorkeuren van gast en account verschillen. Je gastwerk blijft intact. Maak de loopbaanvoorkeuren en geheugeninstellingen voor Kennis in beide accounts gelijk en probeer opnieuw."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Ik licht het graag toe tijdens ons gesprek."
@@ -8023,6 +8041,7 @@ msgid "Images cover most of the page."
 msgstr "Afbeeldingen bedekken het grootste deel van de pagina."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "Importeren"
 
@@ -10768,6 +10787,10 @@ msgstr "Niet opgeslagen"
 msgid "Not saved — this fact was forgotten before."
 msgstr "Niet opgeslagen — dit feit is eerder vergeten."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Niet opgeslagen · Meld je aan om op te slaan"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -11442,6 +11465,7 @@ msgstr "van de 100"
 msgid "Out of date: the text has changed since."
 msgstr "Verouderd: de tekst is sindsdien gewijzigd."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11981,6 +12005,7 @@ msgid "Practice"
 msgstr "Oefening"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12029,6 +12054,10 @@ msgstr "Oefenprioriteit:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Oefenvragen zijn gesimuleerd, niet afkomstig van Fieldnote."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Oefenen zonder sollicitatie"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -13520,6 +13549,10 @@ msgstr "CV's worden altijd weergegeven op wit papier, ongeacht het thema."
 msgid "Resumes created"
 msgstr "CV's gemaakt"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Hef ongebruikte sollicitatiekolommen op voordat je de accounts samenvoegt; samen hebben ze meer dan 40 actieve kolommen."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14461,6 +14494,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Nieuwe link sturen"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15004,6 +15041,10 @@ msgstr "Zijbalken worden vaak als laatste gelezen of in de hoofdkolom gemengd."
 msgid "Sign in"
 msgstr "Inloggen"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Opnieuw aanmelden"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Meld je aan vanuit je AI-client of gebruik een API-sleutel."
@@ -15022,6 +15063,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Aanmelden om op te slaan"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16082,6 +16127,10 @@ msgstr "Bedankt, Sam. Hier is er een: bij Northwind Labs leidde ik het onboardin
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Die code klopt niet. Controleer de code en probeer opnieuw."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16089,6 +16138,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "Dat e-mailadres, die gebruikersnaam of dat wachtwoord klopt niet. Controleer je gegevens of stel je wachtwoord opnieuw in."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16915,6 +16968,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Deze herstellink is verlopen of al gebruikt."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Deze herstellink is verlopen of al gebruikt. Nieuwe link sturen."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Dit cv is vergrendeld. Ontgrendel het via het menu om het te bewerken."
@@ -17003,6 +17064,10 @@ msgstr "Deze server gebruikt de standaardfasen. Fasenamen uit het bestand blijve
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Deze inlogpoging is verlopen of al gebruikt. Probeer het opnieuw."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Deze aanmeldstap is verlopen. Meld je opnieuw aan."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17150,6 +17215,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Te licht voor koppen op wit. Het kan moeilijk zijn om vaag te lezen en af ​​te drukken."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Te veel pogingen. Wacht even en probeer opnieuw."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19229,6 +19298,10 @@ msgstr "Uw server biedt internetzoekopdrachten in de sectie Sollicitaties en voo
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Je sessie is beëindigd. Meld je opnieuw aan om verder te werken."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19331,83 +19404,3 @@ msgstr "Uitzoomen"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Beide accounts hebben een privé sollicitatieprofiel. Exporteer en verwijder één profiel via Instellingen → Account voordat je ze koppelt, zodat niets wordt overschreven."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Beide accounts hebben dubbele opgeslagen sollicitatieantwoorden. Exporteer en verwijder één kopie voordat je ze koppelt, zodat niets wordt overschreven."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "De loopbaanvoorkeuren van gast en account verschillen. Je gastwerk blijft intact. Maak de loopbaanvoorkeuren en geheugeninstellingen voor Kennis in beide accounts gelijk en probeer opnieuw."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Hef ongebruikte sollicitatiekolommen op voordat je de accounts samenvoegt; samen hebben ze meer dan 40 actieve kolommen."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Nieuwe link sturen"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Opnieuw aanmelden"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Aanmelden om op te slaan"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Die code klopt niet. Controleer de code en probeer opnieuw."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "Dat e-mailadres, die gebruikersnaam of dat wachtwoord klopt niet. Controleer je gegevens of stel je wachtwoord opnieuw in."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Deze herstellink is verlopen of al gebruikt."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Deze aanmeldstap is verlopen. Meld je opnieuw aan."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Te veel pogingen. Wacht even en probeer opnieuw."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Je sessie is beëindigd. Meld je opnieuw aan om verder te werken."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Niet opgeslagen · Meld je aan om op te slaan"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Deze herstellink is verlopen of al gebruikt. Nieuwe link sturen."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "Vergelijk pogingen om je vooruitgang te zien. Oefenvragen zijn gesimuleerd."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compared with your stories."
-msgstr "Vergeleken met je verhalen."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practice without an application"
-msgstr "Oefenen zonder sollicitatie"
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "Voeg een feit toe"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Voeg eerst een gesprek toe"

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:45+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Ülke ekle"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Bir bilgi ekleyin"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Bir bilgi ekleyin, örneğin “2025'te iki yardımcı ürün yöneticisine mentorluk yaptım”"
 
@@ -3131,6 +3135,14 @@ msgstr "Kenar ovalliği"
 msgid "Border width"
 msgstr "Kenar kalınlığı"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "İki hesapta da özel başvuru profili var. Üzerine yazılmaması için bağlamadan önce Ayarlar → Hesap bölümünden bir profili dışa aktarın ve silin."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "İki hesapta da yinelenen kayıtlı başvuru yanıtları var. Üzerine yazılmaması için bağlamadan önce bir kopyayı dışa aktarın ve silin."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "Bölümlere ayrılabilmesi için özgeçmişi alışılmış bölümlere ayırın."
@@ -3615,6 +3627,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Bir para birimi seçin."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr ""
@@ -4014,6 +4030,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Neyin geliştiğini görmek için denemeleri karşılaştırın. Pratik soruları simülasyondur, {0} şirketinden gelmez."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Gelişimi görmek için denemeleri karşılaştırın. Alıştırma soruları simülasyondur."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -4035,6 +4055,10 @@ msgstr "Kendi para birimi ve ödeme döneminde karşılaştırılır. Karşıla�
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Hikayelerinizle ve ilanla karşılaştırıldı."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Hikâyelerinizle karşılaştırıldı."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4774,6 +4798,7 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Bu içerik yüklenemedi. Kayıtlı verileriniz değişmedi."
@@ -4933,7 +4958,6 @@ msgstr "Geçiş anahtarı yeniden adlandırılamadı. Tekrar deneyin."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Bu konuşma yeniden adlandırılamadı. Tekrar deneyin."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Şifreniz sıfırlanamadı. Tekrar deneyin."
@@ -5087,7 +5111,6 @@ msgstr "Görüşme planlanamadı. Tekrar deneyin."
 msgid "Couldn't send the email. Try again."
 msgstr "E-posta gönderilemedi. Tekrar deneyin."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Şifre sıfırlama e-postası gönderilemedi. Tekrar deneyin."
@@ -5120,8 +5143,6 @@ msgstr "PDF önizlemesi gösterilemedi. Dosyayı yeniden yükleyin."
 msgid "Couldn't show the preview."
 msgstr "Önizleme gösterilemedi."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5266,12 +5287,10 @@ msgstr "Fotoğraf yüklenemedi. Tekrar deneyin."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Kod doğrulanamadı. Doğrulayıcı uygulamanızdaki güncel kodu girin."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Yedek kodunuz doğrulanamadı. Kodu kontrol edip tekrar deneyin."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Kodunuz doğrulanamadı. Kodu kontrol edip tekrar deneyin."
@@ -5459,7 +5478,6 @@ msgstr "CSV verileri"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
-#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "Para birimi"
 
@@ -6640,10 +6658,6 @@ msgstr "En fazla 64 karakterden oluşan bir ad girin."
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "Üç harfli para birimi kodunu girin."
-
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
@@ -7633,6 +7647,10 @@ msgstr "Hitap"
 msgid "Grid"
 msgstr "Izgara"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Misafir ve hesabın kariyer tercihleri farklı. Misafir çalışmalarınız korunuyor. Yeniden denemeden önce iki hesabın kariyer tercihleriyle Bilgi bellek ayarlarını eşitleyin."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Görüşmemizde ayrıntılarıyla anlatmaktan memnuniyet duyarım."
@@ -8023,6 +8041,7 @@ msgid "Images cover most of the page."
 msgstr "Görseller sayfanın büyük bölümünü kaplıyor."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "İçe Aktar"
 
@@ -10768,6 +10787,10 @@ msgstr "Kaydedilmedi"
 msgid "Not saved — this fact was forgotten before."
 msgstr "Kaydedilmedi — bu bilginin daha önce unutulması istenmişti."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Kaydedilmedi · Kaydetmek için giriş yapın"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -11442,6 +11465,7 @@ msgstr "100 üzerinden"
 msgid "Out of date: the text has changed since."
 msgstr "Güncel değil: metin o zamandan beri değişti."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11981,6 +12005,7 @@ msgid "Practice"
 msgstr "Pratik"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12029,6 +12054,10 @@ msgstr "Pratik önceliği:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Pratik soruları simülasyondur, Fieldnote'tan gelmez."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "İş başvurusu olmadan pratik yapın"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -13520,6 +13549,10 @@ msgstr "Tema ne olursa olsun özgeçmişler her zaman beyaz kağıda işlenir."
 msgid "Resumes created"
 msgstr "özgeçmişler oluşturuldu"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Hesapları birleştirmeden önce kullanılmayan başvuru sütunlarını kullanımdan kaldırın; toplam 40 etkin sütunu aşıyor."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14461,6 +14494,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Yeni bağlantı gönder"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15004,6 +15041,10 @@ msgstr "Kenar çubukları genellikle en son okunur veya ana sütuna karıştır�
 msgid "Sign in"
 msgstr "Giriş yap"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Yeniden giriş yap"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Yapay zekâ istemcinizden giriş yapın veya bir API anahtarı kullanın."
@@ -15022,6 +15063,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Kaydetmek için giriş yapın"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16082,6 +16127,10 @@ msgstr "Teşekkürler Sam. İşte bir örnek: Northwind Labs'te onboarding yenid
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Kod eşleşmiyor. Kontrol edip yeniden deneyin."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16089,6 +16138,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "E-posta, kullanıcı adı veya parola eşleşmiyor. Kontrol edin veya parolanızı sıfırlayın."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16915,6 +16968,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Bu sıfırlama bağlantısının süresi doldu veya zaten kullanıldı."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Bu sıfırlama bağlantısının süresi doldu veya zaten kullanıldı. Yeni bağlantı gönder."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Bu özgeçmiş kilitli. Düzenlemek için menüsünden kilidini açın."
@@ -17003,6 +17064,10 @@ msgstr "Bu sunucu standart aşamaları kullandığı için dosyadaki aşama adla
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Bu oturum açma denemesinin süresi doldu veya zaten kullanıldı. Tekrar deneyin."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Bu giriş adımının süresi doldu. Yeniden giriş yapın."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17150,6 +17215,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Beyaz başlıklar için fazla hafif. Hafifçe okunması ve yazdırılması zor olabilir."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Çok fazla deneme. Biraz bekleyip yeniden deneyin."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19229,6 +19298,10 @@ msgstr "Sunucunuz Başvurular bölümünde ve asistan için web araması sağlar
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Oturumunuz sona erdi. Çalışmaya devam etmek için yeniden giriş yapın."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19331,83 +19404,3 @@ msgstr "Uzaklaştır"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "İki hesapta da özel başvuru profili var. Üzerine yazılmaması için bağlamadan önce Ayarlar → Hesap bölümünden bir profili dışa aktarın ve silin."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "İki hesapta da yinelenen kayıtlı başvuru yanıtları var. Üzerine yazılmaması için bağlamadan önce bir kopyayı dışa aktarın ve silin."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Misafir ve hesabın kariyer tercihleri farklı. Misafir çalışmalarınız korunuyor. Yeniden denemeden önce iki hesabın kariyer tercihleriyle Bilgi bellek ayarlarını eşitleyin."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Hesapları birleştirmeden önce kullanılmayan başvuru sütunlarını kullanımdan kaldırın; toplam 40 etkin sütunu aşıyor."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Yeni bağlantı gönder"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Yeniden giriş yap"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Kaydetmek için giriş yapın"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Kod eşleşmiyor. Kontrol edip yeniden deneyin."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "E-posta, kullanıcı adı veya parola eşleşmiyor. Kontrol edin veya parolanızı sıfırlayın."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Bu sıfırlama bağlantısının süresi doldu veya zaten kullanıldı."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Bu giriş adımının süresi doldu. Yeniden giriş yapın."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Çok fazla deneme. Biraz bekleyip yeniden deneyin."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Oturumunuz sona erdi. Çalışmaya devam etmek için yeniden giriş yapın."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Kaydedilmedi · Kaydetmek için giriş yapın"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Bu sıfırlama bağlantısının süresi doldu veya zaten kullanıldı. Yeni bağlantı gönder."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "Gelişimi görmek için denemeleri karşılaştırın. Alıştırma soruları simülasyondur."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compared with your stories."
-msgstr "Hikâyelerinizle karşılaştırıldı."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practice without an application"
-msgstr "İş başvurusu olmadan pratik yapın"
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "Bir bilgi ekleyin"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Önce bir görüşme ekleyin"
