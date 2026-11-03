@@ -419,6 +419,7 @@ export const documentsService = {
 					tags: source.tags,
 					locale: source.data.metadata.page.locale as never,
 					data: source.data,
+					aiOperationIds: source.aiOperationIds,
 					...(created || newJob
 						? {
 								inTransaction: async (tx, copyId) => {

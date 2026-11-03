@@ -18,6 +18,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { formatVersionMoment, formatVersionTime, getVersionDetail, getVersionTitle } from "./format";
+import { AiResultUsage } from "@/features/ai/usage";
 import {
 	savePendingChanges,
 	useCurrentResume,
@@ -52,7 +53,23 @@ export type HistorySource = {
 
 /** History for the resume in the editor. */
 export function HistoryTab() {
-	return <HistoryTimeline source={useResumeHistory()} />;
+	const resume = useCurrentResume();
+	const versionId = useEditorStore((state) => state.historyVersionId);
+	const version = useQuery({
+		...orpc.resume.getVersion.queryOptions({ input: { resumeId: resume.id, versionId: versionId ?? "" } }),
+		enabled: versionId !== null,
+	});
+	const selected = versionId && version.data?.id === versionId ? version.data : null;
+	return (
+		<>
+			{selected ? (
+				<AiResultUsage usage={selected.aiUsage} />
+			) : !versionId && (resume.aiOperationIds?.length ?? 0) > 0 ? (
+				<AiResultUsage usage={resume.aiUsage} />
+			) : null}
+			<HistoryTimeline source={useResumeHistory()} />
+		</>
+	);
 }
 
 function useResumeHistory(): HistorySource {

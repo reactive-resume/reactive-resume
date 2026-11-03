@@ -15,13 +15,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createMemoryHistory, createRootRoute, createRouter, RouterContextProvider } from "@tanstack/react-router";
 import { renderToString } from "react-dom/server";
 import { isRTL, supportedLocales } from "@reactive-resume/utils/locale";
+import { MarketingLayout } from "./marketing-layout";
 import { Homepage } from "./page";
 import { AtsCheckerPage } from "@/features/ats-checker/page";
 import { TemplateGallery } from "@/features/templates/gallery";
 import { ThemeProvider } from "@/features/theme/provider";
 import { getLocaleMessages } from "@/libs/locale";
 import { getAtsCheckerMeta, getHomepageMeta, getTemplatesMeta } from "@/libs/seo";
-import { Header } from "@/routes/_home/-sections/header";
 
 export const locales = supportedLocales;
 
@@ -34,10 +34,9 @@ const pages = {
 		path: "/resume-templates",
 		meta: getTemplatesMeta,
 		render: () => (
-			<>
-				<Header />
+			<MarketingLayout>
 				<TemplateGallery />
-			</>
+			</MarketingLayout>
 		),
 	},
 	// What the /_home layout renders around the checker for a signed-out visitor (routes/_home/route.tsx).
@@ -45,10 +44,9 @@ const pages = {
 		path: "/ats-checker",
 		meta: getAtsCheckerMeta,
 		render: () => (
-			<>
-				<Header />
+			<MarketingLayout>
 				<AtsCheckerPage signedIn={false} importPending={false} />
-			</>
+			</MarketingLayout>
 		),
 	},
 } satisfies Record<

@@ -223,6 +223,7 @@ export const applicationPackets = {
 				userId,
 				resumeId: captured.resume.id,
 				data: captured.resume.data,
+				aiOperationIds: captured.resume.aiOperationIds,
 				kind: "named",
 				name: `Autofill packet — ${captured.review.application.company}`,
 			});

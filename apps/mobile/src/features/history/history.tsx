@@ -10,6 +10,7 @@ import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { client, orpc } from "@/api/client";
 import { getDraftScope, useResumeStore } from "@/draft";
+import { AiResultUsage } from "@/features/ai/usage";
 import { useDocumentOperations } from "@/features/documents/queries";
 import { flushResume } from "@/features/share/document";
 import { usePreview } from "@/preview/usePreview";
@@ -158,6 +159,7 @@ export function HistoryPanel({ resume, offline }: HistoryProps) {
 				{operations.error && <Banner tone="danger" message={operations.error} />}
 				{!selected && (
 					<>
+						{(resume.aiOperationIds?.length ?? 0) > 0 && <AiResultUsage usage={resume.aiUsage} />}
 						<TextField
 							label={t`Name this version`}
 							placeholder={t`For example, Sent to Lumen`}
@@ -296,6 +298,7 @@ function VersionPage({ resumeId, versionId, offline }: VersionPageProps) {
 			style={{ flex: 1 }}
 			contentContainerStyle={{ padding: space.s4, gap: space.s3, alignItems: "center" }}
 		>
+			{version.data && <AiResultUsage usage={version.data.aiUsage} />}
 			{version.isError || preview.error ? (
 				<Banner
 					tone="danger"

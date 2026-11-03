@@ -2,7 +2,7 @@ import { ORPCError } from "@orpc/client";
 import { AISDKError } from "ai";
 import { flattenError, ZodError, z } from "zod";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
-import { aiWeeklyUsageSchema, aiUsageSummarySchema } from "@reactive-resume/schema/ai-usage";
+import { aiOperationIdsSchema, aiWeeklyUsageSchema, aiUsageSummarySchema } from "@reactive-resume/schema/ai-usage";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
@@ -113,17 +113,24 @@ export const aiRouter = {
 				"Extracts structured resume data from a PDF file with one of the user's saved AI providers: the one named by `aiProviderId`, or their default. Send the file as a base64-encoded string. Returns a complete ResumeData object and saves nothing.",
 			successDescription: "The PDF was successfully parsed into structured resume data.",
 		})
-		.input(z.object({ aiProviderId: z.string().optional(), file: fileInputSchema }))
+		.input(
+			z.object({
+				aiProviderId: z.string().optional(),
+				file: fileInputSchema,
+				includeProvenance: z.boolean().optional(),
+			}),
+		)
 		.use(aiRequestRateLimit)
 		.errors(aiErrors)
-		.output(resumeDataSchema)
+		.output(resumeDataSchema.extend({ aiOperationIds: aiOperationIdsSchema.optional() }))
 		.handler(async ({ context, input, signal }) => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
 				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
 				signal?.throwIfAborted();
-				return await aiService.parsePdf({
-					usage: createAiUsage(context.user.id, "import-pdf", provider),
+				const usage = createAiUsage(context.user.id, "import-pdf", provider);
+				const data = await aiService.parsePdf({
+					usage,
 					provider: provider.provider,
 					model: aiModelForTask(provider, "fast"),
 					apiKey: provider.apiKey,
@@ -131,6 +138,7 @@ export const aiRouter = {
 					file: input.file,
 					signal,
 				});
+				return input.includeProvenance ? { ...data, aiOperationIds: [usage.operationId] } : data;
 			} catch (error) {
 				rethrowAiError(error, "The AI returned resume data in the wrong format. Try again, or choose another model.");
 			}
@@ -151,6 +159,7 @@ export const aiRouter = {
 			z.object({
 				aiProviderId: z.string().optional(),
 				file: fileInputSchema,
+				includeProvenance: z.boolean().optional(),
 				mediaType: z.enum([
 					"application/msword",
 					"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -159,14 +168,15 @@ export const aiRouter = {
 		)
 		.use(aiRequestRateLimit)
 		.errors(aiErrors)
-		.output(resumeDataSchema)
+		.output(resumeDataSchema.extend({ aiOperationIds: aiOperationIdsSchema.optional() }))
 		.handler(async ({ context, input, signal }) => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
 				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
 				signal?.throwIfAborted();
-				return await aiService.parseDocx({
-					usage: createAiUsage(context.user.id, "import-docx", provider),
+				const usage = createAiUsage(context.user.id, "import-docx", provider);
+				const data = await aiService.parseDocx({
+					usage,
 					provider: provider.provider,
 					model: aiModelForTask(provider, "fast"),
 					apiKey: provider.apiKey,
@@ -175,6 +185,7 @@ export const aiRouter = {
 					file: input.file,
 					signal,
 				});
+				return input.includeProvenance ? { ...data, aiOperationIds: [usage.operationId] } : data;
 			} catch (error) {
 				rethrowAiError(error, "The AI returned resume data in the wrong format. Try again, or choose another model.");
 			}

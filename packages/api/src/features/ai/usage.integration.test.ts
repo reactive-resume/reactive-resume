@@ -5,7 +5,7 @@ import { createServer } from "node:http";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { createRouterClient } from "@orpc/server";
 import { generateText, stepCountIs, streamText, tool } from "ai";
-import { strFromU8, unzipSync } from "fflate";
+import { strFromU8, unzipSync, zipSync, strToU8 } from "fflate";
 import { Pool } from "pg";
 import { z } from "zod";
 import { db, withDatabasePool } from "@reactive-resume/db/client";
@@ -18,6 +18,8 @@ import { authService } from "../auth/service";
 import { careerRouter } from "../career/router";
 import { coverLettersRouter } from "../cover-letters/router";
 import { assertDocumentVersion } from "../documents/ownership";
+import { documentsRouter } from "../documents/router";
+import { resumeRouter } from "../resume/router";
 import { aiRouter } from "./router";
 import { getModel } from "./service";
 import { createAiUsage, readAiUsage, readWeeklyAiUsage } from "./usage";
@@ -43,7 +45,7 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 	let pool: Pool;
 	let baseURL: string;
 	let user: typeof tables.user.$inferSelect;
-	let mode: "text" | "retry" | "tools" | "stream" | "failure" | "hold" | "reply" | "answer" | "writing";
+	let mode: "text" | "retry" | "tools" | "stream" | "failure" | "hold" | "reply" | "answer" | "writing" | "resume";
 	let release = () => {};
 	let arrived = () => {};
 	let requests: { model: string; path: string }[] = [];
@@ -79,25 +81,27 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				}
 				const callsTool = mode === "tools" && requests.length === 1;
 				const text =
-					mode === "writing"
-						? JSON.stringify({
-								summary: "Fictional saved wording review",
-								strengths: [],
-								suggestions: [],
-								jdAlignment: null,
-							})
-						: mode === "answer"
-							? JSON.stringify({ text: "Built a fictional reporting workflow.", factIds: [], note: null })
-							: mode === "reply"
-								? JSON.stringify({
-										title: "Reply",
-										asks: [],
-										unconfirmed: [],
-										reply: "Thank you.",
-										changes: [],
-										offer: null,
-									})
-								: "done";
+					mode === "resume"
+						? JSON.stringify(sampleResumeData)
+						: mode === "writing"
+							? JSON.stringify({
+									summary: "Fictional saved wording review",
+									strengths: [],
+									suggestions: [],
+									jdAlignment: null,
+								})
+							: mode === "answer"
+								? JSON.stringify({ text: "Built a fictional reporting workflow.", factIds: [], note: null })
+								: mode === "reply"
+									? JSON.stringify({
+											title: "Reply",
+											asks: [],
+											unconfirmed: [],
+											reply: "Thank you.",
+											changes: [],
+											offer: null,
+										})
+									: "done";
 				res.writeHead(200, { "content-type": "application/json" });
 				res.end(
 					JSON.stringify({
@@ -127,7 +131,14 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 	const run = (operation: () => Promise<void>) => withDatabasePool(pool, operation);
 	const client = (permissions: ("read" | "write" | "delete")[] = ["read", "write", "delete"]) =>
 		createRouterClient(
-			{ ai: aiRouter, auth: authRouter, career: careerRouter, letters: coverLettersRouter },
+			{
+				ai: aiRouter,
+				auth: authRouter,
+				career: careerRouter,
+				letters: coverLettersRouter,
+				resume: resumeRouter,
+				documents: documentsRouter,
+			},
 			{
 				context: {
 					locale: "en-US",
@@ -548,6 +559,136 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				submitted.submissionReview,
 			);
 			expect(requests).toHaveLength(1);
+		}));
+
+	it("pairs reviewed resume imports with real request sources through old edits, copies, history, export and deletion", () =>
+		run(async () => {
+			const connection = await provider();
+			const api = client();
+			mode = "resume";
+			const file = { name: "fictional.pdf", data: Buffer.from("%PDF-fictional").toString("base64") };
+			const legacy = await api.ai.parsePdf({ file });
+			expect(legacy).not.toHaveProperty("aiOperationIds");
+			const bytes = zipSync({
+				"word/document.xml": strToU8(
+					'<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Fictional resume</w:t></w:r></w:p></w:body></w:document>',
+				),
+			});
+			const { aiOperationIds, ...data } = await api.ai.parseDocx({
+				file: { name: "fictional.docx", data: Buffer.from(bytes).toString("base64") },
+				mediaType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+				includeProvenance: true,
+			});
+			expect(aiOperationIds).toEqual([expect.any(String)]);
+			expect((await pool.query("select * from resume")).rows).toEqual([]);
+			const id = await api.resume.import({ data, aiOperationIds });
+			const imported = await api.resume.getById({ id });
+			const expected = {
+				requests: 1,
+				models: [
+					{ providerId: connection.id, label: connection.label, provider: connection.provider, model: "fast-model" },
+				],
+			};
+			expect(imported.aiOperationIds).toEqual(aiOperationIds);
+			expect(imported.aiUsage).toEqual(expected);
+			expect(imported.data).not.toHaveProperty("aiOperationIds");
+			const first = (await api.resume.listVersions({ resumeId: id }))[0];
+			if (!first) throw new Error("Missing import version");
+			expect((await api.resume.getVersion({ resumeId: id, versionId: first.id })).aiUsage).toEqual(expected);
+			const reviewed = { ...data, summary: { ...data.summary, content: "<p>Reviewed import</p>" } };
+			const saved = await api.resume.update({
+				id,
+				data: reviewed,
+				expectedUpdatedAt: imported.updatedAt,
+				sessionId: "reviewed",
+			});
+			expect(saved.aiUsage).toEqual(expected);
+			await expect(client(["read"]).resume.import({ data, aiOperationIds })).rejects.toMatchObject({
+				code: "FORBIDDEN",
+			});
+			for (const [operationId, userId, action] of [
+				["foreign-resume", "usage-bob", "import-docx"],
+				["wrong-resume", user.id, "provider-test"],
+			] as const) {
+				await db.insert(tables.aiRequest).values({
+					operationId,
+					userId,
+					action,
+					providerId: connection.id,
+					label: connection.label,
+					provider: connection.provider,
+					model: "unrelated-model",
+				});
+			}
+			for (const bad of ["foreign-resume", "wrong-resume", "fabricated-source"]) {
+				await expect(api.resume.import({ data, aiOperationIds: [bad] })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+				await expect(
+					api.resume.update({ id, data, aiOperationIds: [bad], expectedUpdatedAt: saved.updatedAt }),
+				).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			}
+			await expect(api.resume.update({ id, aiOperationIds: [] })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			expect((await api.resume.getById({ id })).data.summary.content).toBe("<p>Reviewed import</p>");
+			const duplicateId = await api.resume.duplicate({ id });
+			const copy = await api.documents.copyForJob({ resumeId: id, name: "Fictional job copy" });
+			for (const copyId of [duplicateId, copy])
+				expect((await api.resume.getById({ id: copyId })).aiUsage).toEqual(expected);
+			await api.resume.createVersion({ resumeId: id, name: "Reviewed" });
+			const [application] = await db
+				.insert(tables.application)
+				.values({ userId: user.id, company: "Fictional recipient", role: "Engineer", resumeId: id })
+				.returning();
+			if (!application) throw new Error("Missing submission application");
+			await api.career.submitApplication({
+				applicationId: application.id,
+				answers: [],
+				expectedAnswers: [],
+				expectedDocuments: { resumeId: id, coverLetterId: null },
+			});
+			const sent = (await api.resume.listVersions({ resumeId: id })).find((version) => version.kind === "sent");
+			if (!sent) throw new Error("Missing sent version");
+			expect((await api.resume.getVersion({ resumeId: id, versionId: sent.id })).aiUsage).toEqual(expected);
+			await api.resume.update({ id, isPublic: true });
+			const published = await api.resume.getById({ id });
+			const publicResult = await api.resume.getBySlug({ username: user.username, slug: published.slug });
+			expect(publicResult).not.toHaveProperty("aiOperationIds");
+			expect(publicResult).not.toHaveProperty("aiUsage");
+			await aiProvidersService.update({ userId: user.id, id: connection.id, label: "Renamed", model: "replacement" });
+			await aiProvidersService.delete({ userId: user.id, id: connection.id });
+			expect((await api.resume.getById({ id })).aiUsage).toEqual(expected);
+			const restored = await api.resume.restoreVersion({ resumeId: id, versionId: first.id, proposalSafety: "v1" });
+			expect(restored.aiUsage).toEqual(expected);
+			expect(restored.data.summary.content).toBe(data.summary.content);
+			const exported = await client(["read"]).auth.exportData({});
+			expect(exported.resumes.find((row) => row.id === id)?.aiOperationIds).toEqual(aiOperationIds);
+			expect(exported.documentVersions?.resumes.find((row) => row.id === first.id)?.aiOperationIds).toEqual(
+				aiOperationIds,
+			);
+			const archive = unzipSync(buildAccountZip(exported));
+			const resumeFile = Object.keys(archive).find(
+				(name) => name.startsWith("resumes/") && name.endsWith(`${id}.json`),
+			);
+			if (!resumeFile || !archive[resumeFile]) throw new Error("Missing resume account archive");
+			expect(JSON.parse(strFromU8(archive[resumeFile])).aiOperationIds).toEqual(aiOperationIds);
+			await pool.query("update resume_version set ai_operation_ids='{}' where id=$1", [first.id]);
+			const legacyRestored = await api.resume.restoreVersion({
+				resumeId: id,
+				versionId: first.id,
+				proposalSafety: "v1",
+			});
+			expect(legacyRestored.aiOperationIds).toEqual([]);
+			expect(legacyRestored.aiUsage).toBeNull();
+			const beforeRestore = (await api.resume.listVersions({ resumeId: id })).find(
+				(version) => version.kind === "before-restore",
+			);
+			if (!beforeRestore) throw new Error("Missing before-restore version");
+			expect((await api.resume.getVersion({ resumeId: id, versionId: beforeRestore.id })).aiUsage).toEqual(expected);
+			const localId = await api.resume.import({ data });
+			expect((await api.resume.getById({ id: localId })).aiUsage).toBeNull();
+			await authService.deleteAccount({ userId: user.id });
+			for (const table of ["resume", "resume_version"])
+				expect((await pool.query(`select * from ${table}`)).rows).toEqual([]);
+			expect((await pool.query("select * from ai_request where user_id=$1", [user.id])).rows).toEqual([]);
+			expect(requests).toHaveLength(2);
 		}));
 
 	it("keeps letter draft sources through owned saves, reuse, history, export and deletion without new dispatches", () =>

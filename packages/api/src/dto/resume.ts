@@ -2,6 +2,7 @@ import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
 import * as schema from "@reactive-resume/db/schema";
 import { jsonPatchOperationSchema } from "@reactive-resume/resume/patch";
+import { aiOperationIdsSchema, aiUsageSummarySchema } from "@reactive-resume/schema/ai-usage";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { slugSchema } from "@reactive-resume/schema/resume/slug";
 import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
@@ -41,7 +42,16 @@ const resumeSchema = createSelectSchema(schema.resume, {
 })
 	// Trash and automatic naming and addresses stay internal to the documents API. getById exposes the application link
 	// explicitly because the editor uses it to select the application a tailored copy belongs to.
-	.omit({ applicationId: true, trashedAt: true, autoName: true, autoSlug: true, editedAt: true });
+	.omit({ applicationId: true, trashedAt: true, autoName: true, autoSlug: true, editedAt: true, aiOperationIds: true });
+
+const aiSourceShape = {
+	aiOperationIds: aiOperationIdsSchema.optional(),
+	aiUsage: aiUsageSummarySchema.nullable().optional(),
+};
+const ownedResumeSchema = resumeSchema.omit({ password: true, userId: true }).extend({
+	hasPassword: z.boolean(),
+	...aiSourceShape,
+});
 
 const versionSchema = z.object({
 	id: z.string().describe("The ID of the version."),
@@ -64,10 +74,9 @@ export const expectedRevisionSchema = z
 	.describe(
 		"If provided, the change only applies when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409).",
 	);
-export const acceptedRevisionSchema = resumeSchema
-	.omit({ password: true, userId: true })
-	.extend({ hasPassword: z.boolean() })
-	.describe("The resume as the change left it, with its new updatedAt.");
+export const acceptedRevisionSchema = ownedResumeSchema.describe(
+	"The resume as the change left it, with its new updatedAt.",
+);
 
 export const resumeDto = {
 	list: {
@@ -87,8 +96,7 @@ export const resumeDto = {
 
 	getById: {
 		input: resumeSchema.pick({ id: true }),
-		output: resumeSchema.omit({ password: true, userId: true }).extend({
-			hasPassword: z.boolean(),
+		output: ownedResumeSchema.extend({
 			applicationId: z.string().nullable().describe("The job application this resume was made for, if any."),
 		}),
 	},
@@ -122,7 +130,7 @@ export const resumeDto = {
 	},
 
 	import: {
-		input: z.object({ data: writableResumeDataSchema }),
+		input: z.object({ data: writableResumeDataSchema, aiOperationIds: aiOperationIdsSchema.optional() }),
 		output: z.string().describe("The ID of the imported resume."),
 	},
 
@@ -147,6 +155,7 @@ export const resumeDto = {
 				allowWordDownload: z.boolean().optional(),
 				slug: slugSchema.optional(),
 				data: writableResumeDataSchema.optional(),
+				aiOperationIds: aiOperationIdsSchema.optional(),
 				expectedUpdatedAt: z.coerce
 					.date()
 					.optional()
@@ -161,7 +170,7 @@ export const resumeDto = {
 						"Identifies one editing session. Saves that share it keep one autosave version, refreshed at most every two minutes.",
 					),
 			}),
-		output: resumeSchema.omit({ password: true, userId: true }).extend({ hasPassword: z.boolean() }),
+		output: ownedResumeSchema,
 	},
 
 	checkSlug: {
@@ -213,7 +222,7 @@ export const resumeDto = {
 			),
 			proposalSafety: proposalSafetySchema,
 		}),
-		output: resumeSchema.omit({ password: true, userId: true }).extend({ hasPassword: z.boolean() }),
+		output: ownedResumeSchema,
 	},
 
 	duplicate: {
@@ -248,7 +257,7 @@ export const resumeDto = {
 			resumeId: z.string().describe("The ID of the resume the version belongs to."),
 			versionId: z.string().describe("The ID of the version."),
 		}),
-		output: versionSchema.extend({ data: resumeDataSchema }),
+		output: versionSchema.extend({ data: resumeDataSchema, ...aiSourceShape }),
 	},
 
 	createVersion: {
@@ -282,6 +291,6 @@ export const resumeDto = {
 			versionId: z.string().describe("The ID of the version snapshot to restore."),
 			proposalSafety: proposalSafetySchema,
 		}),
-		output: resumeSchema.omit({ password: true, userId: true }).extend({ hasPassword: z.boolean() }),
+		output: ownedResumeSchema,
 	},
 };

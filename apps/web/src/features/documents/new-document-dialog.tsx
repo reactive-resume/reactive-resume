@@ -39,6 +39,7 @@ import {
 } from "@/features/resume/import/read-file";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
+import { getAccountGeneration, getAccountId } from "@/libs/auth/account-scope";
 import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { formatRelativeTime } from "@/libs/locale";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
@@ -68,6 +69,8 @@ type Step =
 			name: "review";
 			file: File;
 			data: ResumeData;
+			aiOperationIds: string[];
+			owner: { accountId: string; generation: number };
 			review: ImportReview;
 			/** How much of the file's own text the import was compared with. */
 			comparison: "full" | "partial" | "none";
@@ -101,6 +104,7 @@ function useResumeImport(
 	const providerState = useHasUsableAiProvider();
 	const { hasUsableProvider } = providerState;
 	const run = useRef(0);
+	const account = useRef({ id: getAccountId(), generation: getAccountGeneration() });
 	const controller = useRef<AbortController | null>(null);
 	useEffect(
 		() => () => {
@@ -112,11 +116,18 @@ function useResumeImport(
 	const refreshDocuments = () => queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 
 	const importFile = async (file: File, mode?: "local" | "ai") => {
+		const accountId = getAccountId();
+		if (!accountId || account.current.id !== accountId || account.current.generation !== getAccountGeneration()) return;
+		const owner = { accountId, generation: getAccountGeneration() };
 		controller.current?.abort();
 		controller.current = new AbortController();
 		const signal = controller.current.signal;
 		const attempt = ++run.current;
-		const current = () => run.current === attempt;
+		const current = () =>
+			run.current === attempt &&
+			!signal.aborted &&
+			getAccountId() === owner.accountId &&
+			getAccountGeneration() === owner.generation;
 		const advance = (stage: number, note: string) => {
 			const index = stage - 1;
 			setStep((previous) =>
@@ -136,7 +147,9 @@ function useResumeImport(
 			}
 
 			if (kind === "cover-letter-json") {
-				const letter = await client.coverLetters.import({ document: JSON.parse(await file.text()) });
+				const document = JSON.parse(await file.text());
+				if (!current()) return;
+				const letter = await client.coverLetters.import({ document }, { signal, context: { accountId } });
 				if (!current()) return;
 				markNew(letter.id);
 				void refreshDocuments();
@@ -158,9 +171,14 @@ function useResumeImport(
 				}
 			}
 			if (!current()) return;
+			let aiOperationIds: string[] = [];
 			const resume = await readResumeFile(file, kind, {
 				aiAvailable,
 				signal,
+				accountId,
+				onProvenance: (ids) => {
+					aiOperationIds = ids;
+				},
 				onRead: (note) => advance(1, note),
 			});
 			if (!current()) return;
@@ -175,12 +193,14 @@ function useResumeImport(
 					name: "review",
 					file,
 					data,
+					aiOperationIds,
+					owner,
 					review: reviewImport(data, source?.lines),
 					comparison: !source?.lines.length ? "none" : source.partial ? "partial" : "full",
 				});
 				return;
 			}
-			await create(file, resume, attempt);
+			await create(file, resume, owner, aiOperationIds, attempt);
 		} catch (error) {
 			if (current()) fail(file, error);
 		}
@@ -201,8 +221,21 @@ function useResumeImport(
 		setStep({ name: "failed", file, message });
 	};
 
-	const create = async (file: File, resume: ResumeData, attempt = ++run.current) => {
-		const current = () => run.current === attempt;
+	const create = async (
+		file: File,
+		resume: ResumeData,
+		owner: { accountId: string; generation: number },
+		aiOperationIds: string[],
+		attempt = ++run.current,
+	) => {
+		const signal = controller.current?.signal;
+		const current = () =>
+			run.current === attempt &&
+			!signal?.aborted &&
+			getAccountId() === owner.accountId &&
+			getAccountGeneration() === owner.generation;
+		if (!current()) return;
+		const options = { ...(signal ? { signal } : {}), context: { accountId: owner.accountId } };
 		const summary = summarizeImport(resume);
 		setStep({
 			name: "importing",
@@ -211,9 +244,10 @@ function useResumeImport(
 			notes: [t`file read`, plural(summary.sections, { one: "# section", other: "# sections" })],
 		});
 		try {
-			const resumeId = await client.resume.import({ data: resume });
+			const resumeId = await client.resume.import({ data: resume, aiOperationIds }, options);
 			if (!current()) return;
-			if (applicationId) await client.documents.linkApplication({ type: "resume", id: resumeId, applicationId });
+			if (applicationId)
+				await client.documents.linkApplication({ type: "resume", id: resumeId, applicationId }, options);
 			if (!current()) return;
 			markNew(resumeId);
 			void refreshDocuments();
@@ -228,6 +262,8 @@ function useResumeImport(
 		create(
 			step.file,
 			keepLeftovers ? withLeftoverSection(step.data, step.review.notImported, t`More from your file`) : step.data,
+			step.owner,
+			step.aiOperationIds,
 		);
 
 	const cancel = () => {

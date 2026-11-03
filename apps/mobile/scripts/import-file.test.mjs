@@ -36,6 +36,8 @@ for (const scenario of [
 	"partial local",
 	"scanned local",
 	"older AI",
+	"legacy metadata",
+	"DOCX",
 	"older local",
 	"malformed AI",
 	"changed during source",
@@ -61,6 +63,8 @@ for (const scenario of [
 		];
 		const url = "https://www.linkedin.com/in/fictional-avery-morgan-rx216/";
 		const prose = "Completed independent research on accessible interfaces.";
+		const sources = !scenario.startsWith("older") && scenario !== "legacy metadata";
+		if (scenario === "DOCX") data.sections.profiles.items[0].website.url = url;
 		class SessionChangedError extends Error {}
 		const mocks = {
 			"@lingui/core/macro": { t: tag },
@@ -73,21 +77,30 @@ for (const scenario of [
 				},
 			},
 			"@reactive-resume/schema/cover-letter/data": {},
-			"@reactive-resume/import/docx-text": {},
+			"@reactive-resume/import/docx-text": { extractDocxText: () => prose },
 			"@reactive-resume/import/review": domain,
 			"@/auth/session": { getAccountScope: () => scope },
 			"@/api/client": {
 				SessionChangedError,
 				client: {
 					ai: {
-						parsePdf: async () => {
+						parsePdf: async (input) => {
 							modelCalls++;
-							return data;
+							assert.equal(input.includeProvenance, true);
+							return { ...data, ...(sources ? { aiOperationIds: ["actual-import-operation"] } : {}) };
+						},
+						parseDocx: async (input) => {
+							modelCalls++;
+							assert.equal(input.includeProvenance, true);
+							return { ...data, aiOperationIds: ["actual-import-operation"] };
 						},
 					},
 					resume: {
-						import: async ({ data: accepted }) => {
+						import: async ({ data: accepted, aiOperationIds }, options) => {
 							saved++;
+							assert.deepEqual(aiOperationIds, ai ? (sources ? ["actual-import-operation"] : []) : undefined);
+							assert.equal(options.context.scope, "original-account");
+							assert.equal("aiOperationIds" in accepted, false);
 							assert.equal(accepted.sections.profiles.items[0].website.url, url);
 							assert.ok(
 								accepted.customSections.some((section) => section.items.some((item) => item.content.includes(prose))),
@@ -124,7 +137,12 @@ for (const scenario of [
 		);
 		const { importDocument, createReviewedResume } = module.exports;
 		const ai = !scenario.includes("local");
-		const reading = importDocument({ name: "fictional.pdf", uri: "fixture" }, true, ai, controller.signal);
+		const reading = importDocument(
+			{ name: scenario === "DOCX" ? "fictional.docx" : "fictional.pdf", uri: "fixture" },
+			true,
+			ai,
+			controller.signal,
+		);
 		if (scenario === "changed during source") {
 			await assert.rejects(reading, SessionChangedError);
 			assert.equal(saved, 0);
@@ -153,6 +171,7 @@ for (const scenario of [
 		}
 		const pending = await reading;
 		assert.equal(pending.type, "review");
+		assert.deepEqual(pending.aiOperationIds, ai ? (sources ? ["actual-import-operation"] : []) : undefined);
 		assert.equal(saved, 0, "preview must never create a resume");
 		assert.equal(modelCalls, ai ? 1 : 0, "local reading never invokes AI");
 		assert.equal(pending.compared, !scenario.startsWith("older") && !scenario.startsWith("malformed"));

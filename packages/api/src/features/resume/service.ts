@@ -36,6 +36,7 @@ import {
 	CurrentClientRequired,
 	saveProposalApplications,
 } from "../agent/proposal-applications";
+import { assertAiOperations, readAiUsage } from "../ai/usage";
 import { adoptEmbeddedLetters } from "../cover-letters/embedded";
 import { idInUse, lockUser } from "../documents/ownership";
 import { enqueueStorageCleanup, reportStorageCleanupSummary, runStorageCleanup } from "../storage/cleanup";
@@ -191,6 +192,7 @@ const resumeColumns = {
 	slug: schema.resume.slug,
 	tags: schema.resume.tags,
 	data: schema.resume.data,
+	aiOperationIds: schema.resume.aiOperationIds,
 	isPublic: schema.resume.isPublic,
 	isLocked: schema.resume.isLocked,
 	showDownloadButtons: schema.resume.showDownloadButtons,
@@ -198,6 +200,16 @@ const resumeColumns = {
 	updatedAt: schema.resume.updatedAt,
 	hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
 };
+
+const RESUME_AI_ACTIONS = [
+	"import-pdf",
+	"import-docx",
+	"writing-review",
+	"improve",
+	"assistant",
+	"career-chat",
+	"tailor-resume",
+] as const;
 
 async function applyResumePatchTx(
 	client: DbOrTx,
@@ -286,6 +298,7 @@ async function applyResumePatchTx(
 		resumeId: resume.id,
 		userId: input.userId,
 		data: resume.data,
+		aiOperationIds: resume.aiOperationIds,
 		kind: "ai",
 	});
 
@@ -553,6 +566,7 @@ export const resumeService = {
 				resumeId: input.resumeId,
 				userId: input.userId,
 				data: current.data,
+				aiOperationIds: current.aiOperationIds,
 				kind: "named",
 				name: input.name,
 			});
@@ -574,6 +588,7 @@ export const resumeService = {
 				resumeId: input.resumeId,
 				userId: input.userId,
 				data: current.data,
+				aiOperationIds: current.aiOperationIds,
 				kind: "before-restore",
 				...(restoredName ? { name: restoredName } : {}),
 			});
@@ -582,6 +597,8 @@ export const resumeService = {
 				id: input.resumeId,
 				userId: input.userId,
 				data: version.data,
+				aiOperationIds: version.aiOperationIds,
+				expectedUpdatedAt: current.updatedAt,
 				skipAutoSnapshot: true,
 				...(input.proposalSafety ? { proposalSafety: input.proposalSafety } : {}),
 			});
@@ -590,6 +607,7 @@ export const resumeService = {
 				resumeId: input.resumeId,
 				userId: input.userId,
 				data: updated.data,
+				aiOperationIds: updated.aiOperationIds,
 				kind: "restored",
 				...(restoredName ? { name: restoredName } : {}),
 			});
@@ -638,7 +656,11 @@ export const resumeService = {
 		if (!resume) throw new ORPCError("NOT_FOUND");
 
 		// Clients get the current data shape (structured dates and their text in step), not the stored one.
-		return { ...resume, data: parseStoredResumeData(resume.data) };
+		return {
+			...resume,
+			data: parseStoredResumeData(resume.data),
+			aiUsage: await readAiUsage(input.userId, resume.aiOperationIds, reader),
+		};
 	},
 
 	getBySlug: async (input: {
@@ -698,6 +720,7 @@ export const resumeService = {
 		tags: string[];
 		locale: Locale;
 		data?: ResumeData;
+		aiOperationIds?: string[];
 		/** The first version in History: "created", or "import" for an imported document. */
 		origin?: "created" | "import";
 		/** The name follows the headline until someone renames the resume. */
@@ -719,6 +742,8 @@ export const resumeService = {
 			const slug =
 				input.slug ?? (await findFreeSlug(db, input.userId, input.autoName ? DEFAULT_SLUG_STEM : input.name));
 			await db.transaction(async (tx) => {
+				if (input.aiOperationIds?.length) await lockUser(tx, input.userId);
+				await assertAiOperations(input.userId, input.aiOperationIds ?? [], RESUME_AI_ACTIONS, tx);
 				// The resume row comes first: letters an imported file carried are saved linked to it.
 				const stored = structuredClone(data);
 				detachEmbeddedLetters(stored);
@@ -731,15 +756,20 @@ export const resumeService = {
 					tags: input.tags,
 					userId: input.userId,
 					data: stored,
+					aiOperationIds: [...new Set(input.aiOperationIds ?? [])],
 				});
 				await adoptEmbeddedLetters(tx, { userId: input.userId, resumeId: id, resumeName: input.name, data });
 				await input.inTransaction?.(tx, id);
 			});
 
 			// History is never empty: its first entry is where the document came from (best effort).
-			await writeVersion(db, { resumeId: id, userId: input.userId, data, kind: input.origin ?? "created" }).catch(
-				(error: unknown) => console.warn("Failed to save the first version:", error),
-			);
+			await writeVersion(db, {
+				resumeId: id,
+				userId: input.userId,
+				data,
+				aiOperationIds: input.aiOperationIds ?? [],
+				kind: input.origin ?? "created",
+			}).catch((error: unknown) => console.warn("Failed to save the first version:", error));
 
 			await notifyResumeUpdated({
 				type: "resume.updated",
@@ -774,6 +804,7 @@ export const resumeService = {
 		slug?: string;
 		tags?: string[];
 		data?: ResumeData;
+		aiOperationIds?: string[];
 		isPublic?: boolean;
 		showDownloadButtons?: boolean;
 		allowWordDownload?: boolean;
@@ -787,8 +818,11 @@ export const resumeService = {
 		proposalApplications?: ProposalApplications;
 		proposalSafety?: "v1";
 	}) => {
+		if (input.aiOperationIds !== undefined && input.data === undefined)
+			throw new ORPCError("BAD_REQUEST", { message: "Save AI request sources with the reviewed resume content." });
 		const resume = await db
 			.transaction(async (tx) => {
+				if (input.aiOperationIds?.length) await lockUser(tx, input.userId);
 				const [existing] = await tx
 					.select({
 						name: schema.resume.name,
@@ -807,6 +841,8 @@ export const resumeService = {
 				if (!existing) throw new ORPCError("NOT_FOUND");
 				if (existing.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
 				assertResumeVersion(existing.updatedAt, input.expectedUpdatedAt);
+				if (input.aiOperationIds !== undefined)
+					await assertAiOperations(input.userId, input.aiOperationIds, RESUME_AI_ACTIONS, tx);
 				if (input.data !== undefined)
 					await assertCurrentClientWrite(tx, {
 						userId: input.userId,
@@ -858,6 +894,7 @@ export const resumeService = {
 					...(input.slug !== undefined || input.isPublic === true ? { autoSlug: false } : {}),
 					...(input.tags !== undefined ? { tags: input.tags } : {}),
 					...(normalizedData ? { data: normalizedData } : {}),
+					...(input.aiOperationIds !== undefined ? { aiOperationIds: [...new Set(input.aiOperationIds)] } : {}),
 					...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
 					...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
 					...(input.allowWordDownload !== undefined ? { allowWordDownload: input.allowWordDownload } : {}),
@@ -927,6 +964,7 @@ export const resumeService = {
 				resumeId: resume.id,
 				userId: input.userId,
 				data: resume.data,
+				aiOperationIds: resume.aiOperationIds,
 				...(input.sessionId ? { sessionId: input.sessionId } : {}),
 			});
 		}
@@ -939,7 +977,7 @@ export const resumeService = {
 			mutation: "update",
 		});
 
-		return resume;
+		return { ...resume, aiUsage: await readAiUsage(input.userId, resume.aiOperationIds) };
 	},
 
 	patch: async (input: {
