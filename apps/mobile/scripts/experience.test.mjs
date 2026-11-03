@@ -423,7 +423,7 @@ const nativeInterviewCalendar = load("features/application-detail/calendar.ts", 
 let applicationDocuments = [];
 let rejectDocumentLink = false;
 let creatingApplicationLetter = false;
-const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
+const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/application-detail/sections.tsx", {
 	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
 	"@reactive-resume/schema/applications/document-suggestions": suggestionsDomain,
 	"@tanstack/react-query": { useQueryClient: () => ({ invalidateQueries: async () => {} }) },
@@ -435,13 +435,22 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"./notes-queue": { createNotesQueue: () => ({}) },
 	"./hooks": {
 		useDocuments: () => ({ data: applicationDocuments }),
-		useDetailMutations: () => ({ createLetter: { isPending: creatingApplicationLetter } }),
+		useDetailMutations: () => ({
+			createLetter: { isPending: creatingApplicationLetter },
+			addNote: {},
+			updateEntry: {},
+			deleteEntry: {},
+		}),
 		useNow: () => new Date(),
 		useUserTime: () => time,
 		followUpReminder: () => null,
 		interviewReminder: () => null,
 	},
-	"./sheets": { FollowUpSheet: "FollowUpSheet", ReminderSheet: "ReminderSheet" },
+	"./sheets": {
+		FollowUpSheet: "FollowUpSheet",
+		ReminderSheet: "ReminderSheet",
+		TimelineEntrySheet: "TimelineEntrySheet",
+	},
 	"@/api/client": {
 		client: {
 			documents: {
@@ -486,6 +495,26 @@ const application = {
 	sentResumeVersionId: null,
 	sentCoverLetterVersionId: null,
 };
+for (const [marker, text, expected] of [
+	[undefined, "Replied", "Replied"],
+	[{ stageEntryId: null }, "Replied", "Followed up · Replied"],
+	[{ stageEntryId: null, kind: "reply" }, "Custom contact note", "Replied · Custom contact note"],
+	[{ stageEntryId: null, kind: "reply" }, "Replied", "Replied"],
+]) {
+	reset();
+	const view = render(Timeline, {
+		application: {
+			...application,
+			activity: [{ id: "contact", type: "note", at: "2030-01-02", text, followedUp: marker }],
+		},
+		onOpenInterview() {},
+	});
+	assert.ok(
+		nodes(view).some((node) => node.props.title === expected),
+		`Canonical native contact label: ${expected}`,
+	);
+}
+console.log("PASS native timeline labels preserve contact kind after note edits");
 reset();
 tree = render(StageStepper, { application, onMarkApplied: () => calls.push("mark-applied") });
 assert.equal(

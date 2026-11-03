@@ -93,7 +93,17 @@ const applicationSchema = createSelectSchema(schema.application, {
 	createdAt: z.date(),
 	updatedAt: z.date(),
 	trashedAt: z.date().nullable().optional(),
-}).omit({ submittedAt: true });
+})
+	.omit({ submittedAt: true })
+	.extend({
+		replyVersion: z
+			.string()
+			.length(64)
+			.optional()
+			.describe(
+				"Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again.",
+			),
+	});
 
 /** An application's stage as a write left it, with the ID of its latest stage change: what a later move expects. */
 export const savedStagesSchema = z.array(
@@ -280,7 +290,13 @@ export const applicationDto = {
 	},
 
 	logReply: {
-		input: z.object({ id: z.string(), expectedVersion: z.string().min(1) }),
+		input: z.object({
+			id: z.string(),
+			expectedVersion: z
+				.string()
+				.length(64)
+				.describe("The replyVersion from the full application you reviewed; reload and review again on CONFLICT."),
+		}),
 		output: applicationSchema.omit({ userId: true }),
 	},
 

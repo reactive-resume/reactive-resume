@@ -359,7 +359,7 @@ export const crudRouter = {
 			operationId: "logApplicationReply",
 			summary: "Log an explicitly confirmed reply",
 			description:
-				"Records the user's confirmation of replying now, restarts the current stage's no-reply clock and clears the application's follow-up and its delivery schedule only at the reviewed revision. Sends no message. Keeps stage dates and interview reminders. Requires authentication.",
+				"First GET /applications/{id}, review the full application and retain its opaque replyVersion. POST that value as expectedVersion. On CONFLICT (409), reload and review again before retrying. Records the user's confirmation of replying now, restarts the current stage's no-reply clock and clears the application's follow-up and its delivery schedule only at the reviewed revision. Sends no message. Keeps stage dates and interview reminders. Requires authentication.",
 			successDescription: "The updated application.",
 		})
 		.input(applicationDto.logReply.input)

@@ -62,6 +62,9 @@ function harness({ lifetime = 30 } = {}) {
 		logs: [],
 		logReply: async () => undefined,
 		invalidations: 0,
+		invalidate: async () => undefined,
+		cancel: async () => undefined,
+		cancelCalls: [],
 		effects: [],
 		clearedReminders: [],
 	};
@@ -86,6 +89,7 @@ function harness({ lifetime = 30 } = {}) {
 	const hooks = [];
 	let cursor = 0;
 	let renderingReply = false;
+	let mounted = true;
 	const hook = (initial) => {
 		if (!renderingReply) return initial();
 		const index = cursor++;
@@ -106,6 +110,7 @@ function harness({ lifetime = 30 } = {}) {
 					return [
 						cell.value,
 						(value) => {
+							if (!mounted) return;
 							cell.value = typeof value === "function" ? value(cell.value) : value;
 						},
 					];
@@ -179,6 +184,7 @@ function harness({ lifetime = 30 } = {}) {
 				stageScope: () => "srv:" + env.account,
 				useInvalidateApplications: () => async () => {
 					env.invalidations++;
+					await env.invalidate();
 				},
 			},
 			"@/features/applications/stage-actions": {
@@ -189,7 +195,13 @@ function harness({ lifetime = 30 } = {}) {
 			"@/features/career/offer-compare": { formatMoney: String },
 			"@/features/career/offer-entry": { OfferEntry: "OfferEntry" },
 			"@/features/reminders": {
-				useReminders: () => ({ turnOff: async (target) => env.clearedReminders.push(target) }),
+				useReminders: () => ({
+					turnOff: async (target) => {
+						env.cancelCalls.push(target);
+						await env.cancel();
+						env.clearedReminders.push(target);
+					},
+				}),
 			},
 			"@/features/career/undo": undo,
 			"@/ui": {
@@ -224,12 +236,14 @@ function harness({ lifetime = 30 } = {}) {
 		activity: [],
 		followUpAt: null,
 		followUpNote: null,
+		replyVersion: "review-token",
 		updatedAt: new Date(0),
 	};
 	const flushEffects = () => {
 		for (const effect of env.effects.splice(0)) effect();
 	};
 	const replyTree = (flush = true) => {
+		assert.ok(mounted, "Cannot render an unmounted reply card");
 		cursor = 0;
 		renderingReply = true;
 		let tree;
@@ -261,7 +275,12 @@ function harness({ lifetime = 30 } = {}) {
 		return baselines.get("app-1");
 	};
 	const undoToast = () => toasts.find((toast) => toast.action?.label === "Undo");
-	return { env, press, bulkStart, undoToast, toasts, replyTree, application, flushEffects };
+	const unmount = () => {
+		mounted = false;
+		env.effects.length = 0;
+		for (const cell of hooks) cell.cleanup?.();
+	};
+	return { env, press, bulkStart, undoToast, toasts, replyTree, application, flushEffects, unmount };
 }
 
 function buttonIn(node, label) {
@@ -281,12 +300,7 @@ test("native reply copies placeholders normally; explicit logging binds the revi
 	assert.equal(h.env.logs.length, 0);
 	buttonIn(tree, "Copy and log as replied").props.onPress();
 	await new Promise(setImmediate);
-	assert.deepEqual(h.env.logs, [
-		[
-			{ id: "app-1", expectedVersion: '["1970-01-01T00:00:00.000Z","applied",null,null,null,false]' },
-			{ context: { scope: "acct-A" } },
-		],
-	]);
+	assert.deepEqual(h.env.logs, [[{ id: "app-1", expectedVersion: "review-token" }, { context: { scope: "acct-A" } }]]);
 });
 
 test("native reply does not log clipboard failure or a stale account, and ignores duplicate presses", async () => {
@@ -343,6 +357,89 @@ test("native reply view cancels only the cleared follow-up reminder and ignores 
 	h.flushEffects();
 	await new Promise(setImmediate);
 	assert.equal(h.env.clearedReminders.length, 1);
+});
+
+test("native reply completion clears its reminder after the view unmounts", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	let resolveLog;
+	h.env.logReply = () =>
+		new Promise((resolve) => {
+			resolveLog = resolve;
+		});
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	h.unmount();
+	resolveLog();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.clearedReminders, [{ kind: "follow-up", applicationId: "app-1" }]);
+	assert.equal(h.env.invalidations, 1);
+});
+
+test("native cancellation failure offers scoped retry without logging the reply twice", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	let fail = true;
+	h.env.cancel = async () => {
+		if (fail) {
+			fail = false;
+			throw new Error("Notification service unavailable");
+		}
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.logs.length, 1);
+	assert.equal(h.env.invalidations, 1);
+	assert.equal(h.toasts.at(-1).message, "Couldn't clear the follow-up reminder. It may still notify you.");
+	h.toasts.at(-1).action.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.cancelCalls.length, 2);
+	assert.equal(h.env.clearedReminders.length, 1);
+	assert.equal(h.env.logs.length, 1);
+});
+
+test("native reminder Retry refuses dispatch after account replacement", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	h.env.cancel = async () => {
+		throw new Error("Notification service unavailable");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	const retry = h.toasts.at(-1).action;
+	h.env.account = "acct-B";
+	retry.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.cancelCalls.length, 1);
+	assert.equal(h.env.logs.length, 1);
+});
+
+test("native older-server reply keeps Copy and disables explicit logging", async () => {
+	const h = harness();
+	delete h.application.replyVersion;
+	const view = h.replyTree();
+	assert.equal(buttonIn(view, "Copy and log as replied").props.disabled, true);
+	assert.match(JSON.stringify(view), /Update the server to enable reply logging/);
+	buttonIn(view, "Copy reply").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.copied.length, 1);
+	assert.equal(h.env.logs.length, 0);
+});
+
+test("native reply cannot show a success toast to an account replaced during invalidation", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	let resolveInvalidation;
+	h.env.invalidate = () =>
+		new Promise((resolve) => {
+			resolveInvalidation = resolve;
+		});
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	h.env.account = "acct-B";
+	resolveInvalidation();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.toasts, []);
 });
 
 const pendingFor = (promise, ms = 200) =>

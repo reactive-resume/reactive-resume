@@ -5,7 +5,7 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import { replyLogVersion, replyPlaceholders } from "@reactive-resume/schema/applications/reply";
+import { replyPlaceholders } from "@reactive-resume/schema/applications/reply";
 import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
 import { offerTermKeys } from "@reactive-resume/schema/career-offer";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -211,7 +211,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
 	const copy = async (log = false) => {
-		if (copying.current || account !== getAccountGeneration()) return;
+		if ((log && !application.replyVersion) || copying.current || account !== getAccountGeneration()) return;
 		copying.current = true;
 		setLogging(log);
 		let copied = false;
@@ -219,8 +219,8 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 			await navigator.clipboard.writeText(text);
 			copied = true;
 			if (account !== getAccountGeneration()) return;
-			if (log) {
-				await logReply.mutateAsync({ id: application.id, expectedVersion: replyLogVersion(application) });
+			if (log && application.replyVersion) {
+				await logReply.mutateAsync({ id: application.id, expectedVersion: application.replyVersion });
 				if (account !== getAccountGeneration()) return;
 				invalidate(application.id);
 			}
@@ -295,7 +295,13 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							<Trans>Copy reply</Trans>
 						</Button>
 						{!readOnly && application.status !== "saved" && application.status !== "closed" && (
-							<Button variant="secondary" size="sm" loading={logging} onClick={() => void copy(true)}>
+							<Button
+								variant="secondary"
+								size="sm"
+								loading={logging}
+								disabled={!application.replyVersion}
+								onClick={() => void copy(true)}
+							>
 								<Trans>Copy and log as replied</Trans>
 							</Button>
 						)}
@@ -313,7 +319,10 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							<Trans>
 								Log only when you have replied. This records contact and clears the application's follow-up and its
 								reminder; it sends no message and keeps interview reminders.
-							</Trans>
+							</Trans>{" "}
+							{!application.replyVersion && (
+								<Trans>Update the server to enable reply logging. Copy reply is still available.</Trans>
+							)}
 						</p>
 					)}
 					{!readOnly && <GenerateNotice generate={generate} onRetry={rewrite} className="w-fit" />}

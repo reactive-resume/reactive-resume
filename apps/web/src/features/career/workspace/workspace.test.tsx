@@ -132,6 +132,7 @@ const application: Application = {
 	activity: [],
 	appliedAt: new Date("2026-10-08T12:00:00Z"),
 	createdAt: new Date("2026-10-08T12:00:00Z"),
+	replyVersion: "review-token",
 	updatedAt: new Date("2026-10-08T12:00:00Z"),
 	resumeId: null,
 	jobDescription: null,
@@ -162,6 +163,7 @@ const item = (id: string, data: SavedItem["data"]): SavedItem =>
 		data,
 		evidence: { factIds: [], storyIds: [] },
 		userId: "workspace-user",
+		replyVersion: "review-token",
 		updatedAt: new Date("2026-10-08T12:00:00Z"),
 		jobId: null,
 		inputVersion: "input-version",
@@ -361,9 +363,22 @@ it("highlights localized reply placeholders without blocking Copy, and logs only
 	expect(writeText).toHaveBeenLastCalledWith("Available Tuesday at 14:00.");
 	expect(api.logReply.mock.calls[0]?.[0]).toEqual({
 		id: application.id,
-		expectedVersion: '["2026-10-08T12:00:00.000Z","applied",null,null,null,false]',
+		expectedVersion: "review-token",
 	});
 	await waitFor(() => expect(api.invalidate).toHaveBeenCalledWith(application.id));
+});
+
+it("keeps Copy available and disables explicit logging on an older server", async () => {
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [reply()];
+	const { replyVersion: _replyVersion, ...older } = application;
+	mount(<MessagesTab {...props} application={{ ...older, status: "applied" }} />);
+	expect(screen.getByRole("button", { name: "Copy and log as replied" })).toBeDisabled();
+	expect(screen.getByText(/Update the server to enable reply logging/)).toBeVisible();
+	fireEvent.click(screen.getByRole("button", { name: "Copy reply" }));
+	await waitFor(() => expect(writeText).toHaveBeenCalledWith("Original reply"));
+	expect(api.logReply).not.toHaveBeenCalled();
 });
 
 it("warns and refreshes the application when logging is uncertain after copying succeeds", async () => {

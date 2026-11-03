@@ -880,10 +880,12 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 				? {
 						dot: colors.ink3,
 						text: entry.followedUp
-							? entry.text === "Followed up"
-								? t`Followed up`
-								: entry.text === "Replied"
+							? entry.followedUp.kind === "reply"
+								? entry.text === "Replied"
 									? t`Replied`
+									: `${t`Replied`} · ${entry.text}`
+								: entry.text === "Followed up"
+									? t`Followed up`
 									: `${t`Followed up`} · ${entry.text}`
 							: entry.text,
 					}

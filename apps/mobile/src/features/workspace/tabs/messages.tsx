@@ -11,7 +11,7 @@ import * as Clipboard from "expo-clipboard";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 import { View } from "react-native";
-import { replyLogVersion, replyPlaceholders } from "@reactive-resume/schema/applications/reply";
+import { replyPlaceholders } from "@reactive-resume/schema/applications/reply";
 import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
 import { offerTermKeys } from "@reactive-resume/schema/career-offer";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
@@ -185,9 +185,22 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const copying = useRef(false);
 	const [logging, setLogging] = useState(false);
 	const reminders = useReminders(application.id);
+	const clearFollowUpReminder = async (): Promise<boolean> => {
+		if (!scope || scope !== getAccountScope()) return false;
+		try {
+			await reminders.turnOff({ kind: "follow-up", applicationId: application.id });
+			return scope === getAccountScope();
+		} catch {
+			if (scope === getAccountScope())
+				showToast({
+					message: t`Couldn't clear the follow-up reminder. It may still notify you.`,
+					action: { label: t`Retry`, onPress: () => void clearFollowUpReminder() },
+				});
+			return false;
+		}
+	};
 	const clearReminder = useEffectEvent(() => {
-		if (scope && scope === getAccountScope() && !application.followUpAt)
-			void reminders.turnOff({ kind: "follow-up", applicationId: application.id }).catch(() => undefined);
+		if (!application.followUpAt) void clearFollowUpReminder();
 	});
 	useEffect(() => clearReminder(), [application.id, application.followUpAt, scope]);
 	const generate = useGenerate(application.id);
@@ -201,7 +214,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
 	const copy = async (log = false) => {
-		if (copying.current || !scope || scope !== getAccountScope()) return;
+		if ((log && !application.replyVersion) || copying.current || !scope || scope !== getAccountScope()) return;
 		copying.current = true;
 		setLogging(log);
 		let copied = false;
@@ -209,13 +222,16 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 			if (!(await Clipboard.setStringAsync(text))) throw new Error("Clipboard unavailable");
 			copied = true;
 			if (scope !== getAccountScope()) return;
-			if (log) {
+			if (log && application.replyVersion) {
 				await client.applications.logReply(
-					{ id: application.id, expectedVersion: replyLogVersion(application) },
+					{ id: application.id, expectedVersion: application.replyVersion },
 					{ context: { scope } },
 				);
 				if (scope !== getAccountScope()) return;
+				const cleared = await clearFollowUpReminder();
+				if (scope !== getAccountScope()) return;
 				await invalidate();
+				if (!cleared || scope !== getAccountScope()) return;
 			}
 			showToast({ message: log ? t`Reply copied and logged as replied` : t`Reply copied` });
 		} catch {
@@ -272,6 +288,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 								variant="secondary"
 								size="sm"
 								label={t`Copy and log as replied`}
+								disabled={!application.replyVersion}
 								loading={logging}
 								onPress={() => void copy(true)}
 							/>
@@ -292,7 +309,10 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 					</Text>
 					{!readOnly && application.status !== "saved" && application.status !== "closed" ? (
 						<Text variant="caption" color="ink3">
-							{t`Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders.`}
+							{t`Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders.`}{" "}
+							{!application.replyVersion
+								? t`Update the server to enable reply logging. Copy reply is still available.`
+								: null}
 						</Text>
 					) : null}
 				</>
