@@ -68,6 +68,7 @@ const routes = {
 	letter: (id) => `/letter/${id}`,
 	application: (id) => `/applications/${id}`,
 	assistant: (id) => `/builder/${id}/assistant`,
+	letterAssistant: (id) => `/letter/${id}/assistant`,
 	new: () => "/new",
 	newJob: () => "/applications?create=1",
 	career: (p) => `/career/${p}`,
@@ -388,6 +389,9 @@ let count = 9;
 let failed = false;
 let resumesPending = false;
 let resumeCount = 0;
+const searchAi = { isUnavailable: false, hasAIProvider: true, isLoading: false, retry: () => calls.push("ai-retry") };
+let searchScope = "fixture-account";
+let latestSearchDocument = [];
 const inputs = [];
 const letters = Array.from({ length: 209 }, (_, i) => ({
 	id: `letter-${i + 1}`,
@@ -399,9 +403,9 @@ const letters = Array.from({ length: 209 }, (_, i) => ({
 }));
 const { SearchScreen } = load("features/search/search-screen.tsx", {
 	"./rank": load("features/search/rank.ts"),
-	"@/features/ai/providers": { useHasAIProvider: () => ({ isUnavailable: false, hasAIProvider: true }) },
+	"@/features/ai/providers": { useHasAIProvider: () => searchAi, AIProviderSetupSheet: "AIProviderSetupSheet" },
 	"@/auth/session": {
-		getAccountScope: () => "fixture-account",
+		getAccountScope: () => searchScope,
 		useSession: () => ({ status: "signed-in", server: "fixture-server" }),
 	},
 	"@/shell/use-is-tablet": { useIsTablet: () => false },
@@ -438,7 +442,7 @@ const { SearchScreen } = load("features/search/search-screen.tsx", {
 			if (!enabled) return state({ data: undefined, isPending: true });
 			return input.type === "letter"
 				? state({ data: failed ? undefined : letters.slice(0, Math.min(input.limit, count)), isError: failed })
-				: state();
+				: state({ data: latestSearchDocument });
 		},
 	},
 });
@@ -505,3 +509,140 @@ libraryContinuation.props.onPress();
 assert.deepEqual(calls.at(-1), { pathname: "/documents", params: { q: "resume", type: "resume" } });
 console.log("PASS native pending Enter and 100-resume filtered library continuation");
 reset();
+
+searchAi.hasAIProvider = false;
+tree = render(SearchScreen);
+nodes(tree)
+	.find((node) => node.type === "TextInput")
+	.props.onChangeText("Keep my fictional question");
+tree = render(SearchScreen);
+const beforeSetup = calls.length;
+nodes(tree)
+	.find((node) => node.type === "ListRow" && node.props.title.startsWith("Connect an AI provider to ask"))
+	.props.onPress();
+tree = render(SearchScreen);
+assert.equal(calls.length, beforeSetup, "provider setup must not dismiss Search to Settings");
+assert.equal(nodes(tree).find((node) => node.type === "AIProviderSetupSheet").props.open, true);
+nodes(tree)
+	.find((node) => node.type === "AIProviderSetupSheet")
+	.props.onClose();
+tree = render(SearchScreen);
+assert.equal(nodes(tree).find((node) => node.type === "TextInput").props.value, "Keep my fictional question");
+assert.equal(nodes(tree).find((node) => node.type === "AIProviderSetupSheet").props.open, false);
+searchAi.hasAIProvider = true;
+for (const type of ["resume", "letter"]) {
+	latestSearchDocument = [{ id: `named-${type}`, type, name: `Fictional named ${type}` }];
+	tree = render(SearchScreen);
+	const ask = nodes(tree).find((node) => node.type === "ListRow" && node.props.title.startsWith("Ask about"));
+	assert.ok(ask.props.title.includes(`Fictional named ${type}`));
+	ask.props.onPress();
+	assert.deepEqual(
+		calls.at(-1),
+		{
+			pathname: type === "resume" ? `/builder/named-${type}/assistant` : `/letter/named-${type}/assistant`,
+			params: { draft: "Keep my fictional question" },
+		},
+		"the named document receives an unsent draft, never the auto-send ask parameter",
+	);
+}
+const queuedNamedAsk = nodes(tree).find((node) => node.type === "ListRow" && node.props.title.startsWith("Ask about"));
+const beforeQueuedNamedAsk = calls.length;
+searchScope = "replacement-account";
+queuedNamedAsk.props.onPress();
+assert.equal(calls.length, beforeQueuedNamedAsk, "queued named Ask cannot navigate under a replacement account");
+searchScope = "fixture-account";
+searchAi.isUnavailable = true;
+tree = render(SearchScreen);
+const beforeRetry = calls.length;
+nodes(tree)
+	.find((node) => node.type === "ListRow" && node.props.title === "Try again")
+	.props.onPress();
+assert.deepEqual(calls.slice(beforeRetry), ["ai-retry"]);
+Object.assign(searchAi, { isUnavailable: false, hasAIProvider: true });
+searchAi.hasAIProvider = false;
+tree = render(SearchScreen);
+nodes(tree)
+	.find((node) => node.type === "ListRow" && node.props.title.startsWith("Connect an AI provider to ask"))
+	.props.onPress();
+searchScope = "replacement-account";
+render(SearchScreen);
+tree = render(SearchScreen);
+assert.equal(nodes(tree).find((node) => node.type === "TextInput").props.value, "");
+assert.equal(nodes(tree).find((node) => node.type === "AIProviderSetupSheet").props.open, false);
+searchScope = "fixture-account";
+searchAi.hasAIProvider = true;
+reset();
+console.log("PASS native palette setup retains question, binds named document and hands over unsent draft");
+
+const { AssistantScreen, LetterAssistantScreen } = load("features/assistant/assistant-screen.tsx", {
+	"./chat": { useThreads: () => ({ data: [], refetch() {} }) },
+	"./chat-view": { ChatView: "ChatView", ContextChip: "ContextChip" },
+	"./chat-welcome": { ChatWelcome: "ChatWelcome" },
+	"./document": {
+		useResumeAssistantDocument: () => ({ kind: "resume", id: "named-resume", name: "Fictional resume", locked: false }),
+		useLetterAssistantDocument: () => ({ kind: "letter", id: "named-letter", name: "Fictional letter", locked: false }),
+	},
+	"./handoff": { takeAssistantHandoff: () => null },
+	"./proposals": { publishProposals() {} },
+	"./provider": {
+		ConnectionNotice: "ConnectionNotice",
+		ModelButton: "ModelButton",
+		ModelSheet: "ModelSheet",
+		ProviderGate: "ProviderGate",
+		useConversationProvider: () => ({ provider: { id: "fictional" }, label: "Fictional provider", choose() {} }),
+	},
+	"./threads": { PastConversations: "PastConversations" },
+	"./translate-resume": { TranslateResume: "TranslateResume" },
+	"react-native-safe-area-context": { SafeAreaProvider: "SafeAreaProvider", SafeAreaView: "SafeAreaView" },
+	"@/api/client": {
+		client: { agent: { threads: { start: () => assert.fail("Opening a draft must not start a thread") } } },
+	},
+	"@/auth/session": { getAccountScope: () => "fixture-account", useSession: () => ({ status: "signed-in" }) },
+	"@/draft": {
+		useResumeStore: (select) => select({ document: {}, status: "saved" }),
+		useLetterStore: (select) => select({ document: {}, status: "saved" }),
+	},
+	"@/features/ai/providers": { useHasAIProvider: () => ({ usableProviders: [{ id: "fictional" }] }) },
+	"@/features/write/unlock": { useUnlockResume: () => ({}) },
+});
+for (const [component, id] of [
+	[AssistantScreen, { resumeId: "named-resume" }],
+	[LetterAssistantScreen, { letterId: "named-letter" }],
+]) {
+	for (const mode of ["draft", "ask"]) {
+		reset();
+		const outer = render(() => component({ ...id, [mode]: "Fictional task" }));
+		tree = render(() => outer.type(outer.props));
+		const chat = nodes(tree).find((node) => node.type === "ChatView");
+		assert.equal(chat.props.threadId, null);
+		assert.equal(chat.props.draft, mode === "draft" ? "Fictional task" : undefined);
+		assert.equal(chat.props.prompt, mode === "ask" ? "Fictional task" : null);
+		nodes(tree)
+			.find((node) => node.type === "IconButton" && node.props.label === "New conversation")
+			.props.onPress();
+		tree = render(() => outer.type(outer.props));
+		assert.equal(
+			nodes(tree).find((node) => node.type === "ChatView").props.draft,
+			undefined,
+			"a new conversation must not replay initial draft",
+		);
+	}
+}
+reset();
+console.log("PASS native resume and letter draft links fill composer without auto-send; legacy ask links unchanged");
+for (const [path, exportName, screen] of [
+	["builder/[id]/assistant.tsx", "default", AssistantScreen],
+	["letter/[id]/assistant.tsx", "default", LetterAssistantScreen],
+]) {
+	const route = load("../app/" + path, {
+		"expo-router": {
+			...common["expo-router"],
+			useLocalSearchParams: () => ({ id: "named", draft: "Unsent route task" }),
+		},
+		"@/features/assistant/assistant-screen": { AssistantScreen, LetterAssistantScreen },
+	})[exportName];
+	const target = nodes(route()).find((node) => node.type === screen);
+	assert.equal(target.props.draft, "Unsent route task");
+	assert.equal(target.props.ask, undefined);
+}
+console.log("PASS native resume and letter routes preserve draft parameter without converting it to auto-send");
