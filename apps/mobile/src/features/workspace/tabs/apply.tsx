@@ -14,7 +14,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
 import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
-import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
+import { applicationReviewChecks, nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
 import { rewriteSummary } from "@reactive-resume/utils/string";
 import { AnswerLibrary } from "../answer-library";
@@ -633,16 +633,16 @@ function Checklist({
 	const submit = useMutation(orpc.career.submitApplication.mutationOptions());
 	const documents = useDocuments();
 	const [download, setDownload] = useState(false);
-	const submitted = hasApplicationSubmission(application);
-	// The review checks, by their persisted checklist index. Submitting yourself (3) is moot once a submission is recorded.
-	const items = [
+	const review = applicationReviewChecks(application, workspace.data);
+	const { submitted, checklist: ticked } = review;
+	const labels = [
 		t`Review the selected resume and cover letter in their editors.`,
 		t`Check every claim, date and result against your experience.`,
 		t`Review required form answers and remove unsupported claims.`,
 		t`Submit through the employer's application page yourself.`,
-	].slice(0, submitted ? 3 : 4);
-	const ticked = workspace.data.checklist;
-	const done = items.filter((_, index) => ticked.includes(index)).length;
+	] as const;
+	const items = readOnly ? [] : review.indices.map((index) => ({ index, label: labels[index] }));
+	const done = items.filter(({ index }) => ticked.includes(index)).length;
 	const written = answers.filter((answer) => answer.answer.trim());
 	const total = items.length;
 	const title = `${application.role} · ${application.company}`;
@@ -697,7 +697,7 @@ function Checklist({
 				expectedAnswers: currentWorkspace.answers,
 				expectedDocuments: { resumeId: application.resumeId, coverLetterId: application.coverLetterId },
 			});
-			queryClient.setQueryData(workspace.queryKey, { ...currentWorkspace, answers: answersNow });
+			await queryClient.invalidateQueries({ queryKey: workspace.queryKey });
 			// The server confirmed these exact texts, so their device drafts can go (newer edits stay).
 			for (const answer of answersNow) {
 				clearDraft(`answer:${application.id}:${answer.id}:answer`, answer.answer);
@@ -714,20 +714,25 @@ function Checklist({
 	};
 
 	return (
-		<Block title={t`Review checks`} trailing={<Text variant="callout" color="ink2">{t`${done} of ${total}`}</Text>}>
+		<Block
+			title={t`Review checks`}
+			trailing={
+				!submitted && !readOnly ? <Text variant="callout" color="ink2">{t`${done} of ${total}`}</Text> : undefined
+			}
+		>
 			{!submitted && !readOnly ? <PriorNoResponse company={application.company} excludeId={application.id} /> : null}
 			<View>
-				{items.map((label, index) => (
+				{items.map(({ label, index }) => (
 					<CheckRow
 						key={label}
 						label={label}
 						checked={ticked.includes(index)}
-						disabled={readOnly || submitting}
+						disabled={readOnly || submitted || submitting}
 						onChange={(on) => toggle(index, on)}
 					/>
 				))}
 			</View>
-			{application.status === "saved" && !readOnly ? (
+			{application.status === "saved" && !submitted && !readOnly ? (
 				<View style={{ gap: space.s2, paddingTop: space.s2 }}>
 					<Button
 						fullWidth
@@ -748,27 +753,31 @@ function Checklist({
 					)}
 				</View>
 			) : null}
-			<Actions>
-				<Button
-					variant="secondary"
-					size="sm"
-					icon="copy"
-					label={t`Copy answers`}
-					disabled={written.length === 0}
-					onPress={() => void copy()}
-				/>
-				<Button
-					variant="ghost"
-					size="sm"
-					icon="download-simple"
-					label={t`Download`}
-					disabled={written.length === 0}
-					onPress={() => setDownload(true)}
-				/>
-			</Actions>
-			{submitted ? (
+			{written.length > 0 ? (
+				<Actions>
+					<Button
+						variant="secondary"
+						size="sm"
+						icon="copy"
+						label={t`Copy answers`}
+						disabled={written.length === 0}
+						onPress={() => void copy()}
+					/>
+					<Button
+						variant="ghost"
+						size="sm"
+						icon="download-simple"
+						label={t`Download`}
+						disabled={written.length === 0}
+						onPress={() => setDownload(true)}
+					/>
+				</Actions>
+			) : null}
+			{submitted || readOnly ? (
 				<Text variant="caption" color="ink3">
-					{t`Review checks only reflect what you checked yourself.`}
+					{!readOnly && review.recorded
+						? t`Review checks recorded at first submission.`
+						: t`Historical review checks unavailable.`}
 				</Text>
 			) : null}
 			<Sheet open={download} onClose={() => setDownload(false)} title={t`Download`}>

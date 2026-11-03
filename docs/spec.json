@@ -47073,6 +47073,43 @@
 																			"maximum": 10
 																		}
 																	},
+																	"submissionReview": {
+																		"anyOf": [
+																			{
+																				"type": "object",
+																				"properties": {
+																					"at": {
+																						"type": "string",
+																						"format": "date-time"
+																					},
+																					"checklist": {
+																						"type": "array",
+																						"maxItems": 10,
+																						"items": {
+																							"type": "integer",
+																							"minimum": 0,
+																							"maximum": 10
+																						}
+																					},
+																					"documents": {
+																						"type": "boolean"
+																					},
+																					"answers": {
+																						"type": "boolean"
+																					}
+																				},
+																				"required": [
+																					"at",
+																					"checklist",
+																					"documents",
+																					"answers"
+																				]
+																			},
+																			{
+																				"type": "null"
+																			}
+																		]
+																	},
 																	"questions": {
 																		"type": "array",
 																		"maxItems": 20,
@@ -59078,6 +59115,43 @@
 												"maximum": 10
 											}
 										},
+										"submissionReview": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"at": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"checklist": {
+															"type": "array",
+															"maxItems": 10,
+															"items": {
+																"type": "integer",
+																"minimum": 0,
+																"maximum": 10
+															}
+														},
+														"documents": {
+															"type": "boolean"
+														},
+														"answers": {
+															"type": "boolean"
+														}
+													},
+													"required": [
+														"at",
+														"checklist",
+														"documents",
+														"answers"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"questions": {
 											"type": "array",
 											"maxItems": 20,
@@ -59471,6 +59545,43 @@
 												"minimum": 0,
 												"maximum": 10
 											}
+										},
+										"submissionReview": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"at": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"checklist": {
+															"type": "array",
+															"maxItems": 10,
+															"items": {
+																"type": "integer",
+																"minimum": 0,
+																"maximum": 10
+															}
+														},
+														"documents": {
+															"type": "boolean"
+														},
+														"answers": {
+															"type": "boolean"
+														}
+													},
+													"required": [
+														"at",
+														"checklist",
+														"documents",
+														"answers"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"questions": {
 											"type": "array",

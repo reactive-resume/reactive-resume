@@ -309,6 +309,16 @@ export const careerWorkspaceSchema = z.object({
 		.max(30),
 	/** Indexes of the ticked "Before you submit" items. */
 	checklist: z.array(z.number().int().min(0).max(10)).max(10),
+	/** Server-owned first-submission review; null means historical checks were not recorded. */
+	submissionReview: z
+		.object({
+			at: z.iso.datetime({ offset: true }),
+			checklist: z.array(z.number().int().min(0).max(10)).max(10),
+			documents: z.boolean(),
+			answers: z.boolean(),
+		})
+		.nullable()
+		.optional(),
 	/** Questions to ask, added from Fit or the coach. */
 	questions: z.array(z.object({ text: text(400), origin: text(60) })).max(20),
 	/** Fit requirements closed with "Add evidence": requirement text → the new fact's id. */

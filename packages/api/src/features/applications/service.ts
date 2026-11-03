@@ -18,6 +18,7 @@ import { latestStageEntryId } from "@reactive-resume/schema/applications/data";
 import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 import { isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
 import { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
+import { careerWorkspaceSchema, EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
@@ -242,8 +243,28 @@ export const hasSubmitted = (row: SubmissionHistory) =>
 export async function recordSentResume(row: ApplicationRow, client: DbOrTx): Promise<ApplicationRow> {
 	if (!SENT_STAGES.has(row.status)) return row;
 	const changes: Partial<ApplicationRow> = {};
+	const recordedAt = row.submittedAt ?? new Date();
 	// The first sent snapshot also fixes the durable lifetime submission marker. Later timeline edits cannot erase it.
-	if (!row.submittedAt) changes.submittedAt = new Date();
+	if (!row.submittedAt) changes.submittedAt = recordedAt;
+	const [workspace] = await client
+		.select({ data: schema.careerWorkspace.data })
+		.from(schema.careerWorkspace)
+		.where(and(eq(schema.careerWorkspace.applicationId, row.id), eq(schema.careerWorkspace.userId, row.userId)));
+	const data = careerWorkspaceSchema.parse({ ...EMPTY_WORKSPACE, ...workspace?.data });
+	if (data.submissionReview === undefined) {
+		data.submissionReview = row.submittedAt
+			? null
+			: {
+					at: recordedAt.toISOString(),
+					checklist: [...data.checklist],
+					documents: Boolean(row.resumeId || row.coverLetterId || row.resumeFileUrl || row.coverLetterUrl),
+					answers: data.answers.length > 0,
+				};
+		await client
+			.insert(schema.careerWorkspace)
+			.values({ applicationId: row.id, userId: row.userId, data })
+			.onConflictDoUpdate({ target: schema.careerWorkspace.applicationId, set: { data, updatedAt: new Date() } });
+	}
 
 	if (row.resumeId && !row.sentResumeVersionId) {
 		const [resume] = await client
@@ -1012,7 +1033,7 @@ export const applicationService = {
 					fields.followUpDateOnly !== undefined
 				)
 					await syncFollowUp(tx, updated);
-				if (current.status === "saved" && updated.resumeId !== current.resumeId) {
+				if (current.status === "saved" && !hasSubmitted(current) && updated.resumeId !== current.resumeId) {
 					const [workspace] = await tx
 						.select()
 						.from(schema.careerWorkspace)

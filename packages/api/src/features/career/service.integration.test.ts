@@ -1647,6 +1647,10 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 	});
 
 	it("keeps workspace keys a partial save leaves out, and only the owner can write it", async () => {
+		await getDb()
+			.update(tables.application)
+			.set({ sentResumeVersionId: null })
+			.where(eq(tables.application.id, "alice-app"));
 		const answers = [{ id: "why", question: "Why ACME?", answer: "Reliability work.", factIds: [] }];
 		await service.saveWorkspace("alice", "alice-app", { answers, checklist: [1] }, { answers: [], checklist: [] });
 		await service.saveWorkspace("alice", "alice-app", { message: "Thanks for applying." }, { message: "" });
@@ -1957,7 +1961,65 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect(await service.stories({ userId: "alice" })).toMatchObject([{ data: { result: secret, factIds: [] } }]);
 	});
 
+	it.each(["apply", "detail", "bulk", "reply"] as const)(
+		"freezes manual review at first submission through %s",
+		async (entry) => {
+			await getDb()
+				.insert(tables.application)
+				.values({ id: "review-job", userId: "alice", company: "Example", role: "Engineer" });
+			const checklist = [1, 3, 4];
+			const answers = [{ id: "why", question: "Why here?", answer: "Original", factIds: [] }];
+			await service.saveWorkspace("alice", "review-job", { checklist, answers }, { checklist: [], answers: [] });
+			if (entry === "apply") await service.submitApplication("alice", "review-job", answers, answers);
+			else if (entry === "bulk")
+				await applications.bulkUpdate({ userId: "alice", ids: ["review-job"], status: "applied" });
+			else if (entry === "reply") {
+				const reply = await savedItem("review-job", {
+					kind: "reply",
+					message: "Next round",
+					title: "Invite",
+					asks: [],
+					unconfirmed: [],
+					reply: "",
+					changes: [{ type: "stage", stage: "interview" }],
+					offer: null,
+				});
+				await service.applyReply("alice", reply.id, [0], {
+					answers,
+					expectedAnswers: answers,
+					expectedDocuments: { resumeId: null, coverLetterId: null },
+				});
+			} else await applications.update({ userId: "alice", id: "review-job", status: "applied" });
+			const review = (await service.workspace("alice", "review-job")).submissionReview;
+			expect(review).toEqual({ at: expect.any(String), checklist, documents: false, answers: true });
+			await expect(
+				service.saveWorkspace("alice", "review-job", { checklist: [2] }, { checklist }),
+			).rejects.toMatchObject({ code: "CONFLICT" });
+			await service.saveWorkspace("alice", "review-job", { checklist, answers: [] }, { checklist, answers });
+			await applications.update({ userId: "alice", id: "review-job", status: "saved" });
+			await applications.update({ userId: "alice", id: "review-job", resumeId: "shared-resume" });
+			await service.submitApplication("alice", "review-job", [], []);
+			expect((await service.workspace("alice", "review-job")).submissionReview).toEqual(review);
+			expect((await service.workspace("alice", "review-job")).checklist).toEqual(checklist);
+		},
+	);
+
+	it("does not invent legacy review history or accept a client replacement", async () => {
+		expect((await service.workspace("alice", "alice-app")).submissionReview).toBeNull();
+		await expect(
+			service.saveWorkspace("alice", "alice-app", { checklist: [2] }, { checklist: [] }),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		await expect(service.saveWorkspace("alice", "alice-app", { submissionReview: null }, {})).rejects.toMatchObject({
+			code: "BAD_REQUEST",
+		});
+		expect((await service.workspace("alice", "alice-app")).submissionReview).toBeNull();
+	});
+
 	it("preserves independent workspace saves and rejects stale writes to the same key", async () => {
+		await getDb()
+			.update(tables.application)
+			.set({ sentResumeVersionId: null })
+			.where(eq(tables.application.id, "alice-app"));
 		await Promise.all([
 			service.saveWorkspace("alice", "alice-app", { checklist: [1] }, { checklist: [] }),
 			service.saveWorkspace("alice", "alice-app", { message: "Keep this" }, { message: "" }),

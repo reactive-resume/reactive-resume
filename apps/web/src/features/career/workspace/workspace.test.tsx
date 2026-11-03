@@ -4,7 +4,7 @@ import type { WorkspaceTabProps } from "./shell";
 import type { Application } from "@/features/applications/types";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -679,3 +679,51 @@ it("Tighten Undo keeps local typing and pins an unchanged inverse to accepted te
 		expected: { answers: [{ ...original, answer: "Accepted answer.", factIds: ["accepted-proof"] }] },
 	});
 });
+
+it("omits absent review subjects and empty answer actions without moving manual indices", async () => {
+	mount(<ApplyTab {...props} />);
+	await screen.findByRole("heading", { name: "Review checks" });
+	expect(within(document.querySelector("#application-readiness") as HTMLElement).getAllByRole("checkbox")).toHaveLength(
+		1,
+	);
+	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
+	fireEvent.click(screen.getByRole("checkbox", { name: "Submit through the employer's application page yourself." }));
+	await waitFor(() =>
+		expect(api.save.mock.calls[0]?.[0]).toMatchObject({ checklist: [3], expected: { checklist: [] } }),
+	);
+});
+
+it.each(["recorded", "legacy", "saved version"] as const)(
+	"shows honest read-only %s review without unfinished progress",
+	async (kind) => {
+		const answers = [{ id: "answer", question: "Why?", answer: "Current draft", factIds: [] }];
+		api.data.workspace = {
+			...EMPTY_WORKSPACE,
+			answers,
+			checklist: [0],
+			submissionReview:
+				kind === "legacy" ? null : { at: "2026-11-03T10:00:00Z", checklist: [1], documents: false, answers: true },
+		};
+		mount(
+			<ApplyTab
+				{...props}
+				version={
+					kind === "saved version"
+						? item("old answers", { kind: "answers", answers: [{ question: "Why?", answer: "Old version" }] })
+						: undefined
+				}
+			/>,
+		);
+		await screen.findByText(
+			kind === "recorded" ? "Review checks recorded at first submission." : "Historical review checks unavailable.",
+		);
+		const checks = within(document.querySelector("#application-readiness") as HTMLElement).queryAllByRole("checkbox");
+		expect(checks).toHaveLength(kind === "recorded" ? 2 : 0);
+		if (kind === "recorded") {
+			expect((checks[0] as HTMLInputElement).getAttribute("aria-checked")).toBe("true");
+			for (const check of checks) expect(check.getAttribute("aria-disabled")).toBe("true");
+		}
+		expect(screen.queryByRole("button", { name: "Mark as applied" })).toBeNull();
+		expect(document.querySelector("#application-readiness")?.textContent).not.toMatch(/\d+ of \d+/);
+	},
+);

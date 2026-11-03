@@ -9,7 +9,7 @@ import { AnimatePresence } from "motion/react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
-import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
+import { applicationReviewChecks, nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -60,13 +60,13 @@ const shortLabel = (text: string) => {
 };
 
 /** The review checks, by their persisted checklist index. Submitting yourself (3) is moot once a submission is recorded. */
-const checklistItems = (submitted: boolean) =>
+const checklistItems = () =>
 	[
 		t`Review the selected resume and cover letter in their editors.`,
 		t`Check every claim, date and result against your experience.`,
 		t`Review required form answers and remove unsupported claims.`,
 		t`Submit through the employer's application page yourself.`,
-	].slice(0, submitted ? 3 : 4);
+	] as const;
 
 /** W4–W5: the written answers for the employer's form, and a checklist before submitting there yourself. */
 export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
@@ -758,10 +758,11 @@ function Checklist({
 	const workspace = useWorkspace(application.id);
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const submit = useMutation(orpc.career.submitApplication.mutationOptions());
-	const submitted = hasApplicationSubmission(application);
-	const items = checklistItems(submitted);
-	const ticked = workspace.data.checklist;
-	const done = items.filter((_, index) => ticked.includes(index)).length;
+	const review = applicationReviewChecks(application, workspace.data);
+	const { submitted, checklist: ticked } = review;
+	const labels = checklistItems();
+	const items = readOnly ? [] : review.indices.map((index) => ({ index, label: labels[index] }));
+	const done = items.filter(({ index }) => ticked.includes(index)).length;
 	const written = answers.filter((answer) => answer.answer.trim());
 	// Recording the submission is the one emphasised action only once preparation has nothing left to guide.
 	const primary = nextPreparationStep(application, workspace.data, documents) === "review";
@@ -819,9 +820,8 @@ function Checklist({
 				expectedAnswers: currentWorkspace.answers,
 				expectedDocuments: { resumeId: application.resumeId, coverLetterId: application.coverLetterId },
 			});
-			queryClient.setQueryData(orpc.career.workspace.queryKey({ input: { applicationId: application.id } }), {
-				...currentWorkspace,
-				answers,
+			await queryClient.invalidateQueries({
+				queryKey: orpc.career.workspace.queryKey({ input: { applicationId: application.id } }),
 			});
 			toast.add({ description: t`Marked as applied. The versions you sent are kept.` });
 		} catch (error) {
@@ -843,16 +843,18 @@ function Checklist({
 				<h2 className="text-sm font-semibold">
 					<Trans>Review checks</Trans>
 				</h2>
-				<span className="text-xs text-ink-2 tabular-nums">{t`${done} of ${items.length}`}</span>
+				{!submitted && !readOnly && (
+					<span className="text-xs text-ink-2 tabular-nums">{t`${done} of ${items.length}`}</span>
+				)}
 			</div>
 			<ul className="grid gap-2.5">
-				{items.map((label, index) => (
+				{items.map(({ label, index }) => (
 					<li key={label}>
 						<label className="flex cursor-pointer gap-2.5 text-[13px] leading-[19px]">
 							<Checkbox
 								className="mt-px"
 								checked={ticked.includes(index)}
-								disabled={readOnly || submitting}
+								disabled={readOnly || submitted || submitting}
 								onCheckedChange={(checked) => toggle(index, checked)}
 							/>
 							<span
@@ -864,7 +866,7 @@ function Checklist({
 					</li>
 				))}
 			</ul>
-			{application.status === "saved" && !readOnly && (
+			{application.status === "saved" && !submitted && !readOnly && (
 				<div className="grid gap-2 border-t border-line pt-3.5">
 					<Button
 						className="w-full"
@@ -888,29 +890,35 @@ function Checklist({
 					)}
 				</div>
 			)}
-			<div className="flex flex-wrap gap-1.5 border-t border-line pt-3.5">
-				<Button variant="secondary" size="sm" disabled={written.length === 0} onClick={() => void copy()}>
-					<Icon name="copy" size={16} />
-					<Trans>Copy answers</Trans>
-				</Button>
-				<DropdownMenu>
-					<DropdownMenuTrigger render={<Button variant="ghost" size="sm" disabled={written.length === 0} />}>
-						<Icon name="download-simple" size={16} />
-						<Trans>Download</Trans>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent>
-						<DropdownMenuItem onClick={() => download("md")}>
-							<Trans>Markdown (.md)</Trans>
-						</DropdownMenuItem>
-						<DropdownMenuItem onClick={() => download("txt")}>
-							<Trans>Plain text (.txt)</Trans>
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</div>
-			{submitted && (
+			{written.length > 0 && (
+				<div className="flex flex-wrap gap-1.5 border-t border-line pt-3.5">
+					<Button variant="secondary" size="sm" disabled={written.length === 0} onClick={() => void copy()}>
+						<Icon name="copy" size={16} />
+						<Trans>Copy answers</Trans>
+					</Button>
+					<DropdownMenu>
+						<DropdownMenuTrigger render={<Button variant="ghost" size="sm" disabled={written.length === 0} />}>
+							<Icon name="download-simple" size={16} />
+							<Trans>Download</Trans>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DropdownMenuItem onClick={() => download("md")}>
+								<Trans>Markdown (.md)</Trans>
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => download("txt")}>
+								<Trans>Plain text (.txt)</Trans>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+			)}
+			{(submitted || readOnly) && (
 				<p className="text-xs leading-[17px] text-ink-3">
-					<Trans>Review checks only reflect what you checked yourself.</Trans>
+					{!readOnly && review.recorded ? (
+						<Trans>Review checks recorded at first submission.</Trans>
+					) : (
+						<Trans>Historical review checks unavailable.</Trans>
+					)}
 				</p>
 			)}
 		</aside>

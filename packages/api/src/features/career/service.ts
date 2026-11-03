@@ -450,12 +450,16 @@ async function submitAnswerSnapshot(
 		.where(eq(tables.application.id, applicationId))
 		.returning();
 	if (!submitted) throw new ORPCError("NOT_FOUND");
-	await recordSentResume(submitted, tx);
-	const data = { ...current, answers: parsed };
+	const data = {
+		...current,
+		answers: parsed,
+		...(current.submissionReview === undefined && hasSubmitted(application) ? { submissionReview: null } : {}),
+	};
 	await tx
 		.insert(tables.careerWorkspace)
 		.values({ applicationId, userId, data })
 		.onConflictDoUpdate({ target: tables.careerWorkspace.applicationId, set: { data, updatedAt: at } });
+	await recordSentResume(submitted, tx);
 	const sent = parsed.filter((answer) => answer.answer.trim());
 	if (sent.length)
 		await tx.insert(tables.careerArtifact).values({
@@ -1509,12 +1513,14 @@ export const careerService = {
 			return { stages: transition.changed ? [savedStageOf(updated)] : [] };
 		}),
 	workspace: async (userId: string, applicationId: string) => {
-		await requireCareerApplication({ userId, applicationId });
+		const application = await requireCareerApplication({ userId, applicationId });
 		const [row] = await db
 			.select({ data: tables.careerWorkspace.data })
 			.from(tables.careerWorkspace)
 			.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
-		return careerWorkspaceSchema.parse({ ...EMPTY_WORKSPACE, ...row?.data });
+		const data = careerWorkspaceSchema.parse({ ...EMPTY_WORKSPACE, ...row?.data });
+		if (data.submissionReview === undefined && application && hasSubmitted(application)) data.submissionReview = null;
+		return data;
 	},
 	/** Each widget saves its whole key; keys it doesn't send keep their stored values. */
 	saveWorkspace: async (
@@ -1523,11 +1529,13 @@ export const careerService = {
 		patch: { [K in keyof CareerWorkspace]?: CareerWorkspace[K] | undefined },
 		expected: { [K in keyof CareerWorkspace]?: CareerWorkspace[K] | undefined },
 	) => {
+		if (Object.hasOwn(patch, "submissionReview") || Object.hasOwn(expected, "submissionReview"))
+			throw new ORPCError("BAD_REQUEST", { message: "Submission review is read-only." });
 		await requireCareerApplication({ userId, applicationId });
 		// The application row is the lock, so two saves to different keys can't read the same old copy.
 		return db.transaction(async (tx) => {
 			const [application] = await tx
-				.select({ id: tables.application.id })
+				.select()
 				.from(tables.application)
 				.where(and(eq(tables.application.id, applicationId), activeApplications(userId)))
 				.for("update");
@@ -1537,6 +1545,11 @@ export const careerService = {
 				.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
 			if (!application) throw new ORPCError("NOT_FOUND");
 			const current = careerWorkspaceSchema.parse({ ...EMPTY_WORKSPACE, ...row?.data });
+			if (hasSubmitted(application)) {
+				if (current.submissionReview === undefined) current.submissionReview = null;
+				if (patch.checklist !== undefined && !isDeepStrictEqual(patch.checklist, current.checklist))
+					throw new ORPCError("CONFLICT", { message: "Review checks cannot change after submission." });
+			}
 			for (const key of Object.keys(patch) as (keyof CareerWorkspace)[]) {
 				if (patch[key] === undefined) continue;
 				if (!Object.hasOwn(expected, key))
