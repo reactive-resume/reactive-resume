@@ -48,11 +48,13 @@ const pageLabel = "font-martian font-medium text-[calc(var(--pw)*.045)] leading-
 export function Design() {
 	const step = useLanding((state) => state.designStep);
 	const zoomed = useLanding((state) => state.designZoomed);
+	const exiting = useLanding((state) => state.designExiting);
 	const active = useLanding((state) => state.activeScene === SCENE.design);
 	const design = t`Design`;
 	const templateCount = i18n.number(templateSchema.options.length);
 	const templateNames = sheetTemplates.map((template) => i18n._(template.name));
 	const railRef = useRef<HTMLDivElement>(null);
+	const linkRef = useRef<HTMLAnchorElement>(null);
 
 	// On narrow screens the tab rail scrolls; keep the current look in view.
 	useEffect(() => {
@@ -62,13 +64,18 @@ export function Design() {
 		rail.scrollTo({ left: checked.offsetLeft - rail.clientWidth / 2 + checked.offsetWidth / 2, behavior: "smooth" });
 	}, [step]);
 
+	// The heading fades out as the scene leaves; release focus instead of leaving an outline on invisible text.
+	useEffect(() => {
+		if (exiting) linkRef.current?.blur();
+	}, [exiting]);
+
 	return (
 		<section
 			id="design"
 			data-scene={SCENE.design}
 			data-pin
 			aria-labelledby="design-title"
-			className="relative h-[320vh] min-[900px]:h-[360vh]"
+			className="relative h-[280vh] min-[900px]:h-[320vh]"
 		>
 			<div className="sticky top-0 h-svh overflow-clip [--dpt:52%] [--pw:min(66vw,42vh)] [--w1:clamp(0,(var(--p)-.1)/.1,1)] [--w2:clamp(0,(var(--p)-.26)/.1,1)] [--w3:clamp(0,(var(--p)-.42)/.1,1)] [--w4:clamp(0,(var(--p)-.58)/.1,1)] [--z:clamp(0,(var(--p)-.76)/.16,1)] min-[900px]:[--dpt:57%] min-[900px]:[--pw:min(24vw,44vh)]">
 				<Doodle
@@ -80,7 +87,7 @@ export function Design() {
 
 				<div
 					aria-hidden="true"
-					className="absolute inset-x-0 top-[12vh] h-[1.05em] [transform:translateY(calc(var(--z)*-10vh))] text-[15vw] font-normal text-ink opacity-[calc(1-var(--z))] will-change-[transform,opacity] min-[900px]:top-[10vh] min-[900px]:text-[clamp(80px,10vw,180px)]"
+					className="absolute inset-x-0 top-[12vh] h-[1.05em] [transform:translateY(calc(var(--z)*-10vh))] text-[15vw] font-normal text-ink opacity-[calc(1-clamp(0,var(--z)*5,1))] will-change-[transform,opacity] min-[900px]:top-[10vh] min-[900px]:text-[clamp(80px,10vw,180px)]"
 				>
 					<span className="absolute inset-0 text-center font-display leading-none tracking-[-.03em] opacity-[calc(1-clamp(0,(var(--w1)-.35)*3.4,1))]">
 						{design}
@@ -108,38 +115,38 @@ export function Design() {
 					/>
 				</div>
 
-				<div
-					aria-hidden="true"
-					className="absolute top-(--dpt) left-1/2 grid [transform:translate(-50%,calc(-50%-var(--z)*8vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] grid-cols-[repeat(7,var(--pw))] gap-[calc(var(--pw)*.12)] opacity-(--z) will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
-				>
-					{sheetCells.map((cell) => (
-						<div
-							key={cell.index}
-							className={cn(
-								"relative aspect-[612/792] [transform:translateY(calc((1-var(--z))*var(--rise)))] will-change-transform [transition:transform_.5s_var(--ease)]",
-								!cell.template && "invisible",
-							)}
-							style={{ "--rise": `${cell.rise}px` } as CSSProperties}
-						>
-							{cell.template && (
-								<>
-									<img
-										src={`/templates/thumb/${cell.template}.webp`}
-										alt=""
-										width={298}
-										height={420}
-										loading="lazy"
-										decoding="async"
-										draggable={false}
-										className="absolute inset-0 size-full rounded-sm bg-paper object-contain shadow-paper dark:brightness-[.93]"
-									/>
-									<span className={cn(pageLabel, "absolute start-0 top-[calc(100%+10px)]")}>
-										{templates[cell.template].name}
-									</span>
-								</>
-							)}
-						</div>
-					))}
+				{/* The mask is on this screen-sized wrapper, not the scaling grid, so it stays over the headline bands. */}
+				<div aria-hidden="true" className="design-wall pointer-events-none absolute inset-0">
+					<div className="absolute top-(--dpt) left-1/2 grid [transform:translate(-50%,calc(-50%-var(--z)*8vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] grid-cols-[repeat(7,var(--pw))] gap-[calc(var(--pw)*.12)] opacity-(--z) will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]">
+						{sheetCells.map((cell) => (
+							<div
+								key={cell.index}
+								className={cn(
+									"relative aspect-[612/792] [transform:translateY(calc((1-var(--z))*var(--rise)))] will-change-transform [transition:transform_.5s_var(--ease)]",
+									!cell.template && "invisible",
+								)}
+								style={{ "--rise": `${cell.rise}px` } as CSSProperties}
+							>
+								{cell.template && (
+									<>
+										<img
+											src={`/templates/thumb/${cell.template}.webp`}
+											alt=""
+											width={298}
+											height={420}
+											loading="lazy"
+											decoding="async"
+											draggable={false}
+											className="absolute inset-0 size-full rounded-sm bg-paper object-contain shadow-paper dark:brightness-[.93]"
+										/>
+										<span className={cn(pageLabel, "absolute start-0 top-[calc(100%+10px)]")}>
+											{templates[cell.template].name}
+										</span>
+									</>
+								)}
+							</div>
+						))}
+					</div>
 				</div>
 
 				<div
@@ -207,7 +214,7 @@ export function Design() {
 				<SceneCaption
 					number="02"
 					title={design}
-					className="absolute start-(--gutter) bottom-[clamp(20px,5vh,44px)] hidden max-w-[22em] opacity-[calc(1-var(--z)*2)] min-[1100px]:flex"
+					className="absolute start-(--gutter) bottom-[clamp(20px,5vh,44px)] hidden max-w-[22em] opacity-[calc(1-clamp(0,var(--z)*3,1))] min-[1100px]:flex"
 				>
 					{t`Pick from ${templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like.`}
 				</SceneCaption>
@@ -216,9 +223,14 @@ export function Design() {
 				<h2
 					id="design-title"
 					aria-label={`${t`${templateCount} free resume templates.`} ${t`Make any of them yours.`}`}
-					className="pointer-events-none absolute inset-x-(--gutter) top-[12vh] bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none font-normal text-balance opacity-(--z) will-change-[transform,opacity] min-[900px]:bottom-[5vh] min-[900px]:text-[clamp(36px,4vw,72px)]"
+					className="pointer-events-none absolute inset-x-(--gutter) top-[10vh] bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none font-normal text-balance opacity-[calc(clamp(0,(var(--z)-.18)/.1,1)*(1-clamp(0,(var(--out,0)-.6)/.06,1)))] will-change-[transform,opacity] min-[900px]:bottom-[5vh] min-[900px]:text-[clamp(36px,4vw,72px)]"
 				>
-					<Link to="/resume-templates" inert={!zoomed} className="flex h-full flex-col justify-between">
+					<Link
+						ref={linkRef}
+						to="/resume-templates"
+						inert={!zoomed || exiting}
+						className="flex h-full flex-col justify-between"
+					>
 						<span className="font-anybody pointer-events-auto font-light tracking-[-.02em] text-ink">
 							{t`${templateCount} free resume templates.`}
 						</span>
