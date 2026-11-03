@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vite-plus/test";
 import { offerTermsSchema } from "./career";
-import { offerHintFromSalary, offerTermKeys, parseOfferEntry, previousOfferCurrency } from "./career-offer";
+import {
+	annualBaseHint,
+	bonusAmount,
+	bonusEntry,
+	offerHintFromSalary,
+	offerTermKeys,
+	parseOfferEntry,
+	previousOfferCurrency,
+} from "./career-offer";
 
 const entry = () => ({
 	applicationId: "owned-job",
@@ -13,6 +21,25 @@ const entry = () => ({
 });
 
 describe("manual offer entry", () => {
+	it("keeps percentage bonuses distinct from old amount records and rejects malformed percentages", () => {
+		for (const [locale, value, percent] of [
+			["en-US", "10%", 10],
+			["de-DE", "12,5 %", 12.5],
+			["en-US", "0%", 0],
+		] as const) {
+			const input = entry();
+			input.amounts.variable = value;
+			const result = parseOfferEntry({ ...input, locale });
+			expect(result.payload.success).toBe(true);
+			if (!result.payload.success) throw result.payload.error;
+			expect(result.payload.data).toMatchObject({ variable: null, variablePercent: percent });
+		}
+		for (const value of ["%", "10%%", "-1%", "Infinity%", "10% extra"]) {
+			const input = entry();
+			input.amounts.variable = value;
+			expect(parseOfferEntry(input).payload.success, value).toBe(false);
+		}
+	});
 	it.each(["base", "variable", "learning"] as const)("rejects invalid entered %s rather than saving unknown", (key) => {
 		const input = entry();
 		input.amounts[key] = "95k";
@@ -159,4 +186,25 @@ describe("offerHintFromSalary", () => {
 		expect(offerHintFromSalary("$120 thousand")).toEqual({ currency: "USD", base: 120_000, period: null });
 		expect(offerHintFromSalary("$120 to 140 thousand")).toEqual({ currency: "USD", base: 120_000, period: null });
 	});
+});
+
+it("derives percentages only from their own base and round trips localized editing", () => {
+	const old = offerTermsSchema.parse({ currency: "EUR", period: "month", base: 7000, variable: 500 });
+	expect(bonusAmount(old)).toBe(500);
+	const percentage = { ...old, variable: null, variablePercent: 12.5 };
+	expect(bonusAmount(percentage)).toBe(875);
+	expect(bonusAmount({ ...percentage, base: null })).toBeNull();
+	expect(bonusAmount({ ...percentage, base: 0 })).toBe(0);
+	expect(offerTermsSchema.safeParse({ ...old, variablePercent: 10 }).success).toBe(false);
+	const input = entry();
+	input.amounts.variable = bonusEntry(percentage, "de-DE");
+	expect(parseOfferEntry({ ...input, locale: "de-DE" }).payload).toMatchObject({
+		success: true,
+		data: { variable: null, variablePercent: 12.5 },
+	});
+	const yearly = { ...old, period: "year" as const };
+	expect(annualBaseHint(old, yearly)).toBe(84000);
+	expect(annualBaseHint(old, { ...yearly, currency: "USD" })).toBeNull();
+	expect(annualBaseHint(old, { ...yearly, period: "hour" })).toBeNull();
+	expect(annualBaseHint({ ...old, base: null }, yearly)).toBeNull();
 });

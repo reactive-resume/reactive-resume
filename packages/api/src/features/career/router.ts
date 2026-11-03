@@ -358,11 +358,13 @@ export const careerRouter = {
 			operationId: "updateCareerOffer",
 			summary: "Correct saved offer terms",
 			description:
-				"Replaces a saved offer's terms. `expected` is the copy being corrected; a change made elsewhere since then is a conflict.",
+				"Corrects saved terms, or saves a new version when newVersion is true. `expected` is the copy being corrected; concurrent changes conflict.",
 		})
-		.input(id.extend({ terms: offerTermsSchema, expected: offerTermsSchema }))
+		.input(id.extend({ terms: offerTermsSchema, expected: offerTermsSchema, newVersion: z.boolean().optional() }))
 		.output(savedItemSchema)
-		.handler(({ context, input }) => careerService.updateOffer(context.user.id, input.id, input.terms, input.expected)),
+		.handler(({ context, input }) =>
+			careerService.updateOffer(context.user.id, input.id, input.terms, input.expected, input.newVersion),
+		),
 	deleteSavedItem: protectedProcedure
 		.route({
 			method: "DELETE",

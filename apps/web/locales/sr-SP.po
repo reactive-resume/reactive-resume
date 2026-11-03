@@ -983,6 +983,14 @@ msgstr "{passedRules} од {totalRules} провере пролазе."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# је предложио измену на овој страници · ништа се не мења док не прихватите} other {# је предложио измене на овој страници · ништа се не мења док не прихватите}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} основне плате"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} основне плате ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {Предложено #} other {Предложено #}}"
@@ -1168,6 +1176,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} годишње ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3061,7 +3073,7 @@ msgstr "Подебљано"
 msgid "Bonus"
 msgstr "Бонус"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4403,10 +4415,6 @@ msgstr "Исправи"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6570,6 +6578,14 @@ msgstr "Унесите важећу адресу е-поште."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Унесите веб адресу, на пример екампле.com"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Унесите износ или проценат основне плате, на пример 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Унесите износ или проценат као што је 10%, или оставите празно."
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -10013,6 +10029,10 @@ msgstr ""
 msgid "New key"
 msgstr "Нови кључ"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "Нова верзија понуде је сачувана"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10823,10 +10843,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13617,6 +13633,10 @@ msgstr "Сачувај промене"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Сачувај везу"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Сачувајте исправљене услове као нову верзију. Претходна верзија остаје доступна. Не шаље се захтев вештачкој интелигенцији."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

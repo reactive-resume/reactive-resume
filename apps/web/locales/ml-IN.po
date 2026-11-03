@@ -983,6 +983,14 @@ msgstr "{totalRules} ചെക്കുകളുടെ {passedRules} പാസ�
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# ഈ പേജിൽ എഡിറ്റ് ചെയ്യാൻ നിർദ്ദേശിച്ചു · നിങ്ങൾ അംഗീകരിക്കുന്നത് വരെ ഒന്നും മാറില്ല} other {# ഈ പേജിൽ നിർദ്ദേശിച്ച തിരുത്തലുകൾ · നിങ്ങൾ അംഗീകരിക്കുന്നത് വരെ മാറ്റമൊന്നുമില്ല}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "അടിസ്ഥാന ശമ്പളത്തിന്റെ {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "അടിസ്ഥാന ശമ്പളത്തിന്റെ {percent} ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# നിർദ്ദേശിച്ചു} other {# നിർദ്ദേശിച്ചു}}"
@@ -1168,6 +1176,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ വർഷത്തിൽ {yearly} ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3061,7 +3073,7 @@ msgstr "ബോൾഡ്"
 msgid "Bonus"
 msgstr "ബോണസ്"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4403,10 +4415,6 @@ msgstr "തിരുത്തുക"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6570,6 +6578,14 @@ msgstr "സാധുവായ ഒരു ഇമെയിൽ വിലാസം �
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "ഉദാഹരണം.com പോലുള്ള ഒരു വെബ് വിലാസം നൽകുക"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "തുക അല്ലെങ്കിൽ അടിസ്ഥാന ശമ്പളത്തിന്റെ ശതമാനം നൽകുക, ഉദാ. 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "തുക അല്ലെങ്കിൽ 10% പോലുള്ള ശതമാനം നൽകുക, അല്ലെങ്കിൽ ശൂന്യമായി വിടുക."
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -10013,6 +10029,10 @@ msgstr ""
 msgid "New key"
 msgstr "പുതിയ കീ"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "ഓഫറിന്റെ പുതിയ പതിപ്പ് സംരക്ഷിച്ചു"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10823,10 +10843,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13617,6 +13633,10 @@ msgstr "മാറ്റങ്ങൾ സംരക്ഷിക്കുക"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "കണക്ഷൻ സംരക്ഷിക്കുക"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "തിരുത്തിയ വ്യവസ്ഥകൾ പുതിയ പതിപ്പായി സംരക്ഷിക്കുക. മുൻ പതിപ്പ് ലഭ്യമായി തുടരും. AI അഭ്യർത്ഥന അയയ്ക്കുന്നില്ല."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

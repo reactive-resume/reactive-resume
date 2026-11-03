@@ -983,6 +983,14 @@ msgstr "{passedRules} از {totalRules} چک پاس می شود."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# ویرایش پیشنهادی در این صفحه را پیشنهاد کرد · تا زمانی که قبول نکنید هیچ تغییری نمی کند} other {ویرایش‌های پیشنهادی # در این صفحه · تا زمانی که نپذیرید چیزی تغییر نمی‌کند}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} از حقوق پایه"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} از حقوق پایه ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# پیشنهاد شده است} other {# پیشنهاد شده است}}"
@@ -1168,6 +1176,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr "<0>جمع کل عمداً محاسبه نمی‌شود.</0> پاداش و سهام به شرایطی بستگی دارند و ارزش سهام نامطمئن است. پیش از مقایسهٔ جمع‌ها، اسناد اصلی پیشنهادها را بخوانید."
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ سالانه {yearly} ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3061,7 +3073,7 @@ msgstr "بولد"
 msgid "Bonus"
 msgstr "پاداش"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4403,10 +4415,6 @@ msgstr "اصلاح"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6570,6 +6578,14 @@ msgstr "یک آدرس ایمیل معتبر وارد کنید."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "یک آدرس وب مانند مثال.com وارد کنید"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "یک مبلغ یا درصدی از حقوق پایه، مانند 10%، وارد کنید."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "یک مبلغ یا درصدی مانند 10% وارد کنید، یا خالی بگذارید."
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -10013,6 +10029,10 @@ msgstr ""
 msgid "New key"
 msgstr "کلید جدید"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "نسخه جدید پیشنهاد ذخیره شد"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10823,10 +10843,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13617,6 +13633,10 @@ msgstr "ذخیرهٔ تغییرات"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "ذخیره اتصال"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "شرایط اصلاح‌شده را به‌عنوان نسخه جدید ذخیره کنید. نسخه قبلی در دسترس می‌ماند. درخواستی به هوش مصنوعی ارسال نمی‌شود."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

@@ -9,7 +9,12 @@ import { Pool } from "pg";
 import * as tables from "@reactive-resume/db/schema";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
 import { reviewedAnswerEvidence, reviewedAnswerInputSchema } from "@reactive-resume/schema/application-answers";
-import { careerOfferInputSchema, careerProfileDataSchema, savedItemDataSchema } from "@reactive-resume/schema/career";
+import {
+	careerOfferInputSchema,
+	careerProfileDataSchema,
+	offerTermsSchema,
+	savedItemDataSchema,
+} from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { reviewedAnswers } from "./answers";
 
@@ -1553,6 +1558,20 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			title: "ACME · Verbal offer",
 			data: { kind: "offer", base: 125_000, origin: "manual", editedAt: expect.any(String) },
 		});
+		if (updated.data.kind !== "offer") throw new Error("Expected corrected offer terms.");
+		const revised = offerTermsSchema.parse(updated.data);
+		const version = await service.updateOffer("alice", created.id, { ...revised, variablePercent: 10 }, revised, true);
+		expect(version.id).not.toBe(created.id);
+		expect(version.data).toMatchObject({ base: 125000, variable: null, variablePercent: 10, origin: "manual" });
+		expect(
+			(await service.savedItems({ userId: "alice", kind: "offer" })).find((row) => row.id === created.id)?.data,
+		).toMatchObject({ base: 125000, variable: null });
+		await expect(service.updateOffer("bob", created.id, revised, revised, true)).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await expect(service.updateOffer("alice", created.id, revised, terms, true)).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
 		// A second tab still holding the first copy can't overwrite the correction.
 		await expect(service.updateOffer("alice", created.id, { ...terms, base: 1 }, terms)).rejects.toMatchObject({
 			code: "CONFLICT",
@@ -2477,7 +2496,7 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			task: { task: "reply", message: "10% target bonus; please reply by 20 November 2030." },
 		});
 		const prompt = fixture.generate.mock.calls[0]?.[1]?.prompt as string;
-		expect(prompt).toContain("Keep percentage bonuses in variableConditions");
+		expect(prompt).toContain("Record percentage bonuses in variablePercent");
 		expect(prompt).toContain("respondBy is the stated decision deadline");
 	});
 

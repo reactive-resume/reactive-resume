@@ -1,5 +1,6 @@
 import type { SavedData, SavedItem } from "./hooks";
 import type { ApplicationSummary } from "@/features/applications/types";
+import type { RouterOutput } from "@/libs/orpc/client";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { OfferTerms } from "@reactive-resume/schema/career";
 import type { careerOfferInputSchema } from "@reactive-resume/schema/career";
@@ -9,10 +10,11 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
 import {
+	bonusEntry,
 	offerApplications,
 	offerHintFromSalary,
 	parseOfferEntry,
@@ -39,6 +41,7 @@ import {
 import { useMoveWithUndo } from "@/features/applications/use-application-actions";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { MoreOptions } from "@/features/resume/editor/write/fields";
+import { getAccountId, getAccountGeneration } from "@/libs/auth/account-scope";
 import { orpc } from "@/libs/orpc/client";
 
 type Application = {
@@ -236,6 +239,9 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const [offer] = useState(initialOffer);
 	const id = useId();
 	const navigate = useNavigate();
+	const search = useSearch({ strict: false });
+	const [owner] = useState(() => ({ id: getAccountId(), generation: getAccountGeneration() }));
+	const current = () => getAccountId() === owner.id && getAccountGeneration() === owner.generation;
 	const { locale, timeZone } = useCareerTime();
 	const queryClient = useQueryClient();
 	const moveWithUndo = useMoveWithUndo();
@@ -257,7 +263,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const amount = (value: number | null | undefined) => (value === null || value === undefined ? "" : String(value));
 	const [amounts, setAmounts] = useState(() => ({
 		base: amount(offer ? offer.data.base : hint?.base),
-		variable: amount(offer?.data.variable),
+		variable: offer ? bonusEntry(offer.data, locale) : "",
 		learning: amount(offer?.data.learning),
 	}));
 	// What the job's salary filled in, so an untouched sheet isn't "changed" and choosing another job refills it.
@@ -303,11 +309,37 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	});
 	const deadlineMessage = deadlineError ? t`Choose a valid date and time in ${timeZone}, or clear the deadline.` : null;
 	const showDeadlineError = !!deadlineMessage && (submitted || touched.deadline);
+	const rememberOffer = (saved: NonNullable<RouterOutput["career"]["createOffer"]>) => {
+		if (!current()) return;
+		const target = application ?? applications.data?.find((row) => row.id === saved.applicationId);
+		// Publish the save receipt before navigation; a slow or failed list refresh cannot select the old offer again.
+		queryClient.setQueryData<SavedItem[]>(orpc.career.savedItems.queryKey({ input: { kind: "offer" } }), (items) => [
+			{
+				...saved,
+				submission: false,
+				outdated: false,
+				application:
+					items?.find((item) => item.applicationId === saved.applicationId)?.application ??
+					(target
+						? {
+								company: target.company,
+								role: target.role,
+								status: target.status ?? null,
+								closedReason: target.closedReason ?? null,
+							}
+						: null),
+			},
+			...(items ?? []).filter((item) => item.id !== saved.id),
+		]);
+		void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
+	};
 	const create = useMutation({
 		...orpc.career.createOffer.mutationOptions(),
 		onSuccess: (offer, input) => {
-			if (!application && offer) void navigate({ to: "/dashboard/career/offers", search: { a: offer.id } });
-			void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
+			if (!current()) return;
+			if (offer) rememberOffer(offer);
+			if (!application && offer)
+				void navigate({ to: "/dashboard/career/offers", search: { a: offer.id, b: search.b, highlight: offer.id } });
 			const row = (
 				applications.data ?? queryClient.getQueryData<ApplicationSummary[]>(applicationsListQueryKey())
 			)?.find((item) => item.id === input.applicationId);
@@ -333,18 +365,21 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	});
 	const update = useMutation({
 		...orpc.career.updateOffer.mutationOptions(),
-		onSettled: () => void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() }),
-		onSuccess: () => {
-			toast.add({ description: t`Offer terms updated` });
+		onSuccess: (offer) => {
+			if (!current()) return;
+			rememberOffer(offer);
+			void navigate({ to: "/dashboard/career/offers", search: { a: offer.id, b: search.b, highlight: offer.id } });
+			toast.add({ description: t`New offer version saved` });
 			onClose();
 		},
 	});
 	const save = offer ? update : create;
 	const submitPayload = (data: z.infer<typeof careerOfferInputSchema>) => {
+		if (!current()) return;
 		if (!offer) return create.mutate(data);
 		const { applicationId: _applicationId, ...changed } = data;
 		// The copy this form started from: a change made elsewhere since is a conflict, not overwritten.
-		update.mutate({ id: offer.id, terms: changed, expected: offerTerms(offer.data) });
+		update.mutate({ id: offer.id, terms: changed, expected: offerTerms(offer.data), newVersion: true });
 	};
 	const textFields = [
 		{ key: "variableConditions", label: t`Bonus conditions`, max: 1000 },
@@ -365,13 +400,29 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 					value={amounts[key]}
 					onBlur={() => touch(key)}
 					aria-invalid={invalid}
-					aria-describedby={invalid ? `${id}-${key}-error` : undefined}
+					aria-describedby={
+						key === "variable"
+							? `${id}-variable-hint${invalid ? ` ${id}-${key}-error` : ""}`
+							: invalid
+								? `${id}-${key}-error`
+								: undefined
+					}
 					onChange={(event) => setAmounts((current) => ({ ...current, [key]: event.target.value }))}
 				/>
+				{key === "variable" && (
+					<p
+						id={`${id}-variable-hint`}
+						className="text-xs text-ink-3"
+					>{t`Enter an amount or a percentage of base, such as 10%.`}</p>
+				)}
 				{invalid && (
 					<span id={`${id}-${key}-error`} className="flex items-start gap-1.5 text-xs text-danger-text">
 						<Icon name="warning-circle" />
-						<span>{t`Enter a full amount, such as 95000, or leave blank.`}</span>
+						<span>
+							{key === "variable"
+								? t`Enter an amount or a percentage such as 10%, or leave blank.`
+								: t`Enter a full amount, such as 95000, or leave blank.`}
+						</span>
 					</span>
 				)}
 			</div>
@@ -391,7 +442,9 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 			<h2 className="text-base font-semibold">{offer ? <Trans>Edit offer terms</Trans> : <Trans>Add offer</Trans>}</h2>
 			<p className="text-sm text-ink-2">
 				{offer ? (
-					<Trans>Correct the terms yourself. No AI request is made. Leave unknown amounts blank.</Trans>
+					<Trans>
+						Save corrected terms as a new version. The previous version stays available. No AI request is made.
+					</Trans>
 				) : (
 					<Trans>Enter terms yourself. No AI request is made. Leave unknown amounts blank.</Trans>
 				)}

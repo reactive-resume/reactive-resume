@@ -2,11 +2,12 @@ import type { SavedData } from "@/features/workspace/hooks";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { OfferTerms } from "@reactive-resume/schema/career";
 import { useLingui } from "@lingui/react/macro";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
 import {
+	bonusEntry,
 	offerApplications,
 	offerHintFromSalary,
 	parseOfferEntry,
@@ -15,6 +16,7 @@ import {
 import { client, useCareerAction, useCareerQueries, useCareerTime, useOffers } from "./hooks";
 import { formatMoney } from "./offer-compare";
 import { EditorSheet, LoadState } from "./shared";
+import { getAccountScope } from "@/auth/session";
 import { WallClockField } from "@/features/application-detail/date-field";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { resolveLane } from "@/features/applications/lanes";
@@ -148,6 +150,8 @@ const zonedFields = (value: string, timeZone: string) => {
 };
 
 export function OfferForm({ application, offer: initialOffer, onClose, onSaved }: OfferFormProps) {
+	const params = useLocalSearchParams<{ b?: string }>();
+	const [scope] = useState(getAccountScope);
 	// Draft and expected terms belong to the same edit session, even when saved offers refetch.
 	const [offer] = useState(initialOffer);
 	const { t } = useLingui();
@@ -174,7 +178,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const amount = (value: number | null | undefined) => (value === null || value === undefined ? "" : String(value));
 	const [amounts, setAmounts] = useState(() => ({
 		base: amount(offer ? offer.data.base : hint?.base),
-		variable: amount(offer?.data.variable),
+		variable: offer ? bonusEntry(offer.data, locale) : "",
 		learning: amount(offer?.data.learning),
 	}));
 	// What the job's salary filled in, so an untouched sheet isn't "changed" and choosing another job refills it.
@@ -244,13 +248,16 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		<TextField
 			key={key}
 			label={label}
-			keyboardType="decimal-pad"
+			keyboardType={key === "variable" ? "default" : "decimal-pad"}
+			helper={key === "variable" ? t`Enter an amount or a percentage of base, such as 10%.` : undefined}
 			value={amounts[key]}
 			onBlur={() => touch(key)}
 			onChangeText={(value) => setAmounts((current) => ({ ...current, [key]: value }))}
 			error={
 				(submitted || touched[key]) && amountErrors[key]
-					? t`Enter a full amount, such as 95000, or leave blank.`
+					? key === "variable"
+						? t`Enter an amount or a percentage such as 10%, or leave blank.`
+						: t`Enter a full amount, such as 95000, or leave blank.`
 					: undefined
 			}
 		/>
@@ -265,7 +272,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 			<View style={{ padding: space.s4, gap: space.s4 }}>
 				<Text color="ink2">
 					{offer
-						? t`Correct the terms yourself. No AI request is made. Leave unknown amounts blank.`
+						? t`Save corrected terms as a new version. The previous version stays available. No AI request is made.`
 						: t`Enter terms yourself. No AI request is made. Leave unknown amounts blank.`}
 				</Text>
 				{application ? (
@@ -396,25 +403,32 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 					label={action.pending ? t`Saving…` : t`Save offer`}
 					loading={action.pending}
 					onPress={() => {
+						if (!scope || getAccountScope() !== scope) return;
 						setSubmitted(true);
 						if (amountErrors.variable || amountErrors.learning) setMore(true);
 						if (payload.success)
 							void action.run(
 								() =>
 									offer
-										? client.career.updateOffer({
-												id: offer.id,
-												terms: (({ applicationId: _, ...terms }) => terms)(payload.data),
-												expected: offerTermsSchema.parse(offer.data),
-											})
-										: client.career.createOffer(payload.data),
+										? client.career.updateOffer(
+												{
+													id: offer.id,
+													terms: (({ applicationId: _, ...terms }) => terms)(payload.data),
+													expected: offerTermsSchema.parse(offer.data),
+													newVersion: true,
+												},
+												{ context: { scope } },
+											)
+										: client.career.createOffer(payload.data, { context: { scope } }),
 								(result) => {
+									if (getAccountScope() !== scope) return;
 									if (offer) {
-										showToast({ message: t`Offer terms updated` });
+										if (result) router.setParams({ a: result.id, b: params.b, highlight: result.id });
+										showToast({ message: t`New offer version saved` });
 										onClose();
 										return;
 									}
-									if (!application && result) router.setParams({ a: result.id });
+									if (!application && result) router.setParams({ a: result.id, b: params.b, highlight: result.id });
 									if (result?.data.kind === "offer") onSaved?.({ id: result.id, data: result.data });
 									const row = applications.data?.find((item) => item.id === payload.data.applicationId);
 									const target = application ?? row;

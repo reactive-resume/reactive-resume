@@ -45620,6 +45620,17 @@
 																									}
 																								]
 																							},
+																							"variablePercent": {
+																								"anyOf": [
+																									{
+																										"type": "number",
+																										"minimum": 0
+																									},
+																									{
+																										"type": "null"
+																									}
+																								]
+																							},
 																							"variableConditions": {
 																								"type": "string",
 																								"maxLength": 1000,
@@ -45956,6 +45967,17 @@
 																				]
 																			},
 																			"variable": {
+																				"anyOf": [
+																					{
+																						"type": "number",
+																						"minimum": 0
+																					},
+																					{
+																						"type": "null"
+																					}
+																				]
+																			},
+																			"variablePercent": {
 																				"anyOf": [
 																					{
 																						"type": "number",
@@ -53400,6 +53422,17 @@
 																					}
 																				]
 																			},
+																			"variablePercent": {
+																				"anyOf": [
+																					{
+																						"type": "number",
+																						"minimum": 0
+																					},
+																					{
+																						"type": "null"
+																					}
+																				]
+																			},
 																			"variableConditions": {
 																				"type": "string",
 																				"maxLength": 1000,
@@ -53746,6 +53779,17 @@
 																	}
 																]
 															},
+															"variablePercent": {
+																"anyOf": [
+																	{
+																		"type": "number",
+																		"minimum": 0
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
 															"variableConditions": {
 																"type": "string",
 																"maxLength": 1000,
@@ -54044,6 +54088,17 @@
 										]
 									},
 									"variable": {
+										"anyOf": [
+											{
+												"type": "number",
+												"minimum": 0
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"variablePercent": {
 										"anyOf": [
 											{
 												"type": "number",
@@ -54834,6 +54889,17 @@
 																						}
 																					]
 																				},
+																				"variablePercent": {
+																					"anyOf": [
+																						{
+																							"type": "number",
+																							"minimum": 0
+																						},
+																						{
+																							"type": "null"
+																						}
+																					]
+																				},
 																				"variableConditions": {
 																					"type": "string",
 																					"maxLength": 1000,
@@ -55180,6 +55246,17 @@
 																		}
 																	]
 																},
+																"variablePercent": {
+																	"anyOf": [
+																		{
+																			"type": "number",
+																			"minimum": 0
+																		},
+																		{
+																			"type": "null"
+																		}
+																	]
+																},
 																"variableConditions": {
 																	"type": "string",
 																	"maxLength": 1000,
@@ -55389,7 +55466,7 @@
 			"patch": {
 				"operationId": "updateCareerOffer",
 				"summary": "Correct saved offer terms",
-				"description": "Replaces a saved offer's terms. `expected` is the copy being corrected; a change made elsewhere since then is a conflict.",
+				"description": "Corrects saved terms, or saves a new version when newVersion is true. `expected` is the copy being corrected; concurrent changes conflict.",
 				"tags": [
 					"Career"
 				],
@@ -55446,6 +55523,17 @@
 												]
 											},
 											"variable": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"variablePercent": {
 												"anyOf": [
 													{
 														"type": "number",
@@ -55583,6 +55671,17 @@
 													}
 												]
 											},
+											"variablePercent": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
 											"variableConditions": {
 												"type": "string",
 												"maxLength": 1000,
@@ -55664,6 +55763,9 @@
 											"base",
 											"variable"
 										]
+									},
+									"newVersion": {
+										"type": "boolean"
 									}
 								},
 								"required": [
@@ -56362,6 +56464,17 @@
 																				}
 																			]
 																		},
+																		"variablePercent": {
+																			"anyOf": [
+																				{
+																					"type": "number",
+																					"minimum": 0
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
 																		"variableConditions": {
 																			"type": "string",
 																			"maxLength": 1000,
@@ -56698,6 +56811,17 @@
 															]
 														},
 														"variable": {
+															"anyOf": [
+																{
+																	"type": "number",
+																	"minimum": 0
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"variablePercent": {
 															"anyOf": [
 																{
 																	"type": "number",
@@ -57882,6 +58006,17 @@
 																								}
 																							]
 																						},
+																						"variablePercent": {
+																							"anyOf": [
+																								{
+																									"type": "number",
+																									"minimum": 0
+																								},
+																								{
+																									"type": "null"
+																								}
+																							]
+																						},
 																						"variableConditions": {
 																							"type": "string",
 																							"maxLength": 1000,
@@ -58218,6 +58353,17 @@
 																			]
 																		},
 																		"variable": {
+																			"anyOf": [
+																				{
+																					"type": "number",
+																					"minimum": 0
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
+																		"variablePercent": {
 																			"anyOf": [
 																				{
 																					"type": "number",

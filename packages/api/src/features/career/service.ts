@@ -1016,7 +1016,7 @@ export const careerService = {
 	 * Corrects a saved offer's terms. `expected` is the copy the user edited: a change made elsewhere since then is a
 	 * conflict, never overwritten. Where the terms came from is kept.
 	 */
-	updateOffer: (userId: string, id: string, terms: OfferTerms, expected: OfferTerms) =>
+	updateOffer: (userId: string, id: string, terms: OfferTerms, expected: OfferTerms, newVersion = false) =>
 		db.transaction(async (tx) => {
 			await lockUser(tx, userId);
 			const [row] = await tx
@@ -1034,7 +1034,12 @@ export const careerService = {
 				.for("update");
 			if (!row || row.data.kind !== "offer") throw new ORPCError("NOT_FOUND");
 			const { kind: _kind, origin, editedAt: _editedAt, ...current } = row.data;
-			if (!isDeepStrictEqual(offerTermsSchema.parse(current), offerTermsSchema.parse(expected)))
+			if (
+				!isDeepStrictEqual(
+					{ ...offerTermsSchema.parse(current), variablePercent: current.variablePercent ?? null },
+					{ ...offerTermsSchema.parse(expected), variablePercent: expected.variablePercent ?? null },
+				)
+			)
 				throw new ORPCError("CONFLICT", {
 					message: "This offer changed elsewhere. Review the latest terms before saving again.",
 				});
@@ -1045,6 +1050,22 @@ export const careerService = {
 				editedAt: new Date().toISOString(),
 			};
 			const company = row.title.split(" · ")[0] ?? "";
+			if (newVersion) {
+				const [version] = await tx
+					.insert(tables.careerArtifact)
+					.values({
+						userId,
+						applicationId: row.applicationId,
+						interviewId: row.interviewId,
+						title: `${company} · ${terms.version === "verbal" ? "Verbal offer" : "Written offer"}`,
+						data,
+						evidence: row.evidence,
+						inputVersion: row.inputVersion,
+					})
+					.returning();
+				if (!version) throw new ORPCError("NOT_FOUND");
+				return version;
+			}
 			const [updated] = await tx
 				.update(tables.careerArtifact)
 				.set({ data, title: `${company} · ${terms.version === "verbal" ? "Verbal offer" : "Written offer"}` })

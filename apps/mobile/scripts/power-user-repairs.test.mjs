@@ -171,7 +171,7 @@ const { OffersScreen } = load("features/career/offers.tsx", {
 		useNow: () => new Date(),
 	},
 	"@reactive-resume/schema/career-offer": offerDomain,
-	"./offer-compare": load("features/career/offer-compare.ts"),
+	"./offer-compare": load("features/career/offer-compare.ts", { "@reactive-resume/schema/career-offer": offerDomain }),
 	"./offer-entry": { OfferEntry: "OfferEntry", OfferForm: "OfferForm" },
 	"./undo": {
 		withUndo: () => {

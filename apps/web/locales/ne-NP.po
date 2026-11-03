@@ -983,6 +983,14 @@ msgstr "{passedRules} को {totalRules} चेक पास।"
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {यस पृष्ठमा # प्रस्तावित सम्पादन · तपाईंले स्वीकार नगरेसम्म केही परिवर्तन हुँदैन} other {यस पृष्ठमा # प्रस्तावित सम्पादनहरू · तपाईंले स्वीकार नगरेसम्म केही परिवर्तन हुँदैन}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "आधारभूत तलबको {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "आधारभूत तलबको {percent} ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# प्रस्तावित} other {# प्रस्तावित}}"
@@ -1168,6 +1176,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ वर्षमा {yearly} ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3061,7 +3073,7 @@ msgstr "बोल्ड"
 msgid "Bonus"
 msgstr "बोनस"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4403,10 +4415,6 @@ msgstr "सच्याउनुहोस्"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6570,6 +6578,14 @@ msgstr "मान्य इमेल ठेगाना प्रविष्ट
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "उदाहरण.com जस्तै वेब ठेगाना प्रविष्ट गर्नुहोस्"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "रकम वा आधारभूत तलबको प्रतिशत लेख्नुहोस्, जस्तै 10%।"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "रकम वा 10% जस्तो प्रतिशत लेख्नुहोस्, वा खाली छोड्नुहोस्।"
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -10013,6 +10029,10 @@ msgstr ""
 msgid "New key"
 msgstr "नयाँ कुञ्जी"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "प्रस्तावको नयाँ संस्करण सुरक्षित गरियो"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10823,10 +10843,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13617,6 +13633,10 @@ msgstr "परिवर्तनहरू बचत गर्नुहोस्"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "जडान बचत गर्नुहोस्"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "सच्याइएका सर्तहरू नयाँ संस्करणका रूपमा सुरक्षित गर्नुहोस्। अघिल्लो संस्करण उपलब्ध रहन्छ। कुनै AI अनुरोध पठाइँदैन।"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

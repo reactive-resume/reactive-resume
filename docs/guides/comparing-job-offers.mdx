@@ -14,7 +14,7 @@ Offer-stage applications appear first in **Add offer**; applications closed as *
 Moving an application to **Offer** shows **Add the offer's terms** in the confirmation, which opens this form in its **Messages** tab.
 Choose **Add offer** in **Career → Offers**, or in the relevant application's **Messages** tab. An offer belongs to an application: with none yet, the button reads **Add an application first** and opens **Save a job**. Select an application, enter the three-letter currency code and pay period, then the base salary and response deadline if you know them. The currency starts as the one your last saved offer used, so offers compare; type over it for a different one. Base salary, bonus and learning budget can stay blank when unknown; enter `0` only when the amount is confirmed as zero. A deadline asks for a time too, in your account timezone. **More options** holds the offer type (written or verbal), bonus, bonus conditions, equity, learning budget, office days, location, leave and other benefits. Choose **Save offer**. For applications before **Offer**, saving moves them to **Offer** with **Undo**, which keeps the offer and restores the prior stage. The newest terms stay visible in **Messages**, with **Compare**. Manual entry needs no AI connection and sends no terms to an AI provider.
 
-Use full amounts such as `95000` rather than `95k`. Errors appear after leaving a field or choosing **Save offer**, and your entered terms stay available for correction. A response deadline must be a valid local time in your account timezone; times skipped by daylight saving cannot be saved. On mobile, wait for the account timezone to load, retry a failed load, or clear the optional deadline.
+Use full amounts such as `95000` rather than `95k`. Bonus also accepts a percentage of base, such as `10%` or a decimal percentage in your interface locale. It stays a percentage when saved and reopened. With a known base, Offers shows its money equivalent in that base's currency and pay period; with no base, it shows only the percentage. Errors appear after leaving a field or choosing **Save offer**, and your entered terms stay available for correction. A response deadline must be a valid local time in your account timezone; times skipped by daylight saving cannot be saved. On mobile, wait for the account timezone to load, retry a failed load, or clear the optional deadline.
 
 To extract terms with an AI connection instead:
 
@@ -23,7 +23,7 @@ To extract terms with an AI connection instead:
 3. Review the proposed offer information against the original message or document. The proposal lists every term it extracted, including the base, any bonus and its conditions, equity, the start date and the employer's stated answer deadline; a term it could not find stays unknown rather than being guessed.
 4. Select the offer change you want to keep, then choose **Apply … change(s)**.
 
-Repeat for the other application. A response deadline the employer states belongs in **Respond by**; an unrelated follow-up is never copied into it. Written and verbal offers can both be saved. If a term was read incorrectly, open the offer's heading in **Career → Offers** and choose **Edit terms** to correct it; the form opens with the saved terms. If the offer changed in another tab or device since you opened it, saving asks you to review the latest terms first. Close the editor and open **Edit terms** again to start from that latest copy. **Delete offer** in the same menu removes a version, with **Undo**; you can also delete it from **Saved**.
+Repeat for the other application. A response deadline the employer states belongs in **Respond by**; an unrelated follow-up is never copied into it. Written and verbal offers can both be saved. If a term was read incorrectly, open the offer's heading in **Career → Offers** and choose **Edit terms**; the form opens with the saved terms and saves your correction as a new version. The earlier version stays available. If the offer changed in another tab or device since you opened it, saving asks you to review the latest terms first. Close the editor and open **Edit terms** again to start from that latest copy. **Delete offer** in the same menu removes a version, with **Undo**; you can also delete it from **Saved**.
 
 Saving terms records an offer; it does not accept it or reply to the employer.
 
@@ -39,6 +39,8 @@ Offers loads saved terms, preferences and application metadata separately. Saved
 </Frame>
 
 ## Choose the offers to compare
+
+Saving from Offers opens the new version on side A and briefly highlights its heading. An explicitly chosen side B stays selected.
 
 Open **Career → Offers**. Select the company heading on either side to choose a saved offer and its version. **Swap** exchanges the sides. If you have only one offer, you can still review its missing details while the other side is empty.
 
@@ -58,10 +60,10 @@ Empty comparisons point you to the relevant application's **Messages** tab for o
   />
 </Frame>
 
-<Frame caption="An accepted offer keeps its recorded terms and outcome. Questions before deciding apply only to the undecided offer.">
+<Frame caption="A percentage bonus keeps its entered rate and shows the equivalent for this offer's base, currency and pay period.">
   <img
     src="/images/guides/career/offers.png"
-    alt="Accepted Northwind Labs offer beside Lumen Health, with original euro salaries and accepted status visible"
+    alt="Fictional Northwind Labs offer with an 85000 euro annual base and a bonus of 10% of base, equivalent to 8500 euros"
   />
 </Frame>
 
@@ -72,7 +74,7 @@ Empty comparisons point you to the relevant application's **Messages** tab for o
   />
 </Frame>
 
-<Frame caption="An offer read from a message says so. A bonus stated only as a percentage is shown as written, and terms the message didn't state read Not found in the message, with a question to ask.">
+<Frame caption="An older offer with a bonus kept only in free-text conditions still shows that text without guessing an amount. Terms the message did not state read Not found in the message, with a question to ask.">
   <img
     src="/images/guides/career/offers-message.png"
     alt="Fictional Brightpath offer read from a message: €90,000 a year, a 10% target bonus shown as written with No amount stated, a response deadline, unknown terms marked Not found in the message, and questions to ask"
@@ -83,10 +85,10 @@ Empty comparisons point you to the relevant application's **Messages** tab for o
 
 Compare base salary, bonus, equity, where you work, leave, learning budget, other benefits and response deadlines.
 
-- Money stays in the offer's original currency and pay period. Differences are shown only when those terms match.
+- Money stays in the offer's original currency and pay period. Differences are shown only when those terms match. For the same currency, a monthly base beside a yearly offer shows the arithmetic for 12 months. That hint does not compare the offers; hourly pay needs working hours and has no guessed yearly equivalent.
 - A missing term says where the offer came from. **Not found in the message** means the terms were read from an employer's message and that term wasn't found; check the message, as the reading can miss it. **Left blank** means you entered or corrected the terms and left it empty. **Not recorded** marks offers saved before the source was kept. None of them means zero.
 - Each offer's heading says whether it was **Read from a message**, **Entered by you**, or read from a message and then **edited by you**.
-- A bonus stated only as a percentage or condition, such as "10% target, depending on company performance", is shown as written with **No amount stated · value uncertain**. It is never converted to money.
+- An explicitly recorded percentage bonus shows its rate and, when the base is known, its money equivalent. Older free-text bonus conditions stay as written with **No amount stated · value uncertain**; the app does not infer a percentage from that text.
 - A conditional bonus is still conditional. Equity wording is not a confirmed cash value.
 - Totals are not added together. Read the original documents before treating several figures as one package.
 

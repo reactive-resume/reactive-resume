@@ -76,6 +76,7 @@ vi.mock("@/libs/orpc/client", () => {
 });
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => api.navigate,
+	useSearch: () => ({}),
 	useRouteContext: () => ({ session: { user: { id: api.userId } } }),
 	Link: ({ children }: { children: ReactNode }) => <a href="#test-link">{children}</a>,
 }));

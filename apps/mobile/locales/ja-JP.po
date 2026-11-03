@@ -845,6 +845,14 @@ msgstr "{pairing}型"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {このページの変更案#件 · 承認するまで変更されません} other {このページの変更案#件 · 承認するまで変更されません}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "基本給の{percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "基本給の{percent} ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -946,6 +954,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "ほか{0}件"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ 年額{yearly}（{months} × {monthly}）"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2462,7 +2474,7 @@ msgstr "太字"
 msgid "Bonus"
 msgstr "ボーナス"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3502,10 +3514,6 @@ msgstr "この事実を訂正してください"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5234,6 +5242,14 @@ msgstr "0 ～ 52 の整数を入力するか、空白のままにします。"
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org などのアドレスを入力します。"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "金額または基本給に対する割合（10%など）を入力してください。"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "金額または割合（10%など）を入力するか、空欄にしてください。"
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -7897,6 +7913,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "新しいキーは読み取り専用で作成されます。ブラウザーのアカウント設定でキーを作成してください。"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "オファーの新しいバージョンを保存しました"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8578,10 +8598,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10916,6 +10932,10 @@ msgstr "接続を保存する"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "修正した条件を新しいバージョンとして保存します。以前のバージョンも引き続き利用できます。AIへのリクエストは送信されません。"
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
