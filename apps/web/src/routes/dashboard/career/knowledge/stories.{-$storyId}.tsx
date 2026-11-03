@@ -10,6 +10,7 @@ export const Route = createFileRoute("/dashboard/career/knowledge/stories/{-$sto
 	// plan's "Draft story" step.
 	validateSearch: z.object({
 		edit: z.boolean().optional().catch(undefined),
+		practice: z.boolean().optional().catch(undefined),
 		title: z.string().max(200).optional().catch(undefined),
 		note: z.string().max(400).optional().catch(undefined),
 		/** The briefing the step belongs to, so its unsaved draft never shows under another plan. */
@@ -20,11 +21,12 @@ export const Route = createFileRoute("/dashboard/career/knowledge/stories/{-$sto
 
 function RouteComponent() {
 	const { storyId } = Route.useParams();
-	const { edit, title, note, plan } = Route.useSearch();
+	const { edit, practice, title, note, plan } = Route.useSearch();
 	return (
 		<StoriesPage
 			storyId={storyId}
 			edit={edit ?? false}
+			practice={practice ?? false}
 			start={!storyId && title ? { title, note: note ?? "", plan: plan ?? "" } : undefined}
 		/>
 	);

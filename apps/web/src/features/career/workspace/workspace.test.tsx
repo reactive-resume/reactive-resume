@@ -933,3 +933,19 @@ it.each(["first receipt", "legacy"] as const)("opens the correct recorded answer
 	fireEvent.click(await screen.findByRole("button", { name: "View recorded answers" }));
 	expect(go).toHaveBeenCalledWith("apply", { version: kind === "legacy" ? later.id : first.id });
 });
+
+it("keeps approved practice generation running when its tab unmounts", async () => {
+	const pending = deferred<{ item: null }>();
+	api.generate.mockReturnValueOnce(pending.promise);
+	const view = mount(<PractiseTab {...props} />);
+	fireEvent.change(screen.getByRole("textbox", { name: "Your answer" }), {
+		target: { value: "I coordinated the fictional recovery." },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Get feedback" }));
+	await waitFor(() => expect(api.generate).toHaveBeenCalledTimes(1));
+	const signal = api.generate.mock.calls[0]?.[1]?.signal as AbortSignal;
+	expect(signal).toBeDefined();
+	view.unmount();
+	expect(signal.aborted).toBe(false);
+	await act(async () => pending.resolve({ item: null }));
+});
