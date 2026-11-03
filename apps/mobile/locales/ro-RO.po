@@ -3601,7 +3601,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Nu s-a putut finaliza solicitarea. Verifică conexiunea și încearcă din nou."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Această acțiune nu a putut fi finalizată. Încearcă din nou."
@@ -3951,6 +3953,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Nu s-a putut salva modificarea. Verificați conexiunea și încercați din nou."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Nu am putut salva schimbarea. Încearcă din nou."
 
@@ -4683,6 +4686,10 @@ msgstr "Diferite valute sau perioade de plată. Nu se calculează nicio diferen�
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Direcția"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Renunță"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5759,6 +5766,10 @@ msgstr "Răspuns în formular"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Întrebările formularului (opțional)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatare"
@@ -6617,6 +6628,10 @@ msgstr "Păstrați o singură adresă, ca programele să nu fie nevoite să ghic
 msgid "Keep access when you are not using the application."
 msgstr "Să păstreze accesul când nu folosești aplicația."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Păstrează răspunsul"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6649,6 +6664,10 @@ msgstr "Păstrați onestitatea"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Păstrați-l sub 2,5 MB, de obicei prin eliminarea sau micșorarea imaginilor."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Păstrează scrisoarea"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6974,6 +6993,7 @@ msgid "Letter body"
 msgstr "Corpul literei"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Ciornă de scrisoare"
 
@@ -8190,6 +8210,10 @@ msgstr ""
 msgid "no edits"
 msgstr "fara editii"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Nu s-au propus modificări."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Nu a fost găsită nicio secțiune de educație."
@@ -8868,6 +8892,10 @@ msgstr "La sediu"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Deschide"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Deschide asistentul AI"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9550,8 +9578,13 @@ msgid "Prepare a resume"
 msgstr "Pregătiți un CV"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Pregătiți cererea"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Pregătește ciorne pentru verificare"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9577,6 +9610,11 @@ msgstr "Se pregătește exportul..."
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Se pregătește fișierul..."
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Se pregătesc…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9725,6 +9763,10 @@ msgstr "Bară de progres"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Proiecte"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Propune un punct pentru CV"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10693,6 +10735,10 @@ msgstr "Pagina CV {0}"
 msgid "Resume preview"
 msgstr "Previzualizare CV"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Propuneri pentru CV"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "CV trimis (opțional)"
@@ -10889,6 +10935,10 @@ msgstr "Verificați răspunsurile obligatorii din formular și eliminați afirma
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Verifică faptele din CV"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Verifică împreună adaptările, scrisoarea și răspunsurile. Nu se trimite nimic angajatorului."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11668,6 +11718,10 @@ msgstr "Trimis la {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Separă întrebările printr-un rând gol. Cel mult cinci întrebări de câte 2.000 de caractere."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Sârbă"
@@ -11821,6 +11875,18 @@ msgstr "Distribuie prin..."
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Partajează doar CV-ul și anunțul. Cunoștințele, notițele private și accesul web sunt excluse. Verifică propunerile înainte de acceptare; originalul rămâne neschimbat."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Partajează doar informația selectată din Cunoștințe, CV-ul și anunțul. Alte cunoștințe, notițele private și accesul web sunt excluse. Verifică punctul înainte de acceptare."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Partajează CV-ul, anunțul și întrebările lipite. Ciornele răspunsurilor folosesc și scrisoarea, preferințele profesionale, notițele și contactele candidaturii și faptele și poveștile active din Cunoștințe. Contextul poate fi prescurtat. Accesul web este oprit. Verifică înainte de salvare; nu se trimite nimic."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12215,6 +12281,10 @@ msgstr "Unele caractere nu au putut fi desenate: {0}. Alege alt font în Design.
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Unele caractere nu au putut fi redate. Verifică pagina înainte de export."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Unele ciorne nu au putut fi finalizate. Păstrează ciornele finalizate înainte de a reîncerca."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Unele glife nu au sens în afara acestui fișier."
@@ -12514,6 +12584,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Oprește"
 
@@ -12930,6 +13002,7 @@ msgstr "S-a schimbat contul. Încearcă din nou."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Adresa trebuie să conțină doar litere latine a–z și cifre, separate prin liniuțe simple."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14046,6 +14119,7 @@ msgstr "Subliniați linkurile"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

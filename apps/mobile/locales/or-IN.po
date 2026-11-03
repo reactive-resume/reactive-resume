@@ -3608,7 +3608,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "ଅନୁରୋଧ ସମ୍ପୂର୍ଣ୍ଣ କରିହେଲା ନାହିଁ। ଆପଣଙ୍କ ସଂଯୋଗ ଯାଞ୍ଚ କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "ଏହି କ୍ରିୟା ସଂପୂର୍ଣ୍ଣ କରିପାରିଲା ନାହିଁ। ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ।"
@@ -3958,6 +3960,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "ସେହି ପରିବର୍ତ୍ତନ ସେଭ୍ କରିହେଲା ନାହିଁ। ଆପଣଙ୍କ ସଂଯୋଗ ଯାଞ୍ଚ କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "ସେହି ପରିବର୍ତ୍ତନ ସଞ୍ଚୟ କରିପାରିଲା ନାହିଁ | ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |"
 
@@ -4694,6 +4697,10 @@ msgstr "ଭିନ୍ନ ମୁଦ୍ରା ବା ଦେୟ ଅବଧି। ଅ�
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "ଦିଗ"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "ପରିତ୍ୟାଗ କରନ୍ତୁ |"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5773,6 +5780,10 @@ msgstr "ଫର୍ମର ଉତ୍ତର"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "ଫର୍ମର ପ୍ରଶ୍ନଗୁଡ଼ିକ (ଇଚ୍ଛାଧୀନ)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "ଫର୍ମାଟିଂ"
@@ -6634,6 +6645,10 @@ msgstr "ଗୋଟିଏ ମାତ୍ର ଠିକଣା ରଖନ୍ତୁ, ଯ�
 msgid "Keep access when you are not using the application."
 msgstr "ଯେତେବେଳେ ଆପଣ ଅନୁପ୍ରୟୋଗ ବ୍ୟବହାର କରୁନାହାଁନ୍ତି ଆକ୍ସେସ୍ ରଖନ୍ତୁ |"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "ଉତ୍ତର ରଖନ୍ତୁ"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6666,6 +6681,10 @@ msgstr "ସତ୍ୟନିଷ୍ଠ ରଖନ୍ତୁ"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "ଏହାକୁ 2.5 MB ତଳେ ରଖନ୍ତୁ, ସାଧାରଣତଃ ଛବିଗୁଡ଼ିକୁ ହଟାଇ କିମ୍ବା ଛୋଟ କରି।"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "ଚିଠି ରଖନ୍ତୁ"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6991,6 +7010,7 @@ msgid "Letter body"
 msgstr "ଅକ୍ଷର ଶରୀର"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "ଚିଠି ଖସଡ଼ା"
 
@@ -8209,6 +8229,10 @@ msgstr ""
 msgid "no edits"
 msgstr "କ ed ଣସି ସମ୍ପାଦନା ନାହିଁ |"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "କୌଣସି ସମ୍ପାଦନା ପ୍ରସ୍ତାବିତ ହୋଇନାହିଁ।"
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "କୌଣସି ଶିକ୍ଷା ବିଭାଗ ମିଳିଲା ନାହିଁ।"
@@ -8888,6 +8912,10 @@ msgstr "ଅନସାଇଟ୍"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "ଖୋଲନ୍ତୁ"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "AI ସହାୟକ ଖୋଲନ୍ତୁ"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9572,9 +9600,14 @@ msgid "Prepare a resume"
 msgstr "ଏକ ରେଜୁମ୍ ପ୍ରସ୍ତୁତ କରନ୍ତୁ |"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "|\n"
 "ପ୍ରୟୋଗ ପ୍ରସ୍ତୁତ କରନ୍ତୁ |"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "ସମୀକ୍ଷା ପାଇଁ ଡ୍ରାଫ୍ଟ ପ୍ରସ୍ତୁତ କରନ୍ତୁ"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9601,6 +9634,11 @@ msgstr "ରପ୍ତାନି ପ୍ରସ୍ତୁତ କରୁଛି…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "ଫାଇଲ୍ ପ୍ରସ୍ତୁତ କରୁଛି…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "ପ୍ରସ୍ତୁତି…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9750,6 +9788,10 @@ msgstr "ପ୍ରଗତି ବାର୍"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "ପ୍ରକଳ୍ପଗୁଡିକ"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "ରେଜ୍ୟୁମେର ଏକ ବିନ୍ଦୁ ପ୍ରସ୍ତାବ କରନ୍ତୁ"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10721,6 +10763,10 @@ msgstr "ରେଜ୍ୟୁମେ ପେଜ୍ {0}"
 msgid "Resume preview"
 msgstr "ରେଜ୍ୟୁମେ ପୂର୍ବଦୃଶ୍ୟ"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "ରେଜ୍ୟୁମେ ପ୍ରସ୍ତାବଗୁଡ଼ିକ"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "ରେଜୁମ୍ ଦାଖଲ (ବ al କଳ୍ପିକ)"
@@ -10918,6 +10964,10 @@ msgstr "ଆବଶ୍ୟକ ଫର୍ମ ଉତ୍ତର ସମୀକ୍ଷା �
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "ଜୀବନବୃତ୍ତାନ୍ତର ତଥ୍ୟ ସମୀକ୍ଷା କରନ୍ତୁ"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "ଅନୁକୂଳନ ପ୍ରସ୍ତାବ, ଚିଠି ଓ ଉତ୍ତରଗୁଡ଼ିକୁ ଏକାସାଙ୍ଗରେ ସମୀକ୍ଷା କରନ୍ତୁ। ନିଯୁକ୍ତିଦାତାଙ୍କୁ କିଛି ପଠାଯାଏ ନାହିଁ।"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11700,6 +11750,10 @@ msgstr "{0} କୁ ପଠାଯାଇଛି |"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "ପ୍ରଶ୍ନଗୁଡ଼ିକୁ ଏକ ଖାଲି ଧାଡ଼ିରେ ଅଲଗା କରନ୍ତୁ। ସର୍ବାଧିକ ପାଞ୍ଚଟି ପ୍ରଶ୍ନ, ପ୍ରତ୍ୟେକରେ ୨,୦୦୦ ଅକ୍ଷର।"
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "ସର୍ବିଆନ୍"
@@ -11857,6 +11911,18 @@ msgstr "ମାଧ୍ୟମରେ ସେୟାର କରନ୍ତୁ…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "କେବଳ ରେଜ୍ୟୁମେ ଓ ଚାକିରି ବିଜ୍ଞାପନ ଅଂଶୀଦାର ହୁଏ। ଜ୍ଞାନ, ବ୍ୟକ୍ତିଗତ ନୋଟ୍ ଓ ୱେବ୍ ପ୍ରବେଶ ବାଦ ଦିଆଯାଏ। ଗ୍ରହଣ ପୂର୍ବରୁ ପ୍ରସ୍ତାବ ଯାଞ୍ଚ କରନ୍ତୁ; ମୂଳ ଅପରିବର୍ତ୍ତିତ ରହେ।"
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "କେବଳ ବାଛିଥିବା ଜ୍ଞାନ ବିବୃତି, ରେଜ୍ୟୁମେ ଓ ଚାକିରି ବିଜ୍ଞାପନ ଅଂଶୀଦାର ହୁଏ। ଅନ୍ୟ ଜ୍ଞାନ, ବ୍ୟକ୍ତିଗତ ନୋଟ୍ ଓ ୱେବ୍ ପ୍ରବେଶ ବାଦ ଦିଆଯାଏ। ଗ୍ରହଣ ପୂର୍ବରୁ ବିନ୍ଦୁଟି ଯାଞ୍ଚ କରନ୍ତୁ।"
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "ରେଜ୍ୟୁମେ, ବିଜ୍ଞାପନ ଓ ପେଷ୍ଟ ହୋଇଥିବା ପ୍ରଶ୍ନ ଅଂଶୀଦାର ହୁଏ। ଉତ୍ତର ଡ୍ରାଫ୍ଟ ଚିଠି, କ୍ୟାରିୟର ପସନ୍ଦ, ଆବେଦନ ନୋଟ୍ ଓ ଯୋଗାଯୋଗ ଏବଂ ଜ୍ଞାନର ସକ୍ରିୟ ତଥ୍ୟ ଓ କାହାଣୀ ମଧ୍ୟ ବ୍ୟବହାର କରେ। ପ୍ରସଙ୍ଗ ସଂକ୍ଷିପ୍ତ ହୋଇପାରେ। ୱେବ୍ ପ୍ରବେଶ ବନ୍ଦ ଅଛି। ସଞ୍ଚୟ ପୂର୍ବରୁ ସମୀକ୍ଷା କରନ୍ତୁ; କିଛି ଦାଖଲ ହୁଏ ନାହିଁ।"
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12252,6 +12318,10 @@ msgstr "କିଛି ଅକ୍ଷର ଅଙ୍କନ କରିହେଲା ନ�
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "କିଛି ଅକ୍ଷର ରେଣ୍ଡର୍ କରିହେଲା ନାହିଁ। ରପ୍ତାନି କରିବା ପୂର୍ବରୁ ପୃଷ୍ଠା ଯାଞ୍ଚ କରନ୍ତୁ।"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "କିଛି ଡ୍ରାଫ୍ଟ ସମ୍ପୂର୍ଣ୍ଣ ହୋଇପାରିଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା ପୂର୍ବରୁ ସମ୍ପୂର୍ଣ୍ଣ ଡ୍ରାଫ୍ଟଗୁଡ଼ିକ ରଖନ୍ତୁ।"
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "କିଛି ଗ୍ଲିଫ୍ ଏହି ଫାଇଲ ବାହାରେ କୌଣସି ଅର୍ଥ ରଖନ୍ତି ନାହିଁ।"
@@ -12551,6 +12621,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "ବନ୍ଦ କର |"
 
@@ -12968,6 +13040,7 @@ msgstr "|\n"
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "ଠିକଣାରେ କେବଳ ଲାଟିନ୍ ଅକ୍ଷର a–z ଏବଂ ସଂଖ୍ୟା ରହିବା ଉଚିତ, ଯାହା ଏକକ ଡ୍ୟାସ୍ ଦ୍ୱାରା ପୃଥକ ହୋଇଥିବ।"
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14084,6 +14157,7 @@ msgstr "ଲିଙ୍କଗୁଡିକ ଅଣ୍ଡରଲାଇନ୍ କରନ�
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

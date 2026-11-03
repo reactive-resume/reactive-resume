@@ -45,7 +45,7 @@ vi.mock("@reactive-resume/db/client", () => ({
 	},
 }));
 
-vi.mock("../applications/ai", () => ({ generateJson: fixture.generate }));
+vi.mock("../ai/application-generation", () => ({ generateJson: fixture.generate }));
 vi.mock("../ai-providers/service", () => ({
 	aiProvidersService: {
 		assertAvailable: async () => {},

@@ -3601,7 +3601,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Nevarēja pabeigt pieprasījumu. Pārbaudiet savienojumu un mēģiniet vēlreiz."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Nevarēja pabeigt šo darbību. Mēģiniet vēlreiz."
@@ -3951,6 +3953,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Nevarēja saglabāt šo izmaiņu. Pārbaudiet savienojumu un mēģiniet vēlreiz."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Nevarēja saglabāt šīs izmaiņas. Mēģiniet vēlreiz."
 
@@ -4683,6 +4686,10 @@ msgstr "Valūtas vai algas periodi atšķiras. Darba samaksas starpība netiek a
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "virziens"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Izmest"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5759,6 +5766,10 @@ msgstr "Atbilde veidlapā"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Veidlapas jautājumi (neobligāti)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatēšana"
@@ -6617,6 +6628,10 @@ msgstr "Izmantojiet vienu vienīgu adresi, lai programmatūrai nebūtu jāmin, k
 msgid "Keep access when you are not using the application."
 msgstr "Saglabājiet piekļuvi, kad neizmantojat lietojumprogrammu."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Paturēt atbildi"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6649,6 +6664,10 @@ msgstr "Saglabājiet godīgumu"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Saglabājiet to zem 2,5 MB, parasti noņemot vai samazinot attēlus."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Paturēt vēstuli"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6974,6 +6993,7 @@ msgid "Letter body"
 msgstr "Burta pamatteksts"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Vēstules melnraksts"
 
@@ -8190,6 +8210,10 @@ msgstr ""
 msgid "no edits"
 msgstr "nav labojumu"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Nav ierosinātu izmaiņu."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Izglītības sadaļa nav atrasta."
@@ -8868,6 +8892,10 @@ msgstr "Klātienē"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Atvērt"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Atvērt MI asistentu"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9550,8 +9578,13 @@ msgid "Prepare a resume"
 msgstr "Sagatavojiet CV"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Sagatavojiet pieteikumu"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Sagatavot melnrakstus pārskatīšanai"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9577,6 +9610,11 @@ msgstr "Notiek eksportēšanas sagatavošana…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Notiek faila sagatavošana…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Notiek sagatavošana…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9725,6 +9763,10 @@ msgstr "Progresa josla"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projekti"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Ierosināt CV punktu"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10693,6 +10735,10 @@ msgstr "CV lapa {0}"
 msgid "Resume preview"
 msgstr "CV priekšskatījums"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "CV priekšlikumi"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "CV iesniegts (pēc izvēles)"
@@ -10889,6 +10935,10 @@ msgstr "Pārskatiet obligātās veidlapas atbildes un noņemiet nepamatotus apga
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Pārskatīt CV faktus"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Pārskatiet pielāgošanas priekšlikumus, vēstuli un atbildes kopā. Darba devējam nekas netiek nosūtīts."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11668,6 +11718,10 @@ msgstr "Nosūtīts uz {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Atdaliet jautājumus ar tukšu rindu. Līdz pieciem jautājumiem, katrā 2000 rakstzīmju."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbu"
@@ -11821,6 +11875,18 @@ msgstr "Kopīgot, izmantojot…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Kopīgo tikai CV un sludinājumu. Zināšanas, privātās piezīmes un tīmekļa piekļuve netiek iekļautas. Pārskatiet priekšlikumus pirms pieņemšanas; oriģināls nemainās."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Kopīgo tikai izvēlēto Zināšanu apgalvojumu, CV un sludinājumu. Citas zināšanas, privātās piezīmes un tīmekļa piekļuve netiek iekļautas. Pārskatiet punktu pirms pieņemšanas."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Kopīgo CV, sludinājumu un ielīmētos jautājumus. Atbilžu melnraksti izmanto arī vēstuli, karjeras vēlmes, pieteikuma piezīmes un kontaktus, kā arī aktīvos Zināšanu faktus un stāstus. Kontekstu var saīsināt. Tīmekļa piekļuve ir izslēgta. Pārskatiet pirms saglabāšanas; nekas netiek iesniegts."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12215,6 +12281,10 @@ msgstr "Dažas rakstzīmes nevarēja attēlot: {0}. Izvēlieties citu fontu sada
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Dažas rakstzīmes nevarēja atveidot. Pirms eksportēšanas pārbaudiet lapu."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Dažus melnrakstus neizdevās pabeigt. Pirms atkārtota mēģinājuma paturiet pabeigtos melnrakstus."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Dažiem glifiem ārpus šī faila nav nozīmes."
@@ -12514,6 +12584,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Apturēt"
 
@@ -12930,6 +13002,7 @@ msgstr "Konts ir mainīts. Mēģiniet vēlreiz."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Adresē drīkst būt tikai latīņu burti a–z un cipari, kas atdalīti ar atsevišķām defisēm."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14046,6 +14119,7 @@ msgstr "Pasvītrot saites"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

@@ -3601,7 +3601,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Δεν ήταν δυνατή η ολοκλήρωση του αιτήματος. Ελέγξτε τη σύνδεσή σας και προσπαθήστε ξανά."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Δεν ήταν δυνατή η ολοκλήρωση αυτής της ενέργειας. Προσπαθήστε ξανά."
@@ -3951,6 +3953,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Δεν ήταν δυνατή η αποθήκευση της αλλαγής. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Δεν ήταν δυνατή η αποθήκευση αυτής της αλλαγής. Προσπαθήστε ξανά."
 
@@ -4683,6 +4686,10 @@ msgstr "Διαφορετικά νομίσματα ή περίοδοι πληρω
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Κατεύθυνση"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Απορρίψτε"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5759,6 +5766,10 @@ msgstr "Απάντηση φόρμας"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Ερωτήσεις φόρμας (προαιρετικά)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Μορφοποίηση"
@@ -6617,6 +6628,10 @@ msgstr "Κρατήστε μία μόνο διεύθυνση, ώστε το λο�
 msgid "Keep access when you are not using the application."
 msgstr "Διατηρήστε την πρόσβαση όταν δεν χρησιμοποιείτε την εφαρμογή."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Διατήρηση απάντησης"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6649,6 +6664,10 @@ msgstr "Κρατήστε το ειλικρινές"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Διατηρήστε το κάτω από 2,5 MB, συνήθως αφαιρώντας ή σμικρύνοντας εικόνες."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Διατήρηση επιστολής"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6974,6 +6993,7 @@ msgid "Letter body"
 msgstr "Σώμα επιστολής"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Προσχέδιο επιστολής"
 
@@ -8190,6 +8210,10 @@ msgstr ""
 msgid "no edits"
 msgstr "καμία επεξεργασία"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Δεν προτάθηκαν αλλαγές."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Δεν βρέθηκε ενότητα εκπαίδευσης."
@@ -8868,6 +8892,10 @@ msgstr "Με φυσική παρουσία"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Άνοιγμα"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Άνοιγμα βοηθού AI"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9550,8 +9578,13 @@ msgid "Prepare a resume"
 msgstr "Ετοιμάστε ένα βιογραφικό"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Ετοιμάστε την αίτηση"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Προετοιμασία προσχεδίων για έλεγχο"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9577,6 +9610,11 @@ msgstr "Προετοιμασία εξαγωγής…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Προετοιμασία αρχείου…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Προετοιμασία…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9725,6 +9763,10 @@ msgstr "Γραμμή προόδου"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Έργα"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Πρόταση κουκκίδας βιογραφικού"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10693,6 +10735,10 @@ msgstr "Σελίδα βιογραφικού {0}"
 msgid "Resume preview"
 msgstr "Προεπισκόπηση βιογραφικού"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Προτάσεις βιογραφικού"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "υποβλήθηκε βιογραφικό (προαιρετικό)"
@@ -10889,6 +10935,10 @@ msgstr "Ελέγξτε τις υποχρεωτικές απαντήσεις τη
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Έλεγχος στοιχείων βιογραφικού"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Ελέγξτε μαζί τις προσαρμογές, την επιστολή και τις απαντήσεις. Δεν αποστέλλεται τίποτα στον εργοδότη."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11668,6 +11718,10 @@ msgstr "Στάλθηκε στο {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Χωρίστε τις ερωτήσεις με κενή γραμμή. Έως πέντε ερωτήσεις, 2.000 χαρακτήρες η καθεμία."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Σερβικά"
@@ -11821,6 +11875,18 @@ msgstr "Κοινοποίηση μέσω…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Κοινοποιεί μόνο βιογραφικό και αγγελία. Εξαιρούνται οι Γνώσεις, οι ιδιωτικές σημειώσεις και η πρόσβαση στον ιστό. Ελέγξτε τις προτάσεις πριν τις αποδεχτείτε· το πρωτότυπο παραμένει αμετάβλητο."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Κοινοποιεί μόνο την επιλεγμένη δήλωση από τις Γνώσεις, το βιογραφικό και την αγγελία. Εξαιρούνται άλλες γνώσεις, ιδιωτικές σημειώσεις και πρόσβαση στον ιστό. Ελέγξτε την κουκκίδα πριν την αποδεχτείτε."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Κοινοποιεί βιογραφικό, αγγελία και επικολλημένες ερωτήσεις. Τα προσχέδια απαντήσεων χρησιμοποιούν επίσης επιστολή, προτιμήσεις καριέρας, σημειώσεις και επαφές αίτησης και ενεργά γεγονότα και ιστορίες από τις Γνώσεις. Το πλαίσιο μπορεί να συντομευτεί. Η πρόσβαση στον ιστό είναι ανενεργή. Ελέγξτε πριν την αποθήκευση· δεν υποβάλλεται τίποτα."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12215,6 +12281,10 @@ msgstr "Δεν ήταν δυνατή η σχεδίαση ορισμένων χα
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Δεν ήταν δυνατή η απόδοση ορισμένων χαρακτήρων. Ελέγξτε τη σελίδα πριν από την εξαγωγή."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Μερικά προσχέδια δεν ολοκληρώθηκαν. Κρατήστε τα ολοκληρωμένα πριν δοκιμάσετε ξανά."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Ορισμένες γλυφές δεν έχουν νόημα εκτός αυτού του αρχείου."
@@ -12514,6 +12584,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Στάση"
 
@@ -12930,6 +13002,7 @@ msgstr "Ο λογαριασμός άλλαξε. Προσπαθήστε ξανά.
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Η διεύθυνση πρέπει να περιέχει μόνο λατινικά γράμματα a–z και αριθμούς, διαχωρισμένα με μεμονωμένες παύλες."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14046,6 +14119,7 @@ msgstr "Υπογράμμισε συνδέσμους"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

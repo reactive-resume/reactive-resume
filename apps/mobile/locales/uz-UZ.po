@@ -3601,7 +3601,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "So‘rovni bajarib bo‘lmadi. Ulanishingizni tekshiring va qayta urinib ko'ring."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Bu amalni bajarib bo‘lmadi. Qayta urinib ko'ring."
@@ -3951,6 +3953,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Bu o'zgarishni saqlab bo'lmadi. Ulanishingizni tekshiring va qayta urinib ko'ring."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Oʻzgartirishni saqlab boʻlmadi. Qayta urinib ko'ring."
 
@@ -4683,6 +4686,10 @@ msgstr "Turli valyutalar yoki to'lov muddatlari. Pul farqi hisoblanmaydi."
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Yo'nalish"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Bekor qilish"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5759,6 +5766,10 @@ msgstr "Shakl javobi"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Shakl savollari (ixtiyoriy)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatlash"
@@ -6617,6 +6628,10 @@ msgstr "Bitta manzil qoldiring, toki dastur qaysi birini ishlatishni taxmin qili
 msgid "Keep access when you are not using the application."
 msgstr "Ilovadan foydalanmayotganingizda ruxsatni saqlang."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Javobni saqlash"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6649,6 +6664,10 @@ msgstr "Halol bo'ling"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Odatda rasmlarni olib tashlash yoki kichraytirish orqali 2,5 MB dan kam boʻlishini ta'minlang."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Xatni saqlash"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6974,6 +6993,7 @@ msgid "Letter body"
 msgstr "Xat tanasi"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Xat qoralamasi"
 
@@ -8190,6 +8210,10 @@ msgstr ""
 msgid "no edits"
 msgstr "tahrirlar yo'q"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Tahrirlar taklif qilinmadi."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Ta'lim boʻlimi topilmadi."
@@ -8868,6 +8892,10 @@ msgstr "Ofisda"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Ochish"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "AI yordamchisini ochish"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9550,8 +9578,13 @@ msgid "Prepare a resume"
 msgstr "Rezyume tayyorlang"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Ariza tayyorlang"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Ko‘rib chiqish uchun qoralamalar tayyorlash"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9577,6 +9610,11 @@ msgstr "Eksport tayyorlanmoqda…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Fayl tayyorlanmoqda…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Tayyorlanmoqda…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9725,6 +9763,10 @@ msgstr "Progres paneli"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Loyihalar"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Rezyume bandini taklif qilish"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10693,6 +10735,10 @@ msgstr "rezyume sahifasi {0}"
 msgid "Resume preview"
 msgstr "rezyume oldindan ko'rish"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Rezyume takliflari"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "rezyume topshirildi (ixtiyoriy)"
@@ -10889,6 +10935,10 @@ msgstr "Majburiy forma javoblarini ko'rib chiqing va tasdiqlanmagan da'volarni o
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Rezyume faktlarini tekshirish"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Moslashtirish takliflari, xat va javoblarni birga tekshiring. Ish beruvchiga hech narsa yuborilmaydi."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11668,6 +11718,10 @@ msgstr "{0} ga yuborildi"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Savollarni bo‘sh satr bilan ajrating. Har biri 2 000 belgidan iborat ko‘pi bilan beshta savol."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serb tili"
@@ -11821,6 +11875,18 @@ msgstr "Bu orqali ulashish…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Faqat rezyume va ish e’loni ulashiladi. Bilimlar, shaxsiy qaydlar va vebga kirish kiritilmaydi. Qabul qilishdan oldin takliflarni tekshiring; asl nusxa o‘zgarmaydi."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Faqat tanlangan Bilim bayonoti, rezyume va ish e’loni ulashiladi. Boshqa bilimlar, shaxsiy qaydlar va vebga kirish kiritilmaydi. Qabul qilishdan oldin bandni tekshiring."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Rezyume, ish e’loni va joylangan savollar ulashiladi. Javob qoralamalari xat, karyera afzalliklari, ariza qaydlari va kontaktlari hamda faol Bilim faktlari va hikoyalaridan ham foydalanadi. Kontekst qisqartirilishi mumkin. Vebga kirish o‘chiq. Saqlashdan oldin tekshiring; hech narsa yuborilmaydi."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12215,6 +12281,10 @@ msgstr "Ayrim belgilarni chizib bo‘lmadi: {0}. Dizayn bo'limida boshqa shriftn
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Ayrim belgilarni ko‘rsatib bo‘lmadi. Eksport qilishdan oldin sahifani tekshiring."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Ayrim qoralamalar tugallanmadi. Qayta urinishdan oldin tugallangan qoralamalarni saqlang."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Ba'zi glif belgilari bu fayldan tashqarida ma'no anglatmaydi."
@@ -12514,6 +12584,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "STOP"
 
@@ -12930,6 +13002,7 @@ msgstr "Hisob o'zgardi. Qayta urinib ko'ring."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Manzilda faqat yakka tirelar bilan ajratilgan lotin harflari (a–z) va raqamlar bo'lishi kerak."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14046,6 +14119,7 @@ msgstr "Havolalar tagiga chizish"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

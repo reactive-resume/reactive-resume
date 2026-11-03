@@ -35,6 +35,8 @@ const CAPABLE_OPERATIONS = new Set([
 	"agent.messages.send",
 	"agent.threads.update",
 	"applications.ai.draftMessage",
+	"applications.ai.tailorResume",
+	"applications.ai.proposeEvidence",
 	"coverLetters.draft",
 ]);
 

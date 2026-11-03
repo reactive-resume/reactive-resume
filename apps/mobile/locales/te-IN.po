@@ -3601,7 +3601,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "అభ్యర్థనను పూర్తి చేయడం సాధ్యపడలేదు. మీ కనెక్షన్‌ని తనిఖీ చేసి, మళ్ళీ ప్రయత్నించండి."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "ఈ చర్యను పూర్తి చేయడం సాధ్యపడలేదు. మళ్లీ ప్రయత్నించండి."
@@ -3951,6 +3953,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "ఆ మార్పును సేవ్ చేయడం సాధ్యపడలేదు. మీ ఇంటర్నెట్ కనెక్షన్‌ను తనిఖీ చేసి మళ్లీ ప్రయత్నించండి."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "ఆ మార్పును సేవ్ చేయడం సాధ్యపడలేదు. మళ్లీ ప్రయత్నించండి."
 
@@ -4683,6 +4686,10 @@ msgstr "వివిధ కరెన్సీలు లేదా చెల్ల
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "దిశ"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "విస్మరించండి"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5759,6 +5766,10 @@ msgstr "ఫారమ్ సమాధానం"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "ఫారమ్ ప్రశ్నలు (ఐచ్ఛికం)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "ఫార్మాటింగ్"
@@ -6617,6 +6628,10 @@ msgstr "ఒకే చిరునామాను ఉంచండి; అప్�
 msgid "Keep access when you are not using the application."
 msgstr "మీరు అప్లికేషన్‌ను ఉపయోగించనప్పుడు యాక్సెస్‌ను ఉంచండి."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "జవాబును ఉంచు"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6649,6 +6664,10 @@ msgstr "నిజాయితీగా ఉంచండి"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "సాధారణంగా చిత్రాలను తొలగించడం లేదా చిన్నవిగా చేయడం ద్వారా దీన్ని 2.5 MB కంటే తక్కువగా ఉంచండి."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "లేఖను ఉంచు"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6974,6 +6993,7 @@ msgid "Letter body"
 msgstr "లెటర్ బాడీ"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "లేఖ ముసాయిదా"
 
@@ -8190,6 +8210,10 @@ msgstr ""
 msgid "no edits"
 msgstr "సవరణలు లేవు"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "మార్పులు ప్రతిపాదించబడలేదు."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "ఎడ్యుకేషన్ విభాగం కనుగొనబడలేదు."
@@ -8868,6 +8892,10 @@ msgstr "ఆన్‌సైట్"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "తెరవండి"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "AI సహాయకాన్ని తెరవండి"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9550,8 +9578,13 @@ msgid "Prepare a resume"
 msgstr "రెజ్యూమేని సిద్ధం చేయండి"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "అప్లికేషన్ సిద్ధం"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "సమీక్ష కోసం చిత్తుప్రతులను సిద్ధం చేయి"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9577,6 +9610,11 @@ msgstr "ఎగుమతిని సిద్ధం చేస్తోంది�
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "ఫైల్‌ని సిద్ధం చేస్తోంది..."
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "సిద్ధమవుతోంది..."
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9725,6 +9763,10 @@ msgstr "ప్రోగ్రెస్ బార్"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "ప్రాజెక్ట్స్"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "రెజ్యూమే అంశాన్ని ప్రతిపాదించు"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10693,6 +10735,10 @@ msgstr "రెజ్యూమ్ పేజీ {0}"
 msgid "Resume preview"
 msgstr "రెజ్యూమ్ ప్రివ్యూ"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "రెజ్యూమే ప్రతిపాదనలు"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "రెజ్యూమ్ సమర్పించబడింది (ఐచ్ఛికం)"
@@ -10889,6 +10935,10 @@ msgstr "తప్పనిసరి ఫారమ్ సమాధానాలన�
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "రెజ్యూమె వాస్తవాలను సమీక్షించు"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "అనుకూలీకరణ సూచనలు, లేఖ చిత్తుప్రతి, జవాబులను కలిపి సమీక్షించండి. యజమానికి ఏదీ పంపబడదు."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11668,6 +11718,10 @@ msgstr "{0}కి పంపబడింది"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "ప్రశ్నలను ఖాళీ పంక్తితో వేరు చేయండి. గరిష్ఠంగా ఐదు ప్రశ్నలు; ఒక్కోదానికి 2,000 అక్షరాలు."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "సెర్బియన్"
@@ -11821,6 +11875,18 @@ msgstr "దీని ద్వారా భాగస్వామ్యం చే
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "రెజ్యూమే, ఉద్యోగ ప్రకటన మాత్రమే పంచబడతాయి. జ్ఞానం, వ్యక్తిగత గమనికలు, వెబ్ యాక్సెస్ మినహాయించబడతాయి. అంగీకరించే ముందు ప్రతిపాదనలను సమీక్షించండి; అసలు పత్రం మారదు."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "ఎంచుకున్న జ్ఞాన ప్రకటన, రెజ్యూమే, ఉద్యోగ ప్రకటన మాత్రమే పంచబడతాయి. ఇతర జ్ఞానం, వ్యక్తిగత గమనికలు, వెబ్ యాక్సెస్ మినహాయించబడతాయి. అంగీకరించే ముందు అంశాన్ని సమీక్షించండి."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "రెజ్యూమే, ఉద్యోగ ప్రకటన, అతికించిన ప్రశ్నలు పంచబడతాయి. జవాబు చిత్తుప్రతులు లేఖ, వృత్తి ప్రాధాన్యతలు, దరఖాస్తు గమనికలు మరియు పరిచయాలు, సక్రియ జ్ఞాన వాస్తవాలు మరియు కథలను కూడా ఉపయోగిస్తాయి. సందర్భాన్ని సంక్షిప్తం చేయవచ్చు. వెబ్ యాక్సెస్ ఆఫ్‌లో ఉంది. సేవ్ చేసే ముందు సమీక్షించండి; ఏదీ సమర్పించబడదు."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12215,6 +12281,10 @@ msgstr "కొన్ని అక్షరాలను గీయడం సాధ
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "కొన్ని అక్షరాలను రెండర్ చేయడం సాధ్యపడలేదు. ఎగుమతి చేయడానికి ముందు పేజీని తనిఖీ చేయండి."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "కొన్ని చిత్తుప్రతులు పూర్తి కాలేదు. మళ్లీ ప్రయత్నించే ముందు పూర్తయిన చిత్తుప్రతులను ఉంచండి."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "కొన్ని గ్లిఫ్‌లకు ఈ ఫైల్ వెలుపల అర్థం లేదు."
@@ -12514,6 +12584,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "ఆపు"
 
@@ -12930,6 +13002,7 @@ msgstr "ఖాతా మారింది. మళ్లీ ప్రయత్�
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "చిరునామాలో లాటిన్ అక్షరాలు a–z మరియు సంఖ్యలు మాత్రమే ఉండాలి, సింగిల్ డాష్‌లతో వేరు చేయబడాలి."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14046,6 +14119,7 @@ msgstr "లింక్‌లను అండర్లైన్ చేయండ�
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

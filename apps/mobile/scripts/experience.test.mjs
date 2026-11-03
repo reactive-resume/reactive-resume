@@ -3263,6 +3263,7 @@ console.log(
 			}),
 		},
 		"expo-crypto": {},
+		"@/auth/session": { getAccountScope: () => "fixture" },
 		"../hooks": {
 			useSavedItems: () => ({ data: [] }),
 			useWorkspace: () => ({ data: {} }),
@@ -4862,6 +4863,7 @@ const { AnswerCard: NativeAnswerCard } = load(
 			workingSteps: () => [],
 			useWorking: (_busy, _steps, label) => label,
 		},
+		"../prepare-review": { PrepareReview: () => null },
 		"../preparation": {},
 		"../share": {},
 		"../shell": {},

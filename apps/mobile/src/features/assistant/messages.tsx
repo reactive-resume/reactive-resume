@@ -660,7 +660,7 @@ type ChangeSetProps = {
 };
 
 /** "n proposed edits" with Accept all, then each edit numbered: where it lands, old text struck, new text, why. */
-function ChangeSet({
+export function ChangeSet({
 	resumeId,
 	title,
 	proposals,

@@ -2,23 +2,23 @@ import type { AiUsage } from "../ai/usage";
 import type { AiTask } from "@reactive-resume/ai/task-models";
 import type { AiAction } from "@reactive-resume/schema/ai-usage";
 import { ORPCError } from "@orpc/client";
-import { APICallError, generateText, RetryError } from "ai";
 import z from "zod";
-import { safetySystemPrompt } from "@reactive-resume/ai/prompts";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
+import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { aiOperationIdsSchema, aiUsageSummarySchema } from "@reactive-resume/schema/ai-usage";
 import { postingSourceSchema } from "@reactive-resume/schema/applications/data";
-import { slugify } from "@reactive-resume/utils/slug";
-import { generateId } from "@reactive-resume/utils/string";
 import { protectedProcedure } from "../../context";
+import { applicationDto } from "../../dto/application";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
+import { generateJson, generatePlainText } from "../ai/application-generation";
 import { dataBlock } from "../ai/data-block";
 import { approvedAiProviderId, isNoAiDestination } from "../ai/destination";
-import { aiDeadline, generateJson as sharedGenerateJson } from "../ai/generate-json";
+export { generateJson, generatePlainText } from "../ai/application-generation";
 import { getModel } from "../ai/service";
 import { createAiUsage, readAiUsage } from "../ai/usage";
+import { careerService } from "../career/service";
 import { draftLetterBody } from "../cover-letters/draft";
 import { coverLetterService } from "../cover-letters/service";
 import { assertDocumentVersion } from "../documents/ownership";
@@ -34,6 +34,8 @@ import {
 	postingSearchResult,
 	searchJobPostings,
 } from "./posting";
+import { prepareApplication, prepareInput, prepareOutput } from "./prepare";
+import { reviewApplicationResume } from "./resume-review";
 import { applicationService, assertApplicationVersion } from "./service";
 
 const reserved = { tags: ["Applications", "AI"] } as const;
@@ -70,68 +72,6 @@ async function resolveModel(userId: string, action: AiAction, task?: AiTask, che
 			...(provider.baseURL ? { baseURL: provider.baseURL } : {}),
 		}),
 	};
-}
-
-// --- AI provider failure translation ------------------------------------------
-// The AI SDK surfaces provider-side failures as `APICallError` (HTTP 4xx/5xx from
-// the provider) or `RetryError` with `reason: "maxRetriesExceeded"`.  Translating
-// only those to BAD_GATEWAY gives the client an actionable status code instead of
-// an opaque 500.  Validation, credential, model-resolution, and response-parsing
-// errors rethrow unchanged.
-
-function isAiProviderGatewayError(error: unknown): boolean {
-	if (APICallError.isInstance(error)) return true;
-	if (RetryError.isInstance(error) && error.reason === "maxRetriesExceeded") return true;
-	return false;
-}
-
-/** Throws a BAD_GATEWAY ORPCError, preserving the original cause for upstream error reporters. */
-function throwAiProviderGatewayError(cause?: unknown): never {
-	throw new ORPCError("BAD_GATEWAY", {
-		message: "Couldn't reach the AI provider. Check its settings and try again.",
-		cause,
-	});
-}
-
-/**
- * Wrapper around the shared `generateJson` that translates AI provider failures
- * to BAD_GATEWAY.  Accepts the same prompt shape as the shared module.
- * Exported for tests.
- */
-export async function generateJson<T>(
-	model: Parameters<typeof sharedGenerateJson>[0],
-	prompt: { system?: string; prompt: string },
-	schema: z.ZodType<T>,
-	signal?: AbortSignal,
-	maxRetries?: number,
-) {
-	try {
-		return await sharedGenerateJson(model, prompt, schema, signal, maxRetries);
-	} catch (error) {
-		if (isAiProviderGatewayError(error)) throwAiProviderGatewayError(error);
-		throw error;
-	}
-}
-
-/** Exported for tests: provider-failure translation shared by every copilot procedure. */
-export async function generatePlainText(
-	model: Parameters<typeof sharedGenerateJson>[0],
-	prompt: string,
-	signal?: AbortSignal,
-) {
-	try {
-		const { text } = await generateText({
-			model,
-			abortSignal: aiDeadline(signal),
-			maxRetries: 0,
-			system: safetySystemPrompt,
-			messages: [{ role: "user", content: prompt }],
-		});
-		return text.trim();
-	} catch (error) {
-		if (isAiProviderGatewayError(error)) throwAiProviderGatewayError(error);
-		throw error;
-	}
 }
 
 // --- Schema & router -----------------------------------------------------------
@@ -452,12 +392,17 @@ export const aiRouter = {
 			operationId: "aiApplicationMatchScore",
 			summary: "Score the linked resume against the job",
 			description:
-				"Compares the application's linked resume with its job description using your AI provider and returns a 0–100 fit score with matching strengths and missing qualifications.",
+				"Compares the application's linked resume with its job description using your AI provider and returns the legacy 0–100 assessment with strengths and evidence gaps. This numeric compatibility endpoint is separate from the qualitative in-app Fit review.",
 			...reserved,
 		})
 		.input(z.object({ id: z.string() }))
 		.use(aiRequestRateLimit)
-		.output(matchScoreOutput)
+		.output(
+			matchScoreOutput.extend({
+				aiOperationIds: aiOperationIdsSchema.optional(),
+				aiUsage: aiUsageSummarySchema.nullable().optional(),
+			}),
+		)
 		.errors(aiErrors)
 		.handler(async ({ context, input, signal }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
@@ -478,21 +423,27 @@ export const aiRouter = {
 			const result = await generateJson(
 				model,
 				{
-					prompt: `Compare this resume against the job description. Return ONLY JSON with keys score (integer 0-100 fit), gaps (array of short missing-qualification strings), strengths (array of short matching-strength strings).\n\nRESUME:\n${JSON.stringify(resume.data)}\n\nJOB DESCRIPTION:\n${dataBlock("POSTING", application.jobDescription)}`,
+					prompt: `Compare this resume against the job description. Return ONLY JSON with keys score (integer 0-100 fit), gaps (array of short missing-qualification strings), strengths (array of short matching-strength strings).\n\nRESUME:\n${buildMarkdown(resume.data)}\n\nJOB DESCRIPTION:\n${dataBlock("POSTING", application.jobDescription)}`,
 				},
 				matchScoreOutput,
 				signal,
 				0,
 			);
 
+			const aiUsage = await readAiUsage(context.user.id, [usage.operationId]);
 			await applicationService.setAiResult({
 				id: input.id,
 				userId: context.user.id,
 				matchScore: result.score,
-				aiMetadata: { matchScore: result, aiOperationId: usage.operationId },
+				aiMetadata: {
+					matchScore: result,
+					aiOperationId: usage.operationId,
+					aiUsage,
+				},
+				check,
 			});
 
-			return result;
+			return { ...result, aiOperationIds: [usage.operationId], aiUsage };
 		}),
 
 	// Generate a cover letter or recruiter follow-up from the application + resume context.
@@ -561,7 +512,7 @@ export const aiRouter = {
 			}
 			const { model, provider } = await resolveModel(context.user.id, "draft-message", "capable", check);
 
-			const context_ = `${dataBlock("POSTING", JSON.stringify({ role: application.role, company: application.company, location: application.location, description: application.jobDescription }))}${resume ? `\nCANDIDATE RESUME:\n${JSON.stringify(resume.data)}` : ""}`;
+			const context_ = `${dataBlock("POSTING", JSON.stringify({ role: application.role, company: application.company, location: application.location, description: application.jobDescription }))}${resume ? `\nCANDIDATE RESUME:\n${buildMarkdown(resume.data)}` : ""}`;
 
 			const prompt = `Write a short, polite follow-up message (80-120 words) to a recruiter checking in on this application. Warm but not pushy. Return only the message text.\n\n${context_}`;
 
@@ -571,7 +522,57 @@ export const aiRouter = {
 			return { text };
 		}),
 
-	// Create a tailored copy of the linked resume (job-specific summary) and link it to the application.
+	prepare: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/applications/{id}/ai/prepare",
+			operationId: "prepareApplicationReview",
+			summary: "Prepare an application for review",
+			description:
+				"Generates pending assistant tailoring proposals, an unsaved letter draft, and drafts for up to five pasted form questions. Existing document and answer update endpoints save explicit approvals. Nothing is submitted to an employer.",
+			...reserved,
+		})
+		.input(prepareInput)
+		.output(prepareOutput)
+		.use(aiRequestRateLimit)
+		.errors(aiErrors)
+		.handler(({ context, input, signal }) =>
+			prepareApplication({ ...input, userId: context.user.id, locale: context.locale, signal }),
+		),
+
+	proposeEvidence: protectedProcedure
+		.route({ method: "POST", path: "/applications/{id}/ai/evidence-proposal", ...reserved })
+		.input(z.object({ id: z.string(), factId: z.string() }))
+		.use(aiRequestRateLimit)
+		.output(applicationDto.tailorResume.output)
+		.errors(aiErrors)
+		.handler(async ({ context, input, signal }) => {
+			const [workspace, facts, memory] = await Promise.all([
+				careerService.workspace(context.user.id, input.id),
+				careerService.facts({ userId: context.user.id, applicationId: input.id }),
+				careerService.context({ userId: context.user.id, applicationId: input.id }),
+			]);
+			const fact = facts.find((entry) => entry.id === input.factId && entry.status === "active");
+			if (!fact || !Object.values(workspace.evidence).includes(fact.id)) throw new ORPCError("NOT_FOUND");
+			return reviewApplicationResume({
+				userId: context.user.id,
+				id: input.id,
+				signal,
+				fact: { id: fact.id, updatedAt: fact.updatedAt },
+				check: (tx) =>
+					careerService.assertMemoryVersion(
+						context.user.id,
+						memory.memoryVersion,
+						{ applicationId: input.id, version: memory.knowledgeVersion },
+						undefined,
+						undefined,
+						tx,
+					),
+				request: `I explicitly saved this evidence to Knowledge: ${JSON.stringify(fact.text)}. Propose one truthful resume bullet from that statement for this job. Read the resume to choose the right existing entry. Ask me where it belongs if that is unclear. Do not invent dates, employers, metrics or results. Keep the proposed bullet pending for my review.`,
+			});
+		}),
+
+	// Copy first; the existing assistant owns tailoring proposals and their later approval.
 	tailorResume: protectedProcedure
 		.route({
 			method: "POST",
@@ -579,59 +580,14 @@ export const aiRouter = {
 			operationId: "aiTailorResumeForApplication",
 			summary: "Tailor a resume copy for this application",
 			description:
-				"Creates a copy of the linked resume with a summary rewritten for the job using your AI provider, and links the copy to the application.",
+				"Creates an unchanged private copy of the linked resume and asks the existing assistant for tailoring proposals using the resume and posting, without Knowledge or web access. Existing resumeId/name fields remain. Review the returned conversation before applying any edits through the guarded resume update. A failed or interrupted reply leaves the unchanged copy available; generationStatus identifies that outcome. Submitted application document links are preserved.",
 			...reserved,
 		})
-		.input(z.object({ id: z.string() }))
+		.input(applicationDto.tailorResume.input)
 		.use(aiRequestRateLimit)
-		.output(z.object({ resumeId: z.string(), name: z.string() }))
+		.output(applicationDto.tailorResume.output)
 		.errors(aiErrors)
-		.handler(async ({ context, input, signal }) => {
-			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
-			if (!application.resumeId)
-				throw new ORPCError("BAD_REQUEST", { message: "Link a resume to this application first." });
-			if (!application.jobDescription) {
-				throw new ORPCError("BAD_REQUEST", { message: "Paste the job description into this application first." });
-			}
-
-			const resume = await resumeService.getById({ id: application.resumeId, userId: context.user.id });
-			const check: AiUsage["check"] = async (tx) => {
-				await assertApplicationVersion(tx, context.user.id, application);
-				if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
-			};
-			const { model, provider } = await resolveModel(context.user.id, "tailor-resume", undefined, check);
-			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, check);
-			signal?.throwIfAborted();
-			const { summary } = await generateJson(
-				model,
-				{
-					prompt: `Rewrite this candidate's professional summary to target the job below. Return ONLY JSON { "summary": "<one to two sentence HTML paragraph, e.g. <p>…</p>>" }. Keep it truthful to the resume.\n\nRESUME:\n${JSON.stringify(resume.data)}\n\nJOB:\n${dataBlock("POSTING", JSON.stringify({ role: application.role, company: application.company, description: application.jobDescription }))}`,
-				},
-				z.object({ summary: z.string() }),
-				signal,
-				0,
-			);
-
-			const name = `Tailored — ${application.company} · ${application.role}`.slice(0, 60);
-			const tailoredData = { ...resume.data, summary: { ...resume.data.summary, content: summary } };
-
-			const newResumeId = await resumeService.create({
-				userId: context.user.id,
-				name,
-				slug: `${slugify(name)}-${generateId().slice(0, 6)}`,
-				tags: [...resume.tags, "tailored"],
-				data: tailoredData,
-				locale: context.locale,
-			});
-
-			// Point the application at the tailored copy and log it on the timeline.
-			await applicationService.update({ id: input.id, userId: context.user.id, resumeId: newResumeId });
-			await applicationService.addNote({
-				id: input.id,
-				userId: context.user.id,
-				text: `AI tailored a resume: ${name}`,
-			});
-
-			return { resumeId: newResumeId, name };
-		}),
+		.handler(({ context, input, signal }) =>
+			reviewApplicationResume({ userId: context.user.id, id: input.id, signal, alwaysCopy: true }),
+		),
 };

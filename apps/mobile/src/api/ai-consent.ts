@@ -123,14 +123,22 @@ export async function authorizeAiRequest(
 		? (voice?.model ??
 			(connectionTest
 				? aiConfiguredModels(provider).join(", ")
-				: task
-					? aiModelForTask(provider, task)
-					: provider.model))
+				: operation === "applications.ai.prepare"
+					? [...new Set([provider.model, aiModelForTask(provider, "capable")])].join(", ")
+					: task
+						? aiModelForTask(provider, task)
+						: provider.model))
 		: "";
 	const destination = provider
 		? `${provider.label} · ${disclosedModel} (${provider.provider}${provider.baseURL ? ` · ${new URL(provider.baseURL).origin}` : ""})`
 		: t`No AI provider is used for this operation.`;
-	const web = path[0] === "applications" || chat || scheduled;
+	const web =
+		(path[0] === "applications" &&
+			!["applications.ai.prepare", "applications.ai.proposeEvidence", "applications.ai.tailorResume"].includes(
+				operation,
+			)) ||
+		chat ||
+		scheduled;
 	const webStatus = web ? await api.webAccess.status({}, options) : null;
 	if (webOnly && !webStatus?.search)
 		throw new Error(t`Set up web search in Settings before enabling discovery. AI is not required.`);
@@ -143,25 +151,35 @@ export async function authorizeAiRequest(
 	}
 	current();
 	const server = getServer();
-	const data = webOnly
-		? t`Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted.`
-		: operation === "applications.ai.searchPostings"
-			? t`Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge.`
-			: operation === "career.suggestTargetRoles"
-				? t`Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded.`
-				: !provider
-					? optionalAi
-						? t`The posting text or retrieved page. Links also go to the reader and the site being read.`
-						: t`Your search terms and public links go through your server to the selected web services and sites. No AI provider is used.`
-					: rebind
-						? t`Earlier messages and attachments in this conversation will be sent to this destination when you send again.`
-						: connectionTest
-							? t`Your server sends a test prompt and the saved API key to this provider.`
-							: operation === "career.voice.transcribe"
-								? t`Only your recording is sent to this transcription model. The returned transcript is saved to your account.`
-								: operation === "career.voice.speak"
-									? t`Only the text to read aloud is sent to this speech model.`
-									: t`Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information.`;
+	const reviewData =
+		operation === "applications.ai.prepare"
+			? t`Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted.`
+			: operation === "applications.ai.proposeEvidence"
+				? t`Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting.`
+				: operation === "applications.ai.tailorResume"
+					? t`Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged.`
+					: null;
+	const data =
+		reviewData ??
+		(webOnly
+			? t`Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted.`
+			: operation === "applications.ai.searchPostings"
+				? t`Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge.`
+				: operation === "career.suggestTargetRoles"
+					? t`Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded.`
+					: !provider
+						? optionalAi
+							? t`The posting text or retrieved page. Links also go to the reader and the site being read.`
+							: t`Your search terms and public links go through your server to the selected web services and sites. No AI provider is used.`
+						: rebind
+							? t`Earlier messages and attachments in this conversation will be sent to this destination when you send again.`
+							: connectionTest
+								? t`Your server sends a test prompt and the saved API key to this provider.`
+								: operation === "career.voice.transcribe"
+									? t`Only your recording is sent to this transcription model. The returned transcript is saved to your account.`
+									: operation === "career.voice.speak"
+										? t`Only the text to read aloud is sent to this speech model.`
+										: t`Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information.`);
 	// Older servers leave `searxng` out. With it, searches go to the server's SearXNG and only reading uses the connection.
 	const reader = webStatus?.provider;
 	const webNotice =
