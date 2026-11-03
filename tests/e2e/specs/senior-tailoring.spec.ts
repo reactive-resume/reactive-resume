@@ -366,9 +366,10 @@ for (const outcome of ["saved", "failed"] as const)
 		await page.getByRole("checkbox", { name: /at Elm Co/ }).click();
 		await page.getByRole("button", { name: "Move to…" }).click();
 		await page.getByRole("menuitem", { name: "Offer" }).click();
-		await expect(page.getByText("1 application moved to Offer")).toBeVisible();
+		await expect(page.getByText("1 application moved to Offer")).toHaveCount(0);
 		expect(heldWrites).toBe(1);
 		release();
+		await expect(page.getByText("1 application moved to Offer")).toBeVisible();
 		// A longer connection-error toast can appear under the pointer and pause the Undo countdown.
 		await page.mouse.move(0, 0);
 

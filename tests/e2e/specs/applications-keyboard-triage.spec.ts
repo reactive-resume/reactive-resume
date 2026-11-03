@@ -66,6 +66,7 @@ test("focused triage persists canonical stages/contact, suppresses repeats, keep
 	await expect.poll(async () => (await read()).status).toBe("applied");
 	await page.getByRole("button", { name: "Undo", exact: true }).click();
 	await expect(row).toContainText("Applied");
+	await page.mouse.move(0, 0);
 	expect((await read()).activity).toEqual(before.activity);
 	for (const [key, status] of [
 		["5", "offer"],
