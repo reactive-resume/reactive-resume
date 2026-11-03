@@ -5,7 +5,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { m } from "motion/react";
-import { useId, useMemo, useState } from "react";
+import { useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { interviewDetailsSchema, nextInterviewKind } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@reactive-resume/ui/components/dialog";
@@ -23,11 +23,11 @@ import { interviewCalendarAction, showInterviewCancellation } from "../calendar"
 import { dayKey, interviewTypeLabel } from "../interviews";
 import { applicationsListQueryKey } from "../queries";
 import { Combobox } from "@/components/ui/combobox";
-import { useCareerTime, withUndo } from "@/features/career/shared";
+import { useCareerTime, withQueryUndo } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { D2, EASE } from "@/libs/motion";
-import { orpc } from "@/libs/orpc/client";
+import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 export { interviewTypeLabel } from "../interviews";
 
@@ -172,6 +172,13 @@ export function InterviewDialog({
 			: emptyDraft(application?.id ?? "", preferredZone, day, suggestedKind(application)),
 	);
 	const [otherZone, setOtherZone] = useState(false);
+	const activeForm = useRef<symbol | null>(null);
+	useLayoutEffect(() => {
+		activeForm.current = Symbol();
+		return () => {
+			activeForm.current = null;
+		};
+	}, [open, draft.applicationId, interview?.id]);
 
 	// A fresh draft each time the dialog opens, adjusted during render so the first frame is never stale.
 	const [wasOpen, setWasOpen] = useState(open);
@@ -203,12 +210,6 @@ export function InterviewDialog({
 	const update = useMutation(
 		orpc.applications.updateInterview.mutationOptions({
 			onError: () => toast.add({ type: "error", description: t`Couldn't update the interview. Try again.` }),
-		}),
-	);
-	const remove = useMutation(
-		orpc.applications.deleteTimelineEntry.mutationOptions({
-			onSettled: (_data, _error, variables) => invalidate(variables.id),
-			onError: () => toast.add({ type: "error", description: t`Couldn't delete the interview. Try again.` }),
 		}),
 	);
 
@@ -291,6 +292,7 @@ export function InterviewDialog({
 	// Commit after Undo closes so a restored round retains its identity, history and briefing schedules.
 	const deleteInterview = () => {
 		if (!editing) return;
+		const form = activeForm.current;
 		const applicationId = draft.applicationId;
 		const generation = getAccountGeneration();
 		const savedApplication = application ?? applications.find((item) => item.id === applicationId);
@@ -298,25 +300,34 @@ export function InterviewDialog({
 			item.id === applicationId
 				? { ...item, activity: item.activity.filter((entry) => entry.id !== editing.id) }
 				: item;
-		queryClient.setQueryData(applicationsListQueryKey(), (list) => list?.map(drop));
-		queryClient.setQueryData(
-			orpc.applications.getById.queryKey({ input: { id: applicationId } }),
-			(item) => item && drop(item),
-		);
-		onOpenChange(false);
-		withUndo({
+		withQueryUndo({
+			queryClient,
+			queryKey: orpc.applications.getById.queryKey({ input: { id: applicationId } }),
 			description: t`Interview deleted`,
-			onUndo: () => invalidate(applicationId),
-			commit: () => {
-				if (generation !== getAccountGeneration()) return;
-				void remove
-					.mutateAsync({ id: applicationId, entryId: editing.id })
-					.then(() => {
-						if (savedApplication) showInterviewCancellation(savedApplication, editing, generation);
-					})
-					.catch(() => undefined)
-					.finally(() => invalidate(applicationId));
+			errorMessage: t`Couldn't delete the interview. Try again.`,
+			prepare: async () => {
+				const request = await prepareRpc(client.applications.deleteTimelineEntry, {
+					id: applicationId,
+					entryId: editing.id,
+				});
+				return {
+					cancel: request.cancel,
+					send: () =>
+						request.send().then((saved) => {
+							if (savedApplication) showInterviewCancellation(savedApplication, editing, generation);
+							return saved;
+						}),
+				};
 			},
+			hide: () => {
+				queryClient.setQueryData(applicationsListQueryKey(), (list) => list?.map(drop));
+				queryClient.setQueryData(
+					orpc.applications.getById.queryKey({ input: { id: applicationId } }),
+					(item) => item && drop(item),
+				);
+				if (form && activeForm.current === form) onOpenChange(false);
+			},
+			restore: () => {},
 		});
 	};
 

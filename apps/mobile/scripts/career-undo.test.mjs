@@ -8,7 +8,8 @@ const { QueryClient } = createRequire(new URL("../package.json", import.meta.url
 function load(path, mocks, timers) {
 	const module = { exports: {} };
 	const code = transformSync(readFileSync(new URL(path, import.meta.url), "utf8"), {
-		loader: "ts",
+		loader: path.endsWith(".tsx") ? "tsx" : "ts",
+		jsx: "automatic",
 		format: "cjs",
 	}).code;
 	new Function("require", "module", "exports", "setTimeout", "clearTimeout", code)(
@@ -280,7 +281,20 @@ async function rowsHarness() {
 		cursor = 0;
 		return readRows();
 	}
-	return { ...h, env, queryClient, key, render, unmount: () => cleanup.forEach((run) => run?.()) };
+	return {
+		...h,
+		env,
+		queryClient,
+		key,
+		react,
+		readRows,
+		render,
+		renderComponent: (component) => {
+			cursor = 0;
+			return component();
+		},
+		unmount: () => cleanup.forEach((run) => run?.()),
+	};
 }
 const drain = () => new Promise((resolve) => setImmediate(resolve));
 
@@ -366,4 +380,181 @@ test("actual native Undo reveals canonical list even while an unrelated Career e
 	assert.equal(h.env.sent, 0);
 	h.unmount();
 	h.queryClient.clear();
+});
+
+test("actual native committed row removal clears temporary hiding only after canonical readback", async () => {
+	const h = await rowsHarness();
+	try {
+		const preparing = h.request();
+		h.render().remove("fact", "Removed fictional contact", () => preparing, h.key);
+		await preparing;
+		assert.deepEqual(h.render().hidden, ["fact"]);
+		h.env.canonical = [{ id: "survivor", text: "Fictional second matching contact" }];
+		h.background();
+		await drain();
+		assert.equal(h.env.sent, 1);
+		assert.deepEqual(h.queryClient.getQueryData(h.key), h.env.canonical);
+		assert.deepEqual(h.render().hidden, []);
+	} finally {
+		h.unmount();
+		h.queryClient.clear();
+	}
+});
+
+async function contactsHarness(contacts) {
+	const h = await rowsHarness();
+	h.env.application = { id: "fictional-job", contacts, contactsVersion: "reviewed" };
+	h.env.snapshotWrites = [];
+	const key = ["application", "fictional-job"];
+	await h.queryClient.fetchQuery({
+		queryKey: key,
+		queryFn: () => {
+			if (h.env.offline) throw new Error("offline");
+			return structuredClone(h.env.application);
+		},
+	});
+	const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
+	const runtime = { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }) };
+	const { ContactsSheet } = load("../src/features/application-detail/sheets.tsx", {
+		react: h.react,
+		"react/jsx-runtime": runtime,
+		"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
+		"expo-web-browser": {},
+		"react-native": { View: "View", Linking: {} },
+		"@reactive-resume/schema/applications/data": {},
+		"@reactive-resume/schema/applications/follow-up": {},
+		"@reactive-resume/schema/applications/posting-source": {},
+		"@reactive-resume/utils/timezone": {},
+		"./date-field": {},
+		"./hooks": {},
+		"@/features/applications-board/calendar": {},
+		"@/features/applications/error": {},
+		"@/features/applications/lane-notice": {},
+		"@/features/applications/lane-queries": {},
+		"@/features/applications/lanes": {},
+		"@/features/applications/prior-no-response": {},
+		"@/features/applications/stage-actions": {},
+		"@/features/applications/stages": {},
+		"@/features/reminders": {},
+		"@/features/applications/queries": {
+			applicationDetailQueryKey: () => key,
+			useApplicationMutations: () => ({
+				update: {
+					isPending: false,
+					mutate: (input, callbacks) => {
+						h.env.snapshotWrites.push(input);
+						callbacks.onSuccess();
+					},
+				},
+			}),
+		},
+		"@/features/career/hooks": {
+			useUndoRows: h.readRows,
+			client: {
+				applications: {
+					deleteContact: async (input) => {
+						assert.equal(input.expectedVersion, h.env.application.contactsVersion);
+						h.env.application = {
+							...h.env.application,
+							contacts: h.env.application.contacts.filter((_, index) => index !== input.index),
+							contactsVersion: "after-removal",
+						};
+					},
+				},
+			},
+			prepareRpc: (procedure, input) => {
+				const account = h.env.account;
+				return prepareRequest(async (defer) => {
+					await defer(async () => {
+						assert.equal(account, h.env.account);
+						h.env.sent++;
+						await procedure(input);
+						return new Response();
+					});
+				});
+			},
+		},
+		"@/ui": {
+			showToast: (notice) => h.notices.push(notice),
+			...Object.fromEntries(
+				["Sheet", "Text", "ListRow", "View", "IconButton", "TextField", "Button"].map((name) => [name, name]),
+			),
+			useTheme: () => ({ space: { s2: 8, s3: 12, s4: 16 } }),
+		},
+	});
+	const tree = () =>
+		h.renderComponent(() => ContactsSheet({ application: h.queryClient.getQueryData(key), open: true, onClose() {} }));
+	const nodes = (value) =>
+		Array.isArray(value)
+			? value.flatMap(nodes)
+			: value && typeof value === "object" && "props" in value
+				? [value, ...Object.values(value.props).flatMap(nodes)]
+				: [];
+	const remove = (index) =>
+		nodes(tree())
+			.filter((node) => node.type === "IconButton" && node.props.label.startsWith("Remove "))
+			[index].props.onPress();
+	const names = () =>
+		nodes(tree())
+			.filter((node) => node.type === "ListRow")
+			.map((node) => node.props.title);
+	return { ...h, tree, nodes: () => nodes(tree()), remove, names, appKey: key };
+}
+const fictionalSam = { name: "Fictional Sam", role: "", type: "", email: "", phone: "" };
+
+test("native contact Undo never writes erased text back; failed read stays hidden until read-only Retry", async () => {
+	const h = await contactsHarness([fictionalSam]);
+	try {
+		h.nodes()
+			.find((node) => node.type === "TextField" && node.props.label === "Name")
+			.props.onChangeText("Fictional Alex");
+		h.remove(0);
+		await drain();
+		assert.equal(h.env.sent, 0);
+		assert.deepEqual(h.env.snapshotWrites, []);
+		assert.deepEqual(h.names(), []);
+		assert.equal(
+			h.nodes().find((node) => node.type === "Button" && node.props.label === "Add contact").props.disabled,
+			true,
+			"saving a stale contacts array stays unavailable until canonical readback",
+		);
+		h.env.application = { ...h.env.application, contacts: [], contactsVersion: "externally-erased" };
+		h.env.offline = true;
+		h.notices.find((notice) => notice.action?.label === "Undo").action.onPress();
+		await drain();
+		assert.deepEqual(h.names(), []);
+		assert.equal(h.notices.at(-1).action.label, "Retry");
+		h.env.offline = false;
+		h.notices.at(-1).action.onPress();
+		await drain();
+		assert.deepEqual(h.queryClient.getQueryData(h.appKey).contacts, []);
+		assert.deepEqual(h.names(), []);
+		assert.equal(h.env.sent, 0);
+		assert.deepEqual(h.env.snapshotWrites, []);
+		assert.equal(
+			h.nodes().find((node) => node.type === "Button" && node.props.label === "Add contact").props.disabled,
+			false,
+		);
+	} finally {
+		h.unmount();
+		h.queryClient.clear();
+	}
+});
+
+test("native contact background deletion keeps an identical sibling visible after canonical readback", async () => {
+	const h = await contactsHarness([fictionalSam, fictionalSam]);
+	try {
+		h.remove(1);
+		await drain();
+		assert.deepEqual(h.names(), ["Fictional Sam"]);
+		h.background();
+		assert.equal(h.env.sent, 1);
+		await drain();
+		assert.deepEqual(h.env.application.contacts, [fictionalSam]);
+		assert.deepEqual(h.names(), ["Fictional Sam"]);
+		assert.deepEqual(h.env.snapshotWrites, []);
+	} finally {
+		h.unmount();
+		h.queryClient.clear();
+	}
 });

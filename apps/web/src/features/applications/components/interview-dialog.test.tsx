@@ -8,11 +8,17 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Toaster } from "@reactive-resume/ui/components/toast";
+import { prepareRequest } from "@reactive-resume/utils/deferred-request";
+import { pendingCommits } from "@/features/career/pending-commits";
+import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-scope";
 
-const api = vi.hoisted(() => ({ add: vi.fn(), update: vi.fn(), remove: vi.fn(), read: vi.fn() }));
+const api = vi.hoisted(() => ({ add: vi.fn(), update: vi.fn(), remove: vi.fn(), read: vi.fn(), prepare: vi.fn() }));
 vi.mock("@/libs/orpc/client", () => ({
+	client: { applications: { deleteTimelineEntry: api.remove } },
+	prepareRpc: api.prepare,
 	orpc: {
 		applications: {
+			key: () => ["applications"],
 			addInterview: { mutationOptions: (options: object) => ({ mutationFn: api.add, ...options }) },
 			updateInterview: { mutationOptions: (options: object) => ({ mutationFn: api.update, ...options }) },
 			deleteTimelineEntry: { mutationOptions: (options: object) => ({ mutationFn: api.remove, ...options }) },
@@ -77,8 +83,10 @@ const application: Application = {
 const clients: QueryClient[] = [];
 function Harness({ editing }: { editing: boolean }) {
 	const [open, setOpen] = useState(true);
-	const { data } = useQuery({ queryKey: ["applications"], queryFn: api.read });
-	const loaded = (data as Application[] | undefined)?.[0];
+	const { data: loaded } = useQuery<Application>({
+		queryKey: ["application"],
+		queryFn: async () => (await api.read())[0],
+	});
 	return (
 		<>
 			<output aria-label="Saved round identity">
@@ -108,6 +116,17 @@ function mount(editing: boolean) {
 }
 beforeEach(() => {
 	vi.clearAllMocks();
+	setAccountScope("interview-test");
+	api.prepare.mockImplementation((procedure: (input: unknown) => Promise<unknown>, input: unknown) =>
+		prepareRequest(async (defer) => {
+			let saved: unknown;
+			await defer(async () => {
+				saved = await procedure(input);
+				return new Response();
+			});
+			return saved;
+		}),
+	);
 	api.read.mockResolvedValue([application]);
 	api.add.mockResolvedValue(application);
 	api.update.mockResolvedValue(application);
@@ -115,6 +134,9 @@ beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 });
 afterEach(() => {
+	invalidateAccountScope();
+	for (const flush of pendingCommits) flush();
+	pendingCommits.clear();
 	cleanup();
 	clients.splice(0).forEach((client) => client.clear());
 });
@@ -158,4 +180,33 @@ it("offers Update your calendar only after a successful reschedule", async () =>
 	fireEvent.click(screen.getByRole("button", { name: "Save interview" }));
 	expect(await screen.findByRole("button", { name: "Update your calendar" })).toBeVisible();
 	expect(api.update).toHaveBeenCalledWith(expect.objectContaining({ entryId: "original-round" }), expect.anything());
+});
+
+it("late deletion preparation cannot close a departed interview editor", async () => {
+	const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+	clients.push(client);
+	client.setQueryData(["applications"], [application]);
+	let release!: (request: Awaited<ReturnType<typeof prepareRequest>>) => void;
+	const held = new Promise<Awaited<ReturnType<typeof prepareRequest>>>((resolve) => {
+		release = resolve;
+	});
+	api.prepare.mockReturnValueOnce(held);
+	const changed = vi.fn();
+	const view = render(
+		<QueryClientProvider client={client}>
+			<I18nProvider i18n={i18n}>
+				<Toaster>
+					<InterviewDialog open onOpenChange={changed} application={application} interview={interview} />
+				</Toaster>
+			</I18nProvider>
+		</QueryClientProvider>,
+	);
+	fireEvent.click(await screen.findByRole("button", { name: /^Delete$/ }));
+	await waitFor(() => expect(api.prepare).toHaveBeenCalled());
+	view.unmount();
+	release(await prepareRequest((defer) => defer(() => Promise.resolve(new Response()))));
+	await held;
+	await waitFor(() => expect(client.getQueryData<Application[]>(["applications"])?.[0]?.activity).toEqual([]));
+	expect(changed).not.toHaveBeenCalled();
+	expect(api.remove).not.toHaveBeenCalled();
 });

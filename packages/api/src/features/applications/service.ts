@@ -606,7 +606,13 @@ const stripUserId = <T extends { userId: string; activity?: ApplicationTimelineE
 
 // Hash the stored snapshot before display sorting; a timestamp alone can collide within one millisecond.
 const applicationReplyVersion = (row: ApplicationRow) => createHash("sha256").update(JSON.stringify(row)).digest("hex");
-const applicationView = (row: ApplicationRow) => ({ ...stripUserId(row), replyVersion: applicationReplyVersion(row) });
+const applicationContactsVersion = (row: Pick<ApplicationRow, "contacts">) =>
+	createHash("sha256").update(JSON.stringify(row.contacts)).digest("hex");
+const applicationView = (row: ApplicationRow) => ({
+	...stripUserId(row),
+	replyVersion: applicationReplyVersion(row),
+	contactsVersion: applicationContactsVersion(row),
+});
 
 const applicationSummarySelect = {
 	id: schema.application.id,
@@ -1156,6 +1162,24 @@ export const applicationService = {
 		if (!updated) throw new ORPCError("NOT_FOUND");
 		return applicationView(updated);
 	},
+
+	deleteContact: (input: { id: string; userId: string; index: number; expectedVersion: string }) =>
+		db.transaction(async (tx) => {
+			const [existing] = await tx
+				.select()
+				.from(schema.application)
+				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
+				.for("update");
+			if (!existing) throw new ORPCError("NOT_FOUND");
+			if (applicationContactsVersion(existing) !== input.expectedVersion || !existing.contacts[input.index])
+				throw new ORPCError("CONFLICT", { message: "The contacts changed. Reload them before removing the contact." });
+			const [updated] = await tx
+				.update(schema.application)
+				.set({ contacts: existing.contacts.filter((_, index) => index !== input.index) })
+				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
+				.returning({ id: schema.application.id });
+			if (!updated) throw new ORPCError("NOT_FOUND");
+		}),
 
 	/** Records contact within the locked visit; an explicit reply also clears the owned follow-up and its schedule. */
 	logFollowUp: (input: { id: string; userId: string; reply?: { expectedVersion: string } | undefined }) =>

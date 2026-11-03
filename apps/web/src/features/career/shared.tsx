@@ -199,11 +199,15 @@ export function withQueryUndo<T>({
 	const current = () => generation === getAccountGeneration();
 	const reconcile = async () => {
 		if (!current()) return;
-		void invalidateMutationQueries(queryClient, queryKey);
 		await queryClient.cancelQueries({ queryKey });
 		if (!current()) return;
-		await queryClient.invalidateQueries({ queryKey, refetchType: "all" }, { throwOnError: true });
-		if (current()) restore();
+		try {
+			await queryClient.invalidateQueries({ queryKey, refetchType: "all" }, { throwOnError: true });
+			if (current()) restore();
+		} finally {
+			// A refreshed list can hydrate detail and cancel its read, so settle the canonical target first.
+			if (current()) void invalidateMutationQueries(queryClient, queryKey);
+		}
 	};
 	const report = (error: unknown, fallback = t`Couldn't load. Try again.`) => {
 		if (!current()) return;
