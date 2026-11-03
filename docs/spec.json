@@ -61757,6 +61757,15 @@
 												"items": {
 													"type": "string"
 												}
+											},
+											"aiOperationIds": {
+												"type": "array",
+												"maxItems": 1000,
+												"items": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 64
+												}
 											}
 										},
 										"required": [
@@ -61806,6 +61815,15 @@
 														"maxItems": 10,
 														"items": {
 															"type": "string"
+														}
+													},
+													"aiOperationIds": {
+														"type": "array",
+														"maxItems": 1000,
+														"items": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 64
 														}
 													}
 												},

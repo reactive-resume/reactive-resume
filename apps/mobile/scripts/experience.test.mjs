@@ -4451,6 +4451,7 @@ const { AnswerCard: NativeAnswerCard } = load(
 		"../shell": {},
 		"../state": {},
 		"@/api/client": {},
+		"@/auth/session": { getAccountScope: () => "fixture" },
 		"@/draft": {},
 		"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: { id: "fixture" } }) },
 		"@/features/application-detail/sections": {},
@@ -4493,3 +4494,15 @@ await settle();
 assert.deepEqual(provenanceSaves[1].patch.aiOperationIds, ["prior-op"]);
 assert.deepEqual(provenanceSaves[1].expected.aiOperationIds, ["prior-op", "next-op"]);
 console.log("PASS native answer Accept/Undo preserves actual request sources with the reviewed content");
+
+reset();
+provenanceAnswer = { ...provenanceAnswer, question: "Original question from form" };
+provenanceView();
+provenanceAnswer = { ...provenanceAnswer, question: "Corrected question from another device" };
+provenanceView();
+assert.equal(
+	nodes(provenanceView()).find((node) => node.type === "Block").props.title,
+	"Corrected question from another device",
+	"Canonical question correction replaces an untouched native draft instead of autosaving the old wording",
+);
+console.log("PASS native canonical question wording updates an untouched draft");
