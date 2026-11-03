@@ -12,7 +12,8 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
+import { clampZoom, FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
+import { anchoredScroll, wheelZoom, type ZoomAnchor } from "./zoom-wheel";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { useResumeStore } from "@/features/resume/builder/draft";
@@ -57,6 +58,38 @@ function useCanvasWidth() {
 }
 
 /**
+ * The rendered page under the pointer, so zoom holds the point on that page rather than the first page. A pointer in
+ * the gap between pages gets the nearest page; while the preview is still loading, its only child.
+ */
+function pageUnderPointer(canvas: HTMLElement, clientX: number, clientY: number) {
+	// A rendered page is the canvas's box; the loading placeholder has a figure per page instead. Both keep the page
+	// itself last in the figure, after its caption.
+	const pages = new Set<HTMLElement>();
+	for (const element of canvas.querySelectorAll("canvas")) {
+		if (element.parentElement) pages.add(element.parentElement);
+	}
+	for (const figure of canvas.querySelectorAll("figure")) {
+		if (figure.lastElementChild instanceof HTMLElement) pages.add(figure.lastElementChild);
+	}
+	if (pages.size === 0) return canvas.firstElementChild;
+
+	let nearest: HTMLElement | null = null;
+	let nearestDistance = Number.POSITIVE_INFINITY;
+	for (const page of pages) {
+		const bounds = page.getBoundingClientRect();
+		const dx = clientX < bounds.left ? bounds.left - clientX : clientX > bounds.right ? clientX - bounds.right : 0;
+		const dy = clientY < bounds.top ? bounds.top - clientY : clientY > bounds.bottom ? clientY - bounds.bottom : 0;
+		const distance = dx + dy;
+		if (distance === 0) return page;
+		if (distance < nearestDistance) {
+			nearest = page;
+			nearestDistance = distance;
+		}
+	}
+	return nearest;
+}
+
+/**
  * The canvas ref, the fit scale for the page format, and the scale the page is drawn at (zoom, or fit). `covered` is
  * the canvas width something lies over (a sheet), which fit leaves out.
  */
@@ -67,6 +100,121 @@ export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
 	const gutter = isPhone ? CANVAS_GUTTER.narrow : CANVAS_GUTTER.wide;
 	const fitScale = canvasWidth > 0 ? Math.min(FIT_MAX, (canvasWidth - gutter - covered) / PAGE_WIDTH[format]) : 1;
 	const pageScale = zoom === "fit" ? Math.max(0.25, fitScale) : zoom;
+
+	// The wheel handler outlives renders: keep the current fit scale where it can read it.
+	const fitScaleRef = useRef(fitScale);
+	useEffect(() => {
+		fitScaleRef.current = fitScale;
+	}, [fitScale]);
+
+	// A gesture's unrounded scale, the zoom it was last rounded to, and the page point it holds under the pointer.
+	const wheelZoomRef = useRef<{ scale: number; stored: number } | null>(null);
+	const zoomAnchorRef = useRef<ZoomAnchor | null>(null);
+	const zoomFrameRef = useRef<number | null>(null);
+	/** The last zoom this handler set, so a change from Fit or the zoom bar can be told apart. */
+	const wheelAppliedRef = useRef<number | null>(null);
+
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+
+		const zoomByWheel = (event: WheelEvent) => {
+			// Ctrl/Cmd+wheel is the browser's zoom gesture (a trackpad pinch sends it too): keep it on the canvas. Every
+			// other wheel is left alone, so the page scrolls normally, and the panel and the rest of the app are untouched.
+			if (!(event.ctrlKey || event.metaKey) || event.altKey || event.deltaY === 0) return;
+
+			// Even at a zoom limit the browser must not step in and zoom the whole app.
+			event.preventDefault();
+
+			const { zoom, setZoom } = useEditorStore.getState();
+			const stored = zoom === "fit" ? Math.max(0.25, fitScaleRef.current) : zoom;
+			// Keep the unrounded scale between events, so a slow trackpad pinch adds up instead of rounding away. A
+			// zoom set anywhere else (Fit, the zoom bar) starts a fresh gesture.
+			const previous = wheelZoomRef.current;
+			const accumulated = previous?.stored === stored ? previous.scale : null;
+			const before = accumulated ?? stored;
+			const raw = wheelZoom(before, event.deltaY, event.deltaMode, canvas.clientHeight);
+			const after = clampZoom(raw);
+			// Fit can sit below the explicit minimum on a small canvas: zooming out must not jump up to it.
+			const changed = after !== stored && !(raw < before && after > stored);
+			// Hold a scale inside the bounds, so an overshoot does not swallow the first reverse notch. A Fit below the
+			// minimum keeps its own scale until a zoom-in raises it into range.
+			const retained = changed
+				? after
+				: raw < before && stored < ZOOM_MIN
+					? before
+					: Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, raw));
+			wheelZoomRef.current = { scale: retained, stored: changed ? after : stored };
+			if (!changed) return;
+
+			// The page under the pointer, not the canvas's corner, is what stays put while it grows or shrinks.
+			const page = pageUnderPointer(canvas, event.clientX, event.clientY);
+			const pageBounds = page?.getBoundingClientRect();
+			if (page && pageBounds) {
+				const anchor = zoomAnchorRef.current;
+				if (anchor) {
+					// Several wheel events can land before one frame: keep every scale change, and follow the latest
+					// pointer and the page now under it.
+					anchor.ratio *= after / stored;
+					anchor.page = page;
+					anchor.contentX = event.clientX - pageBounds.left;
+					anchor.contentY = event.clientY - pageBounds.top;
+					anchor.pointerX = event.clientX;
+					anchor.pointerY = event.clientY;
+				} else {
+					zoomAnchorRef.current = {
+						page,
+						contentX: event.clientX - pageBounds.left,
+						contentY: event.clientY - pageBounds.top,
+						ratio: after / stored,
+						pointerX: event.clientX,
+						pointerY: event.clientY,
+					};
+				}
+
+				if (zoomFrameRef.current === null) {
+					zoomFrameRef.current = requestAnimationFrame(() => {
+						zoomFrameRef.current = null;
+						const anchor = zoomAnchorRef.current;
+						zoomAnchorRef.current = null;
+						if (!anchor?.page.isConnected) return;
+						const { left, top } = anchoredScroll(
+							anchor,
+							{ left: canvas.scrollLeft, top: canvas.scrollTop },
+							anchor.page.getBoundingClientRect(),
+						);
+						canvas.scrollLeft = left;
+						canvas.scrollTop = top;
+					});
+				}
+			}
+
+			wheelAppliedRef.current = after;
+			setZoom(after);
+		};
+
+		// A zoom from Fit or the zoom bar replaces the gesture: its pending frame must not scroll the new layout by the
+		// old scale ratio.
+		const unsubscribe = useEditorStore.subscribe((state) => {
+			if (state.zoom === wheelAppliedRef.current) return;
+			wheelAppliedRef.current = null;
+			wheelZoomRef.current = null;
+			zoomAnchorRef.current = null;
+			if (zoomFrameRef.current !== null) cancelAnimationFrame(zoomFrameRef.current);
+			zoomFrameRef.current = null;
+		});
+
+		canvas.addEventListener("wheel", zoomByWheel, { passive: false });
+		return () => {
+			unsubscribe();
+			canvas.removeEventListener("wheel", zoomByWheel);
+			if (zoomFrameRef.current !== null) cancelAnimationFrame(zoomFrameRef.current);
+			zoomFrameRef.current = null;
+			zoomAnchorRef.current = null;
+			wheelZoomRef.current = null;
+			wheelAppliedRef.current = null;
+		};
+	}, [canvasRef]);
 
 	return { canvasRef, fitScale, pageScale };
 }
@@ -192,7 +340,10 @@ type ZoomBarProps = {
 	pageCount: number;
 };
 
-/** − · Fit · + and the page count, floating 18px above the bottom of the canvas. Zoom runs from 60% to 150%. */
+/**
+ * − · Fit · + and the page count, floating 18px above the bottom of the canvas. Zoom runs from 60% to 300%, and
+ * Ctrl/Cmd+wheel over the canvas zooms around the pointer.
+ */
 export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 	const { t } = useLingui();
 	const zoom = useEditorStore((state) => state.zoom);
