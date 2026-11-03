@@ -195,14 +195,18 @@ function languageHref(locale: string) {
 	return `/?${url.searchParams}#languages`;
 }
 
-type LanguageDoorwayProps = { className?: string; nameClassName?: string };
+type LanguageDoorwayProps = { className?: string; nameClassName?: string; story?: boolean };
 
 /** The current language, in its own name, leading to the Languages scene: the header's and the footer's way there. */
-export function LanguageDoorway({ className, nameClassName }: LanguageDoorwayProps) {
+export function LanguageDoorway({ className, nameClassName, story = true }: LanguageDoorwayProps) {
 	const { i18n } = useLingui();
 	const name = getLanguageName(i18n.locale, i18n.locale, false);
 	return (
-		<a href="#languages" title={t`Change language`} className={cn("flex items-center", className)}>
+		<a
+			href={story ? "#languages" : `/?locale=${i18n.locale}#languages`}
+			title={t`Change language`}
+			className={cn("flex items-center", className)}
+		>
 			<Icon name="translate" size={16} />
 			<span lang={i18n.locale} className={nameClassName}>
 				{name}

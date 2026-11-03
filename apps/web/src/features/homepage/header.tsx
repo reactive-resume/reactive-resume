@@ -22,9 +22,11 @@ const getStoryScenes = () => [
 	{ scene: SCENE.remember, label: t`Remember` },
 ];
 
-export function LandingHeader() {
+type LandingHeaderProps = { story?: boolean };
+
+export function LandingHeader({ story = true }: LandingHeaderProps) {
 	const scrolled = useLanding((state) => state.scrolled);
-	const night = useLanding((state) => state.night);
+	const night = useLanding((state) => story && state.night);
 	const activeScene = useLanding((state) => state.activeScene);
 
 	return (
@@ -32,17 +34,18 @@ export function LandingHeader() {
 			className={cn(
 				// The ink fades to light with Share's sky (--nt), so it never jumps against a half-dark background.
 				"night-ink fixed inset-x-0 top-0 z-70 flex h-16 items-center gap-2 ps-(--gutter) pe-[calc(var(--gutter)+30px)] whitespace-nowrap sm:gap-7",
+				!story && "blur-ok:backdrop-blur-lg border-b border-line bg-bg/95",
 			)}
 		>
 			<div
 				aria-hidden="true"
 				className={cn(
 					"header-taper pointer-events-none absolute inset-x-0 top-0 -z-1 h-28 transition-opacity duration-[.4s]",
-					scrolled ? "opacity-[calc(1-var(--nt,0))]" : "opacity-0",
+					story && scrolled ? "opacity-[calc(1-var(--nt,0))]" : "opacity-0",
 				)}
 			/>
 
-			<a href="#top" className="flex items-center gap-2.5 rounded-md">
+			<a href={story ? "#top" : "/"} className="flex items-center gap-2.5 rounded-md">
 				<img
 					src="/icon/light.svg"
 					alt=""
@@ -61,40 +64,43 @@ export function LandingHeader() {
 				<span className="sr-only">Reactive Resume</span>
 			</a>
 
-			<nav aria-label={t`Story`} className="mx-auto hidden items-center gap-0.5 min-[1240px]:flex">
-				{getStoryScenes().map(({ scene, label }) => {
-					const active = activeScene === scene;
-					return (
-						<button
-							key={scene}
-							type="button"
-							aria-current={active ? "step" : undefined}
-							onClick={() => goToScene(scene, 0.04)}
-							className={cn(
-								"font-martian relative flex h-[34px] items-center gap-[7px] rounded-sm px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] transition-opacity duration-300",
-								!active && "opacity-65 hover:opacity-100",
-							)}
-						>
-							<span
-								aria-hidden="true"
-								className={cn("size-1.5 rounded-sm transition-colors duration-300", active && "bg-accent")}
-							/>
-							{label}
-							{/* How much of the current scene is left: a line that fills with its scroll progress (--sp). */}
-							{active && (
+			{story && (
+				<nav aria-label={t`Story`} className="mx-auto hidden items-center gap-0.5 min-[1240px]:flex">
+					{getStoryScenes().map(({ scene, label }) => {
+						const active = activeScene === scene;
+						return (
+							<button
+								key={scene}
+								type="button"
+								aria-current={active ? "step" : undefined}
+								onClick={() => goToScene(scene, 0.04)}
+								className={cn(
+									"font-martian relative flex h-[34px] items-center gap-[7px] rounded-sm px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] transition-opacity duration-300",
+									!active && "opacity-65 hover:opacity-100",
+								)}
+							>
 								<span
 									aria-hidden="true"
-									className="absolute inset-x-[11px] bottom-[3px] h-0.5 origin-left rounded-full bg-accent rtl:origin-right"
-									style={{ transform: "scaleX(var(--sp, 0))" }}
+									className={cn("size-1.5 rounded-sm transition-colors duration-300", active && "bg-accent")}
 								/>
-							)}
-						</button>
-					);
-				})}
-			</nav>
+								{label}
+								{/* How much of the current scene is left: a line that fills with its scroll progress (--sp). */}
+								{active && (
+									<span
+										aria-hidden="true"
+										className="absolute inset-x-[11px] bottom-[3px] h-0.5 origin-left rounded-full bg-accent rtl:origin-right"
+										style={{ transform: "scaleX(var(--sp, 0))" }}
+									/>
+								)}
+							</button>
+						);
+					})}
+				</nav>
+			)}
 
 			<div className="ms-auto flex items-center gap-2">
 				<LanguageDoorway
+					story={story}
 					className="font-martian h-[34px] gap-[7px] rounded-sm px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] opacity-65 transition-opacity duration-300 hover:opacity-100"
 					nameClassName="max-[639px]:sr-only"
 				/>

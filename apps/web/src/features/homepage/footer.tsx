@@ -20,13 +20,13 @@ type FooterLink =
 	| { label: string; href: string }
 	| { label: string; to: "/ats-checker" | "/auth/login" | "/auth/register" | "/resume-templates" };
 
-const getColumns = (): { id: string; title: string; links: FooterLink[] }[] => [
+const getColumns = (story: boolean): { id: string; title: string; links: FooterLink[] }[] => [
 	{
 		id: "product",
 		title: t`Product`,
 		links: [
 			{ label: t`Templates`, to: "/resume-templates" },
-			{ label: t`Features`, href: "#write" },
+			{ label: t`Features`, href: story ? "#write" : "/#write" },
 			{ label: t`ATS checker`, to: "/ats-checker" },
 			{ label: t`Get started`, to: "/auth/register" },
 			{ label: t`Sign in`, to: "/auth/login" },
@@ -86,11 +86,16 @@ function FooterLinkItem({ link }: { link: FooterLink }): ReactNode {
  * the page (the resume to Write, the glasses to Check, the letters to Share, the calendar to Prepare, the window to
  * Remember), and its lamp switches the theme.
  */
-export function LandingFooter() {
+type LandingFooterProps = { story?: boolean };
+
+export function LandingFooter({ story = true }: LandingFooterProps) {
 	const headline = getHeadline();
 
 	return (
-		<footer data-scene={SCENE.footer} className="relative overflow-hidden border-t border-line">
+		<footer
+			data-scene={SCENE.footer}
+			className={cn("relative overflow-hidden border-t border-line", !story && "pb-12")}
+		>
 			<div className="relative z-1 mx-auto grid max-w-[1440px] gap-x-12 gap-y-14 px-(--gutter) pt-20 min-[1000px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
 				<div className="flex min-w-0 flex-col items-start gap-5">
 					<img
@@ -119,7 +124,7 @@ export function LandingFooter() {
 				</div>
 
 				<div className="grid grid-cols-2 gap-x-8 gap-y-10 min-[640px]:grid-cols-4">
-					{getColumns().map((column) => (
+					{getColumns(story).map((column) => (
 						<nav
 							key={column.id}
 							aria-labelledby={`footer-${column.id}`}
@@ -144,7 +149,7 @@ export function LandingFooter() {
 				{/* Narrow enough to wrap into two balanced lines in any language, without splitting the translation. */}
 				<p className="max-w-[20ch] text-balance">{t`By the community, for the community.`}</p>
 				<p className="flex flex-wrap items-center gap-x-4 gap-y-1">
-					<LanguageDoorway className={cn("gap-1.5", linkClass)} />
+					<LanguageDoorway story={story} className={cn("gap-1.5", linkClass)} />
 					<span>
 						<Trans>
 							Licensed under{" "}
@@ -160,7 +165,7 @@ export function LandingFooter() {
 				</p>
 			</div>
 
-			<FooterDesk />
+			{story && <FooterDesk />}
 		</footer>
 	);
 }
