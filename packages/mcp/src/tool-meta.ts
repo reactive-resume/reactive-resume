@@ -8,6 +8,7 @@ import { resumePatchOperationsSchema } from "@reactive-resume/ai/tools/resume-to
 import { applicationDto } from "@reactive-resume/api/dto/application";
 import { coverLetterDto } from "@reactive-resume/api/dto/cover-letter";
 import { resumeDto } from "@reactive-resume/api/dto/resume";
+import { aiOperationIdsSchema, aiUsageSummarySchema } from "@reactive-resume/schema/ai-usage";
 import {
 	applicationStatusSchema,
 	interviewDetailsSchema,
@@ -767,8 +768,14 @@ export const TOOL_META = withAnnotationTitles({
 	[T.draftApplicationMessage]: {
 		title: "Draft Application Message",
 		description:
-			"Send application context and the full linked resume, when available, to your configured AI provider to draft a cover letter or recruiter follow-up. Requires an enabled, tested default AI provider. Cover-letter mode saves a new cover letter and returns text plus coverLetterId; follow-up mode returns text without saving it. Neither mode sends a message to a recruiter.",
-		outputSchema: z.object({ text: z.string(), coverLetterId: z.string().optional() }),
+			"Draft a cover letter or recruiter follow-up with your enabled, tested default AI provider. Cover-letter mode uses the same draft owner and letter-language rules as the app, sending the posting and linked resume text rather than resume design or private notes. It returns text, coverLetterId, reviewRequired:true and recorded aiOperationIds/aiUsage; the new linked letter body is empty. Show the draft to the user and obtain approval before saving its body with update_cover_letter, passing the returned aiOperationIds and the letter's current expectedRevision. Never save generated text automatically. Existing text/coverLetterId fields remain available; reviewRequired explicitly identifies unaccepted body text. Follow-up mode sends application context and the full linked resume, then returns text without creating a letter or logging a reply. Neither mode sends anything to an employer.",
+		outputSchema: z.object({
+			text: z.string(),
+			coverLetterId: z.string().optional(),
+			reviewRequired: z.literal(true).optional(),
+			aiOperationIds: aiOperationIdsSchema.optional(),
+			aiUsage: aiUsageSummarySchema.nullable().optional(),
+		}),
 		inputSchema: wireInput(z.strictObject({ id: applicationIdSchema, kind: z.enum(["cover-letter", "follow-up"]) })),
 		annotations: { ...WRITE_NON_IDEMPOTENT, openWorldHint: true },
 	},

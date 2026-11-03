@@ -137,7 +137,7 @@ jobs:
 
       - name: Install Chromium, WebKit and browser dependencies
         if: matrix.suite == 'Browser'
-        timeout-minutes: 10
+        timeout-minutes: 20
         run: pnpm exec playwright install --with-deps chromium webkit
 
       - name: Prepare test storage

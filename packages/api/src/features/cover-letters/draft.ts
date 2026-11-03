@@ -3,6 +3,7 @@ import { ORPCError } from "@orpc/client";
 import { streamText } from "ai";
 import { letterDraftSystemPrompt } from "@reactive-resume/ai/prompts";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
+import { initialCoverLetterLocale } from "@reactive-resume/resume/cover-letter";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { aiProvidersService } from "../ai-providers/service";
 import { dataBlock } from "../ai/data-block";
@@ -14,6 +15,17 @@ import { resumeService } from "../resume/service";
 import { coverLetterService } from "./service";
 
 type Variant = CoverLetterDraftInput["variant"];
+
+type DraftLetterInput = (
+	| CoverLetterDraftInput
+	| {
+			application: Awaited<ReturnType<typeof applicationService.getById>>;
+			resume: Awaited<ReturnType<typeof resumeService.getById>> | null;
+			variant: "draft";
+			previous?: undefined;
+			includeProvenance?: boolean;
+	  }
+) & { userId: string; signal?: AbortSignal | undefined };
 
 const REQUESTS: Record<Variant, string> = {
 	draft: "Write the body of the letter.",
@@ -50,16 +62,21 @@ function buildLetterDraftPrompt(input: PromptInput): string {
  * shows the draft until it's kept or discarded, so a failure leaves the letter as it was.
  */
 export async function draftLetterBody(
-	input: CoverLetterDraftInput & { userId: string; signal?: AbortSignal | undefined },
+	input: DraftLetterInput,
 ): Promise<AsyncGenerator<string | { aiOperationId: string }>> {
 	const { userId } = input;
-	const letter = await coverLetterService.getById({ id: input.id, userId });
-	const [resume, application] = await Promise.all([
-		letter.sourceResumeId ? resumeService.getById({ id: letter.sourceResumeId, userId }).catch(() => null) : null,
-		letter.sourceApplicationId
-			? applicationService.getById({ id: letter.sourceApplicationId, userId }).catch(() => null)
-			: null,
-	]);
+	const letter = "id" in input ? await coverLetterService.getById({ id: input.id, userId }) : null;
+	const [resume, application] =
+		"application" in input
+			? [input.resume, input.application]
+			: await Promise.all([
+					letter?.sourceResumeId
+						? resumeService.getById({ id: letter.sourceResumeId, userId }).catch(() => null)
+						: null,
+					letter?.sourceApplicationId
+						? applicationService.getById({ id: letter.sourceApplicationId, userId }).catch(() => null)
+						: null,
+				]);
 	if (!resume && !application) {
 		throw new ORPCError("BAD_REQUEST", { message: "Link the letter to a resume or an application first." });
 	}
@@ -73,7 +90,7 @@ export async function draftLetterBody(
 		application?.jobDescription?.trim() ||
 		(application?.requirements.length ? application.requirements.map((item) => `- ${item}`).join("\n") : undefined);
 	const usage = createAiUsage(userId, "draft-letter", provider, async (tx) => {
-		await assertDocumentVersion(tx, userId, { kind: "letter", ...letter });
+		if (letter) await assertDocumentVersion(tx, userId, { kind: "letter", ...letter });
 		if (resume) await assertDocumentVersion(tx, userId, { kind: "resume", ...resume });
 		if (application) await assertApplicationVersion(tx, userId, application);
 	});
@@ -86,14 +103,16 @@ export async function draftLetterBody(
 	});
 	const prompt = buildLetterDraftPrompt({
 		variant: input.variant,
-		locale: letter.style.metadata.page.locale,
+		locale:
+			letter?.style.metadata.page.locale ??
+			initialCoverLetterLocale(application?.postingSource?.language, resume?.data.metadata.page.locale),
 		job: application ? `${application.role} at ${application.company}` : undefined,
 		posting,
 		resume: resume ? buildMarkdown(resume.data) : undefined,
 		previous: input.previous,
 	});
 	await aiProvidersService.authorize({ userId, id: provider.id }, async (tx) => {
-		await assertDocumentVersion(tx, userId, { kind: "letter", ...letter });
+		if (letter) await assertDocumentVersion(tx, userId, { kind: "letter", ...letter });
 		if (resume) await assertDocumentVersion(tx, userId, { kind: "resume", ...resume });
 		if (application) await assertApplicationVersion(tx, userId, application);
 	});

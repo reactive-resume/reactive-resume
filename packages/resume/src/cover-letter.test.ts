@@ -7,7 +7,15 @@ import {
 	createCoverLetterResumeData,
 	detachEmbeddedLetters,
 	greetingName,
+	initialCoverLetterLocale,
 } from "./cover-letter";
+
+it("keeps creation and drafting on the same posting/resume/default language", () => {
+	expect(initialCoverLetterLocale("de-de", "en-GB")).toBe("de-DE");
+	expect(initialCoverLetterLocale("not_a_language", "en-GB")).toBe("en-GB");
+	expect(initialCoverLetterLocale(undefined, "en-GB")).toBe("en-GB");
+	expect(initialCoverLetterLocale(undefined)).toBe(defaultResumeData.metadata.page.locale);
+});
 
 describe("detachEmbeddedLetters", () => {
 	it("takes letters out of the resume and its layout, and returns each one", () => {
