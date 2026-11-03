@@ -3,6 +3,7 @@ import type { ApplicationSummary } from "@/features/applications/types";
 import type { CareerProfileData } from "@reactive-resume/schema/career";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -526,9 +527,11 @@ function OfferHeader({ offer, offers, otherId, onChoose, onEdit, onDelete }: Off
 							)}
 							<span className="text-xs text-ink-3">
 								{versionLabel(offer)} · {t`saved ${when(offer.createdAt)}`} · {outcomeLabel(offer)} ·{" "}
-								{offers
-									.filter((item) => item.applicationId === offer.applicationId)
-									.findIndex((item) => item.id === offer.id) + 1}
+								{i18n.number(
+									offers
+										.filter((item) => item.applicationId === offer.applicationId)
+										.findIndex((item) => item.id === offer.id) + 1,
+								)}
 							</span>
 							{originLabel(offer) && <span className="text-xs text-ink-3">{originLabel(offer)}</span>}
 						</span>
@@ -551,7 +554,7 @@ function OfferHeader({ offer, offers, otherId, onChoose, onEdit, onDelete }: Off
 							{versions.map((item) => (
 								<DropdownMenuItem key={item.id} disabled={item.id === otherId} onClick={() => onChoose(item.id)}>
 									<span className="flex-1">
-										{versionLabel(item)} · {when(item.createdAt)} · {versions.indexOf(item) + 1}
+										{versionLabel(item)} · {when(item.createdAt)} · {i18n.number(versions.indexOf(item) + 1)}
 										{item.id === first.id ? ` · ${t`Latest`}` : ""}
 									</span>
 									{item.id === offer?.id && <Icon name="check" size={16} />}
@@ -810,7 +813,7 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 					<ol className="grid gap-2">
 						{questions.map((item, index) => (
 							<li key={item.question} className="grid grid-cols-[20px_minmax(0,1fr)] text-sm leading-[21px]">
-								<span className="font-mono text-xs leading-[21px] text-ink-3">{index + 1}.</span>
+								<span className="font-mono text-xs leading-[21px] text-ink-3">{i18n.number(index + 1)}.</span>
 								<span>
 									{item.question} <span className="text-xs text-ink-3">· {item.ask}</span>
 								</span>

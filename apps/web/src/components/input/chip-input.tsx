@@ -17,6 +17,7 @@ import {
 	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useReducedMotion } from "motion/react";
@@ -392,7 +393,7 @@ export function ChipInput({
 											: "border-line bg-sunken/50 text-ink/80 opacity-80",
 									)}
 								>
-									{isEditingKeyword ? <Trans>Edit</Trans> : chips.length}
+									{isEditingKeyword ? <Trans>Edit</Trans> : i18n.number(chips.length)}
 								</span>
 							)}
 						</div>

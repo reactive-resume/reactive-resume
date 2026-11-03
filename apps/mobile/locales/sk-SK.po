@@ -95,8 +95,8 @@ msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of y
 msgstr "{0, plural, one {„{1}“ sa v inzeráte objaví raz. Ak je to súčasť vašej skúsenosti, pridajte ju tam, kam patrí.} other {„{2}“ sa v pracovnej ponuke objaví #-krát. Ak je to súčasť vašej skúsenosti, pridajte ju tam, kam patrí.}}"
 
 #. placeholder {0}: report.totalRules
-#. placeholder {1}: report.passedRules
-#. placeholder {2}: report.passedRules
+#. placeholder {1}: i18n.number(report.passedRules)
+#. placeholder {2}: i18n.number(report.passedRules)
 #: src/features/check/score.tsx
 msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
 msgstr "{0, plural, one {Úspešné kontroly: {1} z #.} few {Úspešné kontroly: {2} z #.} many {Úspešné kontroly: {2} z #.} other {Úspešné kontroly: {2} z #.}}"
@@ -109,15 +109,15 @@ msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}
 msgstr "{0, plural, one {Prijaté úpravy: {1} z #} few {Prijaté úpravy: {2} z #} many {Prijaté úpravy: {2} z #} other {Prijaté úpravy: {2} z #}}"
 
 #. placeholder {0}: value.report.applicableChecks
-#. placeholder {1}: value.report.passedChecks
-#. placeholder {2}: value.report.passedChecks
+#. placeholder {1}: i18n.number(value.report.passedChecks)
+#. placeholder {2}: i18n.number(value.report.passedChecks)
 #: src/features/check/parser.tsx
 msgid "{0, plural, one {{1} of # exported PDF check passes.} other {{2} of # exported PDF checks pass.}}"
 msgstr "{0, plural, one {Úspešné kontroly exportovaného PDF: {1} z #.} few {Úspešné kontroly exportovaného PDF: {2} z #.} other {Úspešné kontroly exportovaného PDF: {2} z #.}}"
 
 #. placeholder {0}: match.total
-#. placeholder {1}: match.found.length
-#. placeholder {2}: match.found.length
+#. placeholder {1}: i18n.number(match.found.length)
+#. placeholder {2}: i18n.number(match.found.length)
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {Pokryté výrazy inzerátu: {1} z #} few {Pokryté výrazy inzerátu: {2} z #} other {Pokryté výrazy inzerátu: {2} z #}}"
@@ -476,10 +476,10 @@ msgstr "{0} (kópia)"
 msgid "{0} (mine)"
 msgstr "{0} (moje)"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
-#. placeholder {2}: step.reached
-#. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
+#. placeholder {2}: i18n.number(step.reached)
+#. placeholder {3}: step.conversion === null ? "" : ` (${i18n.number(step.conversion)}%)`
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
@@ -513,7 +513,7 @@ msgid "{0} interview · {1}"
 msgstr "{0} pohovor · {1}"
 
 #. placeholder {0}: interviewTypeLabel(event.interview.kind)
-#. placeholder {1}: event.interview.durationMinutes
+#. placeholder {1}: i18n.number(event.interview.durationMinutes)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "{0} interview · {1} min"
 msgstr "{0} pohovor · {1} min"
@@ -533,34 +533,34 @@ msgstr "o {0} viac"
 msgid "{0} new comments"
 msgstr ""
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/features/letters/write.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATES.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATES.length)
 #: src/features/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "Zobrazené {0} z {1}"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{0} z {1} prispôsobené žiadosti o prácu dostali odpoveď; {2} z {3} odoslané s ďalším životopisom."
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -575,38 +575,38 @@ msgstr "Len {0}"
 msgid "{0} posting"
 msgstr "Pracovná ponuka {0}"
 
-#. placeholder {0}: selectedIds.length
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selectedIds.length)
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "Vybraté: {0}"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
-#. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
-#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: displayed?.total ?? page.total
-#. placeholder {2}: pending.length
+#. placeholder {0}: i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))
+#. placeholder {0}: i18n.number(recoveryStart + 1)
+#. placeholder {1}: i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))
+#. placeholder {1}: i18n.number(Math.min(recoveryStart + 100, pending.length))
+#. placeholder {2}: i18n.number(displayed?.total ?? page.total)
+#. placeholder {2}: i18n.number(pending.length)
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: row.index + 1
-#. placeholder {2}: row.count
+#. placeholder {1}: i18n.number(row.index + 1)
+#. placeholder {2}: i18n.number(row.count)
 #: src/features/write/outline.tsx
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, záznam {1} z {2}"
@@ -616,13 +616,13 @@ msgstr "{0}, záznam {1} z {2}"
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: Math.round(zoom * 100)
+#. placeholder {0}: i18n.number(Math.round(zoom * 100))
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
 msgid "{0}%"
 msgstr "{0} %"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/messages.tsx
 msgid "{accepted} of {0} applied"
 msgstr "Použité: {accepted} z {0}"
@@ -942,7 +942,7 @@ msgstr "{words, plural, one {Slovo #} other {Slová #}}"
 msgid "{words} of {shownLimit} words"
 msgstr ""
 
-#. placeholder {0}: items.length - MAX_PER_DAY
+#. placeholder {0}: i18n.number(items.length - MAX_PER_DAY)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} ďalších"
@@ -1433,7 +1433,7 @@ msgstr "Pridajte ho s predvoľbou krajiny; niektoré prihlasovacie formuláre ho
 msgid "Add page"
 msgstr "Pridať stranu"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/preview/page.tsx
 msgid "Add page {0}"
 msgstr ""
@@ -1738,7 +1738,7 @@ msgstr "Albánčina"
 msgid "All"
 msgstr "Všetky"
 
-#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
+#. placeholder {0}: i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Všetky ({0})"
@@ -1866,7 +1866,7 @@ msgstr ""
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
 msgstr ""
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/application-detail/sections.tsx
 msgid "and {0} more"
 msgstr "a ďalšie {0}"
@@ -4297,7 +4297,7 @@ msgstr "Vlastné štýly sa nepoužijú. Ak ich chcete použiť, opravte tieto c
 msgid "Czech"
 msgstr "Čeština"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/share/link.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "Denné zobrazenia za 30 dní, maximálne {0}"
@@ -4547,12 +4547,12 @@ msgstr "Odstrániť verziu"
 msgid "Deleted"
 msgstr "Odstránené"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0}. Refresh to see what remains."
 msgstr ""
@@ -4597,7 +4597,7 @@ msgstr "Popis"
 msgid "Description is clipped to 20,000 characters. Review it before preparing."
 msgstr "Popis je orezaný na 20 000 znakov. Pred prípravou to skontrolujte."
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Description of role {0}"
 msgstr "Popis role {0}"
@@ -4987,7 +4987,7 @@ msgstr "Upraviť"
 msgid "Edit {0}"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
@@ -5447,7 +5447,7 @@ msgstr ""
 msgid "Feedback links"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/basics-screen.tsx
 msgid "Field {0}"
 msgstr "Pole {0}"
@@ -6381,13 +6381,13 @@ msgstr "Je tam bonus a od čoho závisí?"
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/check/page.tsx
 msgid "Issue {0} of {1}"
 msgstr "Vydanie {0} z {1}"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -6895,7 +6895,7 @@ msgstr "Telo písmena"
 msgid "Letter page"
 msgstr "Listová stránka"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/letters/page.tsx
 msgid "Letter page {0}"
 msgstr "Strana listu {0}"
@@ -6968,12 +6968,12 @@ msgstr "Takto blízke riadky sa môžu pri čítaní zbiehať. Použite aspoň {
 msgid "Link"
 msgstr "Odkaz"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -7718,8 +7718,8 @@ msgstr "Posunúť sa hore"
 msgid "Move your email and phone number to the top of page one."
 msgstr "Presuňte svoj e-mail a telefónne číslo na začiatok prvej strany."
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "Presunuté do Koša: {0} z {1}. Zamknuté dokumenty sa preskočili. Obnovte zoznam a zopakujte neúspešné operácie."
@@ -7772,7 +7772,7 @@ msgstr "Názov"
 msgid "Name and contact details weren't found. Add them in Basics."
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
 msgstr "Meno osoby {0}"
@@ -8683,7 +8683,7 @@ msgstr "Zapnúť sa dajú iba poskytovatelia, ktorí prejdú testom."
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "Boli skontrolované iba prvé strany {0}."
@@ -8945,7 +8945,7 @@ msgstr "Ďalšie benefity"
 msgid "Other concern"
 msgstr "Iná obava"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/threads.tsx
 msgid "Other documents · {0}"
 msgstr "Ďalšie dokumenty · {0}"
@@ -8974,8 +8974,8 @@ msgstr "Strana"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: 1
-#. placeholder {0}: index + 1
-#. placeholder {0}: item.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(item.page + 1)
 #: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
@@ -8986,29 +8986,29 @@ msgstr "Strana"
 msgid "Page {0}"
 msgstr "Strana {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/history/history.tsx
 msgid "Page {0} · read-only"
 msgstr "Strana {0} · len na čítanie"
 
-#. placeholder {0}: index + 1
-#. placeholder {0}: placement.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(placement.page + 1)
 #: src/features/write/section-sheet.tsx
 msgid "Page {0} · Sidebar"
 msgstr "Strana {0} · Bočný panel"
 
-#. placeholder {0}: pageIndex + 1
-#. placeholder {1}: preview.result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
+#. placeholder {1}: i18n.number(preview.result?.pageCount ?? 1)
 #: src/features/check/page.tsx
 msgid "Page {0} of {1}"
 msgstr "Strana {0} z {1}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/ats-checker/original-page.tsx
 msgid "Page {0} of the uploaded PDF"
 msgstr "Strana {0} z odovzdaných PDF"
 
-#. placeholder {0}: result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(result?.pageCount ?? 1)
 #: src/preview/page.tsx
 msgid "Page {currentPage} of {0}"
 msgstr "Strana {currentPage} z {0}"
@@ -9982,7 +9982,7 @@ msgstr "Znova"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -10156,7 +10156,7 @@ msgstr "Odstrániť pole"
 msgid "Remove file"
 msgstr "Odstrániť súbor"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -10165,7 +10165,7 @@ msgstr ""
 msgid "Remove password"
 msgstr "Odstrániť heslo"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "Odstrániť osobu {0}"
@@ -10179,7 +10179,7 @@ msgstr "Odstrániť fotografiu"
 msgid "Remove question"
 msgstr "Odstrániť otázku"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -10421,12 +10421,12 @@ msgstr "Obnovené „{0}“"
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -10498,7 +10498,7 @@ msgstr "Jazyk životopisu"
 msgid "Resume options"
 msgstr ""
 
-#. placeholder {0}: pageIndex + 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/check/page.tsx
 msgid "Resume page {0}"
 msgstr "Strana životopisu {0}"
@@ -10721,7 +10721,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "Písanie recenzií"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/check/writing.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -10769,7 +10769,7 @@ msgstr "Pozícia"
 msgid "Role (optional)"
 msgstr "Rola (voliteľné)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Rola {0}"
@@ -11305,12 +11305,12 @@ msgstr "Vybrať všetko"
 msgid "Select all roles"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
 msgstr "Vyberte záznam na stránke {0}"
 
-#. placeholder {0}: entry + 1
+#. placeholder {0}: i18n.number(entry + 1)
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "Vyberte položku {0}"
@@ -11654,7 +11654,7 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "Zobraziť „Vytvorené pomocou Reactive Resume“"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
 #: src/features/applications-board/board-screen.tsx
 msgid "Show {0} more"
 msgstr "Zobraziť ďalšie ({0})."
@@ -12265,8 +12265,8 @@ msgstr ""
 msgid "Stay in Documents"
 msgstr "Zostať v Dokumentoch"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -13911,7 +13911,7 @@ msgstr "Ak chcete spravovať etapy žiadostí, aktualizujte server. Existujúce 
 msgid "Updated"
 msgstr "Aktualizované"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Updated {completed} of {0}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures."
 msgstr "Aktualizované {completed} z {0}. Zamknuté dokumenty a sprievodné listy pre verejné odkazy boli preskočené. Obnovte a zopakujte všetky zlyhania."
@@ -14243,7 +14243,7 @@ msgstr "Verzia bola uložená"
 msgid "Version sent {date}"
 msgstr "Verzia odoslaná {date}"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "Verzia odoslaná {date} · Skontrolujte {0}"

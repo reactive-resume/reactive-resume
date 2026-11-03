@@ -182,7 +182,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 						application.sentResumeVersionId ? (
 							application.sentCheckScore !== null ? (
 								<Trans>
-									Version sent {date} · Check {application.sentCheckScore}
+									Version sent {date} · Check {i18n.number(application.sentCheckScore)}
 								</Trans>
 							) : (
 								<Trans>Version sent {date}</Trans>

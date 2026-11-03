@@ -1,7 +1,8 @@
 import type { FitStep } from "./presets";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { addPageWith, spillingSections } from "@reactive-resume/resume/spill";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useEditorStore } from "../store";
@@ -54,8 +55,8 @@ export function addSpillPage() {
 	const count = moving.main.length + moving.sidebar.length;
 	undoToast(
 		plural(count, {
-			one: `Added page ${page} and moved # section onto it`,
-			other: `Added page ${page} and moved # sections onto it`,
+			one: `Added page ${ph({ page: i18n.number(page) })} and moved # section onto it`,
+			other: `Added page ${ph({ page: i18n.number(page) })} and moved # sections onto it`,
 		}),
 	);
 	return true;
@@ -123,7 +124,7 @@ async function fitOnce() {
 		const current = useResumeStore.getState();
 		const reverted = !interrupted && !timedOut && !!fitted && current.resume?.data === fitted;
 		if (reverted) current.undo();
-		const addPage = { children: t`Add page ${authored + 1}`, onClick: () => void addSpillPage() };
+		const addPage = { children: t`Add page ${i18n.number(authored + 1)}`, onClick: () => void addSpillPage() };
 		toast.add({
 			type: "warning",
 			description: reverted
@@ -143,7 +144,11 @@ async function fitOnce() {
 	if (!applied) return;
 
 	const { density, margins, size } = result.state;
-	const details = [density ? densityLabel()[density] : null, margins ? marginsLabel()[margins] : null, t`${size} pt`]
+	const details = [
+		density ? densityLabel()[density] : null,
+		margins ? marginsLabel()[margins] : null,
+		t`${ph({ size: i18n.number(size) })} pt`,
+	]
 		.filter(Boolean)
 		.join(", ");
 	undoToast(plural(authored, { 1: `Fits on one page: ${details}`, other: `Fits on # pages: ${details}` }));

@@ -95,8 +95,8 @@ msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of y
 msgstr "{0, plural, one {«{1}» یک بار در آگهی آمده است. اگر بخشی از تجربهٔ شماست، آن را جای مناسب اضافه کنید.} other {«{2}» در آگهی # بار آمده است. اگر بخشی از تجربهٔ شماست، آن را جای مناسب اضافه کنید.}}"
 
 #. placeholder {0}: report.totalRules
-#. placeholder {1}: report.passedRules
-#. placeholder {2}: report.passedRules
+#. placeholder {1}: i18n.number(report.passedRules)
+#. placeholder {2}: i18n.number(report.passedRules)
 #: src/features/check/score.tsx
 msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
 msgstr "{0, plural, one {{1} از # بررسی موفق است.} other {{2} از # بررسی موفق هستند.}}"
@@ -109,15 +109,15 @@ msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}
 msgstr "{0, plural, one {{1} از # ویرایش پذیرفته شد} other {{2} از # ویرایش پذیرفته شد}}"
 
 #. placeholder {0}: value.report.applicableChecks
-#. placeholder {1}: value.report.passedChecks
-#. placeholder {2}: value.report.passedChecks
+#. placeholder {1}: i18n.number(value.report.passedChecks)
+#. placeholder {2}: i18n.number(value.report.passedChecks)
 #: src/features/check/parser.tsx
 msgid "{0, plural, one {{1} of # exported PDF check passes.} other {{2} of # exported PDF checks pass.}}"
 msgstr "{0, plural, one {{1} از # بررسی PDF خروجی موفق است.} other {{2} از # بررسی PDF خروجی موفق است.}}"
 
 #. placeholder {0}: match.total
-#. placeholder {1}: match.found.length
-#. placeholder {2}: match.found.length
+#. placeholder {1}: i18n.number(match.found.length)
+#. placeholder {2}: i18n.number(match.found.length)
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {{1} از # واژهٔ آگهی پوشش داده شده} other {{2} از # واژهٔ آگهی پوشش داده شده}}"
@@ -476,10 +476,10 @@ msgstr "{0} (کپی)"
 msgid "{0} (mine)"
 msgstr "{0} (مال من)"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
-#. placeholder {2}: step.reached
-#. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
+#. placeholder {2}: i18n.number(step.reached)
+#. placeholder {3}: step.conversion === null ? "" : ` (${i18n.number(step.conversion)}%)`
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
@@ -513,7 +513,7 @@ msgid "{0} interview · {1}"
 msgstr "مصاحبهٔ {0} · {1}"
 
 #. placeholder {0}: interviewTypeLabel(event.interview.kind)
-#. placeholder {1}: event.interview.durationMinutes
+#. placeholder {1}: i18n.number(event.interview.durationMinutes)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "{0} interview · {1} min"
 msgstr "مصاحبهٔ {0} · {1} دقیقه"
@@ -533,34 +533,34 @@ msgstr "{0} بیشتر"
 msgid "{0} new comments"
 msgstr ""
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/features/letters/write.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATES.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATES.length)
 #: src/features/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "{0} از {1} نشان داده شده است"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{0} از {1} درخواست سفارشی‌شده پاسخ گرفتند؛ {2} از {3} با رزومهٔ دیگری ارسال شد."
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -575,38 +575,38 @@ msgstr "فقط {0}"
 msgid "{0} posting"
 msgstr "آگهی استخدام {0}"
 
-#. placeholder {0}: selectedIds.length
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selectedIds.length)
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "{0} انتخاب شد"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
-#. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
-#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: displayed?.total ?? page.total
-#. placeholder {2}: pending.length
+#. placeholder {0}: i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))
+#. placeholder {0}: i18n.number(recoveryStart + 1)
+#. placeholder {1}: i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))
+#. placeholder {1}: i18n.number(Math.min(recoveryStart + 100, pending.length))
+#. placeholder {2}: i18n.number(displayed?.total ?? page.total)
+#. placeholder {2}: i18n.number(pending.length)
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: row.index + 1
-#. placeholder {2}: row.count
+#. placeholder {1}: i18n.number(row.index + 1)
+#. placeholder {2}: i18n.number(row.count)
 #: src/features/write/outline.tsx
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}، ورودی {1} از {2}"
@@ -616,13 +616,13 @@ msgstr "{0}، ورودی {1} از {2}"
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: Math.round(zoom * 100)
+#. placeholder {0}: i18n.number(Math.round(zoom * 100))
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
 msgid "{0}%"
 msgstr "{0}%"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/messages.tsx
 msgid "{accepted} of {0} applied"
 msgstr "{accepted} از {0} اعمال شد"
@@ -811,7 +811,7 @@ msgstr ""
 
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
-msgstr "{name} به صفحه 1 اضافه شد"
+msgstr "{name} به صفحه ۱ اضافه شد"
 
 #: src/features/check/issues.ts
 msgid "{name} is split into {columns} columns"
@@ -942,22 +942,22 @@ msgstr "{words, plural, one {کلمه #} other {کلمات #}}"
 msgid "{words} of {shownLimit} words"
 msgstr ""
 
-#. placeholder {0}: items.length - MAX_PER_DAY
+#. placeholder {0}: i18n.number(items.length - MAX_PER_DAY)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} بیشتر"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
-msgstr "1 ستون، درون خطی"
+msgstr "۱ ستون، درون خطی"
 
 #: src/features/application-detail/hooks.ts
 msgid "1 day"
-msgstr "1 روز"
+msgstr "۱ روز"
 
 #: src/features/application-detail/hooks.ts
 msgid "1 h"
-msgstr "1 ساعت"
+msgstr "۱ ساعت"
 
 #: src/features/share/feedback.tsx
 msgid "1 new comment"
@@ -969,11 +969,11 @@ msgstr "گزارش توجیهی ۱۰ دقیقه‌ای"
 
 #: src/features/design/style-groups.tsx
 msgid "10–11 recommended"
-msgstr "10-11 توصیه می شود"
+msgstr "۱۰-۱۱ توصیه می شود"
 
 #: src/features/letters/share.tsx
 msgid "2 files"
-msgstr "2 فایل"
+msgstr "۲ فایل"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "2 hours before"
@@ -981,7 +981,7 @@ msgstr "۲ ساعت قبل"
 
 #: src/features/write/entry-screen.tsx
 msgid "2–3 sentences reads best"
-msgstr "2-3 جمله بهترین خوانده می شود"
+msgstr "۲-۳ جمله بهترین خوانده می شود"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "24 hours before"
@@ -989,7 +989,7 @@ msgstr "۲۴ ساعت قبل"
 
 #: src/features/share/feedback.tsx
 msgid "30 days"
-msgstr "30 روز"
+msgstr "۳۰ روز"
 
 #: src/features/share/feedback.tsx
 msgid "7 days"
@@ -997,7 +997,7 @@ msgstr ""
 
 #: src/features/share/feedback.tsx
 msgid "90 days"
-msgstr "90 روز"
+msgstr "۹۰ روز"
 
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
@@ -1399,7 +1399,7 @@ msgstr "علاقه را اضافه کنید"
 
 #: src/features/check/issues.ts
 msgid "Add it to page 1"
-msgstr "آن را به صفحه 1 اضافه کنید"
+msgstr "آن را به صفحه ۱ اضافه کنید"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add lane"
@@ -1433,7 +1433,7 @@ msgstr "شماره‌ای همراه با کد کشور اضافه کنید؛ ب
 msgid "Add page"
 msgstr "افزودن صفحه"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/preview/page.tsx
 msgid "Add page {0}"
 msgstr ""
@@ -1738,7 +1738,7 @@ msgstr "آلبانیایی"
 msgid "All"
 msgstr "همه"
 
-#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
+#. placeholder {0}: i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "همه ({0})"
@@ -1866,7 +1866,7 @@ msgstr ""
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
 msgstr ""
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/application-detail/sections.tsx
 msgid "and {0} more"
 msgstr "و {0} بیشتر"
@@ -2244,7 +2244,7 @@ msgstr "پیوست کردن فایل رزومه (PDF)"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Attach up to 10 files to a message."
-msgstr "حداکثر 10 فایل را به یک پیام پیوست کنید."
+msgstr "حداکثر ۱۰ فایل را به یک پیام پیوست کنید."
 
 #: src/features/assistant/messages.tsx
 #: src/features/career/facts.tsx
@@ -2257,7 +2257,7 @@ msgstr "پیوست ها"
 
 #: src/features/assistant/chat-view.tsx
 msgid "Attachments can be up to 100 MB in all."
-msgstr "ضمیمه ها می توانند در مجموع تا 100 مگابایت باشند."
+msgstr "ضمیمه ها می توانند در مجموع تا ۱۰۰ مگابایت باشند."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "audio file"
@@ -2274,7 +2274,7 @@ msgstr "خودکار"
 
 #: src/features/history/history.tsx
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
-msgstr "ذخیره خودکار بر اساس جلسه گروه بندی شده و به مدت 90 روز نگهداری می شود. نسخه‌های نام‌گذاری‌شده تا زمانی که آن‌ها را حذف نکنید، حفظ می‌شوند. بازیابی ابتدا وضعیت فعلی را ذخیره می کند."
+msgstr "ذخیره خودکار بر اساس جلسه گروه بندی شده و به مدت ۹۰ روز نگهداری می شود. نسخه‌های نام‌گذاری‌شده تا زمانی که آن‌ها را حذف نکنید، حفظ می‌شوند. بازیابی ابتدا وضعیت فعلی را ذخیره می کند."
 
 #: src/features/share/custom-domain.tsx
 msgid "Available"
@@ -2858,12 +2858,12 @@ msgstr "یک فایل PDF را انتخاب کنید. فایل انتخابی آ
 
 #: src/features/application-detail/sections.tsx
 msgid "Choose a PDF smaller than 10 MB. The selected file was not uploaded."
-msgstr "یک PDF کوچکتر از 10 مگابایت انتخاب کنید. فایل انتخابی آپلود نشد."
+msgstr "یک PDF کوچکتر از ۱۰ مگابایت انتخاب کنید. فایل انتخابی آپلود نشد."
 
 #: src/features/settings/profile.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Choose a photo smaller than 10 MB."
-msgstr "یک عکس کوچکتر از 10 مگابایت انتخاب کنید."
+msgstr "یک عکس کوچکتر از ۱۰ مگابایت انتخاب کنید."
 
 #: src/features/applications/lane-settings.tsx
 msgid "Choose a replacement"
@@ -2961,7 +2961,7 @@ msgstr "زمان را انتخاب کنید"
 
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
-msgstr "در هر اقدام انبوه تا 200 درخواست شغلی را انتخاب کنید."
+msgstr "در هر اقدام انبوه تا ۲۰۰ درخواست شغلی را انتخاب کنید."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -4088,7 +4088,7 @@ msgstr "مصاحبه به‌روزرسانی نشد. دوباره امتحان �
 
 #: src/features/settings/profile.tsx
 msgid "Couldn't update the photo. Check camera permissions, choose a photo smaller than 10 MB, and try again."
-msgstr "عکس به‌روزرسانی نشد. مجوزهای دوربین را بررسی کنید، عکسی کوچکتر از 10 مگابایت انتخاب کنید و دوباره امتحان کنید."
+msgstr "عکس به‌روزرسانی نشد. مجوزهای دوربین را بررسی کنید، عکسی کوچکتر از ۱۰ مگابایت انتخاب کنید و دوباره امتحان کنید."
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't update the timeline. Try again."
@@ -4297,10 +4297,10 @@ msgstr "سبک های سفارشی اعمال نمی شوند. برای اعما
 msgid "Czech"
 msgstr "چکی"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/share/link.tsx
 msgid "Daily views over 30 days, peak {0}"
-msgstr "بازدیدهای روزانه در 30 روز گذشته، اوج {0}"
+msgstr "بازدیدهای روزانه در ۳۰ روز گذشته، اوج {0}"
 
 #: src/features/ai/report-content.tsx
 msgid "Dangerous or illegal advice"
@@ -4547,12 +4547,12 @@ msgstr "حذف نسخه"
 msgid "Deleted"
 msgstr "حذف شد"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0}. Refresh to see what remains."
 msgstr ""
@@ -4595,9 +4595,9 @@ msgstr "توضیحات"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Description is clipped to 20,000 characters. Review it before preparing."
-msgstr "توضیحات به 20000 کاراکتر بریده شده است. قبل از تهیه آن را مرور کنید."
+msgstr "توضیحات به ۲۰۰۰۰ کاراکتر بریده شده است. قبل از تهیه آن را مرور کنید."
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Description of role {0}"
 msgstr "شرح نقش {0}"
@@ -4987,7 +4987,7 @@ msgstr "ویرایش"
 msgid "Edit {0}"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
@@ -5199,7 +5199,7 @@ msgstr "شناسهٔ مدل را وارد کنید."
 
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
-msgstr "یک نام تا 64 کاراکتر وارد کنید."
+msgstr "یک نام تا ۶۴ کاراکتر وارد کنید."
 
 #: src/features/write/date-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
@@ -5229,7 +5229,7 @@ msgstr "یک آدرس وب مانند مثال.com وارد کنید"
 
 #: src/features/career/preferences.tsx
 msgid "Enter a whole number from 0 to 52, or leave blank."
-msgstr "یک عدد کامل از 0 تا 52 وارد کنید یا خالی بگذارید."
+msgstr "یک عدد کامل از ۰ تا ۵۲ وارد کنید یا خالی بگذارید."
 
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
@@ -5447,7 +5447,7 @@ msgstr ""
 msgid "Feedback links"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/basics-screen.tsx
 msgid "Field {0}"
 msgstr "فیلد {0}"
@@ -5471,7 +5471,7 @@ msgstr "فرمت فایل"
 
 #: src/features/documents/import-file.ts
 msgid "File is too large. Choose a file up to 10 MB."
-msgstr "فایل خیلی بزرگ است یک فایل تا 10 مگابایت انتخاب کنید."
+msgstr "فایل خیلی بزرگ است یک فایل تا ۱۰ مگابایت انتخاب کنید."
 
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -5484,7 +5484,7 @@ msgstr "اشتراک فایل در این دستگاه در دسترس نیست.
 
 #: src/features/assistant/chat-view.tsx
 msgid "Files can be up to 25 MB each."
-msgstr "هر فایل می تواند حداکثر 25 مگابایت باشد."
+msgstr "هر فایل می تواند حداکثر ۲۵ مگابایت باشد."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Fill details manually"
@@ -5884,15 +5884,15 @@ msgstr "سرعنوان"
 
 #: src/features/write/rich-text-field.tsx
 msgid "Heading 1"
-msgstr "سرعنوان 1"
+msgstr "سرعنوان ۱"
 
 #: src/features/write/rich-text-field.tsx
 msgid "Heading 2"
-msgstr "سرعنوان 2"
+msgstr "سرعنوان ۲"
 
 #: src/features/write/rich-text-field.tsx
 msgid "Heading 3"
-msgstr "سرعنوان 3"
+msgstr "سرعنوان ۳"
 
 #: src/features/check/issues.ts
 msgid "Heading changed"
@@ -6381,13 +6381,13 @@ msgstr "آیا پاداشی وجود دارد و به چه چیزی بستگی �
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/check/page.tsx
 msgid "Issue {0} of {1}"
 msgstr "شماره {0} از {1}"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -6865,7 +6865,7 @@ msgstr "کمتر"
 
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
-msgstr "کمتر از 48 ساعت باقی مانده است."
+msgstr "کمتر از ۴۸ ساعت باقی مانده است."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6895,7 +6895,7 @@ msgstr "بدن نامه"
 msgid "Letter page"
 msgstr "صفحه نامه"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/letters/page.tsx
 msgid "Letter page {0}"
 msgstr "صفحهٔ {0} نامه"
@@ -6968,12 +6968,12 @@ msgstr "خطوط به این نزدیکی می توانند هنگام خوان�
 msgid "Link"
 msgstr "پیوند"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -7588,11 +7588,11 @@ msgstr "بیش از یک آدرس ایمیل ظاهر شده است."
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Morning of · 08:00 local"
-msgstr "صبح همان روز · 08:00 به وقت محلی"
+msgstr "صبح همان روز · ۰۸:۰۰ به وقت محلی"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Morning of runs at 08:00, or two hours before interviews starting before 10:00."
-msgstr "صبح همان روز ساعت 08:00 اجرا می‌شود؛ برای مصاحبه‌های پیش از 10:00، دو ساعت زودتر اجرا می‌شود."
+msgstr "صبح همان روز ساعت ۰۸:۰۰ اجرا می‌شود؛ برای مصاحبه‌های پیش از ۱۰:۰۰، دو ساعت زودتر اجرا می‌شود."
 
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
@@ -7609,7 +7609,7 @@ msgstr "بیشتر ورودی‌ها تاریخ ندارند."
 
 #: src/features/letters/write.tsx
 msgid "Most recruiters read 180–320 words. The shaded band shows the range."
-msgstr "اکثر استخدام کنندگان 180 تا 320 کلمه را می خوانند. نوار سایه دار محدوده را نشان می دهد."
+msgstr "اکثر استخدام کنندگان ۱۸۰ تا ۳۲۰ کلمه را می خوانند. نوار سایه دار محدوده را نشان می دهد."
 
 #: src/features/check/issues.ts
 msgid "Most systems file candidates by email address."
@@ -7718,8 +7718,8 @@ msgstr "حرکت به بالا"
 msgid "Move your email and phone number to the top of page one."
 msgstr "ایمیل و شماره تلفن خود را به بالای صفحهٔ اول منتقل کنید."
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "{0} از {1} به سطل زباله منتقل شد. اسناد قفل شده نادیده گرفته شد. هر گونه شکست را بازخوانی و دوباره امتحان کنید."
@@ -7772,7 +7772,7 @@ msgstr "نام"
 msgid "Name and contact details weren't found. Add them in Basics."
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
 msgstr "نام فرد {0}"
@@ -8683,7 +8683,7 @@ msgstr "فقط ارائه دهندگانی که آزمون خود را قبول 
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "فقط اولین صفحات {0} بررسی شدند."
@@ -8694,7 +8694,7 @@ msgstr "فقط {MAX_IMPORT} ردیف نخست در هر بار وارد می‌�
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
-msgstr "فقط 30 صفحه اول بررسی شد."
+msgstr "فقط ۳۰ صفحه اول بررسی شد."
 
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
@@ -8945,7 +8945,7 @@ msgstr "مزایای دیگر"
 msgid "Other concern"
 msgstr "نگرانی دیگر"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/threads.tsx
 msgid "Other documents · {0}"
 msgstr "سایر اسناد · {0}"
@@ -8974,8 +8974,8 @@ msgstr "صفحه"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: 1
-#. placeholder {0}: index + 1
-#. placeholder {0}: item.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(item.page + 1)
 #: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
@@ -8986,29 +8986,29 @@ msgstr "صفحه"
 msgid "Page {0}"
 msgstr "صفحه {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/history/history.tsx
 msgid "Page {0} · read-only"
 msgstr "صفحه {0} · فقط خواندنی"
 
-#. placeholder {0}: index + 1
-#. placeholder {0}: placement.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(placement.page + 1)
 #: src/features/write/section-sheet.tsx
 msgid "Page {0} · Sidebar"
 msgstr "صفحه {0} · نوار کناری"
 
-#. placeholder {0}: pageIndex + 1
-#. placeholder {1}: preview.result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
+#. placeholder {1}: i18n.number(preview.result?.pageCount ?? 1)
 #: src/features/check/page.tsx
 msgid "Page {0} of {1}"
 msgstr "صفحه {0} از {1}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/ats-checker/original-page.tsx
 msgid "Page {0} of the uploaded PDF"
 msgstr "صفحه {0} از PDF آپلود شده"
 
-#. placeholder {0}: result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(result?.pageCount ?? 1)
 #: src/preview/page.tsx
 msgid "Page {currentPage} of {0}"
 msgstr "صفحه {currentPage} از {0}"
@@ -9835,7 +9835,7 @@ msgstr "امتیاز خوانایی"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Readability score: {score} out of 100"
-msgstr "امتیاز خوانایی: {score} از 100"
+msgstr "امتیاز خوانایی: {score} از ۱۰۰"
 
 #: src/features/assistant/messages.tsx
 msgid "Reading page…"
@@ -9982,7 +9982,7 @@ msgstr "انجام دوباره"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -10156,7 +10156,7 @@ msgstr "حذف فیلد"
 msgid "Remove file"
 msgstr "حذف فایل"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -10165,7 +10165,7 @@ msgstr ""
 msgid "Remove password"
 msgstr "حذف گذرواژه"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "حذف فرد {0}"
@@ -10179,7 +10179,7 @@ msgstr "حذف عکس"
 msgid "Remove question"
 msgstr "حذف پرسش"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -10421,12 +10421,12 @@ msgstr "\"{0}\" بازیابی شد"
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -10498,7 +10498,7 @@ msgstr "زبان رزومه"
 msgid "Resume options"
 msgstr ""
 
-#. placeholder {0}: pageIndex + 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/check/page.tsx
 msgid "Resume page {0}"
 msgstr "صفحه رزومه {0}"
@@ -10721,7 +10721,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "نقد نوشتن"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/check/writing.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -10769,7 +10769,7 @@ msgstr "موقعیت شغلی"
 msgid "Role (optional)"
 msgstr "نقش (اختیاری)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "نقش {0}"
@@ -11305,12 +11305,12 @@ msgstr "انتخاب همه"
 msgid "Select all roles"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
 msgstr "یک ورودی در صفحه {0} انتخاب کنید"
 
-#. placeholder {0}: entry + 1
+#. placeholder {0}: i18n.number(entry + 1)
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "ورودی {0} را انتخاب کنید"
@@ -11654,7 +11654,7 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "نمایش «ساخته‌شده با Reactive Resume»"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
 #: src/features/applications-board/board-screen.tsx
 msgid "Show {0} more"
 msgstr "نمایش {0} مورد دیگر"
@@ -12265,8 +12265,8 @@ msgstr ""
 msgid "Stay in Documents"
 msgstr "در اسناد بمانید"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -12668,7 +12668,7 @@ msgstr "آن فایل را نمی توان به عنوان PDF خواند."
 
 #: src/features/ats-checker/check.ts
 msgid "That file is too large to check. PDFs up to 25 MB work."
-msgstr "آن فایل برای بررسی خیلی بزرگ است. PDFs تا 25 MB کار می کند."
+msgstr "آن فایل برای بررسی خیلی بزرگ است. PDFs تا ۲۵ MB کار می کند."
 
 #: src/features/applications/error.ts
 msgid "That link couldn't be read. Paste the posting text instead."
@@ -13213,7 +13213,7 @@ msgstr "این فایل هیچ برچسب دسترسی‌پذیری ندارد."
 
 #: src/features/ats-checker/checker.tsx
 msgid "This file is {megabytes} MB. Imports take files up to 10 MB."
-msgstr "این فایل {megabytes} مگابایت است. وارد کردن فایل ها تا 10 مگابایت را می گیرد."
+msgstr "این فایل {megabytes} مگابایت است. وارد کردن فایل ها تا ۱۰ مگابایت را می گیرد."
 
 #: src/features/ats-checker/messages.ts
 msgid "This file is encrypted."
@@ -13859,16 +13859,16 @@ msgstr "رزومه بدون عنوان"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Up to 2 minutes · 2 MB maximum."
-msgstr "حداکثر 2 دقیقه · حداکثر 2 مگابایت."
+msgstr "حداکثر ۲ دقیقه · حداکثر ۲ مگابایت."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Up to 20 tags per document, 40 characters per tag."
-msgstr "حداکثر 20 برچسب در هر سند، 40 کاراکتر در هر برچسب."
+msgstr "حداکثر ۲۰ برچسب در هر سند، ۴۰ کاراکتر در هر برچسب."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Up to 25 MB · checked on the server and not stored"
-msgstr "تا 25 مگابایت · در سرور بررسی شده و ذخیره نشده است"
+msgstr "تا ۲۵ مگابایت · در سرور بررسی شده و ذخیره نشده است"
 
 #: src/features/settings/application-profile.tsx
 msgid "Update"
@@ -13911,7 +13911,7 @@ msgstr "برای مدیریت مرحله‌های درخواست شغلی، سر
 msgid "Updated"
 msgstr "به روز شد"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Updated {completed} of {0}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures."
 msgstr "{completed} از {0} به روز شد. اسناد قفل شده، و نامه‌های پوششی برای پیوندهای عمومی، نادیده گرفته شدند. هر گونه شکست را بازخوانی و دوباره امتحان کنید."
@@ -13968,11 +13968,11 @@ msgstr "از {url} استفاده کنید"
 
 #: src/features/settings/profile.tsx
 msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
-msgstr "از 3 تا 64 حروف لاتین a–z، اعداد، نقطه، خط فاصله و زیرخط استفاده کنید."
+msgstr "از ۳ تا ۶۴ حروف لاتین a–z، اعداد، نقطه، خط فاصله و زیرخط استفاده کنید."
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
-msgstr "از 6 تا 64 کاراکتر استفاده کنید."
+msgstr "از ۶ تا ۶۴ کاراکتر استفاده کنید."
 
 #: src/features/design/style-groups.tsx
 msgid "Use a darker shade"
@@ -14243,7 +14243,7 @@ msgstr "نسخه ذخیره شد"
 msgid "Version sent {date}"
 msgstr "نسخه ارسال شده {date}"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "نسخه ارسال شده {date} · {0} را بررسی کنید"
@@ -14305,7 +14305,7 @@ msgstr "مشاهده {0} · فقط خواندنی"
 
 #: src/features/share/link.tsx
 msgid "views · 30 days"
-msgstr "بازدید · 30 روز"
+msgstr "بازدید · ۳۰ روز"
 
 #: src/features/ai/report-content.tsx
 msgid "Violence or abuse"

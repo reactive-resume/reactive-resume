@@ -1,4 +1,5 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -86,10 +87,10 @@ export function LetterPages({ data, zoomBar = true }: { data: ResumeData | null;
 					) : (
 						result.pages.map((page) => (
 							<View key={page.index} style={{ gap: space.s2 }}>
-								<Text variant="caption" color="ink3" align="center">{t`Page ${page.index + 1}`}</Text>
+								<Text variant="caption" color="ink3" align="center">{t`Page ${i18n.number(page.index + 1)}`}</Text>
 								<PageImage
 									uri={page.uri}
-									accessibilityLabel={t`Letter page ${page.index + 1}`}
+									accessibilityLabel={t`Letter page ${i18n.number(page.index + 1)}`}
 									style={{
 										width: page.width * displayScale,
 										height: page.height * displayScale,
@@ -115,7 +116,7 @@ export function LetterPages({ data, zoomBar = true }: { data: ResumeData | null;
 					<IconButton icon="minus" label={t`Zoom out`} disabled={(zoom ?? 1) <= 0.6} onPress={() => step(-0.1)} />
 					<Button
 						variant="ghost"
-						label={zoom === null ? t`Fit` : t`${Math.round(zoom * 100)}%`}
+						label={zoom === null ? t`Fit` : t`${i18n.number(Math.round(zoom * 100))}%`}
 						onPress={() => change(1)}
 					/>
 					<IconButton icon="plus" label={t`Zoom in`} disabled={(zoom ?? 1) >= 1.5} onPress={() => step(0.1)} />

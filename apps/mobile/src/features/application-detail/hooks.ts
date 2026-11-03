@@ -3,7 +3,8 @@
 import type { Application } from "@/features/applications/types";
 import type { ReminderTarget } from "@/features/reminders";
 import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { File } from "expo-file-system";
@@ -150,4 +151,5 @@ export function useUserTime() {
 }
 
 /** "10 min", "1 h", "1 day": how long before the interview the reminder fires. */
-export const leadLabel = (minutes: number) => (minutes >= 1440 ? t`1 day` : minutes >= 60 ? t`1 h` : t`${minutes} min`);
+export const leadLabel = (minutes: number) =>
+	minutes >= 1440 ? t`1 day` : minutes >= 60 ? t`1 h` : t`${ph({ minutes: i18n.number(minutes) })} min`;

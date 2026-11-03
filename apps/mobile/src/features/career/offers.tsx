@@ -1,6 +1,7 @@
 import type { SavedItem } from "./hooks";
 import type { ApplicationSummary } from "@/features/applications/types";
 import type { CareerProfileData, OfferTerms } from "@reactive-resume/schema/career";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -127,7 +128,7 @@ export function OffersScreen() {
 										.filter((row) => row.id !== (side === 0 ? b?.id : a?.id))
 										.map((row) => ({
 											value: row.id,
-											label: `${row.application?.company ?? t`Deleted application`} · ${row.application?.role ?? ""} · ${row.data.version === "verbal" ? t`Verbal offer` : t`Written offer`} · ${time.when(row.createdAt)} · #${offers.filter((item) => item.applicationId === row.applicationId).findIndex((item) => item.id === row.id) + 1} · ${offers.find((item) => item.applicationId === row.applicationId)?.id === row.id ? t`Latest` : ""} · ${row.application?.closedReason === "accepted" ? t`Accepted` : row.application?.status === "closed" ? t`Closed` : row.application?.status === "offer" ? t`Offer` : t`In progress`}`,
+											label: `${row.application?.company ?? t`Deleted application`} · ${row.application?.role ?? ""} · ${row.data.version === "verbal" ? t`Verbal offer` : t`Written offer`} · ${time.when(row.createdAt)} · #${i18n.number(offers.filter((item) => item.applicationId === row.applicationId).findIndex((item) => item.id === row.id) + 1)} · ${offers.find((item) => item.applicationId === row.applicationId)?.id === row.id ? t`Latest` : ""} · ${row.application?.closedReason === "accepted" ? t`Accepted` : row.application?.status === "closed" ? t`Closed` : row.application?.status === "offer" ? t`Offer` : t`In progress`}`,
 										}))}
 									onChange={(id) => setSelected(side === 0 ? [id, b?.id] : [a?.id, id])}
 								/>

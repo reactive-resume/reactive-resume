@@ -2,6 +2,10 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { mock } from "node:test";
+import { i18n } from "@lingui/core";
+
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
 const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
@@ -79,6 +83,7 @@ ui.listLayout = {};
 ui.useFirstAppearance = () => false;
 ui.useReducedMotion = () => false;
 const mocks = {
+	"@lingui/core": { i18n },
 	"@/shell/shortcut-help": {
 		ShortcutHelpButton: "ShortcutHelpButton",
 		CharacterShortcutSetting: "CharacterShortcutSetting",
@@ -87,8 +92,12 @@ const mocks = {
 	react,
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", Platform: { OS: "android" } },
 	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
-	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en-US" } }) },
+	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
+		t: tag,
+		plural: (value, forms) => forms.other.replace("#", String(value)),
+	},
 	"@reactive-resume/ai/task-models": {
 		aiModelForTask: (provider, task) =>
 			(task === "capable" ? provider.capableModel : provider.fastModel) ?? provider.model,
@@ -389,10 +398,14 @@ const laneQuery = {
 };
 // Offer hints for Next step: none known unless a case sets them.
 let offerHint;
+let stageUndo;
 const stageActionsStub = {
 	useOfferHints: () => undefined,
 	offerHintFor: () => offerHint,
-	useStageMovedToast: () => (moved, lane) => calls.push({ moved: moved.id, lane: lane.category }),
+	useStageMovedToast: () => (moved, lane, _schedule, undo) => {
+		stageUndo = undo;
+		calls.push({ moved: moved.id, lane: lane.category });
+	},
 	acceptedStage: () => null,
 };
 const nextSteps = load("features/applications/next-step.ts", {
@@ -424,6 +437,7 @@ const nativeInterviewCalendar = load("features/application-detail/calendar.ts", 
 let applicationDocuments = [];
 let rejectDocumentLink = false;
 let creatingApplicationLetter = false;
+let stageUpdate = (input) => calls.push(input);
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
 	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
 	"@reactive-resume/schema/applications/document-suggestions": suggestionsDomain,
@@ -466,7 +480,7 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"@/features/applications/stage-actions": stageActionsStub,
 	"@/features/applications/stages": stages,
 	"@/features/applications/queries": {
-		useApplicationMutations: () => ({ update: { isPending: false, mutate: (input) => calls.push(input) } }),
+		useApplicationMutations: () => ({ update: { isPending: false, mutate: (...args) => stageUpdate(...args) } }),
 	},
 	"./calendar": nativeInterviewCalendar,
 	"@/features/reminders": {
@@ -505,6 +519,101 @@ control(tree, "Change lane").onChange("applied");
 assert.deepEqual(calls, ["mark-applied"], "Explicit Saved → Applied still captures submission details");
 control(tree, "Change lane").onChange("interview");
 assert.deepEqual(calls.at(-1), { id: "job-a", status: "interview" });
+
+// Undo must report a rejected inverse, rather than dismissing the success toast in silence.
+reset();
+stageUpdate = (input, callbacks) => {
+	calls.push(input);
+	if (input.status === "interview") callbacks?.onSuccess?.();
+	else callbacks?.onError?.(new Error("Offline"));
+};
+tree = render(StageStepper, { application });
+control(tree, "Change lane").onChange("interview");
+assert.equal(typeof stageUndo, "function");
+stageUndo();
+assert.deepEqual(calls.at(-1), { message: "Link unavailable" }, "Detail Undo failure remains visible");
+stageUpdate = (input) => calls.push(input);
+
+// A Move sheet can outlive its row snapshot. Resolve the inverse from the cache when its action dispatches.
+{
+	const { QueryClient } = mobileRequire("@tanstack/react-query");
+	const queryClient = new QueryClient();
+	const listKey = ["applications", "stage-fixture"];
+	const queryBoundary = {
+		applicationsListQueryKey: () => listKey,
+		applicationDetailQueryKey: (id) => ["application", id],
+		useApplications: () => ({ data: [application], isPending: false, refetch: async () => {} }),
+		useApplicationMutations: () => ({ update: { isPending: false, mutate: (...args) => stageUpdate(...args) } }),
+	};
+	const stageActions = load("features/applications/stage-actions.ts", {
+		"./queries": queryBoundary,
+		"./lane-queries": laneQuery,
+		"./lanes": lanes,
+		"./stages": stages,
+		"@tanstack/react-query": { useQueryClient: () => queryClient },
+		"@reactive-resume/schema/applications/stage-baselines": {},
+		"@/auth/session": { getServer: () => "fixture" },
+		"@/features/career/hooks": {},
+		"@/features/career/undo": {},
+	});
+	const { BoardScreen } = load("features/applications-board/board-screen.tsx", {
+		"@tanstack/react-query": { useQueryClient: () => queryClient },
+		"react-native": { ...mocks["react-native"], useWindowDimensions: () => ({ width: 320 }) },
+		"react-native-gesture-handler": {},
+		"react-native-reanimated": {
+			...mocks["react-native-reanimated"],
+			createAnimatedComponent: () => "Animated.ScrollView",
+			useAnimatedReaction() {},
+			useAnimatedScrollHandler: () => () => {},
+			useFrameCallback: () => ({ setActive() {} }),
+		},
+		"react-native-worklets": {},
+		"./board": load("features/applications-board/board.ts"),
+		"./search": { useApplicationSearch: () => ({ search: "", needsYou: false }) },
+		"./views": { ApplicationsViewFrame: "ApplicationsViewFrame" },
+		"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => time },
+		"@/features/application-detail/sheets": { CloseSheet: "CloseSheet", MarkAppliedSheet: "MarkAppliedSheet" },
+		"@/features/applications/error": { applicationError: () => "Stage unavailable" },
+		"@/features/applications/lane-queries": laneQuery,
+		"@/features/applications/lanes": lanes,
+		"@/features/applications/list": { filterApplications: (rows) => rows },
+		"@/features/applications/next-step": nextSteps,
+		"@/features/applications/queries": queryBoundary,
+		"@/features/applications/stage-actions": { ...stageActionsStub, listedApplication: stageActions.listedApplication },
+		"@/shell/use-is-tablet": { useIsTablet: () => false },
+	});
+	reset();
+	const board = BoardScreen().props.children[0].type;
+	let boardTree = render(board);
+	nodes(boardTree)
+		.find((node) => node.type?.name === "Column")
+		.props.onMove(application);
+	boardTree = render(board);
+	queryClient.setQueryData(listKey, [{ ...application, status: "closed", closedReason: "withdrew" }]);
+	stageUpdate = (input, callbacks) => {
+		calls.push(input);
+		if (input.status === "interview") callbacks?.onSuccess?.();
+		else callbacks?.onError?.(new Error("Offline"));
+	};
+	mock.timers.enable({ apis: ["setTimeout"] });
+	try {
+		nodes(boardTree)
+			.find((node) => node.type?.name === "MoveSheet")
+			.props.onPick("interview");
+		mock.timers.tick(1);
+	} finally {
+		mock.timers.reset();
+	}
+	stageUndo();
+	assert.deepEqual(calls.filter((call) => call?.id === application.id).at(-1), {
+		id: application.id,
+		status: "closed",
+		closedReason: "withdrew",
+	});
+	assert.deepEqual(calls.at(-1), { message: "Stage unavailable" }, "Board Undo failure remains visible");
+	queryClient.clear();
+	stageUpdate = (input) => calls.push(input);
+}
 
 for (const [resumeId, coverLetterId] of [
 	[null, null],
@@ -832,7 +941,7 @@ const listLogic = load("features/applications/list.ts", {
 	"./lanes": lanes,
 });
 const { ApplicationsListScreen } = load("features/applications/list-screen.tsx", {
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en" } }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en" } }) },
 	"./add-sheet": { AddApplicationSheet: "AddApplicationSheet" },
 	"./error": { applicationError: String },
 	"./lane-queries": laneQuery,
@@ -1225,8 +1334,9 @@ let calendarRows = [
 const { CalendarScreen } = load("features/applications-board/calendar-screen.tsx", {
 	"@/features/applications/stage-actions": { useOfferHints: () => undefined },
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", RefreshControl: "RefreshControl" },
-	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-GB" } }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { number: i18n.number.bind(i18n), locale: "en-GB" } }) },
 	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
 		plural: (value, forms) => (forms[value] ?? forms[value === 1 ? "one" : "other"]).replace("#", String(value)),
 	},
 	"./calendar": nativeCalendar,
@@ -3480,6 +3590,7 @@ const csvReact = {
 const { ImportApplicationsSheet: NativeCsvImport } = load("features/applications/import-sheet.tsx", {
 	react: csvReact,
 	"@lingui/core/macro": {
+		ph: (named) => Object.values(named)[0],
 		plural: (value, forms) => (value === 1 ? forms.one : forms.other).replaceAll("#", String(value)),
 	},
 	"@reactive-resume/schema/applications/csv": csvDomain,

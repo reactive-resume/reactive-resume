@@ -4,8 +4,10 @@ import type { ApplicationSummary as Application } from "@/features/applications/
 import type { ComponentRef } from "react";
 import type { ScrollView } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, Pressable, View, useWindowDimensions } from "react-native";
@@ -30,7 +32,12 @@ import { getLaneLabel, laneInput, resolveLane, undoLaneInput, visibleLanes } fro
 import { filterApplications } from "@/features/applications/list";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { useApplicationMutations, useApplications } from "@/features/applications/queries";
-import { offerHintFor, useOfferHints, useStageMovedToast } from "@/features/applications/stage-actions";
+import {
+	listedApplication,
+	offerHintFor,
+	useOfferHints,
+	useStageMovedToast,
+} from "@/features/applications/stage-actions";
 import { routes } from "@/routes";
 import { useIsTablet } from "@/shell/use-is-tablet";
 import {
@@ -84,6 +91,7 @@ export function BoardScreen() {
  */
 function Board() {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { t } = useLingui();
 	const { motion, radius, shadows, space } = useTheme();
 	const { width: windowWidth } = useWindowDimensions();
@@ -152,25 +160,29 @@ function Board() {
 	const cardWidth = columnWidth - space.s3 * 2;
 
 	const moveTo = (application: Application, stage: string) => {
+		const before = listedApplication(queryClient, application.id);
 		const lane = laneQuery.active.find((item) => item.id === stage);
-		if (!laneQuery.ready || !lane || update.isPending || stage === statusOf(application)) return;
+		if (!before || !laneQuery.ready || !lane || update.isPending || stage === statusOf(before)) return;
 		setActionLane(lane);
 		if (lane.category === "closed" && !lane.closedReason) {
-			setClosing(application);
+			setClosing(before);
 			return setCloseOpen(true);
 		}
-		if (application.status === "saved" && lane.category === "applied") {
-			setMarking(application);
+		if (before.status === "saved" && lane.category === "applied") {
+			setMarking(before);
 			return setMarkOpen(true);
 		}
-		setPending({ id: application.id, from: application.laneId ?? application.status, to: stage });
+		setPending({ id: application.id, from: before.laneId ?? before.status, to: stage });
 		update.mutate(
 			{ id: application.id, ...laneInput(lane, laneQuery.supported) },
 			{
 				onSuccess: () => {
-					const from = resolveLane(laneQuery.lanes, application);
+					const from = resolveLane(laneQuery.lanes, before);
 					stageMoved(application, lane, undefined, () =>
-						update.mutate({ id: application.id, ...undoLaneInput(from, application, laneQuery.supported) }),
+						update.mutate(
+							{ id: application.id, ...undoLaneInput(from, before, laneQuery.supported) },
+							{ onError: (error) => showToast({ message: applicationError(error) }) },
+						),
 					);
 				},
 				onError: (error) => {
@@ -508,7 +520,7 @@ function Column({
 					{getLaneLabel(stage)}
 				</Text>
 				<Text variant="mono" color="ink3">
-					{applications.length}
+					{i18n.number(applications.length)}
 				</Text>
 			</View>
 			<LegacyScrollView
@@ -538,7 +550,7 @@ function Column({
 					<Button
 						variant="ghost"
 						size="sm"
-						label={t`Show ${Math.min(remaining, COLUMN_PAGE_SIZE)} more`}
+						label={t`Show ${i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))} more`}
 						onPress={() => setVisible((count) => count + COLUMN_PAGE_SIZE)}
 					/>
 				) : null}

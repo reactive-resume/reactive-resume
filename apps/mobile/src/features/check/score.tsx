@@ -1,4 +1,5 @@
 import type { AtsReport } from "@reactive-resume/resume/ats";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useEffect } from "react";
@@ -61,7 +62,7 @@ export function Score({ report }: ScoreProps) {
 						origin={`${diameter / 2}, ${diameter / 2}`}
 					/>
 				</Svg>
-				<Text variant="display">{report.score}</Text>
+				<Text variant="display">{i18n.number(report.score)}</Text>
 			</View>
 			<View style={{ flex: 1, gap: space.s1 }}>
 				<Text variant="title">
@@ -73,8 +74,8 @@ export function Score({ report }: ScoreProps) {
 				</Text>
 				<Text variant="callout" color="ink2">
 					{plural(report.totalRules, {
-						one: `${report.passedRules} of # check passes.`,
-						other: `${report.passedRules} of # checks pass.`,
+						one: `${i18n.number(report.passedRules)} of # check passes.`,
+						other: `${i18n.number(report.passedRules)} of # checks pass.`,
 					}) +
 						" " +
 						plural(report.findings.length, { one: "# thing to review.", other: "# things to review." })}

@@ -2,6 +2,7 @@ import type { ExtractProgress } from "./extract-client";
 import type { AtsCheckResult } from "./run-ats-check";
 import type { PdfAtsReport, PdfCategory } from "@reactive-resume/resume/ats-pdf";
 import type { CSSProperties } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useNavigate } from "@tanstack/react-router";
@@ -345,7 +346,7 @@ function issueRows(report: PdfAtsReport): Row[] {
 		.map(([category, findings]) => ({
 			key: category,
 			title: getPdfCategoryLabel(category),
-			count: String(findings.length),
+			count: i18n.number(findings.length),
 			tone: findings.some((finding) => finding.severity === "blocker")
 				? ("danger" as const)
 				: findings.every((finding) => finding.severity === "tip")
@@ -370,7 +371,7 @@ function issueRows(report: PdfAtsReport): Row[] {
 		rows.push({
 			key: "posting",
 			title: t`Terms from the posting`,
-			count: `${report.jd.matchedCount}/${report.jd.totalTerms}`,
+			count: `${i18n.number(report.jd.matchedCount)}/${i18n.number(report.jd.totalTerms)}`,
 			tone: "accent",
 			body:
 				report.jd.missingTerms.length > 0 ? (
@@ -412,11 +413,11 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 				<div className="flex items-center gap-4">
 					<div
 						role="img"
-						aria-label={t`Readability score: ${report.score} out of 100`}
+						aria-label={t`Readability score: ${i18n.number(report.score)} out of 100`}
 						className="score-ring score-ring-reveal grid size-[84px] shrink-0 place-items-center rounded-full"
 						style={
 							{
-								"--ring-value": `${report.score}%`,
+								"--ring-value": `${i18n.number(report.score)}%`,
 								"--ring-color": `var(--${tone})`,
 							} as CSSProperties
 						}
@@ -442,7 +443,7 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 
 				{report.document.truncated && (
 					<p className="text-xs text-ink-3">
-						<Trans>Only the first {report.document.pageCount} pages were checked.</Trans>
+						<Trans>Only the first {i18n.number(report.document.pageCount)} pages were checked.</Trans>
 					</p>
 				)}
 

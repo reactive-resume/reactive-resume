@@ -13,7 +13,8 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useReducedMotion } from "motion/react";
 import { useCallback, useId, useState } from "react";
@@ -64,7 +65,7 @@ const getPlaceLabel = (pageIndex: number, columnId: ColumnId) => {
 	const page = pageIndex + 1;
 	const column = getColumnLabel(columnId);
 	return t({
-		message: `Page ${page}, ${column}`,
+		message: `Page ${ph({ page: i18n.number(page) })}, ${column}`,
 		comment: "Layout editor: a page and its column, read while dragging",
 	});
 };
@@ -312,7 +313,9 @@ function PageContainer({
 				<div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 @max-[22rem]:grid-cols-1">
 					<div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
 						<span className="text-xs font-medium">
-							<Trans comment="Layout editor page label with 1-based page number">Page {pageIndex + 1}</Trans>
+							<Trans comment="Layout editor page label with 1-based page number">
+								Page {i18n.number(pageIndex + 1)}
+							</Trans>
 						</span>
 
 						<label htmlFor={fullWidthSwitchId} className="flex min-w-0 cursor-pointer items-center gap-2">
@@ -515,7 +518,7 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 								onClick={() => moveTo(targetPageIndex, "main")}
 							>
 								<Icon name="file" size={16} />
-								<Trans>Page {targetPageIndex + 1}</Trans>
+								<Trans>Page {i18n.number(targetPageIndex + 1)}</Trans>
 							</DropdownMenuItem>
 						);
 
@@ -523,7 +526,7 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 						<DropdownMenuSub key={`page-${targetPageIndex}`}>
 							<DropdownMenuSubTrigger>
 								<Icon name="file" size={16} />
-								<Trans>Page {targetPageIndex + 1}</Trans>
+								<Trans>Page {i18n.number(targetPageIndex + 1)}</Trans>
 							</DropdownMenuSubTrigger>
 
 							<DropdownMenuSubContent>

@@ -95,8 +95,8 @@ msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of y
 msgstr "{0, plural, one {ବିଜ୍ଞାପନରେ “{1}” ଥରେ ଅଛି। ଆପଣଙ୍କ ଅଭିଜ୍ଞତା ସହ ମେଳ ଖାଇଲେ ଉପଯୁକ୍ତ ସ୍ଥାନରେ ଯୋଡ଼ନ୍ତୁ।} other {ବିଜ୍ଞାପନରେ “{2}” # ଥର ଅଛି। ଆପଣଙ୍କ ଅଭିଜ୍ଞତା ସହ ମେଳ ଖାଇଲେ ଉପଯୁକ୍ତ ସ୍ଥାନରେ ଯୋଡ଼ନ୍ତୁ।}}"
 
 #. placeholder {0}: report.totalRules
-#. placeholder {1}: report.passedRules
-#. placeholder {2}: report.passedRules
+#. placeholder {1}: i18n.number(report.passedRules)
+#. placeholder {2}: i18n.number(report.passedRules)
 #: src/features/check/score.tsx
 msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
 msgstr "{0, plural, one {#ଟି ଯାଞ୍ଚ ମଧ୍ୟରୁ {1}ଟି ପାସ୍ ହେଲା।} other {#ଟି ଯାଞ୍ଚ ମଧ୍ୟରୁ {2}ଟି ପାସ୍ ହେଲା।}}"
@@ -109,15 +109,15 @@ msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}
 msgstr "{0, plural, one {#ଟି ସମ୍ପାଦନା ମଧ୍ୟରୁ {1}ଟି ଗ୍ରହଣ ହେଲା} other {#ଟି ସମ୍ପାଦନା ମଧ୍ୟରୁ {2}ଟି ଗ୍ରହଣ ହେଲା}}"
 
 #. placeholder {0}: value.report.applicableChecks
-#. placeholder {1}: value.report.passedChecks
-#. placeholder {2}: value.report.passedChecks
+#. placeholder {1}: i18n.number(value.report.passedChecks)
+#. placeholder {2}: i18n.number(value.report.passedChecks)
 #: src/features/check/parser.tsx
 msgid "{0, plural, one {{1} of # exported PDF check passes.} other {{2} of # exported PDF checks pass.}}"
 msgstr "{0, plural, one {ରପ୍ତାନି PDFର # ଯାଞ୍ଚରୁ {1} ସଫଳ।} other {ରପ୍ତାନି PDFର # ଯାଞ୍ଚରୁ {2} ସଫଳ।}}"
 
 #. placeholder {0}: match.total
-#. placeholder {1}: match.found.length
-#. placeholder {2}: match.found.length
+#. placeholder {1}: i18n.number(match.found.length)
+#. placeholder {2}: i18n.number(match.found.length)
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {ବିଜ୍ଞାପନର # ପଦରୁ {1} ସାମିଲ} other {ବିଜ୍ଞାପନର # ପଦରୁ {2} ସାମିଲ}}"
@@ -476,10 +476,10 @@ msgstr "{0} (କପି)"
 msgid "{0} (mine)"
 msgstr "{0} (ମୋର)"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
-#. placeholder {2}: step.reached
-#. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
+#. placeholder {2}: i18n.number(step.reached)
+#. placeholder {3}: step.conversion === null ? "" : ` (${i18n.number(step.conversion)}%)`
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
@@ -513,7 +513,7 @@ msgid "{0} interview · {1}"
 msgstr "{0} ସାକ୍ଷାତକାର · {1}"
 
 #. placeholder {0}: interviewTypeLabel(event.interview.kind)
-#. placeholder {1}: event.interview.durationMinutes
+#. placeholder {1}: i18n.number(event.interview.durationMinutes)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "{0} interview · {1} min"
 msgstr "{0} ସାକ୍ଷାତକାର · {1} ମିନିଟ୍।"
@@ -533,34 +533,34 @@ msgstr "{0} ଅଧିକ"
 msgid "{0} new comments"
 msgstr ""
 
-#. placeholder {0}: index + 1
-#. placeholder {1}: all.length
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {1}: i18n.number(all.length)
 #: src/features/letters/write.tsx
 msgid "{0} of {1}"
 msgstr ""
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} characters"
 msgstr ""
 
-#. placeholder {0}: shown.length
-#. placeholder {1}: TEMPLATES.length
+#. placeholder {0}: i18n.number(shown.length)
+#. placeholder {1}: i18n.number(TEMPLATES.length)
 #: src/features/design/template-group.tsx
 msgid "{0} of {1} shown"
 msgstr "{1} ର {0} ଦର୍ଶାଯାଇଛି |"
 
-#. placeholder {0}: outcomes.tailored.replied
-#. placeholder {1}: outcomes.tailored.sent
-#. placeholder {2}: outcomes.base.replied
-#. placeholder {3}: outcomes.base.sent
+#. placeholder {0}: i18n.number(outcomes.tailored.replied)
+#. placeholder {1}: i18n.number(outcomes.tailored.sent)
+#. placeholder {2}: i18n.number(outcomes.base.replied)
+#. placeholder {3}: i18n.number(outcomes.base.sent)
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{1}ଟି ଅନୁକୂଳିତ ଆବେଦନ ମଧ୍ୟରୁ {0}ଟି ଉତ୍ତର ପାଇଲା; {3}ଟି ମଧ୍ୟରୁ {2}ଟି ଅନ୍ୟ ଏକ ରେଜ୍ୟୁମେ ସହ ପଠାଯାଇଥିଲା।"
 
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
+#. placeholder {0}: i18n.number(measured(proposal.text))
+#. placeholder {1}: i18n.number(limit.max)
 #: src/features/workspace/tabs/apply.tsx
 msgid "{0} of {1} words"
 msgstr ""
@@ -575,38 +575,38 @@ msgstr "କେବଳ {0}"
 msgid "{0} posting"
 msgstr "{0} ଚାକିରି ପୋଷ୍ଟିଂ |"
 
-#. placeholder {0}: selectedIds.length
-#. placeholder {0}: selection.length
+#. placeholder {0}: i18n.number(selectedIds.length)
+#. placeholder {0}: i18n.number(selection.length)
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "{0} ବଛାଗଲା"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: failed.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(failed.length)
 #: src/features/career/today.tsx
 msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
-#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
-#. placeholder {1}: [...answer].length
+#. placeholder {0}: i18n.number(answer.split(/\s+/).filter(Boolean).length)
+#. placeholder {1}: i18n.number([...answer].length)
 #: src/features/workspace/answer-library.tsx
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
-#. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
-#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: displayed?.total ?? page.total
-#. placeholder {2}: pending.length
+#. placeholder {0}: i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))
+#. placeholder {0}: i18n.number(recoveryStart + 1)
+#. placeholder {1}: i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))
+#. placeholder {1}: i18n.number(Math.min(recoveryStart + 100, pending.length))
+#. placeholder {2}: i18n.number(displayed?.total ?? page.total)
+#. placeholder {2}: i18n.number(pending.length)
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
-#. placeholder {1}: row.index + 1
-#. placeholder {2}: row.count
+#. placeholder {1}: i18n.number(row.index + 1)
+#. placeholder {2}: i18n.number(row.count)
 #: src/features/write/outline.tsx
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, {2} ଏଣ୍ଟ୍ରିରୁ {1}"
@@ -616,13 +616,13 @@ msgstr "{0}, {2} ଏଣ୍ଟ୍ରିରୁ {1}"
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
 
-#. placeholder {0}: Math.round(zoom * 100)
+#. placeholder {0}: i18n.number(Math.round(zoom * 100))
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
 msgid "{0}%"
 msgstr "{0}%"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: i18n.number(proposals.length)
 #: src/features/assistant/messages.tsx
 msgid "{accepted} of {0} applied"
 msgstr "{0} ର {accepted} ପ୍ରୟୋଗ ହୋଇଛି |"
@@ -942,7 +942,7 @@ msgstr "{words, plural, one {# ଶବ୍ଦ |} other {# ଶବ୍ଦ |}}"
 msgid "{words} of {shownLimit} words"
 msgstr ""
 
-#. placeholder {0}: items.length - MAX_PER_DAY
+#. placeholder {0}: i18n.number(items.length - MAX_PER_DAY)
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "ଆହୁରି {0}"
@@ -1433,7 +1433,7 @@ msgstr "ଏହାର ଦେଶ କୋଡ୍ ସହିତ ଗୋଟିଏ ଯୋ�
 msgid "Add page"
 msgstr "ପେଜ୍ ଯୋଡନ୍ତୁ"
 
-#. placeholder {0}: authored + 1
+#. placeholder {0}: i18n.number(authored + 1)
 #: src/preview/page.tsx
 msgid "Add page {0}"
 msgstr ""
@@ -1738,7 +1738,7 @@ msgstr "ଆଲବାନିଆନ୍"
 msgid "All"
 msgstr "ସମସ୍ତ"
 
-#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
+#. placeholder {0}: i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "ସମସ୍ତ ({0})"
@@ -1868,7 +1868,7 @@ msgstr ""
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
 msgstr ""
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/application-detail/sections.tsx
 msgid "and {0} more"
 msgstr "ଏବଂ {0} ଅଧିକ |"
@@ -4305,7 +4305,7 @@ msgstr "କଷ୍ଟମ୍ ଶୈଳୀ ପ୍ରୟୋଗ ହୋଇନାହି
 msgid "Czech"
 msgstr "ଚେକ୍"
 
-#. placeholder {0}: summary.peak
+#. placeholder {0}: i18n.number(summary.peak)
 #: src/features/share/link.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "30 ଦିନରୁ ଅଧିକ ଦ Daily ନିକ ଦୃଶ୍ୟ, ଶିଖ {0} |"
@@ -4558,12 +4558,12 @@ msgstr "ସଂସ୍କରଣ ବିଲୋପ କରନ୍ତୁ"
 msgid "Deleted"
 msgstr "ବିଲୋପ ହୋଇଛି"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Deleted {deleted} of {0}. Refresh to see what remains."
 msgstr ""
@@ -4608,7 +4608,7 @@ msgstr "ବର୍ଣ୍ଣନା"
 msgid "Description is clipped to 20,000 characters. Review it before preparing."
 msgstr "ବର୍ଣ୍ଣନା 20,000 ଅକ୍ଷରରେ କ୍ଲିପ୍ ହୋଇଛି। ପ୍ରସ୍ତୁତି ପୂର୍ବରୁ ଏହାକୁ ସମୀକ୍ଷା କରନ୍ତୁ।"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Description of role {0}"
 msgstr "ଭୂମିକା {0} ର ବର୍ଣ୍ଣନା |"
@@ -5000,7 +5000,7 @@ msgstr "ସମ୍ପାଦନ କରନ୍ତୁ"
 msgid "Edit {0}"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
@@ -5460,7 +5460,7 @@ msgstr ""
 msgid "Feedback links"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/basics-screen.tsx
 msgid "Field {0}"
 msgstr "କ୍ଷେତ୍ର {0} |"
@@ -6398,13 +6398,13 @@ msgstr "ବୋନସ୍ ଅଛି କି, ଏବଂ ଏହା କେଉଁଥି
 msgid "Is this job worth applying for?"
 msgstr ""
 
-#. placeholder {0}: issue.number
-#. placeholder {1}: issues.length
+#. placeholder {0}: i18n.number(issue.number)
+#. placeholder {1}: i18n.number(issues.length)
 #: src/features/check/page.tsx
 msgid "Issue {0} of {1}"
 msgstr "{1} ର {0} ଇସ୍ୟୁ କରନ୍ତୁ |"
 
-#. placeholder {0}: issue.number
+#. placeholder {0}: i18n.number(issue.number)
 #. placeholder {1}: issue.title
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -6912,7 +6912,7 @@ msgstr "ଅକ୍ଷର ଶରୀର"
 msgid "Letter page"
 msgstr "ଅକ୍ଷର ପୃଷ୍ଠା |"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/letters/page.tsx
 msgid "Letter page {0}"
 msgstr "ଚିଠିର ପେଜ୍ {0}"
@@ -6985,12 +6985,12 @@ msgstr "ପ close ଼ିବା ସମୟରେ ଏହି କ୍ଲୋଜ୍ ଏ�
 msgid "Link"
 msgstr "ଲିଙ୍କ୍ |"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Link {0} URL"
 msgstr ""
@@ -7736,8 +7736,8 @@ msgstr "ଉପରକୁ ଯାଅ |"
 msgid "Move your email and phone number to the top of page one."
 msgstr "ଆପଣଙ୍କ ଇମେଲ୍ ଏବଂ ଫୋନ୍ ନମ୍ବରକୁ ପ୍ରଥମ ପୃଷ୍ଠାର ଶୀର୍ଷକୁ ନିଅନ୍ତୁ।"
 
-#. placeholder {0}: done.length
-#. placeholder {1}: documents.length
+#. placeholder {0}: i18n.number(done.length)
+#. placeholder {1}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "{1}ରୁ {0} ଆବର୍ଜନାକୁ ଘୁଞ୍ଚାଗଲା। ଲକ୍ ଥିବା ଡକ୍ୟୁମେଣ୍ଟ୍ ଛାଡ଼ିଦିଆଗଲା। ରିଫ୍ରେସ୍ କରି ବିଫଳ କାମ ପୁଣି କରନ୍ତୁ।"
@@ -7790,7 +7790,7 @@ msgstr "ନାମ"
 msgid "Name and contact details weren't found. Add them in Basics."
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
 msgstr "ବ୍ୟକ୍ତି {0}ଙ୍କ ନାମ"
@@ -8702,7 +8702,7 @@ msgstr "କେବଳ ପ୍ରଦାନକାରୀ ଯେଉଁମାନେ ସ
 msgid "Only the first {0} characters are kept."
 msgstr ""
 
-#. placeholder {0}: report.document.pageCount
+#. placeholder {0}: i18n.number(report.document.pageCount)
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "କେବଳ ପ୍ରଥମ {0} ପୃଷ୍ଠାଗୁଡ଼ିକୁ ଯାଞ୍ଚ କରାଯାଇଥିଲା |"
@@ -8966,7 +8966,7 @@ msgid "Other concern"
 msgstr "|\n"
 "ଅନ୍ୟାନ୍ୟ ଚିନ୍ତା |"
 
-#. placeholder {0}: others.length
+#. placeholder {0}: i18n.number(others.length)
 #: src/features/assistant/threads.tsx
 msgid "Other documents · {0}"
 msgstr "ଅନ୍ୟାନ୍ୟ ଡକ୍ୟୁମେଣ୍ଟ୍ · {0} |"
@@ -8995,8 +8995,8 @@ msgstr "ପେଜ୍"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: 1
-#. placeholder {0}: index + 1
-#. placeholder {0}: item.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(item.page + 1)
 #: src/features/application-detail/attachment-preview.tsx
 #: src/features/design/layout-screen.tsx
 #: src/features/letters/page.tsx
@@ -9007,29 +9007,29 @@ msgstr "ପେଜ୍"
 msgid "Page {0}"
 msgstr "ପେଜ୍ {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/history/history.tsx
 msgid "Page {0} · read-only"
 msgstr "ପେଜ୍ {0} · କେବଳ ପଢ଼ିବା ପାଇଁ"
 
-#. placeholder {0}: index + 1
-#. placeholder {0}: placement.page + 1
+#. placeholder {0}: i18n.number(index + 1)
+#. placeholder {0}: i18n.number(placement.page + 1)
 #: src/features/write/section-sheet.tsx
 msgid "Page {0} · Sidebar"
 msgstr "ପେଜ୍ {0} · ପାର୍ଶ୍ୱପଟ"
 
-#. placeholder {0}: pageIndex + 1
-#. placeholder {1}: preview.result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
+#. placeholder {1}: i18n.number(preview.result?.pageCount ?? 1)
 #: src/features/check/page.tsx
 msgid "Page {0} of {1}"
 msgstr "{1}ରୁ ପେଜ୍ {0}"
 
-#. placeholder {0}: page.index + 1
+#. placeholder {0}: i18n.number(page.index + 1)
 #: src/features/ats-checker/original-page.tsx
 msgid "Page {0} of the uploaded PDF"
 msgstr "ଅପଲୋଡ୍ କରାଯାଇଥିବା PDFର ପେଜ୍ {0}"
 
-#. placeholder {0}: result?.pageCount ?? 1
+#. placeholder {0}: i18n.number(result?.pageCount ?? 1)
 #: src/preview/page.tsx
 msgid "Page {currentPage} of {0}"
 msgstr "{0}ରୁ ପେଜ୍ {currentPage}"
@@ -10008,7 +10008,7 @@ msgstr "ପୁଣି କରନ୍ତୁ"
 msgid "Redraft from the posting"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
 msgstr ""
@@ -10182,7 +10182,7 @@ msgstr "କ୍ଷେତ୍ର ଅପସାରଣ କରନ୍ତୁ |"
 msgid "Remove file"
 msgstr "ଫାଇଲ୍ ହଟାନ୍ତୁ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove link {0}"
 msgstr ""
@@ -10191,7 +10191,7 @@ msgstr ""
 msgid "Remove password"
 msgstr "ପାସୱାର୍ଡ ହଟାନ୍ତୁ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "ବ୍ୟକ୍ତି {0}ଙ୍କୁ ହଟାନ୍ତୁ"
@@ -10205,7 +10205,7 @@ msgstr "ଫଟୋ ହଟାନ୍ତୁ"
 msgid "Remove question"
 msgstr "ପ୍ରଶ୍ନ ହଟାନ୍ତୁ"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/settings/application-profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
@@ -10449,12 +10449,12 @@ msgstr "ପୁନରୁଦ୍ଧାର “{0}”"
 msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
-#. placeholder {0}: done.length
+#. placeholder {0}: i18n.number(done.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}."
 msgstr ""
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 msgstr ""
@@ -10526,7 +10526,7 @@ msgstr "ରେଜ୍ୟୁମେର ଭାଷା"
 msgid "Resume options"
 msgstr ""
 
-#. placeholder {0}: pageIndex + 1
+#. placeholder {0}: i18n.number(pageIndex + 1)
 #: src/features/check/page.tsx
 msgid "Resume page {0}"
 msgstr "ରେଜ୍ୟୁମେ ପେଜ୍ {0}"
@@ -10750,7 +10750,7 @@ msgstr ""
 msgid "Review writing"
 msgstr "ଲେଖା ସମୀକ୍ଷା କରନ୍ତୁ |"
 
-#. placeholder {0}: reviewedAt.toLocaleString()
+#. placeholder {0}: reviewedAt.toLocaleString(i18n.locale)
 #: src/features/check/writing.tsx
 msgid "Reviewed {0}"
 msgstr ""
@@ -10798,7 +10798,7 @@ msgstr "ପଦବୀ"
 msgid "Role (optional)"
 msgstr "ଭୂମିକା (ବ al କଳ୍ପିକ)"
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "ଭୂମିକା {0} |"
@@ -11335,12 +11335,12 @@ msgstr "ସବୁ ଚୟନ କରନ୍ତୁ"
 msgid "Select all roles"
 msgstr ""
 
-#. placeholder {0}: index + 1
+#. placeholder {0}: i18n.number(index + 1)
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
 msgstr "ପେଜ୍ {0}ରେ ଏକ ଏଣ୍ଟ୍ରି ବାଛନ୍ତୁ"
 
-#. placeholder {0}: entry + 1
+#. placeholder {0}: i18n.number(entry + 1)
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "ଏଣ୍ଟ୍ରି {0} ବାଛନ୍ତୁ"
@@ -11690,7 +11690,7 @@ msgstr ""
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ସହିତ ନିର୍ମିତ” ଦେଖାନ୍ତୁ"
 
-#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#. placeholder {0}: i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))
 #: src/features/applications-board/board-screen.tsx
 msgid "Show {0} more"
 msgstr "{0} ଅଧିକ ଦେଖାନ୍ତୁ |"
@@ -12302,8 +12302,8 @@ msgstr ""
 msgid "Stay in Documents"
 msgstr "ଡକ୍ୟୁମେଣ୍ଟ୍‌ରେ ରୁହନ୍ତୁ"
 
-#. placeholder {0}: stepIndex + 1
-#. placeholder {1}: STEPS.length
+#. placeholder {0}: i18n.number(stepIndex + 1)
+#. placeholder {1}: i18n.number(STEPS.length)
 #: src/features/workspace/preparation.tsx
 msgid "Step {0} of {1}"
 msgstr ""
@@ -13950,7 +13950,7 @@ msgstr "ଆବେଦନର ପର୍ଯ୍ୟାୟ ପରିଚାଳନା ପ
 msgid "Updated"
 msgstr "ଅଦ୍ୟତନ କରାଯାଇଛି"
 
-#. placeholder {0}: documents.length
+#. placeholder {0}: i18n.number(documents.length)
 #: src/features/documents/queries.ts
 msgid "Updated {completed} of {0}. Locked documents, and letters for public links, were skipped. Refresh and retry any failures."
 msgstr "{0}ରୁ {completed} ଅପଡେଟ୍ ହେଲା। ଲକ୍ ଡକ୍ୟୁମେଣ୍ଟ୍ ଓ ସାର୍ବଜନୀନ ଲିଙ୍କ୍ ପାଇଁ ଚିଠି ଛାଡ଼ିଦିଆଗଲା। ରିଫ୍ରେସ୍ କରି ବିଫଳ କାମ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
@@ -14285,7 +14285,7 @@ msgstr "ସଂସ୍କରଣ ସେଭ୍ ହେଲା"
 msgid "Version sent {date}"
 msgstr "ସଂସ୍କରଣ {date} ପଠାଇଲା |"
 
-#. placeholder {0}: application.sentCheckScore
+#. placeholder {0}: i18n.number(application.sentCheckScore)
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "ସଂସ୍କରଣ {date} ପଠାଇଲା · {0} ଯାଞ୍ଚ କରନ୍ତୁ |"

@@ -162,7 +162,7 @@ export function SectionRow({ section, locked, dragGroup, onMove, children }: Sec
 				)}
 				{section.kind !== "summary" && (
 					<span className="px-1 font-mono text-xs text-ink-3">
-						<span aria-hidden="true">{count}</span>
+						<span aria-hidden="true">{i18n.number(count)}</span>
 						<span className="sr-only">{plural(count, { one: "# entry", other: "# entries" })}</span>
 					</span>
 				)}

@@ -1,5 +1,6 @@
 import type { ColumnId, Drop, DropZone, Location } from "./layout";
 import type { GroupProps } from "./style-groups";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { useRef, useState } from "react";
 import { View } from "react-native";
@@ -206,7 +207,10 @@ export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScre
 				>
 					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
 						<Text variant="label">
-							{t({ message: `Page ${index + 1}`, comment: "Layout editor page label with 1-based page number" })}
+							{t({
+								message: `Page ${i18n.number(index + 1)}`,
+								comment: "Layout editor page label with 1-based page number",
+							})}
 						</Text>
 						{layout.pages.length > 1 ? (
 							<Button
@@ -269,7 +273,7 @@ export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScre
 							(oneColumn || page.fullWidth ? (["main"] as const) : (["main", "sidebar"] as const)).map((columnId) => (
 								<ListRow
 									key={`${index}-${columnId}`}
-									title={`${t`Page ${index + 1}`} · ${columnLabel(columnId)}`}
+									title={`${t`Page ${i18n.number(index + 1)}`} · ${columnLabel(columnId)}`}
 									leading="file"
 									disabled={disabled || (menuData.at.page === index && menuData.at.column === columnId)}
 									onPress={() => {

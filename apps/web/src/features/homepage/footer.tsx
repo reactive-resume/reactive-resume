@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
@@ -238,7 +239,7 @@ function FooterDesk() {
 					<span aria-hidden="true" className={spotWashClass} />
 					<span className={spotLabelClass}>
 						<span aria-hidden="true" className="font-mono text-[10px] opacity-60">
-							{spot.number}
+							{i18n.number(Number(spot.number), { minimumIntegerDigits: 2 })}
 						</span>
 						{spot.label}
 					</span>

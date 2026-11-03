@@ -4,7 +4,8 @@ import type { Fact } from "../hooks";
 import type { WorkspaceTabProps } from "../shell";
 import type { SaveResult } from "../state";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
-import { plural } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
@@ -403,8 +404,8 @@ function AnswerCard({
 							{/* The question's own limit, when it states one in this unit (web apply). */}
 							{shownLimit
 								? unit === "words"
-									? t`${words} of ${shownLimit} words`
-									: t`${characters} of ${shownLimit} characters`
+									? t`${ph({ words: i18n.number(words) })} of ${ph({ shownLimit: i18n.number(shownLimit) })} words`
+									: t`${ph({ characters: i18n.number(characters) })} of ${ph({ shownLimit: i18n.number(shownLimit) })} characters`
 								: unit === "words"
 									? plural(words, { one: "# word", other: "# words" })
 									: plural(characters, { one: "# character", other: "# characters" })}
@@ -513,8 +514,8 @@ function AnswerCard({
 								style={{ marginLeft: "auto" }}
 							>
 								{limit.kind === "characters"
-									? t`${measured(proposal.text)} of ${limit.max} characters`
-									: t`${measured(proposal.text)} of ${limit.max} words`}
+									? t`${i18n.number(measured(proposal.text))} of ${i18n.number(limit.max)} characters`
+									: t`${i18n.number(measured(proposal.text))} of ${i18n.number(limit.max)} words`}
 							</Text>
 						) : null}
 					</Actions>
@@ -714,7 +715,15 @@ function Checklist({
 	};
 
 	return (
-		<Block title={t`Review checks`} trailing={<Text variant="callout" color="ink2">{t`${done} of ${total}`}</Text>}>
+		<Block
+			title={t`Review checks`}
+			trailing={
+				<Text
+					variant="callout"
+					color="ink2"
+				>{t`${ph({ done: i18n.number(done) })} of ${ph({ total: i18n.number(total) })}`}</Text>
+			}
+		>
 			{!submitted && !readOnly ? <PriorNoResponse company={application.company} excludeId={application.id} /> : null}
 			<View>
 				{items.map((label, index) => (

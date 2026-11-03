@@ -1,7 +1,7 @@
 import type { ApplicationSort } from "./list";
 import type { ApplicationSummary } from "./types";
 import type { ApplicationClosedReason } from "@reactive-resume/schema/applications/data";
-import { plural } from "@lingui/core/macro";
+import { ph, plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import Storage from "expo-sqlite/kv-store";
@@ -292,7 +292,10 @@ function ApplicationsList() {
 					? (await bulkDelete.mutateAsync({ ids })).deleted
 					: (await bulkUpdate.mutateAsync({ ids, addTags: [newTag.trim()] })).updated;
 			setResult(
-				plural(ids.length, { one: `${count} of # application changed.`, other: `${count} of # applications changed.` }),
+				plural(ids.length, {
+					one: `${ph({ count: i18n.number(count) })} of # application changed.`,
+					other: `${ph({ count: i18n.number(count) })} of # applications changed.`,
+				}),
 			);
 			setBulk(null);
 			setSelected(new Set());
@@ -416,7 +419,7 @@ function ApplicationsList() {
 			)}
 			{selecting && (
 				<>
-					<Text variant="title">{t`${selectedIds.length} selected`}</Text>
+					<Text variant="title">{t`${i18n.number(selectedIds.length)} selected`}</Text>
 					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 						<Button
 							label={t`Select all`}
@@ -584,7 +587,7 @@ function ApplicationsList() {
 							<Text variant="title" style={{ flex: 1 }}>
 								{getLaneLabel(section.lane)}
 							</Text>
-							<Text color="ink3">{section.total}</Text>
+							<Text color="ink3">{i18n.number(section.total)}</Text>
 							<Icon
 								name={collapsed.has(section.status) ? "caret-right" : "caret-down"}
 								size={size.icon.meta}

@@ -3,6 +3,7 @@ import type { ApplicationLane } from "@/features/applications/lanes";
 import type { Application } from "@/features/applications/types";
 import type { ApplicationTimelineEntry, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
@@ -123,7 +124,10 @@ export function StageStepper({ application, onMarkApplied, onCloseLane, onSchedu
 						(entry) => entry.type === "interview" && new Date(entry.at).getTime() > Date.now(),
 					);
 					stageMoved(application, target, scheduled ? undefined : onSchedule, () =>
-						update.mutate({ id: application.id, ...undoLaneInput(lane, application, lanes.supported) }),
+						update.mutate(
+							{ id: application.id, ...undoLaneInput(lane, application, lanes.supported) },
+							{ onError: (error) => showToast({ message: applicationError(error) }) },
+						),
 					);
 				},
 				onError: (error) => showToast({ message: applicationError(error) }),
@@ -445,7 +449,7 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 							subtitle={
 								sentResumeVersionId
 									? application.sentCheckScore !== null
-										? t`Version sent ${date} · Check ${application.sentCheckScore}`
+										? t`Version sent ${date} · Check ${i18n.number(application.sentCheckScore)}`
 										: t`Version sent ${date}`
 									: t`Linked · not sent yet`
 							}
@@ -713,7 +717,7 @@ export function Contacts({ application }: SectionProps) {
 				<ListRow
 					leading="user-circle"
 					title={primary ? (primary.type ? `${primary.name} · ${primary.type}` : primary.name) : t`No contacts yet.`}
-					subtitle={others.length > 0 ? t`and ${others.length} more` : primary?.role || undefined}
+					subtitle={others.length > 0 ? t`and ${i18n.number(others.length)} more` : primary?.role || undefined}
 					chevron
 					accessibilityHint={t`Manage contacts`}
 					onPress={() => setOpen(true)}

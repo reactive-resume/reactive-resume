@@ -124,3 +124,18 @@ assert.ok(find(Toaster(), "Pressable"), "A throwing action remains available");
 retry.props.onPress();
 assert.equal(attempts, 2, "A synchronous failure permits retry");
 assert.equal(find(Toaster(), "Pressable"), undefined);
+
+showToast({
+	message: "Moved to Offer",
+	action: { label: "Add the offer's terms", onPress() {} },
+	undo() {},
+});
+const responsive = find(Toaster(), "Animated.View");
+assert.equal(responsive.props.style.maxWidth, "100%", "Toast is bounded by the available phone width");
+assert.equal(responsive.props.style.flexWrap, "wrap", "Enlarged controls can move onto another line");
+assert.equal(find(responsive, "Text").props.style.width, "100%", "Message leaves controls their own line");
+const responsiveControl = find(responsive, "Pressable").props.style({ pressed: false });
+assert.equal(responsiveControl.flexShrink, 1, "Long translated control text can wrap within its row");
+assert.equal(responsiveControl.maxWidth, "100%");
+assert.ok(responsiveControl.minHeight >= 44, "Wrapping retains the control's touch target");
+find(responsive, "Pressable").props.onPress();

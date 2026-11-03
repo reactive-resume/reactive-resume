@@ -1,7 +1,8 @@
 import type { Fact } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
-import { plural, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -480,8 +481,8 @@ function AnswerCard({
 						{/* The question's own limit, when it states one in this unit: "174 of 150 words". */}
 						{shownLimit
 							? unit === "words"
-								? t`${words} of ${shownLimit} words`
-								: t`${characters} of ${shownLimit} characters`
+								? t`${ph({ words: i18n.number(words) })} of ${ph({ shownLimit: i18n.number(shownLimit) })} words`
+								: t`${ph({ characters: i18n.number(characters) })} of ${ph({ shownLimit: i18n.number(shownLimit) })} characters`
 							: unit === "words"
 								? plural(words, { one: "# word", other: "# words" })
 								: plural(characters, { one: "# character", other: "# characters" })}
@@ -561,8 +562,8 @@ function AnswerCard({
 									)}
 								>
 									{limit.kind === "characters"
-										? t`${measured(proposal.text)} of ${limit.max} characters`
-										: t`${measured(proposal.text)} of ${limit.max} words`}
+										? t`${i18n.number(measured(proposal.text))} of ${i18n.number(limit.max)} characters`
+										: t`${i18n.number(measured(proposal.text))} of ${i18n.number(limit.max)} words`}
 								</span>
 							)}
 						</div>
@@ -843,7 +844,7 @@ function Checklist({
 				<h2 className="text-sm font-semibold">
 					<Trans>Review checks</Trans>
 				</h2>
-				<span className="text-xs text-ink-2 tabular-nums">{t`${done} of ${items.length}`}</span>
+				<span className="text-xs text-ink-2 tabular-nums">{t`${ph({ done: i18n.number(done) })} of ${i18n.number(items.length)}`}</span>
 			</div>
 			<ul className="grid gap-2.5">
 				{items.map((label, index) => (

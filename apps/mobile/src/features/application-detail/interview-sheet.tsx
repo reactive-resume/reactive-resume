@@ -1,5 +1,6 @@
 import type { Application, ApplicationSummary } from "@/features/applications/types";
 import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
+import { i18n } from "@lingui/core";
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -438,7 +439,7 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 							<View style={{ flexDirection: "row", alignItems: "flex-end", gap: space.s2 }}>
 								<View style={{ flex: 1 }}>
 									<TextField
-										label={t`Name of person ${index + 1}`}
+										label={t`Name of person ${i18n.number(index + 1)}`}
 										editable={!pending}
 										value={person.name}
 										maxLength={200}
@@ -447,7 +448,7 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 								</View>
 								<IconButton
 									icon="x"
-									label={t`Remove person ${index + 1}`}
+									label={t`Remove person ${i18n.number(index + 1)}`}
 									disabled={pending}
 									onPress={() =>
 										set(

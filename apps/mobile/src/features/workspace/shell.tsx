@@ -6,6 +6,8 @@ import type { Application } from "@/features/applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
+import { ph } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
@@ -296,10 +298,14 @@ function TabBadges({ saved, interview, now }: TabBadgesProps) {
 	const badge = (tab: WorkspaceTab) => {
 		if (tab === "prepare" && minutes !== null && minutes > 0 && minutes < 7 * 24 * 60) {
 			const hours = Math.round(minutes / 60);
-			return { tone: minutes <= 60 ? "warn" : "accent", text: minutes <= 60 ? t`${minutes} min` : t`${hours} h` };
+			return {
+				tone: minutes <= 60 ? "warn" : "accent",
+				text:
+					minutes <= 60 ? t`${ph({ minutes: i18n.number(minutes) })} min` : t`${ph({ hours: i18n.number(hours) })} h`,
+			};
 		}
-		if (tab === "messages" && unread > 0) return { tone: "info", text: String(unread) };
-		if (tab === "saved" && (saved?.length ?? 0) > 0) return { tone: "plain", text: String(saved?.length) };
+		if (tab === "messages" && unread > 0) return { tone: "info", text: i18n.number(unread) };
+		if (tab === "saved" && (saved?.length ?? 0) > 0) return { tone: "plain", text: i18n.number(saved?.length ?? 0) };
 		return null;
 	};
 	const badgeColors = {

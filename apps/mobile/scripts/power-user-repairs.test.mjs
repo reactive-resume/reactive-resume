@@ -1,8 +1,10 @@
-// Actual native screen and load-state owners; widgets and transport remain explicit host boundaries.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+// Actual native screen and load-state owners; widgets and transport remain explicit host boundaries.
+import { i18n } from "@lingui/core";
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
+i18n.loadAndActivate({ locale: "en-US", messages: {} });
 const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 let hooks = [];
 let cursor = 0;
@@ -89,8 +91,13 @@ const common = {
 		BackHandler: { addEventListener: () => ({ remove() {} }) },
 	},
 	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
-	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
-	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
+	"@lingui/core": { i18n },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n }) },
+	"@lingui/core/macro": {
+		t: tag,
+		ph: (values) => Object.values(values)[0],
+		plural: (value, forms) => forms.other.replace("#", String(value)),
+	},
 	"@/ui": ui,
 	"@/routes": { routes },
 };

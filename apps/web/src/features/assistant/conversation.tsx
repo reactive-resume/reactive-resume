@@ -6,7 +6,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import { i18n } from "@lingui/core";
-import { plural, t } from "@lingui/core/macro";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
@@ -890,7 +890,7 @@ function ToolPartView({
 											<Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />
 										) : (
 											<Trans>
-												{accepted} of {proposals.length} applied
+												{ph({ accepted: i18n.number(accepted) })} of {i18n.number(proposals.length)} applied
 											</Trans>
 										)}
 									</span>
@@ -970,7 +970,6 @@ function StillOverflows() {
 	const overflow = data && rendered.pageCount > 0 ? measureOverflow(data, rendered) : null;
 	if (!overflow) return null;
 	const first = overflow.spills[0];
-	const page = first?.authoredPage;
 	const lines = first?.lines;
 	return (
 		<p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg bg-warn-soft px-3 py-2 text-xs text-warn-text">
@@ -978,8 +977,8 @@ function StillOverflows() {
 				{first && first.pages.length === 1 && lines ? (
 					<Plural
 						value={lines}
-						one={`Page ${page} still runs over by about # line.`}
-						other={`Page ${page} still runs over by about # lines.`}
+						one={`Page ${ph({ page: i18n.number(first.authoredPage) })} still runs over by about # line.`}
+						other={`Page ${ph({ page: i18n.number(first.authoredPage) })} still runs over by about # lines.`}
 					/>
 				) : (
 					<Plural value={overflow.pageCount} one="Still runs to # page." other="Still runs to # pages." />

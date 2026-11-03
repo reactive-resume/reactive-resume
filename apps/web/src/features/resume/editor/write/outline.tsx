@@ -5,7 +5,8 @@ import type { MessageDescriptor } from "@lingui/core";
 import type { CustomSectionType, SectionType } from "@reactive-resume/schema/resume/data";
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { msg, t } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { msg, ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Fragment, useMemo } from "react";
@@ -105,7 +106,8 @@ export function Outline({ locked, page }: OutlineProps) {
 		const title =
 			getSectionObject(data, section)?.title.trim() ||
 			getSectionTitle(section.kind === "custom" ? section.type : (section.id as SectionType | "summary"));
-		if (position > 0) announce(t`${title} moved to position ${position} of ${rows.length}`);
+		if (position > 0)
+			announce(t`${title} moved to position ${ph({ position: i18n.number(position) })} of ${i18n.number(rows.length)}`);
 	};
 
 	const onDragEnd = ({ active, over }: DragEndEvent) => {
@@ -126,7 +128,7 @@ export function Outline({ locked, page }: OutlineProps) {
 
 						return (
 							<Fragment key={row.id}>
-								{newPage && <Divider label={<Trans>Page {row.page + 1}</Trans>} />}
+								{newPage && <Divider label={<Trans>Page {i18n.number(row.page + 1)}</Trans>} />}
 								{sidebarStarts && <Divider label={<Trans>Sidebar</Trans>} subtle />}
 								<OutlineSection
 									sectionId={row.id}
@@ -157,8 +159,9 @@ export function Outline({ locked, page }: OutlineProps) {
 
 /** The page and column a row prints in, as the dividers show it, for drag announcements. */
 function dragGroup(row: OutlineRow, multiPage: boolean, twoColumns: boolean) {
-	if (twoColumns && row.column === "sidebar") return multiPage ? t`Page ${row.page + 1}, sidebar` : t`Sidebar`;
-	return multiPage ? t`Page ${row.page + 1}` : undefined;
+	if (twoColumns && row.column === "sidebar")
+		return multiPage ? t`Page ${i18n.number(row.page + 1)}, sidebar` : t`Sidebar`;
+	return multiPage ? t`Page ${i18n.number(row.page + 1)}` : undefined;
 }
 
 function Divider({ label, subtle = false }: { label: React.ReactNode; subtle?: boolean }) {
@@ -241,7 +244,7 @@ function EntryList({ section, locked, page }: EntryListProps) {
 		// Said only when the move applied: a locked resume leaves the data as it was.
 		if (!announced || useResumeStore.getState().resume?.data === before) return;
 		const title = entry ? describeEntry(section.type, entry).title || t`Untitled` : t`Untitled`;
-		announce(t`${title}, entry ${to + 1} of ${entryIds.length}`);
+		announce(t`${title}, entry ${i18n.number(to + 1)} of ${i18n.number(entryIds.length)}`);
 	};
 
 	const onDragEnd = ({ active, over }: DragEndEvent) => {

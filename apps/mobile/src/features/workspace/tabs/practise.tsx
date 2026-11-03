@@ -4,6 +4,8 @@ import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "../shell";
 import type { RecordStop, Recording, VoiceSettings } from "../voice";
 import type { ReactNode } from "react";
+import { i18n } from "@lingui/core";
+import { ph } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
@@ -360,10 +362,10 @@ function Session({
 	const position = (index % questions.length) + 1;
 	const total = questions.length;
 	const recordingNow = step.name === "recording";
-	const elapsed = clock(recorder.seconds);
+	const elapsed = clock(recorder.seconds, i18n.locale);
 	const model = transcriber?.model ?? "";
 	const transcriberName = transcriber?.label ?? "";
-	const spokenFor = spoken?.seconds != null ? clock(spoken.seconds) : t`audio file`;
+	const spokenFor = spoken?.seconds != null ? clock(spoken.seconds, i18n.locale) : t`audio file`;
 	const answerField = (
 		<TextArea
 			label={t`Your answer`}
@@ -378,7 +380,7 @@ function Session({
 	return (
 		<View style={{ gap: space.s4 }}>
 			<Block
-				title={`${t`Question ${position} of ${total}`} · ${question.origin === "recalled" ? t`Recalled` : t`Practice`}`}
+				title={`${t`Question ${ph({ position: i18n.number(position) })} of ${ph({ total: i18n.number(total) })}`} · ${question.origin === "recalled" ? t`Recalled` : t`Practice`}`}
 				trailing={<HearIt key={question.text} text={question.text} voice={voice} player={player} />}
 			>
 				<Text variant="heading">{question.text}</Text>

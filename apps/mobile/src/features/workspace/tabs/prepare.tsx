@@ -4,7 +4,8 @@ import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "../shell";
 import type { Application } from "@/features/applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
-import { plural } from "@lingui/core/macro";
+import { i18n } from "@lingui/core";
+import { ph, plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -156,7 +157,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 				<Text variant="heading">{data.headline}</Text>
 				<Text color="ink2">{data.summary}</Text>
 				<Text variant="mono" color="ink3">
-					{t`${doneMinutes} of ${total} min`}
+					{t`${ph({ doneMinutes: i18n.number(doneMinutes) })} of ${ph({ total: i18n.number(total) })} min`}
 				</Text>
 			</View>
 			{/* The interview, posting or Knowledge changed since it was planned: plan again on request. */}
@@ -201,7 +202,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 								onChange={(on) => ticks.toggle(String(index), on)}
 								trailing={
 									<Text variant="mono" color="ink3">
-										{t`${minutes} min`}
+										{t`${ph({ minutes: i18n.number(minutes) })} min`}
 									</Text>
 								}
 							/>
@@ -220,7 +221,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 					{questions.map((question, index) => (
 						<View key={`${question.text}-${index}`} style={{ flexDirection: "row", gap: space.s2 }}>
 							<Text variant="mono" color="accentText">
-								{index + 1}
+								{i18n.number(index + 1)}
 							</Text>
 							<Text style={{ flex: 1 }}>{question.text}</Text>
 							<Text variant="caption" color="ink3">
