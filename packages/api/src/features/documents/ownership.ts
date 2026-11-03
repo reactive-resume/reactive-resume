@@ -37,7 +37,7 @@ const fingerprintOf = (request: unknown) =>
 		.update(JSON.stringify(canonical(request)))
 		.digest("hex");
 
-type CreatedRow = { table: "resume" | "application"; id: string; userId: string; request: unknown };
+type CreatedRow = { table: "resume" | "application" | "careerArtifact"; id: string; userId: string; request: unknown };
 
 /** Refusal of a client-chosen ID: it isn't free, and this request isn't the one that took it. */
 export const idInUse = () =>
@@ -45,7 +45,7 @@ export const idInUse = () =>
 
 /**
  * Whether a row with this client-chosen ID was already saved by this same request: a retry after a lost response, a
- * second press or a remounted screen, which gets that row back. Resumes and applications share one ID space here. Any
+ * second press or a remounted screen, which gets that row back. Receipted creates share one ID space here. Any
  * other use is refused, without saying which: an ID another account holds, one a resume or application was saved
  * under some other way, one a different request took, or one whose row this request saved but has since been deleted
  * or moved to Trash, so a reused ID never returns, links, changes or brings back a row.
@@ -63,10 +63,17 @@ export async function isRetriedCreate(tx: DbOrTx, { table, id, userId, request }
 		.select({ userId: schema.createRequest.userId, fingerprint: schema.createRequest.fingerprint })
 		.from(schema.createRequest)
 		.where(eq(schema.createRequest.id, id));
-	if (!resume && !application && !receipt) return false;
+	const [artifact] =
+		table === "careerArtifact"
+			? await tx
+					.select({ userId: schema.careerArtifact.userId })
+					.from(schema.careerArtifact)
+					.where(eq(schema.careerArtifact.id, id))
+			: [];
+	if (!resume && !application && !artifact && !receipt) return false;
 
 	// A receipted ID was free in both tables when its row was saved, so only that row can hold it.
-	const row = table === "resume" ? resume : application;
+	const row = table === "resume" ? resume : table === "application" ? application : artifact;
 	const sameRequest = receipt?.userId === userId && receipt.fingerprint === fingerprintOf(request);
 	if (row && row.userId === userId && sameRequest && !resume?.trashedAt && !application?.trashedAt) return true;
 	throw idInUse();

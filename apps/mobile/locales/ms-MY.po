@@ -845,6 +845,14 @@ msgstr "Jenis {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# cadangan suntingan pada halaman ini · tiada perubahan sehingga anda menerima} other {# cadangan suntingan pada halaman ini · tiada perubahan sehingga anda menerima}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} daripada gaji asas"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} daripada gaji asas ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -946,6 +954,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} lagi"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} setahun ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2458,7 +2470,7 @@ msgstr "Tebal"
 msgid "Bonus"
 msgstr "Bonus"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3502,10 +3514,6 @@ msgstr "Betulkan fakta ini"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5246,6 +5254,14 @@ msgstr "Masukkan nombor bulat dari 0 hingga 52, atau biarkan kosong."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Masukkan alamat seperti resume.example.org."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Masukkan amaun atau peratusan gaji asas, seperti 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Masukkan amaun atau peratusan seperti 10%, atau biarkan kosong."
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -7912,6 +7928,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "Kunci baharu bermula dengan akses baca sahaja. Cipta kunci dalam tetapan akaun anda di pelayar."
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "Versi baharu tawaran disimpan"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8593,10 +8613,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10950,6 +10966,10 @@ msgstr "Simpan sambungan"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Simpan syarat yang dibetulkan sebagai versi baharu. Versi terdahulu kekal tersedia. Tiada permintaan AI dihantar."
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

@@ -985,6 +985,14 @@ msgstr "{passedRules} of {totalRules} காசோலைகள் பாஸ்."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# இந்தப் பக்கத்தில் திருத்த முன்மொழிந்தது · நீங்கள் ஏற்கும் வரை எதுவும் மாறாது} other {இந்தப் பக்கத்தில் # முன்மொழியப்பட்ட திருத்தங்கள் · நீங்கள் ஏற்கும் வரை எதுவும் மாறாது}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "அடிப்படைச் சம்பளத்தின் {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "அடிப்படைச் சம்பளத்தின் {percent} ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# முன்மொழியப்பட்டது} other {# முன்மொழியப்பட்டது}}"
@@ -1170,6 +1178,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ ஆண்டுக்கு {yearly} ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3068,7 +3080,7 @@ msgstr "தடித்த"
 msgid "Bonus"
 msgstr "போனஸ்"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4414,10 +4426,6 @@ msgstr "சரிசெய்"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6595,6 +6603,14 @@ msgstr "சரியான மின்னஞ்சல் முகவரிய�
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "உதாரணம்.com போன்ற இணைய முகவரியை உள்ளிடவும்"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "தொகை அல்லது அடிப்படைச் சம்பளத்தின் சதவீதத்தை உள்ளிடவும், எ.கா. 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "தொகை அல்லது 10% போன்ற சதவீதத்தை உள்ளிடவும், அல்லது காலியாக விடவும்."
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -10045,6 +10061,10 @@ msgstr ""
 msgid "New key"
 msgstr "புதிய விசை"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "சலுகையின் புதிய பதிப்பு சேமிக்கப்பட்டது"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10859,10 +10879,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13687,6 +13703,10 @@ msgstr "மாற்றங்களைச் சேமிக்கவும்"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "இணைப்பைச் சேமிக்கவும்"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "திருத்திய விதிமுறைகளைப் புதிய பதிப்பாகச் சேமிக்கவும். முந்தைய பதிப்பு தொடர்ந்து கிடைக்கும். AI கோரிக்கை அனுப்பப்படாது."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

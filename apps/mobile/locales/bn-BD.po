@@ -845,6 +845,14 @@ msgstr "{pairing} প্রকার"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {এই পৃষ্ঠায় #টি প্রস্তাবিত সম্পাদনা · আপনি গ্রহণ না করা পর্যন্ত কিছু বদলাবে না} other {এই পৃষ্ঠায় #টি প্রস্তাবিত সম্পাদনা · আপনি গ্রহণ না করা পর্যন্ত কিছু বদলাবে না}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "মূল বেতনের {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "মূল বেতনের {percent} ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -946,6 +954,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "আরও +{0}টি"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ বছরে {yearly} ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2458,7 +2470,7 @@ msgstr "বোল্ড"
 msgid "Bonus"
 msgstr "বোনাস"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3502,10 +3514,6 @@ msgstr "এই তথ্যটি সংশোধন করুন"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5246,6 +5254,14 @@ msgstr "0 থেকে 52 পর্যন্ত একটি পূর্ণ স
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org এর মতো একটি ঠিকানা লিখুন।"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "একটি পরিমাণ বা মূল বেতনের শতাংশ লিখুন, যেমন 10%।"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "একটি পরিমাণ বা 10%-এর মতো শতাংশ লিখুন, অথবা ফাঁকা রাখুন।"
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -7912,6 +7928,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "নতুন কীগুলো শুরুতে শুধু পড়ার অনুমতি পায়। ব্রাউজারে আপনার অ্যাকাউন্ট সেটিংস থেকে কী তৈরি করুন।"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "অফারের নতুন সংস্করণ সংরক্ষিত হয়েছে"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8593,10 +8613,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10950,6 +10966,10 @@ msgstr "সংযোগ সংরক্ষণ করুন"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "সংশোধিত শর্তগুলো নতুন সংস্করণ হিসেবে সংরক্ষণ করুন। আগের সংস্করণ উপলব্ধ থাকবে। কোনো AI অনুরোধ পাঠানো হয় না।"
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

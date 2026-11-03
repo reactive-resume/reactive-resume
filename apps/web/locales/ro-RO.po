@@ -985,6 +985,14 @@ msgstr "Verificările {passedRules} din {totalRules} trec."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# a propus modificarea pe această pagină · nimic nu se schimbă până când nu acceptați} other {# a propus modificări pe această pagină · nimic nu se schimbă până când nu acceptați}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} din salariul de bază"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} din salariul de bază ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# propus} other {# propus}}"
@@ -1170,6 +1178,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} pe an ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3068,7 +3080,7 @@ msgstr "Aldin"
 msgid "Bonus"
 msgstr "Bonus"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4414,10 +4426,6 @@ msgstr "Corectați"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6595,6 +6603,14 @@ msgstr "Introdu o adresă de e-mail validă."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Introduceți o adresă web, cum ar fi exemplu.com"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Introduceți o sumă sau un procent din salariul de bază, de exemplu 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Introduceți o sumă sau un procent precum 10%, sau lăsați necompletat."
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -10045,6 +10061,10 @@ msgstr ""
 msgid "New key"
 msgstr "Cheie nouă"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "Versiunea nouă a ofertei a fost salvată"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10859,10 +10879,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13687,6 +13703,10 @@ msgstr "Salvați modificările"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Salvați conexiunea"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Salvați condițiile corectate ca versiune nouă. Versiunea anterioară rămâne disponibilă. Nu se trimite nicio solicitare AI."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

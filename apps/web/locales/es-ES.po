@@ -985,6 +985,14 @@ msgstr "Los controles {passedRules} o {totalRules} pasan."
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pendingOnPage, plural, one {# edición propuesta en esta página · nada cambia hasta que acepte} other {# ediciones propuestas en esta página · nada cambia hasta que usted acepta}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} del salario base"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} del salario base ({value})"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# propuesto} other {# propuesto}}"
@@ -1170,6 +1178,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
 msgstr "<0>Los totales no se suman a propósito.</0> El bonus y las acciones dependen de condiciones, y el valor de las acciones es incierto. Lee los documentos originales de las ofertas antes de comparar totales."
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} al año ({months} × {monthly})"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -3068,7 +3080,7 @@ msgstr "Negrita"
 msgid "Bonus"
 msgstr "Bonus"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4414,10 +4426,6 @@ msgstr "Corregir"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6595,6 +6603,14 @@ msgstr "Introduce una dirección de correo electrónico válida."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Ingrese una dirección web, como ejemplo.com"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Introduce un importe o un porcentaje del salario base, como 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Introduce un importe o un porcentaje como 10%, o déjalo en blanco."
 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
@@ -10045,6 +10061,10 @@ msgstr ""
 msgid "New key"
 msgstr "Nueva clave"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "Nueva versión de la oferta guardada"
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10859,10 +10879,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13687,6 +13703,10 @@ msgstr "Guardar cambios"
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Guardar conexión"
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Guarda las condiciones corregidas como una nueva versión. La versión anterior sigue disponible. No se envía ninguna solicitud a la IA."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Save correction"

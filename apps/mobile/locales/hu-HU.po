@@ -845,6 +845,14 @@ msgstr "{pairing} típus"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# javasolt módosítás ezen az oldalon · semmi sem változik, amíg el nem fogadod} other {# javasolt módosítás ezen az oldalon · semmi sem változik, amíg el nem fogadod}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "az alapbér {percent}-a"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "az alapbér {percent}-a ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -946,6 +954,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} további"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} évente ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2458,7 +2470,7 @@ msgstr "Félkövér"
 msgid "Bonus"
 msgstr "Bónusz"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3502,10 +3514,6 @@ msgstr "Tény javítása"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5246,6 +5254,14 @@ msgstr "Írjon be egy egész számot 0 és 52 között, vagy hagyja üresen."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Adjon meg egy címet, például resume.example.org."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "Adjon meg összeget vagy az alapbér százalékát, például 10%-ot."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "Adjon meg összeget vagy százalékot, például 10%-ot, vagy hagyja üresen."
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -7912,6 +7928,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "Az új kulcsok kezdetben csak olvasási hozzáférést kapnak. A kulcsokat a böngészőben, a fiókbeállításokban hozhatja létre."
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "Az ajánlat új verziója mentve"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8593,10 +8613,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10950,6 +10966,10 @@ msgstr "Kapcsolat mentése"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "Mentse a javított feltételeket új verzióként. Az előző verzió elérhető marad. Nem indul MI-kérés."
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

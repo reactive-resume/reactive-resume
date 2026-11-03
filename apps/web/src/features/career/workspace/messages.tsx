@@ -35,7 +35,7 @@ import {
 	useSessionDraft,
 	useWorkspace,
 } from "../hooks";
-import { formatMoney } from "../offer-compare";
+import { formatBonus, formatMoney } from "../offer-compare";
 import { OfferEntry } from "../offer-entry";
 import { Swap, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
@@ -443,7 +443,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 								key === "base"
 									? t`Base ${formatMoney(i18n.locale, offer.currency, offer.base ?? 0)} ${periodLabel(offer.period)}`
 									: key === "variable"
-										? t`Bonus ${formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)}${
+										? t`Bonus ${formatBonus(i18n.locale, offer) ?? ""}${
 												offer.variableConditions ? ` (${offer.variableConditions})` : ""
 											}`
 										: key === "equity"
@@ -472,7 +472,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				[t`Currency`, offer.currency],
 				[t`Pay period`, offer.period === "year" ? t`Per year` : offer.period === "month" ? t`Per month` : t`Per hour`],
 				[t`Base salary`, amount(offer.base)],
-				[t`Bonus`, amount(offer.variable)],
+				[t`Bonus`, formatBonus(i18n.locale, offer) ?? unknown],
 				[t`Bonus conditions`, offer.variableConditions || unknown],
 				[t`Equity`, offer.equity || unknown],
 				[t`Where you work`, offer.location || unknown],

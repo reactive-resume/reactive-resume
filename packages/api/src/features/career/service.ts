@@ -33,7 +33,7 @@ import { findTrackedPosting } from "../applications/duplicates";
 import { syncFollowUp } from "../applications/follow-up";
 import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "../applications/lanes";
 import { applicationService, assertApplicationVersion, hasSubmitted, recordSentResume } from "../applications/service";
-import { assertSharedDocument, lockUser } from "../documents/ownership";
+import { assertSharedDocument, idInUse, isRetriedCreate, lockUser, recordCreateRequest } from "../documents/ownership";
 import { parseStoredResumeData } from "../resume/resume-data-validation";
 import { matchPosting } from "./matching";
 import { noticeText } from "./notices";
@@ -1016,35 +1016,81 @@ export const careerService = {
 	 * Corrects a saved offer's terms. `expected` is the copy the user edited: a change made elsewhere since then is a
 	 * conflict, never overwritten. Where the terms came from is kept.
 	 */
-	updateOffer: (userId: string, id: string, terms: OfferTerms, expected: OfferTerms) =>
+	updateOffer: (
+		userId: string,
+		id: string,
+		terms: OfferTerms,
+		expected: OfferTerms,
+		newVersion = false,
+		newId?: string,
+	) =>
 		db.transaction(async (tx) => {
 			await lockUser(tx, userId);
+			const nextTerms = { ...offerTermsSchema.parse(terms), variablePercent: terms.variablePercent ?? null };
+			const expectedTerms = { ...offerTermsSchema.parse(expected), variablePercent: expected.variablePercent ?? null };
+			const request = { kind: "offer-version", id, terms: nextTerms, expected: expectedTerms };
+			if (newVersion && newId && (await isRetriedCreate(tx, { table: "careerArtifact", id: newId, userId, request }))) {
+				const [version] = await tx
+					.select()
+					.from(tables.careerArtifact)
+					.where(
+						and(
+							eq(tables.careerArtifact.id, newId),
+							eq(tables.careerArtifact.userId, userId),
+							availableApplicationContext(userId, tables.careerArtifact.applicationId),
+						),
+					);
+				if (!version || version.data.kind !== "offer") throw new ORPCError("NOT_FOUND");
+				return version;
+			}
 			const [row] = await tx
 				.select()
 				.from(tables.careerArtifact)
 				.where(
 					and(
 						eq(tables.careerArtifact.id, id),
-						and(
-							eq(tables.careerArtifact.userId, userId),
-							availableApplicationContext(userId, tables.careerArtifact.applicationId),
-						),
+						eq(tables.careerArtifact.userId, userId),
+						availableApplicationContext(userId, tables.careerArtifact.applicationId),
 					),
 				)
 				.for("update");
 			if (!row || row.data.kind !== "offer") throw new ORPCError("NOT_FOUND");
 			const { kind: _kind, origin, editedAt: _editedAt, ...current } = row.data;
-			if (!isDeepStrictEqual(offerTermsSchema.parse(current), offerTermsSchema.parse(expected)))
+			if (
+				!isDeepStrictEqual(
+					{ ...offerTermsSchema.parse(current), variablePercent: current.variablePercent ?? null },
+					expectedTerms,
+				)
+			)
 				throw new ORPCError("CONFLICT", {
 					message: "This offer changed elsewhere. Review the latest terms before saving again.",
 				});
 			const data: SavedItemData = {
 				kind: "offer",
-				...offerTermsSchema.parse(terms),
+				...nextTerms,
 				...(origin ? { origin } : {}),
 				editedAt: new Date().toISOString(),
 			};
 			const company = row.title.split(" · ")[0] ?? "";
+			if (newVersion) {
+				const [version] = await tx
+					.insert(tables.careerArtifact)
+					.values({
+						...(newId ? { id: newId } : {}),
+						userId,
+						applicationId: row.applicationId,
+						interviewId: row.interviewId,
+						title: `${company} · ${terms.version === "verbal" ? "Verbal offer" : "Written offer"}`,
+						data,
+						evidence: row.evidence,
+						inputVersion: row.inputVersion,
+					})
+					.onConflictDoNothing({ target: tables.careerArtifact.id })
+					.returning();
+				if (!version) throw idInUse();
+				if (newId) await recordCreateRequest(tx, { id: newId, userId, request });
+				return version;
+			}
 			const [updated] = await tx
 				.update(tables.careerArtifact)
 				.set({ data, title: `${company} · ${terms.version === "verbal" ? "Verbal offer" : "Written offer"}` })
