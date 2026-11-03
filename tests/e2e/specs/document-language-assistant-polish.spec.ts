@@ -320,3 +320,62 @@ test("locale-less JSON Resume import uses the chosen interface language", async 
 	expect(saved.data.metadata.page.locale).toBe("de-DE");
 	expect(saved.data.basics.name).toBe("Fictional language choice");
 });
+
+for (const action of ["cancel", "confirm"] as const)
+	test(`dropped JSON waits for import language confirmation: ${action}`, async ({ authPage: page }, info) => {
+		await page.goto("/dashboard");
+		await expect(page.getByRole("button", { name: "New", exact: true })).toBeVisible();
+		let imports = 0;
+		page.on("request", (request) => {
+			if (request.url().includes("/api/rpc/resume/import")) imports++;
+		});
+		await page.evaluate(() => {
+			const transfer = new DataTransfer();
+			transfer.items.add(
+				new File([JSON.stringify({ basics: { name: "Fictional dropped resume" } })], "fictional.json", {
+					type: "application/json",
+				}),
+			);
+			window.dispatchEvent(new DragEvent("drop", { bubbles: true, cancelable: true, dataTransfer: transfer }));
+		});
+		const dialog = page.getByRole("dialog", { name: "Import a resume", exact: true });
+		await expect(dialog.getByRole("combobox", { name: "Resume language" })).toBeVisible();
+		expect(imports).toBe(0);
+		expect(await (await page.request.get("/api/openapi/resumes")).json()).toEqual([]);
+		if (action === "cancel") {
+			await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+			expect(imports).toBe(0);
+			expect(await (await page.request.get("/api/openapi/resumes")).json()).toEqual([]);
+			return;
+		}
+		await dialog.getByRole("combobox", { name: "Resume language" }).click();
+		await page.getByRole("option", { name: /Español/ }).click();
+		await dialog.screenshot({ path: info.outputPath("dropped-import-language.png"), animations: "disabled" });
+		await dialog.getByRole("button", { name: "Import", exact: true }).click();
+		await expect(page.getByRole("heading", { name: "Imported", exact: true })).toBeVisible();
+		const rows = await (await page.request.get("/api/openapi/resumes")).json();
+		expect(rows).toHaveLength(1);
+		expect((await read(page, rows[0].id)).data.metadata.page.locale).toBe("es-ES");
+		expect(imports).toBe(1);
+	});
+
+test("PDF review language reset saves current Default rather than the earlier choice", async ({ authPage: page }) => {
+	await page.goto("/dashboard");
+	await page.getByRole("button", { name: "New", exact: true }).click();
+	const dialog = page.getByRole("dialog");
+	await dialog.locator('input[type="file"]').setInputFiles("apps/web/public/templates/pdf/onyx.pdf");
+	await expect(page.getByRole("heading", { name: "Choose how to read this file" })).toBeVisible();
+	await dialog.getByRole("combobox", { name: "Resume language" }).click();
+	await page.getByRole("option", { name: /العربية/ }).click();
+	await dialog.getByRole("button", { name: "Read on this device (free)", exact: true }).click();
+	await expect(page.getByRole("heading", { name: "Check what was found" })).toBeVisible();
+	await dialog.getByRole("combobox", { name: "Resume language" }).click();
+	await page.getByRole("option", { name: "Default", exact: true }).click();
+	await dialog.getByRole("button", { name: "Create resume", exact: true }).click();
+	await expect(page.getByRole("heading", { name: "Imported", exact: true })).toBeVisible();
+	const rows = await (await page.request.get("/api/openapi/resumes")).json();
+	expect(rows).toHaveLength(1);
+	expect((await read(page, rows[0].id)).data.metadata.page.locale).toBe("en-US");
+	await page.reload();
+	expect((await read(page, rows[0].id)).data.metadata.page.locale).toBe("en-US");
+});

@@ -1056,6 +1056,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/story-practice-button.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr "Факт в тази история е изключен или променен. Редактирайте историята, за да го проверите."
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A focused plan for this round"
 msgstr "Фокусиран план за този кръг"
@@ -2389,6 +2393,10 @@ msgstr "Назад към обявата за работа"
 msgid "Back to sign in"
 msgstr "Обратно към входа"
 
+#: src/features/career/knowledge.tsx
+msgid "Back to stories"
+msgstr "Към историите"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 #: src/features/workspace/tabs/apply.tsx
@@ -2883,6 +2891,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Изберете валута."
+
 #: src/features/application-detail/date-field.tsx
 msgid "Choose a date"
 msgstr "Изберете дата"
@@ -2963,6 +2975,7 @@ msgstr "Изберете файл WebM, MP4, MP3, WAV или Ogg до 2 MB."
 
 #: src/features/ai/next-steps.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/offers.tsx
 msgid "Choose an application"
 msgstr "Изберете кандидатура"
 
@@ -3216,6 +3229,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {company}."
 msgstr "Сравнете опитите, за да видите какво се е подобрило. Практическите въпроси са симулирани, а не от {company}."
 
+#: src/features/workspace/tabs/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Сравнете опитите, за да видите напредъка. Въпросите за упражнение са симулирани."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -3232,6 +3249,10 @@ msgstr "Сравняват се в оригиналната им валута и
 #: src/features/workspace/tabs/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Сравнено с историите ви и обявата."
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Compared with your stories."
+msgstr "Сравнено с вашите истории."
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Compares your resume with the posting"
@@ -3720,6 +3741,10 @@ msgstr ""
 msgid "Couldn't load documents. Try again."
 msgstr "Документите не можаха да се заредят. Опитайте отново."
 
+#: src/features/career/story-practice-button.tsx
+msgid "Couldn't load interviews. Retry"
+msgstr "Интервютата не можаха да се заредят. Опитайте отново"
+
 #: src/features/documents/thumbnail.tsx
 msgid "Couldn't load letter"
 msgstr "Мотивационното писмо не можа да се зареди"
@@ -3781,6 +3806,10 @@ msgstr "Страницата на тази версия не можа да се 
 #: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Това не можа да се зареди. Проверете връзката си и опитайте отново."
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Couldn't load this. Your saved data hasn't changed."
+msgstr "Това не можа да се зареди. Запазените ви данни не са променени."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -5260,7 +5289,6 @@ msgstr "Въведете име, до 64 знака."
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Enter a three-letter currency code."
 msgstr "Въведете трибуквен код на валутата."
@@ -7085,6 +7113,10 @@ msgstr ""
 msgid "Link {0} URL"
 msgstr ""
 
+#: src/features/career/story-practice-button.tsx
+msgid "Link a fact to practice this story"
+msgstr "Свържете факт, за да упражните тази история"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Link address"
 msgstr "Адрес на връзката"
@@ -7240,6 +7272,10 @@ msgstr "Разговорите се зареждат..."
 #: src/features/letters/page.tsx
 msgid "Loading cover letter…"
 msgstr "Зареждане на мотивационното писмо…"
+
+#: src/features/career/story-practice-button.tsx
+msgid "Loading interviews…"
+msgstr "Зареждане на интервютата…"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Loading Knowledge before you send…"
@@ -9107,6 +9143,7 @@ msgid "Out of date: the text has changed since."
 msgstr "Изтекъл: текстът е променен оттогава."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/application-detail/sections.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "Резултат"
@@ -9519,6 +9556,12 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "Упражнение"
 
+#: src/features/career/story-practice-button.tsx
+#: src/features/workspace/tabs/practise.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice"
+msgstr "Упражнение"
+
 #: src/features/career/prepare-now.tsx
 msgid "Practice {count} questions"
 msgstr "Упражнете {count} въпроса"
@@ -9526,6 +9569,16 @@ msgstr "Упражнете {count} въпроса"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "Упражнете друг въпрос"
+
+#. placeholder {0}: next.application.company
+#: src/features/career/story-practice-button.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr "Упражнявайте се за {0}"
+
+#: src/features/career/story-practice-button.tsx
+msgid "Practice for which interview?"
+msgstr "За кое интервю искате да се упражните?"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -9542,6 +9595,10 @@ msgstr "Приоритети за упражнение, а не заключен
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
 msgstr "Приоритет за упражнение:"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Practice without an application"
+msgstr "Упражнявайте се без кандидатура"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practicing your story: {storyTitle}"
@@ -10787,6 +10844,7 @@ msgstr "Изведи етапа от употреба"
 #: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
+#: src/features/career/story-practice-button.tsx
 #: src/features/check/job-match.tsx
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -15592,50 +15650,3 @@ msgstr "Намаляване"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Зулуски"
-
-#: src/features/career/story-practice-button.tsx
-msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
-msgstr "Факт в тази история е изключен или променен. Редактирайте историята, за да го проверите."
-
-#: src/features/career/knowledge.tsx
-msgid "Back to stories"
-msgstr "Към историите"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "Сравнете опитите, за да видите напредъка. Въпросите за упражнение са симулирани."
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Compared with your stories."
-msgstr "Сравнено с вашите истории."
-
-#: src/features/career/story-practice-button.tsx
-msgid "Couldn't load interviews. Retry"
-msgstr "Интервютата не можаха да се заредят. Опитайте отново"
-
-#: src/features/career/story-practice-button.tsx
-msgid "Link a fact to practice this story"
-msgstr "Свържете факт, за да упражните тази история"
-
-#: src/features/career/story-practice-button.tsx
-msgid "Loading interviews…"
-msgstr "Зареждане на интервютата…"
-
-#: src/features/career/story-practice-button.tsx
-msgctxt "Button: rehearse interview answers"
-msgid "Practice"
-msgstr "Упражнение"
-
-#. placeholder {0}: next.application.company
-#: src/features/career/story-practice-button.tsx
-msgctxt "Button: rehearse interview answers"
-msgid "Practice for {0}"
-msgstr "Упражнявайте се за {0}"
-
-#: src/features/career/story-practice-button.tsx
-msgid "Practice for which interview?"
-msgstr "За кое интервю искате да се упражните?"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Practice without an application"
-msgstr "Упражнявайте се без кандидатура"

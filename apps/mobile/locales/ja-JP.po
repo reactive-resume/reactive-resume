@@ -1056,6 +1056,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/story-practice-button.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr "このストーリーの事実が無効になっているか、変更されています。ストーリーを編集して確認してください。"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A focused plan for this round"
 msgstr "この選考ステップに向けた集中プラン"
@@ -2389,6 +2393,10 @@ msgstr "求人情報に戻る"
 msgid "Back to sign in"
 msgstr "サインインに戻る"
 
+#: src/features/career/knowledge.tsx
+msgid "Back to stories"
+msgstr "ストーリー一覧に戻る"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 #: src/features/workspace/tabs/apply.tsx
@@ -2883,6 +2891,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "通貨を選択してください。"
+
 #: src/features/application-detail/date-field.tsx
 msgid "Choose a date"
 msgstr "日付を選択してください"
@@ -2963,6 +2975,7 @@ msgstr "2 MBまでのWebM、MP4、MP3、WAV、Oggファイルを選択してく�
 
 #: src/features/ai/next-steps.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/offers.tsx
 msgid "Choose an application"
 msgstr "応募を選択してください"
 
@@ -3216,6 +3229,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {company}."
 msgstr "改善点を確認するために試行を比較してください。これらは模擬練習問題であり、{company} からの質問ではありません。"
 
+#: src/features/workspace/tabs/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "試行を比べて改善点を確認しましょう。練習問題はシミュレーションです。"
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -3232,6 +3249,10 @@ msgstr "元の通貨と支払い期間のまま比較しています。比較し
 #: src/features/workspace/tabs/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "あなたのストーリーと求人情報に照らして比較しました。"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Compared with your stories."
+msgstr "あなたのストーリーと比較しました。"
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Compares your resume with the posting"
@@ -3720,6 +3741,10 @@ msgstr ""
 msgid "Couldn't load documents. Try again."
 msgstr "ドキュメントを読み込めませんでした。もう一度お試しください。"
 
+#: src/features/career/story-practice-button.tsx
+msgid "Couldn't load interviews. Retry"
+msgstr "面接を読み込めませんでした。再試行"
+
 #: src/features/documents/thumbnail.tsx
 msgid "Couldn't load letter"
 msgstr "カバーレターを読み込めませんでした"
@@ -3781,6 +3806,10 @@ msgstr "このバージョンのページを読み込めませんでした。"
 #: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "これを読み込めませんでした。接続を確認して、もう一度試してください。"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Couldn't load this. Your saved data hasn't changed."
+msgstr "読み込めませんでした。保存済みのデータは変更されていません。"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -5260,7 +5289,6 @@ msgstr "名前を 64 文字以内で入力します。"
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Enter a three-letter currency code."
 msgstr "アルファベット3文字からなる通貨コードを入力します。"
@@ -7085,6 +7113,10 @@ msgstr ""
 msgid "Link {0} URL"
 msgstr ""
 
+#: src/features/career/story-practice-button.tsx
+msgid "Link a fact to practice this story"
+msgstr "このストーリーを練習するには事実を関連付けてください"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Link address"
 msgstr "リンクアドレス"
@@ -7240,6 +7272,10 @@ msgstr "会話を読み込んでいます…"
 #: src/features/letters/page.tsx
 msgid "Loading cover letter…"
 msgstr "カバーレターを読み込み中…"
+
+#: src/features/career/story-practice-button.tsx
+msgid "Loading interviews…"
+msgstr "面接を読み込み中…"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Loading Knowledge before you send…"
@@ -9107,6 +9143,7 @@ msgid "Out of date: the text has changed since."
 msgstr "期限切れ: テキストは変更されています。"
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/application-detail/sections.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "結果"
@@ -9519,6 +9556,12 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "練習"
 
+#: src/features/career/story-practice-button.tsx
+#: src/features/workspace/tabs/practise.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice"
+msgstr "練習"
+
 #: src/features/career/prepare-now.tsx
 msgid "Practice {count} questions"
 msgstr "{count}問を練習"
@@ -9526,6 +9569,16 @@ msgstr "{count}問を練習"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "別の質問を練習"
+
+#. placeholder {0}: next.application.company
+#: src/features/career/story-practice-button.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr "{0}に向けて練習"
+
+#: src/features/career/story-practice-button.tsx
+msgid "Practice for which interview?"
+msgstr "どの面接に向けて練習しますか？"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -9542,6 +9595,10 @@ msgstr "練習の優先事項であり、採用側がなぜそう判断したか
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
 msgstr "練習の優先事項："
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Practice without an application"
+msgstr "応募先を選ばずに練習"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practicing your story: {storyTitle}"
@@ -10787,6 +10844,7 @@ msgstr "ステージを廃止"
 #: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
+#: src/features/career/story-practice-button.tsx
 #: src/features/check/job-match.tsx
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -15592,50 +15650,3 @@ msgstr "ズームアウト"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ズールー語"
-
-#: src/features/career/story-practice-button.tsx
-msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
-msgstr "このストーリーの事実が無効になっているか、変更されています。ストーリーを編集して確認してください。"
-
-#: src/features/career/knowledge.tsx
-msgid "Back to stories"
-msgstr "ストーリー一覧に戻る"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "試行を比べて改善点を確認しましょう。練習問題はシミュレーションです。"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Compared with your stories."
-msgstr "あなたのストーリーと比較しました。"
-
-#: src/features/career/story-practice-button.tsx
-msgid "Couldn't load interviews. Retry"
-msgstr "面接を読み込めませんでした。再試行"
-
-#: src/features/career/story-practice-button.tsx
-msgid "Link a fact to practice this story"
-msgstr "このストーリーを練習するには事実を関連付けてください"
-
-#: src/features/career/story-practice-button.tsx
-msgid "Loading interviews…"
-msgstr "面接を読み込み中…"
-
-#: src/features/career/story-practice-button.tsx
-msgctxt "Button: rehearse interview answers"
-msgid "Practice"
-msgstr "練習"
-
-#. placeholder {0}: next.application.company
-#: src/features/career/story-practice-button.tsx
-msgctxt "Button: rehearse interview answers"
-msgid "Practice for {0}"
-msgstr "{0}に向けて練習"
-
-#: src/features/career/story-practice-button.tsx
-msgid "Practice for which interview?"
-msgstr "どの面接に向けて練習しますか？"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Practice without an application"
-msgstr "応募先を選ばずに練習"

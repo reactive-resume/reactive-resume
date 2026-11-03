@@ -5319,3 +5319,34 @@ control(render(RememberAnswer, answerProps), "Remember").onPress();
 await settle();
 assert.equal(calls.length, 0, "Old account answer must not be saved into a new account");
 polishScope = "polish-account";
+
+const { OfferMessages: NativeOfferMessages } = load(
+	"features/career/offers.tsx",
+	{
+		"./hooks": {},
+		"./offer-compare": {},
+		"@reactive-resume/utils/timezone": {},
+		"@/features/applications/queries": {},
+		"./offer-entry": {},
+		"./offer-selection": {},
+		"./shared": {},
+		"@/features/applications/hooks": {},
+		"@/auth/session": {},
+		"@reactive-resume/schema/career": {},
+		"@reactive-resume/schema/career-offer": {},
+		"@reactive-resume/utils/amount": {},
+	},
+	"\nmodule.exports.OfferMessages = OfferMessages;",
+);
+reset();
+assert.equal(render(NativeOfferMessages, { applications: [] }), null);
+const nativeOfferMessages = render(NativeOfferMessages, {
+	applications: [{ id: "fictional-role", company: "Fictional Birch", role: "Engineer" }],
+});
+assert.equal(nativeOfferMessages.type, "SelectSheet");
+assert.equal(nativeOfferMessages.props.placeholder, "Choose an application");
+assert.equal(nativeOfferMessages.props.value, "");
+assert.deepEqual(calls, []);
+nativeOfferMessages.props.onChange("fictional-role");
+assert.deepEqual(calls, ["/applications/fictional-role/messages"]);
+console.log("PASS native Offers Messages names its empty chooser and only navigates after selection");

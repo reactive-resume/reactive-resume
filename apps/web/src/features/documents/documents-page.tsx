@@ -64,7 +64,7 @@ type DocumentsPageProps = {
 
 /**
  * Documents: every resume and letter in one library, with type tabs, search (/), sort, grid or list, and tag
- * chips once tags exist. A file dropped anywhere on the page imports straight away.
+ * chips once tags exist. A file dropped anywhere on the page opens import confirmation.
  */
 export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const { t } = useLingui();
@@ -1012,7 +1012,7 @@ export function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
 	);
 }
 
-/** A file dragged anywhere over the page shows the drop target, and dropping it starts the import. */
+/** A file dragged anywhere over the page shows the drop target, and dropping it opens import confirmation. */
 function DropToImport() {
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const [dragging, setDragging] = useState(false);

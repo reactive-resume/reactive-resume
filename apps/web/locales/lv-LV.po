@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:45+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Pievienojiet valsti"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Pievienojiet faktu"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Pievienojiet faktu, piemēram, “2025. gadā mentorēju divus jaunākos produktu vadītājus”"
 
@@ -3131,6 +3135,14 @@ msgstr "Apmales rādiuss"
 msgid "Border width"
 msgstr "Apmales platums"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Abiem kontiem ir privāts pieteikšanās profils. Pirms sasaistes eksportējiet un izdzēsiet vienu profilu sadaļā Iestatījumi → Konts, lai neviens netiktu pārrakstīts."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Abiem kontiem ir dublētas saglabātas pieteikumu atbildes. Pirms sasaistes eksportējiet un izdzēsiet vienu kopiju, lai neviena netiktu pārrakstīta."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "Sadaliet CV ierastajās sadaļās, lai to varētu segmentēt."
@@ -3615,6 +3627,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Izvēlieties valūtu."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr ""
@@ -4014,6 +4030,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Salīdziniet mēģinājumus, lai redzētu, kas uzlabojās. Vingrināšanās jautājumi ir simulēti, nevis no uzņēmuma {0}."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Salīdziniet mēģinājumus, lai redzētu progresu. Treniņa jautājumi ir simulēti."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -4035,6 +4055,10 @@ msgstr "Salīdzināts oriģinālajā valūtā un maksājuma periodā. Salīdzin�
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Salīdzināts ar jūsu stāstiem un sludinājumu."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Salīdzināts ar jūsu stāstiem."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4774,6 +4798,7 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Nevarēja ielādēt. Jūsu saglabātie dati nav mainījušies."
@@ -4933,7 +4958,6 @@ msgstr "Nevarēja pārdēvēt piekļuves atslēgu. Mēģiniet vēlreiz."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Nevarēja pārdēvēt šo sarunu. Mēģiniet vēlreiz."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Nevarēja atiestatīt jūsu paroli. Mēģiniet vēlreiz."
@@ -5087,7 +5111,6 @@ msgstr "Nevarēja ieplānot interviju. Mēģiniet vēlreiz."
 msgid "Couldn't send the email. Try again."
 msgstr "Nevarēja nosūtīt e-pastu. Mēģiniet vēlreiz."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Nevarēja nosūtīt paroles atiestatīšanas e-pastu. Mēģiniet vēlreiz."
@@ -5120,8 +5143,6 @@ msgstr "Neizdevās parādīt PDF priekšskatījumu. Augšupielādējiet failu v�
 msgid "Couldn't show the preview."
 msgstr "Nevarēja parādīt priekšskatījumu."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5266,12 +5287,10 @@ msgstr "Nevarēja augšupielādēt fotoattēlu. Mēģiniet vēlreiz."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Nevarēja pārbaudīt kodu. Ievadiet pašreizējo kodu no autentifikatora lietotnes."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Nevarēja pārbaudīt jūsu rezerves kodu. Pārbaudiet kodu un mēģiniet vēlreiz."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Nevarēja pārbaudīt jūsu kodu. Pārbaudiet kodu un mēģiniet vēlreiz."
@@ -5459,7 +5478,6 @@ msgstr "CSV dati"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
-#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "Valūta"
 
@@ -6640,10 +6658,6 @@ msgstr "Ievadiet nosaukumu, līdz 64 rakstzīmēm."
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "Ievadiet valūtas kodu ar trim burtiem."
-
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
@@ -7633,6 +7647,10 @@ msgstr "Uzruna"
 msgid "Grid"
 msgstr "Režģis"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Viesa un konta karjeras preferences atšķiras. Viesa darbs ir saglabāts. Saskaņojiet abu kontu karjeras preferences un Zināšanu atmiņas iestatījumus un mēģiniet vēlreiz."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Labprāt visu izstāstīšu mūsu zvana laikā."
@@ -8023,6 +8041,7 @@ msgid "Images cover most of the page."
 msgstr "Attēli aizņem lielāko daļu lapas."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "Importēt"
 
@@ -10768,6 +10787,10 @@ msgstr "Nav saglabāts"
 msgid "Not saved — this fact was forgotten before."
 msgstr "Nav saglabāts — šis fakts jau iepriekš tika aizmirsts."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Nav saglabāts · Pierakstieties, lai saglabātu"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -11442,6 +11465,7 @@ msgstr "no 100"
 msgid "Out of date: the text has changed since."
 msgstr "Novecojis: teksts kopš tā laika ir mainīts."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11981,6 +12005,7 @@ msgid "Practice"
 msgstr "Vingrināties"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12029,6 +12054,10 @@ msgstr "Vingrināšanās prioritāte:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Vingrināšanās jautājumi ir simulēti, nevis no Fieldnote."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Trenēties bez darba pieteikuma"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -13520,6 +13549,10 @@ msgstr "CV vienmēr renderē uz balta papīra neatkarīgi no tēmas."
 msgid "Resumes created"
 msgstr "izveidoti CV"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Pirms kontu apvienošanas pārtrauciet izmantot nevajadzīgās pieteikumu kolonnas; kopā ir vairāk nekā 40 aktīvas kolonnas."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14461,6 +14494,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Sūtīt jaunu saiti"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15004,6 +15041,10 @@ msgstr "Sānjoslas bieži tiek lasītas pēdējās vai sajauktas galvenajā kolo
 msgid "Sign in"
 msgstr "Pieteikties"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Pierakstīties vēlreiz"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Pierakstieties no sava MI klienta vai izmantojiet API atslēgu."
@@ -15022,6 +15063,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Pierakstieties, lai saglabātu"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16082,6 +16127,10 @@ msgstr "Paldies, Sam! Lūk, viens piemērs: uzņēmumā Northwind Labs es vadīj
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Kods neatbilst. Pārbaudiet to un mēģiniet vēlreiz."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16089,6 +16138,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "E-pasts, lietotājvārds vai parole neatbilst. Pārbaudiet datus vai atiestatiet paroli."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16915,6 +16968,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Šī atiestatīšanas saite ir beigusies vai jau izmantota."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Šī atiestatīšanas saite ir beigusies vai jau izmantota. Sūtīt jaunu saiti."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Šis CV ir bloķēts. Atbloķējiet to tā izvēlnē, lai rediģētu."
@@ -17003,6 +17064,10 @@ msgstr "Šis serveris izmanto standarta posmus, tāpēc posmu nosaukumi failā n
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Šī pieteikšanās mēģinājuma termiņš ir beidzies vai tas jau ir izmantots. Mēģiniet vēlreiz."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Šī pierakstīšanās darbība ir beigusies. Pierakstieties vēlreiz."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17150,6 +17215,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Pārāk gaišs virsrakstiem uz baltas krāsas. To var būt grūti lasīt un izdrukāt vāji."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Pārāk daudz mēģinājumu. Nedaudz uzgaidiet un mēģiniet vēlreiz."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19229,6 +19298,10 @@ msgstr "Jūsu serveris nodrošina tīmekļa meklēšanu sadaļā Pieteikumi un p
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Jūsu sesija ir beigusies. Pierakstieties vēlreiz, lai turpinātu darbu."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19331,83 +19404,3 @@ msgstr "Tālināt"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Abiem kontiem ir privāts pieteikšanās profils. Pirms sasaistes eksportējiet un izdzēsiet vienu profilu sadaļā Iestatījumi → Konts, lai neviens netiktu pārrakstīts."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Abiem kontiem ir dublētas saglabātas pieteikumu atbildes. Pirms sasaistes eksportējiet un izdzēsiet vienu kopiju, lai neviena netiktu pārrakstīta."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Viesa un konta karjeras preferences atšķiras. Viesa darbs ir saglabāts. Saskaņojiet abu kontu karjeras preferences un Zināšanu atmiņas iestatījumus un mēģiniet vēlreiz."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Pirms kontu apvienošanas pārtrauciet izmantot nevajadzīgās pieteikumu kolonnas; kopā ir vairāk nekā 40 aktīvas kolonnas."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Sūtīt jaunu saiti"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Pierakstīties vēlreiz"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Pierakstieties, lai saglabātu"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Kods neatbilst. Pārbaudiet to un mēģiniet vēlreiz."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "E-pasts, lietotājvārds vai parole neatbilst. Pārbaudiet datus vai atiestatiet paroli."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Šī atiestatīšanas saite ir beigusies vai jau izmantota."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Šī pierakstīšanās darbība ir beigusies. Pierakstieties vēlreiz."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Pārāk daudz mēģinājumu. Nedaudz uzgaidiet un mēģiniet vēlreiz."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Jūsu sesija ir beigusies. Pierakstieties vēlreiz, lai turpinātu darbu."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Nav saglabāts · Pierakstieties, lai saglabātu"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Šī atiestatīšanas saite ir beigusies vai jau izmantota. Sūtīt jaunu saiti."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "Salīdziniet mēģinājumus, lai redzētu progresu. Treniņa jautājumi ir simulēti."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compared with your stories."
-msgstr "Salīdzināts ar jūsu stāstiem."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practice without an application"
-msgstr "Trenēties bez darba pieteikuma"
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "Pievienojiet faktu"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Vispirms pievienojiet interviju"

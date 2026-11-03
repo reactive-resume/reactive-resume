@@ -30,6 +30,7 @@ function OfferMessages({ applications }: OfferMessagesProps) {
 	return (
 		<SelectSheet
 			label={t`Messages`}
+			placeholder={t`Choose an application`}
 			value=""
 			searchable
 			options={applications.map((application) => ({

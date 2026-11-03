@@ -61,12 +61,13 @@ export type NewDocumentDialogData = {
 	sourceResumeId?: string;
 	/** Copy for a job: the application it's for. */
 	applicationId?: string;
-	/** A file dropped on the page, imported straight away. */
+	/** A file dropped on the page, awaiting import confirmation. */
 	file?: File;
 };
 
 type Step =
 	| { name: "choose" }
+	| { name: "import-ready"; file: File }
 	| { name: "import-choice"; file: File; kind: "pdf" | "docx" }
 	| { name: "importing"; file: File; stage: number; notes: string[] }
 	| {
@@ -188,7 +189,6 @@ function useResumeImport(
 				onRead: (note) => advance(1, note),
 			});
 			if (!current()) return;
-			if (kind !== "reactive-resume-json") resume.metadata.page.locale = locale ?? localeSchema.parse(i18n.locale);
 			// A PDF or Word file is read by a model or a heuristic: the user sees what came in, and what didn't,
 			// before anything is created. Structured files (JSON, LinkedIn) come in as they are.
 			if (kind === "pdf" || kind === "docx") {
@@ -207,7 +207,7 @@ function useResumeImport(
 				});
 				return;
 			}
-			await create(file, resume, owner, aiOperationIds, attempt);
+			await create(file, resume, owner, aiOperationIds, kind === "reactive-resume-json", attempt);
 		} catch (error) {
 			if (current()) fail(file, error);
 		}
@@ -233,6 +233,7 @@ function useResumeImport(
 		resume: ResumeData,
 		owner: { accountId: string; generation: number },
 		aiOperationIds: string[],
+		preserveLocale = false,
 		attempt = ++run.current,
 	) => {
 		const signal = controller.current?.signal;
@@ -243,9 +244,11 @@ function useResumeImport(
 			getAccountGeneration() === owner.generation;
 		if (!current()) return;
 		const options = { ...(signal ? { signal } : {}), context: { accountId: owner.accountId } };
-		const data = locale
-			? { ...resume, metadata: { ...resume.metadata, page: { ...resume.metadata.page, locale } } }
-			: resume;
+		const selectedLocale = locale ?? (preserveLocale ? resume.metadata.page.locale : localeSchema.parse(i18n.locale));
+		const data = {
+			...resume,
+			metadata: { ...resume.metadata, page: { ...resume.metadata.page, locale: selectedLocale } },
+		};
 		const summary = summarizeImport(data);
 		setStep({
 			name: "importing",
@@ -301,7 +304,9 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 	const read = readProvider ? { label: readProvider.label, model: aiModelForTask(readProvider, "fast") } : undefined;
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const markNew = useNewDocumentsStore((state) => state.markNew);
-	const [step, setStep] = useState<Step>({ name: data?.step ?? "choose" } as Step);
+	const [step, setStep] = useState<Step>(() =>
+		data?.file ? { name: "import-ready", file: data.file } : { name: data?.step ?? "choose" },
+	);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const importDescriptionId = useId();
 	const languageId = useId();
@@ -338,15 +343,6 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 		data?.applicationId,
 		locale,
 	);
-
-	// A file dropped on the page starts importing as soon as the dialog opens.
-	const dropped = useRef(data?.file);
-	useEffect(() => {
-		if (!dropped.current) return;
-		const file = dropped.current;
-		dropped.current = undefined;
-		void importFile(file);
-	});
 
 	const { startBlank, trySample, newLetter, creating } = useStartDocument(data?.applicationId, locale);
 	const { data: letterResumes } = useQuery(orpc.resume.list.queryOptions());
@@ -423,6 +419,22 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 							);
 						}}
 					/>
+				</div>
+			) : step.name === "import-ready" ? (
+				<div className="grid gap-4">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Import a resume</Trans>
+						</DialogTitle>
+						<DialogDescription>{step.file.name}</DialogDescription>
+					</DialogHeader>
+					{languagePicker}
+					<Button onClick={() => void importFile(step.file)}>
+						<Trans>Import</Trans>
+					</Button>
+					<Button variant="ghost" onClick={cancel}>
+						<Trans>Cancel</Trans>
+					</Button>
 				</div>
 			) : step.name === "import-choice" ? (
 				<div className="grid gap-4">

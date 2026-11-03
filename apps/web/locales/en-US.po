@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:45+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "Add a country"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Add a fact"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Add a fact, for example “I mentored two associate PMs in 2025”"
 
@@ -3133,6 +3137,14 @@ msgstr "Border radius"
 msgid "Border width"
 msgstr "Border width"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "Break the resume into the usual sections so it can be segmented."
@@ -3617,6 +3629,10 @@ msgstr "Choose a connection"
 msgid "Choose a country"
 msgstr "Choose a country"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Choose a currency."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
@@ -4016,6 +4032,10 @@ msgstr "Compare"
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Compare attempts to see what improved. Practice questions are simulated."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr "Compare it with your other offers"
@@ -4037,6 +4057,10 @@ msgstr "Compared in their original currency and pay period. Comparing doesn't sh
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Compared with your stories and the posting."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Compared with your stories."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4776,6 +4800,7 @@ msgstr "Couldn't load this link."
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Couldn't load this. Your saved data hasn't changed."
@@ -4935,7 +4960,6 @@ msgstr "Couldn't rename the passkey. Try again."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Couldn't rename this conversation. Try again."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Couldn't reset your password. Try again."
@@ -5089,7 +5113,6 @@ msgstr "Couldn't schedule the interview. Try again."
 msgid "Couldn't send the email. Try again."
 msgstr "Couldn't send the email. Try again."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Couldn't send the password reset email. Try again."
@@ -5122,8 +5145,6 @@ msgstr "Couldn't show the PDF preview. Upload the file again."
 msgid "Couldn't show the preview."
 msgstr "Couldn't show the preview."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5268,12 +5289,10 @@ msgstr "Couldn't upload the photo. Try again."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Couldn't verify the code. Enter the current code from your authenticator app."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Couldn't verify your backup code. Check the code and try again."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Couldn't verify your code. Check the code and try again."
@@ -5461,7 +5480,6 @@ msgstr "CSV data"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
-#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "Currency"
 
@@ -6642,10 +6660,6 @@ msgstr "Enter a name, up to 64 characters."
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr "Enter a readable date or clear the text to use date fields."
 
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "Enter a three-letter currency code."
-
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
@@ -7635,6 +7649,10 @@ msgstr "Greeting"
 msgid "Grid"
 msgstr "Grid"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Happy to walk you through it on our call."
@@ -8025,6 +8043,7 @@ msgid "Images cover most of the page."
 msgstr "Images cover most of the page."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "Import"
 
@@ -10770,6 +10789,10 @@ msgstr "Not saved"
 msgid "Not saved — this fact was forgotten before."
 msgstr "Not saved — this fact was forgotten before."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Not saved · Sign in to save"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -11444,6 +11467,7 @@ msgstr "out of 100"
 msgid "Out of date: the text has changed since."
 msgstr "Out of date: the text has changed since."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11983,6 +12007,7 @@ msgid "Practice"
 msgstr "Practice"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12031,6 +12056,10 @@ msgstr "Practice priority:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Practice questions are simulated, not from Fieldnote."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Practice without an application"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -13522,6 +13551,10 @@ msgstr "Resumes always render on white paper, whatever the theme."
 msgid "Resumes created"
 msgstr "Resumes created"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14463,6 +14496,10 @@ msgstr "Send {0} again"
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Send a new link"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr "Send again"
@@ -15006,6 +15043,10 @@ msgstr "Sidebars are often read last, or mixed into the main column."
 msgid "Sign in"
 msgstr "Sign in"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Sign in again"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Sign in from your AI client, or use an API key."
@@ -15024,6 +15065,10 @@ msgstr "Sign in to connect {name}."
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr "Sign in to connect an application."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Sign in to save"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16084,6 +16129,10 @@ msgstr "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesi
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "That code doesn't match. Check it and try again."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr "That conversation isn't available. It may have been deleted."
@@ -16091,6 +16140,10 @@ msgstr "That conversation isn't available. It may have been deleted."
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr "That conversation's document was deleted."
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "That email, username or password doesn't match. Check them, or reset your password."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16917,6 +16970,14 @@ msgstr "This reply couldn't finish. Try again."
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr "This reply used Knowledge that has since changed, so it's hidden."
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "This reset link expired or was already used."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "This reset link expired or was already used. Send a new link."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "This resume is locked. Unlock it from its menu to edit."
@@ -17005,6 +17066,10 @@ msgstr "This server uses the standard stages, so stage names in the file aren't 
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "This sign-in attempt expired or was already used. Try again."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "This sign-in step expired. Sign in again."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17152,6 +17217,10 @@ msgstr "Too close to the interview to schedule a refresh."
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Too light for headings on white. It may be hard to read and print faintly."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Too many attempts. Wait a moment, then try again."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19231,6 +19300,10 @@ msgstr "Your server provides search for Applications and the assistant. Connect 
 msgid "your server's search service"
 msgstr "your server's search service"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Your session ended. Sign in again to keep working."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19333,83 +19406,3 @@ msgstr "Zoom out"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Send a new link"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Sign in again"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Sign in to save"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "That code doesn't match. Check it and try again."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "That email, username or password doesn't match. Check them, or reset your password."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "This reset link expired or was already used."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "This sign-in step expired. Sign in again."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Too many attempts. Wait a moment, then try again."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Your session ended. Sign in again to keep working."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Not saved · Sign in to save"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "This reset link expired or was already used. Send a new link."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "Compare attempts to see what improved. Practice questions are simulated."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compared with your stories."
-msgstr "Compared with your stories."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practice without an application"
-msgstr "Practice without an application"
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "Add a fact"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Add an interview first"

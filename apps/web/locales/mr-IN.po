@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:45+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1607,6 +1607,10 @@ msgid "Add a country"
 msgstr "एक देश जोडा"
 
 #: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "एक तथ्य जोडा"
+
+#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "एक तथ्य जोडा, उदाहरणार्थ “मी 2025 मध्ये दोन असोसिएट PM ना मार्गदर्शन केले”"
 
@@ -3131,6 +3135,14 @@ msgstr "सीमेची त्रिज्या"
 msgid "Border width"
 msgstr "सीमेची जाडी"
 
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "दोन्ही खात्यांत खाजगी अर्ज प्रोफाइल आहे. नकळत बदलले जाऊ नये म्हणून जोडण्याआधी सेटिंग्ज → खाते येथे एक प्रोफाइल निर्यात करून हटवा."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "दोन्ही खात्यांत अर्जाची सारखी जतन केलेली उत्तरे आहेत. नकळत बदलले जाऊ नये म्हणून जोडण्याआधी एक प्रत निर्यात करून हटवा."
+
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "रेझ्युमेचे विभाजन करता यावे म्हणून तो नेहमीच्या विभागांमध्ये विभागा."
@@ -3615,6 +3627,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "चलन निवडा."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr ""
@@ -4014,6 +4030,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "काय सुधारले ते पाहण्यासाठी प्रयत्नांची तुलना करा. सरावाचे प्रश्न सिम्युलेटेड आहेत, {0} कडून आलेले नाहीत."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "सुधारणा पाहण्यासाठी प्रयत्नांची तुलना करा. सरावाचे प्रश्न काल्पनिक आहेत."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -4035,6 +4055,10 @@ msgstr "त्यांच्या मूळ चलनात आणि वे�
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "तुमच्या कथा आणि जॉब पोस्टिंगशी तुलना केली."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "तुमच्या कथांशी तुलना केली."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4774,6 +4798,7 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "हे लोड करता आले नाही. तुमचा जतन केलेला डेटा बदललेला नाही."
@@ -4933,7 +4958,6 @@ msgstr "पासकीचे नाव बदलता आले नाही. 
 msgid "Couldn't rename this conversation. Try again."
 msgstr "या संभाषणाचे नाव बदलता आले नाही. पुन्हा प्रयत्न करा."
 
-#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "तुमचा पासवर्ड रीसेट करता आला नाही. पुन्हा प्रयत्न करा."
@@ -5087,7 +5111,6 @@ msgstr "मुलाखत शेड्यूल करता आली ना�
 msgid "Couldn't send the email. Try again."
 msgstr "ईमेल पाठवू शकलो नाही. पुन्हा प्रयत्न करा."
 
-#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "पासवर्ड रीसेट ईमेल पाठवता आला नाही. पुन्हा प्रयत्न करा."
@@ -5120,8 +5143,6 @@ msgstr "PDF पूर्वावलोकन दाखवता आले न�
 msgid "Couldn't show the preview."
 msgstr "पूर्वावलोकन दाखवता आले नाही."
 
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5266,12 +5287,10 @@ msgstr "फोटो अपलोड करता आला नाही. पु
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "कोड पडताळता आला नाही. तुमच्या ऑथेंटिकेटर अॅपमधील सध्याचा कोड टाका."
 
-#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "तुमचा बॅकअप कोड पडताळता आला नाही. कोड तपासा आणि पुन्हा प्रयत्न करा."
 
-#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "तुमचा कोड पडताळता आला नाही. कोड तपासा आणि पुन्हा प्रयत्न करा."
@@ -5459,7 +5478,6 @@ msgstr "CSV डेटा"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
-#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "चलन"
 
@@ -6640,10 +6658,6 @@ msgstr "६४ वर्णांपर्यंत नाव एंटर क�
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "तीन अक्षरांचा चलन कोड द्या."
-
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
@@ -7633,6 +7647,10 @@ msgstr "अभिवादन"
 msgid "Grid"
 msgstr "ग्रिड"
 
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "पाहुणा व खात्याची करिअर प्राधान्ये भिन्न आहेत. पाहुण्याचे काम सुरक्षित आहे. पुन्हा प्रयत्नाआधी दोन्ही खात्यांची करिअर प्राधान्ये आणि ज्ञान स्मृती सेटिंग्ज जुळवा."
+
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "आपल्या कॉलवर याबद्दल सविस्तर सांगायला आनंद होईल."
@@ -8023,6 +8041,7 @@ msgid "Images cover most of the page."
 msgstr "प्रतिमा पानाचा बहुतांश भाग व्यापतात."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "आयात करा"
 
@@ -10768,6 +10787,10 @@ msgstr "जतन केले नाही"
 msgid "Not saved — this fact was forgotten before."
 msgstr "जतन केले नाही — हे तथ्य आधी विसरले गेले होते."
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "जतन झाले नाही · जतन करण्यासाठी साइन इन करा"
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -11442,6 +11465,7 @@ msgstr "१०० पैकी"
 msgid "Out of date: the text has changed since."
 msgstr "कालबाह्य: तेव्हापासून मजकूर बदलला आहे."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11981,6 +12005,7 @@ msgid "Practice"
 msgstr "सराव"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12029,6 +12054,10 @@ msgstr "सरावाचे प्राधान्य:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "सरावाचे प्रश्न सिम्युलेटेड आहेत, Fieldnote कडून आलेले नाहीत."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "नोकरीच्या अर्जाशिवाय सराव करा"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -13520,6 +13549,10 @@ msgstr "रेझ्युमे नेहमी पांढऱ्या का
 msgid "Resumes created"
 msgstr "रेझ्युमे तयार केले"
 
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "खाती एकत्र करण्याआधी न वापरलेले अर्ज स्तंभ निवृत्त करा; एकूण सक्रिय स्तंभ ४० पेक्षा जास्त आहेत."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14461,6 +14494,10 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "नवीन दुवा पाठवा"
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15004,6 +15041,10 @@ msgstr "साइडबार अनेकदा शेवटचे वाचल
 msgid "Sign in"
 msgstr "साइन इन"
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "पुन्हा साइन इन करा"
+
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "तुमच्या AI क्लायंटमधून साइन इन करा किंवा API की वापरा."
@@ -15022,6 +15063,10 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "जतन करण्यासाठी साइन इन करा"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16082,6 +16127,10 @@ msgstr "धन्यवाद, Sam. हे एक उदाहरण: Northwind 
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "कोड जुळत नाही. तपासून पुन्हा प्रयत्न करा."
+
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16089,6 +16138,10 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "ईमेल, वापरकर्तानाव किंवा पासवर्ड जुळत नाही. तपासा किंवा पासवर्ड रीसेट करा."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16915,6 +16968,14 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "हा रीसेट दुवा कालबाह्य झाला आहे किंवा आधीच वापरला आहे."
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "हा रीसेट दुवा कालबाह्य झाला आहे किंवा आधीच वापरला आहे. नवीन दुवा पाठवा."
+
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "हा रेझ्युमे लॉक केलेला आहे. संपादित करण्यासाठी त्याच्या मेनूमधून तो अनलॉक करा."
@@ -17003,6 +17064,10 @@ msgstr "हा सर्व्हर मानक टप्पे वापर�
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "हा साइन-इन प्रयत्न कालबाह्य झाला किंवा आधीच वापरला गेला. पुन्हा प्रयत्न करा."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "ही साइन-इन पायरी कालबाह्य झाली आहे. पुन्हा साइन इन करा."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17150,6 +17215,10 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "पांढऱ्यावरील शीर्षकांसाठी खूप हलके. वाचणे आणि मुद्रित करणे कठीण होऊ शकते."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "खूप जास्त प्रयत्न. थोडे थांबून पुन्हा प्रयत्न करा."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19229,6 +19298,10 @@ msgstr "तुमचा सर्व्हर अर्ज विभागात
 msgid "your server's search service"
 msgstr ""
 
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "तुमचे सत्र संपले. काम सुरू ठेवण्यासाठी पुन्हा साइन इन करा."
+
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19331,83 +19404,3 @@ msgstr "बाहेर झूम करा"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "झुलू"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "दोन्ही खात्यांत खाजगी अर्ज प्रोफाइल आहे. नकळत बदलले जाऊ नये म्हणून जोडण्याआधी सेटिंग्ज → खाते येथे एक प्रोफाइल निर्यात करून हटवा."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "दोन्ही खात्यांत अर्जाची सारखी जतन केलेली उत्तरे आहेत. नकळत बदलले जाऊ नये म्हणून जोडण्याआधी एक प्रत निर्यात करून हटवा."
-
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "पाहुणा व खात्याची करिअर प्राधान्ये भिन्न आहेत. पाहुण्याचे काम सुरक्षित आहे. पुन्हा प्रयत्नाआधी दोन्ही खात्यांची करिअर प्राधान्ये आणि ज्ञान स्मृती सेटिंग्ज जुळवा."
-
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "खाती एकत्र करण्याआधी न वापरलेले अर्ज स्तंभ निवृत्त करा; एकूण सक्रिय स्तंभ ४० पेक्षा जास्त आहेत."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "नवीन दुवा पाठवा"
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "पुन्हा साइन इन करा"
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "जतन करण्यासाठी साइन इन करा"
-
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "कोड जुळत नाही. तपासून पुन्हा प्रयत्न करा."
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "ईमेल, वापरकर्तानाव किंवा पासवर्ड जुळत नाही. तपासा किंवा पासवर्ड रीसेट करा."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "हा रीसेट दुवा कालबाह्य झाला आहे किंवा आधीच वापरला आहे."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "ही साइन-इन पायरी कालबाह्य झाली आहे. पुन्हा साइन इन करा."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "खूप जास्त प्रयत्न. थोडे थांबून पुन्हा प्रयत्न करा."
-
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "तुमचे सत्र संपले. काम सुरू ठेवण्यासाठी पुन्हा साइन इन करा."
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "जतन झाले नाही · जतन करण्यासाठी साइन इन करा"
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "हा रीसेट दुवा कालबाह्य झाला आहे किंवा आधीच वापरला आहे. नवीन दुवा पाठवा."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compare attempts to see what improved. Practice questions are simulated."
-msgstr "सुधारणा पाहण्यासाठी प्रयत्नांची तुलना करा. सरावाचे प्रश्न काल्पनिक आहेत."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Compared with your stories."
-msgstr "तुमच्या कथांशी तुलना केली."
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practice without an application"
-msgstr "नोकरीच्या अर्जाशिवाय सराव करा"
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "एक तथ्य जोडा"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "आधी मुलाखत जोडा"
