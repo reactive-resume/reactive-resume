@@ -202,3 +202,43 @@ test("recovery into a different account clears the old editor and never saves it
 		await deleteE2EUser(other);
 	}
 });
+
+test("auth headings keep regular serif and native-callback guidance uses secondary ink", async ({ page }) => {
+	for (const path of [
+		"/auth/login",
+		"/auth/register",
+		"/auth/forgot-password",
+		"/auth/reset-password?token=fictional",
+		"/auth/reset-password?error=INVALID_TOKEN",
+		"/auth/verify-2fa",
+		"/auth/verify-2fa-backup",
+		"/auth/error?error=UNKNOWN",
+		"/auth/native-callback",
+	]) {
+		await page.goto(path);
+		const heading = page.getByRole("heading", { level: 1 });
+		await expect(heading).toBeVisible();
+		await expect(heading).toHaveCSS("font-weight", "400");
+		await expect(heading).toHaveCSS("font-family", /Instrument Serif/);
+	}
+	const colors = await page
+		.getByText("If the app did not open, try again on a device where it is installed.", { exact: true })
+		.evaluate((element) => {
+			const context = document.createElement("canvas").getContext("2d");
+			if (!context) throw new Error("Canvas unavailable");
+			const pixel = (color: string) => {
+				context.clearRect(0, 0, 1, 1);
+				context.fillStyle = color;
+				context.fillRect(0, 0, 1, 1);
+				return Array.from(context.getImageData(0, 0, 1, 1).data);
+			};
+			const tokens = getComputedStyle(document.documentElement);
+			return {
+				actual: pixel(getComputedStyle(element).color),
+				secondary: pixel(tokens.getPropertyValue("--ink-2")),
+				ink: pixel(tokens.getPropertyValue("--ink")),
+			};
+		});
+	expect(colors.actual).toEqual(colors.secondary);
+	expect(colors.actual).not.toEqual(colors.ink);
+});
