@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import { View } from "react-native";
 import { changedTags, documentRef, sharedTags } from "./filter";
 import { useNewDocuments } from "./new-documents";
+import { useExistingTags } from "./tag-suggestions";
 import { client, orpc } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 import { AddApplicationSheet } from "@/features/applications/add-sheet";
@@ -74,6 +75,10 @@ export function DocumentSheets({ value, onClose, onChange, onSelect, operations 
 		});
 	};
 	const targets = value.documents.filter((document) => !document.isLocked);
+	const tagSuggestions = useExistingTags(
+		value.documents.map((document) => document.type),
+		value.kind === "tags",
+	);
 	const titles = {
 		menu: t`Document options`,
 		rename: t`Rename`,
@@ -257,7 +262,14 @@ export function DocumentSheets({ value, onClose, onChange, onSelect, operations 
 					<>
 						<Text color="ink2">{t`Shows shared tags. Add or remove tags without changing each document's other tags.`}</Text>
 						<View pointerEvents={operations.busy ? "none" : "auto"}>
-							<ChipInput commitRef={commitTags} label={t`Tags`} values={tags} onChange={setTags} />
+							<ChipInput
+								commitRef={commitTags}
+								label={t`Tags`}
+								values={tags}
+								onChange={setTags}
+								suggestions={tagSuggestions}
+								suggestionsLabel={t`Your tags`}
+							/>
 						</View>
 						<Button
 							label={t`Save`}
