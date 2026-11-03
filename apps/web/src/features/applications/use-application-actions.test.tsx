@@ -3,11 +3,14 @@ import type { ApplicationSummary } from "./types";
 import type { ApplicationPipeline } from "@reactive-resume/schema/applications/lanes";
 import type { ReactNode } from "react";
 import { renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vite-plus/test";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { MutationObserver, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createDefaultApplicationLanes } from "@reactive-resume/schema/applications/lanes";
-import { followStageWrites } from "@reactive-resume/schema/applications/stage-baselines";
+import { followStageWrites, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
+import { prepareRequest } from "@reactive-resume/utils/deferred-request";
+import { pendingCommits } from "@/features/career/pending-commits";
+import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-scope";
 
 const mocks = vi.hoisted(() => ({
 	update: vi.fn(),
@@ -15,11 +18,13 @@ const mocks = vi.hoisted(() => ({
 	close: vi.fn(),
 	lanes: vi.fn(),
 	bulkUpdate: vi.fn(),
+	prepare: vi.fn(),
 	navigate: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({ useRouter: () => ({ navigate: mocks.navigate }) }));
 vi.mock("@/libs/orpc/client", () => ({
 	client: { applications: { bulkUpdate: mocks.bulkUpdate } },
+	prepareRpc: mocks.prepare,
 	orpc: {
 		applications: {
 			key: () => ["applications"],
@@ -57,6 +62,25 @@ import { listedApplication, STAGE_SCOPE, useApplicationActions, useMoveWithUndo 
 
 i18n.load("en", {});
 i18n.activate("en");
+
+beforeEach(() => {
+	setAccountScope("stage-fixture");
+	mocks.prepare.mockReset().mockImplementation((procedure: (input: unknown) => Promise<unknown>, input: unknown) =>
+		prepareRequest(async (defer) => {
+			let result: unknown;
+			await defer(async () => {
+				result = await procedure(input);
+				return new Response();
+			});
+			return result;
+		}),
+	);
+});
+afterEach(() => {
+	invalidateAccountScope();
+	for (const flush of pendingCommits) flush();
+	pendingCommits.clear();
+});
 
 const defaults = createDefaultApplicationLanes();
 function lane(category: string) {
@@ -182,6 +206,16 @@ type ToastCall = {
 	onClose?: () => void;
 };
 const lastToast = () => mocks.toast.mock.calls.at(-1)?.[0] as ToastCall;
+const undoNotice = async (description: string) => {
+	const find = () =>
+		mocks.toast.mock.calls
+			.map(([call]) => call as ToastCall)
+			.findLast((call) => call.description === description && call.actionProps?.children === "Undo");
+	await waitFor(() => expect(find()).toBeDefined());
+	const notice = find();
+	if (!notice) throw new Error("Undo notice missing");
+	return notice;
+};
 
 describe("moves with Undo (J2-18)", () => {
 	const stageEntry = (id: string, stage: string) => [{ id: `${id}-${stage}`, type: "stage", stage, at: new Date(0) }];
@@ -204,10 +238,11 @@ describe("moves with Undo (J2-18)", () => {
 		return { client, ...renderHook(() => useMoveWithUndo(), { wrapper }) };
 	}
 
-	it("shows the move at once and puts every row back on Undo without writing", () => {
+	it("shows the prepared move and puts every row back on Undo without writing", async () => {
 		const { client, result } = setupMove();
 		result.current({ applications: [{ id: "a" }, { id: "b" }], lane: lane("interview"), description: "2 moved" });
 
+		await undoNotice("2 moved");
 		expect(client.getQueryData<ApplicationSummary[]>(["applications"])?.map((row) => row.status)).toEqual([
 			"interview",
 			"interview",
@@ -232,8 +267,8 @@ describe("moves with Undo (J2-18)", () => {
 			closedReason: "accepted-other",
 			description: "2 closed",
 		});
-		lastToast().onClose?.();
-		lastToast().onClose?.();
+		(await undoNotice("2 closed")).onClose?.();
+		(await undoNotice("2 closed")).onClose?.();
 
 		await waitFor(() => expect(mocks.bulkUpdate).toHaveBeenCalledTimes(1));
 		expect(mocks.bulkUpdate).toHaveBeenCalledWith({
@@ -252,7 +287,7 @@ describe("moves with Undo (J2-18)", () => {
 		const { client, result } = setupMove();
 		mocks.bulkUpdate.mockRejectedValue(new Error("conflict"));
 		result.current({ applications: [{ id: "a" }], lane: lane("offer"), description: "moved" });
-		lastToast().onClose?.();
+		(await undoNotice("moved")).onClose?.();
 
 		await waitFor(() => expect(client.getQueryData<ApplicationSummary[]>(["applications"])).toEqual(rows));
 	});
@@ -344,7 +379,7 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		const { stages, order } = server();
 		const { result } = setupBoth();
 		result.current.move({ applications: [{ id: "a" }, { id: "b" }], lane: lane("interview"), description: "2 moved" });
-		const bulk = lastToast();
+		const bulk = await undoNotice("2 moved");
 
 		result.current.actions.moveTo({ id: "a" }, lane("offer"));
 		await waitFor(() => expect(mocks.update).toHaveBeenCalled());
@@ -366,13 +401,12 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		const { stages, order } = server();
 		const { result } = setupBoth();
 		result.current.move({ applications: [{ id: "a" }], lane: lane("interview"), description: "moved" });
-		const first = lastToast();
+		const first = await undoNotice("moved");
 		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "moved again" });
-		const second = lastToast();
-
-		// The second toast can close first; its write still waits for the first one's.
-		second.onClose?.();
+		expect(lastToast()).toBe(first);
 		first.onClose?.();
+		const second = await undoNotice("moved again");
+		second.onClose?.();
 
 		await waitFor(() => expect(order).toEqual(["bulk a -> interview", "bulk a -> offer"]));
 		expect(mocks.bulkUpdate.mock.calls[1]?.[0].expectedStages).toEqual([
@@ -385,7 +419,7 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 
 		// A third move before the list reloads starts from what the second saved, not the list's older timeline.
 		result.current.move({ applications: [{ id: "a" }], lane: lane("interview"), description: "moved back" });
-		lastToast().onClose?.();
+		(await undoNotice("moved back")).onClose?.();
 		await waitFor(() => expect(stages.a?.status).toBe("interview"));
 		expect(mocks.bulkUpdate.mock.calls[2]?.[0].expectedStages).toEqual([
 			{ id: "a", status: "offer", laneId: null, closedReason: null, stageEntryId: "change-2" },
@@ -396,11 +430,11 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		const { stages, order } = server();
 		const { result } = setupBoth();
 		result.current.move({ applications: [{ id: "a" }], lane: lane("interview"), description: "moved" });
-		const first = lastToast();
+		const first = await undoNotice("moved");
 		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "moved again" });
-		const second = lastToast();
 		first.onClose?.();
 		await waitFor(() => expect(order).toEqual(["bulk a -> interview"]));
+		const second = await undoNotice("moved again");
 		// Another device moves it away and back before the second move is saved.
 		stages.a = { status: "interview", laneId: null, closedReason: null, stageEntryId: "elsewhere" };
 		second.onClose?.();
@@ -416,11 +450,11 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		const { stages, order } = server();
 		const { result } = setupBoth();
 		result.current.move({ applications: [{ id: "a" }], lane: lane("interview"), description: "moved" });
-		const first = lastToast();
+		const first = await undoNotice("moved");
 		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "moved again" });
-		const second = lastToast();
 
 		first.actionProps?.onClick();
+		const second = await undoNotice("moved again");
 		second.onClose?.();
 
 		await waitFor(() => expect(order).toEqual(["bulk a -> offer"]));
@@ -437,11 +471,11 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		result.current.actions.moveTo({ id: "a" }, lane("interview"));
 		await waitFor(() => expect(mocks.update).toHaveBeenCalled());
 		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "moved" });
-		lastToast().onClose?.();
 		// The bulk write waits for the single one's answer.
 		expect(order).toEqual([]);
 
 		held.open();
+		(await undoNotice("moved")).onClose?.();
 		await waitFor(() => expect(order).toEqual(["update a", "bulk a -> offer"]));
 		expect(mocks.bulkUpdate.mock.calls[0]?.[0].expectedStages).toEqual([
 			{ id: "a", status: "interview", laneId: null, closedReason: null, stageEntryId: "change-1" },
@@ -459,8 +493,8 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		result.current.actions.moveTo({ id: "a" }, lane("interview"));
 		await waitFor(() => expect(mocks.update).toHaveBeenCalled());
 		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "moved" });
-		lastToast().onClose?.();
 		held.fail(new Error("offline"));
+		(await undoNotice("moved")).onClose?.();
 
 		await waitFor(() => expect(order).toEqual(["bulk a -> offer"]));
 		expect(mocks.bulkUpdate.mock.calls[0]?.[0].expectedStages).toEqual([
@@ -473,20 +507,19 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		const { stages, order } = server();
 		const { result } = setupBoth();
 		result.current.move({ applications: [{ id: "a" }], lane: lane("interview"), description: "moved" });
-		const first = lastToast();
+		const first = await undoNotice("moved");
 		const held = holdSingleWrites();
 		result.current.actions.moveTo({ id: "a" }, lane("screening"));
 		await waitFor(() => expect(mocks.update).toHaveBeenCalled());
 		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "moved again" });
-		const third = lastToast();
-		third.onClose?.();
 		first.onClose?.();
 		held.open();
+		(await undoNotice("moved again")).onClose?.();
 
-		await waitFor(() => expect(order).toHaveLength(3));
-		// The first bulk move started before the single move, so the single move wins over it; the last move wins.
+		await waitFor(() => expect(order).toEqual(["bulk a -> interview", "update a", "bulk a -> offer"]));
+		// Prepared transport starts before the single-write gate opens; the final move starts from its later receipt.
 		expect(mocks.bulkUpdate.mock.calls.find(([input]) => input.status === "offer")?.[0].expectedStages).toEqual([
-			{ id: "a", status: "screening", laneId: null, closedReason: null, stageEntryId: "change-1" },
+			{ id: "a", status: "screening", laneId: null, closedReason: null, stageEntryId: "change-2" },
 		]);
 		expect(stages.a?.status).toBe("offer");
 	});
@@ -495,16 +528,15 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		const { stages, order } = server();
 		const { result } = setupBoth();
 		result.current.move({ applications: [{ id: "a" }], lane: lane("interview"), description: "moved" });
-		const first = lastToast();
+		const first = await undoNotice("moved");
 		const held = holdSingleWrites();
 		result.current.actions.moveTo({ id: "a" }, lane("screening"));
 		await waitFor(() => expect(mocks.update).toHaveBeenCalled());
 		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "moved again" });
-		const third = lastToast();
 		first.onClose?.();
 		await waitFor(() => expect(order).toEqual(["bulk a -> interview"]));
 		held.fail(new Error("offline"));
-		third.onClose?.();
+		(await undoNotice("moved again")).onClose?.();
 
 		await waitFor(() => expect(order).toEqual(["bulk a -> interview", "bulk a -> offer"]));
 		expect(mocks.bulkUpdate.mock.calls[1]?.[0].expectedStages).toEqual([
@@ -539,10 +571,10 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		const submitted = submit("c", new Promise((resolve) => (open = resolve)));
 		const failed = submit("a", new Promise((_resolve, reject) => (fail = reject)));
 		result.current.move({ applications: [{ id: "a" }, { id: "c" }], lane: lane("interview"), description: "2 moved" });
-		lastToast().onClose?.();
 		open();
 		fail(new Error("offline"));
 		await Promise.all([submitted, failed]);
+		(await undoNotice("2 moved")).onClose?.();
 
 		await waitFor(() => expect(order).toEqual(["submit c", "bulk a,c -> interview"]));
 		expect(mocks.bulkUpdate.mock.calls[0]?.[0].expectedStages).toEqual([
@@ -580,7 +612,7 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		}).mutate({ id: "a", status: "interview" });
 		await new Promise((resolve) => setTimeout(resolve, 0));
 		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "moved" });
-		lastToast().onClose?.();
+		(await undoNotice("moved")).onClose?.();
 		await waitFor(() => expect(order).toEqual(["bulk a -> offer"]));
 		expect(stages.a?.status).toBe("offer");
 		expect(mocks.bulkUpdate.mock.calls[0]?.[0].expectedStages[0].stageEntryId).toBe("morning");
@@ -595,7 +627,7 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		// Another device moves A away and back; B only gets a note, which adds no stage change.
 		stages.a = { status: "interview", laneId: null, closedReason: null, stageEntryId: "elsewhere" };
 		result.current.move({ applications: [{ id: "a" }, { id: "b" }], lane: lane("offer"), description: "2 moved" });
-		lastToast().onClose?.();
+		(await undoNotice("2 moved")).onClose?.();
 
 		await waitFor(() => expect(order).toHaveLength(3));
 		expect(stages.a.status).toBe("interview");
@@ -609,7 +641,7 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		server();
 		const { client, result } = setupBoth();
 		result.current.move({ applications: [{ id: "a" }, { id: "b" }], lane: lane("interview"), description: "2 moved" });
-		const bulk = lastToast();
+		const bulk = await undoNotice("2 moved");
 		result.current.actions.moveTo({ id: "a" }, lane("offer"));
 		result.current.actions.moveTo({ id: "c" }, lane("applied"));
 		await waitFor(() => expect(mocks.update).toHaveBeenCalledTimes(2));
@@ -621,6 +653,86 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 			["b", "applied"],
 			["c", "applied"],
 		]);
+		expect(mocks.bulkUpdate).not.toHaveBeenCalled();
+	});
+
+	it("a later immediate move remains visible when an earlier bulk intent finishes preparing", async () => {
+		const { stages, order } = server();
+		const { result, client } = setupBoth();
+		let release!: () => void;
+		const held = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const prepare = mocks.prepare.getMockImplementation();
+		if (!prepare) throw new Error("Transport fixture missing");
+		mocks.prepare.mockImplementationOnce(async (procedure, input) => {
+			await held;
+			return prepare(procedure, input);
+		});
+		result.current.move({ applications: [{ id: "a" }], lane: lane("interview"), description: "pending move" });
+		await waitFor(() => expect(mocks.prepare).toHaveBeenCalledTimes(1));
+		result.current.actions.moveTo({ id: "a" }, lane("offer"));
+		await waitFor(() => expect(order).toEqual(["update a"]));
+		release();
+		const notice = await undoNotice("pending move");
+		expect(client.getQueryData<ApplicationSummary[]>(["applications"])?.[0]?.status).toBe("offer");
+		notice.onClose?.();
+		await waitFor(() => expect(order).toHaveLength(2));
+		expect(stages.a?.status).toBe("offer");
+	});
+
+	it("a failed preparation releases the next queued move without acknowledging the failed move", async () => {
+		const { stages, order } = server();
+		const { result } = setupBoth();
+		mocks.prepare.mockRejectedValueOnce(new Error("Preflight unavailable"));
+		result.current.move({ applications: [{ id: "a" }], lane: lane("interview"), description: "failed move" });
+		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "next move" });
+		const next = await undoNotice("next move");
+		expect(mocks.toast.mock.calls.some(([call]) => call.description === "failed move")).toBe(false);
+		next.onClose?.();
+		await waitFor(() => expect(order).toEqual(["bulk a -> offer"]));
+		expect(stages.a?.status).toBe("offer");
+	});
+
+	it("an account switch while waiting for a baseline cannot prepare the old move for the replacement account", async () => {
+		const { order } = server();
+		const { client, result } = setupBoth();
+		const held = holdSingleWrites();
+		result.current.actions.moveTo({ id: "a" }, lane("interview"));
+		await waitFor(() => expect(mocks.update).toHaveBeenCalled());
+		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "old account move" });
+		setAccountScope("replacement");
+		held.open();
+		await waitFor(() => expect(order).toEqual(["update a"]));
+		const row = rows()[0];
+		if (!row) throw new Error("Application fixture missing");
+		const next = stageBaselinesFor(client).begin(STAGE_SCOPE, new Map([["a", row]]));
+		let settled = false;
+		void next.baselines.get("a")?.then(() => {
+			settled = true;
+		});
+		await waitFor(() => expect(settled).toBe(true));
+		next.settle([]);
+		expect(mocks.prepare).not.toHaveBeenCalled();
+		expect(mocks.bulkUpdate).not.toHaveBeenCalled();
+	});
+
+	it("an account switch cancels a ready transport and releases its baseline chain", async () => {
+		server();
+		const { client, result } = setupBoth();
+		result.current.move({ applications: [{ id: "a" }], lane: lane("offer"), description: "ready move" });
+		const notice = await undoNotice("ready move");
+		setAccountScope("replacement");
+		notice.onClose?.();
+		const row = rows()[0];
+		if (!row) throw new Error("Application fixture missing");
+		const next = stageBaselinesFor(client).begin(STAGE_SCOPE, new Map([["a", row]]));
+		let settled = false;
+		void next.baselines.get("a")?.then(() => {
+			settled = true;
+		});
+		await waitFor(() => expect(settled).toBe(true));
+		next.settle([]);
 		expect(mocks.bulkUpdate).not.toHaveBeenCalled();
 	});
 });
@@ -661,6 +773,7 @@ describe("Offer and accepted-offer follow-ups (J2-06, J2-07)", () => {
 		expect(mocks.bulkUpdate).not.toHaveBeenCalled();
 
 		lastToast().actionProps?.onClick();
+		await waitFor(() => expect(lastToast().actionProps?.children).toBe("Undo"));
 		lastToast().onClose?.();
 		await waitFor(() =>
 			expect(mocks.bulkUpdate).toHaveBeenCalledWith({

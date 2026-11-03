@@ -10,7 +10,11 @@ const { MutationObserver, QueryClient, QueryObserver } = createRequire(new URL("
 
 let followUpDomain;
 function load(path, mocks = {}) {
-	const dependencies = { "@reactive-resume/schema/applications/follow-up": followUpDomain, ...mocks };
+	const dependencies = {
+		"@reactive-resume/schema/applications/follow-up": followUpDomain,
+		"@/api/client": { SessionChangedError: Error },
+		...mocks,
+	};
 	const module = { exports: {} };
 	const code = transformSync(readFileSync(new URL("../src/" + path, import.meta.url), "utf8"), {
 		loader: path.endsWith(".tsx") ? "tsx" : "ts",
@@ -26,6 +30,31 @@ function load(path, mocks = {}) {
 	);
 	return module.exports;
 }
+
+const { prepareRequest } = load("../../../packages/utils/src/deferred-request.ts");
+const prepareCall = (call) =>
+	prepareRequest(async (defer) => {
+		let result;
+		await defer(async () => {
+			result = await call();
+			return new Response();
+		});
+		return result;
+	});
+const deferredUndo = (options) => {
+	const ready = options.prepare().then((request) => {
+		options.onReady();
+		return request;
+	});
+	return {
+		ready,
+		restore: async () => {
+			(await ready).cancel();
+			return options.restore();
+		},
+		commit: async () => options.commit((await ready).send()),
+	};
+};
 
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
 const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
@@ -922,12 +951,11 @@ queryClient.clear();
 			applicationDetailQueryKey: detailKey,
 			stageScope: () => "fixture:account",
 			useApplicationMutations: () => ({
-				bulkUpdate: {
-					mutateAsync: async (input) => {
+				prepareBulkUpdate: (input) =>
+					prepareCall(async () => {
 						writes.push(input);
 						return { updated: input.ids.length };
-					},
-				},
+					}),
 			}),
 		},
 		"./stages": stages,
@@ -935,9 +963,9 @@ queryClient.clear();
 			"../../../packages/schema/src/applications/stage-baselines.ts",
 			{ "./data": applicationData },
 		),
-		"@/auth/session": { useSession: () => ({ server: "fixture" }) },
+		"@/auth/session": { useSession: () => ({ server: "fixture" }), getServer: () => "fixture" },
 		"@/features/career/hooks": { useOffers: () => ({ data: undefined }) },
-		"@/features/career/undo": { withUndo: (options) => pending.push(options) },
+		"@/features/career/undo": { withUndo: (options) => pending.push(deferredUndo(options)) },
 		"@/routes": { routes: { application: (id, tab) => `/applications/${id}/${tab}` } },
 		"@/ui": { showToast() {} },
 	});
@@ -952,6 +980,7 @@ queryClient.clear();
 		closedReason: "accepted-other",
 		message: "2 closed",
 	});
+	await pending[0].ready;
 	assert.deepEqual(
 		client.getQueryData(listKey).map((row) => [row.status, row.closedReason]),
 		[
@@ -961,7 +990,7 @@ queryClient.clear();
 	);
 	assert.equal(client.getQueryData(detailKey("a")).status, "closed", "the open application shows the move too");
 	assert.equal(writes.length, 0, "nothing is written until the toast ends");
-	pending[0].restore();
+	await pending[0].restore();
 	assert.deepEqual(client.getQueryData(listKey), rows, "Undo puts every row back");
 	assert.equal(client.getQueryData(detailKey("a")).status, "applied");
 	move({ applications: [{ id: "b" }], lane: closed, supported: false, closedReason: "withdrew", message: "1 closed" });
@@ -985,6 +1014,7 @@ queryClient.clear();
 		closedReason: "withdrew",
 		message: "2 closed",
 	});
+	await pending[2].ready;
 	client.setQueryData(listKey, (current) =>
 		current.map((row) =>
 			row.id === "a"
@@ -994,7 +1024,7 @@ queryClient.clear();
 					: row,
 		),
 	);
-	pending[2].restore();
+	await pending[2].restore();
 	assert.deepEqual(
 		client.getQueryData(listKey).map((row) => [row.id, row.status]),
 		[
@@ -1047,8 +1077,8 @@ queryClient.clear();
 			applicationDetailQueryKey: (id) => ["application", id, "fixture"],
 			stageScope: () => "fixture:account",
 			useApplicationMutations: () => ({
-				bulkUpdate: {
-					mutateAsync: async (input) => {
+				prepareBulkUpdate: (input) =>
+					prepareCall(async () => {
 						order.push({ status: input.status, expected: input.expectedStages });
 						const saved = [];
 						for (const { id, ...expected } of input.expectedStages) {
@@ -1058,15 +1088,14 @@ queryClient.clear();
 							saved.push({ id, ...server[id] });
 						}
 						return { updated: saved.length, stages: saved };
-					},
-				},
+					}),
 			}),
 		},
 		"./stages": stages,
 		"@reactive-resume/schema/applications/stage-baselines": stageBaselines,
-		"@/auth/session": { useSession: () => ({ server: "fixture" }) },
+		"@/auth/session": { useSession: () => ({ server: "fixture" }), getServer: () => "fixture" },
 		"@/features/career/hooks": { useOffers: () => ({ data: undefined }) },
-		"@/features/career/undo": { withUndo: (options) => pending.push(options) },
+		"@/features/career/undo": { withUndo: (options) => pending.push(deferredUndo(options)) },
 		"@/routes": { routes: { application: (id, tab) => `/applications/${id}/${tab}` } },
 		"@/ui": { showToast: (toast) => toasts.push(toast.message) },
 	});
@@ -1100,6 +1129,7 @@ queryClient.clear();
 		closedReason: "withdrew",
 		message: "closed",
 	});
+	await pending[3].ready;
 	server.a = { ...server.a, stageEntryId: "outside-change" };
 	await pending[3].commit();
 	assert.equal(server.a.status, "interview");

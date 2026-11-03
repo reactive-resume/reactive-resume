@@ -11,8 +11,9 @@ import { getCategoryLane, getLaneLabel, laneMoveInput } from "./lanes";
 import { applicationDetailQueryKey, applicationsListQueryKey } from "./queries";
 import { applicationLanesQueryKey, useApplicationLanes } from "./use-application-lanes";
 import { withUndo } from "@/features/career/shared";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { toastError } from "@/libs/error-message";
-import { client, orpc } from "@/libs/orpc/client";
+import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 /** Refreshes everything that shows applications: the list, the open one, stats, tags and documents' job lines. */
 export function useInvalidateApplications() {
@@ -71,6 +72,8 @@ export function useMoveWithUndo() {
 	const listKey = applicationsListQueryKey();
 
 	return ({ applications, lane, closedReason, description }: MoveWithUndoInput) => {
+		const generation = getAccountGeneration();
+		const current = () => generation === getAccountGeneration();
 		const ids = applications.map((application) => application.id);
 		if (ids.length === 0) return;
 		const input = laneMoveInput(lane, mode, closedReason);
@@ -89,7 +92,7 @@ export function useMoveWithUndo() {
 			before.set(id, stageOf(row));
 			listed.set(id, row);
 		}
-		const { baselines, settle } = stageBaselinesFor(queryClient).begin(STAGE_SCOPE, listed);
+		const { baselines, settle, isLatest } = stageBaselinesFor(queryClient).begin(STAGE_SCOPE, listed);
 
 		const revert = <Row extends Stage & { id: string }>(row: Row): Row => {
 			const stage = before.get(row.id);
@@ -97,30 +100,56 @@ export function useMoveWithUndo() {
 		};
 		const selected = new Set(ids);
 		const apply = <Row extends Stage & { id: string }>(row: Row): Row =>
-			selected.has(row.id) ? { ...row, ...moved } : row;
+			selected.has(row.id) && isLatest(row.id) ? { ...row, ...moved } : row;
 
-		queryClient.setQueryData<ApplicationSummary[]>(listKey, (current) => current?.map(apply));
-		// The open application (sheet, workspace) shows the move too.
-		for (const id of ids)
-			queryClient.setQueryData<Application>(applicationDetailQueryKey(id), (current) => current && apply(current));
+		const showMove = () => {
+			queryClient.setQueryData<ApplicationSummary[]>(listKey, (current) => current?.map(apply));
+			for (const id of ids)
+				queryClient.setQueryData<Application>(applicationDetailQueryKey(id), (current) => current && apply(current));
+		};
 
 		const restore = () => {
 			settle([]);
+			if (!current()) return;
 			queryClient.setQueryData<ApplicationSummary[]>(listKey, (current) => current?.map(revert));
 			for (const id of ids)
 				queryClient.setQueryData<Application>(applicationDetailQueryKey(id), (current) => current && revert(current));
 			for (const id of ids) invalidate(id);
 		};
 
+		const failed = (error: unknown) => {
+			restore();
+			if (current()) toastError(error, t`Couldn't update the applications. Try again.`);
+		};
 		withUndo({
 			description,
-			commit: async () => {
+			prepare: async () => {
 				try {
 					const expectedStages = await Promise.all(
 						[...baselines].map(async ([id, baseline]) => ({ id, ...(await baseline) })),
 					);
-					const { updated, stages } = await client.applications.bulkUpdate({ ids, ...input, expectedStages });
+					if (!current()) throw new DOMException("", "AbortError");
+					for (const stage of expectedStages) before.set(stage.id, stageOf(stage));
+					const request = await prepareRpc(client.applications.bulkUpdate, { ids, ...input, expectedStages });
+					return {
+						send: request.send,
+						cancel: () => {
+							request.cancel();
+							settle([]);
+						},
+					};
+				} catch (error) {
+					settle([]);
+					throw error;
+				}
+			},
+			onReady: showMove,
+			onPrepareError: failed,
+			commit: async (result) => {
+				try {
+					const { updated, stages } = await result;
 					settle(stages ?? []);
+					if (!current()) return;
 					const kept = ids.length - updated;
 					if (kept > 0)
 						toast.add({
@@ -130,10 +159,9 @@ export function useMoveWithUndo() {
 							}),
 						});
 				} catch (error) {
-					restore();
-					toastError(error, t`Couldn't update the applications. Try again.`);
+					failed(error);
 				} finally {
-					for (const id of ids) invalidate(id);
+					if (current()) for (const id of ids) invalidate(id);
 				}
 			},
 			onUndo: restore,
