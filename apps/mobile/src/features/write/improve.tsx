@@ -10,7 +10,7 @@ import { orpc } from "@/api/client";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { Button, ListRow, Text, TextField, useTheme } from "@/ui";
 
-type Action = "verb" | "result" | "shorter" | "custom";
+type Action = "verb" | "result" | "shorter" | "posting" | "warmer" | "custom";
 
 type ImprovePanelProps = {
 	line: { index: number; text: string };
@@ -18,6 +18,7 @@ type ImprovePanelProps = {
 	where: string;
 	/** The rest of the field, so a result can come from the lines around it. */
 	context: string;
+	letter?: { applicationId?: string | null | undefined } | undefined;
 	onClose: () => void;
 	/** Swaps the line; false when it changed since Improve was asked. */
 	onReplace: (text: string) => Promise<boolean>;
@@ -27,7 +28,7 @@ type ImprovePanelProps = {
  * Improve (`ai.improve`): pick what to change, then Replace or Keep mine. Only the one line changes, and only when
  * the user replaces it. Without a provider, the setup sheet connects one first.
  */
-export function ImprovePanel({ line, where, context, onClose, onReplace }: ImprovePanelProps) {
+export function ImprovePanel({ line, where, context, letter, onClose, onReplace }: ImprovePanelProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const ai = useHasAIProvider();
@@ -44,23 +45,34 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 	const [setup, setSetup] = useState(false);
 	const improve = useMutation(orpc.ai.improve.mutationOptions());
 
-	const options: { action: Action; icon: IconName; label: string }[] = [
-		{ action: "verb", icon: "lightning", label: t`Stronger verb` },
-		{ action: "result", icon: "trend-up", label: t`Add a result` },
-		{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Make it shorter` },
-	];
+	const options: { action: Action; icon: IconName; label: string }[] = letter
+		? [
+				...(letter.applicationId
+					? [{ action: "posting" as const, icon: "briefcase" as const, label: t`Tie to the posting` }]
+					: []),
+				{ action: "warmer", icon: "hand-heart", label: t`Warmer` },
+				{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Shorter` },
+			]
+		: [
+				{ action: "verb", icon: "lightning", label: t`Stronger verb` },
+				{ action: "result", icon: "trend-up", label: t`Add a result` },
+				{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Make it shorter` },
+			];
 
 	const run = (
 		action: Action,
 		words = action === "custom" ? request.trim() : action === "result" ? result.trim() : "",
 	) => {
+		if (!ai.defaultProvider) return;
 		setLast({ action, words });
 		improve.mutate({
+			aiProviderId: ai.defaultProvider.id,
 			action,
 			line: line.text,
 			where,
 			context: context.slice(0, 10_000),
 			...(words ? { request: words } : {}),
+			...(action === "posting" && letter?.applicationId ? { applicationId: letter.applicationId } : {}),
 		});
 	};
 	const pick = (action: Action) => (action === "result" ? setAsking("result") : run(action));
@@ -83,7 +95,7 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 			}}
 		>
 			<Text variant="micro" color="ink3">
-				{t`Improve selected line`}
+				{letter ? t`Improve this paragraph` : t`Improve selected line`}
 			</Text>
 			<Text variant="caption" color="ink3">{t`Original`}</Text>
 			<Text variant="callout" color="ink2" selectable>
@@ -91,10 +103,13 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 			</Text>
 
 			{improveProvider && (
-				<Text
-					variant="caption"
-					color="ink3"
-				>{t`Sends this line, surrounding field text and your instructions to ${improveProvider.label} · ${improveProvider.model}.`}</Text>
+				<Text variant="caption" color="ink3">
+					{letter
+						? letter.applicationId
+							? t`Sends this paragraph, the rest of the letter, the linked job posting and your instructions to ${improveProvider.label} · ${improveProvider.model}.`
+							: t`Sends this paragraph, the rest of the letter and your instructions to ${improveProvider.label} · ${improveProvider.model}.`
+						: t`Sends this line, surrounding field text and your instructions to ${improveProvider.label} · ${improveProvider.model}.`}
+				</Text>
 			)}
 			{ai.isLoading ? (
 				<Text color="ink2">{t`Loading…`}</Text>

@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# ஆவணம் குப்பைக்கு நகர்த்தப்பட்டது} other {# ஆவணங்கள் குப்பைக்கு நகர்த்தப்பட்டன}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# ஆவணம்} other {# ஆவணங்கள்}}"
@@ -2462,6 +2463,10 @@ msgstr "பெங்காலி"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "போர்டு"
@@ -2479,7 +2484,6 @@ msgstr "உடல் உரை மிகவும் சிறியது"
 msgid "Body text set to {minimum} pt"
 msgstr "உடல் உரை {minimum} pt என அமைக்கப்பட்டது"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "தடித்த"
@@ -2556,7 +2560,6 @@ msgstr "பல்கேரியன்"
 msgid "bullet {n}"
 msgstr "பட்டியல் நுழைவு {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "மூடப்பட்டது"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "கோரிக்கையை முடிக்க முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "இந்த செயலை முடிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "டிரான்ஸ்கிரிப்டை நகலெடுக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "கடிதத்தை உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "கவர் கடிதம்"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "கவர் லெட்டர்"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "அட்டை கடிதம் - {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Open Collective-இல் நன்கொடை அளியுங்க
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "படிவப் பதில்"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "வடிவமைத்தல்"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "தேர்ந்தெடுக்கப்பட்ட வரியை மேம்படுத்தவும்"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "இந்தப் பத்தியை மேம்படுத்து"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "மேம்படுத்துகிறது…"
 
@@ -6493,7 +6489,6 @@ msgstr "இந்த வேலை விண்ணப்பத்திலிர�
 msgid "Italian"
 msgstr "இத்தாலியன்"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "சாய்ந்த"
@@ -8612,7 +8607,6 @@ msgstr "அறிவிப்புகள் முடக்கப்பட்�
 msgid "Now"
 msgstr "இப்போது"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "எண்ணிடப்பட்ட பட்டியல்"
@@ -10710,6 +10704,7 @@ msgstr "நிலையைப் பயன்பாட்டிலிருந�
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "இந்தப் பத்தி, கடிதத்தின் மீதிப் பகுதி மற்றும் உங்கள் வழிமுறைகளை {0} · {1} க்கு அனுப்பும்."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "இந்தப் பத்தி, கடிதத்தின் மீதிப் பகுதி, இணைக்கப்பட்ட வேலை விளம்பரம் மற்றும் உங்கள் வழிமுறைகளை {0} · {1} க்கு அனுப்பும்."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "இந்த PDF ஐ அதன் உரை அடுக்கைப் படிப்பதற்குப் பதிலாக, உங்கள் உள்ளமைக்கப்பட்ட AI வழங்குநருக்கு அனுப்புகிறது."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "இதை விண்ணப்பித்ததாகக் குறிக்கும் முன், கேள்விகளை 2,000 எழுத்துகளுக்குள்ளும் பதில்களை 6,000 எழுத்துகளுக்குள்ளும் சுருக்கவும்."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "குட்டையானது"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "இருந்து தொடங்குங்கள்"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "உங்களிடம் உள்ள ஒன்றில் இருந்து தொடங்கி வேலை விண்ணப்பத்தை இணைக்கவும்."
 
@@ -12387,6 +12399,10 @@ msgstr "பெரும்பாலான ரெஸ்யூம்களில�
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "உங்கள் பெயருடன் தொடங்குங்கள். பிறகு மற்றவற்றைச் சேர்க்கலாம்."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "இந்த வாரம்: உங்கள் சான்றுக�
 msgid "This workspace couldn't be loaded."
 msgstr "இந்தப் பணியிடத்தை ஏற்ற முடியவில்லை."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "வேலை விளம்பரத்திற்கு ஏற்ப மாற்று"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "சுருக்கு"
@@ -13926,7 +13946,6 @@ msgstr "உக்ரேனியன்"
 msgid "Unavailable"
 msgstr "கிடைக்கவில்லை"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "அடிக்கோடு"
@@ -14527,6 +14546,10 @@ msgstr "உங்களுக்காகக் காத்திருக்�
 msgid "Waiting to hear back"
 msgstr "பதில் கேட்க காத்திருக்கிறேன்"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "மேலும் கனிவாக"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "எழுத்து உதவி, ஏற்ப மாற்றிய �
 msgid "Writing review"
 msgstr "எழுத்து மதிப்பாய்வு"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "உங்கள் தொடக்க உரை"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "உங்கள் தொடக்க உரை, கொண்டுசெல்ல வேண்டிய கதைகள், கேட்க வேண்டிய கேள்விகள். அழைப்புக்கு 10 நிமிடங்களுக்கு முன் இது உங்கள் சரிபார்ப்புப் பட்டியலாக மாறும்."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

@@ -4,14 +4,15 @@ import type { ComponentRef, RefObject } from "react";
 import type { EnrichedTextInputInstance, OnChangeStateEvent } from "react-native-enriched-html";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { ScrollView, View } from "react-native";
 import { EnrichedTextInput } from "react-native-enriched-html";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ImprovePanel } from "./improve";
 import { PromptSheet } from "./pickers";
 import { createRichTextSession, fromEnrichedHtml, lineAtCaret, replaceLine } from "./rich-text";
-import { resumeFieldFocus } from "@/draft";
+import { getAccountScope } from "@/auth/session";
+import { letterFieldFocus, resumeFieldFocus } from "@/draft";
 import { Button, IconButton, ListRow, Sheet, Text, useTheme } from "@/ui";
 import { useKeyboardVisible } from "@/ui/keyboard";
 
@@ -53,10 +54,13 @@ const loadBaseline = (
 		})
 		.catch(() => undefined);
 
-type RichTextFieldProps = {
+export type RichTextFieldProps = {
 	label: string;
 	value: string;
-	/** Receives resume HTML, only after the user edits this field. `newStep` marks an accepted AI replacement. */
+	letter?: { applicationId?: string | null | undefined } | undefined;
+	improve?: boolean | undefined;
+	minLines?: number | undefined;
+	/** Receives document HTML, only after the user edits this field. `newStep` marks an accepted AI replacement. */
 	onChange: (html: string, options?: { newStep?: boolean }) => void;
 	/** Guidance while editing, e.g. "2–3 sentences reads best". */
 	hint?: string | undefined;
@@ -68,7 +72,17 @@ type RichTextFieldProps = {
  * Rich text (react-native-enriched-html). The toolbar docks above the keyboard while the field has focus; render
  * `RichTextToolbar` once on the screen. Only an edited field is re-serialised (README §0).
  */
-export function RichTextField({ label, value, onChange, hint, disabled = false, autoFocus }: RichTextFieldProps) {
+export function RichTextField({
+	label,
+	value,
+	onChange,
+	hint,
+	disabled = false,
+	autoFocus,
+	letter,
+	improve = true,
+	minLines = 4,
+}: RichTextFieldProps) {
 	const { t } = useLingui();
 	const { colors, fonts, radius, space, type } = useTheme();
 	const ref = useRef<EnrichedTextInputInstance>(null);
@@ -76,12 +90,24 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 	const [focused, setFocused] = useState(false);
 	const border = focused ? 2 : 1;
 	const [text, setText] = useState("");
-	const [improving, setImproving] = useState<{ index: number; text: string } | null>(null);
+	const [improving, setImproving] = useState<{
+		index: number;
+		text: string;
+		scope: string | null;
+		sequence: number;
+	} | null>(null);
+	const mounted = useRef(true);
+	const improveSequence = useRef(0);
+	const fieldFocus = letter ? letterFieldFocus : resumeFieldFocus;
 	const plain = useRef("");
 	const editor = useRef<ActiveEditor | null>(null);
 	// Table markup can't be edited safely by the native editor; it stays as it is.
 	const readOnly = useMemo(() => /<table[\s>]/i.test(value), [value]);
 	const editable = !disabled && !readOnly;
+	const latest = useRef({ value, disabled: !editable || !improve, onChange });
+	useLayoutEffect(() => {
+		latest.current = { value, disabled: !editable || !improve, onChange };
+	}, [value, editable, improve, onChange]);
 
 	const readBaseline = () => loadBaseline(ref, session, onChange);
 
@@ -94,8 +120,10 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 	});
 
 	useEffect(() => {
+		mounted.current = true;
 		loadBaseline(ref, session, () => undefined);
 		return () => {
+			mounted.current = false;
 			if (active?.ref === ref) setActive(null);
 		};
 	}, [session]);
@@ -108,7 +136,8 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 
 	const startImprove = () => {
 		const line = lineAtCaret(plain.current, editor.current?.selection.start ?? 0);
-		if (line) setImproving(line);
+		if (line && improve && editable)
+			setImproving({ ...line, scope: getAccountScope(), sequence: ++improveSequence.current });
 	};
 
 	return (
@@ -140,8 +169,8 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 					selectionColor={colors.accentSoft}
 					linkRegex={null}
 					style={{
-						minHeight: type.bodyLarge.lineHeight * 4 + space.s3 * 2 - border * 2,
-						maxHeight: 360 - border * 2,
+						minHeight: type.bodyLarge.lineHeight * minLines + space.s3 * 2 - border * 2,
+						...(!letter ? { maxHeight: 360 - border * 2 } : {}),
 						paddingHorizontal: space.s3 - (border - 1),
 						paddingVertical: space.s3 - (border - 1),
 						color: colors.ink,
@@ -156,7 +185,7 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 					}}
 					onFocus={() => {
 						session.focus();
-						resumeFieldFocus.onFocus();
+						fieldFocus.onFocus();
 						setFocused(true);
 						readBaseline();
 						editor.current = {
@@ -164,7 +193,8 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 							focused: true,
 							state: editor.current?.state ?? null,
 							selection: editor.current?.selection ?? { start: 0, end: 0, text: "" },
-							canImprove: lineAtCaret(plain.current, editor.current?.selection.start ?? 0) !== null,
+							canImprove:
+								improve && editable && lineAtCaret(plain.current, editor.current?.selection.start ?? 0) !== null,
 							improve: startImprove,
 							command: session.command,
 						};
@@ -172,13 +202,16 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 					}}
 					onBlur={() => {
 						session.blur();
-						resumeFieldFocus.onBlur();
+						fieldFocus.onBlur();
 						setFocused(false);
 						publish({ focused: false });
 					}}
 					onChangeHtml={(event) => {
 						const html = session.change(event.nativeEvent.value);
-						if (html !== null) onChange(html);
+						if (html !== null) {
+							latest.current.value = html;
+							onChange(html);
+						}
 					}}
 					onChangeText={(event) => {
 						plain.current = event.nativeEvent.value;
@@ -189,7 +222,7 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 						const selection = event.nativeEvent;
 						publish({
 							selection,
-							canImprove: lineAtCaret(plain.current, selection.start) !== null,
+							canImprove: improve && editable && lineAtCaret(plain.current, selection.start) !== null,
 							improve: startImprove,
 						});
 					}}
@@ -211,12 +244,34 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 					line={improving}
 					where={label}
 					context={text}
-					onClose={() => setImproving(null)}
+					letter={letter}
+					onClose={() => {
+						improveSequence.current++;
+						setImproving(null);
+					}}
 					onReplace={async (replacement) => {
-						const html = fromEnrichedHtml((await ref.current?.getHTML()) ?? "");
+						const current = () =>
+							mounted.current &&
+							!latest.current.disabled &&
+							getAccountScope() === improving.scope &&
+							improveSequence.current === improving.sequence;
+						if (!current()) return false;
+						const readValue = latest.current.value;
+						let html: string;
+						try {
+							html = fromEnrichedHtml((await ref.current?.getHTML()) ?? "");
+						} catch {
+							return false;
+						}
+						if (!current() || latest.current.value !== readValue) return false;
 						const next = replaceLine(html, improving.index, improving.text, replacement);
-						if (next === null) return false;
-						onChange(next, { newStep: true });
+						if (
+							next === null ||
+							replaceLine(latest.current.value, improving.index, improving.text, replacement) === null
+						)
+							return false;
+						improveSequence.current++;
+						latest.current.onChange(next, { newStep: true });
 						ref.current?.setValue(session.wrote(next));
 						setImproving(null);
 						return true;

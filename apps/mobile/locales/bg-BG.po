@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# документ е преместен в кошчето} other {# документа са преместени в кошчето}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# документ} other {# документа}}"
@@ -2462,6 +2463,10 @@ msgstr "Бенгалски"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Дъска"
@@ -2479,7 +2484,6 @@ msgstr "Основният текст е много малък"
 msgid "Body text set to {minimum} pt"
 msgstr "Основният текст е зададен на {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Удебелен"
@@ -2556,7 +2560,6 @@ msgstr "Български"
 msgid "bullet {n}"
 msgstr "запис в списъка {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Затворено"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Заявката не можа да бъде изпълнена. Проверете връзката си и опитайте отново."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Това действие не можа да бъде завършено. Опитайте отново."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Преписът не можа да се копира. Опитайте отново."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Не можа да се създаде писмото. Опитайте отново."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Мотивационно писмо"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Мотивационно писмо"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Мотивационно писмо — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Дарете в Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Отговор във формуляр"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Форматиране"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Подобрете избраната линия"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Подобряване на този абзац"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Подобряване..."
 
@@ -6493,7 +6489,6 @@ msgstr "Премахва се от тази кандидатура. След т�
 msgid "Italian"
 msgstr "Италиански"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Курсив"
@@ -8612,7 +8607,6 @@ msgstr "Известията са изключени"
 msgid "Now"
 msgstr "Сега"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Номериран списък"
@@ -10710,6 +10704,7 @@ msgstr "Изведи етапа от употреба"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Изпраща този абзац, останалата част от писмото и указанията ви до {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Изпраща този абзац, останалата част от писмото, свързаната обява за работа и указанията ви до {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Изпраща този PDF до вашия конфигуриран AI доставчик, вместо да чете неговия текстов слой."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Съкратете въпросите до 2000 знака и отговорите до 6000 знака, преди да отбележите кандидатурата като подадена."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "По-кратък"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Започнете от"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Започнете от това, което имате, и свържете кандидатурата за работа."
 
@@ -12387,6 +12399,10 @@ msgstr "Започнете с разделите, които повечето а
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Започнете с вашето име. Изградете от там."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Тази седмица: направете доказателстват
 msgid "This workspace couldn't be loaded."
 msgstr "Това работно пространство не можа да се зареди."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Съобразяване с обявата"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Стягане"
@@ -13926,7 +13946,6 @@ msgstr "Украински"
 msgid "Unavailable"
 msgstr "Недостъпно"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Подчертаване"
@@ -14527,6 +14546,10 @@ msgstr "Чака вас"
 msgid "Waiting to hear back"
 msgstr "Чакам отговор"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "По-сърдечно"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Помощ при писане, адаптирани предложен�
 msgid "Writing review"
 msgstr "Преглед на текста"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Вашето встъпление"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Вашето встъпление, историите, които да разкажете, и въпросите, които да зададете. 10 минути преди разговора става ваш контролен списък."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

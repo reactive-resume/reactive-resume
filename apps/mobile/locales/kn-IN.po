@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# ದಾಖಲೆಯನ್ನು ಅನುಪಯುಕ್ತಕ್ಕೆ ಸರಿಸಲಾಗಿದೆ} other {# ದಾಖಲೆಗಳನ್ನು ಅನುಪಯುಕ್ತಕ್ಕೆ ಸರಿಸಲಾಗಿದೆ}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# ದಾಖಲೆ} other {# ದಾಖಲೆಗಳು}}"
@@ -2462,6 +2463,10 @@ msgstr "ಬೆಂಗಾಲಿ"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "ಬೋರ್ಡ್"
@@ -2479,7 +2484,6 @@ msgstr "ದೇಹದ ಪಠ್ಯವು ತುಂಬಾ ಚಿಕ್ಕದಾಗ
 msgid "Body text set to {minimum} pt"
 msgstr "ಮುಖ್ಯ ಪಠ್ಯವನ್ನು {minimum} pt ಗೆ ಹೊಂದಿಸಲಾಗಿದೆ"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "ದಪ್ಪ"
@@ -2556,7 +2560,6 @@ msgstr "ಬಲ್ಗೇರಿಯನ್"
 msgid "bullet {n}"
 msgstr "ಪಟ್ಟಿ ನಮೂದು {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "ಮುಚ್ಚಲಾಗಿದೆ"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "ವಿನಂತಿಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಿಮ್ಮ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "ಈ ಕ್ರಿಯೆಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "ಪ್ರತಿಲಿಪಿಯನ್ನು ನಕಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "ಪತ್ರವನ್ನು ರಚಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "ಕವರ್ ಲೆಟರ್"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "ಕವರ್ ಲೆಟರ್"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "ಕವರ್ ಲೆಟರ್ - {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Open Collective ನಲ್ಲಿ ದೇಣಿಗೆ ನೀಡಿ"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "ಫಾರ್ಮ್ ಉತ್ತರ"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "ಫಾರ್ಮ್ಯಾಟಿಂಗ್"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "ಆಯ್ದ ಸಾಲನ್ನು ಸುಧಾರಿಸಿ"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "ಈ ಪ್ಯಾರಾಗ್ರಾಫ್ ಸುಧಾರಿಸಿ"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "ಸುಧಾರಿಸುತ್ತಿದೆ..."
 
@@ -6493,7 +6489,6 @@ msgstr "ಇದನ್ನು ಈ ಉದ್ಯೋಗ ಅರ್ಜಿಯಿಂದ �
 msgid "Italian"
 msgstr "ಇಟಾಲಿಯನ್"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "ಇಟಾಲಿಕ್"
@@ -8612,7 +8607,6 @@ msgstr "ಅಧಿಸೂಚನೆಗಳು ಆಫ್ ಆಗಿವೆ"
 msgid "Now"
 msgstr "ಈಗ"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "ಸಂಖ್ಯೆಯ ಪಟ್ಟಿ"
@@ -10710,6 +10704,7 @@ msgstr "ಹಂತದ ಬಳಕೆಯನ್ನು ನಿಲ್ಲಿಸಿ"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "ಈ ಪ್ಯಾರಾಗ್ರಾಫ್, ಪತ್ರದ ಉಳಿದ ಭಾಗ ಮತ್ತು ನಿಮ್ಮ ಸೂಚನೆಗಳನ್ನು {0} · {1} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "ಈ ಪ್ಯಾರಾಗ್ರಾಫ್, ಪತ್ರದ ಉಳಿದ ಭಾಗ, ಲಿಂಕ್ ಮಾಡಿದ ಉದ್ಯೋಗ ಜಾಹೀರಾತು ಮತ್ತು ನಿಮ್ಮ ಸೂಚನೆಗಳನ್ನು {0} · {1} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "ಈ PDF ಅನ್ನು ಅದರ ಪಠ್ಯ ಪದರವನ್ನು ಓದುವ ಬದಲು ನಿಮ್ಮ ಕಾನ್ಫಿಗರ್ ಮಾಡಿದ AI ಪೂರೈಕೆದಾರರಿಗೆ ಕಳುಹಿಸುತ್ತದೆ."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "ಅರ್ಜಿ ಸಲ್ಲಿಸಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸುವ ಮೊದಲು ಪ್ರಶ್ನೆಗಳನ್ನು 2,000 ಅಕ್ಷರಗಳಿಗೆ ಮತ್ತು ಉತ್ತರಗಳನ್ನು 6,000 ಅಕ್ಷರಗಳಿಗೆ ಮೊಟಕುಗೊಳಿಸಿ."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "ಚಿಕ್ಕದು"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "ನಿಂದ ಪ್ರಾರಂಭಿಸಿ"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "ನೀವು ಹೊಂದಿರುವ ಒಂದರಿಂದ ಪ್ರಾರಂಭಿಸಿ ಮತ್ತು ಉದ್ಯೋಗ ಅರ್ಜಿಯನ್ನು ಲಿಂಕ್ ಮಾಡಿ."
 
@@ -12387,6 +12399,10 @@ msgstr "ಹೆಚ್ಚಿನ ರೆಸ್ಯೂಮೆಗಳು ಹೊಂದಿ�
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "ನಿಮ್ಮ ಹೆಸರಿನೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಿ. ಅಲ್ಲಿಂದ ನಿರ್ಮಿಸಿ."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "ಈ ವಾರ: ನಿಮ್ಮ ಪುರಾವೆಯನ್ನು ಅನ�
 msgid "This workspace couldn't be loaded."
 msgstr "ಈ ಕಾರ್ಯಕ್ಷೇತ್ರವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "ಉದ್ಯೋಗ ಜಾಹೀರಾತಿಗೆ ಹೊಂದಿಸಿ"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "ಸಂಕ್ಷಿಪ್ತಗೊಳಿಸಿ"
@@ -13926,7 +13946,6 @@ msgstr "ಉಕ್ರೇನಿಯನ್"
 msgid "Unavailable"
 msgstr "ಲಭ್ಯವಿಲ್ಲ"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "ಅಡಿಗೆರೆ"
@@ -14527,6 +14546,10 @@ msgstr "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ"
 msgid "Waiting to hear back"
 msgstr "ಮತ್ತೆ ಕೇಳಲು ಕಾಯುತ್ತಿದ್ದೇನೆ"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "ಹೆಚ್ಚು ಆತ್ಮೀಯವಾಗಿ"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "ಬರವಣಿಗೆಯ ಸಹಾಯ, ಹೊಂದಿಸಿದ ಸಲ�
 msgid "Writing review"
 msgstr "ಬರವಣಿಗೆ ಪರಿಶೀಲನೆ"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "ನಿಮ್ಮ ಆರಂಭಿಕ ಮಾತು"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "ನಿಮ್ಮ ಆರಂಭಿಕ ಮಾತು, ತರಬೇಕಾದ ಕಥೆಗಳು ಮತ್ತು ಕೇಳಬೇಕಾದ ಪ್ರಶ್ನೆಗಳು. ಕರೆಗೆ 10 ನಿಮಿಷ ಮೊದಲು ಇದು ನಿಮ್ಮ ಪರಿಶೀಲನಾಪಟ್ಟಿಯಾಗುತ್ತದೆ."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

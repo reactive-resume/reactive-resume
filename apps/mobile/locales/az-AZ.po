@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# sənəd zibil qutusuna köçürüldü} other {# sənəd zibil qutusuna köçürüldü}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# sənəd} other {# sənəd}}"
@@ -2462,6 +2463,10 @@ msgstr "Benqal"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Lövhə"
@@ -2479,7 +2484,6 @@ msgstr "Əsas mətn çox kiçikdir"
 msgid "Body text set to {minimum} pt"
 msgstr "Əsas mətn {minimum} pt olaraq ayarlandı"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Qalın"
@@ -2556,7 +2560,6 @@ msgstr "Bolqar"
 msgid "bullet {n}"
 msgstr "siyahı girişi {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "bağlıdır"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Sorğunu tamamlamaq mümkün olmadı. Bağlantınızı yoxlayın və yenidən cəhd edin."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Bu əməliyyatı tamamlamaq mümkün olmadı. Yenidən cəhd edin."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Transkripti kopyalamaq mümkün olmadı. Yenidən cəhd edin."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Məktubu yaratmaq mümkün olmadı. Yenidən cəhd edin."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Müşayiət məktubu"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Müraciət məktubu"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Qapaq məktubu — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Open Collective-də ianə edin"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Forma cavabı"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatlama"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Seçilmiş xətti təkmilləşdirin"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Bu abzası təkmilləşdir"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Təkmilləşir..."
 
@@ -6493,7 +6489,6 @@ msgstr "Bu iş müraciətindən silinir. Sonra təqviminizi yeniləmək üçün 
 msgid "Italian"
 msgstr "İtalyan"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Kursiv"
@@ -8612,7 +8607,6 @@ msgstr "Bildirişlər deaktivdir"
 msgid "Now"
 msgstr "İndi"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Nömrələnmiş siyahı"
@@ -10710,6 +10704,7 @@ msgstr "Mərhələni istifadədən çıxar"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Bu abzası, məktubun qalan hissəsini və təlimatlarınızı {0} · {1} xidmətinə göndərir."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Bu abzası, məktubun qalan hissəsini, əlaqəli iş elanını və təlimatlarınızı {0} · {1} xidmətinə göndərir."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Bu PDF mətn qatını oxumaq əvəzinə konfiqurasiya edilmiş AI provayderinizə göndərir."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Bunu müraciət edildi kimi qeyd etməzdən əvvəl sualları 2000, cavabları isə 6000 simvola qədər qısaldın."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Daha qısa"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "-dən başlayın"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Sahib olduğunuz birindən başlayın və iş ərizəsini əlaqələndirin."
 
@@ -12387,6 +12399,10 @@ msgstr "Əksər rezyumelərdə olan bölmələrdən başlayın."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Adınızla başlayın. Oradan tikin."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Bu həftə: sübutlarınızı izləməyi asanlaşdırın"
 msgid "This workspace couldn't be loaded."
 msgstr "Bu iş sahəsini yükləmək mümkün olmadı."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "İş elanına uyğunlaşdır"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Yığcamlaşdır"
@@ -13926,7 +13946,6 @@ msgstr "Ukrayn"
 msgid "Unavailable"
 msgstr "Əlçatan deyil"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Altından xətt çək"
@@ -14527,6 +14546,10 @@ msgstr "Sizi gözləyir"
 msgid "Waiting to hear back"
 msgstr "Geri eşitməyi gözləyirik"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Daha səmimi"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Yazı köməyi, fərdiləşdirilmiş təkliflər və köməkçi. Seçim 
 msgid "Writing review"
 msgstr "Mətnə baxış"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Girişiniz"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Girişiniz, gətirəcəyiniz hekayələr və verəcəyiniz suallar. Zəngdən 10 dəqiqə əvvəl yoxlama siyahınıza çevrilir."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

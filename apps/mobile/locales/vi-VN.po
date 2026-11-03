@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {Đã chuyển # tài liệu vào Thùng rác} other {Đã chuyển # tài liệu vào Thùng rác}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# tài liệu} other {# tài liệu}}"
@@ -2462,6 +2463,10 @@ msgstr "Tiếng Bengal"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Bảng"
@@ -2479,7 +2484,6 @@ msgstr "Nội dung văn bản rất nhỏ"
 msgid "Body text set to {minimum} pt"
 msgstr "Văn bản nội dung được đặt thành {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Đậm"
@@ -2556,7 +2560,6 @@ msgstr "Tiếng Bulgaria"
 msgid "bullet {n}"
 msgstr "mục danh sách {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Đã đóng"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Không thể hoàn tất yêu cầu. Hãy kiểm tra kết nối và thử lại."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Không thể hoàn thành hành động này. Hãy thử lại."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Không thể sao chép bản chép lời. Hãy thử lại."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Không thể tạo thư. Hãy thử lại."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Thư xin việc"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Thư xin việc"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Thư xin việc — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Quyên góp trên Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Câu trả lời biểu mẫu"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Định dạng"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Cải thiện dòng đã chọn"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Cải thiện đoạn này"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Cải thiện…"
 
@@ -6493,7 +6489,6 @@ msgstr "Cuộc phỏng vấn sẽ bị xóa khỏi hồ sơ ứng tuyển này. 
 msgid "Italian"
 msgstr "Tiếng Ý"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "In nghiêng"
@@ -8612,7 +8607,6 @@ msgstr "Thông báo bị tắt"
 msgid "Now"
 msgstr "Hiện nay"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Danh sách đánh số"
@@ -10710,6 +10704,7 @@ msgstr "Ngừng sử dụng giai đoạn"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Gửi đoạn này, phần còn lại của thư và hướng dẫn của bạn đến {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Gửi đoạn này, phần còn lại của thư, tin tuyển dụng được liên kết và hướng dẫn của bạn đến {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Gửi PDF này tới nhà cung cấp AI đã định cấu hình của bạn thay vì đọc lớp văn bản của nó."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Rút ngắn câu hỏi xuống 2.000 ký tự và câu trả lời xuống 6.000 ký tự trước khi đánh dấu đã ứng tuyển."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "ngắn hơn"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Bắt đầu từ"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Bắt đầu từ cái bạn có và liên kết đơn xin việc."
 
@@ -12387,6 +12399,10 @@ msgstr "Bắt đầu với những phần mà hầu hết các bản lý lịch 
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Bắt đầu bằng tên của bạn, rồi bổ sung dần."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Tuần này: làm cho bằng chứng của bạn dễ theo dõi hơn"
 msgid "This workspace couldn't be loaded."
 msgstr "Không thể tải không gian làm việc này."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Điều chỉnh theo tin tuyển dụng"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Rút gọn"
@@ -13926,7 +13946,6 @@ msgstr "Ukraina"
 msgid "Unavailable"
 msgstr "Không có sẵn"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Gạch chân"
@@ -14527,6 +14546,10 @@ msgstr "Đang chờ bạn"
 msgid "Waiting to hear back"
 msgstr "Đang chờ nghe lại"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Thân thiện hơn"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Hỗ trợ viết, gợi ý được điều chỉnh và trợ lý. Nhà
 msgid "Writing review"
 msgstr "Đánh giá cách viết"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Phần mở đầu của bạn"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Phần mở đầu của bạn, các câu chuyện nên mang theo và câu hỏi nên đặt. Nó trở thành danh sách kiểm tra của bạn 10 phút trước cuộc gọi."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

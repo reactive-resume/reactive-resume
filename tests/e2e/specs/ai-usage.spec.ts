@@ -13,6 +13,61 @@ test.afterAll(async () => {
 	await stub?.close();
 });
 
+test("letter Improve reviews an owned posting paragraph through the canonical service", async ({
+	authPage: page,
+}, testInfo) => {
+	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs isolated local AI stub permission");
+	await page.setViewportSize({ width: 1440, height: 1000 });
+	await approveLocalStubOperations(page);
+	const connection = await page.request.post("/api/openapi/ai-providers", {
+		data: {
+			label: "Fictional Letter AI",
+			provider: "openai-compatible",
+			model: "letter-main",
+			fastModel: "letter-fast",
+			baseURL: stub.baseURL,
+			apiKey: "stub-key",
+		},
+	});
+	await expect(connection).toBeOK();
+	const { id: providerId } = await connection.json();
+	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
+	const application = await page.request.post("/api/openapi/applications", {
+		data: { company: "Fictional Cedar", role: "Engineer", jobDescription: "Maintain fictional reliable services." },
+	});
+	await expect(application).toBeOK();
+	const applicationId = await application.json();
+	const created = await page.request.post("/api/openapi/cover-letters", {
+		data: { name: "Fictional paragraph review", applicationId, content: "<p>I maintain reliable services.</p>" },
+	});
+	await expect(created).toBeOK();
+	const { id } = await created.json();
+	await page.goto(`/builder/letter/${id}`);
+	const body = page.getByRole("region", { name: "Letter", exact: true });
+	await body.getByRole("textbox", { name: "Letter body", exact: true }).click();
+	await body.getByRole("button", { name: "Improve", exact: true }).click();
+	await expect(body.getByRole("button", { name: "Warmer", exact: true })).toBeVisible();
+	await expect(body.getByRole("button", { name: "Shorter", exact: true })).toBeVisible();
+	const before = stub.requests.length;
+	await body.getByRole("button", { name: "Tie to the posting", exact: true }).click();
+	await expect(body.getByText("Led fictional delivery work.", { exact: true })).toBeVisible();
+	expect(stub.requests.length - before).toBe(1);
+	const request = stub.requests.at(-1);
+	expect(request?.model).toBe("letter-fast");
+	expect(JSON.stringify(request?.messages)).toContain("Maintain fictional reliable services.");
+	expect((await (await page.request.get(`/api/openapi/cover-letters/${id}`)).json()).content).toBe(
+		"<p>I maintain reliable services.</p>",
+	);
+	await body
+		.getByText("Improve this paragraph", { exact: true })
+		.locator("..")
+		.screenshot({ path: testInfo.outputPath("letter-improve-review.png"), animations: "disabled" });
+	await body.getByRole("button", { name: "Replace", exact: true }).click();
+	await expect(body.getByRole("textbox", { name: "Letter body", exact: true })).toHaveText(
+		"Led fictional delivery work.",
+	);
+});
+
 test("letter Accept saves the displayed version's original model and request source", async ({
 	authPage: page,
 }, testInfo) => {

@@ -65,7 +65,8 @@ import { useKeyboardScrollSpace } from "@/ui/keyboard";
 type Recipe = (letter: WritableDraft<LetterDocument>) => void;
 
 /** Typing: one undo step per field while typing pauses under a second. */
-const edit = (key: string, recipe: Recipe) => useLetterStore.getState().update(recipe, { coalesceKey: key });
+const edit = (key: string, recipe: Recipe, options?: { newStep?: boolean }) =>
+	useLetterStore.getState().update(recipe, { coalesceKey: key, ...options });
 
 /** Tells the user how a link change went: confirmed, waiting for a connection, or refused over unsaved edits. */
 
@@ -344,6 +345,7 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 				<LetterRichText
 					key={letter.id}
 					label={t`Recipient`}
+					improve={false}
 					value={letter.recipient}
 					disabled={disabled}
 					minLines={3}
@@ -615,10 +617,11 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 			<LetterRichText
 				key={letter.id}
 				label={t`Letter body`}
+				applicationId={application?.id}
 				value={letter.content}
 				disabled={disabled}
 				autoFocus={writing && countWords(letter.content) === 0}
-				onChange={(content) => edit("content", (value) => void (value.content = content))}
+				onChange={(content, options) => edit("content", (value) => void (value.content = content), options)}
 			/>
 		) : (
 			<EmptyBody letter={letter} application={application} disabled={disabled} onWrite={() => setWriting(true)} />

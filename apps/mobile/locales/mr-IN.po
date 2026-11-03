@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# कागदपत्र कचऱ्यात हलवले} other {# कागदपत्रे कचऱ्यात हलवली}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# दस्तऐवज} other {# दस्तऐवज}}"
@@ -2462,6 +2463,10 @@ msgstr "बंगाली"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "बोर्ड"
@@ -2479,7 +2484,6 @@ msgstr "मुख्य मजकूर खूपच लहान आहे"
 msgid "Body text set to {minimum} pt"
 msgstr "मुख्य मजकूर {minimum} pt वर सेट केला"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "जाड (Bold)"
@@ -2556,7 +2560,6 @@ msgstr "बल्गेरियन"
 msgid "bullet {n}"
 msgstr "यादी प्रविष्टी {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "बंद"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "विनंती पूर्ण करता आली नाही. तुमचे कनेक्शन तपासा आणि पुन्हा प्रयत्न करा."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "ही क्रिया पूर्ण करू शकलो नाही. पुन्हा प्रयत्न करा."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "उतारा कॉपी करता आला नाही. पुन्हा प्रयत्न करा."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "पत्र तयार करता आले नाही. पुन्हा प्रयत्न करा."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "कव्हर लेटर"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "कव्हर लेटर"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "कव्हर लेटर — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Open Collective वर देणगी द्या"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "फॉर्मचे उत्तर"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "स्वरूपन"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "निवडलेल्या ओळीत सुधारणा करा"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "हा परिच्छेद सुधारा"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "सुधारत आहे..."
 
@@ -6493,7 +6489,6 @@ msgstr "हे या नोकरीच्या अर्जातून क�
 msgid "Italian"
 msgstr "इटालियन"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "तिरपे (Italic)"
@@ -8612,7 +8607,6 @@ msgstr "सूचना बंद आहेत"
 msgid "Now"
 msgstr "आता"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "क्रमांकित यादी"
@@ -10710,6 +10704,7 @@ msgstr "टप्पा वापरातून काढा"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "हा परिच्छेद, पत्राचा उर्वरित भाग आणि तुमच्या सूचना {0} · {1} कडे पाठवते."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "हा परिच्छेद, पत्राचा उर्वरित भाग, जोडलेली नोकरीची जाहिरात आणि तुमच्या सूचना {0} · {1} कडे पाठवते."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "मजकूर स्तर वाचण्याऐवजी हा PDF तुमच्या सेट केलेल्या AI प्रदात्याकडे पाठवतो."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "हे अर्ज केले म्हणून चिन्हांकित करण्यापूर्वी प्रश्न २,००० अक्षरांपर्यंत आणि उत्तरे ६,००० अक्षरांपर्यंत लहान करा."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "लहान"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "पासून सुरुवात करा"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "तुमच्याकडे असलेल्या एकापासून सुरुवात करा आणि नोकरीच्या अर्जाचा दुवा जोडा."
 
@@ -12387,6 +12399,10 @@ msgstr "बहुतेक रेझ्युमे असलेल्या व
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "तुमच्या नावापासून सुरुवात करा. पुढे माहिती भरा."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "या आठवड्यात: तुमचे पुरावे स�
 msgid "This workspace couldn't be loaded."
 msgstr "हे वर्कस्पेस लोड करता आले नाही."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "नोकरीच्या जाहिरातीनुसार बदला"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "संक्षिप्त करा"
@@ -13926,7 +13946,6 @@ msgstr "युक्रेनियन"
 msgid "Unavailable"
 msgstr "अनुपलब्ध"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "अधोरेखित"
@@ -14527,6 +14546,10 @@ msgstr "तुमची प्रतीक्षा आहे"
 msgid "Waiting to hear back"
 msgstr "परत ऐकण्याची वाट पाहत आहे"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "अधिक आत्मीय"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "लेखन मदत, जुळवलेल्या सूचना �
 msgid "Writing review"
 msgstr "लेखन पुनरावलोकन"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "तुमची सुरुवात"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "तुमची सुरुवात, सोबत न्यायच्या कथा आणि विचारायचे प्रश्न. कॉलच्या १० मिनिटे आधी ती तुमची चेकलिस्ट बनते."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."

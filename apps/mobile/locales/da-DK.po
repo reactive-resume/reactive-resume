@@ -205,6 +205,7 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# dokument flyttet til papirkurven} other {# dokumenter flyttet til papirkurven}}"
 
 #. placeholder {0}: counts.data.trash
+#. placeholder {0}: group.documents.length
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
 msgstr "{0, plural, one {# dokument} other {# dokumenter}}"
@@ -2462,6 +2463,10 @@ msgstr "Bengali"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Tavle"
@@ -2479,7 +2484,6 @@ msgstr "Brødteksten er meget lille"
 msgid "Body text set to {minimum} pt"
 msgstr "Brødtekst sat til {minimum} pt"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Bold"
 msgstr "Fed"
@@ -2556,7 +2560,6 @@ msgstr "Bulgarsk"
 msgid "bullet {n}"
 msgstr "listepost {n}"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Bulleted list"
@@ -3110,6 +3113,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/library.tsx
 msgid "Closed"
 msgstr "Lukket"
 
@@ -3586,6 +3590,7 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Kunne ikke fuldføre anmodningen. Tjek din forbindelse, og prøv igen."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Kunne ikke fuldføre denne handling. Prøv igen."
@@ -3621,11 +3626,6 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
 msgstr "Kunne ikke kopiere transskriptionen. Prøv igen."
-
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Kunne ikke oprette brevet. Prøv igen."
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -4187,12 +4187,6 @@ msgstr "Følgebrev"
 #: src/features/write/fields.ts
 msgid "Cover Letter"
 msgstr "Følgebrev"
-
-#. placeholder {0}: application.company
-#: src/features/application-detail/sections.tsx
-#: src/features/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Følgebrev — {0}"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Cover letter (optional)"
@@ -4797,7 +4791,6 @@ msgstr "Donér via Open Collective"
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
-#: src/features/letters/rich-text-field.tsx
 #: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
@@ -5750,7 +5743,6 @@ msgstr "Formularsvar"
 msgid "Form answers"
 msgstr ""
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatering"
@@ -6313,6 +6305,10 @@ msgid "Improve selected line"
 msgstr "Forbedre den valgte linje"
 
 #: src/features/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr "Forbedr dette afsnit"
+
+#: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Forbedrer..."
 
@@ -6493,7 +6489,6 @@ msgstr "Den fjernes fra denne jobansøgning. Download derefter en aflysning for 
 msgid "Italian"
 msgstr "Italiensk"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Italic"
 msgstr "Kursiv"
@@ -8612,7 +8607,6 @@ msgstr "-meddelelser er slået fra"
 msgid "Now"
 msgstr "Nu"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Numbered list"
 msgstr "Nummereret liste"
@@ -10710,6 +10704,7 @@ msgstr "Udfas fase"
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
@@ -11552,6 +11547,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr "Sender dette afsnit, resten af brevet og dine instruktioner til {0} · {1}."
+
+#. placeholder {0}: improveProvider.label
+#. placeholder {1}: improveProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr "Sender dette afsnit, resten af brevet, det tilknyttede jobopslag og dine instruktioner til {0} · {1}."
+
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
 msgstr "Sender denne PDF til din konfigurerede AI-udbyder i stedet for at læse dets tekstlag."
@@ -11786,6 +11793,7 @@ msgid "Shorten questions to 2,000 characters and answers to 6,000 characters bef
 msgstr "Forkort spørgsmål til 2.000 tegn og svar til 6.000 tegn, før du markerer dette som ansøgt."
 
 #: src/features/letters/write.tsx
+#: src/features/write/improve.tsx
 msgid "Shorter"
 msgstr "Kortere"
 
@@ -12336,6 +12344,10 @@ msgid "Start from"
 msgstr "Start fra"
 
 #: src/features/documents/new-document.tsx
+msgid "Start from an earlier letter"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
 msgid "Start from one you have and link the application."
 msgstr "Start fra en du har og link jobansøgningen."
 
@@ -12387,6 +12399,10 @@ msgstr "Start med de sektioner, de fleste CV'er har."
 #: src/features/documents/new-document.tsx
 msgid "Start with your name. Build from there."
 msgstr "Start med dit navn. Byg videre derfra."
+
+#: src/features/documents/new-document.tsx
+msgid "Starting from an earlier letter copies its body. The new letter keeps its own recipient, date and history."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Starts"
@@ -13597,6 +13613,10 @@ msgstr "Denne uge: gør dit belæg lettere at følge"
 msgid "This workspace couldn't be loaded."
 msgstr "Arbejdsområdet kunne ikke indlæses."
 
+#: src/features/write/improve.tsx
+msgid "Tie to the posting"
+msgstr "Tilpas til jobopslaget"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Tighten"
 msgstr "Stram op"
@@ -13926,7 +13946,6 @@ msgstr "Ukrainsk"
 msgid "Unavailable"
 msgstr "Ikke tilgængelig"
 
-#: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
 msgstr "Understregning"
@@ -14527,6 +14546,10 @@ msgstr "Venter på dig"
 msgid "Waiting to hear back"
 msgstr "Venter på at høre tilbage"
 
+#: src/features/write/improve.tsx
+msgid "Warmer"
+msgstr "Mere imødekommende"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "was {was}"
 msgstr ""
@@ -14948,6 +14971,11 @@ msgstr "Skrivehjælp, skræddersyede forslag og assistenten. Standardudbyderen b
 msgid "Writing review"
 msgstr "Tekstgennemgang"
 
+#. placeholder {0}: letter.application.company
+#: src/features/documents/new-document.tsx
+msgid "Written for {0}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"
 msgstr ""
@@ -15231,6 +15259,10 @@ msgstr "Din indledning"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Din indledning, de historier, du skal have med, og spørgsmål, du kan stille. Den bliver din tjekliste 10 minutter før samtalen."
+
+#: src/features/documents/new-document.tsx
+msgid "Your own body, no earlier letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."
