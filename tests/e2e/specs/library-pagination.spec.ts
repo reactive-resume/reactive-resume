@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 import { Pool } from "pg";
+import { failRpcProcedure } from "../fixtures/rpc-failure";
 import { expect, test } from "../fixtures/test";
 
 async function seedLetters(page: Page, pool: Pool) {
@@ -232,13 +233,17 @@ test("bounds tag filters from chips and URLs and clears a first-load filter fail
 		expect(badResponses).toEqual([]);
 		await page.getByRole("button", { name: "Clear search and filters", exact: true }).click();
 		await expect(page.locator("article")).toHaveCount(100);
+		let failedPages = 0;
 		await page.route("**/api/rpc/**", async (route) => {
 			const body = route.request().postData() ?? "";
-			if (body.includes("unavailable-tag")) await route.fulfill({ status: 503, body: "Unavailable" });
-			else await route.continue();
+			// Counts can share this physical batch; only the filtered page should fail.
+			if (body.includes("unavailable-tag")) {
+				if (await failRpcProcedure(route, "/api/rpc/documents/page", "Fixture: tag filter unavailable")) failedPages++;
+			} else await route.continue();
 		});
 		await page.goto(`/dashboard?tags=${encodeURIComponent(JSON.stringify(["unavailable-tag"]))}`);
 		await expect(page.getByRole("alert")).toBeVisible({ timeout: 20_000 });
+		expect(failedPages).toBeGreaterThan(0);
 		await page.getByRole("button", { name: "Clear search and filters", exact: true }).click();
 		await expect(page.getByRole("alert")).toBeHidden();
 		await expect(page.locator("article")).toHaveCount(100);
