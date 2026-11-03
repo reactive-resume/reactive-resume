@@ -36,6 +36,49 @@ describe("scroll engine", () => {
 		useLanding.setState({ designExiting: false });
 	});
 
+	it("keeps header progress and ink local while Share keeps its own night", async () => {
+		let shareTop = -450;
+		const motion = { matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() };
+		vi.stubGlobal("innerHeight", 900);
+		vi.stubGlobal("matchMedia", () => motion);
+		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+			const top = this.dataset.scene === String(SCENE.share) ? shareTop : 0;
+			return { top, bottom: top + 1800, height: 1800, width: 0 } as DOMRect;
+		});
+		function Scenes() {
+			const root = useRef<HTMLDivElement>(null);
+			useScrollScenes(root);
+			return (
+				<div ref={root} data-testid="landing">
+					<header className="night-ink" />
+					<button type="button" className="night-ink">
+						Lamp
+					</button>
+					<section data-scene={SCENE.share} data-pin />
+				</div>
+			);
+		}
+		const { getByRole, getByTestId } = render(<Scenes />);
+		const root = getByTestId("landing");
+		const header = getByRole("banner");
+		const lamp = getByRole("button", { name: "Lamp" });
+		const share = root.querySelector<HTMLElement>("section");
+		if (!share) throw new Error("The scene harness did not render.");
+		await waitFor(() => expect(header.style.getPropertyValue("--sp")).toBe("0.500"));
+		expect(header.style.getPropertyValue("--nt")).toBe("1.000");
+		expect(lamp.style.getPropertyValue("--nt")).toBe("1.000");
+		expect(share.style.getPropertyValue("--nt")).toBe("1.000");
+		expect(root.style.getPropertyValue("--sp")).toBe("");
+		expect(root.style.getPropertyValue("--nt")).toBe("");
+
+		shareTop = -1350;
+		motion.matches = true;
+		fireEvent.scroll(window);
+		await waitFor(() => expect(header.style.getPropertyValue("--nt")).toBe("0.000"));
+		expect(lamp.style.getPropertyValue("--nt")).toBe("0.000");
+		expect(Number(share.style.getPropertyValue("--nt"))).toBeGreaterThan(0.9);
+	});
+
 	it("writes exit progress on pinned scenes and reports when Design hands its heading off", async () => {
 		const rects = new Map<string, { top: number; bottom: number; height: number }>([
 			[String(SCENE.design), { top: 0, bottom: 315, height: 900 }],
