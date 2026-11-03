@@ -2,7 +2,7 @@ import type { ApplicationTimelineEntry } from "@reactive-resume/schema/applicati
 import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { ApplicationLane } from "@reactive-resume/schema/applications/lanes";
 import { getActiveApplicationLanes, getApplicationLane } from "@reactive-resume/schema/applications/lanes";
-import { getClosedReasonLabel, getStageLabel } from "./stages";
+import { getClosedReasonLabel, getStageColor, getStageLabel } from "./stages";
 
 export type { ApplicationLane };
 
@@ -36,6 +36,14 @@ export function getStageDisplay(
 /** The default lane of a category, where legacy writes land. */
 export const getCategoryLane = (lanes: readonly ApplicationLane[], category: ApplicationStatus) =>
 	getApplicationLane(lanes, { status: category });
+
+/**
+ * How a category reads on Insights: the owner's name for its default lane, with the stage's semantic colour. A renamed
+ * lane therefore keeps its name in the charts, while the colour stays the shared stage token.
+ */
+export function getCategoryDisplay(lanes: readonly ApplicationLane[], category: ApplicationStatus) {
+	return { label: getLaneLabel(getCategoryLane(lanes, category)), color: getStageColor(category) };
+}
 
 /** The next active lane in the configured order, skipping Closed ones; null at the end. */
 export function getNextLane(lanes: readonly ApplicationLane[], current: ApplicationLane): ApplicationLane | null {

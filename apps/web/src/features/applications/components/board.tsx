@@ -38,6 +38,7 @@ type BoardProps = {
 	applications: ApplicationSummary[];
 	showClosed: boolean;
 	onOpen: (application: ApplicationSummary) => void;
+	onTagSelect?: ((tag: string) => void) | undefined;
 };
 
 // While the overlay settles, the real card waits hidden in its new slot and the overlay's tilt eases off.
@@ -50,7 +51,7 @@ const dropSideEffects = defaultDropAnimationSideEffects({
  * A column per active lane in the owner's order (Closed lanes only when shown). Dropping a card on a column moves it, with the same toast as the
  * other ways to change stage; each card's menu has Move to… for the keyboard. Desktop and tablet only.
  */
-export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProps) {
+export function ApplicationBoard({ applications, showClosed, onOpen, onTagSelect }: BoardProps) {
 	const { moveTo, update } = useApplicationActions();
 	const { lanes, active: activeLanes } = useApplicationLanes();
 	const reduceMotion = useReducedMotion();
@@ -115,7 +116,13 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 		>
 			<div className="flex h-full min-h-0 gap-3 overflow-x-auto pb-4">
 				{columns.map((lane) => (
-					<Column key={lane.id} lane={lane} applications={byLane.get(lane.id) ?? []} onOpen={onOpen} />
+					<Column
+						key={lane.id}
+						lane={lane}
+						applications={byLane.get(lane.id) ?? []}
+						onOpen={onOpen}
+						onTagSelect={onTagSelect}
+					/>
 				))}
 			</div>
 
@@ -164,9 +171,10 @@ type ColumnProps = {
 	lane: ApplicationLane;
 	applications: ApplicationSummary[];
 	onOpen: (application: ApplicationSummary) => void;
+	onTagSelect?: ((tag: string) => void) | undefined;
 };
 
-function Column({ lane, applications, onOpen }: ColumnProps) {
+function Column({ lane, applications, onOpen, onTagSelect }: ColumnProps) {
 	const label = getLaneLabel(lane);
 	const { setNodeRef, isOver } = useDroppable({ id: lane.id, data: { label } satisfies DndLabel });
 	const [visible, setVisible] = useState(COLUMN_PAGE_SIZE);
@@ -191,7 +199,7 @@ function Column({ lane, applications, onOpen }: ColumnProps) {
 			</h2>
 			<div ref={setNodeRef} className="flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">
 				{shown.map((application) => (
-					<DraggableCard key={application.id} application={application} onOpen={onOpen} />
+					<DraggableCard key={application.id} application={application} onOpen={onOpen} onTagSelect={onTagSelect} />
 				))}
 				{remaining > 0 && (
 					<button
@@ -207,10 +215,14 @@ function Column({ lane, applications, onOpen }: ColumnProps) {
 	);
 }
 
-type DraggableCardProps = { application: ApplicationSummary; onOpen: (application: ApplicationSummary) => void };
+type DraggableCardProps = {
+	application: ApplicationSummary;
+	onOpen: (application: ApplicationSummary) => void;
+	onTagSelect?: ((tag: string) => void) | undefined;
+};
 
 // Re-renders with every drag context change; the closure here stays stable, so the card itself doesn't.
-function DraggableCard({ application, onOpen }: DraggableCardProps) {
+function DraggableCard({ application, onOpen, onTagSelect }: DraggableCardProps) {
 	const { setNodeRef, listeners, isDragging } = useDraggable({
 		id: application.id,
 		data: { label: [application.role, application.company].filter(Boolean).join(", ") } satisfies DndLabel,
@@ -218,7 +230,12 @@ function DraggableCard({ application, onOpen }: DraggableCardProps) {
 
 	return (
 		<div ref={setNodeRef} {...listeners} className={cn(isDragging && "opacity-40")}>
-			<ApplicationCard application={application} onClick={() => onOpen(application)} withMenu />
+			<ApplicationCard
+				application={application}
+				onClick={() => onOpen(application)}
+				onTagSelect={onTagSelect}
+				withMenu
+			/>
 		</div>
 	);
 }

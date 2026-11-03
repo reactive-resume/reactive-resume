@@ -2,8 +2,10 @@ import type { DocumentSummary } from "./filter";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useInView } from "motion/react";
+import { useId, useRef, useState } from "react";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { ContextMenu, ContextMenuTrigger } from "@reactive-resume/ui/components/context-menu";
 import { DropdownMenu, DropdownMenuTrigger } from "@reactive-resume/ui/components/dropdown-menu";
@@ -13,10 +15,12 @@ import { cn } from "@reactive-resume/utils/style";
 import { DocumentMenuContent, useDocumentActions } from "./document-actions";
 import { daysLeftInTrash, documentKey } from "./filter";
 import { InlineNameInput } from "./inline-name-input";
+import { letterBodyLines, letterGreeting } from "./letter-preview";
 import { useNewDocumentsStore } from "./new-documents";
 import { ResumeThumbnail } from "./resume-thumbnail";
 import { formatRelativeTime } from "@/libs/locale";
 import { ENTER_CLASS, stagger } from "@/libs/motion";
+import { orpc } from "@/libs/orpc/client";
 
 export type DocumentItemProps = {
 	document: DocumentSummary;
@@ -48,11 +52,14 @@ function OpenLink({
 	className,
 	children,
 	label,
+	describedBy,
 	onSelect,
 	disabled,
 	dir,
 }: Pick<DocumentItemProps, "document" | "disabled"> & {
 	className?: string;
+	/** The id of an extra description, such as a letter's opening lines, so equal names stay distinguishable. */
+	describedBy?: string | undefined;
 	/** "auto" when the link's text is the document's name, so the name keeps its own direction. */
 	dir?: "auto";
 	children: React.ReactNode;
@@ -72,7 +79,7 @@ function OpenLink({
 		event.preventDefault();
 		onSelect();
 	};
-	const common = { "aria-label": label, className, onClick, dir };
+	const common = { "aria-label": label, "aria-describedby": describedBy, className, onClick, dir };
 
 	return document.type === "resume" ? (
 		<Link to="/builder/$resumeId" params={{ resumeId: document.id }} {...common}>
@@ -91,23 +98,64 @@ function RenameInput({ document, onDone }: { document: DocumentSummary; onDone: 
 	return <InlineNameInput name={document.name} onSave={(value) => actions.rename(document, value)} onDone={onDone} />;
 }
 
-/** A letter's page, drawn from lines (letters have no thumbnail render), addressed to its recipient once there is one. */
-function LetterThumbnail({ name, recipient }: { name: string; recipient: string | null }) {
+/**
+ * A letter's page: its recipient and opening lines, so several letters can be told apart. The text is the owner's own
+ * letter, read only once the card nears the viewport and cached until the letter's content changes (`editedAt`).
+ */
+function LetterThumbnail({ document, descriptionId }: { document: DocumentSummary; descriptionId: string }) {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const isInView = useInView(containerRef, { amount: 0.1, margin: "240px" });
+	const options = orpc.coverLetters.getById.queryOptions({ input: { id: document.id } });
+	const letter = useQuery({
+		...options,
+		// A content edit moves `editedAt`, so the preview fetches the new letter instead of showing a stale one.
+		queryKey: [...options.queryKey, new Date(document.editedAt).getTime()],
+		enabled: document.type === "letter" && isInView,
+		staleTime: "static",
+	});
+	const recipient = document.recipient;
+	const greeting = letter.data ? letterGreeting(letter.data.greeting) : null;
+	const lines = letter.data ? letterBodyLines(letter.data.content) : [];
+	const empty = letter.isSuccess && !greeting && lines.length === 0;
+	const preview = [greeting, lines[0]].filter(Boolean).join(" ");
+	const status = letter.isError ? t`Preview unavailable` : empty ? t`Empty letter` : "";
+	const description = [recipient ? `${recipient}.` : "", preview, status].filter(Boolean).join(" ");
+
 	return (
-		<div aria-hidden="true" className="flex size-full flex-col gap-1.5 bg-white p-[14%] text-[0]">
-			<span className="h-1.5 w-2/5 rounded-sm bg-[#c9c9c9]" />
-			{recipient ? (
-				<span className="mb-2 truncate text-[11px] leading-4 font-semibold text-[#3a3a3a]">{recipient}</span>
-			) : (
-				<span className="mb-3 h-1 w-3/5 rounded-sm bg-[#e2e2e2]" />
-			)}
-			<span className="h-1 w-1/3 rounded-sm bg-[#d4d4d4]" />
-			{Array.from({ length: 7 }, (_, index) => (
-				<span key={index} className={cn("h-1 rounded-sm bg-[#e6e6e6]", index % 3 === 2 ? "w-4/5" : "w-full")} />
-			))}
-			<span className="mt-2 h-1 w-1/4 rounded-sm bg-[#d4d4d4]" />
-			<span className="sr-only">{name}</span>
-		</div>
+		<>
+			<div ref={containerRef} aria-hidden="true" className="flex size-full flex-col gap-1 bg-white p-[14%] text-[0]">
+				<span className="h-1.5 w-2/5 rounded-sm bg-[#c9c9c9]" />
+				{recipient ? (
+					<span className="truncate text-[10px] leading-4 font-semibold text-[#3a3a3a]">{recipient}</span>
+				) : null}
+				{greeting ? <span className="truncate text-[9px] leading-3 text-[#3a3a3a]">{greeting}</span> : null}
+				{lines.length > 0 ? (
+					lines.map((line, index) => (
+						<span key={`${index}-${line}`} className="line-clamp-2 text-[9px] leading-3 text-[#6d6d6d]">
+							{line}
+						</span>
+					))
+				) : letter.isError ? (
+					<span className="truncate text-[9px] leading-3 text-[#9a9a9a]">
+						<Trans>Preview unavailable</Trans>
+					</span>
+				) : empty ? (
+					<span className="truncate text-[9px] leading-3 text-[#9a9a9a]">
+						<Trans>Empty letter</Trans>
+					</span>
+				) : letter.isSuccess ? null : (
+					// Loading: keep the page's shape rather than an empty frame.
+					Array.from({ length: 7 }, (_, index) => (
+						<span key={index} className={cn("h-1 rounded-sm bg-[#e6e6e6]", index % 3 === 2 ? "w-4/5" : "w-full")} />
+					))
+				)}
+			</div>
+			{/* Outside the aria-hidden page: the link's accessible name stays the document name, and this reads the
+			    letter's own opening words so two equally named letters remain distinguishable. */}
+			<span id={descriptionId} className="sr-only">
+				{description}
+			</span>
+		</>
 	);
 }
 
@@ -135,6 +183,7 @@ export function DocumentCard({
 	disabled = false,
 }: DocumentItemProps) {
 	const openDocument = useOpenDocument();
+	const descriptionId = useId();
 	const requestedRename = useNewDocumentsStore((state) => state.renameId === document.id);
 	const [localRenaming, setLocalRenaming] = useState(false);
 	const renaming = localRenaming || requestedRename;
@@ -176,6 +225,7 @@ export function DocumentCard({
 						document={document}
 						disabled={disabled}
 						label={document.name}
+						describedBy={document.type === "letter" ? descriptionId : undefined}
 						onSelect={selecting && onSelectedChange ? () => onSelectedChange(!selected) : undefined}
 						className={cn(
 							"relative block aspect-page overflow-hidden rounded-md shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[translate,scale,box-shadow] duration-quick ease-enter hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)] active:scale-[0.98]",
@@ -188,7 +238,7 @@ export function DocumentCard({
 						{document.type === "resume" ? (
 							<ResumeThumbnail resume={document} />
 						) : (
-							<LetterThumbnail name={document.name} recipient={document.recipient} />
+							<LetterThumbnail document={document} descriptionId={descriptionId} />
 						)}
 						{/* Bottom of the paper: its top is where every template prints the person's name. */}
 						<span className="absolute start-2 bottom-2 flex gap-1">

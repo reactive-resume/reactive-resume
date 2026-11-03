@@ -204,6 +204,7 @@ function RouteComponent() {
 	}, [prefetch]);
 	const setSearch = (patch: Partial<Search>) =>
 		void navigate({ resetScroll: false, search: (prev: Search) => ({ ...prev, ...patch }) });
+	const filterByTag = useCallback((tag: string) => setQuery(tag), []);
 	const clearFilters = () => {
 		setQuery("");
 		setSearch({ q: "", needsYou: false, followUp: false, closed: false });
@@ -519,11 +520,17 @@ function RouteComponent() {
 									showClosed={closed}
 									selectedId={selectedId}
 									onOpen={openApplication}
+									onTagSelect={filterByTag}
 								/>
 							)}
 							{shown === "board" && (
 								<div className="h-[calc(100svh-230px)] min-h-96">
-									<ApplicationBoard applications={filtered} showClosed={closed} onOpen={openApplication} />
+									<ApplicationBoard
+										applications={filtered}
+										showClosed={closed}
+										onOpen={openApplication}
+										onTagSelect={filterByTag}
+									/>
 								</div>
 							)}
 							{shown === "insights" && (
