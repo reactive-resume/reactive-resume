@@ -83,6 +83,9 @@ test("first-run Choose a file opens the picker and imports the picked file (J2-1
 	const resumeId = await createResume(page, "Fixture source");
 	const source = await api<Resume>(page, "get", `/resumes/${resumeId}`);
 	await expect(await page.request.delete(`/api/openapi/resumes/${resumeId}`)).toBeOK();
+	// Discard the disposable fixture from Trash too, so this is an empty-account first visit.
+	await api(page, "post", "/documents/purge", { type: "resume", id: resumeId });
+	expect(await api(page, "get", "/documents/counts")).toEqual({ resume: 0, letter: 0, trash: 0 });
 	const file = testInfo.outputPath("morgan.json");
 	await import("node:fs/promises").then((fs) => fs.writeFile(file, JSON.stringify(source.data)));
 
