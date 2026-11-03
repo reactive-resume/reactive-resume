@@ -165,6 +165,7 @@ test("recovery into a different account clears the old editor and never saves it
 	baseURL,
 }, testInfo) => {
 	await createSampleResumeFromDashboard(page, testInfo);
+	await expect(page.getByRole("textbox", { name: "Headline", exact: true })).toBeVisible();
 	const id = new URL(page.url()).pathname.split("/").at(-1) ?? "";
 	const original = await browser.newContext({
 		baseURL: String(baseURL),

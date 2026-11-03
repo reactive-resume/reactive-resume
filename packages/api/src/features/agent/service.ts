@@ -1728,7 +1728,7 @@ export const agentService = {
 					replay.map((message) =>
 						toModelInputMessage(
 							withdrawn(message) ? withdrawKnowledgeReply(message, true) : message,
-							runnableProvider,
+							{ provider: runnableProvider.provider, model: capableModel },
 							search,
 						),
 					),
