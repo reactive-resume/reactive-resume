@@ -3,7 +3,7 @@ import z from "zod";
 import { protectedProcedure } from "../context";
 import { documentExports } from "../features/documents/exports";
 import { checkResume, checkPdf, matchResume } from "../features/resume/checks";
-import { importResumeFile } from "../features/resume/imports";
+import { importResumeFile, previewPdfImport } from "../features/resume/imports";
 import { uploadFileOutputSchema } from "../features/storage/router";
 import router from "./index";
 
@@ -14,6 +14,7 @@ export const restAliases = {
 	checkPdf,
 	matchResume,
 	importResumeFile,
+	previewPdfImport,
 	updateCoverLetter: router.coverLetters.update.route({ method: "PATCH", operationId: "patchCoverLetter" }),
 	updateApplication: router.applications.update.route({ method: "PATCH", operationId: "patchApplication" }),
 	updateInterview: router.applications.updateInterview.route({

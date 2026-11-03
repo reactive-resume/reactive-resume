@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Preveri DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3857,6 +3853,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Ni bilo mogoče prebrati izvoženega PDF."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "Datoteke PDF ni bilo mogoče prebrati. Preverite, ali ima berljivo besedilno plast in ni zaščitena z geslom."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "Celotnega PDF-ja ni bilo mogoče prebrati. Preverite, ali imajo vse strani berljivo besedilo, ali poskusite manjšo datoteko."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8704,6 +8708,10 @@ msgstr "Najden je bil le en prepoznaven naslov razdelka."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Zaenkrat le ena različica. Vsaka seja urejanja samodejno doda enega."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Z uvoženo vsebino je bilo mogoče primerjati le del te datoteke. Vsak razdelek v urejevalniku primerjajte s svojo datoteko."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Vklopijo se lahko samo ponudniki, ki uspešno opravijo svoj test."
@@ -13300,6 +13308,10 @@ msgstr "Ta datoteka uporablja pisave Type 3, ki namesto znakov vsebujejo risbe."
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Velikosti te datoteke ni bilo mogoče prebrati. Izberite drug PDF."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Besedila te datoteke ni bilo mogoče primerjati z uvoženo vsebino, zato izpuščene vrstice niso navedene. Vsak razdelek v urejevalniku primerjajte s svojo datoteko."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "To je PDF Portfolio: vidna stran je le naslovnica."
@@ -13380,6 +13392,10 @@ msgstr "Ta odlomek se je spremenil. Ponovno zaženite pregled."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Ta PDF nima besedilne plasti, zato razčlenjevalnik ne prebere ničesar iz njega."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Ta PDF je skenirana slika. Ni besedila za branje. Preizkusite različico Word ali začnite prazno in prilepite razdelke."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13963,6 +13979,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Posodobite koledar"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Pred uvozom datoteke PDF brez umetne inteligence posodobite strežnik."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

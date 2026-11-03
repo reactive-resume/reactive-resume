@@ -3042,6 +3042,7 @@ console.log("PASS native custom-field Undo restores its field without reverting 
 let copyApplications = { data: [], isFetching: true, refetch() {} };
 let newDocumentParams = { step: "copy", applicationId: "new-job" };
 let copyHasProvider = false;
+let pdfReview;
 const { NewDocument } = load("features/documents/new-document.tsx", {
 	"@/routes": load("routes.ts"),
 	"./copy-for-job": {
@@ -3053,8 +3054,14 @@ const { NewDocument } = load("features/documents/new-document.tsx", {
 	"./filter": { defaultCopySource: (rows) => rows.find((row) => !row.applicationId) ?? rows[0] },
 	react: { ...react, useEffect() {} },
 	"@tanstack/react-query": { useQuery: () => copyApplications },
-	"expo-document-picker": {},
-	"expo-file-system": {},
+	"expo-document-picker": {
+		getDocumentAsync: async () => ({ canceled: false, assets: [{ name: "Fictional.pdf", uri: "fixture" }] }),
+	},
+	"expo-file-system": {
+		File: class {
+			delete() {}
+		},
+	},
 	"expo-network": { getNetworkStateAsync: async () => ({ isConnected: true }) },
 	"expo-router": {
 		useRouter: () => ({ replace: (href) => calls.push(href) }),
@@ -3062,7 +3069,7 @@ const { NewDocument } = load("features/documents/new-document.tsx", {
 		Stack: { Screen: "StackScreen" },
 	},
 	"@reactive-resume/schema/resume/dates": {},
-	"./import-file": { ImportError: class extends Error {} },
+	"./import-file": { ImportError: class extends Error {}, importDocument: async () => pdfReview },
 	"@/features/write/fields": { SECTION_TITLES: {} },
 	"./new-documents": { useNewDocuments: { getState: () => ({ markOpened() {} }) } },
 	"./queries": {
@@ -3096,6 +3103,36 @@ const { NewDocument } = load("features/documents/new-document.tsx", {
 	"@/features/ai/providers": { useHasAIProvider: () => ({ hasAIProvider: copyHasProvider }) },
 	"@/features/applications/add-sheet": {},
 });
+for (const compared of [false, true]) {
+	reset();
+	newDocumentParams = { step: "import" };
+	pdfReview = {
+		type: "review",
+		compared,
+		partial: true,
+		review: { sections: [], missingContact: false, notImported: compared ? ["Fictional omitted line"] : [] },
+	};
+	nodes(render(NewDocument))
+		.find((node) => node.props.title === "Import a resume")
+		.props.onPress();
+	control(render(NewDocument), "Choose a file").onPress();
+	await settle();
+	control(render(NewDocument), "Import file").onPress();
+	await settle();
+	const view = JSON.stringify(render(NewDocument));
+	assert.match(view, /Check what was found/);
+	if (compared) {
+		assert.match(
+			view,
+			/Only part of this file could be compared with what came in. Check each section against your file in the editor./,
+		);
+		assert.match(view, /Fictional omitted line/);
+	} else {
+		assert.match(view, /This file's text couldn't be compared with what came in/);
+		assert.doesNotMatch(view, /Only part of this file could be compared/);
+	}
+}
+newDocumentParams = { step: "copy", applicationId: "new-job" };
 reset();
 assert.equal(control(render(NewDocument), "Create copy").disabled, true);
 control(render(NewDocument), "Create copy").onPress();

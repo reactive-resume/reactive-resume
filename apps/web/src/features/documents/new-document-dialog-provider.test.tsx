@@ -104,6 +104,30 @@ it("imports a PDF through the local text reader when AI connection lookup fails"
 	expect(screen.getByRole("button", { name: "Open in editor" })).toBeEnabled();
 });
 
+it.each([false, true])("describes partial PDF comparison honestly when readable source is %s", async (readable) => {
+	api.providers.mockResolvedValue([
+		{ id: "fictional-provider", label: "Fictional provider", model: "fixture", enabled: true, testStatus: "success" },
+	]);
+	api.parsePdf.mockResolvedValue(parseResumeText("Alex Morgan\nalex@example.test"));
+	api.readPdfSource.mockResolvedValue({
+		lines: readable ? ["Fictional omitted paragraph"] : [],
+		links: [],
+		partial: true,
+	});
+	mount(new File(["%PDF-test"], "resume.pdf", { type: "application/pdf" }));
+	fireEvent.click(await screen.findByRole("button", { name: /^Read with AI$/ }));
+	await screen.findByRole("heading", { name: "Check what was found" });
+	expect(
+		screen.getByText(
+			readable
+				? "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+				: "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor.",
+		),
+	).toBeVisible();
+	expect(screen.queryByText("Fictional omitted paragraph") !== null).toBe(readable);
+	expect(api.importResume).not.toHaveBeenCalled();
+});
+
 it("explains Word prerequisites before any upload and retains the file for in-place setup", async () => {
 	mount(new File([new Uint8Array([0x50, 0x4b, 0x03, 0x04])], "resume.docx"));
 	await screen.findByRole("heading", { name: "Choose how to read this file" });

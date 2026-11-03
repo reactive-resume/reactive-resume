@@ -4832,8 +4832,8 @@ msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their 
 msgstr "No se pudieron leer las fechas de {entries}, así que quedan al final. Corrige sus fechas y vuelve a ordenar."
 
 #: src/features/resume/import/pdf-text.ts
-msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
-msgstr ""
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "No se pudo leer todo el PDF. Comprueba que todas las páginas tengan texto legible o prueba con un archivo más pequeño."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
@@ -10981,6 +10981,10 @@ msgstr "Solo se encontró un encabezado de sección reconocible."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Hasta el momento sólo hay una versión. Cada sesión de edición agrega uno automáticamente."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Solo se ha podido comparar parte de este archivo con el contenido importado. Compara cada sección con tu archivo en el editor."
+
 #: src/features/settings/ai/providers.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Solo se pueden activar los proveedores que pasen la prueba."
@@ -16537,10 +16541,6 @@ msgstr "Este archivo es grande para un currículum."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "Este archivo es más grande de lo que aceptan muchos formularios de solicitud."
-
-#: src/features/documents/new-document-dialog.tsx
-msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
-msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."

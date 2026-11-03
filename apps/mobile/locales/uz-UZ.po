@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "DNS ni tekshirish"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3857,6 +3853,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Eksport qilingan PDF ni oʻqib boʻlmadi."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF o‘qilmadi. Unda o‘qiladigan matn qatlami borligini va parol bilan himoyalanmaganini tekshiring."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "Butun PDF faylini o‘qib bo‘lmadi. Barcha sahifalarda o‘qiladigan matn borligini tekshiring yoki kichikroq faylni sinab ko‘ring."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8704,6 +8708,10 @@ msgstr "Faqat bitta taniladigan boʻlim sarlavhasi topildi."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Hozircha faqat bitta versiya. Har bir tahrirlash seansi avtomatik ravishda qo'shiladi."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Bu faylning faqat bir qismini import qilingan mazmun bilan solishtirish mumkin bo‘ldi. Tahrirlovchida har bir bo‘limni faylingiz bilan solishtiring."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Faqat sinovdan o'tgan provayderlar yoqilishi mumkin."
@@ -13300,6 +13308,10 @@ msgstr "Bu faylda belgilar oʻrniga chizmalarni tashuvchi Type 3 shriftlari ishl
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Bu fayl hajmini oʻqib boʻlmadi. Boshqa PDF ni tanlang."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Bu fayl matnini import qilingan mazmun bilan solishtirib bo‘lmadi, shuning uchun tushib qolgan satrlar ko‘rsatilmagan. Tahrirlovchida har bir bo‘limni faylingiz bilan solishtiring."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Bu PDF Portfolio: koʻrinadigan sahifa faqat muqova."
@@ -13380,6 +13392,10 @@ msgstr "Bu parcha o'zgardi. Tekshiruvni qayta ishga tushiring."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Ushbu PDF matn qatlamiga ega emas, shuning uchun tahlilchi undan hech narsani o'qimaydi."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Bu PDF skanerlangan tasvirdir. O'qish uchun matn yo'q. Word versiyasini sinab ko'ring yoki bo'sh va bo'limlarni joylashtiring."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13963,6 +13979,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Taqvimingizni yangilang"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "PDF-ni sun’iy intellektsiz import qilishdan oldin serveringizni yangilang."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

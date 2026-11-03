@@ -179,6 +179,111 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 		return agent.threads.get({ id: threadId, userId });
 	}
 
+	it("removes only owned unsent files, retaining failed deletions and sent attachments", async () => {
+		const db = fixture.db;
+		if (!db) throw new Error("Missing fixture database");
+		const thread = await agent.threads.start({ userId, resumeId: copyId });
+		const { getStorageService } = await import("../storage/service");
+		const remove = vi.spyOn(getStorageService(), "delete").mockResolvedValue(true);
+		try {
+			const [message] = await db
+				.insert(tables.agentMessage)
+				.values({ userId, threadId: thread.id, role: "user", sequence: 0, uiMessage: { role: "user", parts: [] } })
+				.returning();
+			if (!message) throw new Error("Missing sent message");
+			const [unsent, sent] = await db
+				.insert(tables.agentAttachment)
+				.values([
+					{
+						userId,
+						threadId: thread.id,
+						storageKey: "fiction-unsent",
+						filename: "notes.txt",
+						mediaType: "text/plain",
+						size: 4,
+					},
+					{
+						userId,
+						threadId: thread.id,
+						storageKey: "fiction-sent",
+						filename: "sent.txt",
+						mediaType: "text/plain",
+						size: 4,
+						messageId: message.id,
+					},
+				])
+				.returning();
+			if (!unsent || !sent) throw new Error("Missing attachments");
+			await agent.attachments.delete({ id: unsent.id, userId: "another-account" });
+			await expect(agent.attachments.delete({ id: sent.id, userId })).rejects.toMatchObject({ code: "CONFLICT" });
+			expect(remove).not.toHaveBeenCalled();
+			remove.mockRejectedValueOnce(new Error("Storage unavailable"));
+			await expect(agent.attachments.delete({ id: unsent.id, userId })).rejects.toThrow("Storage unavailable");
+			expect((await pool.query("select id from agent_attachments where thread_id=$1", [thread.id])).rowCount).toBe(2);
+			await agent.attachments.delete({ id: unsent.id, userId });
+			await agent.attachments.delete({ id: unsent.id, userId });
+			expect(remove).toHaveBeenCalledTimes(2);
+			expect(remove).toHaveBeenLastCalledWith("fiction-unsent");
+			expect((await pool.query("select id from agent_attachments where thread_id=$1", [thread.id])).rows).toEqual([
+				{ id: sent.id },
+			]);
+		} finally {
+			remove.mockRestore();
+		}
+	});
+
+	it("waits for a concurrent sent-file claim before deciding whether removal may delete its bytes", async () => {
+		const db = fixture.db;
+		if (!db) throw new Error("Missing fixture database");
+		const thread = await agent.threads.start({ userId, resumeId: copyId });
+		const [message] = await db
+			.insert(tables.agentMessage)
+			.values({ userId, threadId: thread.id, role: "user", sequence: 0, uiMessage: { role: "user", parts: [] } })
+			.returning();
+		const [attachment] = await db
+			.insert(tables.agentAttachment)
+			.values({
+				userId,
+				threadId: thread.id,
+				storageKey: "fiction-race",
+				filename: "notes.txt",
+				mediaType: "text/plain",
+				size: 4,
+			})
+			.returning();
+		if (!message || !attachment) throw new Error("Missing message or attachment");
+		const { getStorageService } = await import("../storage/service");
+		const remove = vi.spyOn(getStorageService(), "delete").mockResolvedValue(true);
+		const holder = await pool.connect();
+		let removal: Promise<unknown> = Promise.resolve();
+		try {
+			await holder.query("BEGIN");
+			const pid = (await holder.query<{ pid: number }>("select pg_backend_pid() as pid")).rows[0]?.pid;
+			if (!pid) throw new Error("Missing lock holder");
+			await holder.query("UPDATE agent_attachments SET message_id=$1 WHERE id=$2", [message.id, attachment.id]);
+			removal = agent.attachments.delete({ id: attachment.id, userId }).catch((error: unknown) => error);
+			await vi.waitFor(async () => {
+				const blocked = await admin.query(
+					"select pid from pg_stat_activity where $1=any(pg_blocking_pids(pid)) and query ilike '%select%agent_attachments%for update%'",
+					[pid],
+				);
+				expect(blocked.rowCount).toBe(1);
+			});
+			expect(remove).not.toHaveBeenCalled();
+			await holder.query("COMMIT");
+			await expect(removal).resolves.toMatchObject({ code: "CONFLICT" });
+			expect(remove).not.toHaveBeenCalled();
+			expect((await pool.query("select message_id from agent_attachments where id=$1", [attachment.id])).rows).toEqual([
+				{ message_id: message.id },
+			]);
+		} finally {
+			await holder.query("ROLLBACK");
+			holder.release();
+			await removal;
+			remove.mockRestore();
+		}
+	});
+
 	const proposalOf = (messages: UIMessage[]) => {
 		for (const message of messages)
 			for (const part of message.parts)

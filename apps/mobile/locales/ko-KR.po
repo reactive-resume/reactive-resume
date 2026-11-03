@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "DNS 확인"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3857,6 +3853,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "내보낸 PDF을(를) 읽을 수 없습니다."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF를 읽지 못했습니다. 읽을 수 있는 텍스트 레이어가 있고 비밀번호로 보호되지 않았는지 확인하세요."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "PDF 전체를 읽을 수 없습니다. 모든 페이지에 읽을 수 있는 텍스트가 있는지 확인하거나 더 작은 파일을 시도하세요."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8704,6 +8708,10 @@ msgstr "인식 가능한 섹션 제목이 하나만 발견되었습니다."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "지금까지 하나의 버전만 있습니다. 모든 편집 세션마다 자동으로 하나가 추가됩니다."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "이 파일의 일부만 가져온 내용과 비교할 수 있었습니다. 편집기에서 각 섹션을 원본 파일과 비교하세요."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "테스트를 통과한 공급자만 켤 수 있습니다."
@@ -13300,6 +13308,10 @@ msgstr "이 파일은 문자 대신 그림 정보를 담는 Type 3 폰트를 사
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "이 파일의 크기를 읽을 수 없습니다. 다른 PDF를 선택하세요."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "이 파일의 텍스트를 가져온 내용과 비교할 수 없어 누락된 줄이 표시되지 않습니다. 편집기에서 각 섹션을 원본 파일과 비교하세요."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "이 파일은 PDF 포트폴리오입니다. 보이는 페이지는 표지일 뿐입니다."
@@ -13380,6 +13392,10 @@ msgstr "이 구절이 바뀌었습니다. 검토를 다시 실행하세요."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "이 PDF에는 텍스트 레이어가 없으므로 파서는 이 레이어에서 아무것도 읽지 않습니다."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "이 PDF는 스캔한 이미지입니다. 읽을 텍스트가 없습니다. Word 버전을 사용해 보거나 공백으로 시작하여 섹션을 붙여넣으세요."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13963,6 +13979,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "캘린더 업데이트"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "AI 없이 PDF를 가져오려면 먼저 서버를 업데이트하세요."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

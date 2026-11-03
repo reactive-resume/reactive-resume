@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "التحقق من DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3857,6 +3853,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "تعذر قراءة PDF المصدر."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "تعذرت قراءة PDF. تأكد من احتوائه على طبقة نص قابلة للقراءة ومن أنه غير محمي بكلمة مرور."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "تعذّرت قراءة ملف PDF بالكامل. تأكد من أن جميع الصفحات تحتوي على نص قابل للقراءة، أو جرّب ملفًا أصغر."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8704,6 +8708,10 @@ msgstr "لم يُعثر إلا على عنوان قسم واحد قابل للت
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "نسخة واحدة فقط حتى الآن. تضيف كل جلسة تحرير واحدة تلقائيًا."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "أمكنت مقارنة جزء فقط من هذا الملف بالمحتوى المستورد. قارن كل قسم بملفك في المحرر."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "يمكن تشغيل مقدمي الخدمة الذين اجتازوا الاختبار فقط."
@@ -13300,6 +13308,10 @@ msgstr "يستخدم هذا الملف خطوط Type 3، التي تحمل رس�
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "لا يمكن قراءة حجم هذا الملف. اختر PDF آخر."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "تعذرت مقارنة نص هذا الملف بالمحتوى المستورد، لذا لم تُدرج الأسطر المتروكة. قارن كل قسم بملفك في المحرر."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "هذا ملف PDF Portfolio: الصفحة المرئية هي مجرد غلاف."
@@ -13380,6 +13392,10 @@ msgstr "تم تغيير هذا المقطع. قم بتشغيل المراجعة 
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "لا يحتوي PDF على طبقة نصية، لذلك لا يقرأ المحلل اللغوي أي شيء منها."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "PDF هذه هي صورة ممسوحة ضوئيًا. لا يوجد نص للقراءة. جرب الإصدار Word، أو ابدأ بالأجزاء الفارغة والصقها."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13963,6 +13979,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "تحديث تقويمك"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "حدّث خادمك قبل استيراد PDF دون ذكاء اصطناعي."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
