@@ -2,8 +2,9 @@
 // @vitest-environment-options {"url":"https://localhost:3000"}
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
+import { i18n } from "@lingui/core";
 import Cookies from "js-cookie";
-import { changeLocale, getLocale } from "./locale";
+import { changeLocale, getLocale, hasLocalePreference, loadLocale } from "./locale";
 
 beforeEach(() => {
 	Cookies.remove("locale");
@@ -19,6 +20,36 @@ afterEach(() => {
 });
 
 describe("first-visit language", () => {
+	it("does not activate a catalog whose account was replaced while it loaded", async () => {
+		await loadLocale("en-US");
+		await loadLocale("ar-SA", () => false);
+		expect(i18n.locale).toBe("en-US");
+		await loadLocale("de-DE", () => true);
+		expect(i18n.locale).toBe("de-DE");
+	});
+
+	it("restores the saved account language without making it an explicit browser choice", () => {
+		expect(getLocale("de-DE")).toBe("de-DE");
+		expect(Cookies.get("locale")).toBeUndefined();
+		expect(hasLocalePreference()).toBe(false);
+		expect(getLocale("ar-SA")).toBe("ar-SA");
+		expect(getLocale()).toBe("en-US");
+	});
+
+	it.each([null, undefined, "unsupported"])("falls back to the browser for account locale %s", (saved) => {
+		vi.stubGlobal("navigator", { languages: ["fr-CA"] });
+		expect(getLocale(saved)).toBe("fr-FR");
+		expect(hasLocalePreference()).toBe(false);
+	});
+
+	it("keeps explicit local and URL languages ahead of the account", () => {
+		Cookies.set("locale", "ja-JP");
+		expect(getLocale("de-DE")).toBe("ja-JP");
+		expect(hasLocalePreference()).toBe(true);
+		window.history.replaceState(null, "", "/?locale=ar-SA");
+		expect(getLocale("de-DE")).toBe("ar-SA");
+	});
+
 	it("follows the browser without persisting an inferred choice", () => {
 		vi.stubGlobal("navigator", { languages: ["unsupported", "de-AT", "fr-FR"] });
 		window.history.replaceState({ key: "visit" }, "", "/ats-checker?campaign=first#check");
