@@ -1,5 +1,6 @@
 import type { ImportReview, PdfImportPreview } from "@reactive-resume/import/review";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { Locale } from "@reactive-resume/utils/locale";
 import type { DocumentPickerAsset } from "expo-document-picker";
 import { t } from "@lingui/core/macro";
 import { File } from "expo-file-system";
@@ -46,7 +47,12 @@ async function wordLines(file: File) {
 }
 
 /** Creates the reviewed resume, with what the reader couldn't place kept as a section when the user chose to. */
-export async function createReviewedResume(pending: ImportToReview, keepLeftovers: boolean, signal: AbortSignal) {
+export async function createReviewedResume(
+	pending: ImportToReview,
+	keepLeftovers: boolean,
+	signal: AbortSignal,
+	locale?: Locale,
+) {
 	const scope = getAccountScope();
 	if (!scope || scope !== pending.scope) throw new SessionChangedError();
 	signal.throwIfAborted();
@@ -54,8 +60,9 @@ export async function createReviewedResume(pending: ImportToReview, keepLeftover
 		keepLeftovers && pending.review.notImported.length > 0
 			? withLeftoverSection(pending.data, pending.review.notImported, t`More from your file`)
 			: pending.data;
+	const chosen = locale ? { ...data, metadata: { ...data.metadata, page: { ...data.metadata.page, locale } } } : data;
 	const id = await client.resume.import(
-		{ data, ...(pending.aiOperationIds ? { aiOperationIds: pending.aiOperationIds } : {}) },
+		{ data: chosen, ...(pending.aiOperationIds ? { aiOperationIds: pending.aiOperationIds } : {}) },
 		{ signal, context: { scope } },
 	);
 	if (getAccountScope() !== scope) throw new SessionChangedError();
@@ -110,6 +117,7 @@ export async function importDocument(
 	aiAvailable: boolean,
 	aiPdf: boolean,
 	signal: AbortSignal,
+	locale?: Locale,
 ): Promise<ImportedDocument | ImportToReview> {
 	const scope = getAccountScope();
 	if (!scope) throw new SessionChangedError();
@@ -216,6 +224,7 @@ export async function importDocument(
 		body.append("file", new Blob([JSON.stringify(json.data)], { type: "application/json" }), asset.name);
 	} else body.append("file", file, asset.name);
 	body.append("format", format);
+	if (locale) body.append("locale", locale);
 	assertCurrent();
 	const response = await rest("/resumes/file-imports", { method: "POST", body, signal }, scope);
 	assertCurrent();

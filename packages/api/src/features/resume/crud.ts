@@ -87,7 +87,7 @@ export const crudRouter = {
 				...(input.slug ? { slug: input.slug } : {}),
 				...(input.autoName ? { autoName: true } : {}),
 				tags: input.tags,
-				locale: context.locale,
+				locale: input.locale ?? context.locale,
 				userId: context.user.id,
 				data: createResumeData({
 					withSampleData: input.withSampleData,
@@ -95,7 +95,7 @@ export const crudRouter = {
 					// A guest's address is a placeholder (see the auth anonymous plugin), not one to print. The plugin adds
 					// `isAnonymous` to the user row; the shared User type doesn't name it.
 					email: (context.user as { isAnonymous?: boolean | null }).isAnonymous ? undefined : context.user.email,
-					locale: context.locale,
+					locale: input.locale ?? context.locale,
 					template: input.template,
 				}),
 			}),
@@ -130,7 +130,6 @@ export const crudRouter = {
 				name: await findFreeResumeName(context.user.id, name.slice(0, 100), person.trim() ? headline : undefined),
 				tags: [],
 				data: input.data,
-				locale: context.locale,
 				userId: context.user.id,
 				origin: "import",
 				...(input.aiOperationIds !== undefined ? { aiOperationIds: input.aiOperationIds } : {}),

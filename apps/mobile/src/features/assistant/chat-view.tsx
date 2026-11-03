@@ -21,7 +21,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import * as Clipboard from "expo-clipboard";
 import * as DocumentPicker from "expo-document-picker";
-import { File } from "expo-file-system";
+import { File, Paths } from "expo-file-system";
 import { useCallback, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ActivityIndicator, AppState, Pressable, ScrollView, TextInput, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
@@ -753,6 +753,7 @@ function Conversation(props: ConversationProps) {
 								proposals={handlers}
 								onAnswer={answer}
 								remember={props.remember ?? null}
+								answerApplicationId={props.context.applicationId ?? props.remember?.applicationId ?? null}
 								onPostingSaved={props.onPostingSaved}
 							/>
 							<ToolApprovals
@@ -943,12 +944,14 @@ function Composer(props: ComposerProps) {
 		setAttachments([]);
 	};
 
-	const attach = async () => {
-		const picked = await DocumentPicker.getDocumentAsync({
-			multiple: true,
-			copyToCacheDirectory: true,
-			type: [...AGENT_ATTACHMENT_TYPES],
-		});
+	const attach = async (provided?: DocumentPicker.DocumentPickerAsset[]) => {
+		const picked = provided
+			? { canceled: false, assets: provided }
+			: await DocumentPicker.getDocumentAsync({
+					multiple: true,
+					copyToCacheDirectory: true,
+					type: [...AGENT_ATTACHMENT_TYPES],
+				});
 		if (picked.canceled) return;
 		// Sizes are checked before any file is read: 25 MB a file and 100 MB in all, the server's limits.
 		let budget = MAX_TOTAL_BYTES - attachments.reduce((total, item) => total + item.size, 0);
@@ -969,7 +972,7 @@ function Composer(props: ComposerProps) {
 		if (skipped.count > 0) showToast({ message: t`Attach up to 10 files to a message.` });
 		if (skipped.big) showToast({ message: t`Files can be up to 25 MB each.` });
 		if (skipped.total) showToast({ message: t`Attachments can be up to 100 MB in all.` });
-		if (files.length === 0) return;
+		if (files.length === 0) return false;
 		setAttachments((current) => [
 			...current,
 			...files.map(({ asset, key, size }) => ({
@@ -989,9 +992,13 @@ function Composer(props: ComposerProps) {
 			showToast({ message: errorText(error, t`Couldn't attach the file. Try again.`) });
 			return;
 		}
+		let complete = true;
 		// One file at a time: only one base64 copy is in memory at once.
 		for (const { asset, key } of files) {
-			if (removedUploads.current.delete(key)) continue;
+			if (removedUploads.current.delete(key)) {
+				complete = false;
+				continue;
+			}
 			try {
 				const attachment = await client.agent.attachments.create(
 					{
@@ -1003,6 +1010,7 @@ function Composer(props: ComposerProps) {
 					{ context: { scope: props.scope } },
 				);
 				if (removedUploads.current.delete(key)) {
+					complete = false;
 					// Removed while uploading.
 					void client.agent.attachments
 						.delete({ id: attachment.id }, { context: { scope: props.scope } })
@@ -1017,9 +1025,31 @@ function Composer(props: ComposerProps) {
 					),
 				);
 			} catch (error) {
+				complete = false;
 				drop(key);
 				showToast({ message: errorText(error, t`Couldn't attach the file. Try again.`) });
 			}
+		}
+		return complete;
+	};
+
+	const attachPaste = async () => {
+		if (props.disabled || props.streaming || uploading) return;
+		const pasted = text;
+		const file = new File(Paths.cache, `message-${Date.now()}.txt`);
+		try {
+			file.write(pasted);
+			if (
+				await attach([
+					{ name: "message.txt", uri: file.uri, size: file.size, mimeType: "text/plain", lastModified: Date.now() },
+				])
+			) {
+				setText((current) => (current === pasted ? t`Read the attachment` : current));
+			}
+		} catch (error) {
+			showToast({ message: errorText(error, t`Couldn't attach the file. Try again.`) });
+		} finally {
+			if (file.exists) file.delete();
 		}
 	};
 
@@ -1038,6 +1068,15 @@ function Composer(props: ComposerProps) {
 			}}
 		>
 			{props.notice}
+			{text.length >= 4000 ? (
+				<Button
+					size="sm"
+					variant="ghost"
+					label={t`Attach a file instead`}
+					disabled={props.disabled || props.streaming || uploading}
+					onPress={() => void attachPaste()}
+				/>
+			) : null}
 			{props.chips || attachments.length > 0 ? (
 				// One row that scrolls sideways, so the chips never push the message box down the screen.
 				<ScrollView

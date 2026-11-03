@@ -31,6 +31,7 @@ const tag = (parts, ...values) => parts.reduce((text, part, index) => text + par
 
 for (const scenario of [
 	"AI",
+	"explicit locale",
 	"local",
 	"partial AI",
 	"partial local",
@@ -101,6 +102,11 @@ for (const scenario of [
 							assert.deepEqual(aiOperationIds, ai ? (sources ? ["actual-import-operation"] : []) : undefined);
 							assert.equal(options.context.scope, "original-account");
 							assert.equal("aiOperationIds" in accepted, false);
+							assert.equal(
+								accepted.metadata.page.locale,
+								scenario === "explicit locale" ? "de-DE" : data.metadata.page.locale,
+							);
+							assert.equal(data.metadata.page.locale, "en-US");
 							assert.equal(accepted.sections.profiles.items[0].website.url, url);
 							assert.ok(
 								accepted.customSections.some((section) => section.items.some((item) => item.content.includes(prose))),
@@ -188,10 +194,18 @@ for (const scenario of [
 			assert.equal(saved, 0);
 			return;
 		}
-		assert.deepEqual(await createReviewedResume(pending, true, controller.signal), {
-			id: "reviewed-resume",
-			type: "resume",
-		});
+		assert.deepEqual(
+			await createReviewedResume(
+				pending,
+				true,
+				controller.signal,
+				scenario === "explicit locale" ? "de-DE" : undefined,
+			),
+			{
+				id: "reviewed-resume",
+				type: "resume",
+			},
+		);
 		assert.equal(saved, 1);
 	});
 }

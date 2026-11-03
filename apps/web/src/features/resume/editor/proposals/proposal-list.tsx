@@ -14,6 +14,7 @@ import { useId, useMemo, useState } from "react";
 import { additionParts, getProposalState, needsConfirmation, passageLines } from "@reactive-resume/resume/proposals";
 import { wordDiff } from "@reactive-resume/resume/word-diff";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
@@ -638,6 +639,7 @@ type CoverageProps = {
 
 /** Every posting requirement as the assistant read it, gaps included. Separate from Check's term list. */
 export function Coverage({ requirements, factText }: CoverageProps) {
+	const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
 	const gaps = requirements.filter((item) => item.status === "missing" || item.status === "unassessed").length;
 
 	return (
@@ -653,7 +655,24 @@ export function Coverage({ requirements, factText }: CoverageProps) {
 			<ul className="mt-1.5 grid gap-1.5">
 				{requirements.map((item) => (
 					<li key={item.text} className="grid gap-0.5">
-						<span className="text-ink">{item.text}</span>
+						{item.status === "missing" || item.status === "unassessed" ? (
+							<label className="flex min-h-11 items-center gap-2 text-ink">
+								<Checkbox
+									checked={selected.has(item.text)}
+									onCheckedChange={(checked) =>
+										setSelected((previous) => {
+											const next = new Set(previous);
+											if (checked === true) next.add(item.text);
+											else next.delete(item.text);
+											return next;
+										})
+									}
+								/>
+								{item.text}
+							</label>
+						) : (
+							<span className="text-ink">{item.text}</span>
+						)}
 						<span className={cn((item.status === "missing" || item.status === "unassessed") && "text-warn-text")}>
 							{coverageLabel(item.status)}
 						</span>

@@ -806,3 +806,24 @@ it("preserves external PDF word separators and adjacent split words", async () =
 		description: "<ul><li>Built Important Systems for customers.</li></ul><p>Interoperable tools.</p>",
 	});
 });
+
+it.each([undefined, "ar-SA"] as const)(
+	"preserves structured-file language unless an explicit override is given: %s",
+	async (locale) => {
+		create.mockClear();
+		const original = structuredClone(defaultResumeData);
+		original.metadata.page.locale = "de-DE";
+		original.basics.name = "Fictional language import";
+		const file = new File([JSON.stringify(original)], "German.json", { type: "application/json" });
+		await call(
+			importResumeFile,
+			{ file, format: "REACTIVE_RESUME", ...(locale ? { locale } : {}) },
+			{ context: { locale: "en-US", reqHeaders: new Headers() } },
+		);
+		const saved = create.mock.calls[0]?.[0] as { data: ResumeData; locale?: string };
+		expect(saved.locale).toBeUndefined();
+		expect(saved.data.metadata.page.locale).toBe(locale ?? "de-DE");
+		expect(saved.data.basics).toEqual(original.basics);
+		expect(original.metadata.page.locale).toBe("de-DE");
+	},
+);

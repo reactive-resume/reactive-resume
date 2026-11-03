@@ -9,6 +9,19 @@ i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
 const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+function loadDomain(path) {
+	const output = buildSync({
+		entryPoints: [new URL("../../../" + path, import.meta.url).pathname],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text;
+	const module = { exports: {} };
+	new Function("require", "module", "exports", output)(serverRequire, module, module.exports);
+	return module.exports;
+}
+
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
 // Lingui's t: a tagged template, or a descriptor ({ message, comment }) for strings with translator notes.
 const translatedMessages = new Map();
@@ -3427,6 +3440,9 @@ let newDocumentParams = { step: "copy", applicationId: "new-job" };
 let copyHasProvider = false;
 let pdfReview;
 const { NewDocument } = load("features/documents/new-document.tsx", {
+	"@reactive-resume/utils/locale": loadDomain("packages/utils/src/locale.ts"),
+	"@/features/settings/locale-names": { getLocaleOptions: () => [{ value: "de-DE", label: "Deutsch" }] },
+	"@/i18n": { selectableLocales: ["en-US", "de-DE"] },
 	"@/routes": load("routes.ts"),
 	"./copy-for-job": {
 		copyForJob: async (input) => {
@@ -4994,3 +5010,177 @@ assert.equal(
 	"Late restore cannot notify a replacement editor",
 );
 console.log("PASS native letter named/unnamed History labels, restore notice and late-editor fence");
+
+// Recovered document-language/assistant acceptance runs actual native owners against upload/storage/write boundaries.
+const pasteFiles = new Map();
+class PasteFile {
+	constructor(root, name) {
+		this.uri = name ? `${root}/${name}` : root;
+	}
+	write(text) {
+		pasteFiles.set(this.uri, text);
+	}
+	get exists() {
+		return pasteFiles.has(this.uri);
+	}
+	get size() {
+		return Buffer.byteLength(pasteFiles.get(this.uri) ?? "");
+	}
+	async base64() {
+		return Buffer.from(pasteFiles.get(this.uri) ?? "").toString("base64");
+	}
+	delete() {
+		pasteFiles.delete(this.uri);
+	}
+}
+let pasteUpload;
+let polishScope = "polish-account";
+const polishBoundaries = {
+	react: { ...react, memo: (component) => component },
+	"@legendapp/list/react-native": {},
+	ai: {},
+	"@orpc/client": { ORPCError: class extends Error {} },
+	"expo-clipboard": {},
+	"expo-document-picker": {},
+	"expo-file-system": { File: PasteFile, Paths: { cache: "own-cache" } },
+	"react-native-keyboard-controller": {},
+	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", TextInput: "TextInput" },
+	"@reactive-resume/ai/tools/agent-tool-contracts": loadDomain("packages/ai/src/tools/agent-tool-contracts.ts"),
+	"@reactive-resume/resume/proposals": loadDomain("packages/resume/src/proposals.ts"),
+	"@reactive-resume/resume/word-diff": {},
+	"@reactive-resume/schema/ai-usage": {},
+	"@reactive-resume/utils/http": { isNetworkError: () => false },
+	"./chat": {},
+	"./messages": {},
+	"./proposals": {},
+	"./recovery": {},
+	"./sent": {},
+	"./tool-approvals": {},
+	"./handoff": {},
+	"./markdown": {},
+	"./page-fit": {},
+	"./save-posting": {},
+	"@/features/ai/report-content": {},
+	"@/features/ai/web-access": {},
+	"@/features/career/fact-categories": { factCategories: () => [] },
+	"@/features/documents/queries": {},
+	"@/auth/session": { getAccountScope: () => polishScope },
+	"@/api/client": {
+		orpc: { career: { facts: { key: () => ["facts"] } } },
+		client: {
+			agent: {
+				attachments: {
+					create: (input, options) => {
+						calls.push({ upload: input, options });
+						return pasteUpload;
+					},
+				},
+			},
+			career: {
+				saveFact: async (input) => {
+					calls.push({ fact: input });
+					return { id: "fact" };
+				},
+			},
+		},
+	},
+	"@tanstack/react-query": { useQueryClient: () => ({ invalidateQueries: () => {} }) },
+	"@/ui": { ...ui, useTheme: () => ({ ...theme, type: { body: { lineHeight: 20 } } }) },
+};
+const { Composer: PasteComposer } = load(
+	"features/assistant/chat-view.tsx",
+	polishBoundaries,
+	";module.exports.Composer=Composer;",
+);
+for (const scenario of ["success", "failure", "changed"]) {
+	reset();
+	let finish;
+	let fail;
+	pasteUpload = new Promise((resolve, reject) => {
+		finish = resolve;
+		fail = reject;
+	});
+	const original = "Unicode résumé مرحبا 😀\n".repeat(250);
+	const props = {
+		scope: "polish-account",
+		draft: original,
+		disabled: false,
+		streaming: false,
+		privacy: "Explicit Send only",
+		ensureThread: async () => "paste-thread",
+		onSend: () => assert.fail("Conversion must not send"),
+		onStop() {},
+	};
+	const box = () => nodes(render(PasteComposer, props)).find((n) => n.type === "TextInput").props;
+	assert.equal(box().value, original);
+	assert.equal(calls.length, 0);
+	control(render(PasteComposer, props), "Attach a file instead").onPress();
+	await settle();
+	assert.equal(calls[0].upload.filename, "message.txt");
+	assert.equal(calls[0].options.context.scope, "polish-account");
+	assert.equal(Buffer.from(calls[0].upload.data, "base64").toString("utf8"), original);
+	assert.equal(box().value, original);
+	if (scenario === "changed") box().onChangeText("Fresh native draft");
+	if (scenario === "failure") fail(new Error("offline"));
+	else finish({ id: "paste-upload", filename: "message.txt", mediaType: "text/plain" });
+	await settle();
+	assert.equal(
+		box().value,
+		scenario === "success" ? "Read the attachment" : scenario === "changed" ? "Fresh native draft" : original,
+	);
+	assert.equal(pasteFiles.size, 0, "Own temporary file must be deleted on success or failure");
+}
+const { Coverage: GapCoverage, RememberMessage: RememberAnswer } = load(
+	"features/assistant/messages.tsx",
+	polishBoundaries,
+	";module.exports.Coverage=Coverage;module.exports.RememberMessage=RememberMessage;",
+);
+reset();
+const requirements = [{ text: "Accessibility audits", status: "missing", evidence: [] }];
+let gap = nodes(render(GapCoverage, { requirements, factText: () => null })).find(
+	(n) => n.props.accessibilityRole === "checkbox",
+);
+assert.ok(gap);
+assert.equal(gap.props.accessibilityState.checked, false);
+gap.props.onPress();
+gap = nodes(render(GapCoverage, { requirements, factText: () => null })).find(
+	(n) => n.props.accessibilityRole === "checkbox",
+);
+assert.equal(gap.props.accessibilityState.checked, true);
+assert.equal(requirements[0].status, "missing");
+assert.deepEqual(requirements[0].evidence, []);
+assert.equal(calls.length, 0);
+reset();
+const answerProps = {
+	message: { id: "question-message", role: "assistant", parts: [] },
+	answer: "I repaired six checkout issues.",
+	scope: { applicationId: "fictional-job" },
+};
+control(render(RememberAnswer, answerProps), "Remember").onPress();
+let review = render(RememberAnswer, answerProps);
+control(review, "Remember as a fact in Knowledge").onChangeText("I led repairs for six checkout issues.");
+control(render(RememberAnswer, answerProps), "Cancel").onPress();
+assert.equal(calls.length, 0);
+control(render(RememberAnswer, answerProps), "Remember").onPress();
+review = render(RememberAnswer, answerProps);
+assert.equal(control(review, "Remember as a fact in Knowledge").value, "I led repairs for six checkout issues.");
+control(review, "Remember").onPress();
+await settle();
+assert.deepEqual(calls[0].fact, {
+	applicationId: "fictional-job",
+	text: "I led repairs for six checkout issues.",
+	category: "accomplishment",
+	source: { kind: "manual", id: "question-message", quote: "I repaired six checkout issues." },
+});
+console.log(
+	"PASS native long-paste explicit Unicode upload/failure/changed-draft/temp cleanup, gap evidence isolation and reviewed answer Knowledge save",
+);
+
+assert.ok(JSON.stringify(render(RememberAnswer, answerProps)).includes("Added to Knowledge."));
+reset();
+control(render(RememberAnswer, answerProps), "Remember").onPress();
+polishScope = "another-account";
+control(render(RememberAnswer, answerProps), "Remember").onPress();
+await settle();
+assert.equal(calls.length, 0, "Old account answer must not be saved into a new account");
+polishScope = "polish-account";

@@ -719,7 +719,7 @@ export const resumeService = {
 		/** Generated from the name, and made unique among the user's resumes, when omitted. */
 		slug?: string;
 		tags: string[];
-		locale: Locale;
+		locale?: Locale;
 		data?: ResumeData;
 		aiOperationIds?: string[];
 		/** The first version in History: "created", or "import" for an imported document. */
@@ -731,7 +731,7 @@ export const resumeService = {
 	}) => {
 		const id = input.id ?? generateId();
 		const data = parseWritableResumeData(structuredClone(input.data ?? defaultResumeData));
-		data.metadata.page.locale = input.locale;
+		if (input.locale) data.metadata.page.locale = input.locale;
 
 		if (input.slug !== undefined && !isValidSlug(input.slug)) {
 			throw new ORPCError("INVALID_SLUG", { status: 400 });
