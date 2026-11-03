@@ -10,13 +10,21 @@ import { useCareerTime } from "@/features/career/shared";
 type ApplicationCardProps = {
 	application: ApplicationSummary;
 	onClick?: () => void;
+	/** A tag chip filters the page's existing search. */
+	onTagSelect?: ((tag: string) => void) | undefined;
 	/** The ⋯ menu (Move to…, Close…, Delete); cards dragged in the overlay go without. */
 	withMenu?: boolean;
 	dragging?: boolean;
 };
 
 /** A board card: the company's initial, role and company, and the next step (warn when it's overdue). */
-export function ApplicationCard({ application, onClick, withMenu = false, dragging = false }: ApplicationCardProps) {
+export function ApplicationCard({
+	application,
+	onClick,
+	onTagSelect,
+	withMenu = false,
+	dragging = false,
+}: ApplicationCardProps) {
 	const { locale, timeZone } = useCareerTime();
 	const hints = useOfferHints(application.status === "offer");
 	const next = describeNextStep(
@@ -43,22 +51,23 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 				>
 					{application.company.slice(0, 1).toUpperCase()}
 				</span>
-				<button
-					type="button"
-					data-application-open
-					onClick={onClick}
-					className="grid min-w-0 flex-1 text-start after:absolute after:inset-0 after:rounded-lg"
-				>
-					<span dir="auto" className="truncate text-sm font-semibold">
-						{application.role}
-					</span>
-					<span className="flex min-w-0 items-center gap-1.5 text-xs text-ink-3">
-						<span dir="auto" className="truncate">
+				<div className="grid min-w-0 flex-1 gap-1">
+					<button
+						type="button"
+						data-application-open
+						onClick={onClick}
+						className="grid min-w-0 text-start after:absolute after:inset-0 after:rounded-lg"
+					>
+						<span dir="auto" className="truncate text-sm font-semibold">
+							{application.role}
+						</span>
+						<span dir="auto" className="truncate text-xs text-ink-3">
 							{application.company}
 						</span>
-						<TagChips tags={application.tags} />
-					</span>
-				</button>
+					</button>
+					{/* Above the open button's stretched target, so filtering never opens the card. */}
+					<TagChips tags={application.tags} onSelect={onTagSelect} className="relative z-10 ms-0" />
+				</div>
 				{withMenu && <ApplicationActionsMenu application={application} className="relative z-10 -me-1.5 -mt-1.5" />}
 			</div>
 			<span
