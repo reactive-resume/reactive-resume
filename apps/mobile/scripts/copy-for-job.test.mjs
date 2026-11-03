@@ -28,17 +28,26 @@ function load(path, mocks) {
 const strings = load("../../../packages/utils/src/string.ts", { uuid: { v7: randomUUID } });
 
 /** A server that records each call; `copy` decides what copyForJob does (a current server returns the ID it was sent). */
-function fakeServer({ copy }) {
+function fakeServer({ copy, create = () => "job-old-server", scope = () => "fixture-account" }) {
 	const calls = [];
 	const client = {
 		documents: {
 			copyForJob: async (input) => (calls.push(["copyForJob", input]), copy(input)),
 			linkApplication: async (input) => void calls.push(["linkApplication", input]),
 		},
-		applications: { create: async (input) => (calls.push(["create", input]), "job-old-server") },
+		applications: { create: async (input) => (calls.push(["create", input]), create(input)) },
 	};
 	const { copyForJob } = load("../src/features/documents/copy-for-job.ts", {
-		"@/api/client": { client },
+		"@/api/client": {
+			client,
+			SessionChangedError: class SessionChangedError extends Error {
+				constructor() {
+					super("Session changed");
+					this.name = "SessionChangedError";
+				}
+			},
+		},
+		"@/auth/session": { getAccountScope: scope },
 		"@reactive-resume/utils/string": strings,
 	});
 	return { calls, copyForJob, names: () => calls.map(([name]) => name) };
@@ -110,5 +119,73 @@ test("a settled request starts a new one with a new ID; the same job for another
 	await assert.rejects(failing.copyForJob({ resumeId: "account-a-base", application: job }, signal));
 	await assert.rejects(failing.copyForJob({ resumeId: "account-b-base", application: job }, signal));
 	const [a, b] = sentIds(failing);
+	assert.notEqual(a, b);
+});
+
+test("account change after copy cannot save or link a job through the older-server fallback", async () => {
+	let scope = "account-A";
+	const server = fakeServer({
+		scope: () => scope,
+		copy: () => {
+			scope = "account-B";
+			return "older-copy";
+		},
+	});
+	await assert.rejects(server.copyForJob({ resumeId: "private-base", application: job }, signal), {
+		name: "SessionChangedError",
+	});
+	assert.deepEqual(server.names(), ["copyForJob"]);
+});
+
+test("account change after fallback job creation cannot link the old copy", async () => {
+	let scope = "account-A";
+	const server = fakeServer({
+		scope: () => scope,
+		copy: () => "older-copy",
+		create: () => {
+			scope = "account-B";
+			return "old-job";
+		},
+	});
+	await assert.rejects(server.copyForJob({ resumeId: "private-base", application: job }, signal), {
+		name: "SessionChangedError",
+	});
+	assert.deepEqual(server.names(), ["copyForJob", "create"]);
+});
+
+test("an aborted or signed-out copy dispatches nothing", async () => {
+	const cancelled = new AbortController();
+	cancelled.abort();
+	const server = fakeServer({ copy: (input) => input.newId });
+	await assert.rejects(server.copyForJob({ resumeId: "private-base" }, cancelled.signal), { name: "AbortError" });
+	assert.deepEqual(server.names(), []);
+	const signedOut = fakeServer({ copy: (input) => input.newId, scope: () => null });
+	await assert.rejects(signedOut.copyForJob({ resumeId: "private-base" }, signal), { name: "SessionChangedError" });
+	assert.deepEqual(signedOut.names(), []);
+});
+
+test("the save form's lost copy reply is retried by the recovery picker under the same ID", async () => {
+	let attempts = 0;
+	const server = fakeServer({
+		copy: (input) => (attempts++ === 0 ? Promise.reject(new TypeError("Lost reply")) : input.newId),
+	});
+	await assert.rejects(
+		server.copyForJob({ resumeId: "base-recovery", applicationId: "saved-job", name: "Base — Job" }, signal),
+	);
+	const id = await server.copyForJob(
+		{ resumeId: "base-recovery", name: "Base — Job", applicationId: "saved-job" },
+		signal,
+	);
+	assert.deepEqual(sentIds(server), [id, id]);
+});
+
+test("identical pending copy inputs from different accounts never share a create ID", async () => {
+	let scope = "account-A";
+	const server = fakeServer({ scope: () => scope, copy: () => Promise.reject(new TypeError("Lost reply")) });
+	const input = { resumeId: "imported-id", applicationId: "job-id", name: "Copy" };
+	await assert.rejects(server.copyForJob(input, signal));
+	scope = "account-B";
+	await assert.rejects(server.copyForJob(input, signal));
+	const [a, b] = sentIds(server);
 	assert.notEqual(a, b);
 });

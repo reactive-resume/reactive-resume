@@ -1,6 +1,7 @@
 import type { RouterInput } from "@/api/client";
 import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
-import { client } from "@/api/client";
+import { client, SessionChangedError } from "@/api/client";
+import { getAccountScope } from "@/auth/session";
 
 type CopyForJobInput = Omit<RouterInput["documents"]["copyForJob"], "newId">;
 
@@ -13,12 +14,31 @@ type CopyForJobInput = Omit<RouterInput["documents"]["copyForJob"], "newId">;
  * the job is then saved and linked afterwards, as those servers always did it.
  */
 export async function copyForJob(input: CopyForJobInput, signal: AbortSignal) {
-	const key = `copy-for-job:${JSON.stringify(input)}`;
+	const scope = getAccountScope();
+	if (!scope) throw new SessionChangedError();
+	const check = () => {
+		signal.throwIfAborted();
+		if (getAccountScope() !== scope) throw new SessionChangedError();
+	};
+	check();
+	const options = { signal, context: { scope } };
+	// The save form and recovery picker build fields in different orders; both must retry the same copy.
+	const key = JSON.stringify([
+		"copy-for-job",
+		scope,
+		input.resumeId,
+		input.applicationId,
+		input.application,
+		input.name,
+	]);
 	const newId = pendingRequestId(key);
-	const id = await client.documents.copyForJob({ ...input, newId }, { signal });
+	const id = await client.documents.copyForJob({ ...input, newId }, options);
+	check();
 	if (input.application && id !== newId) {
-		const applicationId = await client.applications.create({ ...input.application, resumeId: id }, { signal });
-		await client.documents.linkApplication({ type: "resume", id, applicationId }, { signal });
+		const applicationId = await client.applications.create({ ...input.application, resumeId: id }, options);
+		check();
+		await client.documents.linkApplication({ type: "resume", id, applicationId }, options);
+		check();
 	}
 	settleRequestId(key);
 	return id;

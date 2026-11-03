@@ -126,6 +126,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 					{(field) => (
 						<FormItem
 							ref={codeRef}
+							data-route-focus
 							className="justify-self-center"
 							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
 						>

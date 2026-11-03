@@ -14,10 +14,11 @@ export function NavigationFocus() {
 			)
 				return;
 			const target =
+				document.querySelector<HTMLElement>("[data-route-focus] input") ??
 				document.querySelector<HTMLElement>("main h1, h1") ??
 				document.querySelector<HTMLElement>("main, #main-content");
 			if (!target) return;
-			if (!target.hasAttribute("tabindex")) target.tabIndex = -1;
+			if (!target.hasAttribute("tabindex") && target.tabIndex < 0) target.tabIndex = -1;
 			target.focus({ preventScroll: true });
 		});
 		return () => cancelAnimationFrame(frame);
