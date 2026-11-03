@@ -878,6 +878,7 @@ for (const resumeId of [null, "resume-for-letter"]) {
 		"Letter creation opens the reusable document picker with this job and its linked resume",
 	);
 }
+tree = render(WhatYouSent, { application });
 let finishDocumentLink;
 documentLinkPromise = new Promise((resolve) => (finishDocumentLink = resolve));
 control(tree, "Use Fictional Cedar — Portfolio · Resume").onPress();
