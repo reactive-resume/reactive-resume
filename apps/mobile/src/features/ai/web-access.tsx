@@ -1,6 +1,7 @@
 import type { RouterOutput } from "@/api/client";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
+import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { View } from "react-native";
@@ -20,6 +21,15 @@ function webTestFailure(error: string | undefined) {
 	if (error === "timeout") return t`The service didn't respond in time. Try again.`;
 	if (error === "rate-limit") return t`Too many requests. Try again later.`;
 	return t`The service is unavailable or doesn't support this operation. Try again later or connect another service.`;
+}
+
+export function webSearchFailure(error: unknown) {
+	if (!(error instanceof ORPCError)) return undefined;
+	if (error.code === "SEARCH_AUTH") return "auth";
+	if (error.code === "SEARCH_QUOTA") return "quota";
+	if (error.code === "RATE_LIMIT_EXCEEDED") return "rate-limit";
+	if (error.code === "SEARCH_UNAVAILABLE" || error.code === "SEARCH_FAILED") return "unavailable";
+	return undefined;
 }
 
 type TestCapabilityProps = { result: { success: boolean; error?: string | undefined }; label: string };
@@ -294,7 +304,9 @@ export function SetUpWebAccess() {
 	);
 }
 
-export function WebAccessAttention() {
+type WebAccessAttentionProps = { failure?: string | undefined; operation?: "search" | "read" };
+
+export function WebAccessAttention({ failure, operation = "search" }: WebAccessAttentionProps = {}) {
 	const { t } = useLingui();
 	const session = useSession();
 	const options = orpc.webAccess.status.queryOptions();
@@ -304,15 +316,22 @@ export function WebAccessAttention() {
 		enabled: session.status === "signed-in",
 	});
 	const status = query.data;
-	if (!status?.testResult || (status.testResult.search.success && status.testResult.read.success)) return null;
+	const failed = status?.testResult && (!status.testResult.search.success || !status.testResult.read.success);
+	if (!failure && !failed) return null;
+	const serverSearch = operation === "search" && failure && status?.searxng;
+	const managedSearch = status?.managed || serverSearch;
 	return (
 		<View>
 			<Banner
 				tone="warn"
-				message={`${status.provider} · ${webTestFailure(status.testResult.search.error ?? status.testResult.read.error)}`}
+				message={`${serverSearch ? "SearXNG" : (status?.provider ?? "")} · ${webTestFailure(failure ?? status?.testResult?.search.error ?? status?.testResult?.read.error)}`}
 			/>
 			<Text>{t`Paste the posting text or a public link to continue. The built-in reader remains available.`}</Text>
-			<SetUpWebAccess />
+			{managedSearch ? (
+				<Text>{t`Ask your server administrator to fix web access. You can still paste a posting or read a public link.`}</Text>
+			) : (
+				<SetUpWebAccess />
+			)}
 		</View>
 	);
 }

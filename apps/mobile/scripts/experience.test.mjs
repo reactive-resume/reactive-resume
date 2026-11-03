@@ -469,7 +469,7 @@ const nativeInterviewCalendar = load("features/application-detail/calendar.ts", 
 });
 let applicationDocuments = [];
 let rejectDocumentLink = false;
-let creatingApplicationLetter = false;
+let documentLinkPromise;
 let stageUpdate = (input) => calls.push(input);
 let stageUpdateAsync = (input) =>
 	new Promise((resolve, reject) => stageUpdate(input, { onSuccess: resolve, onError: reject }));
@@ -487,7 +487,6 @@ const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/app
 	"./hooks": {
 		useDocuments: () => ({ data: applicationDocuments }),
 		useDetailMutations: () => ({
-			createLetter: { isPending: creatingApplicationLetter },
 			addNote: {},
 			updateEntry: {},
 			deleteEntry: {},
@@ -508,6 +507,7 @@ const { StageStepper, NextStepCard, WhatYouSent, Timeline } = load("features/app
 				linkApplication: async (input) => {
 					calls.push({ documentLink: input });
 					if (rejectDocumentLink) throw new Error("Unavailable");
+					await documentLinkPromise;
 				},
 			},
 		},
@@ -856,11 +856,18 @@ assert.deepEqual(calls.filter((call) => call?.documentLink).at(-1).documentLink,
 	id: "existing-letter",
 	applicationId: "job-a",
 });
-creatingApplicationLetter = true;
+let finishDocumentLink;
+documentLinkPromise = new Promise((resolve) => (finishDocumentLink = resolve));
+control(tree, "Use Fictional Cedar — Portfolio · Resume").onPress();
 tree = render(WhatYouSent, { application });
 assert.equal(control(tree, "Use Fictional Cedar — Portfolio · Resume").disabled, true);
 assert.equal(control(tree, "Use an existing letter").disabled, true);
-creatingApplicationLetter = false;
+finishDocumentLink();
+await settle();
+documentLinkPromise = undefined;
+tree = render(WhatYouSent, { application });
+assert.equal(control(tree, "Use Fictional Cedar — Portfolio · Resume").disabled, false);
+assert.equal(control(tree, "Use an existing letter").disabled, false);
 applicationDocuments = [];
 console.log("PASS native company-matched resume/letter selection, revision guard, pending state and failed-link retry");
 

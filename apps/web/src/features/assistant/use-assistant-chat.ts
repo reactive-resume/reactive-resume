@@ -3,6 +3,7 @@ import type { AgentUIMessage } from "@reactive-resume/ai/tools/agent-tool-contra
 import type { ChatTransport, UIMessage } from "ai";
 import { useChat } from "@ai-sdk/react";
 import { eventIteratorToUnproxiedDataStream } from "@orpc/client";
+import { useQueryClient } from "@tanstack/react-query";
 import {
 	lastAssistantMessageIsCompleteWithApprovalResponses,
 	lastAssistantMessageIsCompleteWithToolCalls,
@@ -11,7 +12,8 @@ import {
 } from "ai";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { agentMessageMetadataSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
-import { streamClient } from "@/libs/orpc/client";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
+import { orpc, streamClient } from "@/libs/orpc/client";
 
 // Apart from chat.ts so pages that only list conversations don't load the AI SDK.
 
@@ -52,6 +54,12 @@ type UseAssistantChatInput = {
  * and only the newest message is sent (the server keeps the transcript).
  */
 export function useAssistantChat({ threadId, initialMessages, resume, context, onFinish }: UseAssistantChatInput) {
+	const queryClient = useQueryClient();
+	const [generation] = useState(getAccountGeneration);
+	const refreshWebAccess = () => {
+		if (generation === getAccountGeneration())
+			void queryClient.invalidateQueries({ queryKey: orpc.webAccess.status.key() });
+	};
 	const contextRef = useRef(context);
 	const [resuming, setResuming] = useState(resume);
 	const resumeRequest = useRef(0);
@@ -103,7 +111,11 @@ export function useAssistantChat({ threadId, initialMessages, resume, context, o
 			sendAutomaticallyWhen: (input) =>
 				lastAssistantMessageIsCompleteWithToolCalls(input) ||
 				lastAssistantMessageIsCompleteWithApprovalResponses(input),
-			onFinish,
+			onFinish: () => {
+				refreshWebAccess();
+				onFinish();
+			},
+			onError: refreshWebAccess,
 		}),
 		resuming,
 	};

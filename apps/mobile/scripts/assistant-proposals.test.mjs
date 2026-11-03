@@ -750,6 +750,7 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 			"@/features/documents/queries": { useDocuments: () => ({ data: [] }) },
 			"@/routes": { routes: {} },
 			"@/features/ai/report-content": { ReportAiContent: "Report" },
+			"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
 			"@/ui": { ...dependencies["@/ui"], Button: "Button", Text: "Text", Icon: "Icon", useTheme: () => theme },
 		},
 	);

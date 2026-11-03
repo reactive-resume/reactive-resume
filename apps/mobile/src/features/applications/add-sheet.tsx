@@ -21,7 +21,7 @@ import { CLOSED_REASONS, getClosedReasonLabel } from "./stages";
 import { client, orpc } from "@/api/client";
 import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
-import { WebAccessAttention } from "@/features/ai/web-access";
+import { WebAccessAttention, webSearchFailure } from "@/features/ai/web-access";
 import { WallClockField } from "@/features/application-detail/date-field";
 import { useNow, useUserTime } from "@/features/application-detail/hooks";
 import { defaultCopySource } from "@/features/documents/filter";
@@ -114,6 +114,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 	const [confirmSearchExit, setConfirmSearchExit] = useState(false);
 	const [busy, setBusy] = useState<"read" | "fill" | "search" | "save" | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [searchFailure, setSearchFailure] = useState<string>();
 	const lock = useRef(false);
 	const active = useRef(true);
 	const controller = useRef<AbortController | null>(null);
@@ -130,12 +131,16 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 		lock.current = true;
 		setBusy(action);
 		setError(null);
+		setSearchFailure(undefined);
 		const request = new AbortController();
 		controller.current = request;
 		try {
 			await work(request.signal);
 		} catch (cause) {
-			if (active.current && !request.signal.aborted && getServer() === session.server) {
+			if (current(request.signal)) {
+				const failure = action === "search" ? webSearchFailure(cause) : undefined;
+				setSearchFailure(failure);
+				if (action === "search") void web.refetch();
 				if (action === "read" && mode === "link" && cause instanceof ORPCError && cause.code === "POSTING_UNREADABLE") {
 					setSourceUrl(input.trim());
 					setMode("text");
@@ -144,9 +149,11 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 					setParsed(null);
 				}
 				setError(
-					action === "save"
-						? t`Couldn't confirm the save. Check Applications before retrying to avoid a duplicate.`
-						: applicationError(cause),
+					failure
+						? null
+						: action === "save"
+							? t`Couldn't confirm the save. Check Applications before retrying to avoid a duplicate.`
+							: applicationError(cause),
 				);
 			}
 		} finally {
@@ -194,7 +201,11 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 	const search = () =>
 		void run("search", async (signal) => {
 			setResults(null);
-			const result = await client.applications.ai.searchPostings({ query: query.trim() }, { signal });
+			if (!current(signal)) return;
+			const result = await client.applications.ai.searchPostings(
+				{ query: query.trim() },
+				{ signal, context: { scope: accountScope ?? undefined } },
+			);
 			if (current(signal)) setResults(result);
 		});
 	const changeInput = (value: string) => {
@@ -319,7 +330,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 				}
 			>
 				<View style={{ gap: space.s4 }}>
-					<WebAccessAttention />
+					<WebAccessAttention failure={searchFailure} />
 					{error && <Banner tone="danger" message={error} />}
 					{initialCapture && (
 						<Banner

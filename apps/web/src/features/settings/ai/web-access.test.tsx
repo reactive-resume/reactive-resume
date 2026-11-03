@@ -23,7 +23,7 @@ vi.mock("../integrations/hooks/use-has-usable-ai-provider", () => ({
 }));
 
 i18n.loadAndActivate({ locale: "en", messages: {} });
-const { WebAccessSection } = await import("./web-access");
+const { WebAccessSection, WebAccessAttention } = await import("./web-access");
 
 const status = (overrides: object) => ({
 	builtInReader: true,
@@ -37,12 +37,12 @@ const status = (overrides: object) => ({
 	...overrides,
 });
 
-function renderSection() {
+function renderSection(attention = false, operation: "search" | "read" = "search") {
 	render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
 				<ConfirmDialogProvider>
-					<WebAccessSection />
+					{attention ? <WebAccessAttention failure="auth" operation={operation} /> : <WebAccessSection />}
 				</ConfirmDialogProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
@@ -52,6 +52,28 @@ function renderSection() {
 afterEach(() => {
 	cleanup();
 	vi.clearAllMocks();
+});
+
+it.each([
+	{ managed: true, searxng: false, name: "firecrawl" },
+	{ managed: false, searxng: true, name: "SearXNG" },
+])(
+	"routes $name search repair to the operator rather than personal key controls",
+	async ({ managed, searxng, name }) => {
+		api.status.mockResolvedValue(status({ configured: true, provider: "firecrawl", managed, searxng }));
+		renderSection(true);
+		expect(await screen.findByText(/Ask your server administrator to fix web access/)).toBeTruthy();
+		expect(screen.getByText(new RegExp(`${name} · .*rejected the API key`))).toBeTruthy();
+		expect(screen.queryByRole("button", { name: "Set up web access" })).toBeNull();
+	},
+);
+
+it("keeps a personal reader repair separate from the server's working search", async () => {
+	api.status.mockResolvedValue(status({ configured: true, provider: "firecrawl", searxng: true }));
+	renderSection(true, "read");
+	expect(await screen.findByText(/firecrawl · .*rejected the API key/)).toBeTruthy();
+	expect(screen.getByRole("button", { name: "Set up web access" })).toBeTruthy();
+	expect(screen.queryByText(/Ask your server administrator/)).toBeNull();
 });
 
 it("tests the server's search without a connection and leaves reading to the built-in reader", async () => {
