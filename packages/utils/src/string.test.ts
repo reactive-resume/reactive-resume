@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import { slugify } from "./slug";
-import { filterOptions, getInitials, isolate, rewriteSummary, toUsername } from "./string";
+import { filterOptions, fitLabel, getInitials, isolate, rewriteSummary, toUsername } from "./string";
 
 describe("slugify", () => {
 	it("falls back to a non-empty slug for CJK input", () => {
@@ -17,6 +17,24 @@ describe("toUsername", () => {
 	it("truncates to 64 characters max", () => {
 		const longName = "a".repeat(100);
 		expect(toUsername(longName)).toHaveLength(64);
+	});
+});
+
+describe("fitLabel", () => {
+	it("leaves a short label alone", () => {
+		expect(fitLabel("Recruiter call", 18)).toBe("Recruiter call");
+		expect(fitLabel("Recruiter call", 14)).toBe("Recruiter call");
+	});
+
+	it("ends a long label with an ellipsis within the limit", () => {
+		expect(fitLabel("a".repeat(20), 18)).toBe(`${"a".repeat(17)}…`);
+	});
+
+	it("counts code points so an emoji is never cut in half", () => {
+		const label = "😀".repeat(20);
+		const fitted = fitLabel(label, 18);
+		expect(fitted).toBe(`${"😀".repeat(17)}…`);
+		expect([...fitted]).toHaveLength(18);
 	});
 });
 

@@ -25,7 +25,10 @@ export function Thumbnail({ document, visible, compact = false }: ThumbnailProps
 	const [width, setWidth] = useState(0);
 	const signedIn = visible && session.status === "signed-in";
 	const { server } = session;
-	const draftText = useLetterStore((state) => (state.document?.id === document.id ? state.data?.content : undefined));
+	const draft = useLetterStore((state) => (state.document?.id === document.id ? state.data : undefined));
+	const draftPreview = draft
+		? [draft.greeting?.trim(), letterText(draft.content)].filter(Boolean).join("\n\n")
+		: undefined;
 	const letter = useQuery({
 		queryKey: ["letter-thumbnail", server, document.id, document.updatedAt.getTime()],
 		queryFn: ({ signal }) => orpc.coverLetters.getById.call({ id: document.id }, { signal }),
@@ -71,7 +74,7 @@ export function Thumbnail({ document, visible, compact = false }: ThumbnailProps
 			{document.type === "letter" ? (
 				// A miniature of the page: it scales with the card, not with the text-size setting (tokens.md `pageThumb`).
 				<Text variant="callout" color="paperInk" numberOfLines={compact ? 2 : 12} maxFontSizeMultiplier={1}>
-					{(draftText === undefined ? (letter.data ?? "") : letterText(draftText)) ||
+					{(draftPreview === undefined ? (letter.data ?? "") : draftPreview) ||
 						(letter.isError ? t`Couldn't load letter` : letter.isPending ? t`Loading letter…` : t`Empty letter`)}
 				</Text>
 			) : firstPage ? (

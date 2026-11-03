@@ -92,6 +92,16 @@ export function stripHtml(html: string | undefined): string {
 	return html.replace(/<[^<>]*>/g, "").trim();
 }
 
+/**
+ * Shortens a label to at most `max` code points, ending with an ellipsis when it was longer. Code points (not UTF-16
+ * units) keep astral characters such as emoji whole, so a chart label never ends on half a surrogate pair.
+ */
+export function fitLabel(text: string, max: number): string {
+	if (max <= 0) return "";
+	const characters = Array.from(text);
+	return characters.length > max ? `${characters.slice(0, max - 1).join("")}…` : text;
+}
+
 /** FNV-1a over the text: a short, stable fingerprint. Not for security. */
 export function fnv1a(text: string): number {
 	let hash = 0x811c9dc5;

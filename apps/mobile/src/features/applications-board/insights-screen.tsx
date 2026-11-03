@@ -9,6 +9,7 @@ import * as Sharing from "expo-sharing";
 import { useRef, useState } from "react";
 import { RefreshControl, I18nManager, ScrollView, View } from "react-native";
 import Svg, { Circle, Defs, G, LinearGradient, Path, Rect, Stop, Text as SvgText } from "react-native-svg";
+import { fitLabel } from "@reactive-resume/utils/string";
 import { weekStartsOn } from "./calendar";
 import { computeOutcomes, computePipeline, computeTimeline, countSources } from "./insights";
 import { useApplicationSearch } from "./search";
@@ -344,7 +345,7 @@ type PipelineFlowProps = {
 };
 
 // The flow chart's drawing units (web PipelineFlow): bars on a mid line, bands joining them.
-const FLOW = { width: 800, height: 340, padX: 40, midY: 190, maxBar: 150, bar: 34 } as const;
+const FLOW = { width: 800, height: 340, padX: 40, midY: 190, maxBar: 150, bar: 34, labelMax: 18 } as const;
 
 /**
  * Where active applications went, as a shareable picture (web "Pipeline flow"), with the stage totals as text for
@@ -475,7 +476,7 @@ function PipelineFlow({ active, closed, steps, labelOf }: PipelineFlowProps) {
 								fontFamily={fonts.ui[500]}
 								fill={colors.ink2}
 							>
-								{labelOf(bar.status)}
+								{fitLabel(labelOf(bar.status), FLOW.labelMax)}
 							</SvgText>
 							{i > 0 && bar.conversion !== null ? (
 								<SvgText

@@ -22,6 +22,11 @@ describe("letterBodyLines", () => {
 		]);
 	});
 
+	it("decodes entities the stored letter HTML carries", () => {
+		expect(letterBodyLines("<p>R&amp;D &amp; design&nbsp;team</p>")).toEqual(["R&D & design team"]);
+		expect(letterBodyLines("<p>&lt;hello&gt; &#39;world&#39;</p>")).toEqual(["<hello> 'world'"]);
+	});
+
 	it("returns nothing for a letter with no body", () => {
 		expect(letterBodyLines("")).toEqual([]);
 		expect(letterBodyLines(null)).toEqual([]);

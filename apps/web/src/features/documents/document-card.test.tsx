@@ -14,7 +14,11 @@ vi.mock("motion/react", async (importOriginal) => ({
 	useInView: () => true,
 }));
 vi.mock("@tanstack/react-router", () => ({
-	Link: ({ children }: { children: React.ReactNode }) => <a href="/documents">{children}</a>,
+	Link: ({ children, ...props }: React.ComponentProps<"a">) => (
+		<a href="/documents" {...props}>
+			{children}
+		</a>
+	),
 	useNavigate: () => vi.fn(),
 }));
 vi.mock("@/libs/orpc/client", () => ({
@@ -76,6 +80,34 @@ it("previews a letter's recipient, greeting and opening lines", async () => {
 	expect(await screen.findByText("Dear Dana,")).toBeTruthy();
 	expect(screen.getByText("I am writing about the staff engineer role.")).toBeTruthy();
 	expect(screen.getByText("Northwind Labs")).toBeTruthy();
+});
+
+it("describes the letter's opening words for screen readers without changing the link's name", async () => {
+	letters.load.mockResolvedValue({ greeting: "Dear Dana,", content: "<p>I am writing about the role.</p>" });
+	renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
+	await screen.findByText("I am writing about the role.");
+
+	const link = screen.getByRole("link", { name: "Untitled letter" });
+	const id = link.getAttribute("aria-describedby");
+	expect(id).toBeTruthy();
+	expect(document.getElementById(id ?? "")?.textContent).toContain("Dear Dana,");
+	expect(document.getElementById(id ?? "")?.textContent).toContain("I am writing about the role.");
+});
+
+it("does not draw loading bars over a loaded greeting-only letter", async () => {
+	letters.load.mockResolvedValue({ greeting: "Dear Dana,", content: "" });
+	const { container } = renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
+	await screen.findByText("Dear Dana,");
+
+	expect(container.querySelectorAll("span.h-1")).toHaveLength(0);
+	expect(screen.queryByText("Empty letter")).toBeNull();
+});
+
+it("shows a failed preview instead of an endless loading placeholder", async () => {
+	letters.load.mockRejectedValue(new Error("preview failed"));
+	renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
+
+	expect(await screen.findByText("Preview unavailable")).toBeTruthy();
 });
 
 it("fetches a new preview after the letter's content edit", async () => {

@@ -10,6 +10,7 @@ import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { fitLabel } from "@reactive-resume/utils/string";
 import { resolveExportTokens } from "../flow-tokens";
 import { computeInsights, computeOutcomes, computeTimeline, countSources } from "../insights";
 import { getCategoryDisplay } from "../lanes";
@@ -240,8 +241,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 const FLOW_FONT = "var(--font-ui)";
 // RxR mark ~18px wide in the 256-unit icon viewBox (the mark's glyphs span y ≈ 36–220).
 const ICON_SCALE = 18 / 256;
-// A label wider than this runs into the next stage; keep the owner's name, with an ellipsis when it is very long.
-const fitFlowLabel = (label: string) => (label.length > 18 ? `${label.slice(0, 17)}…` : label);
+const FLOW_LABEL_MAX = 18;
 
 function toBase64(buffer: ArrayBuffer): string {
 	const bytes = new Uint8Array(buffer);
@@ -434,7 +434,7 @@ function PipelineFlow({
 								{bar.reached}
 							</text>
 							<text x={bar.cx} y={H - 42} textAnchor="middle" fontSize={12} fontWeight={500} fill="var(--ink-2)">
-								{fitFlowLabel(bar.label)}
+								{fitLabel(bar.label, FLOW_LABEL_MAX)}
 							</text>
 							{i > 0 && (
 								<text x={bar.cx} y={H - 26} textAnchor="middle" fontSize={11} fill={bar.color}>
