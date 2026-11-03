@@ -2,10 +2,11 @@ import type { ProposedEdit, ProposeEditsOutput } from "@reactive-resume/ai/tools
 import type { DbOrTx } from "@reactive-resume/db/client";
 import type { ProposalApplications } from "@reactive-resume/resume/proposals";
 import type { UIMessage } from "ai";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { tailoringAllows } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import * as schema from "@reactive-resume/db/schema";
 import { appliedApplications, canApplyTo, holdsProposal } from "@reactive-resume/resume/proposals";
+import { aiOperationIds, aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
 import { parseStoredResumeData } from "../resume/resume-data-validation";
 import { lockThreadMessages, proposedEditsOf, withEditStatuses } from "./messages-persistence";
 
@@ -19,6 +20,7 @@ export type DocumentReader = {
 	kind: ProposalDocument["kind"];
 	madeFor: string | null;
 	pageLocale?: string;
+	aiOperationIds?: string[];
 	holds: (edit: HeldEdit) => boolean;
 };
 
@@ -29,7 +31,11 @@ export async function documentReader(
 ): Promise<DocumentReader | null> {
 	if (document.kind === "resume") {
 		const [row] = await tx
-			.select({ data: schema.resume.data, applicationId: schema.resume.applicationId })
+			.select({
+				data: schema.resume.data,
+				applicationId: schema.resume.applicationId,
+				aiOperationIds: schema.resume.aiOperationIds,
+			})
 			.from(schema.resume)
 			.where(and(eq(schema.resume.id, document.id), eq(schema.resume.userId, userId)));
 		if (!row) return null;
@@ -38,17 +44,19 @@ export async function documentReader(
 			kind: "resume",
 			madeFor: row.applicationId,
 			pageLocale: data.metadata.page.locale,
+			aiOperationIds: row.aiOperationIds,
 			holds: (edit) => holdsProposal(data, edit),
 		};
 	}
 	const [row] = await tx
-		.select({ content: schema.coverLetter.content })
+		.select({ content: schema.coverLetter.content, aiOperationIds: schema.coverLetter.aiOperationIds })
 		.from(schema.coverLetter)
 		.where(and(eq(schema.coverLetter.id, document.id), eq(schema.coverLetter.userId, userId)));
 	if (!row) return null;
 	return {
 		kind: "letter",
 		madeFor: null,
+		aiOperationIds: row.aiOperationIds,
 		holds: (edit) =>
 			!edit.snapshot && edit.target.field === "content" && canApplyTo(row.content, { before: edit.after }),
 	};
@@ -126,12 +134,17 @@ export async function saveProposalApplications(
 	if (!input.applications || Object.keys(input.applications).length === 0) return;
 	const threads = await documentThreads(tx, input.userId, input.document);
 	let reader: DocumentReader | null | undefined;
+	const beforeSources = new Set<string>();
+	const afterSources = new Set<string>();
 	for (const thread of threads) {
 		const rows = await lockThreadMessages(tx, { threadId: thread.id, userId: input.userId });
 		let accepted = 0;
 		for (const row of rows) {
 			const original = row.uiMessage as unknown as UIMessage;
 			if (!Array.isArray(original?.parts)) continue;
+			const sources = row.role === "assistant" ? aiOperationIds(original.metadata) : [];
+			if (proposedEditsOf(original).some((edit) => edit.status === "accepted"))
+				for (const id of sources) beforeSources.add(id);
 			const decisions = new Map<string, "accepted" | "pending">();
 			for (const output of proposalSets(original)) {
 				for (const edit of output.edits) {
@@ -146,6 +159,8 @@ export async function saveProposalApplications(
 				}
 			}
 			const message = withEditStatuses(original, null, decisions);
+			if (proposedEditsOf(message).some((edit) => edit.status === "accepted"))
+				for (const id of sources) afterSources.add(id);
 			if (decisions.size > 0)
 				await tx
 					.update(schema.agentMessage)
@@ -158,6 +173,35 @@ export async function saveProposalApplications(
 			.set({ editsAccepted: accepted })
 			.where(and(eq(schema.agentThread.id, thread.id), eq(schema.agentThread.userId, input.userId)));
 	}
+	const candidates = [...new Set([...beforeSources, ...afterSources])];
+	if (!candidates.length) return;
+	// Only this account's actual assistant attempts can supply saved-result provenance; old messages remain unknown.
+	const attempts = await tx
+		.select({ id: schema.aiRequest.operationId })
+		.from(schema.aiRequest)
+		.where(
+			and(
+				eq(schema.aiRequest.userId, input.userId),
+				inArray(schema.aiRequest.operationId, candidates),
+				inArray(schema.aiRequest.action, ["assistant", "career-chat"]),
+			),
+		);
+	const recorded = new Set(attempts.map((row) => row.id));
+	reader ??= await documentReader(tx, input.userId, input.document);
+	if (!reader) throw input.conflict();
+	const removed = new Set([...beforeSources].filter((id) => recorded.has(id) && !afterSources.has(id)));
+	const current = reader.aiOperationIds ?? [];
+	const next = aiOperationIdsSchema.parse(
+		[...new Set([...current, ...[...afterSources].filter((id) => recorded.has(id))])].filter((id) => !removed.has(id)),
+	);
+	if (JSON.stringify(next) === JSON.stringify(current)) return current;
+	const table = input.document.kind === "resume" ? schema.resume : schema.coverLetter;
+	// Receipt, wording and sources share the caller's revision; this metadata write must not create another revision.
+	await tx
+		.update(table)
+		.set({ aiOperationIds: next, updatedAt: sql`${table.updatedAt}` })
+		.where(and(eq(table.id, input.document.id), eq(table.userId, input.userId)));
+	return next;
 }
 
 /** A content save from a client without proposalSafety, to a document whose edits an older app could apply wrongly. */

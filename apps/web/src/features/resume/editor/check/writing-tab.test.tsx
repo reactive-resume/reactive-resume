@@ -4,6 +4,8 @@ import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { buildMarkdown } from "@reactive-resume/resume/markdown";
+import { collectPassages } from "@reactive-resume/resume/proposals";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { useEditorStore } from "../store";
 
@@ -49,6 +51,15 @@ it("publishes only the document's saved review when an older unmounted request f
 	const data = structuredClone(defaultResumeData);
 	data.summary.content = "<p>Fictional original</p>";
 	const review = (summary: string) => ({ summary, suggestions: [], strengths: [], jdAlignment: null });
+	const passages = collectPassages(data, {
+		summary: "Summary",
+		sectionTitle: () => "Section",
+		entryTitle: () => "Entry",
+		bullet: String,
+		paragraph: String,
+	});
+	const passage = passages[0];
+	if (!passage) throw new Error("Missing fictional passage");
 	let saved: unknown = null;
 	api.read.mockImplementation(async () => saved);
 	let old!: (value: unknown) => void;
@@ -82,10 +93,22 @@ it("publishes only the document's saved review when an older unmounted request f
 	fireEvent.click(screen.getByRole("button", { name: "Review writing" }));
 	await waitFor(() => expect(api.review).toHaveBeenCalledTimes(2));
 	saved = {
-		inputText: "original",
-		passages: [],
-		review: review("Latest saved review"),
+		inputText: buildMarkdown(data).trim(),
+		passages: [{ id: passage.id, where: passage.location, text: passage.text }],
+		review: {
+			...review("Latest saved review"),
+			suggestions: [
+				{
+					section: "Summary",
+					passageId: passage.id,
+					issue: "Clearer",
+					rewrite: "Fictional reviewed wording",
+					impact: "medium",
+				},
+			],
+		},
 		reviewedAt: new Date("2030-01-01T00:00:02Z"),
+		aiOperationIds: ["saved-writing-source"],
 		aiUsage: {
 			requests: 2,
 			models: [{ providerId: "old-provider", label: "Recorded AI", provider: "openai", model: "recorded-model" }],
@@ -95,12 +118,23 @@ it("publishes only the document's saved review when an older unmounted request f
 		newer(review("Latest saved review"));
 	});
 	await waitFor(() => expect(screen.getByText("Latest saved review")).toBeDefined());
+	expect(useEditorStore.getState().proposals).toHaveLength(1);
+	expect(useEditorStore.getState().proposals[0]?.aiOperationIds).toEqual(["saved-writing-source"]);
 	await act(async () => {
 		old(review("Older discarded response"));
 	});
 	expect(useEditorStore.getState().writingReview?.summary).toBe("Latest saved review");
+	expect(useEditorStore.getState().proposals[0]?.aiOperationIds).toEqual(["saved-writing-source"]);
 	expect(screen.queryByText("Older discarded response")).toBeNull();
 	expect(screen.getByText("AI request attempts: 2")).toBeVisible();
 	expect(screen.getByText("Recorded AI · openai · recorded-model")).toBeVisible();
+	const { aiOperationIds: _sources, ...legacy } = saved as Record<string, unknown>;
+	saved = { ...legacy, reviewedAt: new Date("2030-01-01T00:00:03Z") };
+	await act(async () => {
+		await client.invalidateQueries({ queryKey: ["writing", api.id] });
+	});
+	await waitFor(() => expect(useEditorStore.getState().proposals[0]?.aiOperationIds).toBeUndefined());
+	expect(useEditorStore.getState().proposals).toHaveLength(1);
+	expect(api.review).toHaveBeenCalledTimes(2);
 	client.clear();
 });

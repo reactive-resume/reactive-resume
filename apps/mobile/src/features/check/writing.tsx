@@ -71,10 +71,19 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 		const identity = `${id}:${entry?.reviewedAt.toISOString()}`;
 		if (!entry || hydrated.current === identity) return;
 		hydrated.current = identity;
+		const mapped = mapWritingReview(
+			entry.review.suggestions,
+			entry.inputText === inputText ? passages : [],
+			entry.passages,
+		);
 		setReview({
 			summary: entry.review.summary,
 			strengths: entry.review.strengths,
-			...mapWritingReview(entry.review.suggestions, entry.inputText === inputText ? passages : [], entry.passages),
+			notes: mapped.notes,
+			proposals: mapped.proposals.map((proposal) => ({
+				...proposal,
+				...(entry.aiOperationIds?.length ? { aiOperationIds: entry.aiOperationIds } : {}),
+			})),
 		});
 		setReviewInput(entry.inputText);
 		setReviewedAt(entry.reviewedAt);

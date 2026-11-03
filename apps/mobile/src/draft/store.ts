@@ -10,6 +10,7 @@ import {
 	queueProposalApplications,
 	readProposalApplications,
 	restoreProposalApplications,
+	proposalAiOperationIds,
 } from "@reactive-resume/resume/proposals";
 import { generateId } from "@reactive-resume/utils/string";
 
@@ -367,7 +368,8 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		const before = adapter.data(record.document);
 		const next = produce(before, recipe);
 		const existingSources = record.document.aiOperationIds ?? [];
-		const newSources = options.aiOperationIds?.some((id) => !existingSources.includes(id));
+		const sources = [...(options.aiOperationIds ?? []), ...proposalAiOperationIds(options.applied ?? [])];
+		const newSources = sources.some((id) => !existingSources.includes(id));
 		if (next === before && !newSources) return;
 		const now = Date.now();
 		const coalesce =
@@ -384,9 +386,7 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			newSources
 				? {
 						...document,
-						aiOperationIds: [
-							...new Set([...(record.document.aiOperationIds ?? []), ...(options.aiOperationIds ?? [])]),
-						],
+						aiOperationIds: [...new Set([...(record.document.aiOperationIds ?? []), ...sources])],
 						aiUsage: null,
 					}
 				: document,

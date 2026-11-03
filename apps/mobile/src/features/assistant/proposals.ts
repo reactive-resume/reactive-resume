@@ -61,7 +61,11 @@ export const supersededIn = (messages: readonly { parts: readonly { type: string
 export const requirementsOf = (part: ToolPart) => (part.output as ProposeEditsOutput | undefined)?.requirements ?? [];
 
 /** The edits in a `propose_edits` result, with what the user has done with each since. */
-export function toProposals(part: ToolPart, receipts: ReadonlyMap<string, Receipt>): Proposal[] {
+export function toProposals(
+	part: ToolPart,
+	receipts: ReadonlyMap<string, Receipt>,
+	sourceIds: string[] = [],
+): Proposal[] {
 	const output = part.output as ProposeEditsOutput | undefined;
 	return (output?.edits ?? []).map((streamed) => {
 		const receipt = receipts.get(streamed.id);
@@ -77,6 +81,7 @@ export function toProposals(part: ToolPart, receipts: ReadonlyMap<string, Receip
 			status: receipt?.status ?? edit.status,
 			...(receipt?.superseded ? { superseded: true } : {}),
 			source: "assistant",
+			aiOperationIds: sourceIds.length ? sourceIds : undefined,
 		};
 	});
 }

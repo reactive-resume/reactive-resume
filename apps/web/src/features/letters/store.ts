@@ -10,6 +10,7 @@ import {
 	queueProposalApplications,
 	readProposalApplications,
 	restoreProposalApplications,
+	proposalAiOperationIds,
 } from "@reactive-resume/resume/proposals";
 import {
 	coverLetterDocumentSchema,
@@ -133,7 +134,7 @@ type LetterEditorStore = {
 	edit: (
 		edits: LetterEdits,
 		options?: {
-			applied?: readonly Pick<Proposal, "id" | "after" | "snapshot">[];
+			applied?: readonly Pick<Proposal, "id" | "after" | "snapshot" | "aiOperationIds">[];
 			restoreApplications?: ProposalApplications;
 		},
 	) => void;
@@ -427,8 +428,15 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 
 	edit: (input, options = {}) => {
 		const { letter, changing, proposalApplications, pendingProposalApplications } = get();
-		const { sender, ...otherEdits } = input;
-		const edits = sender && (changing || (letter?.sourceResumeId && letter.senderLinked)) ? otherEdits : input;
+		const sources = proposalAiOperationIds(options.applied ?? []);
+		const withSources = sources.length
+			? {
+					...input,
+					aiOperationIds: [...new Set([...(input.aiOperationIds ?? letter?.aiOperationIds ?? []), ...sources])],
+				}
+			: input;
+		const { sender, ...otherEdits } = withSources;
+		const edits = sender && (changing || (letter?.sourceResumeId && letter.senderLinked)) ? otherEdits : withSources;
 		if (!hasEdits(edits) || letter?.isLocked) return;
 		set((state) =>
 			state.letter

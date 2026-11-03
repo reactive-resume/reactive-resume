@@ -1,3 +1,4 @@
+import type { ProposeEditsOutput } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import type { AddressInfo } from "node:net";
 import { randomUUID } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
@@ -10,8 +11,12 @@ import { Pool } from "pg";
 import { z } from "zod";
 import { db, withDatabasePool } from "@reactive-resume/db/client";
 import * as tables from "@reactive-resume/db/schema";
+import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { buildAccountZip } from "@reactive-resume/utils/account-zip";
+import { loadDocument } from "../agent/document";
+import { upsertAssistantUiMessage } from "../agent/messages-persistence";
+import { agentRouter } from "../agent/router";
 import { aiProvidersService } from "../ai-providers/service";
 import { authRouter } from "../auth/router";
 import { authService } from "../auth/service";
@@ -56,7 +61,10 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		| "answer"
 		| "writing"
 		| "resume"
+		| "agent"
 		| "improve";
+	let agentChanges: unknown[] = [];
+	let agentStep = 0;
 	let release = () => {};
 	let arrived = () => {};
 	let requests: { model: string; path: string }[] = [];
@@ -77,6 +85,39 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				if (mode === "failure" || (mode === "retry" && requests.length === 1)) {
 					res.writeHead(503, { "content-type": "application/json", "retry-after": "0" });
 					res.end(JSON.stringify({ error: { message: "Synthetic provider failure" } }));
+					return;
+				}
+				if (mode === "agent") {
+					const step = agentStep++;
+					if (step === 2)
+						await new Promise<void>((resolve) => {
+							release = resolve;
+						});
+					res.writeHead(200, { "content-type": "text/event-stream" });
+					const delta =
+						step < 2
+							? {
+									tool_calls: [
+										{
+											index: 0,
+											id: `agent-call-${step}`,
+											type: "function",
+											function: {
+												name: step === 0 ? "read_resume" : "propose_edits",
+												arguments: JSON.stringify(
+													step === 0 ? {} : { title: "Fictional rewrite", changes: agentChanges },
+												),
+											},
+										},
+									],
+								}
+							: { content: "Fictional proposal ready." };
+					res.write(
+						`data: ${JSON.stringify({ id: "agent", created: 1, model: body.model, choices: [{ index: 0, delta, finish_reason: null }] })}\n\n`,
+					);
+					res.end(
+						`data: ${JSON.stringify({ id: "agent", created: 1, model: body.model, choices: [{ index: 0, delta: {}, finish_reason: step < 2 ? "tool_calls" : "stop" }] })}\n\ndata: [DONE]\n\n`,
+					);
 					return;
 				}
 				if (mode === "stream") {
@@ -151,6 +192,7 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				letters: coverLettersRouter,
 				resume: resumeRouter,
 				documents: documentsRouter,
+				agent: agentRouter,
 			},
 			{
 				context: {
@@ -160,9 +202,9 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				},
 			},
 		);
-	const provider = async () => {
+	const provider = async (ownerId = user.id) => {
 		const created = await aiProvidersService.create({
-			userId: user.id,
+			userId: ownerId,
 			label: "Fictional connection",
 			provider: "openai-compatible",
 			model: "main-model",
@@ -172,7 +214,7 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 			apiKey: "synthetic-key-207",
 		});
 		await pool.query("update ai_providers set enabled=true,test_status='success' where id=$1", [created.id]);
-		return aiProvidersService.getRunnableById({ userId: user.id, id: created.id });
+		return aiProvidersService.getRunnableById({ userId: ownerId, id: created.id });
 	};
 	beforeAll(async () => {
 		await admin.query(`create schema ${namespace}`);
@@ -192,6 +234,8 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		release();
 		arrived = () => {};
 		requests = [];
+		agentStep = 0;
+		agentChanges = [];
 		mode = "text";
 		await pool.query('truncate "user" cascade');
 		await withDatabasePool(pool, async () => {
@@ -574,6 +618,222 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 			expect(requests).toHaveLength(1);
 		}));
 
+	it.each(["finish", "stop"] as const)(
+		"accepts a real streamed proposal before %s with the same recorded sources in live metadata and storage",
+		(ending) =>
+			run(async () => {
+				const connection = await provider();
+				const api = client();
+				const data = structuredClone(sampleResumeData);
+				data.summary.content = "<p>Original fictional summary.</p>";
+				const id = await api.resume.import({ data });
+				const loaded = await loadDocument(user.id, { kind: "resume", id });
+				const passage = loaded.passages.find((entry) => entry.target.sectionId === "summary");
+				if (!passage) throw new Error("Missing fictional summary passage");
+				agentChanges = [
+					{
+						kind: "text",
+						sectionId: "summary",
+						passageId: passage.id,
+						text: "Led fictional delivery work.",
+						why: "Clearer wording",
+					},
+				];
+				const thread = await api.agent.threads.start({ resumeId: id });
+				mode = "agent";
+				const held = new Promise<void>((resolve) => {
+					arrived = () => {
+						if (requests.length === 3) resolve();
+					};
+				});
+				const stream = await api.agent.messages.send({
+					threadId: thread.id,
+					message: {
+						id: randomUUID(),
+						role: "user",
+						parts: [{ type: "text", text: "Rewrite the summary for clarity without adding facts." }],
+					},
+					context: { document: true, posting: false, memory: false },
+				});
+				const chunks: Record<string, unknown>[] = [];
+				const finished = (async () => {
+					for await (const frame of stream)
+						for (const line of frame.split("\n"))
+							if (line.startsWith("data: ") && line !== "data: [DONE]") chunks.push(JSON.parse(line.slice(6)));
+				})();
+				try {
+					await held;
+					const sources = aiOperationIds(chunks.find((chunk) => chunk.type === "start")?.messageMetadata);
+					expect(sources).toEqual([expect.any(String)]);
+					const stored = await api.agent.threads.get({ id: thread.id });
+					const message = stored.messages.find((entry) => entry.role === "assistant");
+					expect(aiOperationIds(message?.metadata)).toEqual(sources);
+					const output = message?.parts.find((part) => part.type === "tool-propose_edits") as
+						| { output?: ProposeEditsOutput }
+						| undefined;
+					const edit = output?.output?.edits[0];
+					if (!edit) throw new Error("Missing real streamed proposal");
+					const current = await api.resume.getById({ id });
+					const accepted = await api.resume.update({
+						id,
+						expectedUpdatedAt: current.updatedAt,
+						data: { ...current.data, summary: { ...current.data.summary, content: edit.after } },
+						proposalApplications: { [edit.id]: edit.after },
+						proposalSafety: "v1",
+					});
+					expect(accepted.aiOperationIds).toEqual(sources);
+					expect(accepted.aiUsage).toMatchObject({
+						requests: 3,
+						models: [expect.objectContaining({ providerId: connection.id, model: "capable-model" })],
+					});
+					if (ending === "stop") await api.agent.messages.stop({ threadId: thread.id });
+				} finally {
+					release();
+					await finished;
+				}
+				const sources = aiOperationIds(chunks.find((chunk) => chunk.type === "start")?.messageMetadata);
+				if (ending === "finish")
+					expect(aiOperationIds(chunks.find((chunk) => chunk.type === "finish")?.messageMetadata)).toEqual(sources);
+				const stored = await api.agent.threads.get({ id: thread.id });
+				const message = stored.messages.find((entry) => entry.role === "assistant");
+				expect(aiOperationIds(message?.metadata)).toEqual(sources);
+				expect(
+					(
+						message?.parts.find((part) => part.type === "tool-propose_edits") as
+							| { output?: ProposeEditsOutput }
+							| undefined
+					)?.output?.edits[0]?.status,
+				).toBe("accepted");
+				expect((await api.resume.getById({ id })).aiOperationIds).toEqual(sources);
+				expect(requests).toHaveLength(3);
+			}),
+	);
+
+	it.each(["resume", "letter"] as const)(
+		"%s accepted assistant sources preserve prior lineage, partial decisions and older clients",
+		(kind) =>
+			run(async () => {
+				const connection = await provider();
+				const priorUsage = createAiUsage(user.id, "improve", connection);
+				await generateText({ model: getModel({ ...connection, usage: priorUsage }), prompt: "Fictional prior source" });
+				const foreignConnection = await provider("usage-bob");
+				const foreignUsage = createAiUsage("usage-bob", "assistant", foreignConnection);
+				await generateText({
+					model: getModel({ ...foreignConnection, usage: foreignUsage }),
+					prompt: "Fictional other account",
+				});
+				const usage = createAiUsage(user.id, "assistant", connection);
+				await generateText({ model: getModel({ ...connection, usage }), prompt: "Fictional source fixture" });
+				const api = client();
+				const data = structuredClone(sampleResumeData);
+				const first = "<p>Original fictional summary.</p>";
+				const second = "<p>Second fictional paragraph.</p>";
+				const after = "<p>Led fictional delivery work.</p>";
+				const afterSecond = "<p>Built fictional reporting tools.</p>";
+				data.summary.content = first + second;
+				const id =
+					kind === "resume"
+						? await api.resume.import({ data, aiOperationIds: [priorUsage.operationId] })
+						: (await api.letters.create({ name: "Fictional proposal letter", content: first + second })).id;
+				if (kind === "letter") {
+					const letter = await api.letters.getById({ id });
+					await api.letters.update({
+						id,
+						content: letter.content,
+						aiOperationIds: [priorUsage.operationId],
+						expectedRevision: letter.revision,
+					});
+				}
+				const [thread] = await db
+					.insert(tables.agentThread)
+					.values({
+						userId: user.id,
+						...(kind === "resume" ? { workingResumeId: id, sourceResumeId: id } : { coverLetterId: id }),
+						title: "Fictional proposal source",
+					})
+					.returning();
+				if (!thread) throw new Error("Missing fixture thread");
+				await upsertAssistantUiMessage({
+					userId: user.id,
+					threadId: thread.id,
+					status: "completed",
+					message: {
+						id: "fictional-assistant",
+						role: "assistant",
+						metadata: {
+							aiOperationIds: [usage.operationId, foreignUsage.operationId, priorUsage.operationId, "fabricated-op"],
+						},
+						parts: [
+							{
+								type: "tool-propose_edits",
+								toolCallId: "fictional-edit-call",
+								state: "output-available",
+								input: {},
+								output: {
+									tailoredFor: null,
+									edits: [
+										{
+											id: "fictional-edit",
+											status: "pending",
+											target: { sectionId: kind === "resume" ? "summary" : "letter", field: "content" },
+											location: "Summary",
+											before: first,
+											after,
+											why: "Fictional rewrite",
+										},
+										{
+											id: "second-edit",
+											status: "pending",
+											target: { sectionId: kind === "resume" ? "summary" : "letter", field: "content" },
+											location: "Summary",
+											before: second,
+											after: afterSecond,
+											why: "Fictional second rewrite",
+										},
+									],
+								},
+							},
+						],
+					},
+				});
+				const save = async (content: string, applications: Record<string, string | boolean>) => {
+					if (kind === "resume") {
+						const current = await api.resume.getById({ id });
+						return api.resume.update({
+							id,
+							data: { ...current.data, summary: { ...current.data.summary, content } },
+							expectedUpdatedAt: current.updatedAt,
+							proposalApplications: applications,
+							proposalSafety: "v1",
+						});
+					}
+					const current = await api.letters.getById({ id });
+					return api.letters.update({
+						id,
+						content,
+						expectedRevision: current.revision,
+						proposalApplications: applications,
+						proposalSafety: "v1",
+					});
+				};
+				const accepted = await save(after + second, { "fictional-edit": after });
+				expect(accepted.aiOperationIds).toEqual([priorUsage.operationId, usage.operationId]);
+				expect(accepted.aiUsage).toMatchObject({
+					requests: 2,
+					models: [expect.objectContaining({ providerId: connection.id, model: connection.model })],
+				});
+				await save(after + afterSecond, { "second-edit": afterSecond });
+				const partial = await save(first + afterSecond, { "fictional-edit": false });
+				expect(partial.aiOperationIds).toEqual([priorUsage.operationId, usage.operationId]);
+				const undone = await save(first + second, { "second-edit": false });
+				expect(undone.aiOperationIds).toEqual([priorUsage.operationId]);
+				const redone = await save(after + second, { "fictional-edit": after });
+				expect(redone.aiOperationIds).toEqual([priorUsage.operationId, usage.operationId]);
+				await api.ai.usage();
+				expect(requests).toHaveLength(3);
+			}),
+	);
+
 	it("returns opt-in Improve sources from actual transport records while preserving the default result contract", () =>
 		run(async () => {
 			const connection = await provider();
@@ -896,6 +1156,7 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 			});
 			const writing = await client(["read"]).ai.writingReview({ resumeId: resume.id });
 			expect(writing?.review.summary).toBe("Fictional saved wording review");
+			expect(writing?.aiOperationIds).toEqual([expect.any(String)]);
 			expect(writing?.aiUsage).toEqual(saved[0]?.aiUsage);
 			await aiProvidersService.update({ userId: user.id, id: connection.id, label: "Renamed", model: "replacement" });
 			await aiProvidersService.delete({ userId: user.id, id: connection.id });
@@ -903,6 +1164,9 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				saved[0]?.aiUsage,
 			);
 			expect((await client(["read"]).ai.writingReview({ resumeId: resume.id }))?.aiUsage).toEqual(writing?.aiUsage);
+			expect((await client(["read"]).ai.writingReview({ resumeId: resume.id }))?.aiOperationIds).toEqual(
+				writing?.aiOperationIds,
+			);
 			const report = await client(["read"]).ai.usage({ userId: "usage-bob" } as {});
 			expect(report.requests).toBe(2);
 			expect(report.groups[0]).toMatchObject({ action: "reply", label: "Fictional connection", model: "main-model" });

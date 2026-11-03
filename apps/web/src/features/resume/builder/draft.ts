@@ -16,6 +16,7 @@ import {
 	appliedApplications,
 	queueProposalApplications,
 	readProposalApplications,
+	proposalAiOperationIds,
 	restoreProposalApplications,
 } from "@reactive-resume/resume/proposals";
 import { aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
@@ -65,7 +66,7 @@ export type UpdateResumeDataOptions = {
 	aiOperationIds?: string[] | undefined;
 	removedAiOperationIds?: string[] | undefined;
 	/** Proposals this edit applied, recorded with their wording in this undo step alongside the authored data. */
-	applied?: readonly Pick<Proposal, "id" | "after" | "snapshot">[];
+	applied?: readonly Pick<Proposal, "id" | "after" | "snapshot" | "aiOperationIds">[];
 	/**
 	 * Identifies the field being edited. Consecutive edits to the same field within a second merge into
 	 * one undo step, so typing a sentence undoes as a whole.
@@ -791,10 +792,9 @@ export const useResumeStore = create<ResumeStore>()(
 				}
 
 				fn(state.resume.data as WritableDraft<ResumeData>);
-				if (options.aiOperationIds?.length) {
-					state.resume.aiOperationIds = [
-						...new Set([...(state.resume.aiOperationIds ?? []), ...options.aiOperationIds]),
-					];
+				const sources = [...(options.aiOperationIds ?? []), ...proposalAiOperationIds(options.applied ?? [])];
+				if (sources.length) {
+					state.resume.aiOperationIds = [...new Set([...(state.resume.aiOperationIds ?? []), ...sources])];
 					state.resume.aiUsage = null;
 				}
 				if (options.removedAiOperationIds?.length) {

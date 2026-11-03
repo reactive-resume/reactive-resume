@@ -27,6 +27,7 @@ export async function readWritingReview(userId: string, resumeId: string) {
 				passages: row.passages,
 				review: atsReviewOutputSchema.parse(row.review),
 				reviewedAt: row.reviewedAt,
+				aiOperationIds: row.aiOperationId ? [row.aiOperationId] : [],
 				aiUsage: row.aiOperationId ? await readAiUsage(userId, [row.aiOperationId]) : null,
 			}
 		: null;

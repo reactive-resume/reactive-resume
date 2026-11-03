@@ -826,7 +826,7 @@ describe("agentService.messages.send", () => {
 			uiMessage: {
 				id: "ui-assistant-1",
 				role: "assistant",
-				metadata: { provider: "gemini", model: "gemini-3.8-flash" },
+				metadata: { provider: "gemini", model: "gemini-3.8-flash", aiOperationIds: ["prior-operation"] },
 				parts: [
 					{
 						type: "tool-ask_user_question",
@@ -846,7 +846,7 @@ describe("agentService.messages.send", () => {
 		};
 		const answeredAssistantModelInput = {
 			...unansweredAssistantMessage.uiMessage,
-			metadata: { provider: "gemini", model: "gemini-3.8-flash" },
+			metadata: { provider: "gemini", model: "gemini-3.8-flash", aiOperationIds: ["prior-operation"] },
 			parts: [
 				{
 					type: "tool-ask_user_question",
@@ -990,9 +990,14 @@ describe("agentService.messages.send", () => {
 		const { getAgentModel } = await import("../ai/service");
 		expect(vi.mocked(getAgentModel).mock.calls.at(-1)?.[0]).toMatchObject({ model: provider.capableModel });
 		const messageMetadata = uiStreamOptions?.messageMetadata as (event: { part: { type: string } }) => unknown;
+		const usage = vi.mocked(getAgentModel).mock.calls.at(-1)?.[0].usage;
+		expect(messageMetadata({ part: { type: "start" } })).toEqual({
+			aiOperationIds: ["prior-operation", usage?.operationId],
+		});
 		expect(messageMetadata({ part: { type: "finish" } })).toMatchObject({
 			provider: provider.provider,
 			model: provider.capableModel,
+			aiOperationIds: ["prior-operation", usage?.operationId],
 		});
 		const continuedMessage = {
 			...answeredAssistantMessage.uiMessage,
