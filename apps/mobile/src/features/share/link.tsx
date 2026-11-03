@@ -53,7 +53,13 @@ async function shareQrImage(dataUrl: string) {
 export type ShareSettings = Partial<
 	Pick<
 		ResumeDocument,
-		"isPublic" | "slug" | "showDownloadButtons" | "showInSearchEngines" | "hideContactDetails" | "isPrimary"
+		| "isPublic"
+		| "slug"
+		| "showDownloadButtons"
+		| "allowWordDownload"
+		| "showInSearchEngines"
+		| "hideContactDetails"
+		| "isPrimary"
 	>
 >;
 

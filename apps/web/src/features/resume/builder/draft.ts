@@ -35,6 +35,7 @@ export type Resume = {
 	hasPassword?: boolean | undefined;
 	isPublic?: boolean | undefined;
 	showDownloadButtons?: boolean | undefined;
+	allowWordDownload?: boolean | undefined;
 	showInSearchEngines?: boolean | undefined;
 	hideContactDetails?: boolean | undefined;
 	isPrimary?: boolean | undefined;
@@ -709,6 +710,7 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resume.hasPassword = resume.hasPassword;
 				state.resume.isPublic = resume.isPublic;
 				state.resume.showDownloadButtons = resume.showDownloadButtons;
+				state.resume.allowWordDownload = resume.allowWordDownload;
 				state.resume.showInSearchEngines = resume.showInSearchEngines;
 				state.resume.hideContactDetails = resume.hideContactDetails;
 				state.resume.isPrimary = resume.isPrimary;
