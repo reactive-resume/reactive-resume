@@ -196,6 +196,9 @@ test("discovery explains unknowns and bulk partial failures keep only failed rol
 		await page.getByRole("button", { name: "Select all roles", exact: true }).click();
 		await page.getByRole("main").screenshot({ path: testInfo.outputPath("today.png") });
 		await page.setViewportSize({ width: 390, height: 844 });
+		await expect(
+			page.getByRole("navigation", { name: "App", exact: true }).getByRole("button", { name: "New", exact: true }),
+		).toBeVisible();
 		expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 		await page.getByRole("main").screenshot({ path: testInfo.outputPath("today-narrow.png") });
 		// One role was dismissed in another client after this list loaded. Tracking that stale selection must fail alone.
