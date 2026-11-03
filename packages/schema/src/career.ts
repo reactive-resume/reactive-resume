@@ -34,36 +34,21 @@ export type MemoryMode = z.infer<typeof memoryModeSchema>;
 
 const currencySchema = z.string().regex(/^[A-Z]{3}$/);
 const payPeriodSchema = z.enum(["hour", "month", "year"]);
+// Normalized length bounds belong to the output, not the raw OpenAPI input.
+const profileListEntrySchema = z
+	.string()
+	.trim()
+	.regex(/\S/)
+	.pipe(z.string().min(1).max(200))
+	.describe(
+		"Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected.",
+	);
 
 /** Independent Facts and Preferences writes have no defaults: an omitted field must stay omitted. */
 export const careerProfileUpdateSchema = z
 	.object({
-		targetRoles: z
-			.array(
-				z
-					.string()
-					.trim()
-					.min(1)
-					.regex(/\S/)
-					.max(200)
-					.describe(
-						"Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected.",
-					),
-			)
-			.max(20),
-		locations: z
-			.array(
-				z
-					.string()
-					.trim()
-					.min(1)
-					.regex(/\S/)
-					.max(200)
-					.describe(
-						"Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected.",
-					),
-			)
-			.max(20),
+		targetRoles: z.array(profileListEntrySchema).max(20),
+		locations: z.array(profileListEntrySchema).max(20),
 		/** "What matters to you", in the user's own words. */
 		priorities: z.string().max(4000),
 		minBase: z.object({

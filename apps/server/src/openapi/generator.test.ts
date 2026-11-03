@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vite-plus/test";
+import z from "zod";
 import { createResumeDataJsonSchema } from "@reactive-resume/schema/resume/json-schema";
 
 // Spec generation reads procedure contracts without executing authentication. Keep the
@@ -74,6 +75,9 @@ describe("generateOpenApiSpec", () => {
 		for (const method of ["get", "put", "patch"] as const) {
 			const response = spec.paths?.["/career/profile"]?.[method]?.responses?.["200"];
 			expect(response).toHaveProperty("content.application/json.schema.properties.searchRegions");
+			for (const field of ["targetRoles", "locations"]) {
+				expect(response).toHaveProperty(`content.application/json.schema.properties.${field}.items.maxLength`, 200);
+			}
 			expect(response).toMatchObject({
 				content: {
 					"application/json": {
@@ -97,6 +101,12 @@ describe("generateOpenApiSpec", () => {
 			const request = getRequestSchema(view, "/career/profile", method);
 			expect(request).toHaveProperty("properties.searchRegions");
 			expect(request).not.toHaveProperty("required");
+			const validator = z.fromJSONSchema(request as Parameters<typeof z.fromJSONSchema>[0]);
+			for (const field of ["targetRoles", "locations"]) {
+				expect(validator.safeParse({ [field]: [` ${"x".repeat(200)} `] }).success).toBe(true);
+				expect(validator.safeParse({ [field]: [" \t "] }).success).toBe(false);
+				expect(request).not.toHaveProperty(`properties.${field}.items.maxLength`);
+			}
 		}
 		const input = getRequestSchema(view, "/career/profile", "patch");
 		expect(getRequestSchema(view, "/career/profile", "put")).not.toHaveProperty("properties.memoryMode.default");

@@ -157,6 +157,23 @@ test("legacy profile saves preserve omitted memory consent and accept explicit c
 	}
 });
 
+test("profile writes normalize padded entries and preserve the normalized length limit", async ({ authPage: page }) => {
+	const value = "x".repeat(200);
+	const read = async () => await (await page.request.get("/api/openapi/career/profile")).json();
+	for (const method of ["put", "patch"] as const) {
+		await expect(
+			await page.request[method]("/api/openapi/career/profile", {
+				data: { targetRoles: [` ${value} `], locations: [`\t${value}\n`] },
+			}),
+		).toBeOK();
+		expect(await read()).toMatchObject({ targetRoles: [value], locations: [value] });
+		for (const data of [{ targetRoles: [" \t "] }, { locations: ["x".repeat(201)] }]) {
+			expect((await page.request[method]("/api/openapi/career/profile", { data })).status()).toBe(400);
+			expect(await read()).toMatchObject({ targetRoles: [value], locations: [value] });
+		}
+	}
+});
+
 test("follow-up writes project to Today and back, and attached PDFs count as sent", async ({
 	authPage: page,
 }, info) => {
