@@ -112,3 +112,63 @@ it.each([undefined, "low", "high"] as const)(
 		expect(field).toHaveFocus();
 	},
 );
+
+it("focuses the primary verification field instead of its heading", async () => {
+	const root = createRootRoute({
+		component: () => (
+			<>
+				<NavigationFocus />
+				<Outlet />
+			</>
+		),
+	});
+	const ordinary = createRoute({
+		getParentRoute: () => root,
+		path: "/ordinary",
+		component: () => (
+			<main>
+				<h1>Ordinary</h1>
+				<input aria-label="Ordinary field" />
+			</main>
+		),
+	});
+	const code = createRoute({
+		getParentRoute: () => root,
+		path: "/code",
+		component: () => (
+			<main>
+				<h1>Code heading</h1>
+				<div data-route-focus>
+					<input aria-label="Code" />
+				</div>
+			</main>
+		),
+	});
+	const backup = createRoute({
+		getParentRoute: () => root,
+		path: "/backup",
+		component: () => (
+			<main>
+				<h1>Backup heading</h1>
+				<div data-route-focus>
+					<input aria-label="Backup code" />
+				</div>
+			</main>
+		),
+	});
+	const router = createRouter({
+		routeTree: root.addChildren([ordinary, code, backup]),
+		history: createMemoryHistory({ initialEntries: ["/ordinary"] }),
+	});
+	render(<RouterProvider router={router} />);
+	await waitFor(() => expect(screen.getByRole("heading", { name: "Ordinary" })).toHaveFocus());
+	await act(() => router.navigate({ to: "/code" }));
+	await waitFor(() => expect(screen.getByRole("textbox", { name: "Code" })).toHaveFocus());
+	expect(screen.getByRole("textbox", { name: "Code" })).toHaveProperty("tabIndex", 0);
+	await act(() => router.navigate({ to: "/backup" }));
+	await waitFor(() => expect(screen.getByRole("textbox", { name: "Backup code" })).toHaveFocus());
+	expect(screen.getByRole("textbox", { name: "Backup code" })).toHaveProperty("tabIndex", 0);
+	await act(() => router.navigate({ to: "/ordinary" }));
+	await waitFor(() => expect(screen.getByRole("heading", { name: "Ordinary" })).toHaveFocus());
+	expect(screen.getByRole("heading", { name: "Ordinary" })).toHaveAttribute("tabindex", "-1");
+});
