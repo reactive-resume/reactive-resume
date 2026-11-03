@@ -331,10 +331,9 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 	const router = useRouter();
 	const { utcDay } = useUserTime();
 	const documents = useDocuments();
-	const { createLetter } = useDetailMutations(application.id);
 	const queryClient = useQueryClient();
 	const [linking, setLinking] = useState(false);
-	const documentBusy = linking || createLetter.isPending;
+	const documentBusy = linking;
 	const linkDocument = async (document: NonNullable<typeof documents.data>[number]) => {
 		setLinking(true);
 		try {
@@ -375,17 +374,14 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 	const { resumeId, coverLetterId, sentResumeVersionId, sentCoverLetterVersionId } = application;
 
 	const writeLetter = () =>
-		createLetter.mutate(
-			{
-				name: t`Cover letter — ${application.company}`.slice(0, 100),
+		router.push({
+			pathname: routes.new(),
+			params: {
+				context: "letters",
 				applicationId: application.id,
-				...(resumeId ? { resumeId } : {}),
+				...(resumeId ? { sourceResumeId: resumeId } : {}),
 			},
-			{
-				onSuccess: (created) => router.push(routes.letter(created.id, "write", undefined, application.id)),
-				onError: () => showToast({ message: t`Couldn't create the letter. Try again.` }),
-			},
-		);
+		});
 
 	// Current drafts stay editable after submission; the sent versions never change.
 	const draftMenu = (kind: "resume" | "letter", id: string, name: string) =>
@@ -542,7 +538,6 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 							icon="envelope-simple"
 							label={t`Write a letter`}
 							disabled={documentBusy}
-							loading={createLetter.isPending}
 							onPress={writeLetter}
 						/>
 					) : null}

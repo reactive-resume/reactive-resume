@@ -73,7 +73,6 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 		onSuccess: () => invalidate(application.id),
 		onError: (error) => toastError(error, t`Couldn't save the documents. Try again.`),
 	});
-	const createLetter = useMutation(orpc.coverLetters.create.mutationOptions());
 	const link = useMutation({
 		...orpc.documents.linkApplication.mutationOptions(),
 		onSettled: () => {
@@ -82,32 +81,20 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 		},
 		onError: (error) => toastError(error, t`Couldn't save the documents. Try again.`),
 	});
-	const busy = disabled || update.isPending || link.isPending || createLetter.isPending;
+	const busy = disabled || update.isPending || link.isPending;
 
 	const resume = documents?.find((document) => document.type === "resume" && document.id === application.resumeId);
 	const letter = documents?.find((document) => document.type === "letter" && document.id === application.coverLetterId);
 	const date =
 		applicationSentAt(application)?.toLocaleDateString(i18n.locale, { month: "short", day: "numeric" }) ?? "—";
 
-	// A structured letter: the server fills the recipient from the application and makes it the application's letter.
-	const writeLetter = async () => {
-		const letterInput = {
-			name: t`Cover letter — ${application.company}`.slice(0, 100),
+	// The New dialog can start from an owned earlier letter; the server fills the recipient from this application.
+	const writeLetter = () =>
+		openDialog("document.new", {
+			context: "letters",
 			applicationId: application.id,
-			...(application.resumeId ? { resumeId: application.resumeId } : {}),
-		};
-		try {
-			const created = await createLetter.mutateAsync(letterInput);
-			invalidate(application.id);
-			void navigate({
-				to: "/builder/letter/$coverLetterId",
-				params: { coverLetterId: created.id },
-				search: { applicationId: application.id },
-			});
-		} catch (error) {
-			toastError(error, t`Couldn't create the letter. Try again.`);
-		}
-	};
+			...(application.resumeId ? { sourceResumeId: application.resumeId } : {}),
+		});
 
 	// Current drafts stay editable after submission; the sent versions above never change.
 	const draftMenu = (kind: "resume" | "letter", documentId: string) => (

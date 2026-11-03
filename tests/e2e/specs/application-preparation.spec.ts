@@ -45,6 +45,9 @@ test("prepares documents and answers manually, then keeps submission separate fr
 	await expect(page.getByRole("combobox", { name: "Resume", exact: true })).toContainText("Harbor Labs");
 	await page.getByRole("button", { name: "Cover letter options", exact: true }).click();
 	await page.getByRole("menuitem", { name: "Write a letter", exact: true }).click();
+	// The New dialog can start from an owned earlier letter; blank is the default.
+	await expect(page.getByRole("dialog")).toContainText("Start from an earlier letter");
+	await page.getByRole("button", { name: /^New cover letter/ }).click();
 	await expect(page).toHaveURL(/\/builder\/letter\//);
 	const withLetter = await application();
 	const letter = await (await page.request.get(`/api/openapi/cover-letters/${withLetter.coverLetterId}`)).json();
