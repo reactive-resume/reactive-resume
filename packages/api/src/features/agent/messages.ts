@@ -63,6 +63,7 @@ export const messagesRouter = {
 		.handler(({ context, input }) =>
 			agentService.messages.send({
 				userId: context.user.id,
+				nativeSearchFallback: context.reqHeaders.get("x-ai-native-search") === "1",
 				deviceTimeZone: context.reqHeaders.get("x-client-timezone") ?? undefined,
 				threadId: input.threadId,
 				message: input.message,

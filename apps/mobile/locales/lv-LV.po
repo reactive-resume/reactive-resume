@@ -6224,6 +6224,10 @@ msgstr "Ja tiek izmantota piekļuve tīmeklim, meklēšanas vienumi tiek novirz�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Ja tiek izmantota piekļuve tīmeklim, meklēšanas vienumi tiek novirzīti uz jūsu servera meklēšanas pakalpojumu un tā izmantotajām meklētājprogrammām, un saites tiek novirzītas uz vietnēm, kuras tiek lasītas."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Ja tīmekļa piekļuve noraida atslēgu vai kvota ir iztērēta, šis MI savienojums var atkārtot meklēšanu ar savu meklēšanas pakalpojumu. Tas var radīt papildu MI pieprasījumus un izmaksas."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Ignorēt"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Ja tīmekļa piekļuve noraida atslēgu vai kvota ir iztērēta, šim MI savienojumam nosūta tikai meklēšanas vaicājumu un meklēšanas valstis. Dokumenti, Zināšanas un darba pieteikuma konteksts netiek pievienoti. Pakalpojuma sniedzējs var iekasēt maksu par meklēšanu."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Mēģiniet vēlreiz saglabāt"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Mēģināt vēlreiz ar {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Šis serveris eksportē tikai failu atsauces. Atjauniniet to, lai iekļa
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Šis serveris ir pārāk vecs lietotnei. Lūdziet administratoram to atjaunināt."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Šis serveris vai MI savienojums neatbalsta pakalpojuma sniedzēja iebūvēto tīmekļa meklēšanu."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Šis serveris ziņo par adresi, kas atšķiras no jūsu ievadītās adreses. Ievadiet tā izmantoto adresi vai jautājiet savam administratoram."
@@ -14588,6 +14604,7 @@ msgstr "Tīmekļa piekļuves iestatījumus nevarēja saglabāt vai ielādēt."
 msgid "Web page"
 msgstr "Tīmekļa lapa"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Tīmekļa izpēte"

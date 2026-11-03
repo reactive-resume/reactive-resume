@@ -6224,6 +6224,10 @@ msgstr "אם נעשה שימוש בגישה לאינטרנט, מונחי החי�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "אם נעשה שימוש בגישה לאינטרנט, מונחי החיפוש עוברים לשירות החיפוש של השרת שלך ולמנועי החיפוש שבהם הוא משתמש, וקישורים עוברים לאתרים הנקראים."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "אם הגישה לאינטרנט דוחה את המפתח או שהמכסה נוצלה, חיבור הבינה המלאכותית הזה עשוי לחזור על החיפוש באמצעות שירות החיפוש שלו. הדבר עשוי להוסיף בקשות בינה מלאכותית וחיובים."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "לְהִתְעַלֵם"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "אם הגישה לאינטרנט דוחה את המפתח או שהמכסה נוצלה, רק שאילתת החיפוש ומדינות החיפוש יישלחו לחיבור הבינה המלאכותית הזה. לא יתווספו מסמכים, ידע או הקשר של מועמדות למשרה. הספק עשוי לגבות תשלום על החיפוש."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "נסה שוב לשמור"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "ניסיון נוסף עם {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "שרת זה מייצא הפניות לקבצים בלבד. יש לעדכ
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "השרת הזה ישן מדי עבור האפליקציה. בקש ממנהל המערכת לעדכן אותו."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "השרת או חיבור הבינה המלאכותית הזה אינו תומך בחיפוש האינטרנט המובנה של הספק."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "שרת זה מדווח על כתובת שונה מזו שהזנת. הזן את הכתובת שבה היא משתמשת, או שאל את מנהל המערכת."
@@ -14588,6 +14604,7 @@ msgstr "לא ניתן היה לשמור או לטעון את הגדרות הגי
 msgid "Web page"
 msgstr "דף אינטרנט"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "מחקר ברשת"

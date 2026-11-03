@@ -6224,6 +6224,10 @@ msgstr "في حالة استخدام الوصول إلى الويب، تنتقل
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "في حالة استخدام الوصول إلى الويب، تنتقل مصطلحات البحث إلى خدمة البحث الخاصة بخادمك ومحركات البحث التي تستخدمها، وتنتقل الروابط إلى المواقع التي تتم قراءتها."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "إذا رفض الوصول إلى الويب المفتاح أو نفدت الحصة، فقد يعيد اتصال الذكاء الاصطناعي هذا البحث باستخدام خدمة البحث الخاصة به. قد يؤدي ذلك إلى طلبات ذكاء اصطناعي ورسوم إضافية."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "تجاهل"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "إذا رفض الوصول إلى الويب المفتاح أو نفدت الحصة، فلن يُرسل إلى اتصال الذكاء الاصطناعي هذا إلا استعلام البحث وبلدان البحث. لا تُضاف مستندات أو معرفة أو سياق طلبات التوظيف. قد يفرض المزوّد رسومًا على البحث."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "أعد محاولة الحفظ"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "إعادة المحاولة باستخدام {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "يصدّر هذا الخادم مراجع الملفات فقط. حدّ�
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "هذا الخادم قديم جدًا بالنسبة للتطبيق. اطلب من المسؤول تحديثه."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "لا يدعم هذا الخادم أو اتصال الذكاء الاصطناعي البحث على الويب المدمج لدى المزوّد."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "يقوم هذا الخادم بالإبلاغ عن عنوان مختلف عن العنوان الذي أدخلته. أدخل العنوان الذي يستخدمه، أو اسأل المسؤول."
@@ -14588,6 +14604,7 @@ msgstr "لا يمكن حفظ إعدادات الوصول إلى الويب أو 
 msgid "Web page"
 msgstr "صفحة الويب"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "البحث على الويب"

@@ -6224,6 +6224,10 @@ msgstr "Εάν χρησιμοποιείται πρόσβαση στον ιστό
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Εάν χρησιμοποιείται πρόσβαση στον ιστό, οι όροι αναζήτησης μεταβαίνουν στην υπηρεσία αναζήτησης του διακομιστή σας και στις μηχανές αναζήτησης που χρησιμοποιεί και οι σύνδεσμοι μεταβαίνουν στους ιστότοπους που διαβάζονται."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Αν η πρόσβαση στον ιστό απορρίψει το κλειδί ή εξαντληθεί το όριο, αυτή η σύνδεση AI μπορεί να επαναλάβει την αναζήτηση με τη δική της υπηρεσία. Αυτό μπορεί να προκαλέσει επιπλέον αιτήματα AI και χρεώσεις."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Αγνοώ"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Αν η πρόσβαση στον ιστό απορρίψει το κλειδί ή εξαντληθεί το όριο, σε αυτή τη σύνδεση AI στέλνονται μόνο το ερώτημα και οι χώρες αναζήτησης. Δεν προστίθενται έγγραφα, Γνώσεις ή στοιχεία αιτήσεων εργασίας. Η αναζήτηση του παρόχου μπορεί να χρεώνεται."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Δοκιμάστε ξανά την αποθήκευση"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Δοκιμή ξανά με {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Αυτός ο διακομιστής εξάγει μόνο αναφορ�
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Αυτός ο διακομιστής είναι πολύ παλιός για την εφαρμογή. Ζητήστε από τον διαχειριστή σας να το ενημερώσει."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Αυτός ο διακομιστής ή η σύνδεση AI δεν υποστηρίζει την εγγενή αναζήτηση ιστού του παρόχου."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Αυτός ο διακομιστής αναφέρει διαφορετική διεύθυνση από αυτή που καταχωρίσατε. Εισαγάγετε τη διεύθυνση που χρησιμοποιεί ή ρωτήστε τον διαχειριστή σας."
@@ -14588,6 +14604,7 @@ msgstr "Δεν ήταν δυνατή η αποθήκευση ή η φόρτωσ�
 msgid "Web page"
 msgstr "Ιστοσελίδα"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Έρευνα στον ιστό"

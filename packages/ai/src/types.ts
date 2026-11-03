@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AI_PROVIDER_DEFAULT_BASE_URLS } from "./defaults";
 
 const AI_PROVIDERS = [
 	"openai",
@@ -23,7 +24,32 @@ export type AIProvider = (typeof AI_PROVIDERS)[number];
 
 export const aiProviderSchema = z.enum(AI_PROVIDERS);
 
-export { AI_PROVIDER_DEFAULT_BASE_URLS } from "./defaults";
+export { AI_PROVIDER_DEFAULT_BASE_URLS };
+
+function normalizeDirectBaseUrl(baseURL: string) {
+	try {
+		const parsed = new URL(baseURL);
+		if (parsed.search || parsed.hash || parsed.username || parsed.password) return null;
+		return parsed.toString().replace(/\/+$/, "");
+	} catch {
+		return null;
+	}
+}
+
+/** Provider-native capabilities belong to the official endpoint, not a compatible proxy. */
+export function isDirectAiProvider(input: { provider: AIProvider; baseURL?: string | null }) {
+	if (!input.baseURL?.trim()) return true;
+	const baseURL = normalizeDirectBaseUrl(input.baseURL);
+	return baseURL !== null && baseURL === normalizeDirectBaseUrl(AI_PROVIDER_DEFAULT_BASE_URLS[input.provider]);
+}
+
+/** The installed SDK exposes native search for these direct providers; individual models can still refuse it. */
+export function supportsNativeWebSearch(input: { provider: AIProvider; baseURL?: string | null }) {
+	return (
+		(input.provider === "openai" || input.provider === "anthropic" || input.provider === "gemini") &&
+		isDirectAiProvider(input)
+	);
+}
 
 // Brand names, used when a message has to name the provider outside a translated UI string. Every
 // such message opens with this value, so the generic fallback is capitalised to match.

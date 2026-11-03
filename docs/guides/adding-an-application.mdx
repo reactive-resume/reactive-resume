@@ -134,6 +134,15 @@ Search failures name a rejected key, an exhausted quota, a temporary request lim
   />
 </Frame>
 
+After a rejected key or exhausted quota, **Retry with _connection name_** appears when your default tested AI connection supports native search and your server supports the fallback. Direct OpenAI, Anthropic and Google Gemini connections are supported; custom endpoints and compatible gateways are excluded, and individual models can still refuse. Review the named connection, model, query-only data scope and possible charges, then approve this operation. Declining keeps your query and recovery controls. A successful retry returns retrieved source links without marking the failed web connection ready.
+
+<Frame caption="An explicitly approved retry returns a fictional posting while preserving the authored job fields. This is the web interface.">
+  <img
+    src="/images/guides/career/search-native-retry.png"
+    alt="Save a job shows Retry with Fictional search connection, a retrieved Fictional design engineer result, and retained Accessibility engineer and Fictional studio fields"
+  />
+</Frame>
+
 Pasted postings and public-link reading remain available while search needs attention. Public-link reading can fall back to the built-in reader. Keyword search uses the configured search service; it does not silently switch to an AI provider's search.
 
 ## What gets read from a posting

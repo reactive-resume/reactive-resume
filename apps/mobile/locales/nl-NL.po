@@ -6224,6 +6224,10 @@ msgstr "Als webtoegang wordt gebruikt, gaan de zoektermen naar de zoekservice va
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Als webtoegang wordt gebruikt, gaan de zoektermen naar de zoekservice van uw server en de zoekmachines die deze gebruikt, en gaan links naar de sites die worden gelezen."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Als webtoegang de sleutel weigert of het quotum op is, kan deze AI-verbinding de zoekopdracht via de eigen zoekdienst herhalen. Dit kan extra AI-verzoeken en kosten opleveren."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Negeren"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Als webtoegang de sleutel weigert of het quotum op is, worden alleen je zoekopdracht en zoeklanden naar deze AI-verbinding gestuurd. Documenten, Kennis en sollicitatiecontext worden niet toegevoegd. De zoekdienst van de aanbieder kan kosten in rekening brengen."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Probeer opnieuw op te slaan"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Opnieuw proberen met {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Deze server exporteert alleen bestandsverwijzingen. Werk hem bij om geü
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Deze server is te oud voor de app. Vraag je beheerder om deze bij te werken."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Deze server of AI-verbinding ondersteunt geen eigen webzoekdienst van de aanbieder."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Deze server rapporteert een ander adres dan het adres dat je heeft ingevoerd. Voer het adres in dat wordt gebruikt of vraag dit aan je beheerder."
@@ -14588,6 +14604,7 @@ msgstr "Instellingen voor webtoegang kunnen niet worden opgeslagen of geladen."
 msgid "Web page"
 msgstr "Webpagina"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Webonderzoek"

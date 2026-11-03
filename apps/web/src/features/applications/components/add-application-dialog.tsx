@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
+import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { readPastedPostingHeader } from "@reactive-resume/import/job-posting";
 import { postingReadReceipt } from "@reactive-resume/schema/applications/posting-source";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -179,6 +180,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 		},
 	});
 	const searchFailure = webSearchFailure(search.error);
+	const nativeSearchFailure = searchFailure ?? webAccess?.testResult?.search?.error;
 	// Without a capture, what was pasted and read survives closing the dialog (and a reload in this tab) until saved.
 	const kept = useSessionDraft<SaveJobDraft>(
 		initialCapture ? null : "save-job",
@@ -226,6 +228,15 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const providerState = useHasUsableAiProvider();
 	const { hasUsableProvider } = providerState;
 	const readProvider = providerState.usableProviders[0];
+	const nativeCapabilities = useQuery({
+		...orpc.ai.capabilities.queryOptions(),
+		enabled: nativeSearchFailure === "auth" || nativeSearchFailure === "quota",
+	});
+	const nativeSearchProvider =
+		readProvider && supportsNativeWebSearch(readProvider) && nativeCapabilities.data?.nativeWebSearch === 1
+			? readProvider
+			: undefined;
+	const nativeSearchLabel = nativeSearchProvider?.label ?? "";
 	const readAI = readProvider ? { label: readProvider.label, model: aiModelForTask(readProvider, "fast") } : undefined;
 	const invalidate = useInvalidateApplications();
 	const openDialog = useDialogStore((state) => state.openDialog);
@@ -482,6 +493,16 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						<p className="text-xs text-ink-3" role="status">
 							<Trans>Searching job postings…</Trans>
 						</p>
+					)}
+					{(nativeSearchFailure === "auth" || nativeSearchFailure === "quota") && nativeSearchProvider && (
+						<Button
+							type="button"
+							variant="secondary"
+							disabled={query.trim().length < 2 || search.isPending || create.isPending}
+							onClick={() => search.mutate({ query, aiProviderId: nativeSearchProvider.id })}
+						>
+							<Trans>Retry with {nativeSearchLabel}</Trans>
+						</Button>
 					)}
 					{search.error && !searchFailure && (
 						<p className="text-xs text-danger-text" role="alert">

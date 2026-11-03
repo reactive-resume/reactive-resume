@@ -7966,6 +7966,10 @@ msgstr "Wenn die App nicht geöffnet wurde, versuchen Sie es erneut auf einem Ge
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Wenn der Webzugang den Schlüssel ablehnt oder das Kontingent erschöpft ist, kann diese KI-Verbindung die Suche über ihren eigenen Suchdienst wiederholen. Dabei können zusätzliche KI-Anfragen und Kosten entstehen."
+
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -11131,6 +11135,10 @@ msgstr "Nur du, bis du es teilst. Ein Lebenslauf kann privat bleiben, über eine
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Wenn der Webzugang den Schlüssel ablehnt oder das Kontingent erschöpft ist, werden nur deine Suchanfrage und Suchländer an diese KI-Verbindung gesendet. Dokumente, Wissen und Bewerbungskontext werden nicht hinzugefügt. Die Suche des Anbieters kann kostenpflichtig sein."
+
 #: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "Vor Ort"
@@ -13489,6 +13497,11 @@ msgstr ""
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry saving"
 msgstr "Speichern Sie erneut"
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Mit {nativeSearchLabel} erneut versuchen"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
@@ -16889,6 +16902,10 @@ msgstr "Dieser Server exportiert nur Dateiverweise. Ein Server-Update ermöglich
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Dieser Server nimmt keine neuen Konten an. Melden Sie sich mit einem bestehenden Konto an."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Dieser Server oder diese KI-Verbindung unterstützt keine anbietereigene Websuche."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "Dieser Server verwendet die Standardphasen. Daher bleiben die Phasennamen aus der Datei nicht erhalten."
@@ -18094,6 +18111,7 @@ msgstr "Webseite"
 msgid "Web page preview"
 msgstr "Webseitenvorschau"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Webrecherche"

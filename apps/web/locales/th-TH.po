@@ -7966,6 +7966,10 @@ msgstr "หากแอปไม่เปิดขึ้น ให้ลอง�
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "หากการเข้าถึงเว็บปฏิเสธคีย์หรือโควตาหมด การเชื่อมต่อ AI นี้อาจค้นหาอีกครั้งด้วยบริการค้นหาของตนเอง ซึ่งอาจเพิ่มคำขอ AI และค่าใช้จ่าย"
+
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -11131,6 +11135,10 @@ msgstr "เพียงคุณเท่านั้นจนกว่าคุ
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "หากการเข้าถึงเว็บปฏิเสธคีย์หรือโควตาหมด ระบบจะส่งเฉพาะคำค้นและประเทศที่ต้องการค้นหาไปยังการเชื่อมต่อ AI นี้ โดยไม่เพิ่มเอกสาร ความรู้ หรือบริบทการสมัครงาน การค้นหาของผู้ให้บริการอาจมีค่าใช้จ่าย"
+
 #: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "ที่สำนักงาน"
@@ -13489,6 +13497,11 @@ msgstr ""
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry saving"
 msgstr "ลองบันทึกอีกครั้ง"
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "ลองอีกครั้งด้วย {nativeSearchLabel}"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
@@ -16889,6 +16902,10 @@ msgstr "เซิร์ฟเวอร์นี้ส่งออกเฉพา
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "เซิร์ฟเวอร์นี้ไม่รับบัญชีใหม่ เข้าสู่ระบบด้วยบัญชีที่มีอยู่"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "เซิร์ฟเวอร์หรือการเชื่อมต่อ AI นี้ไม่รองรับการค้นหาเว็บในตัวของผู้ให้บริการ"
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "เซิร์ฟเวอร์นี้ใช้ขั้นตอนมาตรฐาน จึงไม่เก็บชื่อขั้นตอนจากไฟล์ไว้"
@@ -18094,6 +18111,7 @@ msgstr "หน้าเว็บ"
 msgid "Web page preview"
 msgstr "ตัวอย่างหน้าเว็บ"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "การค้นคว้าบนเว็บ"

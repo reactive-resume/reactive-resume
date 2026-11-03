@@ -6224,6 +6224,10 @@ msgstr "Ha webes hozzáférést használ, a keresőkifejezések a szerver keres�
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Webes hozzáférés használata esetén a keresőkifejezések a szerver keresőszolgáltatásához és az általa használt keresőmotorokhoz, a hivatkozások pedig az éppen olvasott webhelyekre mennek."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Ha a webes hozzáférés elutasítja a kulcsot, vagy elfogy a keret, ez az AI-kapcsolat megismételheti a keresést a saját keresőszolgáltatásával. Ez további AI-kérésekkel és díjakkal járhat."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Figyelmen kívül hagyni"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Ha a webes hozzáférés elutasítja a kulcsot, vagy elfogy a keret, csak a keresőkifejezés és a keresés országai jutnak el ehhez az AI-kapcsolathoz. Dokumentumok, Tudás és álláspályázati környezet nem kerül hozzáadásra. A szolgáltató keresése díjköteles lehet."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Próbálja újra a mentést"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Újrapróbálás ezzel: {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Ez a kiszolgáló csak fájlhivatkozásokat exportál. Frissítsd a felt
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Ez a szerver túl régi az alkalmazáshoz. Kérje meg rendszergazdáját, hogy frissítse."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Ez a szerver vagy AI-kapcsolat nem támogatja a szolgáltató saját webes keresését."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Ez a szerver a megadottól eltérő címet jelent. Adja meg a használt címet, vagy kérdezze meg a rendszergazdát."
@@ -14588,6 +14604,7 @@ msgstr "A webhozzáférési beállításokat nem sikerült menteni vagy betölte
 msgid "Web page"
 msgstr "Weboldal"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Webes kutatás"

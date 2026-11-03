@@ -1,5 +1,5 @@
 import type { getModel } from "../ai/service";
-import type { WebAccessConnection } from "../web-access/contracts";
+import type { WebAccessConnection, WebAccessContext } from "../web-access/contracts";
 import type { AssistantDocument } from "./document";
 import type { EditUpdate } from "./messages-persistence";
 import type {
@@ -26,6 +26,7 @@ import {
 import { and, asc, count, desc, eq, getColumns, gt, inArray, isNull, sql } from "drizzle-orm";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
@@ -34,6 +35,7 @@ import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 import { generateId } from "@reactive-resume/utils/string";
 import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
+import { approvedAiProviderId } from "../ai/destination";
 import { extractDocxTextFromBytes, getAgentModel } from "../ai/service";
 import { createAiUsage } from "../ai/usage";
 import { availableApplicationContext } from "../applications/access";
@@ -45,6 +47,7 @@ import { assertDocumentVersion } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { getStorageService, inferContentType } from "../storage/service";
 import { webAccessService } from "../web-access/credentials";
+import { nativeSearch } from "../web-access/native-search";
 import { searchScope } from "../web-access/regions";
 import { readPage, searchWeb } from "../web-access/service";
 import { isRunAlive, monitorRunCancellation, requestRunCancellation } from "./cancellation";
@@ -160,6 +163,8 @@ type MessageContext = {
 
 type SendMessageInput = {
 	userId: string;
+	/** Consent metadata from the request header, never model-provided context. */
+	nativeSearchFallback?: boolean | undefined;
 	deviceTimeZone?: string | undefined;
 	threadId: string;
 	message: UIMessage;
@@ -942,8 +947,10 @@ function createAgent(input: {
 	};
 	model: ReturnType<typeof getModel>;
 	connection: WebAccessConnection | null;
+	searchConnection?: WebAccessConnection | null;
 	/** Whether web search is available: through the connection, or the server's SearXNG without one. */
 	search: boolean;
+	fallbackSearch?: WebAccessContext["fallbackSearch"];
 	signal: AbortSignal;
 }) {
 	// One greppable JSON line per tool execution.
@@ -995,10 +1002,11 @@ function createAgent(input: {
 				// General research searches the user's countries but keeps the query as written.
 				const { regions } = await searchScope(input.userId, input.deviceTimeZone);
 				const result = await searchWeb(query, {
-					connection: input.connection,
+					connection: input.searchConnection ?? input.connection,
 					userId: input.userId,
 					signal,
 					regions,
+					fallbackSearch: input.fallbackSearch,
 				});
 				for (const resultSource of result) allow(resultSource.url);
 				return result;
@@ -1681,8 +1689,15 @@ export const agentService = {
 					throw new ORPCError("BAD_REQUEST", {
 						message: "Knowledge changed or isn't shared with this message. Send a new message to continue.",
 					});
+				const nativeSearchApproved =
+					input.nativeSearchFallback &&
+					approvedAiProviderId() === runnableProvider.id &&
+					supportsNativeWebSearch(runnableProvider);
 				const connection = await webAccessService.resolve(input.userId);
-				const search = webAccessService.canSearch(connection !== null);
+				// Only approved searches retry failed credentials; page reading keeps normal resolution.
+				const searchConnection =
+					connection ?? (nativeSearchApproved ? await webAccessService.resolve(input.userId, true) : null);
+				const search = webAccessService.canSearch(searchConnection !== null);
 				const modelMessages = await convertToModelMessages(
 					replay.map((message) =>
 						toModelInputMessage(
@@ -1814,15 +1829,16 @@ export const agentService = {
 					},
 				);
 				const operationIds = [...new Set([...aiOperationIds(draftUiMessage.metadata), usage.operationId])];
+				const authorize = async () => {
+					controller.signal.throwIfAborted();
+					await aiProvidersService.authorize({ userId: input.userId, id: runnableProvider.id }, async (tx) => {
+						preparedInstructions = await checkContext(tx);
+					});
+					controller.signal.throwIfAborted();
+					return preparedInstructions;
+				};
 				const agent = createAgent({
-					authorize: async () => {
-						controller.signal.throwIfAborted();
-						await aiProvidersService.authorize({ userId: input.userId, id: runnableProvider.id }, async (tx) => {
-							preparedInstructions = await checkContext(tx);
-						});
-						controller.signal.throwIfAborted();
-						return preparedInstructions;
-					},
+					authorize,
 					deviceTimeZone: input.deviceTimeZone,
 					userId: input.userId,
 					threadId: input.threadId,
@@ -1872,7 +1888,26 @@ export const agentService = {
 					jobCopy: loaded?.kind !== "resume" || !posting || loaded.applicationId === posting.applicationId,
 					knowledge,
 					connection,
+					searchConnection,
 					search,
+					...(nativeSearchApproved
+						? {
+								fallbackSearch: async (query: string, region: string | undefined, requestSignal: AbortSignal) => {
+									// Approved tool continuations can run before the next model's prepareStep.
+									await authorize();
+									return nativeSearch({
+										usage,
+										provider: runnableProvider.provider,
+										model: capableModel,
+										apiKey: runnableProvider.apiKey,
+										baseURL: runnableProvider.baseURL ?? "",
+										query,
+										region,
+										signal: requestSignal,
+									});
+								},
+							}
+						: {}),
 					signal: controller.signal,
 					provider: {
 						provider: runnableProvider.provider,

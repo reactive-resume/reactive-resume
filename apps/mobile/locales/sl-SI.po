@@ -6224,6 +6224,10 @@ msgstr "Če je uporabljen spletni dostop, gredo iskalni izrazi na iskalno storit
 msgid "If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read."
 msgstr "Če je uporabljen spletni dostop, gredo iskalni izrazi na iskalno storitev vašega strežnika in iskalnike, ki jih uporablja, povezave pa na spletna mesta, ki se berejo."
 
+#: src/api/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Če spletni dostop zavrne ključ ali je kvota porabljena, lahko ta povezava UI ponovi iskanje s svojo iskalno storitvijo. To lahko pomeni dodatne zahteve UI in stroške."
+
 #: src/features/check/screen.tsx
 msgid "Ignore"
 msgstr "Ignoriraj"
@@ -8831,6 +8835,10 @@ msgstr ""
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Če spletni dostop zavrne ključ ali je kvota porabljena, se tej povezavi UI pošljejo samo iskalna poizvedba in države iskanja. Dokumenti, Znanje in kontekst prijav se ne dodajo. Ponudnik lahko iskanje zaračuna."
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Onsite"
@@ -10768,6 +10776,10 @@ msgstr ""
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Poskusite znova shraniti"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Poskusi znova z {nativeSearchLabel}"
 
 #: src/features/check/screen.tsx
 msgid "Return to Documents and reopen it, or retry the connection."
@@ -13588,6 +13600,10 @@ msgstr "Ta strežnik izvaža le sklice na datoteke. Posodobite ga, da vključi n
 msgid "This server is too old for the app. Ask your administrator to update it."
 msgstr "Ta strežnik je prestar za aplikacijo. Prosite skrbnika, da ga posodobi."
 
+#: src/api/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Ta strežnik ali povezava UI ne podpira ponudnikovega izvornega spletnega iskanja."
+
 #: src/auth/messages.ts
 msgid "This server reports a different address than the one you entered. Enter the address it uses, or ask your administrator."
 msgstr "Ta strežnik poroča o drugačnem naslovu od tistega, ki ste ga vnesli. Vnesite naslov, ki ga uporablja, ali vprašajte skrbnika."
@@ -14588,6 +14604,7 @@ msgstr "Nastavitev spletnega dostopa ni bilo mogoče shraniti ali naložiti."
 msgid "Web page"
 msgstr "Spletna stran"
 
+#: src/features/ai/usage.tsx
 #: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Spletno raziskovanje"

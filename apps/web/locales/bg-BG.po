@@ -7966,6 +7966,10 @@ msgstr "Ако приложението не се отвори, опитайте
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "If web access rejects its key or quota, this AI connection may retry the search using its own search service. This can add AI requests and charges."
+msgstr "Ако уеб достъпът отхвърли ключа или квотата е изчерпана, тази AI връзка може да повтори търсенето със собствената си услуга. Това може да доведе до допълнителни AI заявки и такси."
+
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -11131,6 +11135,10 @@ msgstr "Само ти, докато не го споделиш. Резюмето
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your search query and search countries go to this AI connection if web access rejects its key or quota. No document, Knowledge or application context is added. The provider's search may charge."
+msgstr "Ако уеб достъпът отхвърли ключа или квотата е изчерпана, към тази AI връзка се изпращат само заявката и държавите за търсене. Не се добавят документи, Знания или контекст на кандидатури. Доставчикът може да таксува търсенето."
+
 #: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "На място"
@@ -13489,6 +13497,11 @@ msgstr ""
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry saving"
 msgstr "Повторен опит за запазване"
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Retry with {nativeSearchLabel}"
+msgstr "Опитайте отново с {nativeSearchLabel}"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
@@ -16889,6 +16902,10 @@ msgstr "Този сървър експортира само препратки �
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Този сървър не приема нови профили. Влезте със съществуващ профил."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This server or AI connection doesn't support native web search."
+msgstr "Този сървър или AI връзка не поддържа собственото уеб търсене на доставчика."
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "This server uses the standard stages, so stage names in the file aren't kept."
 msgstr "Този сървър използва стандартните етапи, затова имената на етапите във файла не се запазват."
@@ -18094,6 +18111,7 @@ msgstr "Уеб страница"
 msgid "Web page preview"
 msgstr "Визуализация на уеб страницата"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Уеб проучване"

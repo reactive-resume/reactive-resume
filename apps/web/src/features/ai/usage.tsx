@@ -10,6 +10,7 @@ export const aiActionLabel = (action: AiAction) =>
 		"writing-review": t`Writing review`,
 		improve: t`Improve`,
 		"parse-posting": t`Read posting`,
+		"web-search": t`Web research`,
 		"autofill-posting": t`Fill fields`,
 		"match-score": t`MCP match score`,
 		"tailor-resume": t`MCP tailoring`,

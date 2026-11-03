@@ -16,7 +16,7 @@ import { readExa, searchExa } from "./exa";
 import { readFirecrawl, searchFirecrawl } from "./firecrawl";
 import { searchSearxng } from "./searxng";
 import { readTavily, searchTavily } from "./tavily";
-import { pageContent, safeFailure } from "./transport";
+import { normalizeSearch, pageContent, safeFailure } from "./transport";
 
 const limiter = createRateLimiter("web-access", rateLimitConfig.orpc.aiRequest);
 
@@ -121,29 +121,9 @@ export async function searchWeb(query: string, context: WebAccessContext, queryF
 	const started = Date.now();
 	const backend = searchBackend(context, signal);
 	const provider = backend?.name ?? "builtin";
-	try {
-		await consume(context.userId, signal);
-		if (!backend) throw new WebAccessError("unavailable");
-		const input = searchInput(query);
-		const searches = (context.regions ?? []).map((region) => ({
-			region,
-			query: queryFor ? searchInput(queryFor(region)) : input,
-		}));
-		let results: SearchResults;
-		let partial: string | undefined;
-		if (searches.length === 0) results = await backend.search(input);
-		else {
-			const settled = await Promise.allSettled(searches.map((search) => backend.search(search.query, search.region)));
-			const lists = settled.flatMap((outcome) => (outcome.status === "fulfilled" ? [outcome.value] : []));
-			if (lists.length === 0) throw (settled[0] as PromiseRejectedResult).reason;
-			const failed = settled.length - lists.length;
-			if (failed) partial = `${failed}/${settled.length}-regions-failed`;
-			results = interleave(lists);
-		}
-		signal.throwIfAborted();
-		log("search", provider, started, "success", partial);
-		return results;
-	} catch (error) {
+	let usedFallback = false;
+	let failureRecorded: Promise<void> | undefined;
+	const rememberFailure = async (error: unknown) => {
 		if (
 			!signal.aborted &&
 			provider !== "searxng" &&
@@ -151,13 +131,55 @@ export async function searchWeb(query: string, context: WebAccessContext, queryF
 			(error.reason === "auth" || error.reason === "quota")
 		) {
 			const result = { success: false, error: error.reason };
-			await webAccessService
+			await (failureRecorded ??= webAccessService
 				.recordTest(context.userId, context.connection, { search: result, read: result })
-				.catch(() => undefined);
+				.catch(() => undefined));
 		}
+	};
+	try {
+		await consume(context.userId, signal);
+		if (!backend) throw new WebAccessError("unavailable");
+		const search = async (query: string, region?: string) => {
+			try {
+				return await backend.search(query, region);
+			} catch (error) {
+				if (
+					signal.aborted ||
+					!context.fallbackSearch ||
+					!(error instanceof WebAccessError) ||
+					(error.reason !== "auth" && error.reason !== "quota")
+				)
+					throw error;
+				await rememberFailure(error);
+				signal.throwIfAborted();
+				usedFallback = true;
+				return normalizeSearch(await context.fallbackSearch(query, region, signal));
+			}
+		};
+		const input = searchInput(query);
+		const searches = (context.regions ?? []).map((region) => ({
+			region,
+			query: queryFor ? searchInput(queryFor(region)) : input,
+		}));
+		let results: SearchResults;
+		let partial: string | undefined;
+		if (searches.length === 0) results = await search(input);
+		else {
+			const settled = await Promise.allSettled(searches.map((entry) => search(entry.query, entry.region)));
+			const lists = settled.flatMap((outcome) => (outcome.status === "fulfilled" ? [outcome.value] : []));
+			if (lists.length === 0) throw (settled[0] as PromiseRejectedResult).reason;
+			const failed = settled.length - lists.length;
+			if (failed) partial = `${failed}/${settled.length}-regions-failed`;
+			results = interleave(lists);
+		}
+		signal.throwIfAborted();
+		log("search", usedFallback ? `${provider}+ai-native` : provider, started, "success", partial);
+		return results;
+	} catch (error) {
+		await rememberFailure(error);
 		log(
 			"search",
-			provider,
+			usedFallback ? `${provider}+ai-native` : provider,
 			started,
 			signal.aborted ? "aborted" : error instanceof WebAccessError ? error.reason : "unreachable",
 		);

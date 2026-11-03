@@ -822,3 +822,70 @@ describe("public targets and bounded fallback", () => {
 		expect(requests).toHaveLength(1);
 	});
 });
+
+describe("explicit alternate search", () => {
+	it.each(PROVIDERS.flatMap((provider) => [401, 402].map((status) => ({ provider, status }))))(
+		"uses the approved alternate after $provider returns $status",
+		async ({ provider, status: failure }) => {
+			searchStatus = failure;
+			const alternate = [{ url: URL, title: "Retrieved alternate source" }];
+			const fallbackSearch = vi.fn(async (_query: string, _region: string | undefined, signal: AbortSignal) => {
+				signal.throwIfAborted();
+				return alternate;
+			});
+			expect(await searchWeb("designer", { ...context(provider), fallbackSearch })).toEqual(alternate);
+			expect(requests).toHaveLength(1);
+			expect(fallbackSearch).toHaveBeenCalledExactlyOnceWith("designer", undefined, expect.any(AbortSignal));
+		},
+	);
+
+	it.each([200, 429, 500])("does not reroute success, throttling or outage (%s)", async (failure) => {
+		searchStatus = failure;
+		const fallbackSearch = vi.fn(async () => [{ url: URL, title: "Must not be used" }]);
+		const request = searchWeb("designer", { ...context("firecrawl"), fallbackSearch });
+		if (failure === 200) await expect(request).resolves.toHaveLength(1);
+		else await expect(request).rejects.toMatchObject({ reason: failure === 429 ? "rate-limit" : "unreachable" });
+		expect(fallbackSearch).not.toHaveBeenCalled();
+	});
+
+	it("retains regional queries, ordering and the shared deadline for the failed region", async () => {
+		respond = ({ body }) =>
+			body.country === "germany" ? { status: 401 } : { body: resultsFor("tavily", [job("France")]) };
+		const fallbackSearch = vi.fn(async (query: string, region: string | undefined, signal: AbortSignal) => {
+			signal.throwIfAborted();
+			expect(query).toBe("designer DE");
+			expect(region).toBe("DE");
+			return [job("Germany")];
+		});
+		expect(
+			await searchWeb(
+				"designer",
+				{ ...context("tavily"), regions: ["DE", "FR"], fallbackSearch },
+				(region) => `designer ${region}`,
+			),
+		).toEqual([job("Germany"), job("France")]);
+		expect(fallbackSearch).toHaveBeenCalledTimes(1);
+	});
+
+	it("an abort after the failed response prevents the alternate", async () => {
+		const controller = new AbortController();
+		searchStatus = 401;
+		onRequest = () => controller.abort(new DOMException("Stopped", "AbortError"));
+		const fallbackSearch = vi.fn(async () => [job("Must not be used")]);
+		await expect(
+			searchWeb("designer", { ...context("firecrawl"), signal: controller.signal, fallbackSearch }),
+		).rejects.toMatchObject({ name: "AbortError" });
+		expect(fallbackSearch).not.toHaveBeenCalled();
+	});
+
+	it("does not bypass the request rate budget", async () => {
+		vi.stubEnv("NODE_ENV", "production");
+		fixtures.limit.mockResolvedValue({ success: false });
+		const fallbackSearch = vi.fn(async () => [job("Must not be used")]);
+		await expect(searchWeb("designer", { ...context("firecrawl"), fallbackSearch })).rejects.toMatchObject({
+			reason: "rate-limit",
+		});
+		expect(requests).toHaveLength(0);
+		expect(fallbackSearch).not.toHaveBeenCalled();
+	});
+});
