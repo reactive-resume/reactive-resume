@@ -78,3 +78,57 @@ const NETWORK_FAILURES = new Set([
 
 /** The request couldn't reach the server: no connection, or it dropped mid-response. */
 export const isNetworkError = (error: unknown) => error instanceof TypeError && NETWORK_FAILURES.has(error.message);
+
+/** Resolve a private upload before adding cookies or a bearer token. Redirects must also be disabled by the caller. */
+export function privateUploadUrl(source: string, server: string): string {
+	const origin = new URL(server);
+	const url = new URL(source, origin);
+	if (
+		!["http:", "https:"].includes(url.protocol) ||
+		url.origin !== origin.origin ||
+		url.username ||
+		url.password ||
+		!/^\/(?:api\/)?uploads\//.test(url.pathname)
+	)
+		throw new Error("Invalid private upload URL.");
+	return url.href;
+}
+
+/** Bound actual streamed bytes as well as the optional, untrusted Content-Length. */
+export async function readResponseBytes(
+	response: Response,
+	maximum: number,
+	signal?: AbortSignal,
+): Promise<Uint8Array> {
+	const reader = response.body?.getReader();
+	if (!reader) throw new Error("Response has no streaming body.");
+	const chunks: Uint8Array[] = [];
+	let length = 0;
+	const aborted = () => {
+		void reader.cancel().catch(() => {});
+	};
+	signal?.addEventListener("abort", aborted, { once: true });
+	try {
+		if (Number(response.headers.get("content-length")) > maximum) throw new Error("Response too large.");
+		for (;;) {
+			if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+			const { done, value } = await reader.read();
+			if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+			if (done) break;
+			length += value.byteLength;
+			if (length > maximum) throw new Error("Response too large.");
+			chunks.push(value);
+		}
+	} finally {
+		signal?.removeEventListener("abort", aborted);
+		await reader.cancel().catch(() => {});
+		reader.releaseLock();
+	}
+	const bytes = new Uint8Array(length);
+	let offset = 0;
+	for (const chunk of chunks) {
+		bytes.set(chunk, offset);
+		offset += chunk.length;
+	}
+	return bytes;
+}

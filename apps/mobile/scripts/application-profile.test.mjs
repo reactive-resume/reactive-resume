@@ -91,7 +91,11 @@ test("native private profile sends explicit unknowns with owner scope, retains f
 		"@reactive-resume/schema/application-profile": schema,
 		"@reactive-resume/utils/amount": amount,
 		"@reactive-resume/utils/region": region,
-		"./export-cache": { clearAccountExportCache() {} },
+		"./export-cache": {
+			clearAccountExportCache(kind) {
+				assert.equal(kind, "data");
+			},
+		},
 		"./layout": { SettingsGroup: "SettingsGroup" },
 		"@/api/client": {
 			client: {
@@ -225,9 +229,11 @@ test("mobile export cleanup removes account/profile and workspace exports, prese
 			deleted.push(this.name);
 		}
 	}
+	class Directory extends File {}
 	const { clearAccountExportCache } = load(new URL("../src/features/settings/export-cache.ts", import.meta.url), {
 		"expo-file-system": {
 			File,
+			Directory,
 			Paths: {
 				cache: {
 					list: () => [
@@ -235,6 +241,8 @@ test("mobile export cleanup removes account/profile and workspace exports, prese
 						new File("reactive-resume-456.json"),
 						new File("workspace-reviewed-answers.json"),
 						new File("workspace-interview-notes.md"),
+						new Directory("resume-export-123"),
+						new Directory("keep-directory"),
 						new File("resume.pdf"),
 						{ name: "application-profile-789.json" },
 					],
@@ -248,7 +256,20 @@ test("mobile export cleanup removes account/profile and workspace exports, prese
 		"reactive-resume-456.json",
 		"workspace-reviewed-answers.json",
 		"workspace-interview-notes.md",
+		"resume-export-123",
 	]);
+	deleted.length = 0;
+	clearAccountExportCache("data");
+	assert.deepEqual(
+		deleted,
+		[
+			"application-profile-123.json",
+			"reactive-resume-456.json",
+			"workspace-reviewed-answers.json",
+			"workspace-interview-notes.md",
+		],
+		"a data export preserves document copies that Android recipients can still be reading",
+	);
 });
 
 test("native account export stays bound to its account through fetch and file writing", async () => {
@@ -298,7 +319,11 @@ test("native account export stays bound to its account through fetch and file wr
 					isAvailableAsync: async () => true,
 					shareAsync: async () => shares++,
 				},
-				"./export-cache": { clearAccountExportCache() {} },
+				"./export-cache": {
+					clearAccountExportCache(kind) {
+						assert.equal(kind, "data");
+					},
+				},
 				"@reactive-resume/utils/account-zip": {
 					buildAccountZip: () => new Uint8Array([80, 75]),
 					AccountExportLimitError: class extends Error {},

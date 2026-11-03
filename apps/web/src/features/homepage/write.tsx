@@ -104,7 +104,7 @@ export function Write() {
 								{t`Experience`}
 							</span>
 							<div className="flex items-baseline justify-between gap-[1em]">
-								<b className="font-display text-[1.55em] leading-[1.1]">{t`Lead Product Designer`}</b>
+								<b className="font-display text-[1.55em] leading-[1.1] font-normal">{t`Lead Product Designer`}</b>
 								<span className="font-martian text-[.72em] whitespace-nowrap text-[oklch(0.5_0.01_95)]">
 									{t`2021 – Present`}
 								</span>
@@ -206,7 +206,7 @@ export function Write() {
 						</ul>
 						<div className="col-start-1 mt-[1.2em] flex [translate:0_calc(-1*var(--row-off))] flex-col gap-[.25em]">
 							<div className="flex items-baseline justify-between gap-[1em]">
-								<b className="font-display text-[1.55em] leading-[1.1]">{t`Product Designer`}</b>
+								<b className="font-display text-[1.55em] leading-[1.1] font-normal">{t`Product Designer`}</b>
 								<span className="font-martian text-[.72em] whitespace-nowrap text-[oklch(0.5_0.01_95)]">{t`2017 – 2021`}</span>
 							</div>
 							<span className="text-[oklch(0.45_0.01_95)]">{t`Parcel & Co. · Porto`}</span>
