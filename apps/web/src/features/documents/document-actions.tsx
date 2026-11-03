@@ -28,6 +28,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { isolate } from "@reactive-resume/utils/string";
 import { useDocumentEffect } from "./library-session";
 import { useNewDocumentsStore } from "./new-documents";
+import { useExistingTags } from "./tag-suggestions";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -553,6 +554,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 	const commitTags = useRef<(() => string[]) | null>(null);
 	const setDocumentTags = useMutation(orpc.documents.setTags.mutationOptions());
 	const shared = documents ? sharedTags(documents) : [];
+	const suggestions = useExistingTags(documents?.map((document) => document.type) ?? [], requested !== null);
 
 	const save = async () => {
 		if (!documents) return;
@@ -609,7 +611,14 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 						)}
 					</DialogDescription>
 				</DialogHeader>
-				<ChipInput commitRef={commitTags} value={tags ?? shared} onChange={setTags} placeholder={t`Add a tag…`} />
+				<ChipInput
+					commitRef={commitTags}
+					value={tags ?? shared}
+					onChange={setTags}
+					placeholder={t`Add a tag…`}
+					suggestions={suggestions}
+					suggestionsLabel={t`Your tags`}
+				/>
 				<DialogFooter>
 					<Button onClick={() => void save()} disabled={setDocumentTags.isPending}>
 						<Trans>Save tags</Trans>

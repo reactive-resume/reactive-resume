@@ -13,6 +13,7 @@ import { resumeFieldFocus, useResumeStore } from "@/draft";
 import { TranslateResume } from "@/features/assistant/translate-resume";
 import { useNewDocuments } from "@/features/documents/new-documents";
 import { useDocumentOperations } from "@/features/documents/queries";
+import { useExistingTags } from "@/features/documents/tag-suggestions";
 import { flushResume } from "@/features/share/document";
 import { printResume } from "@/features/share/files";
 import { setResumeLocked } from "@/features/share/revision";
@@ -41,6 +42,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 	const [name, setName] = useState("");
 	const [tags, setTags] = useState<string[]>([]);
 	const commitTags = useRef<(() => string[]) | null>(null);
+	const tagSuggestions = useExistingTags(["resume"], panel === "tags");
 	const [slug, setSlug] = useState("");
 	const helpRequested = useRef(false);
 	const menuTrigger = useRef<ComponentRef<typeof Pressable>>(null);
@@ -271,7 +273,14 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 						{panel === "tags" && (
 							<>
 								<View pointerEvents={operations.busy || resume.isLocked ? "none" : "auto"}>
-									<ChipInput commitRef={commitTags} label={t`Tags`} values={tags} onChange={setTags} />
+									<ChipInput
+										commitRef={commitTags}
+										label={t`Tags`}
+										values={tags}
+										onChange={setTags}
+										suggestions={tagSuggestions}
+										suggestionsLabel={t`Your tags`}
+									/>
 								</View>
 								<Text variant="caption" color="ink3">{t`Up to 20 tags per document, 40 characters per tag.`}</Text>
 								<Button
