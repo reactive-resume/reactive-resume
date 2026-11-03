@@ -1,5 +1,35 @@
 import { expect, test } from "../fixtures/test";
 
+test("sheet returns to its actual opener when a nudge and list row share an application", async ({
+	authPage: page,
+}) => {
+	await expect(
+		await page.request.post("/api/openapi/applications", {
+			data: {
+				role: "Accessibility Engineer",
+				company: "Fictional Workshop",
+				status: "applied",
+				followUpAt: new Date(Date.now() - 86_400_000).toISOString(),
+				followUpDateOnly: false,
+			},
+		}),
+	).toBeOK();
+	await page.goto("/dashboard/applications");
+	const nudge = page.getByRole("button", { name: "Open", exact: true });
+	await expect(nudge).toBeVisible();
+	const row = page.locator("[data-application-open]").filter({ hasText: "Accessibility Engineer" });
+	await row.focus();
+	await row.press("Enter");
+	const sheet = page.getByRole("dialog", { name: "Accessibility Engineer", exact: true });
+	await expect(sheet).toBeVisible();
+	await page.keyboard.press("Escape");
+	await expect(row).toBeFocused();
+	await nudge.click();
+	await expect(sheet).toBeVisible();
+	await page.keyboard.press("Escape");
+	await expect(nudge).toBeFocused();
+});
+
 test("new application focuses its title and returns to its surviving row", async ({ authPage: page }) => {
 	await page.goto("/dashboard/applications");
 	await page.getByRole("button", { name: "Save job", exact: true }).first().click();

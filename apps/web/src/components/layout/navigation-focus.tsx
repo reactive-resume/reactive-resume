@@ -9,7 +9,7 @@ export function NavigationFocus() {
 		const frame = requestAnimationFrame(() => {
 			if (
 				document.querySelector(
-					'[role="dialog"]:not([data-closed]):not([data-slot="toast"]), [role="alertdialog"]:not([data-closed]), dialog[open]',
+					'[role="dialog"]:not([data-closed]):not([data-slot="toast"]), [role="alertdialog"]:not([data-closed]):not([data-slot="toast"]), dialog[open]',
 				)
 			)
 				return;

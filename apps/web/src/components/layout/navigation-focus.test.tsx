@@ -54,7 +54,7 @@ it.each(["dialog", "alertdialog"] as const)("retains initial %s focus when its r
 	expect(screen.getByRole("textbox")).toHaveFocus();
 });
 
-it.each([false, true])(
+it.each([undefined, "low", "high"] as const)(
 	"updates route focus despite a nonmodal toast (%s), retaining field focus for search changes",
 	async (toast) => {
 		const notifications = Toast.createToastManager();
@@ -96,16 +96,16 @@ it.each([false, true])(
 		await waitFor(() => expect(screen.getByRole("heading", { name: "One" })).toHaveFocus());
 		if (toast) {
 			act(() => {
-				notifications.add({ description: "Account created", timeout: 0 });
+				notifications.add({ description: "Account created", timeout: 0, priority: toast });
 			});
-			await screen.findByText("Account created");
+			await screen.findByRole(toast === "high" ? "alertdialog" : "dialog", { hidden: true });
 		}
-		await router.navigate({ to: "/two" });
+		await act(() => router.navigate({ to: "/two" }));
 		await waitFor(() => expect(screen.getByRole("heading", { name: "Two" })).toHaveFocus());
 		expect(document.title).toBe("Two | Reactive Resume");
 		const field = screen.getByRole("textbox", { name: "Search" });
 		field.focus();
-		await router.navigate({ to: "/two", search: { q: "retained" } });
+		await act(() => router.navigate({ to: "/two", search: { q: "retained" } }));
 		await act(
 			() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
 		);

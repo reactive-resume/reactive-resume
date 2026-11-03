@@ -113,6 +113,8 @@ function RouteComponent() {
 	const [query, setQuery] = useState(q);
 	const overlayScope = `applications-overlay-${useId()}`;
 	const pageRef = useRef<HTMLDivElement>(null);
+	const collectionRef = useRef<HTMLDivElement>(null);
+	const openingControl = useRef<HTMLElement | null>(null);
 	const searchRef = useRef<HTMLInputElement>(null);
 	const [capture, setCapture] = useState(takePostingCapture);
 	const [adding, setAdding] = useState(!!capture);
@@ -247,6 +249,9 @@ function RouteComponent() {
 	const empty = !!applications && applications.length === 0;
 	// Hoisted so the compiler keeps one function; inline, it changes with every keystroke and re-renders each row.
 	const openApplication = (application: ApplicationSummary) => {
+		const focused = document.activeElement;
+		if (!openingControl.current && focused instanceof HTMLElement && pageRef.current?.contains(focused))
+			openingControl.current = focused;
 		hydrateApplicationDetail(queryClient, application);
 		setSelectedId(application.id);
 	};
@@ -278,6 +283,11 @@ function RouteComponent() {
 	return (
 		<div
 			ref={pageRef}
+			onClickCapture={(event) => {
+				const trigger =
+					event.target instanceof Element ? event.target.closest<HTMLElement>("[data-application-open]") : null;
+				if (trigger) openingControl.current = trigger;
+			}}
 			tabIndex={-1}
 			className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5"
 		>
@@ -507,6 +517,7 @@ function RouteComponent() {
 					) : (
 						<div
 							key={shown}
+							ref={collectionRef}
 							className={cn(
 								viewSwitched
 									? "transition-[opacity,translate] duration-standard ease-enter starting:translate-y-1 starting:opacity-0"
@@ -583,9 +594,18 @@ function RouteComponent() {
 				/>
 				<ApplicationDetailSheet
 					returnFocus={(id) => {
+						const trigger = openingControl.current;
+						openingControl.current = null;
 						if (editing || adding) return null;
+						if (
+							trigger?.isConnected &&
+							trigger.getClientRects().length > 0 &&
+							trigger.closest<HTMLElement>("[data-application-id]")?.dataset.applicationId === id
+						)
+							return trigger;
 						const rows = Array.from(
-							pageRef.current?.querySelectorAll<HTMLElement>("[data-application-id] [data-application-open]") ?? [],
+							collectionRef.current?.querySelectorAll<HTMLElement>("[data-application-id] [data-application-open]") ??
+								[],
 						).filter((row) => row.getClientRects().length > 0);
 						const row =
 							rows.find((item) => item.closest<HTMLElement>("[data-application-id]")?.dataset.applicationId === id) ??
