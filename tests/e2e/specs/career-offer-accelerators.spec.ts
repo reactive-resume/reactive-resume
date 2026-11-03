@@ -140,6 +140,29 @@ test("percentage bonus persists as a percentage and reopens without becoming an 
 	await expect(page.getByLabel("Bonus", { exact: true })).toHaveValue("10%");
 });
 
+test("Arabic bonus entry saves its locale percent sign and keeps percentage on reload", async ({ authPage: page }) => {
+	const original = await offer(page, await application(page, "Northwind Labs"));
+	await page.goto(`/dashboard/career/offers?a=${original.id}&locale=ar-SA`);
+	await expect(page.locator("html")).toHaveAttribute("lang", "ar-SA");
+	await page.getByRole("button", { name: /Northwind Labs/ }).click();
+	await page.getByRole("menuitem", { name: "Edit terms", exact: true }).click();
+	await page.getByLabel("المكافأة", { exact: true }).fill("١٢٫٥٪\u061c");
+	await page.getByRole("button", { name: "حفظ العرض الوظيفي", exact: true }).click();
+	await expect
+		.poll(async () => (await offers(page)).find((row) => row.id !== original.id)?.data)
+		.toMatchObject({ variable: null, variablePercent: 12.5 });
+	const saved = (await offers(page)).find((row) => row.id !== original.id);
+	if (!saved) throw new Error("Expected one localized offer version.");
+	await page.reload();
+	await expect(page).toHaveURL(new RegExp(`a=${saved.id}`));
+	await page
+		.getByRole("button", { name: /Northwind Labs/ })
+		.first()
+		.click();
+	await page.getByRole("menuitem", { name: "Edit terms", exact: true }).click();
+	await expect(page.getByLabel("المكافأة", { exact: true })).toHaveValue("١٢٫٥%");
+});
+
 test("different pay periods show bounded arithmetic without a money judgement", async ({ authPage: page }) => {
 	const monthly = await offer(page, await application(page, "Lumen Health"), 7000, "month");
 	const yearly = await offer(page, await application(page, "Canopy Systems"), 90000);

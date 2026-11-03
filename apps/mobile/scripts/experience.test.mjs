@@ -1349,6 +1349,7 @@ const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 	"@reactive-resume/utils/timezone": timeParser,
 });
 let offerScope = "offer-account";
+let offerLocale = "en-US";
 let offerProfile = { isSuccess: false, isPending: true, isError: false };
 let savedOffers = [
 	{ createdAt: "2026-09-01T00:00:00Z", data: { kind: "offer", currency: "USD" } },
@@ -1397,7 +1398,7 @@ const loadOfferEntry = () =>
 		"@reactive-resume/schema/career": careerSchema,
 		"@reactive-resume/schema/career-offer": offerParser,
 		"./hooks": {
-			useCareerTime: () => ({ locale: "en-US", timeZone: "Europe/Berlin", profile: offerProfile }),
+			useCareerTime: () => ({ locale: offerLocale, timeZone: "Europe/Berlin", profile: offerProfile }),
 			useCareerAction: () => ({
 				pending: false,
 				run: async (work, success) => {
@@ -1607,6 +1608,15 @@ control(correctedView(), "Save offer").onPress();
 await settle();
 assert.equal(calls.length, 0, "retired native offer form cannot write for the next account");
 offerScope = "offer-account";
+offerLocale = "ar-SA";
+reset();
+calls.length = 0;
+control(correctedView(), "Bonus").onChangeText("١٢٫٥٪\u061c");
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.equal(calls[0].terms.variablePercent, 12.5, "native localized percent signs reach the shared version contract");
+assert.equal(calls[0].terms.variable, null);
+offerLocale = "en-US";
 searchParams = {};
 console.log("PASS native percentage entry and immutable offer-version action");
 

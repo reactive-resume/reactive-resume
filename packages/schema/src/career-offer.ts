@@ -17,10 +17,15 @@ type OfferEntry = {
 /** Blank optional fields are unknown; invalid entered values must not reach schema defaults. */
 export function parseOfferEntry({ applicationId, terms, amounts, date, time, locale, timeZone }: OfferEntry) {
 	const base = parseAmount(amounts.base, locale);
-	const percentage = amounts.variable.trim().endsWith("%");
+	const bonus = amounts.variable.trim().replace(/[\u061c\u200e\u200f]/g, "");
+	const percentSign =
+		new Intl.NumberFormat(locale, { style: "percent" }).formatToParts(1).find((part) => part.type === "percentSign")
+			?.value ?? "%";
+	const suffix = bonus.endsWith("%") ? "%" : percentSign;
+	const percentage = bonus.endsWith(suffix);
 	const variable = percentage
-		? parseDecimal(amounts.variable.trim().slice(0, -1).trim(), locale)
-		: parseAmount(amounts.variable, locale);
+		? parseDecimal(bonus.slice(0, -suffix.length).trim(), locale)
+		: parseAmount(bonus, locale);
 	const invalidVariable = variable === undefined || (percentage && variable === null);
 	const learning = parseAmount(amounts.learning, locale);
 	const deadline = date && timeZone ? fromZonedDateTime(date, time, timeZone) : null;

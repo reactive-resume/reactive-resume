@@ -26,6 +26,10 @@ describe("manual offer entry", () => {
 			["en-US", "10%", 10],
 			["de-DE", "12,5 %", 12.5],
 			["en-US", "0%", 0],
+			["ar-SA", "١٢٫٥٪", 12.5],
+			["ar-SA", "\u200f١٢٫٥٪\u061c", 12.5],
+			["ar-SA", "١٢٫٥%", 12.5],
+			["fa-IR", "۱۲٫۵٪", 12.5],
 		] as const) {
 			const input = entry();
 			input.amounts.variable = value;
@@ -34,7 +38,7 @@ describe("manual offer entry", () => {
 			if (!result.payload.success) throw result.payload.error;
 			expect(result.payload.data).toMatchObject({ variable: null, variablePercent: percent });
 		}
-		for (const value of ["%", "10%%", "-1%", "Infinity%", "10% extra"]) {
+		for (const value of ["%", "10%%", "-1%", "Infinity%", "10% extra", "٪", "10٪%", "10%٪"]) {
 			const input = entry();
 			input.amounts.variable = value;
 			expect(parseOfferEntry(input).payload.success, value).toBe(false);
