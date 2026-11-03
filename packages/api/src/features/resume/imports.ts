@@ -13,12 +13,13 @@ async function readPdfImport(file: File, signal?: AbortSignal) {
 	]);
 	const raw = await extractPdf(file, signal, 0);
 	const document = buildExtractedDocument(raw);
+	const partial = raw.truncated || raw.textReadFailed === true;
 	return {
-		data: !raw.truncated && document.lines.length ? parsePdfResume(document) : null,
+		data: !partial && document.lines.length ? parsePdfResume(document) : null,
 		source: {
 			lines: document.lines.map((line) => line.text),
 			links: raw.links.flatMap((link) => (link.url ? [link.url] : [])),
-			partial: raw.truncated,
+			partial,
 		},
 	};
 }

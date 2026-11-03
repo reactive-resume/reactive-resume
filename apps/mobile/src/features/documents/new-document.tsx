@@ -381,9 +381,9 @@ export function NewDocument() {
 							) : null}
 							{(!pending.compared || pending.partial) && (
 								<Text variant="caption" color="ink2">
-									{pending.partial
-										? t`This file is long, so only its first pages were compared with what came in. Check the rest in the editor.`
-										: t`This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor.`}
+									{!pending.compared
+										? t`This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor.`
+										: t`Only part of this file could be compared with what came in. Check each section against your file in the editor.`}
 								</Text>
 							)}
 							<Button label={t`Create resume`} loading={busy} onPress={() => void confirmImport(pending)} />

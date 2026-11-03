@@ -476,8 +476,8 @@ msgstr "{0}（副本）"
 msgid "{0} (mine)"
 msgstr "{0}（我的）"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
 #. placeholder {2}: step.reached
 #. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
 #: src/features/applications-board/insights-screen.tsx
@@ -8680,6 +8680,10 @@ msgstr "只找到一个可识别的部分标题。"
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "目前只有一个版本。每个编辑会话都会自动添加一个。"
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "只能将此文件的部分内容与导入的内容进行比较。请在编辑器中将每个部分与原文件进行核对。"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "只有通过测试的提供商才能开启。"
@@ -13236,10 +13240,6 @@ msgstr "作为一份简历来说，这个文件偏大。"
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "该文件的大小超过了许多申请表单允许的上限。"
-
-#: src/features/documents/new-document.tsx
-msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
-msgstr "此文件较长，因此仅将前几页与导入的内容进行了比较。请在编辑器中检查其余部分。"
 
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."

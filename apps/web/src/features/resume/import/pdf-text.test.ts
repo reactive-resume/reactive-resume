@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { parseResumeText } from "@reactive-resume/import/plain-text";
 import { buildExtractedDocument } from "@reactive-resume/resume/ats-pdf";
-import { documentToLines } from "./pdf-text";
+import { documentToLines, readPdfSource } from "./pdf-text";
 import { ImportError, readResumeFile } from "./read-file";
 
 const extract = vi.hoisted(() => vi.fn());
@@ -66,6 +66,14 @@ it("refuses a partial PDF harvest before it can report a successful no-AI import
 	const result = readResumeFile(new File(["%PDF-fixture"], "resume.pdf"), "pdf", { aiAvailable: false });
 	await expect(result).rejects.toThrow(ImportError);
 	await expect(result).rejects.toThrow("Split it into smaller files and try again.");
+});
+
+it("preserves readable source as partial and refuses no-AI creation after a page text failure", async () => {
+	const raw = rawExtraction([[{ text: "Readable surviving page", x: 40, y: 60 }]]);
+	extract.mockResolvedValue({ ...raw, textReadFailed: true });
+	const file = new File(["%PDF-fixture"], "resume.pdf");
+	expect(await readPdfSource(file)).toMatchObject({ lines: ["Readable surviving page"], partial: true });
+	await expect(readResumeFile(file, "pdf", { aiAvailable: false })).rejects.toThrow(ImportError);
 });
 
 describe("documentToLines", () => {

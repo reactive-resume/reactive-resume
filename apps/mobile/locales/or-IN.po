@@ -476,8 +476,8 @@ msgstr "{0} (କପି)"
 msgid "{0} (mine)"
 msgstr "{0} (ମୋର)"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
 #. placeholder {2}: step.reached
 #. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
 #: src/features/applications-board/insights-screen.tsx
@@ -8699,6 +8699,10 @@ msgstr "କେବଳ ଗୋଟିଏ ଚିହ୍ନଟଯୋଗ୍ୟ ବିଭ
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "ବର୍ତ୍ତମାନ ପର୍ଯ୍ୟନ୍ତ କେବଳ ଗୋଟିଏ ସଂସ୍କରଣ | ପ୍ରତ୍ୟେକ ଏଡିଟିଂ ଅଧିବେଶନ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ଗୋଟିଏ ଯୋଗ କରେ |"
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "ଏହି ଫାଇଲର କେବଳ କିଛି ଅଂଶକୁ ଆମଦାନୀ ହୋଇଥିବା ବିଷୟବସ୍ତୁ ସହ ତୁଳନା କରାଯାଇପାରିଲା। ଏଡିଟରରେ ପ୍ରତ୍ୟେକ ବିଭାଗକୁ ଆପଣଙ୍କ ଫାଇଲ ସହ ତୁଳନା କରନ୍ତୁ।"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "କେବଳ ପ୍ରଦାନକାରୀ ଯେଉଁମାନେ ସେମାନଙ୍କର ପରୀକ୍ଷାରେ ଉତ୍ତୀର୍ଣ୍ଣ ହୋଇପାରିବେ |"
@@ -13275,10 +13279,6 @@ msgstr "ଏକ ରେଜ୍ୟୁମେ ପାଇଁ ଏହି ଫାଇଲ୍ �
 msgid "This file is larger than many application forms accept."
 msgstr "ଏହି ଫାଇଲ୍ ଅନେକ ଆବେଦନ ଫର୍ମ ଗ୍ରହଣ କରୁଥିବାଠାରୁ ବଡ଼।"
 
-#: src/features/documents/new-document.tsx
-msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
-msgstr "ଏହି ଫାଇଲଟି ଲମ୍ବା, ତେଣୁ କେବଳ ପ୍ରଥମ ପୃଷ୍ଠାଗୁଡ଼ିକୁ ଆମଦାନୀ ହୋଇଥିବା ବିଷୟବସ୍ତୁ ସହ ତୁଳନା କରାଯାଇଛି। ବାକି ଅଂଶ ଏଡିଟରରେ ଯାଞ୍ଚ କରନ୍ତୁ।"
-
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "ଏହି ଫାଇଲ୍ ଅନେକ ଭିନ୍ନ ଫଣ୍ଟ ବ୍ୟବହାର କରେ।"
@@ -13378,7 +13378,7 @@ msgstr "ଏହି PDF ର କ text ଣସି ପାଠ୍ୟ ସ୍ତର ନା
 
 #: src/features/documents/import-file.ts
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
-msgstr "ଏହି PDF ଏକ ସ୍କାନ୍ ହୋଇଥିବା ପ୍ରତିଛବି | ପ read ିବାକୁ କ text ଣସି ପାଠ ନାହିଁ | Word ସଂସ୍କରଣକୁ ଚେଷ୍ଟା କରନ୍ତୁ, କିମ୍ବା ଖାଲି ଏବଂ ବିଭାଗଗୁଡ଼ିକୁ ପେଷ୍ଟ କରନ୍ତୁ |"
+msgstr "ଏହି ପିଡିଏଫ୍‌ଟି ସ୍କାନ୍ କରାଯାଇଥିବା ଏକ ଛବି। ଏଥିରେ ପଢ଼ିବା ପାଇଁ କୌଣସି ପାଠ୍ୟ ନାହିଁ। ୱାର୍ଡ ସଂସ୍କରଣ ବ୍ୟବହାର କରନ୍ତୁ, କିମ୍ବା ଖାଲିରୁ ଆରମ୍ଭ କରି ବିଭାଗଗୁଡ଼ିକ ଲେପନ କରନ୍ତୁ।"
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."

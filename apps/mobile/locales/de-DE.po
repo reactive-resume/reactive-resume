@@ -476,8 +476,8 @@ msgstr "{0} (Kopie)"
 msgid "{0} (mine)"
 msgstr "{0} (mein)"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
 #. placeholder {2}: step.reached
 #. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
 #: src/features/applications-board/insights-screen.tsx
@@ -8680,6 +8680,10 @@ msgstr "Es wurde nur eine erkennbare Abschnittsüberschrift gefunden."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Bisher nur eine Version. Bei jeder Bearbeitungssitzung wird automatisch eines hinzugefügt."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Nur ein Teil dieser Datei konnte mit dem importierten Inhalt verglichen werden. Vergleiche im Editor jeden Abschnitt mit deiner Datei."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Nur Anbieter, die ihren Test bestehen, können aktiviert werden."
@@ -13236,10 +13240,6 @@ msgstr "Diese Datei ist groß für einen Lebenslauf."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "Diese Datei ist größer, als viele Bewerbungsformulare akzeptieren."
-
-#: src/features/documents/new-document.tsx
-msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
-msgstr "Diese Datei ist lang. Deshalb wurden nur die ersten Seiten mit dem importierten Inhalt verglichen. Prüfe den Rest im Editor."
 
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."

@@ -476,8 +476,8 @@ msgstr "{0} (kopie)"
 msgid "{0} (mine)"
 msgstr "{0} (moje)"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
 #. placeholder {2}: step.reached
 #. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
 #: src/features/applications-board/insights-screen.tsx
@@ -8680,6 +8680,10 @@ msgstr "Byl nalezen pouze jeden rozpoznatelný nadpis sekce."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Zatím jen jedna verze. Každá editační relace přidá jeden automaticky."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "S importovaným obsahem se podařilo porovnat jen část tohoto souboru. Porovnejte v editoru každou sekci se svým souborem."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Zapnout lze pouze poskytovatele, kteří projdou testem."
@@ -13236,10 +13240,6 @@ msgstr "Tento soubor je na životopis velký."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "Tento soubor je větší, než mnoho formulářů žádostí přijme."
-
-#: src/features/documents/new-document.tsx
-msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
-msgstr "Tento soubor je dlouhý, proto byly s importovaným obsahem porovnány pouze první stránky. Zbytek zkontrolujte v editoru."
 
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
