@@ -13,13 +13,13 @@ export async function readPdfSource(file: File) {
 	return {
 		lines: documentToLines(doc),
 		links: (doc.links ?? []).flatMap((link) => (link.url ? [link.url] : [])),
-		partial: raw.truncated || raw.textReadFailed === true,
+		partial: raw.truncated || raw.textReadFailed === true || raw.annotationReadFailed === true,
 	};
 }
 
 export async function readPdfResume(file: File) {
 	const raw = await extractPdf(file, { operatorBudgetMs: 0 });
-	if (raw.truncated || raw.textReadFailed)
+	if (raw.truncated || raw.textReadFailed || raw.annotationReadFailed)
 		throw new ImportError(
 			t`Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file.`,
 		);

@@ -13,7 +13,7 @@ async function readPdfImport(file: File, signal?: AbortSignal) {
 	]);
 	const raw = await extractPdf(file, signal, 0);
 	const document = buildExtractedDocument(raw);
-	const partial = raw.truncated || raw.textReadFailed === true;
+	const partial = raw.truncated || raw.textReadFailed === true || raw.annotationReadFailed === true;
 	return {
 		data: !partial && document.lines.length ? parsePdfResume(document) : null,
 		source: {
