@@ -170,7 +170,7 @@ for (const override of [false, true])
 		expect((await read(page, sourceId)).data).toEqual(source.data);
 	});
 
-for (const action of ["remove", "send", "failure", "changed"])
+for (const action of ["remove", "send", "failure", "changed", "reopen"])
 	test(`A2-27 explicit long-paste attachment ${action}`, async ({ authPage: page }, info) => {
 		await provider(page);
 		await createSampleResumeFromDashboard(page, info);
@@ -226,6 +226,16 @@ for (const action of ["remove", "send", "failure", "changed"])
 			return (await r.json()).json;
 		};
 		expect((await get()).attachments).toHaveLength(1);
+		if (action === "reopen") {
+			const reopened = new URL(page.url());
+			reopened.searchParams.set("assistant", threadId);
+			await page.goto(reopened.toString());
+			await expect(region.getByText("message.txt", { exact: true })).toBeVisible();
+			expect(sends).toBe(0);
+			await region.getByRole("button", { name: "Remove message.txt", exact: true }).click();
+			await expect(region.getByText("message.txt", { exact: true })).toHaveCount(0);
+			expect((await get()).attachments).toHaveLength(0);
+		}
 		if (action === "remove") {
 			await region.getByRole("button", { name: "Remove message.txt", exact: true }).click();
 			await expect(region.getByText("message.txt", { exact: true })).toHaveCount(0);
@@ -287,4 +297,26 @@ test("A2-25 real posting gap is tickable without changing its evidence or the do
 	await page
 		.getByRole("region", { name: "Assistant", exact: true })
 		.screenshot({ path: info.outputPath("assistant-posting-gaps.png") });
+});
+
+test("locale-less JSON Resume import uses the chosen interface language", async ({ authPage: page }) => {
+	await page.goto("/dashboard?locale=de-DE");
+	await expect(page.locator("html")).toHaveAttribute("lang", "de-DE");
+	await page.getByRole("button", { name: "Neu", exact: true }).click();
+	const dialog = page.getByRole("dialog");
+	await dialog.locator('input[type="file"]').setInputFiles({
+		name: "Fictional-JSON-Resume.json",
+		mimeType: "application/json",
+		buffer: Buffer.from(JSON.stringify({ basics: { name: "Fictional language choice" } })),
+	});
+	await expect
+		.poll(async () => {
+			const rows = await (await page.request.get("/api/openapi/resumes")).json();
+			return rows.find((row: { name: string }) => row.name.includes("Fictional"))?.id;
+		})
+		.toBeTruthy();
+	const rows = await (await page.request.get("/api/openapi/resumes")).json();
+	const saved = await read(page, rows.find((row: { name: string }) => row.name.includes("Fictional")).id);
+	expect(saved.data.metadata.page.locale).toBe("de-DE");
+	expect(saved.data.basics.name).toBe("Fictional language choice");
 });

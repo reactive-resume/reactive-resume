@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { approveLocalStubOperations } from "../fixtures/ai-consent";
 import { startAiStub } from "../fixtures/ai-stub";
+import { readAuthenticatedJson } from "../fixtures/auth";
 import { createSampleResumeFromDashboard } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
@@ -132,7 +133,7 @@ for (const failure of ["uncommitted", "committed-lost"] as const)
 			await page.getByLabel("Company", { exact: true }).fill("Cancelled Fictional");
 			await page.getByLabel("Role", { exact: true }).fill("Cancelled Role");
 			await page.getByRole("button", { name: "Cancel", exact: true }).last().click();
-			expect(await (await page.request.get("/api/openapi/applications")).json()).toMatchObject([{ id: oldJobId }]);
+			expect(await readAuthenticatedJson(page, "/api/openapi/applications")).toMatchObject([{ id: oldJobId }]);
 			expect(stub.requests).toHaveLength(calls);
 			await action.click();
 			await page.getByLabel("Company", { exact: true }).fill("Fictional Lumen");
@@ -181,7 +182,7 @@ for (const failure of ["uncommitted", "committed-lost"] as const)
 			await page.getByRole("button", { name: "Save and link this resume", exact: true }).click();
 			if (failure === "uncommitted") {
 				await expect(page.getByRole("button", { name: "Save and link this resume", exact: true })).toBeEnabled();
-				expect(await (await page.request.get("/api/openapi/applications")).json()).toHaveLength(2);
+				expect(await readAuthenticatedJson(page, "/api/openapi/applications")).toHaveLength(2);
 				await expect(
 					page.getByRole("button", { name: "Send Previous Fictional posting again", exact: true }),
 				).toBeVisible();
@@ -208,7 +209,7 @@ for (const failure of ["uncommitted", "committed-lost"] as const)
 				await page.getByRole("button", { name: "Save and link this resume", exact: true }).click();
 			}
 			await expect(page.getByText("Saved as a job and linked to this resume", { exact: true }).first()).toBeVisible();
-			const jobs = await (await page.request.get("/api/openapi/applications")).json();
+			const jobs = await readAuthenticatedJson(page, "/api/openapi/applications");
 			const id = jobs.find((job: { id: string }) => job.id !== oldJobId).id;
 			expect(new URL(page.url()).searchParams.get("applicationId")).toBe(id);
 			expect(writes.map((write) => write.path)).toEqual([
@@ -348,7 +349,7 @@ test("posting create and resume link reject foreign resources and mismatched acc
 		});
 		expect(mismatch.ok()).toBe(false);
 		expect(JSON.parse(await resumeJson(page, resumeId)).applicationId).toBeNull();
-		expect(await (await page.request.get("/api/openapi/applications")).json()).toHaveLength(1);
+		expect(await readAuthenticatedJson(page, "/api/openapi/applications")).toHaveLength(1);
 		expect(await (await other.get("/api/openapi/applications")).json()).toEqual([]);
 	} finally {
 		await other.delete("/api/openapi/auth/account");

@@ -1,7 +1,6 @@
 import type { Page } from "@playwright/test";
-import { request } from "@playwright/test";
 import { Pool } from "pg";
-import { createAuthenticatedContext } from "../fixtures/auth";
+import { createAuthenticatedContext, readAuthenticatedJson } from "../fixtures/auth";
 import { createAccount } from "../fixtures/data";
 import { deleteE2EUser } from "../fixtures/db";
 import { expect, test } from "../fixtures/test";
@@ -40,19 +39,8 @@ async function removeFirst(page: Page) {
 	await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
 }
 
-async function readCommittedWorkspace(page: Page, applicationId: string) {
-	// Undo outlives the server's idle HTTP connection; read once as an independent authenticated client.
-	const reader = await request.newContext({
-		baseURL: new URL(page.url()).origin,
-		storageState: await page.context().storageState(),
-	});
-	try {
-		const response = await reader.get(`/api/openapi/career/workspace/${applicationId}`);
-		await expect(response).toBeOK();
-		return await response.json();
-	} finally {
-		await reader.dispose();
-	}
+function readCommittedWorkspace(page: Page, applicationId: string) {
+	return readAuthenticatedJson(page, `/api/openapi/career/workspace/${applicationId}`);
 }
 
 for (const mode of ["reload", "close"] as const)
