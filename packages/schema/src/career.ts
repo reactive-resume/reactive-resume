@@ -87,6 +87,24 @@ export const careerFactInputSchema = careerScopeSchema.extend({
 	source: careerSourceSchema,
 });
 
+// Bound submitted input before normalization so runtime and published lengths agree.
+export const MAX_RESUME_FACT_CHARACTERS = 2000;
+const resumeFactTextSchema = z.string().max(MAX_RESUME_FACT_CHARACTERS).trim().min(1).regex(/\S/);
+
+export const resumeFactProposalSchema = careerFactInputSchema.pick({ text: true, category: true }).extend({
+	text: resumeFactTextSchema.describe(
+		"Non-blank fact text. At most 2,000 characters including surrounding whitespace; trimmed before saving.",
+	),
+	quote: resumeFactTextSchema.describe(
+		"Non-blank source quotation. At most 2,000 characters including surrounding whitespace; trimmed before saving.",
+	),
+});
+export const resumeFactsReviewSchema = z.object({
+	resumeId: z.string().min(1),
+	updatedAt: z.coerce.date(),
+	proposals: z.array(resumeFactProposalSchema).min(1).max(50),
+});
+
 export const careerStoryInputSchema = careerScopeSchema.extend({
 	title: z.string().trim().min(1).max(200),
 	situation: z.string().trim().min(1).max(4000),

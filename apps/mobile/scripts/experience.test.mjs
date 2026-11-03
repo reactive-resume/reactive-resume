@@ -1583,6 +1583,137 @@ console.log(
 	"PASS native discovery role opt-ins, no-AI fallback, editable-before-use roles and cross-account response isolation",
 );
 
+// Resume review: native orchestration only; canonical persistence belongs to the HTTP/SQL regression.
+reset();
+let knowledgeScope = "alice@server-a";
+const factReview = {
+	id: "owned-resume",
+	name: "Maya Example",
+	updatedAt: new Date("2030-01-01"),
+	omitted: 0,
+	proposals: [
+		{ text: "Led twelve engineers.", category: "experience", quote: "Led twelve engineers." },
+		{ text: "TypeScript", category: "skill", quote: "- **TypeScript**" },
+	],
+};
+const knowledgeRequests = [];
+let replyFacts = async () => factReview;
+const mutations = [];
+const { ResumeFacts } = load("features/career/resume-facts.tsx", {
+	"@reactive-resume/schema/career": careerSchema,
+	"@tanstack/react-query": {
+		useQuery: () => ({ isSuccess: true, data: [{ id: "owned-resume", name: "Maya", type: "resume" }], refetch() {} }),
+		useQueryClient: () => ({ invalidateQueries() {} }),
+		useMutation: (options) => {
+			const [state, setState] = react.useState({ isPending: false, error: null });
+			return {
+				...state,
+				reset: () => setState({ isPending: false, error: null }),
+				mutate: () => {
+					setState({ isPending: true, error: null });
+					const pending = Promise.resolve()
+						.then(options.mutationFn)
+						.then(
+							(result) => {
+								setState({ isPending: false, error: null });
+								options.onSuccess?.(result);
+							},
+							(error) => setState({ isPending: false, error }),
+						);
+					mutations.push(pending);
+				},
+			};
+		},
+	},
+	"./fact-categories": {
+		factCategories: () => [
+			{ value: "experience", label: "Experience" },
+			{ value: "skill", label: "Skill" },
+		],
+	},
+	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
+	"@/auth/session": {
+		getAccountScope: () => knowledgeScope,
+		useSession: () => ({ server: "server-a", status: "signed-in" }),
+	},
+	"@/api/client": {
+		orpc: {
+			documents: { list: { queryOptions: () => ({ queryKey: ["documents"] }) } },
+			career: { facts: { key: () => ["facts"] } },
+		},
+		client: {
+			career: {
+				proposeResumeFacts: async (input, options) => {
+					knowledgeRequests.push({ preview: input, options });
+					return replyFacts();
+				},
+				saveResumeFacts: async (input, options) => {
+					knowledgeRequests.push({ save: input, options });
+					return { saved: 1, skipped: 0 };
+				},
+			},
+		},
+	},
+	"@/features/workspace/hooks": { workspaceError: (_cause, fallback) => fallback },
+});
+control(render(ResumeFacts, {}), "Pull facts from my resume").onPress();
+const factForm = nodes(render(ResumeFacts, {})).find((node) => typeof node.type === "function");
+assert.ok(factForm);
+reset();
+const factView = () => render(factForm.type, factForm.props);
+assert.equal(control(factView(), "Review resume facts").disabled, true);
+control(factView(), "Resume").onChange("owned-resume");
+control(factView(), "Review resume facts").onPress();
+await Promise.all(mutations);
+assert.equal(knowledgeRequests.length, 1, "preview never saves");
+assert.deepEqual(knowledgeRequests[0], {
+	preview: { resumeId: "owned-resume" },
+	options: { context: { scope: "alice@server-a" } },
+});
+const firstFact = nodes(factView()).find((node) => node.props.label === "Fact");
+const unicodeFact = "A" + "😀".repeat(1999);
+firstFact.props.onChangeText(unicodeFact);
+assert.equal(nodes(factView()).find((node) => node.props.label === "Fact").props.value, unicodeFact);
+nodes(factView())
+	.find((node) => node.props.label === "Fact")
+	.props.onChangeText("x".repeat(2001));
+assert.equal(nodes(factView()).find((node) => node.props.label === "Fact").props.value, unicodeFact);
+firstFact.props.onChangeText("Led twelve engineers delivering tools.");
+nodes(factView())
+	.filter((node) => node.props.label === "Save this fact")[1]
+	.props.onValueChange(false);
+control(factView(), "Save selected facts").onPress();
+await Promise.all(mutations);
+assert.deepEqual(knowledgeRequests[1].save, {
+	resumeId: "owned-resume",
+	updatedAt: factReview.updatedAt,
+	proposals: [
+		{ text: "Led twelve engineers delivering tools.", category: "experience", quote: "Led twelve engineers." },
+	],
+});
+assert.equal(nodes(factView()).filter((node) => node.props.label === "Fact").length, 0);
+let finishFacts;
+replyFacts = () =>
+	new Promise((resolve) => {
+		finishFacts = resolve;
+	});
+control(factView(), "Review resume facts").onPress();
+await settle();
+knowledgeScope = "bob@server-b";
+finishFacts(factReview);
+await Promise.all(mutations);
+assert.equal(
+	nodes(factView()).filter((node) => node.props.label === "Fact").length,
+	0,
+	"late old-account excerpts cannot enter new-account review",
+);
+control(factView(), "Review resume facts").onPress();
+await Promise.all(mutations);
+assert.equal(knowledgeRequests.length, 3, "a stale account/server callback sends nothing");
+console.log(
+	"PASS native explicit resume selection, editable selected-only review, consented save and late account/server isolation",
+);
+
 reset();
 const triageCalls = [];
 let triageActive = 0;
@@ -2462,6 +2593,8 @@ const { useCareerAction: memoryAction } = load("features/career/hooks.ts", {
 	"@/features/settings/queries": {},
 });
 const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
+	"./fact-categories": load("features/career/fact-categories.ts"),
+	"./resume-facts": { ResumeFacts },
 	react: {
 		...react,
 		memo: (component) => component,

@@ -1171,7 +1171,7 @@ msgstr "Habe ein anderes Angebot angenommen"
 msgid "Accepted offer"
 msgstr "Angebot angenommen"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Erfolg"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "Ersatz auswählen"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "Lebenslauf auswählen"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Wählen Sie in Write einen Lebenslauf aus, der zu seinem Design passt. Bis dahin hat der Brief seinen eigenen."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Wähle einen Lebenslauf und prüfe die Auszüge. Es wird nichts an einen KI-Anbieter gesendet. Nur ausgewählte Fakten werden im Wissen für alle Bewerbungen gespeichert."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "Dokumente konnten nicht geladen werden. Versuchen Sie es erneut."
 msgid "Couldn't load letter"
 msgstr "Anschreiben konnte nicht geladen werden"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Lebenslauffakten konnten nicht geladen oder gespeichert werden. Versuche es erneut."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "Die Lebensläufe für ein neues Anschreiben konnten nicht geladen werden."
@@ -4193,6 +4202,10 @@ msgstr "Sprachkopie erstellen"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Erstellen oder importieren Sie zunächst einen Lebenslauf und kehren Sie dann zurück, um ihn für diesen Job zu kopieren."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Erstelle oder importiere zuerst einen Lebenslauf unter Dokumente."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "Erfahrung"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "Dachzeile"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fakt"
 
@@ -8203,6 +8217,10 @@ msgstr "Aus dieser Stellenbeschreibung konnten keine spezifischen Begriffe entno
 msgid "No stories yet"
 msgstr "Noch keine Geschichten"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Keine geeigneten Auszüge gefunden. Füge einen Fakt manuell hinzu oder wähle einen anderen Lebenslauf."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "Sie üben Ihre Geschichte: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Bevorzugen Sie eine einzelne Spalte, oder beschränken Sie die Seitenspalte auf kurze, in sich geschlossene Listen."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "Präferenz"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "Verlag"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Fakten aus meinem Lebenslauf übernehmen"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Prüfen Sie die Pflichtantworten im Formular und entfernen Sie nicht belegte Aussagen."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Lebenslauffakten prüfen"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Zeitplan speichern"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Ausgewählte Fakten speichern"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Diese Angebotskonditionen zum Vergleichen speichern"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Diesen Fakt speichern"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "In Ihrem Wissen gespeichert, nur für diese Bewerbung."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Gespeichert: {0}. Übersprungen: {1}. Bestehende, korrigierte oder deaktivierte Fakten bleiben unverändert."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "Größe"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "Fähigkeit"
 
@@ -11909,6 +11950,10 @@ msgstr "Manche Glyphen haben außerhalb dieser Datei keine Bedeutung."
 msgid "Some lines are stored out of reading order."
 msgstr "Manche Zeilen sind nicht in Lesereihenfolge gespeichert."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "Ein Teil des Lebenslauftexts wurde ausgelassen. Füge weitere Fakten manuell hinzu."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Einige Systeme gehen falsch mit Bildern um und in manchen Ländern wird von Fotos abgeraten."
@@ -11971,6 +12016,10 @@ msgstr "Quellcode auf GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Quellenzitat"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "Zweistufige Verifizierung"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

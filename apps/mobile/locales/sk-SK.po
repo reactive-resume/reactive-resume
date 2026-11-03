@@ -1171,7 +1171,7 @@ msgstr "Prijal ďalšiu ponuku"
 msgid "Accepted offer"
 msgstr "Prijatá ponuka"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Úspech"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "Vyberte náhradu"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "Vyberte životopis"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Vyberte si životopis v aplikácii Write tak, aby zodpovedal jeho dizajnu. Dovtedy má list svoje."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Vyberte životopis a skontrolujte úryvky. Poskytovateľovi AI sa nič neposiela. Iba vybrané fakty sa uložia do Znalostí pre všetky žiadosti."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "Dokumenty sa nepodarilo načítať. Skúste to znova."
 msgid "Couldn't load letter"
 msgstr "Sprievodný list sa nepodarilo načítať"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Fakty zo životopisu sa nepodarilo načítať alebo uložiť. Skúste to znova."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "Nepodarilo sa načítať životopisy pre nový sprievodný list."
@@ -4193,6 +4202,10 @@ msgstr "Vytvoriť jazykovú kópiu"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Najprv vytvorte alebo importujte životopis, potom sa vráťte a skopírujte ho pre túto úlohu."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Najprv vytvorte alebo importujte životopis v Dokumentoch."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "Skúsenosti"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "Nadtitulok"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fakt"
 
@@ -8203,6 +8217,10 @@ msgstr "Z tohto popisu práce nebolo možné vytiahnuť žiadne konkrétne výra
 msgid "No stories yet"
 msgstr "Zatiaľ žiadne príbehy"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Nenašli sa podporované úryvky. Pridajte fakt ručne alebo vyberte iný životopis."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "Nacvičujete príbeh: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Uprednostnite jeden stĺpec, alebo ponechajte bočný stĺpec len na krátke samostatné zoznamy."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "Preferencia"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "Vydavateľ"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Získať fakty z môjho životopisu"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Skontrolujte povinné odpovede vo formulári a odstráňte nepodložené tvrdenia."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Skontrolovať fakty zo životopisu"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Uložiť naplánovanú úlohu"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Uložiť vybrané fakty"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Uložiť tieto podmienky ponuky na porovnanie"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Uložiť tento fakt"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "Uložené do Znalostí, súkromné pre túto žiadosť."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Uložené: {0}. Preskočené: {1}. Existujúce, opravené alebo vypnuté fakty zostávajú nezmenené."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "Veľkosť"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "Zručnosť"
 
@@ -11909,6 +11950,10 @@ msgstr "Niektoré glyfy nemajú mimo tohto súboru žiadny význam."
 msgid "Some lines are stored out of reading order."
 msgstr "Niektoré riadky sú uložené mimo poradia čítania."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "Časť textu životopisu bola vynechaná. Ďalšie fakty pridajte ručne."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Niektoré systémy nesprávne narábajú s obrázkami a v niektorých krajinách sa fotografie neodporúčajú."
@@ -11971,6 +12016,10 @@ msgstr "Zdrojový kód na GitHube"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Citácia zdroja"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "Dvojstupňové overenie"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

@@ -1171,7 +1171,7 @@ msgstr "अर्को प्रस्ताव स्वीकार गरे
 msgid "Accepted offer"
 msgstr "स्वीकार गरिएको प्रस्ताव"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "उपलब्धि"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "प्रतिस्थापन छान्नुहोस्"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "एउटा बायोडाटा छान्नुहोस्"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "यसको डिजाइन मिलाउन Write मा रिज्युम छान्नुहोस्। त्यतिन्जेल, पत्रको आफ्नै हुन्छ।"
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "एउटा बायोडाटा छान्नुहोस् र त्यसका अंशहरू समीक्षा गर्नुहोस्। AI प्रदायकलाई केही पठाइँदैन। छानिएका तथ्यहरू मात्र सबै आवेदनका लागि ज्ञानमा सुरक्षित हुन्छन्।"
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "कागजातहरू लोड गर्न सकिएन। �
 msgid "Couldn't load letter"
 msgstr "आवरण पत्र लोड गर्न सकिएन"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "बायोडाटाका तथ्यहरू लोड वा सुरक्षित गर्न सकिएन। फेरि प्रयास गर्नुहोस्।"
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "नयाँ आवरण पत्रको लागि बायोडाटाहरू लोड गर्न सकिएन।"
@@ -4193,6 +4202,10 @@ msgstr "भाषाको प्रतिलिपि बनाउनुहो�
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "पहिले बायोडाटा सिर्जना वा आयात गर्नुहोस्, त्यसपछि यो कामको लागि प्रतिलिपि गर्न फर्कनुहोस्।"
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "पहिले कागजातमा बायोडाटा बनाउनुहोस् वा आयात गर्नुहोस्।"
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "अनुभव"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "माथिल्लो लेबल"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "तथ्य"
 
@@ -8203,6 +8217,10 @@ msgstr "त्यो कामको विवरणबाट कुनै व�
 msgid "No stories yet"
 msgstr "अझै कथाहरू छैनन्"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "समर्थित अंशहरू भेटिएनन्। तथ्य आफैँ थप्नुहोस् वा अर्को बायोडाटा छान्नुहोस्।"
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "तपाईंको कथाको अभ्यास: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "एकल स्तम्भ रोज्नुहोस्, वा छेउको स्तम्भलाई छोटो, स्वतन्त्र सूचीहरूमा सीमित राख्नुहोस्।"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "प्राथमिकता"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "प्रकाशक"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "मेरो बायोडाटाबाट तथ्यहरू लिनुहोस्"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "आवश्यक फारम जवाफहरू समीक्षा गर्नुहोस् र समर्थन नभएका दाबीहरू हटाउनुहोस्।"
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "बायोडाटाका तथ्यहरू समीक्षा गर्नुहोस्"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "तालिका सुरक्षित गर्नुहोस्"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "छानिएका तथ्यहरू सुरक्षित गर्नुहोस्"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "तुलना गर्न यी प्रस्ताव सर्तहरू सुरक्षित गर्नुहोस्"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "यो तथ्य सुरक्षित गर्नुहोस्"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "ज्ञानभण्डारमा सुरक्षित गर�
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "सुरक्षित: {0}। छोडिएका: {1}। भएका, सच्याइएका वा बन्द गरिएका तथ्यहरू परिवर्तन हुँदैनन्।"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "आकार"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "सीप"
 
@@ -11909,6 +11950,10 @@ msgstr "केही ग्लिफको यो फाइल बाहिर �
 msgid "Some lines are stored out of reading order."
 msgstr "केही लाइनहरू पढ्ने क्रम बाहिर भण्डारण गरिएका छन्।"
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "बायोडाटाको केही पाठ छुटाइएको छ। अन्य तथ्यहरू आफैँ थप्नुहोस्।"
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "केही प्रणालीहरूले तस्बिरहरूलाई गलत प्रयोग गर्छन्, र केही देशहरूमा तस्बिरहरूलाई निरुत्साहित गरिन्छ।"
@@ -11971,6 +12016,10 @@ msgstr "GitHub मा स्रोत कोड"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "स्रोत उद्धरण"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "दुई-चरण प्रमाणिकरण"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

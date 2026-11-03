@@ -1171,7 +1171,7 @@ msgstr "ሌላ ቅናሽ ተቀብሏል።"
 msgid "Accepted offer"
 msgstr "ቅናሹን ተቀብሏል"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "ስኬት"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "ተተኪ ይምረጡ"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "የሥራ ማመልከቻ ታሪክ ይምረጡ"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "ከዲዛይኑ ጋር ለማዛመድ በጻፍ ውስጥ የመማሪያ መጽሐፍ ምረጥ። እስከዚያ ድረስ ደብዳቤው የራሱ አለው."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "የሕይወት ታሪክ ይምረጡና ቅንጭቦቹን ይከልሱ። ለAI አቅራቢ ምንም አይላክም። የተመረጡ እውነታዎች ብቻ ለሁሉም ማመልከቻዎች በእውቀት ውስጥ ይቀመጣሉ።"
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "ሰነዶችን መጫን አልተቻለም። እንደገና ይሞ�
 msgid "Couldn't load letter"
 msgstr "የሽፋን ደብዳቤ መጫን አልተቻለም"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "የሕይወት ታሪክ እውነታዎችን መጫን ወይም ማስቀመጥ አልተቻለም። እንደገና ይሞክሩ።"
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "ለአዲስ የሽፋን ደብዳቤ የስራ ልምድ ማስረጃዎችን መጫን አልተቻለም።"
@@ -4193,6 +4202,10 @@ msgstr "የቋንቋ ቅጂ ፍጠር"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "መጀመሪያ የስራ ልምድ ማስረጃ ይፍጠሩ ወይም ያስመጡ፣ ከዚያ ለዚህ ስራ ለመቅዳት ይመለሱ።"
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "መጀመሪያ በሰነዶች ውስጥ የሕይወት ታሪክ ይፍጠሩ ወይም ያስገቡ።"
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "ልምድ"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "የላይኛው አነስተኛ ርዕስ"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "እውነታ"
 
@@ -8203,6 +8217,10 @@ msgstr "ከሥራ መግለጫው ውስጥ ምንም ልዩ ቃላቶች ሊወ
 msgid "No stories yet"
 msgstr "እስካሁን ታሪኮች የሉም"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "የሚደገፉ ቅንጭቦች አልተገኙም። እውነታ በእጅ ያክሉ ወይም ሌላ የሕይወት ታሪክ ይምረጡ።"
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "ታሪክዎን በመለማመድ ላይ፦ {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "ነጠላ አምድን ይምረጡ፣ ወይም የጎን አምዱን ለአጫጭር፣ ራሳቸውን ለቻሉ ዝርዝሮች ብቻ ያድርጉት።"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "ምርጫ"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "አታሚ"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "ከሕይወት ታሪኬ እውነታዎችን አውጣ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "የሚያስፈልጉ የቅጽ መልሶችን ይገምግሙ፣ ያልተደገፉ አባባሎችንም ያስወግዱ።"
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "የሕይወት ታሪክ እውነታዎችን ክለስ"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "መርሐ ግብሩን አስቀምጥ"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "የተመረጡ እውነታዎችን አስቀምጥ"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "ለማነጻጸር እነዚህን የቅናሽ ውሎች አስቀምጥ"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "ይህን እውነታ አስቀምጥ"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "ወደ እውቀት ተቀምጧል፣ ለዚህ ማመልከቻ ብቻ 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "የተቀመጡ፦ {0}። የተዘለሉ፦ {1}። ነባር፣ የታረሙ ወይም የተሰናከሉ እውነታዎች አይቀየሩም።"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "መጠን"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "ችሎታ"
 
@@ -11909,6 +11950,10 @@ msgstr "አንዳንድ ፊደላት ከዚህ ፋይል ውጭ ትርጉም የ
 msgid "Some lines are stored out of reading order."
 msgstr "አንዳንድ መስመሮች ከንባብ ቅደም ተከተል ውጪ ተከማችተዋል።"
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "አንዳንድ የሕይወት ታሪክ ጽሑፍ ተትቷል። ሌሎች እውነታዎችን በእጅ ያክሉ።"
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "አንዳንድ ስርዓቶች ምስሎችን በተሳሳተ መንገድ ይያዛሉ፣ እና ፎቶዎች በአንዳንድ አገሮች ተስፋ ይቆርጣሉ።"
@@ -11971,6 +12016,10 @@ msgstr "የምንጭ ኮድ በGitHub ላይ"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "የምንጭ ጥቅስ"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "ባለ ሁለት ደረጃ ማረጋገጫ"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

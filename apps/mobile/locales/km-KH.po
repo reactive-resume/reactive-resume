@@ -1171,7 +1171,7 @@ msgstr "បានទទួលយកការផ្តល់ជូនផ្សេ
 msgid "Accepted offer"
 msgstr "បានទទួលយកការផ្តល់ការងារ"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "សមិទ្ធផល"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "ជ្រើសរើសដំណាក់កាលជំនួស"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "ជ្រើសរើសប្រវត្តិរូបសង្ខេប"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "ជ្រើសរើសប្រវត្តិរូបសង្ខេបក្នុង Write ដើម្បីផ្គូផ្គងការរចនារបស់វា។ រហូតមកដល់ពេលនោះ សំបុត្រមានរបស់ខ្លួន។"
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "ជ្រើសរើសប្រវត្តិរូបសង្ខេប រួចពិនិត្យអត្ថបទដកស្រង់។ គ្មានអ្វីត្រូវបានផ្ញើទៅអ្នកផ្តល់ AI ទេ។ មានតែការពិតដែលបានជ្រើសរើសប៉ុណ្ណោះត្រូវបានរក្សាទុកក្នុងចំណេះដឹងសម្រាប់ពាក្យសុំទាំងអស់។"
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "មិនអាចផ្ទុកឯកសារបានទេ។ ស�
 msgid "Couldn't load letter"
 msgstr "មិនអាចផ្ទុកលិខិតអមបានទេ។"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "មិនអាចផ្ទុក ឬរក្សាទុកការពិតពីប្រវត្តិរូបសង្ខេបបានទេ។ សូមព្យាយាមម្តងទៀត។"
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "មិនអាចផ្ទុក ប្រវត្តិរូបសង្ខេប សម្រាប់ លិខិតអម ថ្មី។"
@@ -4193,6 +4202,10 @@ msgstr "បង្កើតច្បាប់ចម្លងជាភាសាផ
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "បង្កើត ឬនាំចូល ប្រវត្តិរូបសង្ខេប ជាមុនសិន បន្ទាប់មកត្រឡប់ទៅចម្លងវាវិញសម្រាប់ការងារនេះ។"
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "ដំបូង បង្កើត ឬនាំចូលប្រវត្តិរូបសង្ខេបក្នុងឯកសារ។"
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "បទពិសោធន៍"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "ស្លាកខាងលើ"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "ការពិត"
 
@@ -8203,6 +8217,10 @@ msgstr "មិនអាចដកស្រង់ពាក្យគន្លឹះ
 msgid "No stories yet"
 msgstr "មិនទាន់មានរឿងទេ"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "រកមិនឃើញអត្ថបទដកស្រង់ដែលគាំទ្រទេ។ បន្ថែមការពិតដោយដៃ ឬជ្រើសរើសប្រវត្តិរូបសង្ខេបផ្សេង។"
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "កំពុងហាត់សមរឿងរបស់អ្នក៖ {s
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "ចូលចិត្តជួរឈរតែមួយ ឬរក្សាជួរឈរចំហៀងឱ្យមានតែបញ្ជីខ្លីៗ ពេញលេញដោយខ្លួនឯង។"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "ចំណង់ចំណូលចិត្ត"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "អ្នកបោះពុម្ពផ្សាយ"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "យកការពិតពីប្រវត្តិរូបសង្ខេបរបស់ខ្ញុំ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "ពិនិត្យចម្លើយទម្រង់ដែលតម្រូវ ហើយដកការអះអាងដែលគ្មានភស្តុតាងគាំទ្រចេញ។"
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "ពិនិត្យការពិតពីប្រវត្តិរូបសង្ខេប"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "រក្សាទុកកាលវិភាគ"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "រក្សាទុកការពិតដែលបានជ្រើសរើស"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "រក្សាទុកលក្ខខណ្ឌការផ្តល់ការងារទាំងនេះដើម្បីប្រៀបធៀប"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "រក្សាទុកការពិតនេះ"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "បានរក្សាទុកទៅចំណេះដឹង ឯក�
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "បានរក្សាទុក៖ {0}។ បានរំលង៖ {1}។ ការពិតដែលមានស្រាប់ បានកែតម្រូវ ឬបិទនៅដដែល។"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "ទំហំ"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "ជំនាញ"
 
@@ -11909,6 +11950,10 @@ msgstr "តួអក្សរខ្លះគ្មានអត្ថន័យន
 msgid "Some lines are stored out of reading order."
 msgstr "បន្ទាត់ខ្លះត្រូវបានផ្ទុកក្រៅលំដាប់អាន។"
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "អត្ថបទប្រវត្តិរូបសង្ខេបខ្លះមិនត្រូវបានបញ្ចូលក្នុងសំណើទាំងនេះទេ។ បន្ថែមការពិតផ្សេងទៀតដោយដៃ។"
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "ប្រព័ន្ធខ្លះគ្រប់គ្រងរូបភាពខុស ហើយរូបថតត្រូវបានលើកទឹកចិត្តនៅក្នុងប្រទេសខ្លះ។"
@@ -11971,6 +12016,10 @@ msgstr "កូដប្រភពនៅលើ GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "សម្រង់ប្រភព"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "ការផ្ទៀងផ្ទាត់ពីរជំហាន"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

@@ -1171,7 +1171,7 @@ msgstr "接受了另一个报价"
 msgid "Accepted offer"
 msgstr "已接受录用"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "成就"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "选择替代阶段"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "选择简历"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "在 Write 中选择一份与其设计相匹配的简历。到那时，这封信就有了它自己的。"
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "选择一份简历并查看摘录。不会向 AI 提供商发送任何内容。只有选中的事实才会保存到知识库，供所有求职申请使用。"
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "无法加载文档，请重试。"
 msgid "Couldn't load letter"
 msgstr "无法加载求职信"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "无法加载或保存简历事实。请重试。"
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "无法加载新求职信的简历。"
@@ -4193,6 +4202,10 @@ msgstr "创建其他语言副本"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "首先创建或导入简历，然后返回以复制该职位的简历。"
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "请先在文档中创建或导入简历。"
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "工作经历"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "上方小标题"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "事实"
 
@@ -8203,6 +8217,10 @@ msgstr "无法从该职位描述中提取具体关键词。"
 msgid "No stories yet"
 msgstr "暂无故事"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "未找到支持的摘录。请手动添加事实或选择另一份简历。"
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "正在练习您的故事：{storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "优先使用单栏布局，或让侧栏只放简短、独立的列表。"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "偏好"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "发布者"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "从我的简历中提取事实"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "检查必填的表单回答，删除没有依据的陈述。"
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "审核简历事实"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "保存定时任务"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "保存选中的事实"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "保存这些录用条件以进行比较"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "保存此事实"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "已保存到知识库，仅用于此申请。"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "已保存：{0}。已跳过：{1}。现有、已修正或已关闭的事实保持不变。"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "大小"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "技能"
 
@@ -11909,6 +11950,10 @@ msgstr "有些字形脱离这份文件后就没有意义了。"
 msgid "Some lines are stored out of reading order."
 msgstr "有些行的存储顺序和阅读顺序不一致。"
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "部分简历文本已被省略。请手动添加其他事实。"
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "有些系统对图像处理不当，并且在某些国家/地区不鼓励使用照片。"
@@ -11971,6 +12016,10 @@ msgstr "GitHub 上的源代码"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "来源引文"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "两步验证"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

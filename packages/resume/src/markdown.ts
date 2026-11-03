@@ -1,4 +1,6 @@
+import type { FactCategory } from "@reactive-resume/schema/career";
 import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import { MAX_RESUME_FACT_CHARACTERS } from "@reactive-resume/schema/career";
 import { assertResumeRenderBudget, assertRichTextComplexity } from "@reactive-resume/schema/resume/limits";
 import { toSafeLink } from "@reactive-resume/utils/link";
 import { isCoverLetterOnlyDocument } from "./export-sections";
@@ -33,6 +35,72 @@ export function buildMarkdown(data: ResumeData, resolveTitle?: SectionTitleResol
 		.join("\n\n")
 		.replace(/\n{3,}/g, "\n\n")
 		.trim()}\n`;
+}
+
+/** Visible career excerpts, excluding header fields, References and cover letters; no inferred claims or redaction. */
+export function resumeFactProposals(data: ResumeData) {
+	assertResumeRenderBudget(data);
+	const proposals: { text: string; category: FactCategory; quote: string }[] = [];
+	let omitted = 0;
+	const seen = new Set<string>();
+	if (isCoverLetterOnlyDocument(data)) return { proposals, omitted };
+	for (const page of data.metadata.layout.pages) {
+		for (const id of [...page.main, ...page.sidebar]) {
+			const section =
+				id === "summary"
+					? data.summary
+					: id in data.sections
+						? data.sections[id as SectionType]
+						: data.customSections.find((item) => item.id === id);
+			const type = section && "type" in section ? section.type : id;
+			if (
+				![
+					"summary",
+					"experience",
+					"education",
+					"projects",
+					"skills",
+					"languages",
+					"awards",
+					"certifications",
+					"publications",
+					"volunteer",
+				].includes(type)
+			)
+				continue;
+			const sectionHeading = heading(section?.title ?? "");
+			const markdown = renderSection(id, data)
+				.filter((block, index) => index !== 0 || block !== sectionHeading)
+				.join("\n\n")
+				.replace(/\n{3,}/g, "\n\n")
+				.trim();
+			const excerpts = markdown.split(type === "skills" || type === "languages" ? /\n/ : /\n\n(?=### )/);
+			for (const excerpt of excerpts) {
+				const quote = excerpt.trim();
+				if (!quote || seen.has(quote)) continue;
+				seen.add(quote);
+				if (Array.from(quote).length > MAX_RESUME_FACT_CHARACTERS || proposals.length >= 50) {
+					omitted++;
+					continue;
+				}
+				const text = quote
+					.replace(/^### /gm, "")
+					.replace(/\*\*([^*\n]+)\*\*/g, "$1")
+					.replace(/^_([^\n]+)_$/gm, "$1")
+					.replace(/^- /gm, "")
+					.trim();
+				if (!/[\p{L}\p{N}]/u.test(text)) continue;
+				const category =
+					type === "skills" || type === "languages"
+						? "skill"
+						: type === "awards" || type === "projects"
+							? "accomplishment"
+							: "experience";
+				proposals.push({ text, category, quote });
+			}
+		}
+	}
+	return { proposals, omitted };
 }
 
 function renderSection(sectionId: string, data: ResumeData, resolveTitle?: SectionTitleResolver): string[] {

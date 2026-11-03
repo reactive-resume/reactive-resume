@@ -1171,7 +1171,7 @@ msgstr "Menerima tawaran lain"
 msgid "Accepted offer"
 msgstr "Penawaran diterima"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Pencapaian"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "Pilih pengganti"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "Pilih resume"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Pilih resume di Write agar sesuai dengan desainnya. Sampai saat itu, surat itu punya miliknya sendiri."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Pilih CV dan tinjau kutipannya. Tidak ada yang dikirim ke penyedia AI. Hanya fakta terpilih yang disimpan di Pengetahuan untuk semua lamaran."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "Dokumen tidak dapat dimuat. Coba lagi."
 msgid "Couldn't load letter"
 msgstr "Tidak dapat memuat surat lamaran"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Tidak dapat memuat atau menyimpan fakta CV. Coba lagi."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "Tidak dapat memuat CV untuk surat lamaran baru."
@@ -4193,6 +4202,10 @@ msgstr "Buat salinan bahasa"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Buat atau impor CV terlebih dahulu, lalu kembali menyalinnya untuk pekerjaan ini."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Buat atau impor CV di Dokumen terlebih dahulu."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "Pengalaman"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "Label atas"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fakta"
 
@@ -8203,6 +8217,10 @@ msgstr "Tidak ada istilah khusus yang dapat ditarik dari uraian pekerjaan itu."
 msgid "No stories yet"
 msgstr "Belum ada cerita"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Tidak ditemukan kutipan yang didukung. Tambahkan fakta secara manual atau pilih CV lain."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "Melatih cerita Anda: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Utamakan satu kolom, atau batasi kolom samping untuk daftar pendek yang berdiri sendiri."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "Preferensi"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "Penerbit"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Ambil fakta dari CV saya"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Tinjau jawaban formulir yang wajib dan hapus klaim yang tidak didukung."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Tinjau fakta CV"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Simpan jadwal"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Simpan fakta terpilih"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Simpan syarat penawaran ini untuk dibandingkan"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Simpan fakta ini"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "Disimpan ke Pengetahuan, khusus untuk lamaran ini."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Disimpan: {0}. Dilewati: {1}. Fakta yang sudah ada, dikoreksi, atau dinonaktifkan tetap tidak berubah."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "Ukuran"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "Keahlian"
 
@@ -11909,6 +11950,10 @@ msgstr "Beberapa glif tidak memiliki arti di luar file ini."
 msgid "Some lines are stored out of reading order."
 msgstr "Beberapa baris disimpan tidak sesuai urutan baca."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "Sebagian teks CV tidak disertakan. Tambahkan fakta lain secara manual."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Beberapa sistem salah menangani gambar, dan foto tidak dianjurkan di beberapa negara."
@@ -11971,6 +12016,10 @@ msgstr "Kode sumber di GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Kutipan sumber"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "Verifikasi dua langkah"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

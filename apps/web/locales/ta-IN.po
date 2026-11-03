@@ -1510,7 +1510,7 @@ msgstr "API மூலம் உங்கள் கணக்கை அணுக�
 msgid "Accessibility"
 msgstr "அணுகல்தன்மை"
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 msgid "Accomplishment"
 msgstr "சாதனை"
 
@@ -3214,6 +3214,7 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -3594,6 +3595,7 @@ msgstr "PDF கோப்பைத் தேர்வுசெய்யவும�
 msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
 msgstr ""
 
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
 msgid "Choose a resume"
@@ -3602,6 +3604,10 @@ msgstr "ஒரு சுயவிவரத்தைத் தேர்ந்த�
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "அதன் வடிவமைப்புடன் பொருந்த, எழுதுதலில் ஒரு ரெஸ்யூமே தேர்வு செய்யவும். அதுவரை, கடிதம் சொந்தமாக உள்ளது."
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "ஒரு சுயவிவரத்தைத் தேர்ந்தெடுத்து அதன் பகுதிகளைச் சரிபார்க்கவும். AI வழங்குநருக்கு எதுவும் அனுப்பப்படாது. தேர்ந்தெடுத்த தகவல்கள் மட்டுமே எல்லா விண்ணப்பங்களுக்கும் அறிவில் சேமிக்கப்படும்."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -4672,6 +4678,10 @@ msgstr "நேர்காணல்களை ஏற்ற முடியவி�
 msgid "Couldn't load letters. Try again."
 msgstr "அறிமுகக் கடிதங்களை ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "சுயவிவரத் தகவல்களை ஏற்றவோ சேமிக்கவோ முடியவில்லை. மீண்டும் முயலவும்."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "இணைய அணுகல் அமைப்புகளை ஏற்றவோ சேமிக்கவோ முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
@@ -5327,6 +5337,10 @@ msgstr ""
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
 msgstr "இப்போதே உருவாக்குங்கள்"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "முதலில் ஆவணங்களில் ரெஸ்யூமை உருவாக்கவும் அல்லது இறக்குமதி செய்யவும்."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create resume"
@@ -6708,7 +6722,7 @@ msgstr "கவனப் பயன்முறையிலிருந்து �
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/write.tsx
@@ -6812,6 +6826,10 @@ msgstr "பக்கத்தில் உள்ள PDF இலிருந்த
 msgctxt "Entry header layout"
 msgid "Eyebrow"
 msgstr "மேல்தலைப்பு"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Fact"
+msgstr "தகவல்"
 
 #: src/features/homepage/remember.tsx
 msgid "Fact · Accomplishment"
@@ -10363,6 +10381,10 @@ msgstr "அந்த பணி விவரத்திலிருந்து 
 msgid "No stories yet"
 msgstr "இன்னும் கதைகள் இல்லை"
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "ஆதரிக்கப்படும் பகுதிகள் கிடைக்கவில்லை. தகவலைக் கைமுறையாகச் சேர்க்கவும் அல்லது வேறொரு சுயவிவரத்தைத் தேர்ந்தெடுக்கவும்."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -11791,7 +11813,7 @@ msgstr "உங்கள் கதையைப் பயிற்சி செய
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "ஒற்றை நெடுவரிசையை விரும்பவும், அல்லது பக்க நெடுவரிசையை குறுகிய, தன்னிறைவான பட்டியல்களுக்கு மட்டும் வைத்திருங்கள்."
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 msgid "Preference"
 msgstr "விருப்பம்"
 
@@ -12102,6 +12124,10 @@ msgstr ""
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
 msgstr "பதிப்பாளர்"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "என் சுயவிவரத்திலிருந்து தகவல்களை எடு"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Purple"
@@ -13088,6 +13114,7 @@ msgstr "ரெஸ்யூம்"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/feedback/review-page.tsx
@@ -13137,6 +13164,10 @@ msgstr "ரெஸ்யூம் உள்ளடக்கம்"
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Resume details"
 msgstr "ரெஸ்யூம் விவரங்கள்"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Resume fact proposals"
+msgstr "சுயவிவரத் தகவல் பரிந்துரைகள்"
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
@@ -13213,6 +13244,7 @@ msgstr "மீண்டும் முயற்சிக்கவும்"
 msgid "Retry AI connections"
 msgstr ""
 
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/role-suggestions.tsx
 msgid "Retry documents"
 msgstr ""
@@ -13295,6 +13327,10 @@ msgstr ""
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "தேவையான படிவப் பதில்களை மதிப்பாய்வு செய்து, ஆதாரமற்ற கூற்றுகளை அகற்றவும்."
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "சுயவிவரத் தகவல்களைச் சரிபார்"
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -13609,6 +13645,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "அட்டவணையைச் சேமி"
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "தேர்ந்தெடுத்த தகவல்களைச் சேமி"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
@@ -13638,6 +13678,10 @@ msgstr "ஒப்பிட இந்தச் சலுகை விதிமு
 #: src/features/settings/account/backup-codes.tsx
 msgid "Save these somewhere safe. Each works once, and they won't be shown again."
 msgstr ""
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Save this fact"
+msgstr "இந்தத் தகவலைச் சேமி"
 
 #: src/features/assistant/translate-resume.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -13754,6 +13798,12 @@ msgstr "அறிவுத் தளத்தில் சேமிக்கப�
 #: src/features/career/workspace/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "சேமித்தவை: {0}. தவிர்த்தவை: {1}. ஏற்கெனவே உள்ள, திருத்திய அல்லது முடக்கிய தகவல்கள் மாறாது."
 
 #. placeholder {0}: new URL(url).host
 #: src/features/resume/share/address-field.tsx
@@ -14760,7 +14810,7 @@ msgstr "ஆறு தயாரிப்பு குழுக்கள்"
 msgid "Size"
 msgstr "அளவு"
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Skill"
 msgstr "திறன்"
@@ -14840,6 +14890,10 @@ msgstr "சில வேலை விவரங்களைப் படிக்
 msgid "Some lines are stored out of reading order."
 msgstr "சில வரிகள் படிக்கும் வரிசைக்கு மாறாக சேமிக்கப்பட்டுள்ளன."
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "சுயவிவரத்தின் சில உரைகள் விடுபட்டன. மற்ற தகவல்களைக் கைமுறையாகச் சேர்க்கவும்."
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "சில அமைப்புகள் படங்களை தவறாகக் கையாளுகின்றன, சில நாடுகளில் புகைப்படங்கள் ஊக்கமளிக்கவில்லை."
@@ -14888,6 +14942,10 @@ msgstr "மூல குறியீடு"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Source quotation"
+msgstr "மூல மேற்கோள்"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -17025,6 +17083,7 @@ msgid "Two-step verification turned on"
 msgstr "இரண்டு-படி சரிபார்ப்பு இயக்கப்பட்டது"
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx

@@ -1171,7 +1171,7 @@ msgstr "Priėmė kitą pasiūlymą"
 msgid "Accepted offer"
 msgstr "Priimtas pasiūlymas"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Pasiekimas"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "Pasirinkite pakaitinį etapą"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "Pasirinkite gyvenimo aprašymą"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Pasirinkite gyvenimo aprašymą, kad atitiktų jo dizainą. Iki tol laiškas turi savo."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Pasirinkite gyvenimo aprašymą ir peržiūrėkite ištraukas. Nieko nesiunčiama DI teikėjui. Tik pasirinkti faktai išsaugomi Žiniose visoms paraiškoms."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "Nepavyko įkelti dokumentų. Bandykite dar kartą."
 msgid "Couldn't load letter"
 msgstr "Nepavyko įkelti motyvacinio laiško"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Nepavyko įkelti ar išsaugoti gyvenimo aprašymo faktų. Bandykite dar kartą."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "Nepavyko įkelti gyvenimo aprašymų naujam laiškui."
@@ -4193,6 +4202,10 @@ msgstr "Sukurti kalbos kopiją"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Pirmiausia sukurkite arba importuokite gyvenimo aprašymą, tada grįžkite ir nukopijuokite jį šiam darbui."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Pirmiausia sukurkite arba importuokite gyvenimo aprašymą Dokumentuose."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "Patirtis"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "Viršutinė etiketė"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Faktas"
 
@@ -8203,6 +8217,10 @@ msgstr "Iš šio pareigybės aprašymo nebuvo galima ištraukti jokių konkreči
 msgid "No stories yet"
 msgstr "Kol kas istorijų nėra"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Tinkamų ištraukų nerasta. Pridėkite faktą rankiniu būdu arba pasirinkite kitą gyvenimo aprašymą."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "Praktikuojatės pasakoti istoriją: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Rinkitės vieną stulpelį arba šalutiniame stulpelyje palikite tik trumpus, savarankiškus sąrašus."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "Pageidavimas"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "Leidėjas"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Paimti faktus iš mano gyvenimo aprašymo"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Peržiūrėkite privalomus formos atsakymus ir pašalinkite nepagrįstus teiginius."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Peržiūrėti gyvenimo aprašymo faktus"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Išsaugoti tvarkaraštį"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Išsaugoti pasirinktus faktus"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Išsaugoti šias pasiūlymo sąlygas palyginimui"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Išsaugoti šį faktą"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "Išsaugota Žiniose, matoma tik šiai paraiškai."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Išsaugota: {0}. Praleista: {1}. Esami, pataisyti ar išjungti faktai lieka nepakeisti."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "Dydis"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "Įgūdis"
 
@@ -11909,6 +11950,10 @@ msgstr "Kai kurie glifai už šio failo ribų neturi jokios reikšmės."
 msgid "Some lines are stored out of reading order."
 msgstr "Kai kurios eilutės saugomos ne skaitymo tvarka."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "Dalis gyvenimo aprašymo teksto praleista. Kitus faktus pridėkite rankiniu būdu."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Kai kurios sistemos netinkamai apdoroja vaizdus, ​​o kai kuriose šalyse nuotraukos nerekomenduojamos."
@@ -11971,6 +12016,10 @@ msgstr "Pirminis kodas „GitHub“"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Šaltinio citata"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "Patvirtinimas dviem veiksmais"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

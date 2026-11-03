@@ -1171,7 +1171,7 @@ msgstr "Aksepterte et annet tilbud"
 msgid "Accepted offer"
 msgstr "Takket ja til tilbud"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Prestasjon"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "Velg en erstatning"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "Velg en CV"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Velg en CV i Write for å matche designet. Inntil da har brevet sitt."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Velg en CV og se gjennom utdragene. Ingenting sendes til en KI-leverandør. Bare valgte fakta lagres i Kunnskap for alle søknader."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "Kunne ikke laste inn dokumentene. Prøv igjen."
 msgid "Couldn't load letter"
 msgstr "Kunne ikke laste følgebrevet"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Kunne ikke laste inn eller lagre CV-fakta. Prøv igjen."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "Kunne ikke laste inn CV-er for et nytt følgebrev."
@@ -4193,6 +4202,10 @@ msgstr "Opprett språkkopi"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Opprett eller importer en CV først, og gå deretter tilbake for å kopiere den for denne jobben."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Opprett eller importer først en CV i Dokumenter."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "Erfaring"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "Overetikett"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Faktum"
 
@@ -8203,6 +8217,10 @@ msgstr "Ingen spesifikke vilkår kunne trekkes ut av den stillingsbeskrivelsen."
 msgid "No stories yet"
 msgstr "Ingen historier ennå"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Ingen støttede utdrag funnet. Legg til et faktum manuelt eller velg en annen CV."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "Øver på historien din: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Foretrekk én kolonne, eller begrens sidekolonnen til korte, selvstendige lister."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "Preferanse"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "Utgiver"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Hent fakta fra CV-en min"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Se over obligatoriske skjemasvar og fjern påstander uten belegg."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Se gjennom CV-fakta"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Lagre tidsplan"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Lagre valgte fakta"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Lagre disse tilbudsvilkårene for å sammenligne"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Lagre dette faktumet"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "Lagret i Kunnskap, privat for denne søknaden."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Lagret: {0}. Hoppet over: {1}. Eksisterende, rettede eller deaktiverte fakta forblir uendret."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "Størrelse"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "Ferdighet"
 
@@ -11909,6 +11950,10 @@ msgstr "Enkelte glyfer har ingen betydning utenfor denne filen."
 msgid "Some lines are stored out of reading order."
 msgstr "Enkelte linjer er lagret i feil leserekkefølge."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "Noe CV-tekst ble utelatt. Legg til andre fakta manuelt."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Noen systemer mishandler bilder, og bilder frarådes i noen land."
@@ -11971,6 +12016,10 @@ msgstr "Kildekode på GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Kildesitat"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "To-trinns bekreftelse"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

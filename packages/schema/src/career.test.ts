@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vite-plus/test";
-import { careerOfferInputSchema, careerProfileDataSchema, careerProfileUpdateSchema } from "./career";
+import z from "zod";
+import {
+	careerOfferInputSchema,
+	careerProfileDataSchema,
+	careerProfileUpdateSchema,
+	resumeFactProposalSchema,
+} from "./career";
 
 describe("career profile updates", () => {
 	it("never supplies defaults for fields another control owns", () => {
@@ -67,3 +73,35 @@ describe("manual offer input", () => {
 		expect(careerOfferInputSchema.safeParse({ ...input, ...patch }).success).toBe(false);
 	});
 });
+
+it.each(["text", "quote"] as const)(
+	"keeps runtime and published %s validation aligned before normalization",
+	(field) => {
+		const consumer = z.fromJSONSchema(z.toJSONSchema(resumeFactProposalSchema));
+		for (const [value, valid] of [
+			[" ", false],
+			["\n\t", false],
+			["\u00a0", false],
+			["\u3000", false],
+			["  Valid excerpt  ", true],
+			["x".repeat(2000), true],
+			[" " + "x".repeat(1998) + " ", true],
+			[" \n" + "x".repeat(2000) + "\t\u3000", false],
+			["x".repeat(2001), false],
+			["  " + "x".repeat(2001) + "  ", false],
+			["😀".repeat(2000), true],
+			[" \n" + "😀".repeat(2000) + "\t", false],
+			["😀".repeat(2001), false],
+			["  First line\nSecond line  ", true],
+		] as const) {
+			const input = { text: "Valid fact", category: "experience", quote: "Valid quote", [field]: value };
+			expect(
+				consumer.safeParse(input).success,
+				"published: " + JSON.stringify(value.slice(0, 30)) + " (length " + Array.from(value).length + ")",
+			).toBe(valid);
+			const parsed = resumeFactProposalSchema.safeParse(input);
+			expect(parsed.success, "runtime: " + JSON.stringify(value)).toBe(valid);
+			if (parsed.success) expect(parsed.data[field]).toBe(value.trim());
+		}
+	},
+);

@@ -277,6 +277,8 @@ test("reviews and atomically saves a structural set with offscreen Undo and reac
 	await page.getByRole("button", { name: "Assistant", exact: true }).click();
 	await page.locator('[data-slot="toast"]').getByRole("button", { name: "Undo", exact: true }).click();
 	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).not.toContain("CPACC");
+	// The SQL commit can precede the browser acknowledging its queued Undo decision.
+	await expect(page.getByRole("status").filter({ hasText: /^Saved$/ })).toBeVisible();
 	await page.reload();
 	await page.getByRole("button", { name: "Assistant", exact: true }).click();
 	await expect(edits.getByRole("button", { name: "Accept", exact: true })).toBeVisible({ timeout: 20_000 });

@@ -1171,7 +1171,7 @@ msgstr "Boshqa taklifni qabul qildi"
 msgid "Accepted offer"
 msgstr "Taklif qabul qilindi"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Yutuq"
 
@@ -2869,12 +2869,17 @@ msgid "Choose a replacement"
 msgstr "O‘rinbosarni tanlang"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "Rezyume tanlang"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Dizayniga mos keladigan Write-da rezyumeni tanlang. Ungacha maktubning o'ziga xosligi bor."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Rezyumeni tanlang va parchalarni tekshiring. AI provayderiga hech narsa yuborilmaydi. Faqat tanlangan faktlar barcha arizalar uchun Bilimda saqlanadi."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3668,10 @@ msgstr "Hujjatlarni yuklab bo‘lmadi. Qayta urinib ko‘ring."
 msgid "Couldn't load letter"
 msgstr "Motivatsion xatini yuklab bo‘lmadi"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Rezyume faktlarini yuklash yoki saqlash imkoni bo‘lmadi. Qayta urining."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "Yangi motivatsion xat uchun rezyumelarni yuklab bo‘lmadi."
@@ -4193,6 +4202,10 @@ msgstr "Til nusxasini yaratish"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Avval rezyumeni yarating yoki import qiling, so‘ng uni ushbu ish uchun nusxalash uchun qayting."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Avval Hujjatlarda rezyume yarating yoki import qiling."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5315,7 +5328,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "Tajriba"
@@ -5363,6 +5376,7 @@ msgid "Eyebrow"
 msgstr "Ustki sarlavha"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fakt"
 
@@ -8203,6 +8217,10 @@ msgstr "Ushbu ish tavsifidan hech qanday aniq shartlar chiqarib tashlanishi mumk
 msgid "No stories yet"
 msgstr "Hali hikoyalar yo'q"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Mos parchalar topilmadi. Faktni qo‘lda qo‘shing yoki boshqa rezyumeni tanlang."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9331,7 +9349,7 @@ msgstr "Hikoyangizni mashq qilyapsiz: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Bitta ustunni afzal koʻring yoki yon ustunni qisqa, mustaqil roʻyxatlar bilan cheklang."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "Afzallik"
 
@@ -9603,6 +9621,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "Nashriyotchi"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Rezyumemdan faktlarni olish"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10391,6 +10413,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10626,6 +10649,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Majburiy forma javoblarini ko'rib chiqing va tasdiqlanmagan da'volarni olib tashlang."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Rezyume faktlarini tekshirish"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10900,6 +10927,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Jadvalni saqlash"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Tanlangan faktlarni saqlash"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10924,6 +10955,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Solishtirish uchun bu taklif shartlarini saqlash"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Bu faktni saqlash"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11002,6 +11037,12 @@ msgstr "Bilimlarga saqlandi, faqat shu ariza uchun."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Saqlandi: {0}. O‘tkazib yuborildi: {1}. Mavjud, tuzatilgan yoki o‘chirilgan faktlar o‘zgarishsiz qoladi."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11843,7 +11884,7 @@ msgid "Size"
 msgstr "Hajmi"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "Ko'nikma"
 
@@ -11909,6 +11950,10 @@ msgstr "Ba'zi glif belgilari bu fayldan tashqarida ma'no anglatmaydi."
 msgid "Some lines are stored out of reading order."
 msgstr "Ba'zi qatorlar oʻqish tartibidan tashqarida saqlangan."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "Rezyume matnining bir qismi qoldirildi. Boshqa faktlarni qo‘lda qo‘shing."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Ba'zi tizimlar tasvirlarni noto'g'ri boshqaradi va ba'zi mamlakatlarda fotosuratlar tavsiya etilmaydi."
@@ -11971,6 +12016,10 @@ msgstr "GitHub'dagi manba kodi"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Manbadan iqtibos"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13634,6 +13683,7 @@ msgstr "Ikki bosqichli tekshirish"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

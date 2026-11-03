@@ -18,22 +18,15 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError, CareerLoading } from "../load-state";
 import { CollapseRow, FilterChip, flash, useCareerTime, withUndo } from "../shared";
+import { CATEGORIES, categoryLabel } from "./fact-categories";
 import { useProfile } from "./preferences";
+import { ResumeFacts } from "./resume-facts";
 import { toastError } from "@/libs/error-message";
 import { D2, EASE, EXIT } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
-export const CATEGORIES = factCategorySchema.options;
 /** Older rows may carry a retired category; they read as experience. */
 const categoryOf = (fact: Fact): FactCategory => factCategorySchema.catch("experience").parse(fact.category);
-
-export const categoryLabel = (category: FactCategory) =>
-	({
-		accomplishment: t`Accomplishment`,
-		experience: t`Experience`,
-		skill: t`Skill`,
-		preference: t`Preference`,
-	})[category];
 
 const FACTS_INPUT = { applicationId: null, all: true };
 
@@ -144,6 +137,7 @@ export function FactsPage({ highlight }: FactsPageProps) {
 				))}
 			</div>
 
+			<ResumeFacts />
 			<AddFact onAdded={added} />
 			{!facts && (factQuery.isError ? <CareerLoadError onRetry={() => void factQuery.refetch()} /> : <CareerLoading />)}
 
