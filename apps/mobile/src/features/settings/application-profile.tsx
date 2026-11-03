@@ -374,7 +374,7 @@ function ApplicationProfileForm({ initial, scope }: ApplicationProfileFormProps)
 						disabled={busy || !record}
 						onPress={() =>
 							void run(async () => {
-								clearAccountExportCache();
+								clearAccountExportCache("data");
 								if (!(await Sharing.isAvailableAsync())) throw new Error("Sharing unavailable");
 								const data = await client.applicationProfile.get(undefined, options);
 								if (!data) throw new Error("Profile deleted");
@@ -414,7 +414,7 @@ function ApplicationProfileForm({ initial, scope }: ApplicationProfileFormProps)
 						void run(async () => {
 							await client.applicationProfile.delete({ expectedRevision: record.revision }, options);
 							replace(null);
-							clearAccountExportCache();
+							clearAccountExportCache("data");
 							setStatus(t`Profile deleted.`);
 						});
 				}}

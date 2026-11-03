@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const mobile = new URL("../", import.meta.url);
 const requireMobile = createRequire(new URL("package.json", mobile));
 const requireServer = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(requireServer.resolve("tsx"))("esbuild");
+const { transformSync, buildSync } = createRequire(requireServer.resolve("tsx"))("esbuild");
 let account = "fixture-account";
 let dialog;
 let calls = [];
@@ -76,6 +76,19 @@ modules.zod = createRequire(new URL("../../packages/ai/package.json", mobile))("
 modules["./defaults"] = load("../../packages/ai/src/defaults.ts");
 modules["@reactive-resume/ai/types"] = load("../../packages/ai/src/types.ts");
 modules["./ai-consent"] = load("src/api/ai-consent.ts");
+const httpModule = { exports: {} };
+new Function(
+	"module",
+	"exports",
+	buildSync({
+		entryPoints: [fileURLToPath(new URL("../../packages/utils/src/http.ts", mobile))],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text,
+)(httpModule, httpModule.exports);
+modules["@reactive-resume/utils/http"] = httpModule.exports;
 const { client, streamClient, rest } = load("src/api/client.ts");
 async function waitForDialog() {
 	for (let step = 0; step < 100 && !dialog; step++) await new Promise((resolve) => setImmediate(resolve));

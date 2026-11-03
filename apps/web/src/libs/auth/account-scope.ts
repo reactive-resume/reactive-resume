@@ -62,16 +62,18 @@ function ensureChannel() {
 	return channel;
 }
 
+const onStorage = (event: StorageEvent) => {
+	if (event.key === storageKey) notify();
+};
+
 /** Listens for a sign-out or account change made in another tab. Returns the unsubscribe function. */
 export function subscribeAccountChange(listener: AccountChangeListener) {
 	ensureChannel();
 	listeners.add(listener);
-	if (typeof window !== "undefined")
-		window.addEventListener("storage", (event) => {
-			if (event.key === storageKey) notify();
-		});
+	if (listeners.size === 1 && typeof window !== "undefined") window.addEventListener("storage", onStorage);
 	return () => {
 		listeners.delete(listener);
+		if (listeners.size === 0 && typeof window !== "undefined") window.removeEventListener("storage", onStorage);
 	};
 }
 
