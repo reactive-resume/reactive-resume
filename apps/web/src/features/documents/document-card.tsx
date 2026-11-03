@@ -118,7 +118,7 @@ function LetterThumbnail({ document, descriptionId }: { document: DocumentSummar
 	const lines = letter.data ? letterBodyLines(letter.data.content) : [];
 	const empty = letter.isSuccess && !greeting && lines.length === 0;
 	const description =
-		[recipient, greeting, lines[0]].filter(Boolean).join(". ") ||
+		[recipient ? `${recipient}.` : "", greeting ?? "", lines[0] ?? ""].filter(Boolean).join(" ") ||
 		(letter.isError ? t`Preview unavailable` : empty ? t`Empty letter` : "");
 
 	return (

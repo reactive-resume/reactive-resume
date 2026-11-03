@@ -92,8 +92,9 @@ it("describes the letter's opening words for screen readers without changing the
 	const link = screen.getByRole("link", { name: "Untitled letter" });
 	const id = link.getAttribute("aria-describedby");
 	expect(id).toBeTruthy();
-	expect(document.getElementById(id ?? "")?.textContent).toContain("Dear Dana,");
-	expect(document.getElementById(id ?? "")?.textContent).toContain("I am writing about the role.");
+	expect(document.getElementById(id ?? "")?.textContent).toBe(
+		"Northwind Labs. Dear Dana, I am writing about the role.",
+	);
 });
 
 it("does not draw loading bars over a loaded greeting-only letter", async () => {
