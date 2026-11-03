@@ -32,6 +32,7 @@ const tag = (parts, ...values) => parts.reduce((text, part, index) => text + par
 for (const scenario of [
 	"AI",
 	"explicit locale",
+	"interface locale",
 	"local",
 	"partial AI",
 	"partial local",
@@ -68,6 +69,8 @@ for (const scenario of [
 		if (scenario === "DOCX") data.sections.profiles.items[0].website.url = url;
 		class SessionChangedError extends Error {}
 		const mocks = {
+			"@lingui/core": { i18n: { locale: scenario === "interface locale" ? "ar-SA" : "en-US" } },
+			"@reactive-resume/utils/locale": { localeSchema: { parse: (locale) => locale } },
 			"@lingui/core/macro": { t: tag },
 			"expo-file-system": {
 				File: class extends Blob {
@@ -104,7 +107,11 @@ for (const scenario of [
 							assert.equal("aiOperationIds" in accepted, false);
 							assert.equal(
 								accepted.metadata.page.locale,
-								scenario === "explicit locale" ? "de-DE" : data.metadata.page.locale,
+								scenario === "explicit locale"
+									? "de-DE"
+									: scenario === "interface locale"
+										? "ar-SA"
+										: data.metadata.page.locale,
 							);
 							assert.equal(data.metadata.page.locale, "en-US");
 							assert.equal(accepted.sections.profiles.items[0].website.url, url);

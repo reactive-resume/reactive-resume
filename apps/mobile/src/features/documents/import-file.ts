@@ -2,6 +2,7 @@ import type { ImportReview, PdfImportPreview } from "@reactive-resume/import/rev
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
 import type { DocumentPickerAsset } from "expo-document-picker";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { File } from "expo-file-system";
 import { extractDocxText } from "@reactive-resume/import/docx-text";
@@ -12,6 +13,7 @@ import {
 	withLinkTargets,
 } from "@reactive-resume/import/review";
 import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/data";
+import { localeSchema } from "@reactive-resume/utils/locale";
 import { client, rest, SessionChangedError } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
 
@@ -60,7 +62,8 @@ export async function createReviewedResume(
 		keepLeftovers && pending.review.notImported.length > 0
 			? withLeftoverSection(pending.data, pending.review.notImported, t`More from your file`)
 			: pending.data;
-	const chosen = locale ? { ...data, metadata: { ...data.metadata, page: { ...data.metadata.page, locale } } } : data;
+	const pageLocale = locale ?? localeSchema.parse(i18n.locale);
+	const chosen = { ...data, metadata: { ...data.metadata, page: { ...data.metadata.page, locale: pageLocale } } };
 	const id = await client.resume.import(
 		{ data: chosen, ...(pending.aiOperationIds ? { aiOperationIds: pending.aiOperationIds } : {}) },
 		{ signal, context: { scope } },

@@ -639,7 +639,7 @@ type CoverageProps = {
 
 /** Every posting requirement as the assistant read it, gaps included. Separate from Check's term list. */
 export function Coverage({ requirements, factText }: CoverageProps) {
-	const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+	const [selected, setSelected] = useState<ReadonlySet<number>>(new Set());
 	const gaps = requirements.filter((item) => item.status === "missing" || item.status === "unassessed").length;
 
 	return (
@@ -653,17 +653,17 @@ export function Coverage({ requirements, factText }: CoverageProps) {
 				{gaps > 0 && <Plural value={gaps} one="· # gap" other="· # gaps" />}
 			</summary>
 			<ul className="mt-1.5 grid gap-1.5">
-				{requirements.map((item) => (
-					<li key={item.text} className="grid gap-0.5">
+				{requirements.map((item, index) => (
+					<li key={index} className="grid gap-0.5">
 						{item.status === "missing" || item.status === "unassessed" ? (
 							<label className="flex min-h-11 items-center gap-2 text-ink">
 								<Checkbox
-									checked={selected.has(item.text)}
+									checked={selected.has(index)}
 									onCheckedChange={(checked) =>
 										setSelected((previous) => {
 											const next = new Set(previous);
-											if (checked === true) next.add(item.text);
-											else next.delete(item.text);
+											if (checked === true) next.add(index);
+											else next.delete(index);
 											return next;
 										})
 									}

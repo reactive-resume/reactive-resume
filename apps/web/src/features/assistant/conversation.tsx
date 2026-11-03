@@ -79,6 +79,7 @@ type ToolPart = Part & {
 type ConversationProps = {
 	threadId: string;
 	initialMessages: UIMessage[];
+	initialAttachments?: ChatAttachment[];
 	/** A reply was still streaming when the conversation opened. */
 	activeRun: boolean;
 	document: AssistantDocument;
@@ -462,6 +463,7 @@ export function Conversation(props: ConversationProps) {
 			</MessageScrollerProvider>
 
 			<Composer
+				initialAttachments={props.initialAttachments ?? []}
 				document={document}
 				context={context}
 				onContextChange={setContext}
@@ -859,7 +861,6 @@ function ToolPartView({
 		case "tool-ask_user_question":
 			return (
 				<div className="group/message grid gap-2">
-					{" "}
 					<QuestionCard
 						part={part}
 						readOnly={readOnly || !answerable}
@@ -1061,6 +1062,7 @@ type ComposerProps = {
 	onStop: () => void;
 	/** Text the box starts with (a link's `?ask=`); the user still presses Send. */
 	initialText?: string | undefined;
+	initialAttachments?: ChatAttachment[];
 	/** Above the box: what needs a decision before the next message. */
 	notice?: ReactNode;
 	/** The conversation already has messages, which are sent again with the next one. */
@@ -1075,7 +1077,7 @@ export function Composer(props: ComposerProps) {
 	const { document, context, onContextChange, streaming, disabled } = props;
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const [text, setText] = useState(props.initialText ?? "");
-	const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
+	const [attachments, setAttachments] = useState<ChatAttachment[]>(props.initialAttachments ?? []);
 	const removal = useAttachmentRemoval(`${document.kind}:${document.id}:${props.threadId ?? "draft"}`, (id) =>
 		setAttachments((current) => current.filter((item) => item.id !== id)),
 	);

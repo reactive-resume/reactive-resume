@@ -95,6 +95,7 @@ export const importResumeFile = protectedProcedure
 				cause: error,
 			});
 		}
-		if (input.locale) data.metadata.page.locale = input.locale;
+		data.metadata.page.locale =
+			input.locale ?? (input.format === "REACTIVE_RESUME" ? data.metadata.page.locale : context.locale);
 		return call(crudRouter.import, { data }, { context });
 	});
