@@ -17,6 +17,7 @@ const api = vi.hoisted(() => ({
 	readPdfSource: vi.fn(),
 	createLetter: vi.fn(),
 	listDocuments: vi.fn(),
+	linkApplication: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn() }));
 vi.mock("@/features/resume/import/pdf-text", () => ({
@@ -25,7 +26,7 @@ vi.mock("@/features/resume/import/pdf-text", () => ({
 }));
 vi.mock("@/libs/orpc/client", () => ({
 	client: {
-		documents: { list: api.listDocuments },
+		documents: { list: api.listDocuments, linkApplication: api.linkApplication },
 		resume: { import: api.importResume },
 		ai: { parsePdf: api.parsePdf, parseDocx: api.parseDocx },
 	},
@@ -75,12 +76,12 @@ afterEach(() => {
 	cleanup();
 	queryClient.clear();
 });
-function mount(file?: File) {
+function mount(file?: File, data?: { context: "letters"; applicationId: string }) {
 	return render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={queryClient}>
 				<Dialog open>
-					<NewDocumentDialog data={file ? { file } : undefined} />
+					<NewDocumentDialog data={data ?? (file ? { file } : undefined)} />
 				</Dialog>
 			</QueryClientProvider>
 		</I18nProvider>,
@@ -168,6 +169,33 @@ it("starts a new letter from the explicitly selected earlier letter", async () =
 		sourceLetterId: "old-letter",
 		content: "",
 	});
+});
+
+it("creates an application letter with its job and source in one request, without a second link", async () => {
+	api.listDocuments.mockImplementation(async (input: { type?: string; q?: string }) =>
+		input.type === "letter" && !input.q
+			? [
+					{
+						id: "old-letter",
+						type: "letter",
+						name: "Northwind letter",
+						application: { id: "old-job", company: "Northwind Labs", role: "Engineer", status: "applied" },
+					},
+				]
+			: [],
+	);
+	api.createLetter.mockResolvedValue({ id: "new-letter" });
+	mount(undefined, { context: "letters", applicationId: "job-1" });
+	const select = await screen.findByLabelText(/Start from an earlier letter/);
+	await screen.findByRole("option", { name: "Northwind letter — Northwind Labs" });
+	fireEvent.change(select, { target: { value: "old-letter" } });
+	fireEvent.click(screen.getByRole("button", { name: /^New cover letter/ }));
+	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledOnce());
+	expect(api.createLetter.mock.calls[0]?.[0]).toMatchObject({
+		applicationId: "job-1",
+		sourceLetterId: "old-letter",
+	});
+	expect(api.linkApplication).not.toHaveBeenCalled();
 });
 
 it("numbers a new letter while untitled ones exist, so the library can tell them apart", async () => {

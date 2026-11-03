@@ -302,7 +302,10 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			setQuery.flush();
 		} else if (event.key === "ArrowDown") {
 			openOnResults.current = null;
-			const first = resultsRef.current?.querySelector<HTMLElement>("a[href]");
+			// A page of collapsed job groups has no open result links; its headings are the first stop.
+			const first =
+				resultsRef.current?.querySelector<HTMLElement>("a[href]") ??
+				resultsRef.current?.querySelector<HTMLElement>("button[aria-expanded]");
 			if (!first) return;
 			event.preventDefault();
 			first.focus();

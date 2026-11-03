@@ -35,7 +35,8 @@ export function useStartDocument(applicationId?: string) {
 	const { mutateAsync: createLetter } = useMutation(orpc.coverLetters.create.mutationOptions());
 
 	const created = async (id: string, type: "resume" | "letter") => {
-		if (applicationId) await client.documents.linkApplication({ type, id, applicationId });
+		// `create` links a new letter to its application in the same transaction; only resumes need this call.
+		if (applicationId && type === "resume") await client.documents.linkApplication({ type, id, applicationId });
 		markNew(id);
 		void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 		if (applicationId) void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
@@ -98,6 +99,8 @@ export function useStartDocument(applicationId?: string) {
 					recipient: "",
 					content: "",
 					...(resumeId ? { resumeId } : {}),
+					// The application fills the recipient and links the letter in the create transaction.
+					...(applicationId ? { applicationId } : {}),
 					// The server copies the selected letter's body and keeps both letters' histories separate.
 					...(sourceLetterId ? { sourceLetterId } : {}),
 				};
