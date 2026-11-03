@@ -185,7 +185,7 @@ export function SavePosting({ posting, resumeId, disabled, onSaved }: SavePostin
 				</p>
 			)}
 			<div className="flex flex-wrap gap-2">
-				<Button size="sm" type="submit" disabled={disabled || busy || !company.trim() || !role.trim()}>
+				<Button size="sm" type="submit" loading={busy} disabled={disabled || busy || !company.trim() || !role.trim()}>
 					<Trans>Save and link this resume</Trans>
 				</Button>
 				<Button size="sm" variant="ghost" disabled={busy} onClick={() => setOpen(false)}>

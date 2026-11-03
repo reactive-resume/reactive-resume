@@ -142,6 +142,7 @@ it("cancel and empty fields create nothing; explicit confirmation saves plain sn
 	fill();
 	submit();
 	submit();
+	expect(screen.getByRole("button", { name: "Save and link this resume" })).toHaveAttribute("aria-busy", "true");
 	await waitFor(() =>
 		expect(mocks.saved).toHaveBeenCalledWith({ id: "new-job", company: "Fictional Labs", role: "Engineer" }),
 	);
