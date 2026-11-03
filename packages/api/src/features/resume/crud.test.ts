@@ -217,3 +217,21 @@ describe("resume write route validation", () => {
 		expect(mocks.create).toHaveBeenCalledTimes(1);
 	});
 });
+
+it.each([false, true])(
+	"uses explicit resume language for blank/sample=%s independently of interface language",
+	async (withSampleData) => {
+		const client = createRouterClient(crudRouter, {
+			context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "owner", name: "Fictional Person" } } as never,
+		});
+		await client.create({ name: "German resume", tags: [], withSampleData, locale: "de-DE" });
+		expect(mocks.create).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				locale: "de-DE",
+				data: expect.objectContaining({
+					metadata: expect.objectContaining({ page: expect.objectContaining({ locale: "de-DE" }) }),
+				}),
+			}),
+		);
+	},
+);

@@ -367,6 +367,9 @@ function ConversationLoader({ threadId, document, destinationUnavailable, ...pro
 		<Conversation
 			threadId={threadId}
 			initialMessages={thread.data.messages}
+			initialAttachments={(thread.data.attachments ?? []).filter(
+				(file) => !file.messageId && !props.promptAttachments.some((sent) => sent.id === file.id),
+			)}
 			activeRun={Boolean(thread.data.thread.activeRunId)}
 			document={document}
 			readOnly={thread.data.isReadOnly || destinationUnavailable}

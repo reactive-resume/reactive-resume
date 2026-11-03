@@ -1,4 +1,5 @@
 import type { ImportedDocument, ImportToReview } from "./import-file";
+import type { Locale } from "@reactive-resume/utils/locale";
 import type { DocumentPickerAsset } from "expo-document-picker";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
@@ -10,6 +11,7 @@ import { useRouter, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { forEachDatedEntry, hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
+import { localeSchema } from "@reactive-resume/utils/locale";
 import { copyForJob } from "./copy-for-job";
 import { defaultCopySource } from "./filter";
 import { createReviewedResume, importDocument, ImportError } from "./import-file";
@@ -18,7 +20,9 @@ import { documentError, useDocumentRefresh, useDocuments } from "./queries";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
+import { getLocaleOptions } from "@/features/settings/locale-names";
 import { SECTION_TITLES } from "@/features/write/fields";
+import { selectableLocales } from "@/i18n";
 import { routes } from "@/routes";
 import { Banner, Button, Card, ListRow, Screen, SelectSheet, Switch, Text, TextArea, TextField, useTheme } from "@/ui";
 
@@ -48,6 +52,7 @@ export function NewDocument() {
 	const ai = useHasAIProvider();
 	const [setup, setSetup] = useState(false);
 	const [step, setStep] = useState<Step>(params.step === "copy" ? "copy" : "choose");
+	const [locale, setLocale] = useState<Locale>();
 	const [sourceId, setSourceId] = useState<string | null>(params.sourceResumeId ?? null);
 	const [letterResumeId, setLetterResumeId] = useState(params.sourceResumeId ?? "");
 	const [letterSourceId, setLetterSourceId] = useState(params.sourceLetterId ?? "");
@@ -182,6 +187,7 @@ export function NewDocument() {
 						tags: [],
 						autoName: kind === "blank",
 						withSampleData: kind === "sample",
+						...(locale ? { locale } : {}),
 					},
 					{ signal },
 				);
@@ -239,7 +245,7 @@ export function NewDocument() {
 	const read = (picked: DocumentPickerAsset) =>
 		run(async (signal) => {
 			setProgress(t`Reading the file and finding sections…`);
-			const result = await importDocument(picked, ai.hasAIProvider, aiPdf ?? false, signal);
+			const result = await importDocument(picked, ai.hasAIProvider, aiPdf ?? false, signal, locale);
 			if (!current(signal)) return;
 			// Read with AI: nothing is created until the user has seen what came in and what didn't.
 			if (result.type === "review") {
@@ -252,7 +258,7 @@ export function NewDocument() {
 	const confirmImport = (reviewed: ImportToReview) =>
 		run(async (signal) => {
 			setProgress(t`Creating the resume…`);
-			const document = await createReviewedResume(reviewed, keepLeftovers, signal);
+			const document = await createReviewedResume(reviewed, keepLeftovers, signal, locale);
 			if (!current(signal)) return;
 			setPending(null);
 			await finishImport(document, signal);
@@ -324,6 +330,21 @@ export function NewDocument() {
 			) : (
 				<>
 					{error && <Banner tone="danger" message={error} />}
+					{!created && step !== "copy" && (
+						<>
+							<SelectSheet
+								label={t`Resume language`}
+								value={locale ?? ""}
+								disabled={busy}
+								options={[{ value: "", label: t`Default` }, ...getLocaleOptions(i18n, selectableLocales)]}
+								onChange={(value) => setLocale(localeSchema.safeParse(value).data)}
+							/>
+							<Text
+								variant="caption"
+								color="ink3"
+							>{t`Sets section titles, date words and text direction. Your content isn't translated.`}</Text>
+						</>
+					)}
 					{busy && (
 						<View accessibilityLiveRegion="polite" style={{ flexDirection: "row", gap: space.s3 }}>
 							<ActivityIndicator color={colors.accent} />

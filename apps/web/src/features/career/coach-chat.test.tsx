@@ -167,6 +167,7 @@ function mount(
 }
 
 beforeEach(() => {
+	setAccountScope("coach-account");
 	vi.clearAllMocks();
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	mocks.send.mockImplementation(async () => reply());
@@ -484,12 +485,15 @@ it("remembers a message only after the user reviews it, in Never mode, without a
 	fireEvent.change(field, { target: { value: "Mentored three junior designers" } });
 	fireEvent.click(screen.getAllByRole("button", { name: "Remember" }).at(-1) as HTMLElement);
 	await screen.findByText("Added to Knowledge.");
-	expect(mocks.saveFact).toHaveBeenCalledWith({
-		applicationId: "application-1",
-		text: "Mentored three junior designers",
-		category: "accomplishment",
-		source: { kind: "user-message", id: "u-9", quote: "I mentored three junior designers; two were promoted." },
-	});
+	expect(mocks.saveFact).toHaveBeenCalledWith(
+		{
+			applicationId: "application-1",
+			text: "Mentored three junior designers",
+			category: "accomplishment",
+			source: { kind: "user-message", id: "u-9", quote: "I mentored three junior designers; two were promoted." },
+		},
+		{ context: { accountId: "coach-account" } },
+	);
 	expect(mocks.send).not.toHaveBeenCalled();
 });
 
