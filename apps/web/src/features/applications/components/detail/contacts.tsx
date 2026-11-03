@@ -1,35 +1,70 @@
+import type { Application } from "../../types";
 import type { Contact } from "@reactive-resume/schema/applications/data";
-import type { RefObject } from "react";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useEffect, useId, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useId, useRef, useState } from "react";
 import { contactSchema } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
-import { toast } from "@reactive-resume/ui/components/toast";
-import { withUndo } from "@/features/career/shared";
+import { applicationDetailQueryKey } from "../../queries";
+import { withQueryUndo } from "@/features/career/shared";
+import { client, prepareRpc } from "@/libs/orpc/client";
 
 const EMPTY_CONTACT = { name: "", role: "", type: "", email: "", phone: "" };
 
-type ContactsProps = { contacts: Contact[]; disabled: boolean; onChange: (contacts: Contact[]) => void };
+type ContactsProps = {
+	application: Pick<Application, "id" | "contacts" | "contactsVersion">;
+	disabled: boolean;
+	onChange: (contacts: Contact[]) => void;
+};
+type Removing = { index: number; contact: Contact };
 
 const contactKey = (contact: Contact) =>
 	JSON.stringify([contact.name, contact.role ?? "", contact.type ?? "", contact.email ?? "", contact.phone ?? ""]);
 const sameContact = (a: Contact | undefined, b: Contact | undefined) => !!a && !!b && contactKey(a) === contactKey(b);
 
 /** The Contact cell: the primary contact (the first), and the full list, with add and remove, in a popover. */
-export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
-	// A removed contact hides at once, here and in the list, and is saved away when its Undo toast closes.
-	const [removing, setRemoving] = useState<Contact | null>(null);
-	const shown = removing ? contacts.filter((contact) => contact !== removing) : contacts;
-	// The removal saves against the latest list when its Undo closes, even after the popover (and the list) has closed.
-	const latest = useRef(contacts);
-	useEffect(() => {
-		latest.current = contacts;
-	}, [contacts]);
+export function Contacts({ application, disabled, onChange }: ContactsProps) {
+	const { contacts } = application;
+	const queryClient = useQueryClient();
+	const [removing, setRemoving] = useState<Removing | null>(null);
+	const [preparing, setPreparing] = useState(false);
+	const pending = useRef(false);
+	const visible = (contact: Contact, index: number) =>
+		!removing || index !== removing.index || !sameContact(contact, removing.contact);
+	const shown = contacts.filter(visible);
+	const remove = (contact: Contact) => {
+		if (pending.current) return;
+		pending.current = true;
+		setPreparing(true);
+		withQueryUndo({
+			queryClient,
+			queryKey: applicationDetailQueryKey(application.id),
+			description: t`Removed ${contact.name}`,
+			errorMessage: t`Couldn't save the change. Try again.`,
+			prepare: () => {
+				if (!application.contactsVersion) throw new Error(t`Couldn't save the change. Try again.`);
+				return prepareRpc(client.applications.deleteContact, {
+					id: application.id,
+					index: contacts.indexOf(contact),
+					expectedVersion: application.contactsVersion,
+				});
+			},
+			hide: () => {
+				setRemoving({ index: contacts.indexOf(contact), contact });
+				setPreparing(false);
+			},
+			restore: () => {
+				setRemoving(null);
+				setPreparing(false);
+				pending.current = false;
+			},
+		});
+	};
 	const [primary, ...others] = shown;
 
 	return (
@@ -54,33 +89,36 @@ export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
 				</h3>
 				<ContactList
 					contacts={contacts}
-					disabled={disabled}
+					disabled={disabled || preparing}
 					onChange={onChange}
 					removing={removing}
-					onRemoving={setRemoving}
-					latest={latest}
+					onRemove={remove}
 				/>
 			</PopoverContent>
 		</Popover>
 	);
 }
 
-type ContactListProps = ContactsProps & {
-	removing: Contact | null;
-	onRemoving: (contact: Contact | null) => void;
-	latest: RefObject<Contact[]>;
+type ContactListProps = {
+	contacts: Contact[];
+	disabled: boolean;
+	onChange: (contacts: Contact[]) => void;
+	removing: Removing | null;
+	onRemove: (contact: Contact) => void;
 };
 
-function ContactList({ contacts, disabled, onChange, removing, onRemoving, latest }: ContactListProps) {
+function ContactList({ contacts, disabled, onChange, removing, onRemove }: ContactListProps) {
 	const id = useId();
 	const [adding, setAdding] = useState(false);
 	// The contact being corrected: its position, and what it said when the form opened.
 	const [editing, setEditing] = useState<{ index: number; original: Contact } | null>(null);
 	const [draft, setDraft] = useState(EMPTY_CONTACT);
 	const [error, setError] = useState("");
-	const shown = contacts.filter((contact) => contact !== removing);
+	const shown = contacts.filter(
+		(contact, index) => !removing || index !== removing.index || !sameContact(contact, removing.contact),
+	);
 	const formOpen = adding || editing !== null;
-	// Until a removal's Undo closes, the list it will save is fixed; changes made meanwhile would be overwritten.
+	// Keep one reviewed contact removal active until canonical readback settles it.
 	const locked = disabled || removing !== null;
 
 	const close = () => {
@@ -120,29 +158,6 @@ function ContactList({ contacts, disabled, onChange, removing, onRemoving, lates
 		setError("");
 		setAdding(false);
 		setEditing({ index, original: contact });
-	};
-
-	const remove = (contact: Contact) => {
-		// The list as it was: if it changes before the Undo closes (another tab or device), the removal stops.
-		const snapshot = contacts.map(contactKey).join("\n");
-		onRemoving(contact);
-		withUndo({
-			description: t`Removed ${contact.name}`,
-			onUndo: () => onRemoving(null),
-			commit: () => {
-				const current = latest.current;
-				onRemoving(null);
-				if (current.map(contactKey).join("\n") !== snapshot) {
-					toast.add({
-						type: "error",
-						description: t`The contacts changed somewhere else, so ${contact.name} wasn't removed. Remove it again.`,
-					});
-					return;
-				}
-				const at = current.indexOf(contact);
-				onChange(current.filter((_, index) => index !== (at === -1 ? contacts.indexOf(contact) : at)));
-			},
-		});
 	};
 
 	const field = (key: keyof typeof EMPTY_CONTACT, label: string, type = "text") => (
@@ -206,7 +221,7 @@ function ContactList({ contacts, disabled, onChange, removing, onRemoving, lates
 							className="touch-target relative"
 							disabled={locked || formOpen}
 							aria-label={t`Remove ${contact.name}`}
-							onClick={() => remove(contact)}
+							onClick={() => onRemove(contact)}
 						>
 							<Icon name="x" size={16} />
 						</Button>

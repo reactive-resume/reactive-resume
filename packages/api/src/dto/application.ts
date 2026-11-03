@@ -103,6 +103,11 @@ const applicationSchema = createSelectSchema(schema.application, {
 			.describe(
 				"Opaque snapshot for logReply. Read the full application, review it, then send this value as expectedVersion. On CONFLICT, reload and review again.",
 			),
+		contactsVersion: z
+			.string()
+			.length(64)
+			.optional()
+			.describe("Opaque contacts snapshot for deleteContact. Unrelated application edits do not change it."),
 	});
 
 /** An application's stage as a write left it, with the ID of its latest stage change: what a later move expects. */
@@ -260,6 +265,18 @@ export const applicationDto = {
 				.describe("Why the application closed; kept when status stays closed, cleared by any other stage."),
 		}),
 		output: applicationSchema.omit({ userId: true }),
+	},
+
+	deleteContact: {
+		input: z.object({
+			id: z.string(),
+			index: z.number().int().min(0),
+			expectedVersion: z
+				.string()
+				.length(64)
+				.describe("The contactsVersion of the contacts array reviewed before removal."),
+		}),
+		output: z.void(),
 	},
 
 	attachDocument: {

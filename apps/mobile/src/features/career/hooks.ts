@@ -251,11 +251,7 @@ export function useUndoRows() {
 			onReady: () => setHidden((rows) => [...rows, id]),
 			restore: reconcile,
 			failed,
-			commit: (result) =>
-				result.finally(() => {
-					if (current()) void action.refresh();
-					pending.current.delete(id);
-				}),
+			commit: (result) => result.then(reconcile),
 		});
 		pending.current.set(id, operation);
 	};
