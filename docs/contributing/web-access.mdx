@@ -28,6 +28,8 @@ their services because an initial URL check cannot enforce a remote reader's net
 unsafe URLs stop immediately. Recoverable external read failures may use the built-in reader within the same budget;
 search never silently changes to another paid provider.
 
+The shared HTTP transport reports `401`/`403` as authentication failure, `402` as exhausted quota and `429` as a temporary request limit. Provider error bodies are discarded. A request limit does not mark saved credentials as invalid. Search clients refresh saved status after a failure and offer personal connection repair in place; operator-provided search names administrator recovery instead.
+
 Reject malformed, empty and access-challenge results. For Tavily, use full Markdown extraction without query-based
 reranking and inspect per-URL failures even when HTTP status is 200. For Exa, request page text and current freshness
 controls rather than deprecated `livecrawl`, highlights or summaries. Keep search responses small and read a selected

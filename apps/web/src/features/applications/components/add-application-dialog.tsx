@@ -39,9 +39,10 @@ import { useSessionDraft } from "@/features/career/hooks";
 import { useNow } from "@/features/career/shared";
 import { defaultCopySource } from "@/features/documents/filter";
 import { useNewDocumentsStore } from "@/features/documents/new-documents";
-import { SetUpWebAccess, testFailureMessage } from "@/features/settings/ai/web-access";
+import { WebAccessAttention, webSearchFailure } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -166,10 +167,18 @@ type AddApplicationFormProps = {
 function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: AddApplicationFormProps) {
 	const now = useNow();
 	const id = useId();
-	const { data: webAccess } = useQuery(orpc.webAccess.status.queryOptions());
+	const web = useQuery(orpc.webAccess.status.queryOptions());
+	const webAccess = web.data;
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const [query, setQuery] = useState("");
-	const search = useMutation(orpc.applications.ai.searchPostings.mutationOptions());
+	const search = useMutation({
+		...orpc.applications.ai.searchPostings.mutationOptions(),
+		onMutate: () => getAccountGeneration(),
+		onSettled: (_data, _error, _input, generation) => {
+			if (generation === getAccountGeneration()) void web.refetch();
+		},
+	});
+	const searchFailure = webSearchFailure(search.error);
 	// Without a capture, what was pasted and read survives closing the dialog (and a reload in this tab) until saved.
 	const kept = useSessionDraft<SaveJobDraft>(
 		initialCapture ? null : "save-job",
@@ -422,14 +431,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					</Trans>
 				</p>
 			)}
-			{webAccess?.testResult && !webAccess.testResult.search.success && (
-				<div role="alert" className="grid gap-2 text-sm text-warn-text">
-					<p>
-						{webAccess.provider} · {testFailureMessage(webAccess.testResult.search.error)}
-					</p>
-					<SetUpWebAccess />
-				</div>
-			)}
+			<WebAccessAttention failure={searchFailure} />
 			<DialogHeader>
 				<DialogTitle>
 					<Trans>Save a job</Trans>
@@ -445,7 +447,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 				</a>
 			</p>
 
-			{webAccess?.search && (
+			{(webAccess?.search || query.length > 0) && (
 				<section className="grid gap-2" aria-labelledby={`${id}-search-label`}>
 					<Label id={`${id}-search-label`} htmlFor={`${id}-search`}>
 						<Trans>Search job postings</Trans>
@@ -463,14 +465,14 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							onKeyDown={(event) => {
 								if (event.key === "Enter" && !event.nativeEvent.isComposing) {
 									event.preventDefault();
-									if (query.trim().length >= 2 && !search.isPending) search.mutate({ query });
+									if (webAccess?.search && query.trim().length >= 2 && !search.isPending) search.mutate({ query });
 								}
 							}}
 						/>
 						<Button
 							type="button"
 							variant="secondary"
-							disabled={query.trim().length < 2 || search.isPending || create.isPending}
+							disabled={!webAccess?.search || query.trim().length < 2 || search.isPending || create.isPending}
 							onClick={() => search.mutate({ query })}
 						>
 							<Trans>Search</Trans>
@@ -481,7 +483,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							<Trans>Searching job postings…</Trans>
 						</p>
 					)}
-					{search.error && (
+					{search.error && !searchFailure && (
 						<p className="text-xs text-danger-text" role="alert">
 							{getOrpcErrorMessage(search.error, {
 								fallback: t`Job search failed. Try again or paste a posting link.`,

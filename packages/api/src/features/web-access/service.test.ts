@@ -310,7 +310,7 @@ describe.each(PROVIDERS)("%s adapter at shared boundary", (provider) => {
 	it.each([
 		[401, "auth"],
 		[402, "quota"],
-		[429, "quota"],
+		[429, "rate-limit"],
 		[503, "unreachable"],
 	] as const)("returns safe search failure for HTTP %i", async (httpStatus, reason) => {
 		status = httpStatus;
@@ -323,11 +323,12 @@ describe.each(PROVIDERS)("%s adapter at shared boundary", (provider) => {
 		expect(fixtures.direct).not.toHaveBeenCalled();
 	});
 
-	it.each(["auth", "quota", "malformed", "empty", "challenge", "too-large", "per-url"])(
+	it.each(["auth", "quota", "rate-limit", "malformed", "empty", "challenge", "too-large", "per-url"])(
 		"falls back once after %s read failure",
 		async (failure) => {
 			if (failure === "auth") status = 401;
-			if (failure === "quota") status = 429;
+			if (failure === "quota") status = 402;
+			if (failure === "rate-limit") status = 429;
 			if (failure === "malformed") responseOverride = { unexpected: true };
 			if (failure === "empty") responseOverride = readResponse(provider, " ");
 			if (failure === "challenge") responseOverride = readResponse(provider, "Just a moment. Verify you are human");
@@ -472,7 +473,7 @@ describe.each(PROVIDERS)("%s adapter at shared boundary", (provider) => {
 	it("throws the existing failure when every region's request fails", async () => {
 		status = 429;
 		await expect(searchWeb("designer", { ...context(provider), regions: ["DE", "FR"] })).rejects.toMatchObject({
-			reason: "quota",
+			reason: "rate-limit",
 		});
 		expect(requests).toHaveLength(2);
 	});
@@ -497,7 +498,7 @@ describe.each(PROVIDERS)("%s adapter at shared boundary", (provider) => {
 			userId: "user",
 		});
 		expect(result).toEqual({
-			search: { success: false, error: "quota" },
+			search: { success: false, error: "rate-limit" },
 			read: { success: true },
 		});
 		expect(fixtures.direct).not.toHaveBeenCalled();

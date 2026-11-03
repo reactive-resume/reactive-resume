@@ -30,9 +30,11 @@ async function requestJson(url: string, init: RequestInit, signal: AbortSignal) 
 		throw new WebAccessError(
 			response.status === 401 || response.status === 403
 				? "auth"
-				: response.status === 429 || response.status === 402
-					? "quota"
-					: "unreachable",
+				: response.status === 429
+					? "rate-limit"
+					: response.status === 402
+						? "quota"
+						: "unreachable",
 		);
 	}
 	if (Number(response.headers.get("content-length")) > MAX_PAGE_BYTES) {

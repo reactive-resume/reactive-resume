@@ -205,6 +205,26 @@ reset();
 let duplicateLookupError = false;
 let duplicateObserver;
 let hasProvider = false;
+let webStatus = { search: false };
+let webRefetches = 0;
+let searchFailureCode = "SEARCH_AUTH";
+let searchWait;
+let searchRequestScope;
+const webQuery = () => ({
+	data: webStatus,
+	refetch: async () => {
+		webRefetches++;
+	},
+});
+const webAccess = load(source("features/ai/web-access.tsx"), {
+	"@orpc/client": { ORPCError },
+	"@tanstack/react-query": { useQuery: webQuery },
+	"./error": { aiSettingsError: String },
+	"./providers": { useHasAIProvider: () => ({ hasAIProvider: hasProvider }) },
+	"@/api/client": { orpc: { webAccess: { status: { queryOptions: () => ({ queryKey: ["web-access"] }) } } } },
+	"@/auth/session": auth,
+	"@/ui": ui,
+});
 const parseRequests = [];
 const lanes = [{ id: "saved", category: "saved", label: "Saved" }];
 const timezoneHelpers = load(new URL("../../../packages/utils/src/timezone.ts", import.meta.url).pathname, { zod });
@@ -217,9 +237,11 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 	"@orpc/client": { ORPCError },
 	"@tanstack/react-query": {
 		useQuery: (options) =>
-			options.queryKey[0] === "posting-match" && duplicateLookupError
-				? duplicateObserver.getCurrentResult()
-				: { data: options.queryKey[0] === "posting-match" ? null : [], isPending: false, isError: false },
+			options.queryKey[0] === "web-access"
+				? webQuery()
+				: options.queryKey[0] === "posting-match" && duplicateLookupError
+					? duplicateObserver.getCurrentResult()
+					: { data: options.queryKey[0] === "posting-match" ? null : [], isPending: false, isError: false },
 	},
 	"expo-router": { useRouter: () => ({ push() {} }) },
 	"./date": { parseDateOnly: () => new Date() },
@@ -248,6 +270,11 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 		client: {
 			applications: {
 				ai: {
+					searchPostings: async (_input, options) => {
+						searchRequestScope = options.context?.scope;
+						await searchWait;
+						throw new ORPCError(searchFailureCode, { message: "private-key-material" });
+					},
 					parsePosting: async (input) => {
 						await authorizeAiRequest(["applications", "ai", "parsePosting"], input, consentApi, scope);
 						parseRequests.push(input);
@@ -276,7 +303,7 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 		orpc: {
 			applications: { findPosting: { queryOptions: () => ({ queryKey: ["posting-match"] }) } },
 			documents: { list: { queryOptions: () => ({ queryKey: [] }) } },
-			webAccess: { status: { queryOptions: () => ({ queryKey: [] }) } },
+			webAccess: { status: { queryOptions: () => ({ queryKey: ["web-access"] }) } },
 		},
 	},
 	"@/auth/session": auth,
@@ -285,7 +312,7 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 		AIProviderSetupSheet: "AIProviderSetupSheet",
 		useHasAIProvider: () => ({ hasAIProvider: hasProvider }),
 	},
-	"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
+	"@/features/ai/web-access": webAccess,
 	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
 	"@/routes": { routes: { applicationDetails: (id) => `/applications/${id}` } },
 	"@/ui": ui,
@@ -390,6 +417,67 @@ assert.equal(
 	"Couldn't complete the request. Check your connection and try again.",
 	"Arbitrary error text remains hidden",
 );
+for (const [code, failure, message] of [
+	["SEARCH_AUTH", "auth", /rejected the credentials/],
+	["SEARCH_QUOTA", "quota", /quota is used up/],
+	["RATE_LIMIT_EXCEEDED", "rate-limit", /Too many requests/],
+	["SEARCH_FAILED", "unavailable", /unavailable/],
+]) {
+	reset();
+	scope = "alice";
+	webStatus = { search: true, configured: true, provider: "firecrawl", managed: false };
+	searchFailureCode = code;
+	const form = () => render(AddApplicationSheet, { onClose() {} });
+	control(form(), "Role, company or location").onChangeText("Fictional engineer");
+	const before = webRefetches;
+	control(form(), "Search").onPress();
+	await settle();
+	const failed = form();
+	assert.equal(control(failed, "Role, company or location").value, "Fictional engineer");
+	const attention = nodes(failed).find((node) => node.type === webAccess.WebAccessAttention);
+	assert.equal(attention.props.failure, failure);
+	assert.equal(searchRequestScope, "alice", "search binds the selecting account at dispatch");
+	assert.equal(webRefetches, before + 1, "failed search refreshes the selecting account's saved status");
+	reset();
+	const notice = render(webAccess.WebAccessAttention, attention.props);
+	assert.ok(nodes(notice).some((node) => message.test(node.props.message ?? "")));
+	assert.ok(nodes(notice).some((node) => node.type === webAccess.SetUpWebAccess));
+	assert.doesNotMatch(JSON.stringify(notice), /private-key-material/);
+}
+for (const change of ["account", "server", "cancellation", "unmount"]) {
+	reset();
+	scope = "alice";
+	const server = session.server;
+	let release;
+	searchWait = new Promise((done) => {
+		release = done;
+	});
+	const form = () => render(AddApplicationSheet, { onClose() {} });
+	control(form(), "Role, company or location").onChangeText("Fictional engineer");
+	const before = webRefetches;
+	control(form(), "Search").onPress();
+	if (change === "account") scope = "bob";
+	if (change === "server") session = { ...session, server: "https://other.example.test" };
+	if (change === "cancellation")
+		control(nodes(form()).find((node) => node.type === "EditorSheet").props.footer, "Cancel request").onPress();
+	if (change === "unmount") reset();
+	release();
+	await settle();
+	assert.equal(webRefetches, before, `late ${change} failure cannot refresh a different scope`);
+	searchWait = undefined;
+	session = { ...session, server };
+}
+reset();
+webStatus = { search: true, provider: "firecrawl", managed: true };
+const managedNotice = render(webAccess.WebAccessAttention, { failure: "auth" });
+assert.ok(
+	nodes(managedNotice).some((node) =>
+		node.props.children
+			.flat()
+			.some((text) => typeof text === "string" && /Ask your server administrator to fix web search/.test(text)),
+	),
+);
+assert.ok(!nodes(managedNotice).some((node) => node.type === webAccess.SetUpWebAccess));
 reset();
 render(IncomingPosting, {});
 payloads = [{ shareType: "text", value: "Pending" }];
@@ -405,5 +493,5 @@ sessions.forEach((f) => f());
 assert.equal(currentNativeScope, null, "disconnect clears private group context");
 reset();
 console.log(
-	"PASS real native raw receiver → form truncation warning/metadata, one-shot activation, account/disconnect privacy; no AI/save before explicit action",
+	"PASS native raw receiver, reviewed posting metadata and search recovery: causes, retained query, repair/operator controls and account/server/cancel/unmount fences; no AI/save before explicit action",
 );

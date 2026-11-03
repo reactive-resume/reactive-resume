@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -28,6 +29,15 @@ export function testFailureMessage(error: string | undefined) {
 	if (error === "timeout") return t`The service didn't respond in time. Try again.`;
 	if (error === "rate-limit") return t`Too many requests. Try again later.`;
 	return t`The service is unavailable or doesn't support this. Try again later.`;
+}
+
+export function webSearchFailure(error: unknown) {
+	if (!(error instanceof ORPCError)) return undefined;
+	if (error.code === "SEARCH_AUTH") return "auth";
+	if (error.code === "SEARCH_QUOTA") return "quota";
+	if (error.code === "RATE_LIMIT_EXCEEDED") return "rate-limit";
+	if (error.code === "SEARCH_UNAVAILABLE" || error.code === "SEARCH_FAILED") return "unavailable";
+	return undefined;
 }
 
 export function WebAccessSection() {
@@ -468,19 +478,34 @@ export function SetUpWebAccess() {
 }
 
 /** Failed saved credentials stay visible where search is used, with repair and manual fallbacks. */
-export function WebAccessAttention() {
+type WebAccessAttentionProps = { failure?: string | undefined };
+
+export function WebAccessAttention({ failure }: WebAccessAttentionProps = {}) {
 	const { data: status } = useQuery(orpc.webAccess.status.queryOptions());
 	const failed = status?.testResult && (!status.testResult.search.success || !status.testResult.read.success);
-	if (!failed) return null;
+	if (!failure && !failed) return null;
+	const managedSearch = status?.managed || (failure && status?.searxng);
 	return (
-		<div role="status" className="grid justify-items-start gap-2 rounded-lg bg-warn-soft p-3 text-xs text-warn-text">
+		<div
+			role={failure ? "alert" : "status"}
+			className="grid justify-items-start gap-2 rounded-lg bg-warn-soft p-3 text-xs text-warn-text"
+		>
 			<span>
-				{status.provider} · {testFailureMessage(status.testResult?.search.error ?? status.testResult?.read.error)}
+				{failure && status?.searxng ? "SearXNG" : status?.provider} ·{" "}
+				{testFailureMessage(failure ?? status?.testResult?.search.error ?? status?.testResult?.read.error)}
 			</span>
 			<span>
 				<Trans>Paste the posting text or a public link to continue. The built-in reader remains available.</Trans>
 			</span>
-			<SetUpWebAccess />
+			{managedSearch ? (
+				<span>
+					<Trans>
+						Ask your server administrator to fix web search. You can still paste a posting or read a public link.
+					</Trans>
+				</span>
+			) : (
+				<SetUpWebAccess />
+			)}
 		</div>
 	);
 }

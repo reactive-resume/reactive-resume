@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 import { test } from "node:test";
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
+const { ORPCError } = createRequire(new URL("../package.json", import.meta.url))("@orpc/client");
 const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 
@@ -35,6 +36,7 @@ for (const kind of ["domain", "web connection"]) {
 		const domain = { hostname: "resume.example.test", verified: true, records: [] };
 		const dependencies = {
 			react,
+			"@orpc/client": { ORPCError },
 			"react-native": { View: "View", Linking: {} },
 			"expo-clipboard": {},
 			"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
