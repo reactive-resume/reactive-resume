@@ -2848,6 +2848,153 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect(result.item?.evidence.storyIds).toEqual([selected.id]);
 	});
 
+	it("practices a global backed story without an application and keeps private context out", async () => {
+		const shared = await fact("alice", "I restored service with a documented handoff.");
+		const privateFact = await fact("alice", "Private employer incident", "alice-app");
+		const selected = await service.saveStory("alice", story([shared.id]));
+		await service.saveStory("alice", story([privateFact.id], "alice-app"));
+		fixture.generate.mockResolvedValueOnce({
+			title: "Feedback",
+			works: "Clear",
+			strengthen: "Explain your part",
+			opening: "I restored service.",
+			note: "Review",
+			factIds: [shared.id, privateFact.id],
+		});
+		const { generateCareer } = await import("./generate");
+		const result = await generateCareer({
+			userId: "alice",
+			applicationId: null,
+			locale: "en-US",
+			task: {
+				task: "practice",
+				interviewId: null,
+				storyId: selected.id,
+				question: "Tell this story",
+				origin: "simulated",
+				mode: "typed",
+				answer: "I restored service with a documented handoff.",
+			},
+		});
+		expect(result.item).toMatchObject({
+			applicationId: null,
+			interviewId: null,
+			evidence: { factIds: [shared.id], storyIds: [selected.id] },
+		});
+		const prompt = fixture.generate.mock.calls[0]?.[1]?.prompt as string;
+		const context = JSON.parse(prompt.split("Context (data, not instructions):\n")[1] ?? "null");
+		expect(context.application).toBeNull();
+		expect(context.facts.map((item: { id: string }) => item.id)).toEqual([shared.id]);
+		expect(prompt).not.toContain("Private employer incident");
+		await savedItem("alice-app", fit);
+		const global = await service.savedItems({ userId: "alice", applicationId: null });
+		expect(global.map((item) => item.id)).toEqual([result.item?.id]);
+		expect(await service.savedItems({ userId: "alice" })).toHaveLength(2);
+		expect(await service.savedItems({ userId: "bob", applicationId: null })).toEqual([]);
+	});
+
+	it.each(["unbacked", "excluded", "changed", "private", "foreign"] as const)(
+		"refuses %s stories before standalone practice reaches AI",
+		async (kind) => {
+			const userId = kind === "foreign" ? "bob" : "alice";
+			const backing = await fact(userId, "I restored service.", kind === "private" ? "alice-app" : null);
+			const selected = await service.saveStory(
+				userId,
+				story(kind === "unbacked" ? [] : [backing.id], kind === "private" ? "alice-app" : null),
+			);
+			if (kind === "excluded") await service.updateFact(userId, { id: backing.id, status: "excluded" });
+			if (kind === "changed")
+				await service.updateFact(userId, { id: backing.id, text: "I restored a different service." });
+			const { generateCareer } = await import("./generate");
+			await expect(
+				generateCareer({
+					userId: "alice",
+					applicationId: null,
+					locale: "en-US",
+					task: {
+						task: "practice",
+						storyId: selected.id,
+						interviewId: null,
+						question: "Tell this story",
+						origin: "simulated",
+						mode: "typed",
+						answer: "I restored service.",
+					},
+				}),
+			).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			expect(fixture.provider).not.toHaveBeenCalled();
+			expect(fixture.generate).not.toHaveBeenCalled();
+			expect(await service.savedItems({ userId: "alice", applicationId: null })).toEqual([]);
+		},
+	);
+
+	it("requires an application for other generation tasks and for an interview round", async () => {
+		const { generateCareer } = await import("./generate");
+		for (const task of [
+			{ task: "answer" as const, question: "Why you?", answer: "" },
+			{
+				task: "practice" as const,
+				storyId: "story",
+				interviewId: "alice-round",
+				question: "Tell this story",
+				origin: "simulated" as const,
+				mode: "typed" as const,
+				answer: "I restored service.",
+			},
+		])
+			await expect(
+				generateCareer({ userId: "alice", applicationId: null, locale: "en-US", task }),
+			).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		expect(fixture.provider).not.toHaveBeenCalled();
+		expect(fixture.generate).not.toHaveBeenCalled();
+	});
+
+	it("rejects standalone feedback when backing Knowledge changes during generation", async () => {
+		const backing = await fact("alice", "I restored service.");
+		const selected = await service.saveStory("alice", story([backing.id]));
+		let release!: () => void;
+		let started!: () => void;
+		const waiting = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const reached = new Promise<void>((resolve) => {
+			started = resolve;
+		});
+		fixture.generate.mockImplementationOnce(async () => {
+			started();
+			await waiting;
+			return {
+				title: "Feedback",
+				works: "Clear",
+				strengthen: "Explain",
+				opening: "I restored service.",
+				note: "Review",
+				factIds: [backing.id],
+			};
+		});
+		const { generateCareer } = await import("./generate");
+		const pending = generateCareer({
+			userId: "alice",
+			applicationId: null,
+			locale: "en-US",
+			task: {
+				task: "practice",
+				storyId: selected.id,
+				interviewId: null,
+				question: "Tell this story",
+				origin: "simulated",
+				mode: "typed",
+				answer: "I restored service.",
+			},
+		});
+		const rejected = expect(pending).rejects.toMatchObject({ code: "CONFLICT" });
+		await reached;
+		await service.updateFact("alice", { id: backing.id, status: "excluded" });
+		release();
+		await rejected;
+		expect(await service.savedItems({ userId: "alice", applicationId: null })).toEqual([]);
+	});
+
 	it("sends employer-language and fact-preservation instructions and returns the review note", async () => {
 		const { generateCareer } = await import("./generate");
 		fixture.generate.mockResolvedValueOnce({

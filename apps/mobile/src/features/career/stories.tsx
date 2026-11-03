@@ -9,6 +9,7 @@ import Animated from "react-native-reanimated";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
 import { client, prepareRpc, useCareerAction, useCareerQueries, useUndoRows } from "./hooks";
 import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
+import { StoryPracticeButton } from "./story-practice-button";
 import { orpc } from "@/api/client";
 import {
 	Banner,
@@ -88,6 +89,7 @@ export function Stories() {
 								</Text>
 							))}
 							<Text color="ink3">{story.data.tags.join(" · ")}</Text>
+							<StoryPracticeButton story={story} />
 							<Actions>
 								<Button label={t`Edit`} variant="secondary" onPress={() => setEditor({ story })} />
 								<Button

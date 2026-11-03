@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:07+0100\n"
+"POT-Creation-Date: 2026-11-03 23:45+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1318,7 +1318,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
-msgstr ""
+msgstr "Un fapt din această poveste este dezactivat sau s-a schimbat. Editează povestea pentru a-l verifica."
 
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
@@ -1607,10 +1607,6 @@ msgid "Add a country"
 msgstr "Adăugați o țară"
 
 #: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "Adaugă un fapt"
-
-#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Adăugați un fapt, de exemplu „Am îndrumat doi PM asociați în 2025”"
 
@@ -1733,10 +1729,6 @@ msgstr "Adăugați un e-mail"
 #: src/features/career/workspace/shell.tsx
 msgid "Add an interview"
 msgstr "Adăugați un interviu"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Adăugați mai întâi un interviu"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Add an interview in an application first"
@@ -3138,14 +3130,6 @@ msgstr "Rază colțuri"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Lățime chenar"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Ambele conturi au un profil privat de candidatură. Exportă și șterge un profil din Setări → Cont înainte de asociere, ca niciunul să nu fie suprascris."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Ambele conturi au răspunsuri de candidatură salvate duplicate. Exportă și șterge o copie înainte de asociere, ca niciuna să nu fie suprascrisă."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4949,6 +4933,7 @@ msgstr "Nu s-a putut redenumi cheia de acces. Încearcă din nou."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Nu s-a putut redenumi această conversație. Încearcă din nou."
 
+#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Nu s-a putut reseta parola. Încearcă din nou."
@@ -5102,6 +5087,7 @@ msgstr "Nu s-a putut programa interviul. Încearcă din nou."
 msgid "Couldn't send the email. Try again."
 msgstr "Nu s-a putut trimite e-mailul. Încearcă din nou."
 
+#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "Nu s-a putut trimite e-mailul de resetare a parolei. Încearcă din nou."
@@ -5134,6 +5120,8 @@ msgstr "Nu s-a putut afișa previzualizarea PDF. Încărcați din nou fișierul.
 msgid "Couldn't show the preview."
 msgstr "Nu s-a putut afișa previzualizarea."
 
+#. Fallback toast when sign-in fails and no server error message is available
+#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5278,10 +5266,12 @@ msgstr "Nu s-a putut încărca fotografia. Încearcă din nou."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Nu s-a putut verifica codul. Introdu codul actual din aplicația de autentificare."
 
+#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Nu s-a putut verifica codul de rezervă. Verifică codul și încearcă din nou."
 
+#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Nu s-a putut verifica codul. Verifică codul și încearcă din nou."
@@ -5469,6 +5459,7 @@ msgstr "date CSV"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
+#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "Monedă"
 
@@ -7642,10 +7633,6 @@ msgstr "Formulă de adresare"
 msgid "Grid"
 msgstr "Grilă"
 
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Preferințele de carieră ale oaspetelui și contului diferă. Munca de oaspete rămâne intactă. Aliniază preferințele și setările de memorie ale Cunoștințelor din ambele conturi și reîncearcă."
-
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Vă pot explica în detaliu la apelul nostru."
@@ -9110,7 +9097,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Link a fact to practice this story"
-msgstr ""
+msgstr "Asociază un fapt pentru a exersa această poveste"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
@@ -10781,10 +10768,6 @@ msgstr "Nu a fost salvat"
 msgid "Not saved — this fact was forgotten before."
 msgstr "Nesalvat — acest fapt a fost uitat anterior."
 
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Nesalvat · Autentifică-te pentru a salva"
-
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -12019,11 +12002,11 @@ msgstr "Exersați altă întrebare"
 #: src/features/career/knowledge/stories.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice for {0}"
-msgstr ""
+msgstr "Exersează pentru {0}"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Practice for which interview?"
-msgstr ""
+msgstr "Pentru ce interviu vrei să exersezi?"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -13537,10 +13520,6 @@ msgstr "CV-urile se redau întotdeauna pe hârtie albă, indiferent de temă."
 msgid "Resumes created"
 msgstr "CV-urile create"
 
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Retrage coloanele de candidaturi nefolosite înainte de combinarea conturilor; totalul depășește 40 de coloane active."
-
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14482,10 +14461,6 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Trimite un link nou"
-
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15029,10 +15004,6 @@ msgstr "Barele laterale sunt adesea citite ultimele sau amestecate în coloana p
 msgid "Sign in"
 msgstr "Autentificare"
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Autentifică-te din nou"
-
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Conectează-te din clientul tău AI sau folosește o cheie API."
@@ -15051,10 +15022,6 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Autentifică-te pentru a salva"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16115,10 +16082,6 @@ msgstr "Mulțumesc, Sam. Iată unul: la Northwind Labs am condus reproiectarea o
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Codul nu se potrivește. Verifică-l și reîncearcă."
-
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16126,10 +16089,6 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "Adresa de e-mail, utilizatorul sau parola nu se potrivește. Verifică-le sau resetează parola."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16956,14 +16915,6 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Acest link de resetare a expirat sau a fost deja folosit."
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Acest link de resetare a expirat sau a fost deja folosit. Trimite un link nou."
-
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Acest CV este blocat. Deblochează-l din meniul său pentru a-l edita."
@@ -17052,10 +17003,6 @@ msgstr "Acest server folosește etapele standard, așa că numele etapelor din f
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Această încercare de conectare a expirat sau a fost deja folosită. Încearcă din nou."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Acest pas de autentificare a expirat. Autentifică-te din nou."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17203,10 +17150,6 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Prea deschis pentru titluri pe alb. Poate fi greu de citit și de tipărit slab."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Prea multe încercări. Așteaptă puțin și reîncearcă."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19286,10 +19229,6 @@ msgstr "Serverul dvs. oferă căutare pe web în secțiunea Candidaturi și pent
 msgid "your server's search service"
 msgstr ""
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Sesiunea ta s-a încheiat. Autentifică-te din nou pentru a continua."
-
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19392,3 +19331,83 @@ msgstr "Micșorează"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Ambele conturi au un profil privat de candidatură. Exportă și șterge un profil din Setări → Cont înainte de asociere, ca niciunul să nu fie suprascris."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Ambele conturi au răspunsuri de candidatură salvate duplicate. Exportă și șterge o copie înainte de asociere, ca niciuna să nu fie suprascrisă."
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Preferințele de carieră ale oaspetelui și contului diferă. Munca de oaspete rămâne intactă. Aliniază preferințele și setările de memorie ale Cunoștințelor din ambele conturi și reîncearcă."
+
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Retrage coloanele de candidaturi nefolosite înainte de combinarea conturilor; totalul depășește 40 de coloane active."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Trimite un link nou"
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Autentifică-te din nou"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Autentifică-te pentru a salva"
+
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Codul nu se potrivește. Verifică-l și reîncearcă."
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "Adresa de e-mail, utilizatorul sau parola nu se potrivește. Verifică-le sau resetează parola."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Acest link de resetare a expirat sau a fost deja folosit."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Acest pas de autentificare a expirat. Autentifică-te din nou."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Prea multe încercări. Așteaptă puțin și reîncearcă."
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Sesiunea ta s-a încheiat. Autentifică-te din nou pentru a continua."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Nesalvat · Autentifică-te pentru a salva"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Acest link de resetare a expirat sau a fost deja folosit. Trimite un link nou."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Compară încercările pentru a vedea progresul. Întrebările de practică sunt simulate."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Comparat cu poveștile tale."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Exersează fără o candidatură"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Adaugă un fapt"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Add an interview first"
+msgstr "Adăugați mai întâi un interviu"

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:07+0100\n"
+"POT-Creation-Date: 2026-11-03 23:45+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1318,7 +1318,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
-msgstr ""
+msgstr "Fakt použitý v příběhu je vypnutý nebo se změnil. Upravte příběh a zkontrolujte ho."
 
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
@@ -1607,10 +1607,6 @@ msgid "Add a country"
 msgstr "Přidejte zemi"
 
 #: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "Přidejte fakt"
-
-#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Přidejte fakt, například „Mentoring dvou juniorních PM v roce 2025“"
 
@@ -1733,10 +1729,6 @@ msgstr "Přidejte e-mail"
 #: src/features/career/workspace/shell.tsx
 msgid "Add an interview"
 msgstr "Přidat pohovor"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Nejdřív přidejte pohovor"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Add an interview in an application first"
@@ -3138,14 +3130,6 @@ msgstr "Zaoblení ohraničení"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Šířka ohraničení"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Oba účty mají soukromý profil uchazeče. Před propojením exportujte a smažte jeden profil v Nastavení → Účet, aby se žádný nepřepsal."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Oba účty mají duplicitní uložené odpovědi k žádostem. Před propojením exportujte a smažte jednu kopii, aby se žádná nepřepsala."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4949,6 +4933,7 @@ msgstr "Passkey se nepodařilo přejmenovat. Zkuste to znovu."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Tuto konverzaci se nepodařilo přejmenovat. Zkuste to znovu."
 
+#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Heslo se nepodařilo obnovit. Zkuste to znovu."
@@ -5102,6 +5087,7 @@ msgstr "Pohovor se nepodařilo naplánovat. Zkuste to znovu."
 msgid "Couldn't send the email. Try again."
 msgstr "E-mail se nepodařilo odeslat. Zkuste to znovu."
 
+#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "E-mail pro obnovení hesla se nepodařilo odeslat. Zkuste to znovu."
@@ -5134,6 +5120,8 @@ msgstr "Náhled PDF se nepodařilo zobrazit. Nahrajte soubor znovu."
 msgid "Couldn't show the preview."
 msgstr "Náhled se nepodařilo zobrazit."
 
+#. Fallback toast when sign-in fails and no server error message is available
+#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5278,10 +5266,12 @@ msgstr "Fotografii se nepodařilo nahrát. Zkuste to znovu."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Kód se nepodařilo ověřit. Zadejte aktuální kód z ověřovací aplikace."
 
+#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Váš záložní kód se nepodařilo ověřit. Zkontrolujte kód a zkuste to znovu."
 
+#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Váš kód se nepodařilo ověřit. Zkontrolujte kód a zkuste to znovu."
@@ -5469,6 +5459,7 @@ msgstr "Data CSV"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
+#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "Měna"
 
@@ -7642,10 +7633,6 @@ msgstr "Oslovení"
 msgid "Grid"
 msgstr "Mřížka"
 
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Kariérní předvolby hosta a účtu se liší. Práce hosta zůstává zachována. Sjednoťte kariérní předvolby a nastavení paměti Znalostí na obou účtech a zkuste to znovu."
-
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Klidně to podrobně proberu na našem hovoru."
@@ -9110,7 +9097,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Link a fact to practice this story"
-msgstr ""
+msgstr "Propojte fakt a procvičte si tento příběh"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
@@ -10781,10 +10768,6 @@ msgstr "Neuloženo"
 msgid "Not saved — this fact was forgotten before."
 msgstr "Neuloženo — tento fakt už byl dříve zapomenut."
 
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Neuloženo · Přihlaste se pro uložení"
-
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -12019,11 +12002,11 @@ msgstr "Nacvičit další otázku"
 #: src/features/career/knowledge/stories.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice for {0}"
-msgstr ""
+msgstr "Procvičovat pro {0}"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Practice for which interview?"
-msgstr ""
+msgstr "Na který pohovor se chcete připravit?"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -13537,10 +13520,6 @@ msgstr "životopisy jsou vždy vykresleny na bílém papíře, ať už je téma 
 msgid "Resumes created"
 msgstr "vytvořené životopisy"
 
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Před spojením účtů vyřaďte nepoužívané sloupce žádostí; celkem přesahují 40 aktivních sloupců."
-
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14482,10 +14461,6 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Poslat nový odkaz"
-
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15029,10 +15004,6 @@ msgstr "Postranní pruhy se často čtou jako poslední nebo se přimíchají do
 msgid "Sign in"
 msgstr "Přihlásit se"
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Přihlásit se znovu"
-
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Přihlaste se ze svého AI klienta nebo použijte klíč API."
@@ -15051,10 +15022,6 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Přihlásit se pro uložení"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16115,10 +16082,6 @@ msgstr "Díky, Sam. Tady je jeden: v Northwind Labs byl na mně redesign onboard
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Kód nesouhlasí. Zkontrolujte jej a zkuste to znovu."
-
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16126,10 +16089,6 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "E-mail, uživatelské jméno nebo heslo nesouhlasí. Zkontrolujte je nebo obnovte heslo."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16956,14 +16915,6 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Tento odkaz pro obnovení vypršel nebo už byl použit."
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Tento odkaz pro obnovení vypršel nebo už byl použit. Poslat nový odkaz."
-
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Tento životopis je zamčený. Pro úpravy ho odemkněte v jeho nabídce."
@@ -17052,10 +17003,6 @@ msgstr "Tento server používá standardní fáze, proto se názvy fází ze sou
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Tento pokus o přihlášení vypršel nebo už byl použit. Zkuste to znovu."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Tento krok přihlášení vypršel. Přihlaste se znovu."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17203,10 +17150,6 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Příliš světlé pro nadpisy na bílé. Může být obtížné číst a tisknout slabě."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Příliš mnoho pokusů. Chvíli počkejte a zkuste to znovu."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19286,10 +19229,6 @@ msgstr "Váš server poskytuje vyhledávání na webu v sekci Žádosti a pro as
 msgid "your server's search service"
 msgstr ""
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Vaše relace skončila. Chcete-li pokračovat v práci, přihlaste se znovu."
-
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19392,3 +19331,83 @@ msgstr "Oddálit"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Oba účty mají soukromý profil uchazeče. Před propojením exportujte a smažte jeden profil v Nastavení → Účet, aby se žádný nepřepsal."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Oba účty mají duplicitní uložené odpovědi k žádostem. Před propojením exportujte a smažte jednu kopii, aby se žádná nepřepsala."
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Kariérní předvolby hosta a účtu se liší. Práce hosta zůstává zachována. Sjednoťte kariérní předvolby a nastavení paměti Znalostí na obou účtech a zkuste to znovu."
+
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Před spojením účtů vyřaďte nepoužívané sloupce žádostí; celkem přesahují 40 aktivních sloupců."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Poslat nový odkaz"
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Přihlásit se znovu"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Přihlásit se pro uložení"
+
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Kód nesouhlasí. Zkontrolujte jej a zkuste to znovu."
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "E-mail, uživatelské jméno nebo heslo nesouhlasí. Zkontrolujte je nebo obnovte heslo."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Tento odkaz pro obnovení vypršel nebo už byl použit."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Tento krok přihlášení vypršel. Přihlaste se znovu."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Příliš mnoho pokusů. Chvíli počkejte a zkuste to znovu."
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Vaše relace skončila. Chcete-li pokračovat v práci, přihlaste se znovu."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Neuloženo · Přihlaste se pro uložení"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Tento odkaz pro obnovení vypršel nebo už byl použit. Poslat nový odkaz."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Porovnejte pokusy a sledujte pokrok. Cvičné otázky jsou simulované."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Porovnáno s vašimi příběhy."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Procvičovat bez žádosti o práci"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Přidejte fakt"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Add an interview first"
+msgstr "Nejdřív přidejte pohovor"

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:07+0100\n"
+"POT-Creation-Date: 2026-11-03 23:45+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1318,7 +1318,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
-msgstr ""
+msgstr "إحدى الحقائق في هذه القصة معطلة أو تغيرت. عدّل القصة للتحقق منها."
 
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
@@ -1607,10 +1607,6 @@ msgid "Add a country"
 msgstr "أضف دولة"
 
 #: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "أضف حقيقة"
-
-#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "أضف حقيقة، مثلًا “وجّهتُ اثنين من مديري المنتجات المبتدئين في 2025”"
 
@@ -1733,10 +1729,6 @@ msgstr "أضف بريدًا إلكترونيًا"
 #: src/features/career/workspace/shell.tsx
 msgid "Add an interview"
 msgstr "أضف مقابلة"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "أضف مقابلة أولًا"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Add an interview in an application first"
@@ -3138,14 +3130,6 @@ msgstr "نصف قطر الحافة"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "عرض الإطار"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "كلا الحسابين له ملف تقديم خاص. صدّر أحد الملفين واحذفه من الإعدادات → الحساب قبل الربط حتى لا يُستبدل أي منهما."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "كلا الحسابين يحتوي على إجابات تقديم محفوظة مكررة. صدّر نسخة واحذفها قبل الربط حتى لا تُستبدل أي منها."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4949,6 +4933,7 @@ msgstr "تعذرت إعادة تسمية مفتاح المرور. حاول مر�
 msgid "Couldn't rename this conversation. Try again."
 msgstr "تعذّرت إعادة تسمية هذه المحادثة. حاول مرة أخرى."
 
+#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "تعذّرت إعادة تعيين كلمة المرور. حاول مرة أخرى."
@@ -5102,6 +5087,7 @@ msgstr "تعذّر تحديد موعد المقابلة. حاول مرة أخر�
 msgid "Couldn't send the email. Try again."
 msgstr "تعذر إرسال البريد الإلكتروني. حاول ثانية."
 
+#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "تعذّر إرسال بريد إعادة تعيين كلمة المرور. حاول مرة أخرى."
@@ -5134,6 +5120,8 @@ msgstr "تعذر عرض معاينة PDF. ارفع الملف مجددًا."
 msgid "Couldn't show the preview."
 msgstr "تعذّر عرض المعاينة."
 
+#. Fallback toast when sign-in fails and no server error message is available
+#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5278,10 +5266,12 @@ msgstr "تعذّر رفع الصورة. حاول مرة أخرى."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "تعذّر التحقق من الرمز. أدخِل الرمز الحالي من تطبيق المصادقة."
 
+#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "تعذّر التحقق من رمز النسخ الاحتياطي. تحقق من الرمز وحاول مرة أخرى."
 
+#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "تعذّر التحقق من الرمز. تحقق من الرمز وحاول مرة أخرى."
@@ -5469,6 +5459,7 @@ msgstr "بيانات CSV"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
+#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "العملة"
 
@@ -7642,10 +7633,6 @@ msgstr "التحية"
 msgid "Grid"
 msgstr "الشبكة"
 
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "تختلف تفضيلات المسار المهني بين حساب الضيف والحساب. عملك كضيف محفوظ. طابق تفضيلات المسار المهني وإعدادات ذاكرة المعرفة في الحسابين قبل المحاولة مجددًا."
-
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "يسعدني أن أشرحه لك بالتفصيل خلال مكالمتنا."
@@ -9110,7 +9097,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Link a fact to practice this story"
-msgstr ""
+msgstr "اربط حقيقة للتدرّب على هذه القصة"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
@@ -10781,10 +10768,6 @@ msgstr "لم يتم حفظها"
 msgid "Not saved — this fact was forgotten before."
 msgstr "لم يُحفظ — نُسيت هذه الحقيقة من قبل."
 
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "لم يُحفظ · سجّل الدخول للحفظ"
-
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -12019,11 +12002,11 @@ msgstr "تمرّن على سؤال آخر"
 #: src/features/career/knowledge/stories.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice for {0}"
-msgstr ""
+msgstr "تدرّب من أجل {0}"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Practice for which interview?"
-msgstr ""
+msgstr "لأي مقابلة تريد التدرّب؟"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -13537,10 +13520,6 @@ msgstr "يتم تقديم السيرة الذاتية دائمًا على ورق
 msgid "Resumes created"
 msgstr "تم إنشاء السيرة الذاتية"
 
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "أوقف أعمدة الطلبات غير المستخدمة قبل دمج الحسابين؛ يتجاوز المجموع 40 عمودًا نشطًا."
-
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14482,10 +14461,6 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "إرسال رابط جديد"
-
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15029,10 +15004,6 @@ msgstr "غالبًا ما تتم قراءة الأشرطة الجانبية أخ
 msgid "Sign in"
 msgstr "تسجيل الدخول"
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "تسجيل الدخول مجددًا"
-
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "سجّل الدخول من تطبيق الذكاء الاصطناعي، أو استخدم مفتاح API."
@@ -15051,10 +15022,6 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "تسجيل الدخول للحفظ"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16115,10 +16082,6 @@ msgstr "شكرًا يا Sam. إليك مثالًا: في Northwind Labs قُدت
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "هذا الرمز غير مطابق. تحقّق منه وحاول مجددًا."
-
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16126,10 +16089,6 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "البريد أو اسم المستخدم أو كلمة المرور غير مطابق. تحقّق منها أو أعد تعيين كلمة المرور."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16956,14 +16915,6 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "انتهت صلاحية رابط إعادة التعيين هذا أو استُخدم بالفعل."
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "انتهت صلاحية رابط إعادة التعيين هذا أو استُخدم بالفعل. إرسال رابط جديد."
-
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "هذه السيرة الذاتية مقفلة. ألغِ قفلها من قائمتها لتعديلها."
@@ -17052,10 +17003,6 @@ msgstr "يستخدم هذا الخادم المراحل القياسية، لذ�
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "انتهت صلاحية محاولة تسجيل الدخول هذه أو تم استخدامها بالفعل. حاول مرة أخرى."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "انتهت صلاحية خطوة تسجيل الدخول هذه. سجّل الدخول مجددًا."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17203,10 +17150,6 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "فاتح جدًا للعناوين باللون الأبيض. قد يكون من الصعب القراءة والطباعة بشكل ضعيف."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "محاولات كثيرة جدًا. انتظر قليلًا ثم حاول مجددًا."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19286,10 +19229,6 @@ msgstr "يوفر الخادم الخاص بك إمكانية البحث على �
 msgid "your server's search service"
 msgstr ""
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "انتهت جلستك. سجّل الدخول مجددًا لمتابعة العمل."
-
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19392,3 +19331,83 @@ msgstr "تصغير"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "الزولو"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "كلا الحسابين له ملف تقديم خاص. صدّر أحد الملفين واحذفه من الإعدادات → الحساب قبل الربط حتى لا يُستبدل أي منهما."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "كلا الحسابين يحتوي على إجابات تقديم محفوظة مكررة. صدّر نسخة واحذفها قبل الربط حتى لا تُستبدل أي منها."
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "تختلف تفضيلات المسار المهني بين حساب الضيف والحساب. عملك كضيف محفوظ. طابق تفضيلات المسار المهني وإعدادات ذاكرة المعرفة في الحسابين قبل المحاولة مجددًا."
+
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "أوقف أعمدة الطلبات غير المستخدمة قبل دمج الحسابين؛ يتجاوز المجموع 40 عمودًا نشطًا."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "إرسال رابط جديد"
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "تسجيل الدخول مجددًا"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "تسجيل الدخول للحفظ"
+
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "هذا الرمز غير مطابق. تحقّق منه وحاول مجددًا."
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "البريد أو اسم المستخدم أو كلمة المرور غير مطابق. تحقّق منها أو أعد تعيين كلمة المرور."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "انتهت صلاحية رابط إعادة التعيين هذا أو استُخدم بالفعل."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "انتهت صلاحية خطوة تسجيل الدخول هذه. سجّل الدخول مجددًا."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "محاولات كثيرة جدًا. انتظر قليلًا ثم حاول مجددًا."
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "انتهت جلستك. سجّل الدخول مجددًا لمتابعة العمل."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "لم يُحفظ · سجّل الدخول للحفظ"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "انتهت صلاحية رابط إعادة التعيين هذا أو استُخدم بالفعل. إرسال رابط جديد."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "قارن المحاولات لترى التحسن. أسئلة التدريب محاكاة."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "مقارنة بقصصك."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "تدرّب دون طلب توظيف"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "أضف حقيقة"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Add an interview first"
+msgstr "أضف مقابلة أولًا"

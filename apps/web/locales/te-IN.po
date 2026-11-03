@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:07+0100\n"
+"POT-Creation-Date: 2026-11-03 23:45+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1318,7 +1318,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
-msgstr ""
+msgstr "ఈ కథలోని ఒక వాస్తవం నిలిపివేయబడింది లేదా మారింది. తనిఖీ చేయడానికి కథను సవరించండి."
 
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
@@ -1607,10 +1607,6 @@ msgid "Add a country"
 msgstr "దేశాన్ని జోడించండి"
 
 #: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "వాస్తవాన్ని జోడించండి"
-
-#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "ఒక వాస్తవాన్ని జోడించండి, ఉదాహరణకు “2025లో ఇద్దరు అసోసియేట్ PMలకు మెంటార్‌గా ఉన్నాను”"
 
@@ -1733,10 +1729,6 @@ msgstr "ఇమెయిల్‌ను జోడించండి"
 #: src/features/career/workspace/shell.tsx
 msgid "Add an interview"
 msgstr "ఇంటర్వ్యూను జోడించు"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "ముందుగా ఒక ఇంటర్వ్యూను జోడించండి"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Add an interview in an application first"
@@ -3138,14 +3130,6 @@ msgstr "సరిహద్దు వ్యాసార్థం"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "సరిహద్దు వెడల్పు"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "రెండు ఖాతాల్లో వ్యక్తిగత దరఖాస్తు ప్రొఫైల్ ఉంది. ఏదీ భర్తీ కాకుండా కలిపే ముందు సెట్టింగ్‌లు → ఖాతాలో ఒక ప్రొఫైల్‌ను ఎగుమతి చేసి తొలగించండి."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "రెండు ఖాతాల్లో ఒకే సేవ్ చేసిన దరఖాస్తు సమాధానాలు ఉన్నాయి. ఏదీ భర్తీ కాకుండా కలిపే ముందు ఒక కాపీని ఎగుమతి చేసి తొలగించండి."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4949,6 +4933,7 @@ msgstr "పాస్‌కీ పేరు మార్చడం సాధ్య
 msgid "Couldn't rename this conversation. Try again."
 msgstr "ఈ సంభాషణ పేరు మార్చడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
 
+#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "మీ పాస్‌వర్డ్‌ను రీసెట్ చేయడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -5102,6 +5087,7 @@ msgstr "ఇంటర్వ్యూని షెడ్యూల్ చేయడ�
 msgid "Couldn't send the email. Try again."
 msgstr "ఇమెయిల్ పంపడం సాధ్యపడలేదు. మళ్లీ ప్రయత్నించండి."
 
+#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "పాస్‌వర్డ్ రీసెట్ ఇమెయిల్‌ను పంపడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -5134,6 +5120,8 @@ msgstr "PDF ప్రివ్యూను చూపించలేకపోయ�
 msgid "Couldn't show the preview."
 msgstr "ప్రివ్యూను చూపడం సాధ్యపడలేదు."
 
+#. Fallback toast when sign-in fails and no server error message is available
+#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5278,10 +5266,12 @@ msgstr "ఫోటోను అప్‌లోడ్ చేయడం సాధ్
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "కోడ్‌ను ధృవీకరించడం సాధ్యపడలేదు. మీ ఆథెంటికేటర్ యాప్ నుండి ప్రస్తుత కోడ్‌ను నమోదు చేయండి."
 
+#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "మీ బ్యాకప్ కోడ్‌ను ధృవీకరించడం సాధ్యపడలేదు. కోడ్‌ను తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి."
 
+#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "మీ కోడ్‌ను ధృవీకరించడం సాధ్యపడలేదు. కోడ్‌ను తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి."
@@ -5469,6 +5459,7 @@ msgstr "CSV డేటా"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
+#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "కరెన్సీ"
 
@@ -7642,10 +7633,6 @@ msgstr "సంబోధన"
 msgid "Grid"
 msgstr "గ్రిడ్"
 
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "అతిథి, ఖాతా కెరీర్ ప్రాధాన్యతలు వేరుగా ఉన్నాయి. అతిథి పని అలాగే ఉంది. మళ్లీ ప్రయత్నించే ముందు రెండు ఖాతాల కెరీర్ ప్రాధాన్యతలు, జ్ఞాన మెమరీ సెట్టింగ్‌లను సరిపోల్చండి."
-
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "మన కాల్‌లో దాన్ని వివరంగా చెప్పడానికి సంతోషిస్తాను."
@@ -9110,7 +9097,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Link a fact to practice this story"
-msgstr ""
+msgstr "ఈ కథను సాధన చేయడానికి ఒక వాస్తవాన్ని లింక్ చేయండి"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
@@ -10781,10 +10768,6 @@ msgstr "సేవ్ కాలేదు"
 msgid "Not saved — this fact was forgotten before."
 msgstr "సేవ్ చేయలేదు — ఈ వాస్తవం ఇంతకుముందే మరచిపోబడింది."
 
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "సేవ్ కాలేదు · సేవ్ చేయడానికి సైన్ ఇన్ చేయండి"
-
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -12019,11 +12002,11 @@ msgstr "మరో ప్రశ్నను సాధన చేయి"
 #: src/features/career/knowledge/stories.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice for {0}"
-msgstr ""
+msgstr "{0} కోసం సాధన చేయండి"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Practice for which interview?"
-msgstr ""
+msgstr "ఏ ఇంటర్వ్యూ కోసం సాధన చేయాలనుకుంటున్నారు?"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -13537,10 +13520,6 @@ msgstr "రెజ్యూమెలు ఎల్లప్పుడూ తెల�
 msgid "Resumes created"
 msgstr "రెజ్యూమెలు సృష్టించబడ్డాయి"
 
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "ఖాతాలను కలిపే ముందు వాడని దరఖాస్తు నిలువు వరుసలను నిలిపివేయండి; మొత్తం 40 క్రియాశీల వరుసలను మించుతోంది."
-
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14482,10 +14461,6 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "కొత్త లింక్ పంపండి"
-
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15029,10 +15004,6 @@ msgstr "సైడ్‌బార్లు తరచుగా చివరిగ�
 msgid "Sign in"
 msgstr "సైన్ ఇన్ చేయండి"
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "మళ్లీ సైన్ ఇన్ చేయండి"
-
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "మీ AI క్లయింట్ నుండి సైన్ ఇన్ చేయండి లేదా API కీని ఉపయోగించండి."
@@ -15051,10 +15022,6 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "సేవ్ చేయడానికి సైన్ ఇన్ చేయండి"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16115,10 +16082,6 @@ msgstr "ధన్యవాదాలు, Sam. ఇదిగో ఒకటి: North
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "కోడ్ సరిపోలలేదు. తనిఖీ చేసి మళ్లీ ప్రయత్నించండి."
-
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16126,10 +16089,6 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "ఇమెయిల్, వినియోగదారు పేరు లేదా పాస్‌వర్డ్ సరిపోలలేదు. తనిఖీ చేయండి లేదా పాస్‌వర్డ్ రీసెట్ చేయండి."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16956,14 +16915,6 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "ఈ రీసెట్ లింక్ గడువు ముగిసింది లేదా ఇప్పటికే వాడారు."
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "ఈ రీసెట్ లింక్ గడువు ముగిసింది లేదా ఇప్పటికే వాడారు. కొత్త లింక్ పంపండి."
-
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "ఈ రెజ్యూమ్ లాక్ చేయబడింది. సవరించడానికి దాని మెనూ నుండి అన్‌లాక్ చేయండి."
@@ -17052,10 +17003,6 @@ msgstr "ఈ సర్వర్ ప్రామాణిక దశలను ఉ�
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "ఈ సైన్-ఇన్ ప్రయత్నం గడువు ముగిసింది లేదా ఇప్పటికే ఉపయోగించబడింది. మళ్ళీ ప్రయత్నించండి."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "ఈ సైన్ ఇన్ దశ గడువు ముగిసింది. మళ్లీ సైన్ ఇన్ చేయండి."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17203,10 +17150,6 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "తెలుపు రంగులో ఉన్న శీర్షికలకు చాలా తేలికగా ఉంది. అస్పష్టంగా చదవడం మరియు ముద్రించడం కష్టంగా ఉండవచ్చు."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "చాలా ఎక్కువ ప్రయత్నాలు. కాస్త వేచి మళ్లీ ప్రయత్నించండి."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19286,10 +19229,6 @@ msgstr "మీ సర్వర్ దరఖాస్తులు విభాగ
 msgid "your server's search service"
 msgstr ""
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "మీ సెషన్ ముగిసింది. పని కొనసాగించడానికి మళ్లీ సైన్ ఇన్ చేయండి."
-
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19392,3 +19331,83 @@ msgstr "జూమ్ అవుట్ చేయండి"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "జులు"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "రెండు ఖాతాల్లో వ్యక్తిగత దరఖాస్తు ప్రొఫైల్ ఉంది. ఏదీ భర్తీ కాకుండా కలిపే ముందు సెట్టింగ్‌లు → ఖాతాలో ఒక ప్రొఫైల్‌ను ఎగుమతి చేసి తొలగించండి."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "రెండు ఖాతాల్లో ఒకే సేవ్ చేసిన దరఖాస్తు సమాధానాలు ఉన్నాయి. ఏదీ భర్తీ కాకుండా కలిపే ముందు ఒక కాపీని ఎగుమతి చేసి తొలగించండి."
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "అతిథి, ఖాతా కెరీర్ ప్రాధాన్యతలు వేరుగా ఉన్నాయి. అతిథి పని అలాగే ఉంది. మళ్లీ ప్రయత్నించే ముందు రెండు ఖాతాల కెరీర్ ప్రాధాన్యతలు, జ్ఞాన మెమరీ సెట్టింగ్‌లను సరిపోల్చండి."
+
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "ఖాతాలను కలిపే ముందు వాడని దరఖాస్తు నిలువు వరుసలను నిలిపివేయండి; మొత్తం 40 క్రియాశీల వరుసలను మించుతోంది."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "కొత్త లింక్ పంపండి"
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "మళ్లీ సైన్ ఇన్ చేయండి"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "సేవ్ చేయడానికి సైన్ ఇన్ చేయండి"
+
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "కోడ్ సరిపోలలేదు. తనిఖీ చేసి మళ్లీ ప్రయత్నించండి."
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "ఇమెయిల్, వినియోగదారు పేరు లేదా పాస్‌వర్డ్ సరిపోలలేదు. తనిఖీ చేయండి లేదా పాస్‌వర్డ్ రీసెట్ చేయండి."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "ఈ రీసెట్ లింక్ గడువు ముగిసింది లేదా ఇప్పటికే వాడారు."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "ఈ సైన్ ఇన్ దశ గడువు ముగిసింది. మళ్లీ సైన్ ఇన్ చేయండి."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "చాలా ఎక్కువ ప్రయత్నాలు. కాస్త వేచి మళ్లీ ప్రయత్నించండి."
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "మీ సెషన్ ముగిసింది. పని కొనసాగించడానికి మళ్లీ సైన్ ఇన్ చేయండి."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "సేవ్ కాలేదు · సేవ్ చేయడానికి సైన్ ఇన్ చేయండి"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "ఈ రీసెట్ లింక్ గడువు ముగిసింది లేదా ఇప్పటికే వాడారు. కొత్త లింక్ పంపండి."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "మెరుగుదల చూడటానికి ప్రయత్నాలను పోల్చండి. సాధన ప్రశ్నలు ఊహాత్మకమైనవి."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "మీ కథలతో పోల్చబడింది."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "ఉద్యోగ దరఖాస్తు లేకుండా సాధన చేయండి"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "వాస్తవాన్ని జోడించండి"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Add an interview first"
+msgstr "ముందుగా ఒక ఇంటర్వ్యూను జోడించండి"

@@ -2112,6 +2112,7 @@ const { Stories } = load("features/career/stories.tsx", {
 		useCareerAction: () => ({ pending: false, run: (save) => save() }),
 		client: { career: { saveStory: (payload) => calls.push({ story: payload }) } },
 	},
+	"./story-practice-button": { StoryPracticeButton: "StoryPracticeButton" },
 	"./shared": { Actions: "Actions", EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
 });
 reset();

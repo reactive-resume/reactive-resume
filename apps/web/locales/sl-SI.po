@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 23:07+0100\n"
+"POT-Creation-Date: 2026-11-03 23:45+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1318,7 +1318,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
-msgstr ""
+msgstr "Dejstvo v tej zgodbi je izklopljeno ali spremenjeno. Uredite zgodbo in ga preverite."
 
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
@@ -1607,10 +1607,6 @@ msgid "Add a country"
 msgstr "Dodajte državo"
 
 #: src/features/career/knowledge/facts.tsx
-msgid "Add a fact"
-msgstr "Dodajte dejstvo"
-
-#: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Dodajte dejstvo, na primer »Leta 2025 sem bil mentor dvema mlajšima produktnima vodjema«"
 
@@ -1733,10 +1729,6 @@ msgstr "Dodajte e-pošto"
 #: src/features/career/workspace/shell.tsx
 msgid "Add an interview"
 msgstr "Dodaj intervju"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Najprej dodajte intervju"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Add an interview in an application first"
@@ -3138,14 +3130,6 @@ msgstr "Radij obrobe"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Širina obrobe"
-
-#: src/features/auth/error.ts
-msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
-msgstr "Oba računa imata zasebni profil kandidata. Pred povezavo izvozite in izbrišite en profil v Nastavitve → Račun, da se noben ne prepiše."
-
-#: src/features/auth/error.ts
-msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
-msgstr "Oba računa imata podvojene shranjene odgovore na prijave. Pred povezavo izvozite in izbrišite eno kopijo, da se nobena ne prepiše."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -4949,6 +4933,7 @@ msgstr "Ključa passkey ni bilo mogoče preimenovati. Poskusite znova."
 msgid "Couldn't rename this conversation. Try again."
 msgstr "Tega pogovora ni bilo mogoče preimenovati. Poskusite znova."
 
+#. Fallback toast when resetting password fails and no backend message is available
 #: src/features/auth/pages/reset-password.tsx
 msgid "Couldn't reset your password. Try again."
 msgstr "Gesla ni bilo mogoče ponastaviti. Poskusite znova."
@@ -5102,6 +5087,7 @@ msgstr "Razgovora ni bilo mogoče načrtovati. Poskusite znova."
 msgid "Couldn't send the email. Try again."
 msgstr "E-pošte ni bilo mogoče poslati. poskusi ponovno"
 
+#. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Couldn't send the password reset email. Try again."
 msgstr "E-poštnega sporočila za ponastavitev gesla ni bilo mogoče poslati. Poskusite znova."
@@ -5134,6 +5120,8 @@ msgstr "Predogleda PDF ni bilo mogoče prikazati. Znova naložite datoteko."
 msgid "Couldn't show the preview."
 msgstr "Predogleda ni bilo mogoče prikazati."
 
+#. Fallback toast when sign-in fails and no server error message is available
+#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
@@ -5278,10 +5266,12 @@ msgstr "Fotografije ni bilo mogoče naložiti. Poskusite znova."
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Kode ni bilo mogoče preveriti. Vnesite trenutno kodo iz aplikacije za preverjanje pristnosti."
 
+#. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
 msgstr "Varnostne kode ni bilo mogoče preveriti. Preverite kodo in poskusite znova."
 
+#. Fallback toast when verifying a two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Couldn't verify your code. Check the code and try again."
 msgstr "Kode ni bilo mogoče preveriti. Preverite kodo in poskusite znova."
@@ -5469,6 +5459,7 @@ msgstr "podatki CSV"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
+#: src/features/career/knowledge/preferences.tsx
 msgid "Currency"
 msgstr "Valuta"
 
@@ -7642,10 +7633,6 @@ msgstr "Nagovor"
 msgid "Grid"
 msgstr "Mreža"
 
-#: src/features/auth/error.ts
-msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
-msgstr "Karierne nastavitve gosta in računa se razlikujejo. Gostovo delo ostaja ohranjeno. Uskladite karierne nastavitve in nastavitve pomnilnika Znanja v obeh računih ter poskusite znova."
-
 #: src/features/homepage/remember.tsx
 msgid "Happy to walk you through it on our call."
 msgstr "Z veseljem vam ga podrobneje predstavim med pogovorom."
@@ -9110,7 +9097,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Link a fact to practice this story"
-msgstr ""
+msgstr "Povežite dejstvo, da vadite to zgodbo"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
@@ -10781,10 +10768,6 @@ msgstr "Ni shranjeno"
 msgid "Not saved — this fact was forgotten before."
 msgstr "Ni shranjeno — to dejstvo je bilo že prej pozabljeno."
 
-#: src/features/resume/editor/save-status.tsx
-msgid "Not saved · Sign in to save"
-msgstr "Ni shranjeno · Prijavite se za shranjevanje"
-
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -12019,11 +12002,11 @@ msgstr "Vadi drugo vprašanje"
 #: src/features/career/knowledge/stories.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice for {0}"
-msgstr ""
+msgstr "Vadite za {0}"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Practice for which interview?"
-msgstr ""
+msgstr "Za kateri razgovor želite vaditi?"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -13537,10 +13520,6 @@ msgstr "življenjepisi so vedno prikazani na belem papirju, ne glede na temo."
 msgid "Resumes created"
 msgstr "ustvarjeni življenjepisi"
 
-#: src/features/auth/error.ts
-msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
-msgstr "Pred združitvijo računov opustite neuporabljene stolpce prijav; skupaj presegajo 40 aktivnih stolpcev."
-
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -14482,10 +14461,6 @@ msgstr ""
 msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Send a new link"
-msgstr "Pošlji novo povezavo"
-
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
 msgstr ""
@@ -15029,10 +15004,6 @@ msgstr "Stranske vrstice se pogosto preberejo nazadnje ali pomešajo v glavni st
 msgid "Sign in"
 msgstr "Prijava"
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Sign in again"
-msgstr "Znova se prijavite"
-
 #: src/features/settings/ai/mcp.tsx
 msgid "Sign in from your AI client, or use an API key."
 msgstr "Prijavite se iz svojega odjemalca UI ali uporabite ključ API."
@@ -15051,10 +15022,6 @@ msgstr ""
 #: src/features/auth/components/connecting-client.tsx
 msgid "Sign in to connect an application."
 msgstr ""
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Sign in to save"
-msgstr "Prijavite se za shranjevanje"
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -16115,10 +16082,6 @@ msgstr "Hvala, Sam. Tu je en primer: v podjetju Northwind Labs sem vodil prenovo
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
-#: src/features/auth/error.ts
-msgid "That code doesn't match. Check it and try again."
-msgstr "Koda se ne ujema. Preverite jo in poskusite znova."
-
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation isn't available. It may have been deleted."
 msgstr ""
@@ -16126,10 +16089,6 @@ msgstr ""
 #: src/routes/agent/$threadId.tsx
 msgid "That conversation's document was deleted."
 msgstr ""
-
-#: src/features/auth/error.ts
-msgid "That email, username or password doesn't match. Check them, or reset your password."
-msgstr "E-pošta, uporabniško ime ali geslo se ne ujema. Preverite podatke ali ponastavite geslo."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16956,14 +16915,6 @@ msgstr ""
 msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "This reset link expired or was already used."
-msgstr "Ta povezava za ponastavitev je potekla ali je že uporabljena."
-
-#: src/features/auth/error.ts
-msgid "This reset link expired or was already used. Send a new link."
-msgstr "Ta povezava za ponastavitev je potekla ali je že uporabljena. Pošlji novo povezavo."
-
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "Ta življenjepis je zaklenjen. Za urejanje ga odklenite v njegovem meniju."
@@ -17052,10 +17003,6 @@ msgstr "Ta strežnik uporablja standardne stopnje, zato se imena stopenj iz dato
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Ta poskus prijave je potekel ali je bil že uporabljen. Poskusite znova."
-
-#: src/features/auth/error.ts
-msgid "This sign-in step expired. Sign in again."
-msgstr "Ta korak prijave je potekel. Znova se prijavite."
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -17203,10 +17150,6 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
 msgstr "Presvetlo za naslove na beli barvi. Morda je težko berljiv in natisnjen medlo."
-
-#: src/features/auth/error.ts
-msgid "Too many attempts. Wait a moment, then try again."
-msgstr "Preveč poskusov. Malo počakajte in poskusite znova."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Too many requests. Try again later."
@@ -19286,10 +19229,6 @@ msgstr "Vaš strežnik omogoča spletno iskanje v razdelku Prijave in za pomočn
 msgid "your server's search service"
 msgstr ""
 
-#: src/features/auth/components/session-recovery.tsx
-msgid "Your session ended. Sign in again to keep working."
-msgstr "Vaša seja se je končala. Znova se prijavite za nadaljevanje dela."
-
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain open “{0}”."
@@ -19392,3 +19331,83 @@ msgstr "Oddalji"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zuluščina"
+
+#: src/features/auth/error.ts
+msgid "Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten."
+msgstr "Oba računa imata zasebni profil kandidata. Pred povezavo izvozite in izbrišite en profil v Nastavitve → Račun, da se noben ne prepiše."
+
+#: src/features/auth/error.ts
+msgid "Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten."
+msgstr "Oba računa imata podvojene shranjene odgovore na prijave. Pred povezavo izvozite in izbrišite eno kopijo, da se nobena ne prepiše."
+
+#: src/features/auth/error.ts
+msgid "Guest and account Career preferences differ. Your guest work is unchanged. Match Career preferences and Knowledge memory settings in both accounts before trying again."
+msgstr "Karierne nastavitve gosta in računa se razlikujejo. Gostovo delo ostaja ohranjeno. Uskladite karierne nastavitve in nastavitve pomnilnika Znanja v obeh računih ter poskusite znova."
+
+#: src/features/auth/error.ts
+msgid "Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes."
+msgstr "Pred združitvijo računov opustite neuporabljene stolpce prijav; skupaj presegajo 40 aktivnih stolpcev."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Send a new link"
+msgstr "Pošlji novo povezavo"
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Sign in again"
+msgstr "Znova se prijavite"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Sign in to save"
+msgstr "Prijavite se za shranjevanje"
+
+#: src/features/auth/error.ts
+msgid "That code doesn't match. Check it and try again."
+msgstr "Koda se ne ujema. Preverite jo in poskusite znova."
+
+#: src/features/auth/error.ts
+msgid "That email, username or password doesn't match. Check them, or reset your password."
+msgstr "E-pošta, uporabniško ime ali geslo se ne ujema. Preverite podatke ali ponastavite geslo."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "This reset link expired or was already used."
+msgstr "Ta povezava za ponastavitev je potekla ali je že uporabljena."
+
+#: src/features/auth/error.ts
+msgid "This sign-in step expired. Sign in again."
+msgstr "Ta korak prijave je potekel. Znova se prijavite."
+
+#: src/features/auth/error.ts
+msgid "Too many attempts. Wait a moment, then try again."
+msgstr "Preveč poskusov. Malo počakajte in poskusite znova."
+
+#: src/features/auth/components/session-recovery.tsx
+msgid "Your session ended. Sign in again to keep working."
+msgstr "Vaša seja se je končala. Znova se prijavite za nadaljevanje dela."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved · Sign in to save"
+msgstr "Ni shranjeno · Prijavite se za shranjevanje"
+
+#: src/features/auth/error.ts
+msgid "This reset link expired or was already used. Send a new link."
+msgstr "Ta povezava za ponastavitev je potekla ali je že uporabljena. Pošlji novo povezavo."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Primerjajte poskuse in spremljajte napredek. Vprašanja za vajo so simulirana."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Primerjano z vašimi zgodbami."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Vadite brez prijave za službo"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Dodajte dejstvo"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Add an interview first"
+msgstr "Najprej dodajte intervju"

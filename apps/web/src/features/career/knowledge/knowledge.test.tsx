@@ -627,6 +627,40 @@ it("hands the selected story to Practise for the next interview", async () => {
 	);
 });
 
+it("opens a backed story for practice with no application when no interviews exist", async () => {
+	api.data.applications = [];
+	api.data.facts = [
+		{ id: "backing-fact", status: "active", applicationId: null, revisions: [], updatedAt: new Date("2026-10-01") },
+	];
+	api.data.stories = [
+		{
+			id: "chosen-story",
+			updatedAt: new Date(),
+			data: {
+				title: "Story to practise",
+				situation: "S",
+				task: "T",
+				action: "A",
+				result: "",
+				reflection: "",
+				tags: [],
+				factIds: ["backing-fact"],
+			},
+		},
+	];
+	mount(<StoriesPage storyId="chosen-story" edit={false} />);
+	const button = await screen.findByRole("button", { name: /^Practice$/ });
+	expect(button).not.toHaveAttribute("aria-disabled", "true");
+	fireEvent.click(button);
+	expect(api.navigate).toHaveBeenCalledWith(
+		expect.objectContaining({
+			to: "/dashboard/career/knowledge/stories/{-$storyId}",
+			params: { storyId: "chosen-story" },
+			search: { practice: true },
+		}),
+	);
+});
+
 it("doesn't offer Practice for a story with no facts to back it (L6-07)", async () => {
 	api.data.applications = [
 		{
