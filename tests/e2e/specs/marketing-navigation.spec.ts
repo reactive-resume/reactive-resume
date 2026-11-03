@@ -21,7 +21,7 @@ for (const path of ["/resume-templates", "/ats-checker"]) {
 			await expect(start).toBeVisible();
 			await expect(header.locator("nav")).toHaveCount(0);
 			await expect(header.locator('a[href="/"]')).toHaveAccessibleName("Reactive Resume");
-			const boxes = await header.locator("a").evaluateAll((links) =>
+			const boxes = await header.locator("a, button").evaluateAll((links) =>
 				links
 					.filter((link) => link.getBoundingClientRect().width > 0)
 					.map((link) => {
@@ -49,8 +49,9 @@ for (const path of ["/resume-templates", "/ats-checker"]) {
 			const footer = page.getByRole("contentinfo");
 			await footer.scrollIntoViewIfNeeded();
 			await expect(footer.getByRole("navigation")).toHaveCount(4);
-			await expect(footer.locator('a[href="/#write"]')).toBeVisible();
-			await expect(footer.locator(`a[href="/?locale=${locale}#languages"]`)).toBeVisible();
+			await expect(footer.locator('a[href="https://rxresu.me/#write"]')).toBeVisible();
+			await expect(footer.locator("button[title]")).toBeVisible();
+			await expect(footer.locator("button[title]")).toHaveAccessibleName(/\S+/);
 			await expect(footer.locator('img[src*="footer-desk"]')).toHaveCount(0);
 			await expect(header).toBeInViewport();
 			await expect(signIn).toBeInViewport();
@@ -66,7 +67,7 @@ for (const path of ["/resume-templates", "/ats-checker"]) {
 		expect(html).toContain('href="/auth/login"');
 		expect(html).toContain('href="/auth/register"');
 		expect(html).toContain("<footer");
-		expect(html).toContain('href="/#write"');
+		expect(html).toContain('href="https://rxresu.me/#write"');
 		expect(html).not.toContain('href="/dashboard"');
 		await page.goto(path);
 		await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
@@ -77,22 +78,25 @@ for (const path of ["/resume-templates", "/ats-checker"]) {
 	});
 }
 
-test("marketing theme, language and footer links reach their existing destinations", async ({ page }) => {
+test("marketing theme and language persist while footer links name their destinations", async ({ page }) => {
 	await page.goto("/ats-checker");
 	await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
 	await page.getByRole("button", { name: "Switch to dark mode", exact: true }).click();
 	await expect(page.locator("html")).toHaveClass(/dark/);
 	await page.reload();
 	await expect(page.locator("html")).toHaveClass(/dark/);
-	await page.getByRole("contentinfo").getByRole("link", { name: "Features", exact: true }).click();
-	await expect(page).toHaveURL(/\/#write$/);
-	await expect(page.locator("#write")).toBeInViewport();
+	await expect(page.getByRole("contentinfo").getByRole("link", { name: "Features", exact: true })).toHaveAttribute(
+		"href",
+		"https://rxresu.me/#write",
+	);
 	await page.goto("/resume-templates?locale=de-DE");
 	await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
-	await page.getByRole("banner").locator('a[href="/?locale=de-DE#languages"]').click();
-	await expect(page).toHaveURL(/\/\?locale=de-DE#languages$/);
-	await expect(page.locator("html")).toHaveAttribute("lang", "de-DE");
-	await expect(page.locator("#languages")).toBeInViewport();
+	await page.getByRole("banner").locator("button[title]").click();
+	await page.getByRole("option", { name: /American English/ }).click();
+	await expect(page.locator("html")).toHaveAttribute("lang", "en-US");
+	expect(new URL(page.url()).pathname).toBe("/resume-templates");
+	await page.reload();
+	await expect(page.locator("html")).toHaveAttribute("lang", "en-US");
 });
 
 test("marketing account actions remain keyboard destinations on phones", async ({ page }) => {

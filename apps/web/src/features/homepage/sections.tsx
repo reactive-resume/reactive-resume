@@ -11,6 +11,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
 import { CtaLink, SignInLink, Doodle, labelClass } from "./ui";
 import { RollingNumber } from "@/components/ui/rolling-number";
+import { LocaleCombobox } from "@/features/locale/combobox";
 import { localeMap } from "@/libs/locale";
 import { orpc } from "@/libs/orpc/client";
 
@@ -197,20 +198,37 @@ function languageHref(locale: string) {
 
 type LanguageDoorwayProps = { className?: string; nameClassName?: string; story?: boolean };
 
-/** The current language, in its own name, leading to the Languages scene: the header's and the footer's way there. */
+/** Home uses its Languages scene; standalone pages can change language even when a resume replaces the home. */
 export function LanguageDoorway({ className, nameClassName, story = true }: LanguageDoorwayProps) {
 	const { i18n } = useLingui();
 	const name = getLanguageName(i18n.locale, i18n.locale, false);
-	return (
-		<a
-			href={story ? "#languages" : `/?locale=${i18n.locale}#languages`}
-			title={t`Change language`}
-			className={cn("flex items-center", className)}
-		>
+	const content = (
+		<>
 			<Icon name="translate" size={16} />
 			<span lang={i18n.locale} className={nameClassName}>
 				{name}
 			</span>
+		</>
+	);
+	if (!story)
+		return (
+			<LocaleCombobox
+				render={(props) => (
+					<button
+						{...props}
+						type="button"
+						aria-label={t`Change language`}
+						title={t`Change language`}
+						className={cn("touch-target relative flex items-center", props.className, className)}
+					>
+						{content}
+					</button>
+				)}
+			/>
+		);
+	return (
+		<a href="#languages" title={t`Change language`} className={cn("flex items-center", className)}>
+			{content}
 		</a>
 	);
 }

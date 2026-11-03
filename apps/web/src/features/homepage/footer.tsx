@@ -26,7 +26,7 @@ const getColumns = (story: boolean): { id: string; title: string; links: FooterL
 		title: t`Product`,
 		links: [
 			{ label: t`Templates`, to: "/resume-templates" },
-			{ label: t`Features`, href: story ? "#write" : "/#write" },
+			{ label: t`Features`, href: story ? "#write" : "https://rxresu.me/#write" },
 			{ label: t`ATS checker`, to: "/ats-checker" },
 			{ label: t`Get started`, to: "/auth/register" },
 			{ label: t`Sign in`, to: "/auth/login" },
