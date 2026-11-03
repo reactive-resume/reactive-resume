@@ -21,7 +21,12 @@ async function openReminder(page: Page, id: string) {
 }
 
 // Fault only the selected logical read; preserve real responses for physical-batch siblings.
-async function unavailableRead(page: Page, path: string, value: string) {
+async function unavailableRead(
+	page: Page,
+	path: string,
+	value: string,
+	gate = (_attempt: number) => Promise.resolve(),
+) {
 	const state = { failing: true, failures: 0 };
 	await page.route("**/api/rpc/**", async (route) => {
 		const request = route.request();
@@ -37,6 +42,7 @@ async function unavailableRead(page: Page, path: string, value: string) {
 		state.failures++;
 		const response = await route.fetch();
 		expect(response.status()).toBe(batch ? 207 : 200);
+		await gate(state.failures);
 		const failure = {
 			status: 503,
 			body: {
@@ -63,27 +69,86 @@ async function unavailableRead(page: Page, path: string, value: string) {
 	return state;
 }
 
-test("Coming up keeps dated application steps visible when optional briefing reads fail", async ({
+for (const kind of ["briefing", "offer"] as const) {
+	test(`Coming up keeps dated application steps visible when ${kind} reads fail`, async ({ authPage: page }, info) => {
+		await page.clock.setFixedTime(new Date("2026-11-03T12:00:00Z"));
+		const created = await page.request.post("/api/openapi/applications", {
+			data: {
+				company: "Fictional Offline Briefing",
+				role: "Engineer",
+				status: kind === "offer" ? "offer" : "applied",
+				followUpAt: "2026-11-05T09:00:00Z",
+				followUpDateOnly: false,
+				followUpNote: "Email Maya",
+			},
+		});
+		await expect(created).toBeOK();
+		if (kind === "offer") {
+			const id: string = await created.json();
+			await expect(
+				await page.request.post("/api/openapi/career/offers", {
+					data: {
+						applicationId: id,
+						version: "written",
+						currency: "EUR",
+						period: "year",
+						base: 95000,
+						variable: null,
+						respondBy: "2026-11-06T17:00:00Z",
+					},
+				}),
+			).toBeOK();
+		}
+		const fault = await unavailableRead(page, "career/savedItems", kind);
+		await page.goto("/dashboard/career");
+		await expect.poll(() => fault.failures).toBeGreaterThan(0);
+		const coming = page.getByRole("region", { name: "Coming up", exact: true });
+		await expect(coming).toContainText("Fictional Offline Briefing");
+		await expect(coming).toContainText("Email Maya");
+		await expect(coming.getByRole("link", { name: "Open workspace", exact: true })).toBeVisible();
+		if (kind === "offer") {
+			await expect(coming.getByRole("alert")).toContainText("Couldn't load this", { timeout: 15000 });
+			await expect(coming).toContainText("Email Maya");
+			await expect(coming).not.toContainText("Reply to the offer");
+			await coming.screenshot({ path: info.outputPath("coming-up-offer-read-error.png") });
+			fault.failing = false;
+			await coming.getByRole("button", { name: "Try again", exact: true }).click();
+			await expect(coming.getByRole("alert")).toHaveCount(0);
+			await expect(coming).toContainText("Reply to the offer");
+		}
+	});
+}
+
+test("Coming up preserves application dates while the cold offers query retries without any data", async ({
 	authPage: page,
 }) => {
 	const created = await page.request.post("/api/openapi/applications", {
 		data: {
-			company: "Fictional Offline Briefing",
+			company: "Fictional Pending Offer",
 			role: "Engineer",
 			status: "applied",
 			followUpAt: "2030-11-05T09:00:00Z",
 			followUpDateOnly: false,
-			followUpNote: "Email Maya",
+			followUpNote: "Call Maya",
 		},
 	});
 	await expect(created).toBeOK();
-	const fault = await unavailableRead(page, "career/savedItems", "briefing");
-	await page.goto("/dashboard/career");
-	await expect.poll(() => fault.failures).toBeGreaterThan(0);
-	const coming = page.getByRole("region", { name: "Coming up", exact: true });
-	await expect(coming).toContainText("Fictional Offline Briefing");
-	await expect(coming).toContainText("Email Maya");
-	await expect(coming.getByRole("link", { name: "Open workspace", exact: true })).toBeVisible();
+	const release = Promise.withResolvers<void>();
+	const held = Promise.withResolvers<void>();
+	await unavailableRead(page, "career/savedItems", "offer", (attempt) => {
+		if (attempt === 1) return Promise.resolve();
+		held.resolve();
+		return release.promise;
+	});
+	try {
+		await page.goto("/dashboard/career");
+		await held.promise;
+		const coming = page.getByRole("region", { name: "Coming up", exact: true });
+		await expect(coming).toContainText("Fictional Pending Offer");
+		await expect(coming).toContainText("Call Maya");
+	} finally {
+		release.resolve();
+	}
 });
 
 for (const recovery of ["retry", "authored", "cleared"] as const) {

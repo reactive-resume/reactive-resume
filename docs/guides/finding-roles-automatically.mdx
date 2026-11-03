@@ -11,12 +11,19 @@ Discovery reads new search results to check that they are individual open job po
 
 For a new reminder, **Follow-up note** starts from the selected application's most recent activity note, combined into one line. Review it before saving. An application that already has a follow-up keeps its saved note, including a blank note. Typing or clearing the field keeps your choice when details finish loading or you change applications or schedule kind. The web and native editors use the same defaults.
 
-Saving waits while the automatic note is loading. If loading fails without any saved detail, choose **Try again** or type your own note; you can also deliberately clear the field. A failed refresh keeps a previously loaded note. An unavailable interview briefing does not hide the application's dates in **Coming up**.
+Saving waits while the automatic note is loading. If loading fails without any saved detail, choose **Try again** or type your own note; you can also deliberately clear the field. A failed refresh keeps a previously loaded note. Unavailable interview briefings or offer terms do not hide known interview and follow-up dates in **Coming up**. An offer-read failure keeps a retry action alongside those dates; retry reloads offer deadlines.
 
 <Frame caption="A new reminder starts with an editable activity note. This example uses a fictional application.">
   <img
     src="/images/guides/career/reminder-activity-note.png"
     alt="New schedule sheet with Remind me selected, the Follow-up note Email Maya about the next round, Fictional Reminder Labs application, date and UTC time, and Save schedule"
+  />
+</Frame>
+
+<Frame caption="Known follow-up dates stay available while offer terms cannot load. Try again reloads the missing offer read. This example uses a fictional application.">
+  <img
+    src="/images/guides/career/coming-up-offer-read-error.png"
+    alt="Coming up shows a November 5 follow-up for Fictional Offline Briefing, Email Maya, Open workspace and a load-error panel with Try again"
   />
 </Frame>
 

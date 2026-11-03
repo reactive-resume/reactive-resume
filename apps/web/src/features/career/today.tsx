@@ -814,7 +814,7 @@ function RoleCard({ row, found, tracked, pending, selected, onSelect, onTrack, o
 
 type ComingUpProps = { now: Date; className?: string };
 
-/** Application dates stay available when optional briefing decorations cannot load. */
+/** Independent saved-item reads never block application dates; unavailable offer deadlines retain their own retry. */
 function ComingUp({ now, className }: ComingUpProps) {
 	const { format, time, when, relative, locale, timeZone } = useCareerTime();
 	const applicationQuery = useQuery(applicationsListQueryOptions());
@@ -822,7 +822,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 	const offerQuery = useQuery(savedOffersQueryOptions());
 	const briefingQuery = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "briefing" } }));
 	const briefings = briefingQuery.data;
-	if (applicationQuery.isError || offerQuery.isError)
+	if (applicationQuery.isError)
 		return (
 			<CareerLoadError
 				onRetry={() => {
@@ -832,10 +832,16 @@ function ComingUp({ now, className }: ComingUpProps) {
 				}}
 			/>
 		);
-	if (applicationQuery.isPending || offerQuery.isPending) return <Skeleton className="h-36 rounded-xl" />;
-	const events = upcomingApplicationEvents(applications ?? [], latestOfferHints(offerQuery.data), now, timeZone);
+	if (applicationQuery.isPending) return <Skeleton className="h-36 rounded-xl" />;
+	const events = upcomingApplicationEvents(
+		applications ?? [],
+		offerQuery.data ? latestOfferHints(offerQuery.data) : undefined,
+		now,
+		timeZone,
+	);
 	const [next, ...later] = events.slice(0, 3);
-	if (!next) return null;
+	const offerError = offerQuery.isError ? <CareerLoadError onRetry={() => void offerQuery.refetch()} /> : null;
+	if (!next) return offerError;
 
 	const { application, at: start } = next;
 	const label = (item: (typeof events)[number]) =>
@@ -918,6 +924,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 					))}
 				</ul>
 			)}
+			{offerError}
 		</section>
 	);
 }

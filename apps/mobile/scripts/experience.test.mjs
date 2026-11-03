@@ -1948,6 +1948,7 @@ const discovered = ["Platform engineer", "Reliability engineer"].map((role, inde
 }));
 let todayApplications = [];
 let todayOffers = [];
+let todayOfferState = { isPending: false, isError: false };
 let todayNow = new Date();
 const { TodayScreen } = load("features/career/today.tsx", {
 	"@/features/applications/stage-actions": { useOfferHints: () => undefined, offerHintFor: () => undefined },
@@ -1970,7 +1971,7 @@ const { TodayScreen } = load("features/career/today.tsx", {
 		useCareerTime: () => ({ timeZone: "UTC", locale: "en-US", when: () => "31 Oct", profile: { refetch() {} } }),
 		useSaveTimezone: () => ({ isPending: false, mutate() {} }),
 		useNow: () => todayNow,
-		useOffers: () => ({ data: todayOffers, isPending: false, isError: false }),
+		useOffers: () => ({ data: todayOffers, ...todayOfferState }),
 		useTodayQueries: () => ({
 			schedules: { data: [] },
 			opportunities: { data: discovered },
@@ -2045,6 +2046,19 @@ todayOffers = [
 	{ applicationId: nativeJob.id, createdAt: "2030-01-03", data: { kind: "offer", respondBy: null } },
 ];
 assert.ok(!JSON.stringify(comingUpView()).includes("Reply to the offer"), "a newer offer clears its earlier deadline");
+for (const state of [
+	{ isPending: true, isError: false },
+	{ isPending: false, isError: true },
+]) {
+	todayOfferState = state;
+	todayOffers = undefined;
+	const partial = comingUpView();
+	assert.match(JSON.stringify(partial), /Email Maya/);
+	assert.doesNotMatch(JSON.stringify(partial), /Reply to the offer/);
+	assert.ok(control(partial, "Open workspace"));
+}
+todayOfferState = { isPending: false, isError: false };
+todayOffers = [];
 todayApplications = [{ ...todayApplications[0], activity: [{ ...nativeRound, at: "2030-01-03T09:30:00Z" }] }];
 calls.length = 0;
 comingUp = comingUpView();
