@@ -201,7 +201,6 @@ export function useGenerate(applicationId: string | null) {
 	const queryClient = useQueryClient();
 	const connection = useHasAIProvider();
 	const controller = useRef<AbortController | null>(null);
-	useEffect(() => () => controller.current?.abort(), [applicationId]);
 	const mutation = useMutation({
 		mutationKey: orpc.career.generate.mutationKey(),
 		mutationFn: (input: GenerateInput) => {

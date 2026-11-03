@@ -132,6 +132,10 @@ for (const width of [1440, 390])
 		await page.reload();
 		await expect(page.getByText("Practice without an application", { exact: true })).toBeVisible();
 		await expect(page.getByText(/I restored fictional service by coordinating the response/).first()).toBeVisible();
+		await page.getByRole("button", { name: /I restored fictional service by coordinating the response/ }).click();
+		await expect(page.getByRole("textbox", { name: "Your answer", exact: true })).toHaveCount(0);
+		await page.getByRole("button", { name: "Practice", exact: true }).click();
+		await expect(page.getByRole("radio", { name: "Type", exact: true })).toBeVisible();
 		if (width === 1440)
 			await page.screenshot({
 				path: info.outputPath("standalone-story-practice.png"),
@@ -150,6 +154,9 @@ test("unbacked or switched-off story does not offer a practice action that will 
 	await page.goto(`/dashboard/career/knowledge/stories/${story.id}?practice=true`);
 	await expect(page.getByText(/This story has no facts in use here/)).toBeVisible();
 	await expect(page.getByRole("button", { name: /Get feedback/ })).toHaveCount(0);
+	await expect(page.getByRole("button", { name: "Practice another question", exact: true })).toHaveCount(0);
+	await page.getByRole("button", { name: "Back to stories", exact: true }).click();
+	await expect(page).not.toHaveURL(/practice=true/);
 });
 
 test("shared practice preserves strict generation and saved-work selectors", async ({ authPage: page }) => {

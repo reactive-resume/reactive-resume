@@ -126,7 +126,9 @@ function Practise({ application, version, interview, speak: speakFirst, story, w
 		return (
 			<View style={{ gap: space.s3 }}>
 				<Banner tone="warn" message={t`This story is unavailable or uses facts that are switched off.`} />
-				<Button variant="secondary" label={t`Practice another question`} onPress={() => go("practise")} />
+				{application && (
+					<Button variant="secondary" label={t`Practice another question`} onPress={() => go("practise")} />
+				)}
 			</View>
 		);
 
@@ -168,7 +170,16 @@ function Practise({ application, version, interview, speak: speakFirst, story, w
 	return (
 		<View style={{ gap: space.s4 }}>
 			{viewing ? (
-				<SavedAttempt item={viewing} />
+				<View style={{ gap: space.s3 }}>
+					{application === null && (
+						<Button
+							variant="secondary"
+							label={t({ message: "Practice", context: "Button: rehearse interview answers" })}
+							onPress={() => go("practise")}
+						/>
+					)}
+					<SavedAttempt item={viewing} />
+				</View>
 			) : saved.isPending ? (
 				<Skeleton height={space.s12 * 6} />
 			) : (

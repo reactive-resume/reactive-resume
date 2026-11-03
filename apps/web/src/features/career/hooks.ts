@@ -263,7 +263,6 @@ export function useGenerate(applicationId: string | null) {
 	const connection = useDefaultProvider();
 	const { provider } = connection;
 	const controller = useRef<AbortController | null>(null);
-	useEffect(() => () => controller.current?.abort(), [applicationId]);
 	const mutation = useMutation({
 		mutationKey: orpc.career.generate.mutationKey(),
 		mutationFn: (input: GenerateInput) => {

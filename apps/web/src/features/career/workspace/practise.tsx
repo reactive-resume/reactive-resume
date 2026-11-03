@@ -149,9 +149,11 @@ export function PractiseTab({ application, version, interview, speak, story, war
 						<Trans>This story is unavailable or uses facts that are switched off.</Trans>
 					)}
 				</span>
-				<Button variant="secondary" onClick={() => go("practise")}>
-					<Trans>Practice another question</Trans>
-				</Button>
+				{application && (
+					<Button variant="secondary" onClick={() => go("practise")}>
+						<Trans>Practice another question</Trans>
+					</Button>
+				)}
 			</Notice>
 		);
 
@@ -168,7 +170,14 @@ export function PractiseTab({ application, version, interview, speak, story, war
 	return (
 		<div className="grid items-start gap-5 @3xl:grid-cols-[minmax(0,1fr)_280px]">
 			{viewing ? (
-				<SavedAttempt item={viewing} />
+				<div className="grid gap-3">
+					{application === null && (
+						<Button variant="secondary" className="justify-self-start" onClick={() => go("practise")}>
+							<Trans context="Button: rehearse interview answers">Practice</Trans>
+						</Button>
+					)}
+					<SavedAttempt item={viewing} />
+				</div>
 			) : saved.isPending ? (
 				<div className="grid gap-4">
 					<Skeleton className="h-40 rounded-xl" />
