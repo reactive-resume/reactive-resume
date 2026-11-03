@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-03 08:38+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: th-TH\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: removing?.role
 #. placeholder {1}: removing?.company
@@ -139,8 +133,6 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, other {เปลี่ยนแปลง {count} จากใบสมัคร # รายการแล้ว}}"
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, other {# คำตอบ}}"
@@ -631,6 +623,10 @@ msgstr "ปรับใช้แล้ว {accepted} จาก {0}"
 msgid "{active, plural, one {# active application} other {# active applications}}"
 msgstr "{active, plural, one {ใบสมัครที่ดำเนินการอยู่ # รายการ} other {ใบสมัครที่ดำเนินการอยู่ # รายการ}}"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr "{answerCount, plural, other {# คำตอบ}}"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel} ส่งใบสมัครนี้และ คลังความรู้ ของคุณ ผู้ให้บริการของคุณอาจเรียกเก็บเงิน"
@@ -845,6 +841,14 @@ msgstr "ประเภท {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {ข้อเสนอแก้ไข # รายการในหน้านี้ · จะไม่เปลี่ยนจนกว่าคุณยอมรับ} other {ข้อเสนอแก้ไข # รายการในหน้านี้ · จะไม่เปลี่ยนจนกว่าคุณยอมรับ}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "{percent} ของเงินเดือนพื้นฐาน"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "{percent} ของเงินเดือนพื้นฐาน ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -946,6 +950,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} เพิ่มเติม"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ {yearly} ต่อปี ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2458,7 +2466,7 @@ msgstr "ตัวหนา"
 msgid "Bonus"
 msgstr "โบนัส"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3494,10 +3502,6 @@ msgstr "แก้ไขข้อเท็จจริง"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5239,6 +5243,14 @@ msgstr "ป้อนจำนวนเต็มตั้งแต่ 0 ถึง
 msgid "Enter an address like resume.example.org."
 msgstr "ป้อนที่อยู่ เช่น resume.example.org"
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "ป้อนจำนวนเงินหรือเปอร์เซ็นต์ของเงินเดือนพื้นฐาน เช่น 10%"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "ป้อนจำนวนเงินหรือเปอร์เซ็นต์ เช่น 10% หรือเว้นว่างไว้"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
 msgstr "ป้อนคีย์ API สำหรับผู้ให้บริการนี้"
@@ -6024,6 +6036,10 @@ msgstr "รับสมัครผู้จัดการ"
 #: src/features/share/letter.ts
 msgid "Hiring team"
 msgstr "ทีมงานรับสมัคร"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr "ไม่สามารถดูเครื่องหมายการตรวจทานในอดีตได้"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
@@ -7900,6 +7916,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "คีย์ใหม่จะเริ่มต้นด้วยสิทธิ์อ่านอย่างเดียว สร้างคีย์ในการตั้งค่าบัญชีผ่านเบราว์เซอร์ของคุณ"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "บันทึกข้อเสนอเวอร์ชันใหม่แล้ว"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8581,10 +8601,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10665,8 +10681,8 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
-msgstr ""
+msgid "Review checks recorded at first submission."
+msgstr "บันทึกเครื่องหมายการตรวจทานเมื่อส่งใบสมัครครั้งแรก"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -10917,6 +10933,10 @@ msgstr "บันทึกการเชื่อมต่อ"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "บันทึกเงื่อนไขที่แก้ไขเป็นเวอร์ชันใหม่ เวอร์ชันก่อนหน้ายังคงใช้ได้ ไม่มีการส่งคำขอ AI"
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

@@ -9,7 +9,7 @@ import { AnimatePresence } from "motion/react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
-import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
+import { applicationReviewChecks, nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -60,13 +60,13 @@ const shortLabel = (text: string) => {
 };
 
 /** The review checks, by their persisted checklist index. Submitting yourself (3) is moot once a submission is recorded. */
-const checklistItems = (submitted: boolean) =>
+const checklistItems = () =>
 	[
 		t`Review the selected resume and cover letter in their editors.`,
 		t`Check every claim, date and result against your experience.`,
 		t`Review required form answers and remove unsupported claims.`,
 		t`Submit through the employer's application page yourself.`,
-	].slice(0, submitted ? 3 : 4);
+	] as const;
 
 /** W4–W5: the written answers for the employer's form, and a checklist before submitting there yourself. */
 export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
@@ -75,6 +75,8 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
 	const readOnlyVersion = version?.data.kind === "answers" ? version.data : undefined;
 	const recorded = saved.data?.find((item) => item.submission && item.data.kind === "answers");
+	const reviewed =
+		saved.data?.find((item) => item.id === workspace.data?.submissionReview?.answerVersionId) ?? recorded;
 	const candidate = recorded ?? (!hasApplicationSubmission(application) ? latest(saved.data, "answers") : undefined);
 	const sentItem = candidate?.data.kind === "answers" ? { ...candidate, data: candidate.data } : undefined;
 	// Removed questions wait out their Undo here; the workspace drops them when the toast closes.
@@ -82,13 +84,20 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 	const [unit, setUnit] = useState<CountUnit>("words");
 	const [submitting, setSubmitting] = useState(false);
 	const [canSubmit, setCanSubmit] = useState(true);
+	const [writtenDrafts, setWrittenDrafts] = useState<ReadonlyMap<string, boolean>>(new Map());
 	const drafts = useRef(new Map<string, () => Answer>());
 	const registerDraft = useCallback((id: string, read: () => Answer) => {
 		drafts.current.set(id, read);
-		const updateValidity = () =>
-			setCanSubmit(
-				careerWorkspaceSchema.shape.answers.safeParse([...drafts.current.values()].map((value) => value())).success,
-			);
+		const updateValidity = () => {
+			const answers = [...drafts.current.values()].map((value) => value());
+			setCanSubmit(careerWorkspaceSchema.shape.answers.safeParse(answers).success);
+			setWrittenDrafts((previous) => {
+				const next = new Map(answers.map((answer) => [answer.id, Boolean(answer.answer.trim())]));
+				return next.size === previous.size && [...next].every(([key, value]) => previous.get(key) === value)
+					? previous
+					: next;
+			});
+		};
 		updateValidity();
 		return () => {
 			drafts.current.delete(id);
@@ -154,9 +163,14 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 
 			<Checklist
 				application={application}
-				answers={shown}
+				answerCount={
+					shown.filter((answer) =>
+						stored ? answer.answer.trim() : (writtenDrafts.get(answer.id) ?? Boolean(answer.answer.trim())),
+					).length
+				}
 				currentAnswers={currentAnswers}
 				readOnly={!!readOnlyVersion}
+				versionId={readOnlyVersion ? version?.id : undefined}
 				canSubmit={canSubmit}
 				submitting={submitting}
 				onSubmittingChange={setSubmitting}
@@ -199,12 +213,12 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 					</Link>
 					{!version &&
 						hasApplicationSubmission(application) &&
-						(recorded ? (
+						(reviewed ? (
 							<Button
 								size="sm"
 								variant="ghost"
 								className="-me-2.5"
-								onClick={() => go("apply", { version: recorded.id })}
+								onClick={() => go("apply", { version: reviewed.id })}
 							>
 								<Icon name="clock-counter-clockwise" size={16} />
 								<Trans>View recorded answers</Trans>
@@ -329,8 +343,8 @@ function AnswerCard({
 	const { value: text, setValue: setText } = textDraft;
 	const { value: question, setValue: setQuestion } = questionDraft;
 	useLayoutEffect(
-		() => registerDraft(answer.id, () => ({ ...answer, question, answer: text })),
-		[answer, question, text, registerDraft],
+		() => (readOnly ? undefined : registerDraft(answer.id, () => ({ ...answer, question, answer: text }))),
+		[answer, question, text, registerDraft, readOnly],
 	);
 	const [editingQuestion, setEditingQuestion] = useState(answer.question === "");
 	// Edit question focuses the field as its menu closes; the menu would otherwise take focus back and end the edit.
@@ -735,9 +749,10 @@ function diffWords(before: string, after: string): DiffPart[] {
 
 type ChecklistProps = {
 	application: WorkspaceTabProps["application"];
-	answers: Answer[];
+	answerCount: number;
 	currentAnswers: () => Answer[];
 	readOnly: boolean;
+	versionId: string | undefined;
 	canSubmit: boolean;
 	submitting: boolean;
 	onSubmittingChange: (value: boolean) => void;
@@ -746,9 +761,10 @@ type ChecklistProps = {
 /** Manual content checks survive submission; submission actions follow the application record. */
 function Checklist({
 	application,
-	answers,
+	answerCount,
 	currentAnswers,
 	readOnly,
+	versionId,
 	canSubmit,
 	submitting,
 	onSubmittingChange,
@@ -758,11 +774,13 @@ function Checklist({
 	const workspace = useWorkspace(application.id);
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const submit = useMutation(orpc.career.submitApplication.mutationOptions());
-	const submitted = hasApplicationSubmission(application);
-	const items = checklistItems(submitted);
-	const ticked = workspace.data.checklist;
-	const done = items.filter((_, index) => ticked.includes(index)).length;
-	const written = answers.filter((answer) => answer.answer.trim());
+	const review = applicationReviewChecks(application, workspace.data);
+	const { submitted, checklist: ticked } = review;
+	const labels = checklistItems();
+	const recordedVersion =
+		!readOnly || (versionId !== undefined && versionId === workspace.data.submissionReview?.answerVersionId);
+	const items = recordedVersion ? review.indices.map((index) => ({ index, label: labels[index] })) : [];
+	const done = items.filter(({ index }) => ticked.includes(index)).length;
 	// Recording the submission is the one emphasised action only once preparation has nothing left to guide.
 	const primary = nextPreparationStep(application, workspace.data, documents) === "review";
 	const resumeName =
@@ -774,7 +792,7 @@ function Checklist({
 	const names = [resumeName, letterName].filter((name): name is string => name !== null);
 	const records = [
 		...(names.length > 0 ? names : [t`no documents`]),
-		plural(written.length, { one: "# answer", other: "# answers" }),
+		plural(answerCount, { one: "# answer", other: "# answers" }),
 	];
 
 	const toggle = (index: number, on: boolean) => {
@@ -819,9 +837,8 @@ function Checklist({
 				expectedAnswers: currentWorkspace.answers,
 				expectedDocuments: { resumeId: application.resumeId, coverLetterId: application.coverLetterId },
 			});
-			queryClient.setQueryData(orpc.career.workspace.queryKey({ input: { applicationId: application.id } }), {
-				...currentWorkspace,
-				answers,
+			await queryClient.invalidateQueries({
+				queryKey: orpc.career.workspace.queryKey({ input: { applicationId: application.id } }),
 			});
 			toast.add({ description: t`Marked as applied. The versions you sent are kept.` });
 		} catch (error) {
@@ -843,16 +860,18 @@ function Checklist({
 				<h2 className="text-sm font-semibold">
 					<Trans>Review checks</Trans>
 				</h2>
-				<span className="text-xs text-ink-2 tabular-nums">{t`${done} of ${items.length}`}</span>
+				{!submitted && !readOnly && (
+					<span className="text-xs text-ink-2 tabular-nums">{t`${done} of ${items.length}`}</span>
+				)}
 			</div>
 			<ul className="grid gap-2.5">
-				{items.map((label, index) => (
+				{items.map(({ label, index }) => (
 					<li key={label}>
 						<label className="flex cursor-pointer gap-2.5 text-[13px] leading-[19px]">
 							<Checkbox
 								className="mt-px"
 								checked={ticked.includes(index)}
-								disabled={readOnly || submitting}
+								disabled={readOnly || submitted || submitting}
 								onCheckedChange={(checked) => toggle(index, checked)}
 							/>
 							<span
@@ -864,7 +883,7 @@ function Checklist({
 					</li>
 				))}
 			</ul>
-			{application.status === "saved" && !readOnly && (
+			{application.status === "saved" && !submitted && !readOnly && (
 				<div className="grid gap-2 border-t border-line pt-3.5">
 					<Button
 						className="w-full"
@@ -888,29 +907,35 @@ function Checklist({
 					)}
 				</div>
 			)}
-			<div className="flex flex-wrap gap-1.5 border-t border-line pt-3.5">
-				<Button variant="secondary" size="sm" disabled={written.length === 0} onClick={() => void copy()}>
-					<Icon name="copy" size={16} />
-					<Trans>Copy answers</Trans>
-				</Button>
-				<DropdownMenu>
-					<DropdownMenuTrigger render={<Button variant="ghost" size="sm" disabled={written.length === 0} />}>
-						<Icon name="download-simple" size={16} />
-						<Trans>Download</Trans>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent>
-						<DropdownMenuItem onClick={() => download("md")}>
-							<Trans>Markdown (.md)</Trans>
-						</DropdownMenuItem>
-						<DropdownMenuItem onClick={() => download("txt")}>
-							<Trans>Plain text (.txt)</Trans>
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</div>
-			{submitted && (
+			{answerCount > 0 && (
+				<div className="flex flex-wrap gap-1.5 border-t border-line pt-3.5">
+					<Button variant="secondary" size="sm" disabled={answerCount === 0} onClick={() => void copy()}>
+						<Icon name="copy" size={16} />
+						<Trans>Copy answers</Trans>
+					</Button>
+					<DropdownMenu>
+						<DropdownMenuTrigger render={<Button variant="ghost" size="sm" disabled={answerCount === 0} />}>
+							<Icon name="download-simple" size={16} />
+							<Trans>Download</Trans>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DropdownMenuItem onClick={() => download("md")}>
+								<Trans>Markdown (.md)</Trans>
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => download("txt")}>
+								<Trans>Plain text (.txt)</Trans>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+			)}
+			{(submitted || readOnly) && (
 				<p className="text-xs leading-[17px] text-ink-3">
-					<Trans>Review checks only reflect what you checked yourself.</Trans>
+					{recordedVersion && review.recorded ? (
+						<Trans>Review checks recorded at first submission.</Trans>
+					) : (
+						<Trans>Historical review checks unavailable.</Trans>
+					)}
 				</p>
 			)}
 		</aside>

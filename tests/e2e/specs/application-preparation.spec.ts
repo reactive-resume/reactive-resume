@@ -107,7 +107,11 @@ test("prepares documents and answers manually, then keeps submission separate fr
 	await expect(
 		page.getByRole("tabpanel", { name: "Apply" }).getByRole("heading", { name: "What you sent", exact: true }),
 	).toBeVisible();
-	await expect(page.getByText("3 of 3", { exact: true })).toBeVisible();
+	const recordedReview = page.locator("#application-readiness");
+	await expect(recordedReview).not.toContainText(/\d+ of \d+/);
+	await expect(recordedReview.getByRole("checkbox", { checked: true })).toHaveCount(3);
+	for (const checkbox of await recordedReview.getByRole("checkbox").all()) await expect(checkbox).toBeDisabled();
+	await expect(recordedReview).toContainText("Review checks recorded at first submission.");
 	const submitted = await application();
 	expect(submitted).toMatchObject({ status: "applied", resumeId: selected.resumeId, coverLetterId: letter.id });
 	expect(submitted.sentResumeVersionId).toBeTruthy();

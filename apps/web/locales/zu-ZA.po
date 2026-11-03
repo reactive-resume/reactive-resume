@@ -120,8 +120,6 @@ msgid "{0, plural, one {# active application} other {# active applications}}"
 msgstr ""
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr ""
@@ -632,6 +630,10 @@ msgstr ""
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/career/workspace/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "{attached, plural, one {# attached file} other {# attached files}}"
 msgstr ""
@@ -980,6 +982,14 @@ msgstr ""
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr ""
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr ""
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr ""
@@ -1164,6 +1174,10 @@ msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
 msgstr ""
 
 #: src/features/homepage/check.tsx
@@ -3063,7 +3077,7 @@ msgstr ""
 msgid "Bonus"
 msgstr ""
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus {0}{1}"
@@ -4405,10 +4419,6 @@ msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6583,6 +6593,14 @@ msgstr ""
 msgid "Enter a web address, like example.com"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr ""
+
 #: src/features/settings/ai/provider-fields.tsx
 msgid "Enter an API key for this provider."
 msgstr "Enter an API key for this provider."
@@ -7708,6 +7726,10 @@ msgstr ""
 #: src/features/letters/compose.ts
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Hiring team"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "Historical review checks unavailable."
 msgstr ""
 
 #: src/features/resume/editor/chrome/bar.tsx
@@ -10028,6 +10050,10 @@ msgstr ""
 msgid "New key"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr ""
+
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New page"
@@ -10842,10 +10868,6 @@ msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -13364,7 +13386,7 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
+msgid "Review checks recorded at first submission."
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -13649,6 +13671,10 @@ msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
+msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
 msgstr ""
 
 #: src/features/career/knowledge/facts.tsx

@@ -247,6 +247,9 @@ for (const action of ["reply", "submission"] as const)
 			await api(page, "post", `/career/saved/${reply.id}/apply`, { changes: [0] });
 			await api(page, "put", `/applications/${id}`, { status: "offer" });
 		} else {
+			await expect(
+				page.locator("#application-readiness").getByRole("button", { name: "Mark as applied", exact: true }),
+			).toBeVisible();
 			await api(page, "post", `/career/workspace/${id}/submit`, { answers: [], expectedAnswers: [] });
 			await api(page, "put", `/applications/${id}`, { laneId: referral.id });
 		}
