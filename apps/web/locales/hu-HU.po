@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# bejegyzés} other {# bejegyzések}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# elfelejtett tény} other {# elfelejtett tény}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# megoldatlan probléma} other {# megoldatlan probléma}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# sorban nem volt cég vagy pozíció, ezért kimaradt.} other {# sorban nem volt cég vagy pozíció, ezért kimaradtak.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Csillagozz minket a GitHubon, jelenleg # csillag (új lapon nyílik meg)} other {Csillagozz minket a GitHubon, jelenleg # csillag (új lapon nyílik meg)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "A kérelmező nyomkövető rendszerek egyszerű szöveggé alakítják a PDF-t, mielőtt bárki elolvasná. Az ellenőrző ugyanezt teszi, a PDF.js könyvtárral a böngészőben, majd azt értékeli, hogy az önéletrajzból mennyi maradt fenn: 0-tól 100-ig, attól függően, hogy mennyire megbízhatóan jelenik meg a szöveg, nem pedig attól, hogy milyen esélyekkel kapja meg az állást."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Változtassa meg a Tervezésben."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Nyelv módosítása"
 
@@ -7557,7 +7557,6 @@ msgstr "Menj haza"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Tovább az irányítópultra"
 
@@ -9432,10 +9431,6 @@ msgstr "Reactive Resume-val készült, ingyenes és nyílt forráskódú"
 msgid "Main"
 msgstr "Fő"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Fő navigáció"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10395,6 +10390,10 @@ msgstr "Még nincs összekapcsolható tény. Add hozzá őket a Tények között
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Nincsenek elfelejtett tények"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12443,10 +12442,6 @@ msgstr "Exportáld újra beágyazott betűtípusokkal, majd nyisd meg a fájlt, 
 msgid "Re: Senior Product Designer"
 msgstr "Re: Senior termékdizájner"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume – Ugrás a kezdőlapra"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14132,6 +14127,10 @@ msgstr "Ütemezések"
 msgid "School"
 msgstr "Iskola"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Hatókör"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14819,6 +14818,10 @@ msgstr "DNS-rekordok megjelenítése"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Elfelejtett tények megjelenítése"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Címsor megjelenítése"
@@ -15085,6 +15088,7 @@ msgstr "Kihagyás és feltöltés"
 msgid "Skip to content"
 msgstr "Ugrás a tartalomhoz"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15320,10 +15324,6 @@ msgstr "Szabványos szakaszcímek"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Star Reactive Resume a GitHub-n"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Adj csillagot nekünk GitHubon (új lapon nyílik meg)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15681,18 +15681,10 @@ msgstr "Modell váltás"
 msgid "Switch to dark mode"
 msgstr "Váltson sötét módba"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Váltás sötét témára"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Váltson világos üzemmódra"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Váltás világos témára"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

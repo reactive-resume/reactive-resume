@@ -5,6 +5,7 @@ import { aiOperationIdsSchema, aiUsageSummarySchema } from "@reactive-resume/sch
 import { answerEvidenceSchema, answerScopeSchema } from "@reactive-resume/schema/application-answers";
 import {
 	careerNoticeSchema,
+	careerFactRevisionSchema,
 	careerSourceSchema,
 	careerStoryInputSchema,
 	discoverySourceSchema,
@@ -13,7 +14,7 @@ import {
 
 export const careerFactSchema = createSelectSchema(tables.careerFact, {
 	source: careerSourceSchema,
-	revisions: z.array(z.object({ text: z.string(), at: z.string() })),
+	revisions: z.array(careerFactRevisionSchema),
 }).extend({
 	/** The application it's private to, by name; null for shared facts. */
 	company: z.string().nullable(),

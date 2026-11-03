@@ -710,6 +710,10 @@ msgstr ""
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Vstup #} other {Záznamy #}}"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "{count, plural, one {# fact forgotten} other {# facts forgotten}}"
+msgstr "{count, plural, one {# zapomenutý fakt} few {# zapomenuté fakty} other {# zapomenutých faktů}}"
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# otevřený problém} few {# otevřené problémy} other {# otevřených problémů}}"
@@ -1025,10 +1029,6 @@ msgstr "{size} pt"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
 msgstr "{skipped, plural, one {# řádek neměl společnost ani pozici a byl přeskočen.} few {# řádky neměly společnost ani pozici a byly přeskočeny.} other {# řádků nemělo společnost ani pozici a bylo přeskočeno.}}"
-
-#: src/components/input/github-stars-button.tsx
-msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
-msgstr "{starCount, plural, one {Dejte nám hvězdičku na GitHubu, aktuálně # hvězdička (otevře se na nové kartě)} few {Dejte nám hvězdičku na GitHubu, aktuálně # hvězdičky (otevře se na nové kartě)} other {Dejte nám hvězdičku na GitHubu, aktuálně # hvězdiček (otevře se na nové kartě)}}"
 
 #: src/features/homepage/header.tsx
 msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
@@ -2500,6 +2500,7 @@ msgid "Applicant tracking systems turn your PDF into plain text before anyone re
 msgstr "Sledovací systémy žadatelů změní váš PDF na prostý text dříve, než si jej někdo přečte. Kontrola dělá totéž, s knihovnou PDF.js ve vašem prohlížeči pak vyhodnotí, kolik z vašeho životopisu přežije: 0 až 100 podle toho, jak spolehlivě text vyjde, nikoli podle vašich šancí na získání zakázky."
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/facts.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/documents/documents-page.tsx
@@ -3357,7 +3358,6 @@ msgid "Change it in Design."
 msgstr "Změňte to v Designu."
 
 #: src/features/homepage/sections.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Change language"
 msgstr "Změnit jazyk"
 
@@ -7557,7 +7557,6 @@ msgstr "Jít domů"
 #: src/components/layout/not-found-screen.tsx
 #: src/features/auth/pages/consent.tsx
 #: src/features/homepage/ui.tsx
-#: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Přejít na nástěnku"
 
@@ -9432,10 +9431,6 @@ msgstr "Vyrobeno z Reactive Resume, bezplatný a otevřený zdroj"
 msgid "Main"
 msgstr "Hlavní"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Main navigation"
-msgstr "Hlavní navigace"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
 msgstr ""
@@ -10395,6 +10390,10 @@ msgstr "Zatím nejsou fakta k propojení. Přidejte je ve Faktech."
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
 msgstr ""
+
+#: src/features/career/knowledge/facts.tsx
+msgid "No forgotten facts"
+msgstr "Žádná zapomenutá fakta"
 
 #: src/features/applications/next-step.ts
 msgid "No interview scheduled"
@@ -12443,10 +12442,6 @@ msgstr "Znovu exportujte s vloženými písmy, poté soubor otevřete a ověřte
 msgid "Re: Senior Product Designer"
 msgstr "Re: Senior Product Designer"
 
-#: src/routes/_home/-sections/header.tsx
-msgid "Reactive Resume - Go to homepage"
-msgstr "Reactive Resume – přejít na domovskou stránku"
-
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
@@ -14132,6 +14127,10 @@ msgstr "Plány"
 msgid "School"
 msgstr "Škola"
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Scope"
+msgstr "Rozsah"
+
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
@@ -14819,6 +14818,10 @@ msgstr "Zobrazit záznamy DNS"
 msgid "Show edit {number}"
 msgstr ""
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Show forgotten"
+msgstr "Zobrazit zapomenutá fakta"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Zobrazit nadpis"
@@ -15085,6 +15088,7 @@ msgstr "Přeskočit a nahrát"
 msgid "Skip to content"
 msgstr "Přejít na obsah"
 
+#: src/features/homepage/marketing-layout.tsx
 #: src/routes/_home/route.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
@@ -15320,10 +15324,6 @@ msgstr "Standardní nadpisy sekcí"
 #: src/features/homepage/header.tsx
 msgid "Star Reactive Resume on GitHub"
 msgstr "Hvězdička Reactive Resume na GitHub"
-
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub (opens in new tab)"
-msgstr "Dejte nám hvězdičku na GitHubu (otevře se na nové kartě)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -15681,18 +15681,10 @@ msgstr "Model přepínače"
 msgid "Switch to dark mode"
 msgstr "Přepněte do tmavého režimu"
 
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to dark theme"
-msgstr "Přepnout na tmavý motiv"
-
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Přepněte do světelného režimu"
-
-#: src/features/theme/toggle-button.tsx
-msgid "Switch to light theme"
-msgstr "Přepnout na světlý motiv"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Switch to one column"

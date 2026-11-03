@@ -30,6 +30,29 @@ export type CareerSource = z.infer<typeof careerSourceSchema>;
 export const factCategorySchema = z.enum(["accomplishment", "experience", "skill", "preference"]);
 export type FactCategory = z.infer<typeof factCategorySchema>;
 
+export const careerFactRevisionSchema = z.object({
+	text: z.string(),
+	at: z.string(),
+	category: z.string().optional(),
+	applicationId: z.string().nullable().optional(),
+});
+export type CareerFactRevision = z.infer<typeof careerFactRevisionSchema>;
+
+/** A separate correction contract prevents older servers from saving text while ignoring its private scope. */
+export const careerFactCorrectionSchema = z
+	.object({
+		id: z.string().min(1),
+		before: z.object({ text: z.string(), category: z.string(), applicationId: z.string().nullable() }),
+		text: z.string().trim().min(1).max(2000).optional(),
+		category: factCategorySchema.optional(),
+		applicationId: z.string().min(1).nullable().optional(),
+	})
+	.strict()
+	.refine((input) => input.text !== undefined || input.category !== undefined || input.applicationId !== undefined, {
+		message: "Choose a correction.",
+	});
+export type CareerFactCorrection = z.infer<typeof careerFactCorrectionSchema>;
+
 export const memoryModeSchema = z.enum(["ask", "auto", "off"]);
 export type MemoryMode = z.infer<typeof memoryModeSchema>;
 
