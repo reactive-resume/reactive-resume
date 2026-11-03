@@ -506,6 +506,7 @@ it("first run's Choose a file opens the file picker, then imports the chosen fil
 	};
 	const empty = { items: [], total: 0, counts: { resume: 0, letter: 0 }, tags: [], hasPublic: false };
 	client.setQueryData(orpc.documents.page.queryKey({ input }), empty);
+	client.setQueryData(orpc.documents.counts.queryOptions().queryKey, { resume: 0, letter: 0, trash: 0 });
 	const pick = vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
 	render(
 		<I18nProvider i18n={i18n}>

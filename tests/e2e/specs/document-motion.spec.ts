@@ -200,6 +200,11 @@ for (const { view, reduced } of [
 		await options.click();
 		await page.getByRole("menuitem", { name: "Move to Trash", exact: true }).click();
 		await expect(page.getByRole("heading", { name: "No documents", exact: true })).toBeVisible();
+		if (view === "grid") {
+			await page.reload();
+			await expect(page.getByRole("heading", { name: "No documents", exact: true })).toBeVisible();
+			await expect(page.getByText("Let's start with what you have", { exact: true })).toHaveCount(0);
+		}
 		await page.goto("/dashboard/trash");
 		await options.click();
 		await page.getByRole("menuitem", { name: "Restore", exact: true }).click();
