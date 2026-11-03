@@ -384,13 +384,22 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 						summary: { ...defaultResumeData.summary, content: "<p>Built fictional reliable services.</p>" },
 					}
 				: null;
-			const structured = prompt.includes("Plan the user's preparation for the selected interview round.")
-				? BRIEFING
-				: parsed.model === "offer-fixture" && prompt.includes("Read the employer's message")
-					? REPLY
-					: prompt.includes("Write the user's answer to the application form question")
-						? TIGHTENED
-						: null;
+			const structured = prompt.includes("Give feedback on the user's practice answer to the question.")
+				? {
+						title: "Fictional story feedback",
+						works: "Your contribution is clear.",
+						strengthen: "Explain the documented handoff.",
+						opening: "I restored service and documented the handoff.",
+						note: "Keep the evidence accurate.",
+						factIds: [],
+					}
+				: prompt.includes("Plan the user's preparation for the selected interview round.")
+					? BRIEFING
+					: parsed.model === "offer-fixture" && prompt.includes("Read the employer's message")
+						? REPLY
+						: prompt.includes("Write the user's answer to the application form question")
+							? TIGHTENED
+							: null;
 			const asksForRoles = parsed.messages.some((message) =>
 				text(message.content).includes("Suggest up to five plausible target job titles"),
 			);

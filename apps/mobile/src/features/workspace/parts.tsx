@@ -221,7 +221,7 @@ type DisclosureApplication = {
 type AiNoticeProps = {
 	/** Names exactly what this action sends; the list comes from the same schema the server builds its prompt from. */
 	task?: GenerateTask["task"] | undefined;
-	application?: DisclosureApplication | undefined;
+	application?: DisclosureApplication | null | undefined;
 	interview?: boolean | undefined;
 	/** A short, explicit sentence for an action outside the structured tasks (a letter draft, reading a posting). */
 	sends?: string | undefined;
@@ -266,8 +266,8 @@ const itemLabel = (item: DisclosureItem, task: GenerateTask["task"]): string => 
 export function AiNotice({ task, application, interview = false, sends, centered = false }: AiNoticeProps) {
 	const { t, i18n } = useLingui();
 	const connection = useHasAIProvider();
-	const facts = useFacts(application?.id ?? "", Boolean(application));
-	const stories = useStories(application?.id ?? "", Boolean(application));
+	const facts = useFacts(application?.id ?? null, Boolean(task));
+	const stories = useStories(application?.id ?? null, Boolean(task));
 	const [setup, setSetup] = useState(false);
 	const provider = connection.defaultProvider;
 	if (connection.isLoading) return <ActivityIndicator />;
@@ -286,7 +286,7 @@ export function AiNotice({ task, application, interview = false, sends, centered
 				<AIProviderSetupSheet open={setup} onClose={() => setSetup(false)} />
 			</>
 		);
-	const label = `${provider.label} · ${aiModelForTask(provider, "capable")}`;
+	const label = `${provider.label} · ${task ? provider.model : aiModelForTask(provider, "capable")}`;
 	const presence: Partial<Record<DisclosureItem, boolean>> = {
 		preferences: true,
 		posting: Boolean(application?.jobDescription?.trim()),
@@ -308,8 +308,7 @@ export function AiNotice({ task, application, interview = false, sends, centered
 	};
 	const labels = task ? disclosureItemsFromPresence(task, presence).map((item) => itemLabel(item, task)) : [];
 	const sentence =
-		sends ??
-		(task && application && labels.length > 0 ? t`Sends ${formatList(i18n.locale, labels)} to ${label}.` : null);
+		sends ?? (task && labels.length > 0 ? t`Sends ${formatList(i18n.locale, labels)} to ${label}.` : null);
 	return (
 		<>
 			{sentence ? <PrivacyLine centered={centered}>{sentence}</PrivacyLine> : null}

@@ -13,8 +13,8 @@ import { File } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { useEffect, useRef, useState } from "react";
 import { Linking, Pressable, View } from "react-native";
-import { threePracticeQuestions } from "@reactive-resume/schema/career-practice";
-import { latest, useDraft, useGenerate, useSavedItems, useStories, workspaceError } from "../hooks";
+import { canUseCareerStory, threePracticeQuestions } from "@reactive-resume/schema/career-practice";
+import { latest, useDraft, useGenerate, useSavedItems, useStories, useFacts, workspaceError } from "../hooks";
 import { acceptedAudioType, clock, MAX_SECONDS, writeNumbersAsDigits } from "../logic";
 import { Actions, AiNotice, Block, PrivacyLine, Progress, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
@@ -22,7 +22,7 @@ import { afterTranscribed, createRequests, playLatest } from "../state";
 import { deleteQuietly, speak, transcribe, usePlayer, useRecorder, useVoiceSettings } from "../voice";
 import { client } from "@/api/client";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
-import { useUserTime } from "@/features/application-detail/hooks";
+import { useNow, useUserTime } from "@/features/application-detail/hooks";
 import {
 	Banner,
 	Button,
@@ -60,27 +60,68 @@ export function PractiseTab() {
 	return <WorkspaceScreen tab="practise">{(props) => <Practise {...props} />}</WorkspaceScreen>;
 }
 
-function Practise({ application, version, interview, speak: speakFirst, story, warmup, now, go }: WorkspaceTabProps) {
+type PractiseProps = Omit<WorkspaceTabProps, "application" | "addInterview"> & {
+	application: WorkspaceTabProps["application"] | null;
+};
+
+type StoryPracticeProps = { storyId: string };
+
+export function StoryPractice({ storyId }: StoryPracticeProps) {
+	const { t } = useLingui();
+	const saved = useSavedItems(null);
+	const [versionId, setVersionId] = useState<string>();
+	const now = useNow();
+	return (
+		<View>
+			<Text color="ink3">{t`Practice without an application`}</Text>
+			<Practise
+				application={null}
+				version={saved.data?.find((item) => item.id === versionId && item.evidence.storyIds.includes(storyId))}
+				interview={undefined}
+				speak={true}
+				story={storyId}
+				now={now}
+				go={(_tab, search) => setVersionId(search?.version)}
+			/>
+		</View>
+	);
+}
+
+function Practise({ application, version, interview, speak: speakFirst, story, warmup, now, go }: PractiseProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
-	const saved = useSavedItems(application.id);
-	const stories = useStories(application.id);
+	const saved = useSavedItems(application?.id ?? null);
+	const stories = useStories(application?.id ?? null);
+	const facts = useFacts(application?.id ?? null);
 	const voice = useVoiceSettings();
 	if (warmup && !interview) return <Banner tone="warn" message={t`This interview is unavailable.`} />;
 	const viewing = version && isAttempt(version) ? version : undefined;
-	const attempts = saved.data?.filter(isAttempt) ?? [];
-	const selectedStory = story ? stories.data?.find((item) => item.id === story) : undefined;
-	const company = application.company;
+	const attempts =
+		saved.data
+			?.filter(isAttempt)
+			.filter((item) => application !== null || !story || item.evidence.storyIds.includes(story)) ?? [];
+	const selectedStory = story
+		? stories.data?.find(
+				(item) => item.id === story && canUseCareerStory(item, facts.data ?? [], application?.id ?? null),
+			)
+		: undefined;
+	const company = application?.company ?? "";
 
-	if (story && stories.isError)
+	if (story && (stories.isError || facts.isError))
 		return (
 			<Banner
 				tone="danger"
 				message={t`Your story couldn't be loaded.`}
-				action={{ label: t`Try again`, onPress: () => void stories.refetch() }}
+				action={{
+					label: t`Try again`,
+					onPress: () => {
+						void stories.refetch();
+						void facts.refetch();
+					},
+				}}
 			/>
 		);
-	if (story && stories.isPending) return <Skeleton height={space.s12 * 5} />;
+	if (story && (stories.isPending || facts.isPending)) return <Skeleton height={space.s12 * 5} />;
 	if (story && !selectedStory)
 		return (
 			<View style={{ gap: space.s3 }}>
@@ -115,6 +156,15 @@ function Practise({ application, version, interview, speak: speakFirst, story, w
 				? found
 				: fallbacks.map((text) => ({ text, origin: "simulated" as const }));
 
+	if (saved.isError)
+		return (
+			<Banner
+				tone="danger"
+				message={t`Couldn't load this. Your saved data hasn't changed.`}
+				action={{ label: t`Try again`, onPress: () => void saved.refetch() }}
+			/>
+		);
+
 	return (
 		<View style={{ gap: space.s4 }}>
 			{viewing ? (
@@ -123,9 +173,9 @@ function Practise({ application, version, interview, speak: speakFirst, story, w
 				<Skeleton height={space.s12 * 6} />
 			) : (
 				<Session
-					key={`${application.id}:${interview?.id ?? "none"}:${story ?? "general"}:${warmup ? "three" : "all"}`}
+					key={`${application?.id ?? "shared"}:${interview?.id ?? "none"}:${story ?? "general"}:${warmup ? "three" : "all"}`}
 					application={application}
-					applicationId={application.id}
+					applicationId={application?.id ?? null}
 					interviewId={interview?.id ?? null}
 					questions={questions}
 					storyId={selectedStory?.id}
@@ -152,7 +202,9 @@ function Practise({ application, version, interview, speak: speakFirst, story, w
 					))
 				)}
 				<Text variant="caption" color="ink3">
-					{t`Compare attempts to see what improved. Practice questions are simulated, not from ${company}.`}
+					{application
+						? t`Compare attempts to see what improved. Practice questions are simulated, not from ${company}.`
+						: t`Compare attempts to see what improved. Practice questions are simulated.`}
 				</Text>
 			</Block>
 		</View>
@@ -182,8 +234,8 @@ function AttemptRow({ item, now, current, onOpen }: AttemptRowProps) {
 // ---- One question at a time ----
 
 type SessionProps = {
-	application: WorkspaceTabProps["application"];
-	applicationId: string;
+	application: WorkspaceTabProps["application"] | null;
+	applicationId: string | null;
 	interviewId: string | null;
 	questions: Question[];
 	storyId: string | undefined;
@@ -570,7 +622,7 @@ function Session({
 					/>
 					<GenerateNotice generate={generate} onRetry={getFeedback} />
 					<Text variant="caption" color="ink2">
-						{t`Compared with your stories and the posting.`}
+						{application ? t`Compared with your stories and the posting.` : t`Compared with your stories.`}
 					</Text>
 					<AiNotice task="practice" application={application} interview={interviewId !== null} />
 				</View>

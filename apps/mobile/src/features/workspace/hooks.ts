@@ -142,19 +142,21 @@ export function useTicks(applicationId: string, key: string) {
 	};
 }
 
-export function useSavedItems(applicationId: string) {
+export function useSavedItems(applicationId: string | null) {
 	const { server, enabled } = useSignedIn();
-	const options = orpc.career.savedItems.queryOptions({ input: { applicationId } });
+	const options = orpc.career.savedItems.queryOptions({
+		input: applicationId === null ? { scope: "shared" } : { applicationId },
+	});
 	return useQuery({ ...options, queryKey: [...options.queryKey, server], enabled });
 }
 
-export function useFacts(applicationId: string, enabled = true) {
+export function useFacts(applicationId: string | null, enabled = true) {
 	const { server, enabled: signedIn } = useSignedIn();
 	const options = orpc.career.facts.queryOptions({ input: { applicationId } });
 	return useQuery({ ...options, queryKey: [...options.queryKey, server], enabled: signedIn && enabled });
 }
 
-export function useStories(applicationId: string, enabled = true) {
+export function useStories(applicationId: string | null, enabled = true) {
 	const { server, enabled: signedIn } = useSignedIn();
 	const options = orpc.career.stories.queryOptions({ input: { applicationId } });
 	return useQuery({ ...options, queryKey: [...options.queryKey, server], enabled: signedIn && enabled });
@@ -194,11 +196,12 @@ function generateFailure(error: unknown, name: string | undefined) {
  * Asks the coach for one structured piece of work for a tab. A failure is kept as `failure` for the tab to show inline;
  * `stop` cancels the request and clears it. Stored data stays usable either way.
  */
-export function useGenerate(applicationId: string) {
+export function useGenerate(applicationId: string | null) {
 	const { i18n } = useLingui();
 	const queryClient = useQueryClient();
 	const connection = useHasAIProvider();
 	const controller = useRef<AbortController | null>(null);
+	useEffect(() => () => controller.current?.abort(), [applicationId]);
 	const mutation = useMutation({
 		mutationKey: orpc.career.generate.mutationKey(),
 		mutationFn: (input: GenerateInput) => {

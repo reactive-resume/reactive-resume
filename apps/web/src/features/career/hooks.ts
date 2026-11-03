@@ -212,10 +212,10 @@ export function useTicks(applicationId: string, key: string) {
 }
 
 /** Saved items for a job, without those deleted while their Undo is still showing, for every reader. */
-export function useSavedItems(applicationId: string) {
+export function useSavedItems(applicationId: string | null) {
 	const removing = useRemoving((state) => state.ids);
 	return useQuery({
-		...orpc.career.savedItems.queryOptions({ input: { applicationId } }),
+		...orpc.career.savedItems.queryOptions({ input: applicationId === null ? { scope: "shared" } : { applicationId } }),
 		select: (items) => (removing.size === 0 ? items : items.filter((item) => !removing.has(item.id))),
 	});
 }
@@ -257,12 +257,13 @@ function generateFailure(error: unknown, name: string | undefined) {
  * Asks the coach for one structured piece of work for a tab. A failure is kept as `failure` for the tab to show inline;
  * `stop` cancels the request and clears it. Stored data stays usable either way.
  */
-export function useGenerate(applicationId: string) {
+export function useGenerate(applicationId: string | null) {
 	const { i18n } = useLingui();
 	const queryClient = useQueryClient();
 	const connection = useDefaultProvider();
 	const { provider } = connection;
 	const controller = useRef<AbortController | null>(null);
+	useEffect(() => () => controller.current?.abort(), [applicationId]);
 	const mutation = useMutation({
 		mutationKey: orpc.career.generate.mutationKey(),
 		mutationFn: (input: GenerateInput) => {
