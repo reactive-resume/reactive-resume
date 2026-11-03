@@ -1,12 +1,13 @@
 import type { Application, ApplicationSummary } from "./types";
-import type { RouterInput } from "@/api/client";
+import type { RouterInput, RouterOutput } from "@/api/client";
+import type { DeferredFetch } from "@reactive-resume/utils/deferred-request";
 import type { ListViewToken } from "react-native";
 import { t } from "@lingui/core/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef } from "react";
 import { applicationLanesQueryOptions } from "./lane-queries";
 import { resolveLane } from "./lanes";
-import { client, orpc } from "@/api/client";
+import { client, orpc, prepareRpc } from "@/api/client";
 import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { syncReminders } from "@/features/reminders";
 import { showToast } from "@/ui";
@@ -206,13 +207,19 @@ export function useApplicationMutations() {
 		},
 		onSettled,
 	});
-	const bulkUpdate = useMutation({
+	const bulkUpdateOptions = (defer?: DeferredFetch) => ({
 		...orpc.applications.bulkUpdate.mutationOptions(),
 		mutationFn: async (input: RouterInput["applications"]["bulkUpdate"]) => {
 			await ensureLaneWrite(input);
-			return client.applications.bulkUpdate(input, { context: { scope: scope ?? undefined } });
+			return client.applications.bulkUpdate(input, {
+				context: { scope: scope ?? undefined, ...(defer ? { defer } : {}) },
+			});
 		},
-		onSuccess: async (data, input) => {
+		onSuccess: async (
+			data: RouterOutput["applications"]["bulkUpdate"],
+			input: RouterInput["applications"]["bulkUpdate"],
+		) => {
+			if (scope !== getAccountScope()) return;
 			const metadata = queryClient.getQueryData(applicationLanesQueryOptions(server, scope).queryKey);
 			const category = input.status ?? metadata?.pipeline.lanes.find((lane) => lane.id === input.laneId)?.category;
 			// A successful receipt for every requested row plus an immutable target category confirms closure.
@@ -220,7 +227,6 @@ export function useApplicationMutations() {
 				cancelReminders(input.ids);
 				return;
 			}
-			if (scope !== getAccountScope()) return;
 			// Bulk's count is not evidence of each row's canonical status. Read the authoritative result.
 			try {
 				await queryClient.cancelQueries({ queryKey: applicationsListQueryKey(server) });
@@ -238,6 +244,13 @@ export function useApplicationMutations() {
 		},
 		onSettled,
 	});
+	const bulkUpdate = useMutation(bulkUpdateOptions());
+	const prepareBulkUpdate = (input: RouterInput["applications"]["bulkUpdate"]) =>
+		prepareRpc(
+			(value, { context }) =>
+				queryClient.getMutationCache().build(queryClient, bulkUpdateOptions(context.defer)).execute(value),
+			input,
+		);
 	const bulkDelete = useMutation({
 		...orpc.applications.bulkTrash.mutationOptions(),
 		mutationFn: (input: RouterInput["applications"]["bulkTrash"]) =>
@@ -261,5 +274,5 @@ export function useApplicationMutations() {
 		},
 		onSettled,
 	});
-	return { create, update, remove, bulkUpdate, bulkDelete, importCsv, logFollowUp };
+	return { create, update, remove, bulkUpdate, prepareBulkUpdate, bulkDelete, importCsv, logFollowUp };
 }
