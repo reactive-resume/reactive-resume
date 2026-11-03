@@ -136,6 +136,7 @@ describe("career voice transcription", () => {
 			original: "I led the warehouse migration.",
 			edited: "I led the warehouse migration.",
 			model: "whisper-1",
+			aiOperationId: expect.stringMatching(/\S/),
 		});
 	});
 

@@ -1,3 +1,4 @@
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { roleSuggestionsInputSchema } from "@reactive-resume/schema/career";
 import { ORPCError } from "@orpc/client";
 import { and, eq, isNull, sql } from "drizzle-orm";
@@ -8,6 +9,7 @@ import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { roleSuggestionsOutputSchema } from "@reactive-resume/schema/career";
 import { aiProvidersService } from "../ai-providers/service";
 import { getModel } from "../ai/service";
+import { createAiUsage } from "../ai/usage";
 import { generateJson } from "../applications/ai";
 import { careerService } from "./service";
 
@@ -73,6 +75,7 @@ export async function suggestTargetRoles(userId: string, input: Input, signal?: 
 			message: "Share a resume or enable shared Knowledge with active facts. You can also enter roles manually.",
 		});
 	const model = getModel({
+		usage: createAiUsage(userId, "role-suggestions", provider, (reader) => assertCurrent(reader)),
 		provider: provider.provider,
 		model: provider.model,
 		apiKey: provider.apiKey,
@@ -90,13 +93,14 @@ export async function suggestTargetRoles(userId: string, input: Input, signal?: 
 			schema: z.toJSONSchema(response),
 		}),
 	};
-	const assertCurrent = () =>
+	const assertCurrent = (reader?: DbOrTx) =>
 		careerService.assertMemoryVersion(
 			userId,
 			supplied.memoryVersion,
 			{ version: supplied.knowledgeVersion },
 			supplied.selectedResume,
 			provider.id,
+			reader,
 		);
 	// The short guard checks context and provider together, releasing locks before I/O; no awaited preparation follows.
 	await assertCurrent();

@@ -32,6 +32,13 @@ beforeEach(() => {
 	api.aiProviders.list.mockResolvedValue([provider]);
 	api.webAccess.status.mockResolvedValue({ revision: "web-1", provider: null, searxng: false, search: true });
 });
+it("usage history reads do not need a provider or sharing approval", async () => {
+	api.aiProviders.list.mockResolvedValue([]);
+	expect(await authorizeAiRequest(["ai", "usage"], {}, consentApi)).toBeUndefined();
+	expect(api.aiProviders.list).not.toHaveBeenCalled();
+	expect(api.auth.getProfile).not.toHaveBeenCalled();
+	expect(confirmOperation).not.toHaveBeenCalled();
+});
 it("does not approve a canceled operation", async () => {
 	vi.mocked(confirmOperation).mockResolvedValue(false);
 	await expect(authorizeAiRequest(["ai", "improve"], { line: "Fictional text" }, consentApi)).rejects.toMatchObject({

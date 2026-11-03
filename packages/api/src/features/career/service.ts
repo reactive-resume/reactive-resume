@@ -28,6 +28,7 @@ import { countryForTimeZone } from "@reactive-resume/utils/region";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
 import { aiProvidersService } from "../ai-providers/service";
+import { assertAiOperations, combineAiUsage, readAiUsages } from "../ai/usage";
 import { availableApplicationContext } from "../applications/access";
 import { activeApplications } from "../applications/access";
 import { findTrackedPosting } from "../applications/duplicates";
@@ -43,6 +44,27 @@ type Owned = { userId: string; applicationId?: string | null | undefined };
 type FactInput = z.infer<typeof careerFactInputSchema>;
 type StoryInput = z.infer<typeof careerStoryInputSchema>;
 const hash = (text: string) => createHash("sha256").update(text).digest("hex");
+
+/** Older clients omit provenance; their content edits must preserve the recorded request sources. */
+function inheritAnswerUsage(answers: CareerWorkspace["answers"], current: CareerWorkspace["answers"]) {
+	return answers.map((answer) => {
+		const previous = current.find((entry) => entry.id === answer.id);
+		return answer.aiOperationIds === undefined && previous?.aiOperationIds !== undefined
+			? { ...answer, aiOperationIds: previous.aiOperationIds }
+			: answer;
+	});
+}
+
+const answerOperations = (answers: readonly { aiOperationIds?: string[] | undefined }[]) => [
+	...new Set(answers.flatMap((answer) => answer.aiOperationIds ?? [])),
+];
+
+const savedItemOperations = (item: { aiOperationId: string | null; data: SavedItemData }) => [
+	...new Set([
+		...(item.aiOperationId ? [item.aiOperationId] : []),
+		...(item.data.kind === "answers" ? answerOperations(item.data.answers) : []),
+	]),
+];
 const visible = (column: typeof tables.careerFact.applicationId, applicationId?: string | null) =>
 	applicationId ? or(isNull(column), eq(column, applicationId)) : isNull(column);
 const ownedFact = (id: string, userId: string) =>
@@ -358,7 +380,7 @@ async function submitAnswerSnapshot(
 	expectedAnswers: CareerWorkspace["answers"],
 	expectedDocuments?: { resumeId: string | null; coverLetterId: string | null },
 ) {
-	const parsed = careerWorkspaceSchema.shape.answers.parse(answers);
+	let parsed = careerWorkspaceSchema.shape.answers.parse(answers);
 	await lockUser(tx, userId);
 	const [application] = await tx
 		.select()
@@ -379,6 +401,9 @@ async function submitAnswerSnapshot(
 		.from(tables.careerWorkspace)
 		.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
 	const current = careerWorkspaceSchema.parse({ ...EMPTY_WORKSPACE, ...workspace?.data });
+	parsed = inheritAnswerUsage(parsed, current.answers);
+	const reviewedAnswers = inheritAnswerUsage(expectedAnswers, current.answers);
+	await assertAiOperations(userId, answerOperations(parsed), ["answer"], tx);
 	// A lost success response may be retried only while the committed submission still matches.
 	// Draft equality alone also matches a never-submitted application closed in another tab.
 	if (application.status !== "saved") {
@@ -437,7 +462,7 @@ async function submitAnswerSnapshot(
 		}
 		return { application, stages: [] };
 	}
-	if (!isDeepStrictEqual(current.answers, expectedAnswers) && !isDeepStrictEqual(current.answers, parsed))
+	if (!isDeepStrictEqual(current.answers, reviewedAnswers) && !isDeepStrictEqual(current.answers, parsed))
 		throw new ORPCError("CONFLICT", {
 			message: "Application answers changed elsewhere. Review them before marking as applied.",
 		});
@@ -979,6 +1004,11 @@ export const careerService = {
 				),
 			)
 			.orderBy(desc(tables.careerArtifact.createdAt), desc(tables.careerArtifact.id));
+		const usage = await readAiUsages(
+			input.userId,
+			rows.flatMap(({ item }) => savedItemOperations(item)),
+			reader,
+		);
 		return rows.map(({ item, company, role, activity, status, closedReason }) => {
 			// Restore schema key order before hashing: JSONB reorders object keys on disk.
 			const parsed =
@@ -986,6 +1016,7 @@ export const careerService = {
 			const answers = parsed?.success ? parsed.data : null;
 			return {
 				...item,
+				aiUsage: combineAiUsage(savedItemOperations(item).flatMap((id) => usage.get(id) ?? [])),
 				// Submission writers hash the answers; generated drafts use the context version.
 				submission:
 					answers !== null &&
@@ -1121,6 +1152,7 @@ export const careerService = {
 		data: SavedItemData;
 		evidence: { factIds: string[]; storyIds: string[] };
 		inputVersion: string;
+		aiOperationId?: string;
 		jobId?: string;
 		jobLease?: string;
 		expectedMemoryVersion?: string;
@@ -1606,13 +1638,19 @@ export const careerService = {
 				if (patch.checklist !== undefined && !isDeepStrictEqual(patch.checklist, current.checklist))
 					throw new ORPCError("CONFLICT", { message: "Review checks cannot change after submission." });
 			}
-			for (const key of Object.keys(patch) as (keyof CareerWorkspace)[]) {
-				if (patch[key] === undefined) continue;
-				if (!Object.hasOwn(expected, key))
+			const proposed = patch.answers
+				? { ...patch, answers: inheritAnswerUsage(patch.answers, current.answers) }
+				: patch;
+			const reviewed = expected.answers
+				? { ...expected, answers: inheritAnswerUsage(expected.answers, current.answers) }
+				: expected;
+			for (const key of Object.keys(proposed) as (keyof CareerWorkspace)[]) {
+				if (proposed[key] === undefined) continue;
+				if (!Object.hasOwn(reviewed, key))
 					throw new ORPCError("BAD_REQUEST", {
 						message: "Include the previous value for every changed workspace field.",
 					});
-				if (!isDeepStrictEqual(current[key], expected[key]) && !isDeepStrictEqual(current[key], patch[key]))
+				if (!isDeepStrictEqual(current[key], reviewed[key]) && !isDeepStrictEqual(current[key], proposed[key]))
 					throw new ORPCError("CONFLICT", {
 						message:
 							"This workspace changed elsewhere. Your draft has not been saved. Review the latest version before trying again.",
@@ -1620,8 +1658,9 @@ export const careerService = {
 			}
 			const data = careerWorkspaceDataSchema.parse({
 				...current,
-				...Object.fromEntries(Object.entries(patch).filter(([, value]) => value !== undefined)),
+				...Object.fromEntries(Object.entries(proposed).filter(([, value]) => value !== undefined)),
 			});
+			await assertAiOperations(userId, answerOperations(data.answers), ["answer"], tx);
 			await tx
 				.insert(tables.careerWorkspace)
 				.values({ applicationId, userId, data })

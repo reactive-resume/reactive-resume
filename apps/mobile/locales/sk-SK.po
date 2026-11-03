@@ -1724,6 +1724,17 @@ msgstr "Poskytovateľov AI sa nepodarilo načítať. Skúste to znova alebo vypl
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI číta prilepený text iba vtedy, keď sa ho pýtate. Odkazy môžu používať vlastné údaje o úlohe stránky bez AI."
 
+#. placeholder {0}: i18n.number(provider.requests)
+#. placeholder {0}: i18n.number(report.requests)
+#. placeholder {0}: i18n.number(usage.requests)
+#: src/features/ai/usage.tsx
+msgid "AI request attempts: {0}"
+msgstr "Pokusy o požiadavky AI: {0}"
+
+#: src/features/ai/usage.tsx
+msgid "AI request history unavailable for this result."
+msgstr "História požiadaviek AI nie je pre tento výsledok dostupná."
+
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr ""
@@ -1731,6 +1742,14 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
+
+#: src/features/ai/usage.tsx
+msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
+msgstr "Využitie AI sa nepodarilo načítať. Obnovte zobrazenie. Staršie servery môžu vyžadovať aktualizáciu."
+
+#: src/features/ai/usage.tsx
+msgid "AI usage this week"
+msgstr "Využitie AI tento týždeň"
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2224,6 +2243,7 @@ msgid "Aspect ratio"
 msgstr "Pomer strán"
 
 #: app/letter/[id]/_layout.tsx
+#: src/features/ai/usage.tsx
 #: src/features/assistant/assistant-screen.tsx
 msgid "Assistant"
 msgstr "asistent"
@@ -2502,6 +2522,7 @@ msgstr "Rozdeľte životopis na obvyklé sekcie, aby sa dal segmentovať."
 msgid "Breaks long words between syllables, using the language set in Page."
 msgstr "Delí dlhé slová medzi slabikami pomocou jazyka nastaveného na stránke."
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Briefing"
@@ -2611,6 +2632,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Kariéra"
+
+#: src/features/ai/usage.tsx
+msgid "Career chat"
+msgstr "Kariérny čet"
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -4389,6 +4414,7 @@ msgstr "Vážený {name},"
 msgid "Dear hiring team,"
 msgstr "Vážený náborový tím,"
 
+#: src/features/ai/usage.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/shell/workspace-tab-label.ts
@@ -5514,6 +5540,10 @@ msgstr "Vyplňte podrobnosti ručne"
 msgid "Fill empty fields with AI"
 msgstr "Vyplňte prázdne polia AI"
 
+#: src/features/ai/usage.tsx
+msgid "Fill fields"
+msgstr "Vyplniť polia"
+
 #: src/features/letters/write.tsx
 msgid "Filled from the application. The greeting follows the name."
 msgstr "Vyplnené zo žiadosti o zamestnanie. Za menom nasleduje pozdrav."
@@ -5546,6 +5576,7 @@ msgstr "Prvá ponuka"
 msgid "First run (YYYY-MM-DD)"
 msgstr "Prvé spustenie (YYYY-MM-DD)"
 
+#: src/features/ai/usage.tsx
 #: src/features/letters/page.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -5710,6 +5741,10 @@ msgstr "Zabudnúť"
 #: src/features/career/facts.tsx
 msgid "Forgetting unlinks this fact from stories and saved items. The original source stays unchanged."
 msgstr "Zabudnutie odpojí túto skutočnosť od príbehov a uložených položiek. Pôvodný zdroj zostáva nezmenený."
+
+#: src/features/ai/usage.tsx
+msgid "Form answer"
+msgstr "Odpoveď vo formulári"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Form answers"
@@ -6262,6 +6297,10 @@ msgstr "Importované z {source}."
 #: src/features/ats-checker/checker.tsx
 msgid "Importing it into your new resume…"
 msgstr "Importuje sa do vášho nového životopisu…"
+
+#: src/features/ai/usage.tsx
+msgid "Improve"
+msgstr "Zlepšiť sa"
 
 #: src/features/write/improve.tsx
 msgid "Improve needs an AI provider. Connect one to continue."
@@ -6915,6 +6954,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "Telo písmena"
 
+#: src/features/ai/usage.tsx
+msgid "Letter draft"
+msgstr "Návrh listu"
+
 #: src/features/letters/page.tsx
 msgid "Letter page"
 msgstr "Listová stránka"
@@ -7191,6 +7234,10 @@ msgstr ""
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
 msgstr "Načítava sa uložená verzia…"
+
+#: src/features/ai/usage.tsx
+msgid "Loading usage…"
+msgstr "Načítava sa využitie…"
 
 #: src/features/ai/web-access.tsx
 msgid "Loading web access…"
@@ -7494,10 +7541,22 @@ msgstr "Môže byť voľná"
 msgid "MCP"
 msgstr "MCP"
 
+#: src/features/ai/usage.tsx
+msgid "MCP match score"
+msgstr "Skóre zhody MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP message draft"
+msgstr "Návrh správy MCP"
+
 #: app/(tabs)/settings/ai-mcp.tsx
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "Server MCP"
+
+#: src/features/ai/usage.tsx
+msgid "MCP tailoring"
+msgstr "Prispôsobenie MCP"
 
 #: src/features/assistant/page-fit.tsx
 msgid "Measuring page fit…"
@@ -8019,6 +8078,10 @@ msgstr ""
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
 msgstr "Zatiaľ žiadny poskytovateľ AI"
+
+#: src/features/ai/usage.tsx
+msgid "No AI request attempts recorded this week."
+msgstr "Tento týždeň neboli zaznamenané žiadne pokusy o požiadavky AI."
 
 #: src/features/letters/write.tsx
 msgid "No application"
@@ -9177,6 +9240,10 @@ msgstr "PDF · Najlepšie na uchádzanie sa o prácu"
 msgid "PDF check canceled. Retry when ready."
 msgstr "Kontrola PDF bola zrušená. Skúste to znova, keď budete pripravení."
 
+#: src/features/ai/usage.tsx
+msgid "PDF import"
+msgstr "Import PDF"
+
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
 msgstr ""
@@ -9383,6 +9450,7 @@ msgstr "zdroj pracovných ponúk"
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -9645,6 +9713,10 @@ msgstr ""
 msgid "Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available."
 msgstr "Poskytovateľ uchováva a používa jeho zásady ochrany osobných údajov. Odmietnutie zabráni tejto operácii a ponechá k dispozícii ďalšie funkcie aplikácie."
 
+#: src/features/ai/usage.tsx
+msgid "Provider test"
+msgstr "Test poskytovateľa"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Public"
@@ -9804,6 +9876,7 @@ msgstr "Prečítať licenciu"
 msgid "Read only"
 msgstr "Prístup len na čítanie"
 
+#: src/features/ai/usage.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -10048,6 +10121,10 @@ msgstr "Obnoviť brífing 24 hodín vopred"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing on the morning of"
 msgstr "Obnoviť brífing ráno v deň pohovoru"
+
+#: src/features/ai/usage.tsx
+msgid "Refresh usage"
+msgstr "Obnoviť využitie"
 
 #: src/features/share/custom-domain.tsx
 msgid "Register at OlaCV"
@@ -10339,6 +10416,7 @@ msgstr ""
 msgid "Replied"
 msgstr "Odpovedané"
 
+#: src/features/ai/usage.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Odpoveď"
@@ -10385,6 +10463,10 @@ msgstr "Nahlásiť problém"
 #: src/features/ai/report-content.tsx
 msgid "Report received by your server operator. Thank you."
 msgstr "Hlásenie prijaté operátorom vášho servera. dakujem."
+
+#: src/features/ai/usage.tsx
+msgid "Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not."
+msgstr "Pokusy o požiadavky zaznamenané týmto serverom vrátane neúspešných a zrušených. Opakovania a každé volanie modelu v slučke nástrojov sa počítajú samostatne; časti prúdu, samotné nástroje a ukladanie sa nepočítajú."
 
 #: src/features/settings/application-profile.tsx
 msgid "Requested amount"
@@ -10831,6 +10913,10 @@ msgstr "Rola (voliteľné)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Rola {0}"
+
+#: src/features/ai/usage.tsx
+msgid "Role suggestions"
+msgstr "Návrhy pozícií"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
@@ -13116,6 +13202,10 @@ msgstr "Chýba súhrnný odsek."
 msgid "There's no text here to bring into the editor"
 msgstr ""
 
+#: src/features/ai/usage.tsx
+msgid "These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt."
+msgstr "Ide o pokusy, nie vyúčtovanie, počty tokenov ani náklady. Prerušený server môže zaznamenať pokus pred odoslaním; tento prehľad nepotvrdzuje prijatie poskytovateľom."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -14405,9 +14495,17 @@ msgstr ""
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Návštevníci zadajú heslo skôr, ako uvidia životopis. Zdieľajte ho iba s ľuďmi, ktorým dôverujete."
 
+#: src/features/ai/usage.tsx
+msgid "Voice playback"
+msgstr "Prehrávanie hlasu"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
 msgstr "Nastavenia hlasu"
+
+#: src/features/ai/usage.tsx
+msgid "Voice transcription"
+msgstr "Prepis hlasu"
 
 #: src/features/write/fields.ts
 msgid "Volunteer"
@@ -14481,6 +14579,10 @@ msgstr "Vyhľadávania na webe hľadajú prácu v týchto krajinách. Vyberte si
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Webová stránka"
+
+#: src/features/ai/usage.tsx
+msgid "Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed."
+msgstr "Týždeň trvá od pondelka do nedele v časovom pásme účtu. História začína, keď server začne zaznamenávať; staršie požiadavky sa spätne nevytvárajú. Názvy pripojení a modely zostávajú podľa použitia aj po odstránení pripojenia."
 
 #: src/features/workspace/parts.tsx
 msgid "Weighing each requirement"
@@ -14712,6 +14814,10 @@ msgstr "Bez neho vyplníte príjemcu sami a na vypracovanie sa použije iba vá�
 msgid "Word"
 msgstr "Word"
 
+#: src/features/ai/usage.tsx
+msgid "Word import"
+msgstr "Import Word"
+
 #: src/features/ai/provider-list.tsx
 msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Import Word, Zlepšiť sa, asistent, koncepty listov, koučovanie a generovanie v Kariére aj hlasové cvičenie vyžadujú poskytovateľa AI. Úpravy, Dizajn, kontroly čitateľnosti a sťahovanie fungujú aj bez neho."
@@ -14837,6 +14943,10 @@ msgstr "Text"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Pomoc s písaním, prispôsobené návrhy a asistent. Predvolený poskytovateľ sa použije všade, kde nevyberiete iného. Vaše kľúče zostávajú šifrované."
+
+#: src/features/ai/usage.tsx
+msgid "Writing review"
+msgstr "Kontrola písania"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Written manually"

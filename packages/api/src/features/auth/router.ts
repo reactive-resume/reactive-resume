@@ -364,6 +364,15 @@ export const authRouter = {
 				applicationPipeline: applicationPipelineSchema,
 				aiContentReports: z.array(createSelectSchema(schema.aiContentReport)),
 				career: z.object({
+					aiRequests: z.array(createSelectSchema(schema.aiRequest).omit({ userId: true })).optional(),
+					writingReviews: z
+						.array(
+							createSelectSchema(schema.resumeWritingReview, {
+								passages: z.array(z.object({ id: z.string(), where: z.string(), text: z.string() })).nullable(),
+								review: z.record(z.string(), z.unknown()).nullable(),
+							}).omit({ userId: true, requestGeneration: true }),
+						)
+						.optional(),
 					profile: careerProfileDataSchema,
 					reviewedAnswers: z.array(reviewedAnswerSchema),
 					facts: z.array(careerFactSchema.omit({ usedBy: true, company: true })),

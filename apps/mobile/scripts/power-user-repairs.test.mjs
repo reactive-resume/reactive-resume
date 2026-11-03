@@ -174,6 +174,7 @@ const applicationData = load("../../../packages/schema/src/applications/data.ts"
 });
 const careerSchema = load("../../../packages/schema/src/career.ts", {
 	zod,
+	"./ai-usage": load("../../../packages/schema/src/ai-usage.ts", { zod }),
 	"./applications/data": applicationData,
 	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
 	"@reactive-resume/utils/timezone": timeParser,

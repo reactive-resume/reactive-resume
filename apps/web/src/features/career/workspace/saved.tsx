@@ -21,6 +21,7 @@ import { CareerLoadError } from "../load-state";
 import { formatMoney } from "../offer-compare";
 import { useRemoving } from "../removing";
 import { CollapseRow, FilterChip, tabLabel, useCareerTime, withQueryUndo } from "../shared";
+import { AiResultUsage } from "@/features/ai/usage";
 import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 const KINDS: { kind: SavedItemKind; icon: IconName; tab: WorkspaceTab | null }[] = [
@@ -188,6 +189,7 @@ function SavedRow({ item, applicationId, expanded, onToggle, onOpen, onDelete }:
 						</>
 					)}
 				</p>
+				<AiResultUsage usage={item.aiUsage} />
 			</div>
 			<div className="col-start-2 mt-2 flex items-center gap-1 sm:col-start-3 sm:row-start-1 sm:mt-0">
 				{meta?.tab ? (

@@ -214,6 +214,7 @@ export const resumeWritingReview = pg.pgTable("resume_writing_review", {
 	inputText: pg.text("input_text"),
 	passages: pg.jsonb("passages").$type<{ id: string; where: string; text: string }[]>(),
 	review: pg.jsonb("review").$type<Record<string, unknown>>(),
+	aiOperationId: pg.text("ai_operation_id"),
 	requestedAt: pg.timestamp("requested_at", { withTimezone: true }),
 	reviewedAt: pg.timestamp("reviewed_at", { withTimezone: true }),
 });

@@ -19,6 +19,8 @@ vi.mock("@reactive-resume/db/schema", () => ({
 	aiContentReport: { userId: "aiContentReport.userId" },
 	resumeVersion: { userId: "resumeVersion.userId" },
 	coverLetterVersion: { userId: "coverLetterVersion.userId" },
+	aiRequest: { userId: "aiRequest.userId" },
+	resumeWritingReview: { userId: "resumeWritingReview.userId" },
 }));
 vi.mock("drizzle-orm", () => ({ eq: (column: unknown, value: unknown) => ({ column, value }) }));
 vi.mock("@reactive-resume/env/server", () => ({ env: {} }));
@@ -91,6 +93,8 @@ describe("account backup", () => {
 				transcripts: [{ id: "transcript", original: "I lead the migration.", edited: "I led the migration." }],
 			};
 			mocks.exportCareer.mockResolvedValue(career);
+			const aiRequests = [{ id: "request", operationId: "operation", action: "writing-review", model: "model" }];
+			const writingReviews = [{ resumeId: "resume", aiOperationId: "operation", inputText: "Owned wording" }];
 			const application = { id: "application", userId: "owner", company: "Lumen", role: "Designer" };
 			for (const rows of [
 				[{ id: "owner", name: "Owner" }],
@@ -108,6 +112,8 @@ describe("account backup", () => {
 				],
 				[{ id: "approved-letter-version", userId: "owner", coverLetterId: "letter", kind: "named", data: letter }],
 				[{ id: "report", userId: "owner", content: "Reported output" }],
+				aiRequests,
+				writingReviews,
 			]) {
 				mocks.select.mockReturnValueOnce({
 					from: () => ({
@@ -124,7 +130,9 @@ describe("account backup", () => {
 			expect(exported.applications).toEqual([{ id: "application", company: "Lumen", role: "Designer" }]);
 			expect(mocks.predicates).toContainEqual({ column: "coverLetter.userId", value: "owner" });
 			expect(mocks.exportCareer).toHaveBeenCalledExactlyOnceWith("owner");
-			expect(exported.career).toEqual(career);
+			expect(exported.career).toEqual({ ...career, aiRequests, writingReviews });
+			expect(mocks.predicates).toContainEqual({ column: "aiRequest.userId", value: "owner" });
+			expect(mocks.predicates).toContainEqual({ column: "resumeWritingReview.userId", value: "owner" });
 			expect(mocks.getApplicationProfile).toHaveBeenCalledExactlyOnceWith("owner");
 			expect(exported.applicationProfile).toMatchObject({
 				data: { email: "private@example.test" },

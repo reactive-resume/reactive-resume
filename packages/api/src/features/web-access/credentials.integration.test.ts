@@ -80,6 +80,13 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 		for (const statement of taskModels.split("--> statement-breakpoint")) {
 			if (statement.trim().startsWith('ALTER TABLE "ai_providers"')) await pool.query(statement);
 		}
+		const usage = await readFile(
+			new URL("../../../../../migrations/20261103093306_conscious_titanium_man/migration.sql", import.meta.url),
+			"utf8",
+		);
+		for (const statement of usage.split("--> statement-breakpoint")) {
+			if (statement.trim().startsWith('ALTER TABLE "resume_writing_review"')) await pool.query(statement);
+		}
 		web = (await import("./credentials")).webAccessService;
 		ai = (await import("../ai-providers/service")).aiProvidersService;
 	});
@@ -303,6 +310,7 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 		expect(await readWritingReview("alice", "resume-alice")).toMatchObject({
 			inputText: "Original wording",
 			review: { summary: "Latest review" },
+			aiUsage: null,
 		});
 		const pendingReview = await beginWritingReview("alice", "resume-alice");
 		expect(await readWritingReview("alice", "resume-alice")).toMatchObject({ review: { summary: "Latest review" } });
