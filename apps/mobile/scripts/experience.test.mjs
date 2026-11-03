@@ -929,6 +929,7 @@ for (const [overrides, label, destination] of [
 ]) {
 	reset();
 	tree = render(NextStepCard, { application: { ...application, ...overrides }, onOpenInterview() {} });
+	assert.equal(tree.props.title, overrides.status === "closed" ? "Outcome" : "Next step");
 	control(tree, label).onPress();
 	assert.equal(calls.at(-1), `/applications/job-a/${destination}`);
 	if (!overrides.status) assert.ok(!nodes(tree).some((node) => node.props.label === "Schedule an interview"));

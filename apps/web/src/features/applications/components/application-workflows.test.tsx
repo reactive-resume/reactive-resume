@@ -367,6 +367,7 @@ it("shows pasted text once when AI couldn't read it, and saves that text (J2-20)
 	});
 	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
 	await screen.findByText(/AI couldn't fill the details/);
+	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();
 	expect(screen.queryByRole("textbox", { name: "Saved description" })).toBeNull();
 	fireEvent.change(screen.getByRole("textbox", { name: "Role" }), { target: { value: "VP of Engineering" } });
 	fireEvent.change(screen.getByRole("textbox", { name: "Company" }), { target: { value: "Fieldnote" } });
@@ -398,6 +399,7 @@ it("shows the posting once when a link couldn't be read, its text was pasted and
 	fireEvent.change(await screen.findByRole("textbox", { name: "Pasted description" }), { target: { value: posting } });
 	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
 	await screen.findByText(/AI couldn't fill the details/);
+	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();
 
 	expect(screen.getAllByRole("textbox").filter((box) => (box as HTMLTextAreaElement).value === posting)).toHaveLength(
 		1,
@@ -468,4 +470,39 @@ it("keeps the link's failure above paste recovery instead of replacing it with i
 		target: { value: "A full posting" },
 	});
 	await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+});
+
+it("keeps one failure status when optional AI enrichment fails for a captured posting", async () => {
+	const posting = "Build accessible tools for a fictional studio.";
+	api.parsePosting.mockResolvedValue({
+		role: "",
+		company: "",
+		location: "",
+		salary: "",
+		requirements: [],
+		jobDescription: posting,
+		filledBy: "none",
+		enrichmentWarning: true,
+		postingSource: { method: "paste", format: "text", truncated: false, completeness: "unknown" },
+	});
+	mount(
+		<AddApplicationDialog
+			open
+			onOpenChange={vi.fn()}
+			onAdded={vi.fn()}
+			initialCapture={{
+				url: "https://jobs.example.test/captured",
+				role: "Tools Engineer",
+				company: "Fictional Studio",
+				location: "",
+				description: posting,
+				truncated: false,
+			}}
+		/>,
+	);
+	fireEvent.click(await screen.findByRole("button", { name: "Read with AI" }));
+	await waitFor(() => expect(api.parsePosting).toHaveBeenCalledTimes(1));
+	expect(await screen.findAllByText(/AI couldn't fill the details/)).toHaveLength(1);
+	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();
+	expect(screen.getByRole("textbox", { name: "Saved description" })).toHaveValue(posting);
 });
