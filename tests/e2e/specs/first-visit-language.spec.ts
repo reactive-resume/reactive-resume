@@ -22,7 +22,10 @@ test("explicit language wins and the saved choice survives navigation", async ({
 	await expect(page.locator("html")).toHaveAttribute("lang", "fr-FR");
 	await page.goto("/?locale=ja-JP&campaign=explicit");
 	await expect(page.locator("html")).toHaveAttribute("lang", "ja-JP");
-	expect((await context.cookies()).find((cookie) => cookie.name === "locale")?.value).toBe("ja-JP");
+	// Prerendered HTML already has this language; persistence waits for the app to start.
+	await expect
+		.poll(async () => (await context.cookies()).find((cookie) => cookie.name === "locale")?.value)
+		.toBe("ja-JP");
 	await page.goto("/auth/login");
 	await expect(page.locator("html")).toHaveAttribute("lang", "ja-JP");
 });
