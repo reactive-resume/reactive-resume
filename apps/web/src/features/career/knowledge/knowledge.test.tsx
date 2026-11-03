@@ -56,7 +56,7 @@ vi.mock("@/libs/orpc/client", () => {
 					"profile",
 					"savedItems",
 					"saveStory",
-					"saveProfile",
+					"updateProfile",
 					"saveFact",
 					"suggestTargetRoles",
 					"updateFact",
@@ -67,7 +67,7 @@ vi.mock("@/libs/orpc/client", () => {
 		},
 		client: {
 			career: {
-				saveProfile: api.saveProfile,
+				updateProfile: api.saveProfile,
 				proposeResumeFacts: api.proposeResumeFacts,
 				saveResumeFacts: api.saveResumeFacts,
 			},
@@ -385,6 +385,47 @@ it("does not claim an Ask first privacy default when the saved memory setting fa
 	expect(screen.queryByRole("radio", { name: "Ask first" })).toBeNull();
 });
 
+it("saves only memory consent from Facts, preserving other cached preferences", async () => {
+	mount(<FactsPage highlight={undefined} />);
+	fireEvent.click(await screen.findByRole("radio", { name: "Never" }));
+	await waitFor(() => expect(api.saveProfile).toHaveBeenCalledWith({ memoryMode: "off" }, expect.anything()));
+	expect(clients[0]?.getQueryData(["profile"])).toEqual({ ...profile(), memoryMode: "off" });
+});
+
+it.each([false, true])("serializes rapid memory choices, including an earlier failed save (%s)", async (fails) => {
+	api.data.profile = { ...profile(), memoryMode: "ask" };
+	let resolveFirst: (() => void) | undefined;
+	let rejectFirst: ((error: Error) => void) | undefined;
+	let resolveLast: (() => void) | undefined;
+	api.saveProfile
+		.mockImplementationOnce(
+			() =>
+				new Promise<void>((resolve, reject) => {
+					resolveFirst = resolve;
+					rejectFirst = reject;
+				}),
+		)
+		.mockImplementationOnce(
+			() =>
+				new Promise<void>((resolve) => {
+					resolveLast = resolve;
+				}),
+		);
+	mount(<FactsPage highlight={undefined} />);
+	fireEvent.click(await screen.findByRole("radio", { name: "Automatically" }));
+	await waitFor(() => expect(api.saveProfile).toHaveBeenCalledTimes(1));
+	await act(async () => fireEvent.click(screen.getByRole("radio", { name: "Never" })));
+	expect(api.saveProfile).toHaveBeenCalledTimes(1);
+	await act(async () => {
+		if (fails) rejectFirst?.(new Error("Offline"));
+		else resolveFirst?.();
+	});
+	await waitFor(() => expect(api.saveProfile).toHaveBeenCalledTimes(2));
+	expect(api.saveProfile.mock.calls.map(([input]) => input)).toEqual([{ memoryMode: "auto" }, { memoryMode: "off" }]);
+	await act(async () => resolveLast?.());
+	expect(clients[0]?.getQueryData(["profile"])).toEqual({ ...profile(), memoryMode: "off" });
+});
+
 it("rejects salary shorthand without autosaving a different number, and accepts a full amount", async () => {
 	mount(<PreferencesPage />);
 	const input = await screen.findByRole("textbox", { name: "Minimum base salary" });
@@ -405,6 +446,7 @@ it("rejects salary shorthand without autosaving a different number, and accepts 
 		),
 	);
 	expect(input.getAttribute("aria-invalid")).toBeNull();
+	expect(api.saveProfile.mock.calls.at(-1)?.[0].memoryMode).toBeUndefined();
 });
 
 it("lets an existing office-day requirement return to unspecified", async () => {
@@ -646,6 +688,7 @@ it("publishes target roles to search consumers only after a successful preferenc
 	);
 	mount(<PreferencesPage />);
 	const field = await screen.findByRole("textbox", { name: "Target roles" });
+	act(() => clients.at(-1)?.setQueryData(["profile"], { ...profile(), memoryMode: "off" }));
 	fireEvent.change(field, { target: { value: "Reviewed platform engineer" } });
 	fireEvent.keyDown(field, { key: "Enter" });
 	fireEvent.blur(field);
@@ -653,7 +696,10 @@ it("publishes target roles to search consumers only after a successful preferenc
 	expect(clients.at(-1)?.getQueryData(["profile"])).toMatchObject({ targetRoles: [] });
 	write.resolve?.({ ...profile(), targetRoles: ["Reviewed platform engineer"] });
 	await waitFor(() =>
-		expect(clients.at(-1)?.getQueryData(["profile"])).toMatchObject({ targetRoles: ["Reviewed platform engineer"] }),
+		expect(clients.at(-1)?.getQueryData(["profile"])).toMatchObject({
+			targetRoles: ["Reviewed platform engineer"],
+			memoryMode: "off",
+		}),
 	);
 });
 

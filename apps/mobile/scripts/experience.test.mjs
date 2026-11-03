@@ -2555,6 +2555,173 @@ for (const locale of ["de-DE", "fr-FR"]) {
 }
 console.log("PASS native saved Preferences amounts round-trip in comma-decimal locales");
 
+// The Facts control uses the shipped action owner, including pending/repeat and failure handling.
+let memoryProfile = careerSchema.careerProfileDataSchema.parse({ memoryMode: "auto", priorities: "Mentoring" });
+let memoryAccount = { id: "owner" };
+let memoryServer = "test";
+let finishMemory;
+let rejectMemory;
+const memoryApi = {
+	career: {
+		updateProfile: (input, options) => {
+			calls.push({ input, options });
+			return new Promise((resolve, reject) => {
+				finishMemory = () => {
+					memoryProfile = { ...memoryProfile, ...input };
+					resolve(memoryProfile);
+				};
+				rejectMemory = reject;
+			});
+		},
+	},
+};
+const memoryOrpc = Object.fromEntries(
+	["career", "applications", "documents"].map((key) => [key, { key: () => [key] }]),
+);
+const memorySession = {
+	useSession: () => ({ status: "signed-in", server: "test" }),
+	getServer: () => memoryServer,
+};
+const { useCareerAction: memoryAction } = load("features/career/hooks.ts", {
+	"@orpc/client": { ORPCError: Error },
+	"@tanstack/react-query": {
+		useQueryClient: () => ({ invalidateQueries: async () => {} }),
+	},
+	"./undo": {},
+	"@/api/client": { client: memoryApi, orpc: memoryOrpc },
+	"@/auth/session": memorySession,
+	"@/features/settings/queries": {},
+});
+const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
+	"./fact-categories": load("features/career/fact-categories.ts"),
+	"./resume-facts": { ResumeFacts },
+	react: {
+		...react,
+		memo: (component) => component,
+		useMemo: (fn) => fn(),
+		useDeferredValue: (value) => value,
+		useLayoutEffect: (fn) => fn(),
+	},
+	"@legendapp/list/reanimated": { AnimatedLegendList: "LegendList" },
+	"expo-crypto": {},
+	"./hooks": {
+		client: memoryApi,
+		useCareerQueries: () => ({ facts: { data: [] }, profile: { data: memoryProfile } }),
+		useCareerAction: memoryAction,
+		useCareerTime: () => ({ when() {}, profile: { data: memoryAccount } }),
+		useUndoRows: () => ({ hidden: [] }),
+	},
+	"./shared": { LoadState: "LoadState" },
+	"@/auth/session": memorySession,
+});
+const factsHeader = () =>
+	nodes(render(KnowledgeFacts, { onRefresh: async () => {} })).find((node) => node.type === "LegendList").props
+		.ListHeaderComponent;
+reset();
+for (const memoryMode of ["ask", "auto", "off"]) {
+	let header = factsHeader();
+	assert.equal(control(header, "Remember facts from my messages").value, memoryProfile.memoryMode);
+	control(header, "Remember facts from my messages").onChange(memoryMode);
+	control(header, "Remember facts from my messages").onChange(memoryMode);
+	header = factsHeader();
+	assert.equal(control(header, "Remember facts from my messages").disabled, true);
+	assert.equal(calls.length, 1, "pending consent writes cannot repeat");
+	assert.deepEqual(calls[0], {
+		input: { memoryMode },
+		options: { context: { scope: JSON.stringify(["test", "owner"]) } },
+	});
+	finishMemory();
+	await settle();
+	assert.equal(control(factsHeader(), "Remember facts from my messages").value, memoryMode);
+	assert.equal(memoryProfile.priorities, "Mentoring");
+	calls.length = 0;
+}
+control(factsHeader(), "Remember facts from my messages").onChange("auto");
+rejectMemory(new Error("Offline"));
+await settle();
+assert.equal(control(factsHeader(), "Remember facts from my messages").value, "off");
+assert.ok(nodes(factsHeader()).some((node) => node.type === "Banner" && node.props.message === "Offline"));
+control(factsHeader(), "Remember facts from my messages").onChange("auto");
+finishMemory();
+await settle();
+assert.equal(control(factsHeader(), "Remember facts from my messages").value, "auto");
+assert.equal(
+	nodes(factsHeader()).some((node) => node.type === "Banner"),
+	false,
+);
+memoryAccount = undefined;
+assert.equal(control(factsHeader(), "Remember facts from my messages").disabled, true);
+calls.length = 0;
+control(factsHeader(), "Remember facts from my messages").onChange("auto");
+assert.equal(calls.length, 0);
+memoryAccount = { id: "owner" };
+memoryServer = "changed";
+control(factsHeader(), "Remember facts from my messages").onChange("auto");
+assert.equal(calls.length, 0);
+memoryServer = "test";
+memoryProfile = undefined;
+assert.equal(
+	nodes(factsHeader()).some((node) => node.props.label === "Remember facts from my messages"),
+	false,
+);
+console.log("PASS native Facts owns loaded memory consent with scoped writes, pending guard and failure recovery");
+
+const { Preferences: SavingPreferences } = load("features/career/preferences.tsx", {
+	react: { ...react, useLayoutEffect: (fn) => fn() },
+	"@tanstack/react-query": {
+		useQueryClient: () => ({ getQueryData: () => ({ id: "owner" }), invalidateQueries() {} }),
+	},
+	"@reactive-resume/schema/career": careerSchema,
+	"@reactive-resume/utils/amount": amountParser,
+	"./hooks": { useCareerTime: () => ({ locale: "en-US", timeZone: "UTC", profile: { data: { id: "owner" } } }) },
+	"./role-suggestions": { RoleSuggestions: "RoleSuggestions" },
+	"./search-regions-field": { SearchRegionsField: "SearchRegionsField" },
+	"@/api/client": {
+		client: { career: { updateProfile: async (input, options) => calls.push({ input, options }) } },
+		orpc: { auth: { getProfile: { key: () => ["account"] } }, career: { profile: { key: () => ["profile"] } } },
+	},
+	"@/auth/session": memorySession,
+	"@/features/workspace/hooks": {
+		useDraft: (_key, initial) => ({
+			value: { ...initial, draft: { ...initial.draft, memoryMode: "auto", priorities: "Recovered preference" } },
+			blocked: true,
+			setBlocked() {},
+			clear() {},
+		}),
+	},
+});
+reset();
+const preferencesTree = render(SavingPreferences, {
+	initial: careerSchema.careerProfileDataSchema.parse({ memoryMode: "off" }),
+});
+assert.equal(
+	nodes(preferencesTree).some((node) => node.props.label === "Remember facts from my messages"),
+	false,
+);
+control(preferencesTree, "Retry").onPress();
+await settle();
+assert.equal(calls[0].input.memoryMode, undefined, "a recovered draft never replays its old memory consent");
+assert.equal(calls[0].input.priorities, "Recovered preference");
+assert.deepEqual(calls[0].options.context, { scope: JSON.stringify(["test", "owner"]) });
+console.log("PASS native recovered Preferences preserves Facts consent and binds its write to the rendered account");
+
+const { useMemoryNote } = load("features/assistant/provider.tsx", {
+	"@orpc/client": {},
+	"@tanstack/react-query": { useQuery: () => ({ data: { memoryMode: "off" } }) },
+	"./chat": {},
+	"./chat-view": {},
+	"@/api/client": { orpc: { career: { profile: { queryOptions: () => ({}), key: () => ["profile"] } } } },
+	"@/auth/session": memorySession,
+	"@/features/ai/providers": {},
+});
+reset();
+function MemoryNoteRoute() {
+	return useMemoryNote(true).chip;
+}
+render(MemoryNoteRoute).props.onPress();
+assert.deepEqual(calls, [{ pathname: "/career/knowledge", params: { tab: "facts" } }]);
+console.log("PASS native coach privacy chip opens Knowledge Facts");
+
 // Follow-up controls must work for every owed row, including accounts larger than the old dismissal cap.
 reset();
 applicationSearch = "";

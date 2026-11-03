@@ -728,7 +728,9 @@ test("Add to resume opens the resume's assistant with the answer unsent and out 
 		timeout: 30_000,
 	});
 	await expect(page.getByRole("button", { name: "Add to resume" })).toBeVisible();
-	await page.getByRole("main").screenshot({ path: testInfo.outputPath("coach.png") });
+	await expect(page.getByText("Sent", { exact: true })).toBeVisible();
+	await expect(page.getByText("Used", { exact: true })).toHaveCount(0);
+	await page.getByRole("main").screenshot({ animations: "disabled", path: testInfo.outputPath("coach.png") });
 	const requests = stub.requests.length;
 	await page.getByRole("button", { name: "Add to resume" }).click();
 	await page.getByRole("menuitem").first().click();

@@ -51,7 +51,7 @@ const keyOf = (fact: Fact) => fact.id;
 export function Facts({ children, onRefresh }: FactsProps) {
 	const { t } = useLingui();
 	const { colors, size, space } = useTheme();
-	const { facts } = useCareerQueries();
+	const { facts, profile } = useCareerQueries();
 	const pull = usePullRefresh(onRefresh);
 	const [search, setSearch] = useState("");
 	// Typing stays responsive; the list filters in a deferred render.
@@ -61,6 +61,7 @@ export function Facts({ children, onRefresh }: FactsProps) {
 	const [source, setSource] = useState<Fact | null>(null);
 	const undo = useUndoRows();
 	const action = useCareerAction();
+	const memory = useCareerAction();
 	const session = useSession();
 	const busy = useRef(new Set<string>());
 	const [updating, setUpdating] = useState<string[]>([]);
@@ -80,7 +81,7 @@ export function Facts({ children, onRefresh }: FactsProps) {
 			void action.refresh();
 		}
 	};
-	const { when } = useCareerTime();
+	const { when, profile: account } = useCareerTime();
 	const rows = useMemo(
 		() =>
 			(facts.data ?? []).filter(
@@ -131,6 +132,34 @@ export function Facts({ children, onRefresh }: FactsProps) {
 			}}
 		>
 			{children}
+			<LoadState query={profile} />
+			{profile.data ? (
+				<>
+					<SelectSheet
+						label={t`Remember facts from my messages`}
+						value={profile.data.memoryMode}
+						disabled={memory.pending || !account.data?.id}
+						onChange={(memoryMode) => {
+							if (!account.data?.id) return;
+							const scope = JSON.stringify([session.server, account.data.id]);
+							void memory.run(() => client.career.updateProfile({ memoryMode }, { context: { scope } }));
+						}}
+						options={[
+							{ value: "ask", label: t`Ask first` },
+							{ value: "auto", label: t`Automatically` },
+							{ value: "off", label: t`Never` },
+						]}
+					/>
+					<Text color="ink3">
+						{profile.data.memoryMode === "ask"
+							? t`The coach proposes each fact in the chat. Nothing is saved until you agree.`
+							: profile.data.memoryMode === "auto"
+								? t`The coach saves facts you state, and tells you. You can undo.`
+								: t`The coach doesn't remember anything from your messages.`}
+					</Text>
+				</>
+			) : null}
+			{memory.error ? <Banner tone="danger" message={memory.error} /> : null}
 			<TextField label={t`Search facts`} value={search} onChangeText={setSearch} />
 			<SelectSheet
 				label={t`Type`}

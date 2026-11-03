@@ -1,6 +1,30 @@
 import { describe, expect, it } from "vite-plus/test";
 import z from "zod";
-import { careerOfferInputSchema, careerProfileDataSchema, resumeFactProposalSchema } from "./career";
+import {
+	careerOfferInputSchema,
+	careerProfileDataSchema,
+	careerProfileUpdateSchema,
+	resumeFactProposalSchema,
+} from "./career";
+
+describe("career profile updates", () => {
+	it("never supplies defaults for fields another control owns", () => {
+		expect(careerProfileUpdateSchema.parse({ memoryMode: "off" })).toEqual({ memoryMode: "off" });
+		expect(careerProfileUpdateSchema.parse({ priorities: "Mentoring" })).toEqual({ priorities: "Mentoring" });
+		expect(careerProfileUpdateSchema.parse({})).toEqual({});
+		expect(careerProfileDataSchema.parse({}).memoryMode).toBe("ask");
+	});
+	it.each(["targetRoles", "locations"])("trims %s and rejects whitespace-only entries", (field) => {
+		expect(careerProfileUpdateSchema.parse({ [field]: ["  Platform engineer  "] })).toEqual({
+			[field]: ["Platform engineer"],
+		});
+		expect(careerProfileUpdateSchema.safeParse({ [field]: [" \t "] }).success).toBe(false);
+		expect(careerProfileUpdateSchema.parse({ [field]: [` ${"x".repeat(200)} `] })).toEqual({
+			[field]: ["x".repeat(200)],
+		});
+		expect(careerProfileUpdateSchema.safeParse({ [field]: ["x".repeat(201)] }).success).toBe(false);
+	});
+});
 
 describe("careerProfileDataSchema searchRegions", () => {
 	it("leaves searchRegions absent when the input has none", () => {

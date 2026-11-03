@@ -34,25 +34,50 @@ export type MemoryMode = z.infer<typeof memoryModeSchema>;
 
 const currencySchema = z.string().regex(/^[A-Z]{3}$/);
 const payPeriodSchema = z.enum(["hour", "month", "year"]);
+// Normalized length bounds belong to the output, not the raw OpenAPI input.
+const profileListEntrySchema = z
+	.string()
+	.trim()
+	.regex(/\S/)
+	.pipe(z.string().min(1).max(200))
+	.describe(
+		"Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected.",
+	);
 
-/** Preferences: what the user is looking for, used by discovery, Fit, Offers and the coach. */
-export const careerProfileDataSchema = z.object({
-	targetRoles: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
-	locations: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
-	/** "What matters to you", in the user's own words. */
-	priorities: z.string().max(4000).default(""),
-	minBase: z
-		.object({ amount: z.number().nonnegative().nullable(), currency: currencySchema, period: payPeriodSchema })
-		.default({ amount: null, currency: "USD", period: "year" }),
-	/** 0 is fully remote. */
-	maxOfficeDays: z.number().int().min(0).max(5).nullable().default(null),
-	noticeWeeks: z.number().int().min(0).max(52).nullable().default(null),
-	memoryMode: memoryModeSchema.default("ask"),
-	/**
-	 * Countries web searches target, first is primary. Absent or null is automatic (from the account
-	 * time zone), [] is anywhere. No default, so a save that leaves it out keeps the stored value.
-	 */
-	searchRegions: searchRegionsSchema,
+/** Independent Facts and Preferences writes have no defaults: an omitted field must stay omitted. */
+export const careerProfileUpdateSchema = z
+	.object({
+		targetRoles: z.array(profileListEntrySchema).max(20),
+		locations: z.array(profileListEntrySchema).max(20),
+		/** "What matters to you", in the user's own words. */
+		priorities: z.string().max(4000),
+		minBase: z.object({
+			amount: z.number().nonnegative().nullable(),
+			currency: currencySchema,
+			period: payPeriodSchema,
+		}),
+		/** 0 is fully remote. */
+		maxOfficeDays: z.number().int().min(0).max(5).nullable(),
+		noticeWeeks: z.number().int().min(0).max(52).nullable(),
+		memoryMode: memoryModeSchema,
+		/**
+		 * Countries web searches target, first is primary. Absent or null is automatic (from the account
+		 * time zone), [] is anywhere. No default, so a save that leaves it out keeps the stored value.
+		 */
+		searchRegions: searchRegionsSchema,
+	})
+	.partial();
+export type CareerProfileUpdate = z.infer<typeof careerProfileUpdateSchema>;
+
+/** Stored preferences, used by discovery, Fit, Offers and the coach. Defaults apply only on reads. */
+export const careerProfileDataSchema = careerProfileUpdateSchema.extend({
+	targetRoles: careerProfileUpdateSchema.shape.targetRoles.default([]),
+	locations: careerProfileUpdateSchema.shape.locations.default([]),
+	priorities: careerProfileUpdateSchema.shape.priorities.default(""),
+	minBase: careerProfileUpdateSchema.shape.minBase.default({ amount: null, currency: "USD", period: "year" }),
+	maxOfficeDays: careerProfileUpdateSchema.shape.maxOfficeDays.default(null),
+	noticeWeeks: careerProfileUpdateSchema.shape.noticeWeeks.default(null),
+	memoryMode: careerProfileUpdateSchema.shape.memoryMode.default("ask"),
 });
 export type CareerProfileData = z.infer<typeof careerProfileDataSchema>;
 

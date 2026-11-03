@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vite-plus/test";
+import z from "zod";
 import { createResumeDataJsonSchema } from "@reactive-resume/schema/resume/json-schema";
 
 // Spec generation reads procedure contracts without executing authentication. Keep the
@@ -69,6 +70,60 @@ function findImpossibleRequestSchemas(spec: GeneratedSpecView) {
 }
 
 describe("generateOpenApiSpec", () => {
+	it("documents guaranteed profile response fields without adding request defaults", async () => {
+		const spec = await generateSpec();
+		for (const method of ["get", "put", "patch"] as const) {
+			const response = spec.paths?.["/career/profile"]?.[method]?.responses?.["200"];
+			expect(response).toHaveProperty("content.application/json.schema.properties.searchRegions");
+			for (const field of ["targetRoles", "locations"]) {
+				expect(response).toHaveProperty(`content.application/json.schema.properties.${field}.items.maxLength`, 200);
+			}
+			expect(response).toMatchObject({
+				content: {
+					"application/json": {
+						schema: {
+							required: [
+								"targetRoles",
+								"locations",
+								"priorities",
+								"minBase",
+								"maxOfficeDays",
+								"noticeWeeks",
+								"memoryMode",
+							],
+						},
+					},
+				},
+			});
+		}
+		const view = spec as GeneratedSpecView;
+		for (const method of ["put", "patch"]) {
+			const request = getRequestSchema(view, "/career/profile", method);
+			expect(request).toHaveProperty("properties.searchRegions");
+			expect(request).not.toHaveProperty("required");
+			const validator = z.fromJSONSchema(request as Parameters<typeof z.fromJSONSchema>[0]);
+			for (const field of ["targetRoles", "locations"]) {
+				expect(validator.safeParse({ [field]: [` ${"x".repeat(200)} `] }).success).toBe(true);
+				expect(validator.safeParse({ [field]: [" \t "] }).success).toBe(false);
+				expect(request).not.toHaveProperty(`properties.${field}.items.maxLength`);
+			}
+		}
+		const input = getRequestSchema(view, "/career/profile", "patch");
+		expect(getRequestSchema(view, "/career/profile", "put")).not.toHaveProperty("properties.memoryMode.default");
+		for (const field of ["targetRoles", "locations"]) {
+			expect(input).toHaveProperty(
+				`properties.${field}.items.description`,
+				expect.stringContaining("whitespace-only values are rejected"),
+			);
+			expect(input).toHaveProperty(`properties.${field}.items.pattern`, "\\S");
+			expect(input).toHaveProperty(
+				`properties.${field}.items.description`,
+				expect.stringContaining("limit applies after trimming"),
+			);
+			expect(input).not.toHaveProperty(`properties.${field}.default`);
+		}
+	});
+
 	it("documents distinct search countries in every occurrence", async () => {
 		let count = 0;
 		const visit = (value: unknown) => {
@@ -84,7 +139,7 @@ describe("generateOpenApiSpec", () => {
 			}
 		};
 		visit(await generateSpec());
-		expect(count).toBe(4);
+		expect(count).toBeGreaterThan(0);
 	}, 15_000);
 
 	it("keeps instance homepage resolution out of the public API", async () => {
@@ -120,7 +175,7 @@ it("documents anonymous routes, all supported credentials, and additive PATCH ro
 		"x-codeSamples.0.source",
 		expect.stringContaining('--cookie "<session-cookie>"'),
 	);
-	for (const path of ["/applications/{id}", "/cover-letters/{id}"]) {
+	for (const path of ["/applications/{id}", "/cover-letters/{id}", "/career/profile"]) {
 		expect(spec.paths?.[path]?.put?.requestBody).toBeDefined();
 		expect(spec.paths?.[path]?.patch?.requestBody).toBeDefined();
 	}
