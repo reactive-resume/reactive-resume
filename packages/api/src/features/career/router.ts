@@ -488,8 +488,8 @@ export const careerRouter = {
 		})
 		.input(
 			applicationInput
-				.extend(careerWorkspaceSchema.partial().shape)
-				.extend({ expected: careerWorkspaceSchema.partial() }),
+				.extend(careerWorkspaceSchema.omit({ submissionReview: true }).partial().shape)
+				.extend({ expected: careerWorkspaceSchema.omit({ submissionReview: true }).partial() }),
 		)
 		.output(careerWorkspaceSchema)
 		.handler(({ context, input: { applicationId, expected, ...patch } }) =>

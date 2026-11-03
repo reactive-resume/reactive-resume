@@ -4,7 +4,7 @@ import type { WorkspaceTabProps } from "./shell";
 import type { Application } from "@/features/applications/types";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -43,7 +43,7 @@ vi.mock("@/libs/orpc/client", () => {
 	});
 	return {
 		orpc: {
-			documents: { list: endpoint("documents") },
+			documents: { list: endpoint("documents"), linkApplication: endpoint("linkApplication") },
 			applications: {
 				getById: endpoint("application"),
 				listSummary: endpoint("applications"),
@@ -815,4 +815,108 @@ it("Tighten Undo keeps local typing and pins an unchanged inverse to accepted te
 		answers: [original],
 		expected: { answers: [{ ...original, answer: "Accepted answer.", factIds: ["accepted-proof"] }] },
 	});
+});
+
+it("omits absent review subjects and empty answer actions without moving manual indices", async () => {
+	mount(<ApplyTab {...props} />);
+	await screen.findByRole("heading", { name: "Review checks" });
+	expect(within(document.querySelector("#application-readiness") as HTMLElement).getAllByRole("checkbox")).toHaveLength(
+		1,
+	);
+	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
+	fireEvent.click(screen.getByRole("checkbox", { name: "Submit through the employer's application page yourself." }));
+	await waitFor(() =>
+		expect(api.save.mock.calls[0]?.[0]).toMatchObject({ checklist: [3], expected: { checklist: [] } }),
+	);
+});
+
+it.each(["recorded", "legacy", "first version", "saved version"] as const)(
+	"shows honest read-only %s review without unfinished progress",
+	async (kind) => {
+		const answers = [{ id: "answer", question: "Why?", answer: "Current draft", factIds: [] }];
+		api.data.workspace = {
+			...EMPTY_WORKSPACE,
+			answers,
+			checklist: [0],
+			submissionReview:
+				kind === "legacy"
+					? null
+					: {
+							at: "2026-11-03T10:00:00Z",
+							checklist: [1],
+							documents: false,
+							answers: true,
+							answerVersionId: "first answers",
+						},
+		};
+		mount(
+			<ApplyTab
+				{...props}
+				version={
+					kind === "saved version" || kind === "first version"
+						? item(kind === "first version" ? "first answers" : "old answers", {
+								kind: "answers",
+								answers: [{ question: "Why?", answer: "Old version" }],
+							})
+						: undefined
+				}
+			/>,
+		);
+		await screen.findByText(
+			kind === "recorded" || kind === "first version"
+				? "Review checks recorded at first submission."
+				: "Historical review checks unavailable.",
+		);
+		const checks = within(document.querySelector("#application-readiness") as HTMLElement).queryAllByRole("checkbox");
+		expect(checks).toHaveLength(kind === "recorded" || kind === "first version" ? 2 : 0);
+		if (kind === "recorded" || kind === "first version") {
+			expect((checks[0] as HTMLInputElement).getAttribute("aria-checked")).toBe("true");
+			for (const check of checks) expect(check.getAttribute("aria-disabled")).toBe("true");
+		}
+		expect(screen.queryByRole("button", { name: "Mark as applied" })).toBeNull();
+		expect(document.querySelector("#application-readiness")?.textContent).not.toMatch(/\d+ of \d+/);
+	},
+);
+
+it("offers answer actions immediately for an unsaved draft and hides them when cleared", async () => {
+	const answers = [{ id: "first", question: "Why this role?", answer: "", factIds: [] }];
+	api.data.workspace = { ...EMPTY_WORKSPACE, answers };
+	const saving = deferred<CareerWorkspace>();
+	api.save.mockReturnValue(saving.promise);
+	mount(<ApplyTab {...props} />);
+	const input = await screen.findByRole("textbox", { name: "Why this role?" });
+	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
+	fireEvent.change(input, { target: { value: "First local answer" } });
+	expect(screen.getByRole("button", { name: "Copy answers" })).toBeEnabled();
+	expect(screen.getByRole("button", { name: "Download" })).toBeEnabled();
+	fireEvent.blur(input);
+	await waitFor(() => expect(api.save).toHaveBeenCalled());
+	// The pending network save never returned; visibility still follows local text.
+	fireEvent.change(input, { target: { value: "   " } });
+	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
+	expect(screen.queryByRole("button", { name: "Download" })).toBeNull();
+});
+
+it.each(["first receipt", "legacy"] as const)("opens the correct recorded answers for %s", async (kind) => {
+	const first = {
+		...item("first", { kind: "answers", answers: [{ question: "Why?", answer: "First submission" }] }),
+		submission: true,
+	};
+	const later = {
+		...item("later", { kind: "answers", answers: [{ question: "Why?", answer: "Later submission" }] }),
+		submission: true,
+	};
+	api.data.savedItems = [later, first];
+	api.data.workspace = {
+		...EMPTY_WORKSPACE,
+		answers: [{ id: "draft", question: "Why?", answer: "Current draft", factIds: [] }],
+		submissionReview:
+			kind === "legacy"
+				? null
+				: { at: "2026-11-03T10:00:00Z", checklist: [1], documents: false, answers: true, answerVersionId: first.id },
+	};
+	const go = vi.fn();
+	mount(<ApplyTab {...props} application={{ ...application, status: "applied" }} go={go} />);
+	fireEvent.click(await screen.findByRole("button", { name: "View recorded answers" }));
+	expect(go).toHaveBeenCalledWith("apply", { version: kind === "legacy" ? later.id : first.id });
 });

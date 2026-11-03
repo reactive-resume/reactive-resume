@@ -120,9 +120,11 @@ beforeEach(() => {
 		callback({
 			...dbMock,
 			insert: (table: unknown) =>
-				table === testSchema.applicationLane || table === testSchema.applicationPipeline
-					? { values: () => ({ onConflictDoNothing: () => Promise.resolve() }) }
-					: dbMock.insert(table),
+				table === testSchema.careerWorkspace
+					? { values: () => ({ onConflictDoUpdate: () => Promise.resolve() }) }
+					: table === testSchema.applicationLane || table === testSchema.applicationPipeline
+						? { values: () => ({ onConflictDoNothing: () => Promise.resolve() }) }
+						: dbMock.insert(table),
 			select: (...args: unknown[]) => ({
 				from: (table: unknown) => {
 					if (table === testSchema.applicationPipeline) return { where: () => Promise.resolve([{ revision: 0 }]) };

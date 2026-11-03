@@ -48095,6 +48095,63 @@
 																	"message"
 																]
 															},
+															"submissionReview": {
+																"anyOf": [
+																	{
+																		"type": "object",
+																		"properties": {
+																			"at": {
+																				"type": "string",
+																				"format": "date-time"
+																			},
+																			"checklist": {
+																				"type": "array",
+																				"maxItems": 10,
+																				"items": {
+																					"type": "integer",
+																					"minimum": 0,
+																					"maximum": 10
+																				}
+																			},
+																			"documents": {
+																				"type": "boolean"
+																			},
+																			"answers": {
+																				"type": "boolean"
+																			},
+																			"answerVersionId": {
+																				"anyOf": [
+																					{
+																						"type": "string"
+																					},
+																					{
+																						"type": "null"
+																					}
+																				]
+																			},
+																			"stageEntryId": {
+																				"anyOf": [
+																					{
+																						"type": "string"
+																					},
+																					{
+																						"type": "null"
+																					}
+																				]
+																			}
+																		},
+																		"required": [
+																			"at",
+																			"checklist",
+																			"documents",
+																			"answers"
+																		]
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
 															"updatedAt": {
 																"type": "string",
 																"format": "date-time",
@@ -48105,6 +48162,7 @@
 															"applicationId",
 															"userId",
 															"data",
+															"submissionReview",
 															"updatedAt"
 														]
 													}
@@ -60178,6 +60236,63 @@
 												"maximum": 10
 											}
 										},
+										"submissionReview": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"at": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"checklist": {
+															"type": "array",
+															"maxItems": 10,
+															"items": {
+																"type": "integer",
+																"minimum": 0,
+																"maximum": 10
+															}
+														},
+														"documents": {
+															"type": "boolean"
+														},
+														"answers": {
+															"type": "boolean"
+														},
+														"answerVersionId": {
+															"anyOf": [
+																{
+																	"type": "string"
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"stageEntryId": {
+															"anyOf": [
+																{
+																	"type": "string"
+																},
+																{
+																	"type": "null"
+																}
+															]
+														}
+													},
+													"required": [
+														"at",
+														"checklist",
+														"documents",
+														"answers"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"questions": {
 											"type": "array",
 											"maxItems": 20,
@@ -60571,6 +60686,63 @@
 												"minimum": 0,
 												"maximum": 10
 											}
+										},
+										"submissionReview": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"at": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"checklist": {
+															"type": "array",
+															"maxItems": 10,
+															"items": {
+																"type": "integer",
+																"minimum": 0,
+																"maximum": 10
+															}
+														},
+														"documents": {
+															"type": "boolean"
+														},
+														"answers": {
+															"type": "boolean"
+														},
+														"answerVersionId": {
+															"anyOf": [
+																{
+																	"type": "string"
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"stageEntryId": {
+															"anyOf": [
+																{
+																	"type": "string"
+																},
+																{
+																	"type": "null"
+																}
+															]
+														}
+													},
+													"required": [
+														"at",
+														"checklist",
+														"documents",
+														"answers"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"questions": {
 											"type": "array",
