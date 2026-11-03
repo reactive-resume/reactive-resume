@@ -36,6 +36,9 @@ const mocks = {
 	"react-native": { View },
 	"expo-crypto": { randomUUID: () => "new-answer" },
 	"@lingui/react/macro": { useLingui: () => ({ t }) },
+	"expo-router": { useRouter: () => ({ push() {} }) },
+	"@/routes": { routes: { assistant: (id) => `/builder/${id}/assistant` } },
+	"@/features/ai/report-content": { ReportAiContent: () => null },
 	"@/auth/session": { getAccountScope: () => env.scope },
 	"./hooks": {
 		useDraft: (name, initial) => {

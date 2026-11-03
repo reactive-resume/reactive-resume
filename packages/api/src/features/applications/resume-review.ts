@@ -16,6 +16,7 @@ type ResumeReviewInput = {
 	request?: string | undefined;
 	alwaysCopy?: boolean | undefined;
 	check?: AiUsage["check"];
+	fact?: { id: string; updatedAt: Date };
 };
 
 /** Application entry points share the existing copy, assistant and guarded proposal owners. */
@@ -57,7 +58,7 @@ export async function reviewApplicationResume(input: ResumeReviewInput) {
 			threadId,
 			usageAction: "tailor-resume",
 			usageCheck: input.check,
-			knowledgeReview: input.check !== undefined,
+			knowledgeReview: input.fact,
 			signal: input.signal,
 			message: {
 				id: generateId(),

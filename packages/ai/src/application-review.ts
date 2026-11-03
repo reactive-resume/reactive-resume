@@ -7,6 +7,7 @@ import { proposeEditsOutputSchema } from "./tools/agent-tool-contracts";
 /** Also validates account-scoped recovery drafts; no API/database module enters either app. */
 export const applicationReviewSchema = z.object({
 	threadId: z.string().nullable(),
+	assistantText: z.string().default(""),
 	generationStatus: z.enum(["ready", "interrupted"]),
 	resume: z.object({
 		id: z.string(),

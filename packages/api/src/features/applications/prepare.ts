@@ -1,7 +1,7 @@
 import { ORPCError } from "@orpc/client";
 import z from "zod";
 import { applicationReviewSchema } from "@reactive-resume/ai/application-review";
-import { proposeEditsOutputSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { askUserQuestionInputSchema, proposeEditsOutputSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 import { generateCareer } from "../career/generate";
 import { draftLetterBody } from "../cover-letters/draft";
@@ -114,6 +114,17 @@ export async function prepareApplication(
 	signal.throwIfAborted();
 	return {
 		threadId: tailoring.conversation?.thread.id ?? null,
+		assistantText: (tailoring.conversation?.messages ?? [])
+			.filter((message) => message.role === "assistant")
+			.flatMap((message) =>
+				message.parts.flatMap((part) => {
+					if (part.type === "text") return [part.text];
+					if (part.type !== "tool-ask_user_question") return [];
+					const question = askUserQuestionInputSchema.safeParse("input" in part ? part.input : undefined);
+					return question.success ? [question.data.question] : [];
+				}),
+			)
+			.join("\n\n"),
 		generationStatus: tailoring.generationStatus,
 		resume,
 		sets,

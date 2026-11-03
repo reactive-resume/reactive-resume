@@ -2,6 +2,7 @@ import type { Application } from "@/features/applications/types";
 import type { Proposal, ProposalApplications } from "@reactive-resume/resume/proposals";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { applicationReviewSchema, type ApplicationReview } from "@reactive-resume/ai/application-review";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
@@ -278,6 +279,16 @@ export function PrepareReview({ application, disabled }: PrepareReviewProps) {
 					<h3 className="font-semibold">
 						<Trans>Resume proposals</Trans>
 					</h3>
+					{review.assistantText && <p className="text-sm whitespace-pre-line">{review.assistantText}</p>}
+					{review.threadId && (
+						<Link
+							to="/builder/$resumeId"
+							params={{ resumeId: review.resume.id }}
+							search={{ assistant: review.threadId, applicationId: application.id }}
+						>
+							<Trans>Open AI assistant</Trans>
+						</Link>
+					)}
 					{review.sets.length === 0 && (
 						<p>
 							<Trans>No edits proposed.</Trans>

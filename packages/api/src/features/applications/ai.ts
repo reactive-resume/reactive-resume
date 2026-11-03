@@ -558,6 +558,7 @@ export const aiRouter = {
 				userId: context.user.id,
 				id: input.id,
 				signal,
+				fact: { id: fact.id, updatedAt: fact.updatedAt },
 				check: (tx) =>
 					careerService.assertMemoryVersion(
 						context.user.id,

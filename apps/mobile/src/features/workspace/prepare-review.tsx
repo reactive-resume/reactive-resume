@@ -2,15 +2,23 @@ import type { Application } from "@/features/applications/types";
 import type { Proposal, ProposalApplications } from "@reactive-resume/resume/proposals";
 import { useLingui } from "@lingui/react/macro";
 import { randomUUID } from "expo-crypto";
+import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { applicationReviewSchema, type ApplicationReview } from "@reactive-resume/ai/application-review";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
-import { appliedApplications, applyResumeProposals, getProposalState } from "@reactive-resume/resume/proposals";
+import {
+	appliedApplications,
+	applyResumeProposals,
+	getProposalState,
+	proposalText,
+} from "@reactive-resume/resume/proposals";
 import { useDraft, useWorkspace, workspaceError } from "./hooks";
 import { client } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
+import { ReportAiContent } from "@/features/ai/report-content";
 import { ChangeSet } from "@/features/assistant/messages";
+import { routes } from "@/routes";
 import { Button, Text, TextArea, showToast, useTheme } from "@/ui";
 type Review = ApplicationReview;
 type PrepareReviewProps = { application: Application; disabled: boolean };
@@ -19,6 +27,7 @@ type PrepareReviewProps = { application: Application; disabled: boolean };
 export function PrepareReview({ application, disabled }: PrepareReviewProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
+	const router = useRouter();
 	const workspace = useWorkspace(application.id);
 	const questions = useDraft(`prepare-questions:${application.id}`, "");
 	const reviewDraft = useDraft<Review | null>(`prepare-review:${application.id}`, null);
@@ -251,6 +260,19 @@ export function PrepareReview({ application, disabled }: PrepareReviewProps) {
 						}}
 					/>
 					<Text variant="heading">{t`Resume proposals`}</Text>
+					{review.assistantText && <Text>{review.assistantText}</Text>}
+					{review.threadId && (
+						<Button
+							variant="link"
+							label={t`Open AI assistant`}
+							onPress={() =>
+								router.push({
+									pathname: routes.assistant(review.resume.id),
+									params: { thread: review.threadId, applicationId: application.id },
+								})
+							}
+						/>
+					)}
 					{review.sets.length === 0 && <Text>{t`No edits proposed.`}</Text>}
 					{review.sets.map((set) => {
 						const proposals: Proposal[] = set.edits.map((edit) => ({
@@ -327,6 +349,15 @@ export function PrepareReview({ application, disabled }: PrepareReviewProps) {
 							/>
 						</View>
 					))}
+					<ReportAiContent
+						source="career"
+						text={[
+							review.assistantText,
+							...review.sets.flatMap((set) => set.edits.map((edit) => proposalText(edit, "after"))),
+							review.letter?.text ?? "",
+							...review.answers.map((item) => item.answer.answer),
+						].join("\n\n")}
+					/>
 				</>
 			)}
 		</View>

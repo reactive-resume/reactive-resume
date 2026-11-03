@@ -166,7 +166,7 @@ type SendMessageInput = {
 	/** Internal adapters name the action that actually requested this reply. */
 	usageAction?: "tailor-resume" | undefined;
 	usageCheck?: AiUsage["check"];
-	knowledgeReview?: boolean;
+	knowledgeReview?: { id: string; updatedAt: Date } | undefined;
 	signal?: AbortSignal | undefined;
 	/** Consent metadata from the request header, never model-provided context. */
 	nativeSearchFallback?: boolean | undefined;
@@ -1551,7 +1551,7 @@ export const agentService = {
 				parts: [],
 				metadata: {
 					contextScope,
-					...(input.knowledgeReview ? { selectedKnowledge: true } : {}),
+					...(input.knowledgeReview ? { selectedKnowledge: true, selectedKnowledgeFact: input.knowledgeReview } : {}),
 					contextMessageId: input.message.id,
 				},
 			};
@@ -1591,7 +1591,12 @@ export const agentService = {
 				} else {
 					attachmentsForModel = attachments;
 					const userMessage = withAttachmentUiParts(
-						input.knowledgeReview ? { ...input.message, metadata: { selectedKnowledge: true } } : input.message,
+						input.knowledgeReview
+							? {
+									...input.message,
+									metadata: { selectedKnowledge: true, selectedKnowledgeFact: input.knowledgeReview },
+								}
+							: input.message,
 						attachments,
 					);
 					// Retrying a reply that failed sends the same message again; it's saved once.
@@ -2002,10 +2007,18 @@ export const agentService = {
 								// Round-trips inside the persisted uiMessage jsonb — no migration needed.
 								messageMetadata: ({ part }) =>
 									part.type === "start"
-										? { aiOperationIds: operationIds }
+										? {
+												aiOperationIds: operationIds,
+												...(input.knowledgeReview
+													? { selectedKnowledge: true, selectedKnowledgeFact: input.knowledgeReview }
+													: {}),
+											}
 										: part.type === "finish"
 											? {
 													usage: part.totalUsage,
+													...(input.knowledgeReview
+														? { selectedKnowledge: true, selectedKnowledgeFact: input.knowledgeReview }
+														: {}),
 													model: capableModel,
 													aiOperationIds: operationIds,
 													provider: runnableProvider.provider,

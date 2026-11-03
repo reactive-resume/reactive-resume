@@ -429,44 +429,73 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				}
 			}),
 	);
-	it("proposes a bullet only from explicitly mapped active owned Fit evidence, then withdraws forgotten Knowledge", () =>
-		run(async () => {
-			const { api, id } = await reviewFixture();
-			const fact = await api.career.saveFact({
-				applicationId: id,
-				text: "Built fictional services for five teams.",
-				category: "accomplishment",
-				source: { kind: "manual", id: "fictional-evidence", quote: "Built fictional services for five teams." },
-			});
-			if (!fact) throw new Error("Missing fixture fact");
-			await expect(api.applicationAi.proposeEvidence({ id, factId: fact.id })).rejects.toMatchObject({
-				code: "NOT_FOUND",
-			});
-			const workspace = await api.career.workspace({ applicationId: id });
-			await api.career.saveWorkspace({
-				applicationId: id,
-				evidence: { requirement: fact.id },
-				expected: { evidence: workspace.evidence },
-			});
-			mode = "tailoring";
-			const result = await api.applicationAi.proposeEvidence({ id, factId: fact.id });
-			expect(result.generationStatus).toBe("ready");
-			expect(result.conversation?.thread.workingResumeId).toBe(result.resumeId);
-			expect((await api.resume.getById({ id: result.resumeId })).data.summary.content).toBe(
-				"<p>Built fictional reliable services.</p>",
-			);
-			expect(JSON.stringify(requestMessages)).toContain(fact.text);
-			expect(requests).toHaveLength(3);
-			await api.career.forgetFact({ id: fact.id });
-			await expect(api.applicationAi.proposeEvidence({ id, factId: fact.id })).rejects.toMatchObject({
-				code: "NOT_FOUND",
-			});
-			const conversation = await api.agent.threads.get({ id: result.conversation?.thread.id ?? "missing" });
-			expect(
-				conversation.messages.some((message) => message.parts.some((part) => part.type === "tool-propose_edits")),
-			).toBe(false);
-			expect(requests).toHaveLength(3);
-		}));
+	it.each(["active", "forgotten", "excluded", "corrected"] as const)(
+		"reviewed Fit evidence respects %s source state",
+		(state) =>
+			run(async () => {
+				const { api, id } = await reviewFixture();
+				const fact = await api.career.saveFact({
+					applicationId: id,
+					text: "Built fictional services for five teams.",
+					category: "accomplishment",
+					source: { kind: "manual", id: "fictional-evidence", quote: "Built fictional services for five teams." },
+				});
+				if (!fact) throw new Error("Missing fixture fact");
+				await expect(api.applicationAi.proposeEvidence({ id, factId: fact.id })).rejects.toMatchObject({
+					code: "NOT_FOUND",
+				});
+				const workspace = await api.career.workspace({ applicationId: id });
+				await api.career.saveWorkspace({
+					applicationId: id,
+					evidence: { requirement: fact.id },
+					expected: { evidence: workspace.evidence },
+				});
+				mode = "tailoring";
+				const result = await api.applicationAi.proposeEvidence({ id, factId: fact.id });
+				expect(result.generationStatus).toBe("ready");
+				expect(result.conversation?.thread.workingResumeId).toBe(result.resumeId);
+				expect((await api.resume.getById({ id: result.resumeId })).data.summary.content).toBe(
+					"<p>Built fictional reliable services.</p>",
+				);
+				expect(JSON.stringify(requestMessages)).toContain(fact.text);
+				expect(requests).toHaveLength(3);
+				if (state === "forgotten") await api.career.forgetFact({ id: fact.id });
+				else if (state === "excluded") await api.career.updateFact({ id: fact.id, status: "excluded" });
+				else if (state === "corrected")
+					await api.career.updateFact({ id: fact.id, text: "Corrected fictional account of work." });
+				const proposed = result.conversation?.messages
+					.flatMap((message) => message.parts)
+					.find((part) => part.type === "tool-propose_edits") as { output?: ProposeEditsOutput } | undefined;
+				const edit = proposed?.output?.edits[0];
+				if (!edit) throw new Error("Missing saved Fit proposal");
+				const before = await api.resume.getById({ id: result.resumeId });
+				const acceptance = api.resume.update({
+					id: before.id,
+					expectedUpdatedAt: before.updatedAt,
+					data: { ...before.data, summary: { ...before.data.summary, content: edit.after } },
+					proposalApplications: { [edit.id]: edit.after },
+					proposalSafety: "v1",
+				});
+				if (state === "active") {
+					const accepted = await acceptance;
+					expect(accepted.data.summary.content).toBe(edit.after);
+					expect(accepted.aiUsage?.requests).toBe(3);
+					return;
+				}
+				await expect(acceptance).rejects.toMatchObject({ code: "RESUME_VERSION_CONFLICT" });
+				expect((await api.resume.getById({ id: before.id })).data).toEqual(before.data);
+
+				if (state !== "corrected")
+					await expect(api.applicationAi.proposeEvidence({ id, factId: fact.id })).rejects.toMatchObject({
+						code: "NOT_FOUND",
+					});
+				const conversation = await api.agent.threads.get({ id: result.conversation?.thread.id ?? "missing" });
+				expect(
+					conversation.messages.some((message) => message.parts.some((part) => part.type === "tool-propose_edits")),
+				).toBe(false);
+				expect(requests).toHaveLength(3);
+			}),
+	);
 	it.each([false, true])(
 		"prepares all three real draft owners; letter failure=%s retains completed proposals and answers",
 		(failure) =>
