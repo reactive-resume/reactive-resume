@@ -10,12 +10,12 @@ import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
 import { useRouter } from "expo-router";
 import Storage from "expo-sqlite/kv-store";
-import { openBrowserAsync } from "expo-web-browser";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Pressable, View } from "react-native";
 import { suggestApplicationDocuments } from "@reactive-resume/schema/applications/document-suggestions";
 import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { attachmentProblem } from "./attachment";
+import { AttachmentPreview } from "./attachment-preview";
 import { showInterviewCancellation } from "./calendar";
 import {
 	followUpReminder,
@@ -527,6 +527,7 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 							size="sm"
 							icon="copy"
 							label={t`Prepare a resume`}
+							variant={application.resumeFileUrl ? "secondary" : "primary"}
 							disabled={documentBusy}
 							onPress={() =>
 								router.push(`${routes.new()}?step=copy&applicationId=${encodeURIComponent(application.id)}`)
@@ -1004,9 +1005,6 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 	);
 }
 
-/** Stored attachment URLs are same-origin uploads, often relative. */
-const absoluteUrl = (url: string) => (url.startsWith("/") ? `${getServer()}${url}` : url);
-
 /** ATTACHMENTS: the PDFs actually sent (≤ 10 MB each), apart from linked Reactive Resume documents. */
 export function Attachments({ application }: SectionProps) {
 	const { t } = useLingui();
@@ -1056,11 +1054,9 @@ export function Attachments({ application }: SectionProps) {
 			{files.map((file) =>
 				file.url ? (
 					<Card key={file.kind} style={{ padding: 0 }}>
-						<ListRow
-							leading="file-pdf"
-							title={file.name}
-							subtitle={t`PDF · tap to preview`}
-							onPress={() => void openBrowserAsync(absoluteUrl(file.url ?? ""))}
+						<AttachmentPreview
+							url={file.url}
+							name={file.name}
 							trailing={
 								<IconButton icon="x" label={t`Remove file`} disabled={busy} onPress={() => setRemoving(file.kind)} />
 							}
