@@ -120,8 +120,12 @@ export function combineAiUsage(summaries: Iterable<AiUsageSummary>): AiUsageSumm
 	};
 }
 
-export async function readAiUsage(userId: string, operationIds: readonly string[]): Promise<AiUsageSummary | null> {
-	return combineAiUsage((await readAiUsages(userId, operationIds)).values());
+export async function readAiUsage(
+	userId: string,
+	operationIds: readonly string[],
+	reader: DbOrTx = db,
+): Promise<AiUsageSummary | null> {
+	return combineAiUsage((await readAiUsages(userId, operationIds, reader)).values());
 }
 
 export async function readWeeklyAiUsage(userId: string, now = new Date()) {

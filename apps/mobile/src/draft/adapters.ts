@@ -32,6 +32,7 @@ function letterFields(document: LetterDocument) {
 		name: document.name,
 		recipient: document.recipient,
 		content: document.content,
+		aiOperationIds: document.aiOperationIds ?? [],
 		greeting: document.greeting,
 		signOff: document.signOff,
 		recipientName: document.recipientName,
@@ -119,12 +120,17 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 	delay: 800,
 	read: (id) => client.coverLetters.getById({ id }),
 	data: (document) => document,
-	withData: (document, data) => ({ ...document, ...letterFields(data) }),
+	withData: (document, data) => ({
+		...document,
+		...letterFields(data),
+		...(JSON.stringify(document.aiOperationIds) !== JSON.stringify(data.aiOperationIds) ? { aiUsage: null } : {}),
+	}),
 	version: (document) => document.revision,
 	matches: (left, right) => Object.keys(changedFields(letterFields(left), letterFields(right))).length === 0,
 	merge: (saved, submitted, current) => ({
 		...saved,
 		...changedFields(letterFields(current), letterFields(submitted)),
+		...(JSON.stringify(saved.aiOperationIds) !== JSON.stringify(current.aiOperationIds) ? { aiUsage: null } : {}),
 		// Unlinking resolves fresh resume details; retain only fields edited while that request was pending.
 		style: {
 			...saved.style,
@@ -147,6 +153,9 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 			...("name" in changes ? { name: document.name } : {}),
 			...("recipient" in changes ? { recipient: document.recipient } : {}),
 			...("content" in changes ? { content: document.content } : {}),
+			...("aiOperationIds" in changes && document.aiOperationIds !== undefined
+				? { aiOperationIds: document.aiOperationIds }
+				: {}),
 			...("greeting" in changes ? { greeting: document.greeting } : {}),
 			...("signOff" in changes ? { signOff: document.signOff } : {}),
 			...("recipientName" in changes ? { recipientName: document.recipientName } : {}),
@@ -190,6 +199,7 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 		if (copyId) return;
 		const copy = await client.coverLetters.import(
 			{
+				...(document.aiOperationIds ? { aiOperationIds: document.aiOperationIds } : {}),
 				document: {
 					format: "reactive-resume-cover-letter",
 					version: 1,

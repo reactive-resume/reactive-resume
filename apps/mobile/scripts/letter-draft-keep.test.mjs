@@ -9,7 +9,7 @@ const root = fileURLToPath(new URL("../../..", import.meta.url));
 const req = createRequire(`${root}/apps/server/package.json`);
 const { buildSync } = createRequire(req.resolve("tsx"))("esbuild");
 
-function fixture() {
+function fixture(options = {}) {
 	let account = "account-A";
 	let server = "https://rx.example";
 	let document = { id: "letter-A", revision: 1 };
@@ -28,11 +28,15 @@ function fixture() {
 		"@/api/client": {
 			streamClient: {
 				coverLetters: {
-					draft: async () => {
+					draft: async (input) => {
+						assert.equal(input.includeProvenance, true);
 						paidCalls++;
 						return (async function* () {
+							yield { aiOperationId: `server-operation-${paidCalls}` };
 							yield "REPLACEMENT";
 							yield " draft";
+							options.onText?.();
+							await options.hold;
 						})();
 					},
 				},
@@ -159,7 +163,7 @@ function seedReady(f, text = "OLD A PRIVATE DRAFT") {
 	f.setDocument(current);
 	f.draft.useLetterDrafting.setState({
 		owner: f.draft.letterDraftOwner(current.id),
-		draft: { phase: "ready", text, revision: 1, operation: "op-seed", versions: [] },
+		draft: { phase: "ready", text, revision: 1, operation: "op-seed", aiOperationIds: ["server-seed"], versions: [] },
 	});
 	return current;
 }
@@ -183,7 +187,8 @@ for (const change of ["account", "server", "both"]) {
 test("current Keep works and a discarded callback cannot overwrite its replacement", async () => {
 	const f = fixture();
 	const current = seedReady(f, "CURRENT DRAFT");
-	captureKeep(f, current)("CURRENT DRAFT");
+	captureKeep(f, current)("CURRENT DRAFT", ["server-seed"]);
+	assert.deepEqual(current.aiOperationIds, ["server-seed"]);
 	assert.equal(current.content, "<p>CURRENT DRAFT</p>");
 	assert.equal(f.draft.useLetterDrafting.getState().draft.phase, "idle");
 	const keep = captureKeep(f, seedReady(f));
@@ -194,4 +199,51 @@ test("current Keep works and a discarded callback cannot overwrite its replaceme
 	assert.equal(f.getDocument().content, "Authored content");
 	assert.equal(f.draft.useLetterDrafting.getState().draft, replacement);
 	assert.equal(replacement.text, "REPLACEMENT draft");
+});
+
+test("native per-version sources survive revision and account-bound recovery without replacing the Keep nonce", async () => {
+	const f = fixture();
+	const current = seedReady(f);
+	await f.draft.startLetterDraft("shorter", "OLD A PRIVATE DRAFT", ["server-seed"]);
+	const ready = f.draft.useLetterDrafting.getState().draft;
+	assert.deepEqual(ready.aiOperationIds, ["server-seed", "server-operation-1"]);
+	assert.deepEqual(ready.versions, [{ text: "OLD A PRIVATE DRAFT", aiOperationIds: ["server-seed"] }]);
+	assert.notEqual(ready.operation, "server-operation-1");
+	const stored = JSON.parse(f.storage.get(f.draft.letterDraftOwner(current.id)));
+	assert.deepEqual(stored.versions, ["OLD A PRIVATE DRAFT"], "older bundles retain earlier draft text");
+	assert.deepEqual(stored.versionAiOperationIds, [["server-seed"]]);
+	f.draft.useLetterDrafting.setState({ draft: { phase: "idle" } });
+	await f.draft.restoreLetterDraft(current.id);
+	const restored = f.draft.useLetterDrafting.getState().draft;
+	assert.deepEqual(restored.aiOperationIds, ready.aiOperationIds);
+	assert.deepEqual(restored.versions, ready.versions);
+	assert.equal(f.paid(), 1);
+	captureKeep(f, current)(restored.text, restored.aiOperationIds);
+	assert.deepEqual(current.aiOperationIds, ["server-seed", "server-operation-1"]);
+	assert.equal(current.content, "<p>REPLACEMENT draft</p>");
+});
+
+test("native Stop retains partial request lineage through recovery without another provider call", async () => {
+	let release;
+	let arrived;
+	const hold = new Promise((resolve) => {
+		release = resolve;
+	});
+	const text = new Promise((resolve) => {
+		arrived = resolve;
+	});
+	const f = fixture({ hold, onText: arrived });
+	const current = seedReady(f);
+	const pending = f.draft.startLetterDraft("personal", "OLD A PRIVATE DRAFT", ["server-seed"]);
+	await text;
+	f.draft.stopLetterDraftKeepingText();
+	const stopped = f.draft.useLetterDrafting.getState().draft;
+	assert.equal(stopped.stopped, true);
+	assert.deepEqual(stopped.aiOperationIds, ["server-seed", "server-operation-1"]);
+	release();
+	await pending;
+	f.draft.useLetterDrafting.setState({ draft: { phase: "idle" } });
+	await f.draft.restoreLetterDraft(current.id);
+	assert.deepEqual(f.draft.useLetterDrafting.getState().draft.aiOperationIds, stopped.aiOperationIds);
+	assert.equal(f.paid(), 1);
 });

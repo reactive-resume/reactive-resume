@@ -26,6 +26,7 @@ import {
 	CurrentClientRequired,
 	saveProposalApplications,
 } from "../agent/proposal-applications";
+import { assertAiOperations, readAiUsage } from "../ai/usage";
 import { activeApplications } from "../applications/access";
 import { suggestDuplicateName } from "../documents/naming";
 import { lockUser } from "../documents/ownership";
@@ -35,6 +36,7 @@ import { getLetterVersion, saveLetterSessionVersion, writeLetterVersion } from "
 
 type OwnedId = { userId: string; id: string };
 type RevisionInput = OwnedId & { expectedRevision: number };
+const LETTER_AI_ACTIONS = ["draft-letter", "draft-message", "improve", "assistant", "career-chat"] as const;
 type CreateInput = {
 	userId: string;
 	name: string;
@@ -72,7 +74,8 @@ async function getRow(input: OwnedId, reader: DbOrTx = db): Promise<CoverLetter>
  * A letter as it reads now: linked sender details and design come from its source resume as the resume is today.
  * If the resume is gone, the copies the letter keeps stand in.
  */
-async function resolveLinks(letter: CoverLetter, userId: string, reader: DbOrTx = db): Promise<CoverLetter> {
+async function resolveLinks(stored: CoverLetter, userId: string, reader: DbOrTx = db): Promise<CoverLetter> {
+	const letter = { ...stored, aiUsage: await readAiUsage(userId, stored.aiOperationIds ?? [], reader) };
 	if (!(letter.senderLinked || letter.designLinked) || !letter.sourceResumeId) return letter;
 
 	let linked: CoverLetterStyle;
@@ -140,18 +143,18 @@ async function assertOwnedApplication(userId: string, id?: string) {
 }
 
 /**
- * The body of an earlier letter to start from. The source stays untouched: only its text is read, and the new
+ * The body of an earlier letter to start from. The source stays untouched: its text and request sources are read, and the new
  * letter's own "created" version records what was copied.
  */
-async function getOwnedLetterBody(userId: string, id: string) {
-	const [row] = await db
-		.select({ content: schema.coverLetter.content })
+async function getOwnedLetterBody(userId: string, id: string, reader: DbOrTx) {
+	const [row] = await reader
+		.select({ content: schema.coverLetter.content, aiOperationIds: schema.coverLetter.aiOperationIds })
 		.from(schema.coverLetter)
 		.where(
 			and(eq(schema.coverLetter.id, id), eq(schema.coverLetter.userId, userId), isNull(schema.coverLetter.trashedAt)),
 		);
 	if (!row) throw new ORPCError("NOT_FOUND");
-	return row.content;
+	return row;
 }
 
 type LinkLetterApplicationInput = {
@@ -416,6 +419,7 @@ async function insert(
 		tags?: string[];
 		recipient: string;
 		content: string;
+		aiOperationIds?: string[] | undefined;
 		greeting?: string | null | undefined;
 		signOff?: string | null | undefined;
 		style: CoverLetterStyle;
@@ -436,6 +440,7 @@ async function insert(
 			return insert(input, tx);
 		});
 	const content = coverLetterContentSchema.parse(input);
+	await assertAiOperations(input.userId, input.aiOperationIds ?? [], LETTER_AI_ACTIONS, client);
 	const [row] = await client
 		.insert(schema.coverLetter)
 		.values({
@@ -444,6 +449,7 @@ async function insert(
 			userId: input.userId,
 			recipient: sanitizeCoverLetterHtml(content.recipient),
 			content: sanitizeCoverLetterHtml(content.content),
+			aiOperationIds: input.aiOperationIds ?? [],
 			sourceResumeId: input.sourceResumeId ?? null,
 			sourceApplicationId: input.sourceApplicationId ?? null,
 			senderLinked: input.senderLinked ?? false,
@@ -550,7 +556,6 @@ export const coverLetterService = {
 	 */
 	create: async (input: CreateInput) => {
 		const application = await getOwnedApplication(input.userId, input.applicationId);
-		const sourceBody = input.sourceLetterId ? await getOwnedLetterBody(input.userId, input.sourceLetterId) : null;
 		const style = await getResumeStyle(input.userId, input.resumeId);
 		if (input.template) style.metadata.template = input.template;
 		// The letter is for an employer whose posting declared a language: start in it, so the body, greeting,
@@ -567,6 +572,7 @@ export const coverLetterService = {
 		const linked = Boolean(input.resumeId) && !input.template;
 		const letter = await db.transaction(async (tx) => {
 			await lockUser(tx, input.userId);
+			const sourceBody = input.sourceLetterId ? await getOwnedLetterBody(input.userId, input.sourceLetterId, tx) : null;
 			const letter = await insert(
 				{
 					userId: input.userId,
@@ -574,7 +580,8 @@ export const coverLetterService = {
 					recipient: input.recipient ?? "",
 					// The body is the reused part; recipient, date, resume and application come from this request so an
 					// earlier job's company never leaks into the new letter.
-					content: sourceBody ?? input.content ?? "",
+					content: sourceBody?.content ?? input.content ?? "",
+					aiOperationIds: sourceBody?.aiOperationIds ?? [],
 					greeting: input.greeting ?? null,
 					signOff: input.signOff ?? null,
 					style,
@@ -680,6 +687,10 @@ export const coverLetterService = {
 		if (input.letterDate !== undefined) changes.letterDate = input.letterDate;
 
 		const persist = async (client: DbOrTx) => {
+			if (input.aiOperationIds !== undefined) {
+				await assertAiOperations(input.userId, input.aiOperationIds, LETTER_AI_ACTIONS, client);
+				changes.aiOperationIds = [...new Set(input.aiOperationIds)];
+			}
 			const updated = await updateRevision(input, changes, client, { proposalSafety: input.proposalSafety });
 			await saveProposalApplications(client, {
 				userId: input.userId,
@@ -708,7 +719,7 @@ export const coverLetterService = {
 		};
 		const updated = await resolveLinks(
 			await (
-				input.applicationId === undefined && !input.proposalApplications
+				input.applicationId === undefined && !input.proposalApplications && input.aiOperationIds === undefined
 					? persist(db)
 					: db.transaction(async (tx) => {
 							await lockUser(tx, input.userId);
@@ -809,6 +820,7 @@ export const coverLetterService = {
 				name: data.name,
 				recipient: data.recipient,
 				content: data.content,
+				aiOperationIds: data.aiOperationIds ?? [],
 				greeting: data.greeting ?? null,
 				signOff: data.signOff ?? null,
 				style: data.style,
@@ -831,8 +843,11 @@ export const coverLetterService = {
 		const letter = await getById(input);
 		return writeLetterVersion(db, { letter, userId: input.userId, kind: "sent", name: input.company });
 	},
-	import: (input: { userId: string; document: CoverLetterDocument }) => {
+	import: async (input: { userId: string; document: CoverLetterDocument; aiOperationIds?: string[] | undefined }) => {
 		const document = coverLetterDocumentSchema.parse(input.document);
-		return insert({ ...document, userId: input.userId });
+		return resolveLinks(
+			await insert({ ...document, userId: input.userId, aiOperationIds: input.aiOperationIds }),
+			input.userId,
+		);
 	},
 };

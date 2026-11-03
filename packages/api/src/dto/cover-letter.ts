@@ -1,5 +1,6 @@
 import z from "zod";
 import { COVER_LETTER_VERSION_KINDS } from "@reactive-resume/db/schema";
+import { aiOperationIdsSchema, aiUsageSummarySchema } from "@reactive-resume/schema/ai-usage";
 import {
 	coverLetterContentSchema,
 	coverLetterDocumentSchema,
@@ -33,7 +34,9 @@ const letterVersionSummarySchema = z.object({
 });
 
 const letterVersionSchema = letterVersionSummarySchema.extend({
+	aiUsage: aiUsageSummarySchema.nullable().optional(),
 	data: z.object({
+		aiOperationIds: aiOperationIdsSchema.optional(),
 		name: z.string(),
 		recipient: z.string(),
 		content: z.string(),
@@ -48,6 +51,7 @@ const letterVersionSchema = letterVersionSummarySchema.extend({
 });
 const versionRefSchema = idSchema.extend({ versionId: z.string().min(1) });
 const versionNameSchema = z.string().trim().min(1).max(100);
+export const coverLetterDraftChunkSchema = z.union([z.string(), z.object({ aiOperationId: z.string().min(1) })]);
 
 export const coverLetterDto = {
 	list: {
@@ -88,6 +92,7 @@ export const coverLetterDto = {
 	},
 	update: {
 		input: revisionSchema.extend(editableSchema.partial().shape).extend({
+			aiOperationIds: aiOperationIdsSchema.optional(),
 			template: templateSchema.optional().describe("Sets the letter's own template, which unlinks its design."),
 			metadata: coverLetterStyleSchema.shape.metadata
 				.pick({ typography: true, design: true, page: true })
@@ -157,13 +162,17 @@ export const coverLetterDto = {
 				.default("draft")
 				.describe("draft writes the body; shorter and personal revise `previous`."),
 			previous: z.string().max(20_000).optional().describe("The draft being revised."),
+			includeProvenance: z.boolean().optional().describe("Emit an initial AI operation reference before text."),
 		}),
 	},
 	refreshStyle: { input: revisionSchema.extend({ resumeId: z.string().min(1) }), output: coverLetterSchema },
 	duplicate: { input: idSchema.extend({ name: editableSchema.shape.name.optional() }), output: coverLetterSchema },
 	delete: { input: revisionSchema, output: z.void() },
 	export: { input: idSchema, output: coverLetterDocumentSchema },
-	import: { input: z.object({ document: coverLetterDocumentSchema }), output: coverLetterSchema },
+	import: {
+		input: z.object({ document: coverLetterDocumentSchema, aiOperationIds: aiOperationIdsSchema.optional() }),
+		output: coverLetterSchema,
+	},
 };
 
 export type CoverLetterListInput = z.infer<typeof coverLetterDto.list.input>;

@@ -2,10 +2,12 @@ import type { DbOrTx } from "@reactive-resume/db/client";
 import type { CoverLetterVersionData, CoverLetterVersionKind } from "@reactive-resume/db/schema";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import * as schema from "@reactive-resume/db/schema";
+import { readAiUsage } from "../ai/usage";
 import { createVersionHistory } from "../documents/version-history";
 
 /** The parts of a letter a version keeps. */
 const letterVersionData = (letter: CoverLetter): CoverLetterVersionData => ({
+	aiOperationIds: letter.aiOperationIds ?? [],
 	name: letter.name,
 	recipient: letter.recipient,
 	content: letter.content,
@@ -61,7 +63,8 @@ export const listLetterVersions = (input: Owned) => history.list(ids(input));
 
 export const getLetterVersion = async (input: Owned & { versionId: string }) => {
 	const version = await history.get({ ...ids(input), versionId: input.versionId });
-	return { ...version, data: version.data as CoverLetterVersionData };
+	const data = version.data as CoverLetterVersionData;
+	return { ...version, data, aiUsage: await readAiUsage(input.userId, data.aiOperationIds ?? []) };
 };
 
 export const renameLetterVersion = (input: Owned & { versionId: string; name: string }) =>

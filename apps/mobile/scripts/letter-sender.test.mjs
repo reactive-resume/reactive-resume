@@ -123,3 +123,37 @@ test("an unlinked letter saves the header details it prints: headline, links and
 	const merged = letterAdapter.merge(saved, baseline, current);
 	assert.deepEqual(merged.style.picture, { url: "/uploads/current.png", hidden: true, size: 64 });
 });
+
+test("native body undo saves source removal atomically and keeps newer sources while an earlier save returns", async () => {
+	const kept = {
+		...structuredClone(baseline),
+		content: "Kept body",
+		aiOperationIds: ["kept-op"],
+		aiUsage: { requests: 1, models: [] },
+	};
+	const undone = letterAdapter.withData(kept, { ...baseline, content: "Authored body" });
+	assert.deepEqual(undone.aiOperationIds, []);
+	assert.equal(undone.aiUsage, null);
+	await letterAdapter.save(undone, kept, "session", false, "fixture", undefined, "v1");
+	assert.deepEqual(calls.pop(), {
+		id: "letter",
+		expectedRevision: 1,
+		sessionId: "session",
+		proposalSafety: "v1",
+		content: "Authored body",
+		aiOperationIds: [],
+	});
+	const current = { ...kept, content: "Newer body", aiOperationIds: ["newer-op"] };
+	const merged = letterAdapter.merge({ ...kept, revision: 2 }, kept, current);
+	assert.deepEqual(merged.aiOperationIds, ["newer-op"]);
+	assert.equal(merged.aiUsage, null);
+	await letterAdapter.save(merged, { ...kept, revision: 2 }, "session", false, "fixture", undefined, "v1");
+	assert.deepEqual(calls.pop(), {
+		id: "letter",
+		expectedRevision: 2,
+		sessionId: "session",
+		proposalSafety: "v1",
+		content: "Newer body",
+		aiOperationIds: ["newer-op"],
+	});
+});

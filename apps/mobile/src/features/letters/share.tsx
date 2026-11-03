@@ -15,6 +15,7 @@ import { useResumes } from "./queries";
 import { restoreLetterVersion, saveLetter } from "./save";
 import { client, orpc } from "@/api/client";
 import { useLetterStore } from "@/draft";
+import { AiResultUsage } from "@/features/ai/usage";
 import { useDocumentOperations } from "@/features/documents/queries";
 import { exportDirectory, exportFile, shareExport } from "@/features/share/files";
 import { letterWords } from "@/features/share/letter";
@@ -487,8 +488,11 @@ function VersionPage({ letter, versionId }: { letter: LetterDocument; versionId:
 			/>
 		);
 	return (
-		<View style={{ height: size.hit * 10 }}>
-			<LetterPages data={data} zoomBar={false} />
+		<View>
+			<AiResultUsage usage={version.data?.aiUsage} />
+			<View style={{ height: size.hit * 10 }}>
+				<LetterPages data={data} zoomBar={false} />
+			</View>
 		</View>
 	);
 }

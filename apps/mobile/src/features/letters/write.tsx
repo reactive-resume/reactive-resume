@@ -35,6 +35,7 @@ import { relinkLetter } from "./save";
 import { useSession } from "@/auth/session";
 import { letterFieldFocus, useLetterStore } from "@/draft";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
+import { AiResultUsage } from "@/features/ai/usage";
 import { WallClockField } from "@/features/application-detail/date-field";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
@@ -581,7 +582,7 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 			<DraftBox
 				letter={letter}
 				application={application}
-				onKeep={(text) => {
+				onKeep={(text, aiOperationIds) => {
 					// A captured callback may run after another letter/account opened: it may only write its own letter,
 					// at the revision this ready draft came from.
 					const current = useLetterStore.getState().document;
@@ -598,9 +599,13 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 						owned.draft.operation !== draft.operation
 					)
 						return;
-					useLetterStore.getState().update((value) => void (value.content = coverLetterTextToHtml(text)), {
-						newStep: true,
-					});
+					useLetterStore.getState().update(
+						(value) => {
+							value.content = coverLetterTextToHtml(text);
+							value.aiOperationIds = aiOperationIds;
+						},
+						{ newStep: true },
+					);
 					discardLetterDraft();
 					setWriting(true);
 					showToast({ message: t`Draft kept. Edit anything you like.` });
@@ -632,6 +637,7 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 				/>
 			) : null}
 			{body}
+			{(letter.aiOperationIds?.length ?? 0) > 0 && <AiResultUsage usage={letter.aiUsage} />}
 			{structured && words ? (
 				<View style={{ gap: space.s2 }}>
 					<FramingField
@@ -772,7 +778,11 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 	);
 }
 
-type DraftBoxProps = { letter: LetterDocument; application: Application | null; onKeep: (text: string) => void };
+type DraftBoxProps = {
+	letter: LetterDocument;
+	application: Application | null;
+	onKeep: (text: string, aiOperationIds: string[]) => void;
+};
 
 /** The draft on its green wash, then Keep, Shorter, More personal or Discard. */
 function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
@@ -796,7 +806,7 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 						size="sm"
 						variant="secondary"
 						label={t`Try again`}
-						onPress={() => void startLetterDraft(last.variant, last.previous)}
+						onPress={() => void startLetterDraft(last.variant, last.previous, last.previousAiOperationIds)}
 					/>
 					<Button size="sm" variant="ghost" label={t`Dismiss`} onPress={discardLetterDraft} />
 				</View>
@@ -820,7 +830,7 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 						size="sm"
 						variant="secondary"
 						label={t`Try again`}
-						onPress={() => void startLetterDraft(last.variant, last.previous)}
+						onPress={() => void startLetterDraft(last.variant, last.previous, last.previousAiOperationIds)}
 					/>
 					<Button size="sm" variant="ghost" label={t`Dismiss`} onPress={dismissLetterDraftFailure} />
 				</View>
@@ -830,9 +840,10 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 
 	const streaming = draft.phase === "streaming";
 	// Earlier versions stay side by side with the newest: "2 of 3", and Accept or a revision uses the one shown.
-	const all = streaming ? [draft.text] : [...draft.versions, draft.text];
+	const currentVersion = { text: draft.text, aiOperationIds: draft.aiOperationIds ?? [] };
+	const all = streaming ? [currentVersion] : [...draft.versions, currentVersion];
 	const index = pick?.operation === draft.operation ? Math.min(pick.index, all.length - 1) : all.length - 1;
-	const shown = all[index] ?? draft.text;
+	const shown = all[index] ?? currentVersion;
 	const sources =
 		letter.sourceResumeId && application
 			? t`Draft · uses only your resume and the posting`
@@ -858,7 +869,7 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 			>
 				<Text>
 					{/* Reduced motion shows the whole draft at once. */}
-					{streaming && reducedMotion ? "" : shown}
+					{streaming && reducedMotion ? "" : shown.text}
 					{streaming ? <Text color="ink3">{reducedMotion ? t`Drafting…` : "▍"}</Text> : null}
 				</Text>
 			</View>
@@ -890,19 +901,19 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 				<Button size="sm" variant="secondary" icon="stop" label={t`Stop`} onPress={stopLetterDraftKeepingText} />
 			) : (
 				<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
-					<ReportAiContent source="letter" text={shown} />
-					<Button size="sm" label={t`Accept`} onPress={() => onKeep(shown)} />
+					<ReportAiContent source="letter" text={shown.text} />
+					<Button size="sm" label={t`Accept`} onPress={() => onKeep(shown.text, shown.aiOperationIds)} />
 					<Button
 						size="sm"
 						variant="secondary"
 						label={t`Shorter`}
-						onPress={() => void startLetterDraft("shorter", shown)}
+						onPress={() => void startLetterDraft("shorter", shown.text, shown.aiOperationIds)}
 					/>
 					<Button
 						size="sm"
 						variant="secondary"
 						label={t`More personal`}
-						onPress={() => void startLetterDraft("personal", shown)}
+						onPress={() => void startLetterDraft("personal", shown.text, shown.aiOperationIds)}
 					/>
 					<Button size="sm" variant="dangerOutline" label={t`Reject`} onPress={discardLetterDraft} />
 				</View>

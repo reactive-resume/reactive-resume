@@ -44514,6 +44514,62 @@
 													"id": {
 														"type": "string"
 													},
+													"aiOperationIds": {
+														"type": "array",
+														"maxItems": 1000,
+														"items": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 64
+														}
+													},
+													"aiUsage": {
+														"anyOf": [
+															{
+																"type": "object",
+																"properties": {
+																	"requests": {
+																		"type": "integer",
+																		"minimum": 0,
+																		"maximum": 9007199254740991
+																	},
+																	"models": {
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"providerId": {
+																					"type": "string"
+																				},
+																				"label": {
+																					"type": "string"
+																				},
+																				"provider": {
+																					"type": "string"
+																				},
+																				"model": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"providerId",
+																				"label",
+																				"provider",
+																				"model"
+																			]
+																		}
+																	}
+																},
+																"required": [
+																	"requests",
+																	"models"
+																]
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
 													"sourceResumeId": {
 														"anyOf": [
 															{
@@ -63098,6 +63154,62 @@
 													"id": {
 														"type": "string"
 													},
+													"aiOperationIds": {
+														"type": "array",
+														"maxItems": 1000,
+														"items": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 64
+														}
+													},
+													"aiUsage": {
+														"anyOf": [
+															{
+																"type": "object",
+																"properties": {
+																	"requests": {
+																		"type": "integer",
+																		"minimum": 0,
+																		"maximum": 9007199254740991
+																	},
+																	"models": {
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"providerId": {
+																					"type": "string"
+																				},
+																				"label": {
+																					"type": "string"
+																				},
+																				"provider": {
+																					"type": "string"
+																				},
+																				"model": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"providerId",
+																				"label",
+																				"provider",
+																				"model"
+																			]
+																		}
+																	}
+																},
+																"required": [
+																	"requests",
+																	"models"
+																]
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
 													"sourceResumeId": {
 														"anyOf": [
 															{
@@ -64002,6 +64114,62 @@
 										"id": {
 											"type": "string"
 										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"sourceResumeId": {
 											"anyOf": [
 												{
@@ -64791,6 +64959,62 @@
 										"id": {
 											"type": "string"
 										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"sourceResumeId": {
 											"anyOf": [
 												{
@@ -64974,6 +65198,15 @@
 												"type": "null"
 											}
 										]
+									},
+									"aiOperationIds": {
+										"type": "array",
+										"maxItems": 1000,
+										"items": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 64
+										}
 									},
 									"template": {
 										"enum": [
@@ -66116,6 +66349,62 @@
 										},
 										"id": {
 											"type": "string"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"sourceResumeId": {
 											"anyOf": [
@@ -66393,6 +66682,15 @@
 											}
 										]
 									},
+									"aiOperationIds": {
+										"type": "array",
+										"maxItems": 1000,
+										"items": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 64
+										}
+									},
 									"template": {
 										"enum": [
 											"azurill",
@@ -67534,6 +67832,62 @@
 										},
 										"id": {
 											"type": "string"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"sourceResumeId": {
 											"anyOf": [
@@ -68350,6 +68704,62 @@
 										"id": {
 											"type": "string"
 										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"sourceResumeId": {
 											"anyOf": [
 												{
@@ -69156,6 +69566,62 @@
 										},
 										"id": {
 											"type": "string"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"sourceResumeId": {
 											"anyOf": [
@@ -70691,6 +71157,15 @@
 											"format",
 											"version"
 										]
+									},
+									"aiOperationIds": {
+										"type": "array",
+										"maxItems": 1000,
+										"items": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 64
+										}
 									}
 								},
 								"required": [
@@ -71351,6 +71826,62 @@
 										"id": {
 											"type": "string"
 										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"sourceResumeId": {
 											"anyOf": [
 												{
@@ -71844,9 +72375,65 @@
 											"format": "date-time",
 											"x-native-type": "date"
 										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"data": {
 											"type": "object",
 											"properties": {
+												"aiOperationIds": {
+													"type": "array",
+													"maxItems": 1000,
+													"items": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 64
+													}
+												},
 												"name": {
 													"type": "string"
 												},
@@ -73476,6 +74063,62 @@
 										"id": {
 											"type": "string"
 										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"sourceResumeId": {
 											"anyOf": [
 												{
@@ -73599,7 +74242,7 @@
 			"post": {
 				"operationId": "draftCoverLetter",
 				"summary": "Draft a cover letter's body",
-				"description": "Streams a draft of the letter's body, as text, from its linked resume and its application's posting, using only facts from them. Nothing is saved. `shorter` and `personal` revise a previous draft.",
+				"description": "Streams a draft of the letter's body, as text, from its linked resume and its application's posting, using only facts from them. Nothing is saved. `shorter` and `personal` revise a previous draft. With `includeProvenance`, an initial event supplies the AI operation ID before text; the default stream contains only strings.",
 				"deprecated": true,
 				"tags": [
 					"Cover Letters",
@@ -73637,6 +74280,10 @@
 										"type": "string",
 										"maxLength": 20000,
 										"description": "The draft being revised."
+									},
+									"includeProvenance": {
+										"type": "boolean",
+										"description": "Emit an initial AI operation reference before text."
 									}
 								}
 							}
@@ -73657,7 +74304,23 @@
 													"const": "message"
 												},
 												"data": {
-													"type": "string"
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "object",
+															"properties": {
+																"aiOperationId": {
+																	"type": "string",
+																	"minLength": 1
+																}
+															},
+															"required": [
+																"aiOperationId"
+															]
+														}
+													]
 												},
 												"id": {
 													"type": "string"
@@ -154198,6 +154861,62 @@
 										"id": {
 											"type": "string"
 										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"sourceResumeId": {
 											"anyOf": [
 												{
@@ -154993,6 +155712,15 @@
 											"format",
 											"version"
 										]
+									},
+									"aiOperationIds": {
+										"type": "array",
+										"maxItems": 1000,
+										"items": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 64
+										}
 									}
 								},
 								"required": [
@@ -155652,6 +156380,62 @@
 										},
 										"id": {
 											"type": "string"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"sourceResumeId": {
 											"anyOf": [
@@ -156467,6 +157251,62 @@
 										"id": {
 											"type": "string"
 										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"sourceResumeId": {
 											"anyOf": [
 												{
@@ -156590,7 +157430,7 @@
 			"post": {
 				"operationId": "createCoverLetterDraft",
 				"summary": "Draft a cover letter's body",
-				"description": "Streams a draft of the letter's body, as text, from its linked resume and its application's posting, using only facts from them. Nothing is saved. `shorter` and `personal` revise a previous draft.",
+				"description": "Streams a draft of the letter's body, as text, from its linked resume and its application's posting, using only facts from them. Nothing is saved. `shorter` and `personal` revise a previous draft. With `includeProvenance`, an initial event supplies the AI operation ID before text; the default stream contains only strings.",
 				"tags": [
 					"Cover Letters",
 					"AI"
@@ -156627,6 +157467,10 @@
 										"type": "string",
 										"maxLength": 20000,
 										"description": "The draft being revised."
+									},
+									"includeProvenance": {
+										"type": "boolean",
+										"description": "Emit an initial AI operation reference before text."
 									}
 								}
 							}
@@ -156647,7 +157491,23 @@
 													"const": "message"
 												},
 												"data": {
-													"type": "string"
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "object",
+															"properties": {
+																"aiOperationId": {
+																	"type": "string",
+																	"minLength": 1
+																}
+															},
+															"required": [
+																"aiOperationId"
+															]
+														}
+													]
 												},
 												"id": {
 													"type": "string"
@@ -157448,6 +158308,62 @@
 										},
 										"id": {
 											"type": "string"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"sourceResumeId": {
 											"anyOf": [

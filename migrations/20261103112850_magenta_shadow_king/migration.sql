@@ -1,0 +1,1 @@
+ALTER TABLE "cover_letter" ADD COLUMN "ai_operation_ids" text[] DEFAULT '{}'::text[] NOT NULL;

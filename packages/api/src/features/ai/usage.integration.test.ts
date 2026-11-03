@@ -16,6 +16,7 @@ import { aiProvidersService } from "../ai-providers/service";
 import { authRouter } from "../auth/router";
 import { authService } from "../auth/service";
 import { careerRouter } from "../career/router";
+import { coverLettersRouter } from "../cover-letters/router";
 import { assertDocumentVersion } from "../documents/ownership";
 import { aiRouter } from "./router";
 import { getModel } from "./service";
@@ -126,7 +127,7 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 	const run = (operation: () => Promise<void>) => withDatabasePool(pool, operation);
 	const client = (permissions: ("read" | "write" | "delete")[] = ["read", "write", "delete"]) =>
 		createRouterClient(
-			{ ai: aiRouter, auth: authRouter, career: careerRouter },
+			{ ai: aiRouter, auth: authRouter, career: careerRouter, letters: coverLettersRouter },
 			{
 				context: {
 					locale: "en-US",
@@ -546,6 +547,122 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 			expect((await client().career.workspace({ applicationId: application.id })).submissionReview).toEqual(
 				submitted.submissionReview,
 			);
+			expect(requests).toHaveLength(1);
+		}));
+
+	it("keeps letter draft sources through owned saves, reuse, history, export and deletion without new dispatches", () =>
+		run(async () => {
+			const connection = await provider();
+			const [resume] = await db
+				.insert(tables.resume)
+				.values({ userId: user.id, name: "Fictional resume", slug: "letter", data: sampleResumeData })
+				.returning();
+			if (!resume) throw new Error("Missing fixture resume");
+			const api = client();
+			const letter = await api.letters.create({ name: "Fictional letter", resumeId: resume.id });
+			const created = (await api.letters.listVersions({ id: letter.id }))[0];
+			if (!created) throw new Error("Missing created version");
+			mode = "stream";
+			const stream = await api.letters.draft({ id: letter.id, includeProvenance: true });
+			const parts = await Array.fromAsync(stream);
+			const source = parts.find((part) => typeof part !== "string");
+			if (!source || typeof source === "string") throw new Error("Missing draft provenance");
+			const text = parts.filter((part) => typeof part === "string").join("");
+			expect(text).toBe("x".repeat(50));
+			expect(requests).toHaveLength(1);
+			const kept = await api.letters.update({
+				id: letter.id,
+				expectedRevision: letter.revision,
+				content: `<p>${text}</p>`,
+				aiOperationIds: [source.aiOperationId, source.aiOperationId],
+			});
+			const expected = {
+				requests: 1,
+				models: [
+					{ providerId: connection.id, label: connection.label, provider: connection.provider, model: "capable-model" },
+				],
+			};
+			expect(kept.aiOperationIds).toEqual([source.aiOperationId]);
+			expect(kept.aiUsage).toEqual(expected);
+			// An old app edits without the new field: source history is preserved.
+			const edited = await api.letters.update({
+				id: letter.id,
+				expectedRevision: kept.revision,
+				content: "<p>Edited draft</p>",
+			});
+			expect(edited.aiUsage).toEqual(expected);
+			for (const [operationId, userId, action] of [
+				["foreign-letter", "usage-bob", "draft-letter"],
+				["wrong-letter", user.id, "provider-test"],
+			] as const) {
+				await db.insert(tables.aiRequest).values({
+					operationId,
+					userId,
+					action,
+					providerId: connection.id,
+					label: connection.label,
+					provider: connection.provider,
+					model: "foreign-model",
+				});
+				await expect(
+					api.letters.update({
+						id: letter.id,
+						expectedRevision: edited.revision,
+						content: "<p>Refused</p>",
+						aiOperationIds: [operationId],
+					}),
+				).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			}
+			expect((await api.letters.getById({ id: letter.id })).content).toBe("<p>Edited draft</p>");
+			await expect(
+				client(["read"]).letters.update({ id: letter.id, expectedRevision: edited.revision, aiOperationIds: [] }),
+			).rejects.toMatchObject({ code: "FORBIDDEN" });
+			const named = await api.letters.createVersion({ id: letter.id, name: "Kept draft" });
+			expect((await client(["read"]).letters.getVersion({ id: letter.id, versionId: named.id })).aiUsage).toEqual(
+				expected,
+			);
+			const reused = await api.letters.create({
+				name: "New employer",
+				sourceLetterId: letter.id,
+				recipientCompany: "Fictional New Co",
+			});
+			expect(reused).toMatchObject({
+				content: edited.content,
+				recipientCompany: "Fictional New Co",
+				aiOperationIds: [source.aiOperationId],
+				aiUsage: expected,
+			});
+			expect((await api.letters.duplicate({ id: letter.id })).aiUsage).toEqual(expected);
+			const portable = await api.letters.export({ id: letter.id });
+			expect(portable).not.toHaveProperty("aiOperationIds");
+			expect(portable).not.toHaveProperty("aiUsage");
+			const imported = await api.letters.import({ document: portable });
+			expect(imported.aiOperationIds).toEqual([]);
+			const recovered = await api.letters.import({ document: portable, aiOperationIds: [source.aiOperationId] });
+			expect(recovered.aiUsage).toEqual(expected);
+			await expect(
+				api.letters.import({ document: portable, aiOperationIds: ["foreign-letter"] }),
+			).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			await aiProvidersService.delete({ userId: user.id, id: connection.id });
+			expect((await client(["read"]).letters.getById({ id: letter.id })).aiUsage).toEqual(expected);
+			await pool.query("update cover_letter_version set data=data-'aiOperationIds' where id=$1", [created.id]);
+			const restored = await api.letters.restoreVersion({ id: letter.id, versionId: created.id, proposalSafety: "v1" });
+			expect(restored.aiOperationIds).toEqual([]);
+			expect(restored.aiUsage).toBeNull();
+			const history = await api.letters.listVersions({ id: letter.id });
+			const before = history.find((version) => version.kind === "before-restore");
+			if (!before) throw new Error("Missing before-restore version");
+			expect((await api.letters.getVersion({ id: letter.id, versionId: before.id })).aiUsage).toEqual(expected);
+			const exportData = await client(["read"]).auth.exportData({});
+			expect(JSON.stringify(exportData.coverLetters)).toContain(source.aiOperationId);
+			expect(
+				exportData.documentVersions?.letters.find((version) => version.id === before.id)?.data.aiOperationIds,
+			).toEqual([source.aiOperationId]);
+			expect(exportData.career.aiRequests?.some((row) => row.operationId === source.aiOperationId)).toBe(true);
+			await authService.deleteAccount({ userId: user.id });
+			expect((await pool.query("select * from cover_letter")).rows).toEqual([]);
+			expect((await pool.query("select * from cover_letter_version")).rows).toEqual([]);
+			expect((await pool.query("select * from ai_request where user_id=$1", [user.id])).rows).toEqual([]);
 			expect(requests).toHaveLength(1);
 		}));
 
