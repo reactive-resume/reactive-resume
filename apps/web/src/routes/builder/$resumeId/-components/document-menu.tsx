@@ -123,6 +123,7 @@ type BuilderTagsDialogProps = {
 
 function BuilderTagsDialog({ tags: current, locked, onSave, onClose }: BuilderTagsDialogProps) {
 	const [tags, setTags] = useState(current);
+	const commitTags = useRef<(() => string[]) | null>(null);
 	const save = useMutation({ mutationFn: onSave });
 	const invalid = tags.length > 20 || tags.some((tag) => !tag.trim() || tag.length > 40);
 	return (
@@ -139,15 +140,17 @@ function BuilderTagsDialog({ tags: current, locked, onSave, onClose }: BuilderTa
 				<form
 					onSubmit={(event) => {
 						event.preventDefault();
-						if (locked || save.isPending || invalid) return;
-						save.mutate(tags, {
+						if (locked || save.isPending) return;
+						const next = commitTags.current?.() ?? tags;
+						if (next.length > 20 || next.some((tag) => !tag.trim() || tag.length > 40)) return;
+						save.mutate(next, {
 							onSuccess: onClose,
 							onError: (error) => toast.add({ type: "error", description: getResumeErrorMessage(error) }),
 						});
 					}}
 				>
 					<fieldset disabled={locked || save.isPending} className="grid gap-3">
-						<ChipInput value={tags} onChange={setTags} placeholder={t`Add a tag…`} />
+						<ChipInput commitRef={commitTags} value={tags} onChange={setTags} placeholder={t`Add a tag…`} />
 						<p className="text-xs text-ink-3">
 							<Trans>Up to 20 tags per document, 40 characters per tag.</Trans>
 						</p>

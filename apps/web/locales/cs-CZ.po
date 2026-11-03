@@ -20,8 +20,7 @@ msgstr ""
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -141,11 +140,6 @@ msgstr ""
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application closed} other {# applications closed}}"
 msgstr ""
-
-#. placeholder {0}: result.deleted
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
-msgstr "{0, plural, one {# žádost smazána} few {# žádosti smazány} other {# žádostí smazáno}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -331,16 +325,6 @@ msgstr ""
 #: src/features/applications/use-application-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {Smazat # žádost?} few {Smazat # žádosti?} other {Smazat # žádostí?}}"
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {Smazat # žádost} few {Smazat # žádosti} other {Smazat # žádostí}}"
 
 #. placeholder {0}: selection.length
 #: src/features/documents/trash-page.tsx
@@ -2514,7 +2498,7 @@ msgstr "Datum přihlášky od"
 msgid "Application date to"
 msgstr "Datum přihlášky do"
 
-#: src/features/applications/use-application-actions.ts
+#: src/features/applications/trash-page.tsx
 msgid "Application deleted"
 msgstr "Žádost o zaměstnání smazána"
 
@@ -2557,15 +2541,23 @@ msgid "Application updated"
 msgstr "Žádost aktualizována"
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
 msgstr "Žádosti"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "Žádosti a jejich historii lze obnovit z koše."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications over time"
@@ -2574,6 +2566,10 @@ msgstr "Žádosti v čase"
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Žádosti odeslané týdně (posledních 8 týdnů)"
+
+#: src/features/applications/trash-page.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "Žádosti zůstávají v koši, dokud je trvale nesmažete."
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Applications to export"
@@ -4549,6 +4545,7 @@ msgstr ""
 msgid "Couldn't delete that story. Try again."
 msgstr "Tento příběh se nepodařilo smazat. Zkuste to znovu."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't delete the application. Try again."
 msgstr "Žádost se nepodařilo smazat. Zkuste to znovu."
@@ -5134,6 +5131,7 @@ msgstr "Sdílení se nepodařilo aktualizovat. Zkuste to znovu."
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "Žádost se nepodařilo aktualizovat. Nic nebylo změněno. Zkuste to znovu."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the application. Try again."
 msgstr "Žádost se nepodařilo aktualizovat. Zkuste to znovu."
@@ -5595,11 +5593,6 @@ msgstr "Smazat {0}"
 msgid "Delete account"
 msgstr "Smazat účet"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Delete application"
-msgstr "Smazat žádost"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Delete conversation"
 msgstr "Smazat konverzaci"
@@ -5633,7 +5626,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "Smazat stránku"
 
-#: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
 msgstr "Trvale smazat…"
@@ -5666,8 +5659,7 @@ msgstr "Smazat příběh"
 msgid "Delete the {kind} interview on {date}?"
 msgstr ""
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "Delete this application?"
 msgstr "Smazat tuto žádost?"
 
@@ -5699,8 +5691,6 @@ msgstr "Smazat svůj účet?"
 msgid "Delete your documents and account data."
 msgstr "Odstraňte své dokumenty a data účtu."
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
@@ -5913,8 +5903,10 @@ msgstr "Typ dokumentu"
 msgid "Documentation"
 msgstr "Dokumentace"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -7681,6 +7673,7 @@ msgstr "Najímání týmu"
 msgid "History"
 msgstr "Historie"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
@@ -8418,6 +8411,7 @@ msgstr "Ponechat doménu"
 msgid "Keep editing"
 msgstr "Pokračovat v úpravách"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
@@ -9187,6 +9181,7 @@ msgstr "Načítání pracovního prostoru…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/share/feedback-links.tsx
@@ -9732,6 +9727,9 @@ msgstr "Přesunout do fáze {stage}"
 msgid "Move to Interview"
 msgstr "Přesunout do fáze Pohovor"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9759,6 +9757,11 @@ msgstr "Přesuňte svůj e-mail a telefonní číslo na začátek první stránk
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "Do koše přesunuto {0} z {1}. Zamčené dokumenty byly přeskočeny."
 
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/list-view.tsx
+msgid "Moved {0} to Trash."
+msgstr "Přesunuto do koše ({0})."
+
 #. placeholder {0}: getLaneLabel(lane)
 #. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/list-view.tsx
@@ -9778,6 +9781,10 @@ msgstr "Přesunuto do {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/applications/use-application-actions.ts
+msgid "Moved to Trash"
+msgstr "Přesunuto do koše"
 
 #. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
@@ -13030,6 +13037,7 @@ msgstr ""
 msgid "Responsible for the design system and helping other teams with their designs."
 msgstr "Zodpovědnost za návrhový systém a pomoc ostatním týmům s jejich návrhy."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Restore"
@@ -13039,6 +13047,7 @@ msgstr "Obnovit"
 msgid "Restore this version"
 msgstr "Obnovte tuto verzi"
 
+#: src/features/applications/trash-page.tsx
 #: src/libs/undone.ts
 msgid "Restored"
 msgstr ""
@@ -16243,10 +16252,6 @@ msgstr ""
 msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
 msgstr ""
 
-#: src/features/applications/components/list-view.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/resume/editor/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Hledají rubriky jako Zkušenosti, Vzdělání a Dovednosti."
@@ -16845,14 +16850,19 @@ msgstr "Přeloženo do {languageCount} jazyků."
 msgid "Translations"
 msgstr "Překlady"
 
+#: src/features/applications/trash-page.tsx
+#: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/applications/index.tsx
+#: src/routes/dashboard/applications/trash.tsx
 #: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "Koš na odpad"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "Koš je prázdný"

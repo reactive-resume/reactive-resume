@@ -5,6 +5,7 @@ import { and, asc, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { FEEDBACK_MAX_APPLICATIONS, FEEDBACK_MAX_COMMENTS } from "../../dto/feedback";
+import { activeApplications } from "../applications/access";
 import { ownerIsNotBanned, redactResumeForViewer } from "../resume/access-policy";
 import { parseStoredResumeData } from "../resume/resume-data-validation";
 import { feedbackLinkIdFromToken, feedbackUrl } from "./token";
@@ -102,7 +103,7 @@ async function sharedApplications(link: LinkRow) {
 			activity: schema.application.activity,
 		})
 		.from(schema.application)
-		.where(and(eq(schema.application.userId, link.userId), inArray(schema.application.id, link.applicationIds)));
+		.where(and(activeApplications(link.userId), inArray(schema.application.id, link.applicationIds)));
 	const lanes = await db
 		.select({ id: schema.applicationLane.id, label: schema.applicationLane.label })
 		.from(schema.applicationLane)
@@ -175,7 +176,7 @@ export const feedbackService = {
 			const owned = await db
 				.select({ id: schema.application.id })
 				.from(schema.application)
-				.where(and(eq(schema.application.userId, input.userId), inArray(schema.application.id, applicationIds)));
+				.where(and(activeApplications(input.userId), inArray(schema.application.id, applicationIds)));
 			if (owned.length !== applicationIds.length)
 				throw new ORPCError("BAD_REQUEST", { message: "One of the chosen applications wasn't found." });
 		}

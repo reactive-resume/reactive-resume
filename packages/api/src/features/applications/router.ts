@@ -4,6 +4,11 @@ import { applicationLanesRouter } from "./lane-router";
 import { packetRouter } from "./packet-router";
 
 export const applicationsRouter = {
+	listTrash: crudRouter.listTrash,
+	trash: crudRouter.trash,
+	bulkTrash: crudRouter.bulkTrash,
+	restore: crudRouter.restore,
+	purge: crudRouter.purge,
 	packet: packetRouter,
 	lanes: applicationLanesRouter,
 	findPosting: crudRouter.findPosting,

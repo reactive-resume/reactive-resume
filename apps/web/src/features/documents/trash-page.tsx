@@ -159,6 +159,14 @@ export function TrashPage() {
 					) : undefined
 				}
 			/>
+			<nav aria-label={t`Trash`} className="flex gap-2">
+				<Button aria-current="page">
+					<Trans>Documents</Trans>
+				</Button>
+				<Link to="/dashboard/applications/trash" className={buttonVariants({ variant: "ghost" })}>
+					<Trans>Applications</Trans>
+				</Link>
+			</nav>
 
 			{isError && <LibraryError retrying={isFetching} onRetry={() => void refetch()} />}
 

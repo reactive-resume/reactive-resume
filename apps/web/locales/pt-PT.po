@@ -20,8 +20,7 @@ msgstr ""
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -141,11 +140,6 @@ msgstr ""
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application closed} other {# applications closed}}"
 msgstr ""
-
-#. placeholder {0}: result.deleted
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
-msgstr "{0, plural, one {# candidatura eliminada} other {# candidaturas eliminadas}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -331,16 +325,6 @@ msgstr ""
 #: src/features/applications/use-application-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {Eliminar # candidatura?} other {Eliminar # candidaturas?}}"
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {Eliminar # candidatura} other {Eliminar # candidaturas}}"
 
 #. placeholder {0}: selection.length
 #: src/features/documents/trash-page.tsx
@@ -2514,7 +2498,7 @@ msgstr "Data da candidatura de"
 msgid "Application date to"
 msgstr "Data da candidatura até"
 
-#: src/features/applications/use-application-actions.ts
+#: src/features/applications/trash-page.tsx
 msgid "Application deleted"
 msgstr "pedido de emprego excluído"
 
@@ -2557,15 +2541,23 @@ msgid "Application updated"
 msgstr "Candidatura atualizada"
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
 msgstr "Candidaturas"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "As candidaturas e o respetivo histórico podem ser restaurados do lixo."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications over time"
@@ -2574,6 +2566,10 @@ msgstr "Candidaturas ao longo do tempo"
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Candidaturas enviadas por semana (últimas 8 semanas)"
+
+#: src/features/applications/trash-page.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "As candidaturas permanecem no lixo até as eliminares definitivamente."
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Applications to export"
@@ -4549,6 +4545,7 @@ msgstr ""
 msgid "Couldn't delete that story. Try again."
 msgstr "Não foi possível apagar essa história. Tente novamente."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't delete the application. Try again."
 msgstr "Não foi possível eliminar a candidatura. Tente novamente."
@@ -5134,6 +5131,7 @@ msgstr "Não foi possível atualizar a partilha. Tente novamente."
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "Não foi possível atualizar a candidatura. Nada foi alterado. Tente novamente."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the application. Try again."
 msgstr "Não foi possível atualizar a candidatura. Tente novamente."
@@ -5595,11 +5593,6 @@ msgstr "Apagar {0}"
 msgid "Delete account"
 msgstr "Apagar conta"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Delete application"
-msgstr "Eliminar candidatura"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Delete conversation"
 msgstr "Eliminar conversa"
@@ -5633,7 +5626,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "Eliminar página"
 
-#: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
 msgstr "Eliminar permanentemente…"
@@ -5666,8 +5659,7 @@ msgstr "Apagar história"
 msgid "Delete the {kind} interview on {date}?"
 msgstr ""
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "Delete this application?"
 msgstr "Eliminar esta candidatura?"
 
@@ -5699,8 +5691,6 @@ msgstr "Apagar a sua conta?"
 msgid "Delete your documents and account data."
 msgstr "Apague os seus documentos e dados da conta."
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
@@ -5913,8 +5903,10 @@ msgstr "Tipo de documento"
 msgid "Documentation"
 msgstr "Documentação"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -7681,6 +7673,7 @@ msgstr "Contratação de pessoal"
 msgid "History"
 msgstr "Histórico"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
@@ -8418,6 +8411,7 @@ msgstr "Manter domínio"
 msgid "Keep editing"
 msgstr "Continuar a editar"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
@@ -9187,6 +9181,7 @@ msgstr "A carregar espaço de trabalho…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/share/feedback-links.tsx
@@ -9732,6 +9727,9 @@ msgstr "Mover para {stage}"
 msgid "Move to Interview"
 msgstr "Mover para Entrevista"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9759,6 +9757,11 @@ msgstr "Mova o seu email e número de telefone para o topo da primeira página."
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{0} de {1} movidos para a Lixeira. Os documentos bloqueados foram ignorados."
 
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/list-view.tsx
+msgid "Moved {0} to Trash."
+msgstr "Movido para o lixo ({0})."
+
 #. placeholder {0}: getLaneLabel(lane)
 #. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/list-view.tsx
@@ -9778,6 +9781,10 @@ msgstr "Movida para {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/applications/use-application-actions.ts
+msgid "Moved to Trash"
+msgstr "Movido para o lixo"
 
 #. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
@@ -13030,6 +13037,7 @@ msgstr ""
 msgid "Responsible for the design system and helping other teams with their designs."
 msgstr "Responsável pelo sistema de design e ajudando outras equipas nos seus projetos."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Restore"
@@ -13039,6 +13047,7 @@ msgstr "Restaurar"
 msgid "Restore this version"
 msgstr "Restaurar esta versão"
 
+#: src/features/applications/trash-page.tsx
 #: src/libs/undone.ts
 msgid "Restored"
 msgstr ""
@@ -16243,10 +16252,6 @@ msgstr ""
 msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
 msgstr ""
 
-#: src/features/applications/components/list-view.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/resume/editor/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Procuram títulos como Experiência, Educação e Competências."
@@ -16845,14 +16850,19 @@ msgstr "Traduzido para {languageCount} línguas."
 msgid "Translations"
 msgstr "Traduções"
 
+#: src/features/applications/trash-page.tsx
+#: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/applications/index.tsx
+#: src/routes/dashboard/applications/trash.tsx
 #: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "Lixeira"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "A papeleira está vazia"

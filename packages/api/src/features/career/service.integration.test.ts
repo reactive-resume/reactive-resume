@@ -2114,14 +2114,19 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect(await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" })).toEqual([]);
 	});
 
-	it("keeps chats visible if storage failure aborts application deletion", async () => {
+	it("retains chats and never touches storage when moving an application to Trash", async () => {
 		fixture.storageDelete.mockRejectedValueOnce(new Error("Synthetic storage failure"));
-		await expect(applications.delete({ userId: "alice", id: "alice-app" })).rejects.toThrow(
-			"Synthetic storage failure",
-		);
-		expect(await applications.getById({ userId: "alice", id: "alice-app" })).toHaveProperty("id", "alice-app");
+		await applications.delete({ userId: "alice", id: "alice-app" });
+		expect(fixture.storageDelete).not.toHaveBeenCalled();
+		await expect(applications.getById({ userId: "alice", id: "alice-app" })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
 		const [thread] = await getDb().select().from(tables.agentThread).where(eq(tables.agentThread.id, "alice-private"));
 		expect(thread?.deletedAt).toBeNull();
+		const row = (await applications.listTrash({ userId: "alice", limit: 100, offset: 0 })).items[0];
+		if (!row) throw new Error("Missing recoverable application");
+		await applications.restore({ userId: "alice", id: row.id, trashedAt: row.trashedAt });
+		expect(await applications.getById({ userId: "alice", id: "alice-app" })).toHaveProperty("id", "alice-app");
 	});
 
 	it("does not apply an old stage proposal after the application moves on", async () => {

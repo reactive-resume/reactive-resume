@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {Të fshihet # aplikim?} other {Të fshihen # aplikime?}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {Fshi # aplikim} other {Fshi # aplikime}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "data e aplikimit për punë"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "aplikimi për punë u fshi"
 
@@ -2051,10 +2041,17 @@ msgstr "Pamjet e aplikimeve"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "Aplikimet"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "Aplikimet dhe historiku i tyre mund të rikthehen nga koshi."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "Aplikimet me kalimin e kohës"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Aplikimet e dërguara për javë (8 javët e fundit)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "Aplikimet mbeten në kosh derisa t’i fshini përgjithmonë."
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4424,14 +4425,6 @@ msgstr "Fshij {0}"
 msgid "Delete account"
 msgstr "Fshi llogarinë"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "Fshi aplikimin"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "Fshi aplikimin…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "Fshi bisedën"
@@ -4470,7 +4463,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "Fshi faqen"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "Fshi përgjithmonë…"
@@ -4509,7 +4502,7 @@ msgstr "Fshi historinë"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "Të fshihet ky aplikim?"
 
@@ -4698,6 +4691,7 @@ msgid "Document type"
 msgstr "Lloji i dokumentit"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -6006,6 +6000,7 @@ msgstr "Historiku"
 msgid "hold ⋮⋮ to move"
 msgstr "mbaj ⋮⋮ për të lëvizur"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "Mbani shtypur për të fshirë"
@@ -6522,6 +6517,10 @@ msgstr "Mbaje domenin"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "Vazhdo modifikimin"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "Mbaje në kosh"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7140,6 +7139,7 @@ msgstr "Adresa juaj publike po ngarkohet…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7648,6 +7648,8 @@ msgstr "Kalo te {stage}"
 msgid "Move to stage"
 msgstr "Kaloni në skenë"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7689,6 +7691,10 @@ msgstr "U zhvendos në {0}"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "U zhvendos në kosh"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7875,6 +7881,7 @@ msgstr "Seksion i ri"
 msgid "New STARR story"
 msgstr "Histori e re e STARR"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9423,6 +9430,7 @@ msgstr "Shiko paraprakisht faqen e internetit"
 msgid "Previewing {0} · tap to apply"
 msgstr "Po shikon paraprakisht {0} · trokit për të aplikuar"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10334,6 +10342,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "Rinisni për të ndryshuar drejtimin e tekstit"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "Rivendos"
@@ -10353,6 +10362,7 @@ msgstr "Të rivendoset ky version?"
 msgid "Restore version"
 msgstr "Rikthe versionin"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10489,6 +10499,7 @@ msgstr "Hiq fazën nga përdorimi"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -13009,10 +13020,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "Këto hapin cilësimet e llogarisë së serverit tuaj në një skedë të shfletuesit brenda aplikacionit. Mund t'ju duhet të identifikoheni atje."
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Ata kërkojnë tituj të tillë si Përvoja, Edukimi dhe Aftësitë."
@@ -13524,12 +13531,15 @@ msgstr "Transkripti u kopjua"
 msgid "Transcription model"
 msgstr "Modeli i transkriptimit"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "Koshi"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Koshi është bosh"

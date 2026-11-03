@@ -20,8 +20,7 @@ msgstr ""
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -141,11 +140,6 @@ msgstr ""
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application closed} other {# applications closed}}"
 msgstr ""
-
-#. placeholder {0}: result.deleted
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
-msgstr "{0, plural, one {#ଟି ଆବେଦନ ଡିଲିଟ୍ ହେଲା} other {#ଟି ଆବେଦନ ଡିଲିଟ୍ ହେଲା}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -331,16 +325,6 @@ msgstr ""
 #: src/features/applications/use-application-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {#ଟି ଆବେଦନ ଡିଲିଟ୍ କରିବେ?} other {#ଟି ଆବେଦନ ଡିଲିଟ୍ କରିବେ?}}"
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {#ଟି ଆବେଦନ ଡିଲିଟ୍ କରନ୍ତୁ} other {#ଟି ଆବେଦନ ଡିଲିଟ୍ କରନ୍ତୁ}}"
 
 #. placeholder {0}: selection.length
 #: src/features/documents/trash-page.tsx
@@ -2514,7 +2498,7 @@ msgstr "ଆବେଦନ ତାରିଖ ଠାରୁ"
 msgid "Application date to"
 msgstr "ଆବେଦନ ତାରିଖ ପର୍ଯ୍ୟନ୍ତ"
 
-#: src/features/applications/use-application-actions.ts
+#: src/features/applications/trash-page.tsx
 msgid "Application deleted"
 msgstr "ଚାକିରି ଆବେଦନ ବିଲୋପ ହେଲା |"
 
@@ -2557,15 +2541,23 @@ msgid "Application updated"
 msgstr "ଆବେଦନ ଅପଡେଟ୍ ହେଲା"
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
 msgstr "ଆବେଦନଗୁଡ଼ିକ"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "ଆବେଦନ ଓ ସେଗୁଡ଼ିକର ଘଟଣାକ୍ରମ ଟ୍ରାଶ୍‌ରୁ ପୁନରୁଦ୍ଧାର କରାଯାଇପାରିବ।"
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications over time"
@@ -2574,6 +2566,10 @@ msgstr "ସମୟ ସହିତ ଆବେଦନଗୁଡ଼ିକ"
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "ପ୍ରତି ସପ୍ତାହରେ ପଠାଯାଇଥିବା ଆବେଦନ (ଗତ 8 ସପ୍ତାହ)"
+
+#: src/features/applications/trash-page.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "ସ୍ଥାୟୀ ଭାବେ ବିଲୋପ ନ କରିବା ପର୍ଯ୍ୟନ୍ତ ଆବେଦନଗୁଡ଼ିକ ଟ୍ରାଶ୍‌ରେ ରହିବ।"
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Applications to export"
@@ -4549,6 +4545,7 @@ msgstr ""
 msgid "Couldn't delete that story. Try again."
 msgstr "ସେହି କାହାଣୀ ବିଲୋପ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't delete the application. Try again."
 msgstr "ଆବେଦନ ବିଲୋପ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
@@ -5134,6 +5131,7 @@ msgstr "ସେୟାରିଂ ଅଦ୍ୟତନ କରିହେଲା ନାହ
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "ଆବେଦନ ଅଦ୍ୟତନ କରିହେଲା ନାହିଁ। କିଛି ବଦଳିନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the application. Try again."
 msgstr "ଆବେଦନ ଅଦ୍ୟତନ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
@@ -5595,11 +5593,6 @@ msgstr "{0} ବିଲୋପ କରନ୍ତୁ |"
 msgid "Delete account"
 msgstr "ଖାତା ବିଲୋପ କରନ୍ତୁ |"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Delete application"
-msgstr "ଆବେଦନ ବିଲୋପ କରନ୍ତୁ"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Delete conversation"
 msgstr "ବାର୍ତ୍ତାଳାପ ବିଲୋପ କରନ୍ତୁ"
@@ -5633,7 +5626,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "ପେଜ୍ ବିଲୋପ କରନ୍ତୁ"
 
-#: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
 msgstr "ସ୍ଥାୟୀ ଭାବରେ ବିଲୋପ କରନ୍ତୁ…"
@@ -5666,8 +5659,7 @@ msgstr "କାହାଣୀ ବିଲୋପ କରନ୍ତୁ"
 msgid "Delete the {kind} interview on {date}?"
 msgstr ""
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "Delete this application?"
 msgstr "ଏହି ଆବେଦନକୁ ହଟାଇବେ?"
 
@@ -5699,8 +5691,6 @@ msgstr "ଆପଣଙ୍କର ଖାତା ବିଲୋପ କରନ୍ତୁ?"
 msgid "Delete your documents and account data."
 msgstr "ଆପଣଙ୍କ ଦଲିଲ ଓ ଖାତା ତଥ୍ୟ ବିଲୋପ କରନ୍ତୁ।"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
@@ -5913,8 +5903,10 @@ msgstr "ଡକ୍ୟୁମେଣ୍ଟ୍ ପ୍ରକାର |"
 msgid "Documentation"
 msgstr "ଦଳିଲପତ୍ର"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -7681,6 +7673,7 @@ msgstr "ନିଯୁକ୍ତି ଦଳ"
 msgid "History"
 msgstr "ଇତିହାସ"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
@@ -8419,6 +8412,7 @@ msgstr "ଡୋମେନ୍ ରଖନ୍ତୁ"
 msgid "Keep editing"
 msgstr "ସମ୍ପାଦନା ଜାରି ରଖନ୍ତୁ"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
@@ -9188,6 +9182,7 @@ msgstr "ୱାର୍କସ୍ପେସ୍ ଲୋଡ୍ ହେଉଛି…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/share/feedback-links.tsx
@@ -9733,6 +9728,9 @@ msgstr "{stage}କୁ ଘୁଞ୍ଚାନ୍ତୁ"
 msgid "Move to Interview"
 msgstr "ସାକ୍ଷାତକାରକୁ ଘୁଞ୍ଚାନ୍ତୁ"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9760,6 +9758,11 @@ msgstr "ଆପଣଙ୍କ ଇମେଲ୍ ଏବଂ ଫୋନ୍ ନମ୍ବ�
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1}ଟିରୁ {0}ଟି ଟ୍ରାଶକୁ ଚାଲିଗଲା। ତାଲା ପଡିଥିବା ଡକ୍ୟୁମେଣ୍ଟ୍ ଛାଡି ଦିଆଗଲା।"
 
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/list-view.tsx
+msgid "Moved {0} to Trash."
+msgstr "ଟ୍ରାଶ୍‌କୁ ସ୍ଥାନାନ୍ତରିତ ହେଲା ({0})."
+
 #. placeholder {0}: getLaneLabel(lane)
 #. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/list-view.tsx
@@ -9779,6 +9782,10 @@ msgstr "{label} କୁ ଘୁଞ୍ଚାଯାଇଛି"
 #: src/features/career/workspace/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/applications/use-application-actions.ts
+msgid "Moved to Trash"
+msgstr "ଟ୍ରାଶ୍‌କୁ ସ୍ଥାନାନ୍ତରିତ ହେଲା"
 
 #. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
@@ -13032,6 +13039,7 @@ msgstr ""
 msgid "Responsible for the design system and helping other teams with their designs."
 msgstr "ଡିଜାଇନ୍ ସିଷ୍ଟମ୍ ପାଇଁ ଦାୟୀ ଏବଂ ଅନ୍ୟ ଦଳମାନଙ୍କୁ ସେମାନଙ୍କର ଡିଜାଇନ୍ ସହିତ ସାହାଯ୍ୟ କରେ |"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Restore"
@@ -13041,6 +13049,7 @@ msgstr "ପୁନଃସ୍ଥାପନ କରନ୍ତୁ"
 msgid "Restore this version"
 msgstr "ଏହି ସଂସ୍କରଣକୁ ପୁନ ore ସ୍ଥାପନ କରନ୍ତୁ |"
 
+#: src/features/applications/trash-page.tsx
 #: src/libs/undone.ts
 msgid "Restored"
 msgstr ""
@@ -16245,10 +16254,6 @@ msgstr ""
 msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
 msgstr ""
 
-#: src/features/applications/components/list-view.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/resume/editor/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "ସେମାନେ ଅଭିଜ୍ଞତା, ଶିକ୍ଷା ଏବଂ ଦକ୍ଷତା ପରି ହେଡିଙ୍ଗ୍ ଖୋଜନ୍ତି |"
@@ -16847,14 +16852,19 @@ msgstr "{languageCount}ଟି ଭାଷାରେ ଅନୁବାଦ କରାଯ
 msgid "Translations"
 msgstr "ଅନୁବାଦଗୁଡିକ"
 
+#: src/features/applications/trash-page.tsx
+#: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/applications/index.tsx
+#: src/routes/dashboard/applications/trash.tsx
 #: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "ଆବର୍ଜନା"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "ଆବର୍ଜନା ଖାଲି ଅଛି |"

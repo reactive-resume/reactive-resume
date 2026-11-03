@@ -16168,6 +16168,501 @@
 				]
 			}
 		},
+		"/applications/trash": {
+			"get": {
+				"operationId": "listTrashedApplications",
+				"summary": "List applications in Trash",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "limit",
+						"in": "query",
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 100,
+							"description": "Maximum results (1–100). Omit both pagination fields for the legacy complete list."
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991,
+							"description": "Zero-based offset. Defaults to 0; limit defaults to 20 when only offset is given."
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"items": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"company": {
+														"type": "string"
+													},
+													"role": {
+														"type": "string"
+													},
+													"trashedAt": {
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date"
+													}
+												},
+												"required": [
+													"id",
+													"company",
+													"role",
+													"trashedAt"
+												]
+											}
+										},
+										"total": {
+											"type": "integer",
+											"minimum": -9007199254740991,
+											"maximum": 9007199254740991
+										}
+									},
+									"required": [
+										"items",
+										"total"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/applications/trash\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			},
+			"post": {
+				"operationId": "trashApplications",
+				"summary": "Move applications to Trash",
+				"tags": [
+					"Applications"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"ids": {
+										"type": "array",
+										"minItems": 1,
+										"maxItems": 200,
+										"items": {
+											"type": "string"
+										}
+									}
+								},
+								"required": [
+									"ids"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"deleted": {
+											"type": "number"
+										}
+									},
+									"required": [
+										"deleted"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/trash\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"ids\": [\n    \"<string>\"\n  ]\n}'"
+					}
+				]
+			}
+		},
+		"/applications/{id}/trash": {
+			"post": {
+				"operationId": "trashApplication",
+				"summary": "Move an application to Trash",
+				"description": "Retains the timeline, relationships and files until explicitly permanently deleted. Restore from Trash after reload.",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the application."
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/trash\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			},
+			"delete": {
+				"operationId": "purgeApplication",
+				"summary": "Permanently delete an application from Trash",
+				"description": "Permanently removes only the listed Trash generation. Refuses a restored or re-trashed application. Linked resumes and letters are kept.",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"trashedAt": {
+										"type": "string",
+										"format": "date-time",
+										"x-native-type": "date"
+									}
+								},
+								"required": [
+									"trashedAt"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/applications/<id>/trash\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"trashedAt\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
+		"/applications/{id}/restore": {
+			"post": {
+				"operationId": "restoreApplication",
+				"summary": "Restore an application from Trash",
+				"description": "Restores the retained application, timeline and relationships. Requires the timestamp returned by listTrashedApplications; a stale Trash action is refused.",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"trashedAt": {
+										"type": "string",
+										"format": "date-time",
+										"x-native-type": "date"
+									}
+								},
+								"required": [
+									"trashedAt"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/restore\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"trashedAt\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
 		"/applications/{applicationId}/packet-review": {
 			"post": {
 				"operationId": "reviewApplicationPacket",
@@ -19133,6 +19628,18 @@
 													]
 												}
 											},
+											"trashedAt": {
+												"anyOf": [
+													{
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
 											"appliedAt": {
 												"type": "string",
 												"format": "date-time",
@@ -20292,7 +20799,7 @@
 			"delete": {
 				"operationId": "deleteApplications",
 				"summary": "Bulk delete applications",
-				"description": "Permanently deletes multiple applications at once. Requires authentication.",
+				"description": "Moves multiple applications to Trash, retaining their timelines, relationships and files. Requires authentication.",
 				"tags": [
 					"Applications"
 				],
@@ -21579,6 +22086,18 @@
 															]
 														}
 													},
+													"trashedAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
 													"appliedAt": {
 														"type": "string",
 														"format": "date-time",
@@ -22374,6 +22893,18 @@
 													}
 												]
 											}
+										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"appliedAt": {
 											"type": "string",
@@ -23793,6 +24324,18 @@
 												]
 											}
 										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"appliedAt": {
 											"type": "string",
 											"format": "date-time",
@@ -23901,7 +24444,7 @@
 			"delete": {
 				"operationId": "deleteApplication",
 				"summary": "Delete a job application",
-				"description": "Permanently deletes a job application. Requires authentication.",
+				"description": "Moves a job application to Trash, retaining its timeline, relationships and files. Restore from Trash after reload. Requires authentication.",
 				"tags": [
 					"Applications"
 				],
@@ -25283,6 +25826,18 @@
 												]
 											}
 										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"appliedAt": {
 											"type": "string",
 											"format": "date-time",
@@ -26496,6 +27051,18 @@
 												]
 											}
 										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"appliedAt": {
 											"type": "string",
 											"format": "date-time",
@@ -27242,6 +27809,18 @@
 													}
 												]
 											}
+										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"appliedAt": {
 											"type": "string",
@@ -28014,6 +28593,18 @@
 												]
 											}
 										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"appliedAt": {
 											"type": "string",
 											"format": "date-time",
@@ -28761,6 +29352,18 @@
 													}
 												]
 											}
+										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"appliedAt": {
 											"type": "string",
@@ -29602,6 +30205,18 @@
 												]
 											}
 										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"appliedAt": {
 											"type": "string",
 											"format": "date-time",
@@ -30441,6 +31056,18 @@
 												]
 											}
 										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"appliedAt": {
 											"type": "string",
 											"format": "date-time",
@@ -31277,6 +31904,18 @@
 												]
 											}
 										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"appliedAt": {
 											"type": "string",
 											"format": "date-time",
@@ -32054,6 +32693,18 @@
 												]
 											}
 										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"appliedAt": {
 											"type": "string",
 											"format": "date-time",
@@ -32807,6 +33458,18 @@
 													}
 												]
 											}
+										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"appliedAt": {
 											"type": "string",
@@ -33582,6 +34245,18 @@
 												]
 											}
 										},
+										"trashedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"appliedAt": {
 											"type": "string",
 											"format": "date-time",
@@ -33968,7 +34643,7 @@
 			"post": {
 				"operationId": "bulkDeleteApplications",
 				"summary": "Bulk delete applications",
-				"description": "Permanently deletes multiple applications at once. Requires authentication.",
+				"description": "Moves multiple applications to Trash, retaining their timelines, relationships and files. Requires authentication.",
 				"deprecated": true,
 				"tags": [
 					"Applications"
@@ -43403,6 +44078,18 @@
 																}
 															]
 														}
+													},
+													"trashedAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														]
 													},
 													"appliedAt": {
 														"type": "string",

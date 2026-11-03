@@ -20,8 +20,7 @@ msgstr ""
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -141,11 +140,6 @@ msgstr ""
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application closed} other {# applications closed}}"
 msgstr ""
-
-#. placeholder {0}: result.deleted
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
-msgstr "{0, plural, zero {Dzēsti # pieteikumi} one {Dzēsts # pieteikums} other {Dzēsti # pieteikumi}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -331,16 +325,6 @@ msgstr ""
 #: src/features/applications/use-application-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, zero {Vai dzēst # pieteikumus?} one {Vai dzēst # pieteikumu?} other {Vai dzēst # pieteikumus?}}"
-
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, zero {Dzēst # pieteikumus} one {Dzēst # pieteikumu} other {Dzēst # pieteikumus}}"
 
 #. placeholder {0}: selection.length
 #: src/features/documents/trash-page.tsx
@@ -2514,7 +2498,7 @@ msgstr "Pieteikšanās datums no plkst"
 msgid "Application date to"
 msgstr "Pieteikšanās datums līdz"
 
-#: src/features/applications/use-application-actions.ts
+#: src/features/applications/trash-page.tsx
 msgid "Application deleted"
 msgstr "darba pieteikums dzēsts"
 
@@ -2557,15 +2541,23 @@ msgid "Application updated"
 msgstr "Pieteikums atjaunināts"
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
 msgstr "Pieteikumi"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "Pieteikumus un to notikumu vēsturi var atjaunot no atkritnes."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications over time"
@@ -2574,6 +2566,10 @@ msgstr "Pieteikumi laika gaitā"
 #: src/features/applications/components/insights-view.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Nedēļā nosūtītie pieteikumi (pēdējās 8 nedēļas)"
+
+#: src/features/applications/trash-page.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "Pieteikumi paliek atkritnē, līdz tos neatgriezeniski izdzēšat."
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Applications to export"
@@ -4549,6 +4545,7 @@ msgstr ""
 msgid "Couldn't delete that story. Try again."
 msgstr "Nevarēja izdzēst šo stāstu. Mēģiniet vēlreiz."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't delete the application. Try again."
 msgstr "Nevarēja izdzēst pieteikumu. Mēģiniet vēlreiz."
@@ -5134,6 +5131,7 @@ msgstr "Nevarēja atjaunināt kopīgošanu. Mēģiniet vēlreiz."
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "Nevarēja atjaunināt pieteikumu. Nekas netika mainīts. Mēģiniet vēlreiz."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the application. Try again."
 msgstr "Nevarēja atjaunināt pieteikumu. Mēģiniet vēlreiz."
@@ -5595,11 +5593,6 @@ msgstr "Dzēst {0}"
 msgid "Delete account"
 msgstr "Dzēst kontu"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Delete application"
-msgstr "Dzēst pieteikumu"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Delete conversation"
 msgstr "Dzēst sarunu"
@@ -5633,7 +5626,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "Dzēst lapu"
 
-#: src/features/applications/components/list-view.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Delete permanently…"
 msgstr "Neatgriezeniski dzēst…"
@@ -5666,8 +5659,7 @@ msgstr "Dzēst stāstu"
 msgid "Delete the {kind} interview on {date}?"
 msgstr ""
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/trash-page.tsx
 msgid "Delete this application?"
 msgstr "Dzēst šo pieteikumu?"
 
@@ -5699,8 +5691,6 @@ msgstr "Vai dzēst savu kontu?"
 msgid "Delete your documents and account data."
 msgstr "Dzēsiet savus dokumentus un konta datus."
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
@@ -5913,8 +5903,10 @@ msgstr "Dokumenta veids"
 msgid "Documentation"
 msgstr "Dokumentācija"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -7681,6 +7673,7 @@ msgstr "Pieņemšanas komanda"
 msgid "History"
 msgstr "Vēsture"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
@@ -8418,6 +8411,7 @@ msgstr "Saglabāt domēnu"
 msgid "Keep editing"
 msgstr "Turpināt rediģēt"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
@@ -9187,6 +9181,7 @@ msgstr "Ielādē darba telpu…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/applications/trash-page.tsx
 #: src/features/command-palette/index.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/share/feedback-links.tsx
@@ -9732,6 +9727,9 @@ msgstr "Pārvietot uz “{stage}”"
 msgid "Move to Interview"
 msgstr "Pārvietot uz “Intervija”"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9759,6 +9757,11 @@ msgstr "Pārvietojiet savu e-pastu un tālruņa numuru pirmās lapas augšpusē.
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "Uz atkritni pārvietoti {0} no {1}. Bloķētie dokumenti tika izlaisti."
 
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/list-view.tsx
+msgid "Moved {0} to Trash."
+msgstr "Pārvietots uz atkritni ({0})."
+
 #. placeholder {0}: getLaneLabel(lane)
 #. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/list-view.tsx
@@ -9778,6 +9781,10 @@ msgstr "Pārvietots uz {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/applications/use-application-actions.ts
+msgid "Moved to Trash"
+msgstr "Pārvietots uz atkritni"
 
 #. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
@@ -13030,6 +13037,7 @@ msgstr ""
 msgid "Responsible for the design system and helping other teams with their designs."
 msgstr "Atbildīgs par projektēšanas sistēmu un palīdz citām komandām izstrādāt to dizainu."
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Restore"
@@ -13039,6 +13047,7 @@ msgstr "Atjaunot"
 msgid "Restore this version"
 msgstr "Atjaunot šo versiju"
 
+#: src/features/applications/trash-page.tsx
 #: src/libs/undone.ts
 msgid "Restored"
 msgstr ""
@@ -16243,10 +16252,6 @@ msgstr ""
 msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
 msgstr ""
 
-#: src/features/applications/components/list-view.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/resume/editor/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Viņi meklē tādus virsrakstus kā Pieredze, Izglītība un Prasmes."
@@ -16845,14 +16850,19 @@ msgstr "Tulkots {languageCount} valodās."
 msgid "Translations"
 msgstr "Tulkojumi"
 
+#: src/features/applications/trash-page.tsx
+#: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/applications/index.tsx
+#: src/routes/dashboard/applications/trash.tsx
 #: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "Miskaste"
 
+#: src/features/applications/trash-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "Miskaste ir tukša"

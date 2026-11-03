@@ -65,19 +65,19 @@ test("a selection over the API limit explains the limit and recovers at 200", as
 	await bar.getByRole("button", { name: "Select all", exact: true }).click();
 	await expect(bar).toContainText("201 selected");
 	await expect(bar.getByRole("status")).toHaveText("Choose up to 200 applications per bulk action.");
-	for (const name of ["Tags…", "Move to…", "Close…", "Delete permanently…"]) {
+	for (const name of ["Tags…", "Move to…", "Close…", "Move to Trash"]) {
 		await expect(bar.getByRole("button", { name, exact: true })).toBeDisabled();
 	}
 	await page.getByRole("checkbox", { name: "Select Role 0 at Archive Studio", exact: true }).uncheck();
 	await expect(bar).toContainText("200 selected");
-	for (const name of ["Tags…", "Move to…", "Close…", "Delete permanently…"]) {
+	for (const name of ["Tags…", "Move to…", "Close…", "Move to Trash"]) {
 		await expect(bar.getByRole("button", { name, exact: true })).toBeEnabled();
 	}
 	await page.goto("/dashboard/applications?locale=fr-FR");
 	await expect(page.locator("html")).toHaveAttribute("lang", "fr-FR");
 	await page.getByRole("checkbox").first().check();
 	const translatedBar = page.getByRole("toolbar");
-	await expect(translatedBar.getByRole("button", { name: "Supprimer définitivement…", exact: true })).toBeVisible();
+	await expect(translatedBar.getByRole("button", { name: "Déplacer vers la corbeille", exact: true })).toBeVisible();
 	await translatedBar.getByRole("button", { name: "Tout sélectionner", exact: true }).click();
 	await expect(translatedBar.getByRole("status")).toHaveText("Choisissez jusqu'à 200 candidatures par action groupée.");
 });

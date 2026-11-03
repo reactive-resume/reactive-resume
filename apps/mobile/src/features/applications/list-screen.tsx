@@ -307,6 +307,13 @@ function ApplicationsList() {
 		<>
 			<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s3 }}>
 				<Button
+					label={t`Trash`}
+					variant="secondary"
+					icon="trash"
+					disabled={busy}
+					onPress={() => router.push(routes.applicationTrash())}
+				/>
+				<Button
 					label={t`Sort and filter`}
 					variant="secondary"
 					icon="sliders-horizontal"
@@ -452,7 +459,7 @@ function ApplicationsList() {
 						/>
 						<Button label={t`Clear selection`} variant="ghost" disabled={busy} onPress={() => setSelected(new Set())} />
 						<Button
-							label={t`Delete permanently…`}
+							label={t`Move to Trash`}
 							variant="danger"
 							disabled={busy || !lanes.ready || !selectedIds.length}
 							onPress={() => {
@@ -675,7 +682,7 @@ function ApplicationsList() {
 					onClose={() => setBulk(null)}
 					title={
 						bulk === "delete"
-							? plural(selectedIds.length, { one: "Delete # application?", other: "Delete # applications?" })
+							? t`Move to Trash`
 							: bulk === "close"
 								? t`Close selected applications`
 								: bulk === "tag"
@@ -714,15 +721,12 @@ function ApplicationsList() {
 							/>
 						)}
 						{bulk === "delete" && (
-							<Banner
-								tone="warn"
-								message={t`They and their timelines are deleted permanently. Linked resumes and letters are kept.`}
-							/>
+							<Banner tone="warn" message={t`Applications and their timelines can be restored from Trash.`} />
 						)}
 						<Button
 							label={
 								bulk === "delete"
-									? plural(selectedIds.length, { one: "Delete # application", other: "Delete # applications" })
+									? t`Move to Trash`
 									: bulk === "close"
 										? t`Close applications`
 										: bulk === "tag"
