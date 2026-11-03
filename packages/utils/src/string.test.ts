@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import { slugify } from "./slug";
-import { filterOptions, getInitials, isolate, rewriteSummary, toUsername } from "./string";
+import { filterOptions, fitLabel, getInitials, isolate, rewriteSummary, toUsername } from "./string";
 
 describe("slugify", () => {
 	it("falls back to a non-empty slug for CJK input", () => {
@@ -17,6 +17,27 @@ describe("toUsername", () => {
 	it("truncates to 64 characters max", () => {
 		const longName = "a".repeat(100);
 		expect(toUsername(longName)).toHaveLength(64);
+	});
+});
+
+describe("fitLabel", () => {
+	it("leaves a short label alone", () => {
+		expect(fitLabel("Recruiter call", 18)).toBe("Recruiter call");
+		expect(fitLabel("Recruiter call", 14)).toBe("Recruiter call");
+	});
+
+	it("ends a long narrow label with an ellipsis within the width budget", () => {
+		expect(fitLabel("a".repeat(20), 18)).toBe(`${"a".repeat(17)}…`);
+	});
+
+	it("counts wide glyphs as twice a narrow one", () => {
+		expect(fitLabel("漢".repeat(20), 18)).toBe(`${"漢".repeat(8)}…`);
+		expect(fitLabel("😀".repeat(20), 18)).toBe(`${"😀".repeat(8)}…`);
+	});
+
+	it("keeps a multi-code-point emoji cluster whole", () => {
+		const family = "👨‍👩‍👧‍👦";
+		expect(fitLabel(family.repeat(10), 18)).toBe(`${family.repeat(8)}…`);
 	});
 });
 

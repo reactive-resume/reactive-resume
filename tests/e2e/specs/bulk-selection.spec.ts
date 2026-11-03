@@ -75,7 +75,9 @@ test("a selection over the API limit explains the limit and recovers at 200", as
 	}
 	await page.goto("/dashboard/applications?locale=fr-FR");
 	await expect(page.locator("html")).toHaveAttribute("lang", "fr-FR");
-	await page.getByRole("checkbox").first().check();
+	// The table header's select-all is the first checkbox on the page; pick a row instead so the bulk bar still offers
+	// its own Select all, which is what this localization check exercises.
+	await page.getByRole("table").locator("tbody").getByRole("checkbox").first().check();
 	const translatedBar = page.getByRole("toolbar");
 	await expect(translatedBar.getByRole("button", { name: "Déplacer vers la corbeille", exact: true })).toBeVisible();
 	await translatedBar.getByRole("button", { name: "Tout sélectionner", exact: true }).click();
