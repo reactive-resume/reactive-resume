@@ -2109,9 +2109,24 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 	});
 
 	it("keeps legacy capture of unchanged pre-submission answers immutable", async () => {
+		await getDb()
+			.update(tables.application)
+			.set({ sentResumeVersionId: null })
+			.where(eq(tables.application.id, "alice-app"));
 		const answers = [{ id: "why", question: "Why this role?", answer: "Original answer", factIds: [] }];
 		await service.saveWorkspace("alice", "alice-app", { answers }, { answers: [] });
-		await applications.update({ userId: "alice", id: "alice-app", status: "applied" });
+		const [before] = await getDb()
+			.select()
+			.from(tables.careerWorkspace)
+			.where(eq(tables.careerWorkspace.applicationId, "alice-app"));
+		if (!before) throw new Error("Missing saved answers.");
+		vi.useFakeTimers({ toFake: ["Date"] });
+		try {
+			vi.setSystemTime(new Date(before.updatedAt.getTime() + 1000));
+			await applications.update({ userId: "alice", id: "alice-app", status: "applied" });
+		} finally {
+			vi.useRealTimers();
+		}
 		await service.snapshotAnswers("alice", "alice-app");
 		await service.saveWorkspace(
 			"alice",

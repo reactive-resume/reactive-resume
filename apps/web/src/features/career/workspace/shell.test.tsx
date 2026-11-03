@@ -237,7 +237,13 @@ it("requires initial workspace data before exposing edits, with recovery after a
 	expect(screen.queryByRole("button", { name: "Add a question from the form" })).toBeNull();
 	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
 	expect(await screen.findByRole("textbox", { name: "Why this role?" })).toHaveValue("Current answer");
-	expect(screen.getByText("1 of 4", { exact: true })).toBeTruthy();
+	expect(screen.getByText("0 of 3", { exact: true })).toBeTruthy();
+	expect(
+		screen.queryByRole("checkbox", { name: "Review the selected resume and cover letter in their editors." }),
+	).toBeNull();
+	expect(
+		screen.getByRole("checkbox", { name: "Check every claim, date and result against your experience." }),
+	).not.toBeChecked();
 	expect(api.save).not.toHaveBeenCalled();
 });
 

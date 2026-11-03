@@ -106,6 +106,7 @@ for (const entry of ["detail", "workspace", "api"] as const) {
 		const receipt = await stored.json();
 		expect(receipt.checklist).toEqual(checklist);
 		expect(receipt.submissionReview).toEqual({ at: expect.any(String), checklist, documents: false, answers: true });
+		if (entry === "api") await expect(await page.request.post(`${workspaceUrl}/answers`)).toBeOK();
 		expect(
 			(await page.request.patch(workspaceUrl, { data: { checklist: [2], expected: { checklist } } })).status(),
 		).toBe(409);

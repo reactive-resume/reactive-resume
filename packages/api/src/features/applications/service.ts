@@ -263,7 +263,11 @@ export async function recordSentResume(row: ApplicationRow, client: DbOrTx): Pro
 		await client
 			.insert(schema.careerWorkspace)
 			.values({ applicationId: row.id, userId: row.userId, data })
-			.onConflictDoUpdate({ target: schema.careerWorkspace.applicationId, set: { data, updatedAt: new Date() } });
+			// Recording review metadata must not make unchanged answers look edited after submission.
+			.onConflictDoUpdate({
+				target: schema.careerWorkspace.applicationId,
+				set: { data, updatedAt: sql`${schema.careerWorkspace.updatedAt}` },
+			});
 	}
 
 	if (row.resumeId && !row.sentResumeVersionId) {
