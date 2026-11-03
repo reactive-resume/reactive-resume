@@ -8,10 +8,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DocumentCard } from "./document-card";
 
 const letters = vi.hoisted(() => ({ load: vi.fn() }));
+const viewing = vi.hoisted(() => ({ inView: true }));
 
 vi.mock("motion/react", async (importOriginal) => ({
 	...(await importOriginal<typeof import("motion/react")>()),
-	useInView: () => true,
+	useInView: () => viewing.inView,
 }));
 vi.mock("@tanstack/react-router", () => ({
 	Link: ({ children, ...props }: React.ComponentProps<"a">) => (
@@ -54,7 +55,8 @@ const letter = (editedAt: Date): DocumentSummary =>
 		application: null,
 	}) as DocumentSummary;
 
-function renderCard(document: DocumentSummary) {
+function renderCard(document: DocumentSummary, { inView = true }: { inView?: boolean } = {}) {
+	viewing.inView = inView;
 	i18n.load("en", {});
 	i18n.activate("en");
 	const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -108,6 +110,13 @@ it("shows a failed preview instead of an endless loading placeholder", async () 
 	renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
 
 	expect(await screen.findByText("Preview unavailable")).toBeTruthy();
+});
+
+it("does not fetch letter content while the card is offscreen", () => {
+	letters.load.mockClear();
+	renderCard(letter(new Date("2026-10-19T00:00:00.000Z")), { inView: false });
+
+	expect(letters.load).not.toHaveBeenCalled();
 });
 
 it("fetches a new preview after the letter's content edit", async () => {

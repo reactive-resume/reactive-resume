@@ -208,7 +208,7 @@ it("selects a row without opening it", () => {
 	expect(checkbox.getAttribute("aria-checked")).toBe("true");
 });
 
-it("filters by a tag chip without opening the row", () => {
+it("passes a tag chip selection to onTagSelect without opening the row", () => {
 	const onOpen = vi.fn();
 	const onTagSelect = vi.fn();
 	renderList([application({ tags: ["remote", "design"] })], "desktop", onOpen, onTagSelect);
