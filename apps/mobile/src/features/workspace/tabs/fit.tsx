@@ -8,12 +8,13 @@ import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { randomUUID } from "expo-crypto";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { latest, useFacts, useGenerate, useSavedItems, useWorkspace, workspaceError } from "../hooks";
 import { Actions, AiNotice, Block, StatusPill, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
-import { orpc } from "@/api/client";
+import { client, orpc } from "@/api/client";
+import { getAccountScope } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { routes } from "@/routes";
 import { Banner, Button, EmptyState, Icon, SelectSheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
@@ -35,6 +36,45 @@ function Fit({ application, version }: WorkspaceTabProps) {
 	const provider = useHasAIProvider().defaultProvider;
 	const facts = useFacts(application.id);
 	const router = useRouter();
+	const proposing = useRef<AbortController | null>(null);
+	const proposalKey = JSON.stringify([getAccountScope(), application.id]);
+	const [proposalOwner, setProposalOwner] = useState<string | null>(null);
+	const proposalPending = proposalOwner === proposalKey;
+	useEffect(
+		() => () => {
+			proposing.current?.abort();
+			proposing.current = null;
+		},
+		[proposalKey],
+	);
+	const proposeEvidence = async (factId: string) => {
+		if (proposing.current) return;
+		const controller = new AbortController();
+		const scope = getAccountScope();
+		proposing.current = controller;
+		setProposalOwner(proposalKey);
+		try {
+			await workspace.settled();
+			if (controller.signal.aborted || scope !== getAccountScope()) return;
+			const result = await client.applications.ai.proposeEvidence(
+				{ id: application.id, factId },
+				{ signal: controller.signal },
+			);
+			if (controller.signal.aborted || scope !== getAccountScope()) return;
+			router.push({
+				pathname: routes.assistant(result.resumeId),
+				params: { applicationId: application.id, thread: result.conversation?.thread.id ?? "new" },
+			});
+		} catch (error) {
+			if (!controller.signal.aborted && scope === getAccountScope())
+				showToast({ message: workspaceError(error, t`Couldn't complete this action. Try again.`) });
+		} finally {
+			if (proposing.current === controller) {
+				proposing.current = null;
+				if (scope === getAccountScope()) setProposalOwner(null);
+			}
+		}
+	};
 	const tailor = () =>
 		application.resumeId
 			? router.push({
@@ -189,6 +229,14 @@ function Fit({ application, version }: WorkspaceTabProps) {
 							readOnly={readOnly}
 							onTailor={tailor}
 							onSaved={(id) => onSaved(requirement, id)}
+							onPropose={
+								application.resumeId &&
+								factId &&
+								facts.data?.some((fact) => fact.id === factId && fact.status === "active")
+									? () => void proposeEvidence(factId)
+									: undefined
+							}
+							proposalPending={proposalPending}
 						/>
 					);
 				})}
@@ -200,6 +248,16 @@ function Fit({ application, version }: WorkspaceTabProps) {
 						<CheckLine key={entry.label} met={entry.met} label={entry.label} text={entry.text} />
 					))}
 				</Block>
+			) : null}
+			{proposalPending ? (
+				<Button
+					label={t`Stop`}
+					onPress={() => {
+						proposing.current?.abort();
+						proposing.current = null;
+						setProposalOwner(null);
+					}}
+				/>
 			) : null}
 			{item.data.ask ? <WorthAsking ask={item.data.ask} applicationId={application.id} readOnly={readOnly} /> : null}
 		</View>
@@ -227,9 +285,20 @@ type RequirementCardProps = {
 	readOnly: boolean;
 	onSaved: (factId: string) => void;
 	onTailor: () => void;
+	onPropose?: (() => void) | undefined;
+	proposalPending: boolean;
 };
 
-function RequirementCard({ requirement, status, evidence, readOnly, onSaved, onTailor }: RequirementCardProps) {
+function RequirementCard({
+	requirement,
+	status,
+	evidence,
+	readOnly,
+	onSaved,
+	onTailor,
+	onPropose,
+	proposalPending,
+}: RequirementCardProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const [editing, setEditing] = useState(false);
@@ -245,6 +314,15 @@ function RequirementCard({ requirement, status, evidence, readOnly, onSaved, onT
 				</Text>
 			</Actions>
 			<Text color={status === "missing" ? "ink2" : "ink"}>{evidence}</Text>
+			{!readOnly && onPropose ? (
+				<Button
+					size="sm"
+					variant="secondary"
+					disabled={proposalPending}
+					label={proposalPending ? t`Preparing…` : t`Propose a resume bullet`}
+					onPress={onPropose}
+				/>
+			) : null}
 			{status === "missing" || status === "partial" ? (
 				<Button variant="link" size="sm" label={t`Tailor resume for this job`} onPress={onTailor} />
 			) : null}

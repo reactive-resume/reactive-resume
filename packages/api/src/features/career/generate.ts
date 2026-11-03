@@ -4,9 +4,9 @@ import { ORPCError } from "@orpc/client";
 import z from "zod";
 import { careerWorkspaceSchema, savedItemDataSchema } from "@reactive-resume/schema/career";
 import { aiProvidersService } from "../ai-providers/service";
+import { generateJson } from "../ai/application-generation";
 import { getModel } from "../ai/service";
 import { createAiUsage } from "../ai/usage";
-import { generateJson } from "../applications/ai";
 import { careerService, hasFitEvidence } from "./service";
 
 const shape = (kind: SavedItemData["kind"]) =>

@@ -3597,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "無法完成要求。請檢查網路連線後再試一次。"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "無法完成此操作。再試一次。"
@@ -3947,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "無法儲存該變更。請檢查網路連線後重試。"
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "無法儲存該變更。再試一次。"
 
@@ -4678,6 +4681,10 @@ msgstr "不同的貨幣或支付週期。不計算金錢差額。"
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "方向"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "捨棄"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5754,6 +5761,10 @@ msgstr "表單回答"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "表單問題（選填）"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "格式化"
@@ -6612,6 +6623,10 @@ msgstr "只保留一個地址，讓軟體不必猜要用哪一個。"
 msgid "Keep access when you are not using the application."
 msgstr "在您未使用該應用程式時保持存取權限。"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "保留回答"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6644,6 +6659,10 @@ msgstr "保持誠實"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "將檔案控制在 2.5 MB 以內，通常可透過移除或縮小圖片來達成。"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "保留求職信"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6969,6 +6988,7 @@ msgid "Letter body"
 msgstr "信體"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "信件草稿"
 
@@ -8185,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "沒有編輯"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "未提出修改建議。"
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "未找到學歷部分。"
@@ -8863,6 +8887,10 @@ msgstr "現場面試"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "開啟"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "開啟 AI 助理"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9545,8 +9573,13 @@ msgid "Prepare a resume"
 msgstr "準備一份履歷"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "準備求職申請"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "準備草稿以供審閱"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9572,6 +9605,11 @@ msgstr "正在準備匯出…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "正在準備檔案…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "正在準備…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9720,6 +9758,10 @@ msgstr "進度條"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "專案"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "建議一條履歷要點"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10686,6 +10728,10 @@ msgstr "履歷第 {0} 頁"
 msgid "Resume preview"
 msgstr "履歷預覽"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "履歷修改建議"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "提交簡歷（可選）"
@@ -10882,6 +10928,10 @@ msgstr "檢查必填的表單回答，刪除沒有佐證的陳述。"
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "審閱履歷事實"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "一起審閱客製化建議、求職信草稿和回答。不會向雇主提交任何內容。"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11661,6 +11711,10 @@ msgstr "發送至{0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "用空白行分隔問題。最多五個問題，每個不超過 2,000 字元。"
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "塞爾維亞語"
@@ -11813,6 +11867,18 @@ msgstr "分享透過..."
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "僅分享履歷和職缺資訊。不包含知識庫、私人筆記和網頁存取。接受前請審閱建議，原稿保持不變。"
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "僅分享選取的知識庫陳述、履歷和職缺資訊。不包含其他知識、私人筆記和網頁存取。接受前請審閱要點。"
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "分享履歷、職缺資訊和貼上的問題。回答草稿也會使用求職信、職涯偏好、申請筆記和聯絡人，以及知識庫中啟用的事實和經歷。脈絡可能被節錄。網頁存取已關閉。儲存前請審閱，不會提交任何內容。"
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12207,6 +12273,10 @@ msgstr "無法繪製部分字元：{0}。請在「設計」中選擇其他字型
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "無法呈現部分字元。匯出前請檢查頁面。"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "部分草稿未能完成。重試前請保留已完成的草稿。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "有些字形脫離這份檔案後就沒有意義了。"
@@ -12506,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "停止"
 
@@ -12922,6 +12994,7 @@ msgstr "账户变了。再試一次。"
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "網址只能包含拉丁字母 a–z和數字，並以單連字號分隔。"
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14038,6 +14111,7 @@ msgstr "底線連結"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

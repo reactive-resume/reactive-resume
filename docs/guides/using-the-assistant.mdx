@@ -5,6 +5,8 @@ description: "Ask the AI assistant to improve your resume or cover letter, then 
 
 The assistant is an AI chat panel beside your document in the editor. It reads the resume or letter you have open, and the job posting when the document is linked to an application, then proposes changes for you to review. Text-only suggestions can be accepted individually; changes to fields, entries or sections are reviewed and accepted as one set. It never changes your document on its own.
 
+**Prepare application** in Apply generates a combined review of pending tailoring proposals, a letter draft and answers for pasted form questions after one context disclosure. Each section needs approval; existing version guards and account-scoped draft recovery apply. See [Prepare the application together](/guides/writing-application-answers#prepare-the-application-together). Nothing is submitted to an employer.
+
 ## Before you start
 
 Connect an AI provider with your own API key. See [Connecting an AI provider](/guides/using-ai). If you open the assistant before connecting one, it offers to connect one on the spot.
@@ -141,6 +143,8 @@ Select **Edit** to change a text edit's new text in your own words before decidi
 ### Tailoring to a posting
 
 Tailoring changes a copy of your resume made for that job, never the resume your other applications use. If the open resume isn't that copy, the assistant shows **Copy for this job** above the message box and won't propose edits that use the posting until you copy it, or leave the posting out. Edits it proposed with a posting can't be accepted on a resume that isn't that job's copy: copy the resume for the job and ask again there. Edits from older conversations that may have used a posting show as out of date and can't be applied anywhere; ask again on the resume you want to change.
+
+Tailoring started through MCP or the public API uses this same review flow. Its new copy starts unchanged, and its conversation holds pending proposals or questions. Review them here on web or mobile before accepting; **Undo** uses the normal editor history. This route sends the resume and posting without private notes, Knowledge or web access. If generation fails or is stopped, the unchanged copy remains in Documents so you can continue its conversation. Submitted application document links stay intact. The original `resumeId` and `name` response fields still identify the copy; they do not mean generated edits were accepted.
 
 <Note>
   An older version of the app can't check these edits. A resume or letter with tailored edits it can't accept, or with

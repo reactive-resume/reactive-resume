@@ -23,6 +23,7 @@ import { upsertAssistantUiMessage } from "../agent/messages-persistence";
 import { agentRouter } from "../agent/router";
 import { aiProvidersService } from "../ai-providers/service";
 import { aiRouter as applicationAiRouter } from "../applications/ai";
+import { applicationsRouter } from "../applications/router";
 import { authRouter } from "../auth/router";
 import { authService } from "../auth/service";
 import { careerRouter } from "../career/router";
@@ -57,6 +58,9 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 	let baseURL: string;
 	let user: typeof tables.user.$inferSelect;
 	let mode:
+		| "score"
+		| "score-hold"
+		| "prepare"
 		| "text"
 		| "retry"
 		| "tools"
@@ -69,15 +73,22 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		| "resume"
 		| "agent"
 		| "letter"
+		| "tailoring"
 		| "improve"
 		| "native-search";
+	let failLetter = false;
 	let agentChanges: unknown[] = [];
 	let agentStep = 0;
 	let release = () => {};
 	let arrived = () => {};
+	let disconnected = () => {};
 	let requests: { model: string; path: string }[] = [];
 	let requestMessages: unknown[][] = [];
 	const server = createServer((req, res) => {
+		const onDisconnect = disconnected;
+		res.once("close", () => {
+			if (!res.writableEnded) onDisconnect();
+		});
 		let raw = "";
 		req.on("data", (chunk) => {
 			raw += chunk;
@@ -174,7 +185,7 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 					res.end(events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(""));
 					return;
 				}
-				if (mode === "hold")
+				if (mode === "hold" || mode === "score-hold")
 					await new Promise<void>((resolve) => {
 						release = resolve;
 					});
@@ -183,9 +194,14 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 					res.end(JSON.stringify({ error: { message: "Synthetic provider failure" } }));
 					return;
 				}
-				if (mode === "agent") {
+				if (
+					mode === "agent" ||
+					((mode === "tailoring" || mode === "prepare") &&
+						body.stream &&
+						!JSON.stringify(body.messages).includes("The letter's language"))
+				) {
 					const step = agentStep++;
-					if (step === 2)
+					if (step === 2 && mode === "agent")
 						await new Promise<void>((resolve) => {
 							release = resolve;
 						});
@@ -201,7 +217,15 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 											function: {
 												name: step === 0 ? "read_resume" : "propose_edits",
 												arguments: JSON.stringify(
-													step === 0 ? {} : { title: "Fictional rewrite", changes: agentChanges },
+													step === 0
+														? {}
+														: {
+																title: "Fictional rewrite",
+																changes: agentChanges,
+																...(mode === "tailoring"
+																	? { requirements: [{ text: "Build fictional reliable services.", status: "edited" }] }
+																	: {}),
+															},
 												),
 											},
 										},
@@ -216,7 +240,12 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 					);
 					return;
 				}
-				if (mode === "letter" && body.stream) {
+				if ((mode === "letter" || mode === "prepare") && body.stream) {
+					if (failLetter) {
+						res.writeHead(503, { "content-type": "application/json" });
+						res.end(JSON.stringify({ error: { message: "Synthetic letter failure" } }));
+						return;
+					}
 					res.writeHead(200, { "content-type": "text/event-stream" });
 					res.write(
 						`data: ${JSON.stringify({ id: "letter", created: 1, model: body.model, choices: [{ index: 0, delta: { content: "done" }, finish_reason: null }] })}\n\n`,
@@ -239,29 +268,37 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				}
 				const callsTool = mode === "tools" && requests.length === 1;
 				const text =
-					mode === "improve"
-						? JSON.stringify({ text: "Led fictional reliable delivery.", why: "Uses a direct verb.", addsFacts: false })
-						: mode === "resume"
-							? JSON.stringify(sampleResumeData)
-							: mode === "writing"
+					mode === "score" || mode === "score-hold"
+						? JSON.stringify({ score: 73, gaps: ["Evidence not shown"], strengths: ["Fictional services"] })
+						: mode === "tailoring"
+							? JSON.stringify({ summary: "<p>Generated fictional tailored summary.</p>" })
+							: mode === "improve"
 								? JSON.stringify({
-										summary: "Fictional saved wording review",
-										strengths: [],
-										suggestions: [],
-										jdAlignment: null,
+										text: "Led fictional reliable delivery.",
+										why: "Uses a direct verb.",
+										addsFacts: false,
 									})
-								: mode === "answer"
-									? JSON.stringify({ text: "Built a fictional reporting workflow.", factIds: [], note: null })
-									: mode === "reply"
+								: mode === "resume"
+									? JSON.stringify(sampleResumeData)
+									: mode === "writing"
 										? JSON.stringify({
-												title: "Reply",
-												asks: [],
-												unconfirmed: [],
-												reply: "Thank you.",
-												changes: [],
-												offer: null,
+												summary: "Fictional saved wording review",
+												strengths: [],
+												suggestions: [],
+												jdAlignment: null,
 											})
-										: "done";
+										: mode === "answer" || mode === "prepare"
+											? JSON.stringify({ text: "Built a fictional reporting workflow.", factIds: [], note: null })
+											: mode === "reply"
+												? JSON.stringify({
+														title: "Reply",
+														asks: [],
+														unconfirmed: [],
+														reply: "Thank you.",
+														changes: [],
+														offer: null,
+													})
+												: "done";
 				res.writeHead(200, { "content-type": "application/json" });
 				res.end(
 					JSON.stringify({
@@ -303,6 +340,7 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				resume: resumeRouter,
 				documents: documentsRouter,
 				applicationAi: applicationAiRouter,
+				applications: applicationsRouter,
 			},
 			{
 				context: {
@@ -312,6 +350,430 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				},
 			},
 		);
+	const reviewFixture = async () => {
+		const connection = await provider();
+		const api = client();
+		const data = structuredClone(sampleResumeData);
+		data.summary.content = "<p>Built fictional reliable services.</p>";
+		data.metadata.notes = "PRIVATE_FICTIONAL_RESUME_NOTES";
+		const resumeId = await api.resume.import({ data });
+		const loaded = await loadDocument(user.id, { kind: "resume", id: resumeId });
+		const passage = loaded.passages.find((entry) => entry.target.sectionId === "summary");
+		if (!passage) throw new Error("Missing fictional passage");
+		agentChanges = [
+			{
+				kind: "text",
+				sectionId: "summary",
+				passageId: passage.id,
+				text: "Built reliable fictional services.",
+				why: "Clearer wording",
+				evidence: [passage.id],
+			},
+		];
+		const id = await api.applications.create({
+			company: "Fictional Cedar",
+			role: "Engineer",
+			status: "saved",
+			resumeId,
+			jobDescription: "Build fictional reliable services.",
+			notes: "PRIVATE_FICTIONAL_APPLICATION_NOTES",
+		});
+		return { connection, api, data, resumeId, id };
+	};
+	it("preserves numeric compatibility, private context exclusion and saved provider/model sources", () =>
+		run(async () => {
+			const { api, id, data, connection } = await reviewFixture();
+			mode = "score";
+			const score = await api.applicationAi.matchScore({ id });
+			expect(score).toMatchObject({ score: 73, gaps: ["Evidence not shown"], strengths: ["Fictional services"] });
+			expect(JSON.stringify(requestMessages)).not.toContain(data.metadata.notes);
+			expect(JSON.stringify(requestMessages)).not.toContain("PRIVATE_FICTIONAL_APPLICATION_NOTES");
+			const saved = await api.applications.getById({ id });
+			expect(saved.aiMetadata).toMatchObject({
+				matchScore: { score: 73, gaps: ["Evidence not shown"], strengths: ["Fictional services"] },
+				aiUsage: { requests: 1, models: [expect.objectContaining({ providerId: connection.id, model: "main-model" })] },
+			});
+			await aiProvidersService.delete({ userId: user.id, id: connection.id });
+			expect((await api.applications.getById({ id })).aiMetadata).toEqual(saved.aiMetadata);
+			expect(JSON.stringify((await api.auth.exportData({})).applications)).toContain(saved.aiMetadata?.aiOperationId);
+			expect(requests).toHaveLength(1);
+		}));
+	it.each(["application", "resume"] as const)(
+		"refuses stale numeric results after %s edits during provider transport",
+		(owner) =>
+			run(async () => {
+				const { api, id, resumeId } = await reviewFixture();
+				mode = "score-hold";
+				const arrival = new Promise<void>((resolve) => {
+					arrived = resolve;
+				});
+				const pending = api.applicationAi.matchScore({ id });
+				try {
+					await arrival;
+					if (owner === "application")
+						await api.applications.update({ id, jobDescription: "Changed fictional posting" });
+					else {
+						const before = await api.resume.getById({ id: resumeId });
+						await api.resume.update({
+							id: resumeId,
+							expectedUpdatedAt: before.updatedAt,
+							data: { ...before.data, summary: { ...before.data.summary, content: "<p>Changed factual summary.</p>" } },
+						});
+					}
+					release();
+					await expect(pending).rejects.toMatchObject({ code: "CONFLICT" });
+					expect((await api.applications.getById({ id })).matchScore).toBeNull();
+					expect(requests).toHaveLength(1);
+				} finally {
+					release();
+				}
+			}),
+	);
+	it.each(["active", "forgotten", "excluded", "corrected"] as const)(
+		"reviewed Fit evidence respects %s source state",
+		(state) =>
+			run(async () => {
+				const { api, id } = await reviewFixture();
+				const fact = await api.career.saveFact({
+					applicationId: id,
+					text: "Built fictional services for five teams.",
+					category: "accomplishment",
+					source: { kind: "manual", id: "fictional-evidence", quote: "Built fictional services for five teams." },
+				});
+				if (!fact) throw new Error("Missing fixture fact");
+				await expect(api.applicationAi.proposeEvidence({ id, factId: fact.id })).rejects.toMatchObject({
+					code: "NOT_FOUND",
+				});
+				const workspace = await api.career.workspace({ applicationId: id });
+				await api.career.saveWorkspace({
+					applicationId: id,
+					evidence: { requirement: fact.id },
+					expected: { evidence: workspace.evidence },
+				});
+				mode = "tailoring";
+				const result = await api.applicationAi.proposeEvidence({ id, factId: fact.id });
+				expect(result.generationStatus).toBe("ready");
+				expect(result.conversation?.thread.workingResumeId).toBe(result.resumeId);
+				expect((await api.resume.getById({ id: result.resumeId })).data.summary.content).toBe(
+					"<p>Built fictional reliable services.</p>",
+				);
+				expect(JSON.stringify(requestMessages)).toContain(fact.text);
+				expect(requests).toHaveLength(3);
+				if (state === "forgotten") await api.career.forgetFact({ id: fact.id });
+				else if (state === "excluded") await api.career.updateFact({ id: fact.id, status: "excluded" });
+				else if (state === "corrected")
+					await api.career.updateFact({ id: fact.id, text: "Corrected fictional account of work." });
+				const proposed = result.conversation?.messages
+					.flatMap((message) => message.parts)
+					.find((part) => part.type === "tool-propose_edits") as { output?: ProposeEditsOutput } | undefined;
+				const edit = proposed?.output?.edits[0];
+				if (!edit) throw new Error("Missing saved Fit proposal");
+				const before = await api.resume.getById({ id: result.resumeId });
+				const acceptance = api.resume.update({
+					id: before.id,
+					expectedUpdatedAt: before.updatedAt,
+					data: { ...before.data, summary: { ...before.data.summary, content: edit.after } },
+					proposalApplications: { [edit.id]: edit.after },
+					proposalSafety: "v1",
+				});
+				if (state === "active") {
+					const accepted = await acceptance;
+					expect(accepted.data.summary.content).toBe(edit.after);
+					expect(accepted.aiUsage?.requests).toBe(3);
+					return;
+				}
+				await expect(acceptance).rejects.toMatchObject({ code: "RESUME_VERSION_CONFLICT" });
+				expect((await api.resume.getById({ id: before.id })).data).toEqual(before.data);
+
+				if (state !== "corrected")
+					await expect(api.applicationAi.proposeEvidence({ id, factId: fact.id })).rejects.toMatchObject({
+						code: "NOT_FOUND",
+					});
+				const conversation = await api.agent.threads.get({ id: result.conversation?.thread.id ?? "missing" });
+				expect(
+					conversation.messages.some((message) => message.parts.some((part) => part.type === "tool-propose_edits")),
+				).toBe(false);
+				expect(requests).toHaveLength(3);
+			}),
+	);
+	it.each([false, true])(
+		"prepares all three real draft owners; letter failure=%s retains completed proposals and answers",
+		(failure) =>
+			run(async () => {
+				const { api, id, resumeId, data } = await reviewFixture();
+				mode = "prepare";
+				failLetter = failure;
+				const result = await api.applicationAi.prepare({ id, questions: ["Describe work you led.", "Why this role?"] });
+				expect(result.sets[0]?.edits[0]?.status).toBe("pending");
+				expect(result.threadId).toEqual(expect.any(String));
+				expect(result.answers).toHaveLength(2);
+				expect(result.answers.map((answer) => answer.question)).toEqual(["Describe work you led.", "Why this role?"]);
+				expect(result.failed).toEqual(failure ? ["letter"] : []);
+				expect((await api.resume.getById({ id: resumeId })).data.summary.content).toBe(data.summary.content);
+				expect((await api.resume.getById({ id: result.resume.id })).data.summary.content).toBe(data.summary.content);
+				expect((await api.career.workspace({ applicationId: id })).answers).toEqual([]);
+				if (failure) expect(result.letter).toBeNull();
+				else {
+					expect(result.letter?.text).toBe("done");
+					expect(result.letter?.document.content).toBe("");
+					const letter = await api.letters.update({
+						id: result.letter?.document.id ?? "missing",
+						expectedRevision: result.letter?.document.revision ?? 0,
+						content: coverLetterTextToHtml(result.letter?.text ?? ""),
+						aiOperationIds: result.letter?.aiOperationIds ?? [],
+					});
+					expect(letter.aiUsage?.requests).toBe(1);
+				}
+				const first = result.answers[0];
+				if (!first) throw new Error("Missing generated answer");
+				await api.career.saveWorkspace({
+					applicationId: id,
+					answers: [{ id: "approved-question", question: first.question, ...first.answer }],
+					expected: { answers: [] },
+				});
+				expect((await api.career.workspace({ applicationId: id })).answers[0]?.aiOperationIds).toEqual(
+					first.answer.aiOperationIds,
+				);
+				const groups = (await api.ai.usage({})).groups;
+				expect(groups).toEqual(
+					expect.arrayContaining([
+						expect.objectContaining({ action: "tailor-resume", requests: 3, model: "capable-model" }),
+						expect.objectContaining({ action: "draft-letter", requests: 1, model: "capable-model" }),
+						expect.objectContaining({ action: "answer", requests: 2, model: "main-model" }),
+					]),
+				);
+				expect(requests).toHaveLength(6);
+				expect(JSON.stringify(requestMessages.slice(0, 3))).not.toContain("PRIVATE_FICTIONAL_APPLICATION_NOTES");
+				expect(JSON.stringify(requestMessages)).not.toContain(data.metadata.notes);
+			}),
+	);
+	it("rejects invalid, declined and read-only Prepare before any copy or model request", () =>
+		run(async () => {
+			const { api, id } = await reviewFixture();
+			await expect(client(["read"]).applicationAi.prepare({ id, questions: [] })).rejects.toMatchObject({
+				code: "FORBIDDEN",
+			});
+			await expect(
+				client(undefined, new Headers({ "x-ai-destination": "none" })).applicationAi.prepare({ id, questions: [] }),
+			).rejects.toMatchObject({ code: "CONFLICT" });
+			await expect(api.applicationAi.prepare({ id, questions: Array(6).fill("Question") })).rejects.toMatchObject({
+				code: "BAD_REQUEST",
+			});
+			await expect(api.applicationAi.prepare({ id, questions: ["x".repeat(2001)] })).rejects.toMatchObject({
+				code: "BAD_REQUEST",
+			});
+			expect(requests).toHaveLength(0);
+			expect(await api.resume.list({})).toHaveLength(1);
+		}));
+
+	it.each(["saved", "applied"] as const)("keeps %s MCP/REST tailoring pending until reviewed", (stage) =>
+		run(async () => {
+			const connection = await provider();
+			const api = client();
+			const data = structuredClone(sampleResumeData);
+			data.summary.content = "<p>Built fictional reliable services.</p>";
+			data.metadata.notes = "Private fictional resume note must stay out.";
+			const sourceId = await api.resume.import({ data });
+			const loaded = await loadDocument(user.id, { kind: "resume", id: sourceId });
+			const passage = loaded.passages.find((entry) => entry.target.sectionId === "summary");
+			if (!passage) throw new Error("Missing fictional summary passage");
+			agentChanges = [
+				{
+					kind: "text",
+					sectionId: "summary",
+					passageId: passage.id,
+					text: "Built reliable fictional services.",
+					why: "Clearer wording for the posting",
+					requirement: "Build fictional reliable services.",
+					evidence: [passage.id],
+				},
+			];
+			const [application] = await db
+				.insert(tables.application)
+				.values({
+					userId: user.id,
+					company: "Fictional Cedar",
+					role: "Engineer",
+					status: "saved",
+					resumeId: sourceId,
+					jobDescription: "Build fictional reliable services.",
+					notes: "Private fictional application note must stay out.",
+				})
+				.returning();
+			if (!application) throw new Error("Missing fictional application");
+			if (stage === "applied") await api.applications.update({ id: application.id, status: "applied" });
+			const before = await api.applications.getById({ id: application.id });
+			mode = "tailoring";
+			const result = await api.applicationAi.tailorResume({ id: application.id });
+			const source = await api.resume.getById({ id: sourceId });
+			const copy = await api.resume.getById({ id: result.resumeId });
+			expect(source.data.summary.content).toBe(data.summary.content);
+			expect(copy.id).not.toBe(sourceId);
+			expect(requests.length).toBeGreaterThan(0);
+			const link = await pool.query("select resume_id from application where id=$1", [application.id]);
+			expect(link.rows[0]?.resume_id).toBe(stage === "saved" ? copy.id : sourceId);
+			if (stage === "applied") {
+				expect(before.sentResumeVersionId).not.toBeNull();
+				expect((await api.applications.getById({ id: application.id })).sentResumeVersionId).toBe(
+					before.sentResumeVersionId,
+				);
+			}
+			expect(copy.data.summary.content).toBe(data.summary.content);
+			expect(result).toMatchObject({ reviewRequired: true, generationStatus: "ready" });
+			expect(result.conversation?.thread.workingResumeId).toBe(copy.id);
+			const message = result.conversation?.messages.find((entry) => entry.role === "assistant");
+			const output = message?.parts.find((part) => part.type === "tool-propose_edits") as
+				| { output?: ProposeEditsOutput }
+				| undefined;
+			const edit = output?.output?.edits[0];
+			if (!edit) throw new Error("Missing canonical tailoring proposal");
+			expect(edit.status).toBe("pending");
+			expect(output?.output?.tailoredFor).toBe(application.id);
+			expect(requests).toHaveLength(3);
+			expect(requests.every((request) => request.model === "capable-model")).toBe(true);
+			expect(JSON.stringify(requestMessages)).not.toContain(data.metadata.notes);
+			expect(JSON.stringify(requestMessages)).not.toContain(application.notes);
+			const accepted = await api.resume.update({
+				id: copy.id,
+				data: { ...copy.data, summary: { ...copy.data.summary, content: edit.after } },
+				expectedUpdatedAt: copy.updatedAt,
+				proposalApplications: { [edit.id]: true },
+				proposalSafety: "v1",
+			});
+			expect(accepted.data.summary.content).toBe(edit.after);
+			expect(accepted.aiOperationIds).toEqual(aiOperationIds(message?.metadata));
+			expect(accepted.aiUsage?.requests).toBe(3);
+			expect((await api.ai.usage({})).groups).toEqual([
+				expect.objectContaining({ action: "tailor-resume", requests: 3, model: "capable-model" }),
+			]);
+			expect(requests).toHaveLength(3);
+			await aiProvidersService.delete({ userId: user.id, id: connection.id });
+			const reloaded = await api.resume.getById({ id: copy.id });
+			expect(reloaded.aiUsage).toEqual(accepted.aiUsage);
+			expect(reloaded.aiOperationIds).toEqual(accepted.aiOperationIds);
+		}),
+	);
+
+	it("refuses unauthorized, declined and already-cancelled tailoring before creating a copy or sending data", () =>
+		run(async () => {
+			await provider();
+			const api = client();
+			const sourceId = await api.resume.import({ data: structuredClone(sampleResumeData) });
+			const id = await api.applications.create({
+				company: "Fictional Cedar",
+				role: "Engineer",
+				resumeId: sourceId,
+				jobDescription: "Build fictional services.",
+			});
+			const [foreign] = await db
+				.insert(tables.application)
+				.values({ userId: "usage-bob", company: "Fictional Birch", role: "Engineer" })
+				.returning();
+			if (!foreign) throw new Error("Missing fictional application");
+			await expect(client(["read"]).applicationAi.tailorResume({ id })).rejects.toMatchObject({ code: "FORBIDDEN" });
+			await expect(
+				client(undefined, new Headers({ "x-ai-destination": "none" })).applicationAi.tailorResume({ id }),
+			).rejects.toMatchObject({ code: "CONFLICT" });
+			await expect(api.applicationAi.tailorResume({ id: foreign.id })).rejects.toMatchObject({ code: "NOT_FOUND" });
+			const controller = new AbortController();
+			controller.abort();
+			await expect(api.applicationAi.tailorResume({ id }, { signal: controller.signal })).rejects.toThrow();
+			expect(requests).toHaveLength(0);
+			expect((await pool.query("select id from resume where user_id=$1", [user.id])).rows).toEqual([{ id: sourceId }]);
+			expect(await db.select({ id: tables.agentThread.id }).from(tables.agentThread)).toEqual([]);
+			expect((await api.applications.getById({ id })).resumeId).toBe(sourceId);
+		}));
+
+	it("returns the accessible unchanged copy and interrupted conversation after a failed canonical tailoring reply", () =>
+		run(async () => {
+			await provider();
+			const api = client();
+			const sourceId = await api.resume.import({ data: structuredClone(sampleResumeData) });
+			const original = await api.resume.getById({ id: sourceId });
+			const id = await api.applications.create({
+				company: "Fictional Cedar",
+				role: "Engineer",
+				resumeId: sourceId,
+				jobDescription: "Build fictional services.",
+			});
+			mode = "failure";
+			const result = await api.applicationAi.tailorResume({ id });
+			expect(result).toMatchObject({ reviewRequired: true, generationStatus: "interrupted" });
+			expect(result.conversation?.interrupted).toHaveLength(1);
+			expect(result.conversation?.thread.activeRunId).toBeNull();
+			const copy = await api.resume.getById({ id: result.resumeId });
+			expect(copy.id).not.toBe(sourceId);
+			expect(copy.data).toEqual(original.data);
+			expect(copy.aiOperationIds).toEqual([]);
+			expect((await api.resume.getById({ id: sourceId })).data).toEqual(original.data);
+			expect(requests).toHaveLength(1);
+			expect((await api.ai.usage({})).groups).toEqual([
+				expect.objectContaining({ action: "tailor-resume", requests: 1 }),
+			]);
+		}));
+
+	it("cancels actual tailoring transport, keeps its unchanged copy and counts the dispatched request", () =>
+		run(async () => {
+			await provider();
+			const api = client();
+			const sourceId = await api.resume.import({ data: structuredClone(sampleResumeData) });
+			const original = await api.resume.getById({ id: sourceId });
+			const id = await api.applications.create({
+				company: "Fictional Cedar",
+				role: "Engineer",
+				resumeId: sourceId,
+				jobDescription: "Build fictional services.",
+			});
+			mode = "hold";
+			const held = new Promise<void>((resolve) => {
+				arrived = resolve;
+			});
+			const closed = new Promise<void>((resolve) => {
+				disconnected = resolve;
+			});
+			const controller = new AbortController();
+			const pending = api.applicationAi.tailorResume({ id }, { signal: controller.signal });
+			try {
+				await held;
+				controller.abort();
+				await expect(pending).rejects.toThrow();
+				await closed;
+				const copies = await pool.query("select id from resume where user_id=$1 and id<>$2", [user.id, sourceId]);
+				expect(copies.rows).toHaveLength(1);
+				const copy = await api.resume.getById({ id: copies.rows[0].id });
+				expect(copy.data).toEqual(original.data);
+				expect(copy.aiOperationIds).toEqual([]);
+				expect(requests).toHaveLength(1);
+				expect((await api.ai.usage({})).groups).toEqual([
+					expect.objectContaining({ action: "tailor-resume", requests: 1 }),
+				]);
+			} finally {
+				release();
+			}
+		}));
+
+	it("does not let public assistant callers reclassify usage as tailoring", () =>
+		run(async () => {
+			await provider();
+			const api = client();
+			const id = await api.resume.import({ data: structuredClone(sampleResumeData) });
+			const thread = await api.agent.threads.start({ resumeId: id });
+			mode = "letter";
+			const stream = await api.agent.messages.send({
+				threadId: thread.id,
+				message: {
+					id: "fictional-question",
+					role: "user",
+					parts: [{ type: "text", text: "Read this fictional resume." }],
+				},
+				usageAction: "tailor-resume",
+			} as never);
+			for await (const _chunk of stream) {
+				/* Consume the actual streamed reply. */
+			}
+			expect((await api.ai.usage({})).groups).toEqual([expect.objectContaining({ action: "assistant", requests: 1 })]);
+		}));
+
 	const provider = async (ownerId = user.id) => {
 		const created = await aiProvidersService.create({
 			userId: ownerId,
@@ -343,11 +805,13 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 	beforeEach(async () => {
 		release();
 		arrived = () => {};
+		disconnected = () => {};
 		requests = [];
 		requestMessages = [];
 		agentStep = 0;
 		agentChanges = [];
 		mode = "text";
+		failLetter = false;
 		await pool.query('truncate "user" cascade');
 		await withDatabasePool(pool, async () => {
 			const nonce = randomUUID().slice(0, 8);

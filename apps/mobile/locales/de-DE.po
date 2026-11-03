@@ -3597,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Die Anfrage konnte nicht abgeschlossen werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Diese Aktion konnte nicht abgeschlossen werden. Versuchen Sie es erneut."
@@ -3947,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Diese Änderung konnte nicht gespeichert werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Diese Änderung konnte nicht gespeichert werden. Versuchen Sie es erneut."
 
@@ -4678,6 +4681,10 @@ msgstr "Unterschiedliche Währungen oder Zahlungsperioden. Es wird keine Gelddif
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Richtung"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Verwerfen"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5754,6 +5761,10 @@ msgstr "Formularantwort"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Formularfragen (optional)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatierung"
@@ -6612,6 +6623,10 @@ msgstr "Verwenden Sie eine einzige Adresse, damit Software nicht raten muss, wel
 msgid "Keep access when you are not using the application."
 msgstr "Zugriff behalten, wenn Sie die Anwendung nicht verwenden."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Antwort übernehmen"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6644,6 +6659,10 @@ msgstr "Bleiben Sie ehrlich"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Halten Sie sie unter 2,5 MB, meist durch Entfernen oder Verkleinern von Bildern."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Anschreiben übernehmen"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6969,6 +6988,7 @@ msgid "Letter body"
 msgstr "Briefkörper"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Briefentwurf"
 
@@ -8185,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "keine Änderungen"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Keine Änderungen vorgeschlagen."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Es wurde kein Abschnitt \"Education\" gefunden."
@@ -8863,6 +8887,10 @@ msgstr "Vor Ort"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Öffnen"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "KI-Assistent öffnen"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9545,8 +9573,13 @@ msgid "Prepare a resume"
 msgstr "Lebenslauf vorbereiten"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Bewerbung vorbereiten"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Entwürfe zur Prüfung vorbereiten"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9572,6 +9605,11 @@ msgstr "Export wird vorbereitet…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Datei wird vorbereitet…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Vorbereiten…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9720,6 +9758,10 @@ msgstr "Fortschrittsbalken"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projekte"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Lebenslaufpunkt vorschlagen"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10686,6 +10728,10 @@ msgstr "Lebenslaufseite {0}"
 msgid "Resume preview"
 msgstr "Lebenslauf-Vorschau"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Lebenslaufvorschläge"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "Lebenslauf eingereicht (optional)"
@@ -10882,6 +10928,10 @@ msgstr "Prüfen Sie die Pflichtantworten im Formular und entfernen Sie nicht bel
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Lebenslauffakten prüfen"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Prüfe Anpassungsvorschläge, Anschreiben und Antworten gemeinsam. Nichts wird beim Arbeitgeber eingereicht."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11661,6 +11711,10 @@ msgstr "Gesendet an {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Trenne Fragen durch eine Leerzeile. Bis zu fünf Fragen mit je 2.000 Zeichen."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbisch"
@@ -11813,6 +11867,18 @@ msgstr "Teilen über…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Geteilt werden nur Lebenslauf und Stellenanzeige. Wissen, private Notizen und Webzugriff sind ausgeschlossen. Prüfe Vorschläge vor dem Annehmen; das Original bleibt unverändert."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Geteilt werden nur die ausgewählte Wissensaussage, Lebenslauf und Stellenanzeige. Weiteres Wissen, private Notizen und Webzugriff sind ausgeschlossen. Prüfe den Punkt vor dem Annehmen."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Geteilt werden Lebenslauf, Stellenanzeige und eingefügte Fragen. Antwortentwürfe nutzen auch dein Anschreiben, Karrierepräferenzen, Bewerbungsnotizen und Kontakte sowie aktive Wissensfakten und Geschichten. Inhalte können gekürzt sein. Webzugriff ist aus. Prüfe vor dem Speichern; nichts wird eingereicht."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12207,6 +12273,10 @@ msgstr "Einige Zeichen konnten nicht gezeichnet werden: {0}. Wählen Sie in Desi
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Einige Zeichen konnten nicht gerendert werden. Prüfen Sie die Seite vor dem Exportieren."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Einige Entwürfe konnten nicht fertiggestellt werden. Übernimm fertige Entwürfe vor einem erneuten Versuch."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Manche Glyphen haben außerhalb dieser Datei keine Bedeutung."
@@ -12506,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Stoppen"
 
@@ -12922,6 +12994,7 @@ msgstr "Das Konto hat sich geändert. Versuchen Sie es erneut."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Die Adresse darf nur lateinische Buchstaben a–z und Zahlen enthalten, getrennt durch einzelne Bindestriche."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14038,6 +14111,7 @@ msgstr "Unterstreichen Sie Links"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

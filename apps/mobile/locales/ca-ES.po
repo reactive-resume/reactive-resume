@@ -3597,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "No s'ha pogut completar la sol·licitud. Comproveu la connexió i torneu-ho a provar."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "No s'ha pogut completar aquesta acció. Torna-ho a provar."
@@ -3947,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "No s'ha pogut desar el canvi. Comproveu la connexió i torneu-ho a provar."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "No s'ha pogut desar aquest canvi. Torna-ho a provar."
 
@@ -4678,6 +4681,10 @@ msgstr "Diferents monedes o períodes de pagament. No es calcula cap diferència
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Direcció"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Descarta"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5754,6 +5761,10 @@ msgstr "Resposta del formulari"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Preguntes del formulari (opcional)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatatge"
@@ -6612,6 +6623,10 @@ msgstr "Fes servir una sola adreça, perquè el programari no hagi d'endevinar q
 msgid "Keep access when you are not using the application."
 msgstr "Mantenir l'accés quan no estiguis utilitzant l'aplicació."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Conserva la resposta"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6644,6 +6659,10 @@ msgstr "Amb honestedat"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Mantén-lo per sota de 2,5 MB, normalment eliminant o reduint imatges."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Conserva la carta"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6969,6 +6988,7 @@ msgid "Letter body"
 msgstr "Cos de la lletra"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Esborrany de carta"
 
@@ -8185,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "sense edicions"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "No s’han proposat canvis."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "No s'ha trobat cap secció d'educació."
@@ -8863,6 +8887,10 @@ msgstr "Presencial"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Obre"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Obre l’assistent d’IA"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9545,8 +9573,13 @@ msgid "Prepare a resume"
 msgstr "Prepara un currículum"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Preparar l'aplicació"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Prepara esborranys per revisar"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9572,6 +9605,11 @@ msgstr "S'està preparant l'exportació…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "S'està preparant el fitxer…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "S'està preparant…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9720,6 +9758,10 @@ msgstr "Barra de progrés"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projectes"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Proposa un punt per al currículum"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10686,6 +10728,10 @@ msgstr "pàgina de currículum vitae {0}"
 msgid "Resume preview"
 msgstr "vista prèvia del currículum vitae"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Propostes per al currículum"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "currículum enviat (opcional)"
@@ -10882,6 +10928,10 @@ msgstr "Reviseu les respostes obligatòries del formulari i elimineu les afirmac
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Revisa els fets del currículum"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Revisa junts els ajustos, la carta i les respostes. No s’envia res a l’ocupador."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11661,6 +11711,10 @@ msgstr "Enviat a {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Separa les preguntes amb una línia en blanc. Fins a cinc preguntes de 2.000 caràcters cadascuna."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbi"
@@ -11813,6 +11867,18 @@ msgstr "Comparteix a través de…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Comparteix només el currículum i l’oferta. Se n’exclouen Coneixements, notes privades i accés web. Revisa les propostes abans d’acceptar-les; l’original no canvia."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Comparteix només el fet seleccionat de Coneixements, el currículum i l’oferta. Altres coneixements, notes privades i accés web queden exclosos. Revisa el punt abans d’acceptar-lo."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Comparteix el currículum, l’oferta i les preguntes enganxades. Els esborranys de resposta també fan servir la carta, preferències professionals, notes i contactes de la candidatura i fets i històries actius de Coneixements. El context es pot abreujar. Accés web desactivat. Revisa abans de desar; no s’envia res."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12207,6 +12273,10 @@ msgstr "Alguns caràcters no s'han pogut dibuixar: {0}. Trieu un altre tipus de 
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Alguns caràcters no s'han pogut renderitzar. Comproveu la pàgina abans d'exportar."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Alguns esborranys no s’han pogut completar. Conserva els completats abans de tornar-ho a provar."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Alguns glifs no tenen cap significat fora d'aquest fitxer."
@@ -12506,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Atureu-vos"
 
@@ -12922,6 +12994,7 @@ msgstr "El compte ha canviat. Torna-ho a provar."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "L'adreça només ha de contenir lletres llatines a–z i números, separats per guions senzills."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14038,6 +14111,7 @@ msgstr "Subratlla els enllaços"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

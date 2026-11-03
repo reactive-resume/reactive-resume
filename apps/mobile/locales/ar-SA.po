@@ -3597,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "تعذّر إكمال الطلب. تحقق من اتصالك وحاول مرة أخرى."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "تعذر إكمال هذا الإجراء. حاول ثانية."
@@ -3947,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "تعذّر حفظ ذلك التغيير. تحقّق من اتصالك وحاول مرة أخرى."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "تعذر حفظ هذا التغيير. حاول ثانية."
 
@@ -4678,6 +4681,10 @@ msgstr "تختلف العملات أو فترات الراتب. لا يتم اح
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "اتجاه"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "تجاهل"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5754,6 +5761,10 @@ msgstr "إجابة النموذج"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "أسئلة النموذج (اختياري)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "التنسيق"
@@ -6612,6 +6623,10 @@ msgstr "احتفظ بعنوان واحد فقط، حتى لا تضطر البر�
 msgid "Keep access when you are not using the application."
 msgstr "حافظ على الوصول عندما لا تستخدم التطبيق."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "الاحتفاظ بالإجابة"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6644,6 +6659,10 @@ msgstr "كن صادقًا"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "أبقِه أقل من ٢٫٥ ميغابايت، عادةً بحذف الصور أو تصغيرها."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "الاحتفاظ بالخطاب"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6969,6 +6988,7 @@ msgid "Letter body"
 msgstr "جسم الرسالة"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "مسودة خطاب"
 
@@ -8185,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "لا توجد تعديلات"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "لم تُقترح تعديلات."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "لم يُعثر على قسم للتعليم."
@@ -8863,6 +8887,10 @@ msgstr "حضورية"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "افتح"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "فتح مساعد الذكاء الاصطناعي"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9545,8 +9573,13 @@ msgid "Prepare a resume"
 msgstr "قم بإعداد السيرة الذاتية"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "تحضير الطلب"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "إعداد مسودات للمراجعة"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9572,6 +9605,11 @@ msgstr "جارٍ تحضير التصدير…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "جارٍ تحضير الملف…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "جارٍ التحضير…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9720,6 +9758,10 @@ msgstr "شريط التقدّم"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "المشاريع"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "اقتراح نقطة للسيرة الذاتية"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10686,6 +10728,10 @@ msgstr "صفحة السيرة الذاتية {0}"
 msgid "Resume preview"
 msgstr "معاينة السيرة الذاتية"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "مقترحات السيرة الذاتية"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "السيرة الذاتية المقدمة (اختياري)"
@@ -10882,6 +10928,10 @@ msgstr "راجع إجابات النموذج المطلوبة وأزل الاد�
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "مراجعة حقائق السيرة الذاتية"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "راجع مقترحات التخصيص ومسودة الخطاب والإجابات معًا. لا يُرسل شيء إلى صاحب العمل."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11661,6 +11711,10 @@ msgstr "تم الإرسال إلى {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "افصل الأسئلة بسطر فارغ. حتى خمسة أسئلة، بحد أقصى ٢٠٠٠ حرف لكل سؤال."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "الصربية"
@@ -11813,6 +11867,18 @@ msgstr "شارك عبر…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "تُشارك السيرة الذاتية وإعلان الوظيفة فقط. تُستبعد المعرفة والملاحظات الخاصة والوصول إلى الويب. راجع المقترحات قبل قبولها؛ يبقى الأصل دون تغيير."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "تُشارك عبارة المعرفة المحددة والسيرة الذاتية وإعلان الوظيفة فقط. تُستبعد المعرفة الأخرى والملاحظات الخاصة والوصول إلى الويب. راجع النقطة قبل قبولها."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "تُشارك السيرة الذاتية والإعلان والأسئلة الملصقة. تستخدم مسودات الإجابات أيضًا الخطاب والتفضيلات المهنية وملاحظات الطلب وجهات اتصاله وحقائق المعرفة وقصصها المفعلة. قد يُختصر السياق. الوصول إلى الويب معطل. راجع قبل الحفظ؛ لا يُقدَّم شيء."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12207,6 +12273,10 @@ msgstr "تعذّر رسم بعض الأحرف: {0}. اختر خطًا آخر ف�
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "تعذّر عرض بعض الأحرف. افحص الصفحة قبل التصدير."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "تعذر إكمال بعض المسودات. احتفظ بالمسودات المكتملة قبل المحاولة مجددًا."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "بعض الرموز (glyphs) ليس لها معنى خارج هذا الملف."
@@ -12506,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "قف"
 
@@ -12922,6 +12994,7 @@ msgstr "الحساب تغير. حاول ثانية."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "يجب أن يحتوي العنوان على أحرف لاتينية a–z وأرقام فقط، مفصولة بشرطات مفردة."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14038,6 +14111,7 @@ msgstr "تسطير الروابط"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

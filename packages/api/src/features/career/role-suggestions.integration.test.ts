@@ -19,7 +19,7 @@ vi.mock("@reactive-resume/db/client", () => ({
 		return fixture.db;
 	},
 }));
-vi.mock("../applications/ai", () => ({ generateJson: fixture.generate }));
+vi.mock("../ai/application-generation", () => ({ generateJson: fixture.generate }));
 vi.mock("../ai/service", () => ({ getModel: () => ({}) }));
 vi.mock("../ai-providers/service", () => ({
 	aiProvidersService: { getRunnableById: fixture.provider, assertAvailable: async () => {} },
