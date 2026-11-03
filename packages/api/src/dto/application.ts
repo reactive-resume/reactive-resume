@@ -12,6 +12,7 @@ import {
 	postingSourceSchema,
 } from "@reactive-resume/schema/applications/data";
 import { paginationShape } from "../pagination";
+import { agentConversationSchema } from "./agent";
 
 const MAX_APPLICATION_JOB_DESCRIPTION_CHARS = 20_000;
 const MAX_APPLICATION_DOCUMENT_BYTES = 10 * 1024 * 1024;
@@ -422,6 +423,17 @@ export const applicationDto = {
 	tags: {
 		input: z.object({}).optional().default({}),
 		output: z.array(z.string()),
+	},
+
+	tailorResume: {
+		input: z.object({ id: z.string() }),
+		output: z.object({
+			resumeId: z.string(),
+			name: z.string(),
+			reviewRequired: z.literal(true).optional(),
+			generationStatus: z.enum(["ready", "interrupted"]).optional(),
+			conversation: agentConversationSchema.optional(),
+		}),
 	},
 };
 

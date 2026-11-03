@@ -7,6 +7,7 @@ import { tailoringAllows } from "@reactive-resume/ai/tools/agent-tool-contracts"
 import * as schema from "@reactive-resume/db/schema";
 import { appliedApplications, canApplyTo, holdsProposal } from "@reactive-resume/resume/proposals";
 import { aiOperationIds, aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
+import { availableApplicationContext } from "../applications/access";
 import { parseStoredResumeData } from "../resume/resume-data-validation";
 import { lockThreadMessages, proposedEditsOf, withEditStatuses } from "./messages-persistence";
 
@@ -152,6 +153,26 @@ export async function saveProposalApplications(
 					// Explicit rejection wins over old draft saves and history movement.
 					if (applied === undefined || edit.status === "rejected") continue;
 					if (applied !== false && edit.status !== "accepted") {
+						const selected = (
+							original.metadata as { selectedKnowledgeFact?: { id?: unknown; updatedAt?: unknown } } | undefined
+						)?.selectedKnowledgeFact;
+						if (selected) {
+							if (typeof selected.id !== "string" || typeof selected.updatedAt !== "string") throw input.conflict();
+							const [fact] = await tx
+								.select({ updatedAt: schema.careerFact.updatedAt })
+								.from(schema.careerFact)
+								.where(
+									and(
+										eq(schema.careerFact.id, selected.id),
+										eq(schema.careerFact.userId, input.userId),
+										eq(schema.careerFact.status, "active"),
+										availableApplicationContext(input.userId, schema.careerFact.applicationId),
+									),
+								)
+								.for("share");
+							if (!fact || fact.updatedAt.toISOString() !== selected.updatedAt) throw input.conflict();
+						}
+
 						reader ??= await documentReader(tx, input.userId, input.document);
 						if (!reader || !acceptedEditAllowed(original, output, edit, reader, applied)) throw input.conflict();
 					}
@@ -183,7 +204,7 @@ export async function saveProposalApplications(
 			and(
 				eq(schema.aiRequest.userId, input.userId),
 				inArray(schema.aiRequest.operationId, candidates),
-				inArray(schema.aiRequest.action, ["assistant", "career-chat"]),
+				inArray(schema.aiRequest.action, ["assistant", "career-chat", "tailor-resume"]),
 			),
 		);
 	const recorded = new Set(attempts.map((row) => row.id));

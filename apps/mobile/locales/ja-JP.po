@@ -3597,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "リクエストを完了できませんでした。接続を確認して、もう一度お試しください。"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "このアクションを完了できませんでした。もう一度やり直してください。"
@@ -3947,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "その変更を保存できませんでした。接続を確認して、もう一度お試しください。"
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "その変更を保存できませんでした。もう一度やり直してください。"
 
@@ -4678,6 +4681,10 @@ msgstr "通貨や支払い期間が異なります。金額の差額は計算さ
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "方向"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "破棄"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5754,6 +5761,10 @@ msgstr "フォームの回答"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "フォームの質問（任意）"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "書式設定"
@@ -6612,6 +6623,10 @@ msgstr "アドレスは 1 つだけにして、ソフトウェアがどれを使
 msgid "Keep access when you are not using the application."
 msgstr "アプリケーションを使用していないときもアクセスを維持する。"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "回答を保存"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6644,6 +6659,10 @@ msgstr "正直に"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "通常は画像を削除または縮小して、2.5MB未満に抑えてください。"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "手紙を保存"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6969,6 +6988,7 @@ msgid "Letter body"
 msgstr "レター本文"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "手紙の下書き"
 
@@ -8185,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "編集はありません"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "編集の提案はありません。"
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "学歴セクションが見つかりませんでした。"
@@ -8863,6 +8887,10 @@ msgstr "対面"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "開く"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "AIアシスタントを開く"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9545,8 +9573,13 @@ msgid "Prepare a resume"
 msgstr "履歴書を準備する"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "応募を準備"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "確認用の下書きを準備"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9572,6 +9605,11 @@ msgstr "エクスポートを準備しています…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "ファイルを準備しています…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "準備中…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9720,6 +9758,10 @@ msgstr "プログレスバー"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "プロジェクト"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "履歴書の箇条書きを提案"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10686,6 +10728,10 @@ msgstr "レジュメページ {0}"
 msgid "Resume preview"
 msgstr "レジュメのプレビュー"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "履歴書への提案"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "履歴書提出（任意）"
@@ -10882,6 +10928,10 @@ msgstr "必須のフォーム回答を見直し、裏付けのない主張を削
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "レジュメの事実を確認"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "調整案、手紙の下書き、回答をまとめて確認します。雇用主には何も送信されません。"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11661,6 +11711,10 @@ msgstr "{0} に送信されました"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "質問は空行で区切ってください。最大5問、各2,000文字まで。"
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "セルビア語"
@@ -11813,6 +11867,18 @@ msgstr "共有方法…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "履歴書と求人情報のみを共有します。ナレッジ、非公開メモ、ウェブアクセスは含まれません。承認前に提案を確認してください。原本は変更されません。"
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "選択したナレッジの記述、履歴書、求人情報のみを共有します。他のナレッジ、非公開メモ、ウェブアクセスは含まれません。承認前に箇条書きを確認してください。"
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "履歴書、求人情報、貼り付けた質問を共有します。回答の下書きには、手紙、キャリアの希望、応募のメモと連絡先、有効なナレッジの事実やエピソードも使用します。内容は抜粋される場合があります。ウェブアクセスは無効です。保存前に確認してください。応募は送信されません。"
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12207,6 +12273,10 @@ msgstr "一部の文字を描画できませんでした: {0}。デザインで�
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "一部の文字をレンダリングできませんでした。エクスポートする前にページを確認してください。"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "一部の下書きが完了しませんでした。再試行前に完成した下書きを保存してください。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "一部のグリフは、このファイルの外では意味を持ちません。"
@@ -12506,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "停止"
 
@@ -12922,6 +12994,7 @@ msgstr "アカウントが変わりました。もう一度やり直してくだ
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "アドレスには半角英字（a–z）と数字のみを含め、単一のダッシュで区切る必要があります。"
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14038,6 +14111,7 @@ msgstr "リンクに下線を引く"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

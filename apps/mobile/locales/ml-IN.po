@@ -3597,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "അഭ്യർത്ഥന പൂർത്തിയാക്കാനായില്ല. നിങ്ങളുടെ കണക്ഷൻ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "ഈ പ്രവർത്തനം പൂർത്തിയാക്കാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക."
@@ -3947,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "ആ മാറ്റം സേവ് ചെയ്യാനായില്ല. നിങ്ങളുടെ കണക്ഷൻ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "ആ മാറ്റം സംരക്ഷിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
@@ -4678,6 +4681,10 @@ msgstr "വ്യത്യസ്ത കറൻസികൾ അല്ലെങ്�
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "ദിശ"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "നിരസിക്കുക"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5754,6 +5761,10 @@ msgstr "ഫോം മറുപടി"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "ഫോം ചോദ്യങ്ങൾ (ഐച്ഛികം)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "ഫോർമാറ്റിംഗ്"
@@ -6612,6 +6623,10 @@ msgstr "ഒരൊറ്റ വിലാസം മാത്രം വയ്ക്
 msgid "Keep access when you are not using the application."
 msgstr "നിങ്ങൾ ആപ്ലിക്കേഷൻ ഉപയോഗിക്കാത്തപ്പോൾ ആക്സസ് നിലനിർത്തുക."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "ഉത്തരം സൂക്ഷിക്കുക"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6644,6 +6659,10 @@ msgstr "സത്യസന്ധമായിരിക്കട്ടെ"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "സാധാരണയായി ചിത്രങ്ങൾ നീക്കം ചെയ്തോ ചെറുതാക്കിയോ 2.5 MB-യിൽ താഴെ സൂക്ഷിക്കുക."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "കത്ത് സൂക്ഷിക്കുക"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6969,6 +6988,7 @@ msgid "Letter body"
 msgstr "ലെറ്റർ ബോഡി"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "കത്തിന്റെ കരട്"
 
@@ -8185,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "തിരുത്തലുകളൊന്നുമില്ല"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "തിരുത്തലുകൾ നിർദേശിച്ചിട്ടില്ല."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "വിദ്യാഭ്യാസ വിഭാഗം കണ്ടെത്തിയില്ല."
@@ -8863,6 +8887,10 @@ msgstr "ഓൺസൈറ്റ്"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "ഓപ്പൺ ചെയ്യുക"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "AI സഹായിയെ തുറക്കുക"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9545,8 +9573,13 @@ msgid "Prepare a resume"
 msgstr "ഒരു റെസ്യൂമെ തയ്യാറാക്കുക"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "അപേക്ഷ തയ്യാറാക്കുക"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "അവലോകനത്തിനായി കരടുകൾ തയ്യാറാക്കുക"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9572,6 +9605,11 @@ msgstr "കയറ്റുമതി തയ്യാറാക്കുന്ന�
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "ഫയൽ തയ്യാറാക്കുന്നു..."
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "തയ്യാറെടുക്കുന്നു..."
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9720,6 +9758,10 @@ msgstr "പ്രോഗ്രസ് ബാർ"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "പ്രോജക്ടുകൾ"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "റെസ്യൂമെ പോയിന്റ് നിർദേശിക്കുക"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10686,6 +10728,10 @@ msgstr "റെസ്യൂമെ പേജ് {0}"
 msgid "Resume preview"
 msgstr "റെസ്യൂമെ പ്രിവ്യൂ"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "റെസ്യൂമെ നിർദേശങ്ങൾ"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "റെസ്യൂമെ സമർപ്പിച്ചു (ഓപ്ഷണൽ)"
@@ -10882,6 +10928,10 @@ msgstr "ആവശ്യമായ ഫോം ഉത്തരങ്ങൾ പരി
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "റെസ്യൂമെ വസ്തുതകൾ പരിശോധിക്കുക"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "അനുയോജ്യമായ മാറ്റങ്ങൾ, കത്തിന്റെ കരട്, ഉത്തരങ്ങൾ എന്നിവ ഒരുമിച്ച് പരിശോധിക്കുക. തൊഴിലുടമയ്ക്ക് ഒന്നും അയയ്ക്കില്ല."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11661,6 +11711,10 @@ msgstr "{0}-ലേക്ക് അയച്ചു"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "ചോദ്യങ്ങൾ ഒരു ഒഴിഞ്ഞ വരിയാൽ വേർതിരിക്കുക. പരമാവധി അഞ്ച് ചോദ്യങ്ങൾ; ഓരോന്നിലും 2,000 അക്ഷരങ്ങൾ."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "സെർബിയൻ"
@@ -11813,6 +11867,18 @@ msgstr "ഇതുവഴി പങ്കിടുക..."
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "റെസ്യൂമെയും ജോലി പരസ്യവും മാത്രം പങ്കിടും. അറിവ്, സ്വകാര്യ കുറിപ്പുകൾ, വെബ് പ്രവേശനം എന്നിവ ഒഴിവാക്കും. സ്വീകരിക്കുന്നതിന് മുമ്പ് നിർദേശങ്ങൾ പരിശോധിക്കുക; അസൽ മാറില്ല."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "തിരഞ്ഞെടുത്ത അറിവിലെ പ്രസ്താവന, റെസ്യൂമെ, ജോലി പരസ്യം എന്നിവ മാത്രം പങ്കിടും. മറ്റ് അറിവുകൾ, സ്വകാര്യ കുറിപ്പുകൾ, വെബ് പ്രവേശനം എന്നിവ ഒഴിവാക്കും. സ്വീകരിക്കുന്നതിന് മുമ്പ് പോയിന്റ് പരിശോധിക്കുക."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "റെസ്യൂമെ, ജോലി പരസ്യം, ഒട്ടിച്ച ചോദ്യങ്ങൾ എന്നിവ പങ്കിടും. ഉത്തരങ്ങളുടെ കരടുകൾ കത്ത്, തൊഴിൽ മുൻഗണനകൾ, അപേക്ഷാ കുറിപ്പുകളും ബന്ധപ്പെടാനുള്ള വിവരങ്ങളും, സജീവമായ അറിവിലെ വസ്തുതകളും കഥകളും ഉപയോഗിക്കും. സന്ദർഭം ചുരുക്കിയേക്കാം. വെബ് പ്രവേശനം ഓഫാണ്. സംരക്ഷിക്കുന്നതിന് മുമ്പ് പരിശോധിക്കുക; ഒന്നും സമർപ്പിക്കില്ല."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12207,6 +12273,10 @@ msgstr "ചില അക്ഷരങ്ങൾ വരയ്ക്കാനായ�
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "ചില അക്ഷരങ്ങൾ റെൻഡർ ചെയ്യാനായില്ല. എക്സ്പോർട്ട് ചെയ്യുന്നതിന് മുമ്പ് പേജ് പരിശോധിക്കുക."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "ചില കരടുകൾ പൂർത്തിയാക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുന്നതിന് മുമ്പ് പൂർത്തിയായ കരടുകൾ സൂക്ഷിക്കുക."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "ചില ഗ്ലിഫുകൾക്ക് ഈ ഫയലിന് പുറത്ത് അർത്ഥമില്ല."
@@ -12506,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "നിർത്തുക"
 
@@ -12922,6 +12994,7 @@ msgstr "അക്കൗണ്ട് മാറ്റി. വീണ്ടും �
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "വിലാസത്തിൽ ലാറ്റിൻ അക്ഷരങ്ങളും (a–z) അക്കങ്ങളും മാത്രമേ ഉണ്ടാകാവൂ, അവ ഒറ്റ ഡാഷുകളാൽ വേർതിരിച്ചിരിക്കണം."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14038,6 +14111,7 @@ msgstr "ലിങ്കുകൾക്ക് അടിവരയിടുക"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

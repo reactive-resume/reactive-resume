@@ -3597,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "មិនអាចបំពេញសំណើបានទេ។ ពិនិត្យការតភ្ជាប់របស់អ្នក ហើយព្យាយាមម្តងទៀត។"
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "មិនអាចបញ្ចប់សកម្មភាពនេះបានទេ។ ព្យាយាមម្តងទៀត។"
@@ -3947,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "មិនអាចរក្សាទុកការផ្លាស់ប្តូរនោះបានទេ។ សូមពិនិត្យការតភ្ជាប់របស់អ្នក ហើយព្យាយាមម្តងទៀត។"
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "មិនអាចរក្សាទុកការផ្លាស់ប្តូរនោះបានទេ។ ព្យាយាមម្តងទៀត។"
 
@@ -4678,6 +4681,10 @@ msgstr "រូបិយប័ណ្ណផ្សេងគ្នា ឬរយៈ�
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "ទិស"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "បោះបង់"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5754,6 +5761,10 @@ msgstr "ចម្លើយក្នុងទម្រង់"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "សំណួរក្នុងទម្រង់ (ស្រេចចិត្ត)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "ការធ្វើទ្រង់ទ្រាយ"
@@ -6612,6 +6623,10 @@ msgstr "រក្សាទុកអាសយដ្ឋានតែមួយ ដ�
 msgid "Keep access when you are not using the application."
 msgstr "រក្សាការចូលប្រើនៅពេលដែលអ្នកមិនប្រើកម្មវិធី។"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "រក្សាចម្លើយ"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6644,6 +6659,10 @@ msgstr "រក្សាភាពស្មោះត្រង់"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "រក្សាវាឱ្យតិចជាង 2.5 MB ជាធម្មតាដោយការលុប ឬបង្រួមរូបភាព។"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "រក្សាលិខិត"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6969,6 +6988,7 @@ msgid "Letter body"
 msgstr "តួអក្សរ"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "សេចក្ដីព្រាងលិខិត"
 
@@ -8185,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "គ្មានការកែសម្រួលទេ។"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "គ្មានការកែប្រែដែលបានស្នើទេ។"
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "រកមិនឃើញផ្នែកការអប់រំទេ។"
@@ -8863,6 +8887,10 @@ msgstr "នៅទីតាំង"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "បើក"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "បើកជំនួយការ AI"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9545,8 +9573,13 @@ msgid "Prepare a resume"
 msgstr "រៀបចំប្រវត្តិរូបសង្ខេប"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "រៀបចំកម្មវិធី"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "រៀបចំសេចក្តីព្រាងសម្រាប់ពិនិត្យ"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9572,6 +9605,11 @@ msgstr "កំពុងរៀបចំនាំចេញ…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "កំពុងរៀបចំឯកសារ…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "កំពុងរៀបចំ…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9720,6 +9758,10 @@ msgstr "របារវឌ្ឍនភាព"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "គម្រោង"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "ស្នើចំណុចក្នុងប្រវត្តិរូបសង្ខេប"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10686,6 +10728,10 @@ msgstr "ទំព័រ ប្រវត្តិរូបសង្ខេប {0}"
 msgid "Resume preview"
 msgstr "ការមើលប្រវត្តិរូបជាមុន"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "សំណើសម្រាប់ប្រវត្តិរូបសង្ខេប"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "ប្រវត្តិរូបសង្ខេបត្រូវបានដាក់ជូន (ជាជម្រើស)"
@@ -10882,6 +10928,10 @@ msgstr "ពិនិត្យចម្លើយទម្រង់ដែលតម
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "ពិនិត្យការពិតពីប្រវត្តិរូបសង្ខេប"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "ពិនិត្យសំណើកែសម្រួល លិខិតព្រាង និងចម្លើយរួមគ្នា។ គ្មានអ្វីត្រូវបានផ្ញើទៅនិយោជកទេ។"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11661,6 +11711,10 @@ msgstr "ផ្ញើទៅ {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "បំបែកសំណួរដោយបន្ទាត់ទទេ។ ច្រើនបំផុតប្រាំសំណួរ មួយៗមាន ២,០០០ តួអក្សរ។"
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbian"
@@ -11813,6 +11867,18 @@ msgstr "ចែករំលែកតាមរយៈ…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "ចែករំលែកតែប្រវត្តិរូបសង្ខេបនិងប្រកាសការងារ។ មិនរួមបញ្ចូលចំណេះដឹង កំណត់ត្រាឯកជន និងការចូលប្រើវេបទេ។ ពិនិត្យសំណើមុនទទួលយក; ឯកសារដើមមិនផ្លាស់ប្តូរទេ។"
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "ចែករំលែកតែសេចក្តីថ្លែងក្នុងចំណេះដឹងដែលបានជ្រើស ប្រវត្តិរូបសង្ខេប និងប្រកាសការងារ។ មិនរួមបញ្ចូលចំណេះដឹងផ្សេង កំណត់ត្រាឯកជន និងការចូលប្រើវេបទេ។ ពិនិត្យចំណុចមុនទទួលយក។"
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "ចែករំលែកប្រវត្តិរូបសង្ខេប ប្រកាសការងារ និងសំណួរដែលបានបិទភ្ជាប់។ ចម្លើយព្រាងក៏ប្រើលិខិត ចំណូលចិត្តអាជីព កំណត់ត្រានិងទំនាក់ទំនងនៃពាក្យសុំ និងការពិតនិងរឿងរ៉ាវសកម្មក្នុងចំណេះដឹងផងដែរ។ បរិបទអាចត្រូវបានសង្ខេប។ ការចូលប្រើវេបត្រូវបានបិទ។ ពិនិត្យមុនរក្សាទុក; គ្មានអ្វីត្រូវបានដាក់ស្នើទេ។"
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12207,6 +12273,10 @@ msgstr "មិនអាចគូរតួអក្សរមួយចំនួន
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "មិនអាចបង្ហាញតួអក្សរមួយចំនួនបានទេ។ ពិនិត្យទំព័រមុនពេលនាំចេញ។"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "សេចក្តីព្រាងខ្លះមិនអាចបញ្ចប់បាន។ រក្សាសេចក្តីព្រាងដែលបញ្ចប់មុនព្យាយាមម្ដងទៀត។"
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "តួអក្សរខ្លះគ្មានអត្ថន័យនៅក្រៅឯកសារនេះទេ។"
@@ -12506,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "ឈប់"
 
@@ -12922,6 +12994,7 @@ msgstr "គណនីបានផ្លាស់ប្តូរ។ ព្យា�
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "អាសយដ្ឋានត្រូវតែមានតែអក្សរឡាតាំង a–z និងលេខប៉ុណ្ណោះ ដោយបំបែកដោយសញ្ញាដាច់ៗតែមួយ។"
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14038,6 +14111,7 @@ msgstr "គូសបន្ទាត់ក្រោមតំណ"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

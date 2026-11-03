@@ -3597,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Požadavek se nepodařilo dokončit. Zkontrolujte připojení a zkuste to znovu."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Tuto akci nelze dokončit. Zkuste to znovu."
@@ -3947,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Změnu se nepodařilo uložit. Zkontrolujte připojení a zkuste to znovu."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Změnu se nepodařilo uložit. Zkuste to znovu."
 
@@ -4678,6 +4681,10 @@ msgstr "Různé měny nebo platební období. Žádný peněžní rozdíl se nep
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Směr"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Zahodit"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5754,6 +5761,10 @@ msgstr "Odpověď ve formuláři"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Otázky formuláře (nepovinné)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formátování"
@@ -6612,6 +6623,10 @@ msgstr "Ponechte jedinou adresu, aby software nemusel hádat, kterou použít."
 msgid "Keep access when you are not using the application."
 msgstr "Ponechte si přístup, když aplikaci nepoužíváte."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Ponechat odpověď"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6644,6 +6659,10 @@ msgstr "Buďte upřímní"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Udržujte jej pod 2,5 MB, obvykle odstraněním nebo zmenšením obrázků."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Ponechat dopis"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6969,6 +6988,7 @@ msgid "Letter body"
 msgstr "Tělo dopisu"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Návrh dopisu"
 
@@ -8185,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "žádné úpravy"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Žádné navržené úpravy."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Nebyla nalezena sekce vzdělání."
@@ -8863,6 +8887,10 @@ msgstr "Na místě"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Otevřít"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Otevřít asistenta AI"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9545,8 +9573,13 @@ msgid "Prepare a resume"
 msgstr "Připravte si resumé"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Připravte aplikaci"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Připravit návrhy ke kontrole"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9572,6 +9605,11 @@ msgstr "Příprava exportu…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Příprava souboru…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Příprava…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9720,6 +9758,10 @@ msgstr "Ukazatel průběhu"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projekty"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Navrhnout bod životopisu"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10686,6 +10728,10 @@ msgstr "Stránka životopisu {0}"
 msgid "Resume preview"
 msgstr "náhled životopisu"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Návrhy pro životopis"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "životopis předložen (volitelné)"
@@ -10882,6 +10928,10 @@ msgstr "Zkontrolujte povinné odpovědi ve formuláři a odstraňte nepodložen�
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Zkontrolovat fakta ze životopisu"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Zkontrolujte společně návrhy úprav, dopis a odpovědi. Zaměstnavateli se nic neposílá."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11661,6 +11711,10 @@ msgstr "Odesláno na {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Oddělte otázky prázdným řádkem. Nejvýše pět otázek po 2 000 znacích."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Srbština"
@@ -11813,6 +11867,18 @@ msgstr "Sdílet přes…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Sdílí pouze životopis a inzerát. Znalosti, soukromé poznámky a přístup k webu jsou vyloučeny. Před přijetím návrhy zkontrolujte; originál zůstává nezměněný."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Sdílí pouze vybraný údaj ze Znalostí, životopis a inzerát. Ostatní znalosti, soukromé poznámky a přístup k webu jsou vyloučeny. Před přijetím bod zkontrolujte."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Sdílí životopis, inzerát a vložené otázky. Návrhy odpovědí používají také dopis, kariérní preference, poznámky a kontakty žádosti a aktivní fakta a příběhy ze Znalostí. Kontext může být zkrácen. Přístup k webu je vypnutý. Před uložením zkontrolujte; nic se neodesílá."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12207,6 +12273,10 @@ msgstr "Některé znaky nešlo vykreslit: {0}. Vyberte jiné písmo v Designu."
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Některé znaky nešlo vykreslit. Před exportem zkontrolujte stránku."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Některé návrhy se nepodařilo dokončit. Před dalším pokusem ponechte dokončené návrhy."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Některé glyfy nemají mimo tento soubor žádný význam."
@@ -12506,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Zastávka"
 
@@ -12922,6 +12994,7 @@ msgstr "Účet se změnil. Zkuste to znovu."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Adresa musí obsahovat pouze latinská písmena a–z a číslice, oddělené jednotlivými pomlčkami."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14038,6 +14111,7 @@ msgstr "Podtrhněte odkazy"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

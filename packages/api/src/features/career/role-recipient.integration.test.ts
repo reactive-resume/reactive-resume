@@ -13,9 +13,9 @@ import { env } from "@reactive-resume/env/server";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { aiProvidersRouter } from "../ai-providers/router";
 import { aiProvidersService } from "../ai-providers/service";
+import { generateJson } from "../ai/application-generation";
 import { getModel } from "../ai/service";
 import { createAiUsage } from "../ai/usage";
-import { generateJson } from "../applications/ai";
 import { careerRouter } from "./router";
 import { careerService } from "./service";
 

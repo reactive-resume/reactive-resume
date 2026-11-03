@@ -3597,7 +3597,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Nepavyko užbaigti užklausos. Patikrinkite ryšį ir bandykite dar kartą."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Nepavyko atlikti šio veiksmo. Bandykite dar kartą."
@@ -3947,6 +3949,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Nepavyko išsaugoti šio pakeitimo. Patikrinkite interneto ryšį ir bandykite dar kartą."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Nepavyko išsaugoti šio pakeitimo. Bandykite dar kartą."
 
@@ -4678,6 +4681,10 @@ msgstr "Skirtingos valiutos arba mokėjimo laikotarpiai. Pinigų skirtumas neska
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Kryptis"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Išmesti"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5754,6 +5761,10 @@ msgstr "Formos atsakymas"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Formos klausimai (neprivaloma)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatavimas"
@@ -6612,6 +6623,10 @@ msgstr "Naudokite vieną adresą, kad programinei įrangai nereikėtų spėlioti
 msgid "Keep access when you are not using the application."
 msgstr "Turėkite prieigą, kai nenaudojate programos."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Palikti atsakymą"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6644,6 +6659,10 @@ msgstr "Būkite sąžiningi"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Neviršykite 2,5 MB – dažniausiai tai pasiekiama pašalinus ar sumažinus vaizdus."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Palikti laišką"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6969,6 +6988,7 @@ msgid "Letter body"
 msgstr "Raidės korpusas"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Laiško juodraštis"
 
@@ -8185,6 +8205,10 @@ msgstr ""
 msgid "no edits"
 msgstr "jokių pakeitimų"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Pakeitimų nepasiūlyta."
+
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
 msgstr "Išsilavinimo skyriaus nerasta."
@@ -8863,6 +8887,10 @@ msgstr "Biure"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Atidaryti"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Open AI assistant"
+msgstr "Atidaryti DI asistentą"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -9545,8 +9573,13 @@ msgid "Prepare a resume"
 msgstr "Paruoškite gyvenimo aprašymą"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Paruoškite paraišką"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Parengti juodraščius peržiūrai"
 
 #: src/features/career/prepare-now.tsx
 msgid "Prepare for {company}"
@@ -9572,6 +9605,11 @@ msgstr "Ruošiama eksportuoti…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Ruošiamas failas…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Ruošiamasi…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9720,6 +9758,10 @@ msgstr "Progreso juosta"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projektai"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Pasiūlyti gyvenimo aprašymo punktą"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10686,6 +10728,10 @@ msgstr "Gyvenimo aprašymo puslapis {0}"
 msgid "Resume preview"
 msgstr "Gyvenimo aprašymo peržiūra"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Gyvenimo aprašymo pasiūlymai"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "gyvenimo aprašymas pateiktas (neprivaloma)"
@@ -10882,6 +10928,10 @@ msgstr "Peržiūrėkite privalomus formos atsakymus ir pašalinkite nepagrįstus
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Peržiūrėti gyvenimo aprašymo faktus"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Kartu peržiūrėkite pritaikymo pasiūlymus, laišką ir atsakymus. Darbdaviui niekas nesiunčiama."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11661,6 +11711,10 @@ msgstr "Išsiųstas į {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Klausimus atskirkite tuščia eilute. Iki penkių klausimų po 2 000 simbolių."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbų"
@@ -11813,6 +11867,18 @@ msgstr "Bendrinti per…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Bendrinamas tik gyvenimo aprašymas ir skelbimas. Žinios, privatūs užrašai ir žiniatinklio prieiga neįtraukiami. Peržiūrėkite pasiūlymus prieš priimdami; originalas nesikeičia."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Bendrinamas tik pasirinktas Žinių teiginys, gyvenimo aprašymas ir skelbimas. Kitos žinios, privatūs užrašai ir žiniatinklio prieiga neįtraukiami. Peržiūrėkite punktą prieš priimdami."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Bendrinamas gyvenimo aprašymas, skelbimas ir įklijuoti klausimai. Atsakymų juodraščiai taip pat naudoja laišką, karjeros nuostatas, paraiškos užrašus ir kontaktus bei aktyvius Žinių faktus ir istorijas. Kontekstas gali būti sutrumpintas. Žiniatinklio prieiga išjungta. Peržiūrėkite prieš išsaugodami; niekas nepateikiama."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12207,6 +12273,10 @@ msgstr "Kai kurių simbolių nepavyko nupiešti: {0}. Skiltyje Dizainas pasirink
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Kai kurių simbolių nepavyko atvaizduoti. Prieš eksportuodami patikrinkite puslapį."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Kai kurių juodraščių nepavyko užbaigti. Prieš bandydami dar kartą palikite užbaigtus juodraščius."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Kai kurie glifai už šio failo ribų neturi jokios reikšmės."
@@ -12506,6 +12576,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Sustok"
 
@@ -12922,6 +12994,7 @@ msgstr "Paskyra pasikeitė. Bandykite dar kartą."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Adrese gali būti tik lotyniškos raidės a–z ir skaičiai, atskirti pavieniais brūkšneliais."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14038,6 +14111,7 @@ msgstr "Pabraukite nuorodas"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

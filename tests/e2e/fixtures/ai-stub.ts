@@ -319,7 +319,17 @@ function reply(request: ChatRequest, response: ServerResponse) {
 					},
 					{ passageId: passage.id, text: "A conflicting rewrite.", why: "Conflicts with the first rewrite." },
 				]
-			: [{ passageId: passage.id, text: `${passage.text} (tightened by the stub)`, why: "Leads with the outcome." }];
+			: [
+					{
+						passageId: passage.id,
+						text: said.includes("propose truthful edits")
+							? passage.text.replace(/^Passionate /, "")
+							: `${passage.text} (tightened by the stub)`,
+						why: said.includes("propose truthful edits")
+							? "Removes a generic opening without changing the experience."
+							: "Leads with the outcome.",
+					},
+				];
 		const title = overlapping ? "Overlapping passage edits" : "Tighten the first passage";
 		return streamToolCall(
 			response,

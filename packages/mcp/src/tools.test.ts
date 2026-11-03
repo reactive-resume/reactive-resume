@@ -132,6 +132,22 @@ describe("registerTools", () => {
 		});
 	});
 
+	it("preserves pending tailoring review metadata and the legacy resume reference", async () => {
+		const draft = { resumeId: "copy", name: "Fictional copy", reviewRequired: true, generationStatus: "interrupted" };
+		clientMock.applications.ai.tailorResume.mockResolvedValueOnce(draft);
+		const { server, registered } = makeFakeServer();
+		registerTools(server as never, clientMock as never, new Headers());
+		const tool = registered.find((tool) => tool.name === MCP_TOOL_NAME.tailorResumeForApplication)!;
+		const result = await tool.handler({ id: "application" });
+		expect(clientMock.applications.ai.tailorResume).toHaveBeenCalledWith({ id: "application" });
+		expect(result.structuredContent).toEqual(draft);
+		expect(TOOL_META[MCP_TOOL_NAME.tailorResumeForApplication].outputSchema.parse(draft)).toEqual(draft);
+		expect(
+			TOOL_META[MCP_TOOL_NAME.tailorResumeForApplication].outputSchema.parse({ resumeId: "old", name: "Old" }),
+		).toEqual({ resumeId: "old", name: "Old" });
+		expect(clientMock.resume.patch).not.toHaveBeenCalled();
+	});
+
 	it("creates and duplicates with an automatically generated address", async () => {
 		const { server, registered } = makeFakeServer();
 		registerTools(server as never, clientMock as never, new Headers());

@@ -1131,24 +1131,28 @@ export const applicationService = {
 
 	// Persist AI-owned enrichment (match score + freeform metadata). Separate from the editable
 	// update path so these fields are only ever written by the AI procedures.
-	setAiResult: async (input: {
+	setAiResult: (input: {
 		id: string;
 		userId: string;
 		matchScore?: number | null;
 		aiMetadata?: AiMetadata | null;
-	}) => {
-		const [updated] = await db
-			.update(schema.application)
-			.set({
-				...(input.matchScore !== undefined ? { matchScore: input.matchScore } : {}),
-				...(input.aiMetadata !== undefined ? { aiMetadata: input.aiMetadata } : {}),
-			})
-			.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
-			.returning();
+		check?: (tx: DbOrTx) => Promise<void>;
+	}) =>
+		db.transaction(async (tx) => {
+			await lockUser(tx, input.userId);
+			await input.check?.(tx);
+			const [updated] = await tx
+				.update(schema.application)
+				.set({
+					...(input.matchScore !== undefined ? { matchScore: input.matchScore } : {}),
+					...(input.aiMetadata !== undefined ? { aiMetadata: input.aiMetadata } : {}),
+				})
+				.where(and(eq(schema.application.id, input.id), activeApplications(input.userId)))
+				.returning();
 
-		if (!updated) throw new ORPCError("NOT_FOUND");
-		return applicationView(updated);
-	},
+			if (!updated) throw new ORPCError("NOT_FOUND");
+			return applicationView(updated);
+		}),
 
 	addNote: async (input: { id: string; userId: string; text: string; date?: string | undefined }) => {
 		// Append in a single statement (activity || [event]) so concurrent notes can't drop each
