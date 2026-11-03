@@ -6,7 +6,7 @@ import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { coachStarters } from "@reactive-resume/schema/career-starters";
 import { formatList } from "@reactive-resume/utils/locale";
 import { refreshThreads, useThreads } from "./chat";
@@ -87,6 +87,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 	const [draftKey, setDraftKey] = useState(0);
 	const [chips, setChips] = useState<Chips>(DEFAULT_CHIPS);
 	const [listOpen, setListOpen] = useState(false);
+	const [renaming, setRenaming] = useState<{ id: string; title: string } | null>(null);
 	const [modelOpen, setModelOpen] = useState(false);
 
 	const conversations = (threads.data ?? []).filter((thread) => thread.scope === "career");
@@ -151,9 +152,21 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.surface }}>
 			<View style={{ paddingHorizontal: space.s4, flexDirection: "row", alignItems: "center" }}>
-				<Text variant="label" style={{ flex: 1 }}>
-					{summary ? title(summary) : t`Coach`}
-				</Text>
+				{summary ? (
+					<Pressable
+						accessibilityRole="button"
+						accessibilityLabel={t`Rename ${title(summary)}`}
+						onPress={() => {
+							setRenaming({ id: summary.id, title: title(summary) });
+							setListOpen(true);
+						}}
+						style={{ flex: 1, minHeight: 44, justifyContent: "center" }}
+					>
+						<Text variant="label">{title(summary)}</Text>
+					</Pressable>
+				) : (
+					<Text variant="label" style={{ flex: 1 }}>{t`Coach`}</Text>
+				)}
 				<IconButton icon="clock-counter-clockwise" label={t`Conversations`} onPress={() => setListOpen(true)} />
 				<IconButton icon="note-pencil" label={t`New conversation`} onPress={newConversation} />
 			</View>
@@ -299,6 +312,8 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 				onClose={() => setListOpen(false)}
 				threads={conversations}
 				currentId={threadId}
+				renaming={renaming}
+				onRenamingChange={setRenaming}
 				onNew={newConversation}
 				onOpen={(id) => {
 					setThreadId(id);
@@ -393,6 +408,8 @@ type ConversationsSheetProps = {
 	onClose: () => void;
 	threads: readonly ThreadSummary[];
 	currentId: string | null;
+	renaming: { id: string; title: string } | null;
+	onRenamingChange: (target: { id: string; title: string } | null) => void;
 	onNew: () => void;
 	onOpen: (id: string) => void;
 	onDeleted: (id: string) => void;
@@ -406,7 +423,7 @@ function ConversationsSheet(props: ConversationsSheetProps) {
 	const title = useThreadTitle();
 	const time = useThreadTime();
 	const remove = useDeleteThread(props.onDeleted);
-	const [renaming, setRenaming] = useState<{ id: string; title: string } | null>(null);
+	const { renaming, onRenamingChange: setRenaming } = props;
 
 	const saveName = async () => {
 		const target = renaming;

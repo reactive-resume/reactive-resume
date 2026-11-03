@@ -641,9 +641,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 									<Trans>Cancel</Trans>
 								</Button>
 								{needsWebSearch ? (
-									<Button variant="secondary" nativeButton={false} render={<Link to="/dashboard/settings/ai" />}>
-										<Trans>Set up web search in Settings</Trans>
-									</Button>
+									<SetUpWebAccess />
 								) : (
 									<Button disabled={!form || blocked || prefillBlocked} loading={save.isPending} onClick={onSave}>
 										<Trans>Save schedule</Trans>
