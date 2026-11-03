@@ -197,6 +197,8 @@ curl "https://rxresu.me/api/openapi/resumes?limit=20&offset=20" \
 
 Use `PATCH` for partial application, interview, timeline-entry and cover-letter updates. Resume content uses JSON Patch at `/resumes/{id}`; metadata uses `PATCH /resumes/{id}/metadata`. Resource-oriented paths such as `/resumes/{id}/copies` and `/documents/{type}/{id}/trash` are preferred for new integrations. Existing verb-based routes, partial `PUT` routes, response shapes and enum values remain supported.
 
+Application cover-letter drafts at `POST /applications/{id}/ai/message-drafts` retain `text` and `coverLetterId`, and add `reviewRequired: true`, recorded `aiOperationIds` and `aiUsage`. The new linked letter's body stays empty: show the text for approval before saving it with `PATCH /cover-letters/{coverLetterId}`, the letter's current `expectedRevision`, and those operation IDs. Convert approved plain text to escaped HTML paragraphs for `content`. Do not treat the returned ID as acceptance of generated text. Follow-up mode still returns text without creating or sending a letter.
+
 ## Retries
 
 State-changing operations do not implement `Idempotency-Key`. Treat mutations as unsafe to retry automatically, including requests that timed out: the change might already have happened. Read the current resource before deciding whether to repeat a write. Repeating create, copy, import or AI operations can create duplicates or incur provider charges.
