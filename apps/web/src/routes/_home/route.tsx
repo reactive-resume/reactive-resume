@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react/macro";
 import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
-import { Header } from "./-sections/header";
+import { MarketingLayout } from "@/features/homepage/marketing-layout";
 
 export const Route = createFileRoute("/_home")({
 	component: RouteComponent,
@@ -11,6 +11,12 @@ function RouteComponent() {
 	const rootMode = rootMatch?.loaderData?.root.status;
 	// The homepage ships its own header and skip link; the shared ones are for the other marketing pages.
 	const isHomepage = rootMatch !== undefined && (!rootMode || rootMode === "disabled");
+	if (!rootMatch)
+		return (
+			<MarketingLayout>
+				<Outlet />
+			</MarketingLayout>
+		);
 	return (
 		<>
 			{!isHomepage && (
@@ -21,7 +27,6 @@ function RouteComponent() {
 					<Trans>Skip to main content</Trans>
 				</a>
 			)}
-			{!rootMatch && <Header />}
 			<Outlet />
 		</>
 	);

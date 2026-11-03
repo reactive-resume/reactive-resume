@@ -33,7 +33,7 @@ test("a foreign-language picker shows endonyms and keeps translated names and co
 }, info) => {
 	await page.goto("/ats-checker?locale=de-DE&campaign=endonyms");
 	await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
-	await page.getByRole("combobox", { name: "Sprache ändern", exact: true }).click();
+	await page.getByRole("banner").getByRole("combobox", { name: "Sprache ändern", exact: true }).click();
 	await expect(page.getByRole("listbox")).toBeVisible();
 	const french = page.getByRole("option").filter({ hasText: "Français" });
 	await expect(french).toHaveText(/Français\s*·\s*Französisch/);
