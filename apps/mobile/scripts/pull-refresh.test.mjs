@@ -1,13 +1,11 @@
 // Run: node --test apps/mobile/scripts/pull-refresh.test.mjs
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { esbuild, run } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const source = readFileSync(new URL("../src/ui/use-pull-refresh.ts", import.meta.url), "utf8");
-const code = transformSync(source, { loader: "ts", format: "cjs" }).code;
+const code = esbuild.transformSync(source, { loader: "ts", format: "cjs" }).code;
 
 function hook(...refetches) {
 	const values = [];
@@ -29,18 +27,10 @@ function hook(...refetches) {
 			return values[index];
 		},
 	};
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.equal(name, "react");
-			return react;
-		},
-		module,
-		module.exports,
-	);
+	const { usePullRefresh } = run(code, { react });
 	return () => {
 		cursor = 0;
-		return module.exports.usePullRefresh(...refetches);
+		return usePullRefresh(...refetches);
 	};
 }
 

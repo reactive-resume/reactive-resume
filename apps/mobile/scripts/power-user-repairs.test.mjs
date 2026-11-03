@@ -3,9 +3,8 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 // Actual native screen and load-state owners; widgets and transport remain explicit host boundaries.
 import { i18n } from "@lingui/core";
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
+import { esbuild, run, tag } from "./harness.mjs";
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 let hooks = [];
 let cursor = 0;
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
@@ -34,7 +33,6 @@ function reset() {
 	for (const hook of hooks) hook?.cleanup?.();
 	hooks = [];
 }
-const tag = (parts, ...values) => parts.reduce((text, part, i) => text + part + (values[i] ?? ""), "");
 const theme = {
 	space: { s1: 4, s2: 8, s3: 12, s4: 16, s12: 48 },
 	size: { panel: 400, input: 44, icon: { row: 20 } },
@@ -118,28 +116,17 @@ const common = {
 	"@/routes": { routes },
 };
 function load(file, mocks = {}) {
-	const module = { exports: {} };
 	let source = readFileSync(new URL("../src/" + file, import.meta.url), "utf8");
 	if (process.env.RX112_MUTATION === "offer-error" && file === "features/career/offers.tsx")
 		source = source.replace("applications.isError", "false");
 	if (process.env.RX112_MUTATION === "letter-continuation" && file === "features/search/search-screen.tsx")
 		source = source.replace("letters.length > 8", "false");
-	const code = transformSync(source, {
+	const { code } = esbuild.transformSync(source, {
 		loader: file.endsWith(".tsx") ? "tsx" : "ts",
 		format: "cjs",
 		jsx: "transform",
-	}).code;
-	const dependencies = { ...common, ...mocks };
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(name) => {
-			assert.ok(name in dependencies, "Missing boundary: " + name);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
+	});
+	return run(code, { ...common, ...mocks }, { React: react });
 }
 const nodes = (tree) =>
 	!tree || typeof tree !== "object"

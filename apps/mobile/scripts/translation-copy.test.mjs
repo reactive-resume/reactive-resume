@@ -1,14 +1,9 @@
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
 import { test } from "node:test";
-import { fileURLToPath } from "node:url";
 import { filterOptions } from "@reactive-resume/utils/string";
+import { bundle, tag } from "./harness.mjs";
 
-const root = fileURLToPath(new URL("../../..", import.meta.url));
-const serverRequire = createRequire(`${root}/apps/server/package.json`);
-const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const jsx = (type, props) => ({ type, props });
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 
 function fixture(locale = "en-US", uiLocale = "en-US") {
 	let state = [];
@@ -93,27 +88,10 @@ function fixture(locale = "en-US", uiLocale = "en-US") {
 			useTheme: () => ({ space: {} }),
 		},
 	};
-	const code = buildSync({
-		entryPoints: [`${root}/apps/mobile/src/features/assistant/translate-resume.tsx`],
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-		jsx: "automatic",
-		external: Object.keys(dependencies),
-	}).outputFiles[0].text;
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in dependencies, name);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
+	const { TranslateResume } = bundle("../src/features/assistant/translate-resume.tsx", dependencies);
 	const render = () => {
 		cursor = 0;
-		return module.exports.TranslateResume({ resumeId: "source", onClose: () => calls.push(["close"]) });
+		return TranslateResume({ resumeId: "source", onClose: () => calls.push(["close"]) });
 	};
 	const nodes = (node) =>
 		Array.isArray(node)

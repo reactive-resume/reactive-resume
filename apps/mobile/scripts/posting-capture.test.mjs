@@ -1,14 +1,11 @@
 // Execute the shipped raw receiver and review form; only native/session/network/UI boundaries are replaced.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
+import { esbuild, load as loadSource, mobileRequire, tag } from "./harness.mjs";
 const { QueryClient, QueryObserver } = mobileRequire("@tanstack/react-query");
 const { ORPCError } = mobileRequire("@orpc/client");
-const { transformSync, buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { buildSync } = esbuild;
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
-const tag = (parts, ...values) => parts.reduce((s, p, i) => s + p + (values[i] ?? ""), "");
 let hooks = [];
 let cursor = 0;
 let effects = [];
@@ -88,25 +85,8 @@ const defaults = {
 	},
 	"react-native": { View: "View", Platform: { OS: "ios" } },
 };
-function load(path, extra = {}) {
-	const mod = { exports: {} };
-	const code = transformSync(readFileSync(path, "utf8"), {
-		loader: path.endsWith("tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	const dependencies = { ...defaults, ...extra };
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(n) => {
-			assert.ok(n in dependencies, `Unexpected boundary ${n}`);
-			return dependencies[n];
-		},
-		mod,
-		mod.exports,
-	);
-	return mod.exports;
-}
+const load = (path, extra = {}) =>
+	loadSource(path, { ...defaults, ...extra }, { jsx: "transform", globals: { React: react } });
 const source = (path) => new URL(`../src/${path}`, import.meta.url).pathname;
 const schema = (path) => new URL(`../../../packages/schema/src/applications/${path}`, import.meta.url).pathname;
 const urls = load(schema("posting-url.ts"));

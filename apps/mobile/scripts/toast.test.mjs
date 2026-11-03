@@ -1,11 +1,8 @@
 // Exercise the real Toaster's action callback the way two quick taps reach it: both from one render, before the
 // dismissal re-renders it. Host proof only; it says nothing about device touch delivery.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
+import { load } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const react = {
 	createElement: (type, props, ...children) => ({ type, props: { ...props, children } }),
 	useCallback: (callback) => callback,
@@ -57,22 +54,7 @@ const mocks = {
 	"./text": { Text: "Text" },
 	"./theme": { useTheme: () => theme },
 };
-const module = { exports: {} };
-const code = transformSync(readFileSync(new URL("../src/ui/overlays.tsx", import.meta.url), "utf8"), {
-	loader: "tsx",
-	format: "cjs",
-	jsx: "transform",
-}).code;
-new Function("React", "require", "module", "exports", code)(
-	react,
-	(name) => {
-		assert.ok(name in mocks, `Missing boundary fixture: ${name}`);
-		return mocks[name];
-	},
-	module,
-	module.exports,
-);
-const { Toaster, showToast } = module.exports;
+const { Toaster, showToast } = load("../src/ui/overlays.tsx", mocks, { jsx: "transform", globals: { React: react } });
 
 const find = (node, type) => {
 	if (!node || typeof node !== "object") return undefined;

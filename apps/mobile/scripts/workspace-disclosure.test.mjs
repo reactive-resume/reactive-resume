@@ -1,43 +1,11 @@
 // Render the actual native AI notice across Knowledge query states. No device or provider traffic.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { bundle, tag as t } from "./harness.mjs";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
-const req = createRequire(`${root}/apps/server/package.json`);
-const { buildSync } = createRequire(req.resolve("tsx"))("esbuild");
-
-function load(file, deps) {
-	const code = buildSync({
-		stdin: {
-			contents: readFileSync(file, "utf8"),
-			sourcefile: file,
-			resolveDir: file.slice(0, file.lastIndexOf("/")),
-			loader: "tsx",
-		},
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-		external: Object.keys(deps),
-		jsx: "automatic",
-		absWorkingDir: root,
-	}).outputFiles[0].text;
-	const mod = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in deps, `unexpected dependency ${name} in ${file}`);
-			return deps[name];
-		},
-		mod,
-		mod.exports,
-	);
-	return mod.exports;
-}
-
-const t = (pieces, ...values) => pieces.reduce((text, part, i) => text + part + (values[i] ?? ""), "");
+const load = (file, deps) => bundle(file, deps, { absWorkingDir: root });
 const i18n = { locale: "en-US" };
 const jsx = (type, props) => ({ type, props });
 

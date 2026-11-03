@@ -1,6 +1,6 @@
 # RX-75 controlled prototype and release gates
 
-Historical v1 experiment only. Its blocked status and requirements below describe that old candidate. The account-backed desktop implementation supersedes it, and the owner later excluded Android/iOS autofill explicitly; see [the current handoff](../rx-75-native-release-handoff.md). These lab results do not prove shipped ATS support.
+Historical v1 experiment only. Its blocked status and requirements below describe that old candidate. The account-backed desktop implementation supersedes it, and the owner later excluded Android/iOS autofill explicitly; see "Parity exceptions" in [the mobile guide](../../../apps/mobile/AGENTS.md). These lab results do not prove shipped ATS support.
 
 Base: `39aa6c15c3f291a7ebe9f473e4cc9b52804aa582`. Worktree began clean on the tool-created branch, renamed to `feature/rx-75` before edits. No commit, push, PR, Linear write, paid provider or employer account/submission. Current Linear read matched the saved baseline; zero comments, attachments or inline media. Input snapshots remain outside source.
 

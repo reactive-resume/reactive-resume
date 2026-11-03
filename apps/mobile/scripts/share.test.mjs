@@ -1,11 +1,8 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
+import * as harness from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { mobileRequire, tag } = harness;
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 
 let hooks = [];
 let cursor = 0;
@@ -37,25 +34,8 @@ ui.useTheme = () => ({
 	colors: { ink: "#111", ink3: "#777", line: "#ddd" },
 });
 
-function load(path, extra = {}) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8"), {
-		loader: path.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	const dependencies = { ...mocks, ...extra };
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(name) => {
-			assert.ok(name in dependencies, `Missing boundary: ${name}`);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (path, extra = {}) =>
+	harness.load(`../src/${path}`, { ...mocks, ...extra }, { jsx: "transform", globals: { React: react } });
 
 const mocks = {
 	react,
@@ -104,9 +84,7 @@ const mocks = {
 	},
 	"@/ui": ui,
 	"@/ui/use-document-operations": { useDocumentOperations: () => ({ busy: false, run: async (fn) => fn() }) },
-	"@reactive-resume/resume/sharing": createRequire(new URL("../package.json", import.meta.url))(
-		"@reactive-resume/resume/sharing",
-	),
+	"@reactive-resume/resume/sharing": mobileRequire("@reactive-resume/resume/sharing"),
 };
 
 const nodes = (tree) =>

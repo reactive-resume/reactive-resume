@@ -1,12 +1,10 @@
 // Exercise the real hook with a virtual clock and native/store boundaries.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { esbuild, run } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const code = transformSync(
+const code = esbuild.transformSync(
 	readFileSync(new URL("../src/features/reviews/use-review-prompt.ts", import.meta.url), "utf8"),
 	{
 		loader: "ts",
@@ -84,18 +82,10 @@ function mount(context, stored = new Map()) {
 			getAccountScope: () => (fixture.status === "signed-in" ? fixture.scope : null),
 		},
 	};
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in mocks, `Missing boundary fixture: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
+	const hook = run(code, mocks);
 	fixture.render = (changes = {}) => {
 		Object.assign(fixture, changes);
-		module.exports.useReviewPrompt();
+		hook.useReviewPrompt();
 		if (pending) {
 			cleanup?.();
 			cleanup = pending();

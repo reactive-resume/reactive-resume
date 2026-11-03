@@ -1,25 +1,12 @@
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
-const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+import { esbuild, mobileRequire, run } from "./harness.mjs";
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 function evaluate(options, boundaries = {}) {
-	const code = buildSync({ bundle: true, platform: "node", format: "cjs", write: false, ...options }).outputFiles[0]
-		.text;
-	const module = { exports: {} };
-	new Function("require", "module", "exports", "setTimeout", code)(
-		(name) => {
-			assert.ok(name in boundaries, name);
-			return boundaries[name];
-		},
-		module,
-		module.exports,
-		() => 0,
-	);
-	return module.exports;
+	const code = esbuild.buildSync({ bundle: true, platform: "node", format: "cjs", write: false, ...options })
+		.outputFiles[0].text;
+	return run(code, boundaries, { setTimeout: () => 0 });
 }
 const { createDraftStore } = evaluate(
 	{ entryPoints: [root + "apps/mobile/src/draft/store.ts"], external: ["zustand", "immer"] },

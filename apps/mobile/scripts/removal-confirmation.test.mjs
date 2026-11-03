@@ -1,12 +1,8 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { load, mobileRequire, tag } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { ORPCError } = createRequire(new URL("../package.json", import.meta.url))("@orpc/client");
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
+const { ORPCError } = mobileRequire("@orpc/client");
 
 for (const kind of ["domain", "web connection"]) {
 	test(`${kind}: removal waits for confirmation, cancellation preserves connection`, async () => {
@@ -100,26 +96,10 @@ for (const kind of ["domain", "web connection"]) {
 			},
 		};
 		const path = kind === "domain" ? "share/custom-domain.tsx" : "ai/web-access.tsx";
-		const code = transformSync(readFileSync(new URL(`../src/features/${path}`, import.meta.url), "utf8"), {
-			loader: "tsx",
-			format: "cjs",
-			jsx: "transform",
-		}).code;
-		const module = { exports: {} };
-		new Function("React", "require", "module", "exports", code)(
-			react,
-			(name) => {
-				assert.ok(name in dependencies, `Missing boundary: ${name}`);
-				return dependencies[name];
-			},
-			module,
-			module.exports,
-		);
+		const loaded = load(`../src/features/${path}`, dependencies, { jsx: "transform", globals: { React: react } });
 		const render = () => {
 			cursor = 0;
-			return kind === "domain"
-				? module.exports.CustomDomain({ offline: false, suggest: false })
-				: module.exports.WebAccessSettings();
+			return kind === "domain" ? loaded.CustomDomain({ offline: false, suggest: false }) : loaded.WebAccessSettings();
 		};
 		const nodes = (node) =>
 			!node || typeof node !== "object" ? [] : [node, ...(node.props?.children ?? []).flat(Infinity).flatMap(nodes)];

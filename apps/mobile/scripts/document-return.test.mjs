@@ -1,17 +1,8 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { load } from "./harness.mjs";
 
-const requireServer = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(requireServer.resolve("tsx"))("esbuild");
-const code = transformSync(readFileSync(new URL("../src/routes.ts", import.meta.url), "utf8"), {
-	loader: "ts",
-	format: "cjs",
-}).code;
-const module = { exports: {} };
-new Function("module", "exports", code)(module, module.exports);
-const { routes } = module.exports;
+const { routes } = load("../src/routes.ts");
 
 test("native document links retain selected application and submitted version, including reserved characters", () => {
 	assert.equal(routes.builder("shared", "page", "job /2"), "/builder/shared/page?applicationId=job%20%2F2");

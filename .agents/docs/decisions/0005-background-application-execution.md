@@ -4,8 +4,8 @@ Decision (November 2, 2026): **no-go**. Do not build hosted or background execut
 
 ## Where the prerequisite stands
 
-- On November 1, 2026 the owner removed Android/iOS autofill and the embedded browser from RX-75: "I do not like the feature implementation." See `.agents/docs/rx-75-native-release-handoff.md`.
-- What ships is account-backed **review packets**: exact approved PDFs, copyable answers, and opening the employer form in the system browser. On desktop, autofill is an **experimental helper** limited to the active page. Its proof covers synthetic Greenhouse, Lever and Ashby control shapes only, with no live ATS acceptance claim. See `research/rx-75-autofill-v2.md`.
+- On November 1, 2026 the owner removed Android/iOS autofill and the embedded browser from RX-75: "I do not like the feature implementation." The exception is listed under "Parity exceptions" in `apps/mobile/AGENTS.md`.
+- What ships is account-backed **review packets**: exact approved PDFs, copyable answers, and opening the employer form in the system browser. On desktop, autofill is an **experimental helper** limited to the active page. Its proof covers synthetic Greenhouse, Lever and Ashby control shapes only, with no live ATS acceptance claim. See `research/employer-form-autofill-v2.md`.
 - No measurement of helper usage or fill reliability exists yet. Background execution would extend a feature the owner has scaled back and that has no reliability data.
 
 ## Requirements any future proposal must meet

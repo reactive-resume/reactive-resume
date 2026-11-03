@@ -8,6 +8,8 @@
 		"start": "expo start",
 		"preview:web": "EXPO_MOBILE_WEB_PREVIEW=1 expo start --web",
 		"test": "node --test scripts/*.test.mjs",
+		"test:ci": "mkdir -p reports && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=reports/node-junit.xml scripts/*.test.mjs",
+		"check:bundle": "dir=$(mktemp -d) && trap 'rm -rf \"$dir\"' EXIT && TMPDIR=\"$dir\" expo export --output-dir \"$dir/dist\"",
 		"ios": "expo run:ios",
 		"android": "expo run:android",
 		"export": "expo export",

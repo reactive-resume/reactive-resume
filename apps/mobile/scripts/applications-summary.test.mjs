@@ -1,35 +1,16 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import * as harness from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const { MutationObserver, QueryClient, QueryObserver } = createRequire(new URL("../package.json", import.meta.url))(
-	"@tanstack/react-query",
-);
+const { MutationObserver, QueryClient, QueryObserver } = harness.mobileRequire("@tanstack/react-query");
 
 let followUpDomain;
-function load(path, mocks = {}) {
-	const dependencies = {
+const load = (path, mocks = {}) =>
+	harness.load("../src/" + path, {
 		"@reactive-resume/schema/applications/follow-up": followUpDomain,
 		"@/api/client": { SessionChangedError: Error },
 		...mocks,
-	};
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL("../src/" + path, import.meta.url), "utf8"), {
-		loader: path.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-	}).code;
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in dependencies, "Missing boundary: " + name);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+	});
 
 const { prepareRequest } = load("../../../packages/utils/src/deferred-request.ts");
 const prepareCall = (call) =>

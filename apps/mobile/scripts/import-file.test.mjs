@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
+import { esbuild, run, tag } from "./harness.mjs";
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { buildSync, transformSync } = esbuild;
 const project = new URL("../../../", import.meta.url).pathname;
 const bundled = buildSync({
 	stdin: {
@@ -27,7 +28,6 @@ const source = transformSync(
 	readFileSync(new URL("../src/features/documents/import-file.ts", import.meta.url), "utf8"),
 	{ loader: "ts", format: "cjs" },
 ).code;
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 
 for (const scenario of [
 	"AI",
@@ -126,16 +126,7 @@ for (const scenario of [
 				},
 			},
 		};
-		const module = { exports: {} };
-		new Function("require", "module", "exports", source)(
-			(name) => {
-				assert.ok(name in mocks, name);
-				return mocks[name];
-			},
-			module,
-			module.exports,
-		);
-		const { importDocument, createReviewedResume } = module.exports;
+		const { importDocument, createReviewedResume } = run(source, mocks);
 		const ai = !scenario.includes("local");
 		const reading = importDocument(
 			{ name: scenario === "DOCX" ? "fictional.docx" : "fictional.pdf", uri: "fixture" },

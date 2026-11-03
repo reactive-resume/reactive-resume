@@ -1,13 +1,10 @@
 // Actual React state, shipped letter/shared fields and Improve panel; native input and HTTP are boundary fixtures.
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { bundle, mobileRequire as req, tag } from "./harness.mjs";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
-const req = createRequire(`${root}/apps/mobile/package.json`);
-const serverReq = createRequire(`${root}/apps/server/package.json`);
-const { buildSync } = createRequire(serverReq.resolve("tsx"))("esbuild");
 const { Window } = await import(req.resolve("happy-dom"));
 const window = new Window();
 Object.assign(globalThis, {
@@ -20,8 +17,6 @@ Object.defineProperty(globalThis, "navigator", { configurable: true, value: wind
 const React = req("react");
 const { act, cleanup, fireEvent, render, screen } = req("@testing-library/react");
 const h = React.createElement;
-const tag = (parts, ...values) =>
-	Array.isArray(parts) ? parts.reduce((text, part, i) => text + part + (values[i] ?? ""), "") : parts.message;
 let fixture;
 const NativeInput = React.forwardRef((props, ref) => {
 	React.useLayoutEffect(() => {
@@ -114,29 +109,7 @@ const deps = {
 		}),
 	},
 };
-function load(path, extra = {}) {
-	const boundaries = { ...deps, ...extra };
-	const code = buildSync({
-		entryPoints: [`${root}/apps/mobile/src/${path}`],
-		absWorkingDir: root,
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		jsx: "automatic",
-		write: false,
-		external: Object.keys(boundaries),
-	}).outputFiles[0].text;
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in boundaries, `Unexpected boundary: ${name}`);
-			return boundaries[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (path, extra = {}) => bundle(`../src/${path}`, { ...deps, ...extra }, { absWorkingDir: root });
 const shared = load("features/write/rich-text-field.tsx");
 const { LetterRichText, LetterRichTextToolbar } = load("features/letters/rich-text-field.tsx", {
 	"@/features/write/rich-text-field": shared,

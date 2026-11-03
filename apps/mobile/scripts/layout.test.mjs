@@ -2,14 +2,12 @@
 // Execute shipped layout components; native measurements and navigation are boundary fixtures.
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { i18n } from "@lingui/core";
 import { groupDocumentsByApplication, groupIsExpanded } from "@reactive-resume/schema/applications/document-groups";
+import { load as loadSource, mobileRequire, tag } from "./harness.mjs";
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 let window = { width: 951, height: 669, fontScale: 1 };
 let insets = { top: 0, bottom: 20, left: 0, right: 84 };
 const calls = [];
@@ -32,8 +30,6 @@ const router = {
 	push: (href) => calls.push(href),
 	navigate: (href) => calls.push(href),
 };
-const tag = (parts, ...values) =>
-	Array.isArray(parts) ? parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "") : parts.message;
 const routes = {
 	documents: () => "/documents",
 	trash: () => "/documents/trash",
@@ -73,26 +69,8 @@ mocks["react-native-keyboard-controller"].useKeyboardState = (select) =>
 mocks["react-native-keyboard-controller"].useReanimatedKeyboardAnimation = () => ({
 	height: { get: () => keyboardHeight },
 });
-function load(path, extra = {}) {
-	const module = { exports: {} };
-	const source = readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8");
-	const code = transformSync(source, {
-		loader: path.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	const dependencies = { ...mocks, ...extra };
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(name) => {
-			assert.ok(name in dependencies, `Missing boundary fixture: ${name}`);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (path, extra = {}) =>
+	loadSource(`../src/${path}`, { ...mocks, ...extra }, { jsx: "transform", globals: { React: react } });
 const tokens = load("ui/tokens.ts");
 const theme = { ...tokens, colors: tokens.colors.light, shadows: tokens.shadows.light };
 const ui = {
@@ -609,9 +587,7 @@ const restoredFromSheet = [];
 const librarySession = load("features/documents/library-session.ts", {
 	"zustand/react": {
 		create: (initialize) => {
-			const store = createRequire(new URL("../package.json", import.meta.url))("zustand/vanilla").createStore(
-				initialize,
-			);
+			const store = mobileRequire("zustand/vanilla").createStore(initialize);
 			return Object.assign((select) => select(store.getState()), store);
 		},
 	},

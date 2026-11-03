@@ -190,32 +190,44 @@ pnpm --filter @reactive-resume/pdf test:coverage
 
 Pass file paths straight after `test`. An extra `--` stops Vitest from filtering the run. Most test scripts use `--passWithNoTests`, so a green run with zero tests proves nothing about your change.
 
-Database integration suites need `COVER_LETTER_TEST_DATABASE_URL`, `INTEGRATIONS_TEST_DATABASE_URL`, and `OAUTH_TEST_DATABASE_URL`. The migration suite uses `COVER_LETTER_TEST_DATABASE_URL` as an administrative connection and creates and deletes its own disposable databases, so its user needs `CREATE DATABASE` permission. Give the OAuth suite its own database, because it writes signing keys. Never point test variables at a database with real data. `.github/workflows/ci.yml` shows the full setup.
+#### Database integration suites
+
+Some suites run against a real PostgreSQL database and skip themselves when their database variables are missing. With PostgreSQL running from `compose.dev.yml`, run them through `pnpm test:db`:
+
+```bash
+pnpm test:db exec -- pnpm --filter @reactive-resume/api test   # one package
+pnpm test:db exec -- pnpm test                                 # every package
+pnpm test:db down                                              # drop this checkout's test databases
+```
+
+`pnpm test:db exec` creates two databases named after your checkout directory, applies pending migrations to both, and runs the command with the variables the CI unit job sets: `COVER_LETTER_TEST_DATABASE_URL`, `INTEGRATIONS_TEST_DATABASE_URL`, `OAUTH_TEST_DATABASE_URL`, the fixed test secrets and flags, and `REQUIRE_DB_TESTS=1`. With `REQUIRE_DB_TESTS=1`, a missing database variable fails the run instead of skipping the suites, so a green run means they ran. Separate worktrees get separate databases.
+
+| Command                      | What it does                                                       |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `pnpm test:db up`            | Create this checkout's test databases and apply migrations         |
+| `pnpm test:db env`           | Print `export` lines for the same variables, for `eval` in a shell |
+| `pnpm test:db exec -- <cmd>` | Run `up`, then the command with those variables set                |
+| `pnpm test:db down`          | Drop this checkout's test and browser-test databases               |
+
+The commands only manage databases on a local server. Set `TEST_DB_ADMIN_URL` if yours isn't at `postgresql://postgres:postgres@localhost:5432/postgres`; its user needs `CREATE DATABASE` permission, which the migration suite also uses. To set the variables yourself instead, follow the CI unit job in `.github/workflows/ci.yml`: give the OAuth suites their own database, because they write signing keys, and never point test variables at a database with real data.
 
 ### Browser tests
 
 End-to-end tests use [Playwright](https://playwright.dev/) and live in `tests/e2e/specs`, with fixtures in `tests/e2e/fixtures`. They cover sign-up and sign-in, section editing and autosave, JSON export and import, public sharing with statistics and passwords, OAuth consent for MCP clients, and the assistant against a scripted AI provider.
 
-Playwright starts the **built** server (`node apps/server/dist/index.mjs`) in production mode and waits for `/api/health`, so build first. Use a disposable database, and export the variables yourself; these scripts don't load `.env.local`.
+With PostgreSQL running from `compose.dev.yml`, run them with `pnpm test:e2e:local`:
 
 ```bash
-pnpm exec playwright install chromium
+pnpm exec playwright install chromium                    # once
 
-export APP_URL=http://localhost:3000 PORT=3000
-export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
-export AUTH_SECRET=$(openssl rand -hex 32) ENCRYPTION_SECRET=$(openssl rand -hex 32)
-export LOCAL_STORAGE_PATH="$PWD/data/e2e"
-export FLAG_DISABLE_SIGNUPS=false FLAG_DISABLE_EMAIL_AUTH=false FLAG_DISABLE_API_RATE_LIMIT=true
-export FLAG_ALLOW_UNSAFE_AI_BASE_URL=true   # lets the assistant spec reach its local stub
-
-pnpm db:migrate
-pnpm build
-pnpm test:e2e                                  # all specs
-pnpm test:e2e tests/e2e/specs/auth.spec.ts     # one spec
-pnpm test:e2e:ui                               # Playwright's interactive UI
+pnpm test:e2e:local --build                              # build, then run every spec
+pnpm test:e2e:local tests/e2e/specs/auth.spec.ts         # one spec, against the existing build
+pnpm test:e2e:local --ui                                 # Playwright's interactive UI
 ```
 
-Without `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`, the assistant spec skips itself. Playwright runs Chromium with no retries. Locally it reuses a server that's already running on `PORT`. See `tests/e2e/README.md` for the full recipe.
+The command sets up the CI browser job for this checkout: a migrated database named after the checkout directory, local file storage in the system temporary folder, a free port, and the same fixed secrets and flags as CI, including `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` for the assistant specs. Playwright starts the **built** server (`node apps/server/dist/index.mjs`) in production mode, so pass `--build` after changing application code; without a build, the command stops and says so. Other arguments go to `playwright test`. Playwright runs Chromium with no retries.
+
+To run Playwright directly, export the CI browser job's variables against a disposable database, then run `pnpm db:migrate`, `pnpm build`, and `pnpm test:e2e`. These scripts don't load `.env.local`. Playwright reuses a server that's already running on `PORT`, so pick a port no other checkout uses. See `tests/e2e/README.md` for details.
 
 <Note>
   Keep the unsafe AI and OAuth redirect flags for isolated test installations. They relax SSRF and redirect protections.

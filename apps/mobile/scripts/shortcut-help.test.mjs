@@ -1,10 +1,7 @@
 // Native help UI adapter contract. Host execution, not hardware or device proof.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
+import * as harness from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
 const nodes = (tree) =>
 	!tree || typeof tree !== "object"
@@ -67,24 +64,8 @@ const mocks = {
 		useTheme: () => ({ space: {} }),
 	},
 };
-function load() {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL("../src/shell/shortcut-help.tsx", import.meta.url), "utf8"), {
-		loader: "tsx",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(name) => {
-			assert.ok(name in mocks, `Missing native boundary: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = () =>
+	harness.load("../src/shell/shortcut-help.tsx", mocks, { jsx: "transform", globals: { React: react } });
 let { KeyboardShortcuts, ShortcutHelpButton, CharacterShortcutSetting } = load();
 KeyboardShortcuts();
 assert.equal(bindings[0].input, "?");

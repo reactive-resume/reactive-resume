@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { afterAll, beforeAll, describe, expect, it } from "vite-plus/test";
 import { Pool } from "pg";
 
@@ -15,14 +15,13 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("serialized usernam
 			options: `-c search_path=${namespace}`,
 			max: 3,
 		});
-		await pool.query(
-			'CREATE TABLE "user" (id text PRIMARY KEY, username text UNIQUE, is_anonymous boolean DEFAULT false)',
-		);
-		for (const migration of ["20261023064403_rapid_nehzno", "20261028045128_serialize_username_reservations"])
+		const migrations = new URL("../../../migrations/", import.meta.url);
+		for (const name of (await readdir(migrations)).filter((name) => /^\d+_/.test(name)).sort()) {
 			await pool.query(
-				await readFile(new URL(`../../../migrations/${migration}/migration.sql`, import.meta.url), "utf8"),
+				(await readFile(new URL(`${name}/migration.sql`, migrations), "utf8")).replaceAll('"public".', ""),
 			);
-	});
+		}
+	}, 30_000);
 	afterAll(async () => {
 		await pool?.end();
 		await admin?.query(`DROP SCHEMA IF EXISTS ${namespace} CASCADE`);
@@ -30,7 +29,11 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("serialized usernam
 	});
 	it.each(["rename", "delete"])("rejects a concurrent claim after %s commits its reservation", async (operation) => {
 		const name = `owner-${operation}`;
-		await pool.query('INSERT INTO "user" (id,username) VALUES ($1,$1),($2,$2)', [name, `claimant-${operation}`]);
+		await pool.query(
+			`INSERT INTO "user" (id,name,email,username,display_username) VALUES
+			($1,$1,$1 || '@example.test',$1,$1),($2,$2,$2 || '@example.test',$2,$2)`,
+			[name, `claimant-${operation}`],
+		);
 		const release = await pool.connect();
 		const claim = await pool.connect();
 		try {

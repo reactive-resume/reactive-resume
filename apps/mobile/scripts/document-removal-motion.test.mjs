@@ -1,14 +1,11 @@
 // Host lifecycle/SDK-boundary proof; native worklet execution and gesture feel need device QA.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
 import { i18n } from "@lingui/core";
+import { load as loadSource, tag } from "./harness.mjs";
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
-const server = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(server.resolve("tsx"))("esbuild");
 let owner;
 const same = (a, b) => a && b && a.length === b.length && a.every((value, i) => Object.is(value, b[i]));
 const react = {
@@ -61,24 +58,7 @@ function mount(render, props) {
 	instance.render();
 	return instance;
 }
-function load(path, mocks) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8"), {
-		loader: path.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(name) => {
-			assert.ok(name in mocks, `Missing native boundary: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (path, mocks) => loadSource(`../src/${path}`, mocks, { jsx: "transform", globals: { React: react } });
 const tick = async () => {
 	for (let i = 0; i < 20; i++) await Promise.resolve();
 };
@@ -169,7 +149,7 @@ function fixture(reduced = false, requests = {}) {
 		react,
 		"@lingui/core/macro": {
 			ph: (named) => Object.values(named)[0],
-			t: (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), ""),
+			t: tag,
 			plural: (n, options) => options[n === 1 ? "one" : "other"].replace("#", n),
 		},
 		"@orpc/client": { ORPCError: class extends Error {} },

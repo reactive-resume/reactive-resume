@@ -1,30 +1,14 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import * as harness from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
-
-function load(path, mocks, development = true) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8"), {
+const { tag } = harness;
+const load = (path, mocks, development = true) =>
+	harness.load(`../src/${path}`, mocks, {
 		loader: "ts",
-		format: "cjs",
 		supported: { "dynamic-import": false },
-	}).code;
-	new Function("require", "module", "exports", "__DEV__", code)(
-		(name) => {
-			assert.ok(name in mocks, `Unexpected dependency: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-		development,
-	);
-	return module.exports;
-}
+		globals: { __DEV__: development },
+	});
 
 test("AI imports retain the selecting account through parsing", async () => {
 	let scope = "original-account";

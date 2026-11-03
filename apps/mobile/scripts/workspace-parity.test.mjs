@@ -1,30 +1,9 @@
 // Run: node apps/mobile/scripts/workspace-parity.test.mjs
 // Pure native workspace logic + shared schema contracts, evaluated on the host (no React Native runtime).
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
+import { bundle } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-function load(entry, dependencies = {}, external = []) {
-	const code = buildSync({
-		entryPoints: [entry],
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-		external,
-	}).outputFiles[0].text;
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			if (name in dependencies) return dependencies[name];
-			throw new Error(`Missing boundary: ${name}`);
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (entry, dependencies = {}, external = []) => bundle(entry, dependencies, { external });
 const logic = load(new URL("../src/features/workspace/logic.ts", import.meta.url).pathname);
 assert.equal(logic.clock(67, "en-US"), "1:07");
 assert.equal(logic.clock(67, "ar-SA"), "١:٠٧");

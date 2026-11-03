@@ -1,37 +1,16 @@
 // Drives the shipped Messages Apply handler, Undo, account dispatch and shared tracker at their module boundaries.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
+import { load as loadSource, mobileRequire } from "./harness.mjs";
 
 const MOBILE = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
-const mobileRequire = createRequire(MOBILE + "/package.json");
-const serverRequire = createRequire(MOBILE + "/../server/package.json");
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const schemaRequire = createRequire(MOBILE + "/../../packages/schema/package.json");
 const { QueryClient } = mobileRequire("@tanstack/react-query");
 const { ORPCError } = await import("@orpc/client");
 const zod = schemaRequire("zod");
 
-const source = (file) => readFileSync(file, "utf8");
-
-function load(file, mocks = {}, append = "") {
-	const module = { exports: {} };
-	const code = transformSync(source(file), {
-		loader: file.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "automatic",
-	}).code;
-	new Function("require", "module", "exports", code + append)(
-		(name) => {
-			assert.ok(name in mocks, "Missing boundary: " + name);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (file, mocks = {}, append = "") => loadSource(file, mocks, { append });
 
 const data = load(MOBILE + "/../../packages/schema/src/applications/data.ts", {
 	zod,

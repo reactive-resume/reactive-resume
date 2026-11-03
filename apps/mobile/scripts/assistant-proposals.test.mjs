@@ -1,28 +1,14 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { beforeEach, test } from "node:test";
 import { i18n } from "@lingui/core";
+import { esbuild, mobileRequire, run, tag } from "./harness.mjs";
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { buildSync, transformSync } = esbuild;
 const { produce } = mobileRequire("immer");
-function evaluate(code, dependencies) {
-	const module = { exports: {} };
-	new Function("require", "module", "exports", "setTimeout", code)(
-		(name) => {
-			assert.ok(name in dependencies, `Missing boundary: ${name}`);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-		() => {},
-	);
-	return module.exports;
-}
+const evaluate = (code, dependencies) => run(code, dependencies, { setTimeout: () => {} });
 const shared = evaluate(
 	buildSync({
 		entryPoints: [new URL("../../../packages/resume/src/proposals.ts", import.meta.url).pathname],
@@ -788,7 +774,7 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 			"@lingui/react/macro": {
 				Trans: "Trans",
 				useLingui: () => ({
-					t: (parts, ...values) => parts.reduce((text, part, i) => text + part + (values[i] ?? ""), ""),
+					t: tag,
 				}),
 			},
 			"@tanstack/react-query": { useQueryClient: () => ({}) },

@@ -1,29 +1,9 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+import { load, mobileRequire, tag } from "./harness.mjs";
 const { renderToStaticMarkup } = mobileRequire("react-dom/server");
 const React = mobileRequire("react");
-function load(path, mocks) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(path, import.meta.url), "utf8"), {
-		loader: path.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "automatic",
-	}).code;
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in mocks, "Missing boundary: " + name);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
 const schemaRequire = createRequire(new URL("../../../packages/schema/package.json", import.meta.url));
 const schema = load("../../../packages/schema/src/ai-usage.ts", { zod: schemaRequire("zod") });
 const { authorizeAiRequest } = load("../src/api/ai-consent.ts", {
@@ -47,7 +27,6 @@ test("native usage history needs no provider or sharing approval", async () => {
 	assert.equal(await authorizeAiRequest(["ai", "usage"], {}, api, "account"), undefined);
 	assert.equal(lookups, 0);
 });
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 let locale = "en-US";
 let state;
 let refresh;

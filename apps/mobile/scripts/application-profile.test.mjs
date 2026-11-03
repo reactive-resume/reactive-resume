@@ -1,32 +1,14 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
 import { i18n } from "@lingui/core";
+import { load as loadSource, tag } from "./harness.mjs";
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const tag = (parts, ...values) => parts.reduce((text, part, i) => text + part + (values[i] ?? ""), "");
-function load(path, dependencies, react) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(path, "utf8"), {
-		loader: path.pathname.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(name) => {
-			assert.ok(name in dependencies, `Unexpected boundary: ${name}`);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (path, dependencies, react) =>
+	loadSource(path, dependencies, { jsx: "transform", globals: { React: react } });
 const nodes = (tree) =>
 	!tree || typeof tree !== "object"
 		? []

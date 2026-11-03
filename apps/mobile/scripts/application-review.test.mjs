@@ -1,15 +1,15 @@
 // Exercises native Checklist output and handlers on the host; no device/runtime claim.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
 import { i18n } from "@lingui/core";
+import { esbuild, load as loadSource, tag } from "./harness.mjs";
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const root = new URL("../../..", import.meta.url).pathname;
 const serverRequire = createRequire(root + "/apps/server/package.json");
-const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { buildSync } = esbuild;
 const sharedCode = buildSync({
 	entryPoints: [root + "/packages/schema/src/applications/preparation.ts"],
 	bundle: true,
@@ -28,7 +28,6 @@ const dataCode = buildSync({
 }).outputFiles[0].text;
 const submission = { exports: {} };
 new Function("require", "module", "exports", dataCode)(serverRequire, submission, submission.exports);
-const tag = (parts, ...values) => parts.reduce((out, part, i) => out + part + (values[i] ?? ""), "");
 const jsx = (type, props) => ({ type, props });
 const application = {
 	id: "job",
@@ -86,26 +85,10 @@ function load(data, overrides = {}) {
 		"@/ui": { Button: "Button", Text: "Text", Sheet: "Sheet", ListRow: "ListRow", useTheme: () => ({ space: {} }) },
 	};
 	Object.assign(dependencies, overrides);
-	const code = transformSync(readFileSync(root + "/apps/mobile/src/features/workspace/tabs/apply.tsx", "utf8"), {
-		loader: "tsx",
-		format: "cjs",
-		jsx: "automatic",
-	}).code;
-	const module = { exports: {} };
-	new Function(
-		"require",
-		"module",
-		"exports",
-		code + "\nmodule.exports.Checklist = Checklist; module.exports.Apply = Apply;",
-	)(
-		(name) => {
-			assert.ok(name in dependencies, name);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
-	return { ...module.exports, saves };
+	const exports = loadSource("../src/features/workspace/tabs/apply.tsx", dependencies, {
+		append: "\nmodule.exports.Checklist = Checklist; module.exports.Apply = Apply;",
+	});
+	return { ...exports, saves };
 }
 
 function render(data, readOnly = false, versionId = undefined, currentAnswers = data.answers) {

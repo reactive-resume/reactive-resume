@@ -4,11 +4,12 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { mock } from "node:test";
 import { i18n } from "@lingui/core";
+import * as harness from "./harness.mjs";
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { buildSync } = harness.esbuild;
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
 // Lingui's t: a tagged template, or a descriptor ({ message, comment }) for strings with translator notes.
 const translatedMessages = new Map();
@@ -154,25 +155,9 @@ const mocks = {
 		withSpring: (value) => value,
 	},
 };
-function load(path, extra = {}, append = "") {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8"), {
-		loader: path.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	const dependencies = { ...mocks, ...extra };
-	new Function("React", "require", "module", "exports", code + append)(
-		react,
-		(name) => {
-			assert.ok(name in dependencies, `Missing boundary: ${name}`);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+// Every source import needs a key here or in `extra`; see ../AGENTS.md.
+const load = (path, extra = {}, append = "") =>
+	harness.load(`../src/${path}`, { ...mocks, ...extra }, { jsx: "transform", globals: { React: react }, append });
 const nodes = (tree) =>
 	!tree || typeof tree !== "object"
 		? []

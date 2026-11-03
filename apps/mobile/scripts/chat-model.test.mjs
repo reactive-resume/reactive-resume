@@ -1,30 +1,15 @@
 // Render the native model control's presentation boundary; not device execution.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { bundle, load, tag } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const react = { createElement: (type, props, ...children) => ({ type, props: { ...props, children } }) };
 let webStatus;
 let nativeCapability;
-const aiTypes = { exports: {} };
-new Function(
-	"module",
-	"exports",
-	buildSync({
-		entryPoints: [new URL("../../../packages/ai/src/types.ts", import.meta.url).pathname],
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-	}).outputFiles[0].text,
-)(aiTypes, aiTypes.exports);
 const mocks = {
-	"@reactive-resume/ai/types": aiTypes.exports,
+	"@reactive-resume/ai/types": bundle("../../../packages/ai/src/types.ts"),
 	"@lingui/react/macro": {
-		useLingui: () => ({ t: (parts, ...values) => parts.reduce((s, part, i) => s + part + (values[i] ?? ""), "") }),
+		useLingui: () => ({ t: tag }),
 	},
 	"@reactive-resume/ai/task-models": {
 		aiModelForTask: (provider, task) =>
@@ -51,27 +36,10 @@ const mocks = {
 	"@/routes": {},
 	"@/ui": { Text: "Text", Icon: "Icon", useTheme: () => ({ colors: {}, space: {} }) },
 };
-const module = { exports: {} };
-new Function(
-	"React",
-	"require",
-	"module",
-	"exports",
-	transformSync(readFileSync(new URL("../src/features/assistant/provider.tsx", import.meta.url), "utf8"), {
-		loader: "tsx",
-		format: "cjs",
-		jsx: "transform",
-	}).code,
-)(
-	react,
-	(name) => {
-		assert.ok(name in mocks, `Unmapped native boundary ${name}`);
-		return mocks[name];
-	},
-	module,
-	module.exports,
-);
-const { ModelButton, useWebSearch } = module.exports;
+const { ModelButton, useWebSearch } = load("../src/features/assistant/provider.tsx", mocks, {
+	jsx: "transform",
+	globals: { React: react },
+});
 
 test("native chat model control names the selected connection and model, retaining a missing-connection fallback", () => {
 	for (const [current, expected] of [

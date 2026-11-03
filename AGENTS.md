@@ -1,6 +1,8 @@
 # Reactive Resume: agent instructions
 
-This file applies across the repository. Follow a closer `AGENTS.md` when one exists. Keep this guide focused on agent workflows. Keep `docs/` for public product, integration, self-hosting, and contributor guides; agent instructions, internal runbooks, plans, and research belong in `.agents/docs/`. Format guidance: [agents.md](https://agents.md/).
+This is the index for coding agents. It holds hard rules and pointers; detail lives in the linked files. The only other
+area guide is `apps/mobile/AGENTS.md`, read it before mobile work. Agent reference docs are in `.agents/docs/` (start at
+its `README.md`); contributor docs are in `docs/contributing/`. Scripts and config win when a doc disagrees with them.
 
 <!-- caveman-begin -->
 
@@ -22,232 +24,129 @@ Auto-Clarity: drop caveman for security warnings, irreversible actions, user con
 Boundaries: code/commits/PRs written normal.
 <!-- caveman-end -->
 
-<!-- BEGIN:turborepo-agent-rules -->
+## Hard rules
 
-# This is NOT the Turborepo you know
+- Check `git status --short` before editing and preserve unrelated changes. Set work aside with a WIP commit; plain
+  `git stash` shares one stack across every worktree.
+- **Web and mobile parity**: a user-facing change in `apps/web` gets the matching change in `apps/mobile` in the same
+  work, and the reverse. Share logic through workspace packages. Owner-approved exceptions are listed in
+  `apps/mobile/AGENTS.md`.
+- **Old clients keep working**: mobile binaries and OTA bundles stay installed for weeks. Keep API changes backward
+  compatible and deploy the backend before mobile changes that depend on it.
+- Never add AI attribution, AI co-author trailers or session links to commits or PRs. Commits follow Conventional
+  Commits (enforced by the commit-msg hook).
+- Keep credentials, personal resume data and production identifiers out of source, logs, fixtures and PRs.
+- Ticket notes (delivery logs, handoffs, review results) go on the Linear issue as a comment, never into repo files.
 
-Turborepo configuration, task behavior, and CLI commands can vary between installed versions and may differ from your training data. Resolve the `turbo` package from this file's directory or relevant workspace; in monorepos, it may not be visible from the repository root. For example, run `node -p "require.resolve('turbo/package.json')"` from a workspace that depends on `turbo`.
+## Specs and review
 
-Read `docs/README.md` inside that installed package first, then read the relevant pages from its `docs/` directory before changing Turborepo configuration or commands. Heed deprecation notices. These bundled docs match the installed package version and are available without network access.
+- Tickets: Linear team `RX` (`RX-<n>`); public reports: GitHub issues. How to read them: `.agents/docs/issue-tracker.md`.
+- Review rules: `CODING_STANDARDS.md`. Decision records: `.agents/docs/decisions/`.
+- Runbooks (container publishing, mobile CI and releases, Turbo remote cache): `.agents/docs/runbooks/`.
 
-This block is written and re-added by `turbo` before repository-scoped commands when an AI agent is detected. In the Turborepo source repository, its template is defined in `crates/turborepo-cli/src/cli/agent_guidance.rs`. Removing the managed block while updates are enabled means a later qualifying invocation will add it again. Set `"agentGuidance": false` in the root `turbo.json` or `turbo.jsonc` to opt out; this does not remove an existing block. Keep the block committed with your work to avoid an uncommitted change on the next agent invocation.
-<!-- END:turborepo-agent-rules -->
+## Environment
 
-## Agent skills
+- Node 24 (`.nvmrc`). This machine's default may be newer; run commands as `mise exec node@24 -- <cmd>` when
+  `node -v` isn't 24. pnpm version: root `packageManager`.
+- Setup, `.env.local`, dev servers, storage and database workflow: `docs/contributing/development.mdx`. Local Postgres,
+  Redis and SeaweedFS come from `compose.dev.yml`; host-run code uses `localhost`, containers use service names.
+- Root `.env` is auto-loaded by `packages/env`; root dev and `db:*` scripts load `.env.local` through `dotenvx`; tests,
+  builds and `pnpm start` load neither, so export what they need or use the scripts below.
 
-- Issues and specs: GitHub Issues for `reactive-resume/reactive-resume`. See `.agents/docs/issue-tracker.md`.
-- Check `git status --short` before editing. Preserve unrelated changes, including existing edits in this file.
-- Use scripts and configuration as the source of truth when documentation disagrees with them.
-
-## Overview
-
-Reactive Resume is a free, open-source resume builder for creating, importing, exporting, and sharing resumes, cover letters, and job applications. It is a TypeScript pnpm monorepo managed by Turborepo, with three apps: `apps/web` (React 19 SPA with TanStack Router, TanStack Query, Tailwind CSS, and Vite), `apps/server` (Hono / Node.js), and `apps/mobile` (Expo / React Native iOS and Android app with the native Forme renderer from `packages/forme-native`). oRPC connects browser workflows to server business logic; Better Auth handles authentication; Drizzle accesses PostgreSQL. Forme renders PDFs in the browser and on the server.
-
-The production Docker image runs a single Node.js process on port 3000; `apps/server` mounts the API/auth/MCP/static routes and serves the built web app. On Vercel, the `frontend` service serves static assets through its CDN and the `backend` service runs the same Hono application in a Node.js Function.
-
-Internal packages are source-consumed through `package.json` export maps pointing at `src` files. Do not assume package-local `dist` output exists unless a package explicitly adds it.
-
-## Setup
-
-Prerequisites: **Node.js 24** (`.nvmrc`, root `engines`, and Dockerfile), **pnpm 12.14.0** (root `packageManager`; pnpm self-manages to this version), and **Docker with Docker Compose** for local infrastructure. The Dockerfile's `ARG PNPM_VERSION` chooses its base image, not the project's pnpm version. Start your Docker daemon before running Compose.
-
-Shared dependency versions live in the default `catalog` in `pnpm-workspace.yaml`. Use `catalog:` in workspace manifests when that shared range applies; keep intentional exact pins and peer dependency ranges explicit.
-
-Run commands from the workspace root unless stated otherwise:
+## Commands
 
 ```sh
-pnpm install --frozen-lockfile
-test -e .env.local || cp .env.example .env.local
-docker compose -f compose.dev.yml up -d postgres redis seaweedfs seaweedfs_create_bucket
-docker compose -f compose.dev.yml ps
+pnpm check:affected                              # typecheck + tests of changed packages, boundaries, lint, format
+pnpm test:db exec -- pnpm --filter @reactive-resume/api test   # DB suites on per-worktree databases, no silent skips
+pnpm test:e2e:local --build [spec]               # Playwright on a per-worktree DB, port and storage
+pnpm --filter mobile test                        # mobile host tests (node --test, not Vitest)
+pnpm lingui:extract                              # web, mobile and PDF catalogs; run before building
+pnpm lingui:check                                # catalogs match source (CI gate)
+pnpm locales:diff [--base <ref>]                 # lost translations, placeholder/tag mismatches vs base
+pnpm ci:logs [run or job URL]                    # failure blocks from a CI run, even while it's still running
+pnpm check:agent-docs                            # paths named in agent docs exist, AGENTS.md size, no ignored files tracked
+pnpm docs:gen                                    # regenerate the OpenAPI spec after API contract changes
 ```
 
-Copy the environment template only when `.env.local` does not already exist. For host-run development, edit these values in `.env.local`; the template uses container hostnames:
-
-```dotenv
-APP_URL=http://localhost:3000
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
-S3_ENDPOINT=http://localhost:8333
-REDIS_URL=redis://localhost:6379
-```
-
-Set `AUTH_SECRET` to a generated secret (`openssl rand -hex 32`). If using saved AI providers or the assistant, also set a separate `ENCRYPTION_SECRET` of at least 32 characters. For database-only development, start just `postgres` and set `STORAGE_BACKEND=local` to avoid the template's S3 defaults.
-
-## Development workflow
-
-Vite+ (`vp`) runs Vite, Vitest, Oxlint, and Oxfmt through project-local binaries; no global install is required. Keep `vite-plus`, its `vite` override, and the bundled Vitest/coverage versions aligned in `pnpm-workspace.yaml` and `package.json`. Root `vite.config.ts` owns lint and formatting settings; package `vitest.config.ts` files retain isolated test configuration. Turbo owns workspace orchestration and boundaries; tsdown owns server/plugin packaging.
-
-Package typechecks use the pinned experimental `tsrs --noEmit`. Published binaries currently support macOS arm64 and Linux x64/arm64 (GNU/musl), not Windows or Intel macOS. TypeScript remains installed for library APIs and editor support.
-
-```sh
-pnpm dev
-pnpm dev:web
-pnpm db:generate
-pnpm db:migrate
-pnpm db:studio
-```
-
-- `pnpm dev` runs Vite on `PORT` (default `3000`), Hono on `SERVER_PORT` (default `3001`), and the email template preview on `3002`. Vite proxies API requests to Hono. Vite supplies hot reload; `tsx watch` restarts the server.
-- `pnpm dev:web` starts only Vite; API workflows still need a server. If ports are busy, change `PORT` and `SERVER_PORT` consistently in `.env.local`; keep the email preview's `3002` port free when running all dev tasks.
-- Server startup applies migrations before initializing auth and serving traffic. `pnpm db:migrate` applies them without starting the app; `pnpm db:studio` opens the database UI.
-- After adding user-facing strings, use Lingui macros and run `pnpm lingui:extract`. Catalogs live in `apps/web/locales/*.po`; `pnpm pdf:translations` regenerates PDF translations. Root build/check scripts run PDF translation generation automatically.
-- `pnpm docs:gen` regenerates the OpenAPI spec. Use it when changing that public surface.
-- Career/workspace changes: update the mapped user guides and fictional screenshots in the same change. Use `docs/contributing/career-platform.mdx` → **Keep product guides current**; verify UI labels, opt-ins, context, timezone and voice fallback against current code.
+- One package: `pnpm --filter <name> test [file]` (paths relative to the package; no extra `--`). Package names come
+  from each `package.json`: apps are `web`, `server`, `mobile`; shared packages are `@reactive-resume/<name>`.
+- `--filter <pkg> exec vp test run <file> -t "<name>"` runs one test. Most scripts use `--passWithNoTests`, so a green
+  run with zero tests proves nothing.
+- `check:affected` compares against `TURBO_SCM_BASE` (default `origin/main`); fetch first if `origin/main` is stale.
+- Send long-running output to a log file and read it with `tail` or `rg`; find background jobs with `pgrep -f <tag>`,
+  not a full `ps` listing.
 
 ## Ownership map
 
-Where each concern lives, and where new code for it goes:
+| Area                                                       | Owner                                                                                                                                                      |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web routes and workflows                                   | `apps/web/src/routes` (file-based; never hand-edit `routeTree.gen.ts`), `apps/web/src/features`                                                            |
+| Mobile screens and workflows                               | `apps/mobile/app` (Expo Router), `apps/mobile/src/features`; web-to-mobile map in `apps/mobile/AGENTS.md`                                                  |
+| Server HTTP, startup, static pages, MCP transport, OpenAPI | `apps/server/src/{http,rpc,mcp,openapi,static,startup}`                                                                                                    |
+| Public resume web page (server-rendered)                   | `apps/server/src/static/resume-page.ts`; HTML shell and SEO in `apps/server/src/static/web.ts`                                                             |
+| API routers and business logic                             | `packages/api/src/features/<feature>` (`router.ts`, `service.ts`); use `protectedProcedure` from `packages/api/src/context.ts`                             |
+| API input/output DTOs                                      | `packages/api/src/dto/<feature>.ts`                                                                                                                        |
+| Auth                                                       | `packages/auth` (Better Auth); `apps/server/src/http/auth.ts` delegates to it                                                                              |
+| DB schema and client                                       | `packages/db/src/schema/<area>.ts`, config `packages/db/drizzle.config.ts`, SQL in `migrations/`                                                           |
+| Server env validation                                      | `packages/env/src/server.ts`                                                                                                                               |
+| Resume, template and application schemas                   | `packages/schema` (fixtures: `defaultResumeData` in `packages/schema/src/resume/default.ts`, `sampleResumeData` in `packages/schema/src/resume/sample.ts`) |
+| Pure resume behaviour (JSON Patch, icons)                  | `packages/resume`                                                                                                                                          |
+| PDF rendering                                              | `packages/pdf` (templates through `src/forme`; shared filtering in `src/templates/shared/filtering.ts`)                                                    |
+| PDF.js viewer and canvas UI                                | `apps/web/src/features/resume/preview`, `apps/web/src/features/ats-checker`; never `packages/pdf`                                                          |
+| DOCX export                                                | `packages/docx`                                                                                                                                            |
+| MCP tools, prompts, server card                            | `packages/mcp` (tool annotation review: `packages/mcp/src/fixtures/tool-annotations.md`)                                                                   |
+| Generic UI primitives and styles                           | `packages/ui` (styles in `packages/ui/src/styles/`); web design rules in `apps/web/DESIGN.md`                                                              |
+| Other support packages                                     | `packages/{fonts,email,import,ai,utils,config}`; `packages/dsh-plugin` is a separately published plugin                                                    |
+| Dev-only scripts                                           | `tooling/`, never `packages/`                                                                                                                              |
 
-| Area                                                                                            | Owner                                                                                                                                                            |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Web routes, loaders, user-facing workflows                                                      | `apps/web/src/routes`, `apps/web/src/features` (file-based; never hand-edit `routeTree.gen.ts`)                                                                  |
-| Native mobile screens and workflows                                                             | `apps/mobile/app` (Expo Router), `apps/mobile/src/features`; native Forme engine in `packages/forme-native`                                                      |
-| Server HTTP routes/adapters, startup checks, static handlers, MCP transport, OpenAPI/well-known | `apps/server/src/{http,rpc,mcp,openapi,static,startup}`                                                                                                          |
-| Authenticated API contracts + business logic                                                    | `packages/api/src/features/*` (oRPC routers, DTOs, rate limiting; aggregated at `@reactive-resume/api/routers` for `/api/rpc`)                                   |
-| Auth                                                                                            | `packages/auth` (Better Auth config/helpers/types; `apps/server/src/http/auth.ts` delegates to `auth.handler`)                                                   |
-| DB client + schema                                                                              | `packages/db` (Drizzle; migrations at repo root `migrations/`)                                                                                                   |
-| Server env validation                                                                           | `packages/env` (auto-loads root `.env`)                                                                                                                          |
-| Resume/page/template Zod schemas                                                                | `packages/schema`                                                                                                                                                |
-| Pure resume-domain behavior (no DB/HTTP/DOM/renderer deps)                                      | `packages/resume` (JSON Patch helpers, social-network icons)                                                                                                     |
-| Resume PDF rendering                                                                            | `packages/pdf` (React templates converted through `src/forme` to Forme documents, font resolution, browser/server adapters)                                      |
-| PDF.js viewer/canvas UI                                                                         | `apps/web/src/features/resume/preview`, `apps/web/src/features/ats-checker` — never in `packages/pdf`                                                            |
-| DOCX export                                                                                     | `packages/docx`                                                                                                                                                  |
-| MCP tools/prompts/resources/server-card                                                         | `packages/mcp`                                                                                                                                                   |
-| Generic UI primitives + hooks                                                                   | `packages/ui` (Base UI/shadcn-style); workflow-specific UI stays in the owning web feature                                                                       |
-| DeepSeek Harness integration                                                                    | `packages/dsh-plugin` (separately built/published plugin)                                                                                                        |
-| Focused support surfaces                                                                        | `packages/fonts`, `packages/email`, `packages/import`, `packages/ai`, `packages/utils`, `packages/config` — prefer existing exports over cross-package shortcuts |
-| Dev-only scripts                                                                                | `tooling/`, not `packages/`, so packages only hold runtime-bundled code                                                                                          |
-
-Narrow cross-cutting helpers go in `packages/utils` only after checking no domain package is a better owner. Specifically: resume JSON Patch behavior belongs in `@reactive-resume/resume/patch` and DOCX builders in `@reactive-resume/docx` — not in `@reactive-resume/utils`.
-
-## Web app conventions
-
-- `apps/web/src/router.tsx` initializes router context with `queryClient`, `orpc`, `theme`, `locale`, `session`, and `flags`. Reuse route context instead of refetching these ad hoc.
-- The web app is a client-rendered SPA. The web build prerenders marketing homepages per locale; there is no request-time React SSR. `apps/server/src/static/web.ts` serves HTML and injects OpenGraph, canonical, and JSON-LD metadata. When adding a public marketing route, update its server fallback/SEO handling as well as the TanStack route; Vite's dev fallback can otherwise hide production 404s.
-- Builder shell: `apps/web/src/routes/builder/$resumeId`. Public resume route: `apps/web/src/routes/$username/$slug.tsx`.
-- Browser-only preview code: `apps/web/src/features/resume/preview`. PDF.js viewer (the ATS checker's upload): `apps/web/src/features/ats-checker`. Keep PDF.js/canvas code in these features, not in `packages/pdf`.
-- oRPC client: `apps/web/src/libs/orpc/client.ts` calls `/api/rpc` with credentials included. `apps/web/src/libs/orpc/fetch.ts` stages large request bodies through Blob on Vercel.
-- For React components with explicit props, use a named props type (e.g. `type FooProps = {...}` with `function Foo(props: FooProps)`) rather than inline object annotations, especially with more than one field or with generics.
-
-## Native mobile app
-
-- **Feature parity is required.** The web app and the native mobile app must always offer the same user-facing features. A change that adds, removes, or changes a feature in `apps/web` must make the matching change in `apps/mobile` in the same work, and the reverse. Share logic through workspace packages (`packages/api`, `packages/schema`, `packages/resume`, `packages/pdf`) rather than duplicating it. An exception forced by store policy (for example, the hidden iOS Donate row) needs the owner's explicit decision and a note in `.agents/docs/mobile-release-handoff.md`.
-- **Over-the-air update or new store build.** The runtime version uses an Expo fingerprint (`apps/mobile/fingerprint.config.js`). JavaScript, styling, copy, translation, and bundled-asset changes ship as an EAS Update: a stable Docker release publishes it to the `production` channel automatically, and no store submission is needed. A change to native code needs a new store build: native dependencies or config plugins, permissions or entitlements, `app.config.ts` native fields (icon, splash, schemes, associated domains), Expo SDK upgrades, `apps/mobile/patches`, or Forme native sources and `packages/forme-native/scripts/prebuilt.json`. Run `eas fingerprint:compare <installed native fingerprint hash> --environment production` from `apps/mobile` to check; save each Blacksmith build's `fingerprint.json` with the store release record. A changed fingerprint means a new store build. Native binaries and optional store uploads use `.github/workflows/mobile-release.yml` on Blacksmith, not EAS Build/Submit. Setup: `.agents/docs/mobile-ci.md`. Release steps: `.agents/docs/mobile-release-handoff.md` → **Releasing a new version**.
-- **Manual APKs and release gates.** `mobile-release.yml` supports `format=store|apk`; APKs require `platform=android`, one `abi`, and `upload=false`. Signing requires the `mobile-signing` approval; store uploads require a separate `mobile-store` approval. APK artifacts expire after 14 days; store binaries and release evidence expire after 90 days. Export evidence to permanent release records before expiry. Docker main pushes never build APKs or create Git tags/GitHub Releases. Promotion requires successful latest `ci.yml` main-push CI at the exact full source SHA before aliases or production move; keep the backend-revision health gate before production OTA.
-- Old binaries and old OTA bundles stay in use for weeks. Keep API changes backward compatible, and deploy the backend before releasing mobile changes that depend on it. Never bump the runtime version to force an incompatible update onto old binaries.
+`packages/utils` takes a helper only when no domain package owns it: JSON Patch belongs in `@reactive-resume/resume`,
+DOCX builders in `@reactive-resume/docx`.
 
 ## Package boundaries
 
-`pnpm exec turbo boundaries` is the executable check. Rules:
+`pnpm exec turbo boundaries` enforces them. Import other workspaces by package name and export map, never through a
+`src` path or path alias. Runtime-specific code sits behind explicit subpaths (`@reactive-resume/pdf/browser`,
+`@reactive-resume/pdf/server`, `@reactive-resume/env/server`); root exports stay environment-neutral. Wildcard exports
+are only for file-like leaf surfaces (`@reactive-resume/ui/components/*`, `@reactive-resume/ui/hooks/*`, schema model
+files).
 
-- Workspace deps go through package names and export maps. Never import another workspace's `src` tree via repo paths, `@reactive-resume/*/src/*`, or TS path aliases.
-- Workspace `turbo.json` files declare coarse tags: `app:web`, `app:server`, `runtime:server` (server-only packages: API/auth/db/env/email/MCP), `runtime:browser` (browser-only shared UI), `runtime:universal` (environment-neutral domain packages), plus `role:domain|infra|adapter|api|rendering|tooling` for intent.
-- Runtime-specific code lives behind explicit export subpaths (`@reactive-resume/pdf/browser`, `@reactive-resume/pdf/server`, `@reactive-resume/env/server`). Keep root exports environment-neutral unless the package is intentionally server-only.
-- Wildcard exports are allowed only for leaf libraries with an intentionally file-like surface — currently `@reactive-resume/ui/components/*`, `@reactive-resume/ui/hooks/*`, and schema resume/application model files. Prefer explicit exports for packages owning runtime behavior.
-- Prefer `protectedProcedure` from `packages/api/src/context.ts` for authenticated procedures. Expose only intentional public surfaces through `packages/api/package.json`.
-- Shared PDF section filtering: `packages/pdf/src/templates/shared/filtering.ts`. Template-specific visual exceptions stay in the owning template directory unless multiple templates need the behavior. `packages/pdf/src/hooks/use-register-fonts.ts` resolves font families, weights, and script fallback stacks; the Forme adapter owns conversion/rendering. PDF generation needs no Browserless or Chromium service.
+## Changes that touch several places
 
-Multi-place changes:
+- **Resume data shape**: `packages/schema/src/resume/*`, then DTOs, importers, PDF rendering, web and mobile forms.
+- **New DB column or table**: `packages/db/src/schema/*`, then `pnpm db:generate`. Also check the feature's `crud.ts`
+  update allow-list, the account export in `packages/api/src/features/auth`, and the DTO. To rebase a branch's
+  migration onto a newer `main`, delete the branch's migration folder and regenerate it so its snapshot chains on.
+- **API contract change**: `pnpm docs:gen`, then `pnpm --filter server test src/openapi` (it counts schemas).
+- **New env var**: `packages/env/src/server.ts`, `.env.example`, and `turbo.json` (`globalPassThroughEnv` plus the
+  test-task `env` arrays; Turbo's strict env mode hides unlisted variables). Deployment aliases:
+  `packages/env/src/deployment.ts`.
+- **User-facing strings**: Lingui macros, then `pnpm lingui:extract` (both apps). Translations workflow:
+  `docs/contributing/translations.mdx` and the `.agents/skills/fill-translations` skill. Glossary: root `GLOSSARY.md`.
+- **New template**: `packages/schema/src/templates.ts`, `packages/pdf/src/templates/index.ts`, source in
+  `packages/pdf/src/templates/<name>/`, previews under `apps/web/public/templates/` (command in `apps/web/DESIGN.md`).
+- **Public marketing route**: the TanStack route plus its server fallback and SEO in `apps/server/src/static/web.ts`;
+  Vite's dev fallback hides production 404s.
+- **Career or workspace behaviour**: update the mapped user guides and screenshots; see "Keep product guides current"
+  in `docs/contributing/career-platform.mdx`.
 
-- **Resume data shape**: `packages/schema/src/resume/*` first, then API DTOs, importers, PDF rendering, and web forms consuming it.
-- **New template**: `packages/schema/src/templates.ts`, `packages/pdf/src/templates/index.ts`, source under `packages/pdf/src/templates/<name>/`, and previews under `apps/web/public/templates/{pdf,jpg,thumb}`: the sample PDF, then images generated from it with the command in `apps/web/DESIGN.md` (Template previews).
-- **New DB column/table**: `packages/db/src/schema/*`, then `pnpm db:generate`.
-- **New env var**: `packages/env/src/server.ts`, `.env.example`, **and** the `globalPassThroughEnv` array and applicable test-task `env` arrays in `turbo.json`. Add deployment aliases in `packages/env/src/deployment.ts` when needed. Turborepo strict env mode filters unlisted injected variables from task processes.
+## Finish checks
 
-## Environment and database
-
-Host development requires `APP_URL`, `DATABASE_URL`, and non-empty `AUTH_SECRET`. `packages/env/src/server.ts` also loads root `.env` through Node's native `process.loadEnvFile`; existing process variables take precedence. Root dev/database scripts explicitly load `.env.local` through `dotenvx`. Tests and application code can have their own environment loaders; do not assume every command loads `.env.local`.
-
-- **Storage**: explicit `STORAGE_BACKEND=local|s3|blob` wins. Otherwise, complete S3 credentials select S3; Vercel selects private Blob; other deployments select local storage. `.env.example` ships SeaweedFS defaults, so either run SeaweedFS or select `local`/remove the S3 credentials. Local storage defaults to `<workspace>/data` in development and `/app/data` in Docker. `LOCAL_STORAGE_PATH` must be absolute and writable; persist it in deployed installations.
-- **`ENCRYPTION_SECRET`** is required for saved AI providers and the assistant. **`REDIS_URL`** is optional outside Vercel; it shares rate limits, cancellation and resumable replies between processes. Vercel deployment preparation requires Redis. Host-run dev uses `REDIS_URL=redis://localhost:6379`; the container-run app uses `redis://redis:6379`.
-- **`drizzle-kit` (used by `pnpm db:migrate`) reads `DATABASE_URL` from `process.env` directly** — it does not auto-load `.env`. The root migration scripts load `.env.local` through `dotenvx` before invoking Drizzle Kit.
-- `DATABASE_MIGRATION_URL` supplies a direct migration connection when runtime `DATABASE_URL` is pooled. Review generated migration SQL before applying it; avoid resetting databases or deleting volumes to fix setup errors.
-- Startup verifies the migrated schema. `STRICT_SCHEMA_CHECK=true` makes detected drift fatal; otherwise the server logs it and continues.
-
-## Testing and checks
-
-Prefer package-scoped checks for the files changed. Package names come from their `package.json`: the apps are `web` and `server`, most shared packages are `@reactive-resume/<name>`.
-
-```sh
-pnpm --filter web typecheck
-pnpm --filter @reactive-resume/pdf test
-pnpm --filter @reactive-resume/pdf test src/templates/shared/filtering.test.ts
-pnpm --filter @reactive-resume/pdf exec vp test run src/templates/shared/filtering.test.ts -t "filterItems"
-pnpm --filter @reactive-resume/pdf test:coverage
-pnpm exec vp lint --deny-warnings apps/web/src/features/resume
-pnpm exec vp fmt --check apps/web/src/features/resume
-pnpm exec turbo boundaries
-```
-
-- Vitest tests live alongside source as `src/**/*.test.ts(x)` or `src/**/*.spec.ts(x)` (including integration tests). Paths under `pnpm --filter <package>` are package-relative. Pass paths directly after `test`: an extra `--` currently prevents Vitest from filtering the run. Shared settings live in `vitest.shared.mts` and setup in `vitest.setup.ts`; most packages use Node, while `packages/ui` uses `happy-dom`.
-- Coverage uses V8 and writes package-local `coverage/` reports. No shared minimum coverage threshold is configured. `test:ci` writes JSON/JUnit results under package-local `reports/`.
-- Root `pnpm test`, `pnpm test:coverage`, and `pnpm typecheck` run workspace checks through Turbo. CI runs unit and browser jobs independently. Unit CI checks boundaries and affected-package typechecks, then discovers all unit suites with Turbo: four concurrent packages on 32-vCPU Blacksmith runners, one on GitHub runners, with two Vitest workers per package. Local test scripts remain serial. Unit/browser and Vercel jobs persist separate `.turbo/cache` namespaces; cached coverage and test reports restore to package-local output directories. Public, fixed CI secrets belong only to disposable services and keep unchanged test cache keys reusable; database and workflow integration suites retain their package-level cache opt-outs.
-- Real-database unit suites use `COVER_LETTER_TEST_DATABASE_URL` and `OAUTH_TEST_DATABASE_URL`; see `.github/workflows/ci.yml` for isolated database setup. Never point test fixtures at production data.
-- After changing shared contracts, exports, or imports, check affected consumers and run `pnpm exec turbo boundaries`.
-
-### Browser tests
-
-Playwright specs live in `tests/e2e/specs/*.spec.ts`, with fixtures in `tests/e2e/fixtures`. Configure a disposable PostgreSQL database and export test environment variables before building/running; these root scripts do not wrap `dotenvx`.
-
-```sh
-pnpm exec playwright install chromium
-pnpm build
-pnpm test:e2e
-pnpm test:e2e tests/e2e/specs/auth.spec.ts
-pnpm test:e2e:ui
-```
-
-- `playwright.config.ts` starts `node apps/server/dist/index.mjs` in production mode and waits for `/api/health`; locally it can reuse an existing server. Build first. Keep the direct Node command: pnpm's script process groups can prevent Playwright from cleaning up a server started through `pnpm start`.
-- Export `APP_URL`, `PORT`, `DATABASE_URL`, `AUTH_SECRET`, and `ENCRYPTION_SECRET`, and choose an absolute writable `LOCAL_STORAGE_PATH`. Auth fixtures need signups/email auth enabled; `FLAG_DISABLE_API_RATE_LIMIT=true` is appropriate for this isolated test installation.
-- Assistant specs use a deterministic local AI stub and need `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`; otherwise those specs skip. See `tests/e2e/README.md` for the full environment recipe; adapt its example storage path to your machine.
-- Playwright runs Chromium with no retries. CI selects four workers on Blacksmith and one on GitHub runners; the config default remains one in CI. Tests own separate accounts and browser contexts. CI retains failure traces, screenshots, videos, and reports. PDF/DOCX rasterization and visual regression are outside this browser gate.
-
-## Code style
-
-- TypeScript is strict, including `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, and unused-symbol checks; packages typecheck with `tsrs --noEmit`.
-- Oxlint checks code with its native React Compiler and accessibility rules. Oxfmt uses tabs, double quotes, 120-column lines, separated type import groups, and sorted Tailwind classes in `clsx`, `cva`, and `cn`. Use existing file naming and feature-local conventions.
-- **`pnpm check` modifies files**: it regenerates PDF translations, applies safe Oxlint fixes, runs Oxfmt, then fails on remaining lint errors or warnings. Review the diff; use `pnpm lint` and `pnpm format:check` for non-mutating checks.
-- Lefthook's pre-commit hook checks conflict markers, applies safe Oxlint fixes, runs Oxfmt, then checks staged files with warnings denied and stages the fixes. The commit-message hook enforces Conventional Commits (`fix:`, `feat:`, `docs:`, etc.).
-
-## Linting and formatting for coding agents
-
-- After code changes, run `pnpm exec vp lint --fix <changed paths>`, then `pnpm exec vp fmt <changed paths>`. Safe lint fixes run before formatting and import/Tailwind sorting. Keep side-effect import order intact.
-- Before finishing, run `pnpm lint:agent` (`vp lint --deny-warnings --format=agent`) and `pnpm format:check`. Fix diagnostics and recheck; do not disable rules merely to make a check pass. Any necessary inline suppression must name its rule and explain why.
-- Lint rules live in `vite.config.ts` under `lint`; formatting and import groups live under `fmt`. Generated route trees, build outputs, migrations, OpenAPI JSON, generated schema references, and byte-sensitive PDF CSS fixtures are excluded where appropriate.
-- `@shadcn/lint` is registered as a JS plugin. Its design-system rules are opt-in: configure them in the root `vite.config.ts` lint block after choosing the policy. It discovers the shared UI exports and Tailwind theme through `apps/web/components.json` and `packages/ui/components.json`. See [available rules](https://github.com/shadcn-ui/lint#rules). Keep UI-specific policies scoped to the web app and UI package.
-- Async test doubles may return a Promise without awaiting; the test override permits this. Playwright fixture callbacks named `use` are not React hooks, so `rules-of-hooks` is disabled only in the fixture adapter. Path references in declaration shims remain supported. CSS is formatted by Oxfmt; Oxlint checks JavaScript/TypeScript rather than CSS declarations.
-- Editor setup is checked in under `.vscode/`: install the recommended Oxc extension for lint fixes and formatting on save. This workflow follows the [Oxc coding-agent guide](https://oxc.rs/docs/guide/usage/coding-agents.html). Restart Codex sessions after changing these instructions.
-
-## Build and deployment
-
-```sh
-pnpm build
-NODE_ENV=production pnpm start
-docker compose up -d --build
-```
-
-- Build outputs: `apps/web/dist` (SPA/assets), `apps/web/dist-prerender` (localized marketing HTML), and `apps/server/dist` (`index.mjs` plus server/deployment chunks). `pnpm start` runs the built server; set `NODE_ENV=production` so it uses `PORT` instead of `SERVER_PORT`. Export runtime variables or provide root `.env`; `.env.local` is not loaded by `start`.
-- Production Compose loads `.env.example` then `.env`, not `.env.local`. Configure `.env` with container hostnames (`postgres`, `redis`, `seaweedfs`) and production secrets before running it. The Docker image runs as `node`, listens on `3000`, and persists local storage through `/app/data`. Health endpoint: `/api/health`. Its build also writes brotli copies (`*.br`) of the web app's text files and WASM (`tooling/docker/precompress.mjs`), which the server sends to browsers that accept brotli.
-- `vercel.json` defines Vercel Services (project framework must be `Services`): `frontend` (`apps/web`, static `dist`) and `backend` (`apps/server`, entrypoint `apps/server/vercel.mjs` re-exporting the tsdown build). The backend build runs `pnpm build` for both apps, then `node apps/server/dist/prepare-deployment.mjs`. Top-level rewrites send paths whose last segment has a file extension to `frontend` and everything else, including HTML shells, to `backend`, except the server-owned paths listed first. The Function uses Node 24 and a 300-second budget. `outputDirectory: "."` on `backend` stops the builder from treating `dist/index.mjs` (the Docker entrypoint) as the handler.
-- Vercel environment normalization accepts `POSTGRES_URL`, direct/unpooled DB aliases, and `KV_URL`. `APP_URL` can be derived from Vercel host variables. Blob is the default when no S3 credentials are set. Preview deployments require isolated resources before enabling `ALLOW_PREVIEW_MIGRATIONS=true`; see `docs/self-hosting/vercel.mdx`.
-- `.github/workflows/ci.yml` is the CI workflow: unit/browser tests and Vercel and Cloudflare compatibility run as separate jobs on PRs and pushes to `main`. `autofix.yml` runs write-capable autofix (`pnpm knip --fix` and `pnpm check`) separately because autofix.ci requires its own workflow name. Manual runs default to CI; `live_smoke=true` runs only the dedicated deployment smoke test. `issue-maintenance.yml` combines issue-form labeling with scheduled needs-info cleanup. GitHub runners are the default; `USE_BLACKSMITH=true` switches runners and paired actions.
-- `docker-publish.yml` publishes native AMD64/ARM64 images. `main` publishes nightly aliases; release tags/explicit release dispatch publish stable aliases and can trigger configured production integrations. The production Cloudflare purge removes only the `html` and `public` cache tags that `apps/server/src/static/web.ts` sets; hashed `/assets/*` stay cached across releases. See `.agents/docs/container-publishing.md` before release work.
-- Deployment smoke tests create/delete accounts and files; run only against a dedicated test installation. Details: `docs/contributing/deployment-checks.mdx`.
-
-## Security and pull requests
-
-- Keep credentials and personal resume data out of source, logs, test artifacts, issues, and PRs. Do not commit local environment files or substitute production secrets for test values.
-- Authenticated procedures use `protectedProcedure`; enforce resource ownership in feature logic. Reuse shared auth resolution for API keys, bearer tokens, and cookies rather than adding a separate auth path.
-- Keep unsafe OAuth redirect/AI URL flags disabled on public deployments. They relax redirect validation and SSRF protections for trusted self-hosted/test use.
-- Keep PRs focused. Describe the problem, resulting behavior, and checks actually run; link the relevant GitHub issue. Conventional Commits are enforced for commit messages; no separate PR-title convention is configured.
-- Before submitting, run applicable typechecks/tests and non-mutating lint checks; run the production build for runtime/bundling changes. Match CI's database/browser prerequisites when reproducing its checks. Report skipped checks and failures instead of claiming they passed.
-- Never add AI attribution, co-author trailers naming AI tools, or session/chat links to commits or PR descriptions.
+- After edits: `pnpm exec vp lint --fix <paths>`, then `pnpm exec vp fmt <paths>` (keep side-effect import order).
+- Before handing off: `pnpm check:affected` (or `pnpm lint:agent` and `pnpm format:check` plus the package tests you
+  touched), DB suites through `pnpm test:db exec`, and the production build for runtime or bundling changes. Report
+  skipped checks and failures as they are.
+- `pnpm check` mutates files (translations, lint fixes, formatting); review its diff.
+- Lint and format rules live in `vite.config.ts`. A suppression names its rule and the reason.
 
 ## Gotchas
 
-- Email sending needs SMTP config; without it emails are logged to console. Dev still works — verification links appear in server logs.
-- Database connection errors: check `docker compose -f compose.dev.yml ps` and use `localhost` for host-run code, service names inside containers.
-- S3 errors: check `docker compose -f compose.dev.yml logs seaweedfs seaweedfs_create_bucket`; verify endpoint and bucket, or select local storage.
-- Route-tree errors after adding routes: run Vite dev/build to regenerate `apps/web/src/routeTree.gen.ts`; never edit it by hand.
-- Serverless module-loading failures: inspect `bundledInteropPackages` in `apps/server/tsdown.config.ts` and the Vercel compatibility workflow. External CommonJS server dependencies break on Vercel because its service builder drops their pnpm links; bundle them with their dependencies.
-- Most test scripts use `--passWithNoTests`; a successful run with zero tests does not verify the behavior you changed.
+- `drizzle-kit` reads `DATABASE_URL` from the environment only; run it through the root `db:*` scripts.
+- Startup applies migrations and verifies the schema; `STRICT_SCHEMA_CHECK=true` makes drift fatal.
+- `.env.example` ships SeaweedFS S3 defaults: run SeaweedFS or set `STORAGE_BACKEND=local`.
+- Without SMTP, emails (verification links included) are printed to the server log.
+- Vercel module-loading failures: bundle CommonJS server dependencies through `bundledInteropPackages` in
+  `apps/server/tsdown.config.ts`; Vercel's service builder drops their pnpm links.
+- Playwright starts `node apps/server/dist/index.mjs` directly; build first, and keep that direct command.
+- Deployment smoke tests create and delete accounts; run them only against a dedicated test installation
+  (`docs/contributing/deployment-checks.mdx`).
+- CodeRabbit is not set up for automatic reviews; don't wait for it.

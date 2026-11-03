@@ -1,31 +1,11 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
 import { i18n } from "@lingui/core";
+import { load as loadSource, mobileRequire, tag } from "./harness.mjs";
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
-const requireServer = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(requireServer.resolve("tsx"))("esbuild");
-const { QueryClient } = createRequire(new URL("../package.json", import.meta.url))("@tanstack/react-query");
-function load(path, mocks, timers = {}) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(path, import.meta.url), "utf8"), {
-		loader: path.endsWith("tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "automatic",
-	}).code;
-	new Function("require", "module", "exports", "setTimeout", "clearTimeout", code)(
-		(name) => {
-			assert.ok(name in mocks, name);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-		timers.set,
-		timers.clear,
-	);
-	return module.exports;
-}
+const { QueryClient } = mobileRequire("@tanstack/react-query");
+const load = (path, mocks, timers = {}) =>
+	loadSource(path, mocks, { globals: { setTimeout: timers.set, clearTimeout: timers.clear } });
 const { prepareRequest } = load("../../../packages/utils/src/deferred-request.ts", {});
 const deferred = () => {
 	let resolve;
@@ -35,7 +15,6 @@ const deferred = () => {
 	return { promise, resolve };
 };
 const drain = () => new Promise((resolve) => setImmediate(resolve));
-const tag = (parts, ...values) => parts.reduce((out, part, index) => out + part + (values[index] ?? ""), "");
 const empty = { answers: [], checklist: [], questions: [], evidence: {}, ticks: {}, message: "" };
 const target = { id: "first", question: "Fictional first question", answer: "Original answer", factIds: [] };
 const second = { ...target, id: "second", question: "Fictional second question" };

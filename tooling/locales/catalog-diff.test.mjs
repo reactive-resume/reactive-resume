@@ -1,0 +1,23 @@
+import { expect, test } from "vite-plus/test";
+import { mismatch } from "./catalog-diff.mjs";
+
+test.each([
+	["Hello {name}", "Hallo {name}", ""],
+	["Hello {name}", "Hallo {nom}", "missing {name}, extra {nom}"],
+	["Hello {name}", "Hallo '{name}'", "missing {name}"],
+	["{0, plural, one {item} other {items}}", "{0, plural, one {Element} other {Elemente}}", ""],
+	["{0, plural, one {“{1}” once} other {“{2}” # times}}", "{0, plural, other {「{2}」が#回}}", ""],
+	[
+		"{0, plural, one {“{1}” once} other {“{2}” # times}}",
+		"{0, plural, one {„{2}“} other {„{2}“ #-mal}}",
+		"missing {1}",
+	],
+	[
+		"{0, plural, one {# day} other {# days}}",
+		"{count, plural, one {# Tag} other {# Tage}}",
+		"missing {0, plural}, extra {count, plural}",
+	],
+	["by <0>Amruth</0>", "von Amruth", "missing <0>, missing </0>"],
+])("%s → %s", (source, translation, problem) => {
+	expect(mismatch(source, translation)).toBe(problem);
+});

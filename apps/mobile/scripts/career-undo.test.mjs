@@ -1,29 +1,9 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
-const requireServer = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(requireServer.resolve("tsx"))("esbuild");
-const { QueryClient } = createRequire(new URL("../package.json", import.meta.url))("@tanstack/react-query");
-function load(path, mocks, timers) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(path, import.meta.url), "utf8"), {
-		loader: path.endsWith(".tsx") ? "tsx" : "ts",
-		jsx: "automatic",
-		format: "cjs",
-	}).code;
-	new Function("require", "module", "exports", "setTimeout", "clearTimeout", code)(
-		(name) => {
-			assert.ok(name in mocks, name);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-		timers?.set,
-		timers?.clear,
-	);
-	return module.exports;
-}
+import { load as loadSource, mobileRequire, tag } from "./harness.mjs";
+const { QueryClient } = mobileRequire("@tanstack/react-query");
+const load = (path, mocks, timers) =>
+	loadSource(path, mocks, { globals: { setTimeout: timers?.set, clearTimeout: timers?.clear } });
 const { prepareRequest } = load("../../../packages/utils/src/deferred-request.ts", {});
 const deferred = () => {
 	let resolve;
@@ -413,7 +393,6 @@ async function contactsHarness(contacts) {
 			return structuredClone(h.env.application);
 		},
 	});
-	const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 	const runtime = { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }) };
 	const { ContactsSheet } = load("../src/features/application-detail/sheets.tsx", {
 		react: h.react,

@@ -1,20 +1,8 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import * as harness from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const code = transformSync(readFileSync(new URL("../src/features/assistant/handoff.ts", import.meta.url), "utf8"), {
-	loader: "ts",
-	format: "cjs",
-}).code;
-
-function load() {
-	const module = { exports: {} };
-	new Function("module", "exports", code)(module, module.exports);
-	return module.exports;
-}
+const load = () => harness.load("../src/features/assistant/handoff.ts");
 
 test("Add to resume hands text only to the same account's chosen resume, once", () => {
 	const { handToAssistant, takeAssistantHandoff } = load();

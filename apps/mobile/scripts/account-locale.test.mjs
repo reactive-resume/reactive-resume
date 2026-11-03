@@ -1,12 +1,10 @@
 // Host proof of account lifetime; native rendering remains device QA.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { esbuild, run } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const code = transformSync(
+const code = esbuild.transformSync(
 	readFileSync(new URL("../src/features/settings/account-locale.ts", import.meta.url), "utf8"),
 	{ loader: "ts", format: "cjs" },
 ).code;
@@ -35,21 +33,12 @@ function harness(saved = "en-US") {
 			useSession: () => ({ status: "signed-in", server: "https://resume.example" }),
 		},
 	};
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in mocks, `Missing boundary: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
 	return {
 		state,
 		writes,
 		invalidations,
 		finish,
-		render: module.exports.useAccountLocale,
+		render: run(code, mocks).useAccountLocale,
 		effect: () => effects.shift()(),
 	};
 }

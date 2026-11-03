@@ -1,13 +1,12 @@
 // Actual native drafting store and captured Keep action; only platform, storage and session boundaries are substituted.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { bundle, esbuild, tag } from "./harness.mjs";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
-const req = createRequire(`${root}/apps/server/package.json`);
-const { buildSync } = createRequire(req.resolve("tsx"))("esbuild");
+const { buildSync } = esbuild;
 
 function fixture(options = {}) {
 	let account = "account-A";
@@ -45,26 +44,8 @@ function fixture(options = {}) {
 		"@/auth/session": { getAccountScope: () => account, getServer: () => server },
 		"@/draft": { useLetterStore: { getState: () => ({ document }) } },
 	};
-	const code = buildSync({
-		entryPoints: [`${root}/apps/mobile/src/features/letters/drafting.ts`],
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-		external: Object.keys(deps),
-		absWorkingDir: root,
-	}).outputFiles[0].text;
-	const mod = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in deps, `unexpected drafting dependency ${name}`);
-			return deps[name];
-		},
-		mod,
-		mod.exports,
-	);
 	return {
-		draft: mod.exports,
+		draft: bundle("../src/features/letters/drafting.ts", deps, { absWorkingDir: root }),
 		storage,
 		paid: () => paidCalls,
 		getDocument: () => document,
@@ -86,7 +67,7 @@ const letter = (id = "letter-A") => ({
 // Load write.tsx and expose the internal BodySection so the actual captured onKeep can be invoked.
 function loadWriteCaller(f) {
 	const jsx = (type, props) => ({ type, props });
-	const t = (pieces, ...values) => pieces.reduce((text, part, i) => text + part + (values[i] ?? ""), "");
+	const t = tag;
 	const store = (selector) => selector({ document: f.getDocument(), status: "saved" });
 	store.getState = () => ({
 		document: f.getDocument(),

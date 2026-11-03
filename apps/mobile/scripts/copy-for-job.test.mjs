@@ -1,29 +1,8 @@
 // Runs the shipped copy-for-job caller against a fake server; only the network client is replaced.
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import test from "node:test";
-
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-
-function load(path, mocks) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(path, import.meta.url), "utf8"), {
-		loader: "ts",
-		format: "cjs",
-	}).code;
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in mocks, "Missing boundary: " + name);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+import { load } from "./harness.mjs";
 
 const strings = load("../../../packages/utils/src/string.ts", { uuid: { v7: randomUUID } });
 

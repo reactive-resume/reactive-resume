@@ -1,26 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { beforeEach, test } from "node:test";
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-function load(path, mocks) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(path, import.meta.url), "utf8"), {
-		loader: "ts",
-		format: "cjs",
-	}).code;
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in mocks, `Missing boundary: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+import { load, mobileRequire } from "./harness.mjs";
 const schedule = load("../src/features/reminders/schedule.ts", {
 	"@reactive-resume/utils/timezone": mobileRequire("@reactive-resume/utils/timezone"),
 });
