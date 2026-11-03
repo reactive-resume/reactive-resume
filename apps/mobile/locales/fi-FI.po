@@ -3994,6 +3994,7 @@ msgstr "Vastauksia ei voitu jakaa. Yritä uudelleen."
 msgid "Couldn't share the calendar event. Try again."
 msgstr "Kalenteritapahtumaa ei voitu jakaa. Yritä uudelleen."
 
+#: src/features/application-detail/calendar.ts
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Kalenteritiedostoa ei voitu jakaa. Yritä uudelleen."
@@ -4793,6 +4794,10 @@ msgstr ""
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
 msgstr "Lataa molemmat PDF:t"
+
+#: src/features/application-detail/calendar.ts
+msgid "Download cancellation"
+msgstr "Lataa peruutus"
 
 #: src/features/application-detail/sections.tsx
 msgid "Download current PDF"
@@ -6294,13 +6299,24 @@ msgstr "Vain käyttöliittymä. Jokainen ansioluettelo asettaa oman kielensä De
 msgid "Interview"
 msgstr "Haastattelu"
 
+#. placeholder {0}: application.role
+#. placeholder {1}: application.company
+#: src/features/application-detail/calendar.ts
+msgid "Interview · {0}, {1}"
+msgstr "Haastattelu · {0}, {1}"
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Interview debrief"
 msgstr "Haastattelun jälkipuinti"
 
+#: src/features/application-detail/calendar.ts
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview deleted"
 msgstr "Haastattelu poistettu"
+
+#: src/features/application-detail/interview-sheet.tsx
+msgid "Interview deleted. Couldn't cancel its device reminder."
+msgstr "Haastattelu poistettu. Sen muistutusta laitteella ei voitu perua."
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview is in another timezone"
@@ -6389,12 +6405,12 @@ msgid "It stops opening at once. Comments already left are kept. You can make a 
 msgstr ""
 
 #: src/features/application-detail/sections.tsx
-msgid "It's removed from the timeline and the calendar for good."
-msgstr ""
-
-#: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Se on poistettu aikajanalta lopullisesti."
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from this application. Download a cancellation afterward to update your calendar."
+msgstr "Se poistetaan tästä työhakemuksesta. Lataa sen jälkeen peruutus päivittääksesi kalenterisi."
 
 #: src/features/settings/locale-names.ts
 msgid "Italian"
@@ -13867,6 +13883,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update this story in Knowledge?"
 msgstr ""
+
+#: src/features/application-detail/calendar.ts
+msgid "Update your calendar"
+msgstr "Päivitä kalenterisi"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

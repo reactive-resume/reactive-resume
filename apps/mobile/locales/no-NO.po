@@ -3994,6 +3994,7 @@ msgstr "Kunne ikke dele svarene. Prøv igjen."
 msgid "Couldn't share the calendar event. Try again."
 msgstr "Kunne ikke dele kalenderhendelsen. Prøv igjen."
 
+#: src/features/application-detail/calendar.ts
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Kunne ikke dele kalenderfilen. Prøv igjen."
@@ -4793,6 +4794,10 @@ msgstr ""
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
 msgstr "Last ned begge PDF-ene"
+
+#: src/features/application-detail/calendar.ts
+msgid "Download cancellation"
+msgstr "Last ned avlysning"
 
 #: src/features/application-detail/sections.tsx
 msgid "Download current PDF"
@@ -6294,13 +6299,24 @@ msgstr "Bare grensesnitt. Hver CV setter sitt eget språk i design."
 msgid "Interview"
 msgstr "Intervju"
 
+#. placeholder {0}: application.role
+#. placeholder {1}: application.company
+#: src/features/application-detail/calendar.ts
+msgid "Interview · {0}, {1}"
+msgstr "Intervju · {0}, {1}"
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Interview debrief"
 msgstr "Intervjuoppsummering"
 
+#: src/features/application-detail/calendar.ts
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview deleted"
 msgstr "Intervjuet er slettet"
+
+#: src/features/application-detail/interview-sheet.tsx
+msgid "Interview deleted. Couldn't cancel its device reminder."
+msgstr "Intervjuet er slettet. Påminnelsen på enheten kunne ikke avbrytes."
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview is in another timezone"
@@ -6389,12 +6405,12 @@ msgid "It stops opening at once. Comments already left are kept. You can make a 
 msgstr ""
 
 #: src/features/application-detail/sections.tsx
-msgid "It's removed from the timeline and the calendar for good."
-msgstr ""
-
-#: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Den er fjernet fra tidslinjen for godt."
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from this application. Download a cancellation afterward to update your calendar."
+msgstr "Det fjernes fra denne jobbsøknaden. Last deretter ned en avlysning for å oppdatere kalenderen din."
 
 #: src/features/settings/locale-names.ts
 msgid "Italian"
@@ -13867,6 +13883,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update this story in Knowledge?"
 msgstr ""
+
+#: src/features/application-detail/calendar.ts
+msgid "Update your calendar"
+msgstr "Oppdater kalenderen din"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

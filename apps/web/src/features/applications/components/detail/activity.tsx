@@ -23,6 +23,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { showInterviewCancellation } from "../../calendar";
 import { interviewKindOf, interviewTypeLabel } from "../../interviews";
 import { getCategoryLane, getLaneLabel, isCurrentLaneEvent } from "../../lanes";
 import { useInvalidateApplications } from "../../use-application-actions";
@@ -30,6 +31,7 @@ import { useApplicationLanes } from "../../use-application-lanes";
 import { useCareerTime } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { orpc } from "@/libs/orpc/client";
 
 const byNewest = (a: ApplicationTimelineEntry, b: ApplicationTimelineEntry) =>
@@ -209,16 +211,25 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 											const interview = entry.type === "interview" ? entry : null;
 											const kind = interview ? interviewTypeLabel(interview.kind) : "";
 											const date = interview ? day(new Date(interview.at)) : "";
+											const generation = getAccountGeneration();
 											const confirmed = await confirm(
 												interview ? t`Delete the ${kind} interview on ${date}?` : t`Delete this entry?`,
 												{
 													description: interview
-														? t`It's removed from the timeline and the calendar for good.`
+														? t`It's removed from this application. Download a cancellation afterward to update your calendar.`
 														: t`It's removed from the timeline for good.`,
 													confirmText: interview ? t`Delete interview` : t`Delete entry`,
 												},
 											);
-											if (confirmed) deleteEntry.mutate({ id: application.id, entryId: entry.id });
+											if (confirmed && generation === getAccountGeneration())
+												deleteEntry.mutate(
+													{ id: application.id, entryId: entry.id },
+													{
+														onSuccess: () => {
+															if (interview) showInterviewCancellation(application, interview, generation);
+														},
+													},
+												);
 										}}
 									>
 										<Trans>Delete…</Trans>

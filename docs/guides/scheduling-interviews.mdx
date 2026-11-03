@@ -80,7 +80,23 @@ Select the interview on the calendar, in **Upcoming interviews**, or in the appl
 
 A date and time skipped by a daylight-saving change is rejected. Pick a valid local time instead of accepting an automatic shift.
 
-To remove it, select **Delete**. The notice offers **Undo** for six seconds. Undo keeps the original round and its linked schedules. Removing an interview pauses its briefing schedules; rescheduling moves them to the new time. Check **Career → Today → Schedules** after a change.
+To remove it, select **Delete** (**Delete interview** in the native app). The notice offers **Undo** for six seconds. Undo keeps the original round and its linked schedules. Removing an interview pauses its briefing schedules; rescheduling moves them to the new time. Check **Career → Today → Schedules** after a change.
+
+After you save an edited interview, select **Update your calendar** in the notice to download its updated `.ics` file. After a deletion completes, select **Download cancellation** to download a cancellation for the same event. These actions are available on web and in the native app. Undo does not generate a cancellation. Deleting through **Activity** (**Timeline** in the native app) asks for confirmation instead of offering Undo, then offers the same cancellation action.
+
+<Frame caption="After changing an interview, download its updated calendar file from the save notice.">
+  <img
+    src="/images/guides/scheduling-interviews/phone-calendar-update.png"
+    alt="Phone browser Calendar with a fictional Calendar Protocol Labs interview at 3:30 PM and an Interview saved notice offering Update your calendar"
+  />
+</Frame>
+
+<Frame caption="A completed deletion offers a cancellation file for the original event.">
+  <img
+    src="/images/guides/scheduling-interviews/phone-calendar-cancellation.png"
+    alt="Phone browser Calendar with no remaining interviews and an Interview deleted notice offering Download cancellation"
+  />
+</Frame>
 
 ## Prepare for the round
 
@@ -161,11 +177,13 @@ The follow-up shows as the next step (unless an interview is coming up first) an
 
 When the next step is an interview or a follow-up, select **Add to calendar** under it. Reactive Resume downloads an `.ics` file named after the company and date. Open it to add the event to Apple Calendar, Google Calendar, Outlook or any other calendar app.
 
-The event includes the type of step, the role and company, and the start and end time. Interviews also include where and your notes. Follow-ups are added as 30-minute events at 9:00 on the chosen day.
+The event includes the type of step, the role and company, and the start and end time. Interviews also include the location, participants' names and roles, preparation notes, and a reminder one hour before the start. Follow-ups are 30-minute events at their saved time; date-only follow-ups use 09:00 in your account timezone.
 
 <Tip>
-  The `.ics` file is a one-time copy. If you change the interview in Reactive Resume later, download it again and update
-  the event in your calendar.
+  Calendar export is manual. Import **Update your calendar** or **Download cancellation** into your calendar app after
+  changing or deleting an interview. Files retain the original event identity and include a sequence number;
+  cancellation files mark that event cancelled and omit its reminder. Calendar apps handle imports differently, so check
+  the resulting event in your calendar. Reactive Resume does not sync directly with external calendars.
 </Tip>
 
 ## Related guides
