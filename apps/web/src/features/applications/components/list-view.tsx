@@ -66,6 +66,8 @@ type ListViewProps = {
 	showClosed: boolean;
 	selectedId: string | null;
 	onOpen: (application: ApplicationSummary) => void;
+	/** A tag chip filters the page's existing search, rather than starting a second filter state. */
+	onTagSelect?: ((tag: string) => void) | undefined;
 };
 
 /**
@@ -74,7 +76,7 @@ type ListViewProps = {
  * Next step: dated steps soonest first, then the longest wait. Groups collapse, headers sort within groups, and row checkboxes select
  * for bulk moves, tags, closing and deleting. Phones get two-line rows.
  */
-export function ApplicationList({ applications, showClosed, selectedId, onOpen }: ListViewProps) {
+export function ApplicationList({ applications, showClosed, selectedId, onOpen, onTagSelect }: ListViewProps) {
 	const breakpoint = useBreakpoint();
 	const { timeZone } = useCareerTime();
 	const phone = breakpoint === "mobile";
@@ -211,9 +213,15 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 					<thead>
 						<tr className="border-b border-line text-xs text-ink-3">
 							<th scope="col" className="w-10 ps-3">
-								<span className="sr-only">
-									<Trans>Select</Trans>
-								</span>
+								<Checkbox
+									checked={visible.length > 0 && checkedIds.length === visible.length}
+									indeterminate={checkedIds.length > 0 && checkedIds.length < visible.length}
+									disabled={visible.length === 0}
+									onCheckedChange={(on) =>
+										setChecked(on ? new Set(visible.map((application) => application.id)) : new Set())
+									}
+									aria-label={t`Select all visible applications`}
+								/>
 							</th>
 							{header("role", t`Role`)}
 							{header("next", t`Next step`, "w-1/4")}
@@ -272,6 +280,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 										checked={checked.has(application.id)}
 										onCheck={toggleRow}
 										onOpen={onOpen}
+										onTagSelect={onTagSelect}
 										rowRef={rowRef}
 										onStep={step}
 										onMove={move}
@@ -320,6 +329,7 @@ type ApplicationRowProps = {
 	onFollowUp: (id: string) => void;
 	onCheck: (id: string) => void;
 	onOpen: (application: ApplicationSummary) => void;
+	onTagSelect?: ((tag: string) => void) | undefined;
 };
 
 // Memoized with id-taking callbacks, so one row's change doesn't re-render the other rows.
@@ -335,6 +345,7 @@ const ApplicationRow = memo(function ApplicationRow({
 	onFollowUp,
 	onCheck,
 	onOpen,
+	onTagSelect,
 }: ApplicationRowProps) {
 	const openRef = useRef<HTMLButtonElement>(null);
 	useHotkeys(
@@ -415,7 +426,6 @@ const ApplicationRow = memo(function ApplicationRow({
 			) : (
 				<span dir="auto" className="truncate text-xs text-ink-3">
 					{[application.company, application.location].filter(Boolean).join(" · ")}
-					<TagChips tags={application.tags} />
 				</span>
 			)}
 		</button>
@@ -431,7 +441,10 @@ const ApplicationRow = memo(function ApplicationRow({
 				<td className="py-2.5 ps-1">
 					<div className="flex items-center gap-3">
 						{initial}
-						{openButton}
+						<div className="flex min-w-0 flex-1 flex-col gap-0.5">
+							{openButton}
+							<TagChips tags={application.tags} onSelect={onTagSelect} className="ms-0" />
+						</div>
 						<Icon name="caret-right" size={20} className="ms-auto shrink-0 text-ink-3" />
 					</div>
 				</td>
@@ -458,7 +471,14 @@ const ApplicationRow = memo(function ApplicationRow({
 			<td className="py-2 pe-2">
 				<div className="flex items-center gap-3">
 					{initial}
-					{openButton}
+					<div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-1.5">
+						<div className="col-start-1 row-span-2 min-w-0">{openButton}</div>
+						<TagChips
+							tags={application.tags}
+							onSelect={onTagSelect}
+							className="col-start-2 row-start-2 ms-0 self-center"
+						/>
+					</div>
 				</div>
 			</td>
 			<td className="px-2">

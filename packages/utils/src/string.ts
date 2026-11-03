@@ -100,6 +100,86 @@ export function stripHtml(html: string | undefined): string {
 	return html.replace(/<[^<>]*>/g, "").trim();
 }
 
+/**
+ * Shortens a label to an approximate `maxWidth`, where a narrow character counts as one unit and a wide glyph (CJK,
+ * Hangul, full-width or emoji) as two. Grapheme clusters stay whole, so an emoji ZWJ sequence or a combining accent is
+ * never cut; `Intl.Segmenter` is used when the runtime provides it, with code points as the fallback.
+ */
+type GraphemeSegmenter = { segment(input: string): Iterable<{ segment: string }> };
+const segmenterConstructor = (
+	Intl as unknown as {
+		Segmenter?: new (locale?: string, options?: { granularity: "grapheme" }) => GraphemeSegmenter;
+	}
+).Segmenter;
+const graphemeSegmenter = (() => {
+	if (!segmenterConstructor) return null;
+	try {
+		return new segmenterConstructor(undefined, { granularity: "grapheme" });
+	} catch {
+		return null;
+	}
+})();
+
+/** A small fallback for runtimes without `Intl.Segmenter`: keep combining marks, variation selectors, modifiers and
+ * ZWJ sequences attached to their base, so a label never ends on a partial emoji or a stranded accent. */
+function fallbackGraphemes(text: string): string[] {
+	const parts: string[] = [];
+	for (const character of text) {
+		const code = character.codePointAt(0) ?? 0;
+		const attached =
+			(code >= 0x0300 && code <= 0x036f) ||
+			(code >= 0x1ab0 && code <= 0x1aff) ||
+			(code >= 0x1dc0 && code <= 0x1dff) ||
+			(code >= 0x20d0 && code <= 0x20ff) ||
+			(code >= 0xfe20 && code <= 0xfe2f) ||
+			(code >= 0xfe00 && code <= 0xfe0f) ||
+			(code >= 0x1f3fb && code <= 0x1f3ff) ||
+			code === 0x200d ||
+			code === 0x20e3;
+		const previous = parts.at(-1);
+		if (previous !== undefined && (attached || previous.endsWith("\u200d"))) {
+			parts[parts.length - 1] = previous + character;
+		} else {
+			parts.push(character);
+		}
+	}
+	return parts;
+}
+
+const graphemes = (text: string): string[] =>
+	graphemeSegmenter ? Array.from(graphemeSegmenter.segment(text), (part) => part.segment) : fallbackGraphemes(text);
+
+/** CJK, Hangul, full-width punctuation and emoji occupy roughly twice the width of a Latin glyph. */
+function glyphWidth(grapheme: string): number {
+	const code = grapheme.codePointAt(0) ?? 0;
+	const wide =
+		(code >= 0x1100 && code <= 0x115f) ||
+		(code >= 0x2e80 && code <= 0xa4cf) ||
+		(code >= 0xac00 && code <= 0xd7a3) ||
+		(code >= 0xf900 && code <= 0xfaff) ||
+		(code >= 0xfe30 && code <= 0xfe4f) ||
+		(code >= 0xff00 && code <= 0xff60) ||
+		(code >= 0xffe0 && code <= 0xffe6) ||
+		(code >= 0x1f300 && code <= 0x1faff) ||
+		(code >= 0x20000 && code <= 0x3fffd);
+	return wide ? 2 : 1;
+}
+
+export function fitLabel(text: string, maxWidth = 18): string {
+	if (maxWidth <= 0) return "";
+	const parts = graphemes(text);
+	if (parts.reduce((total, part) => total + glyphWidth(part), 0) <= maxWidth) return text;
+	let width = 0;
+	let end = 0;
+	while (end < parts.length) {
+		const next = glyphWidth(parts[end] ?? "");
+		if (width + next > maxWidth - 1) break;
+		width += next;
+		end++;
+	}
+	return `${parts.slice(0, end).join("")}…`;
+}
+
 /** FNV-1a over the text: a short, stable fingerprint. Not for security. */
 export function fnv1a(text: string): number {
 	let hash = 0x811c9dc5;

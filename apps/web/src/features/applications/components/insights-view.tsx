@@ -1,3 +1,4 @@
+import type { ApplicationLane } from "../lanes";
 import type { ApplicationSummary } from "../types";
 import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -9,8 +10,12 @@ import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { fitLabel } from "@reactive-resume/utils/string";
+import { resolveExportTokens } from "../flow-tokens";
 import { computeInsights, computeOutcomes, computeTimeline, countSources } from "../insights";
-import { getStageColor, getStageLabel } from "../stages";
+import { getCategoryDisplay } from "../lanes";
+import { getStageColor } from "../stages";
+import { useApplicationLanes } from "../use-application-lanes";
 import { stagger } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
@@ -36,6 +41,7 @@ type ApplicationInsightsProps = {
 
 export function ApplicationInsights({ applications, onSaveJob, onClearFilters }: ApplicationInsightsProps) {
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	const { lanes } = useApplicationLanes();
 
 	// A resume is tailored for an application when it was made for it (Copy for a job).
 	const madeFor = new Map(
@@ -95,29 +101,28 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 					<Trans>How far applications get</Trans>
 				</h2>
 				<ol className="grid gap-2">
-					{outcomes.funnel.map((row, index) => (
-						<li key={row.status} className="grid grid-cols-[92px_minmax(0,1fr)_32px] items-center gap-3 text-sm">
-							<span className="flex items-center gap-1.5 text-ink-2">
-								<span
-									aria-hidden="true"
-									className="size-2 rounded-sm"
-									style={{ background: getStageColor(row.status) }}
-								/>
-								{getStageLabel(row.status)}
-							</span>
-							<span className="h-5 overflow-hidden rounded bg-sunken">
-								<span
-									className="block h-full origin-left rounded transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right starting:scale-x-0"
-									style={{
-										...stagger(index),
-										width: `${(row.reached / widest) * 100}%`,
-										background: getStageColor(row.status),
-									}}
-								/>
-							</span>
-							<span className="text-end font-display text-base tabular-nums">{row.reached}</span>
-						</li>
-					))}
+					{outcomes.funnel.map((row, index) => {
+						const stage = getCategoryDisplay(lanes, row.status);
+						return (
+							<li key={row.status} className="grid grid-cols-[8rem_minmax(0,1fr)_2rem] items-center gap-3 text-sm">
+								<span className="flex min-w-0 items-center gap-1.5 text-ink-2">
+									<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: stage.color }} />
+									<span className="truncate">{stage.label}</span>
+								</span>
+								<span className="h-5 overflow-hidden rounded bg-sunken">
+									<span
+										className="block h-full origin-left rounded transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right starting:scale-x-0"
+										style={{
+											...stagger(index),
+											width: `${(row.reached / widest) * 100}%`,
+											background: stage.color,
+										}}
+									/>
+								</span>
+								<span className="text-end font-display text-base tabular-nums">{row.reached}</span>
+							</li>
+						);
+					})}
 				</ol>
 				<p className="text-xs text-ink-3">
 					<Trans>Counts every application that reached each stage, including ones now closed.</Trans>
@@ -169,7 +174,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 				</section>
 			)}
 
-			<PipelineFlow insights={insights} />
+			<PipelineFlow insights={insights} lanes={lanes} />
 
 			<div className="grid gap-4 lg:grid-cols-2">
 				{/* application velocity over time */}
@@ -233,14 +238,10 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 	);
 }
 
-// Vibrant, dark-mode palette for the pipeline snapshot — brighter than the muted board stage
-// colors so the chart pops both on screen (preview) and in the exported PNG.
-const FLOW_COLORS = ["#a5b4fc", "#818cf8", "#22d3ee", "#fbbf24", "#34d399"];
-const FLOW_BG = "#0a0a0f";
-const FLOW_REJECTED = "#fb7185";
 const FLOW_FONT = "var(--font-ui)";
 // RxR mark ~18px wide in the 256-unit icon viewBox (the mark's glyphs span y ≈ 36–220).
 const ICON_SCALE = 18 / 256;
+const FLOW_LABEL_MAX = 18;
 
 function toBase64(buffer: ArrayBuffer): string {
 	const bytes = new Uint8Array(buffer);
@@ -291,10 +292,15 @@ async function uiFontFace(): Promise<string | null> {
 	return null;
 }
 
-// A funnel-flow snapshot (the shareable picture). Hand-drawn SVG with inline fills so it exports to
-// PNG without any library. Rendered dark + vibrant so the on-screen preview matches the export;
-// the "Tracked using Reactive Resume" mark is injected only when exporting.
-function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsights> }) {
+// A funnel-flow snapshot (the shareable picture). Hand-drawn SVG on the theme surface, with inline stage tokens
+// resolved for the PNG export; the "Tracked using Reactive Resume" mark is injected only when exporting.
+function PipelineFlow({
+	insights,
+	lanes,
+}: {
+	insights: ReturnType<typeof computeInsights>;
+	lanes: readonly ApplicationLane[];
+}) {
 	const svgRef = useRef<SVGSVGElement>(null);
 	const W = 800;
 	const H = 340;
@@ -307,10 +313,11 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 	const maxReached = Math.max(1, ...insights.funnel.map((f) => f.reached));
 
 	const bars = insights.funnel.map((f, i) => {
+		const display = getCategoryDisplay(lanes, f.status);
 		const h = Math.max((f.reached / maxReached) * maxBarH, 4);
 		const x = padX + slotW * i + slotW / 2 - barW / 2;
 		const yTop = midY - h / 2;
-		return { ...f, color: FLOW_COLORS[i] ?? f.color, x, yTop, h, cx: x + barW / 2 };
+		return { ...f, ...display, x, yTop, h, cx: x + barW / 2 };
 	});
 
 	const exportPng = async () => {
@@ -320,6 +327,8 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 		const clone = svg.cloneNode(true) as SVGSVGElement;
 		clone.style.fontFamily = getComputedStyle(svg).fontFamily;
 		for (const el of clone.querySelectorAll<SVGElement>("[data-export-only]")) el.style.display = "";
+		// The clone is rasterized outside the document, so its tokens need concrete values.
+		resolveExportTokens(clone);
 		// Inline the UI font so the rasterized PNG uses the same type as the app.
 		const fontFace = await uiFontFace();
 		if (fontFace) {
@@ -337,8 +346,6 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 			canvas.height = H * scale;
 			const ctx = canvas.getContext("2d");
 			if (!ctx) return;
-			ctx.fillStyle = FLOW_BG;
-			ctx.fillRect(0, 0, canvas.width, canvas.height);
 			ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 			const link = document.createElement("a");
 			link.download = "pipeline-flow.png";
@@ -376,7 +383,7 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 							const next = bars[i + 1];
 							if (!next) return null;
 							return (
-								<linearGradient key={`grad-${bar.label}`} id={`flow-grad-${i}`} x1="0" y1="0" x2="1" y2="0">
+								<linearGradient key={`grad-${bar.status}`} id={`flow-grad-${i}`} x1="0" y1="0" x2="1" y2="0">
 									<stop offset="0%" stopColor={bar.color} />
 									<stop offset="100%" stopColor={next.color} />
 								</linearGradient>
@@ -384,18 +391,18 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 						})}
 					</defs>
 
-					<rect x={0} y={0} width={W} height={H} rx={16} fill={FLOW_BG} />
+					<rect x={0} y={0} width={W} height={H} rx={6} fill="var(--surface)" />
 
-					<text x={padX} y={40} fontSize={17} fontWeight={700} fill="#fafafa">
+					<text x={padX} y={40} fontSize={17} fontWeight={700} fill="var(--ink)">
 						{t`Job search pipeline`}
 					</text>
-					<text x={padX} y={60} fontSize={12} fill="#71717a">
+					<text x={padX} y={60} fontSize={12} fill="var(--ink-3)">
 						{plural(insights.total, { one: "# active application", other: "# active applications" })}
 					</text>
 					{insights.closed > 0 && (
 						<g>
-							<circle cx={W - padX - 96} cy={54} r={4} fill={FLOW_REJECTED} />
-							<text x={W - padX - 86} y={58} fontSize={12} fill="#a1a1aa">
+							<circle cx={W - padX - 96} cy={54} r={4} fill={getStageColor("closed")} />
+							<text x={W - padX - 86} y={58} fontSize={12} fill="var(--ink-2)">
 								{t`${insights.closed} closed`}
 							</text>
 						</g>
@@ -411,7 +418,7 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 						const cxa = (x1 + x2) / 2;
 						return (
 							<path
-								key={`band-${bar.label}`}
+								key={`band-${bar.status}`}
 								d={`M${x1},${bar.yTop} C${cxa},${bar.yTop} ${cxa},${next.yTop} ${x2},${next.yTop} L${x2},${next.yTop + next.h} C${cxa},${next.yTop + next.h} ${cxa},${bar.yTop + bar.h} ${x1},${bar.yTop + bar.h} Z`}
 								fill={`url(#flow-grad-${i})`}
 								opacity={0.32}
@@ -421,13 +428,13 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 
 					{/* bars + labels */}
 					{bars.map((bar, i) => (
-						<g key={`bar-${bar.label}`}>
+						<g key={`bar-${bar.status}`}>
 							<rect x={bar.x} y={bar.yTop} width={barW} height={bar.h} rx={6} fill={bar.color} />
-							<text x={bar.cx} y={bar.yTop - 10} textAnchor="middle" fontSize={15} fontWeight={700} fill="#fafafa">
+							<text x={bar.cx} y={bar.yTop - 10} textAnchor="middle" fontSize={15} fontWeight={700} fill="var(--ink)">
 								{bar.reached}
 							</text>
-							<text x={bar.cx} y={H - 42} textAnchor="middle" fontSize={12} fontWeight={500} fill="#e4e4e7">
-								{bar.label}
+							<text x={bar.cx} y={H - 42} textAnchor="middle" fontSize={12} fontWeight={500} fill="var(--ink-2)">
+								{fitLabel(bar.label, FLOW_LABEL_MAX)}
 							</text>
 							{i > 0 && (
 								<text x={bar.cx} y={H - 26} textAnchor="middle" fontSize={11} fill={bar.color}>
@@ -437,13 +444,13 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 						</g>
 					))}
 
-					{/* export-only watermark: the Reactive Resume mark, bottom-right, 8px from each edge.
-				    Paths are apps/web/public/icon/dark.svg verbatim (fill #FAFAFA). */}
+					{/* export-only watermark: the Reactive Resume mark, bottom-right, 8px from each edge, in the theme's
+				    ink so it reads on the light and dark surface alike. Paths are apps/web/public/icon/dark.svg verbatim. */}
 					<g
 						data-export-only
 						style={{ display: "none" }}
 						transform={`translate(${W - 8 - 256 * ICON_SCALE}, ${H - 8 - 220 * ICON_SCALE}) scale(${ICON_SCALE})`}
-						fill="#FAFAFA"
+						fill="var(--ink)"
 						fillRule="evenodd"
 						clipRule="evenodd"
 					>
