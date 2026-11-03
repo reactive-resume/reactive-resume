@@ -301,7 +301,7 @@ function WritingNoteCard({ note }: { note: WritingNote }) {
 				<span className="font-mono text-xs text-ink-3">{note.location}</span>
 				<span
 					className={cn(
-						"h-[18px] rounded px-1.5 text-[11px] leading-[18px] font-semibold",
+						"h-[18px] rounded px-1.5 text-xs leading-[18px] font-semibold",
 						note.impact === "high" ? "bg-warn-soft text-warn-text" : "bg-sunken text-ink-2",
 					)}
 				>

@@ -239,7 +239,7 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 	if (overflow?.spills.some((spill) => spill.pages.includes(pageNumber))) {
 		return (
 			<figcaption className="relative mb-2.5 border-t-[1.5px] border-dashed border-warn">
-				<span className="absolute end-0 -top-2.5 rounded bg-sunken px-1.5 text-[11px] font-semibold text-warn-text">
+				<span className="absolute end-0 -top-2.5 rounded bg-sunken px-1.5 text-xs font-semibold text-warn-text">
 					<Trans>Page {pageNumber}</Trans>
 				</span>
 			</figcaption>

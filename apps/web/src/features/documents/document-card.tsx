@@ -193,7 +193,7 @@ export function DocumentCard({
 						{/* Bottom of the paper: its top is where every template prints the person's name. */}
 						<span className="absolute start-2 bottom-2 flex gap-1">
 							{isNew && (
-								<span className="rounded bg-accent px-1.5 text-[11px] leading-[18px] font-semibold text-on-accent">
+								<span className="rounded bg-accent px-1.5 text-xs leading-[18px] font-semibold text-on-accent">
 									<Trans>New</Trans>
 								</span>
 							)}
@@ -344,7 +344,7 @@ export function DocumentRow({
 							</OpenLink>
 						)}
 						{isNew && (
-							<span className="rounded bg-accent px-1.5 text-[11px] leading-[18px] font-semibold text-on-accent">
+							<span className="rounded bg-accent px-1.5 text-xs leading-[18px] font-semibold text-on-accent">
 								<Trans>New</Trans>
 							</span>
 						)}

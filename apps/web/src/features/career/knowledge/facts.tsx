@@ -382,7 +382,7 @@ const FactRow = memo(function FactRow({ fact, onStatus, onCorrect, onShare, onFo
 						{categoryLabel(categoryOf(fact))}
 						<span
 							className={cn(
-								"h-[18px] rounded-lg px-1.5 font-sans text-[11px] leading-[18px] normal-case",
+								"h-[18px] rounded-lg px-1.5 font-sans text-xs leading-[18px] normal-case",
 								company === null ? "bg-sunken text-ink-2" : "bg-info-soft text-info-text",
 							)}
 						>
@@ -448,7 +448,7 @@ const FactRow = memo(function FactRow({ fact, onStatus, onCorrect, onShare, onFo
 										<ol className="mt-1 grid gap-1 border-t border-line pt-2">
 											{fact.revisions.toReversed().map((revision) => (
 												<li key={revision.at} className="text-ink-3">
-													<span className="font-mono text-[11px]">{date(revision.at)}</span> · {revision.text}
+													<span className="font-mono text-xs">{date(revision.at)}</span> · {revision.text}
 												</li>
 											))}
 										</ol>

@@ -49,7 +49,7 @@ const issueOnLine = (issues: readonly CheckIssue[], line: string) =>
 
 function IssueChip({ issue }: { issue: CheckIssue }) {
 	return (
-		<span className="h-[18px] shrink-0 rounded-sm bg-warn-soft px-1.5 font-sans text-[10px] leading-[18px] font-semibold whitespace-nowrap text-warn-text">
+		<span className="h-[18px] shrink-0 rounded-sm bg-warn-soft px-1.5 font-sans text-xs leading-[18px] font-semibold whitespace-nowrap text-warn-text">
 			<Trans>issue {issue.number}</Trans>
 		</span>
 	);

@@ -857,8 +857,8 @@ function ComingUp({ now, className }: ComingUpProps) {
 				</span>
 			</Eyebrow>
 			<div className="flex items-start gap-3">
-				<span className="flex w-11 shrink-0 flex-col items-center rounded-lg bg-sunken py-1.5">
-					<span className="font-mono text-[11px] font-medium text-ink-3">{format(start, { weekday: "short" })}</span>
+				<span className="flex min-w-[2.75rem] shrink-0 flex-col items-center rounded-lg bg-sunken py-1.5">
+					<span className="font-mono text-xs font-medium text-ink-3">{format(start, { weekday: "short" })}</span>
 					<span className="font-display text-[22px] leading-[26px]">{format(start, { day: "numeric" })}</span>
 				</span>
 				<div className="grid min-w-0 gap-0.5">

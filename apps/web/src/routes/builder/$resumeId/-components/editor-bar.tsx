@@ -119,7 +119,7 @@ function ModeTabs() {
 					{labels[mode]}
 					{mode === "check" && <CheckBadge count={issueCount} />}
 					{mode === "share" && isPublic && (
-						<span className="size-1.5 rounded-full bg-accent" aria-hidden="true" title={t`Public`} />
+						<span className="size-1.5 rounded-sm bg-accent" aria-hidden="true" title={t`Public`} />
 					)}
 				</TabsTrigger>
 			))}
@@ -140,7 +140,7 @@ function CheckBadge({ count }: { count: number }) {
 	}
 
 	return (
-		<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-sm bg-warn-soft px-[5px] text-[11px] font-semibold text-warn-text">
+		<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-sm bg-warn-soft px-[5px] text-xs font-semibold text-warn-text">
 			<span aria-hidden="true">{count}</span>
 			<span className="sr-only">
 				<Plural value={count} one="# open issue" other="# open issues" />
