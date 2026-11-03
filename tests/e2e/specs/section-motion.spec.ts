@@ -2,15 +2,14 @@ import type { Locator } from "@playwright/test";
 import { createSampleResumeFromDashboard } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
-async function timing(row: Locator) {
-	return row.evaluate(async (element) => {
-		await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+async function timing(row: Locator, observeClose = false) {
+	return row.evaluate(async (element, observeClose) => {
 		const button = element.querySelector<HTMLButtonElement>(
 			'button[aria-label="Open Education"], button[aria-label="Close Education"]',
 		);
 		const panel = element.querySelector<HTMLElement>('[data-slot="collapsible-content"]');
 		if (!button) throw new Error("Education toggle is missing.");
-		return {
+		const read = () => ({
 			chevron: Number.parseFloat(getComputedStyle(button).transitionDuration),
 			panel: panel ? Number.parseFloat(getComputedStyle(panel).transitionDuration) : null,
 			heightAnimations:
@@ -21,8 +20,19 @@ async function timing(row: Locator) {
 							? [Number(animation.effect?.getTiming().duration)]
 							: [],
 					) ?? [],
-		};
-	});
+		});
+		if (observeClose && panel) {
+			const capture = (event: TransitionEvent) => {
+				if (event.target !== panel || event.propertyName !== "height") return;
+				element.setAttribute("data-observed-closing-timing", JSON.stringify(read()));
+				panel.removeEventListener("transitionrun", capture);
+			};
+			panel.addEventListener("transitionrun", capture);
+		} else {
+			await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+		}
+		return read();
+	}, observeClose);
 }
 
 for (const reducedMotion of ["no-preference", "reduce"] as const)
@@ -42,11 +52,20 @@ for (const reducedMotion of ["no-preference", "reduce"] as const)
 			)
 			.toBe(0);
 		const close = row.getByRole("button", { name: "Close Education", exact: true });
+		if (reducedMotion === "no-preference") await timing(row, true);
 		await close.focus();
 		await page.keyboard.press("Enter");
 		await expect(title).toHaveAttribute("aria-expanded", "false");
 		await expect(open).toBeFocused();
-		const closing = await timing(row);
+		await expect(row.locator('[data-slot="collapsible-content"]')).toBeHidden();
+		// Collect after unmount: browser transitionrun already retained the timing before host assertions.
+		const closing =
+			reducedMotion === "reduce"
+				? await timing(row)
+				: (JSON.parse((await row.getAttribute("data-observed-closing-timing")) ?? "null") as Awaited<
+						ReturnType<typeof timing>
+					>);
+		expect(closing).not.toBeNull();
 		await info.attach("section-timing", {
 			body: JSON.stringify({ reducedMotion, opening, closing }),
 			contentType: "application/json",
