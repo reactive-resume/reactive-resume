@@ -878,7 +878,9 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		await getPool().query(
 			`UPDATE application SET company='Northwind Labs', contacts='[{"name":"Dana Reyes"}]' WHERE id='alice-app'`,
 		);
-		await getPool().query("INSERT INTO application (id, user_id, company) VALUES ('alice-app-2','alice','Fieldnote')");
+		await getPool().query(
+			`INSERT INTO application (id, user_id, company, contacts) VALUES ('alice-app-2','alice','Fieldnote','[{"name":"Morgan Lee"}]')`,
+		);
 		const source = await service.create({
 			userId: "alice",
 			name: "Northwind letter",
@@ -898,7 +900,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		expect(reused).toMatchObject({
 			content: source.content,
 			recipientCompany: "Fieldnote",
-			recipientName: "",
+			recipientName: "Morgan Lee",
 			layout: "structured",
 		});
 		expect(await service.getById({ userId: "alice", id: source.id })).toMatchObject({
