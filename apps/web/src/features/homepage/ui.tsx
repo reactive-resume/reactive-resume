@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 
@@ -10,21 +10,39 @@ export const labelClass = "font-martian font-medium text-[13px] leading-[1.4]";
 
 type CtaLinkProps = { size: "header" | "hero" | "closing"; className?: string };
 
-/** "Build your resume": the page's one call to action, in the header, the hero and the closing section. */
+// Build-time prerender has no route matches; live routes carry the existing root session.
+const useSignedIn = () => useRouterState({ select: (state) => Boolean(state.matches.at(-1)?.context.session) });
+
+/** The main action in the header, hero and closing: start a resume or return to your dashboard. */
 export function CtaLink({ size, className }: CtaLinkProps) {
+	const signedIn = useSignedIn();
 	return (
 		<Link
-			to="/auth/register"
+			to={signedIn ? "/dashboard" : "/auth/register"}
 			className={cn(
 				"inline-flex shrink-0 items-center rounded-sm bg-accent font-ui font-semibold text-on-accent transition-[background-color,transform] duration-[160ms] ease-out-strong hover:bg-accent-hover motion-safe:active:[transform:scale(.97)]",
-				size === "header" && "h-[38px] px-4 text-sm",
+				size === "header" &&
+					"min-h-11 px-4 text-sm max-[479px]:max-w-28 max-[479px]:px-2 max-[479px]:text-center max-[479px]:text-xs max-[479px]:whitespace-normal",
 				size === "hero" && "h-[54px] gap-2.5 px-6 text-base shadow-e2",
 				size === "closing" && "h-14 gap-2.5 px-7 text-[17px] shadow-e2",
 				className,
 			)}
 		>
-			<Trans>Build your resume</Trans>
+			{signedIn ? <Trans>Go to dashboard</Trans> : <Trans>Build your resume</Trans>}
 			{size !== "header" && <Icon name="arrow-right" size={20} />}
+		</Link>
+	);
+}
+
+export function SignInLink() {
+	const signedIn = useSignedIn();
+	if (signedIn) return null;
+	return (
+		<Link
+			to="/auth/login"
+			className="touch-target relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-sm px-2 font-ui text-sm font-medium text-ink-2 underline-offset-3 transition-colors hover:text-ink hover:underline max-[479px]:px-1 max-[479px]:text-xs"
+		>
+			<Trans>Sign in</Trans>
 		</Link>
 	);
 }

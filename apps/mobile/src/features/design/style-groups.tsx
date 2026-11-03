@@ -3,7 +3,6 @@ import type { PickerSpec } from "./picker";
 import type { DensityId, FontPairingId, MarginId } from "./presets";
 import type { MessageDescriptor } from "@lingui/core";
 import type { EntryHeader, ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Locale } from "@reactive-resume/utils/locale";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useState } from "react";
@@ -29,7 +28,7 @@ import {
 	matchMargins,
 	rgbaToHex,
 } from "./presets";
-import { localeMap } from "@/features/settings/locale-names";
+import { getLocaleOptions } from "@/features/settings/locale-names";
 import { selectableLocales } from "@/i18n";
 import { Button, Icon, IconButton, Segmented, Text, haptics, listLayout, useTheme } from "@/ui";
 
@@ -503,7 +502,8 @@ export function PageGroup({ data, write, disabled, pick }: GroupProps) {
 	const { colors, radius, space, size } = useTheme();
 	const { page } = data.metadata;
 	const margins = matchMargins(data.metadata);
-	const languageName = (code: string) => (code in localeMap ? i18n._(localeMap[code as Locale]) : code);
+	const languageOptions = getLocaleOptions(i18n, selectableLocales);
+	const languageName = (code: string) => languageOptions.find((option) => option.value === code)?.label ?? code;
 	const set = (key: string, mutate: (value: ResumeData["metadata"]["page"]) => void) =>
 		write(key, (draft) => mutate(draft.metadata.page), true);
 
@@ -543,7 +543,7 @@ export function PageGroup({ data, write, disabled, pick }: GroupProps) {
 						pick({
 							title: t`Language`,
 							value: page.locale,
-							options: selectableLocales.map((code) => ({ value: code, label: languageName(code), detail: code })),
+							options: languageOptions,
 							onPick: (locale) =>
 								set("locale", (draft) => {
 									draft.locale = locale;
@@ -563,9 +563,6 @@ export function PageGroup({ data, write, disabled, pick }: GroupProps) {
 						opacity: disabled ? 0.45 : 1,
 					}}
 				>
-					<Text variant="mono" color="ink3">
-						{page.locale}
-					</Text>
 					<Text variant="body" numberOfLines={1} style={{ flex: 1 }}>
 						{languageName(page.locale)}
 					</Text>

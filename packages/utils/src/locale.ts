@@ -99,6 +99,24 @@ export function getPreferredLocale(languages: readonly string[]): Locale {
 /** A locale as a BCP 47 language tag for hreflang and `inLanguage`: "sr-SP" isn't a valid region, so it's "sr". */
 export const languageTag = (locale: Locale) => (locale === "sr-SP" ? "sr" : locale);
 
+const nameVariants: Record<string, string> = { "zh-CN": "zh-Hans", "zh-TW": "zh-Hant" };
+const sharedLanguages = new Set(["en", "pt", "zh"]);
+// Chromium lacks locale data for these; keep their CLDR names instead of falling back to English.
+const unlistedNames: Record<string, string> = { km: "ខ្មែរ", ne: "नेपाली", or: "ଓଡ଼ିଆ", sq: "shqip" };
+
+/** A language's name, in its own language by default; exact names distinguish supported regions and scripts. */
+export function getLanguageName(locale: string, displayLocale = locale, exact = true) {
+	const language = locale.split("-")[0] ?? locale;
+	const code = exact && sharedLanguages.has(language) ? (nameVariants[locale] ?? locale) : language;
+	const name =
+		(displayLocale === locale && Intl.DisplayNames.supportedLocalesOf([locale]).length === 0
+			? unlistedNames[language]
+			: undefined) ??
+		new Intl.DisplayNames([displayLocale], { type: "language" }).of(code) ??
+		locale;
+	return name.charAt(0).toLocaleUpperCase(displayLocale) + name.slice(1);
+}
+
 /** hreflang alternates for a page: every real locale plus x-default. */
 export function getLocaleAlternates(pageUrl: string) {
 	const alternates = supportedLocales.map((locale) => ({

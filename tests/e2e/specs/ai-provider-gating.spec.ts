@@ -28,7 +28,7 @@ async function saveProvider(page: Page, label: string) {
 
 async function connectProvider(page: Page) {
 	await page.getByRole("button", { name: /^Add AI provider/ }).click();
-	const dialog = page.getByRole("dialog");
+	const dialog = page.getByRole("dialog", { name: "Add provider", exact: true });
 	await dialog.getByRole("combobox", { name: "Provider", exact: true }).click();
 	await page.getByRole("option", { name: "OpenAI-compatible", exact: true }).click();
 	await dialog.getByLabel("Base URL").fill(stub.baseURL);
@@ -36,7 +36,7 @@ async function connectProvider(page: Page) {
 	await dialog.getByLabel("API key", { exact: true }).fill("stub-key");
 	await dialog.getByRole("button", { name: "Save and test", exact: true }).click();
 	await consent(page);
-	await expect(dialog).toBeHidden();
+	await expect(page.getByRole("dialog")).toHaveCount(0);
 }
 
 test("provider retries update one row, Test preserves Off, and no public catalog is requested", async ({
@@ -56,7 +56,7 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 	await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
 	await expect(page.getByRole("heading", { name: "AI is ready", exact: true })).toBeHidden();
 	await page.getByRole("button", { name: /^Add AI provider/ }).click();
-	const dialog = page.getByRole("dialog");
+	const dialog = page.getByRole("dialog", { name: "Add provider", exact: true });
 	await dialog.getByRole("combobox", { name: "Provider", exact: true }).click();
 	await page.getByRole("option", { name: "OpenAI-compatible", exact: true }).click();
 	await dialog.getByLabel("Base URL").fill(stub.baseURL);
@@ -73,7 +73,7 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 	await dialog.getByLabel("API key", { exact: true }).fill("stub-key");
 	await dialog.getByRole("button", { name: "Save and test", exact: true }).click();
 	await consent(page);
-	await expect(dialog).toBeHidden();
+	await expect(page.getByRole("dialog")).toHaveCount(0);
 	await expect(page.getByRole("heading", { name: "AI is ready", exact: true })).toBeVisible();
 	const ready = page.getByRole("region", { name: "AI is ready", exact: true });
 	for (const name of ["Improve selected line", "Review writing", "Check fit", "New cover letter", "Ask the coach"])
