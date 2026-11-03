@@ -237,6 +237,7 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 	"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => ({ timeZone: "UTC" }) },
 	"@orpc/client": { ORPCError },
 	"@tanstack/react-query": {
+		useQueryClient: () => ({ invalidateQueries: async () => {} }),
 		useQuery: (options) =>
 			options.queryKey[0] === "web-access"
 				? webQuery()
@@ -309,6 +310,12 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 	},
 	"@/auth/session": auth,
 	"@/features/documents/filter": { defaultCopySource: () => undefined },
+	"@/features/documents/copy-for-job": {
+		copyForJob: async () => {
+			throw new Error("No copy requested");
+		},
+	},
+	"@/features/documents/new-documents": { useNewDocuments: { getState: () => ({ markOpened() {} }) } },
 	"@/features/ai/providers": {
 		AIProviderSetupSheet: "AIProviderSetupSheet",
 		useHasAIProvider: () => ({ hasAIProvider: hasProvider }),

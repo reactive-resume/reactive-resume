@@ -138,9 +138,12 @@ test("fresh account prepares a linked blank resume and selects only submitted at
 test("save and prepare a copy in one step, then confirm submitted documents without services", async ({
 	authPage: page,
 }, testInfo) => {
-	const baseName = await createSampleResumeFromDashboard(page, testInfo);
+	await page.setViewportSize({ width: 1280, height: 1000 });
+	await createSampleResumeFromDashboard(page, testInfo);
 	// oxlint-disable-next-line typescript/no-non-null-assertion -- The dashboard fixture waits for the builder URL before returning.
 	const baseId = new URL(page.url()).pathname.split("/").at(-1)!;
+	const baseName = "Engineering base resume";
+	await expect(await page.request.put(`/api/openapi/resumes/${baseId}`, { data: { name: baseName } })).toBeOK();
 	const original = await (await page.request.get(`/api/openapi/resumes/${baseId}`)).json();
 	await page.goto("/dashboard/applications");
 	await page.getByRole("button", { name: "Save job", exact: true }).first().click();
@@ -151,6 +154,7 @@ test("save and prepare a copy in one step, then confirm submitted documents with
 	await save.getByLabel("Role", { exact: true }).fill("Engineer");
 	await save.getByLabel("Company", { exact: true }).fill("Example");
 	await save.getByLabel("Resume (optional)").selectOption(baseId);
+	await save.screenshot({ path: testInfo.outputPath("save-prepare-review.png"), animations: "disabled" });
 	// With a resume chosen, the copy is made and opened in one step (A3-11).
 	await save.getByRole("button", { name: "Save and prepare resume", exact: true }).click();
 	await page.waitForURL((url) => url.pathname.startsWith("/builder/") && !url.pathname.endsWith(baseId));

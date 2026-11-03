@@ -3,7 +3,7 @@ import type { PostingCapture } from "@reactive-resume/schema/applications/captur
 import type { ApplicationClosedReason } from "@reactive-resume/schema/applications/data";
 import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
@@ -24,7 +24,9 @@ import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers"
 import { WebAccessAttention, webSearchFailure } from "@/features/ai/web-access";
 import { WallClockField } from "@/features/application-detail/date-field";
 import { useNow, useUserTime } from "@/features/application-detail/hooks";
+import { copyForJob } from "@/features/documents/copy-for-job";
 import { defaultCopySource } from "@/features/documents/filter";
+import { useNewDocuments } from "@/features/documents/new-documents";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -38,6 +40,7 @@ import {
 	Text,
 	TextArea,
 	TextField,
+	showToast,
 	useTheme,
 } from "@/ui";
 
@@ -65,6 +68,7 @@ const today = () => {
 export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApplicationSheetProps) {
 	const now = useNow();
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { t, i18n } = useLingui();
 	const { timeZone } = useUserTime();
 	const { space } = useTheme();
@@ -246,9 +250,9 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 				...(clipped ? { completeness: "incomplete" } : {}),
 			}
 		: null;
-	const save = () =>
+	const save = (prepare = false) =>
 		void run("save", async (signal) => {
-			if (!ready || duplicate.data) return;
+			if (!ready || duplicate.data || !current(signal)) return;
 			const text = description.slice(0, 20_000);
 			const followUpAt = followUpDate ? fromZonedDateTime(followUpDate, "09:00", timeZone) : null;
 			if (followUpDate && !followUpAt)
@@ -275,6 +279,38 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 				followUpNote: followUpNote.trim() || null,
 			});
 			if (!current(signal)) return;
+			if (prepare && !onAdded) {
+				const source = resumes.find((resume) => resume.id === resumeId);
+				const chooseCopy = () => {
+					if (!current(signal)) return;
+					onClose();
+					router.push({
+						pathname: routes.new(),
+						params: { step: "copy", applicationId: id, ...(source ? { sourceResumeId: source.id } : {}) },
+					});
+				};
+				if (!source) return chooseCopy();
+				const base = source.name.split(" — ")[0] ?? source.name;
+				let copyId: string;
+				try {
+					copyId = await copyForJob(
+						{ resumeId: source.id, applicationId: id, name: `${base} — ${company.trim()}`.slice(0, 100) },
+						signal,
+					);
+				} catch {
+					if (!current(signal)) return;
+					showToast({ message: t`Couldn't copy the resume. Choose it again to prepare it.` });
+					chooseCopy();
+					return;
+				}
+				if (!current(signal)) return;
+				void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
+				useNewDocuments.getState().markOpened({ id: copyId, type: "resume" });
+				onClose();
+				router.push(routes.builder(copyId));
+				if (providers.hasAIProvider) router.push({ pathname: routes.assistant(copyId), params: { prepare: "1" } });
+				return;
+			}
 			onClose();
 			if (onAdded) onAdded(id);
 			else router.push(routes.applicationDetails(id));
@@ -315,13 +351,26 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 				footer={
 					<>
 						{review ? (
-							<Button
-								label={t`Save job`}
-								fullWidth
-								loading={busy === "save"}
-								disabled={!ready || !!duplicate.data}
-								onPress={save}
-							/>
+							<>
+								<Button
+									label={stage === "saved" ? t`Save job` : t`Record application`}
+									variant={onAdded || (stage !== "saved" && resumeId) ? "primary" : "secondary"}
+									fullWidth
+									loading={busy === "save"}
+									disabled={!ready || !!duplicate.data}
+									onPress={() => save()}
+								/>
+								{!onAdded ? (
+									<Button
+										label={t`Save and prepare resume`}
+										variant={stage !== "saved" && resumeId ? "secondary" : "primary"}
+										fullWidth
+										loading={busy === "save"}
+										disabled={!ready || !!duplicate.data}
+										onPress={() => save(true)}
+									/>
+								) : null}
+							</>
 						) : null}
 						{busy === "read" || busy === "search" || busy === "fill" ? (
 							<Button label={t`Cancel request`} variant="ghost" onPress={() => controller.current?.abort()} />
