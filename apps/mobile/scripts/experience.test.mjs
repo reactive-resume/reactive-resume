@@ -99,6 +99,7 @@ const mocks = {
 	},
 	"@/routes": { routes },
 	"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
+	"@/features/documents/tag-suggestions": { useExistingTags: () => [] },
 	"@/ui": ui,
 	"@/shell/key-commands": {
 		supportsUnmodifiedCommands: true,

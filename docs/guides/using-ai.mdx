@@ -146,6 +146,8 @@ Each saved provider appears as a row under **AI providers**, showing its name, m
 
 Select **Test** on a row to check it again. The result appears separately: **Connected** with the round-trip time (for example, **Connected · 420 ms**), or an error explaining what to check. The button returns to **Test**, so you can run it again. A failed test makes the connection unavailable. A passed test makes it ready unless you deliberately switched it off; **Test** preserves that choice. Turn it on in **Edit** when you want to use it again.
 
+Each row's **⋯** menu has **Delete provider**, so you can remove a connection without opening it.
+
 ## Edit, turn off or delete a provider
 
 Select **Edit** on a provider's row.
@@ -159,12 +161,12 @@ Select **Edit** on a provider's row.
 
 - **Change the key, model, task models, name or base URL**, then select **Save and test**. Leave **API key** empty to keep the saved key. Changing the key, model, task models or base URL turns the provider off until the new test passes.
 - **Turn it on or off** with **Use this provider**. Only a provider that passed its test can be turned on. A provider that is off stays saved but isn't offered anywhere in the app.
-- **Delete it** with **Delete provider**, then confirm with the red **Delete provider** button. Choose **Cancel** to keep it. The provider and its stored key are removed only after confirmation.
+- **Delete it** from the row's **⋯** menu or the **Delete provider** button under **Edit**, then confirm with the red **Delete provider** button. Choose **Keep provider** to keep it. The provider and its stored key are removed only after confirmation.
 
 <Frame caption="Confirm before deleting a saved provider">
   <img
     src="/images/guides/using-ai/provider-delete-confirmation.png"
-    alt="Delete provider confirmation for Fictional working connection, with Cancel and a red Delete provider button"
+    alt="Delete provider confirmation for Fictional working connection, with Keep provider and a red Delete provider button"
   />
 </Frame>
 
