@@ -1,7 +1,9 @@
 // AI draft of the letter body, streamed over SSE. Ported from startLetterDraft in apps/web/src/features/letters/store.ts.
+import type { CoverLetterDraftVersion } from "@reactive-resume/schema/cover-letter/data";
 import { ORPCError } from "@orpc/client";
 import Storage from "expo-sqlite/kv-store";
 import { create } from "zustand";
+import { coverLetterDraftVersionSchema } from "@reactive-resume/schema/cover-letter/data";
 import { draftForOwner, letterDraftOwnerKey } from "./draft-owner";
 import { saveLetter } from "./save";
 import { streamClient } from "@/api/client";
@@ -20,16 +22,21 @@ export type LetterDraft =
 	| {
 			phase: "streaming" | "ready";
 			text: string;
+			aiOperationIds: string[];
 			revision: number;
 			operation: string;
-			versions: string[];
+			versions: CoverLetterDraftVersion[];
 			stopped?: true;
 	  }
-	| { phase: "failed"; provider: string | null; error: unknown; versions: string[] }
+	| { phase: "failed"; provider: string | null; error: unknown; versions: CoverLetterDraftVersion[] }
 	/** What's typed couldn't be saved (offline, error, conflict), so the server would draft from stale links. */
 	| { phase: "unsaved" };
 
-type LastDraft = { variant: DraftVariant; previous?: string | undefined };
+type LastDraft = {
+	variant: DraftVariant;
+	previous?: string | undefined;
+	previousAiOperationIds?: string[] | undefined;
+};
 type DraftingState = {
 	/** The account, server and letter that own this draft. A different letter/account sees idle, never this text. */
 	owner: string | null;
@@ -41,9 +48,18 @@ const idle: LetterDraft = { phase: "idle" };
 /** The most drafts kept side by side: the current one and up to four before it. */
 const MAX_DRAFT_VERSIONS = 5;
 
-const asVersions = (value: unknown) =>
+const asVersions = (value: unknown, sources: unknown) =>
 	Array.isArray(value)
-		? value.filter((version): version is string => typeof version === "string").slice(-(MAX_DRAFT_VERSIONS - 1))
+		? value
+				.flatMap((version, index) => {
+					const parsed = coverLetterDraftVersionSchema.safeParse(
+						typeof version === "string"
+							? { text: version, aiOperationIds: Array.isArray(sources) ? sources[index] : undefined }
+							: version,
+					);
+					return parsed.success ? [parsed.data] : [];
+				})
+				.slice(-(MAX_DRAFT_VERSIONS - 1))
 		: [];
 const defaultLast: LastDraft = { variant: "draft" };
 
@@ -89,9 +105,11 @@ export async function restoreLetterDraft(id: string) {
 		const value = raw
 			? (JSON.parse(raw) as {
 					text?: unknown;
+					aiOperationIds?: unknown;
 					variant?: unknown;
 					revision?: unknown;
 					versions?: unknown;
+					versionAiOperationIds?: unknown;
 					stopped?: unknown;
 				})
 			: null;
@@ -117,9 +135,13 @@ export async function restoreLetterDraft(id: string) {
 						draft: {
 							phase: "ready",
 							text: value.text as string,
+							aiOperationIds: coverLetterDraftVersionSchema.parse({
+								text: value.text,
+								aiOperationIds: value.aiOperationIds,
+							}).aiOperationIds,
 							revision,
 							operation: nextOperation(),
-							versions: asVersions(value.versions),
+							versions: asVersions(value.versions, value.versionAiOperationIds),
 							...(value.stopped === true ? { stopped: true as const } : {}),
 						},
 						last: { variant },
@@ -131,11 +153,26 @@ export async function restoreLetterDraft(id: string) {
 	}
 }
 
-type StoredDraft = { text: string; variant: DraftVariant; revision: number; versions: string[]; stopped?: true };
+type StoredDraft = {
+	text: string;
+	aiOperationIds: string[];
+	variant: DraftVariant;
+	revision: number;
+	versions: CoverLetterDraftVersion[];
+	stopped?: true;
+};
 
 async function storeDraft(owner: string, draft: StoredDraft) {
 	try {
-		await Storage.setItem(owner, JSON.stringify(draft));
+		// Keep text-only versions readable by older app bundles.
+		await Storage.setItem(
+			owner,
+			JSON.stringify({
+				...draft,
+				versions: draft.versions.map((version) => version.text),
+				versionAiOperationIds: draft.versions.map((version) => version.aiOperationIds),
+			}),
+		);
 	} catch {
 		// Storage full or unavailable: the draft stays in this view.
 	}
@@ -150,7 +187,11 @@ async function clearDraft(owner: string) {
 }
 
 /** Streams a draft (or a Shorter / More personal revision of `previous`) into `useLetterDrafting`. */
-export async function startLetterDraft(variant: DraftVariant = "draft", previous?: string) {
+export async function startLetterDraft(
+	variant: DraftVariant = "draft",
+	previous?: string,
+	previousAiOperationIds: string[] = [],
+) {
 	const letter = useLetterStore.getState().document;
 	if (!letter) return;
 	const owner = letterDraftOwner(letter.id);
@@ -165,7 +206,7 @@ export async function startLetterDraft(variant: DraftVariant = "draft", previous
 	const prior = before.owner === owner ? before.draft : idle;
 	const versions = (
 		prior.phase === "ready"
-			? [...prior.versions, prior.text]
+			? [...prior.versions, { text: prior.text, aiOperationIds: prior.aiOperationIds }]
 			: prior.phase === "streaming" || prior.phase === "failed"
 				? prior.versions
 				: []
@@ -174,9 +215,10 @@ export async function startLetterDraft(variant: DraftVariant = "draft", previous
 		if (drafting !== controller || letterDraftOwner(letter.id) !== owner) return;
 		useLetterDrafting.setState((state) => (state.owner === owner ? { draft } : state));
 	};
-	useLetterDrafting.setState({ owner, last: { variant, previous } });
+	useLetterDrafting.setState({ owner, last: { variant, previous, previousAiOperationIds } });
 	void clearDraft(owner);
-	set({ phase: "streaming", text: "", revision, operation, versions });
+	let aiOperationIds = variant === "draft" ? [] : previousAiOperationIds;
+	set({ phase: "streaming", text: "", aiOperationIds, revision, operation, versions });
 
 	try {
 		// The server drafts from the saved letter's links, so links chosen a moment ago must reach it first.
@@ -193,16 +235,18 @@ export async function startLetterDraft(variant: DraftVariant = "draft", previous
 		if (!saved) return set({ phase: "unsaved" });
 		revision = savedLetter.revision;
 		const stream = await streamClient.coverLetters.draft(
-			{ id: letter.id, variant, ...(previous ? { previous } : {}) },
+			{ id: letter.id, variant, includeProvenance: true, ...(previous ? { previous } : {}) },
 			{ signal: controller.signal },
 		);
 		let text = "";
 		for await (const chunk of stream) {
-			text += chunk;
-			set({ phase: "streaming", text, revision, operation, versions });
+			if (typeof chunk !== "string") {
+				aiOperationIds = [...new Set([...aiOperationIds, chunk.aiOperationId])];
+			} else text += chunk;
+			set({ phase: "streaming", text, aiOperationIds, revision, operation, versions });
 		}
 		if (!text.trim()) throw new Error("The draft came back empty.");
-		set({ phase: "ready", text: text.trim(), revision, operation, versions });
+		set({ phase: "ready", text: text.trim(), aiOperationIds, revision, operation, versions });
 		// A late completion after leave/account/letter change may not persist into the new owner's namespace.
 		if (
 			drafting === controller &&
@@ -211,7 +255,7 @@ export async function startLetterDraft(variant: DraftVariant = "draft", previous
 			useLetterDrafting.getState().owner === owner &&
 			useLetterStore.getState().document?.id === letter.id
 		)
-			void storeDraft(owner, { text: text.trim(), variant, revision, versions });
+			void storeDraft(owner, { text: text.trim(), aiOperationIds, variant, revision, versions });
 	} catch (error) {
 		if (controller.signal.aborted) return;
 		const data = error instanceof ORPCError ? (error.data as { provider?: unknown } | undefined) : undefined;
@@ -220,23 +264,32 @@ export async function startLetterDraft(variant: DraftVariant = "draft", previous
 }
 
 /** What's left when a run stops or its failure is dismissed: its text when any arrived, else the draft before it. */
-function settle(owner: string, text: string, versions: string[], revision: number, stopped: boolean): LetterDraft {
+function settle(
+	owner: string,
+	text: string,
+	versions: CoverLetterDraftVersion[],
+	revision: number,
+	stopped: boolean,
+	aiOperationIds: string[] = [],
+): LetterDraft {
 	const last = versions.at(-1);
 	const draft: LetterDraft = text.trim()
 		? {
 				phase: "ready",
 				text: text.trim(),
+				aiOperationIds,
 				revision,
 				operation: nextOperation(),
 				versions,
 				...(stopped ? { stopped: true as const } : {}),
 			}
 		: last !== undefined
-			? { phase: "ready", text: last, revision, operation: nextOperation(), versions: versions.slice(0, -1) }
+			? { phase: "ready", ...last, revision, operation: nextOperation(), versions: versions.slice(0, -1) }
 			: idle;
 	if (draft.phase === "ready")
 		void storeDraft(owner, {
 			text: draft.text,
+			aiOperationIds: draft.aiOperationIds,
 			variant: "draft",
 			revision,
 			versions: draft.versions,
@@ -256,7 +309,17 @@ export function stopLetterDraftKeepingText() {
 	const owner = letterDraftOwner(letter.id);
 	useLetterDrafting.setState((state) =>
 		state.owner === owner && state.draft.phase === "streaming"
-			? { ...state, draft: settle(owner, state.draft.text, state.draft.versions, letter.revision, true) }
+			? {
+					...state,
+					draft: settle(
+						owner,
+						state.draft.text,
+						state.draft.versions,
+						letter.revision,
+						true,
+						state.draft.aiOperationIds,
+					),
+				}
 			: state,
 	);
 }

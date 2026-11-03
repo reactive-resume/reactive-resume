@@ -12,6 +12,7 @@ import { applyProposals } from "@reactive-resume/resume/proposals";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
+import { AiResultUsage } from "@/features/ai/usage";
 import { letterPageData, useLetterWords } from "@/features/letters/compose";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { useLetterMode } from "@/features/letters/use-letter-mode";
@@ -120,6 +121,7 @@ export function LetterPage() {
 					isPhone ? "px-4" : "px-10",
 				)}
 			>
+				{viewing && <AiResultUsage usage={viewing.aiUsage} />}
 				<ResumePreview
 					data={data}
 					includeCoverLetterHeader

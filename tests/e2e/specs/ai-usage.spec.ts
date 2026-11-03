@@ -6,8 +6,72 @@ let stub: Awaited<ReturnType<typeof startAiStub>>;
 test.beforeAll(async () => {
 	stub = await startAiStub();
 });
+test.beforeEach(() => {
+	stub.requests.length = 0;
+});
 test.afterAll(async () => {
 	await stub?.close();
+});
+
+test("letter Accept saves the displayed version's original model and request source", async ({
+	authPage: page,
+}, testInfo) => {
+	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs isolated local AI stub permission");
+	test.setTimeout(90_000);
+	await page.setViewportSize({ width: 1440, height: 1000 });
+	await approveLocalStubOperations(page);
+	const before = stub.requests.length;
+	const connection = await page.request.post("/api/openapi/ai-providers", {
+		data: {
+			label: "Fictional Letter AI",
+			provider: "openai-compatible",
+			model: "letter-model",
+			baseURL: stub.baseURL,
+			apiKey: "stub-key",
+		},
+	});
+	await expect(connection).toBeOK();
+	const { id: providerId } = await connection.json();
+	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
+	const resumeResponse = await page.request.post("/api/openapi/resumes", {
+		data: { name: "Fictional services resume", tags: [], withSampleData: true },
+	});
+	await expect(resumeResponse).toBeOK();
+	const resumeId = await resumeResponse.json();
+	const created = await page.request.post("/api/openapi/cover-letters", {
+		data: { name: "Fictional services letter", resumeId },
+	});
+	await expect(created).toBeOK();
+	const { id } = await created.json();
+	await page.goto(`/builder/letter/${id}`);
+	await page.getByRole("button", { name: "Draft from your resume", exact: true }).click();
+	const body = page.getByRole("region", { name: "Letter", exact: true });
+	await expect(
+		body.getByText("I build reliable services and would welcome the chance to discuss your team.", { exact: true }),
+	).toBeVisible();
+	await body.getByRole("button", { name: "Shorter", exact: true }).click();
+	await expect(body.getByText("I build reliable services.", { exact: true })).toBeVisible();
+	await body.getByRole("button", { name: "Previous version", exact: true }).click();
+	await expect(
+		body.getByText("I build reliable services and would welcome the chance to discuss your team.", { exact: true }),
+	).toBeVisible();
+	await body.getByRole("button", { name: "Accept", exact: true }).click();
+	await expect(body.getByText("AI request attempts: 1", { exact: true })).toBeVisible();
+	const saved = await (await page.request.get(`/api/openapi/cover-letters/${id}`)).json();
+	expect(saved.content).toBe("<p>I build reliable services and would welcome the chance to discuss your team.</p>");
+	expect(saved.aiOperationIds).toHaveLength(1);
+	await expect(await page.request.delete(`/api/openapi/ai-providers/${providerId}`)).toBeOK();
+	await page.reload();
+	await expect(body.getByText("AI request attempts: 1", { exact: true })).toBeVisible();
+	await expect(body.getByText("Fictional Letter AI · openai-compatible · letter-model", { exact: true })).toBeVisible();
+	expect(stub.requests.length - before).toBe(3);
+	const report = await (await page.request.get("/api/openapi/ai/usage")).json();
+	expect(report.requests).toBe(3);
+	expect(report.groups).toEqual(
+		expect.arrayContaining([expect.objectContaining({ action: "draft-letter", requests: 2, model: "letter-model" })]),
+	);
+	await body.scrollIntoViewIfNeeded();
+	await body.screenshot({ path: testInfo.outputPath("letter-ai-provenance.png"), animations: "disabled" });
 });
 
 test("real AI attempts reach weekly usage and saved provenance after connection rename and deletion", async ({

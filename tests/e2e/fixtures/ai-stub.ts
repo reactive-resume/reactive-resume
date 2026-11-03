@@ -133,6 +133,12 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	}
 
 	response.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-cache" });
+	if (!request.tools?.length && /^(write the body|shorter:|more personal:)/.test(said))
+		return streamText(response, [
+			said.startsWith("write")
+				? "I build reliable services and would welcome the chance to discuss your team."
+				: "I build reliable services.",
+		]);
 
 	// A realistic coaching answer for documentation captures; the people and companies are fictional.
 	if (said.includes("follow up on this week"))
