@@ -3595,7 +3595,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Tidak dapat melengkapkan permintaan. Semak sambungan anda dan cuba lagi."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Tidak dapat menyelesaikan tindakan ini. Cuba lagi."
@@ -3945,6 +3947,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Tidak dapat menyimpan perubahan itu. Semak sambungan anda dan cuba lagi."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Tidak dapat menyimpan perubahan itu. Cuba lagi."
 
@@ -4676,6 +4679,10 @@ msgstr "Mata wang yang berbeza atau tempoh pembayaran. Tiada perbezaan wang diki
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Arah"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Buang"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5759,10 @@ msgstr "Jawapan borang"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Soalan borang (pilihan)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Memformat"
@@ -6606,6 +6617,10 @@ msgstr "Kekalkan satu alamat sahaja, supaya perisian tidak perlu meneka yang man
 msgid "Keep access when you are not using the application."
 msgstr "Kekalkan akses apabila anda tidak menggunakan aplikasi."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Simpan jawapan"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6653,10 @@ msgstr "Kekal jujur"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Kekalkan di bawah 2.5 MB, biasanya dengan membuang atau mengecilkan imej."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Simpan surat"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6982,7 @@ msgid "Letter body"
 msgstr "Badan surat"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Draf surat"
 
@@ -8178,6 +8198,10 @@ msgstr ""
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "tiada suntingan"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Tiada suntingan dicadangkan."
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -9531,8 +9555,13 @@ msgid "Prepare a resume"
 msgstr "Sediakan resume"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Sediakan permohonan"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Sediakan draf untuk semakan"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9583,11 @@ msgstr "Menyediakan eksport…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Menyediakan fail…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Menyediakan…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9736,10 @@ msgstr "Bar kemajuan"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projek"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Cadangkan poin resume"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10666,6 +10704,10 @@ msgstr "Halaman resume {0}"
 msgid "Resume preview"
 msgstr "Pratonton resume"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Cadangan resume"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "resume diserahkan (pilihan)"
@@ -10862,6 +10904,10 @@ msgstr "Semak jawapan borang yang diperlukan dan alih keluar dakwaan yang tidak 
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Semak fakta resume"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Semak cadangan penyesuaian, draf surat dan jawapan bersama. Tiada apa dihantar kepada majikan."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11687,10 @@ msgstr "Dihantar kepada {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Pisahkan soalan dengan baris kosong. Maksimum lima soalan, 2,000 aksara setiap satu."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbia"
@@ -11793,6 +11843,18 @@ msgstr "Kongsi melalui…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Hanya resume dan iklan jawatan dikongsi. Pengetahuan, nota peribadi dan akses web dikecualikan. Semak cadangan sebelum menerima; dokumen asal tidak berubah."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Hanya pernyataan Pengetahuan terpilih, resume dan iklan jawatan dikongsi. Pengetahuan lain, nota peribadi dan akses web dikecualikan. Semak poin sebelum menerima."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Berkongsi resume, iklan jawatan dan soalan yang ditampal. Draf jawapan turut menggunakan surat, pilihan kerjaya, nota dan kenalan permohonan serta fakta dan cerita Pengetahuan yang aktif. Konteks mungkin dipendekkan. Akses web dimatikan. Semak sebelum menyimpan; tiada apa dihantar."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12249,10 @@ msgstr "Sesetengah aksara tidak dapat dilukis: {0}. Pilih fon lain dalam Reka Be
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Sesetengah aksara tidak dapat dipaparkan. Semak halaman sebelum mengeksport."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Sesetengah draf tidak dapat disiapkan. Simpan draf yang siap sebelum mencuba lagi."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Sesetengah glif tiada makna di luar fail ini."
@@ -12486,6 +12552,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Berhenti"
 
@@ -12902,6 +12970,7 @@ msgstr "Akaun berubah. Cuba lagi."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Alamat hanya boleh mengandungi huruf Latin a–z dan nombor, dipisahkan oleh sempang tunggal."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14014,6 +14083,7 @@ msgstr "Garis bawah pautan"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

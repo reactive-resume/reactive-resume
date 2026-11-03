@@ -303,6 +303,7 @@ export function pruneAgentModelContext(
 
 /** A reply that looked up Knowledge: anything it said after the lookup may repeat those facts. */
 export const readsKnowledge = (message: UIMessage) =>
+	(message.metadata as { selectedKnowledge?: unknown } | undefined)?.selectedKnowledge === true ||
 	message.parts.some((part) => ["tool-read_knowledge", "tool-search_career_knowledge"].includes(part.type));
 
 /**

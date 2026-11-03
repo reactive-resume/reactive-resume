@@ -183,7 +183,7 @@ export async function saveProposalApplications(
 			and(
 				eq(schema.aiRequest.userId, input.userId),
 				inArray(schema.aiRequest.operationId, candidates),
-				inArray(schema.aiRequest.action, ["assistant", "career-chat"]),
+				inArray(schema.aiRequest.action, ["assistant", "career-chat", "tailor-resume"]),
 			),
 		);
 	const recorded = new Set(attempts.map((row) => row.id));

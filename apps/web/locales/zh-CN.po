@@ -4533,6 +4533,11 @@ msgstr ""
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Couldn't complete this action. Try again."
+msgstr "无法完成此操作。再试一次。"
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -4963,6 +4968,7 @@ msgstr "无法保存该更改。请检查网络连接后重试。"
 #: src/features/assistant/use-attachment-removal.ts
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "无法保存该更改。再试一次。"
@@ -5908,6 +5914,7 @@ msgid "Digit {position} of {total}"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "Discard"
 msgstr "放弃"
 
@@ -7306,6 +7313,10 @@ msgstr "表单回答"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "表单问题（可选）"
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Format"
 msgstr "格式"
@@ -8526,6 +8537,10 @@ msgstr "在你未使用该应用时保持访问权限。"
 msgid "Keep account"
 msgstr "保留账户"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "保留回答"
+
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Keep application"
@@ -8565,6 +8580,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "将文件控制在 2.5 MB 以内，通常可通过移除或缩小图片实现。"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "保留求职信"
 
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -8980,6 +8999,7 @@ msgid "Letter details"
 msgstr "信件详情"
 
 #: src/features/ai/usage.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "信件草稿"
 
@@ -10356,6 +10376,10 @@ msgstr ""
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
 msgstr "没有编辑"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "未提出修改建议。"
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -12037,6 +12061,14 @@ msgstr "准备简报"
 msgid "Prepare a resume"
 msgstr "准备一份简历"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Prepare application"
+msgstr "准备求职申请"
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "准备草稿以供审阅"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "为我的面试做准备"
@@ -12053,6 +12085,8 @@ msgstr "准备编辑..."
 msgid "Preparing resume for printing…"
 msgstr "正在准备打印简历…"
 
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 msgid "Preparing…"
 msgstr "正在准备……"
@@ -12226,6 +12260,10 @@ msgstr "项目"
 #: src/features/homepage/hero.tsx
 msgid "Promoted to lead, 2021"
 msgstr "2021 年晋升领导"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "建议一条简历要点"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -13427,6 +13465,10 @@ msgstr "简历页"
 msgid "Resume page {pageNumber} of {totalPages}"
 msgstr "简历第 {pageNumber} 页，共 {totalPages} 页"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "简历修改建议"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume submitted (optional)"
@@ -13572,6 +13614,10 @@ msgstr "审核简历事实"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Review saved version"
 msgstr ""
+
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "一起审阅定制建议、求职信草稿和回答。不会向雇主提交任何内容。"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Review target roles in Knowledge"
@@ -14565,6 +14611,10 @@ msgstr "发送至{0}"
 msgid "Sent to Lumen"
 msgstr "已发送给 Lumen"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "用空行分隔问题。最多五个问题，每个不超过 2,000 字符。"
+
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "塞尔维亚语"
@@ -14686,6 +14736,18 @@ msgstr "分享通过..."
 #: src/features/documents/document-actions.tsx
 msgid "Share…"
 msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "仅分享简历和招聘信息。不包含知识库、私人笔记和网页访问。接受前请审阅建议，原件保持不变。"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "仅分享选中的知识库陈述、简历和招聘信息。不包含其他知识、私人笔记和网页访问。接受前请审阅要点。"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "分享简历、招聘信息和粘贴的问题。回答草稿还会使用求职信、职业偏好、申请笔记和联系人，以及知识库中启用的事实和经历。上下文可能被节选。网页访问已关闭。保存前请审阅，不会提交任何内容。"
 
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
@@ -15134,6 +15196,10 @@ msgstr "有些字符会变成问号。"
 msgid "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
 msgstr "有些检查需要这个文件没有携带的信息：无法查看的页面内容，或者这些检查未覆盖的语言的文字。它们既不算通过，也不算失败。"
 
+#: src/features/career/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "部分草稿未能完成。重试前请保留已完成的草稿。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "有些字形脱离这份文件后就没有意义了。"
@@ -15483,6 +15549,8 @@ msgstr ""
 
 #: src/features/assistant/chat-chrome.tsx
 #: src/features/career/shared.tsx
+#: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Stop"
@@ -16075,6 +16143,7 @@ msgid "The AI provider rejected the saved key. Check the key in Settings, or cha
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
 
@@ -17399,6 +17468,7 @@ msgstr "下划线链接"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/career/workspace/messages.tsx
+#: src/features/career/workspace/prepare-review.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
 #: src/features/resume/builder/undo-toast.ts
@@ -18966,6 +19036,10 @@ msgstr ""
 msgid "Your guest documents and applications are in this account."
 msgstr ""
 
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has. Different Career profiles stop sign-in and keep your guest work. Assistant conversations don't move."
+msgstr "访客的简历、求职信、求职申请和职业知识会转移到此账户，已有事实除外。职业资料不同时会停止登录并保留访客的工作。助手对话不会转移。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "你的标题看起来和正文一模一样。"
@@ -19114,10 +19188,6 @@ msgstr "您的简历，居住地址"
 msgid "Your saved AI connections need attention. Test or edit them below. History and saved proposals remain available."
 msgstr ""
 
-#: src/libs/orpc/ai-consent.ts
-msgid "Your search terms. These also go to the configured search service."
-msgstr ""
-
 #: src/libs/error-message.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
 msgstr "您选择的字体无法显示部分字符，它们会显示为“?”。请在“设计”中选择包含这些字符的字体。"
@@ -19232,7 +19302,3 @@ msgstr "缩小"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "祖鲁语"
-
-#: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has. Different Career profiles stop sign-in and keep your guest work. Assistant conversations don't move."
-msgstr "访客的简历、求职信、求职申请和职业知识会转移到此账户，已有事实除外。职业资料不同时会停止登录并保留访客的工作。助手对话不会转移。"

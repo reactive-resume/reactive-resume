@@ -16,6 +16,113 @@ test.afterAll(async () => {
 	await stub?.close();
 });
 
+test("Prepare application reviews actual tailoring, letter and pasted answers under one disclosure", async ({
+	authPage: page,
+}, info) => {
+	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs isolated local AI stub permission");
+	await page.setViewportSize({ width: 1440, height: 1100 });
+	const connection = await page.request.post("/api/openapi/ai-providers", {
+		data: {
+			label: "Fictional Review AI",
+			provider: "openai-compatible",
+			model: "review-main",
+			capableModel: "review-capable",
+			baseURL: stub.baseURL,
+			apiKey: "stub-key",
+		},
+	});
+	await expect(connection).toBeOK();
+	const { id: providerId } = await connection.json();
+	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
+	await createSampleResumeFromDashboard(page, info);
+	const sourceId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
+	const original = await (await page.request.get(`/api/openapi/resumes/${sourceId}`)).json();
+	const created = await page.request.post("/api/openapi/applications", {
+		data: {
+			company: "Fictional Cedar",
+			role: "Engineer",
+			resumeId: sourceId,
+			jobDescription: "Build fictional reliable services.",
+		},
+	});
+	await expect(created).toBeOK();
+	const id = await created.json();
+	await expect(
+		await page.request.patch(`/api/openapi/career/workspace/${id}`, {
+			data: {
+				answers: [
+					{ id: "existing-answer", question: "Existing question", answer: "Existing authored answer", factIds: [] },
+				],
+				expected: { answers: [] },
+			},
+		}),
+	).toBeOK();
+	await page.goto(`/dashboard/applications/${id}/apply`);
+	const review = page.getByRole("region", { name: "Prepare application", exact: true });
+	await expect(review).toBeVisible();
+	await review.getByLabel("Form questions (optional)").fill("Describe work you led.\n\nWhy this role?");
+	const before = stub.requests.length;
+	await review.getByRole("button", { name: "Prepare drafts for review", exact: true }).click();
+	const disclosure = page.getByRole("alertdialog");
+	await expect(disclosure).toContainText("review-main, review-capable");
+	await expect(disclosure).toContainText("application notes and contacts");
+	await expect(disclosure).toContainText("Web access is off");
+	await disclosure.getByRole("button", { name: "Don't share", exact: true }).click();
+	await expect(review.getByRole("button", { name: "Prepare drafts for review", exact: true })).toBeEnabled();
+	expect(stub.requests).toHaveLength(before);
+	await review.getByRole("button", { name: "Prepare drafts for review", exact: true }).click();
+	await disclosure.getByRole("button", { name: "Allow this operation", exact: true }).click();
+	await expect(review.getByLabel("Letter draft")).toBeVisible({ timeout: 60_000 });
+	await expect(review.getByLabel("Describe work you led.")).toBeVisible();
+	await expect(review.getByLabel("Why this role?")).toBeVisible();
+	const app = await (await page.request.get(`/api/openapi/applications/${id}`)).json();
+	expect(app.resumeId).not.toBe(sourceId);
+	const readResume = async () => await (await page.request.get(`/api/openapi/resumes/${app.resumeId}`)).json();
+	expect((await readResume()).data).toEqual(original.data);
+	const letter = await (await page.request.get(`/api/openapi/cover-letters/${app.coverLetterId}`)).json();
+	expect(letter.content).toBe("");
+	expect((await (await page.request.get(`/api/openapi/career/workspace/${id}`)).json()).answers).toHaveLength(1);
+	expect(stub.requests.length - before).toBe(6);
+	await review.getByLabel("Letter draft").fill("I build fictional reliable services for real teams.");
+	await page.reload();
+	await expect(review.getByLabel("Letter draft")).toHaveValue("I build fictional reliable services for real teams.");
+	expect(stub.requests.length - before).toBe(6);
+	await review.screenshot({ path: info.outputPath("prepare-application-review.png"), animations: "disabled" });
+	const edits = review.getByRole("list", { name: "Proposed edits" });
+	await edits.getByRole("button", { name: "Edit", exact: true }).click();
+	await edits.getByLabel("Your wording").fill("Built fictional reliable services with product teams.");
+	await edits.getByRole("button", { name: "Save wording", exact: true }).click();
+	await expect(edits.getByRole("button", { name: "Accept", exact: true })).toBeEnabled();
+	await edits.getByRole("button", { name: "Accept", exact: true }).click();
+	await expect
+		.poll(async () => (await readResume()).data.summary.content)
+		.toContain("Built fictional reliable services with product teams.");
+	await review.getByRole("button", { name: "Undo", exact: true }).click();
+	await expect.poll(async () => (await readResume()).data).toEqual(original.data);
+	await review.getByRole("button", { name: "Keep letter", exact: true }).click();
+	await expect
+		.poll(
+			async () => (await (await page.request.get(`/api/openapi/cover-letters/${app.coverLetterId}`)).json()).content,
+		)
+		.toContain("I build fictional reliable services for real teams.");
+	await review.getByLabel("Describe work you led.").fill("I led fictional service improvements with my team.");
+	await review.getByRole("button", { name: "Keep answer", exact: true }).first().click();
+	await expect
+		.poll(async () => (await (await page.request.get(`/api/openapi/career/workspace/${id}`)).json()).answers)
+		.toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ id: "existing-answer", answer: "Existing authored answer" }),
+				expect.objectContaining({
+					question: "Describe work you led.",
+					answer: "I led fictional service improvements with my team.",
+					aiOperationIds: [expect.any(String)],
+				}),
+			]),
+		);
+	await review.screenshot({ path: info.outputPath("prepare-application-saved-review.png"), animations: "disabled" });
+	expect(stub.requests.length - before).toBe(6);
+});
+
 test("application message REST draft stays empty until approved and retains the canonical letter source", async ({
 	authPage: page,
 }, info) => {
@@ -92,6 +199,84 @@ test("application message REST draft stays empty until approved and retains the 
 	expect((await read()).aiUsage).toEqual(result.aiUsage);
 	expect(stub.requests.length - before).toBe(1);
 	await body.screenshot({ path: info.outputPath("mcp-letter-reviewed-source.png"), animations: "disabled" });
+});
+
+test("application tailoring REST returns a pending assistant review and saves sources only after approval", async ({
+	authPage: page,
+}, info) => {
+	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs isolated local AI stub permission");
+	await page.setViewportSize({ width: 1440, height: 1000 });
+	await approveLocalStubOperations(page);
+	const connection = await page.request.post("/api/openapi/ai-providers", {
+		data: {
+			label: "Fictional Tailoring AI",
+			provider: "openai-compatible",
+			model: "tailoring-main",
+			capableModel: "tailoring-capable",
+			baseURL: stub.baseURL,
+			apiKey: "stub-key",
+		},
+	});
+	await expect(connection).toBeOK();
+	const { id: providerId } = await connection.json();
+	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
+	await createSampleResumeFromDashboard(page, info);
+	const sourceId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
+	const read = async (id: string) => await (await page.request.get(`/api/openapi/resumes/${id}`)).json();
+	const original = await read(sourceId);
+	const application = await page.request.post("/api/openapi/applications", {
+		data: {
+			company: "Fictional Cedar",
+			role: "Engineer",
+			resumeId: sourceId,
+			jobDescription: "Build fictional reliable services.",
+		},
+	});
+	await expect(application).toBeOK();
+	const applicationId = await application.json();
+	const before = stub.requests.length;
+	const response = await page.request.post(`/api/openapi/applications/${applicationId}/ai/tailored-resumes`, {
+		data: {},
+	});
+	await expect(response).toBeOK();
+	const result = await response.json();
+	expect(result).toMatchObject({
+		resumeId: expect.any(String),
+		name: expect.any(String),
+		reviewRequired: true,
+		generationStatus: "ready",
+	});
+	expect(result.resumeId).not.toBe(sourceId);
+	expect((await read(result.resumeId)).data).toEqual(original.data);
+	expect((await read(result.resumeId)).aiOperationIds).toEqual([]);
+	expect(stub.requests.length - before).toBe(3);
+	await page.goto(`/builder/${result.resumeId}?assistant=${result.conversation.thread.id}`);
+	const edits = page.getByRole("list", { name: "Proposed edits" });
+	await expect(edits).toBeVisible();
+	await expect(edits.getByRole("button", { name: "Accept", exact: true })).toBeVisible();
+	await edits.screenshot({ path: info.outputPath("mcp-tailoring-review.png"), animations: "disabled" });
+	expect((await read(result.resumeId)).data).toEqual(original.data);
+	await edits.getByRole("button", { name: "Accept", exact: true }).click();
+	await expect
+		.poll(() => read(result.resumeId))
+		.toMatchObject({ aiOperationIds: [expect.any(String)], aiUsage: { requests: 3 } });
+	const accepted = await read(result.resumeId);
+	await page.locator('[data-slot="toast"]').getByRole("button", { name: "Undo", exact: true }).click();
+	await expect.poll(() => read(result.resumeId)).toMatchObject({ data: original.data, aiOperationIds: [] });
+	await edits.getByRole("button", { name: "Accept", exact: true }).click();
+	await expect
+		.poll(() => read(result.resumeId))
+		.toMatchObject({ aiOperationIds: accepted.aiOperationIds, aiUsage: accepted.aiUsage });
+	await expect(await page.request.delete(`/api/openapi/ai-providers/${providerId}`)).toBeOK();
+	await page.reload();
+	await page.getByRole("button", { name: "History", exact: true }).click();
+	const history = page.getByRole("dialog", { name: "Download & history" });
+	await expect(history.getByText("AI request attempts: 3", { exact: true })).toBeVisible();
+	await expect(
+		history.getByText("Fictional Tailoring AI · openai-compatible · tailoring-capable", { exact: true }),
+	).toBeVisible();
+	expect((await read(sourceId)).data).toEqual(original.data);
+	expect(stub.requests.length - before).toBe(3);
 });
 
 for (const kind of ["resume assistant", "letter assistant", "writing review"] as const)

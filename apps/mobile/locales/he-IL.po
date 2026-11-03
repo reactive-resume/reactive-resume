@@ -3595,7 +3595,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "לא ניתן היה להשלים את הבקשה. בדוק את החיבור שלך ונסה שוב."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "לא ניתן היה להשלים את הפעולה הזו. נסה שוב."
@@ -3945,6 +3947,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "לא ניתן היה לשמור את השינוי. בדוק את החיבור ונסה שוב."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "לא ניתן היה לשמור את השינוי הזה. נסה שוב."
 
@@ -4676,6 +4679,10 @@ msgstr "מטבעות או תקופות תשלום שונות. לא מחושב ה
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "כיוון"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "לזרוק"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5759,10 @@ msgstr "תשובה לטופס"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "שאלות הטופס (רשות)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "עיצוב"
@@ -6606,6 +6617,10 @@ msgstr "השאר כתובת אחת בלבד, כדי שתוכנה לא תצטרך
 msgid "Keep access when you are not using the application."
 msgstr "שמור על גישה כאשר אינך משתמש באפליקציה."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "שמירת התשובה"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6653,10 @@ msgstr "שמור על כנות"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "שמור על גודל מתחת ל־2.5MB, בדרך כלל על ידי הסרה או הקטנה של תמונות."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "שמירת המכתב"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6982,7 @@ msgid "Letter body"
 msgstr "גוף האות"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "טיוטת מכתב"
 
@@ -8178,6 +8198,10 @@ msgstr ""
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "ללא עריכות"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "לא הוצעו שינויים."
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -9531,8 +9555,13 @@ msgid "Prepare a resume"
 msgstr "הכינו קורות חיים"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "הכן יישום"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "הכנת טיוטות לבדיקה"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9583,11 @@ msgstr "מכין ייצוא…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "מכין קובץ…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "עֲרִיכָה…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9736,10 @@ msgstr "פס התקדמות"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "פרויקטים"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "הצעת נקודה לקורות החיים"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10666,6 +10704,10 @@ msgstr "דף קורות חיים {0}"
 msgid "Resume preview"
 msgstr "תצוגה מקדימה של קורות חיים"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "הצעות לקורות החיים"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "קורות חיים נשלחו (אופציונלי)"
@@ -10862,6 +10904,10 @@ msgstr "עבור על תשובות החובה בטופס והסר טענות ל�
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "בדיקת עובדות מקורות החיים"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "בדקו יחד הצעות התאמה, טיוטת מכתב ותשובות. דבר לא נשלח למעסיק."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11687,10 @@ msgstr "נשלח אל {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "הפרידו שאלות בשורה ריקה. עד חמש שאלות, עד 2,000 תווים לכל שאלה."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "סרבית"
@@ -11793,6 +11843,18 @@ msgstr "שתפו באמצעות…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "משתף רק קורות חיים ומודעת משרה. ידע, הערות פרטיות וגישה לרשת אינם נכללים. בדקו הצעות לפני אישור; המקור נשאר ללא שינוי."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "משתף רק את פריט הידע הנבחר, קורות החיים ומודעת המשרה. ידע אחר, הערות פרטיות וגישה לרשת אינם נכללים. בדקו את הנקודה לפני אישור."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "משתף קורות חיים, מודעת משרה ושאלות שהודבקו. טיוטות התשובות משתמשות גם במכתב, בהעדפות קריירה, בהערות ובאנשי קשר של המועמדות ובעובדות ובסיפורים פעילים בידע. ההקשר עשוי להתקצר. הגישה לרשת כבויה. בדקו לפני שמירה; דבר לא מוגש."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12249,10 @@ msgstr "לא ניתן היה לצייר חלק מהתווים: {0}. בחר גו�
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "לא ניתן היה לעבד חלק מהתווים. בדוק את הדף לפני הייצוא."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "חלק מהטיוטות לא הושלמו. שמרו את הטיוטות המוכנות לפני ניסיון נוסף."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "לחלק מהגליפים אין משמעות מחוץ לקובץ הזה."
@@ -12486,6 +12552,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "לְהַפְסִיק"
 
@@ -12902,6 +12970,7 @@ msgstr "החשבון השתנה. נסה שוב."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "הכתובת חייבת להכיל רק אותיות לטיניות a–z ומספרים, מופרדים במקפים בודדים."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14014,6 +14083,7 @@ msgstr "קו תחתון של קישורים"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

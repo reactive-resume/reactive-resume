@@ -3595,7 +3595,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Zahteve ni bilo mogoče dokončati. Preverite povezavo in poskusite znova."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Tega dejanja ni bilo mogoče dokončati. Poskusite znova."
@@ -3945,6 +3947,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Te spremembe ni bilo mogoče shraniti. Preverite povezavo in poskusite znova."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Te spremembe ni bilo mogoče shraniti. poskusi ponovno"
 
@@ -4676,6 +4679,10 @@ msgstr "Različne valute ali plačilna obdobja. Razlika v denarju se ne izračun
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Smer"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Zavrzi"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5759,10 @@ msgstr "Odgovor v obrazcu"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Vprašanja obrazca (neobvezno)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Oblikovanje"
@@ -6606,6 +6617,10 @@ msgstr "Uporabljajte en sam naslov, da programski opremi ni treba ugibati, kater
 msgid "Keep access when you are not using the application."
 msgstr "Ohranite dostop, ko aplikacije ne uporabljate."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Obdrži odgovor"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6653,10 @@ msgstr "Ostanite iskreni"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Ohranite ga pod 2,5 MB, običajno z odstranitvijo ali zmanjšanjem slik."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Obdrži pismo"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6982,7 @@ msgid "Letter body"
 msgstr "Telo pisma"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Osnutek pisma"
 
@@ -8178,6 +8198,10 @@ msgstr ""
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "brez urejanj"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Ni predlaganih sprememb."
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -9531,8 +9555,13 @@ msgid "Prepare a resume"
 msgstr "Pripravite življenjepis"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Pripravite aplikacijo"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Pripravi osnutke za pregled"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9583,11 @@ msgstr "Priprava izvoza …"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Priprava datoteke …"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Priprava ..."
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9736,10 @@ msgstr "Vrstica napredka"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projekti"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Predlagaj alinejo življenjepisa"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10666,6 +10704,10 @@ msgstr "Stran življenjepisa {0}"
 msgid "Resume preview"
 msgstr "Predogled življenjepisa"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Predlogi za življenjepis"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "oddan življenjepis (neobvezno)"
@@ -10862,6 +10904,10 @@ msgstr "Preglejte obvezne odgovore v obrazcu in odstranite nepodprte trditve."
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Preglej dejstva iz življenjepisa"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Skupaj preglejte prilagoditve, pismo in odgovore. Delodajalcu se nič ne pošlje."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11687,10 @@ msgstr "Poslano na {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Vprašanja ločite s prazno vrstico. Največ pet vprašanj po 2000 znakov."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "srbščina"
@@ -11793,6 +11843,18 @@ msgstr "Delite prek ..."
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Deli le življenjepis in oglas. Znanje, zasebne opombe in spletni dostop so izključeni. Pred sprejemom preglejte predloge; izvirnik ostane nespremenjen."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Deli le izbrano trditev iz Znanja, življenjepis in oglas. Drugo znanje, zasebne opombe in spletni dostop so izključeni. Pred sprejemom preglejte alinejo."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Deli življenjepis, oglas in prilepljena vprašanja. Osnutki odgovorov uporabljajo tudi pismo, karierne želje, opombe in stike prijave ter aktivna dejstva in zgodbe iz Znanja. Kontekst se lahko skrajša. Spletni dostop je izklopljen. Pred shranjevanjem preglejte; nič se ne odda."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12249,10 @@ msgstr "Nekaterih znakov ni bilo mogoče izrisati: {0}. V Oblikovanju izberite d
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Nekaterih znakov ni bilo mogoče upodobiti. Pred izvozom preverite stran."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Nekaterih osnutkov ni bilo mogoče dokončati. Pred ponovnim poskusom obdržite dokončane osnutke."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Nekateri znaki nimajo pomena zunaj te datoteke."
@@ -12486,6 +12552,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Stop"
 
@@ -12902,6 +12970,7 @@ msgstr "Račun se je spremenil. poskusi ponovno"
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Naslov lahko vsebuje samo latinične črke a–z in številke, ločene s posameznimi vezaji."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14014,6 +14083,7 @@ msgstr "Podčrtaj povezave"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

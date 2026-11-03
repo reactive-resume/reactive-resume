@@ -3595,7 +3595,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Det gick inte att slutföra begäran. Kontrollera din anslutning och försök igen."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Det gick inte att slutföra den här åtgärden. Försök igen."
@@ -3945,6 +3947,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Det gick inte att spara ändringen. Kontrollera din anslutning och försök igen."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Det gick inte att spara ändringen. Försök igen."
 
@@ -4676,6 +4679,10 @@ msgstr "Olika valutor eller betalningsperioder. Ingen skillnad i pengar beräkna
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Riktning"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Släng"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5759,10 @@ msgstr "Formulärsvar"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Formulärfrågor (valfritt)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Formatering"
@@ -6606,6 +6617,10 @@ msgstr "Håll dig till en enda adress, så att programvara inte behöver gissa v
 msgid "Keep access when you are not using the application."
 msgstr "Behålla åtkomst när du inte använder applikationen."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Behåll svar"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6653,10 @@ msgstr "Håll det ärligt"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Håll den under 2,5 MB, vanligtvis genom att ta bort eller förminska bilder."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Behåll brev"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6982,7 @@ msgid "Letter body"
 msgstr "Brevkropp"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Brevutkast"
 
@@ -8178,6 +8198,10 @@ msgstr ""
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "inga redigeringar"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Inga ändringar föreslagna."
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -9531,8 +9555,13 @@ msgid "Prepare a resume"
 msgstr "Förbered en meritförteckning"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Förbered ansökan"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Förbered utkast för granskning"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9583,11 @@ msgstr "Förbereder export…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Förbereder fil..."
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Förbereder..."
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9736,10 @@ msgstr "Förloppsindikator"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projekt"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Föreslå en punkt i CV:t"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10666,6 +10704,10 @@ msgstr "CV-sida {0}"
 msgid "Resume preview"
 msgstr "Förhandsvisning av CV"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "CV-förslag"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "CV skickat (valfritt)"
@@ -10862,6 +10904,10 @@ msgstr "Granska obligatoriska svar i formuläret och ta bort påståenden som sa
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Granska CV-fakta"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Granska anpassningsförslag, brev och svar tillsammans. Inget skickas till arbetsgivaren."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11687,10 @@ msgstr "Skickat till {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Skilj frågor med en tom rad. Högst fem frågor med 2 000 tecken vardera."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbiska"
@@ -11793,6 +11843,18 @@ msgstr "Dela via..."
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Delar bara CV och annons. Kunskap, privata anteckningar och webbåtkomst ingår inte. Granska förslag innan du godkänner; originalet förblir oförändrat."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Delar bara den valda kunskapsuppgiften, CV:t och annonsen. Övrig kunskap, privata anteckningar och webbåtkomst ingår inte. Granska punkten innan du godkänner."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Delar CV, annons och inklistrade frågor. Svarsutkast använder också ditt brev, karriärpreferenser, ansökningsanteckningar och kontakter samt aktiva fakta och berättelser i Kunskap. Kontexten kan kortas. Webbåtkomst är avstängd. Granska innan du sparar; inget skickas in."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12249,10 @@ msgstr "Vissa tecken kunde inte ritas: {0}. Välj ett annat typsnitt i Design."
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Vissa tecken kunde inte renderas. Kontrollera sidan innan du exporterar."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Vissa utkast kunde inte slutföras. Behåll färdiga utkast innan du försöker igen."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Vissa glyfer saknar betydelse utanför denna fil."
@@ -12486,6 +12552,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Stopp"
 
@@ -12902,6 +12970,7 @@ msgstr "Kontot ändrades. Försök igen."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Adressen får endast innehålla bokstäverna a–z och siffrorna 0–9, åtskilda av enstaka bindestreck."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14014,6 +14083,7 @@ msgstr "Stryk under länkar"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

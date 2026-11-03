@@ -3595,7 +3595,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "요청을 완료할 수 없습니다. 연결을 확인하고 다시 시도해 보세요."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "이 작업을 완료할 수 없습니다. 다시 시도해 보세요."
@@ -3945,6 +3947,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "해당 변경 사항을 저장할 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "변경사항을 저장할 수 없습니다. 다시 시도해 보세요."
 
@@ -4676,6 +4679,10 @@ msgstr "통화 또는 지불 기간이 다릅니다. 금액 차액은 계산되�
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "방향"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "버리기"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5759,10 @@ msgstr "양식 답변"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "양식 질문(선택 사항)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "서식 지정"
@@ -6606,6 +6617,10 @@ msgstr "주소는 하나만 남겨서 소프트웨어가 어느 것을 써야 �
 msgid "Keep access when you are not using the application."
 msgstr "애플리케이션을 사용하지 않을 때도 액세스를 유지합니다."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "답변 보관"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6653,10 @@ msgstr "솔직하게"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "보통 이미지를 제거하거나 축소하여 2.5MB 이하로 유지하세요."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "편지 보관"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6982,7 @@ msgid "Letter body"
 msgstr "편지 본문"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "편지 초안"
 
@@ -8178,6 +8198,10 @@ msgstr ""
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "수정사항 없음"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "제안된 수정이 없습니다."
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -9531,8 +9555,13 @@ msgid "Prepare a resume"
 msgstr "이력서를 준비하세요"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "신청서 준비"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "검토할 초안 준비"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9583,11 @@ msgstr "내보내기 준비 중…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "파일 준비 중…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "준비 중…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9736,10 @@ msgstr "진행률 표시줄"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "프로젝트"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "이력서 글머리 항목 제안"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10666,6 +10704,10 @@ msgstr "이력서 페이지 {0}"
 msgid "Resume preview"
 msgstr "이력서 미리보기"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "이력서 제안"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "이력서 제출(선택)"
@@ -10862,6 +10904,10 @@ msgstr "필수 양식 답변을 검토하고 근거 없는 주장을 삭제하�
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "이력서 사실 검토"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "맞춤 수정 제안, 편지 초안, 답변을 함께 검토하세요. 고용주에게 아무것도 전송되지 않습니다."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11687,10 @@ msgstr "{0}로 보냄"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "질문을 빈 줄로 구분하세요. 최대 5개, 질문당 2,000자입니다."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "세르비아어"
@@ -11793,6 +11843,18 @@ msgstr "다음을 통해 공유…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "이력서와 채용 공고만 공유합니다. 지식, 비공개 메모, 웹 액세스는 제외됩니다. 수락 전에 제안을 검토하세요. 원본은 변경되지 않습니다."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "선택한 지식 문장, 이력서, 채용 공고만 공유합니다. 다른 지식, 비공개 메모, 웹 액세스는 제외됩니다. 수락 전에 항목을 검토하세요."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "이력서, 채용 공고, 붙여 넣은 질문을 공유합니다. 답변 초안에는 편지, 경력 선호, 지원 메모와 연락처, 활성 지식의 사실과 이야기도 사용됩니다. 내용이 발췌될 수 있습니다. 웹 액세스는 꺼져 있습니다. 저장 전에 검토하세요. 지원서는 제출되지 않습니다."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12249,10 @@ msgstr "일부 문자를 그릴 수 없습니다: {0}. 디자인에서 다른 �
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "일부 문자를 렌더링할 수 없습니다. 내보내기 전에 페이지를 확인하세요."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "일부 초안을 완료하지 못했습니다. 다시 시도하기 전에 완료된 초안을 보관하세요."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "일부 글리프는 이 파일 밖에서는 의미가 없습니다."
@@ -12486,6 +12552,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "멈추다"
 
@@ -12902,6 +12970,7 @@ msgstr "계정이 변경되었습니다. 다시 시도해 보세요."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "주소에는 영문자(a–z)와 숫자만 포함되어야 하며 단일 대시로 구분되어야 합니다."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14014,6 +14083,7 @@ msgstr "링크에 밑줄을 긋습니다"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

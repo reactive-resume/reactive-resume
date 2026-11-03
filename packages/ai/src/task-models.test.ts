@@ -40,6 +40,7 @@ describe("task models", () => {
 		expect(aiTaskForOperation("agent.messages.send")).toBe("capable");
 		expect(aiTaskForOperation("coverLetters.draft")).toBe("capable");
 		expect(aiTaskForOperation("applications.ai.draftMessage")).toBe("capable");
+		expect(aiTaskForOperation("applications.ai.tailorResume")).toBe("capable");
 		expect(aiTaskForOperation("ai.atsReview")).toBeUndefined();
 	});
 });

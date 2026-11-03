@@ -3595,7 +3595,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Pyyntöä ei voitu suorittaa. Tarkista yhteytesi ja yritä uudelleen."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Tätä toimintoa ei voitu suorittaa. Yritä uudelleen."
@@ -3945,6 +3947,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Muutosta ei voitu tallentaa. Tarkista yhteytesi ja yritä uudelleen."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Muutosta ei voitu tallentaa. Yritä uudelleen."
 
@@ -4676,6 +4679,10 @@ msgstr "Valuutat tai palkkakaudet vaihtelevat. Palkkaeroa ei lasketa."
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Suunta"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Hylkää"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5759,10 @@ msgstr "Lomakevastaus"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Lomakekysymykset (valinnainen)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Muotoilu"
@@ -6606,6 +6617,10 @@ msgstr "Pidä vain yksi osoite, jottei ohjelmiston tarvitse arvata kumpaa käytt
 msgid "Keep access when you are not using the application."
 msgstr "Säilyttää käyttöoikeuden, kun et käytä sovellusta."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Säilytä vastaus"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6653,10 @@ msgstr "Pysy rehellisenä"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Pidä se alle 2,5 megatavun, yleensä poistamalla tai pienentämällä kuvia."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Säilytä kirje"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6982,7 @@ msgid "Letter body"
 msgstr "Kirjeen runko"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Kirjeluonnos"
 
@@ -8178,6 +8198,10 @@ msgstr ""
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "ei muokkauksia"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Ei muutosehdotuksia."
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -9531,8 +9555,13 @@ msgid "Prepare a resume"
 msgstr "Valmistele ansioluettelo"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Valmistele hakemus"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Valmistele luonnokset tarkistettaviksi"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9583,11 @@ msgstr "Valmistellaan vientiä…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Valmistellaan tiedostoa…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Valmistellaan…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9736,10 @@ msgstr "Edistymispalkki"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projektit"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Ehdota ansioluettelon kohtaa"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10666,6 +10704,10 @@ msgstr "Ansioluettelon sivu {0}"
 msgid "Resume preview"
 msgstr "Ansioluettelon esikatselu"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Ansioluetteloehdotukset"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "ansioluettelo lähetetty (valinnainen)"
@@ -10862,6 +10904,10 @@ msgstr "Tarkista lomakkeen pakolliset vastaukset ja poista perustelemattomat vä
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Tarkista ansioluettelon tiedot"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Tarkista muokkausehdotukset, kirje ja vastaukset yhdessä. Työnantajalle ei lähetetä mitään."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11687,10 @@ msgstr "Lähetetty numeroon {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Erota kysymykset tyhjällä rivillä. Enintään viisi kysymystä, kussakin 2 000 merkkiä."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "serbia"
@@ -11793,6 +11843,18 @@ msgstr "Jaa…"
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Jakaa vain ansioluettelon ja työpaikkailmoituksen. Tietopohja, yksityiset muistiinpanot ja verkkoyhteys eivät sisälly. Tarkista ehdotukset ennen hyväksymistä; alkuperäinen ei muutu."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Jakaa vain valitun Tietopohjan tiedon, ansioluettelon ja työpaikkailmoituksen. Muu tietopohja, yksityiset muistiinpanot ja verkkoyhteys eivät sisälly. Tarkista kohta ennen hyväksymistä."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Jakaa ansioluettelon, työpaikkailmoituksen ja liitetyt kysymykset. Vastausluonnokset käyttävät myös kirjettä, uratoiveita, hakemuksen muistiinpanoja ja yhteystietoja sekä Tietopohjan käytössä olevia tietoja ja tarinoita. Kontekstia voidaan lyhentää. Verkkoyhteys on pois päältä. Tarkista ennen tallentamista; mitään ei lähetetä."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12249,10 @@ msgstr "Joitakin merkkejä ei voitu piirtää: {0}. Valitse toinen fontti kohdas
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Joitakin merkkejä ei voitu piirtää. Tarkista sivu ennen vientiä."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Joitakin luonnoksia ei voitu viimeistellä. Säilytä valmiit luonnokset ennen uutta yritystä."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Osalla glyfeistä ei ole merkitystä tämän tiedoston ulkopuolella."
@@ -12486,6 +12552,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Pysäytä"
 
@@ -12902,6 +12970,7 @@ msgstr "Tili vaihtui. Yritä uudelleen."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Osoite saa sisältää vain latinalaisia kirjaimia a–z ja numeroita, erotettuna yksittäisillä yhdysviivoilla."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14014,6 +14083,7 @@ msgstr "Alleviivaa linkit"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx

@@ -216,6 +216,7 @@ async function harness() {
 		"../hooks": { ...hooks, useSavedItems: () => ({ data: [], isPending: false }), useFacts: () => ({ data: [] }) },
 		"../logic": {},
 		"../parts": {},
+		"../prepare-review": { PrepareReview: () => null },
 		"../preparation": {},
 		"../share": {},
 		"../shell": { WorkspaceScreen: "WorkspaceScreen" },

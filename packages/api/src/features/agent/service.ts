@@ -37,7 +37,7 @@ import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
 import { approvedAiProviderId } from "../ai/destination";
 import { extractDocxTextFromBytes, getAgentModel } from "../ai/service";
-import { createAiUsage } from "../ai/usage";
+import { createAiUsage, type AiUsage } from "../ai/usage";
 import { availableApplicationContext } from "../applications/access";
 import { assertApplicationVersion } from "../applications/service";
 import { careerService, requireCareerApplication } from "../career/service";
@@ -163,6 +163,11 @@ type MessageContext = {
 
 type SendMessageInput = {
 	userId: string;
+	/** Internal adapters name the action that actually requested this reply. */
+	usageAction?: "tailor-resume" | undefined;
+	usageCheck?: AiUsage["check"];
+	knowledgeReview?: boolean;
+	signal?: AbortSignal | undefined;
 	/** Consent metadata from the request header, never model-provided context. */
 	nativeSearchFallback?: boolean | undefined;
 	deviceTimeZone?: string | undefined;
@@ -1498,6 +1503,8 @@ export const agentService = {
 				input.context?.posting === false || !document || !loaded
 					? null
 					: await findPosting(input.userId, document.id, loaded, input.context?.applicationId);
+			// The legacy tailoring request approves the resume and posting, not private application notes.
+			if (posting && input.usageAction === "tailor-resume") posting.notes = "";
 
 			const [runnableProvider, attachments] = await Promise.all([
 				aiProvidersService.getRunnableById({
@@ -1542,11 +1549,22 @@ export const agentService = {
 				id: responseMessageId,
 				role: "assistant",
 				parts: [],
-				metadata: { contextScope, contextMessageId: input.message.id },
+				metadata: {
+					contextScope,
+					...(input.knowledgeReview ? { selectedKnowledge: true } : {}),
+					contextMessageId: input.message.id,
+				},
 			};
 
 			try {
-				activeRunCleanup.set(runId, await monitorRunCancellation(runId, controller));
+				const stopMonitoring = await monitorRunCancellation(runId, controller);
+				const abort = () => controller.abort(abortReason("USER_STOPPED"));
+				input.signal?.addEventListener("abort", abort, { once: true });
+				activeRunCleanup.set(runId, () => {
+					input.signal?.removeEventListener("abort", abort);
+					stopMonitoring();
+				});
+				if (input.signal?.aborted) abort();
 				controller.signal.throwIfAborted();
 				let attachmentsForModel: AgentAttachmentRecord[] = [];
 				let sourceMessageId: string | undefined;
@@ -1572,7 +1590,10 @@ export const agentService = {
 					draftUiMessage = continuation.message;
 				} else {
 					attachmentsForModel = attachments;
-					const userMessage = withAttachmentUiParts(input.message, attachments);
+					const userMessage = withAttachmentUiParts(
+						input.knowledgeReview ? { ...input.message, metadata: { selectedKnowledge: true } } : input.message,
+						attachments,
+					);
 					// Retrying a reply that failed sends the same message again; it's saved once.
 					const retried = await findUserMessageRow({
 						userId: input.userId,
@@ -1821,9 +1842,10 @@ export const agentService = {
 				let preparedInstructions: string | undefined;
 				const usage = createAiUsage(
 					input.userId,
-					thread.scope === "career" ? "career-chat" : "assistant",
+					input.usageAction ?? (thread.scope === "career" ? "career-chat" : "assistant"),
 					runnableProvider,
 					async (tx) => {
+						await input.usageCheck?.(tx);
 						if ((await checkContext(tx)) !== preparedInstructions)
 							throw new ORPCError("CONFLICT", { message: "Shared context changed. Start a new reply." });
 					},
@@ -1832,6 +1854,7 @@ export const agentService = {
 				const authorize = async () => {
 					controller.signal.throwIfAborted();
 					await aiProvidersService.authorize({ userId: input.userId, id: runnableProvider.id }, async (tx) => {
+						await input.usageCheck?.(tx);
 						preparedInstructions = await checkContext(tx);
 					});
 					controller.signal.throwIfAborted();

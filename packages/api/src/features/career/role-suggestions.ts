@@ -8,9 +8,9 @@ import * as tables from "@reactive-resume/db/schema";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { roleSuggestionsOutputSchema } from "@reactive-resume/schema/career";
 import { aiProvidersService } from "../ai-providers/service";
+import { generateJson } from "../ai/application-generation";
 import { getModel } from "../ai/service";
 import { createAiUsage } from "../ai/usage";
-import { generateJson } from "../applications/ai";
 import { careerService } from "./service";
 
 const output = roleSuggestionsOutputSchema.shape.suggestions.element.omit({ facts: true }).extend({

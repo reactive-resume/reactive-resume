@@ -3595,7 +3595,9 @@ msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Kan het verzoek niet voltooien. Controleer uw verbinding en probeer het opnieuw."
 
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
 msgstr "Kan deze actie niet voltooien. Probeer het opnieuw."
@@ -3945,6 +3947,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Kan die wijziging niet opslaan. Controleer uw verbinding en probeer het opnieuw."
 
 #: src/features/workspace/preparation.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Kan die wijziging niet opslaan. Probeer het opnieuw."
 
@@ -4676,6 +4679,10 @@ msgstr "Verschillende valuta of betaalperioden. Er wordt geen geldverschil berek
 #: src/features/applications/list-screen.tsx
 msgid "Direction"
 msgstr "Richting"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Discard"
+msgstr "Verwerpen"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -5752,6 +5759,10 @@ msgstr "Formulierantwoord"
 msgid "Form answers"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Form questions (optional)"
+msgstr "Formuliervragen (optioneel)"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Formatting"
 msgstr "Opmaak"
@@ -6606,6 +6617,10 @@ msgstr "Houd het bij één adres, zodat software niet hoeft te raden welk adres 
 msgid "Keep access when you are not using the application."
 msgstr "Toegang behouden wanneer je de applicatie niet gebruikt."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep answer"
+msgstr "Antwoord behouden"
+
 #: src/features/application-detail/detail-screen.tsx
 msgid "Keep application"
 msgstr ""
@@ -6638,6 +6653,10 @@ msgstr "Blijf eerlijk"
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Houd het onder 2,5 MB, meestal door afbeeldingen te verwijderen of te verkleinen."
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Keep letter"
+msgstr "Brief behouden"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/write/improve.tsx
@@ -6963,6 +6982,7 @@ msgid "Letter body"
 msgstr "Brief lichaam"
 
 #: src/features/ai/usage.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Letter draft"
 msgstr "Briefconcept"
 
@@ -8178,6 +8198,10 @@ msgstr ""
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "geen bewerkingen"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "No edits proposed."
+msgstr "Geen wijzigingen voorgesteld."
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -9531,8 +9555,13 @@ msgid "Prepare a resume"
 msgstr "Bereid een CV voor"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/prepare-review.tsx
 msgid "Prepare application"
 msgstr "Applicatie voorbereiden"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Prepare drafts for review"
+msgstr "Concepten voorbereiden ter controle"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -9554,6 +9583,11 @@ msgstr "Export voorbereiden…"
 #: src/features/share/download.tsx
 msgid "Preparing file…"
 msgstr "Bestand voorbereiden…"
+
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
+msgid "Preparing…"
+msgstr "Voorbereiden…"
 
 #: src/features/write/date-field.tsx
 msgid "Present"
@@ -9702,6 +9736,10 @@ msgstr "Voortgangsbalk"
 #: src/features/write/fields.ts
 msgid "Projects"
 msgstr "Projecten"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Propose a resume bullet"
+msgstr "Een cv-punt voorstellen"
 
 #: src/features/assistant/chat.ts
 msgid "proposed"
@@ -10666,6 +10704,10 @@ msgstr "cv-pagina {0}"
 msgid "Resume preview"
 msgstr "cv-voorbeeld"
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Resume proposals"
+msgstr "Cv-voorstellen"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Resume submitted (optional)"
 msgstr "CV ingediend (optioneel)"
@@ -10862,6 +10904,10 @@ msgstr "Controleer verplichte formulierantwoorden en verwijder ononderbouwde bew
 #: src/features/career/resume-facts.tsx
 msgid "Review resume facts"
 msgstr "Cv-feiten controleren"
+
+#: src/features/workspace/prepare-review.tsx
+msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
+msgstr "Controleer aanpassingsvoorstellen, brief en antwoorden samen. Er wordt niets naar de werkgever verstuurd."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -11641,6 +11687,10 @@ msgstr "Verzonden naar {0}"
 msgid "Sent: {0}"
 msgstr ""
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Separate questions with a blank line. Up to five questions, 2,000 characters each."
+msgstr "Scheid vragen met een lege regel. Maximaal vijf vragen van elk 2.000 tekens."
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Servisch"
@@ -11793,6 +11843,18 @@ msgstr "Deel via..."
 #: src/features/applications/add-sheet.tsx
 msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
 msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
+msgstr "Deelt alleen cv en vacature. Kennis, privénotities en webtoegang zijn uitgesloten. Controleer voorstellen vóór acceptatie; het origineel blijft ongewijzigd."
+
+#: src/api/ai-consent.ts
+msgid "Shares only the selected Knowledge statement, resume and posting. Other Knowledge, private notes and web access are excluded. Review the bullet before accepting."
+msgstr "Deelt alleen de geselecteerde kennisuitspraak, het cv en de vacature. Andere kennis, privénotities en webtoegang zijn uitgesloten. Controleer het punt vóór acceptatie."
+
+#: src/api/ai-consent.ts
+msgid "Shares resume, posting and pasted questions. Answer drafts also use your letter, career preferences, application notes and contacts, and enabled Knowledge facts and stories. Context may be excerpted. Web access is off. Review before saving; nothing is submitted."
+msgstr "Deelt cv, vacature en geplakte vragen. Antwoordconcepten gebruiken ook je brief, loopbaanvoorkeuren, sollicitatienotities en contacten en actieve feiten en verhalen uit Kennis. De context kan ingekort zijn. Webtoegang staat uit. Controleer vóór opslaan; er wordt niets ingediend."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -12187,6 +12249,10 @@ msgstr "Sommige tekens kunnen niet worden getekend: {0}. Kies een ander letterty
 msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "Sommige tekens kunnen niet worden weergegeven. Controleer de pagina voordat u exporteert."
 
+#: src/features/workspace/prepare-review.tsx
+msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
+msgstr "Sommige concepten konden niet worden voltooid. Bewaar voltooide concepten voordat je opnieuw probeert."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Sommige glyphs hebben geen betekenis buiten dit bestand."
@@ -12486,6 +12552,8 @@ msgstr ""
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/prepare-review.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Stop"
 msgstr "Stop"
 
@@ -12902,6 +12970,7 @@ msgstr "De rekening is gewijzigd. Probeer het opnieuw."
 msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
 msgstr "Het adres mag alleen Latijnse letters a–z en cijfers bevatten, met telkens één koppelteken tussen de delen."
 
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
 msgstr ""
@@ -14014,6 +14083,7 @@ msgstr "Onderstreep koppelingen"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/prepare-review.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/messages.tsx
