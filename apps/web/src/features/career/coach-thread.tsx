@@ -22,8 +22,9 @@ import { cn } from "@reactive-resume/utils/style";
 import { useSessionDraft } from "./hooks";
 import { MemoryCard } from "./knowledge/facts";
 import { ContextChip, useCareerTime, useNow, withUndo } from "./shared";
-import { fileToBase64 } from "@/features/assistant/chat";
+import { attachmentErrorMessages, fileToBase64 } from "@/features/assistant/chat";
 import { ChatComposer } from "@/features/assistant/chat-chrome";
+import { useAttachmentRemoval } from "@/features/assistant/use-attachment-removal";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -349,12 +350,15 @@ export function Composer(props: ComposerProps) {
 	const text = draft.value;
 	const setText = draft.setValue;
 	const [attachments, setAttachments] = useState<Upload[]>([]);
+	const removal = useAttachmentRemoval(props.draftKey ?? "draft", (id) =>
+		setAttachments((current) => current.filter((item) => item.id !== id)),
+	);
 	const [uploading, setUploading] = useState(false);
 	const fileInput = useRef<HTMLInputElement>(null);
 
 	const submit = async () => {
 		const value = text.trim();
-		if (!value || props.streaming || props.disabled || uploading) return;
+		if (!value || props.streaming || props.disabled || uploading || removal.isPending) return;
 		const sent = await props.onSend(
 			value,
 			attachments.map(({ size: _size, ...attachment }) => attachment),
@@ -383,7 +387,7 @@ export function Composer(props: ComposerProps) {
 			);
 			setAttachments((current) => [...current, ...uploaded]);
 		} catch (error) {
-			toastError(error, t`Couldn't attach the file. Try again.`);
+			toastError(error, t`Couldn't attach the file. Try again.`, { byCode: attachmentErrorMessages() });
 		} finally {
 			setUploading(false);
 			if (fileInput.current) fileInput.current.value = "";
@@ -402,7 +406,7 @@ export function Composer(props: ComposerProps) {
 					value={text}
 					onValueChange={setText}
 					disabled={props.disabled}
-					sendDisabled={!text.trim() || props.disabled || uploading}
+					sendDisabled={!text.trim() || props.disabled || uploading || removal.isPending}
 					streaming={props.streaming}
 					onSend={() => void submit()}
 					onStop={props.onStop}
@@ -421,7 +425,8 @@ export function Composer(props: ComposerProps) {
 									<button
 										type="button"
 										aria-label={t`Remove ${attachment.filename}`}
-										onClick={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
+										onClick={() => void removal.remove(attachment.id)}
+										disabled={props.disabled || props.streaming || uploading || removal.isPending}
 										className="grid size-6 place-items-center rounded-sm text-ink-3 transition-colors duration-quick hover:bg-hover hover:text-ink"
 									>
 										<Icon name="x" size={14} />
@@ -436,7 +441,7 @@ export function Composer(props: ComposerProps) {
 								icon="paperclip"
 								label={t`Attach a file`}
 								size="icon-sm"
-								disabled={props.disabled || uploading}
+								disabled={props.disabled || uploading || removal.isPending}
 								loading={uploading}
 								className="text-ink-2"
 								onClick={() => fileInput.current?.click()}
