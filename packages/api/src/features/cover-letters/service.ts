@@ -26,6 +26,7 @@ import {
 	CurrentClientRequired,
 	saveProposalApplications,
 } from "../agent/proposal-applications";
+import { activeApplications } from "../applications/access";
 import { suggestDuplicateName } from "../documents/naming";
 import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
@@ -128,7 +129,7 @@ async function getOwnedApplication(userId: string, id?: string) {
 			postingSource: schema.application.postingSource,
 		})
 		.from(schema.application)
-		.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)));
+		.where(and(eq(schema.application.id, id), activeApplications(userId)));
 	if (!application) throw new ORPCError("NOT_FOUND");
 	return application;
 }
@@ -236,7 +237,12 @@ async function linkLetterApplication(client: DbOrTx, input: LinkLetterApplicatio
 	const namesLetter = eq(table.coverLetterId, input.letterId);
 	const identity = identityIds.length ? or(namesLetter, inArray(table.id, identityIds)) : namesLetter;
 	const applications = await client
-		.select({ id: table.id, coverLetterId: table.coverLetterId, sentVersion: table.sentCoverLetterVersionId })
+		.select({
+			id: table.id,
+			coverLetterId: table.coverLetterId,
+			sentVersion: table.sentCoverLetterVersionId,
+			trashedAt: table.trashedAt,
+		})
 		.from(table)
 		.where(and(eq(table.userId, input.userId), identity))
 		.orderBy(asc(table.id))
@@ -252,7 +258,7 @@ async function linkLetterApplication(client: DbOrTx, input: LinkLetterApplicatio
 
 	if (input.to !== null) {
 		const target = applications.find((application) => application.id === input.to);
-		if (!target) throw new ORPCError("NOT_FOUND");
+		if (!target || target.trashedAt) throw new ORPCError("NOT_FOUND");
 		const cleared = applications.filter(
 			(application) => application.coverLetterId === input.letterId && application.id !== input.to,
 		);

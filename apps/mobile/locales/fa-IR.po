@@ -13,9 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: application.role
-#. placeholder {1}: application.company
-#: src/features/application-detail/detail-screen.tsx
+#. placeholder {0}: removing?.role
+#. placeholder {1}: removing?.company
+#: src/features/applications/trash-screen.tsx
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
@@ -345,16 +345,6 @@ msgstr ""
 #: src/features/applications/stage-actions.ts
 msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
 msgstr ""
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
-msgstr "{0, plural, one {# درخواست حذف شود؟} other {# درخواست حذف شوند؟}}"
-
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr "{0, plural, one {حذف # درخواست} other {حذف # درخواست}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -2020,7 +2010,7 @@ msgstr ""
 msgid "Application date"
 msgstr "تاریخ درخواست شغل"
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Application deleted"
 msgstr "درخواست کار حذف شد"
 
@@ -2051,10 +2041,17 @@ msgstr "نماهای درخواست‌ها"
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "درخواست‌ها"
+
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Applications and their timelines can be restored from Trash."
+msgstr "درخواست‌های شغلی و تاریخچهٔ آن‌ها از سطل زباله قابل بازیابی هستند."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2063,6 +2060,10 @@ msgstr "درخواست‌ها در طول زمان"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "درخواست‌های ارسال‌شده در هفته (۸ هفته گذشته)"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Applications stay in Trash until you delete them permanently."
+msgstr "درخواست‌های شغلی تا زمانی که آن‌ها را برای همیشه حذف کنید در سطل زباله می‌مانند."
 
 #: src/features/applications/queries.ts
 msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
@@ -4411,14 +4412,6 @@ msgstr "{0} را حذف کنید"
 msgid "Delete account"
 msgstr "حذف اکانت"
 
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application"
-msgstr "حذف درخواست"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Delete application…"
-msgstr "حذف درخواست…"
-
 #: src/features/assistant/threads.tsx
 msgid "Delete conversation"
 msgstr "حذف گفتگو"
@@ -4457,7 +4450,7 @@ msgstr ""
 msgid "Delete page"
 msgstr "حذف صفحه"
 
-#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Delete permanently…"
 msgstr "حذف دائمی…"
@@ -4496,7 +4489,7 @@ msgstr "حذف داستان"
 msgid "Delete the {0} interview on {1}?"
 msgstr ""
 
-#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/trash-screen.tsx
 msgid "Delete this application?"
 msgstr "این درخواست حذف شود؟"
 
@@ -4685,6 +4678,7 @@ msgid "Document type"
 msgstr "نوع سند"
 
 #: app/(tabs)/_layout.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 msgid "Documents"
@@ -5992,6 +5986,7 @@ msgstr "تاریخچه"
 msgid "hold ⋮⋮ to move"
 msgstr "برای حرکت ⋮⋮ را نگه دارید"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Hold to delete"
 msgstr "برای حذف نگه دارید"
@@ -6508,6 +6503,10 @@ msgstr "حفظ دامنه"
 #: src/ui/overlays.tsx
 msgid "Keep editing"
 msgstr "ادامهٔ ویرایش"
+
+#: src/features/applications/trash-screen.tsx
+msgid "Keep in Trash"
+msgstr "در سطل زباله نگه دارید"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Keep it honest"
@@ -7126,6 +7125,7 @@ msgstr "در حال بارگیری آدرس عمومی شما…"
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/ai/next-steps.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7634,6 +7634,8 @@ msgstr "انتقال به {stage}"
 msgid "Move to stage"
 msgstr "انتقال به مرحله"
 
+#: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
@@ -7675,6 +7677,10 @@ msgstr "به {0} منتقل شد"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moved to {stage}"
 msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Moved to Trash"
+msgstr "به سطل زباله منتقل شد"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Moves the application from {from}."
@@ -7861,6 +7867,7 @@ msgstr "بخش جدید"
 msgid "New STARR story"
 msgstr "داستان جدید STARR"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Next"
 msgstr ""
@@ -9405,6 +9412,7 @@ msgstr "پیش‌نمایش صفحه وب"
 msgid "Previewing {0} · tap to apply"
 msgstr "در حال پیش‌نمایش {0} · برای اعمال ضربه بزنید"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Previous"
 msgstr ""
@@ -10312,6 +10320,7 @@ msgstr ""
 msgid "Restart to change text direction"
 msgstr "راه اندازی مجدد برای تغییر جهت متن"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Restore"
 msgstr "بازیابی"
@@ -10331,6 +10340,7 @@ msgstr "بازیابی این نسخه؟"
 msgid "Restore version"
 msgstr "بازیابی نسخه"
 
+#: src/features/applications/trash-screen.tsx
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr ""
@@ -10466,6 +10476,7 @@ msgstr "توقف استفاده از مرحله"
 #: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -12960,10 +12971,6 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "اینها تنظیمات حساب سرور شما را در یک برگه مرورگر در داخل برنامه باز می کنند. ممکن است لازم باشد در آنجا وارد شوید."
 
-#: src/features/applications/list-screen.tsx
-msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
-msgstr ""
-
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "آنها به دنبال عناوینی مانند تجربه، آموزش و مهارت هستند."
@@ -13475,12 +13482,15 @@ msgstr "رونوشت کپی شد"
 msgid "Transcription model"
 msgstr "مدل رونویسی"
 
+#: src/features/applications/list-screen.tsx
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
 #: src/shell/app-tabs.tsx
 msgid "Trash"
 msgstr "سطل زباله"
 
+#: src/features/applications/trash-screen.tsx
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "سطل زباله خالی است"

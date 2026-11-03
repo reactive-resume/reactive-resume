@@ -9,7 +9,7 @@ import { ORPCError } from "@orpc/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const api = vi.hoisted(() => ({
-	bulkDelete: vi.fn(),
+	bulkTrash: vi.fn(),
 	copyForJob: vi.fn(),
 	bulkUpdate: vi.fn(),
 	parsePosting: vi.fn(),
@@ -38,7 +38,7 @@ vi.mock("@/libs/orpc/client", () => ({
 				},
 			},
 			priorNoResponse: { queryOptions: () => ({ queryKey: ["prior"], queryFn: async () => [] }) },
-			bulkDelete: { mutationOptions: () => ({ mutationFn: api.bulkDelete }) },
+			bulkTrash: { mutationOptions: () => ({ mutationFn: api.bulkTrash }) },
 			bulkUpdate: { mutationOptions: () => ({ mutationFn: api.bulkUpdate }) },
 			create: { mutationOptions: () => ({ mutationFn: api.create }) },
 			update: { mutationOptions: () => ({ mutationFn: api.update }) },
@@ -137,7 +137,7 @@ beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	api.confirm.mockResolvedValue(true);
 	api.findPosting.mockResolvedValue({ application: null });
-	api.bulkDelete.mockResolvedValue({ deleted: 1 });
+	api.bulkTrash.mockResolvedValue({ deleted: 1 });
 });
 afterEach(() => {
 	cleanup();
@@ -153,8 +153,8 @@ it("removes hidden closed applications from bulk selection before deleting visib
 	view.rerender(<ApplicationList applications={rows} showClosed={false} selectedId={null} onOpen={vi.fn()} />);
 	expect(screen.queryByRole("checkbox", { name: "Select Engineer at Closed Co" })).toBeNull();
 	expect(screen.getByText("1 selected")).toBeTruthy();
-	fireEvent.click(screen.getByRole("button", { name: "Delete permanently…" }));
-	await waitFor(() => expect(api.bulkDelete.mock.calls[0]?.[0]).toEqual({ ids: ["open"] }));
+	fireEvent.click(screen.getByRole("button", { name: "Move to Trash" }));
+	await waitFor(() => expect(api.bulkTrash.mock.calls[0]?.[0]).toEqual({ ids: ["open"] }));
 });
 
 it("offers one board-card open control and a separate options control without a dead draggable tab stop", async () => {

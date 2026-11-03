@@ -30,7 +30,7 @@ vi.mock("@/libs/orpc/client", () => ({
 			},
 			priorNoResponse: { queryOptions: () => ({ queryKey: ["prior"], queryFn: async () => [] }) },
 			bulkUpdate: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
-			bulkDelete: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			bulkTrash: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 		},
 		career: { savedItems: { queryOptions: () => ({ queryKey: ["offers"], queryFn: async () => [] }) } },
 	},

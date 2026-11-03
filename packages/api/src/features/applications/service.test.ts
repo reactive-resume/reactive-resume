@@ -32,6 +32,7 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		resumeFileUrl: "resume_file_url",
 		coverLetterUrl: "cover_letter_url",
 	},
+	careerJob: { userId: "job_user_id", scheduleId: "schedule_id", status: "job_status" },
 	agentThread: {
 		id: "thread_id",
 		userId: "user_id",
@@ -83,6 +84,7 @@ const existing = {
 	activity: [{ id: "e0", type: "stage" as const, stage: "saved" as const, at: new Date("2026-07-01T12:00:00.000Z") }],
 	appliedAt: new Date("2026-07-01T12:00:00.000Z"),
 	createdAt: new Date("2026-07-01T12:00:00.000Z"),
+	updatedAt: new Date("2026-07-01T12:00:00.000Z"),
 	resumeFileUrl: "http://localhost:3000/api/uploads/user-1/pictures/resume.pdf",
 	coverLetterUrl: "/api/uploads/user-1/pictures/cover.pdf",
 };
@@ -483,8 +485,9 @@ describe("applicationService.attachDocument", () => {
 });
 
 describe("applicationService.bulkDelete", () => {
-	it("deletes uploaded attachments for deleted owned applications", async () => {
+	it("retains uploaded attachments and coaching when applications move to Trash", async () => {
 		setSelectResults(
+			[{ id: "user-1" }],
 			[
 				{ ...existing, id: "app-1" },
 				{
@@ -495,8 +498,6 @@ describe("applicationService.bulkDelete", () => {
 				},
 			],
 			[{ id: "coach-1", runId: null }],
-			[{ id: "user-1" }],
-			[],
 		);
 		dbMock.delete.mockReturnValue({
 			where: () => ({ returning: () => Promise.resolve([{ id: "app-1" }, { id: "app-2" }]) }),
@@ -505,22 +506,19 @@ describe("applicationService.bulkDelete", () => {
 		const result = await applicationService.bulkDelete({ userId: "user-1", ids: ["app-1", "app-2"] });
 
 		expect(result).toEqual({ deleted: 2 });
-		expect(storageDeleteMock).toHaveBeenCalledWith("uploads/user-1/pictures/resume.pdf");
-		expect(storageDeleteMock).toHaveBeenCalledWith("uploads/user-1/pictures/cover.pdf");
-		expect(storageDeleteMock).toHaveBeenCalledWith("uploads/user-1/agent/coach-1");
-		expect(storageDeleteMock).not.toHaveBeenCalledWith("uploads/user-2/pictures/ignored.pdf");
+		expect(storageDeleteMock).not.toHaveBeenCalled();
+		expect(dbMock.delete).not.toHaveBeenCalled();
 	});
 
 	it("never deletes a folder or non-PDF that an edited document URL points at", async () => {
 		setSelectResults(
+			[{ id: "user-1" }],
 			[
 				{ ...existing, resumeFileUrl: "/api/uploads/user-1", coverLetterUrl: "/api/uploads/user-1/agent/coach-1" },
 				{ ...existing, id: "app-2", resumeFileUrl: "/uploads/user-1/pictures", coverLetterUrl: null },
 				{ ...existing, id: "app-3", resumeFileUrl: "/api/uploads/user-1/pictures/a/b.pdf", coverLetterUrl: null },
 				{ ...existing, id: "app-4", resumeFileUrl: "/api/uploads/user-1/pictures/photo.jpeg", coverLetterUrl: null },
 			],
-			[],
-			[{ id: "user-1" }],
 			[],
 		);
 		dbMock.delete.mockReturnValue({

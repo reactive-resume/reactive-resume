@@ -107,6 +107,7 @@ export const application = pg.pgTable(
 		followUpNote: pg.text("follow_up_note"),
 		contacts: pg.jsonb("contacts").notNull().$type<Contact[]>().default([]),
 		activity: pg.jsonb("activity").notNull().$type<ApplicationTimelineEntry[]>().default([]),
+		trashedAt: pg.timestamp("trashed_at", { withTimezone: true }),
 		appliedAt: pg.timestamp("applied_at", { withTimezone: true }).notNull().defaultNow(),
 		// Durable lifetime submission marker: set on the first sent stage or explicit submit, never cleared by timeline
 		// edits. It distinguishes a genuine first submission from reopening a job that was applied earlier.
@@ -121,6 +122,7 @@ export const application = pg.pgTable(
 	(t) => [
 		pg.index().on(t.userId),
 		pg.index().on(t.userId, t.updatedAt.desc()),
+		pg.index().on(t.userId, t.trashedAt),
 		pg.foreignKey({
 			name: "application_lane_owner_fk",
 			columns: [t.userId, t.laneId],
