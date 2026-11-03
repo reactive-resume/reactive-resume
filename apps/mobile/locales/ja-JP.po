@@ -3843,8 +3843,8 @@ msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't 
 msgstr "PDFを読み取れませんでした。読み取り可能なテキストレイヤーがあり、パスワードで保護されていないことを確認してください。"
 
 #: src/features/documents/import-file.ts
-msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
-msgstr "PDF全体を読み取れませんでした。小さいファイルに分割して、もう一度お試しください。"
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "PDF全体を読み取れませんでした。すべてのページに読み取り可能なテキストがあるか確認するか、より小さいファイルをお試しください。"
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -7804,10 +7804,6 @@ msgstr "名前付きバージョン"
 msgid "Named versions are kept until you delete them. This can't be undone."
 msgstr "名前付きバージョンは、削除するまで保持されます。これを元に戻すことはできません。"
 
-#: src/features/documents/library.tsx
-msgid "Names, tags or applications"
-msgstr "名前、タグ、または応募"
-
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
 msgid "Narrow"
@@ -10786,10 +10782,6 @@ msgstr "職種（任意）"
 msgid "Role {0}"
 msgstr "役割 {0}"
 
-#: src/features/applications-board/views.tsx
-msgid "Role, company or contact"
-msgstr "職種、会社、連絡先"
-
 #: src/features/applications/add-sheet.tsx
 msgid "Role, company or location"
 msgstr "役割、会社または場所"
@@ -11167,8 +11159,10 @@ msgstr "スクリーニング"
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
 #: src/features/ai/provider-model.tsx
+#: src/features/applications-board/views.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/design/picker.tsx
+#: src/features/documents/library.tsx
 #: src/ui/fields.tsx
 msgid "Search"
 msgstr "検索"

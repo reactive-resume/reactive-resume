@@ -65,7 +65,7 @@ it("refuses a partial PDF harvest before it can report a successful no-AI import
 	extract.mockResolvedValue({ ...raw, pageCount: 31, truncated: true });
 	const result = readResumeFile(new File(["%PDF-fixture"], "resume.pdf"), "pdf", { aiAvailable: false });
 	await expect(result).rejects.toThrow(ImportError);
-	await expect(result).rejects.toThrow("Split it into smaller files and try again.");
+	await expect(result).rejects.toThrow("Check that all pages have readable text, or try a smaller file.");
 });
 
 it("preserves readable source as partial and refuses no-AI creation after a page text failure", async () => {
@@ -73,7 +73,9 @@ it("preserves readable source as partial and refuses no-AI creation after a page
 	extract.mockResolvedValue({ ...raw, textReadFailed: true });
 	const file = new File(["%PDF-fixture"], "resume.pdf");
 	expect(await readPdfSource(file)).toMatchObject({ lines: ["Readable surviving page"], partial: true });
-	await expect(readResumeFile(file, "pdf", { aiAvailable: false })).rejects.toThrow(ImportError);
+	const reading = readResumeFile(file, "pdf", { aiAvailable: false });
+	await expect(reading).rejects.toThrow(ImportError);
+	await expect(reading).rejects.toThrow("Check that all pages have readable text, or try a smaller file.");
 });
 
 describe("documentToLines", () => {
