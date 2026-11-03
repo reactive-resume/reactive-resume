@@ -133,6 +133,7 @@ export const crudRouter = {
 				locale: context.locale,
 				userId: context.user.id,
 				origin: "import",
+				...(input.aiOperationIds !== undefined ? { aiOperationIds: input.aiOperationIds } : {}),
 			});
 
 			return id;
@@ -177,6 +178,7 @@ export const crudRouter = {
 				...(input.slug !== undefined ? { slug: input.slug } : {}),
 				...(input.tags !== undefined ? { tags: input.tags } : {}),
 				...(input.data !== undefined ? { data: input.data } : {}),
+				...(input.aiOperationIds !== undefined ? { aiOperationIds: input.aiOperationIds } : {}),
 				...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
 				...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
 				...(input.allowWordDownload !== undefined ? { allowWordDownload: input.allowWordDownload } : {}),
@@ -278,6 +280,7 @@ export const crudRouter = {
 				tags: input.tags ?? original.tags,
 				locale: input.pageLocale ?? context.locale,
 				data,
+				aiOperationIds: original.aiOperationIds,
 			});
 		}),
 

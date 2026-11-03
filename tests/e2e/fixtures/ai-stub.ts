@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { createServer } from "node:http";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 /**
  * A scripted OpenAI-compatible provider for the assistant spec. It answers the connection test, and plays a small
@@ -343,6 +344,13 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 				text(message.content).includes("Check the posting's requirements"),
 			);
 			const prompt = parsed.messages.map((message) => text(message.content)).join("\n");
+			const importedResume = prompt.includes("Use the following JSON as a template")
+				? {
+						...defaultResumeData,
+						basics: { ...defaultResumeData.basics, name: "Avery Morgan", headline: "Fictional reliability engineer" },
+						summary: { ...defaultResumeData.summary, content: "<p>Built fictional reliable services.</p>" },
+					}
+				: null;
 			const structured =
 				parsed.model === "offer-fixture" && prompt.includes("Read the employer's message")
 					? REPLY
@@ -428,7 +436,14 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 					choices: [
 						{
 							index: 0,
-							message: { role: "assistant", content: structured ? JSON.stringify(structured) : content },
+							message: {
+								role: "assistant",
+								content: importedResume
+									? JSON.stringify(importedResume)
+									: structured
+										? JSON.stringify(structured)
+										: content,
+							},
 							finish_reason: "stop",
 						},
 					],

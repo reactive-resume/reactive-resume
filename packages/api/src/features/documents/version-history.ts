@@ -26,6 +26,7 @@ type VersionTable = {
 	documentKey: string;
 	userId: PgColumn;
 	data: PgColumn;
+	aiOperationIds?: PgColumn;
 	kind: PgColumn;
 	name: PgColumn;
 	sessionId: PgColumn;
@@ -50,6 +51,10 @@ export function createVersionHistory<TKind extends string, TData>(config: {
 }) {
 	const v = config.versions;
 	const summary = { id: v.id, kind: v.kind, name: v.name, createdAt: v.createdAt };
+	const stored = (input: { data: TData; aiOperationIds?: string[] | undefined }) => ({
+		data: config.toStored(input.data),
+		...(v.aiOperationIds ? { aiOperationIds: input.aiOperationIds ?? [] } : {}),
+	});
 	const ownedVersion = (input: Owned & { versionId: string }) =>
 		and(eq(v.id, input.versionId), eq(v.document, input.documentId), eq(v.userId, input.userId));
 
@@ -79,7 +84,13 @@ export function createVersionHistory<TKind extends string, TData>(config: {
 
 	async function write(
 		client: DbOrTx,
-		input: Owned & { data: TData; kind: TKind; name?: string | null | undefined; sessionId?: string | undefined },
+		input: Owned & {
+			data: TData;
+			aiOperationIds?: string[] | undefined;
+			kind: TKind;
+			name?: string | null | undefined;
+			sessionId?: string | undefined;
+		},
 	) {
 		if (input.kind === "named") {
 			const [named] = await client
@@ -97,7 +108,7 @@ export function createVersionHistory<TKind extends string, TData>(config: {
 			.values({
 				[v.documentKey]: input.documentId,
 				userId: input.userId,
-				data: config.toStored(input.data),
+				...stored(input),
 				kind: input.kind,
 				name: input.name ?? null,
 				sessionId: input.sessionId ?? null,
@@ -117,7 +128,9 @@ export function createVersionHistory<TKind extends string, TData>(config: {
 		 * two minutes. Callers that send no session (API clients) get a new autosave once the newest version is two
 		 * minutes old. Best effort: it never fails or delays the save beyond its own queries.
 		 */
-		async saveSession(input: Owned & { data: TData; sessionId?: string | undefined }) {
+		async saveSession(
+			input: Owned & { data: TData; aiOperationIds?: string[] | undefined; sessionId?: string | undefined },
+		) {
 			try {
 				const [latest] = await db
 					.select({ id: v.id, createdAt: v.createdAt })
@@ -136,7 +149,7 @@ export function createVersionHistory<TKind extends string, TData>(config: {
 				if (latest && input.sessionId) {
 					await db
 						.update(v.table)
-						.set({ data: config.toStored(input.data), createdAt: new Date() } as never)
+						.set({ ...stored(input), createdAt: new Date() } as never)
 						.where(eq(v.id, latest.id));
 					return;
 				}
@@ -178,11 +191,11 @@ export function createVersionHistory<TKind extends string, TData>(config: {
 
 		async get(input: Owned & { versionId: string }) {
 			const [version] = await db
-				.select({ ...summary, data: v.data })
+				.select({ ...summary, data: v.data, ...(v.aiOperationIds ? { aiOperationIds: v.aiOperationIds } : {}) })
 				.from(v.table)
 				.where(ownedVersion(input));
 			if (!version) throw new ORPCError("NOT_FOUND");
-			return version as VersionSummary<TKind> & { data: unknown };
+			return version as VersionSummary<TKind> & { data: unknown; aiOperationIds?: string[] };
 		},
 
 		/** Named versions are the user's own; only they can be renamed or deleted. */

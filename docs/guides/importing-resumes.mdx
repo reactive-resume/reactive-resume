@@ -83,6 +83,17 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
 
 ## Review what came in
 
+After an AI PDF or Word import, **History** on web and mobile shows the original connection, provider, model and request attempts for the saved resume and its versions. Creating the reviewed resume, copying it or restoring a version makes no additional AI request. Renaming or removing the connection doesn't rewrite those saved sources. An older server may return the resume without source history; the app doesn't repeat the AI reading to recover it.
+
+These private sources stay with owned copies and **Export everything**, outside the resume's portable JSON, public page and employer downloads. Importing a portable JSON file doesn't recover request history from another account or server.
+
+<Frame caption="Web History for a reviewed fictional Word import">
+  <img
+    src="/images/guides/importing-resumes/ai-import-history.png"
+    alt="History showing an Imported resume version with one AI request attempt and the original fictional provider and import-fast model after the connection was removed"
+  />
+</Frame>
+
 When you open an imported resume from the dialog, the **Write** panel starts with a note naming the file you imported and counting its sections and entries.
 
 <Frame caption="Review the imported resume in the editor">

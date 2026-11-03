@@ -2,6 +2,7 @@ import type { DbOrTx } from "@reactive-resume/db/client";
 import type { ResumeVersionKind } from "@reactive-resume/db/schema";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import * as schema from "@reactive-resume/db/schema";
+import { readAiUsage } from "../ai/usage";
 import { createVersionHistory } from "../documents/version-history";
 import { parseStoredResumeData, parseWritableResumeData } from "./resume-data-validation";
 
@@ -20,25 +21,43 @@ const ids = ({ resumeId, ...rest }: Owned) => ({ ...rest, documentId: resumeId }
 
 export const writeVersion = (
 	client: DbOrTx,
-	input: Owned & { data: ResumeData; kind: ResumeVersionKind; name?: string; sessionId?: string },
+	input: Owned & {
+		data: ResumeData;
+		aiOperationIds: string[];
+		kind: ResumeVersionKind;
+		name?: string;
+		sessionId?: string;
+	},
 ) =>
 	history.write(client, {
 		documentId: input.resumeId,
 		userId: input.userId,
 		data: input.data,
+		aiOperationIds: input.aiOperationIds,
 		kind: input.kind,
 		name: input.name,
 		sessionId: input.sessionId,
 	});
 
-export const saveSessionVersion = (input: Owned & { data: ResumeData; sessionId?: string }) =>
-	history.saveSession({ ...ids(input), data: input.data, sessionId: input.sessionId });
+export const saveSessionVersion = (input: Owned & { data: ResumeData; aiOperationIds: string[]; sessionId?: string }) =>
+	history.saveSession({
+		...ids(input),
+		data: input.data,
+		aiOperationIds: input.aiOperationIds,
+		sessionId: input.sessionId,
+	});
 
 export const listVersions = (input: Owned) => history.list(ids(input));
 
 export const getVersion = async (input: Owned & { versionId: string }) => {
 	const version = await history.get({ ...ids(input), versionId: input.versionId });
-	return { ...version, data: parseStoredResumeData(version.data) };
+	const aiOperationIds = version.aiOperationIds ?? [];
+	return {
+		...version,
+		data: parseStoredResumeData(version.data),
+		aiOperationIds,
+		aiUsage: await readAiUsage(input.userId, aiOperationIds),
+	};
 };
 
 export const renameVersion = (input: Owned & { versionId: string; name: string }) =>

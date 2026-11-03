@@ -1988,6 +1988,9 @@
 											"name",
 											"data"
 										]
+									},
+									"includeProvenance": {
+										"type": "boolean"
 									}
 								},
 								"required": [
@@ -6334,6 +6337,15 @@
 												"notes"
 											],
 											"description": "Metadata for the resume, such as template, layout, typography, etc. This section describes the overall design and appearance of the resume."
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
 										}
 									},
 									"required": [
@@ -6556,6 +6568,9 @@
 											"name",
 											"data"
 										]
+									},
+									"includeProvenance": {
+										"type": "boolean"
 									},
 									"mediaType": {
 										"enum": [
@@ -10910,6 +10925,15 @@
 												"notes"
 											],
 											"description": "Metadata for the resume, such as template, layout, typography, etc. This section describes the overall design and appearance of the resume."
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
 										}
 									},
 									"required": [
@@ -44048,6 +44072,62 @@
 														"format": "date-time",
 														"x-native-type": "date",
 														"description": "The date and time the resume was last updated."
+													},
+													"aiOperationIds": {
+														"type": "array",
+														"maxItems": 1000,
+														"items": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 64
+														}
+													},
+													"aiUsage": {
+														"anyOf": [
+															{
+																"type": "object",
+																"properties": {
+																	"requests": {
+																		"type": "integer",
+																		"minimum": 0,
+																		"maximum": 9007199254740991
+																	},
+																	"models": {
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"providerId": {
+																					"type": "string"
+																				},
+																				"label": {
+																					"type": "string"
+																				},
+																				"provider": {
+																					"type": "string"
+																				},
+																				"model": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"providerId",
+																				"label",
+																				"provider",
+																				"model"
+																			]
+																		}
+																	}
+																},
+																"required": [
+																	"requests",
+																	"models"
+																]
+															},
+															{
+																"type": "null"
+															}
+														]
 													}
 												},
 												"required": [
@@ -44857,6 +44937,12 @@
 																},
 																"additionalProperties": {}
 															},
+															"aiOperationIds": {
+																"type": "array",
+																"items": {
+																	"type": "string"
+																}
+															},
 															"kind": {
 																"enum": [
 																	"created",
@@ -44900,6 +44986,7 @@
 															"id",
 															"resumeId",
 															"data",
+															"aiOperationIds",
 															"kind",
 															"name",
 															"sessionId",
@@ -81227,6 +81314,62 @@
 												},
 												"hasPassword": {
 													"type": "boolean"
+												},
+												"aiOperationIds": {
+													"type": "array",
+													"maxItems": 1000,
+													"items": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 64
+													}
+												},
+												"aiUsage": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"requests": {
+																	"type": "integer",
+																	"minimum": 0,
+																	"maximum": 9007199254740991
+																},
+																"models": {
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"providerId": {
+																				"type": "string"
+																			},
+																			"label": {
+																				"type": "string"
+																			},
+																			"provider": {
+																				"type": "string"
+																			},
+																			"model": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"providerId",
+																			"label",
+																			"provider",
+																			"model"
+																		]
+																	}
+																}
+															},
+															"required": [
+																"requests",
+																"models"
+															]
+														},
+														{
+															"type": "null"
+														}
+													]
 												}
 											},
 											"required": [
@@ -93573,6 +93716,62 @@
 										"hasPassword": {
 											"type": "boolean"
 										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"applicationId": {
 											"anyOf": [
 												{
@@ -93723,6 +93922,15 @@
 									"isPrimary": {
 										"type": "boolean",
 										"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
+									},
+									"aiOperationIds": {
+										"type": "array",
+										"maxItems": 1000,
+										"items": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 64
+										}
 									},
 									"expectedUpdatedAt": {
 										"type": "string",
@@ -98180,6 +98388,62 @@
 										},
 										"hasPassword": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -103097,6 +103361,62 @@
 										},
 										"hasPassword": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -112792,6 +113112,62 @@
 										},
 										"hasPassword": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -117395,6 +117771,62 @@
 										},
 										"hasPassword": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -122001,6 +122433,62 @@
 										},
 										"hasPassword": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -126657,6 +127145,62 @@
 										},
 										"hasPassword": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -132005,6 +132549,62 @@
 												"metadata"
 											],
 											"additionalProperties": {}
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -136766,6 +137366,62 @@
 										},
 										"hasPassword": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -144296,6 +144952,15 @@
 										"type": "boolean",
 										"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
 									},
+									"aiOperationIds": {
+										"type": "array",
+										"maxItems": 1000,
+										"items": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 64
+										}
+									},
 									"expectedUpdatedAt": {
 										"type": "string",
 										"format": "date-time",
@@ -148752,6 +149417,62 @@
 										},
 										"hasPassword": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -154008,6 +154729,62 @@
 										},
 										"hasPassword": {
 											"type": "boolean"
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
+										},
+										"aiUsage": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"requests": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"models": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"providerId": {
+																		"type": "string"
+																	},
+																	"label": {
+																		"type": "string"
+																	},
+																	"provider": {
+																		"type": "string"
+																	},
+																	"model": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"providerId",
+																	"label",
+																	"provider",
+																	"model"
+																]
+															}
+														}
+													},
+													"required": [
+														"requests",
+														"models"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -163514,6 +164291,62 @@
 												},
 												"hasPassword": {
 													"type": "boolean"
+												},
+												"aiOperationIds": {
+													"type": "array",
+													"maxItems": 1000,
+													"items": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 64
+													}
+												},
+												"aiUsage": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"requests": {
+																	"type": "integer",
+																	"minimum": 0,
+																	"maximum": 9007199254740991
+																},
+																"models": {
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"providerId": {
+																				"type": "string"
+																			},
+																			"label": {
+																				"type": "string"
+																			},
+																			"provider": {
+																				"type": "string"
+																			},
+																			"model": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"providerId",
+																			"label",
+																			"provider",
+																			"model"
+																		]
+																	}
+																}
+															},
+															"required": [
+																"requests",
+																"models"
+															]
+														},
+														{
+															"type": "null"
+														}
+													]
 												}
 											},
 											"required": [
@@ -167720,6 +168553,9 @@
 											"name",
 											"data"
 										]
+									},
+									"includeProvenance": {
+										"type": "boolean"
 									}
 								},
 								"required": [
@@ -172066,6 +172902,15 @@
 												"notes"
 											],
 											"description": "Metadata for the resume, such as template, layout, typography, etc. This section describes the overall design and appearance of the resume."
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
 										}
 									},
 									"required": [
@@ -172287,6 +173132,9 @@
 											"name",
 											"data"
 										]
+									},
+									"includeProvenance": {
+										"type": "boolean"
 									},
 									"mediaType": {
 										"enum": [
@@ -176641,6 +177489,15 @@
 												"notes"
 											],
 											"description": "Metadata for the resume, such as template, layout, typography, etc. This section describes the overall design and appearance of the resume."
+										},
+										"aiOperationIds": {
+											"type": "array",
+											"maxItems": 1000,
+											"items": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											}
 										}
 									},
 									"required": [
