@@ -99,15 +99,19 @@ export function StoriesPage({ storyId, edit, start: planStart }: StoriesPageProp
 		});
 
 	const remove = (story: Story) => {
-		hide(story.id);
-		open(undefined);
 		withQueryUndo({
 			queryClient,
-			queryKey: orpc.career.key(),
+			queryKey: orpc.career.stories.key(),
 			description: t`Story deleted`,
 			errorMessage: t`Couldn't delete that story. Try again.`,
 			prepare: () => prepareRpc(client.career.deleteStory, { id: story.id }),
-			restore: () => unhide(story.id),
+			hide: () => {
+				hide(story.id);
+				open(undefined);
+			},
+			restore: () => {
+				unhide(story.id);
+			},
 		});
 	};
 

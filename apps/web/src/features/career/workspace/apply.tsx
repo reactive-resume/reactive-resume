@@ -45,8 +45,10 @@ import { AiNotice } from "./fit";
 import { Preparation } from "./preparation";
 import { SentDocuments } from "@/features/applications/components/detail/sent-documents";
 import { useInvalidateApplications } from "@/features/applications/use-application-actions";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { toastError } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
+import { client, orpc, prepareRpc } from "@/libs/orpc/client";
+import { invalidateMutationQueries } from "@/libs/query/client";
 
 type Answer = CareerWorkspace["answers"][number];
 type AnswerSnapshot = Pick<Answer, "answer" | "factIds" | "aiOperationIds">;
@@ -71,6 +73,7 @@ const checklistItems = () =>
 
 /** W4–W5: the written answers for the employer's form, and a checklist before submitting there yourself. */
 export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
+	const queryClient = useQueryClient();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
@@ -82,6 +85,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 	const sentItem = candidate?.data.kind === "answers" ? { ...candidate, data: candidate.data } : undefined;
 	// Removed questions wait out their Undo here; the workspace drops them when the toast closes.
 	const [removed, setRemoved] = useState<string[]>([]);
+	const removing = useRef(new Set<string>());
 	const [unit, setUnit] = useState<CountUnit>("words");
 	const [submitting, setSubmitting] = useState(false);
 	const [canSubmit, setCanSubmit] = useState(true);
@@ -143,11 +147,51 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 	};
 	const currentAnswers = () => shown.map((answer) => drafts.current.get(answer.id)?.() ?? answer);
 	const removeAnswer = (id: string) => {
-		setRemoved((ids) => [...ids, id]);
+		const generation = getAccountGeneration();
+		const key = JSON.stringify([generation, application.id, id]);
+		if (removing.current.has(key)) return;
+		removing.current.add(key);
+		const current = () => generation === getAccountGeneration();
+		const reconcile = async () => {
+			removing.current.delete(key);
+			await workspace.settled();
+			if (!current()) return;
+			const queryKey = orpc.career.workspace.queryKey({ input: { applicationId: application.id } });
+			void invalidateMutationQueries(queryClient, queryKey);
+			await queryClient.cancelQueries({ queryKey });
+			if (!current()) return;
+			await queryClient.invalidateQueries({ queryKey, refetchType: "all" }, { throwOnError: true });
+			if (current()) setRemoved((ids) => ids.filter((item) => item !== id));
+		};
+		const failed = () => {
+			if (!current()) return;
+			toast.add({
+				type: "error",
+				description: t`Couldn't save that change. Check your connection and try again.`,
+				actionProps: {
+					children: t`Retry`,
+					onClick: () => {
+						void reconcile().catch(failed);
+					},
+				},
+			});
+		};
 		withUndo({
 			description: t`Question removed`,
-			commit: () => workspace.save({ answers: workspace.current().answers.filter((answer) => answer.id !== id) }),
-			onUndo: () => setRemoved((ids) => ids.filter((item) => item !== id)),
+			onReady: () => setRemoved((ids) => [...ids, id]),
+			prepare: async () => {
+				const value = await workspace.settled();
+				if (!current()) throw new DOMException("", "AbortError");
+				const expected = value.answers.find((answer) => answer.id === id);
+				if (!expected) throw new Error("Answer no longer available");
+				return prepareRpc(client.career.deleteWorkspaceAnswer, { applicationId: application.id, id, expected });
+			},
+			onPrepareError: () => {
+				failed();
+				void reconcile().catch(failed);
+			},
+			commit: (result) => result.catch(failed).then(() => reconcile().catch(failed)),
+			onUndo: () => reconcile().catch(failed),
 		});
 	};
 
@@ -360,17 +404,22 @@ function AnswerCard({
 		before: { text: string; factIds: string[]; aiOperationIds: string[] };
 	} | null>(null);
 	// The answer as it reads now, for a toast's Undo that runs after later renders.
-	const current = useRef({ text, factIds: answer.factIds, aiOperationIds: answer.aiOperationIds ?? [] });
+	const current = useRef({ text, question, factIds: answer.factIds, aiOperationIds: answer.aiOperationIds ?? [] });
 	useLayoutEffect(() => {
-		current.current = { text, factIds: answer.factIds, aiOperationIds: answer.aiOperationIds ?? [] };
+		current.current = { text, question, factIds: answer.factIds, aiOperationIds: answer.aiOperationIds ?? [] };
 	});
-	const previousSaved = useRef(answer.answer);
+	const previousSaved = useRef({ text: answer.answer, question: answer.question });
 	useLayoutEffect(() => {
 		// A refetch is not a local edit to autosave. Keep only text the user changed since the last saved copy.
-		if (previousSaved.current !== answer.answer && current.current.text === previousSaved.current)
+		if (previousSaved.current.text !== answer.answer && current.current.text === previousSaved.current.text)
 			setText(answer.answer);
-		previousSaved.current = answer.answer;
-	}, [answer.answer, setText]);
+		if (
+			previousSaved.current.question !== answer.question &&
+			current.current.question === previousSaved.current.question
+		)
+			setQuestion(answer.question);
+		previousSaved.current = { text: answer.answer, question: answer.question };
+	}, [answer.answer, answer.question, setText, setQuestion]);
 	const generate = useGenerate(applicationId);
 	const { provider } = useDefaultProvider();
 	const flushAnswer = useDebouncedSave(

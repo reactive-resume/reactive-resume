@@ -501,6 +501,23 @@ export const careerRouter = {
 		.handler(({ context, input: { applicationId, expected, ...patch } }) =>
 			careerService.saveWorkspace(context.user.id, applicationId, patch, expected),
 		),
+	deleteWorkspaceAnswer: protectedProcedure
+		.route({
+			method: "DELETE",
+			path: "/career/workspace/{applicationId}/answers/{id}",
+			tags: ["Career"],
+			operationId: "deleteCareerWorkspaceAnswer",
+			summary: "Remove one unchanged workspace answer",
+			description:
+				"Removes only the answer matching the supplied previous value. Other answers, workspace fields and submitted history remain unchanged. Repeating an already completed removal is safe.",
+		})
+		.input(
+			applicationInput.extend({ id: z.string().min(1).max(64), expected: careerWorkspaceSchema.shape.answers.element }),
+		)
+		.output(careerWorkspaceSchema)
+		.handler(({ context, input }) =>
+			careerService.deleteWorkspaceAnswer(context.user.id, input.applicationId, input.id, input.expected),
+		),
 	submitApplication: protectedProcedure
 		.route({
 			method: "POST",

@@ -76,6 +76,16 @@ const routes = {
 	trash: () => "/documents/trash",
 };
 const common = {
+	"@/api/client": {
+		orpc: {
+			career: Object.fromEntries(
+				["facts", "stories", "savedItems", "notifications", "opportunities", "schedules"].map((name) => [
+					name,
+					{ key: () => ["career", name] },
+				]),
+			),
+		},
+	},
 	"@/shell/shortcut-help": {
 		ShortcutHelpButton: "ShortcutHelpButton",
 		CharacterShortcutSetting: "CharacterShortcutSetting",

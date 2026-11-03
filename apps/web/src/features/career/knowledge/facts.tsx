@@ -88,14 +88,16 @@ export function FactsPage({ highlight }: FactsPageProps) {
 	};
 
 	const forget = (fact: Fact) => {
-		setHidden((current) => [...current, fact.id]);
 		withQueryUndo({
 			queryClient,
-			queryKey: orpc.career.key(),
+			queryKey: orpc.career.facts.key(),
 			description: t`Fact forgotten`,
 			errorMessage: t`Couldn't forget that fact. Try again.`,
 			prepare: () => prepareRpc(client.career.forgetFact, { id: fact.id }),
-			restore: () => setHidden((current) => current.filter((id) => id !== fact.id)),
+			hide: () => setHidden((current) => [...current, fact.id]),
+			restore: () => {
+				setHidden((current) => current.filter((id) => id !== fact.id));
+			},
 		});
 	};
 

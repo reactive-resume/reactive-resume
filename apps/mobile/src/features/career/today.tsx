@@ -23,6 +23,7 @@ import {
 import { ScheduleSheet, scheduleTitle } from "./schedule-sheet";
 import { rollForward } from "./scheduling";
 import { Actions, LoadState, Section, SwitchRow } from "./shared";
+import { orpc } from "@/api/client";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import {
@@ -344,8 +345,11 @@ export function TodayScreen() {
 													label={t`Mark as read`}
 													variant="ghost"
 													onPress={() =>
-														undo.remove(row.id, t`Marked as read`, () =>
-															prepareRpc(client.career.markNotificationRead, { id: row.id }),
+														undo.remove(
+															row.id,
+															t`Marked as read`,
+															() => prepareRpc(client.career.markNotificationRead, { id: row.id }),
+															orpc.career.notifications.key(),
 														)
 													}
 												/>
@@ -478,8 +482,11 @@ export function TodayScreen() {
 												label={t`Track in Applications`}
 												disabled={action.pending}
 												onPress={() =>
-													undo.remove(row.id, t`Saved to Applications with the posting`, () =>
-														prepareRpc(client.career.trackOpportunity, { id: row.id }),
+													undo.remove(
+														row.id,
+														t`Saved to Applications with the posting`,
+														() => prepareRpc(client.career.trackOpportunity, { id: row.id }),
+														orpc.career.opportunities.key(),
 													)
 												}
 											/>
@@ -498,8 +505,11 @@ export function TodayScreen() {
 												label={t`Not for me`}
 												disabled={action.pending}
 												onPress={() =>
-													undo.remove(row.id, t`Hidden from New roles`, () =>
-														prepareRpc(client.career.dismissOpportunity, { id: row.id }),
+													undo.remove(
+														row.id,
+														t`Hidden from New roles`,
+														() => prepareRpc(client.career.dismissOpportunity, { id: row.id }),
+														orpc.career.opportunities.key(),
 													)
 												}
 											/>
@@ -580,7 +590,12 @@ export function TodayScreen() {
 					{...sheet}
 					onClose={() => setSheet(null)}
 					onDelete={(id) =>
-						undo.remove(id, t`Schedule deleted`, () => prepareRpc(client.career.deleteSchedule, { id }))
+						undo.remove(
+							id,
+							t`Schedule deleted`,
+							() => prepareRpc(client.career.deleteSchedule, { id }),
+							orpc.career.schedules.key(),
+						)
 					}
 				/>
 			) : null}

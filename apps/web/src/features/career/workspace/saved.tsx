@@ -91,6 +91,7 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 			description: t`Deleted from Library`,
 			errorMessage: t`Couldn't save that change. Check your connection and try again.`,
 			prepare: () => prepareRpc(client.career.deleteSavedItem, { id: item.id }),
+			hide: () => hide(item.id),
 			restore: () => unhide(item.id),
 		});
 	};

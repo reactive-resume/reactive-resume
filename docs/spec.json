@@ -61699,6 +61699,324 @@
 				]
 			}
 		},
+		"/career/workspace/{applicationId}/answers/{id}": {
+			"delete": {
+				"operationId": "deleteCareerWorkspaceAnswer",
+				"summary": "Remove one unchanged workspace answer",
+				"description": "Removes only the answer matching the supplied previous value. Other answers, workspace fields and submitted history remain unchanged. Repeating an already completed removal is safe.",
+				"tags": [
+					"Career"
+				],
+				"parameters": [
+					{
+						"name": "applicationId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 64
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"expected": {
+										"type": "object",
+										"properties": {
+											"id": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											},
+											"question": {
+												"type": "string",
+												"maxLength": 2000
+											},
+											"answer": {
+												"type": "string",
+												"maxLength": 6000
+											},
+											"factIds": {
+												"type": "array",
+												"maxItems": 10,
+												"items": {
+													"type": "string"
+												}
+											},
+											"aiOperationIds": {
+												"type": "array",
+												"maxItems": 1000,
+												"items": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 64
+												}
+											}
+										},
+										"required": [
+											"id",
+											"question",
+											"answer",
+											"factIds"
+										]
+									}
+								},
+								"required": [
+									"expected"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"answers": {
+											"type": "array",
+											"maxItems": 30,
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 64
+													},
+													"question": {
+														"type": "string",
+														"maxLength": 2000
+													},
+													"answer": {
+														"type": "string",
+														"maxLength": 6000
+													},
+													"factIds": {
+														"type": "array",
+														"maxItems": 10,
+														"items": {
+															"type": "string"
+														}
+													},
+													"aiOperationIds": {
+														"type": "array",
+														"maxItems": 1000,
+														"items": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 64
+														}
+													}
+												},
+												"required": [
+													"id",
+													"question",
+													"answer",
+													"factIds"
+												]
+											}
+										},
+										"checklist": {
+											"type": "array",
+											"maxItems": 10,
+											"items": {
+												"type": "integer",
+												"minimum": 0,
+												"maximum": 10
+											}
+										},
+										"submissionReview": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"at": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"checklist": {
+															"type": "array",
+															"maxItems": 10,
+															"items": {
+																"type": "integer",
+																"minimum": 0,
+																"maximum": 10
+															}
+														},
+														"documents": {
+															"type": "boolean"
+														},
+														"answers": {
+															"type": "boolean"
+														},
+														"answerVersionId": {
+															"anyOf": [
+																{
+																	"type": "string"
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"stageEntryId": {
+															"anyOf": [
+																{
+																	"type": "string"
+																},
+																{
+																	"type": "null"
+																}
+															]
+														}
+													},
+													"required": [
+														"at",
+														"checklist",
+														"documents",
+														"answers"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"questions": {
+											"type": "array",
+											"maxItems": 20,
+											"items": {
+												"type": "object",
+												"properties": {
+													"text": {
+														"type": "string",
+														"maxLength": 400
+													},
+													"origin": {
+														"type": "string",
+														"maxLength": 60
+													}
+												},
+												"required": [
+													"text",
+													"origin"
+												]
+											}
+										},
+										"evidence": {
+											"type": "object",
+											"propertyNames": {
+												"type": "string",
+												"maxLength": 300
+											},
+											"additionalProperties": {
+												"type": "string",
+												"maxLength": 64
+											}
+										},
+										"ticks": {
+											"type": "object",
+											"propertyNames": {
+												"type": "string",
+												"maxLength": 100
+											},
+											"additionalProperties": {
+												"type": "array",
+												"maxItems": 20,
+												"items": {
+													"type": "string",
+													"maxLength": 20
+												}
+											}
+										},
+										"message": {
+											"type": "string",
+											"maxLength": 20000
+										}
+									},
+									"required": [
+										"answers",
+										"checklist",
+										"questions",
+										"evidence",
+										"ticks",
+										"message"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/career/workspace/<applicationId>/answers/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expected\": {\n    \"id\": \"<string>\",\n    \"question\": \"<string>\",\n    \"answer\": \"<string>\",\n    \"factIds\": [\n      \"<string>\"\n    ]\n  }\n}'"
+					}
+				]
+			}
+		},
 		"/career/workspace/{applicationId}/submit": {
 			"post": {
 				"operationId": "submitCareerApplication",

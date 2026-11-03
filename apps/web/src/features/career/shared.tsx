@@ -21,6 +21,7 @@ import { deviceTimeZone } from "@/features/settings/use-save-timezone";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { D2, EASE, EXIT } from "@/libs/motion";
+import { invalidateMutationQueries } from "@/libs/query/client";
 
 // ---- Time: always in the user's timezone, "Thu 8 Oct, 17:58". Relative time is secondary text. ----
 
@@ -99,6 +100,7 @@ type UndoInput<T> = { description: string; onUndo: () => unknown } & (
 	| { commit: () => unknown }
 	| {
 			prepare: () => Promise<PreparedRequest<T>>;
+			onReady: () => void;
 			commit: (result: Promise<T>) => unknown;
 			onPrepareError: (error: unknown) => unknown;
 	  }
@@ -125,6 +127,7 @@ export function withUndo<T>(input: UndoInput<T>) {
 				request.cancel();
 				return;
 			}
+			input.onReady();
 			const operation = showUndo({
 				description: input.description,
 				onUndo: () => {
@@ -178,6 +181,7 @@ type QueryUndoOptions<T> = {
 	description: string;
 	errorMessage: string;
 	prepare: () => Promise<PreparedRequest<T>>;
+	hide: () => void;
 	restore: () => void;
 };
 
@@ -188,12 +192,14 @@ export function withQueryUndo<T>({
 	description,
 	errorMessage,
 	prepare,
+	hide,
 	restore,
 }: QueryUndoOptions<T>) {
 	const generation = getAccountGeneration();
 	const current = () => generation === getAccountGeneration();
 	const reconcile = async () => {
 		if (!current()) return;
+		void invalidateMutationQueries(queryClient, queryKey);
 		await queryClient.cancelQueries({ queryKey });
 		if (!current()) return;
 		await queryClient.invalidateQueries({ queryKey, refetchType: "all" }, { throwOnError: true });
@@ -219,6 +225,7 @@ export function withQueryUndo<T>({
 	withUndo({
 		description,
 		prepare,
+		onReady: hide,
 		onPrepareError: failed,
 		onUndo: () => reconcile().catch(report),
 		commit: (result) => result.then(() => reconcile().catch(report), failed),

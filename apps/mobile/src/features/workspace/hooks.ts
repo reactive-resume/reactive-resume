@@ -111,6 +111,7 @@ export function useWorkspace(applicationId: string) {
 		 */
 		fetchConfirmed: async () => {
 			while (pending.size > 0) await Promise.allSettled(pending);
+			await queryClient.cancelQueries({ queryKey });
 			return queryClient.fetchQuery({
 				...orpc.career.workspace.queryOptions({ input: { applicationId } }),
 				queryKey,

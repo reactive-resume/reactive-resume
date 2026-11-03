@@ -8,7 +8,7 @@ type UndoNotice = { message: string; restore: () => unknown; failed: () => void 
 type UndoOptions<T> = UndoNotice &
 	(
 		| { commit: () => Promise<unknown> }
-		| { prepare: () => Promise<PreparedRequest<T>>; commit: (result: Promise<T>) => unknown }
+		| { prepare: () => Promise<PreparedRequest<T>>; onReady: () => void; commit: (result: Promise<T>) => unknown }
 	);
 
 /** Prepared requests reach the transport in the background event's stack, before JS can suspend. */
@@ -37,6 +37,7 @@ export function withUndo<T>(options: UndoOptions<T>) {
 			if (intent === "cancel") void restore(true);
 			return;
 		}
+		options.onReady();
 		operation = showUndo({
 			message: options.message,
 			commit: () => {

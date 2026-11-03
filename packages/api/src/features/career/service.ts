@@ -1673,6 +1673,47 @@ export const careerService = {
 			};
 		});
 	},
+	/** The application lock serializes removal with workspace saves; only the unchanged target is removed. */
+	deleteWorkspaceAnswer: async (
+		userId: string,
+		applicationId: string,
+		id: string,
+		expected: CareerWorkspace["answers"][number],
+	) => {
+		await requireCareerApplication({ userId, applicationId });
+		return db.transaction(async (tx) => {
+			const [application] = await tx
+				.select()
+				.from(tables.application)
+				.where(and(eq(tables.application.id, applicationId), activeApplications(userId)))
+				.for("update");
+			if (!application) throw new ORPCError("NOT_FOUND");
+			const [row] = await tx
+				.select()
+				.from(tables.careerWorkspace)
+				.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
+			const current = careerWorkspaceDataSchema.parse({ ...EMPTY_WORKSPACE, ...row?.data });
+			const answer = current.answers.find((item) => item.id === id);
+			if (answer && !isDeepStrictEqual(answer, expected))
+				throw new ORPCError("CONFLICT", {
+					message: "This answer changed elsewhere. Review its latest version before removing it.",
+				});
+			const data = answer ? { ...current, answers: current.answers.filter((item) => item.id !== id) } : current;
+			if (answer)
+				await tx
+					.update(tables.careerWorkspace)
+					.set({ data, updatedAt: new Date() })
+					.where(
+						and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)),
+					);
+			return {
+				...data,
+				...(row?.submissionReview || hasSubmitted(application)
+					? { submissionReview: row?.submissionReview ?? null }
+					: {}),
+			};
+		});
+	},
 	/** The submitted answers, document versions and stage are one committed action. */
 	submitApplication: (
 		userId: string,

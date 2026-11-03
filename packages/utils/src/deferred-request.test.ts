@@ -86,3 +86,24 @@ it("allows an existing transport to retry after its first authenticated send", a
 	await request.send();
 	expect(sent).toBe(2);
 });
+
+it("cannot dispatch a held request after its preparation callback rejects", async () => {
+	let sent = 0;
+	const error = new Error("Preparation failed after defer");
+	let fail!: (error: Error) => void;
+	const failed = new Promise<never>((_resolve, reject) => {
+		fail = reject;
+	});
+	const request = await prepareRequest(async (defer) => {
+		void defer(() => {
+			sent++;
+			return Promise.resolve(new Response());
+		});
+		return failed;
+	});
+	fail(error);
+	await failed.catch(() => {});
+	await new Promise<void>((resolve) => setImmediate(resolve));
+	await expect(request.send()).rejects.toBe(error);
+	expect(sent).toBe(0);
+});

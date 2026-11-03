@@ -75,6 +75,7 @@ function load(data, overrides = {}) {
 		"../state": {},
 		"@/api/client": { orpc: { career: { submitApplication: { mutationOptions: () => ({}) } } } },
 		"@/draft": {},
+		"@/auth/session": { getAccountScope: () => "fixture" },
 		"@/features/ai/providers": {},
 		"@/features/application-detail/sections": {},
 		"@/features/applications/prior-no-response": { PriorNoResponse: "PriorNoResponse" },

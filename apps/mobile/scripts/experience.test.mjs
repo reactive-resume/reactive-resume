@@ -96,6 +96,16 @@ ui.useFirstAppearance = () => false;
 ui.useReducedMotion = () => false;
 const mocks = {
 	"@lingui/core": { i18n },
+	"@/api/client": {
+		orpc: {
+			career: Object.fromEntries(
+				["facts", "stories", "savedItems", "notifications", "opportunities", "schedules"].map((name) => [
+					name,
+					{ key: () => ["career", name] },
+				]),
+			),
+		},
+	},
 	"@/shell/shortcut-help": {
 		ShortcutHelpButton: "ShortcutHelpButton",
 		CharacterShortcutSetting: "CharacterShortcutSetting",
@@ -856,6 +866,19 @@ assert.deepEqual(calls.filter((call) => call?.documentLink).at(-1).documentLink,
 	id: "existing-letter",
 	applicationId: "job-a",
 });
+for (const resumeId of [null, "resume-for-letter"]) {
+	tree = render(WhatYouSent, { application: { ...application, resumeId } });
+	control(tree, "Write a letter").onPress();
+	assert.deepEqual(
+		calls.at(-1),
+		{
+			pathname: "/new",
+			params: { context: "letters", applicationId: "job-a", ...(resumeId ? { sourceResumeId: resumeId } : {}) },
+		},
+		"Letter creation opens the reusable document picker with this job and its linked resume",
+	);
+}
+tree = render(WhatYouSent, { application });
 let finishDocumentLink;
 documentLinkPromise = new Promise((resolve) => (finishDocumentLink = resolve));
 control(tree, "Use Fictional Cedar — Portfolio · Resume").onPress();
@@ -4428,6 +4451,7 @@ const { AnswerCard: NativeAnswerCard } = load(
 		"../shell": {},
 		"../state": {},
 		"@/api/client": {},
+		"@/auth/session": { getAccountScope: () => "fixture" },
 		"@/draft": {},
 		"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: { id: "fixture" } }) },
 		"@/features/application-detail/sections": {},
@@ -4470,3 +4494,15 @@ await settle();
 assert.deepEqual(provenanceSaves[1].patch.aiOperationIds, ["prior-op"]);
 assert.deepEqual(provenanceSaves[1].expected.aiOperationIds, ["prior-op", "next-op"]);
 console.log("PASS native answer Accept/Undo preserves actual request sources with the reviewed content");
+
+reset();
+provenanceAnswer = { ...provenanceAnswer, question: "Original question from form" };
+provenanceView();
+provenanceAnswer = { ...provenanceAnswer, question: "Corrected question from another device" };
+provenanceView();
+assert.equal(
+	nodes(provenanceView()).find((node) => node.type === "Block").props.title,
+	"Corrected question from another device",
+	"Canonical question correction replaces an untouched native draft instead of autosaving the old wording",
+);
+console.log("PASS native canonical question wording updates an untouched draft");

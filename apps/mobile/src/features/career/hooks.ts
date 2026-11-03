@@ -1,5 +1,6 @@
 import type { RouterOutput } from "@/api/client";
 import type { PreparedRequest } from "@reactive-resume/utils/deferred-request";
+import type { QueryKey } from "@tanstack/react-query";
 import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -185,6 +186,12 @@ export function useUndoRows() {
 	const queryClient = useQueryClient();
 	const session = useSession();
 	const [hidden, setHidden] = useState<string[]>([]);
+	const accountScope = getAccountScope();
+	const [hiddenScope, setHiddenScope] = useState(accountScope);
+	if (hiddenScope !== accountScope) {
+		setHiddenScope(accountScope);
+		setHidden([]);
+	}
 	const pending = useRef(new Map<string, ReturnType<typeof withUndo>>());
 	const active = useRef(session);
 	useLayoutEffect(() => {
@@ -200,24 +207,28 @@ export function useUndoRows() {
 			}
 			operations.clear();
 		};
-	}, [session.server]);
-	const remove = (id: string, message: string, prepare: () => Promise<PreparedRequest<unknown>>) => {
+	}, [session.server, accountScope]);
+	const remove = (
+		id: string,
+		message: string,
+		prepare: () => Promise<PreparedRequest<unknown>>,
+		queryKey: QueryKey,
+	) => {
 		if (pending.current.has(id)) return;
 		const server = session.server;
 		const scope = getAccountScope();
 		const current = () =>
 			getAccountScope() === scope && getServer() === server && active.current.status === "signed-in";
-		setHidden((rows) => [...rows, id]);
 		const reconcile = async () => {
 			try {
 				if (!current()) return;
-				await queryClient.cancelQueries({ queryKey: orpc.career.key() });
+				await queryClient.cancelQueries({ queryKey });
 				if (!current()) return;
-				await queryClient.invalidateQueries(
-					{ queryKey: orpc.career.key(), refetchType: "all" },
-					{ throwOnError: true },
-				);
-				if (current()) setHidden((rows) => rows.filter((value) => value !== id));
+				await queryClient.invalidateQueries({ queryKey, refetchType: "all" }, { throwOnError: true });
+				if (current()) {
+					setHidden((rows) => rows.filter((value) => value !== id));
+					void action.refresh();
+				}
 			} finally {
 				pending.current.delete(id);
 			}
@@ -237,6 +248,7 @@ export function useUndoRows() {
 		const operation = withUndo({
 			message,
 			prepare,
+			onReady: () => setHidden((rows) => [...rows, id]),
 			restore: reconcile,
 			failed,
 			commit: (result) =>
