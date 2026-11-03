@@ -6,7 +6,7 @@ import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { postingReadReceipt } from "@reactive-resume/schema/applications/posting-source";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -53,6 +53,7 @@ import { orpc } from "@/libs/orpc/client";
 
 type DetailSheetProps = {
 	application: ApplicationSummary | null;
+	returnFocus: (id: string) => HTMLElement | null;
 	onOpenChange: (open: boolean) => void;
 	onEditDetails: (application: Application) => void;
 };
@@ -61,7 +62,8 @@ type DetailSheetProps = {
  * One application, 480px from the right (full screen on phones): the stage stepper with Move to next, the next
  * step, what was sent, the key facts, notes and activity. Close application… takes a reason; Delete is in ⋯.
  */
-export function ApplicationDetailSheet({ application, onOpenChange, onEditDetails }: DetailSheetProps) {
+export function ApplicationDetailSheet({ application, onOpenChange, onEditDetails, returnFocus }: DetailSheetProps) {
+	const contentRef = useRef<HTMLDivElement>(null);
 	const phone = useBreakpoint() === "mobile";
 	// Closing keeps the last application on screen until the sheet has slid away.
 	const [shown, onOpenChangeComplete] = useClosingValue(application);
@@ -78,6 +80,13 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEditDetail
 	return (
 		<Sheet open={Boolean(application)} onOpenChange={onOpenChange} onOpenChangeComplete={onOpenChangeComplete}>
 			<SheetContent
+				ref={contentRef}
+				initialFocus={() =>
+					contentRef.current?.querySelector<HTMLElement>(
+						current ? '[data-slot="sheet-title"]' : '[data-slot="sheet-close"]',
+					) ?? false
+				}
+				finalFocus={() => (shown ? returnFocus(shown.id) : null) ?? false}
 				side={phone ? "bottom" : "right"}
 				closeLabel={t`Close`}
 				className={cn("gap-0", phone ? "h-svh" : "data-[side=right]:sm:max-w-[480px]")}
@@ -91,7 +100,9 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEditDetail
 					/>
 				) : (
 					<div className="grid gap-2 p-5">
-						<SheetTitle dir="auto">{shown?.role}</SheetTitle>
+						<SheetTitle tabIndex={-1} dir="auto">
+							{shown?.role}
+						</SheetTitle>
 						<SheetDescription aria-live="polite">
 							{isError ? t`Couldn't load this. Your saved data hasn't changed.` : t`Loading…`}
 						</SheetDescription>
@@ -178,7 +189,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 	return (
 		<>
 			<div className="min-h-0 flex-1 overflow-y-auto">
-				<header className="sticky top-0 z-10 grid gap-4 border-b border-line bg-raised px-5 pt-5 pb-4">
+				<header className="sticky top-0 z-10 grid gap-4 border-b border-line bg-raised px-5 pt-5 pb-4 [@media(max-height:500px)]:static">
 					<div className="flex items-start gap-3 pe-8">
 						<span
 							aria-hidden="true"
@@ -187,7 +198,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 							{application.company.slice(0, 1).toUpperCase()}
 						</span>
 						<div className="grid min-w-0 flex-1 gap-0.5">
-							<SheetTitle dir="auto" className="font-display text-[22px] leading-7">
+							<SheetTitle tabIndex={-1} dir="auto" className="font-display text-[22px] leading-7">
 								{application.role}
 							</SheetTitle>
 							<SheetDescription className="flex flex-wrap items-center gap-x-1.5 text-sm text-ink-2">

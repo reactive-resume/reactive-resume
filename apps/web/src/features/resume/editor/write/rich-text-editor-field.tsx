@@ -4,11 +4,12 @@ import type { Menu } from "@base-ui/react/menu";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Editor } from "@tiptap/react";
 import type { ReactNode } from "react";
+import { Toolbar } from "@base-ui/react/toolbar";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
+import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -231,7 +232,30 @@ export function RichTextEditor({
 		immediatelyRender: false,
 		shouldRerenderOnTransaction: false,
 		editorProps: {
-			handleKeyDown: (_view, event) => {
+			handleKeyDown: (view, event) => {
+				if (event.key === "Tab") {
+					// Commit the live range before focus leaves: the browser's selectionchange can still be queued.
+					const range = view.dom.ownerDocument.getSelection();
+					if (
+						range?.anchorNode &&
+						range.focusNode &&
+						view.dom.contains(range.anchorNode) &&
+						view.dom.contains(range.focusNode)
+					) {
+						const anchor = view.posAtDOM(range.anchorNode, range.anchorOffset);
+						const head = view.posAtDOM(range.focusNode, range.focusOffset);
+						const current = view.state.selection;
+						const sameNode =
+							current instanceof NodeSelection &&
+							Math.min(anchor, head) === current.from &&
+							Math.max(anchor, head) === current.to;
+						if (!sameNode) {
+							const selection = TextSelection.between(view.state.doc.resolve(anchor), view.state.doc.resolve(head));
+							if (!selection.eq(current)) view.dispatch(view.state.tr.setSelection(selection));
+						}
+					}
+					return false;
+				}
 				const mod = event.metaKey || event.ctrlKey;
 				if (!mod || event.altKey || event.shiftKey || event.key.toLowerCase() !== "k" || !linkShortcut.current)
 					return false;
@@ -308,10 +332,6 @@ export function RichTextEditor({
 	}, [editor, focusRequest]);
 
 	const editing = focused || improving !== null || menus.open;
-	// Phones dock the toolbar above the keyboard. Inside a sheet it renders in that sheet, so Tab reaches it after the
-	// text (the sheet keeps focus within itself) instead of skipping it.
-	const [fieldElement, setFieldElement] = useState<HTMLDivElement | null>(null);
-	const toolbarHost = fieldElement?.closest<HTMLElement>('[role="dialog"]') ?? null;
 
 	const acceptImprove = (line: ImproveLine, text: string) => {
 		if (!editor) return;
@@ -329,7 +349,7 @@ export function RichTextEditor({
 	const toolbarButtons = (
 		<>
 			{actions.map((action, index) => (
-				<button
+				<Toolbar.Button
 					key={action.icon}
 					type="button"
 					aria-label={action.label}
@@ -346,7 +366,7 @@ export function RichTextEditor({
 					)}
 				>
 					<Icon name={action.icon} />
-				</button>
+				</Toolbar.Button>
 			))}
 			{editor && (
 				<FormattingMenus
@@ -357,7 +377,7 @@ export function RichTextEditor({
 					menus={menus}
 				/>
 			)}
-			<button
+			<Toolbar.Button
 				type="button"
 				aria-expanded={improving !== null}
 				disabled={ai.isUnavailable || (!state?.canImprove && improving === null)}
@@ -374,13 +394,12 @@ export function RichTextEditor({
 				<span className="@max-[24rem]:sr-only">
 					<Trans>Improve</Trans>
 				</span>
-			</button>
+			</Toolbar.Button>
 		</>
 	);
 
 	return (
 		<div
-			ref={setFieldElement}
 			onFocus={() => setFocused(true)}
 			onBlur={(event) => {
 				const next = event.relatedTarget;
@@ -395,35 +414,6 @@ export function RichTextEditor({
 				className,
 			)}
 		>
-			{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
-			{editing &&
-				!readOnlyTable &&
-				mobile &&
-				createPortal(
-					<div
-						ref={toolbar}
-						role="toolbar"
-						aria-label={t`Formatting`}
-						style={{ bottom: keyboardInset }}
-						className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
-					>
-						<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
-						<button
-							type="button"
-							onMouseDown={(event) => event.preventDefault()}
-							onClick={() => {
-								setImproving(null);
-								setFocused(false);
-								editor?.commands.blur();
-							}}
-							className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
-						>
-							<Trans>Done</Trans>
-						</button>
-					</div>,
-					toolbarHost ?? document.body,
-				)}
-
 			{readOnlyTable && (
 				<p role="status" className="border-b border-line px-3 py-2 text-xs text-ink-2">
 					<Trans>
@@ -433,20 +423,43 @@ export function RichTextEditor({
 			)}
 
 			<EditorContent editor={editor} />
+			{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
+			{editing && !readOnlyTable && mobile && (
+				<Toolbar.Root
+					ref={toolbar}
+					aria-label={t`Formatting`}
+					style={{ bottom: keyboardInset }}
+					className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
+				>
+					<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
+					<Toolbar.Button
+						type="button"
+						onMouseDown={(event) => event.preventDefault()}
+						onClick={() => {
+							setImproving(null);
+							setFocused(false);
+							editor?.commands.blur();
+						}}
+						className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
+					>
+						<Trans>Done</Trans>
+					</Toolbar.Button>
+				</Toolbar.Root>
+			)}
+
 			{editing && <AiProviderLoadState state={ai} />}
 			{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
 			{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
 
 			{/* Under the text, so focusing the field never moves the line you clicked. */}
 			{editing && !readOnlyTable && !mobile && (
-				<div
+				<Toolbar.Root
 					ref={toolbar}
-					role="toolbar"
 					aria-label={t`Formatting`}
 					className="@container flex flex-wrap gap-0.5 border-t border-line px-1.5 py-1"
 				>
 					{toolbarButtons}
-				</div>
+				</Toolbar.Root>
 			)}
 
 			{editor && improving && (
@@ -518,13 +531,14 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 	return (
 		<>
 			<DropdownMenu {...menus.rootProps("align")}>
-				<DropdownMenuTrigger
+				<Toolbar.Button
+					render={<DropdownMenuTrigger />}
 					aria-label={t`Text alignment`}
 					title={t`Text alignment`}
 					className={cn(buttonClassName, "ms-1.5", formatting.align !== "left" && "bg-accent-soft text-accent-text")}
 				>
 					<Icon name={ALIGNMENT_ICONS[formatting.align]} />
-				</DropdownMenuTrigger>
+				</Toolbar.Button>
 				<DropdownMenuContent side={side} className="w-44" {...menus.contentProps}>
 					<DropdownMenuRadioGroup
 						value={formatting.align}
@@ -543,9 +557,14 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 			</DropdownMenu>
 
 			<DropdownMenu {...menus.rootProps("more")}>
-				<DropdownMenuTrigger aria-label={t`More formatting`} title={t`More formatting`} className={buttonClassName}>
+				<Toolbar.Button
+					render={<DropdownMenuTrigger />}
+					aria-label={t`More formatting`}
+					title={t`More formatting`}
+					className={buttonClassName}
+				>
 					<Icon name="dots-three" />
-				</DropdownMenuTrigger>
+				</Toolbar.Button>
 				<DropdownMenuContent side={side} className="w-56" {...menus.contentProps}>
 					<DropdownMenuCheckboxItem checked={formatting.strike} onCheckedChange={() => chain().toggleStrike().run()}>
 						<Icon name="text-strikethrough" />

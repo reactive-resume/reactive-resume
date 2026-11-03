@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { Link, useRouteContext } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
@@ -150,12 +150,14 @@ export function ForgotPasswordPage() {
 type PostForgotPasswordScreenProps = { onResend: () => Promise<void> };
 
 function PostForgotPasswordScreen({ onResend }: PostForgotPasswordScreenProps) {
+	const heading = useRef<HTMLHeadingElement>(null);
+	useEffect(() => heading.current?.focus(), []);
 	const [resending, setResending] = useState(false);
 	return (
 		// Replaces the form in place: fades up into the auth column, with the layout's 24px gap.
 		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
 			<div className="space-y-1 text-center">
-				<h1 className="text-[30px] leading-9">
+				<h1 ref={heading} tabIndex={-1} className="text-[30px] leading-9">
 					<Trans>Check your email</Trans>
 				</h1>
 				{/* Worded so it doesn't reveal whether an account uses the address. */}
