@@ -108,10 +108,10 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 				dot: "var(--ink-3)",
 				text: entry.followedUp
 					? entry.followedUp.kind === "reply"
-						? entry.text === "Replied"
+						? entry.text === "Replied" || entry.text === t`Replied`
 							? t`Replied`
 							: `${t`Replied`} · ${entry.text}`
-						: entry.text === "Followed up"
+						: entry.text === "Followed up" || entry.text === t`Followed up`
 							? t`Followed up`
 							: `${t`Followed up`} · ${entry.text}`
 					: entry.text,

@@ -185,22 +185,31 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const copying = useRef(false);
 	const [logging, setLogging] = useState(false);
 	const reminders = useReminders(application.id);
-	const clearFollowUpReminder = async (): Promise<boolean> => {
+	const reminderCancellation = useRef({
+		id: application.id,
+		cancel: reminders.captureTurnOff({ kind: "follow-up", applicationId: application.id }),
+	});
+	const clearFollowUpReminder = async (cancel: () => Promise<void>): Promise<boolean> => {
 		if (!scope || scope !== getAccountScope()) return false;
 		try {
-			await reminders.turnOff({ kind: "follow-up", applicationId: application.id });
+			await cancel();
 			return scope === getAccountScope();
 		} catch {
 			if (scope === getAccountScope())
 				showToast({
 					message: t`Couldn't clear the follow-up reminder. It may still notify you.`,
-					action: { label: t`Retry`, onPress: () => void clearFollowUpReminder() },
+					action: { label: t`Retry`, onPress: () => void clearFollowUpReminder(cancel) },
 				});
 			return false;
 		}
 	};
 	const clearReminder = useEffectEvent(() => {
-		if (!application.followUpAt) void clearFollowUpReminder();
+		if (application.followUpAt || reminderCancellation.current.id !== application.id)
+			reminderCancellation.current = {
+				id: application.id,
+				cancel: reminders.captureTurnOff({ kind: "follow-up", applicationId: application.id }),
+			};
+		if (!application.followUpAt) void clearFollowUpReminder(reminderCancellation.current.cancel);
 	});
 	useEffect(() => clearReminder(), [application.id, application.followUpAt, scope]);
 	const generate = useGenerate(application.id);
@@ -216,6 +225,8 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const copy = async (log = false) => {
 		if ((log && !application.replyVersion) || copying.current || !scope || scope !== getAccountScope()) return;
 		copying.current = true;
+		const cancel = reminders.captureTurnOff({ kind: "follow-up", applicationId: application.id });
+		if (log) reminderCancellation.current = { id: application.id, cancel };
 		setLogging(log);
 		let copied = false;
 		try {
@@ -228,15 +239,21 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 					{ context: { scope } },
 				);
 				if (scope !== getAccountScope()) return;
-				const cleared = await clearFollowUpReminder();
+				const cleared = await clearFollowUpReminder(cancel);
 				if (scope !== getAccountScope()) return;
 				await invalidate();
 				if (!cleared || scope !== getAccountScope()) return;
 			}
 			showToast({ message: log ? t`Reply copied and logged as replied` : t`Reply copied` });
-		} catch {
+		} catch (error) {
 			if (scope !== getAccountScope()) return;
 			if (copied) void invalidate();
+			if (copied && error instanceof ORPCError && error.code === "CONFLICT") {
+				showToast({
+					message: t`Reply copied. Nothing was logged because the application changed. Review it again before logging.`,
+				});
+				return;
+			}
 			showToast({
 				message: copied
 					? t`Reply copied. Logging wasn't confirmed. Check the timeline before trying again.`

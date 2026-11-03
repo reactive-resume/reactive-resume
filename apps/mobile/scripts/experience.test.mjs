@@ -7,10 +7,13 @@ const serverRequire = createRequire(new URL("../../server/package.json", import.
 const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
 // Lingui's t: a tagged template, or a descriptor ({ message, comment }) for strings with translator notes.
-const tag = (parts, ...values) =>
-	Array.isArray(parts)
+const translatedMessages = new Map();
+const tag = (parts, ...values) => {
+	const text = Array.isArray(parts)
 		? parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "")
 		: (parts?.message ?? "");
+	return translatedMessages.get(text) ?? text;
+};
 let hooks = [];
 let cursor = 0;
 const react = {
@@ -497,13 +500,15 @@ const application = {
 	sentResumeVersionId: null,
 	sentCoverLetterVersionId: null,
 };
-for (const [marker, text, expected] of [
+for (const [marker, text, expected, french] of [
 	[undefined, "Replied", "Replied"],
 	[{ stageEntryId: null }, "Replied", "Followed up · Replied"],
 	[{ stageEntryId: null, kind: "reply" }, "Custom contact note", "Replied · Custom contact note"],
 	[{ stageEntryId: null, kind: "reply" }, "Replied", "Replied"],
+	[{ stageEntryId: null, kind: "reply" }, "Réponse donnée", "Réponse donnée", true],
 ]) {
 	reset();
+	if (french) translatedMessages.set("Replied", "Réponse donnée");
 	const view = render(Timeline, {
 		application: {
 			...application,

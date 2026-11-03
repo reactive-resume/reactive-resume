@@ -31,6 +31,27 @@ export type ScheduleResult = "scheduled" | "denied" | "passed";
 const CHANNEL = "reminders";
 const queryKey = (applicationId: string) => ["reminders", applicationId] as const;
 const idOf = (target: ReminderTarget) => reminderId(target.kind, target.applicationId, target.entryId);
+const revisions = new Map<string, number>();
+const changes = new Map<string, Promise<unknown>>();
+
+// The platform cannot compare-and-cancel: serialize mutations so a delayed retry cannot delete a replacement.
+function changeReminder<T>(id: string, change: () => Promise<T>): Promise<T> {
+	const next = (changes.get(id) ?? Promise.resolve()).catch(() => undefined).then(change);
+	changes.set(id, next);
+	const settled = () => {
+		if (changes.get(id) === next) changes.delete(id);
+	};
+	void next.then(settled, settled);
+	return next;
+}
+
+function cancelReminder(id: string, expected?: number) {
+	return changeReminder(id, async () => {
+		if (expected !== undefined && (revisions.get(id) ?? 0) !== expected) return;
+		await Notifications.cancelScheduledNotificationAsync(id);
+		revisions.set(id, (revisions.get(id) ?? 0) + 1);
+	});
+}
 
 /** Asks for permission only if it hasn't been answered; false when notifications are off. */
 async function requestPermission() {
@@ -40,7 +61,7 @@ async function requestPermission() {
 	return (await Notifications.requestPermissionsAsync()).granted;
 }
 
-async function schedule(target: ReminderTarget, lead: number): Promise<ScheduleResult> {
+async function scheduleNative(target: ReminderTarget, lead: number): Promise<ScheduleResult> {
 	const id = idOf(target);
 	const at = reminderTime(target.start, lead);
 	if (!at) {
@@ -66,6 +87,12 @@ async function schedule(target: ReminderTarget, lead: number): Promise<ScheduleR
 		trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: at, channelId: CHANNEL },
 	});
 	return "scheduled";
+}
+
+function schedule(target: ReminderTarget, lead: number): Promise<ScheduleResult> {
+	const id = idOf(target);
+	revisions.set(id, (revisions.get(id) ?? 0) + 1);
+	return changeReminder(id, () => scheduleNative(target, lead));
 }
 
 /** Reminders scheduled on this device for one application: notification identifier → lead minutes. */
@@ -100,10 +127,17 @@ export function useReminders(applicationId: string) {
 			return result;
 		},
 		turnOff: async (target: Pick<ReminderTarget, "kind" | "applicationId" | "entryId">) => {
-			await Notifications.cancelScheduledNotificationAsync(
-				reminderId(target.kind, target.applicationId, target.entryId),
-			);
+			await cancelReminder(reminderId(target.kind, target.applicationId, target.entryId));
 			await refresh();
+		},
+		/** Retain this cancellation across retries; a later local schedule makes it inert. */
+		captureTurnOff: (target: Pick<ReminderTarget, "kind" | "applicationId" | "entryId">) => {
+			const id = reminderId(target.kind, target.applicationId, target.entryId);
+			const expected = revisions.get(id) ?? 0;
+			return async () => {
+				await cancelReminder(id, expected);
+				await refresh();
+			};
 		},
 	};
 }
@@ -122,7 +156,7 @@ export async function syncReminders(applicationId: string, targets: ReminderTarg
 	for (const { id, data } of await scheduledFor(applicationId)) {
 		if (held.has(id)) continue;
 		const target = byId.get(id);
-		if (!target) await Notifications.cancelScheduledNotificationAsync(id);
+		if (!target) await cancelReminder(id);
 		else if (data.start !== target.start.toISOString() || data.title !== target.title || data.body !== target.body)
 			await schedule(target, data.lead);
 	}

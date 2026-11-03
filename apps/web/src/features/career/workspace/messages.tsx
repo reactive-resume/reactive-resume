@@ -3,6 +3,7 @@ import type { WorkspaceTabProps } from "./shell";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
+import { ORPCError } from "@orpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { replyPlaceholders } from "@reactive-resume/schema/applications/reply";
@@ -225,9 +226,16 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 				invalidate(application.id);
 			}
 			toast.add({ description: log ? t`Reply copied and logged as replied` : t`Reply copied` });
-		} catch {
+		} catch (error) {
 			if (account !== getAccountGeneration()) return;
 			if (copied) invalidate(application.id);
+			if (copied && error instanceof ORPCError && error.code === "CONFLICT") {
+				toast.add({
+					type: "error",
+					description: t`Reply copied. Nothing was logged because the application changed. Review it again before logging.`,
+				});
+				return;
+			}
 			toast.add({
 				type: "error",
 				description: copied

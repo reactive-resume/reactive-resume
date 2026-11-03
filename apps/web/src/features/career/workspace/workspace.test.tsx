@@ -381,6 +381,23 @@ it("keeps Copy available and disables explicit logging on an older server", asyn
 	expect(api.logReply).not.toHaveBeenCalled();
 });
 
+it("explains a known reply-log conflict and refreshes the application", async () => {
+	const { ORPCError } = await import("@orpc/client");
+	const { toast } = await import("@reactive-resume/ui/components/toast");
+	vi.stubGlobal("navigator", { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } });
+	api.logReply.mockRejectedValueOnce(new ORPCError("CONFLICT"));
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	await waitFor(() =>
+		expect(toast.add).toHaveBeenCalledWith({
+			type: "error",
+			description: "Reply copied. Nothing was logged because the application changed. Review it again before logging.",
+		}),
+	);
+	expect(api.invalidate).toHaveBeenCalledWith(application.id);
+});
+
 it("warns and refreshes the application when logging is uncertain after copying succeeds", async () => {
 	const writeText = vi.fn().mockResolvedValue(undefined);
 	vi.stubGlobal("navigator", { clipboard: { writeText } });

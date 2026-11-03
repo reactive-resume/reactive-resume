@@ -65,6 +65,7 @@ function harness({ lifetime = 30 } = {}) {
 		invalidate: async () => undefined,
 		cancel: async () => undefined,
 		cancelCalls: [],
+		reminderVersion: 0,
 		effects: [],
 		clearedReminders: [],
 	};
@@ -196,6 +197,15 @@ function harness({ lifetime = 30 } = {}) {
 			"@/features/career/offer-entry": { OfferEntry: "OfferEntry" },
 			"@/features/reminders": {
 				useReminders: () => ({
+					captureTurnOff: (target) => {
+						const version = env.reminderVersion;
+						return async () => {
+							if (version !== env.reminderVersion) return;
+							env.cancelCalls.push(target);
+							await env.cancel();
+							env.clearedReminders.push(target);
+						};
+					},
 					turnOff: async (target) => {
 						env.cancelCalls.push(target);
 						await env.cancel();
@@ -337,6 +347,20 @@ test("native reply warns and refreshes when logging is uncertain after copying s
 	);
 });
 
+test("native copied reply explains a known conflict without claiming an uncertain log", async () => {
+	const h = harness();
+	h.env.logReply = async () => {
+		throw new ORPCError("CONFLICT");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(
+		h.toasts.at(-1).message,
+		"Reply copied. Nothing was logged because the application changed. Review it again before logging.",
+	);
+	assert.equal(h.env.invalidations, 1);
+});
+
 test("native reply view cancels only the cleared follow-up reminder and ignores a stale account effect", async () => {
 	const h = harness();
 	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
@@ -395,6 +419,23 @@ test("native cancellation failure offers scoped retry without logging the reply 
 	await new Promise(setImmediate);
 	assert.equal(h.env.cancelCalls.length, 2);
 	assert.equal(h.env.clearedReminders.length, 1);
+	assert.equal(h.env.logs.length, 1);
+});
+
+test("native failed reminder Retry preserves a newer authored follow-up", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	h.env.cancel = async () => {
+		throw new Error("Unavailable");
+	};
+	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	const retry = h.toasts.at(-1).action;
+	h.env.reminderVersion++;
+	h.env.cancel = async () => {};
+	retry.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.clearedReminders.length, 0);
 	assert.equal(h.env.logs.length, 1);
 });
 

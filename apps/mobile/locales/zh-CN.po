@@ -476,8 +476,8 @@ msgstr "{0}（副本）"
 msgid "{0} (mine)"
 msgstr "{0}（我的）"
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
 #. placeholder {2}: step.reached
 #. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
 #: src/features/applications-board/insights-screen.tsx
@@ -10342,6 +10342,10 @@ msgstr "回复已复制并记录为已回复"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
 msgstr "回复已复制，但尚未确认记录成功。请先检查时间线，再重试。"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "回复已复制。由于申请信息已更改，未记录任何内容。请重新检查后再记录。"
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
