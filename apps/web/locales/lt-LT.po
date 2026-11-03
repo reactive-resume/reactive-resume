@@ -4825,8 +4825,8 @@ msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their 
 msgstr "Nepavyko nuskaityti įrašų {entries} datų, todėl jie lieka gale. Pataisykite jų datas ir rūšiuokite iš naujo."
 
 #: src/features/resume/import/pdf-text.ts
-msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
-msgstr ""
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "Nepavyko perskaityti viso PDF. Patikrinkite, ar visuose puslapiuose yra skaitomo teksto, arba pabandykite mažesnį failą."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
@@ -10971,6 +10971,10 @@ msgstr "Rasta tik viena atpažįstama skyriaus antraštė."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Kol kas tik viena versija. Kiekviena redagavimo sesija automatiškai pridedama."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Su importuotu turiniu pavyko palyginti tik dalį šio failo. Redaktoriuje palyginkite kiekvieną skyrių su savo failu."
+
 #: src/features/settings/ai/providers.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Galima įjungti tik testą išlaikiusius teikėjus."
@@ -16504,10 +16508,6 @@ msgstr "Šis failas gyvenimo aprašymui yra didelis."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "Šis failas didesnis, nei priima daugelis paraiškų formų."
-
-#: src/features/documents/new-document-dialog.tsx
-msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
-msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."

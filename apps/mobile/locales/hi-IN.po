@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "DNS जाँचें"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3837,6 +3833,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "निर्यातित PDF को पढ़ा नहीं जा सका."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF पढ़ी नहीं जा सकी। जाँचें कि इसमें पढ़ने योग्य टेक्स्ट लेयर है और यह पासवर्ड से सुरक्षित नहीं है।"
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "पूरा PDF पढ़ा नहीं जा सका। जाँचें कि सभी पेजों पर पढ़ने योग्य टेक्स्ट है, या छोटी फ़ाइल आज़माएँ।"
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8676,6 +8680,10 @@ msgstr "केवल एक पहचानने योग्य अनुभ�
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "अभी तक केवल एक ही संस्करण। प्रत्येक संपादन सत्र स्वचालित रूप से एक जोड़ता है।"
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "इस फ़ाइल के केवल कुछ हिस्से की आयात किए गए कंटेंट से तुलना हो सकी। एडिटर में हर सेक्शन की अपनी फ़ाइल से तुलना करें।"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "केवल वे प्रदाता जो अपना परीक्षण पास करते हैं, उन्हें चालू किया जा सकता है।"
@@ -13248,6 +13256,10 @@ msgstr "यह फ़ाइल Type 3 फ़ॉन्ट का उपयोग 
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "इस फ़ाइल का आकार पढ़ा नहीं जा सका. दूसरा PDF चुनें."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "इस फ़ाइल के टेक्स्ट की आयात किए गए कंटेंट से तुलना नहीं हो सकी, इसलिए छूटी हुई पंक्तियाँ सूची में नहीं हैं। एडिटर में हर सेक्शन की अपनी फ़ाइल से तुलना करें।"
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "यह एक PDF पोर्टफ़ोलियो है: दिखने वाला पेज केवल एक कवर है।"
@@ -13328,6 +13340,10 @@ msgstr "यह मार्ग बदल गया. समीक्षा फि
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "इस PDF में कोई टेक्स्ट परत नहीं है, इसलिए पार्सर इसमें से कुछ भी नहीं पढ़ता है।"
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "यह PDF एक स्कैन की गई छवि है। पढ़ने के लिए कोई पाठ नहीं है. Word संस्करण आज़माएँ, या रिक्त प्रारंभ करें और अनुभागों को चिपकाएँ।"
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13907,6 +13923,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "अपना कैलेंडर अपडेट करें"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "AI के बिना PDF आयात करने से पहले अपना सर्वर अपडेट करें।"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

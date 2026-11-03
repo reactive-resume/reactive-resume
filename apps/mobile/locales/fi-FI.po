@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Tarkista DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3837,6 +3833,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Vietyä PDF-tiedostoa ei voitu lukea."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF-tiedostoa ei voitu lukea. Tarkista, että siinä on luettava tekstikerros eikä sitä ole suojattu salasanalla."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "Koko PDF-tiedostoa ei voitu lukea. Tarkista, että kaikilla sivuilla on luettavaa tekstiä, tai kokeile pienempää tiedostoa."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8676,6 +8680,10 @@ msgstr "Vain yksi tunnistettava osio-otsikko löytyi."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Toistaiseksi vain yksi versio. Jokainen muokkausistunto lisää yhden automaattisesti."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Vain osaa tästä tiedostosta voitiin verrata tuotuun sisältöön. Vertaa kutakin osiota tiedostoosi editorissa."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Vain testin läpäisevät palveluntarjoajat voidaan ottaa käyttöön."
@@ -13248,6 +13256,10 @@ msgstr "Tämä tiedosto käyttää Type 3 -fontteja, jotka sisältävät piirrok
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Tämän tiedoston kokoa ei voitu lukea. Valitse toinen PDF."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Tämän tiedoston tekstiä ei voitu verrata tuotuun sisältöön, joten pois jääneitä rivejä ei luetella. Vertaa kutakin osiota tiedostoosi editorissa."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Tämä on PDF-portfolio: näkyvä sivu on vain kansi."
@@ -13328,6 +13340,10 @@ msgstr "Tämä kohta muuttui. Suorita tarkistus uudelleen."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Tässä PDF:ssa ei ole tekstikerrosta, joten jäsentäjä ei lue siitä mitään."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Tämä PDF on skannattu kuva. Ei ole luettavaa tekstiä. Kokeile Word-versiota tai aloita tyhjiä ja liitä osia."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13907,6 +13923,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Päivitä kalenterisi"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Päivitä palvelimesi ennen PDF-tiedoston tuontia ilman tekoälyä."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

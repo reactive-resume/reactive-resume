@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Comprova el DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3837,6 +3833,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "No s'ha pogut llegir el PDF exportat."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "No s'ha pogut llegir el PDF. Comprova que tingui una capa de text llegible i que no estigui protegit amb contrasenya."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "No s'ha pogut llegir tot el PDF. Comprova que totes les pàgines tinguin text llegible o prova un fitxer més petit."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8676,6 +8680,10 @@ msgstr "Només s'ha trobat un encapçalament de secció reconeixible."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "Només una versió fins ara. Cada sessió d'edició n'afegeix una automàticament."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Només s’ha pogut comparar una part d’aquest fitxer amb el contingut importat. Compara cada secció amb el teu fitxer a l’editor."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Només es poden activar els proveïdors que superin la prova."
@@ -13248,6 +13256,10 @@ msgstr "Aquest fitxer utilitza tipus de lletra Type 3, que porten dibuixos en ll
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "No s'ha pogut llegir la mida d'aquest fitxer. Trieu un altre PDF."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "No s'ha pogut comparar el text d'aquest fitxer amb el contingut importat, de manera que no es mostren les línies omeses. Compara cada secció amb el teu fitxer a l'editor."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Això és un PDF Portfolio: la pàgina visible només és una portada."
@@ -13328,6 +13340,10 @@ msgstr "Aquest passatge va canviar. Torna a executar la revisió."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Aquest PDF no té cap capa de text, de manera que un analitzador no en llegirà res."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Aquesta PDF és una imatge escanejada. No hi ha text per llegir. Proveu la versió Word o comenceu en blanc i enganxeu-hi seccions."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13907,6 +13923,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Actualitza el calendari"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Actualitza el servidor abans d'importar un PDF sense IA."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."

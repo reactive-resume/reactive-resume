@@ -77,6 +77,41 @@ describe("harvestPdfDocument", () => {
 		expect(raw.truncated).toBe(true);
 	});
 
+	it("distinguishes a failed text read from a readable blank page and preserves other pages", async () => {
+		const failed = makePage(2);
+		failed.getTextContent = vi.fn(async () => {
+			throw new Error("Fictional page text failure");
+		});
+		const blank = makePage(3, { items: [] });
+		const raw = await harvestPdfDocument(makeDocument([makePage(1), failed, blank]), { file: FILE });
+		expect(raw.textReadFailed).toBe(true);
+		expect(raw.truncated).toBe(false);
+		expect(raw.pages.map((page) => page.items.length)).toEqual([1, 0, 0]);
+		const readable = await harvestPdfDocument(makeDocument([makePage(1), blank]), { file: FILE });
+		expect(readable.textReadFailed).toBe(false);
+	});
+
+	it.each(["rejected", "malformed"])("keeps annotation coverage incomplete after a %s read", async (failure) => {
+		const readable = makePage(1);
+		readable.getAnnotations = vi.fn(async () => [
+			{ subtype: "Link", url: "https://example.org/fictional-profile", rect: [10, 20, 30, 40] },
+		]);
+		const failed = makePage(2);
+		failed.getAnnotations = vi.fn(async () => {
+			if (failure === "rejected") throw new Error("Fictional annotation failure");
+			return null;
+		});
+		const raw = await harvestPdfDocument(makeDocument([readable, failed]), { file: FILE });
+		expect(raw.annotationReadFailed).toBe(true);
+		expect(raw.textReadFailed).toBe(false);
+		expect(raw.truncated).toBe(false);
+		expect(raw.pages.map((page) => page.items.length)).toEqual([1, 1]);
+		expect(raw.links).toHaveLength(1);
+		expect(raw.links[0]?.url).toBe("https://example.org/fictional-profile");
+		const complete = await harvestPdfDocument(makeDocument([readable, makePage(2)]), { file: FILE });
+		expect(complete.annotationReadFailed).toBe(false);
+	});
+
 	it("leaves operators null when the page blows its budget", async () => {
 		const page = makePage(1, { operatorDelayMs: 50 });
 		const raw = await harvestPdfDocument(makeDocument([page]), {

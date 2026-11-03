@@ -280,6 +280,8 @@ export async function harvestPdfDocument(document: PdfDocumentLike, options: Har
 	const operatorStartedAt = Date.now();
 	let operatorsAttempted = false;
 	let operatorsSucceeded = false;
+	let textReadFailed = false;
+	let annotationReadFailed = false;
 
 	for (let pageNumber = 1; pageNumber <= harvestedPageCount; pageNumber += 1) {
 		throwIfAborted();
@@ -294,6 +296,8 @@ export async function harvestPdfDocument(document: PdfDocumentLike, options: Har
 		]);
 
 		const rawItems = (textContent as PdfTextContentLike | null)?.items;
+		if (!Array.isArray(rawItems)) textReadFailed = true;
+		if (!Array.isArray(annotations)) annotationReadFailed = true;
 		const items: RawTextItem[] = [];
 
 		if (Array.isArray(rawItems)) {
@@ -351,6 +355,8 @@ export async function harvestPdfDocument(document: PdfDocumentLike, options: Har
 		file: options.file,
 		pageCount,
 		truncated: pageCount > harvestedPageCount,
+		textReadFailed,
+		annotationReadFailed,
 		pages,
 		fonts: [...fonts.values()],
 		links,

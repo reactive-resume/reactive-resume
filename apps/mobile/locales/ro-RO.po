@@ -2721,10 +2721,6 @@ msgstr ""
 msgid "Check DNS"
 msgstr "Verifică DNS"
 
-#: src/features/documents/new-document.tsx
-msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
-msgstr ""
-
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -3837,6 +3833,14 @@ msgstr ""
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Nu s-a putut citi PDF exportat."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the PDF. Check that it has a readable text layer and isn't password protected."
+msgstr "PDF-ul nu a putut fi citit. Verifică dacă are un strat de text lizibil și nu este protejat prin parolă."
+
+#: src/features/documents/import-file.ts
+msgid "Couldn't read the whole PDF. Check that all pages have readable text, or try a smaller file."
+msgstr "Nu s-a putut citi întregul PDF. Verifică dacă toate paginile au text lizibil sau încearcă un fișier mai mic."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/messages.tsx
@@ -8676,6 +8680,10 @@ msgstr "A fost găsit doar un singur titlu de secțiune recognoscibil."
 msgid "Only one version so far. Every editing session adds one automatically."
 msgstr "O singură versiune până acum. Fiecare sesiune de editare adaugă una automat."
 
+#: src/features/documents/new-document.tsx
+msgid "Only part of this file could be compared with what came in. Check each section against your file in the editor."
+msgstr "Doar o parte din acest fișier a putut fi comparată cu conținutul importat. Compară fiecare secțiune cu fișierul tău în editor."
+
 #: src/features/ai/provider-editor.tsx
 msgid "Only providers that pass their test can be turned on."
 msgstr "Numai furnizorii care trec testul pot fi activați."
@@ -13248,6 +13256,10 @@ msgstr "Acest fișier folosește fonturi Type 3, care conțin desene în loc de 
 msgid "This file's size couldn't be read. Choose another PDF."
 msgstr "Dimensiunea acestui fișier nu a putut fi citită. Alegeți un alt PDF."
 
+#: src/features/documents/new-document.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "Textul acestui fișier nu a putut fi comparat cu conținutul importat, așa că rândurile omise nu sunt afișate. Compară fiecare secțiune cu fișierul tău în editor."
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Acesta este un PDF Portfolio: pagina vizibilă este doar o copertă."
@@ -13328,6 +13340,10 @@ msgstr "Acest pasaj s-a schimbat. Rulați din nou revizuirea."
 #: src/features/check/parser.tsx
 msgid "This PDF has no text layer, so a parser reads nothing from it."
 msgstr "Acest PDF nu are un strat de text, așa că un parser nu citește nimic din el."
+
+#: src/features/documents/import-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr "Acest PDF este o imagine scanată. Nu există text de citit. Încercați versiunea Word sau începeți și inserați secțiuni goale."
 
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
@@ -13907,6 +13923,10 @@ msgstr ""
 #: src/features/application-detail/calendar.ts
 msgid "Update your calendar"
 msgstr "Actualizează calendarul"
+
+#: src/features/documents/import-file.ts
+msgid "Update your server before importing a PDF without AI."
+msgstr "Actualizează serverul înainte de a importa un PDF fără IA."
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
