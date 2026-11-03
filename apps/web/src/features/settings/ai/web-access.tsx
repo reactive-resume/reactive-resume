@@ -22,7 +22,7 @@ const PROVIDERS = { firecrawl: "Firecrawl", tavily: "Tavily", exa: "Exa" } as co
 const PROVIDER_SITES = { firecrawl: "firecrawl.dev", tavily: "tavily.com", exa: "exa.ai" } as const;
 type Provider = keyof typeof PROVIDERS;
 
-export function testFailureMessage(error: string | undefined) {
+function testFailureMessage(error: string | undefined) {
 	if (error === "auth") return t`The service rejected the API key. Check the key and save it again.`;
 	if (error === "quota")
 		return t`The service's quota is used up. Check your plan with the service, or try again later.`;
