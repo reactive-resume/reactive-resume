@@ -9,8 +9,10 @@ import { generateText, stepCountIs, streamText, tool } from "ai";
 import { strFromU8, unzipSync, zipSync, strToU8 } from "fflate";
 import { Pool } from "pg";
 import { z } from "zod";
+import { letterDraftSystemPrompt } from "@reactive-resume/ai/prompts";
 import { db, withDatabasePool } from "@reactive-resume/db/client";
 import * as tables from "@reactive-resume/db/schema";
+import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { buildAccountZip } from "@reactive-resume/utils/account-zip";
@@ -18,6 +20,7 @@ import { loadDocument } from "../agent/document";
 import { upsertAssistantUiMessage } from "../agent/messages-persistence";
 import { agentRouter } from "../agent/router";
 import { aiProvidersService } from "../ai-providers/service";
+import { aiRouter as applicationAiRouter } from "../applications/ai";
 import { authRouter } from "../auth/router";
 import { authService } from "../auth/service";
 import { careerRouter } from "../career/router";
@@ -62,12 +65,14 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		| "writing"
 		| "resume"
 		| "agent"
+		| "letter"
 		| "improve";
 	let agentChanges: unknown[] = [];
 	let agentStep = 0;
 	let release = () => {};
 	let arrived = () => {};
 	let requests: { model: string; path: string }[] = [];
+	let requestMessages: unknown[][] = [];
 	const server = createServer((req, res) => {
 		let raw = "";
 		req.on("data", (chunk) => {
@@ -75,8 +80,9 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		});
 		req.on("end", () => {
 			void (async () => {
-				const body = JSON.parse(raw) as { model: string };
+				const body = JSON.parse(raw) as { model: string; messages?: unknown[]; stream?: boolean };
 				requests.push({ model: body.model, path: req.url ?? "" });
+				requestMessages.push(body.messages ?? []);
 				arrived();
 				if (mode === "hold")
 					await new Promise<void>((resolve) => {
@@ -117,6 +123,16 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 					);
 					res.end(
 						`data: ${JSON.stringify({ id: "agent", created: 1, model: body.model, choices: [{ index: 0, delta: {}, finish_reason: step < 2 ? "tool_calls" : "stop" }] })}\n\ndata: [DONE]\n\n`,
+					);
+					return;
+				}
+				if (mode === "letter" && body.stream) {
+					res.writeHead(200, { "content-type": "text/event-stream" });
+					res.write(
+						`data: ${JSON.stringify({ id: "letter", created: 1, model: body.model, choices: [{ index: 0, delta: { content: "done" }, finish_reason: null }] })}\n\n`,
+					);
+					res.end(
+						`data: ${JSON.stringify({ id: "letter", created: 1, model: body.model, choices: [{ index: 0, delta: {}, finish_reason: "stop" }] })}\n\ndata: [DONE]\n\n`,
 					);
 					return;
 				}
@@ -183,7 +199,10 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		});
 	});
 	const run = (operation: () => Promise<void>) => withDatabasePool(pool, operation);
-	const client = (permissions: ("read" | "write" | "delete")[] = ["read", "write", "delete"]) =>
+	const client = (
+		permissions: ("read" | "write" | "delete")[] = ["read", "write", "delete"],
+		reqHeaders = new Headers(),
+	) =>
 		createRouterClient(
 			{
 				ai: aiRouter,
@@ -193,11 +212,12 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				resume: resumeRouter,
 				documents: documentsRouter,
 				agent: agentRouter,
+				applicationAi: applicationAiRouter,
 			},
 			{
 				context: {
 					locale: "en-US",
-					reqHeaders: new Headers(),
+					reqHeaders,
 					authentication: { user, method: "apiKey", permissions },
 				},
 			},
@@ -234,6 +254,7 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		release();
 		arrived = () => {};
 		requests = [];
+		requestMessages = [];
 		agentStep = 0;
 		agentChanges = [];
 		mode = "text";
@@ -708,6 +729,169 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 				expect(requests).toHaveLength(3);
 			}),
 	);
+
+	it("uses the canonical letter prompt for MCP/REST cover-letter drafts", () =>
+		run(async () => {
+			await provider();
+			const api = client();
+			const data = structuredClone(sampleResumeData);
+			data.metadata.page.locale = "en-GB";
+			data.metadata.notes = "PRIVATE_FICTIONAL_NOTES_NOT_FOR_DRAFT";
+			const sourceId = await api.resume.import({ data });
+			const sourceBefore = await api.resume.getById({ id: sourceId });
+			const [application] = await db
+				.insert(tables.application)
+				.values({
+					userId: user.id,
+					company: "Fictional Cedar",
+					role: "Engineer",
+					status: "saved",
+					resumeId: sourceId,
+					jobDescription: "Build fictional reliable services.",
+					postingSource: {
+						method: "paste",
+						format: "text",
+						truncated: false,
+						completeness: "unknown",
+						language: "de-DE",
+					},
+				})
+				.returning();
+			if (!application) throw new Error("Missing fictional application");
+			mode = "letter";
+			const result = await api.applicationAi.draftMessage({ id: application.id, kind: "cover-letter" });
+			expect(result.text).toBe("done");
+			expect(requests).toHaveLength(1);
+			const system = requestMessages[0]?.find((message) => (message as { role?: string }).role === "system") as
+				| { content: string }
+				| undefined;
+			expect(system?.content).toBe(letterDraftSystemPrompt);
+			expect(JSON.stringify(requestMessages[0])).toContain("Write in de-DE.");
+			expect(JSON.stringify(requestMessages[0])).not.toContain(data.metadata.notes);
+			expect(result).toMatchObject({
+				reviewRequired: true,
+				coverLetterId: expect.any(String),
+				aiOperationIds: [expect.any(String)],
+				aiUsage: { requests: 1 },
+			});
+			const letter = await api.letters.getById({ id: result.coverLetterId ?? "missing" });
+			expect(letter.content).toBe("");
+			expect(letter.aiOperationIds).toEqual([]);
+			expect(letter.style.metadata.page.locale).toBe("de-DE");
+			await expect(
+				client(["read"]).applicationAi.draftMessage({ id: application.id, kind: "cover-letter" }),
+			).rejects.toMatchObject({ code: "FORBIDDEN" });
+			await expect(
+				client(undefined, new Headers({ "x-ai-destination": "none" })).applicationAi.draftMessage({
+					id: application.id,
+					kind: "cover-letter",
+				}),
+			).rejects.toMatchObject({ code: "CONFLICT" });
+			expect(requests).toHaveLength(1);
+			const accepted = await api.letters.update({
+				id: letter.id,
+				expectedRevision: letter.revision,
+				content: coverLetterTextToHtml(result.text),
+				aiOperationIds: result.aiOperationIds,
+			});
+			expect(accepted.content).toBe("<p>done</p>");
+			expect(accepted.aiUsage).toEqual(result.aiUsage);
+			expect(requests).toHaveLength(1);
+			expect((await api.resume.getById({ id: sourceId })).data).toEqual(sourceBefore.data);
+		}));
+
+	it("does not create a letter when a canonical application draft fails or the application belongs to another account", () =>
+		run(async () => {
+			await provider();
+			const [owned, foreign] = await db
+				.insert(tables.application)
+				.values([
+					{
+						userId: user.id,
+						company: "Fictional Cedar",
+						role: "Engineer",
+						status: "saved" as const,
+						jobDescription: "Build fictional reliable services.",
+					},
+					{
+						userId: "usage-bob",
+						company: "Other fictional company",
+						role: "Engineer",
+						status: "saved" as const,
+						jobDescription: "PRIVATE_OTHER_APPLICATION",
+					},
+				])
+				.returning();
+			if (!owned || !foreign) throw new Error("Missing fictional applications");
+			await expect(client().applicationAi.draftMessage({ id: foreign.id, kind: "cover-letter" })).rejects.toMatchObject(
+				{ code: "NOT_FOUND" },
+			);
+			expect(requests).toHaveLength(0);
+			mode = "failure";
+			await expect(client().applicationAi.draftMessage({ id: owned.id, kind: "cover-letter" })).rejects.toMatchObject({
+				code: "BAD_GATEWAY",
+			});
+			expect(requests).toHaveLength(1);
+			expect((await pool.query("select id from cover_letter where user_id=$1", [user.id])).rows).toEqual([]);
+		}));
+
+	it("leaves no new letter after an application draft is cancelled in transport", () =>
+		run(async () => {
+			await provider();
+			const [application] = await db
+				.insert(tables.application)
+				.values({
+					userId: user.id,
+					company: "Fictional Cedar",
+					role: "Engineer",
+					status: "saved",
+					jobDescription: "Build fictional reliable services.",
+				})
+				.returning();
+			if (!application) throw new Error("Missing fictional application");
+			mode = "hold";
+			const arrivedAtProvider = new Promise<void>((resolve) => {
+				arrived = resolve;
+			});
+			const controller = new AbortController();
+			const pending = client().applicationAi.draftMessage(
+				{ id: application.id, kind: "cover-letter" },
+				{ signal: controller.signal },
+			);
+			try {
+				await arrivedAtProvider;
+				controller.abort();
+				await expect(pending).rejects.toThrow();
+				expect(requests).toHaveLength(1);
+				expect((await client().ai.usage({})).requests).toBe(1);
+				expect((await pool.query("select id from cover_letter where user_id=$1", [user.id])).rows).toEqual([]);
+			} finally {
+				release();
+			}
+		}));
+
+	it("preserves the legacy follow-up text contract without creating a letter or logging a sent reply", () =>
+		run(async () => {
+			await provider();
+			const [application] = await db
+				.insert(tables.application)
+				.values({
+					userId: user.id,
+					company: "Fictional Cedar",
+					role: "Engineer",
+					status: "saved",
+					jobDescription: "Build fictional reliable services.",
+				})
+				.returning();
+			if (!application) throw new Error("Missing fictional application");
+			const result = await client().applicationAi.draftMessage({ id: application.id, kind: "follow-up" });
+			expect(result).toEqual({ text: "done" });
+			expect(requests).toHaveLength(1);
+			expect((await pool.query("select id from cover_letter where user_id=$1", [user.id])).rows).toEqual([]);
+			expect(
+				(await pool.query("select activity from application where id=$1", [application.id])).rows[0]?.activity,
+			).toEqual(application.activity);
+		}));
 
 	it.each(["resume", "letter"] as const)(
 		"%s accepted assistant sources preserve prior lineage, partial decisions and older clients",

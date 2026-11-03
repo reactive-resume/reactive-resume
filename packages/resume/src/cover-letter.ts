@@ -12,6 +12,19 @@ export function copyCoverLetterStyle(
 	return structuredClone({ basics: data.basics, picture: data.picture, metadata, sectionId, itemId });
 }
 
+/** A new letter follows a valid posting language, otherwise its resume or the default style. */
+export function initialCoverLetterLocale(
+	postingLanguage: string | undefined,
+	fallback = defaultResumeData.metadata.page.locale,
+): string {
+	if (!postingLanguage) return fallback;
+	try {
+		return Intl.getCanonicalLocales(postingLanguage)[0] ?? fallback;
+	} catch {
+		return fallback;
+	}
+}
+
 export function createCoverLetterResumeData(
 	letter: Pick<CoverLetter, "name" | "recipient" | "content" | "style">,
 ): ResumeData {

@@ -107,6 +107,31 @@ describe("registerTools", () => {
 		vi.clearAllMocks();
 	});
 
+	it("preserves the application-letter review and provenance envelope without saving generated text", async () => {
+		const draft = {
+			text: "Fictional reviewed body",
+			coverLetterId: "letter",
+			reviewRequired: true,
+			aiOperationIds: ["operation"],
+			aiUsage: {
+				requests: 1,
+				models: [{ providerId: "provider", label: "Fictional AI", provider: "openai", model: "original-model" }],
+			},
+		};
+		clientMock.applications.ai.draftMessage.mockResolvedValueOnce(draft);
+		const { server, registered } = makeFakeServer();
+		registerTools(server as never, clientMock as never, new Headers());
+		const tool = registered.find((tool) => tool.name === MCP_TOOL_NAME.draftApplicationMessage)!;
+		const input = { id: "application", kind: "cover-letter" };
+		const result = await tool.handler(TOOL_META[MCP_TOOL_NAME.draftApplicationMessage].inputSchema.parse(input));
+		expect(clientMock.applications.ai.draftMessage).toHaveBeenCalledWith(input);
+		expect(result.structuredContent).toEqual(draft);
+		expect(clientMock.coverLetters.update).not.toHaveBeenCalled();
+		expect(TOOL_META[MCP_TOOL_NAME.draftApplicationMessage].outputSchema.parse({ text: "Legacy follow-up" })).toEqual({
+			text: "Legacy follow-up",
+		});
+	});
+
 	it("creates and duplicates with an automatically generated address", async () => {
 		const { server, registered } = makeFakeServer();
 		registerTools(server as never, clientMock as never, new Headers());
