@@ -172,7 +172,9 @@ export const careerWorkspace = pg.pgTable("career_workspace", {
 		.text("user_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
-	data: pg.jsonb("data").notNull().$type<CareerWorkspace>(),
+	data: pg.jsonb("data").notNull().$type<Omit<CareerWorkspace, "submissionReview">>(),
+	/** Old whole-workspace writers must not erase the first-submission receipt. */
+	submissionReview: pg.jsonb("submission_review").$type<NonNullable<CareerWorkspace["submissionReview"]>>(),
 	updatedAt: pg
 		.timestamp("updated_at", { withTimezone: true })
 		.notNull()

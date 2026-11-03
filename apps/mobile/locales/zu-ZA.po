@@ -133,8 +133,6 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr ""
 
 #. placeholder {0}: data.answers.length
-#. placeholder {0}: written.length
-#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr ""
@@ -470,8 +468,8 @@ msgstr ""
 msgid "{0} (mine)"
 msgstr ""
 
-#. placeholder {0}: getStageLabel(from.status)
-#. placeholder {1}: getStageLabel(step.status)
+#. placeholder {0}: labelOf(from.status)
+#. placeholder {1}: labelOf(step.status)
 #. placeholder {2}: step.reached
 #. placeholder {3}: step.conversion === null ? "" : ` (${step.conversion}%)`
 #: src/features/applications-board/insights-screen.tsx
@@ -623,6 +621,10 @@ msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "{active, plural, one {# active application} other {# active applications}}"
+msgstr ""
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
@@ -6031,6 +6033,10 @@ msgstr ""
 msgid "Hiring team"
 msgstr ""
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Historical review checks unavailable."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
 #: src/features/share/export-screen.tsx
@@ -10667,7 +10673,7 @@ msgid "Review checks"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Review checks only reflect what you checked yourself."
+msgid "Review checks recorded at first submission."
 msgstr ""
 
 #: src/features/write/outline.tsx

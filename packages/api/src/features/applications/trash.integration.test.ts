@@ -159,6 +159,10 @@ describe.skipIf(!databaseUrl)("application Trash: real retained rows, storage an
 				applicationId: id,
 				userId: "alice",
 				data: { ...EMPTY_WORKSPACE, evidence: { "Fictional requirement": "fact" } },
+			})
+			.onConflictDoUpdate({
+				target: tables.careerWorkspace.applicationId,
+				set: { data: { ...EMPTY_WORKSPACE, evidence: { "Fictional requirement": "fact" } } },
 			});
 		await getDb()
 			.insert(tables.careerFact)
