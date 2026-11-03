@@ -9,6 +9,7 @@ import { Stack, ThemeProvider } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
+import { DevSettings } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -23,7 +24,7 @@ import { useReviewPrompt } from "@/features/reviews/use-review-prompt";
 import { useAccountLocale } from "@/features/settings/account-locale";
 import { i18n, initI18n } from "@/i18n";
 import { KeyboardShortcuts, ShortcutHelpButton } from "@/shell/shortcut-help";
-import { EmptyState, Screen, Toaster, WindowSafeAreaProvider, useReducedMotion, useTheme } from "@/ui";
+import { ConfirmDialog, EmptyState, Screen, Toaster, WindowSafeAreaProvider, useReducedMotion, useTheme } from "@/ui";
 import { fontAssets } from "@/ui/fonts";
 import { initTheme } from "@/ui/theme";
 
@@ -80,7 +81,7 @@ function RootStack() {
 	const reduced = useReducedMotion();
 	useOpenReminder();
 	useReviewPrompt();
-	useAccountLocale();
+	const accountLocale = useAccountLocale();
 
 	return (
 		<ThemeProvider value={navigationTheme}>
@@ -106,6 +107,18 @@ function RootStack() {
 				<Stack.Screen name="r/[username]/[slug]" options={{ title: t`Resume` }} />
 			</Stack>
 			<KeyboardShortcuts />
+			<ConfirmDialog
+				open={accountLocale.restart}
+				title={t`Restart to change text direction`}
+				message={t`Your language is saved. Restart Reactive Resume to apply the new left-to-right or right-to-left layout.`}
+				confirmLabel={__DEV__ ? t`Reload now` : t`Done`}
+				cancelLabel={t`Later`}
+				onCancel={accountLocale.dismissRestart}
+				onConfirm={() => {
+					accountLocale.dismissRestart();
+					if (__DEV__) DevSettings.reload();
+				}}
+			/>
 		</ThemeProvider>
 	);
 }
