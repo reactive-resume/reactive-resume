@@ -526,7 +526,7 @@ const { KnowledgeScreen } = load("features/career/knowledge.tsx", {
 	"@/ui": { ...ui, Screen: "Screen", Segmented: "Segmented" },
 });
 native.FlatList = "FlatList";
-const documentQuery = {
+let documentQuery = {
 	data: { items: [], total: 19500, counts: { resume: 19500, letter: 0 }, tags: [], hasPublic: false },
 	isError: false,
 	isPlaceholderData: false,
@@ -537,13 +537,39 @@ let documentPlaceholder;
 let pendingDocuments = [];
 const documentPage = (input) => ({ queryKey: ["document-page", input] });
 let libraryParams = {};
+let libraryAccountScope = "fixture";
+const restoredFromSheet = [];
+const librarySession = load("features/documents/library-session.ts", {
+	"zustand/react": {
+		create: (initialize) => {
+			const store = createRequire(new URL("../package.json", import.meta.url))("zustand/vanilla").createStore(
+				initialize,
+			);
+			return Object.assign((select) => select(store.getState()), store);
+		},
+	},
+	"@/auth/session": { getAccountScope: () => libraryAccountScope },
+});
 const { DocumentsLibrary } = load("features/documents/library.tsx", {
+	"./library-session": librarySession,
 	"@legendapp/list/reanimated": { AnimatedLegendList: "FlatList" },
 	"./document-sheets": { DocumentSheets: "DocumentSheets" },
+	"./removal-motion": {
+		DocumentMotionFrame: "Animated.View",
+		useDocumentRemovalMotion: () => ({ register: () => () => {}, onEffect: async () => {} }),
+	},
 	"./filter": load("features/documents/filter.ts"),
 	"./new-documents": {},
 	"./pending": { usePendingDocuments: () => pendingDocuments },
-	"./queries": { useDocumentOperations: () => ({ busy: false }) },
+	"./queries": {
+		useDocumentOperations: () => ({
+			busy: false,
+			restoreSelected: async (documents) => {
+				restoredFromSheet.push(documents);
+				return true;
+			},
+		}),
+	},
 	"./thumbnail": { Thumbnail: "Thumbnail" },
 	"@/api/client": {
 		client: {},
@@ -556,7 +582,7 @@ const { DocumentsLibrary } = load("features/documents/library.tsx", {
 	},
 	"@/auth/session": {
 		useSession: () => ({ status: "signed-in", server: "fixture" }),
-		getAccountScope: () => "fixture",
+		getAccountScope: () => libraryAccountScope,
 	},
 	"@/components/collection-header": { CollectionHeader: "CollectionHeader" },
 	"@tanstack/react-query": {
@@ -591,6 +617,7 @@ const { DocumentsLibrary } = load("features/documents/library.tsx", {
 		listItemMotion: () => ({}),
 		listLayout: {},
 		useFirstAppearance: () => false,
+		useReducedMotion: () => false,
 	},
 });
 // A search continuation updates the already-mounted tab, clears its one-shot params, and preserves library paging ownership.
@@ -621,6 +648,81 @@ assert.equal(documentInput.type, "letter");
 assert.equal(libraryParams.q, undefined);
 assert.equal(libraryParams.type, undefined);
 console.log("PASS native repeatable query/type continuation into an already-mounted paginated library");
+
+// An expired session can keep the tab mounted while a different account signs in.
+const originalDocumentQuery = documentQuery;
+hooks.length = 0;
+libraryAccountScope = "fixture:account-a";
+documentQuery = {
+	...originalDocumentQuery,
+	data: {
+		items: [{ type: "resume", id: "seen" }],
+		total: 1,
+		counts: { resume: 1, letter: 0 },
+		tags: [],
+		hasPublic: false,
+	},
+};
+render(DocumentsLibrary);
+render(DocumentsLibrary);
+documentQuery = {
+	...originalDocumentQuery,
+	data: { items: [], total: 0, counts: { resume: 0, letter: 0 }, tags: [], hasPublic: false },
+};
+let emptyLibrary = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+assert.equal(
+	emptyLibrary.props.ListEmptyComponent.props.title,
+	"No documents",
+	"The current account keeps its quiet empty state",
+);
+hooks.length = 0;
+emptyLibrary = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+assert.equal(
+	emptyLibrary.props.ListEmptyComponent.props.title,
+	"No documents",
+	"History survives collection remount after Trash navigation",
+);
+libraryAccountScope = "fixture:account-b";
+render(DocumentsLibrary);
+emptyLibrary = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+assert.equal(
+	emptyLibrary.props.ListEmptyComponent.props.title,
+	"Let's start with what you have",
+	"Another empty account gets its own first-run guidance",
+);
+libraryAccountScope = "fixture:account-a";
+render(DocumentsLibrary);
+emptyLibrary = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+assert.equal(
+	emptyLibrary.props.ListEmptyComponent.props.title,
+	"No documents",
+	"Returning to the prior account preserves its own history",
+);
+libraryAccountScope = "fixture";
+documentQuery = originalDocumentQuery;
+hooks.length = 0;
+console.log("PASS native empty-state history belongs to the current account");
+
+// The actual Trash sheet entry point reuses receipt-aware Restore instead of bypassing motion.
+hooks.length = 0;
+const sheetDocument = { type: "resume", id: "restore-sheet", trashedAt: new Date(), name: "Restore fixture" };
+documentQuery = { ...originalDocumentQuery, data: { ...originalDocumentQuery.data, items: [sheetDocument], total: 1 } };
+render(DocumentsLibrary, { trashed: true });
+let trashList = nodes(render(DocumentsLibrary, { trashed: true })).find((node) => node.type === "FlatList");
+const trashItem = trashList.props.renderItem({ item: sheetDocument, index: 0 });
+// Row body is wrapped by the motion frame; its menu opens the sheet owned by DocumentsLibrary.
+nodes(trashItem)
+	.find((node) => typeof node.props.onMenu === "function")
+	.props.onMenu();
+const sheetTree = render(DocumentsLibrary, { trashed: true });
+const restoreSheet = nodes(sheetTree).find((node) => typeof node.props.onRestore === "function");
+assert.ok(restoreSheet);
+restoreSheet.props.onRestore(sheetDocument);
+await new Promise(setImmediate);
+assert.deepEqual(restoredFromSheet, [[sheetDocument]]);
+documentQuery = originalDocumentQuery;
+hooks.length = 0;
+console.log("PASS native single Trash-sheet Restore uses receipt-aware operations");
 
 // Changing library columns remounts its header; an active filter must remain visible and clearable.
 hooks.length = 0;

@@ -190,10 +190,10 @@ Icons inside resumes use Phosphor names stored in resume data, drawn by the Phos
 - Entering and changing state use `ease-enter` (`cubic-bezier(0.2, 0.8, 0.2, 1)`). Exits take 70% of the entry duration.
 - Sliding indicators, reordering, and settling use `ease-in-out-strong` (`cubic-bezier(0.77, 0, 0.175, 1)`). Swipe-dismissed bottom sheets use `ease-drawer`.
 - Keep app motion brief and purposeful. Small entrance fades, status transitions, and the mobile tab indicator's spring are supported. Loading placeholders stay still; document reflow is never animated. Keyboard mode switches are instant.
-- Reduced motion sets duration tokens to 1ms and collapses CSS transitions and animations. Status spinners continue turning.
+- Reduced motion removes spatial movement, stagger and decorative animation. Known layer/content state changes retain a short 120ms opacity fade; page snapshot transitions and explicit instant controls stay instant, and status spinners continue turning. Native custom fades follow the same policy; native system sheets keep their platform accessibility behavior.
 - A pathname change fades through: the old page fades out over 140ms, then the new one fades up 6px over 200ms, so the two never show at once. The builder's own pending shell (its bar, panel placeholders and a blank page at the canvas's size) stands in while a resume loads; the logo loader covers only the app's first load.
 - Dragging auto-scrolls a list only from its outer 8%, gently (`DRAG_AUTO_SCROLL`).
-- `apps/web/src/libs/motion.ts` mirrors CSS timings. `MotionConfig reducedMotion="user"` and `followReducedMotion()` make Motion animations respect the preference.
+- `apps/web/src/libs/motion.ts` mirrors CSS timings. `MotionConfig reducedMotion="user"` removes transform/layout animations while preserving opacity. CSS keeps unknown effects instant and allows opacity alone on known layer/content transitions.
 
 The homepage has separate motion rules below.
 
@@ -207,7 +207,7 @@ Generic primitives live in `packages/ui/src/components`, using Base UI and cmdk 
 - **Segments and tabs:** use `SegmentedControl` for 2–4 options in a radio group. Use `Tabs` to switch panels; set `TabsList variant="line"` for underline tabs.
 - **Menus:** 4px radius and 36px items. Size popups for their content and trigger; put destructive items last, after a separator.
 - **Layers:** menus and popovers provide lightweight choices; sheets hold tasks beside the document and use the bottom variant on mobile; dialogs hold decisions. Use `AlertDialog` for destructive confirmation and name what cancel keeps.
-- **Creating things:** a short create form (up to about six fields, such as New document or Save a job) is a dialog. A long form, or one that needs the page behind it, is a sheet (New schedule, Add offer on Offers). A form tied to one item already on screen opens in place beside it (Add fact, Add offer in a job's Offer stage).
+- **Creating things:** a short create form (up to about six fields, such as New document or Save a job) is a dialog. New document uses a bottom sheet on phones, matching the native creation form; its presentation stays fixed while open so a resize cannot discard work. A long form, or one that needs the page behind it, is a sheet (New schedule, Add offer on Offers). A form tied to one item already on screen opens in place beside it (Add fact, Add offer in a job's Offer stage).
 - **Toasts:** one visible at a time, bottom center, with `bg-ink` and `text-bg`. The default timeout is six seconds; `timeout: 0` keeps a toast visible. Undo is an optional underlined action. Pressing an action closes its toast after the action's handler runs, and a second press while it leaves does nothing.
 - **Chats:** the assistant and career coach transcripts use `MessageScroller` (shadcn, behaviour from `@shadcn/react`): it follows a streaming reply only while the reader is at the latest message, settles each question near the top, reopens a saved thread on its last question, and shows a “Latest” button after scrolling away. Agent steps are `Trace` lines: spinner and shimmer while running, check when done, danger when failed, dimmed dash when unfinished. Mobile mirrors both.
 - **Alerts:** `info`, `success`, `warn`, and `error`; only the error variant adds `role="alert"` by default.

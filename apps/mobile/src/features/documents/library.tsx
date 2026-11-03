@@ -10,12 +10,13 @@ import { useRouter, Stack, useFocusEffect, useLocalSearchParams } from "expo-rou
 import { useCallback, useEffect, useState } from "react";
 import { RefreshControl, I18nManager, Platform, Pressable, ScrollView, View, useWindowDimensions } from "react-native";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-import Animated from "react-native-reanimated";
 import { DocumentSheets } from "./document-sheets";
 import { daysLeftInTrash, documentKey, documentRef } from "./filter";
+import { useDocumentHistory } from "./library-session";
 import { isNewDocument, useNewDocuments } from "./new-documents";
 import { usePendingDocuments } from "./pending";
 import { useDocumentOperations } from "./queries";
+import { DocumentMotionFrame, useDocumentRemovalMotion } from "./removal-motion";
 import { Thumbnail } from "./thumbnail";
 import { client, orpc } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
@@ -40,6 +41,7 @@ import {
 	listItemMotion,
 	listLayout,
 	useFirstAppearance,
+	useReducedMotion,
 	useTheme,
 } from "@/ui";
 import { usePullRefresh } from "@/ui/use-pull-refresh";
@@ -237,7 +239,6 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		!documents.isPlaceholderData &&
 		!documents.isError &&
 		q === query;
-	const operations = useDocumentOperations(rowsCurrent);
 	const changePage = (next: number) => {
 		setSelection([]);
 		setSheet(null);
@@ -264,6 +265,14 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	);
 	const grid = !trashed && (view ?? (width >= 768 ? "grid" : "list")) === "grid";
 	const columns = grid ? (width >= 1000 ? 3 : 2) : 1;
+	const removal = useDocumentRemovalMotion(
+		JSON.stringify([filterKey, displayedOffset, columns]),
+		trashed,
+		documents.data,
+		documents.isFetching,
+		documents.isError,
+	);
+	const operations = useDocumentOperations(rowsCurrent);
 	if (
 		page.filterKey !== filterKey ||
 		(documents.data && !documents.isPlaceholderData && offset > 0 && offset >= documents.data.total)
@@ -291,7 +300,15 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		!trashed && type !== "all" && !q && !tags.length && !publicOnly && offset === 0 && displayed?.counts[type] === 0
 			? type
 			: null;
+	const quietEmpty = useDocumentHistory(
+		scope,
+		Boolean(
+			(!documents.isPlaceholderData && documents.data?.total) ||
+			(counts.data && counts.data.resume + counts.data.letter + counts.data.trash > 0),
+		),
+	);
 	const firstAppearance = useFirstAppearance(filtered.length > 0);
+	const reduced = useReducedMotion();
 	const selected = rowsCurrent ? filtered.filter((document) => selection.includes(documentKey(document))) : [];
 	const { refetch: refetchDocuments } = documents;
 	const { refetch: refetchCounts } = counts;
@@ -589,8 +606,10 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 				// Reanimated's item layout animation supports one column only.
 				{...(columns === 1 ? { itemLayoutAnimation: listLayout } : {})}
 				renderItem={({ item, index }) => (
-					<Animated.View
-						{...listItemMotion(index, firstAppearance)}
+					<DocumentMotionFrame
+						itemKey={documentKey(item)}
+						register={removal.register}
+						{...listItemMotion(index, firstAppearance, { reduced, exiting: false })}
 						style={{ flex: 1, maxWidth: Math.max(0, (width - space.s3 * (columns - 1)) / columns) }}
 					>
 						<DocumentItem
@@ -613,7 +632,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 								if (rowsCurrent) void duplicate(item);
 							}}
 						/>
-					</Animated.View>
+					</DocumentMotionFrame>
 				)}
 				ListEmptyComponent={
 					session.status !== "signed-in" ? (
@@ -622,7 +641,9 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 							title={t`Sign in to see your documents`}
 							action={{ label: t`Sign in`, onPress: () => router.push(routes.signIn()) }}
 						/>
-					) : recoverable.length > 0 ? undefined : documents.isPending || (!rowsCurrent && !documents.isError) ? (
+					) : recoverable.length > 0 ? undefined : documents.isPending ||
+					  counts.isPending ||
+					  (!rowsCurrent && !documents.isError) ? (
 						<View style={{ gap: space.s3 }}>
 							<Skeleton height={size.row * 2} />
 							<Skeleton height={size.row * 2} />
@@ -650,14 +671,18 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 									? t`No matches`
 									: trashed
 										? t`Trash is empty`
-										: t`Let's start with what you have`
+										: quietEmpty
+											? t`No documents`
+											: t`Let's start with what you have`
 							}
 							message={
 								q || type !== "all" || tags.length || publicOnly || offset > 0
 									? t`Try another search or clear your filters.`
 									: trashed
 										? t`Documents you move here stay for 30 days.`
-										: t`Import your current resume, or start fresh with your name.`
+										: quietEmpty
+											? undefined
+											: t`Import your current resume, or start fresh with your name.`
 							}
 							action={
 								q || type !== "all" || tags.length || publicOnly || offset > 0
@@ -718,11 +743,9 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 						busy={operations.busy}
 						onClose={() => setSheet(null)}
 						onRestore={(document) =>
-							void operations
-								.run(() => client.documents.restore(documentRef(document)))
-								.then((success) => {
-									if (success) setSheet(null);
-								})
+							void operations.restoreSelected([document]).then((success) => {
+								if (success) setSheet(null);
+							})
 						}
 						onDelete={(document) => {
 							setSheet(null);
@@ -731,6 +754,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 					/>
 				) : (
 					<DocumentSheets
+						operations={operations}
 						key={`${sheet.kind}:${sheet.documents.map(documentKey).join(",")}`}
 						value={sheet}
 						onClose={() => setSheet(null)}

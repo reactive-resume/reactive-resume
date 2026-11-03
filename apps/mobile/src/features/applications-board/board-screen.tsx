@@ -467,6 +467,7 @@ function Column({
 	const shown = applications.slice(0, visible);
 	// Columns mount once the board has data, so cards stagger in when the board opens.
 	const firstAppearance = useFirstAppearance(true);
+	const reduced = useReducedMotion();
 	const remaining = applications.length - shown.length;
 
 	return (
@@ -519,7 +520,11 @@ function Column({
 					<Text variant="callout" color="ink3">{t`Drop here to close with a reason.`}</Text>
 				) : null}
 				{shown.map((application, index) => (
-					<Animated.View key={application.id} {...listItemMotion(index, firstAppearance)} layout={listLayout}>
+					<Animated.View
+						key={application.id}
+						{...listItemMotion(index, firstAppearance, { reduced })}
+						layout={listLayout}
+					>
 						<DraggableCard
 							application={application}
 							width={cardWidth}

@@ -6,8 +6,9 @@ import { getNetworkStateAsync } from "expo-network";
 import { useRef, useState } from "react";
 import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 import { documentRef } from "./filter";
+import { playDocumentEffect } from "./library-session";
 import { client, orpc } from "@/api/client";
-import { getServer, useSession } from "@/auth/session";
+import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { confirmUndone } from "@/lib/undone";
 import { showToast } from "@/ui";
 
@@ -67,15 +68,21 @@ export function useDocumentRefresh() {
 /** Serialize user actions; report partial batches and undo only successful Trash moves. */
 export function useDocumentOperations(enabled = true) {
 	const refresh = useDocumentRefresh();
+	const accountScope = getAccountScope();
 	const session = useSession();
 	const active = useRef(false);
 	const idle = useRef(Promise.resolve());
 	const partial = useRef(false);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const current = () => getServer() === session.server && getAccountScope() === accountScope;
+	const notifyCurrent = (options: Parameters<typeof showToast>[0]) => {
+		if (current()) showToast(options);
+	};
 	const fail = (message: string) => {
+		if (!current()) return false;
 		setError(message);
-		showToast({ message });
+		notifyCurrent({ message });
 		return false;
 	};
 	const run = async (task: () => Promise<unknown>) => {
@@ -89,21 +96,21 @@ export function useDocumentOperations(enabled = true) {
 		setBusy(true);
 		setError(null);
 		try {
-			if (session.status !== "signed-in" || getServer() !== session.server) {
+			if (session.status !== "signed-in" || !current()) {
 				return fail(t`Sign in to continue.`);
 			}
 			const network = await getNetworkStateAsync();
 			if (network.isConnected === false || network.isInternetReachable === false) {
 				return fail(t`You're offline. Try again when you reconnect.`);
 			}
-			if (getServer() !== session.server) return false;
+			if (!current()) return false;
 			await task();
-			return !partial.current;
+			return current() && !partial.current;
 		} catch (cause) {
 			return fail(documentError(cause));
 		} finally {
 			try {
-				await refresh();
+				if (current()) await refresh();
 			} finally {
 				active.current = false;
 				setBusy(false);
@@ -121,7 +128,7 @@ export function useDocumentOperations(enabled = true) {
 		// Sequential calls avoid overwhelming per-account mutation limits.
 		for (const document of documents) {
 			if (alreadyDone(document) || !applies(document)) continue;
-			if (getServer() !== session.server) break;
+			if (!current()) break;
 			try {
 				await task(document);
 				done.push(document);
@@ -129,6 +136,7 @@ export function useDocumentOperations(enabled = true) {
 				/* Remaining documents can still succeed. */
 			}
 		}
+		if (!current()) return done;
 		const completed = done.length + unchanged;
 		const message =
 			completed === documents.length
@@ -138,7 +146,7 @@ export function useDocumentOperations(enabled = true) {
 			partial.current = true;
 			setError(message);
 		}
-		if (notify) showToast({ message });
+		if (notify) notifyCurrent({ message });
 		return done;
 	};
 	const trash = async (documents: readonly DocumentSummary[]) => {
@@ -150,9 +158,10 @@ export function useDocumentOperations(enabled = true) {
 				applies: (document) => !document.isLocked,
 				notify: false,
 			});
+			if (done.length) await playDocumentEffect(accountScope, "trash", done);
 		});
 		if (attempted)
-			showToast({
+			notifyCurrent({
 				message:
 					done.length === documents.length
 						? plural(done.length, { one: "# document moved to Trash", other: "# documents moved to Trash" })
@@ -170,10 +179,12 @@ export function useDocumentOperations(enabled = true) {
 										run(async () => {
 											started = true;
 											for (const group of chunks(done)) {
-												if (getServer() !== session.server) break;
+												if (!current()) break;
 												try {
-													restored += (await client.documents.restoreMany({ documents: group.map(documentRef) }))
-														.restored;
+													const result = await client.documents.restoreMany({ documents: group.map(documentRef) });
+													restored += result.restored;
+													if (result.restored === group.length)
+														await playDocumentEffect(accountScope, "restore", group);
 												} catch {
 													/* The remaining groups can still succeed. */
 												}
@@ -182,9 +193,9 @@ export function useDocumentOperations(enabled = true) {
 									)
 									.then(() => {
 										// A run that couldn't start (offline, signed out) already said why.
-										if (!started) return;
+										if (!started || !current()) return;
 										if (restored === done.length) return confirmUndone();
-										showToast({ message: t`Restored ${restored} of ${done.length}.` });
+										notifyCurrent({ message: t`Restored ${restored} of ${done.length}.` });
 									});
 							},
 						}
@@ -199,21 +210,23 @@ export function useDocumentOperations(enabled = true) {
 		const success = await run(async () => {
 			attempted = true;
 			for (const group of chunks(documents)) {
-				if (getServer() !== session.server) break;
+				if (!current()) break;
 				try {
 					const result = await client.documents.restoreMany({ documents: group.map(documentRef) });
 					restored += result.restored;
+					// Partial receipts give no item IDs; refresh them without guessing which rows changed.
+					if (result.restored === group.length) await playDocumentEffect(accountScope, "restore", group);
 				} catch {
 					/* The remaining groups can still succeed. */
 				}
 			}
-			if (restored !== documents.length) {
+			if (current() && restored !== documents.length) {
 				partial.current = true;
 				setError(t`Restored ${restored} of ${documents.length}. Refresh and retry any that remain in Trash.`);
 			}
 		});
 		if (attempted && restored > 0)
-			showToast({
+			notifyCurrent({
 				message:
 					restored === documents.length
 						? plural(restored, { one: "# document restored", other: "# documents restored" })
@@ -228,21 +241,22 @@ export function useDocumentOperations(enabled = true) {
 		const success = await run(async () => {
 			attempted = true;
 			for (const group of chunks(documents)) {
-				if (getServer() !== session.server) break;
+				if (!current()) break;
 				try {
 					const result = await client.documents.purgeMany({ documents: group.map(documentRef) });
 					deleted += result.deleted;
+					if (result.deleted === group.length) await playDocumentEffect(accountScope, "purge", group);
 				} catch {
 					/* The remaining groups can still succeed. */
 				}
 			}
-			if (deleted !== documents.length) {
+			if (current() && deleted !== documents.length) {
 				partial.current = true;
 				setError(t`Deleted ${deleted} of ${documents.length}. Refresh to see what remains.`);
 			}
 		});
 		if (attempted && deleted > 0)
-			showToast({
+			notifyCurrent({
 				message:
 					deleted === documents.length
 						? plural(deleted, { one: "# document deleted forever", other: "# documents deleted forever" })
@@ -255,9 +269,10 @@ export function useDocumentOperations(enabled = true) {
 		let deleted = 0;
 		const success = await run(async () => {
 			deleted = (await client.documents.emptyTrash({})).deleted;
+			if (deleted > 0) await playDocumentEffect(accountScope, "purge");
 		});
 		if (success)
-			showToast({
+			notifyCurrent({
 				message:
 					deleted === 0
 						? t`Trash was already empty`

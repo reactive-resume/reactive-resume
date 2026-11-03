@@ -34,6 +34,7 @@ import {
 	listLayout,
 	showToast,
 	useFirstAppearance,
+	useReducedMotion,
 	useTheme,
 } from "@/ui";
 import { usePullRefresh } from "@/ui/use-pull-refresh";
@@ -106,6 +107,7 @@ export function TodayScreen() {
 		(row) => showRead || (!row.readAt && !undo.hidden.includes(row.id)),
 	);
 	const firstAppearance = useFirstAppearance(!queries.notifications.isPending);
+	const reduced = useReducedMotion();
 	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
 	const attention = (applications.data ?? [])
 		.flatMap((row) => {
@@ -249,7 +251,11 @@ export function TodayScreen() {
 								)
 							) : null}
 							{notes.map((row, index) => (
-								<Animated.View key={row.id} {...listItemMotion(index, firstAppearance)} layout={listLayout}>
+								<Animated.View
+									key={row.id}
+									{...listItemMotion(index, firstAppearance, { reduced })}
+									layout={listLayout}
+								>
 									<Card style={{ gap: space.s3 }}>
 										<Text variant="title">{row.title}</Text>
 										<Text>{row.body}</Text>

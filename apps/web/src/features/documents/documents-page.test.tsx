@@ -9,6 +9,7 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { DocumentsPage } from "./documents-page";
+import { DocumentLibraryProvider } from "./library-session";
 import { TrashPage } from "./trash-page";
 import { useDialogStore } from "@/dialogs/store";
 import { orpc } from "@/libs/orpc/client";
@@ -20,6 +21,7 @@ const requests = vi.hoisted(() => ({
 	purge: vi.fn(),
 	navigate: vi.fn(),
 	newLetter: vi.fn(),
+	counts: vi.fn(async () => ({ resume: 0, letter: 19500, trash: 19500 })),
 }));
 vi.mock("@/libs/orpc/client", async (importOriginal) => {
 	const actual = await importOriginal<typeof import("@/libs/orpc/client")>();
@@ -37,7 +39,7 @@ vi.mock("@/libs/orpc/client", async (importOriginal) => {
 				counts: {
 					queryOptions: () => ({
 						queryKey: ["document-counts"],
-						queryFn: async () => ({ resume: 0, letter: 19500, trash: 19500 }),
+						queryFn: () => requests.counts(),
 					}),
 				},
 			},
@@ -142,7 +144,9 @@ function setup(trashed = false, view: "grid" | "list" = "list", cacheNext = true
 	}
 	render(
 		<I18nProvider i18n={i18n}>
-			<QueryClientProvider client={client}>{trashed ? <TrashPage /> : <Library />}</QueryClientProvider>
+			<QueryClientProvider client={client}>
+				<DocumentLibraryProvider>{trashed ? <TrashPage /> : <Library />}</DocumentLibraryProvider>
+			</QueryClientProvider>
 		</I18nProvider>,
 	);
 	return { client, input };
@@ -400,10 +404,12 @@ it("does not carry queued navigation into a replacement query client", async () 
 	const tree = (client: QueryClient) => (
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={client}>
-				<DocumentsPage
-					search={{ type: "all", q: "Shared", tags: [], sort: "edited", view: "list" }}
-					onSearchChange={vi.fn()}
-				/>
+				<DocumentLibraryProvider>
+					<DocumentsPage
+						search={{ type: "all", q: "Shared", tags: [], sort: "edited", view: "list" }}
+						onSearchChange={vi.fn()}
+					/>
+				</DocumentLibraryProvider>
 			</QueryClientProvider>
 		</I18nProvider>
 	);
@@ -477,7 +483,9 @@ it.each([
 	render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={client}>
-				<DocumentsPage search={{ type, q: "", tags: [], sort: "edited", view: "grid" }} onSearchChange={vi.fn()} />
+				<DocumentLibraryProvider>
+					<DocumentsPage search={{ type, q: "", tags: [], sort: "edited", view: "grid" }} onSearchChange={vi.fn()} />
+				</DocumentLibraryProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
@@ -506,14 +514,17 @@ it("first run's Choose a file opens the file picker, then imports the chosen fil
 	};
 	const empty = { items: [], total: 0, counts: { resume: 0, letter: 0 }, tags: [], hasPublic: false };
 	client.setQueryData(orpc.documents.page.queryKey({ input }), empty);
+	client.setQueryData(orpc.documents.counts.queryOptions().queryKey, { resume: 0, letter: 0, trash: 0 });
 	const pick = vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
 	render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={client}>
-				<DocumentsPage
-					search={{ type: "all", q: "", tags: [], sort: "edited", view: "grid" }}
-					onSearchChange={vi.fn()}
-				/>
+				<DocumentLibraryProvider>
+					<DocumentsPage
+						search={{ type: "all", q: "", tags: [], sort: "edited", view: "grid" }}
+						onSearchChange={vi.fn()}
+					/>
+				</DocumentLibraryProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
@@ -527,4 +538,44 @@ it("first run's Choose a file opens the file picker, then imports the chosen fil
 	expect(useDialogStore.getState().activeDialog).toEqual({ type: "document.new", data: { file } });
 	pick.mockRestore();
 	act(() => useDialogStore.getState().closeDialog());
+});
+
+it.each([0, 1])("recovers the correct empty state after a failed counts request (trash=%i)", async (trash) => {
+	requests.load.mockReset().mockResolvedValue(page(0, 0));
+	requests.counts
+		.mockRejectedValueOnce(new Error("Counts unavailable"))
+		.mockResolvedValueOnce({ resume: 0, letter: 0, trash });
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
+	const input = {
+		trashed: false,
+		type: "all" as const,
+		q: "",
+		tags: [],
+		sort: "edited" as const,
+		public: false,
+		limit: 100,
+		offset: 0,
+	};
+	client.setQueryData(orpc.documents.page.queryKey({ input }), page(0, 0));
+	render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={client}>
+				<DocumentLibraryProvider>
+					<DocumentsPage
+						search={{ type: "all", q: "", tags: [], sort: "edited", view: "grid" }}
+						onSearchChange={vi.fn()}
+					/>
+				</DocumentLibraryProvider>
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+	expect(await screen.findByRole("alert")).toBeVisible();
+	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+	if (trash === 0) expect(await screen.findByRole("button", { name: "Choose a file" })).toBeVisible();
+	else {
+		expect(await screen.findByRole("heading", { name: "No documents" })).toBeVisible();
+		expect(await screen.findByText("Trash has 1 document.")).toBeVisible();
+		expect(screen.queryByRole("button", { name: "Choose a file" })).toBeNull();
+	}
 });

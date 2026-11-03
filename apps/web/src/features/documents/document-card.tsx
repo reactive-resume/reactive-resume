@@ -11,7 +11,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { cn } from "@reactive-resume/utils/style";
 import { DocumentMenuContent, useDocumentActions } from "./document-actions";
-import { daysLeftInTrash } from "./filter";
+import { daysLeftInTrash, documentKey } from "./filter";
 import { InlineNameInput } from "./inline-name-input";
 import { useNewDocumentsStore } from "./new-documents";
 import { ResumeThumbnail } from "./resume-thumbnail";
@@ -159,6 +159,7 @@ export function DocumentCard({
 			<ContextMenuTrigger
 				render={
 					<article
+						data-document-key={documentKey(document)}
 						style={introIndex === undefined ? undefined : stagger(introIndex)}
 						className={cn(
 							// content-start: a neighbour's extra application line doesn't push this card's title down.
@@ -305,6 +306,7 @@ export function DocumentRow({
 			<ContextMenuTrigger
 				render={
 					<tr
+						data-document-key={documentKey(document)}
 						aria-disabled={disabled}
 						style={introIndex === undefined ? undefined : stagger(introIndex)}
 						className={cn(

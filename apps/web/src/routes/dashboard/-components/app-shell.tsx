@@ -20,6 +20,7 @@ import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
 import { useDialogStore } from "@/dialogs/store";
 import { GuestBanner } from "@/features/auth/components/guest-banner";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
+import { DocumentLibraryProvider } from "@/features/documents/library-session";
 import { shortcutOverlayOpen } from "@/features/keyboard-shortcuts/blocking";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
@@ -167,7 +168,7 @@ export function AppShell({ children }: AppShellProps) {
 			{breakpoint !== "mobile" && (breakpoint === "tablet" ? <Rail /> : <Sidebar />)}
 			<main id="main-content" className="min-w-0">
 				<GuestBanner />
-				{children}
+				<DocumentLibraryProvider>{children}</DocumentLibraryProvider>
 			</main>
 			{tabs && <MobileTabs />}
 		</div>
@@ -218,6 +219,7 @@ function Sidebar() {
 				{trash && <NavLink item={trash} current={isCurrent(trash.to)} />}
 				{/* Secondary, so each view's own primary action is the one accent button on screen. */}
 				<Button
+					data-document-new-trigger=""
 					variant="secondary"
 					aria-label={t`New`}
 					aria-keyshortcuts={characterShortcuts ? "N" : undefined}
@@ -320,7 +322,7 @@ function Rail() {
 					</RailTip>
 				)}
 				<RailTip label={t`New`} icon="plus">
-					<Button size="icon" aria-label={t`New`} onClick={openNew} />
+					<Button data-document-new-trigger="" size="icon" aria-label={t`New`} onClick={openNew} />
 				</RailTip>
 				<UserDropdownMenu>
 					{({ session }) => (
@@ -396,6 +398,7 @@ function MobileTabs() {
 			{tabs.slice(0, 2).map(link)}
 			<button
 				type="button"
+				data-document-new-trigger=""
 				onClick={openNew}
 				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>

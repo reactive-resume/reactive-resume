@@ -1,26 +1,36 @@
 import type { DialogSchema } from "./schemas";
-import { Fragment, lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Dialog } from "@reactive-resume/ui/components/dialog";
+import { Sheet } from "@reactive-resume/ui/components/sheet";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { useDialogStore } from "./store";
 
-// The dialogs pull in forms, importers and editors; load them on first open so they stay out of every page's bundle.
+type RenderDialogProps = { dialog: DialogSchema; mobileSheet: boolean };
+
+// Forms, importers and editors load on first open.
 const DialogContent = lazy(async () => {
 	const { renderDialog } = await import("./renderers");
-	return { default: ({ dialog }: { dialog: DialogSchema }) => renderDialog(dialog) };
+	return { default: ({ dialog, mobileSheet }: RenderDialogProps) => renderDialog(dialog, mobileSheet) };
 });
 
-export function DialogManager() {
-	const { open, activeDialog, openCount, onOpenChange } = useDialogStore();
+type DialogInstanceProps = { dialog: DialogSchema };
 
+function DialogInstance({ dialog }: DialogInstanceProps) {
+	const { open, onOpenChange } = useDialogStore();
+	const breakpoint = useBreakpoint();
+	// Rotating/resizing an open form must not replace its provider and discard its draft/import.
+	const [mobileSheet] = useState(() => dialog.type === "document.new" && breakpoint === "mobile");
+	const Layer = mobileSheet ? Sheet : Dialog;
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
-			<Fragment key={openCount}>
-				{activeDialog && (
-					<Suspense>
-						<DialogContent dialog={activeDialog} />
-					</Suspense>
-				)}
-			</Fragment>
-		</Dialog>
+		<Layer open={open} onOpenChange={onOpenChange}>
+			<Suspense>
+				<DialogContent dialog={dialog} mobileSheet={mobileSheet} />
+			</Suspense>
+		</Layer>
 	);
+}
+
+export function DialogManager() {
+	const { activeDialog, openCount } = useDialogStore();
+	return activeDialog && <DialogInstance key={openCount} dialog={activeDialog} />;
 }

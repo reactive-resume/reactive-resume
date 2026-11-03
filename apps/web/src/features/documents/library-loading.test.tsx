@@ -1,12 +1,12 @@
-// @vitest-environment happy-dom
-
 import type { ReactNode } from "react";
+// @vitest-environment happy-dom
 import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DocumentsPage } from "./documents-page";
+import { DocumentLibraryProvider } from "./library-session";
 import { TrashPage } from "./trash-page";
 
 const { loadDocuments, loadCounts, openDialog } = vi.hoisted(() => ({
@@ -61,11 +61,13 @@ it.each(["documents", "trash"])("keeps %s load failures distinct from empty stat
 	const view = render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={queryClient}>
-				{page === "documents" ? (
-					<DocumentsPage search={{ type: "all", q: "", tags: [], sort: "edited" }} onSearchChange={vi.fn()} />
-				) : (
-					<TrashPage />
-				)}
+				<DocumentLibraryProvider>
+					{page === "documents" ? (
+						<DocumentsPage search={{ type: "all", q: "", tags: [], sort: "edited" }} onSearchChange={vi.fn()} />
+					) : (
+						<TrashPage />
+					)}
+				</DocumentLibraryProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
@@ -90,10 +92,12 @@ it("offers clearing filters after a first-load failure without tag facets", asyn
 	const view = render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={queryClient}>
-				<DocumentsPage
-					search={{ type: "all", q: "", tags: ["design"], sort: "edited" }}
-					onSearchChange={onSearchChange}
-				/>
+				<DocumentLibraryProvider>
+					<DocumentsPage
+						search={{ type: "all", q: "", tags: ["design"], sort: "edited" }}
+						onSearchChange={onSearchChange}
+					/>
+				</DocumentLibraryProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
@@ -115,7 +119,9 @@ it("opens the file picker from first-run Choose a file and imports the picked fi
 	const view = render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={queryClient}>
-				<DocumentsPage search={{ type: "all", q: "", tags: [], sort: "edited" }} onSearchChange={vi.fn()} />
+				<DocumentLibraryProvider>
+					<DocumentsPage search={{ type: "all", q: "", tags: [], sort: "edited" }} onSearchChange={vi.fn()} />
+				</DocumentLibraryProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);

@@ -76,6 +76,7 @@ ui.showToast = (value) => calls.push(value);
 ui.listItemMotion = () => ({});
 ui.listLayout = {};
 ui.useFirstAppearance = () => false;
+ui.useReducedMotion = () => false;
 const mocks = {
 	"@/shell/shortcut-help": {
 		ShortcutHelpButton: "ShortcutHelpButton",

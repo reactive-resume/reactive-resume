@@ -22,3 +22,5 @@ export function defaultCopySource<
 	);
 	return recent.find((resume) => !resume.application) ?? recent[0];
 }
+
+export const documentKey = (document: Pick<DocumentSummary, "type" | "id">) => `${document.type}:${document.id}`;

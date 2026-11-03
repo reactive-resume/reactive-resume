@@ -38,6 +38,7 @@ import {
 	TextField,
 	listItemMotion,
 	useFirstAppearance,
+	useReducedMotion,
 	useTheme,
 } from "@/ui";
 import { usePullRefresh } from "@/ui/use-pull-refresh";
@@ -80,6 +81,7 @@ function ApplicationsList() {
 	const lanes = useApplicationLanes();
 	const pull = usePullRefresh(query.refetch);
 	const firstAppearance = useFirstAppearance(!query.isPending);
+	const reduced = useReducedMotion();
 	const { timeZone } = useUserTime();
 	const { bulkUpdate, bulkDelete, logFollowUp } = useApplicationMutations();
 	const offerHints = useOfferHints();
@@ -607,7 +609,7 @@ function ApplicationsList() {
 							.join(" · ");
 						return (
 							<Animated.View
-								{...listItemMotion(index, firstAppearance)}
+								{...listItemMotion(index, firstAppearance, { reduced })}
 								style={{
 									borderWidth: triageActive && focusedRow?.id === item.id ? 2 : 0,
 									borderColor: colors.accent,

@@ -16,6 +16,7 @@ import {
 	listLayout,
 	showToast,
 	useFirstAppearance,
+	useReducedMotion,
 } from "@/ui";
 
 /** The same plain-language permission lines the web settings use, without repeating profile and email when the whole account is readable. */
@@ -49,6 +50,7 @@ export function ConnectedApps() {
 	);
 	const ownClient = useQuery({ queryKey: ["auth", "own-client", server], queryFn: () => getClientId(server) });
 	const firstAppearance = useFirstAppearance(!connections.isPending);
+	const reduced = useReducedMotion();
 	const disconnect = useMutation({
 		mutationKey: ["settings", "disconnect-app"],
 		mutationFn: (id: string) => client.auth.connections.delete({ id }),
@@ -93,7 +95,11 @@ export function ConnectedApps() {
 					? t`Connected ${i18n.date(connection.createdAt, { dateStyle: "medium" })}`
 					: null;
 				return (
-					<Animated.View key={connection.id} {...listItemMotion(index, firstAppearance)} layout={listLayout}>
+					<Animated.View
+						key={connection.id}
+						{...listItemMotion(index, firstAppearance, { reduced })}
+						layout={listLayout}
+					>
 						<ListRow
 							title={own ? t`${name} (this app)` : name}
 							subtitle={[...scopeLines(connection.scopes), ...(connected ? [connected] : [])].join("\n")}

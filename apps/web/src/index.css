@@ -129,3 +129,13 @@ html[dir="rtl"] {
 		animation: var(--d2) var(--ease) calc(var(--d2) * 0.7) both vt-pop-in;
 	}
 }
+
+@media (prefers-reduced-motion: reduce) {
+	/* Page snapshots stay instant; app-owned layers keep their short opacity fades. */
+	html::view-transition-group(*),
+	html::view-transition-old(*),
+	html::view-transition-new(*) {
+		animation-duration: 0.01ms !important;
+		animation-delay: 0ms !important;
+	}
+}

@@ -28,6 +28,7 @@ import {
 	listItemMotion,
 	listLayout,
 	useFirstAppearance,
+	useReducedMotion,
 	useTheme,
 } from "@/ui";
 import { usePullRefresh } from "@/ui/use-pull-refresh";
@@ -245,11 +246,12 @@ type FactRowProps = { fact: Fact; index: number; first: boolean; pending: boolea
 
 // Memoized: the app has no React Compiler, and typing or one toggle shouldn't re-render every card.
 const FactRow = memo(function FactRow({ fact, index, first, pending, actions }: FactRowProps) {
+	const reduced = useReducedMotion();
 	const { t } = useLingui();
 	const { size, space } = useTheme();
 	return (
 		<Animated.View
-			{...listItemMotion(index, first)}
+			{...listItemMotion(index, first, { reduced })}
 			style={{
 				paddingBottom: space.s4,
 				width: "100%",

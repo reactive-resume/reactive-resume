@@ -1,6 +1,5 @@
-// @vitest-environment happy-dom
-
 import type { DocumentSummary } from "./filter";
+// @vitest-environment happy-dom
 import type { ReactNode } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -8,6 +7,7 @@ import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DocumentLibraryProvider } from "./library-session";
 import { TrashPage } from "./trash-page";
 
 const { documents, confirm, batch, server } = vi.hoisted(() => ({
@@ -113,7 +113,9 @@ function renderPage() {
 	return render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={queryClient}>
-				<TrashPage />
+				<DocumentLibraryProvider>
+					<TrashPage />
+				</DocumentLibraryProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);

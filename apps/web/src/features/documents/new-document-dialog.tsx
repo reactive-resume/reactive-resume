@@ -15,6 +15,7 @@ import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@re
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
+import { SheetContent } from "@reactive-resume/ui/components/sheet";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -241,7 +242,11 @@ function useResumeImport(
  * New: import a file, copy a resume for a job, or start blank; no name, slug or tags are asked for first.
  * Importing shows three labelled steps rather than a spinner, so a slow parse still looks like progress.
  */
-export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | undefined }) {
+type NewDocumentDialogProps = { data?: NewDocumentDialogData | undefined; mobileSheet?: boolean };
+
+export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDialogProps) {
+	const Content = mobileSheet ? SheetContent : DialogContent;
+	const [opener] = useState(() => document.activeElement);
 	const navigate = useNavigate();
 	const providerState = useHasUsableAiProvider();
 	const { hasUsableProvider } = providerState;
@@ -294,7 +299,16 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	const chooseFile = () => inputRef.current?.click();
 
 	return (
-		<DialogContent closeLabel={t`Close`} className="sm:max-w-[640px]">
+		<Content
+			closeLabel={t`Close`}
+			finalFocus={() => {
+				if (opener instanceof HTMLElement && opener.isConnected && opener.getClientRects().length) return opener;
+				// Responsive navigation replaces the opener; return to the current New action.
+				return document.querySelector<HTMLElement>("[data-document-new-trigger]") ?? true;
+			}}
+			{...(mobileSheet ? { side: "bottom" as const } : {})}
+			className={mobileSheet ? "overflow-y-auto px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]" : "sm:max-w-[640px]"}
+		>
 			{step.name !== "choose" && <AiProviderLoadState state={providerState} />}
 			<input
 				ref={inputRef}
@@ -308,7 +322,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 					if (file) void importFile(file);
 				}}
 			/>
-			{/* Each step fades up into place as it replaces the last; the dialog's height changes in the same frame. */}
+			{/* Each step enters as it replaces the last; reduced motion keeps only its opacity fade. */}
 			{step.name === "copy" ? (
 				<div key="copy" className={cn(ENTER_CLASS, "grid gap-4")}>
 					<CopyForJob
@@ -507,7 +521,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 					<AiProviderLoadState state={providerState} reserveErrorSpace />
 				</div>
 			)}
-		</DialogContent>
+		</Content>
 	);
 }
 

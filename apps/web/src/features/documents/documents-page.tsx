@@ -30,9 +30,12 @@ import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-
 import { cn } from "@reactive-resume/utils/style";
 import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
+import { documentKey } from "./filter";
 import { LibraryError } from "./library-error";
+import { useDocumentHistory } from "./library-session";
 import { useNewDocumentsStore } from "./new-documents";
 import { PageNavigation } from "./page-navigation";
+import { useDocumentRemovalMotion } from "./removal-motion";
 import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { PageHeader } from "@/components/layout/page-header";
 import { useDialogStore } from "@/dialogs/store";
@@ -142,6 +145,15 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		viewSwitched &&
 		"transition-[opacity,translate] duration-standard ease-enter starting:translate-y-1 starting:opacity-0";
 
+	useDocumentRemovalMotion({
+		container: resultsRef,
+		scope: JSON.stringify([filterKey, displayedOffset, view]),
+		trashed: false,
+		data: displayed,
+		fetching: isFetching,
+		failed: isError,
+	});
+
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	useHotkey(
 		"/",
@@ -167,9 +179,18 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const shown = displayed?.items ?? [];
 	const failed = isError && !displayed;
 	const filtered = search.type !== "all" || search.q.trim() !== "" || search.tags.length > 0 || search.public === true;
-	const firstRun = rowsCurrent && !filtered && offset === 0 && pageData?.total === 0;
-	const { data: libraryCounts } = useQuery(orpc.documents.counts.queryOptions());
+	const {
+		data: libraryCounts,
+		isPending: countsPending,
+		isError: countsError,
+		isFetching: countsFetching,
+		refetch: refetchCounts,
+	} = useQuery(orpc.documents.counts.queryOptions());
 	const trashCount = libraryCounts?.trash ?? 0;
+	const hadDocuments = useDocumentHistory(
+		shown.length > 0 || (libraryCounts ? libraryCounts.resume + libraryCounts.letter + libraryCounts.trash > 0 : false),
+	);
+	const firstRun = rowsCurrent && !filtered && offset === 0 && pageData?.total === 0 && !hadDocuments;
 	const tags = displayed?.tags ?? [];
 	const counts = {
 		all: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0),
@@ -369,9 +390,15 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				)}
 			</PageHeader>
 
-			{isError && (
+			{(isError || countsError) && (
 				<div className="grid justify-items-start gap-2">
-					<LibraryError retrying={isFetching} onRetry={() => void refetch()} />
+					<LibraryError
+						retrying={isFetching || countsFetching}
+						onRetry={() => {
+							void refetch();
+							void refetchCounts();
+						}}
+					/>
 					{filtered && (
 						<Button variant="secondary" onClick={() => onSearchChange({ q: "", tags: [], type: "all", public: false })}>
 							<Trans>Clear search and filters</Trans>
@@ -380,7 +407,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				</div>
 			)}
 
-			{failed ? null : firstRun ? (
+			{failed ? null : firstRun && trashCount === 0 && libraryCounts ? (
 				<FirstRun trashCount={trashCount} onFile={(file) => openDialog("document.new", { file })} />
 			) : (
 				<>
@@ -395,10 +422,24 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 						/>
 					)}
 
-					{isPending || (!rowsCurrent && !isError && shown.length === 0) ? (
+					{isPending || (firstRun && countsPending) || (!rowsCurrent && !isError && shown.length === 0) ? (
 						<LibrarySkeleton view={view} />
 					) : shown.length === 0 ? (
-						isError ? null : emptyType ? (
+						isError ? null : !filtered && offset === 0 ? (
+							<EmptyState
+								title={<Trans>No documents</Trans>}
+								description={
+									trashCount > 0 ? (
+										<Plural value={trashCount} one="Trash has # document." other="Trash has # documents." />
+									) : undefined
+								}
+								action={
+									<Button onClick={() => openDialog("document.new", undefined)}>
+										<Trans>New document</Trans>
+									</Button>
+								}
+							/>
+						) : emptyType ? (
 							<TypeEmpty type={emptyType} />
 						) : (
 							<div className="grid justify-items-center gap-2 py-16 text-center">
@@ -521,8 +562,6 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		</div>
 	);
 }
-
-const documentKey = (document: DocumentSummary) => `${document.type}:${document.id}`;
 
 const VIEW_KEY = "documents-view";
 // Longest stagger (150ms) plus the D2 entrance (200ms), with room to spare: then the intro classes come off.

@@ -21,6 +21,7 @@ import Animated, {
 	FadeInDown,
 	FadeOut,
 	FadeOutDown,
+	ReduceMotion,
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
@@ -672,8 +673,12 @@ export function Toaster() {
 				return (
 					<Animated.View
 						key={item.id}
-						entering={reduced ? FadeIn.duration(motion.d1) : FadeInDown.duration(motion.d2)}
-						exiting={reduced ? FadeOut.duration(motion.d1) : FadeOutDown.duration(motion.d2)}
+						entering={
+							reduced ? FadeIn.duration(motion.d1).reduceMotion(ReduceMotion.Never) : FadeInDown.duration(motion.d2)
+						}
+						exiting={
+							reduced ? FadeOut.duration(motion.d1).reduceMotion(ReduceMotion.Never) : FadeOutDown.duration(motion.d2)
+						}
 						accessibilityLiveRegion="polite"
 						style={{
 							flexDirection: "row",
