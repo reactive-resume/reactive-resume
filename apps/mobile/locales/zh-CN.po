@@ -841,6 +841,14 @@ msgstr "{pairing}型"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {此页有#项修改建议 · 接受后才会更改} other {此页有#项修改建议 · 接受后才会更改}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "基本工资的 {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "基本工资的 {percent} ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -942,6 +950,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "另有{0}项"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ 每年 {yearly}（{months} × {monthly}）"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2454,7 +2466,7 @@ msgstr "加粗"
 msgid "Bonus"
 msgstr "奖金"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3494,10 +3506,6 @@ msgstr "修正事实"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5230,6 +5238,14 @@ msgstr "输入 0 到 52 之间的整数，或留空。"
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "请输入类似resume.example.org的地址。"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "输入金额或基本工资的百分比，例如 10%。"
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "输入金额或百分比（例如 10%），或留空。"
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -7896,6 +7912,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "新密钥默认为只读权限。请在浏览器中的账户设置里创建密钥。"
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "已保存新的录用条件版本"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8577,10 +8597,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10909,6 +10925,10 @@ msgstr "保存连接"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "将更正的条件保存为新版本。之前的版本仍可使用。不会发送 AI 请求。"
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

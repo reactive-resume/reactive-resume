@@ -1,5 +1,5 @@
 import type { OfferTerms } from "./career";
-import { parseAmount } from "@reactive-resume/utils/amount";
+import { parseAmount, parseDecimal } from "@reactive-resume/utils/amount";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { careerOfferInputSchema } from "./career";
 
@@ -17,18 +17,28 @@ type OfferEntry = {
 /** Blank optional fields are unknown; invalid entered values must not reach schema defaults. */
 export function parseOfferEntry({ applicationId, terms, amounts, date, time, locale, timeZone }: OfferEntry) {
 	const base = parseAmount(amounts.base, locale);
-	const variable = parseAmount(amounts.variable, locale);
+	const bonus = amounts.variable.trim().replace(/[\u061c\u200e\u200f]/g, "");
+	const percentSign =
+		new Intl.NumberFormat(locale, { style: "percent" }).formatToParts(1).find((part) => part.type === "percentSign")
+			?.value ?? "%";
+	const suffix = bonus.endsWith("%") ? "%" : percentSign;
+	const percentage = bonus.endsWith(suffix);
+	const variable = percentage
+		? parseDecimal(bonus.slice(0, -suffix.length).trim(), locale)
+		: parseAmount(bonus, locale);
+	const invalidVariable = variable === undefined || (percentage && variable === null);
 	const learning = parseAmount(amounts.learning, locale);
 	const deadline = date && timeZone ? fromZonedDateTime(date, time, timeZone) : null;
 	const deadlineError = !date ? null : !timeZone ? "timezone" : !deadline ? "wallTime" : null;
 	return {
-		amountErrors: { base: base === undefined, variable: variable === undefined, learning: learning === undefined },
+		amountErrors: { base: base === undefined, variable: invalidVariable, learning: learning === undefined },
 		deadlineError,
 		payload: careerOfferInputSchema.safeParse({
 			...terms,
 			applicationId,
 			base: base === undefined ? Number.NaN : base,
-			variable: variable === undefined ? Number.NaN : variable,
+			variable: invalidVariable ? Number.NaN : percentage ? null : variable,
+			variablePercent: percentage ? variable : null,
 			learning: learning === undefined ? Number.NaN : learning,
 			respondBy: deadlineError ? "" : (deadline?.toISOString() ?? null),
 		}),
@@ -81,10 +91,10 @@ export function previousOfferCurrency(items: readonly SavedOffer[] | undefined):
 export type OfferTermKey = "base" | "variable" | "equity" | "startDate" | "respondBy";
 
 /** The extracted terms a review must show, in reading order, omitting ones the employer didn't state. */
-export function offerTermKeys(terms: Pick<OfferTerms, OfferTermKey>): OfferTermKey[] {
+export function offerTermKeys(terms: Pick<OfferTerms, OfferTermKey | "variablePercent">): OfferTermKey[] {
 	const known: Record<OfferTermKey, boolean> = {
 		base: terms.base !== null,
-		variable: terms.variable !== null,
+		variable: terms.variable !== null || terms.variablePercent != null,
 		equity: terms.equity.trim() !== "",
 		startDate: terms.startDate !== null,
 		respondBy: terms.respondBy !== null,
@@ -164,4 +174,28 @@ export function offerHintFromSalary(salary: string | null | undefined): {
 	const scale = unit === "k" || unit === "thousand" ? 1_000 : unit === "m" || unit === "million" ? 1_000_000 : 1;
 	const base = Number.isFinite(number) ? Math.round(number * scale) : null;
 	return { currency, base: base && base > 0 ? base : null, period };
+}
+
+/** Resolve only explicit numeric bonuses; old free-text conditions remain uninterpreted. */
+export function bonusAmount(terms: Pick<OfferTerms, "base" | "variable" | "variablePercent">) {
+	if (terms.variablePercent == null) return terms.variable;
+	if (terms.base === null) return null;
+	const amount = (terms.base / 100) * terms.variablePercent;
+	return Number.isFinite(amount) ? amount : null;
+}
+
+export function bonusEntry(terms: Pick<OfferTerms, "variable" | "variablePercent">, locale: string) {
+	return terms.variablePercent != null
+		? `${new Intl.NumberFormat(locale, { useGrouping: false, maximumSignificantDigits: 21 }).format(terms.variablePercent)}%`
+		: terms.variable === null
+			? ""
+			: String(terms.variable);
+}
+
+/** Month/year arithmetic needs no guessed working hours. It never changes comparison eligibility. */
+export function annualBaseHint(terms: OfferTerms, other: OfferTerms) {
+	if (terms.currency !== other.currency || terms.period !== "month" || other.period !== "year" || terms.base === null)
+		return null;
+	const amount = terms.base * 12;
+	return Number.isFinite(amount) ? amount : null;
 }

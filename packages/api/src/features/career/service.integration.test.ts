@@ -13,6 +13,7 @@ import {
 	careerOfferInputSchema,
 	careerProfileDataSchema,
 	careerWorkspaceDataSchema,
+	offerTermsSchema,
 	savedItemDataSchema,
 } from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
@@ -1558,6 +1559,20 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			title: "ACME · Verbal offer",
 			data: { kind: "offer", base: 125_000, origin: "manual", editedAt: expect.any(String) },
 		});
+		if (updated.data.kind !== "offer") throw new Error("Expected corrected offer terms.");
+		const revised = offerTermsSchema.parse(updated.data);
+		const version = await service.updateOffer("alice", created.id, { ...revised, variablePercent: 10 }, revised, true);
+		expect(version.id).not.toBe(created.id);
+		expect(version.data).toMatchObject({ base: 125000, variable: null, variablePercent: 10, origin: "manual" });
+		expect(
+			(await service.savedItems({ userId: "alice", kind: "offer" })).find((row) => row.id === created.id)?.data,
+		).toMatchObject({ base: 125000, variable: null });
+		await expect(service.updateOffer("bob", created.id, revised, revised, true)).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await expect(service.updateOffer("alice", created.id, revised, terms, true)).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
 		// A second tab still holding the first copy can't overwrite the correction.
 		await expect(service.updateOffer("alice", created.id, { ...terms, base: 1 }, terms)).rejects.toMatchObject({
 			code: "CONFLICT",
@@ -1568,6 +1583,72 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		);
 		if (fit)
 			await expect(service.updateOffer("alice", fit.id, terms, terms)).rejects.toMatchObject({ code: "NOT_FOUND" });
+	});
+
+	it("keeps a saved offer version when Undo removes the offer extracted by a reply", async () => {
+		await applications.update({ userId: "alice", id: "alice-app", status: "applied" });
+		const reply = await savedItem("alice-app", {
+			kind: "reply",
+			message: "An offer from Fictional Labs",
+			title: "An offer",
+			asks: [],
+			unconfirmed: [],
+			reply: "",
+			changes: [{ type: "offer" }],
+			offer: { currency: "EUR", period: "year", base: 90000, variable: null },
+		});
+		await service.applyReply("alice", reply.id, [0]);
+		const [original] = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" });
+		if (original?.data.kind !== "offer") throw new Error("Expected extracted offer");
+		const expected = offerTermsSchema.parse(original.data);
+		const version = await service.updateOffer(
+			"alice",
+			original.id,
+			{ ...expected, base: 95000 },
+			expected,
+			true,
+			randomUUID(),
+		);
+		await service.undoReply("alice", reply.id);
+		const remaining = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" });
+		expect(remaining).toMatchObject([{ id: version.id, data: { base: 95000, origin: "message" } }]);
+		expect(remaining.map((row) => row.id)).not.toContain(original.id);
+	});
+
+	it("replays one receipted offer version without duplicating it or reviving a deleted version", async () => {
+		const input = careerOfferInputSchema.parse({
+			applicationId: "alice-app",
+			currency: "EUR",
+			period: "year",
+			base: 85000,
+			variable: null,
+		});
+		const original = await service.createOffer("alice", input);
+		if (original?.data.kind !== "offer") throw new Error("Expected an offer.");
+		const expected = offerTermsSchema.parse(original.data);
+		const terms = { ...expected, base: 90000 };
+		const newId = randomUUID();
+		const save = () => service.updateOffer("alice", original.id, terms, expected, true, newId);
+		const [first, replay] = await Promise.all([save(), save()]);
+		expect(replay.id).toBe(first.id);
+		expect(first.id).toBe(newId);
+		expect(await service.savedItems({ userId: "alice", kind: "offer" })).toHaveLength(2);
+		await expect(
+			service.updateOffer("alice", original.id, { ...terms, base: 1 }, expected, true, newId),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		await expect(service.updateOffer("bob", original.id, terms, expected, true, newId)).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		await expect(service.updateOffer("bob", original.id, terms, expected, true, randomUUID())).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await service.updateOffer("alice", original.id, { ...expected, base: 86000 }, expected);
+		expect((await save()).id).toBe(newId);
+		await service.deleteSavedItem("alice", original.id);
+		expect((await save()).id).toBe(newId);
+		await service.deleteSavedItem("alice", newId);
+		await expect(save()).rejects.toMatchObject({ code: "CONFLICT" });
+		expect(await service.savedItems({ userId: "alice", kind: "offer" })).toHaveLength(0);
 	});
 
 	it("names the messages no longer sent after Knowledge changes, and replies that ended early", async () => {
@@ -2641,7 +2722,8 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			task: { task: "reply", message: "10% target bonus; please reply by 20 November 2030." },
 		});
 		const prompt = fixture.generate.mock.calls[0]?.[1]?.prompt as string;
-		expect(prompt).toContain("Keep percentage bonuses in variableConditions");
+		expect(prompt).toContain("Record percentage bonuses in variablePercent");
+		expect(prompt).toContain("bonus amount (never a percentage) into offer.variable");
 		expect(prompt).toContain("respondBy is the stated decision deadline");
 	});
 

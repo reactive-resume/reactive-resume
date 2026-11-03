@@ -841,6 +841,14 @@ msgstr "{pairing} തരം"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {ഈ പേജിൽ # നിർദ്ദേശിത തിരുത്തൽ · അംഗീകരിക്കുന്നതുവരെ ഒന്നും മാറില്ല} other {ഈ പേജിൽ # നിർദ്ദേശിത തിരുത്തലുകൾ · അംഗീകരിക്കുന്നതുവരെ ഒന്നും മാറില്ല}}"
 
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base"
+msgstr "അടിസ്ഥാന ശമ്പളത്തിന്റെ {percent}"
+
+#: src/features/career/offer-compare.ts
+msgid "{percent} of base ({value})"
+msgstr "അടിസ്ഥാന ശമ്പളത്തിന്റെ {percent} ({value})"
+
 #: src/features/settings/profile.tsx
 msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -942,6 +950,10 @@ msgstr ""
 #: src/features/applications-board/calendar-screen.tsx
 msgid "+{0} more"
 msgstr "+{0} കൂടുതൽ"
+
+#: src/features/career/offers.tsx
+msgid "≈ {yearly} a year ({months} × {monthly})"
+msgstr "≈ വർഷത്തിൽ {yearly} ({months} × {monthly})"
 
 #: src/features/write/section-sheet.tsx
 msgid "1 column, inline"
@@ -2454,7 +2466,7 @@ msgstr "ബോൾഡ്"
 msgid "Bonus"
 msgstr "ബോണസ്"
 
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {0}: formatBonus(i18n.locale, offer) ?? ""
 #. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Bonus {0}{1}"
@@ -3494,10 +3506,6 @@ msgstr "വസ്തുത തിരുത്തുക"
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the highlighted fields before saving."
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5230,6 +5238,14 @@ msgstr "0 മുതൽ 52 വരെയുള്ള ഒരു പൂർണ്ണ 
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org പോലുള്ള വിലാസം നൽകുക."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage of base, such as 10%."
+msgstr "തുക അല്ലെങ്കിൽ അടിസ്ഥാന ശമ്പളത്തിന്റെ ശതമാനം നൽകുക, ഉദാ. 10%."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter an amount or a percentage such as 10%, or leave blank."
+msgstr "തുക അല്ലെങ്കിൽ 10% പോലുള്ള ശതമാനം നൽകുക, അല്ലെങ്കിൽ ശൂന്യമായി വിടുക."
 
 #: src/features/ai/provider-editor.tsx
 msgid "Enter an API key for this provider."
@@ -7896,6 +7912,10 @@ msgstr ""
 msgid "New keys start read-only. Create keys in your browser account settings."
 msgstr "പുതിയ കീകൾക്ക് തുടക്കത്തിൽ വായിക്കാൻ മാത്രമേ അനുമതിയുള്ളൂ. ബ്രൗസറിലെ അക്കൗണ്ട് ക്രമീകരണങ്ങളിൽ കീകൾ സൃഷ്ടിക്കുക."
 
+#: src/features/career/offer-entry.tsx
+msgid "New offer version saved"
+msgstr "ഓഫറിന്റെ പുതിയ പതിപ്പ് സംരക്ഷിച്ചു"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -8577,10 +8597,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Offer terms"
-msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Offer terms updated"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -10909,6 +10925,10 @@ msgstr "കണക്ഷൻ സംരക്ഷിക്കുക"
 #: src/features/application-detail/sheets.tsx
 msgid "Save contact"
 msgstr ""
+
+#: src/features/career/offer-entry.tsx
+msgid "Save corrected terms as a new version. The previous version stays available. No AI request is made."
+msgstr "തിരുത്തിയ വ്യവസ്ഥകൾ പുതിയ പതിപ്പായി സംരക്ഷിക്കുക. മുൻ പതിപ്പ് ലഭ്യമായി തുടരും. AI അഭ്യർത്ഥന അയയ്ക്കുന്നില്ല."
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

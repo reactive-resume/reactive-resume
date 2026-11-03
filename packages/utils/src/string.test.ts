@@ -2,6 +2,43 @@ import { describe, expect, it, vi } from "vite-plus/test";
 import { slugify } from "./slug";
 import { filterOptions, fitLabel, getInitials, isolate, rewriteSummary, toUsername } from "./string";
 
+it("retains opaque pending request IDs across module restart until acknowledgement", async () => {
+	const values = new Map<string, string>();
+	const storage = {
+		getItem: (key: string) => values.get(key) ?? null,
+		setItem: (key: string, value: string) => {
+			values.set(key, value);
+		},
+		removeItem: (key: string) => {
+			values.delete(key);
+		},
+	};
+	const key = JSON.stringify(["offer-version", "account-a", { id: "original", base: 90000 }]);
+	const first = await import("./string");
+	const id = first.pendingRequestId(key, storage);
+	vi.resetModules();
+	const restarted = await import("./string");
+	expect(restarted.pendingRequestId(key, storage)).toBe(id);
+	expect([...values.keys()].join()).not.toMatch(/account-a|original/);
+	expect(restarted.pendingRequestId(key + "another-account", storage)).not.toBe(id);
+	restarted.settleRequestId(key, storage, id);
+	const next = restarted.pendingRequestId(key, storage);
+	expect(next).not.toBe(id);
+	restarted.settleRequestId(key, storage, id);
+	expect(restarted.pendingRequestId(key, storage)).toBe(next);
+	expect(() => restarted.pendingRequestId("corrupt", { ...storage, getItem: () => "invalid" })).toThrow(
+		"Invalid pending request ID",
+	);
+	expect(() =>
+		restarted.pendingRequestId("unwritable", {
+			...storage,
+			setItem: () => {
+				throw new Error("Disk full");
+			},
+		}),
+	).toThrow("Disk full");
+});
+
 describe("slugify", () => {
 	it("falls back to a non-empty slug for CJK input", () => {
 		expect(slugify("中文简历")).not.toBe("");

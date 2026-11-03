@@ -45625,6 +45625,18 @@
 																									}
 																								]
 																							},
+																							"variablePercent": {
+																								"anyOf": [
+																									{
+																										"type": "number",
+																										"minimum": 0
+																									},
+																									{
+																										"type": "null"
+																									}
+																								],
+																								"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
+																							},
 																							"variableConditions": {
 																								"type": "string",
 																								"maxLength": 1000,
@@ -45970,6 +45982,18 @@
 																						"type": "null"
 																					}
 																				]
+																			},
+																			"variablePercent": {
+																				"anyOf": [
+																					{
+																						"type": "number",
+																						"minimum": 0
+																					},
+																					{
+																						"type": "null"
+																					}
+																				],
+																				"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
 																			},
 																			"variableConditions": {
 																				"type": "string",
@@ -53463,6 +53487,18 @@
 																					}
 																				]
 																			},
+																			"variablePercent": {
+																				"anyOf": [
+																					{
+																						"type": "number",
+																						"minimum": 0
+																					},
+																					{
+																						"type": "null"
+																					}
+																				],
+																				"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
+																			},
 																			"variableConditions": {
 																				"type": "string",
 																				"maxLength": 1000,
@@ -53809,6 +53845,18 @@
 																	}
 																]
 															},
+															"variablePercent": {
+																"anyOf": [
+																	{
+																		"type": "number",
+																		"minimum": 0
+																	},
+																	{
+																		"type": "null"
+																	}
+																],
+																"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
+															},
 															"variableConditions": {
 																"type": "string",
 																"maxLength": 1000,
@@ -54116,6 +54164,18 @@
 												"type": "null"
 											}
 										]
+									},
+									"variablePercent": {
+										"anyOf": [
+											{
+												"type": "number",
+												"minimum": 0
+											},
+											{
+												"type": "null"
+											}
+										],
+										"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
 									},
 									"variableConditions": {
 										"type": "string",
@@ -54897,6 +54957,18 @@
 																						}
 																					]
 																				},
+																				"variablePercent": {
+																					"anyOf": [
+																						{
+																							"type": "number",
+																							"minimum": 0
+																						},
+																						{
+																							"type": "null"
+																						}
+																					],
+																					"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
+																				},
 																				"variableConditions": {
 																					"type": "string",
 																					"maxLength": 1000,
@@ -55243,6 +55315,18 @@
 																		}
 																	]
 																},
+																"variablePercent": {
+																	"anyOf": [
+																		{
+																			"type": "number",
+																			"minimum": 0
+																		},
+																		{
+																			"type": "null"
+																		}
+																	],
+																	"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
+																},
 																"variableConditions": {
 																	"type": "string",
 																	"maxLength": 1000,
@@ -55452,7 +55536,7 @@
 			"patch": {
 				"operationId": "updateCareerOffer",
 				"summary": "Correct saved offer terms",
-				"description": "Replaces a saved offer's terms. `expected` is the copy being corrected; a change made elsewhere since then is a conflict.",
+				"description": "Corrects saved terms, or saves a new version when newVersion is true. `expected` is the copy being corrected; concurrent changes conflict. Supply the same newId and payload when retrying a new version after a lost response; a deleted version cannot be recreated by retrying.",
 				"tags": [
 					"Career"
 				],
@@ -55518,6 +55602,18 @@
 														"type": "null"
 													}
 												]
+											},
+											"variablePercent": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
 											},
 											"variableConditions": {
 												"type": "string",
@@ -55646,6 +55742,18 @@
 													}
 												]
 											},
+											"variablePercent": {
+												"anyOf": [
+													{
+														"type": "number",
+														"minimum": 0
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
+											},
 											"variableConditions": {
 												"type": "string",
 												"maxLength": 1000,
@@ -55727,6 +55835,13 @@
 											"base",
 											"variable"
 										]
+									},
+									"newVersion": {
+										"type": "boolean"
+									},
+									"newId": {
+										"type": "string",
+										"format": "uuid"
 									}
 								},
 								"required": [
@@ -56425,6 +56540,18 @@
 																				}
 																			]
 																		},
+																		"variablePercent": {
+																			"anyOf": [
+																				{
+																					"type": "number",
+																					"minimum": 0
+																				},
+																				{
+																					"type": "null"
+																				}
+																			],
+																			"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
+																		},
 																		"variableConditions": {
 																			"type": "string",
 																			"maxLength": 1000,
@@ -56770,6 +56897,18 @@
 																	"type": "null"
 																}
 															]
+														},
+														"variablePercent": {
+															"anyOf": [
+																{
+																	"type": "number",
+																	"minimum": 0
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
 														},
 														"variableConditions": {
 															"type": "string",
@@ -57945,6 +58084,18 @@
 																								}
 																							]
 																						},
+																						"variablePercent": {
+																							"anyOf": [
+																								{
+																									"type": "number",
+																									"minimum": 0
+																								},
+																								{
+																									"type": "null"
+																								}
+																							],
+																							"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
+																						},
 																						"variableConditions": {
 																							"type": "string",
 																							"maxLength": 1000,
@@ -58290,6 +58441,18 @@
 																					"type": "null"
 																				}
 																			]
+																		},
+																		"variablePercent": {
+																			"anyOf": [
+																				{
+																					"type": "number",
+																					"minimum": 0
+																				},
+																				{
+																					"type": "null"
+																				}
+																			],
+																			"description": "Percentage points of base: 10 means 10% of base in its currency and pay period. Set variable to null."
 																		},
 																		"variableConditions": {
 																			"type": "string",

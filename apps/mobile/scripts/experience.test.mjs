@@ -21,6 +21,7 @@ const react = {
 		if (ref) ref.current = make();
 	},
 	useEffect() {},
+	useLayoutEffect() {},
 	useState(initial) {
 		const index = cursor++;
 		if (!(index in hooks)) hooks[index] = typeof initial === "function" ? initial() : initial;
@@ -33,6 +34,7 @@ const react = {
 	},
 };
 const calls = [];
+let searchParams = {};
 let triageBindings = [];
 let triageEligible = true;
 const routes = {
@@ -43,7 +45,14 @@ const routes = {
 	newJob: () => "/applications?create=1",
 	career: (pane = "today") => `/career/${pane}`,
 };
-const router = { push: (href) => calls.push(href), back() {} };
+const router = {
+	push: (href) => calls.push(href),
+	setParams: (params) => {
+		searchParams = { ...searchParams, ...params };
+		calls.push({ params });
+	},
+	back() {},
+};
 const theme = {
 	space: { s0: 2, s1: 4, s2: 8, s3: 12, s4: 16, s12: 48 },
 	size: { sheetShare: 440 },
@@ -86,7 +95,12 @@ const mocks = {
 	},
 	react,
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", Platform: { OS: "android" } },
-	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
+	"expo-router": {
+		useIsFocused: () => true,
+		useRouter: () => router,
+		useLocalSearchParams: () => searchParams,
+		Stack: { Screen: "StackScreen" },
+	},
 	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
 	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
 	"@reactive-resume/ai/task-models": {
@@ -1334,38 +1348,101 @@ const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 	"@reactive-resume/utils/amount": amountParser,
 	"@reactive-resume/utils/timezone": timeParser,
 });
+let offerScope = "offer-account";
+let offerLocale = "en-US";
 let offerProfile = { isSuccess: false, isPending: true, isError: false };
 let savedOffers = [
 	{ createdAt: "2026-09-01T00:00:00Z", data: { kind: "offer", currency: "USD" } },
 	{ createdAt: "2026-10-01T00:00:00Z", data: { kind: "offer", currency: "GBP" } },
 ];
 let offerApplications = { data: [] };
-const { OfferEntry } = load("features/career/offer-entry.tsx", {
-	"@reactive-resume/schema/career": careerSchema,
-	"@reactive-resume/schema/career-offer": offerParser,
-	"./hooks": {
-		useCareerTime: () => ({ locale: "en-US", timeZone: "Europe/Berlin", profile: offerProfile }),
-		useCareerAction: () => ({
-			pending: false,
-			run: async (work, success) => {
-				await work();
-				success();
-			},
-		}),
-		client: { career: { createOffer: async (input) => calls.push(input) } },
-		useOffers: () => ({ data: savedOffers }),
-		useCareerQueries: () => ({ profile: { data: undefined } }),
+let loseOfferResponse = false;
+let offerFailures = 0;
+let holdOfferResponse = false;
+let heldOffer;
+let offerFocused = true;
+const offerLayouts = [];
+const offerStorage = new Map();
+const nativeOfferSelection = load("features/career/offer-selection.ts", {
+	"@/auth/session": { getAccountScope: () => offerScope },
+	"zustand/react": {
+		create: (initialize) => {
+			const store = createRequire(new URL("../../web/package.json", import.meta.url))("zustand/vanilla").createStore(
+				initialize,
+			);
+			return Object.assign((selector) => selector(store.getState()), store);
+		},
 	},
-	"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
-	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
-	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
-	"@/features/applications/lane-queries": laneQuery,
-	"@/features/applications/lanes": lanes,
-	"@/features/applications/stage-actions": {
-		useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
-	},
-	"@/features/applications/queries": { useApplications: () => offerApplications },
 });
+const loadOfferEntry = () =>
+	load("features/career/offer-entry.tsx", {
+		react: {
+			...react,
+			useLayoutEffect: (effect) => {
+				offerLayouts.push(effect);
+			},
+		},
+		"expo-router": { ...mocks["expo-router"], useIsFocused: () => offerFocused },
+		"expo-sqlite/kv-store": {
+			getItemSync: (key) => offerStorage.get(key) ?? null,
+			setItemSync: (key, value) => {
+				offerStorage.set(key, value);
+			},
+			removeItemSync: (key) => {
+				offerStorage.delete(key);
+			},
+		},
+		"./offer-selection": nativeOfferSelection,
+		"@reactive-resume/utils/string": load("../../../packages/utils/src/string.ts", { uuid: serverRequire("uuid") }),
+		"@/auth/session": { getAccountScope: () => offerScope },
+		"@reactive-resume/schema/career": careerSchema,
+		"@reactive-resume/schema/career-offer": offerParser,
+		"./hooks": {
+			useCareerTime: () => ({ locale: offerLocale, timeZone: "Europe/Berlin", profile: offerProfile }),
+			useCareerAction: () => ({
+				pending: false,
+				run: async (work, success) => {
+					try {
+						success(await work());
+					} catch {
+						offerFailures++;
+					}
+				},
+			}),
+			client: {
+				career: {
+					createOffer: async (input) => {
+						calls.push(input);
+						return { id: "new-offer", data: { kind: "offer", ...input } };
+					},
+					updateOffer: async (input) => {
+						calls.push(input);
+						if (loseOfferResponse) {
+							loseOfferResponse = false;
+							throw new Error("Response lost after commit");
+						}
+						if (holdOfferResponse) {
+							heldOffer = Promise.withResolvers();
+							await heldOffer.promise;
+						}
+						return { id: "new-version", data: { kind: "offer", ...input.terms } };
+					},
+				},
+			},
+			useOffers: () => ({ data: savedOffers }),
+			useCareerQueries: () => ({ profile: { data: undefined } }),
+		},
+		"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
+		"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
+		"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
+		"@/features/applications/lane-queries": laneQuery,
+		"@/features/applications/lanes": lanes,
+		"@/features/applications/stage-actions": {
+			useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
+		},
+		"@/features/applications/queries": { useApplications: () => offerApplications },
+	});
+const { OfferEntry, OfferForm } = loadOfferEntry();
 reset();
 offerApplications = { isPending: true };
 assert.equal(render(OfferEntry, {}).type, "LoadState", "unknown metadata offers no ready action");
@@ -1456,6 +1533,92 @@ assert.deepEqual(moved?.applications, [{ id: "job" }]);
 assert.equal(moved?.lane.category, "offer");
 assert.equal(moved?.message, "Offer saved. Fictional Labs moved to Offer.");
 console.log("PASS native offer validation, draft preservation, profile loading/failure and blank deadline");
+
+// RX-202: the real native form preserves the percentage and requests a new version, never an overwrite.
+reset();
+offerProfile = { isSuccess: true, isPending: false, isError: false };
+searchParams = { b: "pinned-offer" };
+const originalTerms = careerSchema.offerTermsSchema.parse({
+	currency: "EUR",
+	period: "year",
+	base: 85000,
+	variable: null,
+	variablePercent: 10,
+});
+let CurrentOfferForm = OfferForm;
+let offerCloses = 0;
+const correctedView = () =>
+	render(CurrentOfferForm, {
+		application: { id: "job", company: "Northwind Labs", role: "Engineer" },
+		offer: { id: "original-offer", data: originalTerms },
+		onClose() {
+			offerCloses++;
+		},
+	});
+assert.equal(control(correctedView(), "Bonus").value, "10%");
+assert.equal(control(correctedView(), "Bonus").keyboardType, "default", "percentage entry needs a percent key");
+control(correctedView(), "Bonus").onChangeText("12.5%");
+loseOfferResponse = true;
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.equal(offerFailures, 1);
+assert.equal(calls.length, 1, "lost response keeps the native form open without navigation");
+const firstAttempt = calls[0];
+CurrentOfferForm = loadOfferEntry().OfferForm;
+reset();
+control(correctedView(), "Bonus").onChangeText("12.5%");
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.deepEqual(calls[0], firstAttempt, "restart and re-entry retain the version receipt after a lost response");
+assert.match(calls[0].newId, /^[0-9a-f-]{36}$/);
+assert.equal(calls[0].id, "original-offer");
+assert.equal(calls[0].newVersion, true);
+assert.equal(calls[0].terms.variable, null);
+assert.equal(calls[0].terms.variablePercent, 12.5);
+assert.deepEqual(calls[0].expected, originalTerms);
+assert.deepEqual(nativeOfferSelection.useSavedOffer.getState().accounts[offerScope], {
+	id: "new-version",
+	b: "pinned-offer",
+});
+assert.ok(!calls.some((call) => call?.params), "form never writes selection to the focused route");
+assert.equal(offerCloses, 1);
+calls.length = 0;
+holdOfferResponse = true;
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.ok(heldOffer);
+offerFocused = false;
+correctedView();
+for (const effect of offerLayouts.splice(0)) effect();
+heldOffer.resolve();
+await settle();
+assert.equal(offerCloses, 1, "late success cannot close a form after leaving its screen");
+assert.ok(
+	!calls.some((call) => call?.params || call?.message),
+	"late success cannot change another route or toast there",
+);
+assert.equal(nativeOfferSelection.useSavedOffer.getState().accounts[offerScope].id, "new-version");
+holdOfferResponse = false;
+offerFocused = true;
+correctedView();
+for (const effect of offerLayouts.splice(0)) effect();
+calls.length = 0;
+offerScope = "another-account";
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.equal(calls.length, 0, "retired native offer form cannot write for the next account");
+offerScope = "offer-account";
+offerLocale = "ar-SA";
+reset();
+calls.length = 0;
+control(correctedView(), "Bonus").onChangeText("١٢٫٥٪\u061c");
+control(correctedView(), "Save offer").onPress();
+await settle();
+assert.equal(calls[0].terms.variablePercent, 12.5, "native localized percent signs reach the shared version contract");
+assert.equal(calls[0].terms.variable, null);
+offerLocale = "en-US";
+searchParams = {};
+console.log("PASS native percentage entry and immutable offer-version action");
 
 // Native Save must stay reachable for validation, then focus the actual missing input.
 const { Stories } = load("features/career/stories.tsx", {

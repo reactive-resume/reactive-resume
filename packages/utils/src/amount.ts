@@ -1,5 +1,4 @@
-/** Parse a complete nonnegative amount. Invalid notation must never silently change a saved requirement. */
-export function parseAmount(input: string, locale: string): number | null | undefined {
+function parseLocalizedNumber(input: string, locale: string, maximumFractionDigits: number): number | null | undefined {
 	const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
 	const parts = number.formatToParts(12345.6);
 	const decimal = parts.find((part) => part.type === "decimal")?.value ?? ".";
@@ -12,7 +11,11 @@ export function parseAmount(input: string, locale: string): number | null | unde
 	if (pieces.length > 2) return undefined;
 	const [whole = "", fraction] = pieces;
 	const ungrouped = group ? whole.replaceAll(group, "") : whole;
-	if (!/^\d+$/.test(ungrouped) || (fraction !== undefined && !/^\d{1,2}$/.test(fraction))) return undefined;
+	if (
+		!/^\d+$/.test(ungrouped) ||
+		(fraction !== undefined && (!/^\d+$/.test(fraction) || fraction.length > maximumFractionDigits))
+	)
+		return undefined;
 	if (group && whole.includes(group)) {
 		const expected = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(Number(ungrouped));
 		let normalized = expected;
@@ -20,5 +23,17 @@ export function parseAmount(input: string, locale: string): number | null | unde
 		if (whole !== normalized) return undefined;
 	}
 	const value = Number(`${ungrouped}.${fraction ?? "0"}`);
-	return Number.isFinite(value) && value <= Number.MAX_SAFE_INTEGER ? value : undefined;
+	if (value === 0 && /[1-9]/.test(`${ungrouped}${fraction ?? ""}`)) return undefined;
+	return Number.isFinite(value) ? value : undefined;
+}
+
+/** Complete, finite, nonnegative decimal; percentages retain their stored precision. */
+export function parseDecimal(input: string, locale: string): number | null | undefined {
+	return parseLocalizedNumber(input, locale, Number.POSITIVE_INFINITY);
+}
+
+/** Money retains its two-decimal and safe-integer bounds. */
+export function parseAmount(input: string, locale: string): number | null | undefined {
+	const value = parseLocalizedNumber(input, locale, 2);
+	return typeof value === "number" && value > Number.MAX_SAFE_INTEGER ? undefined : value;
 }
