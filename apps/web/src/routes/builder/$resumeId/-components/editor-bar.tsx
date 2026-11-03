@@ -32,7 +32,7 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 			layout={layout}
 			pinnable={pinnable}
 			menu={<DocumentMenu />}
-			modes={<ModeTabs />}
+			modes={<ModeTabs compact={layout === "tablet"} />}
 			history={<UndoRedo />}
 		>
 			<DownloadButtons
@@ -83,7 +83,9 @@ const MODE_ICONS = {
 	share: "globe-hemisphere-west",
 } as const;
 
-function ModeTabs() {
+type ModeTabsProps = { compact: boolean };
+
+function ModeTabs({ compact }: ModeTabsProps) {
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const issueCount = useOpenIssueCount();
 	const isPublic = useCurrentBuilderResumeSelector((resume) => resume.isPublic ?? false);
@@ -104,7 +106,7 @@ function ModeTabs() {
 				<TabsTrigger
 					key={mode}
 					value={mode}
-					className="px-4"
+					className={compact ? "px-2" : "px-4"}
 					aria-keyshortcuts={characterShortcuts ? String(index + 1) : undefined}
 					title={
 						characterShortcuts
@@ -116,7 +118,7 @@ function ModeTabs() {
 					}
 				>
 					<Icon name={MODE_ICONS[mode]} size={18} />
-					{labels[mode]}
+					<span className={compact ? "sr-only" : undefined}>{labels[mode]}</span>
 					{mode === "check" && <CheckBadge count={issueCount} />}
 					{mode === "share" && isPublic && (
 						<span className="size-1.5 rounded-sm bg-accent" aria-hidden="true" title={t`Public`} />

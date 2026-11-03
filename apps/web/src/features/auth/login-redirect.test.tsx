@@ -17,6 +17,7 @@ const mocks = vi.hoisted(() => ({
 	verifyTotp: vi.fn(),
 	verifyBackupCode: vi.fn(),
 	signup: vi.fn(),
+	requestPasswordReset: vi.fn(),
 	continueOAuth: vi.fn(),
 	queryClient: { invalidateQueries: vi.fn(async () => {}) },
 }));
@@ -42,6 +43,7 @@ vi.mock("@tanstack/react-router", () => ({
 vi.mock("@/libs/orpc/client", () => ({ orpc: { auth: { providers: { list: { queryOptions: () => ({}) } } } } }));
 vi.mock("@/libs/auth/client", () => ({
 	authClient: {
+		requestPasswordReset: mocks.requestPasswordReset,
 		signUp: { email: mocks.signup },
 		oauth2: { continue: mocks.continueOAuth },
 		twoFactor: { verifyTotp: mocks.verifyTotp, verifyBackupCode: mocks.verifyBackupCode },
@@ -50,6 +52,7 @@ vi.mock("@/libs/auth/client", () => ({
 }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn(), close: vi.fn() } }));
 
+import { ForgotPasswordPage } from "./pages/forgot-password";
 import { LoginPage } from "./pages/login";
 import { RegisterPage } from "./pages/register";
 import { VerifyTwoFactorBackupPage, VerifyTwoFactorPage } from "./pages/verify-2fa";
@@ -67,6 +70,7 @@ beforeEach(() => {
 		mocks.verifyTotp,
 		mocks.verifyBackupCode,
 		mocks.signup,
+		mocks.requestPasswordReset,
 		mocks.continueOAuth,
 	])
 		signIn.mockResolvedValue({ data: {}, error: null });
@@ -314,4 +318,21 @@ describe("OAuth account creation", () => {
 		expect(mocks.signup).toHaveBeenCalledWith(expect.objectContaining({ username: "", email: "new@example.com" }));
 		expect(screen.queryByText("Your account is ready")).toBeNull();
 	});
+});
+
+it("focuses the replacement password-reset heading once and preserves subsequent action focus", async () => {
+	render(
+		<I18nProvider i18n={i18n}>
+			<ForgotPasswordPage />
+		</I18nProvider>,
+	);
+	fireEvent.change(screen.getByRole("textbox", { name: "Email address" }), { target: { value: "maya@example.com" } });
+	fireEvent.click(screen.getByRole("button", { name: "Send reset link" }));
+	const heading = await screen.findByRole("heading", { name: "Check your email" });
+	expect(document.activeElement).toBe(heading);
+	const resend = screen.getByRole("button", { name: "Send again" });
+	resend.focus();
+	fireEvent.click(resend);
+	await waitFor(() => expect(mocks.requestPasswordReset).toHaveBeenCalledTimes(2));
+	expect(document.activeElement).toBe(resend);
 });

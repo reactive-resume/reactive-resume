@@ -52,7 +52,7 @@ export function ApplicationsViewFrame({ current, children, search, addDisabled }
 				<CollectionHeader
 					title={t`Applications`}
 					searchLabel={t`Search applications`}
-					placeholder={t`Role, company or contact`}
+					placeholder={t`Search`}
 					{...(search ?? { value: shared.search, onChangeText: shared.setSearch })}
 					actions={
 						<View style={{ flexDirection: "row" }}>
