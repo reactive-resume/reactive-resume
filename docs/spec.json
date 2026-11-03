@@ -61189,6 +61189,11 @@
 										"minLength": 1,
 										"description": "The job it's for; it fills the recipient."
 									},
+									"sourceLetterId": {
+										"type": "string",
+										"minLength": 1,
+										"description": "An earlier owned letter to start from. Its body is copied; the new letter still takes its recipient, date, resume and application link from this request, and keeps its own version history."
+									},
 									"template": {
 										"enum": [
 											"azurill",
@@ -72797,12 +72802,25 @@
 															},
 															"role": {
 																"type": "string"
+															},
+															"status": {
+																"enum": [
+																	"saved",
+																	"applied",
+																	"screening",
+																	"interview",
+																	"offer",
+																	"closed"
+																],
+																"type": "string",
+																"description": "The job's pipeline stage; closed groups start collapsed."
 															}
 														},
 														"required": [
 															"id",
 															"company",
-															"role"
+															"role",
+															"status"
 														]
 													},
 													{
@@ -73127,12 +73145,25 @@
 																	},
 																	"role": {
 																		"type": "string"
+																	},
+																	"status": {
+																		"enum": [
+																			"saved",
+																			"applied",
+																			"screening",
+																			"interview",
+																			"offer",
+																			"closed"
+																		],
+																		"type": "string",
+																		"description": "The job's pipeline stage; closed groups start collapsed."
 																	}
 																},
 																"required": [
 																	"id",
 																	"company",
-																	"role"
+																	"role",
+																	"status"
 																]
 															},
 															{

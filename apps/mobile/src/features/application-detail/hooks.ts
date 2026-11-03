@@ -37,7 +37,6 @@ export function useDetailMutations(applicationId: string) {
 		addInterview: useMutation({ ...orpc.applications.addInterview.mutationOptions(), onSettled }),
 		updateInterview: useMutation({ ...orpc.applications.updateInterview.mutationOptions(), onSettled }),
 		removeDocument: useMutation({ ...orpc.applications.removeDocument.mutationOptions(), onSettled }),
-		createLetter: useMutation({ ...orpc.coverLetters.create.mutationOptions(), onSettled }),
 		/** Uploads a picked PDF (already checked by `attachmentProblem`) through the REST multipart endpoint. */
 		attach: useMutation({
 			mutationFn: async ({ kind, uri }: { kind: AttachmentKind; uri: string }) => {
