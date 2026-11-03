@@ -1724,6 +1724,7 @@ const careerSchema = load("../../../packages/schema/src/career.ts", {
 	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
 	"@reactive-resume/utils/timezone": timeParser,
 });
+mocks["@reactive-resume/schema/career-practice"] = load("../../../packages/schema/src/career-practice.ts");
 const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 	"./career": careerSchema,
 	"@reactive-resume/utils/amount": amountParser,
@@ -2498,6 +2499,7 @@ let todayOffers = [];
 let todayOfferState = { isPending: false, isError: false };
 let todayNow = new Date();
 const { TodayScreen } = load("features/career/today.tsx", {
+	"./prepare-now": { PrepareNow: "PrepareNow" },
 	"@/features/applications/stage-actions": { useOfferHints: () => undefined, offerHintFor: () => undefined },
 	"expo-web-browser": { openBrowserAsync: async () => {} },
 	"./hooks": {
@@ -2621,6 +2623,114 @@ todayApplications = [];
 todayOffers = [];
 console.log("PASS native Today shows simultaneous dated steps, latest offer clearing and exact interview navigation");
 
+todayApplications = [
+	{
+		...nativeJob,
+		status: "interview",
+		activity: [{ ...nativeRound, at: "2030-01-03T12:00:00Z" }],
+		followUpAt: "2030-01-03T11:00:00Z",
+		followUpDateOnly: false,
+		followUpNote: "Earlier reminder",
+	},
+];
+const duePreparation = nodes(comingUpView()).find((node) => node.type === "PrepareNow");
+assert.equal(duePreparation.props.applicationId, nativeJob.id);
+assert.equal(duePreparation.props.interviewId, nativeRound.id);
+todayApplications = [{ ...todayApplications[0], activity: [{ ...nativeRound, at: "2030-01-04T10:00:00.001Z" }] }];
+assert.equal(
+	nodes(comingUpView()).some((node) => node.type === "PrepareNow"),
+	false,
+	"a round outside24h has no immediate preparation action",
+);
+todayApplications = [];
+
+reset();
+const preparationJob = {
+	...nativeJob,
+	status: "interview",
+	company: "Fictional Cedar",
+	activity: [{ ...nativeRound, at: "2030-01-03T12:00:00Z" }],
+};
+let preparationQuery = { data: preparationJob, isError: false };
+let preparationProvider = { id: "fictional-provider" };
+let finishPreparation;
+let failPreparation;
+const preparationGeneration = {
+	isPending: false,
+	failure: null,
+	data: undefined,
+	run: (task) => {
+		calls.push({ task });
+		return new Promise((resolve, reject) => {
+			finishPreparation = resolve;
+			failPreparation = reject;
+		});
+	},
+};
+const preparationModule = load("features/career/prepare-now.tsx", {
+	"./shared": { LoadState: "LoadState" },
+	"./hooks": { useNow: () => todayNow, useCareerTime: () => ({ when: (at) => `Round ${at}` }) },
+	"./scheduling": load("features/career/scheduling.ts", { "@reactive-resume/utils/timezone": timeParser }),
+	"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: preparationProvider }) },
+	"@/features/applications/queries": {
+		useApplication: () => preparationQuery,
+		useApplications: () => ({ data: [preparationJob] }),
+	},
+	"@/features/workspace/hooks": {
+		useGenerate: (id) => {
+			assert.equal(id, preparationJob.id);
+			return preparationGeneration;
+		},
+	},
+	"@/features/workspace/parts": { AiNotice: "AiNotice", GenerateNotice: "GenerateNotice" },
+	"@/features/workspace/shell": {
+		workspaceHref: (id, tab, search) => {
+			calls.push({ destination: { id, tab, search } });
+			return `/applications/${id}/${tab}`;
+		},
+	},
+});
+const preparationView = () =>
+	render(preparationModule.PrepareNow, {
+		applicationId: preparationJob.id,
+		interviewId: nativeRound.id,
+		now: todayNow,
+	});
+const disclosure = nodes(preparationView()).find((node) => node.type === "AiNotice");
+assert.match(JSON.stringify(preparationView()), /Round 2030-01-03T12:00:00Z/);
+assert.equal(disclosure.props.application, preparationJob);
+assert.equal(disclosure.props.task, "briefing");
+assert.equal(disclosure.props.interview, true);
+control(preparationView(), "Generate briefing now").onPress();
+control(preparationView(), "Generate briefing now").onPress();
+assert.deepEqual(calls, [{ task: { task: "briefing", interviewId: nativeRound.id } }]);
+failPreparation(new Error("Fictional offline request"));
+await settle();
+control(preparationView(), "Generate briefing now").onPress();
+finishPreparation({ item: { id: "briefing" } });
+await settle();
+assert.equal(calls.length, 2, "failed request can be retried without duplicate dispatch");
+preparationProvider = null;
+assert.equal(control(preparationView(), "Generate briefing now").disabled, true);
+control(preparationView(), "Practice 3 questions").onPress();
+assert.deepEqual(calls.findLast((entry) => entry?.destination).destination, {
+	id: preparationJob.id,
+	tab: "practise",
+	search: { round: nativeRound.id, warmup: true },
+});
+reset();
+control(render(preparationModule.PracticeHandoff), "Practice in Fictional Cedar’s workspace").onPress();
+assert.deepEqual(calls.find((entry) => entry?.destination).destination, {
+	id: preparationJob.id,
+	tab: "practise",
+	search: { round: nativeRound.id, warmup: true },
+});
+preparationQuery = { data: undefined, isError: true };
+assert.equal(preparationView().type, "LoadState");
+console.log(
+	"PASS native Today immediate briefing shares disclosed owned context, guards repeats and retries; Today/Coach handoffs target the same warm-up round without a provider",
+);
+
 const { DraftConflictSheet } = load("draft/conflict-sheet.tsx", {
 	"./runtime": {},
 	"react-native": { ...mocks["react-native"], Modal: "Modal" },
@@ -2662,14 +2772,16 @@ for (const kind of ["resume", "letter"]) {
 console.log("PASS native older-draft refusal explains cause and offers only copy or saved-version recovery");
 
 let headerSaved = { data: undefined, isPending: true, isError: false, refetch: () => calls.push("retry-saved") };
-const { WorkspaceScreen } = load("features/workspace/shell.tsx", {
+let headerApplication = { ...application, status: "offer", company: "Context job", role: "Engineer" };
+let headerCurrentInterview;
+const { WorkspaceScreen, workspaceHref } = load("features/workspace/shell.tsx", {
 	"@reactive-resume/schema/career": careerSchema,
 	"./coach-sheet": { CoachSheet: "CoachSheet" },
 	"./hooks": {
 		useSavedItems: () => headerSaved,
 		useWorkspace: () => ({ isPending: false, query: { isError: false, data: {}, refetch: () => {} } }),
 	},
-	"./logic": { currentInterview: () => undefined },
+	"./logic": { currentInterview: () => headerCurrentInterview },
 	"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => time },
 	"@/features/application-detail/interview-sheet": { InterviewSheet: "InterviewSheet" },
 	"@/features/applications/error": { applicationError: String },
@@ -2677,7 +2789,7 @@ const { WorkspaceScreen } = load("features/workspace/shell.tsx", {
 	"@/features/applications/lanes": lanes,
 	"@/features/applications/queries": {
 		useApplication: () => ({
-			data: { ...application, status: "offer", company: "Context job", role: "Engineer" },
+			data: headerApplication,
 			isPending: false,
 		}),
 	},
@@ -2704,6 +2816,44 @@ assert.equal(loadedHeader.disabled, false);
 loadedHeader.onPress();
 assert.deepEqual(calls.at(-1), { pathname: "/career/offers", params: { a: "context-latest" } });
 console.log("PASS native contextual offers gated cold/error and retain latest offer when loaded");
+
+const quickPracticeUrl = new URL(
+	workspaceHref("fictional-job", "practise", { round: "round & one", warmup: true }),
+	"https://fictional.invalid",
+);
+assert.equal(quickPracticeUrl.pathname, "/applications/fictional-job/practise");
+assert.deepEqual(Object.fromEntries(quickPracticeUrl.searchParams), { warmup: "1", round: "round & one" });
+headerApplication = { ...headerApplication, activity: [nativeRound] };
+headerCurrentInterview = { ...nativeRound, id: "other-round" };
+const practiceProps = () => {
+	reset();
+	let props;
+	render(WorkspaceScreen, {
+		tab: "practise",
+		children: (value) => {
+			props = value;
+			return null;
+		},
+	});
+	return props;
+};
+searchParams = { id: headerApplication.id, warmup: "1", round: nativeRound.id };
+assert.equal(practiceProps().interview.id, nativeRound.id);
+assert.equal(practiceProps().warmup, true);
+practiceProps().go("prepare");
+assert.equal(calls.at(-1), `/applications/${headerApplication.id}/prepare?round=${nativeRound.id}`);
+searchParams = { ...searchParams, round: "removed-round" };
+assert.equal(practiceProps().interview, undefined, "quick Practice must not switch to another round after removal");
+searchParams = { id: headerApplication.id, round: "removed-round" };
+assert.equal(
+	practiceProps().interview.id,
+	"other-round",
+	"ordinary workspace navigation retains its existing fallback",
+);
+searchParams = {};
+console.log(
+	"PASS native quick Practice URL encoding and screen parsing pin the requested round without changing ordinary navigation",
+);
 
 reset();
 const scheduleWrites = [];

@@ -3,6 +3,7 @@
 import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "../shell";
 import type { RecordStop, Recording, VoiceSettings } from "../voice";
+import type { PracticeQuestion as Question } from "@reactive-resume/schema/career-practice";
 import type { ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { ph } from "@lingui/core/macro";
@@ -12,6 +13,7 @@ import { File } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { useEffect, useRef, useState } from "react";
 import { Linking, Pressable, View } from "react-native";
+import { threePracticeQuestions } from "@reactive-resume/schema/career-practice";
 import { latest, useDraft, useGenerate, useSavedItems, useStories, workspaceError } from "../hooks";
 import { acceptedAudioType, clock, MAX_SECONDS, writeNumbersAsDigits } from "../logic";
 import { Actions, AiNotice, Block, PrivacyLine, Progress, GenerateNotice, useWorking, workingSteps } from "../parts";
@@ -39,7 +41,6 @@ import {
 
 type Practice = SavedData<"practice">;
 type Attempt = SavedItem & { data: Practice };
-type Question = { text: string; origin: Practice["origin"] };
 type Mode = Practice["mode"];
 /** A transcribed answer: the server's transcript id and text. */
 type Spoken = { id: string; text: string; seconds: number | null };
@@ -59,12 +60,13 @@ export function PractiseTab() {
 	return <WorkspaceScreen tab="practise">{(props) => <Practise {...props} />}</WorkspaceScreen>;
 }
 
-function Practise({ application, version, interview, speak: speakFirst, story, now, go }: WorkspaceTabProps) {
+function Practise({ application, version, interview, speak: speakFirst, story, warmup, now, go }: WorkspaceTabProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const saved = useSavedItems(application.id);
 	const stories = useStories(application.id);
 	const voice = useVoiceSettings();
+	if (warmup && !interview) return <Banner tone="warn" message={t`This interview is unavailable.`} />;
 	const viewing = version && isAttempt(version) ? version : undefined;
 	const attempts = saved.data?.filter(isAttempt) ?? [];
 	const selectedStory = story ? stories.data?.find((item) => item.id === story) : undefined;
@@ -95,6 +97,11 @@ function Practise({ application, version, interview, speak: speakFirst, story, n
 		...simulated.map((text) => ({ text, origin: "simulated" as const })),
 		...[...new Set(recalled)].map((text) => ({ text, origin: "recalled" as const })),
 	];
+	const fallbacks = [
+		t`Tell me about a piece of work you're proud of. What was your part in it, and how did you measure success?`,
+		t`Tell me about a time you disagreed with a colleague. How did you resolve it?`,
+		t`Why do you want this role at ${company}?`,
+	];
 	const questions: Question[] = storyTitle
 		? [
 				{
@@ -102,13 +109,11 @@ function Practise({ application, version, interview, speak: speakFirst, story, n
 					origin: "simulated",
 				},
 			]
-		: found.length > 0
-			? found
-			: [
-					t`Tell me about a piece of work you're proud of. What was your part in it, and how did you measure success?`,
-					t`Tell me about a time you disagreed with a colleague. How did you resolve it?`,
-					t`Why do you want this role at ${company}?`,
-				].map((text) => ({ text, origin: "simulated" as const }));
+		: warmup
+			? threePracticeQuestions(found, fallbacks)
+			: found.length > 0
+				? found
+				: fallbacks.map((text) => ({ text, origin: "simulated" as const }));
 
 	return (
 		<View style={{ gap: space.s4 }}>
@@ -118,7 +123,7 @@ function Practise({ application, version, interview, speak: speakFirst, story, n
 				<Skeleton height={space.s12 * 6} />
 			) : (
 				<Session
-					key={`${application.id}:${interview?.id ?? "none"}:${story ?? "general"}`}
+					key={`${application.id}:${interview?.id ?? "none"}:${story ?? "general"}:${warmup ? "three" : "all"}`}
 					application={application}
 					applicationId={application.id}
 					interviewId={interview?.id ?? null}
@@ -127,6 +132,7 @@ function Practise({ application, version, interview, speak: speakFirst, story, n
 					storyTitle={storyTitle}
 					voice={voice}
 					initialMode={speakFirst ? "spoken" : "typed"}
+					warmup={warmup === true}
 				/>
 			)}
 			<Block title={t`Your attempts`}>
@@ -184,6 +190,7 @@ type SessionProps = {
 	storyTitle: string | undefined;
 	voice: VoiceSettings;
 	initialMode: Mode;
+	warmup: boolean;
 };
 
 function Session({
@@ -195,17 +202,21 @@ function Session({
 	initialMode,
 	storyId,
 	storyTitle,
+	warmup,
 }: SessionProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const generate = useGenerate(applicationId);
 	const provider = useHasAIProvider().defaultProvider;
-	const draft = useDraft<PracticeDraft>(`practice:${applicationId}:${interviewId ?? "none"}:${storyId ?? "general"}`, {
-		question: questions[0] ?? { text: t`Tell me about a piece of work you're proud of.`, origin: "simulated" },
-		mode: initialMode,
-		answer: "",
-		spoken: null,
-	});
+	const draft = useDraft<PracticeDraft>(
+		`practice:${applicationId}:${interviewId ?? "none"}:${storyId ?? "general"}${warmup ? ":three" : ""}`,
+		{
+			question: questions[0] ?? { text: t`Tell me about a piece of work you're proud of.`, origin: "simulated" },
+			mode: initialMode,
+			answer: "",
+			spoken: null,
+		},
+	);
 	const { question, mode, answer, spoken } = draft.value;
 	const setMode = (next: Mode) => draft.setValue((current) => ({ ...current, mode: next }));
 	const setAnswer = (next: string) => draft.setValue((current) => ({ ...current, answer: next }));

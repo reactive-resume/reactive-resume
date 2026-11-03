@@ -29,6 +29,7 @@ import { useSession } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { useApplications } from "@/features/applications/queries";
 import { useNow, useOpportunities } from "@/features/career/hooks";
+import { PracticeHandoff } from "@/features/career/prepare-now";
 import { collectInterviews } from "@/features/career/scheduling";
 import { StoryEditor } from "@/features/career/stories";
 import { Button, Icon, IconButton, ListRow, Sheet, Text, TextField, showToast, useTheme } from "@/ui";
@@ -170,6 +171,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 				<IconButton icon="clock-counter-clockwise" label={t`Conversations`} onPress={() => setListOpen(true)} />
 				<IconButton icon="note-pencil" label={t`New conversation`} onPress={newConversation} />
 			</View>
+			<PracticeHandoff />
 			<ProviderGate
 				providers={providers}
 				readOnly={threadId !== null}

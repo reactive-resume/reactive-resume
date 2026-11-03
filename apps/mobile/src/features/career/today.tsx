@@ -9,6 +9,7 @@ import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { latestOfferHints } from "@reactive-resume/schema/applications/next-step";
 import { upcomingApplicationEvents } from "@reactive-resume/schema/applications/upcoming";
+import { interviewPreparationDue } from "@reactive-resume/schema/career-practice";
 import {
 	client,
 	prepareRpc,
@@ -20,6 +21,7 @@ import {
 	useTodayQueries,
 	useUndoRows,
 } from "./hooks";
+import { PrepareNow } from "./prepare-now";
 import { ScheduleSheet, scheduleTitle } from "./schedule-sheet";
 import { rollForward } from "./scheduling";
 import { Actions, LoadState, Section, SwitchRow } from "./shared";
@@ -84,6 +86,7 @@ export function TodayScreen() {
 	const columnY = useRef(0);
 	const events = upcomingApplicationEvents(applications.data ?? [], hints, now, time.timeZone);
 	const next = events[0];
+	const preparation = events.find((item) => item.kind === "interview" && interviewPreparationDue(item.at, now));
 	const eventLabel = (item: (typeof events)[number]) =>
 		item.kind === "offer"
 			? t`Reply to the offer`
@@ -236,6 +239,14 @@ export function TodayScreen() {
 											)
 										}
 									/>
+									{preparation?.kind === "interview" ? (
+										<PrepareNow
+											key={preparation.key}
+											applicationId={preparation.application.id}
+											interviewId={preparation.interview.id}
+											now={now}
+										/>
+									) : null}
 									{events.slice(1, 3).map((item) => (
 										<Pressable
 											key={item.key}
