@@ -77,7 +77,13 @@ export const aiRouter = {
 		.handler(({ context, input }) => readWeeklyAiUsage(context.user.id, undefined, input.includeWebSearch)),
 	reportContent: reportAiContent,
 	capabilities: protectedProcedure
-		.route({ method: "GET", path: "/ai/capabilities", tags: ["AI"], operationId: "getAiCapabilities" })
+		.route({
+			method: "GET",
+			path: "/ai/capabilities",
+			tags: ["AI"],
+			operationId: "getAiCapabilities",
+			summary: "Get supported AI consent and web-search capabilities",
+		})
 		.input(z.object({}).default({}))
 		.output(z.object({ recipientApproval: z.literal(1), explicitNoAi: z.literal(true), nativeWebSearch: z.literal(1) }))
 		.handler(() => ({ recipientApproval: 1 as const, explicitNoAi: true as const, nativeWebSearch: 1 as const })),
