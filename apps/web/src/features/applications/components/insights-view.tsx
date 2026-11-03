@@ -180,7 +180,7 @@ export function ApplicationInsights({ applications, onSaveJob, onClearFilters }:
 					<p className="mt-0.5 text-xs text-ink-3">
 						<Trans>Applications sent per week (last 8 weeks)</Trans>
 					</p>
-					<div className="mt-4 flex items-end gap-2">
+					<div className="mt-4 flex items-end gap-2 overflow-x-auto">
 						{timeline.map((bucket, index) => (
 							<div key={bucket.label} className="flex flex-1 flex-col items-center gap-1">
 								<div className="flex h-28 w-full flex-col justify-end">

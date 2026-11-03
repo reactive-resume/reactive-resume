@@ -385,7 +385,12 @@ function MobileTabs() {
 			>
 				{current && <MobileTabIndicator />}
 				<Icon name={icon} size={24} filled={current} />
-				<span className={cn("text-center text-xs break-words", current ? "font-semibold text-ink" : "text-ink-2")}>
+				<span
+					className={cn(
+						"text-center text-xs [overflow-wrap:anywhere]",
+						current ? "font-semibold text-ink" : "text-ink-2",
+					)}
+				>
 					{label}
 				</span>
 			</Link>
@@ -407,7 +412,7 @@ function MobileTabs() {
 				<span className="grid h-[26px] w-[34px] place-items-center rounded-sm bg-accent text-on-accent">
 					<Icon name="plus" size={20} />
 				</span>
-				<span className="text-center text-xs break-words text-ink-2">
+				<span className="text-center text-xs [overflow-wrap:anywhere] text-ink-2">
 					<Trans>New</Trans>
 				</span>
 			</button>

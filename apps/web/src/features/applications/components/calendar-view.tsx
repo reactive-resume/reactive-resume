@@ -225,7 +225,7 @@ export function ApplicationCalendar({
 													render={
 														<button
 															type="button"
-															className="self-start rounded-md px-1.5 py-0.5 text-xs text-ink-3 transition-colors hover:bg-sunken hover:text-ink"
+															className="max-w-full self-start rounded-md px-1.5 py-0.5 text-xs text-ink-3 transition-colors hover:bg-sunken hover:text-ink"
 														/>
 													}
 												>
