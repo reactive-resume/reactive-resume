@@ -1,5 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { broadcastAccountChange, invalidateAccountScope, subscribeAccountChange } from "./account-scope";
+import { useSessionRecovery } from "./session-recovery";
 import { useNewDocumentsStore } from "@/features/documents/new-documents";
 import { clearStoredThumbnails } from "@/features/documents/thumbnail-store";
 import { useLetterEditorStore } from "@/features/letters/store";
@@ -37,6 +38,7 @@ export function syncAccountDataAcrossTabs(queryClient: QueryClient) {
 }
 
 function forgetAccountState(queryClient: QueryClient) {
+	useSessionRecovery.setState({ accountId: null });
 	clearResumeDrafts();
 	useLetterEditorStore.getState().reset();
 	queryClient.clear();

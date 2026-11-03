@@ -1,4 +1,4 @@
-// Interface language: the device locale (expo-localization) unless the user picked one in Settings → Preferences.
+// Local language choices win; unconfigured devices restore the account language or follow expo-localization.
 // Catalogs are apps/mobile/locales/*.po, seeded from the web catalogs by scripts/seed-locales.mjs.
 import type { Messages } from "@lingui/core";
 import type { Locale } from "@reactive-resume/utils/locale";
@@ -16,6 +16,7 @@ import {
 } from "@reactive-resume/utils/locale";
 
 const storageKey = "locale";
+let activation = 0;
 export const selectableLocales = __DEV__ ? localeSchema.options : supportedLocales;
 
 // Static paths, so Metro can bundle each catalog.
@@ -88,6 +89,11 @@ export function getLocalePreference(): Locale | null {
 	return isLocale(stored) && selectableLocales.includes(stored) ? stored : null;
 }
 
+/** An explicit System choice must survive account language restoration. */
+export function hasLocalePreference(): boolean {
+	return Storage.getItemSync(storageKey) === "system" || getLocalePreference() !== null;
+}
+
 /**
  * Saves the override (null follows the device) and activates it. Changing between a left-to-right and a
  * right-to-left language only flips the layout after the app restarts: React Native reads the direction at launch.
@@ -95,15 +101,16 @@ export function getLocalePreference(): Locale | null {
  */
 export function setLocalePreference(value: Locale | null): Promise<boolean> {
 	const locale = value && selectableLocales.includes(value) ? value : null;
-	if (locale) Storage.setItemSync(storageKey, locale);
-	else Storage.removeItemSync(storageKey);
+	Storage.setItemSync(storageKey, locale ?? "system");
 	return activateLocale(locale ?? getDeviceLocale());
 }
 
 /** Loads and activates a catalog. Returns true when the layout direction changes on the next launch. */
-export async function activateLocale(value: Locale) {
+export async function activateLocale(value: Locale, current = () => true) {
+	const request = ++activation;
 	const locale = selectableLocales.includes(value) ? value : defaultLocale;
 	const { messages } = await loaders[locale]().catch(() => loaders[defaultLocale]());
+	if (request !== activation || !current()) return false;
 	i18n.loadAndActivate({ locale, messages });
 
 	const rtl = isRTL(locale);

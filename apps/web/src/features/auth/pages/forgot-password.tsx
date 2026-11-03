@@ -1,7 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
-import { Link, useRouteContext } from "@tanstack/react-router";
+import { Link, useRouteContext, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -10,6 +10,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { authErrorMessage } from "../error";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
 import { useAppForm } from "@/libs/tanstack-form";
@@ -20,6 +21,12 @@ const formSchema = z.object({
 
 export function ForgotPasswordPage() {
 	const [submitted, setSubmitted] = useState(false);
+	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
+	const resetSearch = new URLSearchParams({
+		...(callbackURL ? { callbackURL } : {}),
+		...(reauthenticate ? { reauthenticate: "true" } : {}),
+	}).toString();
+	const redirectTo = `/auth/reset-password${resetSearch ? `?${resetSearch}` : ""}`;
 	// A server without email can't deliver the link: say so instead of promising one.
 	const smtpEnabled = useRouteContext({ strict: false }).flags?.smtpEnabled ?? false;
 
@@ -31,18 +38,13 @@ export function ForgotPasswordPage() {
 
 			const { error } = await authClient.requestPasswordReset({
 				email: value.email,
-				redirectTo: "/auth/reset-password",
+				redirectTo,
 			});
 
 			if (error) {
 				toast.add({
 					type: "error",
-					description:
-						error.message ||
-						t({
-							comment: "Fallback toast when requesting password reset email fails without backend message",
-							message: "Couldn't send the password reset email. Try again.",
-						}),
+					description: authErrorMessage(error, t`Couldn't send the password reset email. Try again.`),
 					id: toastId,
 				});
 				return;
@@ -61,7 +63,7 @@ export function ForgotPasswordPage() {
 				onResend={async () => {
 					const { error } = await authClient.requestPasswordReset({
 						email: form.state.values.email,
-						redirectTo: "/auth/reset-password",
+						redirectTo,
 					});
 					toast.add(
 						error
@@ -87,7 +89,7 @@ export function ForgotPasswordPage() {
 							className="h-auto gap-1.5 px-1! py-0"
 							nativeButton={false}
 							render={
-								<Link to="/auth/login">
+								<Link to="/auth/login" search={{ callbackURL, reauthenticate }}>
 									<Trans comment="Call-to-action link from forgot-password page to login page">Sign in now</Trans>{" "}
 									<Icon name="arrow-right" size={16} />
 								</Link>
@@ -150,6 +152,7 @@ export function ForgotPasswordPage() {
 type PostForgotPasswordScreenProps = { onResend: () => Promise<void> };
 
 function PostForgotPasswordScreen({ onResend }: PostForgotPasswordScreenProps) {
+	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const heading = useRef<HTMLHeadingElement>(null);
 	useEffect(() => heading.current?.focus(), []);
 	const [resending, setResending] = useState(false);
@@ -166,7 +169,11 @@ function PostForgotPasswordScreen({ onResend }: PostForgotPasswordScreenProps) {
 				</p>
 			</div>
 
-			<Button nativeButton={false} variant="secondary" render={<Link to="/auth/login" />}>
+			<Button
+				nativeButton={false}
+				variant="secondary"
+				render={<Link to="/auth/login" search={{ callbackURL, reauthenticate }} />}
+			>
 				<Trans>Back to sign in</Trans>
 			</Button>
 			<p className="text-center text-sm text-ink-3">

@@ -14,6 +14,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { ConnectingClient } from "../components/connecting-client";
 import { GuestTransferNote } from "../components/guest-banner";
 import { SocialAuth } from "../components/social-auth";
+import { authErrorMessage } from "../error";
 import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { PasswordInput } from "@/components/input/password-input";
 import { authClient } from "@/libs/auth/client";
@@ -67,12 +68,7 @@ async function submitLogin({ value, callbackURL, reauthenticate, navigate, query
 		if (result.error) {
 			toast.add({
 				type: "error",
-				description:
-					result.error.message ||
-					t({
-						comment: "Fallback toast when sign-in fails and no server error message is available",
-						message: "Couldn't sign in. Try again.",
-					}),
+				description: authErrorMessage(result.error, t`Couldn't sign in. Try again.`),
 				id: toastId,
 			});
 			return;
@@ -231,12 +227,11 @@ export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin, i
 									</FormLabel>
 
 									<Button
-										tabIndex={-1}
 										variant="link"
 										nativeButton={false}
-										className="h-auto p-0 text-xs leading-none"
+										className="min-h-11 px-2 py-2 text-xs"
 										render={
-											<Link to="/auth/forgot-password">
+											<Link to="/auth/forgot-password" search={{ callbackURL, reauthenticate }}>
 												<Trans comment="Link label to password reset page from login form">Forgot password?</Trans>
 											</Link>
 										}
