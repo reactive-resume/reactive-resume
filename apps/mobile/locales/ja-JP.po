@@ -3443,6 +3443,10 @@ msgstr ""
 msgid "Copy a resume for a job"
 msgstr "仕事の履歴書をコピーする"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Copy and log as replied"
+msgstr "コピーして返信済みとして記録"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "回答をコピー"
@@ -3548,6 +3552,10 @@ msgstr "AI プロバイダーを確認できませんでした。"
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't clear the follow-up reminder. It may still notify you."
+msgstr "フォローアップのリマインダーを削除できませんでした。引き続き通知される可能性があります。"
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "リクエストを完了できませんでした。接続を確認して、もう一度お試しください。"
@@ -3577,6 +3585,10 @@ msgstr "保存を確認できませんでした。重複を避けるため、再
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "保存を確認できませんでした。重複を避けるため、再試行する前に応募情報を確認してください。"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "返信をコピーできませんでした。何も記録されていません。もう一度お試しください。"
+
 #: src/features/check/job-match.tsx
 msgid "Couldn't copy the resume. Your edits are kept. Try again."
 msgstr ""
@@ -3589,14 +3601,6 @@ msgstr "トランスクリプトをコピーできませんでした。もう一
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "レターを作成できませんでした。もう一度お試しください。"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Library."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Couldn't delete that offer. Try again."
-msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3905,10 +3909,6 @@ msgstr ""
 #: src/features/workspace/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "その変更を保存できませんでした。接続を確認して、もう一度お試しください。"
-
-#: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item is restored; try again."
-msgstr "その変更を保存できませんでした。項目は元に戻されました。もう一度お試しください。"
 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
@@ -7270,6 +7270,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "返信した後にのみ記録してください。連絡を記録し、応募のフォローアップとそのリマインダーを解除します。メッセージは送信されず、面接のリマインダーは保持されます。"
+
 #: src/features/documents/library.tsx
 msgid "Long press to select"
 msgstr "長押しして選択"
@@ -10311,6 +10315,10 @@ msgstr "写真を置き換える"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "表をプレーンな段落やリストに置き換えてください。セルは読み取り順ではなく保存順で抽出されます。"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "送信前にこれらのプレースホルダーを置き換えてください："
+
 #: src/features/assistant/messages.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -10327,6 +10335,10 @@ msgstr "応募の「{current}」を置き換えます。"
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+msgid "Replied"
+msgstr "返信済み"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "返信"
@@ -10334,6 +10346,22 @@ msgstr "返信"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Reply copied"
 msgstr "返信をコピーしました"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "返信をコピーし、返信済みとして記録しました"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "返信をコピーしました。記録は確認できませんでした。再試行する前にタイムラインを確認してください。"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "返信をコピーしました。応募情報が変更されたため、何も記録されませんでした。記録する前に、もう一度確認してください。"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "返信をコピーしました。何も記録されていません。再度記録する前に応募内容を確認してください。"
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -10575,6 +10603,7 @@ msgstr "ステージを廃止"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/provider.tsx
+#: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
 #: src/features/check/job-match.tsx
@@ -10600,6 +10629,7 @@ msgstr "ステージを廃止"
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -13926,6 +13956,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "返信の記録を有効にするには、サーバーを更新してください。返信のコピーは引き続き利用できます。"
 
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."

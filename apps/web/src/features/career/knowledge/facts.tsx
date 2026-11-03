@@ -17,13 +17,13 @@ import { Switch } from "@reactive-resume/ui/components/switch";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError, CareerLoading } from "../load-state";
-import { CollapseRow, FilterChip, flash, useCareerTime, withUndo } from "../shared";
+import { CollapseRow, FilterChip, flash, useCareerTime, withQueryUndo } from "../shared";
 import { CATEGORIES, categoryLabel } from "./fact-categories";
 import { useProfile } from "./preferences";
 import { ResumeFacts } from "./resume-facts";
 import { toastError } from "@/libs/error-message";
 import { D2, EASE, EXIT } from "@/libs/motion";
-import { client, orpc } from "@/libs/orpc/client";
+import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 /** Older rows may carry a retired category; they read as experience. */
 const categoryOf = (fact: Fact): FactCategory => factCategorySchema.catch("experience").parse(fact.category);
@@ -89,17 +89,13 @@ export function FactsPage({ highlight }: FactsPageProps) {
 
 	const forget = (fact: Fact) => {
 		setHidden((current) => [...current, fact.id]);
-		withUndo({
+		withQueryUndo({
+			queryClient,
+			queryKey: orpc.career.key(),
 			description: t`Fact forgotten`,
-			onUndo: () => setHidden((current) => current.filter((id) => id !== fact.id)),
-			commit: () =>
-				client.career
-					.forgetFact({ id: fact.id })
-					.catch((error: unknown) => {
-						setHidden((current) => current.filter((id) => id !== fact.id));
-						toastError(error, t`Couldn't forget that fact. Try again.`);
-					})
-					.finally(refresh),
+			errorMessage: t`Couldn't forget that fact. Try again.`,
+			prepare: () => prepareRpc(client.career.forgetFact, { id: fact.id }),
+			restore: () => setHidden((current) => current.filter((id) => id !== fact.id)),
 		});
 	};
 

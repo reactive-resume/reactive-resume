@@ -69,6 +69,13 @@ export const coverLetterDto = {
 			content: editableSchema.shape.content.default(""),
 			resumeId: z.string().min(1).optional().describe("The resume it goes with; its details and design are linked."),
 			applicationId: z.string().min(1).optional().describe("The job it's for; it fills the recipient."),
+			sourceLetterId: z
+				.string()
+				.min(1)
+				.optional()
+				.describe(
+					"An earlier owned letter to start from. Its body is copied; the new letter still takes its recipient, date, resume and application link from this request, and keeps its own version history.",
+				),
 			template: templateSchema.optional(),
 			layout: coverLetterLayoutSchema
 				.optional()

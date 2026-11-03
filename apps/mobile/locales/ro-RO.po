@@ -3443,6 +3443,10 @@ msgstr ""
 msgid "Copy a resume for a job"
 msgstr "Copiați un CV pentru un loc de muncă"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Copy and log as replied"
+msgstr "Copiază și înregistrează răspunsul"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "Copiați răspunsurile"
@@ -3548,6 +3552,10 @@ msgstr "Nu s-au putut verifica furnizorii dvs. de AI."
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't clear the follow-up reminder. It may still notify you."
+msgstr "Mementoul pentru revenire nu a putut fi șters. Este posibil să te notifice în continuare."
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Nu s-a putut finaliza solicitarea. Verifică conexiunea și încearcă din nou."
@@ -3577,6 +3585,10 @@ msgstr "Nu s-a putut confirma salvarea. Verifică Candidaturile înainte de a re
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "Nu s-a putut confirma salvarea. Verifică candidatura înainte de a reîncerca, pentru a evita un duplicat."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "Răspunsul nu a putut fi copiat. Nu s-a înregistrat nimic. Încearcă din nou."
+
 #: src/features/check/job-match.tsx
 msgid "Couldn't copy the resume. Your edits are kept. Try again."
 msgstr ""
@@ -3589,14 +3601,6 @@ msgstr "Nu s-a putut copia transcrierea. Încearcă din nou."
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "Nu s-a putut crea scrisoarea. Încearcă din nou."
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Library."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Couldn't delete that offer. Try again."
-msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3905,10 +3909,6 @@ msgstr ""
 #: src/features/workspace/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Nu s-a putut salva modificarea. Verificați conexiunea și încercați din nou."
-
-#: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item is restored; try again."
-msgstr "Nu s-a putut salva modificarea. Elementul a fost restaurat; încearcă din nou."
 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
@@ -7270,6 +7270,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "Înregistrează doar după ce ai răspuns. Se înregistrează contactul și se șterg urmărirea candidaturii și mementoul ei; nu se trimite niciun mesaj, iar mementourile pentru interviuri se păstrează."
+
 #: src/features/documents/library.tsx
 msgid "Long press to select"
 msgstr "Apasă lung pentru a selecta"
@@ -10311,6 +10315,10 @@ msgstr "Înlocuiește fotografia"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Înlocuiți tabelele cu paragrafe și liste simple. Celulele sunt extrase în ordinea de stocare, nu în ordinea de citire."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "Înlocuiește acești substituenți înainte de trimitere:"
+
 #: src/features/assistant/messages.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -10327,6 +10335,10 @@ msgstr "Înlocuiește „{current}” în candidatură."
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+msgid "Replied"
+msgstr "Răspuns dat"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Răspuns"
@@ -10334,6 +10346,22 @@ msgstr "Răspuns"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Reply copied"
 msgstr "Răspuns copiat"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "Răspuns copiat și înregistrat"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "Răspuns copiat. Înregistrarea nu a fost confirmată. Verifică cronologia înainte de a încerca din nou."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "Răspuns copiat. Nu s-a înregistrat nimic deoarece candidatura s-a schimbat. Verific-o din nou înainte de înregistrare."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "Răspuns copiat. Nu s-a înregistrat nimic. Verifică candidatura înainte de a încerca din nou înregistrarea."
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -10575,6 +10603,7 @@ msgstr "Retrageți etapa"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/provider.tsx
+#: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
 #: src/features/check/job-match.tsx
@@ -10600,6 +10629,7 @@ msgstr "Retrageți etapa"
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -13926,6 +13956,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "Actualizează serverul pentru a activa înregistrarea răspunsurilor. Poți copia în continuare răspunsul."
 
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."

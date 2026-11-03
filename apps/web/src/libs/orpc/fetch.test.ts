@@ -88,4 +88,44 @@ describe("RPC fetch", () => {
 		await rpcFetch(rpcUrl, { method: "POST", body: "small draft" });
 		expect(new Headers(fetchMock.mock.calls[0]?.[1]?.headers).get("x-account-id")).toBe("alice");
 	});
+	it("prepares the real RPC pipeline before synchronous flush and does not hold unrelated calls", async () => {
+		vi.stubGlobal("window", { location: { origin: "https://resume.test" } });
+		fetchMock.mockImplementation(async () => Response.json({ json: null }));
+		const { setAccountScope } = await import("@/libs/auth/account-scope");
+		setAccountScope("alice");
+		const { client, prepareRpc } = await import("./client");
+		const request = await prepareRpc(client.career.forgetFact, { id: "fictional-fact" });
+		expect(fetchMock).not.toHaveBeenCalled();
+		await client.career.profile();
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const result = request.send();
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		const [url, init] = fetchMock.mock.calls[1] ?? [];
+		expect(String(url)).toContain("/career/forgetFact");
+		expect(init?.keepalive).toBe(true);
+		expect(new TextDecoder().decode(init?.body as ArrayBuffer)).toContain("fictional-fact");
+		expect(new Headers(init?.headers).get("x-account-id")).toBe("alice");
+		await result;
+		await request.send();
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it("refuses a prepared send after an account switch and rejects oversized Undo bodies before acknowledgement", async () => {
+		const { prepareRequest } = await import("@reactive-resume/utils/deferred-request");
+		const { setAccountScope } = await import("@/libs/auth/account-scope");
+		const { rpcFetch } = await import("./fetch");
+		setAccountScope("alice");
+		const request = await prepareRequest((defer) =>
+			rpcFetch(rpcUrl, { method: "POST", body: "small" }, { context: { defer } }),
+		);
+		setAccountScope("bob");
+		await expect(request.send()).rejects.toMatchObject({ name: "AbortError" });
+		expect(fetchMock).not.toHaveBeenCalled();
+		await expect(
+			prepareRequest((defer) =>
+				rpcFetch(rpcUrl, { method: "POST", body: new Uint8Array(61 * 1024) }, { context: { defer } }),
+			),
+		).rejects.toThrow("Undo dispatch limit");
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });

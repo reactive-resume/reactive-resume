@@ -195,6 +195,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# document déplacé vers la corbeille} other {# documents déplacés vers la corbeille}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -412,6 +417,12 @@ msgstr "{0, plural, one {utilisé dans # élément enregistré} other {utilisé 
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {La police sélectionnée ne peut pas afficher {list}. Ce caractère s’affiche sous la forme “?”. Dans Apparence, choisissez une police qui le contient.} other {La police sélectionnée ne peut pas afficher {list}. Ces caractères s’affichent sous la forme “?”. Dans Apparence, choisissez une police qui les contient.}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3039,6 +3050,10 @@ msgstr "Idéal pour postuler"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "Bloquant"
@@ -3853,6 +3868,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "Fermé"
 
@@ -4308,6 +4324,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4328,6 +4348,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "Copier un curriculum vitae pour un emploi"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Copy and log as replied"
+msgstr "Copier et consigner la réponse"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
@@ -4511,6 +4535,10 @@ msgstr "Impossible de continuer en tant qu'invité. Réessayez."
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "Impossible de copier les questions. Sélectionnez le texte et copiez-le manuellement."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "Impossible de copier la réponse. Rien n'a été consigné. Réessayez."
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Couldn't copy the resume. Choose it again to prepare it."
 msgstr ""
@@ -4538,11 +4566,6 @@ msgstr "Impossible de créer le document. Réessayez."
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "Impossible de créer la clé. Essayer à nouveau."
-
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Impossible de créer la lettre. Réessayez."
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
@@ -4736,6 +4759,7 @@ msgstr "Impossible de charger vos étapes. Les étapes standard sont donc affich
 msgid "Couldn't load your stages."
 msgstr "Impossible de charger vos étapes."
 
+#: src/features/career/shared.tsx
 #: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
@@ -4898,6 +4922,7 @@ msgid "Couldn't revoke this connection. Try again."
 msgstr "Impossible de révoquer cette connexion. Réessayez."
 
 #: src/features/career/hooks.ts
+#: src/features/career/workspace/saved.tsx
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Impossible d'enregistrer cette modification. Vérifiez votre connexion et réessayez."
 
@@ -5258,12 +5283,6 @@ msgstr "Lettre de motivation"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "Lettre de motivation"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Lettre de motivation — {0}"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -9314,6 +9333,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "Consignez uniquement après avoir répondu. Cela enregistre le contact et efface la relance de la candidature et son rappel ; aucun message n'est envoyé et les rappels d'entretien sont conservés."
+
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "De longs passages sont en majuscules."
@@ -13012,6 +13035,10 @@ msgstr "Remplacez les polices d'icônes par du texte brut, puis réexportez."
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Remplacez les tableaux par des paragraphes et des listes simples. Les cellules s'extraient dans l'ordre de stockage, pas dans l'ordre de lecture."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "Remplacez ces espaces réservés avant l'envoi :"
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -13024,6 +13051,10 @@ msgstr "Remplace « {current} » sur la candidature."
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Replied"
+msgstr "Réponse donnée"
+
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13032,6 +13063,22 @@ msgstr "Réponse"
 #: src/features/career/workspace/messages.tsx
 msgid "Reply copied"
 msgstr "Réponse copiée"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "Réponse copiée et consignée"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "Réponse copiée. L'enregistrement n'a pas été confirmé. Vérifiez la chronologie avant de réessayer."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "Réponse copiée. Rien n'a été enregistré car la candidature a changé. Vérifiez-la à nouveau avant d'enregistrer la réponse."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "Réponse copiée. Rien n'a été enregistré. Vérifiez la candidature avant de réessayer l'enregistrement."
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -13321,6 +13368,7 @@ msgstr "CV créés"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -15214,6 +15262,10 @@ msgstr "Commencez chacune par un verbe concret : construit, dirigé, réduit, mi
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "Commencer à partir de"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."
@@ -17369,6 +17421,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "Mettez le serveur à jour pour activer l'enregistrement des réponses. Vous pouvez toujours copier la réponse."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."

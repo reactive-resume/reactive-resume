@@ -195,6 +195,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# سند به سطل زباله منتقل شد} other {# سند به سطل زباله منتقل شد}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -412,6 +417,12 @@ msgstr "{0, plural, one {در # مورد ذخیره‌شده استفاده شد
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {فونت انتخاب‌شدهٔ شما نمی‌تواند {list} را نمایش دهد. به‌صورت “?” نشان داده می‌شود. در طراحی، فونتی را انتخاب کنید که آن را داشته باشد.} other {فونت انتخاب‌شدهٔ شما نمی‌تواند {list} را نمایش دهد. به‌صورت “?” نشان داده می‌شوند. در طراحی، فونتی را انتخاب کنید که آن‌ها را داشته باشد.}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3039,6 +3050,10 @@ msgstr "بهترین برای درخواست"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "مسدودکننده"
@@ -3853,6 +3868,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "بسته شد"
 
@@ -4308,6 +4324,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4328,6 +4348,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "رزومه کاری را کپی کنید"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Copy and log as replied"
+msgstr "کپی و ثبت به‌عنوان پاسخ‌داده‌شده"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
@@ -4511,6 +4535,10 @@ msgstr "ادامه به‌عنوان مهمان ممکن نشد. دوباره ا
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "پرسش‌ها کپی نشدند. متن را انتخاب کنید و دستی کپی کنید."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "پاسخ کپی نشد. چیزی ثبت نشد. دوباره تلاش کنید."
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Couldn't copy the resume. Choose it again to prepare it."
 msgstr ""
@@ -4538,11 +4566,6 @@ msgstr "ایجاد سند ممکن نشد. دوباره امتحان کنید."
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "کلید ایجاد نشد. دوباره امتحان کنید."
-
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "نامه ایجاد نشد. دوباره امتحان کنید."
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
@@ -4736,6 +4759,7 @@ msgstr "مرحله‌های شما بارگیری نشدند؛ بنابراین 
 msgid "Couldn't load your stages."
 msgstr "مرحله‌های شما بارگیری نشدند."
 
+#: src/features/career/shared.tsx
 #: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
@@ -4898,6 +4922,7 @@ msgid "Couldn't revoke this connection. Try again."
 msgstr "ابطال این اتصال ممکن نشد. دوباره امتحان کنید."
 
 #: src/features/career/hooks.ts
+#: src/features/career/workspace/saved.tsx
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "آن تغییر ذخیره نشد. اتصال خود را بررسی کنید و دوباره امتحان کنید."
 
@@ -5258,12 +5283,6 @@ msgstr "نامهٔ پوششی"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "نامه پوششی"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "جلد نامه - {0}"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -9314,6 +9333,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "فقط پس از پاسخ دادن ثبت کنید. این کار تماس را ثبت و پیگیری درخواست شغلی و یادآور آن را پاک می‌کند؛ پیامی ارسال نمی‌کند و یادآورهای مصاحبه را نگه می‌دارد."
+
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "بخش‌های طولانی با حروف بزرگ نوشته شده‌اند."
@@ -13012,6 +13035,10 @@ msgstr "فونت‌های آیکنی را با متن ساده جایگزین ک
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "جدول‌ها را با پاراگراف‌ها و فهرست‌های ساده جایگزین کنید. سلول‌ها به ترتیب ذخیره‌سازی استخراج می‌شوند، نه به ترتیب خواندن."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "پیش از ارسال، این جای‌نگهدارها را جایگزین کنید:"
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -13024,6 +13051,10 @@ msgstr "جایگزین «{current}» در درخواست می‌شود."
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Replied"
+msgstr "پاسخ داده شد"
+
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13032,6 +13063,22 @@ msgstr "پاسخ"
 #: src/features/career/workspace/messages.tsx
 msgid "Reply copied"
 msgstr "پاسخ کپی شد"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "پاسخ کپی و به‌عنوان پاسخ‌داده‌شده ثبت شد"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "پاسخ کپی شد. ثبت تأیید نشد. پیش از تلاش دوباره، خط زمانی را بررسی کنید."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "پاسخ کپی شد. چون درخواست شغلی تغییر کرده، چیزی ثبت نشد. پیش از ثبت، دوباره آن را بررسی کنید."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "پاسخ کپی شد. چیزی ثبت نشد. پیش از ثبت دوباره، درخواست شغلی را بررسی کنید."
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -13321,6 +13368,7 @@ msgstr "رزومه ایجاد شد"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -15214,6 +15262,10 @@ msgstr "هر مورد را با یک فعل مشخص شروع کنید: ساخت
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "شروع از"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."
@@ -17369,6 +17421,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "برای فعال کردن ثبت پاسخ، سرور را به‌روز کنید. کپی پاسخ همچنان در دسترس است."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."

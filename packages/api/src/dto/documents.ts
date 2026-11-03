@@ -1,4 +1,5 @@
 import z from "zod";
+import { applicationStatusSchema } from "@reactive-resume/schema/applications/data";
 import { paginationShape } from "../pagination";
 import { applicationDto } from "./application";
 import { acceptedRevisionSchema, expectedRevisionSchema } from "./resume";
@@ -45,7 +46,12 @@ const documentSchema = z.object({
 			"Who a letter is to: its recipient company, else the recipient's name. Null for resumes and blank letters.",
 		),
 	application: z
-		.object({ id: z.string(), company: z.string(), role: z.string() })
+		.object({
+			id: z.string(),
+			company: z.string(),
+			role: z.string(),
+			status: applicationStatusSchema.describe("The job's pipeline stage; closed groups start collapsed."),
+		})
 		.nullable()
 		.describe("The job application this document was made for, if any."),
 });

@@ -36,14 +36,15 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 		});
 		fixture.db = drizzle({ client: pool });
 		await pool.query(`
-   CREATE TABLE application (id text PRIMARY KEY, user_id text, company text, role text, trashed_at timestamptz);
+   CREATE TABLE application (id text PRIMARY KEY, user_id text, company text, role text, status text DEFAULT 'saved', trashed_at timestamptz);
    CREATE TABLE resume (id text PRIMARY KEY, user_id text, name text, tags text[] DEFAULT '{}', is_locked boolean DEFAULT false,
     is_public boolean DEFAULT false, slug text DEFAULT 'resume', trashed_at timestamptz, created_at timestamptz DEFAULT '2026-01-01',
     updated_at timestamptz DEFAULT '2026-01-01', edited_at timestamptz, application_id text, password text);
    CREATE TABLE cover_letter (LIKE resume INCLUDING DEFAULTS);
    ALTER TABLE cover_letter ADD COLUMN source_application_id text, ADD COLUMN recipient_name text DEFAULT '',
     ADD COLUMN recipient_company text DEFAULT '', ADD COLUMN layout text DEFAULT 'structured', ADD COLUMN recipient text DEFAULT '';
-   INSERT INTO application VALUES ('job', 'owner', 'Orbital', 'Design lead'), ('foreign-job', 'stranger', 'Secret', 'Private');
+   INSERT INTO application (id, user_id, company, role, status) VALUES
+    ('job', 'owner', 'Orbital', 'Design lead', 'closed'), ('foreign-job', 'stranger', 'Secret', 'Private', 'saved');
    INSERT INTO resume (id, user_id, name, tags, is_public, application_id) VALUES
     ('same', 'owner', 'Alpha', ARRAY['design','shared'], true, 'job'),
     ('foreign-link', 'owner', 'Beta', ARRAY['shared'], false, 'foreign-job'),
@@ -84,6 +85,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 			id: "job",
 			company: "Orbital",
 			role: "Design lead",
+			status: "closed",
 		});
 	});
 

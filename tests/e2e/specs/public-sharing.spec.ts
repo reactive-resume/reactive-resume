@@ -146,7 +146,7 @@ test("counts a visitor's PDF download without counting the preview", async ({ br
 test("publishing the first resume enables a working short link", async ({ browser, authPage: page }, testInfo) => {
 	await createSampleResumeFromDashboard(page, testInfo);
 	await openSidebarSection(page, "Sharing");
-	const addresses = page.getByRole("region", { name: "Short link and domain" });
+	const addresses = page.getByRole("region", { name: /^Short link(?: and domain)?$/ });
 	const copy = addresses.getByRole("button", { name: "Copy", exact: true });
 	await expect(copy).toBeDisabled();
 	await page.getByRole("button", { name: "Publish", exact: true }).click();
@@ -181,9 +181,9 @@ test("a non-primary resume can copy the short link another published primary ser
 	await page.goto(`/builder/${secondId}`);
 	await openSidebarSection(page, "Sharing");
 
-	const addresses = page.getByRole("region", { name: "Short link and domain" });
+	const addresses = page.getByRole("region", { name: /^Short link(?: and domain)?$/ });
 	await expect(addresses.getByRole("button", { name: "Copy", exact: true })).toBeEnabled();
-	await expect(addresses).toContainText(`open “${primaryName}”`);
+	await expect(addresses).toContainText(new RegExp(`opens? “${RegExp.escape(primaryName)}”`));
 });
 
 test("a failed primary lookup stops Copy for a cached primary that is no longer published", async ({
@@ -208,10 +208,10 @@ test("a failed primary lookup stops Copy for a cached primary that is no longer 
 	const secondId = (await created.json()) as string;
 	await page.goto(`/builder/${secondId}`);
 	await openSidebarSection(page, "Sharing");
-	const addresses = page.getByRole("region", { name: "Short link and domain" });
+	const addresses = page.getByRole("region", { name: /^Short link(?: and domain)?$/ });
 	const copy = addresses.getByRole("button", { name: "Copy", exact: true });
 	await expect(copy).toBeEnabled();
-	await expect(addresses).toContainText(`open “${primaryName}”`);
+	await expect(addresses).toContainText(new RegExp(`opens? “${RegExp.escape(primaryName)}”`));
 
 	// The primary is unpublished outside this page. The cached row still says it is public until the list is read again.
 	expect((await page.request.put(`/api/openapi/resumes/${primaryId}`, { data: { isPublic: false } })).ok()).toBe(true);
@@ -246,6 +246,9 @@ test("a primary in Trash keeps the short link closed until Primary is switched o
 	authPage: page,
 	account,
 }, testInfo) => {
+	const flags = await page.request.get("/api/openapi/flags");
+	await expect(flags).toBeOK();
+	const { customDomains } = (await flags.json()) as { customDomains: boolean };
 	const primaryName = await createSampleResumeFromDashboard(page, testInfo);
 	await openSidebarSection(page, "Sharing");
 	await page.getByRole("button", { name: "Publish", exact: true }).click();
@@ -262,7 +265,7 @@ test("a primary in Trash keeps the short link closed until Primary is switched o
 	const secondId = (await created.json()) as string;
 	await page.goto(`/builder/${secondId}`);
 	await openSidebarSection(page, "Sharing");
-	const addresses = page.getByRole("region", { name: "Short link and domain" });
+	const addresses = page.getByRole("region", { name: /^Short link(?: and domain)?$/ });
 	const copy = addresses.getByRole("button", { name: "Copy", exact: true });
 	await expect(copy).toBeEnabled();
 
@@ -273,7 +276,11 @@ test("a primary in Trash keeps the short link closed until Primary is switched o
 	await page.reload();
 	await openSidebarSection(page, "Sharing");
 
-	await expect(addresses).toContainText("Publish this resume to open it at your short link and custom domain.");
+	await expect(addresses).toContainText(
+		customDomains
+			? "Publish this resume to open it at your short link and custom domain."
+			: "Publish this resume to open it at your short link.",
+	);
 	await expect(addresses).toContainText("If another resume holds Primary, turn it on for this one instead.");
 	await expect(copy).toBeDisabled();
 	expect((await page.request.get(`/${account.username}`)).status()).toBe(404);

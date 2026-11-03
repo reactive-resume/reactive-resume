@@ -3443,6 +3443,10 @@ msgstr ""
 msgid "Copy a resume for a job"
 msgstr "Copiar un currículum para un trabajo."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Copy and log as replied"
+msgstr "Copiar y registrar como respondido"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "Copiar respuestas"
@@ -3548,6 +3552,10 @@ msgstr "No se han podido comprobar sus proveedores de IA."
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't clear the follow-up reminder. It may still notify you."
+msgstr "No se ha podido eliminar el recordatorio de seguimiento. Es posible que aún te notifique."
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "No se pudo completar la solicitud. Revisa tu conexión e inténtalo de nuevo."
@@ -3577,6 +3585,10 @@ msgstr "No se pudo confirmar el guardado. Revisa Candidaturas antes de volver a 
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "No se pudo confirmar el guardado. Revisa la candidatura antes de volver a intentarlo para evitar un duplicado."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "No se pudo copiar la respuesta. No se registró nada. Inténtalo de nuevo."
+
 #: src/features/check/job-match.tsx
 msgid "Couldn't copy the resume. Your edits are kept. Try again."
 msgstr ""
@@ -3589,14 +3601,6 @@ msgstr "No se pudo copiar la transcripción. Inténtalo de nuevo."
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "No se pudo crear la carta. Inténtalo de nuevo."
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Library."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Couldn't delete that offer. Try again."
-msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3905,10 +3909,6 @@ msgstr ""
 #: src/features/workspace/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "No se pudo guardar ese cambio. Comprueba tu conexión y vuelve a intentarlo."
-
-#: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item is restored; try again."
-msgstr "No se pudo guardar ese cambio. El elemento se ha restaurado; inténtalo de nuevo."
 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
@@ -7270,6 +7270,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "Regístralo solo después de responder. Esto registra el contacto y borra el seguimiento de la candidatura y su recordatorio; no envía ningún mensaje y conserva los recordatorios de entrevistas."
+
 #: src/features/documents/library.tsx
 msgid "Long press to select"
 msgstr "Mantén pulsado para seleccionar"
@@ -10311,6 +10315,10 @@ msgstr "Reemplazar foto"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Sustituya las tablas por párrafos y listas sencillas. Las celdas se extraen en el orden de almacenamiento, no en el orden de lectura."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "Sustituye estos marcadores antes de enviar:"
+
 #: src/features/assistant/messages.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -10327,6 +10335,10 @@ msgstr "Sustituye “{current}” en la candidatura."
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+msgid "Replied"
+msgstr "Respondido"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Respuesta"
@@ -10334,6 +10346,22 @@ msgstr "Respuesta"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Reply copied"
 msgstr "Respuesta copiada"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "Respuesta copiada y registrada como respondida"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "Respuesta copiada. No se confirmó el registro. Revisa la cronología antes de intentarlo de nuevo."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "Respuesta copiada. No se ha registrado nada porque la candidatura ha cambiado. Revísala de nuevo antes de registrar la respuesta."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "Respuesta copiada. No se ha registrado nada. Revisa la candidatura antes de volver a registrarla."
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -10575,6 +10603,7 @@ msgstr "Retirar etapa"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/provider.tsx
+#: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
 #: src/features/check/job-match.tsx
@@ -10600,6 +10629,7 @@ msgstr "Retirar etapa"
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -13926,6 +13956,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "Actualiza el servidor para activar el registro de respuestas. Aún puedes copiar la respuesta."
 
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."

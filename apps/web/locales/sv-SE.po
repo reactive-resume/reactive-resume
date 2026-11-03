@@ -195,6 +195,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# dokument flyttades till papperskorgen} other {# dokument flyttades till papperskorgen}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -412,6 +417,12 @@ msgstr "{0, plural, one {använt i # sparat objekt} other {använt i # sparade o
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {Det valda typsnittet kan inte visa {list}. Det visas som “?”. Välj ett typsnitt som har det under Design.} other {Det valda typsnittet kan inte visa {list}. De visas som “?”. Välj ett typsnitt som har dem under Design.}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3039,6 +3050,10 @@ msgstr "Bäst för ansökningar"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "Blockerare"
@@ -3853,6 +3868,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "Stängd"
 
@@ -4308,6 +4324,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4328,6 +4348,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "Kopiera ett CV för ett jobb"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Copy and log as replied"
+msgstr "Kopiera och logga som besvarat"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
@@ -4511,6 +4535,10 @@ msgstr "Det gick inte att fortsätta som gäst. Försök igen."
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "Det gick inte att kopiera frågorna. Markera texten och kopiera den manuellt."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "Svaret kunde inte kopieras. Inget loggades. Försök igen."
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Couldn't copy the resume. Choose it again to prepare it."
 msgstr ""
@@ -4538,11 +4566,6 @@ msgstr "Det gick inte att skapa dokumentet. Försök igen."
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "Det gick inte att skapa nyckeln. Försök igen."
-
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Det gick inte att skapa brevet. Försök igen."
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
@@ -4736,6 +4759,7 @@ msgstr "Det gick inte att läsa in dina faser, så standardfaserna visas. Förs�
 msgid "Couldn't load your stages."
 msgstr "Det gick inte att läsa in dina faser."
 
+#: src/features/career/shared.tsx
 #: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
@@ -4898,6 +4922,7 @@ msgid "Couldn't revoke this connection. Try again."
 msgstr "Det gick inte att återkalla den här anslutningen. Försök igen."
 
 #: src/features/career/hooks.ts
+#: src/features/career/workspace/saved.tsx
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Det gick inte att spara ändringen. Kontrollera din anslutning och försök igen."
 
@@ -5258,12 +5283,6 @@ msgstr "Följebrev"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "Personligt brev"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Följebrev — {0}"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -9314,6 +9333,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "Logga först när du har svarat. Detta registrerar kontakten och rensar ansökans uppföljning och dess påminnelse; inget meddelande skickas och intervjupåminnelser behålls."
+
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "Långa stycken är skrivna med versaler."
@@ -13012,6 +13035,10 @@ msgstr "Ersätt ikontypsnitt med vanlig text, exportera sedan på nytt."
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Ersätt tabeller med vanliga stycken och listor. Celler extraheras i lagringsordning, inte läsordning."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "Ersätt dessa platshållare innan du skickar:"
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -13024,6 +13051,10 @@ msgstr "Ersätter \"{current}\" i ansökan."
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Replied"
+msgstr "Besvarat"
+
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13032,6 +13063,22 @@ msgstr "Svar"
 #: src/features/career/workspace/messages.tsx
 msgid "Reply copied"
 msgstr "Svaret kopierat"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "Svar kopierat och loggat som besvarat"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "Svar kopierat. Loggningen bekräftades inte. Kontrollera tidslinjen innan du försöker igen."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "Svaret har kopierats. Inget registrerades eftersom ansökan har ändrats. Granska den igen innan du registrerar svaret."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "Svar kopierat. Ingenting registrerades. Granska ansökan innan du försöker registrera igen."
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -13321,6 +13368,7 @@ msgstr "meritförteckningar skapade"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -15214,6 +15262,10 @@ msgstr "Börja varje punkt med ett konkret verb: byggde, ledde, minskade, migrer
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "Börja från"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."
@@ -17369,6 +17421,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "Uppdatera servern för att aktivera registrering av svar. Du kan fortfarande kopiera svaret."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."

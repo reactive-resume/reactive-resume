@@ -3443,6 +3443,10 @@ msgstr ""
 msgid "Copy a resume for a job"
 msgstr "Kopējiet darba CV"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Copy and log as replied"
+msgstr "Kopēt un reģistrēt kā atbildētu"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "Kopēt atbildes"
@@ -3548,6 +3552,10 @@ msgstr "Nevarēja pārbaudīt jūsu AI nodrošinātājus."
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't clear the follow-up reminder. It may still notify you."
+msgstr "Neizdevās noņemt atkārtotas saziņas atgādinājumu. Tas joprojām var nosūtīt paziņojumu."
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Nevarēja pabeigt pieprasījumu. Pārbaudiet savienojumu un mēģiniet vēlreiz."
@@ -3577,6 +3585,10 @@ msgstr "Nevarēja apstiprināt saglabāšanu. Pirms mēģināt vēlreiz, pārbau
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "Nevarēja apstiprināt saglabāšanu. Pirms mēģināt vēlreiz, pārbaudiet pieteikumu, lai neveidotu dublikātu."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "Atbildi neizdevās nokopēt. Nekas nav reģistrēts. Mēģiniet vēlreiz."
+
 #: src/features/check/job-match.tsx
 msgid "Couldn't copy the resume. Your edits are kept. Try again."
 msgstr ""
@@ -3589,14 +3601,6 @@ msgstr "Nevarēja nokopēt atšifrējumu. Mēģiniet vēlreiz."
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "Nevarēja izveidot vēstuli. Mēģiniet vēlreiz."
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Library."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Couldn't delete that offer. Try again."
-msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3905,10 +3909,6 @@ msgstr ""
 #: src/features/workspace/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Nevarēja saglabāt šo izmaiņu. Pārbaudiet savienojumu un mēģiniet vēlreiz."
-
-#: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item is restored; try again."
-msgstr "Nevarēja saglabāt šo izmaiņu. Vienums ir atjaunots; mēģiniet vēlreiz."
 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
@@ -7270,6 +7270,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "Reģistrējiet tikai pēc atbildēšanas. Tas reģistrē saziņu un notīra pieteikuma atkārtoto saziņu un tās atgādinājumu; ziņa netiek nosūtīta, un interviju atgādinājumi tiek saglabāti."
+
 #: src/features/documents/library.tsx
 msgid "Long press to select"
 msgstr "Nospiediet un turiet, lai atlasītu"
@@ -10311,6 +10315,10 @@ msgstr "Nomainiet fotoattēlu"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Aizstājiet tabulas ar parastām rindkopām un sarakstiem. Šūnas tiek iegūtas glabāšanas, nevis lasīšanas secībā."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "Pirms sūtīšanas aizstājiet šos vietturus:"
+
 #: src/features/assistant/messages.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -10327,6 +10335,10 @@ msgstr "Aizstāj pieteikumā esošo vērtību “{current}”."
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+msgid "Replied"
+msgstr "Atbildēts"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "Atbilde"
@@ -10334,6 +10346,22 @@ msgstr "Atbilde"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Reply copied"
 msgstr "Atbilde nokopēta"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "Atbilde nokopēta un reģistrēta kā atbildēta"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "Atbilde nokopēta. Reģistrēšana nav apstiprināta. Pirms mēģināt vēlreiz, pārbaudiet laika skalu."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "Atbilde nokopēta. Nekas netika reģistrēts, jo darba pieteikums ir mainījies. Pirms reģistrēšanas pārskatiet to vēlreiz."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "Atbilde nokopēta. Nekas netika reģistrēts. Pirms atkārtotas reģistrēšanas pārskatiet pieteikumu."
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -10575,6 +10603,7 @@ msgstr "Pārtraukt izmantot posmu"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/provider.tsx
+#: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
 #: src/features/check/job-match.tsx
@@ -10600,6 +10629,7 @@ msgstr "Pārtraukt izmantot posmu"
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -13926,6 +13956,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "Atjauniniet serveri, lai iespējotu atbilžu reģistrēšanu. Atbildi joprojām var kopēt."
 
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."

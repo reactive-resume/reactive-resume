@@ -7,10 +7,12 @@ import type { InferRouterInputs, InferRouterOutputs, RouterClient } from "@orpc/
 // the mobile override in the root vite.config.ts rejects value imports from it.
 // @boundaries-ignore type-only import of the server router
 import type router from "@reactive-resume/api/routers";
+import type { DeferredFetch } from "@reactive-resume/utils/deferred-request";
 import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { fetch as expoFetch } from "expo/fetch";
+import { prepareRequest } from "@reactive-resume/utils/deferred-request";
 import { privateUploadUrl } from "@reactive-resume/utils/http";
 import { authorizeAiRequest } from "./ai-consent";
 import { getAccountScope, getCredentials, recoverFromUnauthorized, rejectCredentials } from "@/auth/session";
@@ -20,6 +22,7 @@ import { getAccountScope, getCredentials, recoverFromUnauthorized, rejectCredent
  * the call fails instead of going out when the session no longer belongs to that account.
  */
 export type ClientContext = {
+	defer?: DeferredFetch | undefined;
 	scope?: string | undefined;
 	aiDestination?: string | undefined;
 	webDestination?: string | undefined;
@@ -73,14 +76,17 @@ const rpcFetch = async (request: Request, _init: unknown, options: { context: Cl
 	const path = request.url.slice(placeholder.length);
 	const hasBody = request.method !== "GET" && request.method !== "HEAD";
 	const body = hasBody ? await request.arrayBuffer() : null;
-	return withCredentials(async (credentials) => {
-		const response = await expoFetch(`${credentials.server}${path}`, {
-			method: request.method,
-			headers: bearer(credentials, new Headers(request.headers)),
-			body,
-			signal: request.signal,
-		});
-		return response as unknown as Response;
+	return withCredentials((credentials) => {
+		const send = () => {
+			if (getAccountScope() !== credentials.scope) throw new SessionChangedError();
+			return expoFetch(`${credentials.server}${path}`, {
+				method: request.method,
+				headers: bearer(credentials, new Headers(request.headers)),
+				body,
+				signal: request.signal,
+			}).then((response) => response as unknown as Response);
+		};
+		return options.context.defer ? options.context.defer(send) : send();
 	}, options.context.scope);
 };
 
@@ -116,6 +122,16 @@ export const client: RouterClient<typeof router, ClientContext> = createORPCClie
 export const streamClient: RouterClient<typeof router, ClientContext> = createORPCClient(
 	createLink("oRPC stream client"),
 );
+
+/** Bind preparation and its eventual send to the initiating server and account. */
+export function prepareRpc<Input, Output>(
+	procedure: (input: Input, options: { context: ClientContext }) => Promise<Output>,
+	input: Input,
+) {
+	const scope = getAccountScope();
+	if (!scope) return Promise.reject(new SessionChangedError());
+	return prepareRequest((defer) => procedure(input, { context: { scope, defer } }));
+}
 
 /** TanStack Query helpers: `orpc.resume.list.queryOptions()` and friends. */
 export const orpc = createTanstackQueryUtils(client);
