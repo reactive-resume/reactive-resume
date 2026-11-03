@@ -34,18 +34,21 @@ it.each([false, true])(
 			editor.focus();
 		});
 		const bold = screen.getByRole("button", { name: "Bold" });
-		if (mobile)
-			await act(async () => {
-				bold.focus();
-			});
-		else await userEvent.tab();
+		await userEvent.tab();
 		expect(document.activeElement).toBe(bold);
-		expect(screen.getByRole("toolbar", { name: "Formatting" })).toBeDefined();
+		const toolbar = screen.getByRole("toolbar", { name: "Formatting" });
+		expect(Array.from(toolbar.querySelectorAll("button")).filter((button) => button.tabIndex === 0).length).toBe(1);
+		await userEvent.keyboard("{ArrowRight}");
+		expect(document.activeElement).toBe(screen.getByRole("button", { name: "Italic" }));
 		await userEvent.keyboard("{Enter}");
-		expect(screen.getByRole("button", { name: "Bold" }).getAttribute("aria-pressed")).toBe("true");
+		expect(screen.getByRole("button", { name: "Italic" }).getAttribute("aria-pressed")).toBe("true");
 		await act(async () => {
-			screen.getByRole("button", { name: "Outside" }).focus();
+			editor.focus();
 		});
+		await userEvent.tab();
+		expect(toolbar.contains(document.activeElement)).toBe(true);
+		await userEvent.tab();
+		expect(screen.getByRole("button", { name: "Outside" })).toHaveFocus();
 		expect(screen.queryByRole("toolbar")).toBeNull();
 	},
 );
