@@ -169,7 +169,8 @@ export function Check() {
 			aria-labelledby="check-title"
 			className="relative h-[245vh] min-[900px]:h-[295vh]"
 		>
-			<div className="sticky top-0 h-svh overflow-clip [--chk:var(--sp)] [--dw:calc(clamp(0,(var(--sp)-.42)*20,1)*(1-clamp(0,(var(--sp)-.7)*20,1)))] [--lo:clamp(0,(var(--p)-.04)*10,1)] [--pw:min(62vw,40vh)] [--sp:clamp(0,(var(--p)-.06)/.8,1)] [--sv:clamp(0,var(--p)/.24,1)] min-[900px]:[--pw:min(28vw,58vh)]">
+			{/* The page and lens are already there as the scene rises, so the hand-off never opens on an empty half-screen. */}
+			<div className="sticky top-0 h-svh overflow-clip [--chk:var(--sp)] [--dw:calc(clamp(0,(var(--sp)-.42)*20,1)*(1-clamp(0,(var(--sp)-.7)*20,1)))] [--lo:clamp(.85,var(--p)*20,1)] [--pw:min(62vw,40vh)] [--sp:clamp(0,(var(--p)-.06)/.8,1)] [--sv:clamp(0,var(--p)/.24,1)] min-[900px]:[--pw:min(28vw,58vh)]">
 				<h2
 					id="check-title"
 					className="absolute start-(--gutter) top-[10vh] max-w-[90vw] text-[9vw] leading-[1.05] font-normal text-balance text-ink min-[900px]:top-[11vh] min-[900px]:max-w-[45vw] min-[900px]:text-[clamp(40px,4vw,72px)]"
@@ -220,7 +221,7 @@ export function Check() {
 					onPointerMove={moveLens}
 					onPointerLeave={releaseLens}
 					data-lens-page
-					className="@container absolute end-[calc(50%-var(--pw)/2)] bottom-[3vh] aspect-[612/792] w-(--pw) [transform:rotate(1deg)] cursor-crosshair rounded-sm opacity-[clamp(0,var(--p)*20,1)] shadow-paper min-[900px]:end-[10vw] min-[900px]:top-[52%] min-[900px]:bottom-auto min-[900px]:[transform:translateY(-50%)_rotate(1deg)]"
+					className="@container absolute end-[calc(50%-var(--pw)/2)] bottom-[3vh] aspect-[612/792] w-(--pw) [transform:rotate(1deg)] cursor-crosshair rounded-sm opacity-[clamp(.85,var(--p)*20,1)] shadow-paper min-[900px]:end-[10vw] min-[900px]:top-[52%] min-[900px]:bottom-auto min-[900px]:[transform:translateY(-50%)_rotate(1deg)]"
 				>
 					<Sheet />
 					<div

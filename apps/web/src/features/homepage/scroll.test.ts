@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
-import { goToScene, sectionProgress, useLanding } from "./scroll";
+import { goToScene, sectionExitProgress, sectionProgress, useLanding } from "./scroll";
 
 describe("section progress", () => {
 	it("measures a pinned scene by how far its sticky stage has travelled", () => {
@@ -13,6 +13,15 @@ describe("section progress", () => {
 		expect(sectionProgress(1000, 600, 1000, false)).toBe(0);
 		expect(sectionProgress(700, 600, 1000, false)).toBe(0.5);
 		expect(sectionProgress(-50, 2400, 1000, false)).toBe(1);
+	});
+});
+
+describe("scene exit", () => {
+	it("runs from the section's bottom reaching the fold to its bottom passing the top", () => {
+		expect(sectionExitProgress(1000, 1000)).toBe(0);
+		expect(sectionExitProgress(500, 1000)).toBe(0.5);
+		expect(sectionExitProgress(0, 1000)).toBe(1);
+		expect(sectionExitProgress(-400, 1000)).toBe(1);
 	});
 });
 

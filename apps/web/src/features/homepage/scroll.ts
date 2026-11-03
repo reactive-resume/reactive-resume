@@ -101,6 +101,15 @@ export function sectionProgress(top: number, height: number, viewportHeight: num
 	return clamp01((viewportHeight - top) / Math.max(1, Math.min(height, viewportHeight)));
 }
 
+/**
+ * How far a section has scrolled out of the viewport, from 0 as its bottom reaches the bottom edge to 1 once its bottom
+ * passes the top edge. A pinned scene holds its last frame while it leaves, so Design uses this to hand its closing
+ * headline over to Check instead of letting the word hang over the next scene.
+ */
+export function sectionExitProgress(bottom: number, viewportHeight: number) {
+	return clamp01((viewportHeight - bottom) / Math.max(1, viewportHeight));
+}
+
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 
 export const prefersReducedMotion = () => window.matchMedia(reducedMotionQuery).matches;
@@ -214,6 +223,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 		const sectionAt = (index: number) => sections.find((section) => section.dataset.scene === String(index));
 		// Rewriting an unchanged --p would still restyle the whole section, so only changes are written.
 		const writtenProgress = new WeakMap<HTMLElement, string>();
+		const writtenExit = new WeakMap<HTMLElement, string>();
 
 		// Where Check's lens comes to rest, as a share of its page: over the date line it flags.
 		let lensPark = { x: 60, y: 50 };
@@ -282,6 +292,13 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 				if (rect.top < viewportHeight * 2 && rect.bottom > -viewportHeight) nearby.add(index);
 				const pinned = section.dataset.pin !== undefined;
 				progress[index] = reduced ? 1 : sectionProgress(rect.top, rect.height, viewportHeight, pinned);
+				if (pinned) {
+					const exit = sectionExitProgress(rect.bottom, viewportHeight).toFixed(3);
+					if (writtenExit.get(section) !== exit) {
+						section.style.setProperty("--out", exit);
+						writtenExit.set(section, exit);
+					}
+				}
 				if (rect.top <= viewportHeight / 2 && rect.bottom > viewportHeight / 2) activeScene = index;
 			}
 			warmScenes(sections, nearby, decodedScenes);
