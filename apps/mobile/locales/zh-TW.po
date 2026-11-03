@@ -3439,6 +3439,10 @@ msgstr ""
 msgid "Copy a resume for a job"
 msgstr "影印一份工作履歷"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Copy and log as replied"
+msgstr "複製並記錄為已回覆"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "複製回答"
@@ -3544,6 +3548,10 @@ msgstr "無法檢查您的 AI 供應商。"
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't clear the follow-up reminder. It may still notify you."
+msgstr "無法清除跟進提醒。它仍可能向你傳送通知。"
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "無法完成要求。請檢查網路連線後再試一次。"
@@ -3573,6 +3581,10 @@ msgstr "無法確認是否已儲存。再試一次前請先檢查「應徵紀錄
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "無法確認是否已儲存。再試一次前請先檢查該應徵紀錄，以免重複。"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "無法複製回覆。未記錄任何內容。請重試。"
+
 #: src/features/check/job-match.tsx
 msgid "Couldn't copy the resume. Your edits are kept. Try again."
 msgstr ""
@@ -3585,14 +3597,6 @@ msgstr "無法複製文字記錄。請再試一次。"
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "無法建立這封信。請再試一次。"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Library."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Couldn't delete that offer. Try again."
-msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3901,10 +3905,6 @@ msgstr ""
 #: src/features/workspace/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "無法儲存該變更。請檢查網路連線後重試。"
-
-#: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item is restored; try again."
-msgstr "無法儲存該變更。該項目已還原，請再試一次。"
 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
@@ -7266,6 +7266,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "請僅在回覆後記錄。這會記錄聯絡並清除該求職申請的跟進安排及其提醒；不會傳送訊息，且會保留面試提醒。"
+
 #: src/features/documents/library.tsx
 msgid "Long press to select"
 msgstr "長按選取"
@@ -10307,6 +10311,10 @@ msgstr "更換照片"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "用一般段落和清單取代表格。儲存格是按儲存順序擷取的，而不是按閱讀順序。"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "傳送前請替換以下預留內容："
+
 #: src/features/assistant/messages.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -10323,6 +10331,10 @@ msgstr "取代應徵紀錄中的「{current}」。"
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+msgid "Replied"
+msgstr "已回覆"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "回覆"
@@ -10330,6 +10342,22 @@ msgstr "回覆"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Reply copied"
 msgstr "已複製回覆"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "回覆已複製並記錄為已回覆"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "回覆已複製，但尚未確認記錄成功。請先檢查時間軸，再重試。"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "回覆已複製。由於申請資料已變更，未記錄任何內容。請重新檢查後再記錄。"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "已複製回覆。未記錄任何內容。再次記錄前請檢查申請。"
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -10571,6 +10599,7 @@ msgstr "停用階段"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/provider.tsx
+#: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
 #: src/features/check/job-match.tsx
@@ -10596,6 +10625,7 @@ msgstr "停用階段"
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -13922,6 +13952,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "更新伺服器以啟用回覆記錄。仍可複製回覆。"
 
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."

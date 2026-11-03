@@ -195,6 +195,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {已將 # 份文件移至垃圾箱} other {已將 # 份文件移至垃圾箱}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -412,6 +417,12 @@ msgstr "{0, plural, other {用於 # 個已儲存項目}}"
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {您選擇的字體無法顯示 {list}，它會顯示為“?”。請在「設計」中選擇包含該字元的字體。} other {您選擇的字體無法顯示 {list}，它們會顯示為“?”。請在「設計」中選擇包含這些字元的字體。}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3035,6 +3046,10 @@ msgstr "最適合申請"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "阻斷性問題"
@@ -3849,6 +3864,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "關閉"
 
@@ -4304,6 +4320,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4324,6 +4344,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "影印一份工作履歷"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Copy and log as replied"
+msgstr "複製並記錄為已回覆"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
@@ -4507,6 +4531,10 @@ msgstr "無法以訪客身分繼續。請再試一次。"
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "無法複製問題。請選取文字後手動複製。"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "無法複製回覆。未記錄任何內容。請重試。"
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Couldn't copy the resume. Choose it again to prepare it."
 msgstr ""
@@ -4534,11 +4562,6 @@ msgstr "無法建立文件。請再試一次。"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "無法建立密鑰。再試一次。"
-
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "無法建立這封信。請再試一次。"
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
@@ -4732,6 +4755,7 @@ msgstr "無法載入您的階段，因此顯示標準階段。請重試。"
 msgid "Couldn't load your stages."
 msgstr "無法載入您的階段。"
 
+#: src/features/career/shared.tsx
 #: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
@@ -4894,6 +4918,7 @@ msgid "Couldn't revoke this connection. Try again."
 msgstr "無法撤銷此連線。請再試一次。"
 
 #: src/features/career/hooks.ts
+#: src/features/career/workspace/saved.tsx
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "無法儲存該變更。請檢查網路連線後重試。"
 
@@ -5253,12 +5278,6 @@ msgstr "求職信"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "求職信"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "求職信 — {0}"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -9309,6 +9328,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "請僅在回覆後記錄。這會記錄聯絡並清除該求職申請的跟進安排及其提醒；不會傳送訊息，且會保留面試提醒。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "有大段文字使用了全大寫。"
@@ -13007,6 +13030,10 @@ msgstr "用純文字取代圖示字體，然後重新匯出。"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "用一般段落和清單取代表格。儲存格是按儲存順序擷取的，而不是按閱讀順序。"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "傳送前請替換以下預留內容："
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -13019,6 +13046,10 @@ msgstr "取代應徵紀錄中的「{current}」。"
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Replied"
+msgstr "已回覆"
+
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13027,6 +13058,22 @@ msgstr "回覆"
 #: src/features/career/workspace/messages.tsx
 msgid "Reply copied"
 msgstr "已複製回覆"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "回覆已複製並記錄為已回覆"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "回覆已複製，但尚未確認記錄成功。請先檢查時間軸，再重試。"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "回覆已複製。由於申請資料已變更，未記錄任何內容。請重新檢查後再記錄。"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "已複製回覆。未記錄任何內容。再次記錄前請檢查申請。"
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -13316,6 +13363,7 @@ msgstr "創建的簡歷"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -15209,6 +15257,10 @@ msgstr "每一條都以具體的動詞開頭：建置、領導、降低、遷移
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "開始於"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."
@@ -17364,6 +17416,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "更新伺服器以啟用回覆記錄。仍可複製回覆。"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."

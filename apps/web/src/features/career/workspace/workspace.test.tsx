@@ -17,6 +17,7 @@ import { DebriefTab } from "./debrief";
 import { MessagesTab } from "./messages";
 import { PractiseTab } from "./practise";
 import { SavedTab } from "./saved";
+import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-scope";
 
 const api = vi.hoisted(() => ({
 	data: {} as Record<string, unknown>,
@@ -24,6 +25,7 @@ const api = vi.hoisted(() => ({
 	submit: vi.fn(),
 	generate: vi.fn(),
 	apply: vi.fn(),
+	logReply: vi.fn(),
 	invalidate: vi.fn(),
 	speak: vi.fn(),
 	userId: "workspace-user",
@@ -47,6 +49,7 @@ vi.mock("@/libs/orpc/client", () => {
 				listSummary: endpoint("applications"),
 				list: endpoint("applications"),
 				update: endpoint("updateApplication"),
+				logReply: endpoint("logReply", api.logReply),
 				lanes: { get: endpoint("lanes") },
 			},
 			coverLetters: { create: endpoint("createLetter") },
@@ -71,7 +74,10 @@ vi.mock("@/libs/orpc/client", () => {
 				saveFact: endpoint("saveFact"),
 			},
 		},
-		client: { career: { generate: api.generate, voice: { speak: api.speak } } },
+		client: {
+			career: { generate: api.generate, voice: { speak: api.speak } },
+			applications: { logReply: api.logReply },
+		},
 	};
 });
 vi.mock("@tanstack/react-router", () => ({
@@ -126,6 +132,7 @@ const application: Application = {
 	activity: [],
 	appliedAt: new Date("2026-10-08T12:00:00Z"),
 	createdAt: new Date("2026-10-08T12:00:00Z"),
+	replyVersion: "review-token",
 	updatedAt: new Date("2026-10-08T12:00:00Z"),
 	resumeId: null,
 	jobDescription: null,
@@ -156,6 +163,7 @@ const item = (id: string, data: SavedItem["data"]): SavedItem =>
 		data,
 		evidence: { factIds: [], storyIds: [] },
 		userId: "workspace-user",
+		replyVersion: "review-token",
 		updatedAt: new Date("2026-10-08T12:00:00Z"),
 		jobId: null,
 		inputVersion: "input-version",
@@ -224,6 +232,8 @@ beforeEach(() => {
 	api.knowledgeError = false;
 	api.save.mockResolvedValue(EMPTY_WORKSPACE);
 	api.submit.mockResolvedValue(undefined);
+	api.logReply.mockReset().mockResolvedValue(undefined);
+	setAccountScope("workspace-user");
 	sessionStorage.clear();
 	localStorage.clear();
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
@@ -333,6 +343,133 @@ it("retains edited replies across navigation while saved versions keep the gener
 	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue("My reply draft");
 	next.rerender(<MessagesTab {...props} version={savedReply} />);
 	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue("Original reply");
+});
+
+it("highlights localized reply placeholders without blocking Copy, and logs only the explicit action", async () => {
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	const editor = screen.getByRole("textbox", { name: "Suggested reply · edit before sending" });
+	fireEvent.change(editor, { target: { value: "Available [Datum und Uhrzeit 1] or [slot 2]." } });
+	expect(screen.getByRole("status")).toHaveTextContent("[Datum und Uhrzeit 1] · [slot 2]");
+	fireEvent.click(screen.getByRole("button", { name: "Copy reply" }));
+	await waitFor(() => expect(writeText).toHaveBeenCalledWith("Available [Datum und Uhrzeit 1] or [slot 2]."));
+	expect(api.logReply).not.toHaveBeenCalled();
+	fireEvent.change(editor, { target: { value: "Available Tuesday at 14:00." } });
+	expect(screen.queryByText("Replace these placeholders before sending:")).not.toBeInTheDocument();
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	await waitFor(() => expect(api.logReply).toHaveBeenCalledTimes(1));
+	expect(writeText).toHaveBeenLastCalledWith("Available Tuesday at 14:00.");
+	expect(api.logReply.mock.calls[0]?.[0]).toEqual({
+		id: application.id,
+		expectedVersion: "review-token",
+	});
+	await waitFor(() => expect(api.invalidate).toHaveBeenCalledWith(application.id));
+});
+
+it("keeps Copy available and disables explicit logging on an older server", async () => {
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [reply()];
+	const { replyVersion: _replyVersion, ...older } = application;
+	mount(<MessagesTab {...props} application={{ ...older, status: "applied" }} />);
+	expect(screen.getByRole("button", { name: "Copy and log as replied" })).toBeDisabled();
+	expect(screen.getByText(/Update the server to enable reply logging/)).toBeVisible();
+	fireEvent.click(screen.getByRole("button", { name: "Copy reply" }));
+	await waitFor(() => expect(writeText).toHaveBeenCalledWith("Original reply"));
+	expect(api.logReply).not.toHaveBeenCalled();
+});
+
+it("disables empty-draft logging while preserving ordinary Copy", async () => {
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	const editor = screen.getByRole("textbox", { name: "Suggested reply · edit before sending" });
+	for (const text of ["", " \n\t"]) {
+		fireEvent.change(editor, { target: { value: text } });
+		const log = screen.getByRole("button", { name: "Copy and log as replied" });
+		expect(log).toBeDisabled();
+		fireEvent.click(log);
+		expect(api.logReply).not.toHaveBeenCalled();
+	}
+	expect(writeText).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Copy reply" }));
+	await waitFor(() => expect(writeText).toHaveBeenCalledWith(" \n\t"));
+	expect(api.logReply).not.toHaveBeenCalled();
+});
+
+it("explains a known reply-log refusal without inventing a conflict reason", async () => {
+	const { ORPCError } = await import("@orpc/client");
+	const { toast } = await import("@reactive-resume/ui/components/toast");
+	vi.stubGlobal("navigator", { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } });
+	api.logReply.mockRejectedValueOnce(new ORPCError("BAD_REQUEST"));
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	await waitFor(() =>
+		expect(toast.add).toHaveBeenCalledWith({
+			type: "error",
+			description: "Reply copied. Nothing was logged. Review the application before logging again.",
+		}),
+	);
+	expect(api.invalidate).toHaveBeenCalledWith(application.id);
+});
+
+it("explains a known reply-log conflict and refreshes the application", async () => {
+	const { ORPCError } = await import("@orpc/client");
+	const { toast } = await import("@reactive-resume/ui/components/toast");
+	vi.stubGlobal("navigator", { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } });
+	api.logReply.mockRejectedValueOnce(new ORPCError("CONFLICT"));
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	await waitFor(() =>
+		expect(toast.add).toHaveBeenCalledWith({
+			type: "error",
+			description: "Reply copied. Nothing was logged because the application changed. Review it again before logging.",
+		}),
+	);
+	expect(api.invalidate).toHaveBeenCalledWith(application.id);
+});
+
+it("warns and refreshes the application when logging is uncertain after copying succeeds", async () => {
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.logReply.mockRejectedValueOnce(new Error("Lost response"));
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	const { toast } = await import("@reactive-resume/ui/components/toast");
+	await waitFor(() =>
+		expect(toast.add).toHaveBeenCalledWith({
+			type: "error",
+			description: "Reply copied. Logging wasn't confirmed. Check the timeline before trying again.",
+		}),
+	);
+	expect(writeText).toHaveBeenCalledWith("Original reply");
+	expect(api.logReply).toHaveBeenCalledTimes(1);
+	expect(api.invalidate).toHaveBeenCalledWith(application.id);
+});
+
+it("does not log after failed clipboard access, duplicate presses or an account switch during copying", async () => {
+	const writeText = vi.fn().mockRejectedValueOnce(new Error("Denied"));
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [reply()];
+	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
+	const button = screen.getByRole("button", { name: "Copy and log as replied" });
+	fireEvent.click(button);
+	await waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
+	expect(api.logReply).not.toHaveBeenCalled();
+	const pending = deferred<void>();
+	writeText.mockReturnValueOnce(pending.promise);
+	fireEvent.click(button);
+	fireEvent.click(button);
+	expect(writeText).toHaveBeenCalledTimes(2);
+	invalidateAccountScope();
+	await act(async () => pending.resolve());
+	expect(api.logReply).not.toHaveBeenCalled();
 });
 
 it("retains the practice answer after leaving, without exposing it to another signed-in account", () => {

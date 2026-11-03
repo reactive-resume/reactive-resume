@@ -195,6 +195,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# документ е преместен в кошчето} other {# документа са преместени в кошчето}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -412,6 +417,12 @@ msgstr "{0, plural, one {използван в # запазен елемент} 
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {Избраният от вас шрифт не може да покаже {list}. Показва се като “?”. В Дизайн изберете шрифт, който го съдържа.} other {Избраният от вас шрифт не може да покаже {list}. Показват се като “?”. В Дизайн изберете шрифт, който ги съдържа.}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3035,6 +3046,10 @@ msgstr "Най-добър за кандидатстване"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "Пречка"
@@ -3849,6 +3864,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "Затворено"
 
@@ -4304,6 +4320,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4324,6 +4344,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "Копирайте автобиография за работа"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Copy and log as replied"
+msgstr "Копиране и записване като отговорено"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
@@ -4507,6 +4531,10 @@ msgstr "Не можахте да продължите като гост. Опи�
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "Въпросите не можаха да бъдат копирани. Маркирайте текста и го копирайте ръчно."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "Отговорът не можа да бъде копиран. Нищо не е записано. Опитайте отново."
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Couldn't copy the resume. Choose it again to prepare it."
 msgstr ""
@@ -4534,11 +4562,6 @@ msgstr "Документът не можа да бъде създаден. Оп�
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "Ключът не можа да бъде създаден. Опитайте отново."
-
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Не можа да се създаде писмото. Опитайте отново."
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
@@ -4732,6 +4755,7 @@ msgstr "Етапите ви не можаха да се заредят, зато
 msgid "Couldn't load your stages."
 msgstr "Етапите ви не можаха да се заредят."
 
+#: src/features/career/shared.tsx
 #: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
@@ -4894,6 +4918,7 @@ msgid "Couldn't revoke this connection. Try again."
 msgstr "Тази връзка не можа да бъде отменена. Опитайте отново."
 
 #: src/features/career/hooks.ts
+#: src/features/career/workspace/saved.tsx
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Промяната не можа да бъде запазена. Проверете връзката си и опитайте отново."
 
@@ -5253,12 +5278,6 @@ msgstr "Мотивационно писмо"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "Мотивационно писмо"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Мотивационно писмо — {0}"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -9309,6 +9328,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "Запишете само след като сте отговорили. Това записва контакта и изчиства последващото действие по кандидатурата и напомнянето му; не изпраща съобщение и запазва напомнянията за интервюта."
+
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "Дълги пасажи са изписани с главни букви."
@@ -13007,6 +13030,10 @@ msgstr "Заменете иконните шрифтове с обикновен
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Заменете таблиците с обикновени абзаци и списъци. Клетките се извличат в реда на съхранение, а не в реда на четене."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "Заменете тези полета преди изпращане:"
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -13019,6 +13046,10 @@ msgstr "Заменя „{current}“ в кандидатурата."
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Replied"
+msgstr "Отговорено"
+
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13027,6 +13058,22 @@ msgstr "Отговор"
 #: src/features/career/workspace/messages.tsx
 msgid "Reply copied"
 msgstr "Отговорът е копиран"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "Отговорът е копиран и записан като отговорено"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "Отговорът е копиран. Записването не е потвърдено. Проверете хронологията, преди да опитате отново."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "Отговорът е копиран. Нищо не е записано, защото кандидатурата е променена. Прегледайте я отново преди записване."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "Отговорът е копиран. Нищо не е записано. Прегледайте кандидатурата, преди да опитате отново да запишете отговора."
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -13316,6 +13363,7 @@ msgstr "създадени автобиографии"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -15209,6 +15257,10 @@ msgstr "Започнете всяка точка с конкретен глаг�
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "Започнете от"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."
@@ -17364,6 +17416,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "Актуализирайте сървъра, за да активирате записването на отговори. Копирането на отговора остава достъпно."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."

@@ -44,6 +44,7 @@ type CreateInput = {
 	signOff?: string | null | undefined;
 	resumeId?: string | undefined;
 	applicationId?: string | undefined;
+	sourceLetterId?: string | undefined;
 	template?: Template | undefined;
 	layout?: CoverLetterLayout | undefined;
 	recipientName?: string | undefined;
@@ -136,6 +137,21 @@ async function getOwnedApplication(userId: string, id?: string) {
 
 async function assertOwnedApplication(userId: string, id?: string) {
 	await getOwnedApplication(userId, id);
+}
+
+/**
+ * The body of an earlier letter to start from. The source stays untouched: only its text is read, and the new
+ * letter's own "created" version records what was copied.
+ */
+async function getOwnedLetterBody(userId: string, id: string) {
+	const [row] = await db
+		.select({ content: schema.coverLetter.content })
+		.from(schema.coverLetter)
+		.where(
+			and(eq(schema.coverLetter.id, id), eq(schema.coverLetter.userId, userId), isNull(schema.coverLetter.trashedAt)),
+		);
+	if (!row) throw new ORPCError("NOT_FOUND");
+	return row.content;
 }
 
 type LinkLetterApplicationInput = {
@@ -534,6 +550,7 @@ export const coverLetterService = {
 	 */
 	create: async (input: CreateInput) => {
 		const application = await getOwnedApplication(input.userId, input.applicationId);
+		const sourceBody = input.sourceLetterId ? await getOwnedLetterBody(input.userId, input.sourceLetterId) : null;
 		const style = await getResumeStyle(input.userId, input.resumeId);
 		if (input.template) style.metadata.template = input.template;
 		// The letter is for an employer whose posting declared a language: start in it, so the body, greeting,
@@ -555,7 +572,9 @@ export const coverLetterService = {
 					userId: input.userId,
 					name: input.name,
 					recipient: input.recipient ?? "",
-					content: input.content ?? "",
+					// The body is the reused part; recipient, date, resume and application come from this request so an
+					// earlier job's company never leaks into the new letter.
+					content: sourceBody ?? input.content ?? "",
 					greeting: input.greeting ?? null,
 					signOff: input.signOff ?? null,
 					style,

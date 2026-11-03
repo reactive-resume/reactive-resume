@@ -1,4 +1,5 @@
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
+import type { DocumentGroup } from "@reactive-resume/schema/applications/document-groups";
 import type { QueryClient } from "@tanstack/react-query";
 import type { KeyboardEvent, Ref } from "react";
 import { i18n } from "@lingui/core";
@@ -9,6 +10,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
+import { groupDocumentsByApplication, groupIsExpanded } from "@reactive-resume/schema/applications/document-groups";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
@@ -84,6 +86,8 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const markOpened = useNewDocumentsStore((state) => state.markOpened);
 	const [tagsFor, setTagsFor] = useState<DocumentSummary[] | null>(null);
 	const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
+	// Only explicit toggles that differ from the default: a closed job starts collapsed, every other group expanded.
+	const [groupOverrides, setGroupOverrides] = useState<ReadonlyMap<string, boolean>>(() => new Map());
 	const { ref: selectionBarRef, space: selectionBarSpace } = useFloatingToolbarSpace();
 	const [linkFor, setLinkFor] = useState<DocumentSummary | null>(null);
 	// Grid and list animate in only after a switch, never on the page's first render.
@@ -178,6 +182,20 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	}
 
 	const shown = displayed?.items ?? [];
+	const groups = groupDocumentsByApplication(shown);
+	const expandedGroup = (group: DocumentGroup<DocumentSummary>) =>
+		group.kind === "document" || groupIsExpanded(group.closed, groupOverrides, group.key);
+	const toggleGroup = (group: DocumentGroup<DocumentSummary>) => {
+		if (group.kind !== "application") return;
+		setGroupOverrides((current) => {
+			const next = new Map(current);
+			next.set(group.key, !groupIsExpanded(group.closed, current, group.key));
+			return next;
+		});
+	};
+	// A closed group's documents are out of the page until it opens, so selection and Select this page follow what is shown.
+	const visibleShown = groups.flatMap((group) => (expandedGroup(group) ? group.documents : []));
+	const shownIndex = new Map(visibleShown.map((document, index) => [documentKey(document), index]));
 	const failed = isError && !displayed;
 	const filtered = search.type !== "all" || search.q.trim() !== "" || search.tags.length > 0 || search.public === true;
 	const {
@@ -209,10 +227,10 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		counts[search.type] === 0
 			? search.type
 			: null;
-	// Actions apply to the selected documents the filters show.
-	const selection = rowsCurrent ? shown.filter((document) => selected.has(documentKey(document))) : [];
+	// Actions apply to the selected documents the filters and open groups show.
+	const selection = rowsCurrent ? visibleShown.filter((document) => selected.has(documentKey(document))) : [];
 	const selecting = selection.length > 0;
-	const allSelected = selecting && selection.length === shown.length;
+	const allSelected = selecting && selection.length === visibleShown.length;
 	const setSelectedFor = (document: DocumentSummary, on: boolean) => {
 		if (!rowsCurrent) return;
 		setSelected((current) => {
@@ -224,7 +242,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	};
 	const selectAll = (on: boolean) => {
 		if (on && !rowsCurrent) return;
-		setSelected(new Set(on ? shown.map(documentKey) : []));
+		setSelected(new Set(on ? visibleShown.map(documentKey) : []));
 	};
 	const itemProps = (document: DocumentSummary) => ({
 		onTags: (document: DocumentSummary) => {
@@ -285,7 +303,10 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			setQuery.flush();
 		} else if (event.key === "ArrowDown") {
 			openOnResults.current = null;
-			const first = resultsRef.current?.querySelector<HTMLElement>("a[href]");
+			// A page of collapsed job groups has no open result links; its headings are the first stop.
+			const first =
+				resultsRef.current?.querySelector<HTMLElement>("a[href]") ??
+				resultsRef.current?.querySelector<HTMLElement>("button[aria-expanded]");
 			if (!first) return;
 			event.preventDefault();
 			first.focus();
@@ -501,33 +522,60 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 									</th>
 								</tr>
 							</thead>
-							<tbody>
-								{shown.map((document, index) => (
-									<DocumentRow
-										key={documentKey(document)}
-										document={document}
-										introIndex={intro ? index : undefined}
-										{...itemProps(document)}
-									/>
-								))}
-							</tbody>
+							{groups.map((group) => {
+								const expanded = expandedGroup(group);
+								return (
+									<tbody key={group.key}>
+										{group.kind === "application" && (
+											<GroupHeadingRow group={group} expanded={expanded} onToggle={() => toggleGroup(group)} />
+										)}
+										{expanded &&
+											group.documents.map((document) => (
+												<DocumentRow
+													key={documentKey(document)}
+													document={document}
+													introIndex={intro ? shownIndex.get(documentKey(document)) : undefined}
+													{...itemProps(document)}
+												/>
+											))}
+									</tbody>
+								);
+							})}
 						</table>
 					) : (
-						<div
-							ref={resultsRef}
-							className={cn(
-								"grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4",
-								viewEnter,
-							)}
-						>
-							{shown.map((document, index) => (
-								<DocumentCard
-									key={documentKey(document)}
-									document={document}
-									introIndex={intro ? index : undefined}
-									{...itemProps(document)}
-								/>
-							))}
+						<div ref={resultsRef} className={cn(GRID_CLASS, viewEnter)}>
+							{groups.map((group) => {
+								const expanded = expandedGroup(group);
+								if (group.kind === "document") {
+									const document = group.documents[0];
+									return (
+										<DocumentCard
+											key={group.key}
+											document={document}
+											introIndex={intro ? shownIndex.get(documentKey(document)) : undefined}
+											{...itemProps(document)}
+										/>
+									);
+								}
+								// display: contents lets the group's heading span every column while its cards keep flowing in
+								// the library's grid with the ungrouped documents around them.
+								return (
+									<div key={group.key} className="contents">
+										<div className="col-span-full">
+											<GroupHeading group={group} expanded={expanded} onToggle={() => toggleGroup(group)} />
+										</div>
+										{expanded &&
+											group.documents.map((document) => (
+												<DocumentCard
+													key={documentKey(document)}
+													document={document}
+													introIndex={intro ? shownIndex.get(documentKey(document)) : undefined}
+													{...itemProps(document)}
+												/>
+											))}
+									</div>
+								);
+							})}
 						</div>
 					)}
 				</>
@@ -567,6 +615,57 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 const VIEW_KEY = "documents-view";
 // Longest stagger (150ms) plus the D2 entrance (200ms), with room to spare: then the intro classes come off.
 const INTRO_MS = 400;
+const GRID_CLASS =
+	"grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4";
+
+type GroupHeadingProps = {
+	group: Extract<DocumentGroup<DocumentSummary>, { kind: "application" }>;
+	expanded: boolean;
+	onToggle: () => void;
+};
+
+/** The job a group's resume and letter share: a disclosure with the company, role, stage and document count. */
+function GroupHeading({ group, expanded, onToggle }: GroupHeadingProps) {
+	const { company, role } = group.application;
+	return (
+		<button
+			type="button"
+			aria-expanded={expanded}
+			onClick={onToggle}
+			className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 text-start transition-colors duration-quick hover:bg-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+		>
+			<Icon name={expanded ? "caret-down" : "caret-right"} size={16} className="shrink-0 text-ink-3" />
+			<Icon name="briefcase" size={16} className="shrink-0 text-ink-2" />
+			<span className="min-w-0 truncate text-sm font-semibold" dir="auto">
+				{company}
+			</span>
+			{role && (
+				<span className="min-w-0 truncate text-sm text-ink-2" dir="auto">
+					· {role}
+				</span>
+			)}
+			{group.closed && (
+				<span className="shrink-0 rounded-sm bg-sunken px-1.5 text-xs leading-[18px] font-medium text-ink-2">
+					<Trans>Closed</Trans>
+				</span>
+			)}
+			<span className="ms-auto shrink-0 text-xs text-ink-3">
+				<Plural value={group.documents.length} one="# document" other="# documents" />
+			</span>
+		</button>
+	);
+}
+
+/** The list view's heading, spanning every column, with the same disclosure as the grid's. */
+function GroupHeadingRow({ group, expanded, onToggle }: GroupHeadingProps) {
+	return (
+		<tr className="border-b border-line bg-sunken/40">
+			<th colSpan={6} className="p-0">
+				<GroupHeading group={group} expanded={expanded} onToggle={onToggle} />
+			</th>
+		</tr>
+	);
+}
 
 // The last view picked on this device; storage can be unavailable, and then it's the grid.
 function readStoredView(): "grid" | "list" {

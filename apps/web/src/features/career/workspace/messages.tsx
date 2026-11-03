@@ -3,8 +3,10 @@ import type { WorkspaceTabProps } from "./shell";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
+import { ORPCError } from "@orpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { replyPlaceholders } from "@reactive-resume/schema/applications/reply";
 import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
 import { offerTermKeys } from "@reactive-resume/schema/career-offer";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -46,9 +48,9 @@ import {
 	useInvalidateApplications,
 } from "@/features/applications/use-application-actions";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
-import { getAccountGeneration } from "@/libs/auth/account-scope";
+import { getAccountGeneration, getAccountId } from "@/libs/auth/account-scope";
 import { toastError } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
+import { client, orpc } from "@/libs/orpc/client";
 
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
 
@@ -184,21 +186,74 @@ type ReplyCardProps = { reply: ReplyItem; application: WorkspaceTabProps["applic
 /** W16: what they're asking, what isn't confirmed, and a reply to edit and send yourself. */
 function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const { i18n } = useLingui();
+	const [account] = useState(getAccountGeneration);
+	const [accountId] = useState(getAccountId);
+	const invalidate = useInvalidateApplications();
+	const logReply = useMutation({
+		...orpc.applications.logReply.mutationOptions(),
+		mutationFn: (input: { id: string; expectedVersion: string }) => {
+			if (!accountId) throw new Error("Signed-in account required");
+			return client.applications.logReply(input, { context: { accountId } });
+		},
+	});
+	const copying = useRef(false);
+	const [logging, setLogging] = useState(false);
 	const generate = useGenerate(application.id);
 	const { provider } = useDefaultProvider();
 	const draft = useSessionDraft(`reply:${reply.id}`, reply.data.reply, (value) =>
 		typeof value === "string" && value.length <= 4000 ? value : undefined,
 	);
 	const text = readOnly ? reply.data.reply : draft.value;
+	const placeholders = replyPlaceholders(text);
 	// The employer's language is the default; this is the explicit way back to the words the user reads everything else in.
 	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
 
 	const rewrite = () =>
 		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
-	const copy = async () => {
-		await navigator.clipboard.writeText(text);
-		toast.add({ description: t`Reply copied` });
+	const copy = async (log = false) => {
+		if ((log && (!application.replyVersion || !text.trim())) || copying.current || account !== getAccountGeneration())
+			return;
+		copying.current = true;
+		setLogging(log);
+		let copied = false;
+		try {
+			await navigator.clipboard.writeText(text);
+			copied = true;
+			if (account !== getAccountGeneration()) return;
+			if (log && application.replyVersion) {
+				await logReply.mutateAsync({ id: application.id, expectedVersion: application.replyVersion });
+				if (account !== getAccountGeneration()) return;
+				invalidate(application.id);
+			}
+			toast.add({ description: log ? t`Reply copied and logged as replied` : t`Reply copied` });
+		} catch (error) {
+			if (account !== getAccountGeneration()) return;
+			if (copied) invalidate(application.id);
+			if (copied && error instanceof ORPCError && error.code === "CONFLICT") {
+				toast.add({
+					type: "error",
+					description: t`Reply copied. Nothing was logged because the application changed. Review it again before logging.`,
+				});
+				return;
+			}
+			if (copied && error instanceof ORPCError && error.code === "BAD_REQUEST") {
+				toast.add({
+					type: "error",
+					description: t`Reply copied. Nothing was logged. Review the application before logging again.`,
+				});
+				return;
+			}
+			toast.add({
+				type: "error",
+				description: copied
+					? t`Reply copied. Logging wasn't confirmed. Check the timeline before trying again.`
+					: t`Couldn't copy the reply. Nothing was logged. Try again.`,
+			});
+		} finally {
+			copying.current = false;
+			setLogging(false);
+		}
 	};
 
 	return (
@@ -237,11 +292,35 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							className="min-h-[110px] px-3.5 py-3 text-sm leading-[22px] pointer-coarse:text-base"
 						/>
 					</div>
+					{placeholders.length > 0 && (
+						<p role="status" className="text-sm text-warn-text">
+							<Trans>Replace these placeholders before sending:</Trans>{" "}
+							{placeholders.map((placeholder, index) => (
+								<span key={placeholder}>
+									{index > 0 && " · "}
+									<mark className="rounded bg-warn-soft px-1 text-warn-text" dir="auto">
+										{placeholder}
+									</mark>
+								</span>
+							))}
+						</p>
+					)}
 					<div className="flex flex-wrap items-center gap-2">
 						<Button variant="secondary" size="sm" onClick={() => void copy()}>
 							<Icon name="copy" size={16} />
 							<Trans>Copy reply</Trans>
 						</Button>
+						{!readOnly && application.status !== "saved" && application.status !== "closed" && (
+							<Button
+								variant="secondary"
+								size="sm"
+								loading={logging}
+								disabled={!application.replyVersion || !text.trim()}
+								onClick={() => void copy(true)}
+							>
+								<Trans>Copy and log as replied</Trans>
+							</Button>
+						)}
 						<span className="text-xs text-ink-3">
 							<Trans>You send it from your own email.</Trans>
 						</span>
@@ -251,6 +330,17 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							</Button>
 						)}
 					</div>
+					{!readOnly && application.status !== "saved" && application.status !== "closed" && (
+						<p className="text-xs text-ink-3">
+							<Trans>
+								Log only when you have replied. This records contact and clears the application's follow-up and its
+								reminder; it sends no message and keeps interview reminders.
+							</Trans>{" "}
+							{!application.replyVersion && (
+								<Trans>Update the server to enable reply logging. Copy reply is still available.</Trans>
+							)}
+						</p>
+					)}
 					{!readOnly && <GenerateNotice generate={generate} onRetry={rewrite} className="w-fit" />}
 				</>
 			)}

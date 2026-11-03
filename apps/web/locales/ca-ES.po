@@ -195,6 +195,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# document mogut a la paperera} other {# documents moguts a la paperera}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -412,6 +417,12 @@ msgstr "{0, plural, one {s'usa en # element desat} other {s'usa en # elements de
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {La font seleccionada no pot mostrar {list}. Es mostra com a “?”. A Disseny, trieu una font que el tingui.} other {La font seleccionada no pot mostrar {list}. Es mostren com a “?”. A Disseny, trieu una font que els tingui.}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3035,6 +3046,10 @@ msgstr "El millor per a candidatures"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "Bloquejant"
@@ -3849,6 +3864,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "Tancat"
 
@@ -4304,6 +4320,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4324,6 +4344,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "Copia un currículum per a una feina"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Copy and log as replied"
+msgstr "Copia i registra com a respost"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
@@ -4507,6 +4531,10 @@ msgstr "No s'ha pogut continuar com a convidat. Torneu-ho a provar."
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "No s'han pogut copiar les preguntes. Seleccioneu el text i copieu-lo manualment."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "No s'ha pogut copiar la resposta. No s'ha registrat res. Torna-ho a provar."
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Couldn't copy the resume. Choose it again to prepare it."
 msgstr ""
@@ -4534,11 +4562,6 @@ msgstr "No s'ha pogut crear el document. Torneu-ho a provar."
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "No s'ha pogut crear la clau. Torna-ho a provar."
-
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "No s'ha pogut crear la carta. Torneu-ho a provar."
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
@@ -4732,6 +4755,7 @@ msgstr "No s'han pogut carregar les vostres etapes; es mostren les estàndard. T
 msgid "Couldn't load your stages."
 msgstr "No s'han pogut carregar les vostres etapes."
 
+#: src/features/career/shared.tsx
 #: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
@@ -4894,6 +4918,7 @@ msgid "Couldn't revoke this connection. Try again."
 msgstr "No s'ha pogut revocar aquesta connexió. Torneu-ho a provar."
 
 #: src/features/career/hooks.ts
+#: src/features/career/workspace/saved.tsx
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "No s'ha pogut desar el canvi. Comproveu la connexió i torneu-ho a provar."
 
@@ -5253,12 +5278,6 @@ msgstr "Carta de presentació"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "Carta de presentació"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Carta de presentació — {0}"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -9309,6 +9328,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "Registra-ho només després de respondre. Això registra el contacte i esborra el seguiment de la candidatura i el seu recordatori; no envia cap missatge i conserva els recordatoris d'entrevistes."
+
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "Hi ha trams llargs escrits en majúscules."
@@ -13007,6 +13030,10 @@ msgstr "Substitueix els tipus de lletra d'icones per text pla i torna a exportar
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Substitueix les taules per paràgrafs i llistes simples. Les cel·les s'extreuen en l'ordre d'emmagatzematge, no en l'ordre de lectura."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "Substitueix aquests marcadors abans d'enviar:"
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -13019,6 +13046,10 @@ msgstr "Substitueix «{current}» a la candidatura."
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Replied"
+msgstr "Respost"
+
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13027,6 +13058,22 @@ msgstr "Resposta"
 #: src/features/career/workspace/messages.tsx
 msgid "Reply copied"
 msgstr "S'ha copiat la resposta"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "Resposta copiada i registrada com a respost"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "Resposta copiada. No s'ha confirmat el registre. Revisa la cronologia abans de tornar-ho a provar."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "Resposta copiada. No s'ha registrat res perquè la candidatura ha canviat. Revisa-la de nou abans de registrar-ho."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "Resposta copiada. No s'ha registrat res. Revisa la candidatura abans de tornar-ho a registrar."
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -13316,6 +13363,7 @@ msgstr "currículums creats"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -15209,6 +15257,10 @@ msgstr "Comença cadascuna amb un verb concret: va crear, va liderar, va reduir,
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "Comença des de"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."
@@ -17364,6 +17416,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "Actualitza el servidor per activar el registre de respostes. Encara pots copiar la resposta."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."

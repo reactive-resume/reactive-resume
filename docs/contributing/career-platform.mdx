@@ -280,3 +280,9 @@ Target-role dispatch resolves and validates the approved runnable provider once,
 Role preflight checks the captured connection’s availability in the same owner/Knowledge/resume transaction, after validating context. Explicit Off/delete or managed-AI removal committed before this preflight authorization prevents dispatch. A configuration retarget followed by a successful test still uses the previously approved captured configuration; a retarget left untested is unavailable. Locks end before provider I/O. Changes after committed preflight can race with transmission; the post-response check rejects stale results but cannot recall data already sent.
 
 Role suggestions disable SDK automatic retries for this revocable prompt only. A manual retry resolves the approved recipient and checks the selected context again. Other generation callers keep their existing retry policy. A failed connection attempt or retryable HTTP response never silently repeats this prompt after its context check.
+
+### Reply-log snapshot contract
+
+Read the full application with `GET /api/openapi/applications/{id}` and retain its opaque `replyVersion` while the user reviews it. Send that value as `expectedVersion` to `POST /api/openapi/applications/{id}/replies`. The server checks the complete stored snapshot under the application lock. A `409 CONFLICT` requires a fresh read and user review; never automatically retry with a newer token. The token is not a timestamp or a value clients derive. Full application responses, including mutation results, provide it; summary rows do not. Older servers may omit it, so clients keep Copy available and disable explicit logging.
+
+Explicit replies store `followedUp.kind: "reply"`; editable note text never determines contact kind. Legacy follow-up markers remain valid.

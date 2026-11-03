@@ -1,6 +1,7 @@
 import type { DocumentSheet } from "./document-sheets";
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
 import type { LegendListProps } from "@legendapp/list/react-native";
+import type { DocumentGroup } from "@reactive-resume/schema/applications/document-groups";
 import { AnimatedLegendList } from "@legendapp/list/reanimated";
 import { i18n } from "@lingui/core";
 import { plural } from "@lingui/core/macro";
@@ -11,6 +12,7 @@ import { useRouter, Stack, useFocusEffect, useLocalSearchParams } from "expo-rou
 import { useCallback, useEffect, useState } from "react";
 import { RefreshControl, I18nManager, Platform, Pressable, ScrollView, View, useWindowDimensions } from "react-native";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import { groupDocumentsByApplication, groupIsExpanded } from "@reactive-resume/schema/applications/document-groups";
 import { DocumentSheets } from "./document-sheets";
 import { daysLeftInTrash, documentKey, documentRef } from "./filter";
 import { useDocumentHistory } from "./library-session";
@@ -166,6 +168,55 @@ function DocumentItem({
 	);
 }
 
+type LibraryRow =
+	| { kind: "group"; group: Extract<DocumentGroup<DocumentSummary>, { kind: "application" }> }
+	| { kind: "document"; document: DocumentSummary };
+
+type GroupHeadingProps = {
+	group: Extract<DocumentGroup<DocumentSummary>, { kind: "application" }>;
+	expanded: boolean;
+	onToggle: () => void;
+};
+
+/** A job's resume and letter share this heading; closed jobs start collapsed but stay one tap away. */
+function GroupHeading({ group, expanded, onToggle }: GroupHeadingProps) {
+	const { t } = useLingui();
+	const { colors, space, size } = useTheme();
+	const { company, role } = group.application;
+	return (
+		<Pressable
+			accessibilityRole="button"
+			accessibilityState={{ expanded }}
+			accessibilityLabel={`${company}${role ? ` · ${role}` : ""}${group.closed ? ` · ${t`Closed`}` : ""}`}
+			accessibilityHint={plural(group.documents.length, { one: "# document", other: "# documents" })}
+			onPress={onToggle}
+			style={{
+				minHeight: size.hit,
+				flexDirection: "row",
+				alignItems: "center",
+				gap: space.s2,
+				paddingHorizontal: space.s2,
+				marginTop: space.s3,
+			}}
+		>
+			<Icon name={expanded ? "caret-down" : "caret-right"} size={size.icon.meta} color={colors.ink3} />
+			<Icon name="briefcase" size={size.icon.meta} color={colors.ink2} />
+			<Text variant="label" numberOfLines={1} style={{ flex: 1 }}>
+				{company}
+				{role ? ` · ${role}` : ""}
+			</Text>
+			{group.closed && (
+				<Text variant="caption" color="ink2">
+					{t`Closed`}
+				</Text>
+			)}
+			<Text variant="caption" color="ink3">
+				{group.documents.length}
+			</Text>
+		</Pressable>
+	);
+}
+
 type DocumentsLibraryProps = { trashed?: boolean };
 const viewabilityConfig = { itemVisiblePercentThreshold: 1 };
 
@@ -254,11 +305,12 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	const [view, setView] = useState<"list" | "grid" | null>(null);
 	const [selecting, setSelecting] = useState(false);
 	const [selection, setSelection] = useState<string[]>([]);
+	const [groupOverrides, setGroupOverrides] = useState<ReadonlyMap<string, boolean>>(() => new Map());
 	const [recoveryOffset, setRecoveryOffset] = useState(0);
 	const [sheet, setSheet] = useState<DocumentSheet | null>(null);
 	const [purge, setPurge] = useState<{ documents: DocumentSummary[]; all: boolean } | null>(null);
 	const [visible, setVisible] = useState<string[]>([]);
-	const onViewableItemsChanged = useCallback<NonNullable<LegendListProps<DocumentSummary>["onViewableItemsChanged"]>>(
+	const onViewableItemsChanged = useCallback<NonNullable<LegendListProps<LibraryRow>["onViewableItemsChanged"]>>(
 		({ viewableItems }) => {
 			setVisible(viewableItems.filter((token) => token.isViewable).map((token) => token.key));
 		},
@@ -297,6 +349,29 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	const recoveryStart = Math.min(recoveryOffset, Math.max(0, Math.floor((pending.length - 1) / 100) * 100));
 	const recoverable = trashed ? [] : pending.slice(recoveryStart, recoveryStart + 100);
 	const filtered = all;
+	// Trash keeps its flat list: grouping is for the live library, where a job's documents go together.
+	const groups = trashed ? [] : groupDocumentsByApplication(filtered);
+	const groupExpanded = (group: DocumentGroup<DocumentSummary>) =>
+		group.kind === "document" || groupIsExpanded(group.closed, groupOverrides, group.key);
+	const toggleGroup = (key: string, closed: boolean) => {
+		setGroupOverrides((current) => {
+			const next = new Map(current);
+			next.set(key, !groupIsExpanded(closed, current, key));
+			return next;
+		});
+	};
+	const rows: LibraryRow[] = trashed
+		? filtered.map((document) => ({ kind: "document" as const, document }))
+		: groups.flatMap((group) => {
+				const expanded = groupExpanded(group);
+				if (group.kind === "document") return [{ kind: "document" as const, document: group.documents[0] }];
+				const heading: LibraryRow = { kind: "group", group };
+				return expanded
+					? [heading, ...group.documents.map((document) => ({ kind: "document" as const, document }))]
+					: [heading];
+			});
+	// Closed groups are out of the page until opened, so selection and Select this page follow what is shown.
+	const visibleDocuments = rows.flatMap((row) => (row.kind === "document" ? [row.document] : []));
 	const emptyType =
 		!trashed && type !== "all" && !q && !tags.length && !publicOnly && offset === 0 && displayed?.counts[type] === 0
 			? type
@@ -308,9 +383,9 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 			(counts.data && counts.data.resume + counts.data.letter + counts.data.trash > 0),
 		),
 	);
-	const firstAppearance = useFirstAppearance(filtered.length > 0);
+	const firstAppearance = useFirstAppearance(visibleDocuments.length > 0);
 	const reduced = useReducedMotion();
-	const selected = rowsCurrent ? filtered.filter((document) => selection.includes(documentKey(document))) : [];
+	const selected = rowsCurrent ? visibleDocuments.filter((document) => selection.includes(documentKey(document))) : [];
 	const { refetch: refetchDocuments } = documents;
 	const { refetch: refetchCounts } = counts;
 	const pull = usePullRefresh(async () => {
@@ -525,7 +600,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 									variant="ghost"
 									disabled={!rowsCurrent}
 									onPress={() => {
-										if (rowsCurrent) setSelection(filtered.map(documentKey));
+										if (rowsCurrent) setSelection(visibleDocuments.map(documentKey));
 									}}
 								/>
 								{trashed ? (
@@ -591,10 +666,14 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		>
 			<Stack.Screen options={{ title: trashed ? t`Trash` : t`Documents`, headerShown: false }} />
 			<AnimatedLegendList
-				data={session.status === "signed-in" ? filtered : []}
+				data={session.status === "signed-in" ? rows : []}
 				ListHeaderComponent={header}
 				numColumns={columns}
-				keyExtractor={documentKey}
+				keyExtractor={(row) => (row.kind === "group" ? row.group.key : documentKey(row.document))}
+				getItemType={(row) => row.kind}
+				overrideItemLayout={(layout, row) => {
+					if (row.kind === "group") layout.span = columns;
+				}}
 				extraData={visible}
 				viewabilityConfig={viewabilityConfig}
 				onViewableItemsChanged={onViewableItemsChanged}
@@ -606,35 +685,48 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 				{...(columns > 1 ? { columnWrapperStyle: { gap: space.s3 } } : {})}
 				// Reanimated's item layout animation supports one column only.
 				{...(columns === 1 ? { itemLayoutAnimation: listLayout } : {})}
-				renderItem={({ item, index }) => (
-					<DocumentMotionFrame
-						itemKey={documentKey(item)}
-						register={removal.register}
-						{...listItemMotion(index, firstAppearance, { reduced, exiting: false })}
-						style={{ flex: 1, maxWidth: Math.max(0, (width - space.s3 * (columns - 1)) / columns) }}
-					>
-						<DocumentItem
-							document={item}
-							visible={visible.includes(documentKey(item))}
-							grid={grid}
-							selected={rowsCurrent && selection.includes(documentKey(item))}
-							selecting={selecting}
-							busy={operations.busy || !rowsCurrent}
-							unsynced={!trashed && pendingKeys.has(documentKey(item))}
-							onOpen={() => open(item)}
-							onSelect={() => toggle(item)}
-							onMenu={() => {
-								if (rowsCurrent) setSheet({ kind: "menu", documents: [item] });
-							}}
-							onTrash={() => {
-								if (rowsCurrent) void operations.trash([item]);
-							}}
-							onDuplicate={() => {
-								if (rowsCurrent) void duplicate(item);
-							}}
-						/>
-					</DocumentMotionFrame>
-				)}
+				renderItem={({ item, index }) => {
+					if (item.kind === "group")
+						return (
+							<View style={{ flex: 1, width }}>
+								<GroupHeading
+									group={item.group}
+									expanded={groupExpanded(item.group)}
+									onToggle={() => toggleGroup(item.group.key, item.group.closed)}
+								/>
+							</View>
+						);
+					const document = item.document;
+					return (
+						<DocumentMotionFrame
+							itemKey={documentKey(document)}
+							register={removal.register}
+							{...listItemMotion(index, firstAppearance, { reduced, exiting: false })}
+							style={{ flex: 1, maxWidth: Math.max(0, (width - space.s3 * (columns - 1)) / columns) }}
+						>
+							<DocumentItem
+								document={document}
+								visible={visible.includes(documentKey(document))}
+								grid={grid}
+								selected={rowsCurrent && selection.includes(documentKey(document))}
+								selecting={selecting}
+								busy={operations.busy || !rowsCurrent}
+								unsynced={!trashed && pendingKeys.has(documentKey(document))}
+								onOpen={() => open(document)}
+								onSelect={() => toggle(document)}
+								onMenu={() => {
+									if (rowsCurrent) setSheet({ kind: "menu", documents: [document] });
+								}}
+								onTrash={() => {
+									if (rowsCurrent) void operations.trash([document]);
+								}}
+								onDuplicate={() => {
+									if (rowsCurrent) void duplicate(document);
+								}}
+							/>
+						</DocumentMotionFrame>
+					);
+				}}
 				ListEmptyComponent={
 					session.status !== "signed-in" ? (
 						<EmptyState

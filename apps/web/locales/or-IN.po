@@ -195,6 +195,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# ଡକ୍ୟୁମେଣ୍ଟ୍ ଟ୍ରାଶକୁ ଚାଲିଗଲା} other {# ଡକ୍ୟୁମେଣ୍ଟ୍ ଟ୍ରାଶକୁ ଚାଲିଗଲା}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -412,6 +417,12 @@ msgstr "{0, plural, one {#ଟି ସେଭ୍ ହୋଇଥିବା ଆଇଟମ
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {ଆପଣ ଚୟନ କରିଥିବା ଫଣ୍ଟ {list} ଦେଖାଇପାରିବ ନାହିଁ। ଏହା “?” ଭାବେ ଦେଖାଯାଏ। ଡିଜାଇନ୍ ଟ୍ୟାବରେ, ଏହା ଥିବା ଏକ ଫଣ୍ଟ ବାଛନ୍ତୁ।} other {ଆପଣ ଚୟନ କରିଥିବା ଫଣ୍ଟ {list} ଦେଖାଇପାରିବ ନାହିଁ। ଏଗୁଡ଼ିକ “?” ଭାବେ ଦେଖାଯାଏ। ଡିଜାଇନ୍ ଟ୍ୟାବରେ, ଏଗୁଡ଼ିକ ଥିବା ଏକ ଫଣ୍ଟ ବାଛନ୍ତୁ।}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3035,6 +3046,10 @@ msgstr "ଆବେଦନ ପାଇଁ ସର୍ବୋତ୍ତମ |"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "ଅବରୋଧକ"
@@ -3849,6 +3864,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "ବନ୍ଦ |"
 
@@ -4304,6 +4320,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4324,6 +4344,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "ଏକ ଚାକିରି ପାଇଁ ଏକ ରେଜୁମ୍ କପି କରନ୍ତୁ |"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Copy and log as replied"
+msgstr "କପି କରି ଉତ୍ତର ଦିଆଯାଇଛି ଭାବେ ରେକର୍ଡ କରନ୍ତୁ"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
@@ -4507,6 +4531,10 @@ msgstr "ଅତିଥି ଭାବରେ ଜାରି ରଖିହେଲା ନ�
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "ପ୍ରଶ୍ନଗୁଡ଼ିକ କପି କରିହେଲା ନାହିଁ। ଟେକ୍ସଟ୍ ଚୟନ କରି ନିଜେ କପି କରନ୍ତୁ।"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "ଉତ୍ତର କପି ହୋଇପାରିଲା ନାହିଁ। କିଛି ରେକର୍ଡ ହୋଇନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Couldn't copy the resume. Choose it again to prepare it."
 msgstr ""
@@ -4534,11 +4562,6 @@ msgstr "ଡକ୍ୟୁମେଣ୍ଟ୍ ସୃଷ୍ଟି କରିହେଲ�
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "ଚାବି ସୃଷ୍ଟି କରିପାରିଲା ନାହିଁ | ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |"
-
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "ପତ୍ର ସୃଷ୍ଟି କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
@@ -4732,6 +4755,7 @@ msgstr "ଆପଣଙ୍କ ପର୍ଯ୍ୟାୟଗୁଡ଼ିକ ଲୋଡ�
 msgid "Couldn't load your stages."
 msgstr "ଆପଣଙ୍କ ପର୍ଯ୍ୟାୟଗୁଡ଼ିକ ଲୋଡ୍ କରିହେଲା ନାହିଁ।"
 
+#: src/features/career/shared.tsx
 #: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
@@ -4894,6 +4918,7 @@ msgid "Couldn't revoke this connection. Try again."
 msgstr "ଏହି ସଂଯୋଗ ପ୍ରତ୍ୟାହାର କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
 #: src/features/career/hooks.ts
+#: src/features/career/workspace/saved.tsx
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "ସେହି ପରିବର୍ତ୍ତନ ସେଭ୍ କରିହେଲା ନାହିଁ। ଆପଣଙ୍କ ସଂଯୋଗ ଯାଞ୍ଚ କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
@@ -5253,12 +5278,6 @@ msgstr "କଭର୍ ଚିଠି"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "କଭର ଲେଟର"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "କଭର୍ ଅକ୍ଷର - {0} |"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -9310,6 +9329,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "ଉତ୍ତର ଦେବା ପରେ ହିଁ ରେକର୍ଡ କରନ୍ତୁ। ଏହା ଯୋଗାଯୋଗ ରେକର୍ଡ କରେ ଏବଂ ଆବେଦନର ଫଲୋ-ଅପ୍ ଓ ଏହାର ସ୍ମାରକ ହଟାଏ; ବାର୍ତ୍ତା ପଠାଏ ନାହିଁ ଏବଂ ସାକ୍ଷାତକାର ସ୍ମାରକ ରଖେ।"
+
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "ଲମ୍ବା ଅଂଶ ବଡ଼ ଅକ୍ଷରରେ ଲେଖାଯାଇଛି।"
@@ -13009,6 +13032,10 @@ msgstr "ଆଇକନ୍ ଫଣ୍ଟକୁ ସରଳ ଟେକ୍ସଟ୍‌ର
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "ଟେବୁଲ୍‌କୁ ସରଳ ଅନୁଚ୍ଛେଦ ଏବଂ ତାଲିକାରେ ବଦଳାନ୍ତୁ। ସେଲ୍‌ଗୁଡ଼ିକ ପଠନ କ୍ରମରେ ନୁହେଁ, ସଂଗ୍ରହ କ୍ରମରେ ବାହାର ହୁଅନ୍ତି।"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "ପଠାଇବା ପୂର୍ବରୁ ଏହି ସ୍ଥାନଧାରକଗୁଡ଼ିକ ବଦଳାନ୍ତୁ:"
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -13021,6 +13048,10 @@ msgstr "ଆବେଦନରେ “{current}”କୁ ବଦଳାଏ।"
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Replied"
+msgstr "ଉତ୍ତର ଦିଆଯାଇଛି"
+
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13029,6 +13060,22 @@ msgstr "ଉତ୍ତର"
 #: src/features/career/workspace/messages.tsx
 msgid "Reply copied"
 msgstr "ଉତ୍ତର କପି ହେଲା"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "ଉତ୍ତର କପି ହୋଇ ଉତ୍ତର ଦିଆଯାଇଛି ଭାବେ ରେକର୍ଡ ହୋଇଛି"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "ଉତ୍ତର କପି ହୋଇଛି। ରେକର୍ଡ ନିଶ୍ଚିତ ହୋଇନାହିଁ। ପୁଣି ଚେଷ୍ଟା ପୂର୍ବରୁ ସମୟରେଖା ଯାଞ୍ଚ କରନ୍ତୁ।"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "ଉତ୍ତର କପି ହେଲା। ଚାକିରି ଆବେଦନ ବଦଳିଥିବାରୁ କିଛି ରେକର୍ଡ ହୋଇନାହିଁ। ରେକର୍ଡ କରିବା ପୂର୍ବରୁ ପୁଣି ସମୀକ୍ଷା କରନ୍ତୁ।"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "ଉତ୍ତର କପି ହୋଇଛି। କିଛି ରେକର୍ଡ ହୋଇନାହିଁ। ପୁଣି ରେକର୍ଡ କରିବା ପୂର୍ବରୁ ଆବେଦନଟି ସମୀକ୍ଷା କରନ୍ତୁ।"
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -13318,6 +13365,7 @@ msgstr "ରେଜୁମେସ୍ ସୃଷ୍ଟି |"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -15211,6 +15259,10 @@ msgstr "ପ୍ରତ୍ୟେକଟିକୁ ଏକ ନିର୍ଦ୍ଦିଷ�
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "ଠାରୁ ଆରମ୍ଭ କରନ୍ତୁ |"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."
@@ -17367,6 +17419,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "ଉତ୍ତର ରେକର୍ଡ କରିବା ସକ୍ରିୟ କରିବାକୁ ସର୍ଭର୍ ଅପଡେଟ୍ କରନ୍ତୁ। ଉତ୍ତର କପି କରିବା ଏବେ ବି ଉପଲବ୍ଧ ଅଛି।"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."

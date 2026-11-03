@@ -1,9 +1,15 @@
+import type { DeferredFetch } from "@reactive-resume/utils/deferred-request";
 import { getAccountId } from "@/libs/auth/account-scope";
 
 let stagingUnavailable = false;
 
 /** Large RPC bodies bypass the hosting ingress limit while retaining their original wire format. */
-export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+export async function rpcFetch(
+	input: RequestInfo | URL,
+	init?: RequestInit,
+	options?: { context: { defer?: DeferredFetch } },
+): Promise<Response> {
+	const defer = options?.context.defer;
 	const request = new Request(input, { ...init, credentials: "include" });
 	request.headers.set("x-client-timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
 	// A call-bound account (captured when the procedure was invoked) wins; a direct fetch gets the live scope.
@@ -14,8 +20,9 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 	if (request.method !== "POST") return fetch(request);
 	// Buffer as bytes: a teed stream needs duplex mode, and a Blob body is not visible to DevTools/CDP.
 	const body = await request.arrayBuffer();
-	const sendDirect = () =>
-		fetch(request.url, {
+	const sendDirect = () => {
+		if (defer && request.headers.get("x-account-id") !== getAccountId()) throw new DOMException("", "AbortError");
+		return fetch(request.url, {
 			method: "POST",
 			headers: request.headers,
 			body,
@@ -23,6 +30,11 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 			credentials: "include",
 			signal: request.signal,
 		});
+	};
+	if (defer) {
+		if (body.byteLength > 60 * 1024) throw new Error("Request exceeds the Undo dispatch limit");
+		return defer(sendDirect);
+	}
 	if (stagingUnavailable || body.byteLength < 3 * 1024 * 1024) return sendDirect();
 
 	const url = new URL(request.url);

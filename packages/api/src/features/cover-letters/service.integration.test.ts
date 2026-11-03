@@ -874,6 +874,52 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		]);
 	});
 
+	it("starts a new job's letter from an owned earlier letter without carrying its company or history", async () => {
+		await getPool().query(
+			`UPDATE application SET company='Northwind Labs', contacts='[{"name":"Dana Reyes"}]' WHERE id='alice-app'`,
+		);
+		await getPool().query(
+			`INSERT INTO application (id, user_id, company, contacts) VALUES ('alice-app-2','alice','Fieldnote','[{"name":"Morgan Lee"}]')`,
+		);
+		const source = await service.create({
+			userId: "alice",
+			name: "Northwind letter",
+			content: "<p>I led delivery for Northwind's platform team.</p>",
+			applicationId: "alice-app",
+		});
+		const { listLetterVersions } = await import("./versions");
+		const sourceVersions = await listLetterVersions({ userId: "alice", coverLetterId: source.id });
+
+		const reused = await service.create({
+			userId: "alice",
+			name: "Fieldnote letter",
+			applicationId: "alice-app-2",
+			sourceLetterId: source.id,
+		});
+
+		expect(reused).toMatchObject({
+			content: source.content,
+			recipientCompany: "Fieldnote",
+			recipientName: "Morgan Lee",
+			layout: "structured",
+		});
+		expect(await service.getById({ userId: "alice", id: source.id })).toMatchObject({
+			content: source.content,
+			recipientCompany: "Northwind Labs",
+		});
+		expect(await listLetterVersions({ userId: "alice", coverLetterId: source.id })).toEqual(sourceVersions);
+		expect(await listLetterVersions({ userId: "alice", coverLetterId: reused.id })).toHaveLength(1);
+
+		// Another account's letter, and a trashed one, are not usable sources.
+		await expect(service.create({ userId: "bob", name: "Borrowed", sourceLetterId: source.id })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await service.delete({ userId: "alice", id: source.id, expectedRevision: source.revision });
+		await expect(
+			service.create({ userId: "alice", name: "From Trash", sourceLetterId: source.id }),
+		).rejects.toMatchObject({ code: "NOT_FOUND" });
+	});
+
 	it("starts a letter in the posting's language and keeps its language independent of the design link", async () => {
 		await getPool().query(
 			`UPDATE application SET company='Lumen Health', posting_source='{"method":"builtin","format":"text","truncated":false,"completeness":"unknown","language":"de-DE"}' WHERE id='alice-app'`,

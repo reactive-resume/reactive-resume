@@ -195,6 +195,11 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# document mutat în Coșul de gunoi} few {# documente mutate în Coșul de gunoi} other {# de documente mutate în Coșul de gunoi}}"
 
+#. placeholder {0}: group.documents.length
+#: src/features/documents/documents-page.tsx
+msgid "{0, plural, one {# document} other {# documents}}"
+msgstr ""
+
 #. placeholder {0}: stale.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
@@ -412,6 +417,12 @@ msgstr "{0, plural, one {folosit în # element salvat} few {folosit în # elemen
 #: src/libs/error-message.ts
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {Fontul selectat nu poate afișa {list}. Apare ca “?”. În Design, alegeți un font care îl conține.} few {Fontul selectat nu poate afișa {list}. Apar ca “?”. În Design, alegeți un font care le conține.} other {Fontul selectat nu poate afișa {list}. Apar ca “?”. În Design, alegeți un font care le conține.}}"
+
+#. placeholder {0}: letter.name
+#. placeholder {1}: letter.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} — {1}"
+msgstr ""
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
@@ -3035,6 +3046,10 @@ msgstr "Cel mai bun pentru candidaturi"
 msgid "blank"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Blank letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
 msgstr "Blocaj"
@@ -3849,6 +3864,7 @@ msgstr ""
 #: src/features/applications/stages.ts
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Closed"
 msgstr "Închis"
 
@@ -4304,6 +4320,10 @@ msgstr ""
 msgid "Copies for this job"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copies the body. The new letter keeps its own recipient, date and history."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -4324,6 +4344,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "Copiați un CV pentru un loc de muncă"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Copy and log as replied"
+msgstr "Copiază și înregistrează răspunsul"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
@@ -4507,6 +4531,10 @@ msgstr "Nu s-a putut continua ca invitat. Încearcă din nou."
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "Nu s-au putut copia întrebările. Selectați textul și copiați-l manual."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "Răspunsul nu a putut fi copiat. Nu s-a înregistrat nimic. Încearcă din nou."
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Couldn't copy the resume. Choose it again to prepare it."
 msgstr ""
@@ -4534,11 +4562,6 @@ msgstr "Documentul nu a putut fi creat. Încearcă din nou."
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "Nu s-a putut crea cheia. Încearcă din nou."
-
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Couldn't create the letter. Try again."
-msgstr "Nu s-a putut crea scrisoarea. Încearcă din nou."
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
@@ -4732,6 +4755,7 @@ msgstr "Etapele nu au putut fi încărcate, așa că sunt afișate cele standard
 msgid "Couldn't load your stages."
 msgstr "Etapele nu au putut fi încărcate."
 
+#: src/features/career/shared.tsx
 #: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
@@ -4894,6 +4918,7 @@ msgid "Couldn't revoke this connection. Try again."
 msgstr "Nu s-a putut revoca această conexiune. Încearcă din nou."
 
 #: src/features/career/hooks.ts
+#: src/features/career/workspace/saved.tsx
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Nu s-a putut salva modificarea. Verificați conexiunea și încercați din nou."
 
@@ -5253,12 +5278,6 @@ msgstr "Scrisoare de intenție"
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "Scrisoare de intenție"
-
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-#: src/features/career/workspace/preparation.tsx
-msgid "Cover letter — {0}"
-msgstr "Scrisoarea de intenție — {0}"
 
 #: src/features/homepage/tailor.tsx
 msgid "Cover letter · Fieldnote"
@@ -9309,6 +9328,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "Înregistrează doar după ce ai răspuns. Se înregistrează contactul și se șterg urmărirea candidaturii și mementoul ei; nu se trimite niciun mesaj, iar mementourile pentru interviuri se păstrează."
+
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "Porțiuni lungi sunt scrise cu majuscule."
@@ -13007,6 +13030,10 @@ msgstr "Înlocuiți fonturile de pictograme cu text simplu, apoi exportați din 
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Înlocuiți tabelele cu paragrafe și liste simple. Celulele sunt extrase în ordinea de stocare, nu în ordinea de citire."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "Înlocuiește acești substituenți înainte de trimitere:"
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -13019,6 +13046,10 @@ msgstr "Înlocuiește „{current}” în candidatură."
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Replied"
+msgstr "Răspuns dat"
+
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reply"
@@ -13027,6 +13058,22 @@ msgstr "Răspuns"
 #: src/features/career/workspace/messages.tsx
 msgid "Reply copied"
 msgstr "Răspuns copiat"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "Răspuns copiat și înregistrat"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "Răspuns copiat. Înregistrarea nu a fost confirmată. Verifică cronologia înainte de a încerca din nou."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "Răspuns copiat. Nu s-a înregistrat nimic deoarece candidatura s-a schimbat. Verific-o din nou înainte de înregistrare."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "Răspuns copiat. Nu s-a înregistrat nimic. Verifică candidatura înainte de a încerca din nou înregistrarea."
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -13316,6 +13363,7 @@ msgstr "CV-urile create"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -15209,6 +15257,10 @@ msgstr "Începeți fiecare cu un verb concret: a construit, a condus, a redus, a
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from"
 msgstr "Începe de la"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from an earlier letter"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Start from one you have and link the application."
@@ -17364,6 +17416,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "Actualizează serverul pentru a activa înregistrarea răspunsurilor. Poți copia în continuare răspunsul."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."

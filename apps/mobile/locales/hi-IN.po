@@ -3439,6 +3439,10 @@ msgstr ""
 msgid "Copy a resume for a job"
 msgstr "नौकरी के लिए बायोडाटा कॉपी करें"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Copy and log as replied"
+msgstr "कॉपी करें और उत्तर दिया गया के रूप में दर्ज करें"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "जवाब कॉपी करें"
@@ -3544,6 +3548,10 @@ msgstr "आपके AI प्रदाताओं की जाँच नह�
 msgid "Couldn't check your evidence."
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't clear the follow-up reminder. It may still notify you."
+msgstr "फ़ॉलो-अप रिमाइंडर हटाया नहीं जा सका। यह अभी भी आपको सूचना दे सकता है।"
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "अनुरोध पूरा नहीं किया जा सका। अपना कनेक्शन जाँचें और पुनः प्रयास करें।"
@@ -3573,6 +3581,10 @@ msgstr "सहेजे जाने की पुष्टि नहीं क�
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "सहेजे जाने की पुष्टि नहीं की जा सकी। डुप्लिकेट से बचने के लिए पुनः प्रयास करने से पहले आवेदन जाँचें।"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't copy the reply. Nothing was logged. Try again."
+msgstr "उत्तर कॉपी नहीं हो सका। कुछ दर्ज नहीं हुआ। फिर कोशिश करें।"
+
 #: src/features/check/job-match.tsx
 msgid "Couldn't copy the resume. Your edits are kept. Try again."
 msgstr ""
@@ -3585,14 +3597,6 @@ msgstr "प्रतिलेख कॉपी नहीं किया जा �
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "पत्र नहीं बनाया जा सका। पुनः प्रयास करें।"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Library."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Couldn't delete that offer. Try again."
-msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3901,10 +3905,6 @@ msgstr ""
 #: src/features/workspace/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "वह बदलाव सहेजा नहीं जा सका। अपना कनेक्शन जाँचें और फिर से प्रयास करें।"
-
-#: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item is restored; try again."
-msgstr "वह बदलाव सहेजा नहीं जा सका। आइटम पुनर्स्थापित कर दिया गया है; पुनः प्रयास करें।"
 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
@@ -7266,6 +7266,10 @@ msgstr ""
 msgid "Log an update…"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Log only when you have replied. This records contact and clears the application's follow-up and its reminder; it sends no message and keeps interview reminders."
+msgstr "उत्तर देने के बाद ही दर्ज करें। इससे संपर्क दर्ज होता है और आवेदन का फ़ॉलो-अप और उसका रिमाइंडर हटता है; कोई संदेश नहीं भेजा जाता और इंटरव्यू के रिमाइंडर बने रहते हैं।"
+
 #: src/features/documents/library.tsx
 msgid "Long press to select"
 msgstr "चुनने के लिए दबाकर रखें"
@@ -10307,6 +10311,10 @@ msgstr "फ़ोटो बदलें"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "टेबल को सादे पैराग्राफ और सूचियों से बदलें। सेल स्टोरेज क्रम में निकलती हैं, पढ़ने के क्रम में नहीं।"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Replace these placeholders before sending:"
+msgstr "भेजने से पहले इन प्लेसहोल्डर को बदलें:"
+
 #: src/features/assistant/messages.tsx
 msgid "Replaced by a newer suggestion"
 msgstr ""
@@ -10323,6 +10331,10 @@ msgstr "आवेदन पर \"{current}\" को बदलता है।"
 msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+msgid "Replied"
+msgstr "उत्तर दिया गया"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
 msgstr "उत्तर"
@@ -10330,6 +10342,22 @@ msgstr "उत्तर"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Reply copied"
 msgstr "उत्तर कॉपी किया गया"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied and logged as replied"
+msgstr "उत्तर कॉपी करके उत्तर दिया गया के रूप में दर्ज किया गया"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Logging wasn't confirmed. Check the timeline before trying again."
+msgstr "उत्तर कॉपी हुआ। दर्ज होने की पुष्टि नहीं हुई। फिर कोशिश करने से पहले टाइमलाइन देखें।"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged because the application changed. Review it again before logging."
+msgstr "जवाब कॉपी किया गया। नौकरी का आवेदन बदलने के कारण कुछ दर्ज नहीं हुआ। दर्ज करने से पहले इसे फिर से जाँचें।"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Reply copied. Nothing was logged. Review the application before logging again."
+msgstr "जवाब कॉपी हुआ। कुछ भी दर्ज नहीं हुआ। फिर से दर्ज करने से पहले आवेदन की समीक्षा करें।"
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -10571,6 +10599,7 @@ msgstr "चरण का उपयोग बंद करें"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/provider.tsx
+#: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
 #: src/features/check/job-match.tsx
@@ -10596,6 +10625,7 @@ msgstr "चरण का उपयोग बंद करें"
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -13922,6 +13952,10 @@ msgstr ""
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"
 msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Update the server to enable reply logging. Copy reply is still available."
+msgstr "जवाब दर्ज करना चालू करने के लिए सर्वर अपडेट करें। जवाब कॉपी करना अभी भी उपलब्ध है।"
 
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."
