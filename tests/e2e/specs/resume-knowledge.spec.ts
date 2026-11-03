@@ -151,6 +151,65 @@ test("Unicode review keeps full excerpts and original quotations when fact text 
 	expect(JSON.stringify(facts)).not.toContain("header-only@example.test");
 });
 
+test("section collisions exclude References while literal heading-like excerpts persist unchanged", async ({
+	authPage: page,
+}) => {
+	const data = structuredClone(defaultResumeData);
+	const quote = "## Career\n\nLed twelve engineers.";
+	data.summary.title = "Career";
+	data.summary.content = "<p>## Career</p><p>Led twelve engineers.</p>";
+	data.sections.references.items = [
+		{
+			id: "reference",
+			hidden: false,
+			name: "Private reference",
+			position: "Manager",
+			phone: "+1 202 555 0148",
+			website: { url: "", label: "", inlineLink: false },
+			description: "",
+		},
+	];
+	data.customSections.push({ ...data.sections.skills, id: "references", type: "skills" });
+	data.metadata.layout.pages = [{ fullWidth: true, main: ["summary", "references"], sidebar: [] }];
+	const imported = await page.request.post("/api/openapi/resumes/import", { data: { data } });
+	await expect(imported).toBeOK();
+	const resumeId = (await imported.json()) as string;
+	const preview = await page.request.post("/api/openapi/career/facts/resume/preview", { data: { resumeId } });
+	await expect(preview).toBeOK();
+	const { updatedAt } = await preview.json();
+	const rejected = await page.request.post("/api/openapi/career/facts/resume/import", {
+		data: {
+			resumeId,
+			updatedAt,
+			proposals: [
+				{
+					text: "Private reference",
+					category: "skill",
+					quote: "- **Private reference** — Manager · +1 202 555 0148",
+				},
+			],
+		},
+	});
+	expect(rejected.status()).toBe(400);
+	expect(await (await page.request.get("/api/openapi/career/facts")).json()).toEqual([]);
+	await page.goto("/dashboard/career/knowledge/facts");
+	await page.getByRole("button", { name: "Pull facts from my resume", exact: true }).click();
+	await page.getByLabel("Resume", { exact: true }).selectOption(resumeId);
+	await page.getByRole("button", { name: "Review resume facts", exact: true }).click();
+	const field = page.getByRole("textbox", { name: "Fact", exact: true });
+	await expect(field).toHaveCount(1);
+	await expect(field).toHaveValue(quote);
+	await page.getByRole("button", { name: "Save selected facts", exact: true }).click();
+	await expect(field).toHaveCount(0);
+	const response = await page.request.get("/api/openapi/career/facts");
+	await expect(response).toBeOK();
+	const facts = await response.json();
+	expect(facts).toMatchObject([{ text: quote, source: { kind: "resume", id: resumeId, quote } }]);
+	expect(facts).toHaveLength(1);
+	expect(JSON.stringify(facts)).not.toContain("Private reference");
+	expect(JSON.stringify(facts)).not.toContain("+1 202 555 0148");
+});
+
 test("protected import rejects foreign, changed, trashed and forged sources atomically, preserving duplicates and exclusions", async ({
 	authPage: page,
 	browser,

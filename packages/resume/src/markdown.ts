@@ -46,7 +46,13 @@ export function resumeFactProposals(data: ResumeData) {
 	if (isCoverLetterOnlyDocument(data)) return { proposals, omitted };
 	for (const page of data.metadata.layout.pages) {
 		for (const id of [...page.main, ...page.sidebar]) {
-			const type = data.customSections.find((section) => section.id === id)?.type ?? id;
+			const section =
+				id === "summary"
+					? data.summary
+					: id in data.sections
+						? data.sections[id as SectionType]
+						: data.customSections.find((item) => item.id === id);
+			const type = section && "type" in section ? section.type : id;
 			if (
 				![
 					"summary",
@@ -62,8 +68,9 @@ export function resumeFactProposals(data: ResumeData) {
 				].includes(type)
 			)
 				continue;
+			const sectionHeading = heading(section?.title ?? "");
 			const markdown = renderSection(id, data)
-				.filter((block) => !block.startsWith("## "))
+				.filter((block, index) => index !== 0 || block !== sectionHeading)
 				.join("\n\n")
 				.replace(/\n{3,}/g, "\n\n")
 				.trim();

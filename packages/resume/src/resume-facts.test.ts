@@ -65,6 +65,41 @@ it("does not silently clip a long claim or propose contact-only documents", () =
 	expect(resumeFactProposals(data)).toEqual({ proposals: [], omitted: 1 });
 });
 
+it("keeps built-in References excluded when a custom section shares its ID", () => {
+	const data = structuredClone(defaultResumeData);
+	data.sections.references.items = [
+		{
+			id: "reference",
+			hidden: false,
+			name: "Private reference",
+			position: "Manager",
+			phone: "+1 202 555 0148",
+			website: { url: "", label: "", inlineLink: false },
+			description: "",
+		},
+	];
+	data.customSections.push({ ...data.sections.skills, id: "references", type: "skills" });
+	data.metadata.layout.pages = [{ fullWidth: true, main: ["references"], sidebar: [] }];
+	expect(buildMarkdown(data)).toContain("Private reference");
+	expect(resumeFactProposals(data)).toEqual({ proposals: [], omitted: 0 });
+});
+
+it.each(["", "Career"])("retains literal heading-like content with section title '%s'", (title) => {
+	const data = structuredClone(defaultResumeData);
+	data.summary.title = title;
+	data.summary.content = "<p>## Career</p><p>Led twelve engineers.</p>";
+	expect(resumeFactProposals(data)).toEqual({
+		omitted: 0,
+		proposals: [
+			{
+				text: "## Career\n\nLed twelve engineers.",
+				quote: "## Career\n\nLed twelve engineers.",
+				category: "experience",
+			},
+		],
+	});
+});
+
 it.each([
 	["ASCII", "A".repeat(2000)],
 	["astral", "A" + "😀".repeat(1999)],
