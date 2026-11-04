@@ -17,7 +17,6 @@ import {
 	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useReducedMotion } from "motion/react";
@@ -384,16 +383,9 @@ export function ChipInput({
 								onChange={handleInputChange}
 								className="h-9 flex-1 border-none p-0 focus-visible:border-none focus-visible:ring-0 dark:bg-transparent"
 							/>
-							{chips.length > 0 && (
-								<span
-									className={cn(
-										"flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md border px-1.5 text-[0.7rem] font-medium tabular-nums",
-										isEditingKeyword
-											? "border-accent/30 bg-accent/10 text-accent-text"
-											: "border-line bg-sunken/50 text-ink/80 opacity-80",
-									)}
-								>
-									{isEditingKeyword ? <Trans>Edit</Trans> : i18n.number(chips.length)}
+							{isEditingKeyword && (
+								<span className="flex h-6 shrink-0 items-center rounded-md border border-accent/30 bg-accent/10 px-1.5 text-xs font-medium text-accent-text">
+									<Trans>Edit</Trans>
 								</span>
 							)}
 						</div>

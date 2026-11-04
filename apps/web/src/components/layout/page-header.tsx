@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 type PageHeaderProps = {
 	title: ReactNode;
-	/** One line under the title. */
+	/** Context for subpages such as Trash. Top-level titles stand alone. */
 	description?: ReactNode;
 	/** A small back link above the title. */
 	back?: ReactNode;
@@ -22,7 +22,7 @@ export function PageHeader({ title, description, back, actions, children }: Page
 					<h1 className="font-display text-[30px] leading-9">{title}</h1>
 					{description && <p className="text-sm text-ink-2">{description}</p>}
 				</div>
-				{actions && <div className="flex items-center gap-2">{actions}</div>}
+				{actions && <div className="flex max-w-full flex-wrap items-center gap-2">{actions}</div>}
 			</header>
 			{children && <div className="flex flex-wrap items-center gap-3">{children}</div>}
 		</>

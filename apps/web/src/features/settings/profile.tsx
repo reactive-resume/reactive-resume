@@ -34,7 +34,7 @@ export function ProfileSettings() {
 	const query = useQuery(orpc.applicationProfile.get.queryOptions());
 	return (
 		<>
-			<PageHeader title={<Trans>Profile</Trans>} description={<Trans>Details for your job application forms.</Trans>} />
+			<PageHeader title={<Trans>Profile</Trans>} />
 			{query.isPending ? (
 				<p role="status">
 					<Trans>Loading…</Trans>

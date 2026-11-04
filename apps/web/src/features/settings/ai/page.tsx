@@ -13,10 +13,7 @@ export function AiDeveloperSettings() {
 	const { newKey } = useSearch({ from: "/dashboard/settings/ai" });
 	return (
 		<>
-			<PageHeader
-				title={<Trans>AI &amp; developer</Trans>}
-				description={<Trans>Connect the tools you use for writing, job search and working with your resumes.</Trans>}
-			/>
+			<PageHeader title={<Trans>AI &amp; developer</Trans>} />
 			<ProvidersSection />
 			<AiUsageSection />
 			<WebAccessSection />
