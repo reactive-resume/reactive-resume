@@ -1,5 +1,16 @@
-import { expect, it } from "vite-plus/test";
-import { parseAmount, parseDecimal } from "./amount";
+import { expect, it, vi } from "vite-plus/test";
+import { getCurrencyOptions, parseAmount, parseDecimal } from "./amount";
+
+it("labels currency choices with codes and localized symbols without dropping saved codes", () => {
+	const english = getCurrencyOptions("en-US", "BTC");
+	expect(english.find((option) => option.value === "USD")?.label).toBe("USD · $");
+	expect(english.find((option) => option.value === "EUR")?.label).toBe("EUR · €");
+	expect(english.find((option) => option.value === "BTC")?.label).toBe("BTC");
+	expect(getCurrencyOptions("de-DE").find((option) => option.value === "USD")?.label).toBe("USD · $");
+	expect(getCurrencyOptions("ar-SA").find((option) => option.value === "EUR")?.label).toContain("EUR");
+	expect(new Set(english.map((option) => option.value)).size).toBe(english.length);
+	expect(getCurrencyOptions("en-US", "bad input").some((option) => option.value === "bad input")).toBe(false);
+});
 
 it("keeps monetary precision and safe bounds while accepting finite percentage decimals", () => {
 	for (const [locale, text, value] of [
@@ -21,4 +32,19 @@ it("keeps monetary precision and safe bounds while accepting finite percentage d
 	expect(parseDecimal("9".repeat(400), "en-US")).toBeUndefined();
 	expect(parseDecimal(`0.${"0".repeat(323)}1`, "en-US")).toBeUndefined();
 	expect(parseDecimal(`0.${"0".repeat(323)}5`, "en-US")).toBe(Number.MIN_VALUE);
+});
+
+it("reuses currency labels when selection changes, formatting only a saved extra code", () => {
+	const formatter = vi.spyOn(Intl, "NumberFormat");
+	try {
+		getCurrencyOptions("fr-CA");
+		const built = formatter.mock.calls.length;
+		expect(built).toBeGreaterThan(100);
+		getCurrencyOptions("fr-CA", "EUR");
+		expect(formatter.mock.calls.length).toBe(built);
+		getCurrencyOptions("fr-CA", "BTC");
+		expect(formatter.mock.calls.length).toBe(built + 1);
+	} finally {
+		formatter.mockRestore();
+	}
 });

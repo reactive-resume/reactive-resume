@@ -37,7 +37,7 @@ const itemLabel = (item: DisclosureItem, task: GenerateTask["task"]): ReactNode 
 		case "letter":
 			return t`the cover letter for this job`;
 		case "knowledge":
-			return t`Knowledge that's switched on`;
+			return t`enabled Knowledge`;
 		case "interview":
 			return t`the interview details`;
 		case "answers":
@@ -101,20 +101,16 @@ export function DisclosureText({
 }: DisclosureTextProps) {
 	const { i18n } = useLingui();
 	const factsQuery = useQuery({
-		...orpc.career.facts.queryOptions({ input: { applicationId: application?.id ?? "" } }),
-		enabled: Boolean(application),
+		...orpc.career.facts.queryOptions({ input: { applicationId: application?.id ?? null } }),
 	});
 	const storiesQuery = useQuery({
-		...orpc.career.stories.queryOptions({ input: { applicationId: application?.id ?? "" } }),
-		enabled: Boolean(application),
+		...orpc.career.stories.queryOptions({ input: { applicationId: application?.id ?? null } }),
 	});
 	const facts = factsQuery.data;
 	const stories = storiesQuery.data;
 	// Until both lookups answer, the notice cannot know Knowledge is absent. Over-disclose while it is unknown rather
 	// than omit a category the server may already have sent. A failed lookup is also unknown, not empty.
-	const knowledgeUnknown =
-		Boolean(application) &&
-		(factsQuery.isPending || storiesQuery.isPending || factsQuery.isError || storiesQuery.isError);
+	const knowledgeUnknown = factsQuery.isPending || storiesQuery.isPending || factsQuery.isError || storiesQuery.isError;
 	const present: Partial<Record<DisclosureItem, boolean>> = {
 		preferences: true,
 		posting: Boolean(application?.jobDescription?.trim()),

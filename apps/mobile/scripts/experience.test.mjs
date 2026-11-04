@@ -10,6 +10,19 @@ i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
 const { buildSync } = harness.esbuild;
+function loadDomain(path) {
+	const output = buildSync({
+		entryPoints: [new URL("../../../" + path, import.meta.url).pathname],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text;
+	const module = { exports: {} };
+	new Function("require", "module", "exports", output)(serverRequire, module, module.exports);
+	return module.exports;
+}
+
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
 // Lingui's t: a tagged template, or a descriptor ({ message, comment }) for strings with translator notes.
 const translatedMessages = new Map();
@@ -901,6 +914,7 @@ for (const [overrides, label, destination] of [
 ]) {
 	reset();
 	tree = render(NextStepCard, { application: { ...application, ...overrides }, onOpenInterview() {} });
+	assert.equal(tree.props.title, overrides.status === "closed" ? "Outcome" : "Next step");
 	control(tree, label).onPress();
 	assert.equal(calls.at(-1), `/applications/job-a/${destination}`);
 	if (!overrides.status) assert.ok(!nodes(tree).some((node) => node.props.label === "Schedule an interview"));
@@ -1770,6 +1784,7 @@ const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 let offerScope = "offer-account";
 let offerLocale = "en-US";
 let offerProfile = { isSuccess: false, isPending: true, isError: false };
+let offerPreferences;
 let savedOffers = [
 	{ createdAt: "2026-09-01T00:00:00Z", data: { kind: "offer", currency: "USD" } },
 	{ createdAt: "2026-10-01T00:00:00Z", data: { kind: "offer", currency: "GBP" } },
@@ -1816,6 +1831,7 @@ const loadOfferEntry = () =>
 		"@/auth/session": { getAccountScope: () => offerScope },
 		"@reactive-resume/schema/career": careerSchema,
 		"@reactive-resume/schema/career-offer": offerParser,
+		"@reactive-resume/utils/amount": amountParser,
 		"./hooks": {
 			useCareerTime: () => ({ locale: offerLocale, timeZone: "Europe/Berlin", profile: offerProfile }),
 			useCareerAction: () => ({
@@ -1849,7 +1865,7 @@ const loadOfferEntry = () =>
 				},
 			},
 			useOffers: () => ({ data: savedOffers }),
-			useCareerQueries: () => ({ profile: { data: undefined } }),
+			useCareerQueries: () => ({ profile: { data: offerPreferences } }),
 		},
 		"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
 		"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
@@ -1862,6 +1878,37 @@ const loadOfferEntry = () =>
 		"@/features/applications/queries": { useApplications: () => offerApplications },
 	});
 const { OfferEntry, OfferForm } = loadOfferEntry();
+reset();
+offerPreferences = { minBase: { amount: 8000, currency: "EUR", period: "month" } };
+const annualHintView = render(OfferForm, {
+	application: { id: "annual-job", company: "Fictional Salary", role: "Engineer", salary: "$120k–140k" },
+	onClose() {},
+});
+assert.equal(control(annualHintView, "Pay period").value, "year");
+assert.equal(control(annualHintView, "Base salary").value, "120000");
+reset();
+const defaultPeriodView = () =>
+	render(OfferForm, { application: { id: "period-job", company: "Fictional Labs", role: "Engineer" }, onClose() {} });
+assert.equal(
+	control(defaultPeriodView(), "Pay period").value,
+	"month",
+	"saved Preferences seed the native offer period",
+);
+offerPreferences = { minBase: { amount: 100, currency: "EUR", period: "hour" } };
+assert.equal(
+	control(defaultPeriodView(), "Pay period").value,
+	"hour",
+	"untouched period follows late saved Preferences",
+);
+control(defaultPeriodView(), "Pay period").onChange("year");
+offerPreferences = { minBase: { amount: 8000, currency: "EUR", period: "month" } };
+assert.equal(
+	control(defaultPeriodView(), "Pay period").value,
+	"year",
+	"explicit offer period survives later Preferences",
+);
+offerPreferences = undefined;
+
 reset();
 offerApplications = { isPending: true };
 assert.equal(render(OfferEntry, {}).type, "LoadState", "unknown metadata offers no ready action");
@@ -1891,10 +1938,11 @@ assert.equal(control(offerView(), "Currency").value, "GBP", "starts in the last 
 savedOffers = [{ createdAt: "2026-11-01T00:00:00Z", data: { kind: "offer", currency: "EUR" } }];
 assert.equal(control(offerView(), "Currency").value, "GBP", "late refetch cannot replace the draft currency");
 assert.equal(control(offerView(), "Currency").placeholder, undefined, "no placeholder posing as a value");
-assert.match(control(offerView(), "Currency").helper, /three-letter/);
+assert.equal(control(offerView(), "Currency").searchable, true);
+assert.equal(control(offerView(), "Currency").options.find((item) => item.value === "USD").label, "USD · $");
 assert.ok(!nodes(offerView()).some((node) => node.props.label === "Learning budget"), "rarer terms start folded");
 assert.ok(!nodes(offerView()).some((node) => /Times are shown/.test(String(node.props.children))));
-control(offerView(), "Currency").onChangeText("EUR");
+control(offerView(), "Currency").onChange("EUR");
 control(offerView(), "More options").onPress();
 control(offerView(), "Learning budget").onChangeText("95k");
 assert.equal(control(offerView(), "Learning budget").error, undefined, "typing shows no premature error");
@@ -1944,7 +1992,7 @@ const appliedForm = nodes(appliedEntry).find((node) => typeof node.type === "fun
 assert.ok(appliedForm, "initialOpen shows the form at once");
 reset();
 const appliedView = () => render(appliedForm.type, { ...appliedForm.props, onClose() {} });
-control(appliedView(), "Currency").onChangeText("EUR");
+control(appliedView(), "Currency").onChange("EUR");
 control(appliedView(), "Save offer").onPress();
 await settle();
 const moved = calls.find((call) => call?.moveWithUndo)?.moveWithUndo;
@@ -2040,18 +2088,33 @@ searchParams = {};
 console.log("PASS native percentage entry and immutable offer-version action");
 
 // Native Save must stay reachable for validation, then focus the actual missing input.
-const { Stories } = load("features/career/stories.tsx", {
+let storyReadState = {};
+const { Stories, StoryEditor } = load("features/career/stories.tsx", {
 	"@reactive-resume/schema/career": careerSchema,
 	"./hooks": {
-		useCareerQueries: () => ({ stories: { data: [] }, facts: { data: [] } }),
+		useCareerQueries: () => ({ stories: { data: [], ...storyReadState }, facts: { data: [] } }),
 		useUndoRows: () => ({ hidden: [] }),
 		useCareerAction: () => ({ pending: false, run: (save) => save() }),
 		client: { career: { saveStory: (payload) => calls.push({ story: payload }) } },
 	},
+	"./story-practice-button": { StoryPracticeButton: "StoryPracticeButton" },
 	"./shared": { Actions: "Actions", EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
 });
 reset();
-control(render(Stories, {}), "Add a story").onPress();
+for (const state of [{ isPending: true }, { isError: true }]) {
+	storyReadState = state;
+	reset();
+	const tree = render(Stories, {});
+	control(tree, "Add a story").onPress();
+	assert.ok(nodes(render(Stories, {})).some((node) => typeof node.type === "function" && node.props.story === null));
+}
+storyReadState = {};
+reset();
+const emptyStory = nodes(render(Stories, {})).find((node) => node.props.title === "No stories yet");
+assert.ok(emptyStory);
+assert.equal(emptyStory.props.variant, "card");
+assert.equal(emptyStory.props.action.label, "Add a story");
+emptyStory.props.action.onPress();
 const storyEditor = nodes(render(Stories, {})).find(
 	(node) => typeof node.type === "function" && node.props.story === null,
 );
@@ -2197,6 +2260,7 @@ const photoHooks = load("features/write/hooks.ts", {
 	"./model": {},
 });
 let pictureOptions;
+let photoUploadRequest;
 const { PictureScreen } = load("features/write/picture-screen.tsx", {
 	"@tanstack/react-query": {
 		useMutation: (options) => {
@@ -2204,19 +2268,88 @@ const { PictureScreen } = load("features/write/picture-screen.tsx", {
 			return {};
 		},
 	},
-	"expo-file-system": {},
+	"expo-file-system": {
+		File: class extends Blob {
+			constructor(uri) {
+				super(["fictional image bytes"]);
+				this.uri = uri;
+			}
+		},
+	},
 	"expo-image": { Image: "Image" },
-	"expo-image-picker": {},
+	"expo-image-picker": {
+		launchImageLibraryAsync: async () => ({ canceled: false, assets: [{ uri: "fixture://photo" }] }),
+	},
 	"./entry-screen": { EditorScreen: "EditorScreen" },
 	"./hooks": { ...photoHooks, useWriteData: (select) => select(photoStore.getState().data) },
 	"./pickers": {},
-	"./upload": {},
-	"@/api/client": { client: { storage: { deleteFile: async () => photoBytes.delete(photoUrl) } } },
+	"./upload": load("features/write/upload.ts", {}),
+	"@/api/client": {
+		rest: async (path, init) => {
+			assert.equal(path, "/files");
+			assert.equal(init.method, "POST");
+			assert.ok(init.body instanceof FormData);
+			photoUploadRequest.started();
+			return photoUploadRequest.response;
+		},
+		client: { storage: { deleteFile: async () => photoBytes.delete(photoUrl) } },
+	},
 	"@/auth/session": { useSession: () => ({ server: "https://resume.example.test" }) },
 	"@/draft": { useResumeStore: photoStore, useIsResumeLocked: () => photoStore.getState().locked },
-	"@/draft/native": { nativeEnvironment: {} },
+	"@/draft/native": { nativeEnvironment: { scope: async () => "photo-owner" } },
 });
 const photoView = () => render(PictureScreen);
+assert.equal(
+	nodes(photoView()).some((node) => node.props?.label === "Rotation"),
+	false,
+	"unsupported rotation is not offered",
+);
+assert.equal(
+	nodes(photoView()).some((node) => node.props?.label === "Size"),
+	true,
+	"existing photo offers appearance controls",
+);
+
+for (const action of ["unchanged", "edited", "removed"]) {
+	let completeUpload;
+	let enterUpload;
+	const started = new Promise((resolve) => {
+		enterUpload = resolve;
+	});
+	const response = new Promise((resolve) => {
+		completeUpload = resolve;
+	});
+	photoUploadRequest = { started: enterUpload, response };
+	photoStore.getState().update((draft) => {
+		draft.picture.url = photoUrl;
+		draft.picture.size = 80;
+	});
+	photoView();
+	const pending = pictureOptions.mutationFn();
+	await started;
+	assert.equal(photoStore.getState().data.picture.url, photoUrl);
+	const newerUrl = "https://photos.example.test/newer.jpeg";
+	control(photoView(), "Size").onChange(99);
+	if (action === "edited") control(photoView(), "URL").onChangeText(newerUrl);
+	if (action === "removed") control(photoView(), "Remove photo").onPress();
+	const expected =
+		action === "unchanged" ? "https://photos.example.test/uploaded.jpeg" : action === "edited" ? newerUrl : "";
+	completeUpload({ ok: true, json: async () => ({ url: "https://photos.example.test/uploaded.jpeg" }) });
+	await pending;
+	assert.equal(photoStore.getState().data.picture.url, expected, `late upload respects ${action} URL`);
+	assert.equal(photoStore.getState().data.picture.size, 99, "upload preserves newer appearance edits");
+	photoStore.getState().undo();
+	assert.equal(photoStore.getState().data.picture.url, photoUrl, "upload or newer choice is one undo step");
+	assert.equal(photoStore.getState().data.picture.size, 99, "photo Undo preserves newer appearance edits");
+	photoStore.getState().redo();
+	assert.equal(photoStore.getState().data.picture.url, expected, "ignored upload does not replace newer history");
+}
+photoStore.getState().update((draft) => {
+	draft.picture.url = photoUrl;
+	draft.picture.size = 80;
+});
+console.log("PASS native photo upload preserves newer URL or removal and unrelated appearance edits");
+
 // Undo removal must retain the edit immediately before it.
 photoStore.getState().update((draft) => {
 	draft.picture.size = 123;
@@ -2226,6 +2359,12 @@ const photoConfirm = nodes(photoView()).find((node) => node.type === "ConfirmDia
 if (photoConfirm) photoConfirm.props.onConfirm();
 assert.equal(photoStore.getState().data.picture.url, "");
 assert.equal(photoBytes.get(photoUrl), "photo bytes");
+assert.equal(
+	nodes(photoView()).some((node) => ["Fit", "Size", "Border color", "Shadow color"].includes(node.props?.label)),
+	false,
+	"empty photo offers upload before appearance controls",
+);
+
 assert.equal(
 	nodes(photoView()).some((node) => node.type === "ConfirmDialog"),
 	false,
@@ -2535,6 +2674,7 @@ let todayApplications = [];
 let todayOffers = [];
 let todayOfferState = { isPending: false, isError: false };
 let todayNow = new Date();
+let todaySchedules = [];
 const { TodayScreen } = load("features/career/today.tsx", {
 	"./prepare-now": { PrepareNow: "PrepareNow" },
 	"@/features/applications/stage-actions": { useOfferHints: () => undefined, offerHintFor: () => undefined },
@@ -2559,7 +2699,7 @@ const { TodayScreen } = load("features/career/today.tsx", {
 		useNow: () => todayNow,
 		useOffers: () => ({ data: todayOffers, ...todayOfferState }),
 		useTodayQueries: () => ({
-			schedules: { data: [] },
+			schedules: { data: todaySchedules },
 			opportunities: { data: discovered },
 			notifications: { data: [] },
 			briefings: { data: [] },
@@ -2599,6 +2739,52 @@ assert.equal(
 );
 assert.match(JSON.stringify(triageTree), /1 updated; 1 failed/);
 console.log("PASS native discovery serial bulk triage, partial-failure selection and success suppression");
+
+reset();
+const completedPreparation = {
+	id: "completed-preparation",
+	kind: "prepare",
+	enabled: true,
+	intervalDays: null,
+	lastQueuedAt: "2026-10-31T08:00:00Z",
+	nextRunAt: "2026-10-31T08:00:00Z",
+	lastRun: { status: "completed" },
+	timezone: "UTC",
+	query: "",
+};
+for (const [change, expected] of [
+	[{}, "Ran 31 Oct · done for this interview"],
+	[{ enabled: false }, "Ran 31 Oct · done for this interview"],
+	[{ kind: "follow-up" }, "Done · 31 Oct"],
+	[{ lastRun: { status: "queued" } }, "Running · 31 Oct"],
+	[{ lastRun: { status: "running" } }, "Running · 31 Oct"],
+	[{ lastRun: { status: "failed" } }, "Failed · open to check it · 31 Oct"],
+	[{ intervalDays: 1, lastRun: { status: "failed" } }, "Last run failed · 31 Oct"],
+	[{ lastQueuedAt: null, lastRun: null }, "On · 31 Oct"],
+	[{ lastQueuedAt: null, lastRun: null, enabled: false }, "Paused · 31 Oct"],
+	[{ intervalDays: 1 }, "On · 31 Oct"],
+]) {
+	todaySchedules = [{ ...completedPreparation, ...change }];
+	const tree = render(TodayScreen);
+	const text = nodes(tree)
+		.filter((node) => node.type === "Text")
+		.map((node) => node.props.children.flat(Infinity).join(""));
+	assert.ok(text.includes(expected), `Missing schedule status: ${expected}`);
+	const toggle = control(tree, todaySchedules[0].kind);
+	assert.equal(toggle.value, todaySchedules[0].enabled);
+	assert.equal(toggle.disabled, false);
+}
+todaySchedules = [completedPreparation];
+control(render(TodayScreen), "prepare").onValueChange(true);
+assert.equal(
+	nodes(render(TodayScreen)).find((node) => node.type === "ScheduleSheet").props.schedule,
+	completedPreparation,
+	"turning a completed one-off on still opens review rather than dispatching another run",
+);
+todaySchedules = [];
+console.log(
+	"PASS native completed preparation explains one-interview lifetime and preserves statuses, dates and review",
+);
 
 reset();
 todayNow = new Date("2030-01-03T10:00:00Z");
@@ -3413,6 +3599,9 @@ let newDocumentParams = { step: "copy", applicationId: "new-job" };
 let copyHasProvider = false;
 let pdfReview;
 const { NewDocument } = load("features/documents/new-document.tsx", {
+	"@reactive-resume/utils/locale": loadDomain("packages/utils/src/locale.ts"),
+	"@/features/settings/locale-names": { getLocaleOptions: () => [{ value: "de-DE", label: "Deutsch" }] },
+	"@/i18n": { selectableLocales: ["en-US", "de-DE"] },
 	"@/routes": load("routes.ts"),
 	"./copy-for-job": {
 		copyForJob: async (input) => {
@@ -3831,6 +4020,7 @@ const { useCareerAction: memoryAction } = load("features/career/hooks.ts", {
 	"@/auth/session": memorySession,
 	"@/features/settings/queries": {},
 });
+let factsReadState = {};
 const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
 	"@tanstack/react-query": {},
 	"@reactive-resume/schema/career": careerSchema,
@@ -3851,7 +4041,7 @@ const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
 	"expo-crypto": {},
 	"./hooks": {
 		client: memoryApi,
-		useCareerQueries: () => ({ facts: { data: [] }, profile: { data: memoryProfile } }),
+		useCareerQueries: () => ({ facts: { data: [], ...factsReadState }, profile: { data: memoryProfile } }),
 		useCareerAction: memoryAction,
 		useCareerTime: () => ({ when() {}, profile: { data: memoryAccount } }),
 		useUndoRows: () => ({ hidden: [] }),
@@ -3862,6 +4052,18 @@ const { Facts: KnowledgeFacts } = load("features/career/facts.tsx", {
 const factsHeader = () =>
 	nodes(render(KnowledgeFacts, { onRefresh: async () => {} })).find((node) => node.type === "LegendList").props
 		.ListHeaderComponent;
+reset();
+for (const state of [{ isPending: true }, { isError: true }]) {
+	factsReadState = state;
+	reset();
+	control(factsHeader(), "Add a fact").onPress();
+	assert.ok(
+		nodes(render(KnowledgeFacts, { onRefresh: async () => {} })).some(
+			(node) => typeof node.type === "function" && node.props.fact === null,
+		),
+	);
+}
+factsReadState = {};
 reset();
 for (const memoryMode of ["ask", "auto", "off"]) {
 	let header = factsHeader();
@@ -3912,7 +4114,11 @@ assert.equal(
 console.log("PASS native Facts owns loaded memory consent with scoped writes, pending guard and failure recovery");
 
 reset();
-control(factsHeader(), "Add a fact").onPress();
+const emptyFact = nodes(factsHeader()).find((node) => node.props.title === "No facts yet");
+assert.ok(emptyFact);
+assert.equal(emptyFact.props.variant, "card");
+assert.equal(emptyFact.props.action.label, "Add a fact");
+emptyFact.props.action.onPress();
 const nativeFactEditor = nodes(render(KnowledgeFacts, { onRefresh: async () => {} })).find(
 	(node) => typeof node.type === "function" && node.type.name === "FactEditor",
 ).type;
@@ -4017,6 +4223,67 @@ function MemoryNoteRoute() {
 render(MemoryNoteRoute).props.onPress();
 assert.deepEqual(calls, [{ pathname: "/career/knowledge", params: { tab: "facts" } }]);
 console.log("PASS native coach privacy chip opens Knowledge Facts");
+
+reset();
+let privacyStranded = false;
+const { CoachSheet: PrivacyCoachSheet } = load("features/workspace/coach-sheet.tsx", {
+	"react-native": { View: "View", useWindowDimensions: () => ({ height: 800 }) },
+	"@tanstack/react-query": { useQuery: () => ({ data: [] }) },
+	"./coach-starters": { coachStarters: () => [] },
+	"./parts": { tabLabel: () => "Fit" },
+	"@/api/client": {
+		client: {},
+		orpc: { career: { facts: { queryOptions: () => ({}) }, stories: { queryOptions: () => ({}) } } },
+	},
+	"@/auth/session": { useSession() {}, getAccountScope: () => "privacy-owner" },
+	"@/features/ai/providers": { useHasAIProvider: () => ({ hasAIProvider: true, usableProviders: [] }) },
+	"@/features/assistant/chat": { useThreads: () => ({ data: [], refetch() {} }) },
+	"@/features/assistant/chat-view": { ChatView: "ChatView", ContextChip: "ContextChip" },
+	"@/features/assistant/chat-welcome": { ChatWelcome: "ChatWelcome" },
+	"@/features/assistant/provider": {
+		ConnectionNotice: "ConnectionNotice",
+		ModelButton: "ModelButton",
+		ModelSheet: "ModelSheet",
+		ProviderGate: "ProviderGate",
+		WebResearchChip: "WebResearchChip",
+		useConversationProvider: () => ({ provider: { id: "provider" }, stranded: privacyStranded, label: "Fictional AI" }),
+		useMemoryNote: () => ({ note: "Memory policy unchanged" }),
+		useWebSearch: () => ({ canSearch: true }),
+	},
+	"@/features/assistant/sent": { usableStories: () => [] },
+	"@/features/assistant/threads": {
+		useDeleteThread: () => ({}),
+		useThreadTime: () => () => "Today",
+		useThreadTitle: () => () => "Conversation",
+	},
+	"@/features/career/stories": { StoryEditor: "StoryEditor" },
+	"@/ui": { ...ui, Sheet: "Sheet", IconButton: "IconButton", ListRow: "ListRow" },
+});
+const privacySheet = render(PrivacyCoachSheet, { open: true, application: nativeJob, tab: "fit" });
+const privacyBody = nodes(privacySheet).find((node) => typeof node.type === "function");
+reset();
+const privacyChat = () =>
+	nodes(render(privacyBody.type, privacyBody.props)).find((node) => node.type === "ChatView").props;
+for (const earlier of [0, 2]) {
+	const line = privacyChat().privacy({ earlier, withheld: 0 });
+	assert.match(line, /Knowledge that's switched on, to Fictional AI\./);
+	assert.match(line, /posting, notes, documents, your form answers, the saved offer and recent messages/);
+	assert.equal(line.includes("earlier messages here"), earlier > 0);
+	assert.match(line, /Memory policy unchanged/);
+}
+const privacyControls = nodes(privacyChat().chips);
+privacyControls.find((node) => node.props.label === "Knowledge").props.onPress();
+assert.doesNotMatch(privacyChat().privacy({ earlier: 2, withheld: 1 }), /Knowledge that's switched on/);
+assert.match(privacyChat().privacy({ earlier: 2, withheld: 1 }), /Messages from before Knowledge changed aren't sent/);
+nodes(privacyChat().chips)
+	.find((node) => node.type === "WebResearchChip")
+	.props.onPress();
+assert.match(privacyChat().privacy({ earlier: 0, withheld: 0 }), /Search terms go to your web search service/);
+privacyStranded = true;
+assert.match(privacyChat().privacy({ earlier: 2, withheld: 0 }), /^Nothing is sent until you choose a connection/);
+console.log(
+	"PASS native actual CoachSheet privacy separates Knowledge from destination and retains context/consent states",
+);
 
 // Follow-up controls must work for every owed row, including accounts larger than the old dismissal cap.
 reset();
@@ -4313,6 +4580,25 @@ assert.equal(control(menuView(), "Save").disabled, true);
 control(menuView(), "Back").onPress();
 assert.equal(tagsAction().disabled, true);
 console.log("PASS native builder tags use draft flush, retain body, and respect tag limits and locks");
+
+hooks = [];
+let suggestedTags = ["chosen"];
+const suggestedCommit = { current: null };
+const suggestedView = () =>
+	render(NativeTagInput, {
+		label: "Tags",
+		values: suggestedTags,
+		onChange: (next) => {
+			suggestedTags = next;
+		},
+		suggestions: ["remote"],
+		commitRef: suggestedCommit,
+	});
+control(suggestedView(), "Tags").onChangeText("rem");
+control(suggestedView(), "remote").onPress();
+suggestedView();
+assert.deepEqual(suggestedCommit.current(), ["chosen", "remote"], "suggestion consumes its typed filter before Save");
+console.log("PASS native filtered tag suggestion never saves the filter as another tag");
 
 control(menuView(), "Document options").onPress();
 nodes(menuView())
@@ -4981,3 +5267,386 @@ assert.equal(
 	"Late restore cannot notify a replacement editor",
 );
 console.log("PASS native letter named/unnamed History labels, restore notice and late-editor fence");
+
+// Recovered document-language/assistant acceptance runs actual native owners against upload/storage/write boundaries.
+const pasteFiles = new Map();
+class PasteFile {
+	constructor(root, name) {
+		this.uri = name ? `${root}/${name}` : root;
+	}
+	write(text) {
+		pasteFiles.set(this.uri, text);
+	}
+	get exists() {
+		return pasteFiles.has(this.uri);
+	}
+	get size() {
+		return Buffer.byteLength(pasteFiles.get(this.uri) ?? "");
+	}
+	async base64() {
+		return Buffer.from(pasteFiles.get(this.uri) ?? "").toString("base64");
+	}
+	delete() {
+		pasteFiles.delete(this.uri);
+	}
+}
+let pasteUpload;
+let polishScope = "polish-account";
+const polishBoundaries = {
+	react: { ...react, memo: (component) => component },
+	"@legendapp/list/react-native": {},
+	ai: {},
+	"@orpc/client": { ORPCError: class extends Error {} },
+	"expo-clipboard": {},
+	"expo-document-picker": {},
+	"expo-file-system": { File: PasteFile, Paths: { cache: "own-cache" } },
+	"react-native-keyboard-controller": {},
+	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", TextInput: "TextInput" },
+	"@reactive-resume/ai/tools/agent-tool-contracts": loadDomain("packages/ai/src/tools/agent-tool-contracts.ts"),
+	"@reactive-resume/resume/proposals": loadDomain("packages/resume/src/proposals.ts"),
+	"@reactive-resume/resume/word-diff": {},
+	"@reactive-resume/schema/ai-usage": {},
+	"@reactive-resume/utils/http": { isNetworkError: () => false },
+	"./chat": {},
+	"./messages": {},
+	"./proposals": {},
+	"./recovery": {},
+	"./sent": {},
+	"./tool-approvals": {},
+	"./handoff": {},
+	"./markdown": {},
+	"./page-fit": {},
+	"./save-posting": {},
+	"@/features/ai/report-content": {},
+	"@/features/ai/web-access": {},
+	"@/features/career/fact-categories": { factCategories: () => [] },
+	"@/features/documents/queries": {},
+	"@/auth/session": { getAccountScope: () => polishScope },
+	"@/api/client": {
+		orpc: { career: { facts: { key: () => ["facts"] } } },
+		client: {
+			agent: {
+				attachments: {
+					create: (input, options) => {
+						calls.push({ upload: input, options });
+						return pasteUpload;
+					},
+				},
+			},
+			career: {
+				saveFact: async (input) => {
+					calls.push({ fact: input });
+					return { id: "fact" };
+				},
+			},
+		},
+	},
+	"@tanstack/react-query": { useQueryClient: () => ({ invalidateQueries: () => {} }) },
+	"@/ui": { ...ui, useTheme: () => ({ ...theme, type: { body: { lineHeight: 20 } } }) },
+};
+const { Composer: PasteComposer } = load(
+	"features/assistant/chat-view.tsx",
+	polishBoundaries,
+	";module.exports.Composer=Composer;",
+);
+reset();
+let recoveredSend;
+const recoveredProps = {
+	scope: "polish-account",
+	initialAttachments: [{ id: "recovered", filename: "Fictional native draft.txt", mediaType: "text/plain", size: 64 }],
+	draft: "Review recovered file",
+	disabled: false,
+	streaming: false,
+	privacy: "Explicit Send only",
+	ensureThread: async () => "paste-thread",
+	onSend: (text, files) => {
+		recoveredSend = { text, files };
+		return true;
+	},
+	onStop() {},
+};
+const recoveredTree = render(PasteComposer, recoveredProps);
+assert.ok(JSON.stringify(recoveredTree).includes("Fictional native draft.txt"));
+assert.equal(recoveredSend, undefined);
+nodes(recoveredTree)
+	.find((node) => node.props.accessibilityLabel === "Send")
+	.props.onPress();
+await settle();
+assert.deepEqual(recoveredSend, {
+	text: "Review recovered file",
+	files: [{ id: "recovered", filename: "Fictional native draft.txt", mediaType: "text/plain" }],
+});
+assert.equal(JSON.stringify(render(PasteComposer, recoveredProps)).includes("Fictional native draft.txt"), false);
+for (const scenario of ["success", "failure", "changed"]) {
+	reset();
+	let finish;
+	let fail;
+	pasteUpload = new Promise((resolve, reject) => {
+		finish = resolve;
+		fail = reject;
+	});
+	const original = "Unicode résumé مرحبا 😀\n".repeat(250);
+	const props = {
+		scope: "polish-account",
+		draft: original,
+		disabled: false,
+		streaming: false,
+		privacy: "Explicit Send only",
+		ensureThread: async () => "paste-thread",
+		onSend: () => assert.fail("Conversion must not send"),
+		onStop() {},
+	};
+	const box = () => nodes(render(PasteComposer, props)).find((n) => n.type === "TextInput").props;
+	assert.equal(box().value, original);
+	assert.equal(calls.length, 0);
+	control(render(PasteComposer, props), "Attach a file instead").onPress();
+	await settle();
+	assert.equal(calls[0].upload.filename, "message.txt");
+	assert.equal(calls[0].options.context.scope, "polish-account");
+	assert.equal(Buffer.from(calls[0].upload.data, "base64").toString("utf8"), original);
+	assert.equal(box().value, original);
+	if (scenario === "changed") box().onChangeText("Fresh native draft");
+	if (scenario === "failure") fail(new Error("offline"));
+	else finish({ id: "paste-upload", filename: "message.txt", mediaType: "text/plain" });
+	await settle();
+	assert.equal(
+		box().value,
+		scenario === "success" ? "Read the attachment" : scenario === "changed" ? "Fresh native draft" : original,
+	);
+	assert.equal(pasteFiles.size, 0, "Own temporary file must be deleted on success or failure");
+}
+const {
+	Coverage: GapCoverage,
+	RememberMessage: RememberAnswer,
+	ToolPartView: NativeQuestionPart,
+} = load(
+	"features/assistant/messages.tsx",
+	polishBoundaries,
+	";module.exports.Coverage=Coverage;module.exports.RememberMessage=RememberMessage;module.exports.ToolPartView=ToolPartView;",
+);
+reset();
+const nativeQuestion = render(NativeQuestionPart, {
+	part: { type: "tool-ask_user_question", state: "output-available", output: "Fictional answer" },
+	message: { id: "question", role: "assistant", parts: [] },
+	streaming: false,
+	readOnly: false,
+	answerable: true,
+	proposals: [],
+	onAnswer() {},
+});
+for (const node of nodes(nativeQuestion).filter((node) => node.type === "View")) {
+	assert.ok(
+		node.props.children.flat(Infinity).every((child) => typeof child !== "string" && typeof child !== "number"),
+		"Native View children must not contain raw text",
+	);
+}
+reset();
+const repeatedRequirements = ["missing", "unassessed"].map((status) => ({
+	text: "Repeated requirement",
+	status,
+	evidence: [],
+}));
+let repeatedGaps = nodes(render(GapCoverage, { requirements: repeatedRequirements, factText: () => null })).filter(
+	(node) => node.props.accessibilityRole === "checkbox",
+);
+assert.equal(repeatedGaps.length, 2);
+repeatedGaps[0].props.onPress();
+repeatedGaps = nodes(render(GapCoverage, { requirements: repeatedRequirements, factText: () => null })).filter(
+	(node) => node.props.accessibilityRole === "checkbox",
+);
+assert.deepEqual(
+	repeatedGaps.map((node) => node.props.accessibilityState.checked),
+	[true, false],
+);
+reset();
+const requirements = [{ text: "Accessibility audits", status: "missing", evidence: [] }];
+let gap = nodes(render(GapCoverage, { requirements, factText: () => null })).find(
+	(n) => n.props.accessibilityRole === "checkbox",
+);
+assert.ok(gap);
+assert.equal(gap.props.accessibilityState.checked, false);
+gap.props.onPress();
+gap = nodes(render(GapCoverage, { requirements, factText: () => null })).find(
+	(n) => n.props.accessibilityRole === "checkbox",
+);
+assert.equal(gap.props.accessibilityState.checked, true);
+assert.equal(requirements[0].status, "missing");
+assert.deepEqual(requirements[0].evidence, []);
+assert.equal(calls.length, 0);
+reset();
+const answerProps = {
+	message: { id: "question-message", role: "assistant", parts: [] },
+	answer: "I repaired six checkout issues.",
+	scope: { applicationId: "fictional-job" },
+};
+control(render(RememberAnswer, answerProps), "Remember").onPress();
+let review = render(RememberAnswer, answerProps);
+control(review, "Remember as a fact in Knowledge").onChangeText("I led repairs for six checkout issues.");
+control(render(RememberAnswer, answerProps), "Cancel").onPress();
+assert.equal(calls.length, 0);
+control(render(RememberAnswer, answerProps), "Remember").onPress();
+review = render(RememberAnswer, answerProps);
+assert.equal(control(review, "Remember as a fact in Knowledge").value, "I led repairs for six checkout issues.");
+control(review, "Remember").onPress();
+await settle();
+assert.deepEqual(calls[0].fact, {
+	applicationId: "fictional-job",
+	text: "I led repairs for six checkout issues.",
+	category: "accomplishment",
+	source: { kind: "manual", id: "question-message", quote: "I repaired six checkout issues." },
+});
+console.log(
+	"PASS native long-paste explicit Unicode upload/failure/changed-draft/temp cleanup, gap evidence isolation and reviewed answer Knowledge save",
+);
+
+assert.ok(JSON.stringify(render(RememberAnswer, answerProps)).includes("Added to Knowledge."));
+reset();
+control(render(RememberAnswer, answerProps), "Remember").onPress();
+polishScope = "another-account";
+control(render(RememberAnswer, answerProps), "Remember").onPress();
+await settle();
+assert.equal(calls.length, 0, "Old account answer must not be saved into a new account");
+polishScope = "polish-account";
+
+const { OfferMessages: NativeOfferMessages } = load(
+	"features/career/offers.tsx",
+	{
+		"./hooks": {},
+		"./offer-compare": {},
+		"@reactive-resume/utils/timezone": {},
+		"@/features/applications/queries": {},
+		"./offer-entry": {},
+		"./offer-selection": {},
+		"./shared": {},
+		"@/features/applications/hooks": {},
+		"@/auth/session": {},
+		"@reactive-resume/schema/career": {},
+		"@reactive-resume/schema/career-offer": {},
+		"@reactive-resume/utils/amount": {},
+	},
+	"\nmodule.exports.OfferMessages = OfferMessages;",
+);
+reset();
+assert.equal(render(NativeOfferMessages, { applications: [] }), null);
+const nativeOfferMessages = render(NativeOfferMessages, {
+	applications: [{ id: "fictional-role", company: "Fictional Birch", role: "Engineer" }],
+});
+assert.equal(nativeOfferMessages.type, "SelectSheet");
+assert.equal(nativeOfferMessages.props.placeholder, "Choose an application");
+assert.equal(nativeOfferMessages.props.value, "");
+assert.deepEqual(calls, []);
+nativeOfferMessages.props.onChange("fictional-role");
+assert.deepEqual(calls, ["/applications/fictional-role/messages"]);
+console.log("PASS native Offers Messages names its empty chooser and only navigates after selection");
+
+// The actual editor initializes citations once; later renders must not undo an explicit untick.
+const citedFact = {
+	id: "draft-shared",
+	text: "I rebuilt the fictional design system.",
+	applicationId: null,
+	status: "active",
+};
+const storyFacts = [
+	citedFact,
+	{ ...citedFact, id: "draft-excluded", status: "excluded" },
+	{ ...citedFact, id: "draft-private", applicationId: "job" },
+];
+for (const start of [
+	{ title: "Draft the project story", note: `Use “${citedFact.text}” as evidence.` },
+	{
+		title: "Draft the project story",
+		note: "Explain your contribution.",
+		factIds: storyFacts.map((f) => f.id).concat("foreign"),
+	},
+]) {
+	reset();
+	const draftView = () => render(StoryEditor, { story: null, facts: storyFacts, start, onClose() {} });
+	assert.equal(control(draftView(), "Title").value, start.title);
+	assert.equal(control(draftView(), citedFact.text).value, true);
+	assert.equal(nodes(draftView()).filter((n) => n.type === "SwitchRow").length, 1);
+	control(draftView(), citedFact.text).onValueChange(false);
+	assert.equal(control(draftView(), citedFact.text).value, false, "rerender preserves the user's explicit choice");
+}
+console.log("PASS native actual story citation initialization and reviewed deselection");
+
+// Preparation waits for owned facts before mounting an editor whose initialization runs once.
+let planFactsQuery = { data: undefined, isPending: true, isError: false, refetch() {} };
+const { TestPlan } = load(
+	"features/workspace/tabs/prepare.tsx",
+	{
+		"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: null }) },
+		"@tanstack/react-query": {},
+		"@/api/flags": {},
+		"@reactive-resume/utils/locale": { formatList: (items) => items.join(", ") },
+		"@reactive-resume/schema/career-schedule": loadDomain("packages/schema/src/career-schedule.ts"),
+		"../hooks": {
+			useFacts: () => planFactsQuery,
+			useTicks: () => ({ ticked: [] }),
+			useWorkspace: () => ({ data: { questions: [] } }),
+			useGenerate: () => ({ isPending: false }),
+		},
+		"../logic": {},
+		"../parts": {
+			useWorking: () => "Plan again",
+			workingSteps: () => [],
+			Actions: "Actions",
+			AiNotice: "AiNotice",
+			Block: "Block",
+			CheckRow: "CheckRow",
+			Pill: "Pill",
+			GenerateNotice: "GenerateNotice",
+		},
+		"../shell": { WorkspaceScreen: "WorkspaceScreen" },
+		"@/features/career/shared": { LoadState: "LoadState" },
+		"@/features/career/stories": { StoryEditor: "StoryEditor" },
+		"@/features/application-detail/hooks": {},
+	},
+	";module.exports.TestPlan = Plan;",
+);
+reset();
+const planStep = {
+	minutes: 10,
+	title: "Draft the project story",
+	detail: "Explain the project.",
+	action: "draft-story",
+	storyId: null,
+	factIds: [citedFact.id],
+};
+const planView = () =>
+	render(TestPlan, {
+		application: { id: "story-job" },
+		briefing: {
+			id: "story-plan",
+			data: {
+				plan: [planStep],
+				questions: [],
+				stories: [],
+				storyIds: [],
+				headline: "Plan",
+				summary: "",
+				focus: "",
+				opening: "",
+				honesty: "",
+			},
+		},
+		readOnly: true,
+		go() {},
+	});
+const stepAction = nodes(planView()).find((n) => n.type === "Button" && n.props.label === "Draft story");
+assert.ok(stepAction, "actual plan exposes the Draft story action");
+stepAction.props.onPress();
+assert.equal(
+	nodes(planView()).some((n) => n.type === "StoryEditor"),
+	false,
+);
+assert.equal(nodes(planView()).find((n) => n.type === "LoadState").props.query, planFactsQuery);
+planFactsQuery = { ...planFactsQuery, isPending: false, isError: true };
+assert.equal(
+	nodes(planView()).some((n) => n.type === "StoryEditor"),
+	false,
+);
+planFactsQuery = { ...planFactsQuery, isError: false, data: storyFacts };
+const readyStory = nodes(planView()).find((n) => n.type === "StoryEditor");
+assert.equal(readyStory.props.facts, storyFacts);
+assert.deepEqual(readyStory.props.start.factIds, [citedFact.id]);
+console.log("PASS native actual plan keeps citation initialization behind fact loading and failure");

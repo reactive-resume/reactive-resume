@@ -1,6 +1,7 @@
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/api/client";
+import { getAccountScope } from "@/auth/session";
 import { ApiKeys } from "@/features/settings/api-keys";
 import { openAccountSettings } from "@/features/settings/browser";
 import { ExportDataRow } from "@/features/settings/export";
@@ -15,13 +16,18 @@ export default function AccountScreen() {
 	const profile = useProfile();
 	const queryClient = useQueryClient();
 	const { size } = useTheme();
-	const browse = () => {
-		void openAccountSettings()
-			.then(async () => {
+	const scope = getAccountScope();
+	const browse = (path: Parameters<typeof openAccountSettings>[0]) => {
+		void openAccountSettings(path, scope)
+			.then(async (current) => {
+				if (!current) return;
 				await profile.refetch();
-				await queryClient.invalidateQueries({ queryKey: orpc.auth.apiKeys.list.key() });
+				if (getAccountScope() === scope)
+					await queryClient.invalidateQueries({ queryKey: orpc.auth.apiKeys.list.key() });
 			})
-			.catch(() => showToast({ message: t`Couldn't open the browser. Try again.` }));
+			.catch(() => {
+				if (getAccountScope() === scope) showToast({ message: t`Couldn't open the browser. Try again.` });
+			});
 	};
 	return (
 		<SettingsPage
@@ -55,31 +61,31 @@ export default function AccountScreen() {
 							subtitle={profile.data.email}
 							leading="envelope-simple"
 							trailing={<Icon name="arrow-square-out" />}
-							onPress={browse}
+							onPress={() => browse("/dashboard/settings/account#email")}
 						/>
 						<ListRow
 							title={t`Password`}
 							leading="password"
 							trailing={<Icon name="arrow-square-out" />}
-							onPress={browse}
+							onPress={() => browse("/dashboard/settings/account#password")}
 						/>
 						<ListRow
 							title={t`Two-step verification`}
 							leading="shield-check"
 							trailing={<Icon name="arrow-square-out" />}
-							onPress={browse}
+							onPress={() => browse("/dashboard/settings/account#two-step")}
 						/>
 						<ListRow
 							title={t`Passkeys`}
 							leading="fingerprint"
 							trailing={<Icon name="arrow-square-out" />}
-							onPress={browse}
+							onPress={() => browse("/dashboard/settings/account#passkeys")}
 						/>
 						<ListRow
 							title={t`Linked accounts`}
 							leading="plugs-connected"
 							trailing={<Icon name="arrow-square-out" />}
-							onPress={browse}
+							onPress={() => browse("/dashboard/settings/account#linked-accounts")}
 						/>
 					</SettingsGroup>
 					<ApiKeys userId={profile.data.id} />
@@ -91,11 +97,7 @@ export default function AccountScreen() {
 							leading="trash"
 							destructive
 							trailing={<Icon name="arrow-square-out" />}
-							onPress={() => {
-								void openAccountSettings("/dashboard/settings/account?deleteAccount=true").catch(() =>
-									showToast({ message: t`Couldn't open the browser. Try again.` }),
-								);
-							}}
+							onPress={() => browse("/dashboard/settings/account?deleteAccount=true")}
 						/>
 					</SettingsGroup>
 				</>

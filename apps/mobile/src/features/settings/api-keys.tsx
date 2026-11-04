@@ -5,7 +5,7 @@ import Animated from "react-native-reanimated";
 import { openAccountSettings } from "./browser";
 import { SettingsGroup } from "./layout";
 import { client, orpc } from "@/api/client";
-import { useSession } from "@/auth/session";
+import { getAccountScope, useSession } from "@/auth/session";
 import {
 	Banner,
 	ConfirmDialog,
@@ -29,6 +29,7 @@ type ApiKeysProps = { userId: string };
 export function ApiKeys({ userId }: ApiKeysProps) {
 	const { t, i18n } = useLingui();
 	const { server } = useSession();
+	const scope = getAccountScope();
 	const queryClient = useQueryClient();
 	const [selected, setSelected] = useState<{ id: string; name: string } | null>(null);
 	const keys = useQuery(
@@ -62,9 +63,13 @@ export function ApiKeys({ userId }: ApiKeysProps) {
 				title={t`New API key`}
 				leading="arrow-square-out"
 				onPress={() => {
-					void openAccountSettings("/dashboard/settings/ai?newKey=true#api-keys")
-						.then(() => keys.refetch())
-						.catch(() => showToast({ message: t`Couldn't open the browser. Try again.` }));
+					void openAccountSettings("/dashboard/settings/ai?newKey=true#api-keys", scope)
+						.then(async (current) => {
+							if (current) await keys.refetch();
+						})
+						.catch(() => {
+							if (getAccountScope() === scope) showToast({ message: t`Couldn't open the browser. Try again.` });
+						});
 				}}
 			/>
 			{keys.isPending ? <ListRow title={t`Loading API keys…`} /> : null}

@@ -1,5 +1,6 @@
 import type { Page, TestInfo } from "@playwright/test";
 import { Pool } from "pg";
+import { chooseCurrency } from "../fixtures/career";
 import { expect, test } from "../fixtures/test";
 
 const LIBRARY_SIZE = 2500;
@@ -256,7 +257,7 @@ test("Applications, Career Today and Offers read one next-step rule", async ({ a
 		list.find((row: { company: string }) => row.company === "Ubisoft").id,
 	);
 	await capture(page, testInfo, "offers-stage.png");
-	await pending.getByLabel("Currency").fill("EUR");
+	await chooseCurrency(page, "EUR", pending);
 	await pending.getByLabel("Base salary").fill("182000");
 	await pending.getByRole("button", { name: "Save offer" }).click();
 	await expect(page.getByText("No offers to compare yet")).toHaveCount(0);

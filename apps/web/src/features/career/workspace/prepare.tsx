@@ -170,7 +170,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 						to="/dashboard/career/knowledge/stories/{-$storyId}"
 						params={{ storyId: undefined }}
 						// The new story starts from this step: its title, and its detail as a note above the parts.
-						search={{ edit: true, title: row.title, note: row.detail, plan: briefing.id }}
+						search={{ edit: true, title: row.title, note: row.detail, plan: briefing.id, factIds: row.factIds }}
 						className={className}
 					>
 						<Trans>Draft story</Trans>

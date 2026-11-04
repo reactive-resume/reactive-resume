@@ -1,5 +1,6 @@
 // Kept apart from ./new-document-dialog.tsx, so the library loads without the importers that dialog needs.
 import type { Template } from "@reactive-resume/schema/templates";
+import type { Locale } from "@reactive-resume/utils/locale";
 import { t } from "@lingui/core/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -25,7 +26,7 @@ function freeName(base: string, taken: readonly string[]) {
 }
 
 /** Start blank, try a sample, or a new letter: each creates the document at once and opens it. */
-export function useStartDocument(applicationId?: string) {
+export function useStartDocument(applicationId?: string, locale?: Locale) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
@@ -69,6 +70,7 @@ export function useStartDocument(applicationId?: string) {
 					tags: [],
 					autoName: true,
 					withSampleData: false,
+					...(locale ? { locale } : {}),
 					...(template ? { template } : {}),
 				});
 				await created(resumeId, "resume");
@@ -82,7 +84,7 @@ export function useStartDocument(applicationId?: string) {
 					t`Sample resume`,
 					resumes.map((resume) => resume.name),
 				);
-				const resumeId = await createResume({ name, tags: [], withSampleData: true });
+				const resumeId = await createResume({ name, tags: [], withSampleData: true, ...(locale ? { locale } : {}) });
 				await created(resumeId, "resume");
 				toast.add({ description: t`Sample resume added. Delete it anytime.` });
 				void navigate({ to: "/builder/$resumeId", params: { resumeId } });

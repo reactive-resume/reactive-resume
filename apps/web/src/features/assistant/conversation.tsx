@@ -44,6 +44,7 @@ import { attachmentErrorMessages, attachmentPart, fileToBase64, transcriptOf } f
 import { ChatComposer } from "./chat-chrome";
 import { AssistantMarkdown } from "./markdown";
 import { QuestionCard } from "./question-card";
+import { RememberMessage } from "./remember-message";
 import { SavePosting } from "./save-posting";
 import { ToolApprovals } from "./tool-approvals";
 import { useAssistantChat } from "./use-assistant-chat";
@@ -56,6 +57,7 @@ import { runFit } from "@/features/resume/editor/design/fit";
 import { ChangeSet, Coverage } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { WebAccessAttention } from "@/features/settings/ai/web-access";
+import { getAccountGeneration, getAccountId } from "@/libs/auth/account-scope";
 import { getOrpcErrorMessage, isProviderFailure, toastError } from "@/libs/error-message";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -77,6 +79,7 @@ type ToolPart = Part & {
 type ConversationProps = {
 	threadId: string;
 	initialMessages: UIMessage[];
+	initialAttachments?: ChatAttachment[];
 	/** A reply was still streaming when the conversation opened. */
 	activeRun: boolean;
 	document: AssistantDocument;
@@ -222,8 +225,8 @@ export function Conversation(props: ConversationProps) {
 		)
 		.join(" ");
 	const statuses = useMemo(() => {
-		const map = new Map<string, Receipt>([
-			...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
+		const map = new Map<string, Receipt>(
+			((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
 				message.parts.flatMap((part) =>
 					isProposeEdits(part)
 						? toProposals(part, new Map(), document).map(
@@ -233,8 +236,8 @@ export function Conversation(props: ConversationProps) {
 						: [],
 				),
 			),
-			...[...rejections].map(([id, status]) => [id, { status }] as const),
-		]);
+		);
+		for (const [id, status] of rejections) map.set(id, { ...map.get(id), status });
 		// Only an undecided edit reads as replaced: one accepted or rejected (here or on another device) keeps its outcome.
 		for (const id of superseded.split(" ").filter(Boolean))
 			if ((map.get(id)?.status ?? "pending") === "pending") map.set(id, { status: "rejected", superseded: true });
@@ -460,6 +463,7 @@ export function Conversation(props: ConversationProps) {
 			</MessageScrollerProvider>
 
 			<Composer
+				initialAttachments={props.initialAttachments ?? []}
 				document={document}
 				context={context}
 				onContextChange={setContext}
@@ -856,13 +860,27 @@ function ToolPartView({
 			);
 		case "tool-ask_user_question":
 			return (
-				<QuestionCard
-					part={part}
-					readOnly={readOnly || !answerable}
-					passed={!answerable}
-					busy={busy}
-					onAnswer={onAnswer}
-				/>
+				<div className="group/message grid gap-2">
+					<QuestionCard
+						part={part}
+						readOnly={readOnly || !answerable}
+						passed={!answerable}
+						busy={busy}
+						onAnswer={onAnswer}
+					/>
+					{!readOnly &&
+						!busy &&
+						part.state === "output-available" &&
+						typeof part.output === "string" &&
+						part.output.trim() && (
+							<RememberMessage
+								message={message}
+								answer={part.output}
+								applicationId={document.posting?.id ?? null}
+								company={document.posting?.company}
+							/>
+						)}
+				</div>
 			);
 		case "tool-propose_edits": {
 			if (part.state === "output-error")
@@ -1044,6 +1062,7 @@ type ComposerProps = {
 	onStop: () => void;
 	/** Text the box starts with (a link's `?ask=`); the user still presses Send. */
 	initialText?: string | undefined;
+	initialAttachments?: ChatAttachment[];
 	/** Above the box: what needs a decision before the next message. */
 	notice?: ReactNode;
 	/** The conversation already has messages, which are sent again with the next one. */
@@ -1058,12 +1077,15 @@ export function Composer(props: ComposerProps) {
 	const { document, context, onContextChange, streaming, disabled } = props;
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const [text, setText] = useState(props.initialText ?? "");
-	const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
+	const [attachments, setAttachments] = useState<ChatAttachment[]>(props.initialAttachments ?? []);
 	const removal = useAttachmentRemoval(`${document.kind}:${document.id}:${props.threadId ?? "draft"}`, (id) =>
 		setAttachments((current) => current.filter((item) => item.id !== id)),
 	);
 	const [uploading, setUploading] = useState(false);
 	const fileInput = useRef<HTMLInputElement>(null);
+	const owner = useRef({ accountId: getAccountId(), generation: getAccountGeneration() });
+	const currentUpload = () =>
+		owner.current.accountId === getAccountId() && owner.current.generation === getAccountGeneration();
 	const hasText = text.trim().length > 0;
 
 	const submit = () => {
@@ -1073,20 +1095,26 @@ export function Composer(props: ComposerProps) {
 		setAttachments([]);
 	};
 
-	const upload = async (files: FileList | null) => {
-		if (!files?.length) return;
+	const upload = async (files: FileList | File[] | null) => {
+		const accountId = owner.current.accountId;
+		if (!files?.length || !accountId || !currentUpload()) return false;
 		setUploading(true);
 		try {
 			const threadId = props.threadId ?? (await props.ensureThread?.());
-			if (!threadId) return;
+			if (!threadId || !currentUpload()) return false;
 			const uploaded = await Promise.all(
 				Array.from(files).map(async (file) => {
-					const attachment = await client.agent.attachments.create({
-						threadId,
-						filename: file.name,
-						mediaType: file.type || "application/octet-stream",
-						data: await fileToBase64(file),
-					});
+					const data = await fileToBase64(file);
+					if (!currentUpload()) throw new DOMException("", "AbortError");
+					const attachment = await client.agent.attachments.create(
+						{
+							threadId,
+							filename: file.name,
+							mediaType: file.type || "application/octet-stream",
+							data,
+						},
+						{ context: { accountId } },
+					);
 					return {
 						id: attachment.id,
 						filename: attachment.filename,
@@ -1094,12 +1122,23 @@ export function Composer(props: ComposerProps) {
 					};
 				}),
 			);
+			if (!currentUpload()) return false;
 			setAttachments((current) => [...current, ...uploaded]);
+			return true;
 		} catch (error) {
+			if (!currentUpload()) return false;
 			toastError(error, t`Couldn't attach the file. Try again.`, { byCode: attachmentErrorMessages() });
 		} finally {
 			setUploading(false);
 			if (fileInput.current) fileInput.current.value = "";
+		}
+	};
+
+	const attachPaste = async () => {
+		if (disabled || streaming || uploading || removal.isPending) return;
+		const pasted = text;
+		if (await upload([new File([pasted], "message.txt", { type: "text/plain" })])) {
+			setText((current) => (current === pasted ? t`Read the attachment` : current));
 		}
 	};
 
@@ -1177,6 +1216,16 @@ export function Composer(props: ComposerProps) {
 				</p>
 			)}
 			{/* The Knowledge switch is always here, so the row is too. */}
+			{text.length >= 4000 && (props.threadId || props.ensureThread) && (
+				<Button
+					size="sm"
+					variant="ghost"
+					disabled={disabled || streaming || uploading || removal.isPending}
+					onClick={() => void attachPaste()}
+				>
+					<Trans>Attach a file instead</Trans>
+				</Button>
+			)}
 			<ChatComposer
 				label={t`Message the assistant`}
 				placeholder={t`Ask, or describe a change…`}

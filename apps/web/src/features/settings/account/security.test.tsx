@@ -7,6 +7,7 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const linkMock = vi.hoisted(() => vi.fn().mockResolvedValue({ error: null }));
 const unlinkMock = vi.hoisted(() => vi.fn().mockResolvedValue({ error: null }));
 const listAccountsMock = vi.hoisted(() =>
 	vi.fn().mockResolvedValue({
@@ -42,6 +43,7 @@ vi.mock("@/libs/auth/client", () => ({
 		useSession: () => ({ data: { user: { twoFactorEnabled: false } } }),
 		listAccounts: listAccountsMock,
 		unlinkAccount: unlinkMock,
+		linkSocial: linkMock,
 		passkey: {
 			listUserPasskeys: async () => ({ data: [] }),
 		},
@@ -57,6 +59,7 @@ vi.mock("@/libs/orpc/client", () => ({
 						queryKey: ["auth", "providers"],
 						queryFn: async () => ({
 							google: "Google",
+							github: "GitHub",
 							credential: "Password",
 						}),
 					}),
@@ -99,4 +102,23 @@ it("passes internal account ID (account.id) when unlinking a social provider", a
 	expect(unlinkMock).not.toHaveBeenCalledWith({
 		accountId: "google-external-sub-456",
 	});
+});
+
+it("social linking returns to the opening account's linked-account section", async () => {
+	window.history.replaceState(null, "", "/dashboard/settings/account?forAccount=fictional-account");
+	const queryClient = new QueryClient();
+	render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={queryClient}>
+				<SecuritySection />
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+	fireEvent.click(await screen.findByRole("button", { name: /^Connect$/ }));
+	await waitFor(() =>
+		expect(linkMock).toHaveBeenCalledWith({
+			provider: "github",
+			callbackURL: "/dashboard/settings/account?forAccount=fictional-account#linked-accounts",
+		}),
+	);
 });

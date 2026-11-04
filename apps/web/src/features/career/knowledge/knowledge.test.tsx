@@ -171,6 +171,13 @@ afterEach(() => {
 	vi.useRealTimers();
 });
 
+async function chooseCurrency(code: string) {
+	fireEvent.click(screen.getByRole("combobox", { name: "Currency" }));
+	const input = await screen.findByPlaceholderText("Search…");
+	fireEvent.change(input, { target: { value: code } });
+	fireEvent.click(await screen.findByRole("option", { name: new RegExp(`^${code}(?: ·|$)`) }));
+}
+
 it("keeps the complete correction after a failed save and retries its reviewed type/scope atomically", async () => {
 	const fact = {
 		id: "correct-me",
@@ -280,30 +287,53 @@ it("retries failed application refreshes even when an empty result remains cache
 	expect(await screen.findByRole("button", { name: "Add offer" })).toBeDefined();
 });
 
+it("follows saved preference pay periods until the offer period is explicitly chosen", async () => {
+	api.data.profile = { ...profile(), minBase: { amount: 8000, currency: "EUR", period: "month" } };
+	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+	const period = screen.getByLabelText("Pay period") as HTMLSelectElement;
+	await waitFor(() => expect(period.value).toBe("month"));
+	await act(() => {
+		clients.at(-1)?.setQueryData(["profile"], {
+			...profile(),
+			minBase: { amount: 100, currency: "EUR", period: "hour" },
+		});
+	});
+	await waitFor(() => expect(period.value).toBe("hour"));
+	fireEvent.change(period, { target: { value: "year" } });
+	await act(() => {
+		clients.at(-1)?.setQueryData(["profile"], {
+			...profile(),
+			minBase: { amount: 8000, currency: "EUR", period: "month" },
+		});
+	});
+	expect(period.value).toBe("year");
+});
+
 it("prefills currency when an offer arrives after an initially empty saved-offers result", async () => {
 	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
 	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
 	const client = clients[0];
 	if (!client) throw new Error("Missing mounted query client");
 	await waitFor(() => expect(client.getQueryState(["savedItems"])?.status).toBe("success"));
-	const currency = screen.getByLabelText("Currency") as HTMLInputElement;
+	const currency = screen.getByRole("combobox", { name: "Currency" });
 	// Before any saved offer, the currency of the minimum salary in Preferences.
-	expect(currency.value).toBe("EUR");
+	expect(currency.textContent).toContain("EUR");
 	await act(() => {
 		client.setQueryData(
 			["savedItems"],
 			[{ id: "late", createdAt: new Date("2026-11-01"), data: { kind: "offer", currency: "GBP" } }],
 		);
 	});
-	await waitFor(() => expect(currency.value).toBe("GBP"));
-	fireEvent.change(currency, { target: { value: "EUR" } });
+	await waitFor(() => expect(currency.textContent).toContain("GBP"));
+	await chooseCurrency("EUR");
 	await act(() => {
 		client.setQueryData(
 			["savedItems"],
 			[{ id: "later", createdAt: new Date("2026-11-02"), data: { kind: "offer", currency: "USD" } }],
 		);
 	});
-	expect(currency.value).toBe("EUR");
+	expect(currency.textContent).toContain("EUR");
 });
 
 it("keeps an unfinished story after navigating away and remounting, until Cancel explicitly discards it", async () => {
@@ -597,6 +627,40 @@ it("hands the selected story to Practise for the next interview", async () => {
 	);
 });
 
+it("opens a backed story for practice with no application when no interviews exist", async () => {
+	api.data.applications = [];
+	api.data.facts = [
+		{ id: "backing-fact", status: "active", applicationId: null, revisions: [], updatedAt: new Date("2026-10-01") },
+	];
+	api.data.stories = [
+		{
+			id: "chosen-story",
+			updatedAt: new Date(),
+			data: {
+				title: "Story to practise",
+				situation: "S",
+				task: "T",
+				action: "A",
+				result: "",
+				reflection: "",
+				tags: [],
+				factIds: ["backing-fact"],
+			},
+		},
+	];
+	mount(<StoriesPage storyId="chosen-story" edit={false} />);
+	const button = await screen.findByRole("button", { name: /^Practice$/ });
+	expect(button).not.toHaveAttribute("aria-disabled", "true");
+	fireEvent.click(button);
+	expect(api.navigate).toHaveBeenCalledWith(
+		expect.objectContaining({
+			to: "/dashboard/career/knowledge/stories/{-$storyId}",
+			params: { storyId: "chosen-story" },
+			search: { practice: true },
+		}),
+	);
+});
+
 it("doesn't offer Practice for a story with no facts to back it (L6-07)", async () => {
 	api.data.applications = [
 		{
@@ -671,7 +735,7 @@ it("validates manual amounts and retains the draft after a failed save", async (
 	api.createOffer.mockRejectedValueOnce(new Error("Offline"));
 	const view = mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
 	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
-	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "eur" } });
+	await chooseCurrency("EUR");
 	fireEvent.change(screen.getByLabelText("Base salary"), { target: { value: "95k" } });
 	expect(screen.getByLabelText("Base salary").getAttribute("aria-invalid")).not.toBe("true");
 	fireEvent.blur(screen.getByLabelText("Base salary"));
@@ -700,7 +764,7 @@ it("validates manual amounts and retains the draft after a failed save", async (
 it("blocks invalid optional learning and skipped DST deadlines without losing the draft", async () => {
 	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
 	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
-	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "EUR" } });
+	await chooseCurrency("EUR");
 	const learning = screen.getByLabelText("Learning budget");
 	fireEvent.click(screen.getByRole("button", { name: "More options" }));
 	fireEvent.change(learning, { target: { value: "95k" } });
@@ -780,7 +844,7 @@ it("moves an Applied job to Offer with Undo once its offer is saved, and keeps t
 			onDone={done}
 		/>,
 	);
-	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "EUR" } });
+	await chooseCurrency("EUR");
 	fireEvent.change(screen.getByLabelText("Base salary"), { target: { value: "182000" } });
 	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
 
@@ -814,7 +878,7 @@ it("moves an Applied job to Offer with Undo once its offer is saved, and keeps t
 it("leaves an application already at Offer where it is", async () => {
 	api.createOffer.mockResolvedValue(null);
 	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer", status: "offer" }} initialOpen />);
-	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "EUR" } });
+	await chooseCurrency("EUR");
 	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
 	await waitFor(() => expect(api.createOffer).toHaveBeenCalled());
 	expect(api.moveWithUndo).not.toHaveBeenCalled();
@@ -844,8 +908,8 @@ it("starts in the last offer's currency, keeps the rarer terms under More option
 	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
 	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
 
-	const currency = screen.getByLabelText("Currency") as HTMLInputElement;
-	await waitFor(() => expect(currency.value).toBe("GBP"));
+	const currency = screen.getByRole("combobox", { name: "Currency" });
+	await waitFor(() => expect(currency.textContent).toContain("GBP"));
 	await act(async () => {
 		clients
 			.at(-1)
@@ -855,7 +919,7 @@ it("starts in the last offer's currency, keeps the rarer terms under More option
 			);
 		await new Promise((resolve) => setTimeout(resolve, 0));
 	});
-	expect(currency.value).toBe("GBP");
+	expect(currency.textContent).toContain("GBP");
 	expect(currency.getAttribute("placeholder")).toBeNull();
 	expect(currency.getAttribute("aria-describedby")).toBeTruthy();
 	expect(screen.getByRole("button", { name: "More options" }).getAttribute("aria-expanded")).toBe("false");
@@ -871,9 +935,9 @@ it("starts in the last offer's currency, keeps the rarer terms under More option
 	});
 
 	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
-	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "" } });
+	fireEvent.click(screen.getByRole("button", { name: "Clear selection" }));
 	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
-	expect((screen.getByLabelText("Currency") as HTMLInputElement).value).toBe("");
+	expect(screen.getByRole("combobox", { name: "Currency" }).textContent).toContain("Select…");
 	expect(screen.getByLabelText("Currency").getAttribute("aria-invalid")).toBe("true");
 });
 
@@ -963,4 +1027,16 @@ it("keeps an open global offer draft mounted when application metadata refresh f
 	fireEvent.click(screen.getAllByRole("button", { name: "Try again" })[0] as HTMLElement);
 	await waitFor(() => expect(screen.queryAllByRole("alert")).toHaveLength(0));
 	expect(screen.getByLabelText("Base salary")).toHaveValue("123456");
+});
+
+it("keeps an amount-only job salary annual beside monthly Preferences", async () => {
+	api.data.profile = { ...profile(), minBase: { amount: 8000, currency: "EUR", period: "month" } };
+	mount(
+		<OfferEntry
+			application={{ id: "salary-job", company: "Fictional Salary", role: "Engineer", salary: "$120k–140k" }}
+		/>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+	await waitFor(() => expect((screen.getByLabelText("Pay period") as HTMLSelectElement).value).toBe("year"));
+	expect((screen.getByLabelText("Base salary") as HTMLInputElement).value).toBe("120000");
 });

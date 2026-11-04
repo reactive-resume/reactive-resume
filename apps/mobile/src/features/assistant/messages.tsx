@@ -60,6 +60,7 @@ export type ProposalHandlers = {
 type FactText = (id: string) => string | null;
 
 type MessageViewProps = {
+	answerApplicationId?: string | null | undefined;
 	onPostingSaved?: ((posting: { id: string; company: string; role: string }) => void) | undefined;
 	message: UIMessage;
 	streaming: boolean;
@@ -86,6 +87,7 @@ export const MessageView = memo(function MessageView({
 	remember,
 	sent,
 	onPostingSaved,
+	answerApplicationId,
 }: MessageViewProps) {
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
@@ -136,6 +138,7 @@ export const MessageView = memo(function MessageView({
 						readOnly={readOnly}
 						answerable={answerable}
 						proposals={proposals}
+						answerApplicationId={answerApplicationId}
 						onAnswer={onAnswer}
 					/>
 				);
@@ -267,7 +270,16 @@ export function Status({ status, children }: StatusProps) {
 
 type ToolPartViewProps = Omit<MessageViewProps, "message"> & { part: ToolPart; message: UIMessage };
 
-function ToolPartView({ part, message, streaming, readOnly, answerable, proposals, onAnswer }: ToolPartViewProps) {
+function ToolPartView({
+	part,
+	message,
+	streaming,
+	readOnly,
+	answerable,
+	proposals,
+	onAnswer,
+	answerApplicationId,
+}: ToolPartViewProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const working = part.state === "input-streaming" || part.state === "input-available";
@@ -365,13 +377,26 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 			);
 		case "tool-ask_user_question":
 			return (
-				<QuestionCard
-					part={part}
-					readOnly={readOnly || !answerable}
-					passed={!answerable}
-					busy={streaming}
-					onAnswer={onAnswer}
-				/>
+				<View style={{ gap: space.s2 }}>
+					<QuestionCard
+						part={part}
+						readOnly={readOnly || !answerable}
+						passed={!answerable}
+						busy={streaming}
+						onAnswer={onAnswer}
+					/>
+					{!readOnly &&
+					!streaming &&
+					part.state === "output-available" &&
+					typeof part.output === "string" &&
+					part.output.trim() ? (
+						<RememberMessage
+							message={message}
+							answer={part.output}
+							scope={{ applicationId: answerApplicationId ?? null }}
+						/>
+					) : null}
+				</View>
 			);
 		case "tool-propose_edits": {
 			if (part.state === "output-error")
@@ -1203,6 +1228,7 @@ function Coverage({ requirements, factText }: { requirements: readonly Requireme
 	const labels = useReviewLabels();
 	const gaps = requirements.filter((item) => item.status === "missing" || item.status === "unassessed").length;
 	const [open, setOpen] = useState(gaps > 0);
+	const [selected, setSelected] = useState<ReadonlySet<number>>(new Set());
 
 	return (
 		<View
@@ -1229,9 +1255,31 @@ function Coverage({ requirements, factText }: { requirements: readonly Requireme
 			</Pressable>
 			{open ? (
 				<>
-					{requirements.map((item) => (
-						<View key={item.text} style={{ gap: 2 }}>
-							<Text variant="caption">{item.text}</Text>
+					{requirements.map((item, index) => (
+						<View key={index} style={{ gap: 2 }}>
+							{item.status === "missing" || item.status === "unassessed" ? (
+								<Pressable
+									accessibilityRole="checkbox"
+									accessibilityLabel={item.text}
+									accessibilityState={{ checked: selected.has(index) }}
+									onPress={() =>
+										setSelected((previous) => {
+											const next = new Set(previous);
+											if (next.has(index)) next.delete(index);
+											else next.add(index);
+											return next;
+										})
+									}
+									style={{ minHeight: 44, flexDirection: "row", alignItems: "center", gap: space.s2 }}
+								>
+									<Icon name={selected.has(index) ? "check-square" : "square"} size={20} color={colors.ink2} />
+									<Text variant="caption" style={{ flex: 1 }}>
+										{item.text}
+									</Text>
+								</Pressable>
+							) : (
+								<Text variant="caption">{item.text}</Text>
+							)}
 							<Text
 								variant="caption"
 								color={item.status === "missing" || item.status === "unassessed" ? "warnText" : "ink2"}
@@ -1425,13 +1473,15 @@ function RememberNote({ part }: { part: ToolPart }) {
 
 // ---- Remember a message on demand, in any memory mode: the user reviews the words, kind and scope first ----
 
-type RememberMessageProps = { message: UIMessage; scope: { applicationId: string | null } };
+type RememberMessageProps = { message: UIMessage; scope: { applicationId: string | null }; answer?: string };
 
-function RememberMessage({ message, scope }: RememberMessageProps) {
+function RememberMessage({ message, scope, answer }: RememberMessageProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const queryClient = useQueryClient();
-	const quote = (message.parts.find((part) => part.type === "text")?.text ?? "").trim().slice(0, 4000);
+	const owner = useRef(getAccountScope());
+	const saving = useRef(false);
+	const quote = (answer ?? message.parts.find((part) => part.type === "text")?.text ?? "").trim().slice(0, 4000);
 	const [open, setOpen] = useState(false);
 	const [text, setText] = useState(() => quote.slice(0, 2000));
 	const [category, setCategory] = useState<FactCategory>("accomplishment");
@@ -1440,22 +1490,33 @@ function RememberMessage({ message, scope }: RememberMessageProps) {
 	if (!quote) return null;
 
 	const save = () => {
+		const accountScope = owner.current;
+		if (!accountScope || accountScope !== getAccountScope() || saving.current) return;
+		saving.current = true;
 		setState("saving");
 		client.career
-			.saveFact({
-				applicationId: scope.applicationId && onlyHere ? scope.applicationId : null,
-				text: text.trim(),
-				category,
-				source: { kind: "user-message", id: message.id, quote },
-			})
+			.saveFact(
+				{
+					applicationId: scope.applicationId && onlyHere ? scope.applicationId : null,
+					text: text.trim(),
+					category,
+					source: { kind: answer === undefined ? "user-message" : "manual", id: message.id, quote },
+				},
+				{ context: { scope: accountScope } },
+			)
 			.then((fact) => {
+				if (getAccountScope() !== accountScope) return;
 				setState(fact ? "saved" : "forgotten");
 				setOpen(false);
 				void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
 			})
 			.catch((error: unknown) => {
+				if (getAccountScope() !== accountScope) return;
 				setState("idle");
 				showToast({ message: reason(error, t`Couldn't remember that. Try again.`) });
+			})
+			.finally(() => {
+				saving.current = false;
 			});
 	};
 

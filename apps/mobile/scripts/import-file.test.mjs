@@ -31,6 +31,8 @@ const source = transformSync(
 
 for (const scenario of [
 	"AI",
+	"explicit locale",
+	"interface locale",
 	"local",
 	"partial AI",
 	"partial local",
@@ -67,6 +69,8 @@ for (const scenario of [
 		if (scenario === "DOCX") data.sections.profiles.items[0].website.url = url;
 		class SessionChangedError extends Error {}
 		const mocks = {
+			"@lingui/core": { i18n: { locale: scenario === "interface locale" ? "ar-SA" : "en-US" } },
+			"@reactive-resume/utils/locale": { localeSchema: { parse: (locale) => locale } },
 			"@lingui/core/macro": { t: tag },
 			"expo-file-system": {
 				File: class extends Blob {
@@ -101,6 +105,15 @@ for (const scenario of [
 							assert.deepEqual(aiOperationIds, ai ? (sources ? ["actual-import-operation"] : []) : undefined);
 							assert.equal(options.context.scope, "original-account");
 							assert.equal("aiOperationIds" in accepted, false);
+							assert.equal(
+								accepted.metadata.page.locale,
+								scenario === "explicit locale"
+									? "de-DE"
+									: scenario === "interface locale"
+										? "ar-SA"
+										: data.metadata.page.locale,
+							);
+							assert.equal(data.metadata.page.locale, "en-US");
 							assert.equal(accepted.sections.profiles.items[0].website.url, url);
 							assert.ok(
 								accepted.customSections.some((section) => section.items.some((item) => item.content.includes(prose))),
@@ -179,10 +192,18 @@ for (const scenario of [
 			assert.equal(saved, 0);
 			return;
 		}
-		assert.deepEqual(await createReviewedResume(pending, true, controller.signal), {
-			id: "reviewed-resume",
-			type: "resume",
-		});
+		assert.deepEqual(
+			await createReviewedResume(
+				pending,
+				true,
+				controller.signal,
+				scenario === "explicit locale" ? "de-DE" : undefined,
+			),
+			{
+				id: "reviewed-resume",
+				type: "resume",
+			},
+		);
 		assert.equal(saved, 1);
 	});
 }

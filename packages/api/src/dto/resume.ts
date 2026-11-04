@@ -122,6 +122,7 @@ export const resumeDto = {
 				.optional()
 				.describe("The slug of the resume. Generated from the name, and made unique, when omitted."),
 			withSampleData: z.boolean().default(false),
+			locale: localeSchema.optional().describe("The resume language. Uses the interface language when omitted."),
 			template: templateSchema
 				.optional()
 				.describe("The template to start in, such as one chosen in the template gallery. The default when omitted."),

@@ -31,6 +31,7 @@ import { CareerLoadError } from "./load-state";
 import { formatBonus, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry, OfferForm } from "./offer-entry";
 import { flash, useCareerTime, useNow, withQueryUndo } from "./shared";
+import { Combobox } from "@/components/ui/combobox";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
@@ -56,6 +57,7 @@ const writePair = (a: string | undefined, b: string | undefined) => {
 };
 
 const companyOf = (offer: Offer) => offer.application?.company ?? t`Deleted application`;
+const applicationLabel = (offer: Offer) => [companyOf(offer), offer.application?.role].filter(Boolean).join(" · ");
 const outcomeLabel = (offer: Offer) =>
 	offer.application?.closedReason === "accepted"
 		? t`Accepted`
@@ -109,6 +111,31 @@ function OfferStageApplications({ offers, applications }: OfferStageApplications
 }
 
 type OffersPageProps = { a: string | undefined; b: string | undefined; highlight?: string | undefined };
+
+type OfferMessagesProps = { applications: ApplicationSummary[] };
+
+function OfferMessages({ applications }: OfferMessagesProps) {
+	const navigate = useNavigate();
+	if (!applications.length) return null;
+	return (
+		<Combobox
+			render={<Button variant="secondary" aria-label={t`Messages`} />}
+			value={null}
+			placeholder={t`Messages`}
+			options={applications.map((application) => ({
+				value: application.id,
+				label: `${application.company} · ${application.role}`,
+			}))}
+			onValueChange={(applicationId) => {
+				if (applicationId)
+					void navigate({
+						to: "/dashboard/applications/$applicationId/{-$tab}",
+						params: { applicationId, tab: "messages" },
+					});
+			}}
+		/>
+	);
+}
 
 /** C20: two saved offers side by side, in their own currency and pay period, against the user's requirements. */
 export function OffersPage({ a, b, highlight }: OffersPageProps) {
@@ -213,6 +240,7 @@ export function OffersPage({ a, b, highlight }: OffersPageProps) {
 										</Trans>
 									}
 									action={action}
+									secondary={<OfferMessages applications={applications.data ?? []} />}
 								/>
 							)
 						}
@@ -280,6 +308,7 @@ export function OffersPage({ a, b, highlight }: OffersPageProps) {
 			</div>
 
 			<ComparisonTable
+				applications={applications.data ?? []}
 				offers={offers}
 				left={left}
 				right={right}
@@ -323,6 +352,7 @@ const rowGrid =
 const phoneCard = "max-md:rounded-xl max-md:border max-md:border-line max-md:bg-surface";
 
 type ComparisonTableProps = {
+	applications: ApplicationSummary[];
 	offers: Offer[];
 	left: Offer | undefined;
 	right: Offer | undefined;
@@ -331,7 +361,7 @@ type ComparisonTableProps = {
 	onDelete: (offer: Offer) => void;
 };
 
-function ComparisonTable({ offers, left, right, onChoose, onEdit, onDelete }: ComparisonTableProps) {
+function ComparisonTable({ applications, offers, left, right, onChoose, onEdit, onDelete }: ComparisonTableProps) {
 	const cells = useCells();
 	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
 	const rows = [
@@ -379,6 +409,7 @@ function ComparisonTable({ offers, left, right, onChoose, onEdit, onDelete }: Co
 											Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms.
 										</Trans>
 									</p>
+									<OfferMessages applications={applications} />
 									{offers.length > 1 && (
 										<OfferHeader
 											offer={undefined}
@@ -406,7 +437,7 @@ function ComparisonTable({ offers, left, right, onChoose, onEdit, onDelete }: Co
 							<div key={index} className={cn("border-line px-[18px] py-3 md:border-s", !offer && "max-md:hidden")}>
 								{offer && cell && (
 									<>
-										<p className="text-xs text-ink-3 md:hidden">{companyOf(offer)}</p>
+										<p className="text-xs text-ink-3 md:hidden">{applicationLabel(offer)}</p>
 										<p className={cn("text-sm leading-[21px]", cell.strong && "font-semibold")}>{cell.value}</p>
 										{cell.notes.map((note) => (
 											<p
@@ -445,7 +476,7 @@ function ComparisonTable({ offers, left, right, onChoose, onEdit, onDelete }: Co
 									!offer && "max-md:hidden",
 								)}
 							>
-								{offer && <li className="text-xs text-ink-3 md:hidden">{companyOf(offer)}</li>}
+								{offer && <li className="text-xs text-ink-3 md:hidden">{applicationLabel(offer)}</li>}
 								{list.map((item) => (
 									<li
 										key={item.text}

@@ -37,3 +37,35 @@ export function parseAmount(input: string, locale: string): number | null | unde
 	const value = parseLocalizedNumber(input, locale, 2);
 	return typeof value === "number" && value > Number.MAX_SAFE_INTEGER ? undefined : value;
 }
+
+// Shared CLDR codes keep browser and Hermes choices identical without Intl.supportedValuesOf.
+const currencyCodes = (
+	"AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BRL BSD BTN BWP BYN BZD " +
+	"CAD CDF CHF CLP CNY COP CRC CUC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP " +
+	"GMD GNF GTQ GYD HKD HNL HRK HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW " +
+	"KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MYR MZN NAD " +
+	"NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP " +
+	"SLE SLL SOS SRD SSP STN SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD UYU UZS VES VND " +
+	"VUV WST XAF XCD XCG XDR XOF XPF XSU YER ZAR ZMW ZWG ZWL"
+).split(" ");
+
+const currencyOptionsByLocale = new Map<string, { value: string; label: string }[]>();
+
+function currencyOption(locale: string, value: string) {
+	const symbol = new Intl.NumberFormat(locale, { style: "currency", currency: value })
+		.formatToParts(0)
+		.find((part) => part.type === "currency")?.value;
+	return { value, label: symbol && symbol !== value ? `${value} · ${symbol}` : value };
+}
+
+/** Codes disambiguate shared symbols; a previously saved code remains selectable. */
+export function getCurrencyOptions(locale: string, current = "") {
+	let options = currencyOptionsByLocale.get(locale);
+	if (!options) {
+		options = currencyCodes.map((value) => currencyOption(locale, value));
+		currencyOptionsByLocale.set(locale, options);
+	}
+	return /^[A-Z]{3}$/.test(current) && !currencyCodes.includes(current)
+		? [...options, currencyOption(locale, current)]
+		: [...options];
+}

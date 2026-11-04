@@ -2,14 +2,14 @@ import type { AuthSession } from "@reactive-resume/auth/types";
 import type { QueryClient } from "@tanstack/react-query";
 import { setAccountScope } from "./auth/account-scope";
 import { getSession } from "./auth/session";
-import { getLocale, loadLocale } from "./locale";
+import { getLocale, hasLocalePreference, loadLocale } from "./locale";
 import { client } from "./orpc/client";
 import { getTheme } from "./theme";
 
 export const sessionQueryKey = ["auth", "session"] as const;
 
-// The account's language follows the interface it was last used in, so its emails (password reset, email change)
-// arrive in that language. A different account, session or interface language needs its own check.
+// Explicit interface choices update account emails; unconfigured browsers restore the account language instead.
+// A different account, session or interface language needs its own check.
 let accountLocaleCheck: { userId: string; sessionId: string; locale: string } | null = null;
 const flagsQueryKey = ["flags"] as const;
 // Each root load is numbered. A load that finishes after a newer one must not certify its older session: a hover
@@ -28,7 +28,7 @@ type RootLoadOptions = {
 export async function loadRootContext(queryClient: QueryClient, options: RootLoadOptions = {}) {
 	const load = options.commit === false ? rootLoadSequence : ++rootLoadSequence;
 	const theme = getTheme();
-	const locale = getLocale();
+	const explicitLocale = hasLocalePreference() ? getLocale() : undefined;
 
 	const sessionPromise = queryClient
 		.query({
@@ -48,8 +48,17 @@ export async function loadRootContext(queryClient: QueryClient, options: RootLoa
 	const [session, flags] = await Promise.all([
 		sessionPromise,
 		queryClient.query({ queryKey: flagsQueryKey, queryFn: () => client.flags.get(), staleTime: 5 * 60_000 }),
-		loadLocale(locale),
 	]);
+	const locale = explicitLocale ?? getLocale(session?.user.isAnonymous ? undefined : session?.user.locale);
+	await loadLocale(locale, () => {
+		const current = queryClient.getQueryData<AuthSession | null>(sessionQueryKey);
+		return (
+			load === rootLoadSequence &&
+			options.commit !== false &&
+			current?.user.id === session?.user.id &&
+			current?.session.id === session?.session.id
+		);
+	});
 	// A preload only prepares a future navigation; a stale completion has already been overtaken. Neither may adopt
 	// an account scope, because the page on screen still belongs to the session it was rendered for.
 	const current = queryClient.getQueryData<AuthSession | null>(sessionQueryKey);
@@ -59,6 +68,7 @@ export async function loadRootContext(queryClient: QueryClient, options: RootLoa
 	if (
 		committed &&
 		session &&
+		hasLocalePreference() &&
 		!session.user.isAnonymous &&
 		current?.user.id === session.user.id &&
 		current.session.id === session.session.id &&

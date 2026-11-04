@@ -27,18 +27,23 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
 
 ## Import a file
 
+In **New**, **Resume language** lets you choose the imported document's language before saving. Leave it at **Default** to keep a Reactive Resume JSON file's own language. Formats without a stored language use your interface language. An explicit choice changes generated headings, date words and text direction; it does not translate imported content. PDF and Word review also lets you change this choice before **Create resume**. Choosing **Default** there uses your current interface language, even if you chose another language earlier. Your source file and existing resumes remain unchanged.
+
 <Steps>
   <Step title="Open the import">
-    On Documents, select **New** in the sidebar (or press <kbd>N</kbd>), then select **Import a resume** and pick your file. On web, while AI connections load, a spinner occupies the import tile icon; the choices stay in place and remain available. A connection lookup failure appears below the choices with **Try again**; its space is kept so the choices stay steady through retry too. On your first visit, the empty Documents page has a **Choose a file** button that opens your device's file picker directly; the import starts as soon as you pick a file.
+    On Documents, select **New** in the sidebar (or press <kbd>N</kbd>), then select **Import a resume** and pick your file. On web, while AI connections load, a spinner occupies the import tile icon; the choices stay in place and remain available. A connection lookup failure appears below the choices with **Try again**; its space is kept so the choices stay steady through retry too. On your first visit, the empty Documents page has a **Choose a file** button that opens your device's file picker directly; choose **Resume language** and press **Import** to continue after picking a file.
   </Step>
   <Step title="Or drop the file">
-    Drag the file from your computer anywhere onto the Documents page. The page shows **Drop to import**; let go and choose how to read it.
+    Drag the file from your computer anywhere onto the Documents page. The page shows **Drop to import**; let go, choose **Resume language**, and press **Import** to continue. **Cancel** leaves your documents unchanged.
 
     <Frame caption="Drop a supported resume file onto Documents">
       <img src="/images/guides/importing-resumes/drop-to-import.webp" alt="Documents displaying the Drop to import overlay while a fictional JSON file is dragged over it" />
     </Frame>
 
   </Step>
+  <Frame caption="Choose the language before importing a dropped file">
+    <img src="/images/guides/importing-resumes/dropped-import-language.png" alt="Import a resume dialog for fictional.json with Spanish selected as Resume language and Import and Cancel controls" />
+  </Frame>
   <Step title="Choose local or AI reading">
     On web, PDF offers **Read on this device (free)**. On mobile, the AI switch is off by default and the text layer is read on your server without an AI provider. Choose AI reading only if you want the complete PDF sent to the named provider. After you choose a Word file, the dialog explains that it needs AI and offers **Set up AI** without leaving your task. AI reading asks you to approve the destination before sending; Word sends extracted document text. JSON and LinkedIn imports never use an AI provider.
   </Step>

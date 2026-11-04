@@ -32,7 +32,7 @@ import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 import { canApplyTo, withEditedText } from "@reactive-resume/resume/proposals";
 import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
-import { generateId } from "@reactive-resume/utils/string";
+import { buildConversationTitle, generateId } from "@reactive-resume/utils/string";
 import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
 import { approvedAiProviderId } from "../ai/destination";
@@ -203,7 +203,7 @@ function toThreadSummary(row: ThreadSummaryRow) {
 		id: row.id,
 		title: row.title,
 		...(row.firstMessage !== undefined
-			? { firstMessage: row.firstMessage ? buildThreadTitle(row.firstMessage, "", 160) || null : null }
+			? { firstMessage: row.firstMessage ? buildConversationTitle(row.firstMessage, "", 160) || null : null }
 			: {}),
 		status: row.status,
 		scope: (row.scope ?? "document") as "document" | "application" | "career",
@@ -747,18 +747,6 @@ function messageText(message: UIMessage) {
 	}
 
 	return textParts.join(" ").trim();
-}
-
-/** Opening text names new conversations; history uses a longer preview of that same request. */
-function buildThreadTitle(input: string, fallback: string, max = 60) {
-	const text = input.replace(/\s+/g, " ").trim();
-	if (!text) return fallback;
-	if (text.length <= max) return text;
-	// Cut at a word, with one ellipsis character, so the list doesn't add a second.
-	const cut = text.slice(0, max - 1);
-	const space = cut.lastIndexOf(" ");
-	const bounded = (space > max / 2 ? cut.slice(0, space) : cut).trimEnd();
-	return `${bounded.replace(/[\uD800-\uDBFF]$/u, "")}…`;
 }
 
 /**
@@ -1651,7 +1639,7 @@ export const agentService = {
 					if ((messageCount?.total ?? 0) === 1) {
 						await db
 							.update(schema.agentThread)
-							.set({ title: buildThreadTitle(messageText(userMessage), thread.title, isCareer ? 47 : 60) })
+							.set({ title: buildConversationTitle(messageText(userMessage), thread.title, isCareer ? 47 : 60) })
 							.where(
 								and(
 									eq(schema.agentThread.id, input.threadId),
@@ -1728,7 +1716,7 @@ export const agentService = {
 					replay.map((message) =>
 						toModelInputMessage(
 							withdrawn(message) ? withdrawKnowledgeReply(message, true) : message,
-							runnableProvider,
+							{ provider: runnableProvider.provider, model: capableModel },
 							search,
 						),
 					),

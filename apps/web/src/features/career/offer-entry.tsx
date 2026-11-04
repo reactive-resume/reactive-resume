@@ -30,6 +30,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { CurrencySelect } from "./currency-select";
 import { CareerLoadError } from "./load-state";
 import { formatMoney } from "./offer-compare";
 import { useCareerTime } from "./shared";
@@ -278,14 +279,14 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		learning: amount(offer?.data.learning),
 	}));
 	// What the job's salary filled in, so an untouched sheet isn't "changed" and choosing another job refills it.
-	const [seed, setSeed] = useState(() => ({ base: offer ? "" : amount(hint?.base), period: hint?.period ?? "year" }));
+	const [seed, setSeed] = useState(() => (offer ? "" : amount(hint?.base)));
+	const [periodTyped, setPeriodTyped] = useState(false);
 	const chooseApplication = (id: string) => {
 		setApplicationId(id);
 		if (offer) return;
 		const next = offerHintFromSalary(applications.data?.find((row) => row.id === id)?.salary);
-		const nextSeed = { base: amount(next.base), period: next.period ?? "year" };
-		if (amounts.base === seed.base) setAmounts((current) => ({ ...current, base: nextSeed.base }));
-		if (draft.period === seed.period) setTerms((current) => ({ ...current, period: nextSeed.period }));
+		const nextSeed = amount(next.base);
+		if (amounts.base === seed) setAmounts((current) => ({ ...current, base: nextSeed }));
 		setSeed(nextSeed);
 	};
 	const deadline = offer?.data.respondBy ? zonedFields(offer.data.respondBy, timeZone) : null;
@@ -302,8 +303,14 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	// A new offer starts in the last offer's currency, else the one the user's minimum salary is in (Preferences).
 	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
 	const preferred = profile?.minBase.amount === null ? undefined : profile?.minBase.currency;
-	const terms =
-		offer || currencyTyped ? draft : { ...draft, currency: hint?.currency ?? previousCurrency ?? preferred ?? "" };
+	const terms = {
+		...draft,
+		currency: offer || currencyTyped ? draft.currency : (hint?.currency ?? previousCurrency ?? preferred ?? ""),
+		period:
+			offer || periodTyped
+				? draft.period
+				: (hint?.period ?? (hint?.base != null ? "year" : (profile?.minBase.period ?? "year"))),
+	};
 	const [more, setMore] = useState(Boolean(offer));
 	const [submitted, setSubmitted] = useState(false);
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
@@ -503,18 +510,17 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 					<label htmlFor={`${id}-currency`}>
 						<Trans>Currency</Trans>
 					</label>
-					<Input
+					<CurrencySelect
+						clearable
 						id={`${id}-currency`}
 						value={terms.currency}
-						maxLength={3}
-						required
-						pattern="[A-Z]{3}"
-						onBlur={() => touch("currency")}
-						aria-invalid={currencyInvalid}
-						aria-describedby={`${id}-currency-hint`}
-						onChange={(event) => {
+						invalid={currencyInvalid}
+						describedBy={`${id}-currency-hint`}
+						className="w-full justify-start font-normal"
+						onChange={(currency) => {
 							setCurrencyTyped(true);
-							change({ currency: event.target.value.toUpperCase() });
+							touch("currency");
+							change({ currency });
 						}}
 					/>
 					{/* A hint, not a placeholder: a placeholder "EUR" reads as a currency already chosen. */}
@@ -523,7 +529,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						className={cn("flex items-start gap-1.5 text-xs", currencyInvalid ? "text-danger-text" : "text-ink-3")}
 					>
 						{currencyInvalid && <Icon name="warning-circle" />}
-						<span>{t`Enter a three-letter currency code.`}</span>
+						<span>{t`Choose a currency.`}</span>
 					</p>
 				</div>
 				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
@@ -533,7 +539,10 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 					<NativeSelect
 						id={`${id}-period`}
 						value={terms.period}
-						onChange={(event) => change({ period: event.target.value as OfferTerms["period"] })}
+						onChange={(event) => {
+							setPeriodTyped(true);
+							change({ period: event.target.value as OfferTerms["period"] });
+						}}
 					>
 						<option value="year">{t`Per year`}</option>
 						<option value="month">{t`Per month`}</option>

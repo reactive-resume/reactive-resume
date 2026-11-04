@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 08:38+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1318,7 +1318,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
-msgstr ""
+msgstr "此故事使用的一项事实已停用或发生变化。请编辑故事进行核实。"
 
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
@@ -1582,8 +1582,8 @@ msgstr "活动"
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
-#: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/improve.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Add"
 msgstr "添加"
 
@@ -1605,6 +1605,10 @@ msgstr ""
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
 msgstr "添加国家"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "添加一个事实"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
@@ -1729,10 +1733,6 @@ msgstr "添加电子邮件"
 #: src/features/career/workspace/shell.tsx
 msgid "Add an interview"
 msgstr "添加面试"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "请先添加面试"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Add an interview in an application first"
@@ -2017,9 +2017,9 @@ msgstr "已作为成就添加到知识库。"
 msgid "Added to Knowledge as an experience."
 msgstr "已作为经历添加到知识库。"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Added to Knowledge."
-msgstr ""
+msgstr "添加到知识库。"
 
 #: src/features/resume/share/address-field.tsx
 #: src/features/settings/profile.tsx
@@ -2861,6 +2861,7 @@ msgid "Attach a file"
 msgstr "附上文件"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Attach a file instead"
 msgstr "改为附加文件"
 
@@ -3272,8 +3273,8 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/assistant/remember-message.tsx
 #: src/features/assistant/save-posting.tsx
-#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -3626,6 +3627,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "请选择货币。"
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr ""
@@ -3658,10 +3663,6 @@ msgstr ""
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "请选择 PDF 文件。"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
-msgstr ""
 
 #: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/fit.tsx
@@ -4025,6 +4026,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "比较各次尝试，看看哪里进步了。练习问题为模拟生成，并非来自 {0}。"
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "比较各次尝试，查看进步。练习问题为模拟生成。"
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -4046,6 +4051,10 @@ msgstr "按原始币种和发薪周期比较。比较不会向教练分享任何
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "已与您的故事和职位公告对照。"
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "已与您的故事对照。"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4174,10 +4183,6 @@ msgstr ""
 #: src/features/assistant/chat-chrome.tsx
 msgid "Connect another…"
 msgstr "连接另一个…"
-
-#: src/features/settings/ai/page.tsx
-msgid "Connect the tools you use for writing, job search and working with your resumes."
-msgstr "连接您用于写作、求职和处理简历的工具。"
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job match need no provider."
@@ -4785,6 +4790,7 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "无法加载此内容。您已保存的数据没有变化。"
@@ -4919,6 +4925,7 @@ msgstr "无法记录提交。再试一次。"
 msgid "Couldn't reload the resume. Your changes are still open."
 msgstr ""
 
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't remember that. Try again."
 msgstr "无法记住该内容。请重试。"
@@ -5459,7 +5466,7 @@ msgstr "跨职能领导"
 msgid "CSV data"
 msgstr "CSV 数据"
 
-#: src/features/career/knowledge/preferences.tsx
+#: src/features/career/currency-select.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
@@ -5628,6 +5635,7 @@ msgstr ""
 msgid "Deep breath."
 msgstr "深呼吸。"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
@@ -5874,10 +5882,6 @@ msgstr "设计系统"
 msgid "Details"
 msgstr "细节"
 
-#: src/features/settings/profile.tsx
-msgid "Details for your job application forms."
-msgstr ""
-
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
 msgid "Details from the provider:"
@@ -6042,7 +6046,6 @@ msgstr "不要发送 {0}"
 msgid "Don't share"
 msgstr ""
 
-#: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/features/settings/project-links.ts
 msgid "Donate"
@@ -6334,7 +6337,7 @@ msgstr "此聊天中的早前消息"
 #: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Edit"
 msgstr "编辑"
@@ -6584,6 +6587,10 @@ msgstr ""
 msgid "Empty Trash…"
 msgstr ""
 
+#: src/features/career/disclosure.tsx
+msgid "enabled Knowledge"
+msgstr "已启用的知识"
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "结尾"
@@ -6614,10 +6621,6 @@ msgstr "增强阅读不可用；使用内置阅读器。"
 msgid "Enhanced reading was unavailable. The built-in reader retrieved this posting."
 msgstr "增强阅读不可用。内置阅读器检索到了该职位发布。"
 
-#: src/components/ui/donation-toast.tsx
-msgid "Enjoying Reactive Resume?"
-msgstr "喜欢 Reactive Resume 吗？"
-
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter a backup code."
 msgstr "请输入备份码。"
@@ -6641,10 +6644,6 @@ msgstr "输入名称，最多 64 个字符。"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "请输入三字母货币代码。"
 
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
@@ -6945,7 +6944,7 @@ msgstr "事实 · 成就"
 msgid "Fact forgotten"
 msgstr "事实已忘记"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/knowledge/facts.tsx
 msgid "Fact type"
 msgstr "事实类型"
@@ -8029,6 +8028,7 @@ msgid "Images cover most of the page."
 msgstr "图片占据了页面的大部分空间。"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "导入"
 
@@ -8391,10 +8391,6 @@ msgstr "它将被永久删除且无法恢复。"
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "它将显示在工作申请的时间表和日历上。"
 
-#: src/components/ui/donation-toast.tsx
-msgid "It's free and open source, kept going by donations from the people who use it. If it has helped you, consider chipping in."
-msgstr "它免费且开源，靠用户的捐赠维持运转。如果它帮到了您，欢迎支持一下。"
-
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
 msgstr "它已从时间线中永久删除。"
@@ -8740,10 +8736,6 @@ msgstr "知识库中没有提到指导经历。"
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Knowledge is off for this message: the coach doesn't read it or remember anything you say"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "Knowledge that's switched on"
 msgstr ""
 
 #: src/features/career/role-suggestions.tsx
@@ -9103,7 +9095,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Link a fact to practice this story"
-msgstr ""
+msgstr "关联一项事实以练习此故事"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
@@ -9173,6 +9165,10 @@ msgstr "链接已更新"
 #: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "已链接 · 尚未发送"
+
+#: src/features/settings/account/security.tsx
+msgid "Linked accounts"
+msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Linked document unavailable"
@@ -9655,10 +9651,6 @@ msgstr "正在匹配您的事实"
 msgid "May be available"
 msgstr "可能可注册"
 
-#: src/components/ui/donation-toast.tsx
-msgid "Maybe later"
-msgstr "以后再说"
-
 #: src/features/command-palette/pages/navigation.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -9715,6 +9707,7 @@ msgstr "给助理留言"
 msgid "Message the coach"
 msgstr "给教练发消息"
 
+#: src/features/career/offers.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Messages"
@@ -10509,7 +10502,7 @@ msgstr "没有电话号码"
 msgid "No phone number was found."
 msgstr "未找到电话号码。"
 
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "No photo. Most ATS ignore photos; some regions expect one."
 msgstr "没有照片。大多数ATS忽略照片；一些地区预计会出现这一情况。"
 
@@ -10575,6 +10568,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
 msgstr "未找到技能部分。"
+
+#: src/features/settings/account/security.tsx
+msgid "No social sign-in providers are available on this server."
+msgstr "此服务器没有可用的社交账户登录提供商。"
 
 #: src/features/applications/components/insights-view.tsx
 msgid "No source data yet."
@@ -10768,6 +10765,7 @@ msgstr "尚未记录。在能提供依据之前请留空。"
 msgid "Not saved"
 msgstr "未保存"
 
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "未保存 — 这个事实之前已被忘记。"
@@ -11092,7 +11090,7 @@ msgstr "只允许你信任的应用。该应用将能够："
 msgid "Only applies when the section fits on a single page."
 msgstr "仅适用于该部分内容能够完整显示在一页上的情况。"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Only for {company}"
 msgstr ""
 
@@ -11450,6 +11448,7 @@ msgstr "满分 100"
 msgid "Out of date: the text has changed since."
 msgstr "已过时：此后文本已更改。"
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11806,12 +11805,12 @@ msgstr ""
 msgid "Photo hidden"
 msgstr "照片已隐藏"
 
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "照片从页面隐藏。"
 
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "页面上的照片。"
@@ -11891,10 +11890,6 @@ msgstr "规划我的准备"
 #: src/features/career/offers.tsx
 msgid "Plan what to ask"
 msgstr "规划要问的问题"
-
-#: src/routes/dashboard/career/route.tsx
-msgid "Plan your search, keep your evidence in one place, and decide between offers."
-msgstr "规划求职、集中管理证据，并在录用通知之间做出选择。"
 
 #: src/features/career/shared.tsx
 msgid "Planning your week"
@@ -11989,6 +11984,7 @@ msgid "Practice"
 msgstr "练习"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12010,11 +12006,11 @@ msgstr "练习另一个问题"
 #: src/features/career/knowledge/stories.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice for {0}"
-msgstr ""
+msgstr "为 {0} 练习"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Practice for which interview?"
-msgstr ""
+msgstr "要为哪场面试练习？"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -12037,6 +12033,10 @@ msgstr "练习重点："
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "练习问题为模拟生成，并非来自 Fieldnote。"
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "无需职位申请即可练习"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -12481,7 +12481,7 @@ msgstr "升起设计单"
 #. placeholder {0}: day(row.nextRunAt)
 #: src/features/career/today.tsx
 msgid "Ran {0} · done for this interview"
-msgstr ""
+msgstr "已于 {0} 运行 · 本次面试准备已完成"
 
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -12944,7 +12944,7 @@ msgstr ""
 msgid "Relocation"
 msgstr ""
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
@@ -12952,9 +12952,9 @@ msgstr ""
 msgid "Remember"
 msgstr "记住"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Remember as a fact in Knowledge"
-msgstr ""
+msgstr "在知识库中记为事实"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Remember facts from my messages"
@@ -13478,6 +13478,7 @@ msgid "Resume for a new letter"
 msgstr ""
 
 #. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/write/resume-language.tsx
 msgid "Resume language"
 msgstr "简历语言"
@@ -14088,9 +14089,9 @@ msgstr ""
 msgid "Saved description"
 msgstr "已保存的描述"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
-msgstr ""
+msgstr "按您撰写的原文从消息中保存。不会向 AI 发送任何内容。"
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Saved just now"
@@ -14609,11 +14610,11 @@ msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr ""
+msgstr "将你的消息、此处之前的消息、此次申请的信息（职位发布、笔记、文档、你的表单回答、已保存的录用意向及最近的消息）和已启用的知识发送至 {label}。"
 
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr ""
+msgstr "将你的消息、此次申请的信息（职位发布、笔记、文档、你的表单回答、已保存的录用意向及最近的消息）和已启用的知识发送至 {label}。"
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -14667,6 +14668,10 @@ msgstr "设置后续..."
 msgid "Set a password"
 msgstr "设置密码"
 
+#: src/features/settings/account/security.tsx
+msgid "Set a password to turn on two-step verification."
+msgstr "设置密码以启用两步验证。"
+
 #. Primary action button to add a password to an account without one
 #: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
@@ -14703,10 +14708,11 @@ msgstr "设置你的验证器应用"
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/features/resume/editor/write/resume-language.tsx
 msgid "Sets section titles, date words and text direction. Your content isn't translated."
-msgstr ""
+msgstr "设置章节标题、日期用语和文本方向。不会翻译您的内容。"
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -15019,6 +15025,7 @@ msgid "Sign in"
 msgstr "登录"
 
 #: src/features/auth/components/session-recovery.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Sign in again"
 msgstr "重新登录"
 
@@ -15049,6 +15056,10 @@ msgstr "登录以保存"
 #: src/features/auth/pages/login.tsx
 msgid "Sign in to your account"
 msgstr "登录你的账号"
+
+#: src/routes/dashboard/settings/route.tsx
+msgid "Sign in with the account that opened these settings."
+msgstr "请使用打开这些设置的账户登录。"
 
 #: src/features/settings/account/security.tsx
 msgid "Sign in with your fingerprint, face or device PIN"
@@ -15841,6 +15852,7 @@ msgstr "标签"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/document-card.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags"
 msgstr "标签"

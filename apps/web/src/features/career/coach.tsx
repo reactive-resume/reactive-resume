@@ -29,6 +29,7 @@ import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { formatList } from "@reactive-resume/utils/locale";
+import { buildConversationTitle } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import {
 	CoachThread,
@@ -102,9 +103,6 @@ function writeOfferIds(id: string, offers: string[]) {
 		/* Storage may be unavailable. The URL still carries this session's selection. */
 	}
 }
-
-/** The server's title for a conversation, from its first message, so the list doesn't change after a refetch. */
-const titleOf = (text: string) => (text.length > 47 ? `${text.slice(0, 44)}...` : text);
 
 type CoachPageProps = { conversationId: string | undefined; offerIds: string[] };
 
@@ -199,7 +197,10 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		queryClient.setQueryData(listKey, (old) => {
 			const thread = old?.find((item) => item.id === id) ?? (created.current?.id === id ? created.current : undefined);
 			if (!old || !thread) return old;
-			return [{ ...thread, title: titleOf(text), lastMessageAt: new Date() }, ...old.filter((item) => item.id !== id)];
+			return [
+				{ ...thread, title: buildConversationTitle(text, thread.title, 47), lastMessageAt: new Date() },
+				...old.filter((item) => item.id !== id),
+			];
 		});
 		// No longer a draft: the URL names it from here on.
 		created.current = null;

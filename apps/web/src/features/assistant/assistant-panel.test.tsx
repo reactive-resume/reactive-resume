@@ -5,6 +5,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";
+import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-scope";
 
 const mocks = vi.hoisted(() => ({
 	selected: null as string | null,
@@ -68,6 +69,7 @@ const document: AssistantDocument = {
 };
 beforeEach(() => {
 	vi.clearAllMocks();
+	setAccountScope("account-1");
 	mocks.selected = null;
 	mocks.threads = [];
 	mocks.setState.mockImplementation((partial: { assistantThread?: string }) => {
@@ -77,7 +79,10 @@ beforeEach(() => {
 	mocks.attach.mockResolvedValue({ id: "file-1", filename: "posting.txt", mediaType: "text/plain" });
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 });
-afterEach(cleanup);
+afterEach(() => {
+	cleanup();
+	invalidateAccountScope();
+});
 
 it("keeps task titles and shows the original message in history, with old-server fallback", () => {
 	mocks.selected = "new";

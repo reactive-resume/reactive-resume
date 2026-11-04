@@ -112,6 +112,15 @@ A request involving fields, entries or sections appears as one card for the enti
 
 A small wording change marks only the words it changes: removed words struck through, added words highlighted. A rewrite shows the old and new text whole.
 
+After undoing a rejection, you can select **Edit**, change the text and select **Save wording**. The card shows **Edited by you** once the saved wording is read back. Your document changes only when you select **Accept**; Undo and Redo then follow that reviewed wording.
+
+<Frame caption="Reviewed wording on a fictional resume, reopened after accepting and reloading.">
+  <img
+    src="/images/guides/using-the-assistant/restored-reviewed-wording.png"
+    alt="An opened Summary edit with the original paragraph struck through, Audited the fictional checkout flow with keyboard users highlighted, and Edited by you beneath it"
+  />
+</Frame>
+
 Each set is headed by what the edits do together, as the assistant titled it, and how many there are: for example **Tailor to the Lumen posting · 3 proposed edits**. An edit that adds a passage after an existing one shows **Adds after:** and that passage, then the new text, one line per new bullet. An edit whose new text says something your document doesn't, however small, shows **New detail: check it's true**. **Accept all** leaves those out (the button reads **Accept the others**), so you accept each one yourself after checking it.
 
 Before accepting resume edits, **Page fit** compares the printed page count before and after the edits eligible for **Accept all** (or **Accept the others**). **Estimated overflow change** shows the signed change in spill lines: a positive number adds overflow, a negative number reduces it. Measurement uses private copies with the current design and does not save changes. Edits open for rewriting and new details needing individual confirmation are left out. If measurement fails, check the page preview before accepting.
@@ -159,12 +168,19 @@ Tailoring started through MCP or the public API uses this same review flow. Its 
 
 When you tailor, the card can also show:
 
-- **The assistant's reading of n posting requirements:** the requirements it found in the posting (and any the application lists), marked **An edit addresses it**, **Cited as already shown · check it**, **No evidence found · left as a gap** or **Not assessed**. Gaps stay open, even when no edit could be placed; the assistant doesn't fill them with experience you don't have. It can miss requirements in a posting's text, so read the posting too.
+- **The assistant's reading of n posting requirements:** the requirements it found in the posting (and any the application lists), marked **An edit addresses it**, **Cited as already shown · check it**, **No evidence found · left as a gap** or **Not assessed**. Tick a gap to mark what you want to discuss; untick it to clear your choice. Ticking does not supply evidence, change its assessment, or change your resume. Gaps stay open, even when no edit could be placed; the assistant doesn't fill them with experience you don't have. It can miss requirements in a posting's text, so read the posting too.
 - **Posting asks for:** the requirement an edit addresses.
 - **The assistant cites n sources · check they say this:** the passages, or Knowledge facts, the assistant pointed to. A citation is the assistant's pointer, not proof; read it before you accept. **Nothing cited for this edit** means it pointed to nothing.
 - **Nothing checked backs these. Confirm each before accepting:** what the model flagged, plus numbers and years unless one statement in the entry (or role) being edited says all of them with the same subject words (longer words, and short names such as AWS), and words that aren't anywhere in your resume. A reworded claim can be flagged too. These checks find likely problems; they can't confirm an edit is true.
 
 Accepting changes the document only. It never saves anything to Knowledge as a confirmed fact. This reading helps you edit; it's separate from the term list in Check, and it isn't a prediction of how an employer or screening system will respond.
+
+<Frame caption="Tick a posting gap to mark it for discussion; its assessment stays Not assessed. Fictional resume and job.">
+  <img
+    src="/images/guides/using-the-assistant/posting-gap-checklist.png"
+    alt="Assistant showing an unchecked Accessibility audits gap, Not assessed, and proposed edits with separate Accept and Reject controls"
+  />
+</Frame>
 
 ### Use Knowledge
 
@@ -180,6 +196,15 @@ Accepted edits keep the reply's recorded AI request sources with your resume or 
 
 When the assistant needs a fact or a choice from you, it shows a blue question card with a few answers. Select one, or type your own under **Or in your own words…** and select **Send**. The assistant then continues with your answer.
 
+After answering, **Remember** opens a review of your answer for Knowledge. Edit the fact and its type, choose whether it stays private to the selected application, then select **Remember** again to save. **Cancel** saves nothing. This is an explicit statement you review, not verified evidence or automatic memory; it sends nothing to AI and leaves your resume unchanged.
+
+<Frame caption="Review your own answer before saving a fact. Fictional answer; no Knowledge write until Remember.">
+  <img
+    src="/images/guides/using-the-assistant/answer-knowledge-review.png"
+    alt="Completed accessibility question with the original answer and an editable Knowledge review form, fact type, Remember and Cancel"
+  />
+</Frame>
+
 The same question cards appear in **Career → Coach** and **Ask the coach** inside an application workspace, on web and mobile. Only the latest reply can take an answer. Choices stay disabled while a reply is starting or reconnecting; **Stop** cancels that wait.
 
 If a question did not finish or could not be asked, send a new message to continue. If the provider fails after you answer, **Try again** keeps that answer and retries the reply. After reopening a conversation whose answer was already saved, send a new message instead.
@@ -193,7 +218,7 @@ If a question did not finish or could not be asked, send a new message to contin
 
 ## Choose what's shared with each message
 
-Above the message box, chips show what goes with your next message: the document, and the job posting when the document is linked to an application. Select the **×** on a chip to leave it out, including before your first message. A chip you left out stays as a dashed outline; select it to send that item again. Without the document, the assistant can't read or edit it for that message. The line under the box always says what will be sent and to which provider, names any attached files, and mentions earlier messages only once there are some. Nothing is sent until you press send. A long pasted message folds to its first lines in the conversation, with **Show all**.
+Above the message box, chips show what goes with your next message: the document, and the job posting when the document is linked to an application. Select the **×** on a chip to leave it out, including before your first message. A chip you left out stays as a dashed outline; select it to send that item again. Without the document, the assistant can't read or edit it for that message. The line under the box always says what will be sent and to which provider, names any attached files, and mentions earlier messages only once there are some. Nothing is sent until you press send. A long pasted message folds to its first lines in the conversation, with **Show all**. Before sending a long paste, **Attach a file instead** offers to upload those words as `message.txt`, using the existing destination approval. After a successful upload, the unchanged message box says **Read the attachment**; text you typed while it uploaded stays intact. A failed upload keeps your paste. Review the named file and disclosure, then press **Send** yourself. Removing the file releases its upload before the next message. Unsent uploads stay with their conversation. Reopening it on web or mobile restores their named chips, including an upload that finished while you changed accounts. Review or remove those files before sending; reopening never sends them to a provider.
 
 Removing either context chip also leaves earlier conversation history out of the next reply. Pending questions or approvals from a different context cannot resume; send a new message with your current choices.
 

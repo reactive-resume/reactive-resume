@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 08:38+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1318,7 +1318,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
-msgstr ""
+msgstr "Факт в тази история е изключен или променен. Редактирайте историята, за да го проверите."
 
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
@@ -1582,8 +1582,8 @@ msgstr "активност"
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
-#: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/improve.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Add"
 msgstr "Добавяне"
 
@@ -1605,6 +1605,10 @@ msgstr ""
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
 msgstr "Добавяне на държава"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Добавете факт"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
@@ -1729,10 +1733,6 @@ msgstr "Добавете имейл"
 #: src/features/career/workspace/shell.tsx
 msgid "Add an interview"
 msgstr "Добавяне на интервю"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Първо добавете интервю"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Add an interview in an application first"
@@ -2017,9 +2017,9 @@ msgstr "Добавено в Знания като постижение."
 msgid "Added to Knowledge as an experience."
 msgstr "Добавено в Знания като опит."
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Added to Knowledge."
-msgstr ""
+msgstr "Добавено към Знания."
 
 #: src/features/resume/share/address-field.tsx
 #: src/features/settings/profile.tsx
@@ -2861,6 +2861,7 @@ msgid "Attach a file"
 msgstr "Прикачете файл"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Attach a file instead"
 msgstr "Вместо това прикачете файл"
 
@@ -3272,8 +3273,8 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/assistant/remember-message.tsx
 #: src/features/assistant/save-posting.tsx
-#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -3626,6 +3627,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Изберете валута."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr ""
@@ -3658,10 +3663,6 @@ msgstr ""
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "Изберете PDF файл."
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
-msgstr ""
 
 #: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/fit.tsx
@@ -4025,6 +4026,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Сравнете опитите, за да видите какво се е подобрило. Въпросите за упражнение са симулирани и не са от {0}."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Сравнете опитите, за да видите напредъка. Въпросите за упражнение са симулирани."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -4046,6 +4051,10 @@ msgstr "Сравняват се в оригиналната им валута и
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Сравнено с историите ви и обявата."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Сравнено с вашите истории."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4174,10 +4183,6 @@ msgstr ""
 #: src/features/assistant/chat-chrome.tsx
 msgid "Connect another…"
 msgstr "Свържете друг..."
-
-#: src/features/settings/ai/page.tsx
-msgid "Connect the tools you use for writing, job search and working with your resumes."
-msgstr "Свържете инструментите, които използвате за писане, търсене на работа и работа с вашите автобиографии."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job match need no provider."
@@ -4785,6 +4790,7 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Това не можа да се зареди. Запазените ви данни не са променени."
@@ -4919,6 +4925,7 @@ msgstr "Изпращането не можа да се запише. Опита�
 msgid "Couldn't reload the resume. Your changes are still open."
 msgstr ""
 
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't remember that. Try again."
 msgstr "Това не можа да бъде запомнено. Опитайте отново."
@@ -5459,7 +5466,7 @@ msgstr "Междуфункционално лидерство"
 msgid "CSV data"
 msgstr "CSV данни"
 
-#: src/features/career/knowledge/preferences.tsx
+#: src/features/career/currency-select.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
@@ -5628,6 +5635,7 @@ msgstr ""
 msgid "Deep breath."
 msgstr "Поемете дълбоко дъх."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
@@ -5874,10 +5882,6 @@ msgstr "Дизайн системи"
 msgid "Details"
 msgstr "Подробности"
 
-#: src/features/settings/profile.tsx
-msgid "Details for your job application forms."
-msgstr ""
-
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
 msgid "Details from the provider:"
@@ -6042,7 +6046,6 @@ msgstr "Не изпращайте {0}"
 msgid "Don't share"
 msgstr ""
 
-#: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/features/settings/project-links.ts
 msgid "Donate"
@@ -6334,7 +6337,7 @@ msgstr "предишните съобщения в този чат"
 #: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Edit"
 msgstr "Редактиране"
@@ -6584,6 +6587,10 @@ msgstr ""
 msgid "Empty Trash…"
 msgstr ""
 
+#: src/features/career/disclosure.tsx
+msgid "enabled Knowledge"
+msgstr "включените Знания"
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "Край"
@@ -6614,10 +6621,6 @@ msgstr "Подобреното четене не е налично; използ
 msgid "Enhanced reading was unavailable. The built-in reader retrieved this posting."
 msgstr "Подобреното четене не беше налично. Вграденият четец извлече тази обява за работа."
 
-#: src/components/ui/donation-toast.tsx
-msgid "Enjoying Reactive Resume?"
-msgstr "Харесва ли ви Reactive Resume?"
-
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter a backup code."
 msgstr "Въведете резервен код."
@@ -6641,10 +6644,6 @@ msgstr "Въведете име, до 64 знака."
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
-
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "Въведете трибуквен код на валутата."
 
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
@@ -6945,7 +6944,7 @@ msgstr "Факт · Постижение"
 msgid "Fact forgotten"
 msgstr "Фактът е забравен"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/knowledge/facts.tsx
 msgid "Fact type"
 msgstr "Вид факт"
@@ -8029,6 +8028,7 @@ msgid "Images cover most of the page."
 msgstr "Изображения покриват по-голямата част от страницата."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "Импорт"
 
@@ -8391,10 +8391,6 @@ msgstr "Той ще бъде изтрит завинаги и не може да
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "Ще се покаже в графика на кандидатурата за работа и в календара."
 
-#: src/components/ui/donation-toast.tsx
-msgid "It's free and open source, kept going by donations from the people who use it. If it has helped you, consider chipping in."
-msgstr "Безплатен е и с отворен код, а се поддържа от дарения на хората, които го използват. Ако ви е помогнал, помислете дали да не дадете своя принос."
-
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Премахнато е от времевата линия завинаги."
@@ -8740,10 +8736,6 @@ msgstr "В Знания не се споменава менторство."
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Knowledge is off for this message: the coach doesn't read it or remember anything you say"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "Knowledge that's switched on"
 msgstr ""
 
 #: src/features/career/role-suggestions.tsx
@@ -9103,7 +9095,7 @@ msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Link a fact to practice this story"
-msgstr ""
+msgstr "Свържете факт, за да упражните тази история"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
@@ -9173,6 +9165,10 @@ msgstr "Връзката е актуализирана"
 #: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Свързано · още не е изпратено"
+
+#: src/features/settings/account/security.tsx
+msgid "Linked accounts"
+msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Linked document unavailable"
@@ -9655,10 +9651,6 @@ msgstr "Съпоставяне с фактите ви"
 msgid "May be available"
 msgstr "Може да е свободен"
 
-#: src/components/ui/donation-toast.tsx
-msgid "Maybe later"
-msgstr "Може би по-късно"
-
 #: src/features/command-palette/pages/navigation.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -9715,6 +9707,7 @@ msgstr "Изпратете съобщение до асистента"
 msgid "Message the coach"
 msgstr "Съобщение до коуча"
 
+#: src/features/career/offers.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Messages"
@@ -10509,7 +10502,7 @@ msgstr "Няма телефонен номер"
 msgid "No phone number was found."
 msgstr "Не бе открит телефонен номер."
 
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "No photo. Most ATS ignore photos; some regions expect one."
 msgstr "Няма снимка. Повечето ATS игнорират снимки; някои региони очакват такъв."
 
@@ -10575,6 +10568,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
 msgstr "Не бе открит раздел „Skills“."
+
+#: src/features/settings/account/security.tsx
+msgid "No social sign-in providers are available on this server."
+msgstr "На този сървър няма доставчици за вход със социален акаунт."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "No source data yet."
@@ -10768,6 +10765,7 @@ msgstr "Все още не е записано. Оставете празно, �
 msgid "Not saved"
 msgstr "Не е запазено"
 
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "Не е запазено — този факт вече е бил забравен."
@@ -11092,7 +11090,7 @@ msgstr "Разрешавайте само приложения, на които 
 msgid "Only applies when the section fits on a single page."
 msgstr "Важи само когато разделът се побира на една страница."
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Only for {company}"
 msgstr ""
 
@@ -11450,6 +11448,7 @@ msgstr "от 100"
 msgid "Out of date: the text has changed since."
 msgstr "Изтекъл: текстът е променен оттогава."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11806,12 +11805,12 @@ msgstr ""
 msgid "Photo hidden"
 msgstr "Снимката е скрита"
 
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "Снимката е скрита от страницата."
 
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "Снимка на страницата."
@@ -11891,10 +11890,6 @@ msgstr "Планирай подготовката ми"
 #: src/features/career/offers.tsx
 msgid "Plan what to ask"
 msgstr "Планиране на въпросите"
-
-#: src/routes/dashboard/career/route.tsx
-msgid "Plan your search, keep your evidence in one place, and decide between offers."
-msgstr "Планирайте търсенето си, пазете доказателствата си на едно място и избирайте между оферти."
 
 #: src/features/career/shared.tsx
 msgid "Planning your week"
@@ -11989,6 +11984,7 @@ msgid "Practice"
 msgstr "Упражнение"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12010,11 +12006,11 @@ msgstr "Упражнете друг въпрос"
 #: src/features/career/knowledge/stories.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice for {0}"
-msgstr ""
+msgstr "Упражнявайте се за {0}"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Practice for which interview?"
-msgstr ""
+msgstr "За кое интервю искате да се упражните?"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -12037,6 +12033,10 @@ msgstr "Приоритет за упражнение:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Въпросите за упражнение са симулирани и не са от Fieldnote."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Упражнявайте се без кандидатура"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -12481,7 +12481,7 @@ msgstr "Повдигнете листа с дизайн"
 #. placeholder {0}: day(row.nextRunAt)
 #: src/features/career/today.tsx
 msgid "Ran {0} · done for this interview"
-msgstr ""
+msgstr "Изпълнено на {0} · завършено за това интервю"
 
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -12944,7 +12944,7 @@ msgstr ""
 msgid "Relocation"
 msgstr ""
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
@@ -12952,9 +12952,9 @@ msgstr ""
 msgid "Remember"
 msgstr "Запомняне"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Remember as a fact in Knowledge"
-msgstr ""
+msgstr "Запомни като факт в Знания"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Remember facts from my messages"
@@ -13478,6 +13478,7 @@ msgid "Resume for a new letter"
 msgstr ""
 
 #. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/write/resume-language.tsx
 msgid "Resume language"
 msgstr "Език на автобиографията"
@@ -14088,9 +14089,9 @@ msgstr ""
 msgid "Saved description"
 msgstr "Запазено описание"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
-msgstr ""
+msgstr "Запазено от съобщението ви така, както сте го написали. Нищо не се изпраща до ИИ."
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Saved just now"
@@ -14609,11 +14610,11 @@ msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr ""
+msgstr "Изпраща съобщението ви, предишните съобщения тук, тази кандидатура (обявата, бележките, документите, отговорите ви във формулярите, запазената оферта и последните съобщения) и включените Знания до {label}."
 
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr ""
+msgstr "Изпраща съобщението ви, тази кандидатура (обявата, бележките, документите, отговорите ви във формулярите, запазената оферта и последните съобщения) и включените Знания до {label}."
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -14667,6 +14668,10 @@ msgstr "Задаване на последващи действия..."
 msgid "Set a password"
 msgstr "Задайте парола"
 
+#: src/features/settings/account/security.tsx
+msgid "Set a password to turn on two-step verification."
+msgstr "Задайте парола, за да включите потвърждаването в две стъпки."
+
 #. Primary action button to add a password to an account without one
 #: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
@@ -14703,10 +14708,11 @@ msgstr "Настройте приложението си за удостовер
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/features/resume/editor/write/resume-language.tsx
 msgid "Sets section titles, date words and text direction. Your content isn't translated."
-msgstr ""
+msgstr "Задава заглавията на разделите, думите за дати и посоката на текста. Съдържанието ви не се превежда."
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -15019,6 +15025,7 @@ msgid "Sign in"
 msgstr "Вход"
 
 #: src/features/auth/components/session-recovery.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Sign in again"
 msgstr "Влизане отново"
 
@@ -15049,6 +15056,10 @@ msgstr "Влезте, за да запазите"
 #: src/features/auth/pages/login.tsx
 msgid "Sign in to your account"
 msgstr "Влезте в профила си"
+
+#: src/routes/dashboard/settings/route.tsx
+msgid "Sign in with the account that opened these settings."
+msgstr "Влезте с акаунта, който отвори тези настройки."
 
 #: src/features/settings/account/security.tsx
 msgid "Sign in with your fingerprint, face or device PIN"
@@ -15841,6 +15852,7 @@ msgstr "Етикет"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/document-card.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags"
 msgstr "Етикети"

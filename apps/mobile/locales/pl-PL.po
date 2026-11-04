@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 08:38+0100\n"
+"POT-Creation-Date: 2026-11-03 20:42+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1055,6 +1055,10 @@ msgstr ""
 #: src/features/assistant/messages.tsx
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
+
+#: src/features/career/story-practice-button.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr "Fakt używany w tej historii jest wyłączony lub zmieniony. Edytuj historię, aby go sprawdzić."
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A focused plan for this round"
@@ -2276,6 +2280,10 @@ msgstr "Dołącz list motywacyjny (PDF)"
 msgid "Attach a file"
 msgstr "Załącz plik"
 
+#: src/features/assistant/chat-view.tsx
+msgid "Attach a file instead"
+msgstr "Zamiast tego załącz plik"
+
 #: src/features/application-detail/sections.tsx
 msgid "Attach a resume file (PDF)"
 msgstr "Dołącz plik CV (PDF)"
@@ -2384,6 +2392,10 @@ msgstr "Powrót do ogłoszenia"
 #: app/(auth)/sign-in.tsx
 msgid "Back to sign in"
 msgstr "Powrót do logowania"
+
+#: src/features/career/knowledge.tsx
+msgid "Back to stories"
+msgstr "Wróć do historii"
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
@@ -2879,6 +2891,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Wybierz walutę."
+
 #: src/features/application-detail/date-field.tsx
 msgid "Choose a date"
 msgstr "Wybierz datę"
@@ -2959,6 +2975,7 @@ msgstr "Wybierz plik WebM, MP4, MP3, WAV lub Ogg do 2 MB."
 
 #: src/features/ai/next-steps.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/offers.tsx
 msgid "Choose an application"
 msgstr "Wybierz podanie o pracę"
 
@@ -3212,6 +3229,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {company}."
 msgstr "Porównaj próby, aby zobaczyć, co uległo poprawie. Pytania praktyczne są symulowane, a nie z {company}."
 
+#: src/features/workspace/tabs/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Porównaj próby, aby zobaczyć postępy. Pytania ćwiczeniowe są symulowane."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -3228,6 +3249,10 @@ msgstr "Porównywane w oryginalnej walucie i okresie płatności. Porównanie ni
 #: src/features/workspace/tabs/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Porównano z Twoimi historiami i ogłoszeniem."
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Compared with your stories."
+msgstr "Porównano z Twoimi historiami."
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Compares your resume with the posting"
@@ -3716,6 +3741,10 @@ msgstr ""
 msgid "Couldn't load documents. Try again."
 msgstr "Nie udało się wczytać dokumentów. Spróbuj ponownie."
 
+#: src/features/career/story-practice-button.tsx
+msgid "Couldn't load interviews. Retry"
+msgstr "Nie udało się wczytać rozmów. Spróbuj ponownie"
+
 #: src/features/documents/thumbnail.tsx
 msgid "Couldn't load letter"
 msgstr "Nie można załadować listu motywacyjnego"
@@ -3777,6 +3806,10 @@ msgstr "Nie można załadować strony tej wersji."
 #: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Nie można tego załadować. Sprawdź połączenie i spróbuj ponownie."
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Couldn't load this. Your saved data hasn't changed."
+msgstr "Nie udało się tego wczytać. Zapisane dane się nie zmieniły."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -4442,6 +4475,7 @@ msgid "Decrease {label}"
 msgstr "Zmniejsz {label}"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/documents/new-document.tsx
 #: src/features/write/pickers.tsx
 msgid "Default"
 msgstr "Domyślny"
@@ -4665,10 +4699,6 @@ msgstr "Projekt przywrócony do ustawień domyślnych"
 #: src/features/document-menu/index.tsx
 msgid "Details"
 msgstr "Bliższe dane"
-
-#: src/features/settings/application-profile.tsx
-msgid "Details for your job application forms."
-msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
@@ -5211,6 +5241,10 @@ msgstr "Opróżnij kosz"
 msgid "Empty Trash?"
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "enabled Knowledge"
+msgstr "włączona Wiedza"
+
 #: src/features/write/date-field.tsx
 msgid "End"
 msgstr "Koniec"
@@ -5255,8 +5289,6 @@ msgstr "Wpisz nazwę, maksymalnie 64 znaki."
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-#: src/features/career/preferences.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Enter a three-letter currency code."
 msgstr "Wpisz trzyliterowy kod waluty."
@@ -6773,10 +6805,6 @@ msgstr "Wiedza"
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "Nie udało się wczytać Wiedzy. Spróbuj ponownie lub wyłącz Wiedzę przed wysłaniem."
 
-#: src/features/workspace/parts.tsx
-msgid "Knowledge that's switched on"
-msgstr ""
-
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
 msgstr ""
@@ -7081,6 +7109,10 @@ msgstr ""
 msgid "Link {0} URL"
 msgstr ""
 
+#: src/features/career/story-practice-button.tsx
+msgid "Link a fact to practice this story"
+msgstr "Połącz fakt, aby ćwiczyć tę historię"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Link address"
 msgstr "Adres linku"
@@ -7236,6 +7268,10 @@ msgstr "Ładowanie rozmów…"
 #: src/features/letters/page.tsx
 msgid "Loading cover letter…"
 msgstr "Ładowanie listu motywacyjnego…"
+
+#: src/features/career/story-practice-button.tsx
+msgid "Loading interviews…"
+msgstr "Wczytywanie rozmów…"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Loading Knowledge before you send…"
@@ -7635,6 +7671,7 @@ msgstr "Wiadomość"
 msgid "Message the assistant"
 msgstr "Wyślij wiadomość do asystenta"
 
+#: src/features/career/offers.tsx
 #: src/shell/workspace-tab-label.ts
 msgid "Messages"
 msgstr "Wiadomości"
@@ -9102,6 +9139,7 @@ msgid "Out of date: the text has changed since."
 msgstr "Nieaktualny: od tego czasu tekst się zmienił."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/application-detail/sections.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "Wynik"
@@ -9514,6 +9552,12 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "Ćwiczenie"
 
+#: src/features/career/story-practice-button.tsx
+#: src/features/workspace/tabs/practise.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice"
+msgstr "Ćwiczenie"
+
 #: src/features/career/prepare-now.tsx
 msgid "Practice {count} questions"
 msgstr "Przećwicz {count} pytania"
@@ -9521,6 +9565,16 @@ msgstr "Przećwicz {count} pytania"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "Poćwicz inne pytanie"
+
+#. placeholder {0}: next.application.company
+#: src/features/career/story-practice-button.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr "Ćwicz przed rozmową w {0}"
+
+#: src/features/career/story-practice-button.tsx
+msgid "Practice for which interview?"
+msgstr "Do której rozmowy chcesz się przygotować?"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -9537,6 +9591,10 @@ msgstr "Priorytety ćwiczeń, a nie wnioski o tym, dlaczego pracodawca cokolwiek
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
 msgstr "Priorytet ćwiczeń:"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Practice without an application"
+msgstr "Ćwicz bez podania o pracę"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practicing your story: {storyTitle}"
@@ -9897,6 +9955,11 @@ msgstr ""
 msgid "Raise the design sheet"
 msgstr "Podnieś arkusz projektu"
 
+#. placeholder {0}: time.when(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Ran {0} · done for this interview"
+msgstr "Uruchomiono {0} · ukończono dla tej rozmowy"
+
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
 msgstr "Wyeksportuj ponownie z układu jednokolumnowego, a następnie skopiuj tekst i sprawdź, czy czyta się od góry do dołu."
@@ -9964,6 +10027,7 @@ msgstr "Przeczytaj ogłoszenie o pracę"
 msgid "Read questions with"
 msgstr "Czytaj pytania za pomocą"
 
+#: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Read the attachment"
 msgstr "Przeczytaj załącznik"
@@ -10260,7 +10324,7 @@ msgstr "Zapamiętaj"
 
 #: src/features/assistant/messages.tsx
 msgid "Remember as a fact in Knowledge"
-msgstr ""
+msgstr "Zapamiętaj jako fakt w Wiedza"
 
 #: src/features/career/facts.tsx
 msgid "Remember facts from my messages"
@@ -10714,6 +10778,7 @@ msgid "Resume for a new letter"
 msgstr ""
 
 #. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/documents/new-document.tsx
 #: src/features/write/resume-language.tsx
 msgid "Resume language"
 msgstr "Język CV"
@@ -10780,6 +10845,7 @@ msgstr "Wycofaj etap"
 #: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
+#: src/features/career/story-practice-button.tsx
 #: src/features/check/job-match.tsx
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -11034,14 +11100,6 @@ msgstr "Rumuński"
 #: src/features/design/style-groups.tsx
 msgid "Roomy"
 msgstr "Przestronny"
-
-#: src/features/write/picture-screen.tsx
-msgid "Rotation"
-msgstr "Obrót"
-
-#: src/features/write/picture-screen.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "Obrót nie jest obsługiwany przez renderowanie PDF."
 
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/import-sheet.tsx
@@ -11312,7 +11370,7 @@ msgstr "Zapisano opis"
 
 #: src/features/assistant/messages.tsx
 msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
-msgstr ""
+msgstr "Zapisano z Twojej wiadomości tak, jak została napisana. Nic nie jest wysyłane do AI."
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
@@ -11576,6 +11634,10 @@ msgstr "Wybierz wpis {0}"
 msgid "Select this page"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Select…"
+msgstr "Wybierz…"
+
 #: src/preview/page.tsx
 msgid "Selected entry"
 msgstr "Wybrany wpis"
@@ -11686,12 +11748,12 @@ msgid "Sends your message, earlier messages and this application (posting, notes
 msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-msgstr ""
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "Wysyła Twoją wiadomość, wcześniejsze wiadomości tutaj, tę aplikację (ogłoszenie, notatki, dokumenty, Twoje odpowiedzi w formularzach, zapisaną ofertę i ostatnie wiadomości) oraz włączoną Wiedzę do {label}."
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-msgstr ""
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "Wysyła Twoją wiadomość, tę aplikację (ogłoszenie, notatki, dokumenty, Twoje odpowiedzi w formularzach, zapisaną ofertę i ostatnie wiadomości) oraz włączoną Wiedzę do {label}."
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -11784,9 +11846,10 @@ msgid "Set your preferences"
 msgstr ""
 
 #: src/features/design/style-groups.tsx
+#: src/features/documents/new-document.tsx
 #: src/features/write/resume-language.tsx
 msgid "Sets section titles, date words and text direction. Your content isn't translated."
-msgstr ""
+msgstr "Ustawia tytuły sekcji, słowa w datach i kierunek tekstu. Twoja treść nie jest tłumaczona."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."

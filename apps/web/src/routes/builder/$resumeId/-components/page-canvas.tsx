@@ -134,7 +134,7 @@ function ResumePageCanvas() {
 				}}
 				className={cn(
 					// The region takes focus to scroll from the keyboard: it shows the ring, inset since it fills its container.
-					"absolute inset-0 overflow-auto pb-24 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent",
+					"absolute inset-0 overflow-auto pb-24 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent",
 					// Check keeps room above the page for the page-view toggle.
 					mode === "check" && !viewing ? "pt-[68px]" : "pt-7",
 					isPhone ? "px-4" : "px-10",

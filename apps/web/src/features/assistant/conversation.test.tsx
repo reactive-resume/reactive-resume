@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
 	chat: vi.fn(),
 	send: vi.fn(),
 	attach: vi.fn(),
+	saveFact: vi.fn(),
 	publish: vi.fn(),
 	record: vi.fn(),
 	receipts: vi.fn(),
@@ -33,10 +34,13 @@ vi.mock("@/features/resume/builder/draft", () => ({
 }));
 vi.mock("@/features/resume/editor/proposals/page-fit", () => ({ ProposalPageFit: () => null }));
 vi.mock("@/libs/orpc/client", () => ({
-	client: { agent: { attachments: { create: mocks.attach }, messages: { setEditStatus: mocks.record } } },
+	client: {
+		career: { saveFact: mocks.saveFact },
+		agent: { attachments: { create: mocks.attach }, messages: { setEditStatus: mocks.record } },
+	},
 	orpc: {
 		agent: { threads: { get: { queryOptions: () => ({ queryKey: ["thread"] }) }, list: { key: () => ["threads"] } } },
-		career: { facts: { queryOptions: () => ({ queryKey: ["facts"] }) } },
+		career: { facts: { key: () => ["facts"], queryOptions: () => ({ queryKey: ["facts"] }) } },
 	},
 }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
@@ -55,6 +59,7 @@ vi.mock("./chat", async (importOriginal) => ({
 }));
 
 import { Composer, Conversation } from "./conversation";
+import { setAccountScope } from "@/libs/auth/account-scope";
 
 const document: AssistantDocument = {
 	kind: "resume",
@@ -70,6 +75,7 @@ const document: AssistantDocument = {
 };
 beforeEach(() => {
 	vi.clearAllMocks();
+	setAccountScope("assistant-account");
 	mocks.receipts.mockReturnValue({});
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	mocks.chat.mockReturnValue({ messages: [], sendMessage: mocks.send, status: "ready", clearError: vi.fn() });
@@ -167,12 +173,15 @@ it("uploads a file in the initial composer before sending its first message", as
 	if (!input) throw new Error("File picker missing");
 	fireEvent.change(input, { target: { files: [new File(["foo"], "posting.txt", { type: "text/plain" })] } });
 	await waitFor(() => expect(screen.getByText("posting.txt")).toBeDefined());
-	expect(mocks.attach).toHaveBeenCalledWith({
-		threadId: "draft-thread",
-		filename: "posting.txt",
-		mediaType: "text/plain",
-		data: "Zm9v",
-	});
+	expect(mocks.attach).toHaveBeenCalledWith(
+		{
+			threadId: "draft-thread",
+			filename: "posting.txt",
+			mediaType: "text/plain",
+			data: "Zm9v",
+		},
+		{ context: { accountId: "assistant-account" } },
+	);
 	fireEvent.change(screen.getByRole("textbox"), { target: { value: "Review this posting" } });
 	fireEvent.click(screen.getByRole("button", { name: "Send" }));
 	expect(send).toHaveBeenCalledWith("Review this posting", [
@@ -616,7 +625,7 @@ it("never accepts tailored or older sets into a resume that isn't the job's copy
 	}
 });
 
-it("keeps the wording draft and every Accept closed until a fresh read shows the saved wording", async () => {
+it("keeps restored edits and Accept bound to wording confirmed by a fresh read", async () => {
 	const saved = {
 		messages: [
 			proposing({
@@ -648,8 +657,18 @@ it("keeps the wording draft and every Accept closed until a fresh read shows the
 			return { data, isError: false };
 		});
 	mocks.receipts.mockImplementation(() => ({ data, refetch }));
-	mocks.record.mockRejectedValueOnce(new Error("offline")).mockResolvedValue({});
-	const { accept, rerender } = renderConversation([proposing({ tailoredFor: "application-2" })]);
+	mocks.record
+		.mockResolvedValueOnce({})
+		.mockResolvedValueOnce({})
+		.mockRejectedValueOnce(new Error("offline"))
+		.mockResolvedValue({});
+	const { accept, rerender } = renderConversation([proposing({ tailoredFor: "application-2" })], {
+		stateOf: (proposal) => proposal.status,
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Reject" }));
+	fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+	await waitFor(() => expect(mocks.record).toHaveBeenCalledTimes(2));
+	mocks.record.mockClear();
 	const write = {
 		threadId: "thread-1",
 		messageId: "proposal-reply",
@@ -712,4 +731,134 @@ it("shows requirement gaps when no edit could be placed, and a notice for a with
 	expect(screen.getByText("Kubernetes operations")).toBeDefined();
 	expect(screen.getByText("No evidence found · left as a gap")).toBeDefined();
 	expect(screen.getByText("This reply used Knowledge that has since changed, so it's hidden.")).toBeDefined();
+});
+
+it("reviews a completed interview answer before an explicit manual Knowledge save", async () => {
+	mocks.saveFact.mockResolvedValue({ id: "fact" });
+	renderConversation([
+		{
+			id: "question-message",
+			role: "assistant",
+			parts: [
+				{
+					type: "tool-ask_user_question",
+					toolCallId: "question",
+					state: "output-available",
+					input: { question: "What happened?", choices: [] },
+					output: "I cut response time by 20%.",
+				},
+			],
+		},
+	]);
+	expect(mocks.saveFact).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Remember" }));
+	fireEvent.change(screen.getByLabelText("Remember as a fact in Knowledge"), {
+		target: { value: "I cut response time by 20% in a pilot." },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Remember" }));
+	await waitFor(() =>
+		expect(mocks.saveFact).toHaveBeenCalledWith(
+			{
+				applicationId: "application-2",
+				text: "I cut response time by 20% in a pilot.",
+				category: "accomplishment",
+				source: { kind: "manual", id: "question-message", quote: "I cut response time by 20%." },
+			},
+			{ context: { accountId: "assistant-account" } },
+		),
+	);
+	expect(mocks.send).not.toHaveBeenCalled();
+});
+
+it.each(["success", "failure", "changed"])(
+	"converts long pasted text only after explicit upload, preserving draft on %s",
+	async (mode) => {
+		let resolve: (value: { id: string; filename: string; mediaType: string }) => void = () => {};
+		let reject: (reason: Error) => void = () => {};
+		mocks.attach.mockReturnValue(
+			new Promise((yes, no) => {
+				resolve = yes;
+				reject = no;
+			}),
+		);
+		const pasted = "Unicode résumé مرحبا\n".repeat(300);
+		render(
+			<I18nProvider i18n={i18n}>
+				<Composer
+					document={document}
+					context={{ document: true, posting: true }}
+					onContextChange={() => {}}
+					streaming={false}
+					disabled={false}
+					threadId="thread-1"
+					providerLabel="Local"
+					onSend={mocks.send}
+					onStop={() => {}}
+					initialText={pasted}
+				/>
+			</I18nProvider>,
+		);
+		expect(mocks.attach).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole("button", { name: "Attach a file instead" }));
+		await waitFor(() => expect(mocks.attach).toHaveBeenCalled());
+		const box = screen.getByRole("textbox", { name: "Message the assistant" });
+		if (mode === "changed") fireEvent.change(box, { target: { value: "New unsent words" } });
+		if (mode === "failure") reject(new Error("offline"));
+		else resolve({ id: "paste", filename: "message.txt", mediaType: "text/plain" });
+		await waitFor(() =>
+			expect((box as HTMLTextAreaElement).value).toBe(
+				mode === "success" ? "Read the attachment" : mode === "changed" ? "New unsent words" : pasted,
+			),
+		);
+		expect(mocks.send).not.toHaveBeenCalled();
+	},
+);
+
+it("does not save a reviewed answer after its account has changed", () => {
+	renderConversation([
+		{
+			id: "scoped-answer",
+			role: "assistant",
+			parts: [
+				{
+					type: "tool-ask_user_question",
+					toolCallId: "answer",
+					state: "output-available",
+					input: { question: "What did you do?" },
+					output: "I repaired six defects.",
+				},
+			],
+		},
+	]);
+	fireEvent.click(screen.getByRole("button", { name: "Remember" }));
+	setAccountScope("different-account");
+	fireEvent.click(screen.getByRole("button", { name: "Remember" }));
+	expect(mocks.saveFact).not.toHaveBeenCalled();
+});
+
+it("restores owned unsent files as visible chips and waits for explicit Send", () => {
+	const send = vi.fn();
+	const files = [{ id: "recovered", filename: "Fictional draft.txt", mediaType: "text/plain" }];
+	render(
+		<I18nProvider i18n={i18n}>
+			<Composer
+				document={document}
+				context={{ document: false, posting: false }}
+				onContextChange={() => {}}
+				providerLabel="Local"
+				streaming={false}
+				disabled={false}
+				threadId="original-thread"
+				initialAttachments={files}
+				onSend={send}
+				onStop={() => {}}
+			/>
+		</I18nProvider>,
+	);
+	expect(screen.getByText("Fictional draft.txt")).toBeDefined();
+	expect(send).not.toHaveBeenCalled();
+	fireEvent.change(screen.getByRole("textbox"), { target: { value: "Review this recovered file" } });
+	fireEvent.click(screen.getByRole("button", { name: "Send" }));
+	expect(send).toHaveBeenCalledWith("Review this recovered file", files);
+	expect(screen.queryByText("Fictional draft.txt")).toBeNull();
 });

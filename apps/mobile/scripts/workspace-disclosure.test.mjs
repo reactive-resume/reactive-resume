@@ -35,7 +35,7 @@ const pending = { data: undefined, isPending: true, isError: false };
 const errored = { data: undefined, isPending: false, isError: true };
 const empty = { data: [], isPending: false, isError: false };
 const filled = { data: [{ id: "fact-1" }], isPending: false, isError: false };
-function nativeLine(query) {
+function nativeLine(query, selectedApplication = application, task = "briefing") {
 	const components = [
 		"ActivityIndicator",
 		"Banner",
@@ -64,7 +64,7 @@ function nativeLine(query) {
 		"./hooks": { useFacts: () => query.facts, useStories: () => query.stories },
 		"@/features/ai/providers": {
 			useHasAIProvider: () => ({
-				defaultProvider: { label: "Provider", id: "p", model: "m" },
+				defaultProvider: { label: "Provider", id: "p", model: "m", capableModel: "different-capable-model" },
 				isLoading: false,
 				error: null,
 				retry: () => {},
@@ -76,7 +76,7 @@ function nativeLine(query) {
 		"expo-router": { useRouter: () => ({ push: () => {} }) },
 		"@/shell/workspace-tab-label": { workspaceTabLabel: (label) => label },
 	});
-	return sentenceOf(AiNotice({ task: "briefing", application, interview: true }));
+	return sentenceOf(AiNotice({ task, application: selectedApplication, interview: Boolean(selectedApplication) }));
 }
 
 for (const [name, facts, stories, expected] of [
@@ -95,3 +95,10 @@ for (const [name, facts, stories, expected] of [
 		assert.equal(line.includes("Knowledge"), expected, line);
 	});
 }
+
+test("standalone practice discloses shared Knowledge without claiming an employer posting", () => {
+	const line = nativeLine({ facts: filled, stories: filled }, null, "practice");
+	assert.match(line, /Sends .*Knowledge.*question and your answer.*Provider/);
+	assert.doesNotMatch(line, /posting|interview details|resume for this job|your notes|different-capable-model/);
+	assert.match(line, /Provider · m/);
+});

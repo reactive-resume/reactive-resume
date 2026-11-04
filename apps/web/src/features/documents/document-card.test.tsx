@@ -1,6 +1,6 @@
 import type { DocumentSummary } from "./filter";
 // @vitest-environment happy-dom
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -134,4 +134,19 @@ it("fetches a new preview after the letter's content edit", async () => {
 
 	expect(await screen.findByText("Second version.")).toBeTruthy();
 	await waitFor(() => expect(letters.load).toHaveBeenCalledTimes(2));
+});
+
+it("shows saved tags without changing the document link name and removes empty tag metadata", () => {
+	const document = { ...letter(new Date("2026-10-19T00:00:00.000Z")), tags: ["remote", "مرحبا", "x".repeat(50)] };
+	const view = renderCard(document, { inView: false });
+	const tags = screen.getByRole("list", { name: "Tags" });
+	expect(
+		within(tags)
+			.getAllByRole("listitem")
+			.map((item) => item.textContent),
+	).toEqual(document.tags.map((tag) => `#${tag}`));
+	expect(within(tags).getByText("#مرحبا").getAttribute("dir")).toBe("auto");
+	expect(screen.getByRole("link", { name: document.name })).toBeTruthy();
+	view.update({ ...document, tags: [] });
+	expect(screen.queryByRole("list", { name: "Tags" })).toBeNull();
 });

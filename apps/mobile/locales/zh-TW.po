@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-11-03 08:38+0100\n"
+"POT-Creation-Date: 2026-11-03 20:42+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1055,6 +1055,10 @@ msgstr ""
 #: src/features/assistant/messages.tsx
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
+
+#: src/features/career/story-practice-button.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr "此故事使用的一項事實已停用或發生變更。請編輯故事進行核實。"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A focused plan for this round"
@@ -2276,6 +2280,10 @@ msgstr "附加求職信 (PDF)"
 msgid "Attach a file"
 msgstr "附上文件"
 
+#: src/features/assistant/chat-view.tsx
+msgid "Attach a file instead"
+msgstr "改為附加文件"
+
 #: src/features/application-detail/sections.tsx
 msgid "Attach a resume file (PDF)"
 msgstr "附加履歷檔案 (PDF)"
@@ -2384,6 +2392,10 @@ msgstr "返回職缺說明"
 #: app/(auth)/sign-in.tsx
 msgid "Back to sign in"
 msgstr "返回登入"
+
+#: src/features/career/knowledge.tsx
+msgid "Back to stories"
+msgstr "返回故事"
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
@@ -2879,6 +2891,10 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "請選擇貨幣。"
+
 #: src/features/application-detail/date-field.tsx
 msgid "Choose a date"
 msgstr "選擇日期"
@@ -2959,6 +2975,7 @@ msgstr "選擇不超過 2 MB 的 WebM、MP4、MP3、WAV 或 Ogg 檔案。"
 
 #: src/features/ai/next-steps.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/career/offers.tsx
 msgid "Choose an application"
 msgstr "選擇應徵紀錄"
 
@@ -3212,6 +3229,10 @@ msgstr ""
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {company}."
 msgstr "比較嘗試看看有什麼改進。練習題是模擬題，不是來自{company}。"
 
+#: src/features/workspace/tabs/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "比較各次嘗試，查看進步。練習問題為模擬生成。"
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr ""
@@ -3228,6 +3249,10 @@ msgstr "依原始幣別和發薪週期比較。比較不會與教練分享任何
 #: src/features/workspace/tabs/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "已與您的故事和職缺公告對照。"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Compared with your stories."
+msgstr "已與您的故事對照。"
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Compares your resume with the posting"
@@ -3716,6 +3741,10 @@ msgstr ""
 msgid "Couldn't load documents. Try again."
 msgstr "無法載入文件，請再試一次。"
 
+#: src/features/career/story-practice-button.tsx
+msgid "Couldn't load interviews. Retry"
+msgstr "無法載入面試。重試"
+
 #: src/features/documents/thumbnail.tsx
 msgid "Couldn't load letter"
 msgstr "無法載入求職信"
@@ -3777,6 +3806,10 @@ msgstr "無法載入該版本的頁面。"
 #: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "無法載入此內容。檢查您的連線並重試。"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Couldn't load this. Your saved data hasn't changed."
+msgstr "無法載入此內容。您已儲存的資料沒有變更。"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -4442,6 +4475,7 @@ msgid "Decrease {label}"
 msgstr "減少{label}"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/documents/new-document.tsx
 #: src/features/write/pickers.tsx
 msgid "Default"
 msgstr "預設"
@@ -4665,10 +4699,6 @@ msgstr "設計重設為預設值"
 #: src/features/document-menu/index.tsx
 msgid "Details"
 msgstr "細節"
-
-#: src/features/settings/application-profile.tsx
-msgid "Details for your job application forms."
-msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
@@ -5211,6 +5241,10 @@ msgstr "清空垃圾箱"
 msgid "Empty Trash?"
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "enabled Knowledge"
+msgstr "已啟用的知識"
+
 #: src/features/write/date-field.tsx
 msgid "End"
 msgstr "結尾"
@@ -5255,8 +5289,6 @@ msgstr "輸入名稱，最多 64 個字元。"
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
 
-#: src/features/career/offer-entry.tsx
-#: src/features/career/preferences.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Enter a three-letter currency code."
 msgstr "請輸入三個字母的貨幣代碼。"
@@ -6773,10 +6805,6 @@ msgstr "知識庫"
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "知識庫無法載入。請重試，或在傳送前關閉知識庫。"
 
-#: src/features/workspace/parts.tsx
-msgid "Knowledge that's switched on"
-msgstr ""
-
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
 msgstr ""
@@ -7081,6 +7109,10 @@ msgstr ""
 msgid "Link {0} URL"
 msgstr ""
 
+#: src/features/career/story-practice-button.tsx
+msgid "Link a fact to practice this story"
+msgstr "連結一項事實以練習此故事"
+
 #: src/features/write/rich-text-field.tsx
 msgid "Link address"
 msgstr "連結地址"
@@ -7236,6 +7268,10 @@ msgstr "正在加載對話..."
 #: src/features/letters/page.tsx
 msgid "Loading cover letter…"
 msgstr "正在載入求職信…"
+
+#: src/features/career/story-practice-button.tsx
+msgid "Loading interviews…"
+msgstr "正在載入面試…"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Loading Knowledge before you send…"
@@ -7635,6 +7671,7 @@ msgstr "訊息"
 msgid "Message the assistant"
 msgstr "給助理留言"
 
+#: src/features/career/offers.tsx
 #: src/shell/workspace-tab-label.ts
 msgid "Messages"
 msgstr "訊息"
@@ -9102,6 +9139,7 @@ msgid "Out of date: the text has changed since."
 msgstr "已過時：此後文字已更改。"
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/application-detail/sections.tsx
 #: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "成果"
@@ -9514,6 +9552,12 @@ msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "練習"
 
+#: src/features/career/story-practice-button.tsx
+#: src/features/workspace/tabs/practise.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice"
+msgstr "練習"
+
 #: src/features/career/prepare-now.tsx
 msgid "Practice {count} questions"
 msgstr "練習 {count} 個問題"
@@ -9521,6 +9565,16 @@ msgstr "練習 {count} 個問題"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practice another question"
 msgstr "練習另一個問題"
+
+#. placeholder {0}: next.application.company
+#: src/features/career/story-practice-button.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr "為 {0} 練習"
+
+#: src/features/career/story-practice-button.tsx
+msgid "Practice for which interview?"
+msgstr "要為哪場面試練習？"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -9537,6 +9591,10 @@ msgstr "這是練習重點，而非對雇主決策原因的結論。"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
 msgstr "練習重點："
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Practice without an application"
+msgstr "無需職位申請即可練習"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Practicing your story: {storyTitle}"
@@ -9897,6 +9955,11 @@ msgstr ""
 msgid "Raise the design sheet"
 msgstr "升起設計單"
 
+#. placeholder {0}: time.when(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Ran {0} · done for this interview"
+msgstr "已於 {0} 執行 · 本次面試準備已完成"
+
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
 msgstr "以單欄佈局重新匯出，然後把文字複製出來，檢查是否按從上到下的順序閱讀。"
@@ -9964,6 +10027,7 @@ msgstr "閱讀職缺發布"
 msgid "Read questions with"
 msgstr "朗讀問題使用"
 
+#: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Read the attachment"
 msgstr "閱讀附件"
@@ -10260,7 +10324,7 @@ msgstr "記住"
 
 #: src/features/assistant/messages.tsx
 msgid "Remember as a fact in Knowledge"
-msgstr ""
+msgstr "在知識庫中記為事實"
 
 #: src/features/career/facts.tsx
 msgid "Remember facts from my messages"
@@ -10714,6 +10778,7 @@ msgid "Resume for a new letter"
 msgstr ""
 
 #. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/documents/new-document.tsx
 #: src/features/write/resume-language.tsx
 msgid "Resume language"
 msgstr "履歷語言"
@@ -10780,6 +10845,7 @@ msgstr "停用階段"
 #: src/features/career/hooks.ts
 #: src/features/career/preferences.tsx
 #: src/features/career/shared.tsx
+#: src/features/career/story-practice-button.tsx
 #: src/features/check/job-match.tsx
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
@@ -11034,14 +11100,6 @@ msgstr "羅馬尼亞語"
 #: src/features/design/style-groups.tsx
 msgid "Roomy"
 msgstr "寬敞"
-
-#: src/features/write/picture-screen.tsx
-msgid "Rotation"
-msgstr "旋轉"
-
-#: src/features/write/picture-screen.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "PDF 渲染不支援旋轉。"
 
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/import-sheet.tsx
@@ -11312,7 +11370,7 @@ msgstr "已儲存的描述"
 
 #: src/features/assistant/messages.tsx
 msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
-msgstr ""
+msgstr "依照您撰寫的原文從訊息中儲存。不會向 AI 傳送任何內容。"
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
@@ -11576,6 +11634,10 @@ msgstr "選擇項目 {0}"
 msgid "Select this page"
 msgstr ""
 
+#: src/features/career/offer-entry.tsx
+msgid "Select…"
+msgstr "選擇…"
+
 #: src/preview/page.tsx
 msgid "Selected entry"
 msgstr "已選取項目"
@@ -11686,12 +11748,12 @@ msgid "Sends your message, earlier messages and this application (posting, notes
 msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-msgstr ""
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "將你的訊息、此處先前的訊息、此次申請的資訊（職缺、筆記、文件、你的表單回答、已儲存的錄用邀約及最近的訊息）和已啟用的知識傳送至 {label}。"
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-msgstr ""
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "將你的訊息、此次申請的資訊（職缺、筆記、文件、你的表單回答、已儲存的錄用邀約及最近的訊息）和已啟用的知識傳送至 {label}。"
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -11784,9 +11846,10 @@ msgid "Set your preferences"
 msgstr ""
 
 #: src/features/design/style-groups.tsx
+#: src/features/documents/new-document.tsx
 #: src/features/write/resume-language.tsx
 msgid "Sets section titles, date words and text direction. Your content isn't translated."
-msgstr ""
+msgstr "設定章節標題、日期用語和文字方向。不會翻譯您的內容。"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-11-04 23:14+0100\n"
+"POT-Creation-Date: 2026-11-04 00:00+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1582,8 +1582,8 @@ msgstr "Activity"
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
-#: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/improve.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Add"
 msgstr "Add"
 
@@ -1605,6 +1605,10 @@ msgstr "Add {suggestion}"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
 msgstr "Add a country"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add a fact"
+msgstr "Add a fact"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
@@ -1729,10 +1733,6 @@ msgstr "Add an email"
 #: src/features/career/workspace/shell.tsx
 msgid "Add an interview"
 msgstr "Add an interview"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Add an interview first"
-msgstr "Add an interview first"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Add an interview in an application first"
@@ -2019,7 +2019,7 @@ msgstr "Added to Knowledge as an accomplishment."
 msgid "Added to Knowledge as an experience."
 msgstr "Added to Knowledge as an experience."
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Added to Knowledge."
 msgstr "Added to Knowledge."
 
@@ -2863,6 +2863,7 @@ msgid "Attach a file"
 msgstr "Attach a file"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Attach a file instead"
 msgstr "Attach a file instead"
 
@@ -3274,8 +3275,8 @@ msgstr "Can't scan? Enter this key in the app:"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/assistant/remember-message.tsx
 #: src/features/assistant/save-posting.tsx
-#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -3628,6 +3629,10 @@ msgstr "Choose a connection"
 msgid "Choose a country"
 msgstr "Choose a country"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a currency."
+msgstr "Choose a currency."
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
 msgstr "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
@@ -3660,10 +3665,6 @@ msgstr "Choose a PDF"
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "Choose a PDF file."
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
-msgstr "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
 
 #: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/fit.tsx
@@ -4027,6 +4028,10 @@ msgstr "Compare"
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Compare attempts to see what improved. Practice questions are simulated."
+msgstr "Compare attempts to see what improved. Practice questions are simulated."
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr "Compare it with your other offers"
@@ -4048,6 +4053,10 @@ msgstr "Compared in their original currency and pay period. Comparing doesn't sh
 #: src/features/career/workspace/practise.tsx
 msgid "Compared with your stories and the posting."
 msgstr "Compared with your stories and the posting."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Compared with your stories."
+msgstr "Compared with your stories."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Compares your resume with the posting"
@@ -4176,10 +4185,6 @@ msgstr "Connect and test an AI provider in Settings, or keep entering roles manu
 #: src/features/assistant/chat-chrome.tsx
 msgid "Connect another…"
 msgstr "Connect another…"
-
-#: src/features/settings/ai/page.tsx
-msgid "Connect the tools you use for writing, job search and working with your resumes."
-msgstr "Connect the tools you use for writing, job search and working with your resumes."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job match need no provider."
@@ -4787,6 +4792,7 @@ msgstr "Couldn't load this link."
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Couldn't load this. Your saved data hasn't changed."
@@ -4921,6 +4927,7 @@ msgstr "Couldn't record submission. Try again."
 msgid "Couldn't reload the resume. Your changes are still open."
 msgstr "Couldn't reload the resume. Your changes are still open."
 
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't remember that. Try again."
 msgstr "Couldn't remember that. Try again."
@@ -5461,7 +5468,7 @@ msgstr "Cross-functional leadership"
 msgid "CSV data"
 msgstr "CSV data"
 
-#: src/features/career/knowledge/preferences.tsx
+#: src/features/career/currency-select.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
@@ -5630,6 +5637,7 @@ msgstr "Decide on the offer"
 msgid "Deep breath."
 msgstr "Deep breath."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
@@ -5876,10 +5884,6 @@ msgstr "Design systems"
 msgid "Details"
 msgstr "Details"
 
-#: src/features/settings/profile.tsx
-msgid "Details for your job application forms."
-msgstr "Details for your job application forms."
-
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
 msgid "Details from the provider:"
@@ -6044,7 +6048,6 @@ msgstr "Don't send {0}"
 msgid "Don't share"
 msgstr "Don't share"
 
-#: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/features/settings/project-links.ts
 msgid "Donate"
@@ -6336,7 +6339,7 @@ msgstr "earlier messages in this chat"
 #: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Edit"
 msgstr "Edit"
@@ -6586,6 +6589,10 @@ msgstr "Empty Trash?"
 msgid "Empty Trash…"
 msgstr "Empty Trash…"
 
+#: src/features/career/disclosure.tsx
+msgid "enabled Knowledge"
+msgstr "enabled Knowledge"
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "End"
@@ -6616,10 +6623,6 @@ msgstr "Enhanced reading unavailable; used the built-in reader."
 msgid "Enhanced reading was unavailable. The built-in reader retrieved this posting."
 msgstr "Enhanced reading was unavailable. The built-in reader retrieved this posting."
 
-#: src/components/ui/donation-toast.tsx
-msgid "Enjoying Reactive Resume?"
-msgstr "Enjoying Reactive Resume?"
-
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter a backup code."
 msgstr "Enter a backup code."
@@ -6643,10 +6646,6 @@ msgstr "Enter a name, up to 64 characters."
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr "Enter a readable date or clear the text to use date fields."
-
-#: src/features/career/offer-entry.tsx
-msgid "Enter a three-letter currency code."
-msgstr "Enter a three-letter currency code."
 
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
@@ -6947,7 +6946,7 @@ msgstr "Fact · Accomplishment"
 msgid "Fact forgotten"
 msgstr "Fact forgotten"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/knowledge/facts.tsx
 msgid "Fact type"
 msgstr "Fact type"
@@ -8031,6 +8030,7 @@ msgid "Images cover most of the page."
 msgstr "Images cover most of the page."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Import"
 msgstr "Import"
 
@@ -8393,10 +8393,6 @@ msgstr "It will be deleted for good and can't be restored."
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "It will show on the application's timeline and on the calendar."
 
-#: src/components/ui/donation-toast.tsx
-msgid "It's free and open source, kept going by donations from the people who use it. If it has helped you, consider chipping in."
-msgstr "It's free and open source, kept going by donations from the people who use it. If it has helped you, consider chipping in."
-
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
 msgstr "It's removed from the timeline for good."
@@ -8743,10 +8739,6 @@ msgstr "Knowledge doesn’t mention mentoring."
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Knowledge is off for this message: the coach doesn't read it or remember anything you say"
 msgstr "Knowledge is off for this message: the coach doesn't read it or remember anything you say"
-
-#: src/features/career/disclosure.tsx
-msgid "Knowledge that's switched on"
-msgstr "Knowledge that's switched on"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
@@ -9175,6 +9167,10 @@ msgstr "Link updated"
 #: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Linked · not sent yet"
+
+#: src/features/settings/account/security.tsx
+msgid "Linked accounts"
+msgstr "Linked accounts"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Linked document unavailable"
@@ -9657,10 +9653,6 @@ msgstr "Matching your facts"
 msgid "May be available"
 msgstr "May be available"
 
-#: src/components/ui/donation-toast.tsx
-msgid "Maybe later"
-msgstr "Maybe later"
-
 #: src/features/command-palette/pages/navigation.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -9717,6 +9709,7 @@ msgstr "Message the assistant"
 msgid "Message the coach"
 msgstr "Message the coach"
 
+#: src/features/career/offers.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Messages"
@@ -10511,7 +10504,7 @@ msgstr "No phone number"
 msgid "No phone number was found."
 msgstr "No phone number was found."
 
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "No photo. Most ATS ignore photos; some regions expect one."
 msgstr "No photo. Most ATS ignore photos; some regions expect one."
 
@@ -10577,6 +10570,10 @@ msgstr "No selected documents were restored. Refresh to see what remains."
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
 msgstr "No skills section was found."
+
+#: src/features/settings/account/security.tsx
+msgid "No social sign-in providers are available on this server."
+msgstr "No social sign-in providers are available on this server."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "No source data yet."
@@ -10770,6 +10767,7 @@ msgstr "Not recorded yet. Leave it blank until you can support it."
 msgid "Not saved"
 msgstr "Not saved"
 
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "Not saved — this fact was forgotten before."
@@ -11094,7 +11092,7 @@ msgstr "Only allow applications you trust. This application will be able to:"
 msgid "Only applies when the section fits on a single page."
 msgstr "Only applies when the section fits on a single page."
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Only for {company}"
 msgstr "Only for {company}"
 
@@ -11452,6 +11450,7 @@ msgstr "out of 100"
 msgid "Out of date: the text has changed since."
 msgstr "Out of date: the text has changed since."
 
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
@@ -11808,12 +11807,12 @@ msgstr "Photo"
 msgid "Photo hidden"
 msgstr "Photo hidden"
 
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "Photo hidden from the page."
 
-#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "Photo on the page."
@@ -11893,10 +11892,6 @@ msgstr "Plan my preparation"
 #: src/features/career/offers.tsx
 msgid "Plan what to ask"
 msgstr "Plan what to ask"
-
-#: src/routes/dashboard/career/route.tsx
-msgid "Plan your search, keep your evidence in one place, and decide between offers."
-msgstr "Plan your search, keep your evidence in one place, and decide between offers."
 
 #: src/features/career/shared.tsx
 msgid "Planning your week"
@@ -11991,6 +11986,7 @@ msgid "Practice"
 msgstr "Practice"
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/prepare.tsx
 msgctxt "Button: rehearse interview answers"
 msgid "Practice"
@@ -12039,6 +12035,10 @@ msgstr "Practice priority:"
 #: src/features/homepage/prepare.tsx
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Practice questions are simulated, not from Fieldnote."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice without an application"
+msgstr "Practice without an application"
 
 #: src/features/homepage/prepare.tsx
 msgid "Practice your introduction once. Keep it to about 90 seconds."
@@ -12946,7 +12946,7 @@ msgstr "Reload to try again."
 msgid "Relocation"
 msgstr "Relocation"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
@@ -12954,7 +12954,7 @@ msgstr "Relocation"
 msgid "Remember"
 msgstr "Remember"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Remember as a fact in Knowledge"
 msgstr "Remember as a fact in Knowledge"
 
@@ -13480,6 +13480,7 @@ msgid "Resume for a new letter"
 msgstr "Resume for a new letter"
 
 #. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/write/resume-language.tsx
 msgid "Resume language"
 msgstr "Resume language"
@@ -14090,7 +14091,7 @@ msgstr "Saved as written. Automated date checks and sorting are unavailable for 
 msgid "Saved description"
 msgstr "Saved description"
 
-#: src/features/career/coach-chat.tsx
+#: src/features/assistant/remember-message.tsx
 msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
 msgstr "Saved from your message as you wrote it. Nothing is sent to the AI."
 
@@ -14669,6 +14670,10 @@ msgstr "Set a follow-up…"
 msgid "Set a password"
 msgstr "Set a password"
 
+#: src/features/settings/account/security.tsx
+msgid "Set a password to turn on two-step verification."
+msgstr "Set a password to turn on two-step verification."
+
 #. Primary action button to add a password to an account without one
 #: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
@@ -14705,6 +14710,7 @@ msgstr "Set up your authenticator app"
 msgid "Set your preferences"
 msgstr "Set your preferences"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/features/resume/editor/write/resume-language.tsx
 msgid "Sets section titles, date words and text direction. Your content isn't translated."
@@ -15021,6 +15027,7 @@ msgid "Sign in"
 msgstr "Sign in"
 
 #: src/features/auth/components/session-recovery.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Sign in again"
 msgstr "Sign in again"
 
@@ -15051,6 +15058,10 @@ msgstr "Sign in to save"
 #: src/features/auth/pages/login.tsx
 msgid "Sign in to your account"
 msgstr "Sign in to your account"
+
+#: src/routes/dashboard/settings/route.tsx
+msgid "Sign in with the account that opened these settings."
+msgstr "Sign in with the account that opened these settings."
 
 #: src/features/settings/account/security.tsx
 msgid "Sign in with your fingerprint, face or device PIN"
@@ -15843,6 +15854,7 @@ msgstr "Tag"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/document-card.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags"
 msgstr "Tags"

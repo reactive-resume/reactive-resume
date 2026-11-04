@@ -74,6 +74,27 @@ it("hands account deletion to browser settings without invoking the API", async 
 	expect(calls.auth.deleteAccount).not.toHaveBeenCalled();
 });
 
+it("rejects misspelled settings arguments and keeps legacy page names on current routes", async () => {
+	const invalid = await client.callTool({ name: "open_account_settings", arguments: { section: "api-keys" } });
+	expect(invalid.isError).toBe(true);
+	expect(JSON.stringify(invalid.content)).toContain("section");
+	for (const [page, path] of Object.entries({
+		account: "/dashboard/settings/account",
+		profile: "/dashboard/settings/account",
+		security: "/dashboard/settings/account#security",
+		authentication: "/dashboard/settings/account#security",
+		preferences: "/dashboard/settings/preferences",
+		ai: "/dashboard/settings/ai",
+		"api-keys": "/dashboard/settings/ai#api-keys",
+		"connected-applications": "/dashboard/settings/ai#connected-applications",
+	})) {
+		const result = await client.callTool({ name: "open_account_settings", arguments: { page } });
+		expect(result.isError).not.toBe(true);
+		const url = new URL((result.structuredContent as { url: string }).url);
+		expect(url.pathname + url.hash).toBe(path);
+	}
+});
+
 it("discovers API-derived contracts and exchanges native files and dates through the SDK", async () => {
 	const { tools } = await client.listTools();
 	const cardTools = new Map(buildMcpServerCard("1.0.0").tools.map((tool) => [tool.name, tool]));

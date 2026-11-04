@@ -2,7 +2,8 @@ import type { ImportKind } from "@/features/resume/import/read-file";
 import type { ImportReview } from "@reactive-resume/import/review";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { IconName } from "@reactive-resume/ui/components/icon";
-import type { CSSProperties, Dispatch, SetStateAction } from "react";
+import type { Locale } from "@reactive-resume/utils/locale";
+import type { CSSProperties, Dispatch, ReactNode, SetStateAction } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -21,14 +22,17 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { formatFileSize } from "@reactive-resume/utils/file";
+import { localeSchema } from "@reactive-resume/utils/locale";
 import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { defaultCopySource } from "./filter";
 import { useNewDocumentsStore } from "./new-documents";
 import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
+import { Combobox } from "@/components/ui/combobox";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
 import { SetUpAi } from "@/features/assistant/provider-setup";
+import { getLocaleOptions } from "@/features/locale/locale-options";
 import { getSectionName } from "@/features/resume/editor/check/issues";
 import {
 	detectImportKind,
@@ -57,12 +61,13 @@ export type NewDocumentDialogData = {
 	sourceResumeId?: string;
 	/** Copy for a job: the application it's for. */
 	applicationId?: string;
-	/** A file dropped on the page, imported straight away. */
+	/** A file dropped on the page, awaiting import confirmation. */
 	file?: File;
 };
 
 type Step =
 	| { name: "choose" }
+	| { name: "import-ready"; file: File }
 	| { name: "import-choice"; file: File; kind: "pdf" | "docx" }
 	| { name: "importing"; file: File; stage: number; notes: string[] }
 	| {
@@ -98,7 +103,9 @@ function useResumeImport(
 	setStep: Dispatch<SetStateAction<Step>>,
 	openLetter: (coverLetterId: string) => void,
 	applicationId?: string,
+	locale?: Locale,
 ) {
+	const { i18n } = useLingui();
 	const queryClient = useQueryClient();
 	const markNew = useNewDocumentsStore((state) => state.markNew);
 	const providerState = useHasUsableAiProvider();
@@ -200,7 +207,7 @@ function useResumeImport(
 				});
 				return;
 			}
-			await create(file, resume, owner, aiOperationIds, attempt);
+			await create(file, resume, owner, aiOperationIds, kind === "reactive-resume-json", attempt);
 		} catch (error) {
 			if (current()) fail(file, error);
 		}
@@ -226,6 +233,7 @@ function useResumeImport(
 		resume: ResumeData,
 		owner: { accountId: string; generation: number },
 		aiOperationIds: string[],
+		preserveLocale = false,
 		attempt = ++run.current,
 	) => {
 		const signal = controller.current?.signal;
@@ -236,7 +244,12 @@ function useResumeImport(
 			getAccountGeneration() === owner.generation;
 		if (!current()) return;
 		const options = { ...(signal ? { signal } : {}), context: { accountId: owner.accountId } };
-		const summary = summarizeImport(resume);
+		const selectedLocale = locale ?? (preserveLocale ? resume.metadata.page.locale : localeSchema.parse(i18n.locale));
+		const data = {
+			...resume,
+			metadata: { ...resume.metadata, page: { ...resume.metadata.page, locale: selectedLocale } },
+		};
+		const summary = summarizeImport(data);
 		setStep({
 			name: "importing",
 			file,
@@ -244,7 +257,7 @@ function useResumeImport(
 			notes: [t`file read`, plural(summary.sections, { one: "# section", other: "# sections" })],
 		});
 		try {
-			const resumeId = await client.resume.import({ data: resume, aiOperationIds }, options);
+			const resumeId = await client.resume.import({ data, aiOperationIds }, options);
 			if (!current()) return;
 			if (applicationId)
 				await client.documents.linkApplication({ type: "resume", id: resumeId, applicationId }, options);
@@ -291,9 +304,13 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 	const read = readProvider ? { label: readProvider.label, model: aiModelForTask(readProvider, "fast") } : undefined;
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const markNew = useNewDocumentsStore((state) => state.markNew);
-	const [step, setStep] = useState<Step>({ name: data?.step ?? "choose" } as Step);
+	const [step, setStep] = useState<Step>(() =>
+		data?.file ? { name: "import-ready", file: data.file } : { name: data?.step ?? "choose" },
+	);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const importDescriptionId = useId();
+	const languageId = useId();
+	const [locale, setLocale] = useState<Locale>();
 
 	// A copy made for a job opens with the assistant ready to tailor it.
 	const openResume = (resumeId: string, { withAssistant = false, importedFrom, checkTab }: OpenResumeOptions = {}) => {
@@ -320,18 +337,14 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 		void navigate({ to: "/dashboard/applications", search: { create: true } });
 	};
 
-	const { importFile, confirm, cancel, refreshDocuments } = useResumeImport(setStep, openLetter, data?.applicationId);
+	const { importFile, confirm, cancel, refreshDocuments } = useResumeImport(
+		setStep,
+		openLetter,
+		data?.applicationId,
+		locale,
+	);
 
-	// A file dropped on the page starts importing as soon as the dialog opens.
-	const dropped = useRef(data?.file);
-	useEffect(() => {
-		if (!dropped.current) return;
-		const file = dropped.current;
-		dropped.current = undefined;
-		void importFile(file);
-	});
-
-	const { startBlank, trySample, newLetter, creating } = useStartDocument(data?.applicationId);
+	const { startBlank, trySample, newLetter, creating } = useStartDocument(data?.applicationId, locale);
 	const { data: letterResumes } = useQuery(orpc.resume.list.queryOptions());
 	const { data: sourceLetters } = useQuery(
 		orpc.documents.list.queryOptions({ input: { type: "letter", trashed: false } }),
@@ -341,6 +354,25 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 	const letterSourceFieldId = useId();
 
 	const chooseFile = () => inputRef.current?.click();
+	const languagePicker = (
+		<div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1">
+			<label htmlFor={languageId} className="text-xs font-medium text-ink-2">
+				<Trans>Resume language</Trans>
+			</label>
+			<Combobox
+				id={languageId}
+				className="h-8 min-w-0 text-xs"
+				options={[{ value: "", label: t`Default` }, ...getLocaleOptions()]}
+				value={locale ?? ""}
+				placeholder={t`Default`}
+				disabled={creating}
+				onValueChange={(value) => setLocale(localeSchema.safeParse(value).data)}
+			/>
+			<p className="col-span-2 text-xs text-ink-3">
+				<Trans>Sets section titles, date words and text direction. Your content isn't translated.</Trans>
+			</p>
+		</div>
+	);
 
 	return (
 		<Content
@@ -366,6 +398,7 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 					if (file) void importFile(file);
 				}}
 			/>
+
 			{/* Each step enters as it replaces the last; reduced motion keeps only its opacity fade. */}
 			{step.name === "copy" ? (
 				<div key="copy" className={cn(ENTER_CLASS, "grid gap-4")}>
@@ -387,6 +420,22 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 						}}
 					/>
 				</div>
+			) : step.name === "import-ready" ? (
+				<div className="grid gap-4">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Import a resume</Trans>
+						</DialogTitle>
+						<DialogDescription>{step.file.name}</DialogDescription>
+					</DialogHeader>
+					{languagePicker}
+					<Button onClick={() => void importFile(step.file)}>
+						<Trans>Import</Trans>
+					</Button>
+					<Button variant="ghost" onClick={cancel}>
+						<Trans>Cancel</Trans>
+					</Button>
+				</div>
 			) : step.name === "import-choice" ? (
 				<div className="grid gap-4">
 					<DialogHeader>
@@ -395,6 +444,7 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 						</DialogTitle>
 						<DialogDescription>{step.file.name}</DialogDescription>
 					</DialogHeader>
+					{languagePicker}
 					{step.kind === "pdf" ? (
 						<Button type="button" variant="secondary" onClick={() => void importFile(step.file, "local")}>
 							<Trans>Read on this device (free)</Trans>
@@ -426,6 +476,7 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 				<ReviewStep
 					key="review"
 					step={step}
+					languagePicker={languagePicker}
 					onCreate={(keepLeftovers) => void confirm(step, keepLeftovers)}
 					onChooseFile={chooseFile}
 				/>
@@ -450,6 +501,7 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 							<Trans>Import a resume, start a letter, save a job, copy one for a job, or start blank.</Trans>
 						</DialogDescription>
 					</DialogHeader>
+					{languagePicker}
 
 					<label className="grid gap-1.5 text-sm">
 						<Trans>Resume for a new letter</Trans>
@@ -588,13 +640,14 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 }
 
 type ReviewStepProps = {
+	languagePicker: ReactNode;
 	step: Extract<Step, { name: "review" }>;
 	onCreate: (keepLeftovers: boolean) => void;
 	onChooseFile: () => void;
 };
 
 /** What the reader found, section by section, and the lines it couldn't place, before the resume is created. */
-function ReviewStep({ step, onCreate, onChooseFile }: ReviewStepProps) {
+function ReviewStep({ step, onCreate, onChooseFile, languagePicker }: ReviewStepProps) {
 	const { review, data } = step;
 	const [keepLeftovers, setKeepLeftovers] = useState(true);
 	const leftoversId = useId();
@@ -606,6 +659,7 @@ function ReviewStep({ step, onCreate, onChooseFile }: ReviewStepProps) {
 				</DialogTitle>
 				<DialogDescription>{step.file.name}</DialogDescription>
 			</DialogHeader>
+			{languagePicker}
 
 			{review.sections.length > 0 ? (
 				<ul aria-label={t`Sections found`} className="grid gap-1 rounded-lg border border-line p-3 text-[13px]">

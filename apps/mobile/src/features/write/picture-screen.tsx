@@ -37,7 +37,7 @@ export function resolvePictureUrl(url: string, server: string): string {
 	}
 }
 
-/** Every photo option: upload with crop, address, show or hide, remove, fit, size, rotation, shape, border, shadow. */
+/** Every photo option: upload with crop, address, show or hide, remove, fit, size, shape, border, shadow. */
 export function PictureScreen() {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
@@ -91,7 +91,15 @@ export function PictureScreen() {
 			if (!resolvePictureUrl(uploaded.url, server)) throw new Error("Upload failed");
 			// Leaving for another resume, or switching account, while it uploaded: the result is dropped.
 			const url = uploaded.url;
-			await commitUpload(owner, uploadContext, () => set("url", url, true));
+			await commitUpload(owner, uploadContext, () =>
+				update(
+					(draft) => {
+						// A URL edited or removed during upload is newer than this result.
+						if (draft.picture.url === picture.url) draft.picture.url = url;
+					},
+					{ newStep: true },
+				),
+			);
 		},
 		// The previous photo stays until an upload succeeds.
 		onError: (error) =>
@@ -173,135 +181,128 @@ export function PictureScreen() {
 				autoCorrect={false}
 				onChangeText={(value) => set("url", value)}
 			/>
-			<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
-				<Switch
-					label={t`Show photo`}
-					value={!picture.hidden}
-					disabled={locked}
-					onValueChange={(shown) => set("hidden", !shown, true)}
-				/>
-				<Text>{t`Show photo`}</Text>
-			</View>
+			{picture.url && (
+				<>
+					<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
+						<Switch
+							label={t`Show photo`}
+							value={!picture.hidden}
+							disabled={locked}
+							onValueChange={(shown) => set("hidden", !shown, true)}
+						/>
+						<Text>{t`Show photo`}</Text>
+					</View>
 
-			<Segmented
-				label={t`Fit`}
-				value={picture.fit}
-				options={[
-					{ value: "cover", label: t`Cover` },
-					{ value: "contain", label: t`Contain` },
-				]}
-				onChange={(fit) => !locked && set("fit", fit, true)}
-			/>
+					<Segmented
+						label={t`Fit`}
+						value={picture.fit}
+						options={[
+							{ value: "cover", label: t`Cover` },
+							{ value: "contain", label: t`Contain` },
+						]}
+						onChange={(fit) => !locked && set("fit", fit, true)}
+					/>
 
-			<NumberField
-				label={t`Size`}
-				unit="pt"
-				value={picture.size}
-				min={32}
-				max={512}
-				step={1}
-				disabled={locked}
-				onChange={(value) => set("size", value)}
-			/>
-			<NumberField
-				label={t`Rotation`}
-				unit="°"
-				value={picture.rotation}
-				min={0}
-				max={360}
-				step={5}
-				disabled
-				helper={t`Rotation isn't supported by PDF rendering.`}
-				onChange={(value) => set("rotation", value)}
-			/>
-			<NumberField
-				label={t`Aspect ratio`}
-				value={picture.aspectRatio}
-				min={0.5}
-				max={2.5}
-				step={0.1}
-				disabled={locked}
-				onChange={(value) => set("aspectRatio", value)}
-			/>
-			<View style={{ flexDirection: "row", gap: space.s2 }}>
-				<Button
-					size="sm"
-					variant="secondary"
-					label={t`Square`}
-					disabled={locked}
-					onPress={() => set("aspectRatio", 1, true)}
-				/>
-				<Button
-					size="sm"
-					variant="secondary"
-					label={t`Landscape`}
-					disabled={locked}
-					onPress={() => set("aspectRatio", 1.5, true)}
-				/>
-				<Button
-					size="sm"
-					variant="secondary"
-					label={t`Portrait`}
-					disabled={locked}
-					onPress={() => set("aspectRatio", 0.5, true)}
-				/>
-			</View>
-			<NumberField
-				label={t`Border radius`}
-				unit="pt"
-				value={picture.borderRadius}
-				min={0}
-				max={100}
-				step={1}
-				disabled={locked}
-				onChange={(value) => set("borderRadius", value)}
-			/>
+					<NumberField
+						label={t`Size`}
+						unit="pt"
+						value={picture.size}
+						min={32}
+						max={512}
+						step={1}
+						disabled={locked}
+						onChange={(value) => set("size", value)}
+					/>
+					<NumberField
+						label={t`Aspect ratio`}
+						value={picture.aspectRatio}
+						min={0.5}
+						max={2.5}
+						step={0.1}
+						disabled={locked}
+						onChange={(value) => set("aspectRatio", value)}
+					/>
+					<View style={{ flexDirection: "row", gap: space.s2 }}>
+						<Button
+							size="sm"
+							variant="secondary"
+							label={t`Square`}
+							disabled={locked}
+							onPress={() => set("aspectRatio", 1, true)}
+						/>
+						<Button
+							size="sm"
+							variant="secondary"
+							label={t`Landscape`}
+							disabled={locked}
+							onPress={() => set("aspectRatio", 1.5, true)}
+						/>
+						<Button
+							size="sm"
+							variant="secondary"
+							label={t`Portrait`}
+							disabled={locked}
+							onPress={() => set("aspectRatio", 0.5, true)}
+						/>
+					</View>
+					<NumberField
+						label={t`Border radius`}
+						unit="pt"
+						value={picture.borderRadius}
+						min={0}
+						max={100}
+						step={1}
+						disabled={locked}
+						onChange={(value) => set("borderRadius", value)}
+					/>
 
-			<View>
-				<ColorRow
-					label={t`Border color`}
-					value={picture.borderColor}
-					disabled={locked}
-					onPress={() => setColorFor("borderColor")}
-				/>
-				<NumberField
-					label={t`Border width`}
-					unit="pt"
-					value={picture.borderWidth}
-					min={0}
-					step={1}
-					disabled={locked}
-					onChange={(value) => set("borderWidth", value)}
-				/>
-			</View>
-			<View>
-				<ColorRow
-					label={t`Shadow color`}
-					value={picture.shadowColor}
-					disabled={locked}
-					onPress={() => setColorFor("shadowColor")}
-				/>
-				<NumberField
-					label={t`Shadow width`}
-					unit="pt"
-					value={picture.shadowWidth}
-					min={0}
-					step={0.5}
-					disabled={locked}
-					onChange={(value) => set("shadowWidth", value)}
-				/>
-			</View>
+					<View>
+						<ColorRow
+							label={t`Border color`}
+							value={picture.borderColor}
+							disabled={locked}
+							onPress={() => setColorFor("borderColor")}
+						/>
+						<NumberField
+							label={t`Border width`}
+							unit="pt"
+							value={picture.borderWidth}
+							min={0}
+							step={1}
+							disabled={locked}
+							onChange={(value) => set("borderWidth", value)}
+						/>
+					</View>
+					<View>
+						<ColorRow
+							label={t`Shadow color`}
+							value={picture.shadowColor}
+							disabled={locked}
+							onPress={() => setColorFor("shadowColor")}
+						/>
+						<NumberField
+							label={t`Shadow width`}
+							unit="pt"
+							value={picture.shadowWidth}
+							min={0}
+							step={0.5}
+							disabled={locked}
+							onChange={(value) => set("shadowWidth", value)}
+						/>
+					</View>
 
-			<ColorPickerSheet
-				open={colorFor !== null}
-				title={colorFor === "shadowColor" ? t`Shadow color` : t`Border color`}
-				value={colorFor ? picture[colorFor] : ""}
-				onClose={() => setColorFor(null)}
-				onChange={(color) => {
-					if (colorFor) set(colorFor, color, true);
-					setColorFor(null);
-				}}
-			/>
+					<ColorPickerSheet
+						open={colorFor !== null}
+						title={colorFor === "shadowColor" ? t`Shadow color` : t`Border color`}
+						value={colorFor ? picture[colorFor] : ""}
+						onClose={() => setColorFor(null)}
+						onChange={(color) => {
+							if (colorFor) set(colorFor, color, true);
+							setColorFor(null);
+						}}
+					/>
+				</>
+			)}
 		</EditorScreen>
 	);
 }

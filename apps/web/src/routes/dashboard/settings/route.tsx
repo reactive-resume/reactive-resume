@@ -1,11 +1,15 @@
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, retainSearchParams, useRouterState } from "@tanstack/react-router";
 import { Fragment } from "react";
+import z from "zod";
+import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { PageHeader } from "@/components/layout/page-header";
 import { getProjectLinks } from "@/features/settings/project-links";
 import { popTransition } from "@/features/settings/root";
+import { authClient } from "@/libs/auth/client";
 import { getPageTitle } from "@/libs/seo";
 
 type Page = {
@@ -29,11 +33,20 @@ const SETTINGS_PAGES: Page[] = [
 
 export const Route = createFileRoute("/dashboard/settings")({
 	head: () => ({ meta: [{ title: getPageTitle(t`Settings`) }] }),
+	validateSearch: z.object({ forAccount: z.string().min(1).max(200).optional() }),
+	search: { middlewares: [retainSearchParams(["forAccount"])] },
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const pathname = useRouterState({ select: (state) => state.location.pathname });
+	const location = useRouterState({ select: (state) => state.location });
+	const pathname = location.pathname;
+	const { forAccount } = Route.useSearch();
+	const { session } = Route.useRouteContext();
+	const { data: browserSession, error } = authClient.useSession();
+
+	const matchesAccount =
+		!forAccount || (!error && forAccount === session.user.id && forAccount === browserSession?.user.id);
 	const isRoot = pathname.replace(/\/$/, "") === "/dashboard/settings";
 
 	return (
@@ -81,7 +94,19 @@ function RouteComponent() {
 					</Link>
 				)}
 				<div className="grid max-w-[680px] gap-8">
-					<Outlet />
+					{matchesAccount ? (
+						<Outlet />
+					) : (
+						<>
+							<PageHeader title={<Trans>Account</Trans>} />
+							<p role="alert">
+								<Trans>Sign in with the account that opened these settings.</Trans>
+							</p>
+							<Button render={<Link to="/auth/login" search={{ reauthenticate: true, callbackURL: location.href }} />}>
+								<Trans>Sign in again</Trans>
+							</Button>
+						</>
+					)}
 				</div>
 			</div>
 		</div>

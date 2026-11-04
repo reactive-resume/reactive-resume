@@ -43,6 +43,7 @@ export function FactsPage({ highlight }: FactsPageProps) {
 	const [hidden, setHidden] = useState<string[]>([]);
 	const [showForgotten, setShowForgotten] = useState(false);
 	const listRef = useRef<HTMLDivElement>(null);
+	const addRef = useRef<HTMLDivElement>(null);
 
 	const refresh = () => {
 		void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
@@ -139,7 +140,9 @@ export function FactsPage({ highlight }: FactsPageProps) {
 			</div>
 
 			<ResumeFacts />
-			<AddFact onAdded={added} />
+			<div ref={addRef}>
+				<AddFact onAdded={added} />
+			</div>
 			<FilterChip pressed={showForgotten} onClick={() => setShowForgotten((shown) => !shown)}>
 				<Trans>Show forgotten</Trans>
 			</FilterChip>
@@ -162,7 +165,7 @@ export function FactsPage({ highlight }: FactsPageProps) {
 					</AnimatePresence>
 					{visible.length === 0 && (
 						<EmptyState
-							variant="compact"
+							variant={facts.length === 0 ? "default" : "compact"}
 							title={facts.length === 0 ? t`No facts yet` : t`No facts match`}
 							description={
 								facts.length === 0
@@ -170,7 +173,11 @@ export function FactsPage({ highlight }: FactsPageProps) {
 									: t`Try another word or type.`
 							}
 							action={
-								type !== null ? (
+								facts.length === 0 ? (
+									<Button onClick={() => addRef.current?.querySelector("input")?.focus()}>
+										<Trans>Add a fact</Trans>
+									</Button>
+								) : type !== null ? (
 									<Button variant="link" size="sm" onClick={() => setType(null)}>
 										<Trans>Show all types</Trans>
 									</Button>

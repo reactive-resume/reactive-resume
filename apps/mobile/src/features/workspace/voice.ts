@@ -163,14 +163,14 @@ export async function transcribe(input: {
 	recording: Recording;
 	providerId: string;
 	model: string;
-	applicationId: string;
+	applicationId: string | null;
 	signal?: AbortSignal;
 }) {
 	const file = new File(input.recording.uri);
 	const form = new FormData();
 	form.append("providerId", input.providerId);
 	form.append("model", input.model);
-	form.append("applicationId", input.applicationId);
+	if (input.applicationId !== null) form.append("applicationId", input.applicationId);
 	// The type is set here because the file's own can read audio/x-m4a, which the server refuses. Expo's FormData
 	// sends any part with `bytes()`, `name` and `type`.
 	const audio = { name: input.recording.name, type: input.recording.type, bytes: () => file.bytes() };

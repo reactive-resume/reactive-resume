@@ -189,7 +189,14 @@ time appear when available, and do not guarantee the posting is current.
 
 When a page publishes structured job data, its own title and company are kept over anything a model suggests, and escaped line breaks in its description are decoded. The employer's exact title is what their application system and emails use. Application forms, their buttons and selectors, and equal-opportunity or veteran boilerplate are left out of the saved description; the role's own text is kept.
 
-AI enrichment is optional. If it fails, the retrieved description is retained so you can complete the fields manually. When you pasted the posting text yourself and AI couldn't read it, the text stays in **Job link or posting text** and is saved from there; no second **Saved description** box appears.
+AI enrichment is optional. If it fails, the retrieved description is retained so you can complete the fields manually. When you pasted the posting text yourself and AI couldn't read it, the text stays in **Job link or posting text** and is saved from there; no second **Saved description** box appears. One status explains the failure. In the web dialog, the save actions stay at the bottom while you scroll the fields.
+
+<Frame caption="An unsuccessful optional AI read keeps one warning and the original posting. The web save actions stay visible while the fields scroll.">
+  <img
+    src="/images/guides/adding-an-application/posting-ai-recovery.png"
+    alt="Scrolled web Save a job dialog with the retained fictional posting, one AI failure warning, manually completed Tools Engineer and Fictional Studio fields, and visible Save job and Save and prepare resume buttons"
+  />
+</Frame>
 
 <Note>
   Only public HTTP(S) pages can be read. If a page requires sign-in or can't be retrieved, paste its description in

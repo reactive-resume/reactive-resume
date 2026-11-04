@@ -7,8 +7,10 @@ import { useRef, useState } from "react";
 import { type TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
+import { storyDraftFactIds } from "@reactive-resume/schema/career-practice";
 import { client, prepareRpc, useCareerAction, useCareerQueries, useUndoRows } from "./hooks";
 import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
+import { StoryPracticeButton } from "./story-practice-button";
 import { orpc } from "@/api/client";
 import {
 	Banner,
@@ -51,13 +53,16 @@ export function Stories() {
 	return (
 		<View style={{ gap: space.s4 }}>
 			<Text color="ink3">{t`Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank.`}</Text>
-			<Button label={t`Add a story`} onPress={() => setEditor({ story: null })} />
+			{rows.length || editor || stories.isPending || stories.isError ? (
+				<Button label={t`Add a story`} onPress={() => setEditor({ story: null })} />
+			) : null}
 			<LoadState query={stories} />
 			<LoadState query={facts} />
-			{!stories.isError && !stories.isPending && !rows.length ? (
+			{!stories.isError && !stories.isPending && !rows.length && !editor ? (
 				<EmptyState
 					variant="card"
 					title={t`No stories yet`}
+					action={{ label: t`Add a story`, onPress: () => setEditor({ story: null }) }}
 					message={t`Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them.`}
 				/>
 			) : null}
@@ -85,6 +90,7 @@ export function Stories() {
 								</Text>
 							))}
 							<Text color="ink3">{story.data.tags.join(" · ")}</Text>
+							<StoryPracticeButton story={story} />
 							<Actions>
 								<Button label={t`Edit`} variant="secondary" onPress={() => setEditor({ story })} />
 								<Button
@@ -126,7 +132,7 @@ type StoryEditorProps = {
 	 */
 	proposal?: { story: CareerStoryData; onChange: (story: CareerStoryData) => void; onSaved: () => void };
 	/** A new story from an interview plan's "Draft story" step: its title, and the step's detail shown as a note. */
-	start?: { title: string; note: string } | undefined;
+	start?: { title: string; note: string; factIds?: string[] | undefined } | undefined;
 };
 export function StoryEditor({ story, facts, onClose, proposal, start }: StoryEditorProps) {
 	const { t } = useLingui();
@@ -142,7 +148,7 @@ export function StoryEditor({ story, facts, onClose, proposal, start }: StoryEdi
 				action: "",
 				result: "",
 				reflection: "",
-				factIds: [],
+				factIds: start ? storyDraftFactIds({ detail: start.note, factIds: start.factIds }, facts) : [],
 				tags: [],
 			},
 	);
@@ -178,7 +184,7 @@ export function StoryEditor({ story, facts, onClose, proposal, start }: StoryEdi
 				action: "",
 				result: "",
 				reflection: "",
-				factIds: [],
+				factIds: start ? storyDraftFactIds({ detail: start.note, factIds: start.factIds }, facts) : [],
 				tags: [],
 			},
 		);

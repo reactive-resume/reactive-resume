@@ -81,7 +81,7 @@ const DESIGN_EXIT_AT = 0.66;
 
 /**
  * How dark Share's sky is, from 0 to 1: night falls over the scene's first fifth and lifts into dawn over its last
- * stretch, both eased, so neither end snaps. The engine writes it as --nt on Share and on the page, for the header.
+ * stretch, both eased, so neither end snaps. The engine writes it as --nt on Share and the header's ink consumers.
  */
 function shareNight(progress: number) {
 	return smoothstep(clamp01((progress - 0.02) / 0.22)) * (1 - smoothstep(clamp01((progress - 0.72) / 0.28)));
@@ -167,16 +167,17 @@ export function goToScene(index: number, at: number) {
  * Renders a pinned scene and decodes its images while it's still a screen or two away, so its first frame on screen
  * isn't the one that pays for them. Scenes further off go back to skipping their rendering (landing.css).
  */
-function warmScenes(sections: HTMLElement[], nearby: Set<number>, decoded: WeakSet<HTMLElement>) {
+function warmScenes(sections: HTMLElement[], nearby: Set<number>, decoded: WeakSet<HTMLImageElement>) {
 	for (const section of sections) {
 		const near = nearby.has(Number(section.dataset.scene));
 		if (section.dataset.pin !== undefined && near !== (section.dataset.warm !== undefined))
 			section.toggleAttribute("data-warm", near);
-		if (!near || decoded.has(section)) continue;
-		decoded.add(section);
+		if (!near) continue;
 		for (const image of section.querySelectorAll("img")) {
+			if (decoded.has(image)) continue;
 			// Only the drawing for the current theme: the other one is display: none.
 			if (typeof image.checkVisibility === "function" && !image.checkVisibility()) continue;
+			decoded.add(image);
 			image.loading = "eager";
 			void image.decode().catch(() => undefined);
 		}
@@ -226,6 +227,8 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 
 		const reducedMotion = window.matchMedia(reducedMotionQuery);
 		const sections = [...container.querySelectorAll<HTMLElement>("[data-scene]")];
+		const header = container.querySelector<HTMLElement>("header");
+		const nightInk = [...container.querySelectorAll<HTMLElement>(".night-ink")];
 		const sectionAt = (index: number) => sections.find((section) => section.dataset.scene === String(index));
 		// Rewriting an unchanged --p would still restyle the whole section, so only changes are written.
 		const writtenProgress = new WeakMap<HTMLElement, string>();
@@ -234,7 +237,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 		// Where Check's lens comes to rest, as a share of its page: over the date line it flags.
 		let lensPark = { x: 60, y: 50 };
 
-		const decodedScenes = new WeakSet<HTMLElement>();
+		const decodedImages = new WeakSet<HTMLImageElement>();
 
 		// Values that only change with the viewport, not with scrolling.
 		const measuredScenes = new Set<number>();
@@ -308,7 +311,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 				}
 				if (rect.top <= viewportHeight / 2 && rect.bottom > viewportHeight / 2) activeScene = index;
 			}
-			warmScenes(sections, nearby, decodedScenes);
+			warmScenes(sections, nearby, decodedImages);
 			// Descendant geometry would force content-visibility to render an offscreen scene.
 			layout(nearby);
 			// The footer's desk paints itself in as it scrolls up, finishing exactly when the page ends.
@@ -336,10 +339,10 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 			}
 
 			const at = (scene: number) => progress[scene] ?? 0;
-			// The active scene's progress, on the page, for the header nav's line under the current scene.
+			// Keep continuous header values local: inheriting them from the page restyles every scene.
 			const sceneProgress = clamp01(at(activeScene)).toFixed(3);
 			if (sceneProgress !== writtenSceneProgress) {
-				container.style.setProperty("--sp", sceneProgress);
+				header?.style.setProperty("--sp", sceneProgress);
 				writtenSceneProgress = sceneProgress;
 			}
 			const scan = clamp01((at(SCENE.check) - 0.06) / 0.8);
@@ -347,12 +350,12 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 
 			// Prepare's clock hands turn with the scroll; the minutes are written once, here, for the CSS and the readout.
 			const minutes = prepareMinutes(prepare);
-			// Share's night: on the scene for its sky, and on the page while Share is on screen, for the header's ink.
+			// Share keeps its sky; the header and theme cord follow it only while Share is on screen.
 			const night = reduced ? 1 : shareNight(at(SCENE.share));
 			const pageNight = (activeScene === SCENE.share ? night : 0).toFixed(3);
 			if (`${night.toFixed(3)}|${pageNight}` !== writtenNight) {
 				sectionAt(SCENE.share)?.style.setProperty("--nt", night.toFixed(3));
-				container.style.setProperty("--nt", pageNight);
+				for (const element of nightInk) element.style.setProperty("--nt", pageNight);
 				writtenNight = `${night.toFixed(3)}|${pageNight}`;
 			}
 

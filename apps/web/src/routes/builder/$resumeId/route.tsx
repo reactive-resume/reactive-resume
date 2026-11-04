@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import z from "zod";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { EditorPending } from "./-components/editor-pending";
@@ -47,13 +47,12 @@ export const Route = createFileRoute("/builder/$resumeId")({
 			.catch((error: unknown) => {
 				// A stale or mistyped link: Documents, saying why, rather than an error page whose Try again can't help.
 				if (error instanceof ORPCError && error.code === "NOT_FOUND") {
-					toast.add({ type: "error", description: t`That resume isn't available. It may have been deleted.` });
-					throw redirect({ to: "/dashboard", replace: true });
+					return null;
 				}
 				throw error;
 			});
 
-		return { name: resume.name };
+		return resume ? { name: resume.name } : null;
 	},
 	head: ({ loaderData }) => ({
 		meta: loaderData
@@ -63,6 +62,29 @@ export const Route = createFileRoute("/builder/$resumeId")({
 });
 
 function RouteComponent() {
+	return Route.useLoaderData() ? <ResumeEditor /> : <UnavailableResume />;
+}
+
+function UnavailableResume() {
+	const navigate = Route.useNavigate();
+	const notified = useRef(false);
+	useEffect(() => {
+		let active = true;
+		// The destination explanation waits for the root toaster's sibling mount effect.
+		queueMicrotask(() => {
+			if (!active || notified.current) return;
+			notified.current = true;
+			toast.add({ type: "error", description: t`That resume isn't available. It may have been deleted.` });
+			void navigate({ to: "/dashboard", replace: true });
+		});
+		return () => {
+			active = false;
+		};
+	}, [navigate]);
+	return null;
+}
+
+function ResumeEditor() {
 	const { resumeId } = Route.useParams();
 	const { data: resume } = useSuspenseQuery(orpc.resume.getById.queryOptions({ input: { id: resumeId } }));
 	const initializeResumeStore = useResumeStore((state) => state.initialize);

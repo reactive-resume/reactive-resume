@@ -1,6 +1,7 @@
 import { call, ORPCError } from "@orpc/server";
 import z from "zod";
 import { pdfImportPreviewSchema } from "@reactive-resume/import/review";
+import { localeSchema } from "@reactive-resume/utils/locale";
 import { protectedProcedure } from "../../context";
 import { storageUploadRateLimit } from "../../middleware/rate-limit";
 import { crudRouter } from "./crud";
@@ -56,6 +57,7 @@ export const importResumeFile = protectedProcedure
 		z.object({
 			file: z.file().max(10 * 1024 * 1024),
 			format: z.enum(["REACTIVE_RESUME", "REACTIVE_RESUME_V4", "JSON_RESUME", "LINKEDIN", "PDF"]),
+			locale: localeSchema.optional(),
 		}),
 	)
 	.output(z.string().describe("The imported resume ID."))
@@ -93,5 +95,7 @@ export const importResumeFile = protectedProcedure
 				cause: error,
 			});
 		}
+		data.metadata.page.locale =
+			input.locale ?? (input.format === "REACTIVE_RESUME" ? data.metadata.page.locale : context.locale);
 		return call(crudRouter.import, { data }, { context });
 	});

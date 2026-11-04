@@ -13,6 +13,7 @@ const getSessionMock = vi.hoisted(() => vi.fn());
 const flagsGetMock = vi.hoisted(() => vi.fn().mockResolvedValue({ disableSignups: false, disableEmailAuth: false }));
 
 const localeMock = vi.hoisted(() => vi.fn().mockReturnValue("en-US"));
+const explicitLocaleMock = vi.hoisted(() => vi.fn().mockReturnValue(true));
 const loadLocaleMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 
 const updateProfileMock = vi.hoisted(() => vi.fn().mockResolvedValue({ status: true }));
@@ -23,6 +24,7 @@ vi.mock("./auth/session", () => ({
 
 vi.mock("./locale", () => ({
 	getLocale: localeMock,
+	hasLocalePreference: explicitLocaleMock,
 	loadLocale: loadLocaleMock,
 }));
 
@@ -53,6 +55,7 @@ describe("loadRootContext", () => {
 		registerAccountReset(() => undefined);
 		loadLocaleMock.mockResolvedValue(undefined);
 		localeMock.mockReturnValue("en-US");
+		explicitLocaleMock.mockReturnValue(true);
 		updateProfileMock.mockClear();
 	});
 
@@ -68,6 +71,25 @@ describe("loadRootContext", () => {
 
 		const context = await loadRootContext(queryClient);
 		expect(context.session).toEqual(mockSession);
+	});
+
+	it("resolves account language before catalog loading without writing an inferred preference", async () => {
+		const cache = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+		getSessionMock.mockResolvedValueOnce({ user: { id: "german", locale: "de-DE" }, session: { id: "german" } });
+		explicitLocaleMock.mockReturnValue(false);
+		localeMock.mockImplementationOnce((saved) => saved);
+		const result = await loadRootContext(cache);
+		expect(result.locale).toBe("de-DE");
+		expect(loadLocaleMock).toHaveBeenLastCalledWith("de-DE", expect.any(Function));
+		expect(updateProfileMock).not.toHaveBeenCalled();
+	});
+
+	it("does not save a browser hint over a missing account language", async () => {
+		const cache = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+		getSessionMock.mockResolvedValueOnce({ user: { id: "unconfigured", locale: null }, session: { id: "missing" } });
+		explicitLocaleMock.mockReturnValue(false);
+		await loadRootContext(cache);
+		expect(updateProfileMock).not.toHaveBeenCalled();
 	});
 
 	it("retains cached session when getSession encounters a transient error on refresh", async () => {

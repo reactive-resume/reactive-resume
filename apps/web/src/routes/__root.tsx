@@ -14,10 +14,10 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import { createRootRouteWithContext, HeadContent, Outlet, redirect, useRouterState } from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Outlet, redirect } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { LazyMotion, MotionConfig } from "motion/react";
-import { lazy, Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { Toaster } from "@reactive-resume/ui/components/toast";
 import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
 import { isAppSectionPath } from "@reactive-resume/utils/app-paths";
@@ -49,11 +49,6 @@ const iconContextValue: IconProps = { size: 16, weight: "regular" };
 const motionFeatures = import("@/libs/motion-features").then((module) => module.default);
 const loadMotionFeatures = () => motionFeatures;
 
-// Shows after five minutes at the earliest, so it loads after everything else.
-const DonationToast = lazy(() =>
-	import("@/components/ui/donation-toast").then((module) => ({ default: module.DonationToast })),
-);
-
 export const Route = createRootRouteWithContext<RouterContext>()({
 	component: RootComponent,
 	// index.html carries the tags that never change (charset, viewport, icons, manifest); the server adds each page's
@@ -80,9 +75,6 @@ function RootComponent() {
 	// WebMCP: browser agents can list and open the signed-in user's documents from any page.
 	useDocumentWebMcpTools(session !== null);
 
-	// Suppress the app-wide donation toast inside the builder so it doesn't cover the right-sidebar controls.
-	const isBuilder = useRouterState({ select: (s) => s.location.pathname.startsWith("/builder") });
-
 	// The theme class is owned by ThemeProvider, which also follows the system appearance.
 	useEffect(() => {
 		document.documentElement.lang = locale;
@@ -107,11 +99,6 @@ function RootComponent() {
 													<Outlet />
 													<SessionRecovery />
 
-													{!isBuilder && (
-														<Suspense>
-															<DonationToast />
-														</Suspense>
-													)}
 													<DialogManager />
 													<CommandPalette />
 													<KeyboardShortcuts />

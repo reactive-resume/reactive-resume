@@ -242,7 +242,7 @@ export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTr
 			type="button"
 			{...props}
 			aria-label={t`Document menu: ${name}`}
-			className="-mx-1.5 flex max-w-[calc(100%+0.75rem)] min-w-0 flex-col items-start rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover"
+			className="-mx-1.5 flex max-w-[calc(100%+0.75rem)] min-w-0 flex-col items-start justify-center rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover pointer-coarse:min-h-11"
 		>
 			<span className="flex max-w-full min-w-0 items-center gap-1.5">
 				<span dir="auto" className="truncate text-sm leading-[18px] font-semibold text-ink">

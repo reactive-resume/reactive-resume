@@ -115,7 +115,10 @@ export function formatRelativeTime(value: Date | string, locale: string, style: 
 		: formatter.format(0, "second");
 }
 
-export const getLocale = () => {
+export const hasLocalePreference = () =>
+	isLocale(new URLSearchParams(window.location.search).get(storageKey)) || Cookies.get(storageKey) !== undefined;
+
+export const getLocale = (accountLocale?: unknown) => {
 	// A `?locale=` address (the homepage's hreflang alternates) picks the language and keeps it, like the switcher.
 	const requested = new URLSearchParams(window.location.search).get(storageKey);
 	if (isLocale(requested)) {
@@ -126,6 +129,7 @@ export const getLocale = () => {
 
 	const saved = Cookies.get(storageKey);
 	if (saved !== undefined) return resolveLocale(saved);
+	if (isLocale(accountLocale) && selectableLocales.includes(accountLocale)) return accountLocale;
 	// Browser hints affect the app only; neither persist them nor vary shared server HTML by Accept-Language.
 	return getPreferredLocale(navigator.languages ?? []);
 };
@@ -152,11 +156,11 @@ export const getLocaleMessages = async (locale: string) => {
 	}
 };
 
-export const loadLocale = async (locale: string) => {
+export const loadLocale = async (locale: string, current = () => true) => {
 	// Re-activating the active locale emits "change" and re-renders every translated component.
 	if (i18n.locale === locale) return;
 	const { locale: resolvedLocale, messages } = await getLocaleMessages(locale);
-	i18n.loadAndActivate({ locale: resolvedLocale, messages });
+	if (current()) i18n.loadAndActivate({ locale: resolvedLocale, messages });
 };
 
 export const changeLocale = (value: string | null) => {

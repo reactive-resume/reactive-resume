@@ -1679,6 +1679,7 @@
 		"/ai/capabilities": {
 			"get": {
 				"operationId": "getAiCapabilities",
+				"summary": "Get supported AI consent and web-search capabilities",
 				"tags": [
 					"AI"
 				],
@@ -43199,6 +43200,7 @@
 		"/applications/{id}/ai/evidence-proposal": {
 			"post": {
 				"operationId": "applications.ai.proposeEvidence",
+				"summary": "Propose resume edits for review from selected application evidence",
 				"tags": [
 					"Applications",
 					"AI"
@@ -53037,6 +53039,14 @@
 																								}
 																							],
 																							"default": null
+																						},
+																						"factIds": {
+																							"type": "array",
+																							"maxItems": 20,
+																							"items": {
+																								"type": "string",
+																								"minLength": 1
+																							}
 																						}
 																					},
 																					"required": [
@@ -61028,6 +61038,7 @@
 			"get": {
 				"operationId": "listCareerSavedItems",
 				"summary": "List saved career work",
+				"description": "Lists all saved work by default, or one application. Use scope=shared without an applicationId for standalone practice attempts.",
 				"tags": [
 					"Career"
 				],
@@ -61038,6 +61049,19 @@
 						"schema": {
 							"type": "string",
 							"minLength": 1
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "scope",
+						"in": "query",
+						"schema": {
+							"enum": [
+								"all",
+								"shared"
+							],
+							"type": "string"
 						},
 						"allowEmptyValue": true,
 						"allowReserved": true
@@ -61291,6 +61315,14 @@
 																				}
 																			],
 																			"default": null
+																		},
+																		"factIds": {
+																			"type": "array",
+																			"maxItems": 20,
+																			"items": {
+																				"type": "string",
+																				"minLength": 1
+																			}
 																		}
 																	},
 																	"required": [
@@ -62827,6 +62859,14 @@
 																					}
 																				],
 																				"default": null
+																			},
+																			"factIds": {
+																				"type": "array",
+																				"maxItems": 20,
+																				"items": {
+																					"type": "string",
+																					"minLength": 1
+																				}
 																			}
 																		},
 																		"required": [
@@ -64476,6 +64516,14 @@
 																			}
 																		],
 																		"default": null
+																	},
+																	"factIds": {
+																		"type": "array",
+																		"maxItems": 20,
+																		"items": {
+																			"type": "string",
+																			"minLength": 1
+																		}
 																	}
 																},
 																"required": [
@@ -65650,7 +65698,7 @@
 			"post": {
 				"operationId": "generateCareerWork",
 				"summary": "Generate AI work for an application",
-				"description": "Asks the default AI connection for one structured piece of work for an application (fit check, briefing, practice feedback, debrief review, employer message, answer draft). Everything but answer drafts is saved.",
+				"description": "Asks the default AI connection for one structured piece of work for an application (fit check, briefing, practice feedback, debrief review, employer message, answer draft). Everything but answer drafts is saved. Practice with a shared story may use a null applicationId; other tasks require an application.",
 				"tags": [
 					"Career"
 				],
@@ -65662,8 +65710,15 @@
 								"type": "object",
 								"properties": {
 									"applicationId": {
-										"type": "string",
-										"minLength": 1
+										"anyOf": [
+											{
+												"type": "string",
+												"minLength": 1
+											},
+											{
+												"type": "null"
+											}
+										]
 									},
 									"locale": {
 										"type": "string",
@@ -66086,6 +66141,14 @@
 																							}
 																						],
 																						"default": null
+																					},
+																					"factIds": {
+																						"type": "array",
+																						"maxItems": 20,
+																						"items": {
+																							"type": "string",
+																							"minLength": 1
+																						}
 																					}
 																				},
 																				"required": [
@@ -95562,6 +95625,67 @@
 									"withSampleData": {
 										"type": "boolean",
 										"default": false
+									},
+									"locale": {
+										"enum": [
+											"af-ZA",
+											"am-ET",
+											"ar-SA",
+											"az-AZ",
+											"bg-BG",
+											"bn-BD",
+											"ca-ES",
+											"cs-CZ",
+											"da-DK",
+											"de-DE",
+											"el-GR",
+											"en-US",
+											"en-GB",
+											"es-ES",
+											"fa-IR",
+											"fi-FI",
+											"fr-FR",
+											"he-IL",
+											"hi-IN",
+											"hu-HU",
+											"id-ID",
+											"it-IT",
+											"ja-JP",
+											"km-KH",
+											"kn-IN",
+											"ko-KR",
+											"lt-LT",
+											"lv-LV",
+											"ml-IN",
+											"mr-IN",
+											"ms-MY",
+											"ne-NP",
+											"nl-NL",
+											"no-NO",
+											"or-IN",
+											"pl-PL",
+											"pt-BR",
+											"pt-PT",
+											"ro-RO",
+											"ru-RU",
+											"sk-SK",
+											"sl-SI",
+											"sq-AL",
+											"sr-SP",
+											"sv-SE",
+											"ta-IN",
+											"te-IN",
+											"th-TH",
+											"tr-TR",
+											"uk-UA",
+											"uz-UZ",
+											"vi-VN",
+											"zh-CN",
+											"zh-TW",
+											"zu-ZA"
+										],
+										"type": "string",
+										"description": "The resume language. Uses the interface language when omitted."
 									},
 									"template": {
 										"enum": [
@@ -146802,6 +146926,66 @@
 											"JSON_RESUME",
 											"LINKEDIN",
 											"PDF"
+										],
+										"type": "string"
+									},
+									"locale": {
+										"enum": [
+											"af-ZA",
+											"am-ET",
+											"ar-SA",
+											"az-AZ",
+											"bg-BG",
+											"bn-BD",
+											"ca-ES",
+											"cs-CZ",
+											"da-DK",
+											"de-DE",
+											"el-GR",
+											"en-US",
+											"en-GB",
+											"es-ES",
+											"fa-IR",
+											"fi-FI",
+											"fr-FR",
+											"he-IL",
+											"hi-IN",
+											"hu-HU",
+											"id-ID",
+											"it-IT",
+											"ja-JP",
+											"km-KH",
+											"kn-IN",
+											"ko-KR",
+											"lt-LT",
+											"lv-LV",
+											"ml-IN",
+											"mr-IN",
+											"ms-MY",
+											"ne-NP",
+											"nl-NL",
+											"no-NO",
+											"or-IN",
+											"pl-PL",
+											"pt-BR",
+											"pt-PT",
+											"ro-RO",
+											"ru-RU",
+											"sk-SK",
+											"sl-SI",
+											"sq-AL",
+											"sr-SP",
+											"sv-SE",
+											"ta-IN",
+											"te-IN",
+											"th-TH",
+											"tr-TR",
+											"uk-UA",
+											"uz-UZ",
+											"vi-VN",
+											"zh-CN",
+											"zh-TW",
+											"zu-ZA"
 										],
 										"type": "string"
 									}

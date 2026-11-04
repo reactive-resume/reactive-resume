@@ -562,6 +562,7 @@ const { KnowledgeScreen } = load("features/career/knowledge.tsx", {
 			},
 		}),
 	},
+	"@/features/workspace/tabs/practise": { StoryPractice: "StoryPractice" },
 	"./facts": { Facts: "Facts" },
 	"./stories": { Stories: "Stories" },
 	"./preferences": { Preferences: "Preferences" },

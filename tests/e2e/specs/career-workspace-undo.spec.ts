@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 import { Pool } from "pg";
-import { createAuthenticatedContext } from "../fixtures/auth";
+import { createAuthenticatedContext, readAuthenticatedJson } from "../fixtures/auth";
 import { createAccount } from "../fixtures/data";
 import { deleteE2EUser } from "../fixtures/db";
 import { expect, test } from "../fixtures/test";
@@ -37,6 +37,10 @@ async function removeFirst(page: Page) {
 	await page.getByRole("button", { name: "Question options", exact: true }).first().click();
 	await page.getByRole("menuitem", { name: "Remove question", exact: true }).click();
 	await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeVisible();
+}
+
+function readCommittedWorkspace(page: Page, applicationId: string) {
+	return readAuthenticatedJson(page, `/api/openapi/career/workspace/${applicationId}`);
 }
 
 for (const mode of ["reload", "close"] as const)
@@ -85,9 +89,7 @@ test("question removal preserves another client's independent answer edit", asyn
 	const bytes = response.request().postDataBuffer()?.byteLength ?? 0;
 	expect(bytes).toBeGreaterThan(0);
 	expect(bytes).toBeLessThan(60 * 1024);
-	await expect
-		.poll(async () => (await (await page.request.get(`/api/openapi/career/workspace/${saved.id}`)).json()).answers)
-		.toEqual(newer.slice(1));
+	expect((await readCommittedWorkspace(page, saved.id)).answers).toEqual(newer.slice(1));
 	await expect(page.getByText("Fictional newer question", { exact: true })).toBeVisible();
 	await page.reload();
 	await expect(page.getByText("Fictional question 0", { exact: true })).toHaveCount(0);
@@ -110,9 +112,7 @@ test("prepared question removal rejects a stale target and shows its current wor
 	);
 	await conflict;
 	await expect(page.getByText("Fictional updated question", { exact: true })).toBeVisible();
-	const current = await page.request.get(`/api/openapi/career/workspace/${saved.id}`);
-	await expect(current).toBeOK();
-	expect((await current.json()).answers).toEqual(newer);
+	expect((await readCommittedWorkspace(page, saved.id)).answers).toEqual(newer);
 });
 
 test("question Undo cancels deletion and cannot recreate an answer erased elsewhere", async ({

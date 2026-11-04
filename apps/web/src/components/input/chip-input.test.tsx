@@ -23,6 +23,7 @@ it("keeps commas in new and edited keywords and saves on Enter", () => {
 			<ChipInput allowCommas defaultValue={["Existing"]} onChange={onChange} />
 		</I18nProvider>,
 	);
+	expect(screen.queryByText("1", { exact: true })).toBeNull();
 	const input = screen.getByRole("textbox", { name: "Add keyword" });
 	fireEvent.change(input, { target: { value: "Systems, distributed" } });
 	expect(onChange).not.toHaveBeenCalled();
@@ -149,4 +150,23 @@ it("explicit Save commits an edited tag and preserves duplicate and Escape behav
 	fireEvent.keyDown(screen.getByRole("textbox"), { key: "Escape" });
 	fireEvent.click(screen.getByRole("button", { name: "Save tags" }));
 	expect(saved).toHaveBeenLastCalledWith(["Revised", "Beta"]);
+});
+
+it.each([false, true])("selecting a filtered suggestion consumes its draft before Save (editing=%s)", (editing) => {
+	const commitRef = createRef<() => string[]>();
+	const saved = vi.fn();
+	render(
+		<I18nProvider i18n={i18n}>
+			<ChipInput defaultValue={["Design"]} suggestions={["Remote"]} commitRef={commitRef} />
+			<button onClick={() => saved(commitRef.current?.())}>Save tags</button>
+		</I18nProvider>,
+	);
+	if (editing) fireEvent.click(screen.getByRole("button", { name: "Edit Design" }));
+	const input = screen.getByRole("textbox");
+	fireEvent.change(input, { target: { value: "rem" } });
+	fireEvent.click(screen.getByRole("button", { name: "Add Remote" }));
+	expect(input).toHaveValue("");
+	expect(document.activeElement).toBe(input);
+	fireEvent.click(screen.getByRole("button", { name: "Save tags" }));
+	expect(saved).toHaveBeenLastCalledWith(editing ? ["Remote"] : ["Design", "Remote"]);
 });

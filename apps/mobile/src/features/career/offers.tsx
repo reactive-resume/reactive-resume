@@ -21,6 +21,27 @@ import { routes } from "@/routes";
 import { Banner, Button, Card, EmptyState, Screen, SelectSheet, Text, useTheme } from "@/ui";
 
 type Offer = SavedItem & { data: Extract<SavedItem["data"], { kind: "offer" }> };
+type OfferMessagesProps = { applications: ApplicationSummary[] };
+
+function OfferMessages({ applications }: OfferMessagesProps) {
+	const { t } = useLingui();
+	const router = useRouter();
+	if (!applications.length) return null;
+	return (
+		<SelectSheet
+			label={t`Messages`}
+			placeholder={t`Choose an application`}
+			value=""
+			searchable
+			options={applications.map((application) => ({
+				value: application.id,
+				label: `${application.company} · ${application.role}`,
+			}))}
+			onChange={(id) => router.push(routes.application(id, "messages"))}
+		/>
+	);
+}
+
 const periodLabel = (value: OfferTerms["period"]) =>
 	value === "year" ? t`Per year` : value === "month" ? t`Per month` : t`Per hour`;
 export function OffersScreen() {
@@ -102,7 +123,9 @@ export function OffersScreen() {
 					variant="card"
 					title={t`No offers to compare yet`}
 					message={t`Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms.`}
-				/>
+				>
+					<OfferMessages applications={applications.data ?? []} />
+				</EmptyState>
 			) : null}
 			{offers.length ? (
 				<>
@@ -154,7 +177,9 @@ export function OffersScreen() {
 										variant="card"
 										title={t`Save another offer to compare`}
 										message={t`Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms.`}
-									/>
+									>
+										<OfferMessages applications={applications.data ?? []} />
+									</EmptyState>
 								)}
 							</View>
 						))}

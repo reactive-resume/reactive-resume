@@ -78,8 +78,8 @@ afterEach(() => {
 	cleanup();
 	queryClient.clear();
 });
-function mount(file?: File, data?: { context: "letters"; applicationId: string }) {
-	return render(
+function mount(file?: File, data?: { context: "letters"; applicationId: string }, confirmDrop = true) {
+	const mounted = render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={queryClient}>
 				<Dialog open>
@@ -88,6 +88,8 @@ function mount(file?: File, data?: { context: "letters"; applicationId: string }
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
+	if (file && confirmDrop) fireEvent.click(screen.getByRole("button", { name: "Import" }));
+	return mounted;
 }
 
 it("imports a PDF through the local text reader when AI connection lookup fails", async () => {
@@ -319,4 +321,28 @@ it("keeps lookup failure recovery available on New and retries without creating 
 	expect(api.importResume).not.toHaveBeenCalled();
 	expect(api.createLetter).not.toHaveBeenCalled();
 	expect(api.createResume).not.toHaveBeenCalled();
+});
+
+it("waits for confirmation before reading a dropped structured file", async () => {
+	const file = new File([JSON.stringify({ basics: { name: "Fictional import" } })], "resume.json", {
+		type: "application/json",
+	});
+	mount(file, undefined, false);
+	await screen.findByRole("combobox", { name: "Resume language" });
+	expect(api.importResume).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+	expect(api.importResume).not.toHaveBeenCalled();
+});
+
+it("uses current Default language when a PDF review resets an earlier selection", async () => {
+	mount(new File(["%PDF-test"], "resume.pdf", { type: "application/pdf" }));
+	fireEvent.click(await screen.findByRole("combobox", { name: "Resume language" }));
+	fireEvent.click(await screen.findByRole("option", { name: /العربية/ }));
+	fireEvent.click(screen.getByRole("button", { name: "Read on this device (free)" }));
+	await screen.findByRole("heading", { name: "Check what was found" });
+	fireEvent.click(screen.getByRole("combobox", { name: "Resume language" }));
+	fireEvent.click(await screen.findByRole("option", { name: "Default" }));
+	fireEvent.click(screen.getByRole("button", { name: "Create resume" }));
+	await screen.findByRole("heading", { name: "Imported" });
+	expect(api.importResume.mock.calls[0]?.[0].data.metadata.page.locale).toBe("en-US");
 });

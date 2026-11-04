@@ -598,7 +598,14 @@ export function ChipInput({
 					) : null}
 					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s1 + space.s0 }}>
 						{offered.map((suggestion) => (
-							<Chip key={suggestion} label={suggestion} onPress={() => add([suggestion])} />
+							<Chip
+								key={suggestion}
+								label={suggestion}
+								onPress={() => {
+									add([suggestion]);
+									setDraft("");
+								}}
+							/>
 						))}
 					</View>
 				</View>

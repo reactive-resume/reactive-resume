@@ -387,6 +387,7 @@ test("native chat records real successes and explicit history changes, never ref
 		},
 	};
 	const message = { id: "message", role: "assistant", parts: [part] };
+	let receiptMessage = message;
 	const records = [];
 	// What the receipts read back returns; TanStack Query resolves a failed refetch with the error and old data.
 	let receiptRead = async () => ({ data: { messages: [message] }, isError: false });
@@ -456,7 +457,7 @@ test("native chat records real successes and explicit history changes, never ref
 			"@/routes": { routes: {} },
 			"@tanstack/react-query": {
 				useQuery: (options) => {
-					const data = { messages: [message], thread: {}, isReadOnly: false };
+					const data = { messages: [receiptMessage], thread: {}, isReadOnly: false };
 					return {
 						data: options?.select ? options.select(data) : data,
 						isFetchedAfterMount: true,
@@ -612,6 +613,10 @@ test("native chat records real successes and explicit history changes, never ref
 
 	// New wording counts only once a fresh read of the receipts shows it; a failed read keeps the draft open.
 	const reworded = part.output.edits[1];
+	handlers.onReject(message, part, [reworded]);
+	handlers = render();
+	handlers.onRestore(message, part, [reworded]);
+	handlers = render();
 	const wording = shared.withEditedText(reworded, "My wording").after;
 	const withWording = {
 		...message,
@@ -626,12 +631,22 @@ test("native chat records real successes and explicit history changes, never ref
 	await assert.rejects(handlers.onEdit(message, part, reworded, "My wording"), /couldn't be read back/);
 	receiptRead = async () => ({ data: { messages: [message] }, isError: false });
 	await assert.rejects(handlers.onEdit(message, part, reworded, "My wording"), /couldn't be read back/);
-	receiptRead = async () => ({ data: { messages: [withWording] }, isError: false });
+	receiptRead = async () => {
+		receiptMessage = withWording;
+		return { data: { messages: [withWording] }, isError: false };
+	};
 	await handlers.onEdit(message, part, reworded, "My wording");
 	assert.deepEqual(
 		records.slice(-3),
 		Array(3).fill([{ id: "conflict", status: "pending", text: "My wording", after: reworded.after }]),
 	);
+	handlers = render();
+	const reviewed = proposals.toProposals(part, handlers.statuses).find((proposal) => proposal.id === reworded.id);
+	assert.equal(reviewed.after, wording, "Undo rejection must retain the wording confirmed by the server");
+	handlers.onAccept(message, part, [reviewed]);
+	await resumeStore.getState().flush();
+	assert.equal(resumeStore.getState().data.summary.content, wording);
+	assert.equal(documentSaves.at(-1).applications[reworded.id], wording);
 	// A failed read never confirms, even when the receipts it kept already show that wording.
 	receiptRead = async () => ({ data: { messages: [withWording] }, isError: true });
 	await assert.rejects(handlers.onEdit(message, part, reworded, "My wording"), /couldn't be read back/);

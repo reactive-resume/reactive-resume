@@ -2,6 +2,7 @@ import type { EditorMode } from "@/features/resume/editor/store";
 import { useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { useAssistantShortcutEnabled } from "@/features/assistant/shortcut";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { isEditableElementFocused, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -15,6 +16,7 @@ import { switchModeInstantly } from "@/libs/motion";
  */
 export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	const { t } = useLingui();
+	const assistantShortcutEnabled = useAssistantShortcutEnabled();
 	const hasSelection = useEditorStore((state) => Boolean(state.selection));
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const undo = useResumeStore((state) => state.undo);
@@ -82,7 +84,7 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 			const { assistantOpen, setAssistantOpen } = useEditorStore.getState();
 			setAssistantOpen(!assistantOpen, true);
 		},
-		{ meta: { name: t`Assistant` } },
+		{ enabled: assistantShortcutEnabled, meta: { name: t`Assistant` } },
 	);
 	useHotkey(
 		"Escape",
