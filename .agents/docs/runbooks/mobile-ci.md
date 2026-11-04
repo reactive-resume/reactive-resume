@@ -6,7 +6,7 @@ and Xcode compile them; Fastlane signs and optionally uploads them. It does not 
 EAS Build or EAS Submit. EAS Update still delivers compatible OTA updates through the
 existing Docker release workflow.
 
-Setup verified on **2026-10-21**: all eleven signing/upload secrets were copied from
+Setup verified on **2026-10-21**: the signing/upload secrets were copied from
 existing EAS credentials into repository Actions secrets; the existing `EXPO_TOKEN`
 was retained. The initial `MOBILE_BUILD_NUMBER_BASE` was **100**. Live store counters were iOS **6**
 and Android **8**; workflow run 1, attempt 1 will allocate **100**. Environment
@@ -25,7 +25,7 @@ Apple's current minimum SDK requirements before uploading. Ruby, Fastlane and Co
 dependencies are locked under `tooling/mobile`.
 
 Download the **existing** Android upload keystore and iOS distribution certificate
-(including its private key) and App Store provisioning profile using `eas credentials`
+(including its private key) and the App Store provisioning profiles for the app and its share extension using `eas credentials`
 from `apps/mobile`. Do not generate replacement signing identities for this migration.
 If using that CLI for iOS, set `EXPO_NO_CAPABILITY_SYNC=1`: Apple capabilities remain
 managed manually. Native Apple sign-in uses the web Services ID `me.rxresu.web`;

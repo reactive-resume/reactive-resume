@@ -133,8 +133,16 @@ async function parse(source, path, locale) {
 	return Object.fromEntries(Object.entries(catalog).filter(([, entry]) => !entry.obsolete));
 }
 
-function compare(base, head) {
+/** `head` is undefined when the catalog was deleted: every translation it had counts as lost. */
+export function compare(base, head) {
 	const result = { lost: [], placeholder: [], changed: [], untranslated: 0, removed: 0 };
+	if (head === undefined) {
+		for (const entry of Object.values(base))
+			if (entry.translation)
+				result.lost.push(`${clip(entry.message)} was ${clip(entry.translation)} (catalog deleted)`);
+		result.removed = Object.keys(base).length;
+		return result;
+	}
 	for (const [id, entry] of Object.entries(head)) {
 		const before = base[id]?.translation ?? "";
 		const after = entry.translation ?? "";
@@ -167,7 +175,11 @@ async function main() {
 
 	const totals = { catalogs: 0, lost: 0, placeholder: 0, changed: 0, untranslated: 0, removed: 0 };
 	for (const directory of ["apps/web/locales", "apps/mobile/locales"]) {
-		for (const file of (await readdir(join(root, directory))).filter((name) => name.endsWith(".po")).sort()) {
+		// Catalogs in the checkout or at the base, so a deleted catalog is compared too.
+		const atBase = git("ls-tree", "--name-only", `${base}:${directory}`).split("\n");
+		const present = await readdir(join(root, directory)).catch(() => []);
+		const files = [...new Set([...present, ...atBase])].filter((name) => name.endsWith(".po")).sort();
+		for (const file of files) {
 			const path = `${directory}/${file}`;
 			const locale = file.slice(0, -3);
 			let baseSource;
@@ -176,9 +188,10 @@ async function main() {
 			} catch {
 				// New catalog: every entry counts as new.
 			}
+			const headSource = present.includes(file) ? await readFile(join(root, path), "utf8") : undefined;
 			const result = compare(
 				await parse(baseSource, path, locale),
-				await parse(await readFile(join(root, path), "utf8"), path, locale),
+				headSource === undefined ? undefined : await parse(headSource, path, locale),
 			);
 			totals.catalogs++;
 			for (const key of ["untranslated", "removed"]) totals[key] += result[key];

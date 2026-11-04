@@ -1,5 +1,5 @@
 import { expect, test } from "vite-plus/test";
-import { mismatch } from "./catalog-diff.mjs";
+import { compare, mismatch } from "./catalog-diff.mjs";
 
 test.each([
 	["Hello {name}", "Hallo {name}", ""],
@@ -41,4 +41,9 @@ test.each([
 	],
 ])("%s → %s", (source, translation, problem) => {
 	expect(mismatch(source, translation)).toBe(problem);
+});
+
+test("a deleted catalog loses every translation it had", () => {
+	const base = { a: { message: "Save", translation: "Speichern" }, b: { message: "Open", translation: "" } };
+	expect(compare(base, undefined)).toMatchObject({ lost: ['"Save" was "Speichern" (catalog deleted)'], removed: 2 });
 });
