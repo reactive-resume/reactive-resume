@@ -81,7 +81,7 @@ export const pictureSchema = z.object({
 		.describe("The width of the shadow of the picture to display on the resume, defined in points (pt)."),
 });
 
-export const customFieldSchema = z.object({
+const customFieldSchema = z.object({
 	id: z.string().describe("The unique identifier for the custom field. Usually generated as a UUID."),
 	icon: iconSchema,
 	text: z.string().describe("The text to display for the custom field."),
@@ -98,7 +98,7 @@ export const basicsSchema = z.object({
 	customFields: z.array(customFieldSchema).describe("The custom fields to display on the resume."),
 });
 
-export const summarySchema = z.object({
+const summarySchema = z.object({
 	title: z.string().describe("The title of the summary of the resume."),
 	icon: z
 		.string()
@@ -341,7 +341,7 @@ export const coverLetterItemSchema = baseItemSchema.extend({
 
 export type CoverLetterItem = z.infer<typeof coverLetterItemSchema>;
 
-export const baseSectionSchema = z.object({
+const baseSectionSchema = z.object({
 	title: z.string().describe("The title of the section."),
 	icon: z
 		.string()
@@ -389,7 +389,7 @@ const skillKeywordLayoutSchema = z
 	.catch("inline")
 	.describe("How skill keywords are displayed: inline separated by commas, or one bullet per keyword.");
 
-export const skillsSectionSchema = itemSection(skillItemSchema, "The items to display in the skills section.")
+const skillsSectionSchema = itemSection(skillItemSchema, "The items to display in the skills section.")
 	.extend({
 		keywordLayout: skillKeywordLayoutSchema,
 		layout: z

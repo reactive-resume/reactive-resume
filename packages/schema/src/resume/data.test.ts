@@ -1,16 +1,6 @@
 import type { CustomSectionType } from "./data";
 import { describe, expect, it } from "vite-plus/test";
-import {
-	baseSectionSchema,
-	customFieldSchema,
-	customSectionSchema,
-	pageSchema,
-	parseResumeData,
-	pictureSchema,
-	resumeDataSchema,
-	skillsSectionSchema,
-	summarySchema,
-} from "./data";
+import { customSectionSchema, parseResumeData, resumeDataSchema } from "./data";
 import { defaultResumeData } from "./default";
 
 const representativeCustomSectionItemByType = {
@@ -71,57 +61,23 @@ describe("resumeDataSchema", () => {
 	});
 });
 
-describe("pictureSchema", () => {
-	it("defaults missing and invalid legacy fit values to cover", () => {
-		const { fit: _fit, ...legacyPicture } = defaultResumeData.picture;
+it("defaults fields that resumes saved before they existed leave out", () => {
+	const legacy = JSON.parse(JSON.stringify(defaultResumeData));
+	delete legacy.picture.fit;
+	delete legacy.metadata.page.hideLinkUnderline;
+	delete legacy.summary.icon;
+	delete legacy.sections.experience.icon;
+	delete legacy.sections.skills.layout;
+	legacy.basics.customFields = [{ id: "1", icon: "phone", text: "x" }];
 
-		expect(pictureSchema.parse(legacyPicture).fit).toBe("cover");
-		expect(pictureSchema.parse({ ...legacyPicture, fit: "stretch" }).fit).toBe("cover");
+	expect(resumeDataSchema.parse(legacy)).toMatchObject({
+		picture: { fit: "cover" },
+		basics: { customFields: [{ link: "" }] },
+		summary: { icon: "" },
+		sections: { experience: { icon: "" }, skills: { layout: "default" } },
+		metadata: { page: { hideLinkUnderline: false } },
 	});
-});
-
-describe("customFieldSchema", () => {
-	it("falls back to empty link via .catch when missing", () => {
-		const result = customFieldSchema.safeParse({ id: "1", icon: "phone", text: "x" });
-		expect(result.success).toBe(true);
-		if (result.success) expect(result.data.link).toBe("");
-	});
-});
-
-describe("pageSchema", () => {
-	it("defaults hideLinkUnderline to false when missing", () => {
-		const { hideLinkUnderline: _, ...pageWithout } = defaultResumeData.metadata.page;
-		const result = pageSchema.safeParse(pageWithout);
-		expect(result.success).toBe(true);
-		if (result.success) expect(result.data.hideLinkUnderline).toBe(false);
-	});
-});
-
-describe("baseSectionSchema", () => {
-	it("defaults icon to empty string when missing", () => {
-		const result = baseSectionSchema.safeParse({ title: "Test", columns: 1, hidden: false });
-		expect(result.success).toBe(true);
-		if (result.success) expect(result.data.icon).toBe("");
-	});
-});
-
-describe("summarySchema", () => {
-	it("defaults icon to empty string when missing", () => {
-		const result = summarySchema.safeParse({ title: "", columns: 1, hidden: false, content: "" });
-		expect(result.success).toBe(true);
-		if (result.success) expect(result.data.icon).toBe("");
-	});
-});
-
-describe("skillsSectionSchema", () => {
-	it("defaults layout to 'default' when missing", () => {
-		const result = skillsSectionSchema.parse({
-			title: "Skills",
-			columns: 2,
-			hidden: false,
-			items: [],
-		});
-		expect(result.layout).toBe("default");
-		expect(result.columns).toBe(2);
-	});
+	expect(resumeDataSchema.parse({ ...legacy, picture: { ...legacy.picture, fit: "stretch" } }).picture.fit).toBe(
+		"cover",
+	);
 });

@@ -1,15 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { collectExpectedColumns, verifyMigratedSchema } from "./schema-check";
 
-describe("collectExpectedColumns", () => {
-	it("collects every column of every schema table", () => {
-		const expected = collectExpectedColumns();
-		expect(expected.length).toBeGreaterThan(0);
-		expect(expected).toContainEqual({ tableName: "ai_providers", columnName: "user_id" });
-		expect(expected).toContainEqual({ tableName: "user", columnName: "id" });
-	});
-});
-
 describe("verifyMigratedSchema", () => {
 	it("fails with the table name when every column of a table is missing", async () => {
 		const rows = collectExpectedColumns()

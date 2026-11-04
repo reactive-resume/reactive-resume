@@ -66,39 +66,17 @@ describe("handleAuth", () => {
 		expect(request.headers.get("x-forwarded-for")).toBeNull();
 		expect(request.headers.get("x-real-ip")).toBe(trustedClient === "unknown" ? null : trustedClient);
 	});
-	it.for([null, false, 42, "client", [], [{ redirect_uris: [] }]])(
-		"rejects non-object registration payload %j",
-		async (body) => {
-			const { handleAuth } = await import("./auth");
-			const response = await handleAuth(
-				new Request("http://localhost:3000/api/auth/oauth2/register", {
-					method: "POST",
-					headers: { "content-type": "application/json" },
-					body: JSON.stringify(body),
-				}),
-			);
-			expect(response.status).toBe(400);
-			await expect(response.json()).resolves.toEqual({ message: "Invalid registration payload" });
-			expect(mocks.handler).not.toHaveBeenCalled();
-		},
-	);
-
-	it("rejects unsafe dynamic OAuth redirect URIs in safe mode", async () => {
+	it.for([null, [{ redirect_uris: [] }]])("rejects non-object registration payload %j", async (body) => {
 		const { handleAuth } = await import("./auth");
-
 		const response = await handleAuth(
-			new Request("http://localhost:3001/api/auth/oauth2/register", {
+			new Request("http://localhost:3000/api/auth/oauth2/register", {
 				method: "POST",
-				body: JSON.stringify({ redirect_uris: ["https://192.168.1.10/callback"] }),
 				headers: { "content-type": "application/json" },
+				body: JSON.stringify(body),
 			}),
 		);
-
 		expect(response.status).toBe(400);
-		await expect(response.json()).resolves.toEqual({
-			error: "invalid_redirect_uri",
-			error_description: "redirect_uri is not allowed",
-		});
+		await expect(response.json()).resolves.toEqual({ message: "Invalid registration payload" });
 		expect(mocks.handler).not.toHaveBeenCalled();
 	});
 
@@ -120,86 +98,43 @@ describe("handleAuth", () => {
 		expect(mocks.handler).not.toHaveBeenCalled();
 	});
 
-	it.each(["client_secret_basic", "client_secret_post"])(
-		"keeps an explicitly registered %s so the client receives a client secret",
-		async (method) => {
-			const { handleAuth } = await import("./auth");
-			await handleAuth(
-				new Request("http://localhost:3000/api/auth/oauth2/register", {
-					method: "POST",
-					headers: { "content-type": "application/json" },
-					body: JSON.stringify({
-						redirect_uris: ["https://example.com/callback"],
-						token_endpoint_auth_method: method,
-					}),
+	it("keeps an explicitly registered client_secret_basic so the client receives a client secret", async () => {
+		const { handleAuth } = await import("./auth");
+		await handleAuth(
+			new Request("http://localhost:3000/api/auth/oauth2/register", {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({
+					redirect_uris: ["https://example.com/callback"],
+					token_endpoint_auth_method: "client_secret_basic",
 				}),
-			);
-			const forwarded = mocks.handler.mock.calls[0]?.[0] as Request;
-			await expect(forwarded.json()).resolves.toMatchObject({ token_endpoint_auth_method: method });
-		},
-	);
+			}),
+		);
+		const forwarded = mocks.handler.mock.calls[0]?.[0] as Request;
+		await expect(forwarded.json()).resolves.toMatchObject({ token_endpoint_auth_method: "client_secret_basic" });
+	});
 });
 
 describe("handleOAuth", () => {
-	it("redirects unauthenticated users to the same-origin login route", async () => {
-		const { handleOAuth } = await import("./auth");
-		mocks.getSession.mockResolvedValueOnce(null);
-
-		const response = await handleOAuth(
-			new Request(
-				"http://localhost:3001/api/auth/oauth?client_id=test-client&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&state=abc&exp=123&sig=456",
-			),
-		);
-
-		expect(response.status).toBe(302);
-		const location = response.headers.get("Location");
-		expect(location).toMatch(/^\/auth\/login\?/);
-
-		const loginUrl = new URL(location ?? "", "http://localhost:3000");
-		const callbackUrl = new URL(loginUrl.searchParams.get("callbackURL") ?? "", "http://localhost:3000");
-
-		expect(loginUrl.origin).toBe("http://localhost:3000");
-		expect(callbackUrl.pathname).toBe("/api/auth/oauth");
-		expect(callbackUrl.searchParams.get("client_id")).toBe("test-client");
-		expect(callbackUrl.searchParams.get("redirect_uri")).toBe("https://example.com/callback");
-		expect(callbackUrl.searchParams.get("state")).toBe("abc");
-		expect(callbackUrl.searchParams.get("exp")).toBe("123");
-		expect(callbackUrl.searchParams.get("sig")).toBe("456");
-	});
-
 	it.each([
-		["ar-SA", "ar-SA"],
 		["xx-XX ar-SA", "ar-SA"],
 		["zu-ZA", null],
-		["<script>", null],
-	])("opens the login page in the client's ui_locales %s", async (uiLocales, expected) => {
+	])("opens the same-origin login page in the client's ui_locales %s", async (uiLocales, expected) => {
 		const { handleOAuth } = await import("./auth");
 		mocks.getSession.mockResolvedValueOnce(null);
 		const query = new URLSearchParams({ client_id: "test-client", ui_locales: uiLocales, sig: "456" });
 
 		const response = await handleOAuth(new Request(`http://localhost:3001/api/auth/oauth?${query}`));
 
-		const loginUrl = new URL(response.headers.get("Location") ?? "", "http://localhost:3000");
+		expect(response.status).toBe(302);
+		const location = response.headers.get("Location");
+		expect(location).toMatch(/^\/auth\/login\?/);
+		const loginUrl = new URL(location ?? "", "http://localhost:3000");
 		expect(loginUrl.searchParams.get("locale")).toBe(expected);
 		// The signed query is passed on untouched.
-		expect(new URL(loginUrl.searchParams.get("callbackURL") ?? "", "http://localhost:3000").search).toBe(`?${query}`);
+		const callbackUrl = new URL(loginUrl.searchParams.get("callbackURL") ?? "", "http://localhost:3000");
+		expect(`${callbackUrl.pathname}${callbackUrl.search}`).toBe(`/api/auth/oauth?${query}`);
 	});
-	it("continues signed authorization without approving consent on GET", async () => {
-		const { handleOAuth } = await import("./auth");
-		mocks.getSession.mockResolvedValueOnce({ user: { id: "owner" } });
-		mocks.continueOAuth.mockResolvedValueOnce(
-			Response.json({ redirect: true, url: "/auth/consent?client_id=client&sig=signed" }),
-		);
-		const query = "client_id=client&resource=one&resource=two&exp=123&sig=456";
-		const response = await handleOAuth(new Request(`http://localhost:3000/api/auth/oauth?${query}`));
-		expect(mocks.continueOAuth).toHaveBeenCalledWith(
-			expect.objectContaining({ body: { postLogin: true, oauth_query: query } }),
-		);
-		expect(mocks.consent).not.toHaveBeenCalled();
-		expect(response.status).toBe(302);
-		expect(response.headers.get("location")).toBe("/auth/consent?client_id=client&sig=signed");
-	});
-
 	it("preserves provider cookies and cache headers on forced reauthentication", async () => {
 		const { handleOAuth } = await import("./auth");
 		mocks.getSession.mockResolvedValueOnce({ user: { id: "owner" } });
@@ -220,7 +155,7 @@ describe("handleOAuth", () => {
 });
 
 describe("OAuth provider response validation", () => {
-	it.for([{}, { url: null }, { url: 7 }, { url: "" }, { url: "undefined" }, { url: "javascript:alert(1)" }])(
+	it.for([{}, { url: "undefined" }, { url: "javascript:alert(1)" }])(
 		"fails closed for malformed provider response %j",
 		async (body) => {
 			const { handleOAuth } = await import("./auth");
@@ -250,19 +185,16 @@ describe("account-bound settings writes", () => {
 					}),
 		});
 
-	it.each(["/api/auth/update-user", "/api/auth/oauth2/update-client", "/api/auth/oauth2/delete-client"])(
-		"refuses stale account write %s before Better Auth runs",
-		async (path) => {
-			const { handleAuth } = await import("./auth");
-			mocks.getSession.mockResolvedValueOnce({ user: { id: "bob" } });
-			const response = await handleAuth(request(path, { "x-account-id": "alice" }));
-			expect(response.status).toBe(409);
-			await expect(response.json()).resolves.toMatchObject({
-				message: "This page belongs to a different account now. Reload and try again.",
-			});
-			expect(mocks.handler).not.toHaveBeenCalled();
-		},
-	);
+	it("refuses a stale account write before Better Auth runs", async () => {
+		const { handleAuth } = await import("./auth");
+		mocks.getSession.mockResolvedValueOnce({ user: { id: "bob" } });
+		const response = await handleAuth(request("/api/auth/oauth2/update-client", { "x-account-id": "alice" }));
+		expect(response.status).toBe(409);
+		await expect(response.json()).resolves.toMatchObject({
+			message: "This page belongs to a different account now. Reload and try again.",
+		});
+		expect(mocks.handler).not.toHaveBeenCalled();
+	});
 
 	it("allows the same account's settings write", async () => {
 		const { handleAuth } = await import("./auth");

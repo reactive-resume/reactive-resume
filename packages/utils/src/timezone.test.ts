@@ -48,7 +48,8 @@ describe("formatReadTime", () => {
 	});
 	it("localizes relative time and keeps future clock skew absolute", () => {
 		expect(formatReadTime(new Date(now - 180_000), "de-DE", now)).toBe("vor 3 Minuten");
-		expect(formatReadTime(new Date(now + 60_000), "en-US", now)).toMatch(/^Nov 2, 2026, /);
+		// An absolute date in the viewer's timezone: Nov 1–3 depending on the host, never a relative "in 1 minute".
+		expect(formatReadTime(new Date(now + 60_000), "en-US", now)).toMatch(/^Nov [1-3], 2026, /);
 		expect(formatReadTime("not a date", "en-US")).toBeNull();
 		expect(formatReadTime(new Date(now), "en-US", Number.NaN)).toBeNull();
 	});

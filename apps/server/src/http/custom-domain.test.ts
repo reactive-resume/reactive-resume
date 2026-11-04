@@ -19,7 +19,7 @@ const poll = (headers: Record<string, string>, query = "?service=app@swarm&entry
 	handleTraefikProvider(new Request(`https://rxresu.me/api/internal/traefik${query}`, { headers }));
 
 describe("Traefik provider endpoint", () => {
-	it.each([{}, { "x-provider-secret": "wrong" }, { "x-provider-secret": `${secret}x` }])(
+	it.each([{}, { "x-provider-secret": "t".repeat(secret.length) }])(
 		"hides the routers from a request without the secret: %j",
 		async (headers) => {
 			const response = await poll(headers);

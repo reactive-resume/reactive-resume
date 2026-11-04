@@ -72,6 +72,7 @@ describe("buildMarkdown", () => {
 
 	it("ends with a single trailing newline and never contains raw HTML tags", () => {
 		expect(md.endsWith("\n")).toBe(true);
+		expect(md.endsWith("\n\n")).toBe(false);
 		expect(md).not.toMatch(/<[a-z][^>]*>/i);
 	});
 

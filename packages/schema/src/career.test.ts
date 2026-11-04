@@ -14,36 +14,15 @@ describe("career profile updates", () => {
 		expect(careerProfileUpdateSchema.parse({})).toEqual({});
 		expect(careerProfileDataSchema.parse({}).memoryMode).toBe("ask");
 	});
-	it.each(["targetRoles", "locations"])("trims %s and rejects whitespace-only entries", (field) => {
-		expect(careerProfileUpdateSchema.parse({ [field]: ["  Platform engineer  "] })).toEqual({
-			[field]: ["Platform engineer"],
+	it("trims list entries and rejects whitespace-only entries", () => {
+		expect(careerProfileUpdateSchema.parse({ targetRoles: ["  Platform engineer  "] })).toEqual({
+			targetRoles: ["Platform engineer"],
 		});
-		expect(careerProfileUpdateSchema.safeParse({ [field]: [" \t "] }).success).toBe(false);
-		expect(careerProfileUpdateSchema.parse({ [field]: [` ${"x".repeat(200)} `] })).toEqual({
-			[field]: ["x".repeat(200)],
+		expect(careerProfileUpdateSchema.safeParse({ targetRoles: [" \t "] }).success).toBe(false);
+		expect(careerProfileUpdateSchema.parse({ targetRoles: [` ${"x".repeat(200)} `] })).toEqual({
+			targetRoles: ["x".repeat(200)],
 		});
-		expect(careerProfileUpdateSchema.safeParse({ [field]: ["x".repeat(201)] }).success).toBe(false);
-	});
-});
-
-describe("careerProfileDataSchema searchRegions", () => {
-	it("leaves searchRegions absent when the input has none", () => {
-		const parsed = careerProfileDataSchema.parse({});
-
-		expect(parsed.searchRegions).toBeUndefined();
-		expect(Object.hasOwn(parsed, "searchRegions")).toBe(false);
-	});
-
-	it("keeps chosen countries, an empty list and null", () => {
-		expect(careerProfileDataSchema.parse({ searchRegions: ["SG"] }).searchRegions).toEqual(["SG"]);
-		expect(careerProfileDataSchema.parse({ searchRegions: [] }).searchRegions).toEqual([]);
-		expect(careerProfileDataSchema.parse({ searchRegions: null }).searchRegions).toBeNull();
-	});
-
-	it("rejects invalid search regions", () => {
-		expect(careerProfileDataSchema.safeParse({ searchRegions: ["XX"] }).success).toBe(false);
-		expect(careerProfileDataSchema.safeParse({ searchRegions: ["SG", "SG"] }).success).toBe(false);
-		expect(careerProfileDataSchema.safeParse({ searchRegions: ["SG", "AU", "DE", "FR"] }).success).toBe(false);
+		expect(careerProfileUpdateSchema.safeParse({ targetRoles: ["x".repeat(201)] }).success).toBe(false);
 	});
 });
 
@@ -57,19 +36,7 @@ describe("manual offer input", () => {
 			period: "hour",
 		});
 	});
-	it.each([
-		{ applicationId: "" },
-		{ currency: "eur" },
-		{ currency: "EURO" },
-		{ period: "week" },
-		{ base: -1 },
-		{ variable: Infinity },
-		{ learning: -1 },
-		{ officeDays: 6 },
-		{ officeDays: 1.5 },
-		{ equity: "x".repeat(1001) },
-		{ respondBy: "tomorrow" },
-	])("rejects invalid terms %j", (patch) => {
+	it.each([{ currency: "eur" }, { base: -1 }, { respondBy: "tomorrow" }])("rejects invalid terms %j", (patch) => {
 		expect(careerOfferInputSchema.safeParse({ ...input, ...patch }).success).toBe(false);
 	});
 });

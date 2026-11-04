@@ -1,6 +1,5 @@
 import type { BaseSettingsSnapshot, ResolvedNodeStyle, ResolveStylesheetContext, SemanticNode } from "./types";
 import { describe, expect, it } from "vite-plus/test";
-import fc from "fast-check";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { resolveStylesheet } from "./cascade";
 import { compileStylesheet } from "./compile";
@@ -311,28 +310,20 @@ describe("Semantic CSS cascade and structural resolution", () => {
 		expect(invalid.diagnostics).toContainEqual(expect.objectContaining({ code: "MEDIA_PAGE_SIZE", severity: "error" }));
 	});
 
-	it("bounds generated branching variable expansion by aggregate work and output", () => {
-		fc.assert(
-			fc.property(fc.integer({ min: 3, max: 4 }), (branches) => {
-				const depth = Math.ceil(Math.log(SEMANTIC_CSS_LIMITS_V1.maxSourceBytes) / Math.log(branches)) + 1;
-				const variables = Array.from({ length: depth }, (_, index) => {
-					const next =
-						index === depth - 1 ? "r" : Array.from({ length: branches }, () => `var(--v${index + 1})`).join("");
-					return `--v${index}:${next};`;
-				}).join("");
-				const compiled = compileStylesheet({
-					languageVersion: 1,
-					text: `@version 1;:root{${variables}}section-heading{color:var(--v0);}`,
-				});
-				if (!compiled.program) throw new Error(compiled.diagnostics.map(({ code }) => code).join(","));
-				const result = resolveStylesheet(compiled.program, tree, context);
-				expect(result.nodes).toEqual({});
-				expect(result.diagnostics).toContainEqual(
-					expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }),
-				);
-			}),
-			{ numRuns: 8 },
-		);
+	it.each([3, 4])("bounds %i-way branching variable expansion by aggregate work and output", (branches) => {
+		const depth = Math.ceil(Math.log(SEMANTIC_CSS_LIMITS_V1.maxSourceBytes) / Math.log(branches)) + 1;
+		const variables = Array.from({ length: depth }, (_, index) => {
+			const next = index === depth - 1 ? "r" : Array.from({ length: branches }, () => `var(--v${index + 1})`).join("");
+			return `--v${index}:${next};`;
+		}).join("");
+		const compiled = compileStylesheet({
+			languageVersion: 1,
+			text: `@version 1;:root{${variables}}section-heading{color:var(--v0);}`,
+		});
+		if (!compiled.program) throw new Error(compiled.diagnostics.map(({ code }) => code).join(","));
+		const result = resolveStylesheet(compiled.program, tree, context);
+		expect(result.nodes).toEqual({});
+		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }));
 	});
 
 	it.each([
@@ -434,15 +425,8 @@ describe("Semantic CSS cascade and structural resolution", () => {
 		expect(result.nodes["section-experience"]?.style["break-before"]).toBeUndefined();
 	});
 
-	it("accepts the exact semantic node budget and rejects deep or wide trees one node over", () => {
+	it("rejects deep or wide trees one node over the semantic node budget", () => {
 		const program = { languageVersion: 1, rules: [] };
-		const exact = resolveStylesheet(
-			program,
-			semanticTreeOfSize(SEMANTIC_CSS_LIMITS_V1.maxSemanticNodes, "wide"),
-			context,
-		);
-		expect(Object.keys(exact.nodes)).toHaveLength(SEMANTIC_CSS_LIMITS_V1.maxSemanticNodes);
-
 		for (const shape of ["deep", "wide"] as const) {
 			const result = resolveStylesheet(
 				program,

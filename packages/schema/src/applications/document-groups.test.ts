@@ -20,31 +20,23 @@ const letter = (id: string, applicationId: string | null, status: "saved" | "app
 	application: applicationId ? job(applicationId, status) : null,
 });
 
-it("puts a job's resume and letter together where its first document appears", () => {
+it("puts each job's resume and letter together where its first document appears, even when jobs alternate", () => {
 	const groups = groupDocumentsByApplication([
 		resume("base", null),
 		resume("job-resume", "northwind"),
+		resume("two", "second"),
 		letter("loose", null),
 		letter("job-letter", "northwind"),
-	]);
-
-	expect(groups.map((group) => group.kind)).toEqual(["document", "application", "document"]);
-	expect(groups[1]?.documents.map((document) => document.id)).toEqual(["job-resume", "job-letter"]);
-	expect(groups[0]?.documents.map((document) => document.id)).toEqual(["base"]);
-	expect(groups[2]?.documents.map((document) => document.id)).toEqual(["loose"]);
-});
-
-it("keeps the first-seen order even when the library alternates jobs", () => {
-	const groups = groupDocumentsByApplication([
-		resume("one", "first"),
-		resume("two", "second"),
-		letter("one-letter", "first"),
 		letter("two-letter", "second"),
 	]);
 
-	expect(groups.map((group) => group.key)).toEqual(["application:first", "application:second"]);
-	expect(groups[0]?.documents.map((document) => document.id)).toEqual(["one", "one-letter"]);
-	expect(groups[1]?.documents.map((document) => document.id)).toEqual(["two", "two-letter"]);
+	expect(groups.map((group) => group.kind)).toEqual(["document", "application", "application", "document"]);
+	expect(groups.map((group) => group.documents.map((document) => document.id))).toEqual([
+		["base"],
+		["job-resume", "job-letter"],
+		["two", "two-letter"],
+		["loose"],
+	]);
 });
 
 it("marks closed jobs collapsed by default and lets an explicit choice win", () => {

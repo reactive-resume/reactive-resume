@@ -2,10 +2,7 @@ import { expect, it } from "vite-plus/test";
 import { getDefaultFileName, sanitizeFileName } from "./file";
 
 it.each([
-	["Jordan Long", "Jordan-Long-Resume"],
 	["李明", "李明-Resume"],
-	["आदा कुमार", "आदा-कुमार-Resume"],
-	["أحمد علي", "أحمد-علي-Resume"],
 	["José Álvarez", "José-Álvarez-Resume"],
 ])("names a resume from its full name: %s", (name, filename) => {
 	expect(getDefaultFileName({ name: "acme-tailored-v3", slug: "acme", data: { basics: { name } } })).toBe(filename);

@@ -5,7 +5,7 @@ type AtsRuleReference = {
 	category: AtsCategory;
 };
 
-export const ATS_RULE_CATALOG_V1 = {
+const ATS_RULE_CATALOG_V1 = {
 	MISSING_NAME: {
 		severity: "error",
 		category: "contact",

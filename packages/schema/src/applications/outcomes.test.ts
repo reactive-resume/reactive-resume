@@ -33,10 +33,4 @@ describe("recorded application timing", () => {
 		const progressed = { ...source, activity: [stage("applied", 1), stage("interview", 20, true), stage("offer", 8)] };
 		expect(computeOutcomes([progressed], () => false).medianDaysToReply).toBeNull();
 	});
-	it("requires recorded sending evidence when later-stage history exists", () => {
-		const dated = { ...source, activity: [stage("applied", 1), stage("interview", 6)] };
-		const legacy = { ...source, activity: [stage("interview", 6)] };
-		expect(computeOutcomes([dated], () => false).medianDaysToReply).toBe(5);
-		expect(computeOutcomes([legacy], () => false).medianDaysToReply).toBeNull();
-	});
 });

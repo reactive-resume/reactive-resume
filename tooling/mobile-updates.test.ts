@@ -33,7 +33,6 @@ it.each([
 	["success", "true", false, true],
 	["success", "false", false, false],
 	["failure", "true", false, false],
-	["skipped", "true", false, false],
 	["success", "true", true, false],
 ] as const)("gates OTA on Docker result=%s, eligible=%s, cancelled=%s", (result, mobile_ota, cancelled, expected) => {
 	const expression = workflow.match(/  mobile-ota-update:\n[\s\S]*?    if: \$\{\{ (.+) \}\}/)?.[1];

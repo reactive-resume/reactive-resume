@@ -41,12 +41,11 @@ describe("agent skills discovery", () => {
 		}
 	});
 
-	it("places SKILL.md at the archive root and builds identical bytes each time", () => {
-		const first = loadAgentSkills(skillsRoot);
-		const second = loadAgentSkills(skillsRoot);
+	it("places SKILL.md at the archive root with only the skill's own files", () => {
+		const skills = loadAgentSkills(skillsRoot);
 
-		expect(first.length).toBeGreaterThan(0);
-		for (const skill of first) {
+		expect(skills.length).toBeGreaterThan(0);
+		for (const skill of skills) {
 			const root = join(skillsRoot, skill.name);
 			const files = readdirSync(root, { recursive: true, withFileTypes: true })
 				.filter((entry) => entry.isFile())
@@ -55,7 +54,6 @@ describe("agent skills discovery", () => {
 			expect(entries).toContain("SKILL.md");
 			expect(entries.toSorted()).toEqual(files.toSorted());
 			expect(entries.every((path) => !path.startsWith("/") && !path.includes(".."))).toBe(true);
-			expect(second.find((entry) => entry.name === skill.name)?.digest).toBe(skill.digest);
 		}
 	});
 

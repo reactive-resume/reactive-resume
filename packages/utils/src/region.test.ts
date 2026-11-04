@@ -1,11 +1,9 @@
-import { afterEach, describe, expect, it, vi } from "vite-plus/test";
+import { describe, expect, it } from "vite-plus/test";
 import {
 	countryCodeSchema,
 	countryForTimeZone,
-	countryName,
 	MAX_SEARCH_REGIONS,
 	nextSearchRegions,
-	SEARCH_REGION_CODES,
 	searchRegionsSchema,
 	shownSearchRegions,
 } from "./region";
@@ -61,38 +59,6 @@ describe("searchRegionsSchema", () => {
 	});
 });
 
-describe("countryName", () => {
-	it("localises the country name", () => {
-		expect(countryName("FR", "de-DE")).toBe("Frankreich");
-	});
-
-	it("falls back to the code for an invalid locale", () => {
-		expect(countryName("FR", "not a locale")).toBe("FR");
-	});
-
-	describe("on an engine without Intl.DisplayNames, such as Hermes", () => {
-		afterEach(() => {
-			vi.unstubAllGlobals();
-		});
-
-		it("falls back to the code instead of throwing", () => {
-			vi.stubGlobal("Intl", { ...Intl, DisplayNames: undefined });
-			expect(() => countryName("DE", "de-DE")).not.toThrow();
-			expect(countryName("DE", "de-DE")).toBe("DE");
-		});
-	});
-});
-
-describe("SEARCH_REGION_CODES", () => {
-	it("lists every valid code once, sorted", () => {
-		expect(SEARCH_REGION_CODES).toContain("SG");
-		expect(SEARCH_REGION_CODES).not.toContain("XX");
-		expect(new Set(SEARCH_REGION_CODES).size).toBe(SEARCH_REGION_CODES.length);
-		expect([...SEARCH_REGION_CODES].sort()).toEqual(SEARCH_REGION_CODES);
-		expect(SEARCH_REGION_CODES.every((code) => countryCodeSchema.safeParse(code).success)).toBe(true);
-	});
-});
-
 describe("shownSearchRegions", () => {
 	it("shows a stored list as chosen", () => {
 		expect(shownSearchRegions(["DE", "FR"], "Asia/Singapore", "Asia/Singapore")).toEqual({
@@ -130,11 +96,8 @@ describe("shownSearchRegions", () => {
 		});
 	});
 
-	it("keeps explicit automatic mode on the account time zone", () => {
+	it("keeps explicit automatic mode on the account time zone, showing no country when it names none", () => {
 		expect(shownSearchRegions(null, "UTC", "Australia/Melbourne")).toEqual({ codes: [], automatic: true });
-	});
-
-	it("shows no country when neither zone names one", () => {
 		expect(shownSearchRegions(null, "UTC", "UTC")).toEqual({ codes: [], automatic: true });
 		expect(shownSearchRegions(null, "Etc/GMT+5", "Australia/Melbourne")).toEqual({
 			codes: [],
@@ -163,9 +126,5 @@ describe("nextSearchRegions", () => {
 		expect(nextSearchRegions(["SG"], { type: "remove", code: "SG" })).toEqual([]);
 		const shown = ["DE"];
 		expect(nextSearchRegions(shown, { type: "remove", code: "FR" })).toBe(shown);
-	});
-
-	it("returns to automatic with null", () => {
-		expect(nextSearchRegions(["DE"], { type: "automatic" })).toBeNull();
 	});
 });

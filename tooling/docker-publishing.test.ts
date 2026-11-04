@@ -91,12 +91,7 @@ const healthy = { service: "reactive-resume", status: "healthy", version: "6.0.0
 
 it.each([
 	["matching release", [healthy], 0, 3],
-	["previous version", [{ ...healthy, version: "5.0.0" }], 1, 60],
 	["previous commit with same version", [{ ...healthy, revision: "b".repeat(40) }], 1, 60],
-	["unhealthy release", [{ ...healthy, status: "unhealthy" }], 1, 60],
-	["wrong service", [{ ...healthy, service: "other" }], 1, 60],
-	["invalid JSON", ["not JSON"], 1, 60],
-	["HTTP failure", ["HTTP_ERROR"], 1, 60],
 	[
 		"rolling deployment and transient failures reset consecutive matches",
 		[
@@ -111,10 +106,16 @@ it.each([
 			"not JSON",
 			healthy,
 			healthy,
+			{ ...healthy, status: "unhealthy" },
+			healthy,
+			healthy,
+			{ ...healthy, service: "other" },
+			healthy,
+			healthy,
 			healthy,
 		],
 		0,
-		12,
+		18,
 	],
 ] as const)("waits for published release before cache purge: %s", (_name, responses, status, probes) => {
 	const workflow = readFileSync(new URL("../.github/workflows/docker-publish.yml", import.meta.url), "utf8");

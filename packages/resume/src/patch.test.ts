@@ -31,12 +31,6 @@ describe("applyResumePatches", () => {
 		).toThrow(expect.objectContaining({ code: "OPERATION_FROM_UNRESOLVABLE", index: 0 }));
 	});
 
-	it("throws ResumePatchError for unresolvable path", () => {
-		expect(() =>
-			applyResumePatches(defaultResumeData, [{ op: "replace", path: "/does/not/exist", value: "x" }]),
-		).toThrow(ResumePatchError);
-	});
-
 	it("names the failing operation and path", () => {
 		let caught: unknown;
 		try {

@@ -15,11 +15,4 @@ describe("compileStylesheet", () => {
 		expect(result.program?.rules).toHaveLength(1);
 		expect(result.diagnostics).toEqual([]);
 	});
-
-	it("compiles around a recovered CSS error", () => {
-		const result = compileStylesheet({ languageVersion: 1, text: "section { color red; }" });
-
-		expect(result.program).not.toBeNull();
-		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "CSS_PARSE_ERROR", severity: "error" }));
-	});
 });

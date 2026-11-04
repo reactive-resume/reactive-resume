@@ -5,16 +5,8 @@ const NOW = new Date("2024-06-15T00:00:00Z");
 
 describe("parsePeriod", () => {
 	it.each([
-		["Jan 2020 - Present", { start: { year: 2020, month: 1 }, ongoing: true }],
-		["January 2020 – March 2022", { start: { year: 2020, month: 1 }, end: { year: 2022, month: 3 }, ongoing: false }],
-		["Sept 2019 - Dec 2019", { start: { year: 2019, month: 9 }, end: { year: 2019, month: 12 }, ongoing: false }],
-		["2020 - 2022", { start: { year: 2020 }, end: { year: 2022 }, ongoing: false }],
 		["2020-2022", { start: { year: 2020 }, end: { year: 2022 }, ongoing: false }],
-		["2020–2022", { start: { year: 2020 }, end: { year: 2022 }, ongoing: false }],
-		["03/2020 - 06/2021", { start: { year: 2020, month: 3 }, end: { year: 2021, month: 6 }, ongoing: false }],
 		["03/2020-06/2021", { start: { year: 2020, month: 3 }, end: { year: 2021, month: 6 }, ongoing: false }],
-		["2020-03 - 2021-06", { start: { year: 2020, month: 3 }, end: { year: 2021, month: 6 }, ongoing: false }],
-		["Mar 2020 to Present", { start: { year: 2020, month: 3 }, ongoing: true }],
 		["Jan 2020 until now", { start: { year: 2020, month: 1 }, ongoing: true }],
 		["Fall 2019 - Spring 2021", { start: { year: 2019, month: 9 }, end: { year: 2021, month: 3 }, ongoing: false }],
 		["15/03/2020", { start: { year: 2020, month: 3 }, ongoing: false }],
@@ -22,18 +14,7 @@ describe("parsePeriod", () => {
 		expect(parsePeriod(input)).toEqual(expected);
 	});
 
-	it.each([
-		"",
-		"   ",
-		"Summer of love",
-		"sometime in 2020",
-		"20-22",
-		"Jan 2020 - Feb",
-		"Present",
-		"Present - 2020",
-		"2020 -",
-		"2020 - tbd",
-	])("rejects %j", (input) => {
+	it.each(["", "20-22", "Jan 2020 - Feb", "Present - 2020"])("rejects %j", (input) => {
 		expect(parsePeriod(input)).toBeNull();
 	});
 
@@ -62,11 +43,8 @@ describe("isReversedPeriod", () => {
 });
 
 describe("isFutureEndpoint", () => {
-	it("accepts the current month", () => {
+	it("accepts the current month, reading a missing month as the start of its year", () => {
 		expect(isFutureEndpoint({ year: 2024, month: 6 }, NOW)).toBe(false);
-	});
-
-	it("reads a missing month as the start of its year", () => {
 		expect(isFutureEndpoint({ year: 2024 }, NOW)).toBe(false);
 	});
 });

@@ -1,6 +1,6 @@
 import type { RouterClient } from "@orpc/server";
 import type { RequestAuthentication } from "@reactive-resume/api/context";
-import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
+import { afterAll, beforeAll, beforeEach, expect, it, vi } from "vite-plus/test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -32,8 +32,8 @@ const calls = {
 	},
 };
 
-beforeEach(async () => {
-	vi.clearAllMocks();
+// The registered server is stateless between calls; only the API mocks are reset per test.
+beforeAll(async () => {
 	server = new McpServer({ name: "parity-test", version: "1.0.0" });
 	const context = {
 		authentication: {
@@ -61,7 +61,11 @@ beforeEach(async () => {
 	await client.connect(clientTransport);
 });
 
-afterEach(async () => {
+beforeEach(() => {
+	vi.clearAllMocks();
+});
+
+afterAll(async () => {
 	await client?.close();
 	await server?.close();
 });
@@ -96,14 +100,8 @@ it("rejects misspelled settings arguments and keeps legacy page names on current
 });
 
 it("discovers API-derived contracts and exchanges native files and dates through the SDK", async () => {
-	const { tools } = await client.listTools();
-	const cardTools = new Map(buildMcpServerCard("1.0.0").tools.map((tool) => [tool.name, tool]));
-	expect(tools.map((tool) => tool.name).sort()).toEqual([...cardTools.keys()].sort());
-	for (const tool of tools) {
-		expect(tool.inputSchema, tool.name).toEqual(cardTools.get(tool.name)?.inputSchema);
-		expect(tool.outputSchema, tool.name).toEqual(cardTools.get(tool.name)?.outputSchema);
-		expect(tool.annotations, tool.name).toEqual(cardTools.get(tool.name)?.annotations);
-	}
+	// discovery.test.ts proves the SDK listing equals the server card, so read the cheaper card here.
+	const { tools } = buildMcpServerCard("1.0.0");
 	expect(tools.find((tool) => tool.name === "api_resume_list_versions")?.outputSchema).toBeDefined();
 	expect(tools.find((tool) => tool.name === "update_resume")?.inputSchema.properties?.data).toBeDefined();
 	calls.resume.listVersions.mockResolvedValueOnce([
@@ -251,7 +249,7 @@ it("embeds actual resume JSON in prompts and propagates inaccessible-document er
 });
 
 it("keeps private profiles and derived upload bytes out of MCP exports", async () => {
-	const { tools } = await client.listTools();
+	const { tools } = buildMcpServerCard("1.0.0");
 	expect(tools.some((tool) => /application_profile/.test(tool.name))).toBe(false);
 	expect(tools.find((tool) => tool.name === "api_auth_export_data")?.description).toContain("Settings → Profile");
 	expect(tools.find((tool) => tool.name === "api_auth_export_data")?.inputSchema.properties).not.toHaveProperty(

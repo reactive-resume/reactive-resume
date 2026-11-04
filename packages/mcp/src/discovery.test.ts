@@ -37,12 +37,13 @@ it("matches the complete unmodified SDK tools/list response and server-card sche
 	try {
 		await server.connect(serverTransport);
 		await client.connect(clientTransport);
-		const baseline = JSON.parse(JSON.stringify(await client.listTools()));
+		const baseline: Awaited<ReturnType<typeof client.listTools>> = JSON.parse(JSON.stringify(await client.listTools()));
 		registerToolDiscovery(server);
 		const optimized = JSON.parse(JSON.stringify(await client.listTools()));
 		expect(optimized).toEqual(baseline);
+		// The card is built from the same metadata as the optimized list, so compare it with the SDK's own listing.
 		expect(buildMcpServerCard("1.0.0").tools).toEqual(
-			(await client.listTools()).tools.map(({ execution: _execution, _meta, ...tool }) => tool),
+			baseline.tools.map(({ execution: _execution, _meta, ...tool }) => tool),
 		);
 	} finally {
 		await client.close();

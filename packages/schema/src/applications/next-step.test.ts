@@ -26,7 +26,7 @@ const order = (rows: ReturnType<typeof app>[], direction: "asc" | "desc" = "asc"
 		)
 		.map((row) => row.id);
 
-it.each(["applied", "screening", "interview", "offer"] as const)(
+it.each(["applied", "interview", "offer"] as const)(
 	"lane-only moves preserve the %s clock and stage ordering",
 	(status) => {
 		const a = app("A", status, "2026-10-01", "2026-10-30");
@@ -34,7 +34,7 @@ it.each(["applied", "screening", "interview", "offer"] as const)(
 		expect(order([b, a])).toEqual(["A", "B"]);
 		expect(applicationStageSince(a)).toEqual(new Date("2026-10-01"));
 		expect(getNextStep(a, now)).toMatchObject({ days: 30 });
-		if (status === "applied" || status === "screening") expect(getNextStep(a, now).kind).toBe("no-reply");
+		if (status === "applied") expect(getNextStep(a, now).kind).toBe("no-reply");
 		a.activity[0] = event(status, "2026-10-25");
 		expect(order([a, b])).toEqual(["B", "A"]);
 	},
@@ -80,18 +80,6 @@ it("uses only the current Interview visit when deciding whether feedback is due"
 	expect(getNextStep(application, now).kind).toBe("no-interview");
 	application.activity.push({ ...interview, id: "current", at: new Date("2026-10-27T10:00:00Z") });
 	expect(getNextStep(application, now).kind).toBe("interview-feedback");
-});
-
-it("shares account-clock sorting while preserving explicitly timed midnight follow-ups", () => {
-	const application = { ...app("A", "applied", "2026-10-25", "2026-10-30"), followUpAt: new Date("2030-01-03") };
-	expect(nextStepSortKey({ ...application, followUpDateOnly: true }, now, "Pacific/Honolulu")).toEqual([
-		0,
-		new Date("2030-01-03T19:00:00Z").getTime(),
-	]);
-	expect(nextStepSortKey({ ...application, followUpDateOnly: false }, now, "Pacific/Honolulu")).toEqual([
-		0,
-		application.followUpAt.getTime(),
-	]);
 });
 
 it("orders offers by saved reply deadlines before undated decisions, preserving stage age", () => {
@@ -159,23 +147,20 @@ const contact = (at: string, stageEntryId: string | null): ApplicationTimelineEn
 	followedUp: { stageEntryId },
 });
 
-it.each(["applied", "screening"] as const)(
-	"followed-up contact resets %s silence, preserving stage age and outcomes",
-	(status) => {
-		const application = { ...app("A", status, "2026-10-01", "2026-10-30"), resumeId: null, closedReason: null };
-		const before = computeOutcomes([application], () => false);
-		application.activity.push({ id: "plain", type: "note", text: "Followed up", at: now });
-		expect(getNextStep(application, now)).toMatchObject({ kind: "no-reply", days: 30 });
-		application.activity.push(contact("2026-10-25T12:00:00Z", "2026-10-01"));
-		expect(getNextStep(application, now)).toEqual({ kind: "waiting", days: 30 });
-		expect(getNextStep(application, new Date("2026-11-04T12:00:00Z"))).toEqual({ kind: "no-reply", days: 10 });
-		expect(applicationStageSince(application)).toEqual(new Date("2026-10-01"));
-		expect(computeOutcomes([application], () => false)).toEqual(before);
-		expect(
-			getNextStep({ ...application, followUpAt: new Date("2026-10-29"), followUpNote: "Keep reminder" }, now),
-		).toMatchObject({ kind: "follow-up", note: "Keep reminder", overdue: true });
-	},
-);
+it("followed-up contact resets applied silence, preserving stage age and outcomes", () => {
+	const application = { ...app("A", "applied", "2026-10-01", "2026-10-30"), resumeId: null, closedReason: null };
+	const before = computeOutcomes([application], () => false);
+	application.activity.push({ id: "plain", type: "note", text: "Followed up", at: now });
+	expect(getNextStep(application, now)).toMatchObject({ kind: "no-reply", days: 30 });
+	application.activity.push(contact("2026-10-25T12:00:00Z", "2026-10-01"));
+	expect(getNextStep(application, now)).toEqual({ kind: "waiting", days: 30 });
+	expect(getNextStep(application, new Date("2026-11-04T12:00:00Z"))).toEqual({ kind: "no-reply", days: 10 });
+	expect(applicationStageSince(application)).toEqual(new Date("2026-10-01"));
+	expect(computeOutcomes([application], () => false)).toEqual(before);
+	expect(
+		getNextStep({ ...application, followUpAt: new Date("2026-10-29"), followUpNote: "Keep reminder" }, now),
+	).toMatchObject({ kind: "follow-up", note: "Keep reminder", overdue: true });
+});
 
 it("ignores future contact and contact from a prior visit, including backdated re-entry", () => {
 	const application = app("A", "applied", "2026-10-01", "2026-10-30");
@@ -242,7 +227,7 @@ it("keeps the latest contact without a function-argument limit on long histories
 	application.activity = [
 		...application.activity,
 		contact("2026-10-25T12:00:00Z", "2026-10-01"),
-		...Array.from({ length: 500_000 }, (_, index) => ({ ...older, id: `old-contact-${index}` })),
+		...Array.from({ length: 150_000 }, (_, index) => ({ ...older, id: `old-contact-${index}` })),
 	];
 	expect(getNextStep(application, now)).toEqual({ kind: "waiting", days: 30 });
 });

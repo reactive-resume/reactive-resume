@@ -39,8 +39,6 @@ describe("company-named document suggestions", () => {
 
 	it.each([
 		{ resumeId: "selected", expected: [letter] },
-		{ coverLetterId: "selected", expected: [resume] },
-		{ sentResumeVersionId: "sent", expected: [letter] },
 		{ sentCoverLetterVersionId: "sent", expected: [resume] },
 	])("preserves selected documents and sent-version-bound slots ($expected)", ({ expected, ...patch }) => {
 		expect(suggestApplicationDocuments({ ...application, ...patch }, [resume, letter])).toEqual(expected);

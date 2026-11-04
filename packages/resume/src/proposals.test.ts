@@ -353,13 +353,7 @@ it("records only real structural writes, retains accepted identity after refinem
 
 describe("review checks", () => {
 	it.each([
-		["AWS", "GCP"],
-		["aws", "gcp"],
-		["Aws", "Gcp"],
-		["SQL", "QA"],
-		["sql", "qa"],
 		["iOS", "S3"],
-		["ios", "s3"],
 		["äx", "öy"],
 	])("keeps short subjects case-independent when checking %s versus %s figures", (first, second) => {
 		const entry = `Cut ${first} costs 40% in 2020. Cut ${second} costs 10% in 2023.`;

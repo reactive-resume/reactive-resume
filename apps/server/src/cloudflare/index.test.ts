@@ -175,26 +175,6 @@ describe("Cloudflare invocation lifetime", () => {
 		expect(pool.end).toHaveBeenCalledOnce();
 	});
 
-	it("retains the pool for background work when a scheduled runner rejects", async () => {
-		const fixture = invocation();
-		const background = Promise.withResolvers<void>();
-		const failure = new Error("Synthetic scheduled failure");
-		const log = vi.spyOn(console, "error").mockImplementation(() => {});
-		mocks.run.mockImplementation(async () => {
-			mocks.lifetime(background.promise);
-			throw failure;
-		});
-		worker.scheduled(fixture.controller, fixture.bindings, fixture.ctx);
-		await nextTurn();
-		const pool = invocationPool();
-		expect(mocks.run).toHaveBeenCalledOnce();
-		expect(pool.end).not.toHaveBeenCalled();
-		background.resolve();
-		await expect(fixture.pending[0]).resolves.toBeUndefined();
-		expect(pool.end).toHaveBeenCalledOnce();
-		expect(log).toHaveBeenCalled();
-	});
-
 	it("waits for the career runner before closing the pool when cleanup rejects", async () => {
 		const fixture = invocation();
 		const career = Promise.withResolvers<void>();

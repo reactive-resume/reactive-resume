@@ -41,16 +41,33 @@ export async function generatePresentLabels(catalogDirectory: string) {
 export const generateMessageCatalog = (catalogDirectory: string, messages: readonly string[]) =>
 	generateCatalog(catalogDirectory, messages);
 
+const parsedCatalogs = new Map<string, ReturnType<typeof parseCatalogs>>();
+
+/** `pnpm pdf:translations` reads several message sets from the same catalogs, so each file is parsed once. */
+function readCatalogs(catalogDirectory: string) {
+	const catalogs = parsedCatalogs.get(catalogDirectory) ?? parseCatalogs(catalogDirectory);
+	parsedCatalogs.set(catalogDirectory, catalogs);
+	return catalogs;
+}
+
+async function parseCatalogs(catalogDirectory: string) {
+	const filenames = (await readdir(catalogDirectory)).filter((file) => file.endsWith(".po")).sort();
+	return Promise.all(
+		filenames.map(async (filename) => {
+			const locale = filename.slice(0, -3);
+			const catalog = await formatter().parse(await readFile(join(catalogDirectory, filename), "utf8"), {
+				locale,
+				sourceLocale: "en-US",
+				filename,
+			});
+			return { locale, messages: Object.values(catalog).filter((message) => !message.obsolete && !message.context) };
+		}),
+	);
+}
+
 async function generateCatalog(catalogDirectory: string, titles: readonly string[]) {
 	const result: Record<string, Record<string, string>> = {};
-	for (const filename of (await readdir(catalogDirectory)).filter((file) => file.endsWith(".po")).sort()) {
-		const locale = filename.slice(0, -3);
-		const catalog = await formatter().parse(await readFile(join(catalogDirectory, filename), "utf8"), {
-			locale,
-			sourceLocale: "en-US",
-			filename,
-		});
-		const messages = Object.values(catalog).filter((message) => !message.obsolete && !message.context);
+	for (const { locale, messages } of await readCatalogs(catalogDirectory)) {
 		result[locale] = Object.fromEntries(
 			titles.map((title) => {
 				const message = messages.find((message) => message.message === title);

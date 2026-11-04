@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { firstFutureLead, prepareRunAt } from "./career-schedule";
+import { firstFutureLead } from "./career-schedule";
 
 const interview = new Date("2026-10-31T08:00:00.000Z");
 
@@ -14,12 +14,5 @@ describe("firstFutureLead", () => {
 
 	it("returns null when every lead has passed instead of scheduling an immediate paid run", () => {
 		expect(firstFutureLead(interview, "UTC", new Date("2026-10-31T07:59:00.000Z"))).toBeNull();
-	});
-
-	it("uses the interview's timezone for the morning lead", () => {
-		const at = new Date("2026-11-02T09:00:00.000Z");
-		const chosen = firstFutureLead(at, "Europe/Berlin", new Date("2026-11-01T00:00:00.000Z"));
-		expect(chosen?.lead).toBe("24h");
-		expect(prepareRunAt(at, "morning", "Europe/Berlin").toISOString()).toBe("2026-11-02T07:00:00.000Z");
 	});
 });

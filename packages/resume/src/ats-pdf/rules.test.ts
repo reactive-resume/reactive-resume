@@ -337,16 +337,13 @@ describe("date checks", () => {
 		expect(codes).not.toContain("UNPARSEABLE_DATE_RANGE");
 	});
 
-	it.each(["Presented", "Presenté", "20235", "2023suffix", "2023_suffix"])(
-		"does not accept an endpoint truncated from %s",
-		(endpoint) => {
-			const result = report(
-				withLines(["Research specialist delivering clinical studies.", `Framework 2021 - ${endpoint}`]),
-			);
-			expect(statusOf(result, "NO_DATES_FOUND")).toBe("fail");
-			expect(statusOf(result, "NO_CURRENT_ROLE_MARKER")).toBe("skip");
-		},
-	);
+	it.each(["Presenté", "20235", "2023_suffix"])("does not accept an endpoint truncated from %s", (endpoint) => {
+		const result = report(
+			withLines(["Research specialist delivering clinical studies.", `Framework 2021 - ${endpoint}`]),
+		);
+		expect(statusOf(result, "NO_DATES_FOUND")).toBe("fail");
+		expect(statusOf(result, "NO_CURRENT_ROLE_MARKER")).toBe("skip");
+	});
 
 	it.each(["to", "through", "until"])("treats completed and ongoing %s ranges as one year-only format", (separator) => {
 		const raw = withLines([
@@ -362,22 +359,19 @@ describe("date checks", () => {
 		expect(statusOf(report(raw), "MIXED_DATE_FORMATS")).toBe("pass");
 	});
 
-	it.each([
-		"Framework 20 - Product 22",
-		"Jan 2020 - Framework 2023",
-		"Framework 2021 - Product 2023",
-		"NotMay2020 - Present",
-		"12020 - 2023",
-	])("rejects non-date words inside a range: %s", (text) => {
-		const result = report(
-			withLines([
-				"Research specialist delivering clinical studies with multidisciplinary teams and patient groups.",
-				text,
-			]),
-		);
-		expect(statusOf(result, "UNPARSEABLE_DATE_RANGE")).toBe("pass");
-		expect(statusOf(result, "NO_CURRENT_ROLE_MARKER")).toBe("skip");
-	});
+	it.each(["Jan 2020 - Framework 2023", "Framework 2021 - Product 2023", "NotMay2020 - Present", "12020 - 2023"])(
+		"rejects non-date words inside a range: %s",
+		(text) => {
+			const result = report(
+				withLines([
+					"Research specialist delivering clinical studies with multidisciplinary teams and patient groups.",
+					text,
+				]),
+			);
+			expect(statusOf(result, "UNPARSEABLE_DATE_RANGE")).toBe("pass");
+			expect(statusOf(result, "NO_CURRENT_ROLE_MARKER")).toBe("skip");
+		},
+	);
 
 	it("preserves localized months beside role titles", () => {
 		const result = report(

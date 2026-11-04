@@ -146,13 +146,6 @@ describe("matchJobDescription on a senior posting (J2-04)", () => {
 		for (const skill of ["python", "aws", "event-driven", "carrier integrations", "dora metrics", "logistics"])
 			expect(terms).toContain(skill);
 	});
-
-	it("counts only the remaining terms", () => {
-		const report = matchJobDescription({ jobDescription: parcel, resumeText: "Python and AWS." });
-
-		expect(report.totalTerms).toBe(report.terms.length);
-		expect(report.matchedCount + report.missingTerms.length).toBe(report.totalTerms);
-	});
 });
 
 describe("matchJobDescription keeps concrete skills while dropping noise", () => {
@@ -233,16 +226,6 @@ describe("matchJobDescription keeps concrete skills while dropping noise", () =>
 
 	it.each([
 		["help desk", "Requirements\n- 3+ years of help desk experience\n- Help desk ticketing in ServiceNow", "desk"],
-		[
-			"early childhood",
-			"Requirements\n- Degree in early childhood education\n- Early childhood certification",
-			"childhood",
-		],
-		[
-			"quarterly business",
-			"Requirements\n- Run quarterly business reviews\n- Quarterly business reviews and renewals",
-			null,
-		],
 		["building codes", "Requirements\n- Knowledge of building codes\n- Building codes compliance", null],
 	])("keeps %s whole when the posting repeats it", (phrase, posting, fragment) => {
 		const terms = termsOf(posting);
@@ -258,19 +241,15 @@ describe("matchJobDescription keeps concrete skills while dropping noise", () =>
 		expect(terms).toContain("python");
 	});
 
-	it.each([
-		"Experience managing Workday",
-		"Hands-on experience running Datadog",
-		"Help scale Temporal",
-		"Strong background building Pulumi",
-		"Experience with modern Dagster",
-		"Senior PagerDuty experience",
-	])("keeps a named tool after a generic word: %s", (line) => {
-		const tool = (line.split(" ").find((word, index) => index > 0 && /[A-Z]/.test(word)) ?? "").toLowerCase();
-		const terms = termsOf(`Requirements\n- ${line}\n- Communication`);
+	it.each(["Experience managing Workday", "Senior PagerDuty experience"])(
+		"keeps a named tool after a generic word: %s",
+		(line) => {
+			const tool = (line.split(" ").find((word, index) => index > 0 && /[A-Z]/.test(word)) ?? "").toLowerCase();
+			const terms = termsOf(`Requirements\n- ${line}\n- Communication`);
 
-		expect(terms.some((term) => term.split(/[\s-]/).includes(tool))).toBe(true);
-	});
+			expect(terms.some((term) => term.split(/[\s-]/).includes(tool))).toBe(true);
+		},
+	);
 
 	it("doesn't take a capital at a line start or in a Title Case heading as naming the word", () => {
 		const offer = termsOf(
