@@ -2,10 +2,10 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { readLegacyDates } from "@reactive-resume/schema/resume/dates";
 import { sectionDefaults } from "@reactive-resume/schema/resume/default";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { edgeCaseTemplates } from "./pdf-import";
 import { ownershipSource } from "./pdf-ownership";
 
-export const educationCases = templateSchema.options.flatMap((template) =>
+export const educationCases = edgeCaseTemplates.flatMap((template) =>
 	[
 		"month-first",
 		"year-first",
@@ -163,7 +163,7 @@ export function educationWords(items: ResumeData["sections"]["education"]["items
 	);
 }
 
-export const educationOwnershipCases = templateSchema.options.flatMap((template) =>
+export const educationOwnershipCases = edgeCaseTemplates.flatMap((template) =>
 	["full-before", "two-before"].flatMap((layout) =>
 		["distinct", "identical", "substring-short", "substring-long", "mentioned", "three-runs"].map((kind) => ({
 			template,

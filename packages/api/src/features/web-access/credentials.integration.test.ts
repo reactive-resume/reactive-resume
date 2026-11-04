@@ -3,6 +3,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
+import { truncateCascade } from "../../test-database";
 
 const fixture = vi.hoisted(() => ({ db: undefined as ReturnType<typeof drizzle> | undefined }));
 const env = vi.hoisted(() => ({
@@ -67,8 +68,9 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 			AI_API_KEY: "",
 			AI_BASE_URL: "",
 		});
+		await truncateCascade(pool, ["user", "released_username"]);
 		await pool.query(
-			"TRUNCATE \"user\", released_username CASCADE; INSERT INTO \"user\" (id,name,email,username,display_username) VALUES ('alice','alice','alice@example.test','alice','alice'),('bob','bob','bob@example.test','bob','bob')",
+			"INSERT INTO \"user\" (id,name,email,username,display_username) VALUES ('alice','alice','alice@example.test','alice','alice'),('bob','bob','bob@example.test','bob','bob')",
 		);
 	});
 

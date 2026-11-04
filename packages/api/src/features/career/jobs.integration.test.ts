@@ -7,6 +7,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as tables from "@reactive-resume/db/schema";
 import { careerScheduleInputSchema } from "@reactive-resume/schema/career";
+import { truncateCascade } from "../../test-database";
 
 const fixture = vi.hoisted(() => ({
 	db: undefined as ReturnType<typeof drizzle> | undefined,
@@ -135,7 +136,7 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 		fixture.read.mockReset().mockResolvedValue(posting);
 		fixture.email.mockReset().mockResolvedValue(true);
 		fixture.generate.mockReset().mockResolvedValue({ item: null, answer: null });
-		await pool.query('TRUNCATE "user" CASCADE');
+		await truncateCascade(pool, ["user"]);
 		await getDb()
 			.insert(tables.user)
 			.values({

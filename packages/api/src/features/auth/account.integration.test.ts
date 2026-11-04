@@ -381,26 +381,23 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 					`guest-link:${owner.id}:${challengeId}`,
 				]);
 
-			// The deadline passes after the endpoint accepts the challenge, while its session row is being written.
+			// The deadline passes after the endpoint accepts the challenge, while its session row is being written:
+			// writing the session expires the handoff, with no clock race.
+			const accepted = await startGuest("deadline-guest", owner.credentials);
 			await pool.query(
-				"CREATE FUNCTION delay_session() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN PERFORM pg_sleep(0.6); RETURN NEW; END $$",
+				"CREATE FUNCTION expire_guest_link() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN UPDATE verification SET expires_at = now() - interval '1 second' WHERE identifier LIKE 'guest-link:%'; RETURN NEW; END $$",
 			);
 			await pool.query(
-				"CREATE TRIGGER delay_session BEFORE INSERT ON session FOR EACH ROW EXECUTE FUNCTION delay_session()",
+				"CREATE TRIGGER expire_guest_link BEFORE INSERT ON session FOR EACH ROW EXECUTE FUNCTION expire_guest_link()",
 			);
 			try {
-				for (const id of ["deadline-1", "deadline-2", "deadline-3"]) {
-					const pending = await startGuest(id, owner.credentials);
-					const code = await totp(owner.id);
-					await expire(pending.challengeId, "now() + interval '300 milliseconds'");
-					const verified = await send("two-factor/verify-totp", { code }, pending.jar);
-					expect(verified.status, await verified.clone().text()).toBe(200);
-					expect(await resumeOwner(id)).toBe(owner.id);
-					expect(await userExists(pending.guest.id)).toBe(false);
-				}
+				const verified = await send("two-factor/verify-totp", { code: await totp(owner.id) }, accepted.jar);
+				expect(verified.status, await verified.clone().text()).toBe(200);
+				expect(await resumeOwner("deadline-guest")).toBe(owner.id);
+				expect(await userExists(accepted.guest.id)).toBe(false);
 			} finally {
-				await pool.query("DROP TRIGGER delay_session ON session");
-				await pool.query("DROP FUNCTION delay_session()");
+				await pool.query("DROP TRIGGER expire_guest_link ON session");
+				await pool.query("DROP FUNCTION expire_guest_link()");
 			}
 
 			const expired = await startGuest("expired-guest", owner.credentials);

@@ -7,6 +7,7 @@ import { RPCHandler } from "@orpc/server/fetch";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { savedItemDataSchema } from "@reactive-resume/schema/career";
+import { truncateCascade } from "../../test-database";
 
 const fixture = vi.hoisted(() => ({ db: undefined as ReturnType<typeof drizzle> | undefined }));
 vi.mock("@reactive-resume/db/client", () => ({
@@ -119,7 +120,7 @@ describe.skipIf(!databaseUrl)("application and document letter-link reconciliati
 	});
 
 	beforeEach(async () => {
-		await pool.query('TRUNCATE "user" CASCADE');
+		await truncateCascade(pool, ["user"]);
 		for (const id of ["alice", "bob"])
 			await pool.query('INSERT INTO "user" (id,name,email,username,display_username) VALUES ($1,$1,$2,$1,$1)', [
 				id,

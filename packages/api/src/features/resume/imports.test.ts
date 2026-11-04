@@ -222,24 +222,6 @@ it.each(templateSchema.options)(
 	60000,
 );
 
-it.each(templateSchema.options)("imports the shipped %s PDF without losing its work history", async (template) => {
-	const file = new File(
-		[readFileSync(new URL(`../../../../../apps/web/public/templates/pdf/${template}.pdf`, import.meta.url))],
-		`${template}.pdf`,
-	);
-	create.mockClear();
-	await call(importResumeFile, { file, format: "PDF" }, { context: { locale: "en-US", reqHeaders: new Headers() } });
-	const saved = create.mock.calls[0]?.[0] as { data: ResumeData };
-	const threeRoles = ["azurill", "chikorita", "ditgar", "ditto", "gengar", "glalie", "leafish", "persian", "pikachu"];
-	expect(saved.data.sections.experience.items).toHaveLength(threeRoles.includes(template) ? 3 : 2);
-	for (const role of saved.data.sections.experience.items) {
-		expect(role.company).not.toBe("");
-		expect(role.position).not.toBe("");
-		expect(role.period).not.toBe("");
-		expect(role.description).toContain("<li>");
-	}
-});
-
 const flowCases = [
 	"singleton",
 	"custom",

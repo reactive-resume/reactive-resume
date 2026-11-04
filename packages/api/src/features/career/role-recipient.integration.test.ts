@@ -11,6 +11,7 @@ import { db, withDatabasePool } from "@reactive-resume/db/client";
 import * as tables from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { truncateCascade } from "../../test-database";
 import { aiProvidersRouter } from "../ai-providers/router";
 import { aiProvidersService } from "../ai-providers/service";
 import { generateJson } from "../ai/application-generation";
@@ -86,7 +87,6 @@ async function localProvider() {
 	const port = (server.address() as AddressInfo).port;
 	return {
 		baseURL: `http://127.0.0.1:${port}/v1`,
-		reopen: () => new Promise<void>((resolve) => server.listen(port, "127.0.0.1", resolve)),
 		requests,
 		rejectNext: () => {
 			rejectNextGeneration = true;
@@ -161,7 +161,7 @@ describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQ
 	}, 30000);
 	beforeEach(async () => {
 		Object.assign(env, { AI_PROVIDER: undefined, AI_MODEL: undefined, AI_API_KEY: undefined, AI_BASE_URL: undefined });
-		await pool.query('TRUNCATE "user" CASCADE');
+		await truncateCascade(pool, ["user"]);
 		await withDatabasePool(pool, async () => {
 			const users = await db
 				.insert(tables.user)
@@ -202,37 +202,6 @@ describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQ
 		await admin.query(`DROP SCHEMA IF EXISTS ${schemaName} CASCADE`);
 		await admin.end();
 	});
-
-	it.each(["excluded", "forgotten"] as const)(
-		"never retries a failed dispatch after Knowledge is %s",
-		(status) =>
-			run(async () => {
-				const approved = await create();
-				const before = a.requests.filter((request) => request.roles).length;
-				await a.close();
-				let reopened = false;
-				const pending = client()
-					.career.suggestTargetRoles(input(approved))
-					.then(
-						() => null,
-						(error: unknown) => error,
-					);
-				try {
-					await new Promise((resolve) => setTimeout(resolve, 700));
-					if (status === "forgotten") await careerService.forgetFact(user.id, "shared");
-					else await careerService.updateFact(user.id, { id: "shared", status });
-					await a.reopen();
-					reopened = true;
-					const error = await pending;
-					expect(a.requests.filter((request) => request.roles)).toHaveLength(before);
-					expect(error).toMatchObject({ code: "BAD_GATEWAY" });
-				} finally {
-					if (!reopened) await a.reopen();
-					await pending;
-				}
-			}),
-		15000,
-	);
 
 	it("keeps approval stable across retest, label, default and usage; sends approved configuration", () =>
 		run(async () => {

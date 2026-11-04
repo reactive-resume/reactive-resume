@@ -8,6 +8,7 @@ import { Pool } from "pg";
 import * as tables from "@reactive-resume/db/schema";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { truncateCascade } from "../../test-database";
 import { createPublicResumePdf } from "../resume/public-pdf";
 import { runStorageCleanup } from "../storage/cleanup";
 
@@ -131,7 +132,7 @@ describe.skipIf(!databaseUrl)("Trash batch operations", () => {
 	};
 
 	async function seed() {
-		await pool.query('TRUNCATE released_username, storage_cleanup_job, "user" CASCADE');
+		await truncateCascade(pool, ["released_username", "storage_cleanup_job", "user"]);
 		await getDb()
 			.insert(tables.user)
 			.values(

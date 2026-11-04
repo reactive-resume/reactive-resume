@@ -6,6 +6,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { truncateCascade } from "../../test-database";
 import { coverLettersRouter } from "./router";
 import { coverLetterService as service } from "./service";
 
@@ -55,9 +56,16 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		await admin?.end();
 	});
 	beforeEach(async () => {
-		await getPool().query(
-			'TRUNCATE "user",released_username,resume,resume_version,application,cover_letter,agent_threads,agent_messages CASCADE',
-		);
+		await truncateCascade(getPool(), [
+			"user",
+			"released_username",
+			"resume",
+			"resume_version",
+			"application",
+			"cover_letter",
+			"agent_threads",
+			"agent_messages",
+		]);
 		await getPool().query(
 			"INSERT INTO \"user\" (id,name,email,username,display_username) VALUES ('alice','alice','alice@example.test','alice','alice'),('bob','bob','bob@example.test','bob','bob')",
 		);

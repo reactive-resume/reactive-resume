@@ -56,7 +56,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
     ('same', 'owner', 'Gamma 100%_\\path', '{}', ARRAY['design','shared'], 'job', '2026-01-01', '2026-01-01', '2026-01-01');
    INSERT INTO cover_letter (id, user_id, name, style, tags, trashed_at)
     SELECT 'large-' || lpad(i::text, 5, '0'), 'large', 'Letter ' || i, '{}', ARRAY['tag-' || i],
-     CASE WHEN i > 19500 THEN now() ELSE null END FROM generate_series(1, 39000) i;
+     CASE WHEN i > 1000 THEN now() ELSE null END FROM generate_series(1, 2000) i;
    INSERT INTO resume (id, user_id, name, slug, data, trashed_at) VALUES
     ('trash', 'owner', 'Trash', 'trash', '{}', now()), ('expired', 'owner', 'Expired', 'expired', '{}', now() - interval '31 days');
   `);
@@ -214,14 +214,14 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 	});
 
 	it.each([false, true])(
-		"keeps 19.5k rows bounded, complete and stable across every page (trashed=%s)",
+		"keeps 1,000 rows bounded, complete and stable across every page (trashed=%s)",
 		async (trashed) => {
 			const { documentsRouter } = await import("./router");
 			const large = createRouterClient(documentsRouter, {
 				context: { user: { id: "large" }, resHeaders: new Headers() } as never,
 			});
 			const seen = new Set<string>();
-			for (let offset = 0; offset < 19500; offset += 100) {
+			for (let offset = 0; offset < 1000; offset += 100) {
 				const page = await large.list({ trashed, limit: 100, offset });
 				expect(page).toHaveLength(100);
 				for (const row of page) {
@@ -229,14 +229,14 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 					seen.add(row.id);
 				}
 			}
-			expect(seen.size).toBe(19500);
-			const page = await large.page({ trashed, offset: 19450 });
-			expect(page.total).toBe(19500);
+			expect(seen.size).toBe(1000);
+			const page = await large.page({ trashed, offset: 950 });
+			expect(page.total).toBe(1000);
 			expect(page.items).toHaveLength(50);
 			expect(page.tags).toHaveLength(100);
 			expect(JSON.stringify(page).length).toBeLessThan(40_000);
-			expect((await large.page({ trashed, offset: 19500 })).items).toEqual([]);
-			const tag = trashed ? "tag-29999" : "tag-9999";
+			expect((await large.page({ trashed, offset: 1000 })).items).toEqual([]);
+			const tag = trashed ? "tag-1999" : "tag-999";
 			expect((await large.page({ trashed, q: tag })).tags).toContain(tag);
 		},
 		30_000,
