@@ -201,6 +201,60 @@ test("the builder shows its own frame while a resume loads", async ({ authPage: 
 });
 
 test.describe("homepage", () => {
+	for (const width of [1440, 390])
+		for (const initial of ["light", "dark"] as const)
+			test(`warms the other theme before the footer enters at ${width}px from ${initial}`, async ({ page }) => {
+				await page.setViewportSize({ width, height: 900 });
+				await page.emulateMedia({ colorScheme: initial });
+				await page.addInitScript(() => {
+					const decoded: string[] = [];
+					(window as Window & { homepageDecoded: string[] }).homepageDecoded = decoded;
+					const original = HTMLImageElement.prototype.decode;
+					HTMLImageElement.prototype.decode = function () {
+						const src = this.currentSrc || this.src;
+						return original.call(this).then(() => {
+							decoded.push(src);
+						});
+					};
+				});
+				await page.goto("/");
+				await page.waitForLoadState("networkidle");
+				await expect
+					.poll(() => page.locator("html").evaluate((el) => el.classList.contains("dark")))
+					.toBe(initial === "dark");
+				const footer = page.locator('[data-scene="12"]');
+				await footer.evaluate((el) =>
+					scrollTo({ top: el.getBoundingClientRect().top + scrollY - 1700, behavior: "instant" }),
+				);
+				const decoded = () =>
+					page.evaluate(() =>
+						(window as Window & { homepageDecoded: string[] }).homepageDecoded.filter((src) =>
+							src.includes("footer-desk-"),
+						),
+					);
+				await expect.poll(decoded).toHaveLength(1);
+				expect((await decoded())[0]).toContain(`footer-desk-${initial}`);
+				await page
+					.getByRole("button", {
+						name: initial === "light" ? "Switch to dark mode" : "Switch to light mode",
+						exact: true,
+					})
+					.first()
+					.click();
+				await expect
+					.poll(() => page.locator("html").evaluate((el) => el.classList.contains("dark")))
+					.toBe(initial === "light");
+				await page.mouse.move(width / 2, 450);
+				const before = await page.evaluate(() => scrollY);
+				await page.mouse.wheel(0, 80);
+				await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before);
+				await expect.poll(decoded).toHaveLength(2);
+				expect((await decoded())[1]).toContain(`footer-desk-${initial === "light" ? "dark" : "light"}`);
+				const top = await footer.evaluate((el) => el.getBoundingClientRect().top);
+				expect(top).toBeGreaterThan(900);
+				expect(top).toBeLessThan(1800);
+			});
+
 	test("warms only nearby scenes and keeps scrolling when checkVisibility is unavailable", async ({ page }) => {
 		await page.setViewportSize({ width: 1440, height: 900 });
 		await page.addInitScript(() => {
