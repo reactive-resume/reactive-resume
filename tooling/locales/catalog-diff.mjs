@@ -12,12 +12,12 @@ const EXAMPLES = 3;
 const TAG = /<\/?\d+\s*\/?>/y;
 
 /**
- * ICU arguments and numbered tags of a message, mapped to the innermost plural branch keys they occur in ("" = outside
- * any plural), plus every plural key the message uses. Honors ICU apostrophe quoting, so `'{name}'` is literal text.
+ * ICU arguments and numbered tags of a message, mapped to the innermost plural form they occur in (`<argument>:<key>`,
+ * "" = outside any plural), plus each plural argument's forms. Honors ICU apostrophe quoting, so `'{name}'` is literal.
  */
 function signature(text) {
 	const tokens = new Map();
-	const pluralKeys = new Set();
+	const plurals = new Map();
 	let i = 0;
 	const add = (token, branch) => tokens.set(token, (tokens.get(token) ?? new Set()).add(branch));
 	const skipSpace = () => {
@@ -72,9 +72,9 @@ function signature(text) {
 			const key = readUntil(" \t\n{}");
 			skipSpace();
 			if (text[i] !== "{") continue; // offset:n
-			if (type !== "select") pluralKeys.add(key);
+			if (type !== "select") plurals.set(name, (plurals.get(name) ?? new Set()).add(key));
 			i++;
-			message(type === "select" ? branch : key, type !== "select");
+			message(type === "select" ? branch : `${name}:${key}`, type !== "select");
 			i++;
 		}
 		i++;
@@ -83,17 +83,27 @@ function signature(text) {
 		message("", false);
 		i++;
 	}
-	return { tokens, pluralKeys };
+	return { tokens, plurals };
 }
 
-/** Whether the translation lacks `token` in `branch`, the plural form where the source uses it. */
+/** Whether the translation lacks `token` in `branch`, the plural form (or "" = every form) where the source uses it. */
 function lacks(translation, token, branch) {
-	const found = translation.tokens.get(token);
-	if (branch === "") return !found;
-	// Plural forms the language doesn't have are legitimately omitted; a token hoisted outside the plural still counts.
-	// Languages whose `one` also covers 21, 31… move the singular text to an exact `=1` branch.
-	if (!translation.pluralKeys.has(branch) || found?.has(branch) || found?.has("")) return false;
-	return !(branch === "one" && found?.has("=1"));
+	const found = translation.tokens.get(token) ?? new Set();
+	if (found.has("")) return false;
+	// Outside any plural in the source: a translation may move it into a plural, but then into every form of it.
+	if (branch === "")
+		return ![...translation.plurals].some(([plural, keys]) => [...keys].every((key) => found.has(`${plural}:${key}`)));
+	const separator = branch.lastIndexOf(":");
+	const plural = branch.slice(0, separator);
+	const key = branch.slice(separator + 1);
+	const keys = translation.plurals.get(plural);
+	// A renamed plural is reported on its own; don't also report every argument inside it.
+	if (!keys) return found.size === 0;
+	// Forms the language doesn't have are legitimately omitted, but ICU requires `other`.
+	if (!keys.has(key)) return key === "other";
+	if (found.has(branch)) return false;
+	// Languages whose `one` also covers 21, 31… move the singular text to an exact `=1` form.
+	return !(key === "one" && found.has(`${plural}:=1`));
 }
 
 /** Arguments or tags the translation drops (outside plural forms it legitimately omits) or invents. */
@@ -104,7 +114,15 @@ export function mismatch(source, translation) {
 		.filter(([token, branches]) => [...branches].some((branch) => lacks(actual, token, branch)))
 		.map(([token]) => token);
 	const extra = [...actual.tokens.keys()].filter((token) => !expected.tokens.has(token));
-	return [...missing.map((token) => `missing ${token}`), ...extra.map((token) => `extra ${token}`)].join(", ");
+	// Without `other`, formatting any count outside the listed forms throws.
+	const noOther = [...actual.plurals]
+		.filter(([plural, keys]) => expected.plurals.has(plural) && !keys.has("other"))
+		.map(([plural]) => plural);
+	return [
+		...missing.map((token) => `missing ${token}`),
+		...extra.map((token) => `extra ${token}`),
+		...noOther.map((plural) => `missing other form in {${plural}, plural}`),
+	].join(", ");
 }
 
 const clip = (text) => JSON.stringify(text.length > 70 ? `${text.slice(0, 69)}…` : text);

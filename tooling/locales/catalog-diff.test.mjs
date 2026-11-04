@@ -24,6 +24,21 @@ test.each([
 		"{0, plural, =1 {{1} jednom} one {{2} # put} other {{2} # puta}}",
 		"",
 	],
+	[
+		"{0, plural, one {Item} other {{1} items}}",
+		"{0, plural, one {Element}}",
+		"missing {1}, missing other form in {0, plural}",
+	],
+	[
+		"{name}: {0, plural, one {# file} other {# files}}",
+		"{0, plural, one {{name}: # Datei} other {# Dateien}}",
+		"missing {name}",
+	],
+	[
+		"{0, plural, one {{1} once} other {# times}} {2, plural, one {day} other {# days}}",
+		"{0, plural, one {einmal} other {# Mal}} {2, plural, one {{1} Tag} other {# Tage}}",
+		"missing {1}",
+	],
 ])("%s → %s", (source, translation, problem) => {
 	expect(mismatch(source, translation)).toBe(problem);
 });

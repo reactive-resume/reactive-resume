@@ -50,14 +50,18 @@ function candidatePaths(markdown) {
 					.replace(/:\d+(-\d+)?$/, ""),
 			)
 			.filter((token) => !/[*<>{}|…]|\.\.\./.test(token) && !token.startsWith("-"))
-			.filter((token) => {
+			// An inline `./path` is a path relative to the doc; command blocks keep `./` relative to where they run.
+			.map((token) => (!command && token.startsWith("./") ? { path: token.slice(2), explicit: true } : { path: token }))
+			.filter(({ path: token, explicit }) => {
+				if (explicit) return token.length > 0;
 				const first = token.split("/")[0];
 				if (topLevel.has(first)) return token.includes("/") || /\.[a-z]+$/i.test(token);
 				// Inline file paths under a top-level folder that is gone, or relative to the doc's folder. Command blocks
 				// are skipped here: `pnpm --filter <pkg> exec …` arguments are relative to the package. URLs and package
 				// names never match.
 				return !command && token.includes("/") && /^[\w-]+$/.test(first) && /\.[a-z0-9]+$/i.test(token);
-			}),
+			})
+			.map(({ path }) => path),
 	);
 }
 
