@@ -68,7 +68,7 @@ within GHCR. It adds no annotations and checks that each resulting alias has the
 Embedded SBOM/provenance manifests and existing digest-addressed signatures stay intact; the
 workflow also signs the promoted digest.
 
-Promotion does not wait for a running main build: let it finish first, so the source images exist.
+Promotion waits up to 35 minutes for a running main build to publish the source images (`tooling/docker/promote.sh`), then fails if they are still missing.
 Missing images or incomplete indexes fail before aliases move; promotion never falls back to
 a rebuild. For an unpublished commit on a ref containing this workflow version, run a
 manual `release=false` build at that ref first, then rerun promotion. Historical refs with

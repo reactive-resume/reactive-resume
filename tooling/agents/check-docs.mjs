@@ -26,15 +26,6 @@ const docs = [
 	...tracked.filter((path) => /^\.agents\/skills\/[^/]+\/SKILL\.md$/.test(path)),
 ].filter((path) => existsSync(join(root, path)) && !HISTORICAL.some((prefix) => path.startsWith(prefix)));
 
-function isIgnored(path) {
-	try {
-		git("check-ignore", "-q", "--no-index", path);
-		return true;
-	} catch {
-		return false;
-	}
-}
-
 function candidatePaths(markdown) {
 	const spans = [...markdown.matchAll(/```[^\n]*\n([\s\S]*?)```|`([^`\n]+)`/g)].map((match) => ({
 		text: match[1] ?? match[2],
@@ -77,7 +68,8 @@ for (const doc of docs) {
 	const missing = new Set();
 	for (const path of [...candidatePaths(markdown), ...relativeLinks(markdown, doc)]) {
 		const found = existsSync(join(root, path)) || existsSync(join(root, dirname(doc), path));
-		if (!found && !isIgnored(path)) missing.add(path);
+		// Ignored and generated paths get no pass: a doc that names a build output would hide a stale reference.
+		if (!found) missing.add(path);
 	}
 	for (const path of missing) problems.push(`${doc}: names \`${path}\`, which doesn't exist`);
 }
