@@ -1,5 +1,5 @@
 import type { DbOrTx } from "@reactive-resume/db/client";
-import { and, asc, eq, inArray, lte } from "drizzle-orm";
+import { and, asc, eq, inArray, lte, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { generateId } from "@reactive-resume/utils/string";
@@ -94,7 +94,9 @@ function claimNext(input: RunStorageCleanupInput) {
 			.where(
 				and(
 					eq(schema.storageCleanupJob.status, "pending"),
-					lte(schema.storageCleanupJob.nextAttemptAt, now),
+					// Database clock: rows enqueued with the column's now() default carry microseconds, so a millisecond
+					// JavaScript time can still read a job written moments earlier as not yet due.
+					lte(schema.storageCleanupJob.nextAttemptAt, sql`now()`),
 					input.ownerId ? eq(schema.storageCleanupJob.ownerId, input.ownerId) : undefined,
 					input.storageKeys ? inArray(schema.storageCleanupJob.storageKey, [...new Set(input.storageKeys)]) : undefined,
 				),
