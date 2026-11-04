@@ -130,8 +130,12 @@ function annotationTarget(doc: ExtractedDocument, span: TextSpan): string | unde
 	return targets.get(span);
 }
 
-/** Separate a corroborated identity rail before its name and an adjacent label become one field. */
+/**
+ * Separate a corroborated identity rail before its name and an adjacent label become one field. Identity sits on
+ * page 1; a later page's contact-bearing entry (a reference's phone) beside a heading rail is body text.
+ */
 function separateIdentityRail(page: PageGeometry): ImportPage {
+	if (page.pageNumber !== 1) return page;
 	const gutter = page.gutter;
 	const spans = page.lines.flatMap((line) => line.spans);
 	const candidates = gutter && gutter.coverage >= 0.85 ? [gutter.x + gutter.width / 2] : [];
