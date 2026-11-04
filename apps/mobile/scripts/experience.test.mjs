@@ -2689,6 +2689,7 @@ let todayApplications = [];
 let todayOffers = [];
 let todayOfferState = { isPending: false, isError: false };
 let todayNow = new Date();
+let todaySchedules = [];
 const { TodayScreen } = load("features/career/today.tsx", {
 	"./prepare-now": { PrepareNow: "PrepareNow" },
 	"@/features/applications/stage-actions": { useOfferHints: () => undefined, offerHintFor: () => undefined },
@@ -2713,7 +2714,7 @@ const { TodayScreen } = load("features/career/today.tsx", {
 		useNow: () => todayNow,
 		useOffers: () => ({ data: todayOffers, ...todayOfferState }),
 		useTodayQueries: () => ({
-			schedules: { data: [] },
+			schedules: { data: todaySchedules },
 			opportunities: { data: discovered },
 			notifications: { data: [] },
 			briefings: { data: [] },
@@ -2753,6 +2754,52 @@ assert.equal(
 );
 assert.match(JSON.stringify(triageTree), /1 updated; 1 failed/);
 console.log("PASS native discovery serial bulk triage, partial-failure selection and success suppression");
+
+reset();
+const completedPreparation = {
+	id: "completed-preparation",
+	kind: "prepare",
+	enabled: true,
+	intervalDays: null,
+	lastQueuedAt: "2026-10-31T08:00:00Z",
+	nextRunAt: "2026-10-31T08:00:00Z",
+	lastRun: { status: "completed" },
+	timezone: "UTC",
+	query: "",
+};
+for (const [change, expected] of [
+	[{}, "Ran 31 Oct · done for this interview"],
+	[{ enabled: false }, "Ran 31 Oct · done for this interview"],
+	[{ kind: "follow-up" }, "Done · 31 Oct"],
+	[{ lastRun: { status: "queued" } }, "Running · 31 Oct"],
+	[{ lastRun: { status: "running" } }, "Running · 31 Oct"],
+	[{ lastRun: { status: "failed" } }, "Failed · open to check it · 31 Oct"],
+	[{ intervalDays: 1, lastRun: { status: "failed" } }, "Last run failed · 31 Oct"],
+	[{ lastQueuedAt: null, lastRun: null }, "On · 31 Oct"],
+	[{ lastQueuedAt: null, lastRun: null, enabled: false }, "Paused · 31 Oct"],
+	[{ intervalDays: 1 }, "On · 31 Oct"],
+]) {
+	todaySchedules = [{ ...completedPreparation, ...change }];
+	const tree = render(TodayScreen);
+	const text = nodes(tree)
+		.filter((node) => node.type === "Text")
+		.map((node) => node.props.children.flat(Infinity).join(""));
+	assert.ok(text.includes(expected), `Missing schedule status: ${expected}`);
+	const toggle = control(tree, todaySchedules[0].kind);
+	assert.equal(toggle.value, todaySchedules[0].enabled);
+	assert.equal(toggle.disabled, false);
+}
+todaySchedules = [completedPreparation];
+control(render(TodayScreen), "prepare").onValueChange(true);
+assert.equal(
+	nodes(render(TodayScreen)).find((node) => node.type === "ScheduleSheet").props.schedule,
+	completedPreparation,
+	"turning a completed one-off on still opens review rather than dispatching another run",
+);
+todaySchedules = [];
+console.log(
+	"PASS native completed preparation explains one-interview lifetime and preserves statuses, dates and review",
+);
 
 reset();
 todayNow = new Date("2030-01-03T10:00:00Z");
