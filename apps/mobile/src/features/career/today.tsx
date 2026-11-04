@@ -170,6 +170,18 @@ export function TodayScreen() {
 			}),
 		);
 	};
+	const scheduleStatus = (row: Schedule) => {
+		let label = row.enabled ? t`On` : t`Paused`;
+		// A one-off's queued run goes by its outcome: running or retrying, failed after its last try, or done.
+		if (row.lastRun?.status === "failed") {
+			label = row.intervalDays ? t`Last run failed` : t`Failed · open to check it`;
+		} else if (!row.intervalDays && row.lastQueuedAt) {
+			if (row.lastRun?.status === "queued" || row.lastRun?.status === "running") label = t`Running`;
+			else if (row.kind === "prepare") return t`Ran ${time.when(row.nextRunAt)} · done for this interview`;
+			else label = t`Done`;
+		}
+		return `${label} · ${time.when(row.nextRunAt)}`;
+	};
 	return (
 		<Screen scroll={false} contentStyle={{ padding: 0 }}>
 			<ScrollView
@@ -558,21 +570,7 @@ export function TodayScreen() {
 											: row.query ||
 												applications.data?.find((application) => application.id === row.applicationId)?.company}
 									</Text>
-									{/* A one-off's queued run goes by its outcome: running or retrying, failed after its last try, or done. */}
-									<Text color={row.lastRun?.status === "failed" ? "dangerText" : "ink3"}>
-										{row.lastRun?.status === "failed"
-											? row.intervalDays
-												? t`Last run failed`
-												: t`Failed · open to check it`
-											: !row.intervalDays && row.lastQueuedAt
-												? row.lastRun?.status === "queued" || row.lastRun?.status === "running"
-													? t`Running`
-													: t`Done`
-												: row.enabled
-													? t`On`
-													: t`Paused`}{" "}
-										· {time.when(row.nextRunAt)}
-									</Text>
+									<Text color={row.lastRun?.status === "failed" ? "dangerText" : "ink3"}>{scheduleStatus(row)}</Text>
 									{row.intervalDays ? (
 										<Text color="ink3">
 											{plural(row.intervalDays, { one: "Every day", other: "Every # days" })} · {row.timezone}
