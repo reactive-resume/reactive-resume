@@ -34,6 +34,7 @@ export function SecuritySection() {
 	return (
 		<SettingsSection id="security" title={<Trans>Sign-in & security</Trans>}>
 			<SettingsRow
+				id="password"
 				title={<Trans>Password</Trans>}
 				description={
 					password ? (
@@ -54,50 +55,68 @@ export function SecuritySection() {
 				) : null}
 			</SettingsRow>
 
-			{password && (
-				<SettingsRow
-					title={<Trans>Two-step verification</Trans>}
-					description={<Trans>A code from an authenticator app at sign-in</Trans>}
-				>
-					<Switch
-						aria-label={t`Two-step verification`}
-						checked={twoFactor}
-						// Turning it on walks through the QR code and backup codes; turning it off asks for the password.
-						onCheckedChange={() =>
-							openDialog(twoFactor ? "auth.two-factor.disable" : "auth.two-factor.enable", undefined)
-						}
+			<div id="two-step" className="scroll-mt-6">
+				{!password && (
+					<SettingsRow
+						title={<Trans>Two-step verification</Trans>}
+						description={<Trans>Set a password to turn on two-step verification.</Trans>}
 					/>
-				</SettingsRow>
-			)}
+				)}
+				{password && (
+					<SettingsRow
+						title={<Trans>Two-step verification</Trans>}
+						description={<Trans>A code from an authenticator app at sign-in</Trans>}
+					>
+						<Switch
+							aria-label={t`Two-step verification`}
+							checked={twoFactor}
+							// Turning it on walks through the QR code and backup codes; turning it off asks for the password.
+							onCheckedChange={() =>
+								openDialog(twoFactor ? "auth.two-factor.disable" : "auth.two-factor.enable", undefined)
+							}
+						/>
+					</SettingsRow>
+				)}
 
-			{password && twoFactor && <BackupCodesRow />}
+				{password && twoFactor && <BackupCodesRow />}
+			</div>
 
 			<Passkeys />
 
 			<SessionsRows />
 
-			{social.map((provider) => {
-				const account = getAccountByProviderId(provider);
-				const name =
-					provider === "custom" ? (enabledProviders.custom ?? getProviderName(provider)) : getProviderName(provider);
-				return (
-					<SettingsRow
-						key={provider}
-						title={name}
-						description={hasAccount(provider) ? <Trans>Connected</Trans> : <Trans>Not connected</Trans>}
-					>
-						{account ? (
-							<Button size="sm" variant="ghost" onClick={() => void unlink(provider, account.id)}>
-								<Trans>Disconnect</Trans>
-							</Button>
-						) : (
-							<Button size="sm" variant="secondary" onClick={() => void link(provider)}>
-								<Trans>Connect</Trans>
-							</Button>
-						)}
-					</SettingsRow>
-				);
-			})}
+			<div id="linked-accounts" className="grid scroll-mt-6">
+				<h3 className="text-sm font-medium">
+					<Trans>Linked accounts</Trans>
+				</h3>
+				{social.length === 0 && (
+					<p className="text-[13px] text-ink-3">
+						<Trans>No social sign-in providers are available on this server.</Trans>
+					</p>
+				)}
+				{social.map((provider) => {
+					const account = getAccountByProviderId(provider);
+					const name =
+						provider === "custom" ? (enabledProviders.custom ?? getProviderName(provider)) : getProviderName(provider);
+					return (
+						<SettingsRow
+							key={provider}
+							title={name}
+							description={hasAccount(provider) ? <Trans>Connected</Trans> : <Trans>Not connected</Trans>}
+						>
+							{account ? (
+								<Button size="sm" variant="ghost" onClick={() => void unlink(provider, account.id)}>
+									<Trans>Disconnect</Trans>
+								</Button>
+							) : (
+								<Button size="sm" variant="secondary" onClick={() => void link(provider)}>
+									<Trans>Connect</Trans>
+								</Button>
+							)}
+						</SettingsRow>
+					);
+				})}
+			</div>
 		</SettingsSection>
 	);
 }
@@ -165,7 +184,7 @@ function Passkeys() {
 	});
 
 	return (
-		<div className="grid">
+		<div id="passkeys" className="grid scroll-mt-6">
 			<SettingsRow
 				title={<Trans>Passkeys</Trans>}
 				description={

@@ -23,6 +23,21 @@ On a phone, **Settings** opens a short list first. Tap **Account**.
   />
 </Frame>
 
+## Manage sign-in security in the native app
+
+In the iOS or Android app, open **Settings → Account** and select **Email**, **Password**, **Two-step verification**, **Passkeys** or **Linked accounts**. Each opens its own section in your server's authenticated browser tab inside the app. Native sign-in does not copy your app credentials into the browser; you may need to sign in there.
+
+The browser must use the same account as the app. If another account is signed in, management controls stay hidden. Choose **Sign in again** and sign in with the account that opened the settings. You return to the section you selected. Closing the browser without changing anything leaves your account unchanged.
+
+<Frame caption="A different browser account must sign in again before managing security">
+  <img
+    src="/images/guides/updating-your-profile/native-browser-account-check.png"
+    alt="Account settings hiding management controls and asking to sign in with the account that opened these settings, with a Sign in again button"
+  />
+</Frame>
+
+Password checks, current-address approval, passkey verification and the restriction against disconnecting your last sign-in method still apply. Two-step verification needs a password; servers without social sign-in providers say so under **Linked accounts**. When you close the browser, the app refreshes your profile and API-key list if the opening account is still signed in.
+
 ## Change your name, username or email
 
 Click a field, type the new value, then press <kbd>Enter</kbd> or click anywhere else. The change saves as soon as you leave the field. Press <kbd>Esc</kbd> before leaving to undo what you typed.

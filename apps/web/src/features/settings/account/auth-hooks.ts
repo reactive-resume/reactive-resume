@@ -99,7 +99,7 @@ export function useAuthProviderActions() {
 
 		const { error } = await authClient.linkSocial({
 			provider,
-			callbackURL: "/dashboard/settings/account",
+			callbackURL: `/dashboard/settings/account${window.location.search}#linked-accounts`,
 		});
 
 		if (error) {

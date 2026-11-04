@@ -37,6 +37,7 @@ const usernameSchema = z
 const emailSchema = z.email().trim();
 
 type FieldProps = {
+	anchor?: string;
 	label: string;
 	value: string;
 	/** Saves the new value; resolves to an error message, or null when it saved. */
@@ -55,6 +56,7 @@ type FieldProps = {
 
 /** A text setting that saves when it loses focus. Invalid or failed values stay, with the reason under them. */
 function SavedField({
+	anchor,
 	label,
 	value,
 	save,
@@ -114,7 +116,7 @@ function SavedField({
 	};
 
 	return (
-		<div className={cn("grid content-start gap-1.5", className)}>
+		<div id={anchor} className={cn("grid scroll-mt-6 content-start gap-1.5", className)}>
 			<label htmlFor={id} className="text-xs font-medium text-ink-2">
 				{label}
 			</label>
@@ -190,7 +192,10 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 		// Without email delivery the approval link never arrives, so the change could never finish.
 		if (!smtpEnabled)
 			return t`This server can't send email, so the address can't be changed here. Ask the person who runs it.`;
-		const { error } = await authClient.changeEmail({ newEmail: email, callbackURL: "/dashboard/settings/account" });
+		const { error } = await authClient.changeEmail({
+			newEmail: email,
+			callbackURL: `/dashboard/settings/account${window.location.search}#email`,
+		});
 		if (error) return getReadableErrorMessage(error, t`Couldn't change the email. Try again.`);
 		// A verified address approves the change first; Better Auth then sends the new address its own link.
 		const currentEmail = user.email;
@@ -211,7 +216,7 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 	const resendVerification = async () => {
 		const { error } = await authClient.sendVerificationEmail({
 			email: user.email,
-			callbackURL: "/dashboard/settings/account",
+			callbackURL: `/dashboard/settings/account${window.location.search}#email`,
 		});
 		toast.add(
 			error
@@ -221,7 +226,7 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 	};
 
 	return (
-		<SettingsSection title={<Trans>Account details</Trans>}>
+		<SettingsSection id="account-details" title={<Trans>Account details</Trans>}>
 			<ProfilePhoto name={user.name} image={user.image ?? null} onChange={(image) => updateUser({ image })} />
 
 			<div className="grid gap-3 sm:grid-cols-2">
@@ -250,6 +255,7 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 					hint={<Trans>Part of every public link. Old links keep working for 30 days after a change.</Trans>}
 				/>
 				<SavedField
+					anchor="email"
 					className="sm:col-span-2"
 					type="email"
 					label={t`Email`}
