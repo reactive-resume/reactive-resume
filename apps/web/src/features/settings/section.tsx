@@ -20,7 +20,13 @@ export function SettingsSection({ title, description, action, children, classNam
 	const ref = useRef<HTMLElement>(null);
 	// A link to this group (an agent's settings handoff, an old settings address) lands on it, not at the page top.
 	useEffect(() => {
-		if (id && window.location.hash === `#${id}`) ref.current?.scrollIntoView({ block: "start" });
+		const scroll = () => {
+			const target = document.getElementById(window.location.hash.slice(1));
+			if (target && ref.current?.contains(target)) target.scrollIntoView({ block: "start" });
+		};
+		scroll();
+		window.addEventListener("hashchange", scroll);
+		return () => window.removeEventListener("hashchange", scroll);
 	}, [id]);
 	return (
 		<section
@@ -44,15 +50,16 @@ export function SettingsSection({ title, description, action, children, classNam
 }
 
 type SettingsRowProps = {
+	id?: string;
 	title: ReactNode;
 	description?: ReactNode;
 	children?: ReactNode;
 };
 
 /** One setting: what it is on the left, its control on the right. */
-export function SettingsRow({ title, description, children }: SettingsRowProps) {
+export function SettingsRow({ id, title, description, children }: SettingsRowProps) {
 	return (
-		<div className="flex flex-wrap items-center gap-3 py-2">
+		<div id={id} className="flex scroll-mt-6 flex-wrap items-center gap-3 py-2">
 			<div className="grid min-w-0 flex-1 gap-0.5">
 				<span className="text-sm font-medium">{title}</span>
 				{description && <span className="text-[13px] text-ink-3">{description}</span>}

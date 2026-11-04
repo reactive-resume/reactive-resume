@@ -23,7 +23,10 @@ export function registerAccountReset(reset: () => void) {
  */
 export function setAccountScope(id: string | null) {
 	if (id === accountId) return;
-	if (accountId !== null) resetAccountState?.();
+	if (accountId !== null) {
+		resetAccountState?.();
+		broadcastAccountChange();
+	}
 	accountId = id;
 	generation += 1;
 }
