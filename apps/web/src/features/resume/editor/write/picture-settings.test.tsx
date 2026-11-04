@@ -195,7 +195,7 @@ it("opens the file picker directly from Add before showing photo settings", () =
 	client.clear();
 });
 
-it.each(["current", "resume", "locked", "account"])(
+it.each(["current", "resume", "locked", "account", "url"])(
 	"an upload only updates its current owner URL (%s)",
 	async (scenario) => {
 		let finish: (value: { url: string }) => void = () => {};
@@ -230,6 +230,10 @@ it.each(["current", "resume", "locked", "account"])(
 				invalidateAccountScope();
 				useResumeStore.getState().initialize({ ...initial, data: structuredClone(initial.data) });
 			}
+			if (scenario === "url")
+				useResumeStore.getState().updateResumeData((draft) => {
+					draft.picture.url = "/api/uploads/owner/pictures/manual.png";
+				});
 			if (scenario === "current")
 				useResumeStore.getState().updateResumeData((draft) => {
 					draft.picture.size = 144;

@@ -712,12 +712,13 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 			toast.add({ type: "error", description: t`This photo is larger than 10 MB. Use Crop and upload to shrink it.` });
 			return;
 		}
+		const originalUrl = useResumeStore.getState().resume?.data.picture.url;
 		const toastId = toast.add({ type: "loading", description: t`Uploading photo…` });
 
 		uploadFile(file, {
 			onSuccess: ({ url }) => {
 				toast.close(toastId);
-				if (!current()) return;
+				if (!current() || useResumeStore.getState().resume?.data.picture.url !== originalUrl) return;
 				form.setFieldValue("url", url);
 				updateResumeData(
 					(draft) => {

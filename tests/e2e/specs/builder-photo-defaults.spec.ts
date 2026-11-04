@@ -11,11 +11,22 @@ async function read(page: Page, id: string) {
 	expect(r.ok()).toBe(true);
 	return r.json();
 }
+
+async function downloadPdfText(page: Page) {
+	const pending = page.waitForEvent("download");
+	await page.getByRole("button", { name: "Download PDF", exact: true }).click();
+	const file = await pending;
+	expect(await file.failure()).toBeNull();
+	const path = await file.path();
+	if (!path) throw Error("missing PDF");
+	return execFileSync("pdftotext", [path, "-"], { encoding: "utf8" }).toLowerCase();
+}
 test("L3-15 new default PDF keeps career narrative first and all links, preserving explicit layouts", async ({
 	authPage: page,
 }) => {
 	const id = await create(page, "Fictional professional order");
 	const sample = await read(page, await create(page, "Fictional source", true));
+	expect(sample.data.metadata.layout.pages[0].main.slice(0, 3)).toEqual(["summary", "education", "experience"]);
 	const saved = await read(page, id);
 	const data = saved.data;
 	expect(data.metadata.layout.pages[0].main.slice(0, 3)).toEqual(["summary", "experience", "education"]);
@@ -42,13 +53,7 @@ test("L3-15 new default PDF keeps career narrative first and all links, preservi
 	});
 	expect(patch.ok()).toBe(true);
 	await page.goto(`/builder/${id}`);
-	const pending = page.waitForEvent("download");
-	await page.getByRole("button", { name: "Download PDF", exact: true }).click();
-	const file = await pending;
-	expect(await file.failure()).toBeNull();
-	const path = await file.path();
-	if (!path) throw Error("missing PDF");
-	const text = execFileSync("pdftotext", [path, "-"], { encoding: "utf8" }).toLowerCase();
+	const text = await downloadPdfText(page);
 	for (const title of [
 		"Fictional professional summary.",
 		"Fictional experience",
@@ -56,6 +61,7 @@ test("L3-15 new default PDF keeps career narrative first and all links, preservi
 		"Fictional links",
 	])
 		expect(text).toContain(title.toLowerCase());
+	expect(text).toContain(sample.data.sections.profiles.items[0].username.toLowerCase());
 	expect(text.indexOf("fictional professional summary.")).toBeLessThan(text.indexOf("fictional experience"));
 	expect(text.indexOf("fictional experience")).toBeLessThan(text.indexOf("fictional education"));
 	expect(text.indexOf("fictional education")).toBeLessThan(text.indexOf("fictional links"));
@@ -66,6 +72,19 @@ test("L3-15 new default PDF keeps career narrative first and all links, preservi
 	expect(changed.ok()).toBe(true);
 	await page.reload();
 	expect((await read(page, id)).data.metadata.layout.pages[0].main).toEqual(explicit);
+	const explicitText = await downloadPdfText(page);
+	for (const title of [
+		"fictional links",
+		"fictional education",
+		"fictional experience",
+		"fictional professional summary.",
+	])
+		expect(explicitText).toContain(title);
+	expect(explicitText.indexOf("fictional links")).toBeLessThan(explicitText.indexOf("fictional education"));
+	expect(explicitText.indexOf("fictional education")).toBeLessThan(explicitText.indexOf("fictional experience"));
+	expect(explicitText.indexOf("fictional experience")).toBeLessThan(
+		explicitText.indexOf("fictional professional summary."),
+	);
 });
 test("L3-30 Add chooses file, crop cancel keeps document, upload enables appearance controls", async ({
 	authPage: page,
