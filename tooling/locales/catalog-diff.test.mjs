@@ -18,7 +18,8 @@ test.each([
 		"missing {0, plural}, extra {count, plural}",
 	],
 	["by <0>Amruth</0>", "von Amruth", "missing <0>, missing </0>"],
-	["{0, plural, one {{1} item} other {# items}}", "{0, plural, one {Element} other {{1} Elemente}}", "missing {1}"],
+	["{0, plural, one {{1} item} other {# items}}", "{0, plural, one {Element} other {{1} # Elemente}}", "missing {1}"],
+	["{0, plural, one {# item} other {# items}}", "{0, plural, one {ein Element} other {Elemente}}", "missing #"],
 	[
 		"{0, plural, one {{1} once} other {{2} # times}}",
 		"{0, plural, =1 {{1} jednom} one {{2} # put} other {{2} # puta}}",

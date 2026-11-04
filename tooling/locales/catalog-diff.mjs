@@ -44,6 +44,10 @@ function signature(text) {
 					i++;
 				}
 				i++;
+			} else if (plural && char === "#") {
+				// The plural count, so a form that drops it is caught (see `lacks`).
+				add("#", branch);
+				i++;
 			} else i++;
 		}
 	};
@@ -96,6 +100,8 @@ function lacks(translation, token, branch) {
 	const separator = branch.lastIndexOf(":");
 	const plural = branch.slice(0, separator);
 	const key = branch.slice(separator + 1);
+	// Only `other` must show the count; `zero`/`one`/`two` forms often spell it out ("one request").
+	if (token === "#" && key !== "other") return false;
 	const keys = translation.plurals.get(plural);
 	// A renamed plural is reported on its own; don't also report every argument inside it.
 	if (!keys) return found.size === 0;
@@ -113,7 +119,8 @@ export function mismatch(source, translation) {
 	const missing = [...expected.tokens]
 		.filter(([token, branches]) => [...branches].some((branch) => lacks(actual, token, branch)))
 		.map(([token]) => token);
-	const extra = [...actual.tokens.keys()].filter((token) => !expected.tokens.has(token));
+	// A translation may show the count where the source spells it out, so an added `#` is never an error.
+	const extra = [...actual.tokens.keys()].filter((token) => token !== "#" && !expected.tokens.has(token));
 	// Without `other`, formatting any count outside the listed forms throws.
 	const noOther = [...actual.plurals]
 		.filter(([plural, keys]) => expected.plurals.has(plural) && !keys.has("other"))

@@ -11,7 +11,7 @@ One pipeline: version bump → changelog entry → PR → squash-merge → tag �
 
 1. **Scope the release.** Previous tag: `git tag --sort=-creatordate | head -1`. Changes: `git log vPREV..HEAD --format='%h %s'`. Confirm the new version with the user if not given (patch unless there's a headline feature).
 2. **If this cycle added user-facing strings**, run fill-translations first so catalogs ship complete.
-3. **Bump the version** — root `package.json` only; no other file carries it.
+3. **Bump the version** in the root `package.json`: it is the release version for the web app, server and GitHub release. The native app's store version, `version` in `apps/mobile/app.config.ts`, is separate: change it only when this release also ships a new store build (see `.agents/docs/runbooks/mobile-releases.md`).
 4. **Write the changelog entry** at the TOP of `docs/changelog/index.mdx` (right after the frontmatter), in house style — use changelog-generator for the prose, then fit it to this exact shape:
 
    ```mdx
@@ -48,10 +48,10 @@ One pipeline: version bump → changelog entry → PR → squash-merge → tag �
 
 ## Common Mistakes
 
-| Mistake                                      | Reality                                                    |
-| -------------------------------------------- | ---------------------------------------------------------- |
-| Bumping versions in `apps/*` or `packages/*` | Only the root `package.json` has a version.                |
-| Appending the entry at the bottom            | Newest `<Update>` goes first, directly after frontmatter.  |
-| Implementation-speak in the changelog        | Readers are end users and self-hosters; describe benefits. |
-| Tagging before the squash-merge lands        | Tag the merged commit on `main`, never the branch.         |
-| ISO dates in the description                 | House style is ordinal: "7th July 2026".                   |
+| Mistake                                                       | Reality                                                                                                               |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Bumping versions in `packages/*`, `apps/web` or `apps/server` | Only the root `package.json` carries the release version; `apps/mobile/app.config.ts` changes only for a store build. |
+| Appending the entry at the bottom                             | Newest `<Update>` goes first, directly after frontmatter.                                                             |
+| Implementation-speak in the changelog                         | Readers are end users and self-hosters; describe benefits.                                                            |
+| Tagging before the squash-merge lands                         | Tag the merged commit on `main`, never the branch.                                                                    |
+| ISO dates in the description                                  | House style is ordinal: "7th July 2026".                                                                              |
