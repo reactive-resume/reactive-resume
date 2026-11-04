@@ -91,7 +91,15 @@ export function PictureScreen() {
 			if (!resolvePictureUrl(uploaded.url, server)) throw new Error("Upload failed");
 			// Leaving for another resume, or switching account, while it uploaded: the result is dropped.
 			const url = uploaded.url;
-			await commitUpload(owner, uploadContext, () => set("url", url, true));
+			await commitUpload(owner, uploadContext, () =>
+				update(
+					(draft) => {
+						// A URL edited or removed during upload is newer than this result.
+						if (draft.picture.url === picture.url) draft.picture.url = url;
+					},
+					{ newStep: true },
+				),
+			);
 		},
 		// The previous photo stays until an upload succeeds.
 		onError: (error) =>
