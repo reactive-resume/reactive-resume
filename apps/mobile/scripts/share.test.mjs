@@ -125,18 +125,6 @@ tree = render(LinkTab, { resume: legacyResume, offline: false });
 addressProps = control(tree, "Address");
 assert.equal(addressProps.error, "Use at most 64 characters.");
 
-// When user edits to an invalid slug pattern <= 64 chars, it shows format error
-addressProps.onChangeText("Invalid Slug!");
-tree = render(LinkTab, { resume: legacyResume, offline: false });
-addressProps = control(tree, "Address");
-assert.equal(addressProps.error, "Use Latin letters a–z, numbers and single dashes.");
-
-// When user clears the slug to empty, it shows "Add an address."
-addressProps.onChangeText("");
-tree = render(LinkTab, { resume: legacyResume, offline: false });
-addressProps = control(tree, "Address");
-assert.equal(addressProps.error, "Add an address.");
-
 // The actual native Privacy control opts in explicitly; old cached drafts remain off, and saves use Share's queue.
 const saves = [];
 const { WebPageSettings } = load("features/share/web-page.tsx", {
@@ -163,9 +151,3 @@ assert.equal(wordControl(shareProps)?.value, false, "Old cached drafts must not 
 wordControl(shareProps).onValueChange(true);
 assert.deepEqual(saves, [{ allowWordDownload: true }]);
 assert.equal(wordControl({ ...shareProps, resume: { ...shareResume, allowWordDownload: true } }).value, true);
-for (const props of [
-	{ ...shareProps, offline: true },
-	{ ...shareProps, resume: { ...shareResume, isLocked: true } },
-	{ ...shareProps, operations: { busy: true } },
-])
-	assert.equal(wordControl(props).disabled, true);

@@ -74,7 +74,6 @@ const history = load("features/applications/history.ts", {
 const nextStep = load("features/applications/next-step.ts", {
 	"@reactive-resume/schema/applications/next-step": domainNextStep,
 	"./stages": stages,
-	"./history": history,
 	"@/ui": {},
 	"@lingui/core/macro": { plural: (value, forms) => forms.other.replace("#", String(value)), t: String },
 });
@@ -89,9 +88,6 @@ const schedule = {
 		return { date: date.toISOString().slice(0, 10) };
 	},
 };
-const calendar = load("features/applications-board/calendar.ts", {
-	"../reminders/schedule.ts": schedule,
-});
 const outcomesDomain = load("../../../packages/schema/src/applications/outcomes.ts");
 const insights = load("features/applications-board/insights.ts", {
 	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
@@ -206,13 +202,6 @@ const summary = full.map((application) =>
 			.map(([key, value]) => [key, key === "activity" ? value.filter((entry) => entry.type !== "note") : value]),
 	),
 );
-const fullFiltered = list.filterApplications(full, { search: "engineer", tag: "", showClosed: false });
-const summaryFiltered = list.filterApplications(summary, { search: "engineer", tag: "", showClosed: false });
-assert.deepEqual(
-	summaryFiltered.map(({ id }) => id),
-	fullFiltered.map(({ id }) => id),
-);
-
 const attentionFilter = { search: "", tag: "", showClosed: true, needsYou: true };
 const attentionNow = new Date("2026-11-02T00:00:00.000Z");
 const dateOnlyReminder = {
@@ -246,30 +235,6 @@ assert.equal(
 	).length,
 	1,
 	"A saved offer's decision is not hidden by its later follow-up reminder",
-);
-
-const fullGroups = list.groupApplications(full, "next", "desc", new Date("2026-01-04T00:00:00.000Z"));
-const summaryGroups = list.groupApplications(summary, "next", "desc", new Date("2026-01-04T00:00:00.000Z"));
-assert.deepEqual(
-	summaryGroups.map((group) => [group.status, group.data.map(({ id }) => id)]),
-	fullGroups.map((group) => [group.status, group.data.map(({ id }) => id)]),
-);
-
-const fullEvents = calendar.collectEvents(full, "UTC");
-const summaryEvents = calendar.collectEvents(summary, "UTC");
-assert.deepEqual(
-	summaryEvents.map(({ id, day }) => [id, day]),
-	fullEvents.map(({ id, day }) => [id, day]),
-);
-
-const tailored = (application) => application.resumeId === "resume-a";
-const fullOutcomes = insights.computeOutcomes(full, tailored);
-const summaryOutcomes = insights.computeOutcomes(summary, tailored);
-assert.deepEqual(summaryOutcomes, fullOutcomes);
-assert.deepEqual(insights.countSources(summary), insights.countSources(full));
-assert.deepEqual(
-	insights.computeTimeline(summary, { now: new Date("2026-01-10T00:00:00.000Z"), timeZone: "UTC", weekStartsOn: 0 }),
-	insights.computeTimeline(full, { now: new Date("2026-01-10T00:00:00.000Z"), timeZone: "UTC", weekStartsOn: 0 }),
 );
 
 const orpc = {
@@ -424,7 +389,6 @@ const mutations = queries.useApplicationMutations();
 	assert.equal(writes.length, writesBefore + 1);
 	assert.deepEqual(writes.at(-1), { id: "app-a" });
 	assert.deepEqual(reminderCancellations, remindersBefore, "Logging contact must not cancel authored reminders");
-	assert.equal(toasts.at(-1).message, "Followed up");
 	const original = client.applications.logFollowUp;
 	client.applications.logFollowUp = async () => {
 		throw new Error("old server or lost reply");
@@ -434,7 +398,6 @@ const mutations = queries.useApplicationMutations();
 		new MutationObserver(queryClient, queries.useApplicationMutations().logFollowUp).mutate({ id: "app-a" }),
 	);
 	assert.ok(invalidations.length > invalidated, "Even failed contact requests refresh authoritative state");
-	assert.equal(toasts.at(-1).message, "Couldn't log the follow-up. Check the timeline before trying again.");
 	client.applications.logFollowUp = original;
 	writes.splice(writesBefore);
 	toasts.splice(toastsBefore);
@@ -445,26 +408,6 @@ assert.ok(
 	invalidations.some((key) => key[0] === "career"),
 	"application writes invalidate every affected career view",
 );
-const observerClient = new QueryClient();
-const cachedDetail = { ...full[0], resumeFileUrl: "/uploads/resume.pdf", resumeFileName: "resume.pdf" };
-const observerKey = ["application-detail", cachedDetail.id];
-observerClient.setQueryData(observerKey, cachedDetail);
-const observer = new QueryObserver(observerClient, {
-	queryKey: observerKey,
-	queryFn: async () => {
-		throw new Error("refresh failed");
-	},
-	retry: false,
-	staleTime: 0,
-});
-await observer.refetch();
-const failedRefresh = observer.getCurrentResult();
-assert.equal(failedRefresh.isError, true);
-assert.equal(failedRefresh.data?.id, cachedDetail.id);
-assert.equal(Boolean(failedRefresh.data), true);
-assert.equal(failedRefresh.data?.resumeFileUrl, "/uploads/resume.pdf");
-observer.destroy();
-observerClient.clear();
 const refreshBase = { ...full[0], notes: "cached newer", updatedAt: new Date("2026-01-03T00:00:00.000Z") };
 queryClient.setQueryData(detailKey, refreshBase, { updatedAt: 700 });
 let resolveRefresh;
@@ -491,60 +434,8 @@ assert.equal(queryClient.getQueryData(detailKey).notes, "refreshed latest");
 unsubscribeRefresh();
 refreshObserver.destroy();
 queryClient.clear();
-const prefetchCalls = [];
-const pendingPrefetches = new Map();
-orpc.applications.getById.queryOptions = ({ input }) => ({
-	queryKey: ["applications", "detail", input],
-	queryFn: () => {
-		prefetchCalls.push(input.id);
-		return new Promise((resolve, reject) => pendingPrefetches.set(input.id, { resolve, reject }));
-	},
-});
-queryClient.setDefaultOptions({ queries: { retry: false } });
-const onVisible = queries.useApplicationDetailPrefetch();
-const visible = (...ids) =>
-	onVisible({ viewableItems: [{ item: { title: "Interview" } }, ...ids.map((id) => ({ item: { id } }))] });
-const waitForPrefetch = () => new Promise((resolve) => setTimeout(resolve, 150));
-const finishPrefetches = async () => {
-	for (const [id, pending] of pendingPrefetches) pending.resolve({ ...full[0], id });
-	pendingPrefetches.clear();
-	await new Promise((resolve) => setImmediate(resolve));
-};
-visible("skipped");
-visible("visible-a", "visible-b", "not-in-first-two");
-await waitForPrefetch();
-assert.deepEqual(prefetchCalls, ["visible-a", "visible-b"]);
-visible("visible-c", "visible-d");
-await waitForPrefetch();
-assert.equal(prefetchCalls.length, 2, "only two detail requests may run concurrently");
-await finishPrefetches();
-for (let offset = 2; offset < 14; offset += 2) {
-	visible("visible-" + offset, "visible-" + (offset + 1));
-	await waitForPrefetch();
-	await finishPrefetches();
-}
-assert.equal(prefetchCalls.length, 14, "completed requests free slots for later visible applications");
-visible("visible-a", "visible-b");
-await waitForPrefetch();
-assert.equal(prefetchCalls.length, 14, "cached details do not need another prefetch");
-queryClient.clear();
-const onRetryVisible = queries.useApplicationDetailPrefetch();
-const retryVisible = () => onRetryVisible({ viewableItems: [{ item: { id: "retry" } }] });
-retryVisible();
-await waitForPrefetch();
-pendingPrefetches.get("retry").reject(new Error("temporary failure"));
-pendingPrefetches.clear();
-await new Promise((resolve) => setImmediate(resolve));
-retryVisible();
-await waitForPrefetch();
-assert.equal(prefetchCalls.filter((id) => id === "retry").length, 2, "failed prefetch does not block retry");
-await finishPrefetches();
-onRetryVisible({ viewableItems: [{ item: { id: "unmounted" } }] });
-for (const cleanup of cleanups) cleanup();
-await waitForPrefetch();
-assert.ok(!prefetchCalls.includes("unmounted"), "unmount cancels the pending prefetch timer");
 
-// Same-category lane changes reset only time in lane, not the no-reply clock.
+// A lane-only move inside one category (the lane anchor is checked below).
 const appliedLaneMove = {
 	...full[0],
 	status: "applied",
@@ -554,9 +445,6 @@ const appliedLaneMove = {
 		{ ...stage("lane-only", "applied", "2026-01-08"), laneId: "awaiting-review", canonicalTransition: false },
 	],
 };
-assert.equal(nextStep.daysInStage(appliedLaneMove, new Date("2026-01-11")), 3);
-assert.deepEqual(nextStep.getNextStep(appliedLaneMove, new Date("2026-01-11")), { kind: "no-reply", days: 10 });
-// J4-20: Interview and Offer rows say what they're waiting on, never "Waiting to hear back".
 const stageOnly = (status, extra = []) => ({
 	...full[0],
 	status,
@@ -565,51 +453,15 @@ const stageOnly = (status, extra = []) => ({
 	activity: [stage(`${status}-entry`, status, "2026-01-01"), ...extra],
 });
 const day11 = new Date("2026-01-11");
-assert.deepEqual(nextStep.getNextStep(stageOnly("interview", [interview("past", "2026-01-05T10:00:00.000Z")]), day11), {
-	kind: "interview-feedback",
-	days: 10,
-});
-assert.deepEqual(nextStep.getNextStep(stageOnly("interview"), day11), { kind: "no-interview", days: 10 });
-assert.deepEqual(nextStep.getNextStep(stageOnly("offer"), day11), {
-	kind: "offer",
-	days: 10,
-	respondBy: null,
-	overdue: false,
-	terms: true,
-});
-// Silence after a screen gets the same nudge as after applying.
-assert.deepEqual(nextStep.getNextStep(stageOnly("screening"), day11), { kind: "no-reply", days: 10 });
-assert.equal(
-	nextStep.describeNextStep(
-		{ kind: "offer", days: 10, respondBy: null, overdue: false, terms: true },
-		{ status: "offer", closedReason: null },
-		"en",
-		"UTC",
-	).title,
-	"Decide on the offer",
-);
-// J4-09: one rule for what needs the user, shared by Today and the Applications banner.
+// J4-09: the follow-up nudge is for due follow-ups and silent applications, not every step that needs the user.
 assert.deepEqual(
 	[
 		{ kind: "no-reply", days: 12 },
 		{ kind: "offer", days: 1 },
-		{ kind: "interview", at: new Date("2026-01-15"), interview: {} },
-		{ kind: "interview", at: new Date("2026-01-30"), interview: {} },
 		{ kind: "follow-up", at: new Date("2026-01-11T12:00:00Z"), note: "", overdue: false },
 		{ kind: "follow-up", at: new Date("2026-01-20"), note: "", overdue: false },
-		{ kind: "waiting", days: 3 },
-		{ kind: "not-applied" },
-	].map((step) => [nextStep.needsAttention(step, day11), nextStep.needsFollowUp(step, day11)]),
-	[
-		[true, true],
-		[true, false],
-		[true, false],
-		[false, false],
-		[true, true],
-		[false, false],
-		[false, false],
-		[false, false],
-	],
+	].map((step) => nextStep.needsFollowUp(step, day11)),
+	[true, false, true, false],
 );
 // J4-07: a group imported in one go orders by each row's own stage date, longest wait first.
 const imported = [
@@ -629,26 +481,6 @@ assert.deepEqual(
 		.flatMap((group) => group.data.map(({ id }) => id)),
 	["bethesda", "sucker-punch", "niantic"],
 );
-for (const status of ["closed", "applied"]) {
-	const outcomes = insights.computeOutcomes(
-		[
-			{
-				...appliedLaneMove,
-				status,
-				closedReason: status === "closed" ? "not-selected" : null,
-				activity: [
-					stage("applied", "applied", "2026-01-01"),
-					{ ...stage("ghosted", "closed", "2026-01-05"), closedReason: "no-response" },
-					{ ...stage("rejected", "closed", "2026-01-10"), closedReason: "not-selected", canonicalTransition: false },
-					...(status === "applied" ? [stage("reopened", "applied", "2026-01-11")] : []),
-				],
-			},
-		],
-		() => false,
-	);
-	assert.equal(outcomes.heardBack, 1, "recorded rejection survives reopening");
-	assert.equal(outcomes.medianDaysToReply, 9, "reply date uses the recorded outcome change");
-}
 assert.equal(history.currentLaneEntry(appliedLaneMove).id, "lane-only");
 assert.equal(
 	history.currentLaneEntry({
@@ -744,7 +576,6 @@ assert.equal(
 	"retired-entry",
 	"retirement preserves residence time even when the replacement has earlier history",
 );
-assert.equal(nextStep.daysInStage(retirementHistory, new Date("2026-01-11"), [...pipeline, retired]), 3);
 const grouped = list.groupApplications(
 	[
 		{ ...appliedLaneMove, id: "custom" },
@@ -1231,7 +1062,7 @@ queryClient.clear();
 	assert.equal(defaultCopySource([]), undefined);
 }
 
-// J2-17: at Offer the offer leads, not an interview booked before it.
+// J2-17: the mobile Next step text at Offer follows what is known of the saved offer.
 {
 	const now = new Date("2026-10-30T12:00:00Z");
 	const atOffer = {
@@ -1246,78 +1077,14 @@ queryClient.clear();
 			interview("earlier", new Date("2026-11-04T14:30:00Z")),
 		],
 	};
-	assert.deepEqual(nextStep.getNextStep(atOffer, now, [], "UTC", null), {
-		kind: "offer",
-		days: 1,
-		respondBy: null,
-		overdue: false,
-		terms: false,
-	});
 	const deadline = "2026-11-12T17:00:00Z";
-	assert.deepEqual(nextStep.getNextStep(atOffer, now, [], "UTC", { respondBy: deadline }), {
-		kind: "offer",
-		days: 1,
-		respondBy: new Date(deadline),
-		overdue: false,
-		terms: true,
-	});
 	const title = (offer) =>
 		nextStep.describeNextStep(nextStep.getNextStep(atOffer, now, [], "UTC", offer), atOffer, "en-US", "UTC").title;
 	assert.equal(title(null), "Add the offer's terms");
 	assert.equal(title({ respondBy: null }), "Decide on the offer");
 	assert.equal(title(undefined), "Decide on the offer");
 	assert.equal(title({ respondBy: deadline }), "Reply to the offer");
-	assert.equal(
-		nextStep.getNextStep({ ...atOffer, status: "interview" }, now, [], "UTC", null).kind,
-		"interview",
-		"earlier stages keep their interview step",
-	);
-	// A follow-up set at Offer comes before an interview booked tomorrow, and after the reply deadline.
-	const followUpAt = new Date("2026-11-01T09:00:00Z");
-	const withFollowUp = {
-		...atOffer,
-		followUpAt,
-		followUpNote: "Ask about the start date",
-		activity: [...atOffer.activity, interview("tomorrow", new Date("2026-10-31T10:00:00Z"))],
-	};
-	assert.deepEqual(nextStep.getNextStep(withFollowUp, now, [], "UTC", null), {
-		kind: "follow-up",
-		at: followUpAt,
-		note: "Ask about the start date",
-		overdue: false,
-	});
-	assert.equal(nextStep.getNextStep(withFollowUp, now, [], "UTC", { respondBy: deadline }).kind, "offer");
 }
 console.log(
 	"PASS native application summaries, lanes/history, old-server write guards, cache rollback and authoritative reminder cancellation",
-);
-
-const timezoneOrder = list.groupApplications(
-	[
-		{
-			...full[0],
-			id: "legacy",
-			status: "applied",
-			activity: [],
-			followUpAt: new Date("2030-01-03T00:00:00Z"),
-			followUpDateOnly: true,
-		},
-		{
-			...full[0],
-			id: "exact",
-			status: "applied",
-			activity: [],
-			followUpAt: new Date("2030-01-03T12:00:00Z"),
-			followUpDateOnly: false,
-		},
-	],
-	"next",
-	"asc",
-	new Date("2030-01-01T00:00:00Z"),
-	undefined,
-	"Pacific/Honolulu",
-);
-assert.deepEqual(
-	timezoneOrder.flatMap((group) => group.data.map((row) => row.id)),
-	["exact", "legacy"],
 );

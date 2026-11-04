@@ -33,7 +33,7 @@ When a source file gains an import, grep `scripts/` for its path (for example `f
 
 ### `experience.test.mjs`
 
-About 4,700 lines, written as one script rather than separate `test()` cases. The first failing assertion stops the rest.
+About 5,000 lines, written as one script rather than separate `test()` cases. The first failing assertion stops the rest.
 
 - Lines 1–190 hold the shared setup: a fake `react` whose hooks are keyed by call order, `ui` and `mocks` (the shared boundary map), and `load(path, extra, append)` with `path` relative to `src/`.
 - Helpers: `render(Component, props)` calls the component and returns its element tree. `nodes(tree)` flattens it. `control(tree, label)` returns the props of the element with that `label`, or fails. `reset()` clears hook state and the `calls` log. `settle()` flushes pending promises.
@@ -43,6 +43,10 @@ About 4,700 lines, written as one script rather than separate `test()` cases. Th
 
 Put tests for a new feature in a new `scripts/<feature>.test.mjs` that uses `test()` from `node:test` and the harness. Extend `experience.test.mjs` only when a case needs its fake React and shared mocks: add the block beside related cases, start it with `reset()`, and end it with `console.log("PASS …")`.
 
+- Test logic from `packages/*` in that package. Mobile tests cover the mobile call site: account fences, drafts, Undo and routes.
+- Don't copy app modules into mocks; copies drift. `src/routes.ts` has only type imports, so load the real one.
+- Drive debounces and delays with a fake `setTimeout` passed through `globals`, or with `mock.timers`. Never wait real time.
+
 ## Bundle check
 
 ```sh
@@ -51,7 +55,7 @@ pnpm --filter mobile check:bundle
 
 This runs `expo export` for iOS and Android: Metro bundles the whole app and compiles Hermes bytecode. It uses a fresh Metro cache in a temporary directory and deletes it afterwards, so it needs no `TMPDIR` or `--clear` flags and leaves nothing in the checkout. It takes about 1.5 minutes on an Apple-silicon Mac.
 
-Run it after changing imports, dependencies, Babel or Metro config, or shared-package code the app reaches, and before handing off mobile work. CI runs it when `apps/mobile/` or `packages/` changes. `scripts/hermes-compat.test.mjs` is the quick per-file Hermes check inside the test suite.
+Run it after changing imports, dependencies, Babel or Metro config, or shared-package code the app reaches, and before handing off mobile work. CI runs it when `apps/mobile/` or `packages/` changes.
 
 ## Where web features live on mobile
 
@@ -86,6 +90,6 @@ steps: `.agents/docs/runbooks/mobile-releases.md`; workflow and signing setup: `
 The owner's explicit decisions; every other web/mobile gap is a bug. Add new exceptions here with the date.
 
 - iOS hides the Donate row (store policy, first release).
-- Applications CSV import and export are web-only (2026-10-19).
+- Applications CSV export is web-only (2026-10-19). CSV import shipped on mobile in RX-183.
 - Employer-form autofill and the embedded browser are not on Android or iOS (2026-11-01, RX-75). Mobile keeps review
   packets, copyable answers, exact approved PDFs and opening the form in the system browser.

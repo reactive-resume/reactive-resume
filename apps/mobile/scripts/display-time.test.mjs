@@ -40,23 +40,13 @@ new Function("require", "module", "exports", code)(
 	module,
 	module.exports,
 );
-const results = [];
-for (const [l, z] of [
-	["en-US", "UTC"],
-	["de-DE", "UTC"],
-	["en-US", "Europe/Berlin"],
+// The locale picks its own clock (a forced 24-hour cycle once showed "13:05" to en-US); the profile zone moves the hour.
+for (const [l, z, expected] of [
+	["en-US", "UTC", /^01:05\sPM$/],
+	["de-DE", "UTC", /^13:05$/],
+	["en-US", "Europe/Berlin", /^02:05\sPM$/],
 ]) {
 	locale = l;
 	zone = z;
-	const instant = new Date("2026-11-04T13:05:00Z");
-	const actual = module.exports.useUserTime().time(instant);
-	const expected = new Intl.DateTimeFormat(locale, { timeZone: zone, hour: "2-digit", minute: "2-digit" }).format(
-		instant,
-	);
-	results.push({ locale, zone, actual, expected, pass: actual === expected });
+	assert.match(module.exports.useUserTime().time(new Date("2026-11-04T13:05:00Z")), expected, `${l} ${z}`);
 }
-assert.deepEqual(
-	results.map(({ pass }) => pass),
-	[true, true, true],
-	JSON.stringify(results),
-);

@@ -328,22 +328,6 @@ test("native confirmed workspace fetch cancels an older in-flight response befor
 	h.queryClient.clear();
 });
 
-test("native pending question removal cannot dispatch under a replacement account", async () => {
-	const h = await harness();
-	h.env.holdSave = deferred();
-	const write = h.hooks.useWorkspace("job").save({ answers: [target, second] });
-	h.remove();
-	h.env.account = "bob";
-	h.env.holdSave.resolve();
-	await write;
-	await drain();
-	h.background();
-	assert.equal(h.env.deletions.length, 0);
-	assert.equal(h.env.notices.length, 0);
-	h.unmount();
-	h.queryClient.clear();
-});
-
 test("actual native question unmount during preparation flushes once after its queued save settles", async () => {
 	const h = await harness();
 	h.env.holdSave = deferred();

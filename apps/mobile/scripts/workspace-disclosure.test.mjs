@@ -35,52 +35,53 @@ const pending = { data: undefined, isPending: true, isError: false };
 const errored = { data: undefined, isPending: false, isError: true };
 const empty = { data: [], isPending: false, isError: false };
 const filled = { data: [{ id: "fact-1" }], isPending: false, isError: false };
-function nativeLine(query, selectedApplication = application, task = "briefing") {
-	const components = [
-		"ActivityIndicator",
-		"Banner",
-		"Block",
-		"Button",
-		"Card",
-		"Icon",
-		"Pressable",
-		"PrivacyLine",
-		"ReportAiContent",
-		"Switch",
-		"Text",
-		"View",
-	];
-	const ui = Object.fromEntries(components.map((name) => [name, (props) => jsx(name, props)]));
-	const { AiNotice } = load(`${root}/apps/mobile/src/features/workspace/parts.tsx`, {
-		"@lingui/core/macro": { t },
-		"@lingui/react/macro": { useLingui: () => ({ t, i18n }) },
-		react: { useEffect: () => {}, useState: (init) => [typeof init === "function" ? init() : init, () => {}] },
-		"react-native": {
-			ActivityIndicator: (p) => jsx("ActivityIndicator", p),
-			Pressable: (p) => jsx("Pressable", p),
-			View: (p) => jsx("View", p),
-		},
-		"react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "fragment" },
-		"./hooks": { useFacts: () => query.facts, useStories: () => query.stories },
-		"@/features/ai/providers": {
-			useHasAIProvider: () => ({
-				defaultProvider: { label: "Provider", id: "p", model: "m", capableModel: "different-capable-model" },
-				isLoading: false,
-				error: null,
-				retry: () => {},
-			}),
-			AIProviderSetupSheet: (p) => jsx("AIProviderSetupSheet", p),
-		},
-		"@/features/ai/report-content": { ReportAiContent: (p) => jsx("ReportAiContent", p) },
-		"@/ui": ui,
-		"expo-router": { useRouter: () => ({ push: () => {} }) },
-		"@/shell/workspace-tab-label": { workspaceTabLabel: (label) => label },
-	});
+let query;
+const components = [
+	"ActivityIndicator",
+	"Banner",
+	"Block",
+	"Button",
+	"Card",
+	"Icon",
+	"Pressable",
+	"PrivacyLine",
+	"ReportAiContent",
+	"Switch",
+	"Text",
+	"View",
+];
+const ui = Object.fromEntries(components.map((name) => [name, (props) => jsx(name, props)]));
+const { AiNotice } = load(`${root}/apps/mobile/src/features/workspace/parts.tsx`, {
+	"@lingui/core/macro": { t },
+	"@lingui/react/macro": { useLingui: () => ({ t, i18n }) },
+	react: { useEffect: () => {}, useState: (init) => [typeof init === "function" ? init() : init, () => {}] },
+	"react-native": {
+		ActivityIndicator: (p) => jsx("ActivityIndicator", p),
+		Pressable: (p) => jsx("Pressable", p),
+		View: (p) => jsx("View", p),
+	},
+	"react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "fragment" },
+	"./hooks": { useFacts: () => query.facts, useStories: () => query.stories },
+	"@/features/ai/providers": {
+		useHasAIProvider: () => ({
+			defaultProvider: { label: "Provider", id: "p", model: "m", capableModel: "different-capable-model" },
+			isLoading: false,
+			error: null,
+			retry: () => {},
+		}),
+		AIProviderSetupSheet: (p) => jsx("AIProviderSetupSheet", p),
+	},
+	"@/features/ai/report-content": { ReportAiContent: (p) => jsx("ReportAiContent", p) },
+	"@/ui": ui,
+	"expo-router": { useRouter: () => ({ push: () => {} }) },
+	"@/shell/workspace-tab-label": { workspaceTabLabel: (label) => label },
+});
+function nativeLine(knowledge, selectedApplication = application, task = "briefing") {
+	query = knowledge;
 	return sentenceOf(AiNotice({ task, application: selectedApplication, interview: Boolean(selectedApplication) }));
 }
 
 for (const [name, facts, stories, expected] of [
-	["pending", pending, pending, true],
 	["facts pending", pending, empty, true],
 	["stories pending", empty, pending, true],
 	["facts failed", errored, empty, true],

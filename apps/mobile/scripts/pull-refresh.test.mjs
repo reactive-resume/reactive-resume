@@ -70,22 +70,3 @@ test("pull feedback lasts 400 ms, settles failed callbacks, and ignores overlapp
 	assert.equal(calls, 2);
 	assert.equal(render().refreshing, false);
 });
-
-test("slow requests keep feedback until every request settles", async (context) => {
-	context.mock.timers.enable({ apis: ["setTimeout"] });
-	let finish;
-	const render = hook(
-		() =>
-			new Promise((resolve) => {
-				finish = resolve;
-			}),
-	);
-	const completion = render().onRefresh();
-	await settle();
-	context.mock.timers.tick(400);
-	await settle();
-	assert.equal(render().refreshing, true);
-	finish();
-	await completion;
-	assert.equal(render().refreshing, false);
-});

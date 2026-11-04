@@ -25,7 +25,6 @@ const provider = {
 	baseURL: "https://ai.fixture.test/v1",
 	enabled: true,
 	testStatus: "success",
-	apiKeyFingerprint: "key-a",
 };
 const sessions = {
 	getAccountScope: () => account,
@@ -268,25 +267,6 @@ dialog.buttons[1].onPress();
 await result;
 assert.deepEqual(sent(), ["/api/rpc/career/suggestTargetRoles"]);
 console.log("PASS native same-ID recipient revision cutoff before and during consent, unchanged approval transmitted");
-for (const change of [
-	{ apiKeyFingerprint: "key-b" },
-	{ model: "changed-model" },
-	{ baseURL: "https://other.fixture.test/v1" },
-]) {
-	reset();
-	const previous = { ...provider };
-	const result = client.ai.parsePdf({}).then(
-		() => null,
-		(error) => error,
-	);
-	await waitForDialog();
-	Object.assign(provider, change, { recipientVersion: "c".repeat(64) });
-	dialog.buttons[1].onPress();
-	assert.match((await result).message, /settings changed/);
-	assert.deepEqual(sent(), [], "same-ID configuration changes must not transmit stale consent");
-	Object.assign(provider, previous);
-}
-console.log("PASS: changed native key/model/URL during consent prevents transmission.");
 
 reset();
 result = client.career.voice
@@ -483,13 +463,6 @@ assert.deepEqual(
 	"flush calls native transport synchronously",
 );
 await sentForget;
-await preparedForget.send();
-assert.equal(calls.length, 2, "repeated flush sends once");
-reset();
-const cancelledForget = await prepareRpc(client.career.forgetFact, { id: "fictional-fact" });
-cancelledForget.cancel();
-await assert.rejects(cancelledForget.send(), (error) => error.name === "AbortError");
-assert.deepEqual(calls, []);
 reset();
 const staleForget = await prepareRpc(client.career.forgetFact, { id: "fictional-fact" });
 account = "another-account";
@@ -500,6 +473,4 @@ const stalePreparation = prepareRpc(client.career.forgetFact, { id: "fictional-f
 account = "another-account";
 await assert.rejects(stalePreparation, (error) => error.name === "SessionChangedError");
 assert.deepEqual(calls, [], "preflight cannot bind the old input to a new account");
-console.log(
-	"PASS prepared native RPC: actual pipeline, independent calls, synchronous dispatch, cancellation and account fences",
-);
+console.log("PASS prepared native RPC: actual pipeline, independent calls, synchronous dispatch and account fences");

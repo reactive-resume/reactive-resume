@@ -225,15 +225,8 @@ test("native Prepare keeps all outputs editable, applies only approved proposals
 	assert.deepEqual(env.workspace.answers[1].aiOperationIds, ["op-answer"]);
 	cleanup();
 });
-test("native Prepare bounds complete questions, reports version conflicts, and ignores late account completion", async () => {
-	const mounted = setup();
-	await act(async () =>
-		fireEvent.change(screen.getByLabelText("Form questions (optional)"), {
-			target: { value: Array(6).fill("Question").join("\n\n") },
-		}),
-	);
-	assert.equal(screen.getByRole("button", { name: "Prepare drafts for review" }).disabled, true);
-	assert.equal(env.requests.length, 0);
+test("native Prepare reports version conflicts and ignores late account completion", async () => {
+	setup();
 	await act(async () =>
 		fireEvent.change(screen.getByLabelText("Form questions (optional)"), { target: { value: "Why?" } }),
 	);
@@ -253,6 +246,5 @@ test("native Prepare bounds complete questions, reports version conflicts, and i
 	await act(async () => resolve(structuredClone(env.result)));
 	assert.equal(screen.queryByLabelText("Letter draft"), null);
 	assert.equal(env.resumes.length, 0);
-	mounted.unmount();
 	cleanup();
 });

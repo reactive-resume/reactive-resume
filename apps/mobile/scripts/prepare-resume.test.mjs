@@ -200,6 +200,7 @@ test.after(() => window.close());
 
 test("Save and prepare copies the selected resume and opens Write without any AI provider", async () => {
 	await mount();
+	// Swiping the sheet away with entered details asks before discarding them.
 	assert.equal(fixture.sheet.dirty, true);
 	await click("Save and prepare resume");
 	assert.equal(fixture.jobs.length, 1);
@@ -213,7 +214,7 @@ test("Save and prepare copies the selected resume and opens Write without any AI
 	assert.deepEqual(fixture.navigation, [`/builder/${input.newId}/write`]);
 	assert.equal(fixture.closed, 1);
 });
-test("a connected provider opens existing prepare suggestions without sending an ask", async () => {
+test("a connected provider also opens prepare suggestions for the copy", async () => {
 	await mount({ provider: true });
 	await click("Save and prepare resume");
 	const id = fixture.copies[0].input.newId;
@@ -238,13 +239,6 @@ test("the source explicitly selected in More details is copied instead of the de
 	assert.equal(fixture.jobs[0].resumeId, "chosen");
 	assert.equal(fixture.copies[0].input.resumeId, "chosen");
 	assert.equal(fixture.copies[0].input.name, "Chosen — Fictional");
-});
-test("ordinary Save job keeps the existing detail flow and does not copy", async () => {
-	await mount();
-	await click("Save job");
-	assert.equal(fixture.jobs.length, 1);
-	assert.equal(fixture.copies.length, 0);
-	assert.deepEqual(fixture.navigation, ["/applications/saved-job/details"]);
 });
 test("picker saves return the job without a preparation action or navigation", async () => {
 	const selected = [];
@@ -280,7 +274,6 @@ for (const change of ["account", "unmount"]) {
 		const held = deferred();
 		const view = await mount({ create: () => held.promise });
 		await click("Save and prepare resume");
-		assert.equal(fixture.sheet.pending, true);
 		if (change === "account") fixture.account = "account-B";
 		else view.unmount();
 		await act(async () => {

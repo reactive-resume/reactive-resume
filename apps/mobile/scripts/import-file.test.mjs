@@ -30,7 +30,6 @@ const source = transformSync(
 ).code;
 
 for (const scenario of [
-	"AI",
 	"explicit locale",
 	"interface locale",
 	"local",
@@ -88,14 +87,16 @@ for (const scenario of [
 				SessionChangedError,
 				client: {
 					ai: {
-						parsePdf: async (input) => {
+						parsePdf: async (input, options) => {
 							modelCalls++;
 							assert.equal(input.includeProvenance, true);
+							assert.equal(options.context.scope, "original-account");
 							return { ...data, ...(sources ? { aiOperationIds: ["actual-import-operation"] } : {}) };
 						},
-						parseDocx: async (input) => {
+						parseDocx: async (input, options) => {
 							modelCalls++;
 							assert.equal(input.includeProvenance, true);
+							assert.equal(options.context.scope, "original-account");
 							return { ...data, aiOperationIds: ["actual-import-operation"] };
 						},
 					},

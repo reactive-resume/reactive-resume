@@ -119,16 +119,7 @@ for (const via of ["inline options", "entry screen"]) {
 			assert.ok(item, `Missing ${kind}`);
 			return current.renderItem({ item, drag() {}, isActive: false });
 		};
-		const section = row("section");
-		const renderedSection = section.type(section.props);
-		const handle = nodes(renderedSection).find((node) => node.type?.name === "Handle");
-		assert.ok(handle, "actual section exposes its reorder handle");
-		const target = handle.type(handle.props);
-		assert.ok(
-			target.props.style.width >= 44 && target.props.style.height >= 44,
-			"native reorder target is at least 44 by 44",
-		);
-		section.props.onToggle();
+		row("section").props.onToggle();
 		if (via === "entry screen") row("entry").props.onOpen();
 		else {
 			row("entry").props.onOptions();

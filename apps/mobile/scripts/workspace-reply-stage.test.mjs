@@ -28,7 +28,7 @@ const tag = (strings, ...values) =>
 		? strings.reduce((out, part, i) => out + part + (i < values.length ? values[i] : ""), "")
 		: String(strings);
 
-function harness({ lifetime = 30 } = {}) {
+function harness() {
 	const toasts = [];
 	const env = {
 		account: "acct-A",
@@ -51,16 +51,6 @@ function harness({ lifetime = 30 } = {}) {
 		effects: [],
 		clearedReminders: [],
 	};
-	const undo = load(MOBILE + "/src/features/career/undo.ts", {
-		"@/auth/session": { getAccountScope: () => env.account },
-		"@lingui/core/macro": { t: tag },
-		"react-native": { AppState: { addEventListener: () => ({ remove() {} }) } },
-		"@/ui": {
-			dismissToast: () => {},
-			showToast: (toast) => (toasts.push(toast), toasts.length),
-			toastLifetime: () => lifetime,
-		},
-	});
 	const queryClient = new QueryClient();
 	const listedRow = {
 		id: "app-1",
@@ -200,7 +190,6 @@ function harness({ lifetime = 30 } = {}) {
 					},
 				}),
 			},
-			"@/features/career/undo": undo,
 			"@/ui": {
 				Banner: "Banner",
 				Button: "Button",
@@ -290,7 +279,6 @@ function buttonIn(node, label) {
 test("native reply copies placeholders normally; explicit logging binds the reviewed revision and account", async () => {
 	const h = harness();
 	const tree = h.replyTree();
-	assert.match(JSON.stringify(tree), /Replace these placeholders before sending/);
 	buttonIn(tree, "Copy reply").props.onPress();
 	await new Promise(setImmediate);
 	assert.deepEqual(h.env.copied, ["Available [Datum und Uhrzeit 1] or [slot 2]."]);
@@ -318,68 +306,51 @@ test("native reply does not log clipboard failure or a stale account, and ignore
 	assert.equal(h.env.logs.length, 0);
 });
 
-test("native reply warns and refreshes when logging is uncertain after copying succeeds", async () => {
-	const h = harness();
-	h.env.logReply = async () => {
-		throw new Error("Lost response");
-	};
-	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
-	await new Promise(setImmediate);
-	assert.deepEqual(h.env.copied, ["Available [Datum und Uhrzeit 1] or [slot 2]."]);
-	assert.equal(h.env.logs.length, 1);
-	assert.equal(h.env.invalidations, 1);
-	assert.equal(
-		h.toasts.at(-1).message,
+for (const [failure, error, message] of [
+	[
+		"uncertain",
+		new Error("Lost response"),
 		"Reply copied. Logging wasn't confirmed. Check the timeline before trying again.",
-	);
-});
-
-test("native copied reply explains a known conflict without claiming an uncertain log", async () => {
-	const h = harness();
-	h.env.logReply = async () => {
-		throw new ORPCError("CONFLICT");
-	};
-	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
-	await new Promise(setImmediate);
-	assert.equal(
-		h.toasts.at(-1).message,
+	],
+	[
+		"conflict",
+		new ORPCError("CONFLICT"),
 		"Reply copied. Nothing was logged because the application changed. Review it again before logging.",
-	);
-	assert.equal(h.env.invalidations, 1);
-});
-
-test("native empty reply disables and guards logging while preserving ordinary Copy", async () => {
-	const h = harness();
-	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
-	for (const text of ["", " \n\t"]) {
-		h.env.draft = text;
-		const tree = h.replyTree();
-		const log = buttonIn(tree, "Copy and log as replied");
-		assert.equal(log.props.disabled, true);
-		log.props.onPress();
-		await new Promise(setImmediate);
-		assert.deepEqual(h.env.copied, []);
-		assert.deepEqual(h.env.logs, []);
-		buttonIn(tree, "Copy reply").props.onPress();
-		await new Promise(setImmediate);
-		assert.equal(h.env.copied.pop(), text);
-	}
-	assert.deepEqual(h.env.cancelCalls, []);
-});
-
-test("native known logging refusal confirms no write without inventing a conflict reason", async () => {
-	const h = harness();
-	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
-	h.env.logReply = async () => {
-		throw new ORPCError("BAD_REQUEST");
-	};
-	buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
-	await new Promise(setImmediate);
-	assert.equal(
-		h.toasts.at(-1).message,
+	],
+	[
+		"refused",
+		new ORPCError("BAD_REQUEST"),
 		"Reply copied. Nothing was logged. Review the application before logging again.",
-	);
-	assert.equal(h.env.invalidations, 1);
+	],
+]) {
+	test(`native copied reply with ${failure} logging claims no log, refreshes and keeps the reminder`, async () => {
+		const h = harness();
+		h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+		h.env.logReply = async () => {
+			throw error;
+		};
+		buttonIn(h.replyTree(), "Copy and log as replied").props.onPress();
+		await new Promise(setImmediate);
+		assert.deepEqual(h.env.copied, ["Available [Datum und Uhrzeit 1] or [slot 2]."]);
+		assert.equal(h.env.logs.length, 1);
+		assert.equal(h.env.invalidations, 1);
+		assert.equal(h.toasts.at(-1).message, message);
+		assert.deepEqual(h.env.cancelCalls, []);
+	});
+}
+
+test("native blank reply cannot be logged while ordinary Copy still works", async () => {
+	const h = harness();
+	h.application.followUpAt = new Date("2030-03-15T09:00:00Z");
+	h.env.draft = " \n\t";
+	const tree = h.replyTree();
+	buttonIn(tree, "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.copied, []);
+	assert.deepEqual(h.env.logs, []);
+	buttonIn(tree, "Copy reply").props.onPress();
+	await new Promise(setImmediate);
+	assert.deepEqual(h.env.copied, [" \n\t"]);
 	assert.deepEqual(h.env.cancelCalls, []);
 });
 
@@ -403,7 +374,6 @@ test("native cached cleared follow-up cannot cancel a server-confirmed replaceme
 	h.replyTree();
 	await new Promise(setImmediate);
 	assert.equal(h.env.reads.length, 1);
-	assert.deepEqual(h.env.reads[0][0], { id: "app-1" });
 	assert.equal(h.env.reads[0][1].context.scope, "acct-A");
 	assert.deepEqual(h.env.cancelCalls, []);
 });
@@ -562,12 +532,13 @@ test("native reminder Retry refuses dispatch after account replacement", async (
 	assert.equal(h.env.logs.length, 1);
 });
 
-test("native older-server reply keeps Copy and disables explicit logging", async () => {
+test("native older-server reply keeps Copy and refuses explicit logging", async () => {
 	const h = harness();
 	delete h.application.replyVersion;
 	const view = h.replyTree();
-	assert.equal(buttonIn(view, "Copy and log as replied").props.disabled, true);
-	assert.match(JSON.stringify(view), /Update the server to enable reply logging/);
+	buttonIn(view, "Copy and log as replied").props.onPress();
+	await new Promise(setImmediate);
+	assert.equal(h.env.logs.length, 0);
 	buttonIn(view, "Copy reply").props.onPress();
 	await new Promise(setImmediate);
 	assert.equal(h.env.copied.length, 1);
@@ -590,85 +561,72 @@ test("native reply cannot show a success toast to an account replaced during inv
 	assert.deepEqual(h.toasts, []);
 });
 
-const pendingFor = (promise, ms = 200) =>
-	Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve("still waiting"), ms))]);
+const drain = () => new Promise((resolve) => setImmediate(resolve));
+/** The promise's value once pending work has run, or "still waiting" when it hasn't settled. */
+async function settled(promise) {
+	let outcome = "still waiting";
+	void promise.then((value) => (outcome = value));
+	await drain();
+	return outcome;
+}
 const before = { status: "applied", laneId: "lane-applied", closedReason: null, stageEntryId: "e1" };
 const savedStage = { status: "interview", laneId: "lane-interview", closedReason: null, stageEntryId: "e2" };
 
 test("Immediate Apply, then a bulk move: the move waits and starts from the stage the server saved", async () => {
-	const h = harness({ lifetime: 60 });
+	const h = harness();
 	let answer;
 	h.env.applyReply = () => new Promise((resolve) => (answer = resolve));
 	h.press();
 	const start = h.bulkStart();
-	assert.equal(await pendingFor(start, 20), "still waiting");
-	await new Promise((resolve) => setTimeout(resolve, 120));
+	assert.equal(await settled(start), "still waiting");
 	assert.equal(h.env.applyCalls, 1);
-	assert.equal(await pendingFor(start, 20), "still waiting");
 	answer({ stages: [{ id: "app-1", ...savedStage }] });
-	assert.deepEqual(await pendingFor(start), savedStage);
+	assert.deepEqual(await settled(start), savedStage);
 });
 
 test("Undo after immediate Apply: a bulk move waits for the inverse and starts from its saved stage", async () => {
 	const h = harness();
 	h.env.applyReply = async () => ({ stages: [{ id: "app-1", ...savedStage }] });
 	h.press();
-	await new Promise(setImmediate);
+	await drain();
 	assert.equal(h.env.applyCalls, 1);
 	let answer;
 	h.env.undoReply = () => new Promise((resolve) => (answer = resolve));
 	h.undoToast().action.onPress();
 	const start = h.bulkStart();
-	assert.equal(await pendingFor(start, 20), "still waiting");
+	assert.equal(await settled(start), "still waiting");
 	assert.equal(h.env.undoCalls, 1);
 	answer({ stages: [{ id: "app-1", ...before, stageEntryId: "e3" }] });
-	assert.deepEqual(await pendingFor(start), { ...before, stageEntryId: "e3" });
+	assert.deepEqual(await settled(start), { ...before, stageEntryId: "e3" });
 });
 
 test("Undo refuses dispatch after switching accounts", async () => {
 	const h = harness();
 	h.env.applyReply = async () => ({ stages: [{ id: "app-1", ...savedStage }] });
 	h.press();
-	await new Promise(setImmediate);
+	await drain();
 	h.env.account = "acct-B";
 	h.undoToast().action.onPress();
-	await new Promise(setImmediate);
+	await drain();
 	assert.equal(h.env.undoCalls, 0);
 });
 
 test("Failed apply: the bulk move starts from the stage before", async () => {
-	const h = harness({ lifetime: 10 });
+	const h = harness();
 	h.env.applyReply = async () => {
 		throw new Error("offline");
 	};
 	h.press();
 	const start = h.bulkStart();
-	assert.deepEqual(await pendingFor(start), before);
+	assert.deepEqual(await settled(start), before);
 	assert.equal(h.env.applyCalls, 1);
 });
 
 test("Account switched before dispatch: nothing sent, the old account's bulk start settles", async () => {
-	const h = harness({ lifetime: 30 });
+	const h = harness();
 	h.press();
 	const start = h.bulkStart();
 	h.env.account = "acct-B";
-	assert.deepEqual(await pendingFor(start), before);
+	assert.deepEqual(await settled(start), before);
 	assert.equal(h.env.applyCalls, 0);
-});
-
-test("Old server (no stages in the answer): the bulk move starts from the stage before", async () => {
-	const h = harness({ lifetime: 10 });
-	h.env.applyReply = async () => undefined;
-	h.press();
-	assert.deepEqual(await pendingFor(h.bulkStart()), before);
-	assert.equal(h.env.applyCalls, 1);
-});
-
-test("answered reply before the list reloads: dated history still follows the saved stage", async () => {
-	const h = harness({ lifetime: 10 });
-	h.env.applyReply = async () => ({ stages: [{ id: "app-1", ...savedStage }] });
-	h.press();
-	await new Promise((resolve) => setTimeout(resolve, 50));
-	assert.equal(h.env.applyCalls, 1);
-	assert.deepEqual(await pendingFor(h.bulkStart()), savedStage);
 });

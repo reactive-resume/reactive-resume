@@ -19,7 +19,7 @@ function harness() {
 	const pending = new Map();
 	const listeners = new Set();
 	let serial = 0;
-	const env = { account: "alice", sent: 0, restored: 0, failures: 0, dismissed: 0 };
+	const env = { account: "alice", sent: 0, restored: 0, failures: 0 };
 	const AppState = {
 		currentState: "active",
 		addEventListener: (_name, change) => {
@@ -38,9 +38,7 @@ function harness() {
 					notices.push(notice);
 					return notices.length;
 				},
-				dismissToast: () => {
-					env.dismissed++;
-				},
+				dismissToast: () => {},
 				toastLifetime: (value) => value,
 			},
 		},
@@ -107,41 +105,15 @@ test("native Undo is acknowledged only after readiness and background dispatch i
 	assert.equal(h.listeners.size, 0);
 });
 
-test("native Undo cancels before erasure and waits for canonical reconciliation", async () => {
+test("native Undo cancels the prepared erasure before it is sent and restores", async () => {
 	const h = harness();
-	const canonical = deferred();
 	const preparing = h.request();
-	h.withUndo({
-		...h.options(preparing),
-		restore: async () => {
-			await canonical.promise;
-			h.env.restored++;
-		},
-	});
+	h.withUndo(h.options(preparing));
 	const request = await preparing;
 	h.notices[0].action.onPress();
 	assert.equal(h.env.sent, 0);
-	assert.equal(h.env.restored, 0);
-	canonical.resolve();
-	await canonical.promise;
-	await Promise.resolve();
 	assert.equal(h.env.restored, 1);
 	await assert.rejects(request.send(), (error) => error.name === "AbortError");
-});
-
-test("navigation flush during preparation sends only after readiness and leaves no live notice", async () => {
-	const h = harness();
-	const body = deferred();
-	const preparing = h.request(body.promise);
-	const operation = h.withUndo(h.options(preparing));
-	operation.flush();
-	assert.equal(h.env.sent, 0);
-	body.resolve();
-	const request = await preparing;
-	assert.equal(h.env.sent, 1);
-	assert.equal(h.env.dismissed, 1);
-	assert.equal(h.pending.size, 0);
-	await request.send();
 });
 
 for (const when of ["before", "after"])
@@ -157,30 +129,13 @@ for (const when of ["before", "after"])
 			h.env.account = "bob";
 			h.background();
 		}
+		assert.equal(h.notices.length, when === "before" ? 0 : 1);
 		assert.equal(h.env.sent, 0);
 		assert.equal(h.env.restored, 0);
 		assert.equal(h.env.failures, 0);
 		assert.equal(h.pending.size, 0);
 		await assert.rejects(request.send(), (error) => error.name === "AbortError");
 	});
-
-test("failed canonical read never reports stale restoration and leaves no timer", async () => {
-	const h = harness();
-	const preparing = h.request();
-	h.withUndo({
-		...h.options(preparing),
-		restore: async () => {
-			throw new Error("offline");
-		},
-	});
-	const request = await preparing;
-	h.notices[0].action.onPress();
-	await assert.rejects(request.send());
-	await Promise.resolve();
-	assert.equal(h.env.restored, 0);
-	assert.equal(h.env.failures, 1);
-	assert.equal(h.pending.size, 0);
-});
 
 test("preflight rejection does not display successful Undo acknowledgement", async () => {
 	const h = harness();

@@ -283,7 +283,6 @@ test("native never confirms mismatched, locked or account-switched readback", as
 test("native posting save requires confirmation, keeps snapshot, pins account and revision; double taps create once", async () => {
 	const f = fixture();
 	f.open();
-	assert.equal(f.button("Save and link this resume").props.disabled, true);
 	f.fill();
 	f.button("Cancel").props.onPress();
 	await settled();

@@ -43,27 +43,21 @@ test("saves the job with its copy in one request on a current server", async () 
 	assert.deepEqual(server.calls, [["copyForJob", { resumeId: "base", application: job, newId: id }]]);
 });
 
-test("a lost response or a refused request never saves the job a second way, and the retry sends the same ID", async () => {
-	const refusals = [
-		new TypeError("Network request failed"),
-		Object.assign(new Error("This ID is already in use."), { code: "CONFLICT" }),
-		// A current server whose copy's job was deleted since refuses the retry; it never sends a copy without its job.
-		Object.assign(new Error("The job saved with this copy has since been deleted or unlinked."), { code: "CONFLICT" }),
-	];
-	for (const [index, failure] of refusals.entries()) {
-		let attempts = 0;
-		const server = fakeServer({ copy: (input) => (attempts++ === 0 ? Promise.reject(failure) : input.newId) });
-		const input = { resumeId: `base-${index}`, application: job };
+// The caller never inspects the failure, so a server refusal (CONFLICT) takes this same path.
+test("a lost response never saves the job a second way, and the retry sends the same ID", async () => {
+	const failure = new TypeError("Network request failed");
+	let attempts = 0;
+	const server = fakeServer({ copy: (input) => (attempts++ === 0 ? Promise.reject(failure) : input.newId) });
+	const input = { resumeId: "base-lost", application: job };
 
-		await assert.rejects(server.copyForJob(input, signal), failure);
-		assert.deepEqual(server.names(), ["copyForJob"]);
-		const id = await server.copyForJob(input, signal);
+	await assert.rejects(server.copyForJob(input, signal), failure);
+	assert.deepEqual(server.names(), ["copyForJob"]);
+	const id = await server.copyForJob(input, signal);
 
-		const [first, second] = sentIds(server);
-		assert.equal(first, second);
-		assert.equal(id, first);
-		assert.ok(!server.names().includes("create"));
-	}
+	const [first, second] = sentIds(server);
+	assert.equal(first, second);
+	assert.equal(id, first);
+	assert.ok(!server.names().includes("create"));
 });
 
 test("only a server from before saving the job with its copy, which ignores the ID, gets the old two-step save", async () => {

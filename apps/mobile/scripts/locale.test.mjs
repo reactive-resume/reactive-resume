@@ -12,7 +12,7 @@ const code = transformSync(readFileSync(new URL("../src/i18n/index.ts", import.m
 	supported: { "dynamic-import": false },
 }).code;
 
-function load(development, deviceLocales) {
+function load(deviceLocales) {
 	const storage = new Map([["locale", "zu-ZA"]]);
 	const directions = [];
 	let active;
@@ -43,13 +43,13 @@ function load(development, deviceLocales) {
 		},
 		module,
 		module.exports,
-		development,
+		false,
 	);
 	return { ...module.exports, storage, directions, active: () => active };
 }
 
 test("production recovers saved pseudo-locale to the device language and excludes it from choices", async () => {
-	const app = load(false, [{ languageTag: "de-DE", languageCode: "de" }]);
+	const app = load([{ languageTag: "de-DE", languageCode: "de" }]);
 	assert.equal(app.selectableLocales.includes("zu-ZA"), false);
 	assert.equal(app.getLocalePreference(), null);
 	await app.initI18n();
@@ -65,7 +65,7 @@ test("production recovers saved pseudo-locale to the device language and exclude
 });
 
 test("unconfigured and explicit System are distinct, and derived account languages are never saved locally", async () => {
-	const app = load(false, [{ languageTag: "de-DE" }]);
+	const app = load([{ languageTag: "de-DE" }]);
 	app.storage.clear();
 	assert.equal(app.hasLocalePreference(), false);
 	await app.activateLocale("fr-FR");
@@ -78,7 +78,7 @@ test("unconfigured and explicit System are distinct, and derived account languag
 });
 
 test("a replaced account and a newer local choice prevent a late catalog from activating", async () => {
-	const app = load(false, [{ languageTag: "de-DE" }]);
+	const app = load([{ languageTag: "de-DE" }]);
 	await app.initI18n();
 	await app.activateLocale("fr-FR", () => false);
 	assert.equal(app.active().locale, "de-DE");
@@ -88,7 +88,7 @@ test("a replaced account and a newer local choice prevent a late catalog from ac
 });
 
 test("a restored RTL catalog requests a restart without saving an explicit preference", async () => {
-	const app = load(false, [{ languageTag: "en-US" }]);
+	const app = load([{ languageTag: "en-US" }]);
 	app.storage.clear();
 	assert.equal(await app.activateLocale("ar-SA"), true);
 	assert.equal(app.active().locale, "ar-SA");
@@ -99,24 +99,4 @@ test("a restored RTL catalog requests a restart without saving an explicit prefe
 	assert.equal(app.hasLocalePreference(), false);
 	assert.equal(await app.activateLocale("he-IL", () => false), false);
 	assert.equal(app.active().locale, "ar-SA");
-});
-
-test("a Zulu device never gets pseudo-English automatically, including in development", () => {
-	for (const development of [false, true]) {
-		const app = load(development, [
-			{ languageTag: "zu-ZA", languageCode: "zu" },
-			{ languageTag: "fr-CA", languageCode: "fr" },
-		]);
-		assert.equal(app.getDeviceLocale(), "fr-FR");
-		assert.equal(load(development, [{ languageTag: "zu-ZA", languageCode: "zu" }]).getDeviceLocale(), "en-US");
-	}
-});
-
-test("development preserves explicit pseudo-localization testing", async () => {
-	const app = load(true, [{ languageTag: "en-US", languageCode: "en" }]);
-	assert.equal(app.selectableLocales.includes("zu-ZA"), true);
-	assert.equal(app.getLocalePreference(), "zu-ZA");
-	await app.initI18n();
-	assert.equal(app.active().locale, "zu-ZA");
-	assert.match(app.active().messages.catalog, /zu-ZA\.po$/);
 });

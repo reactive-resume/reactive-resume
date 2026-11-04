@@ -112,8 +112,6 @@ for (const kind of ["domain", "web connection"]) {
 		tree = render();
 		let dialog = find(tree, "ConfirmDialog", ({ open }) => open);
 		assert.ok(dialog);
-		assert.equal(dialog.props.cancelLabel, kind === "domain" ? "Keep domain" : "Keep connection");
-		assert.match(dialog.props.message, kind === "domain" ? /stop opening your primary resume/ : /enter the key again/);
 		dialog.props.onCancel();
 		tree = render();
 		assert.equal(

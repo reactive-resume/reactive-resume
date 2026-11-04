@@ -5,7 +5,6 @@ export type { NextStep, OfferHint } from "@reactive-resume/schema/applications/n
 import type { ApplicationLane } from "@reactive-resume/schema/applications/lanes";
 import { plural, t } from "@lingui/core/macro";
 import { getNextStep as sharedGetNextStep } from "@reactive-resume/schema/applications/next-step";
-import { laneSince } from "./history";
 import { getClosedReasonLabel } from "./stages";
 
 export {
@@ -14,16 +13,6 @@ export {
 	nextStepSortKey,
 	compareNextStepSortKeys,
 } from "@reactive-resume/schema/applications/next-step";
-
-/** Lane residence remains distinct from the canonical-stage clock used by next steps. */
-export const daysInStage = (
-	application: Pick<Application, "status" | "activity" | "appliedAt" | "laneId">,
-	now = new Date(),
-	lanes: readonly ApplicationLane[] = [],
-) => {
-	const since = laneSince(application, lanes);
-	return since ? Math.max(0, Math.floor((now.getTime() - since.getTime()) / 86_400_000)) : null;
-};
 
 /**
  * What's known of an application's newest saved offer: its reply deadline. `null` means no offer is saved yet;

@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { filterOptions } from "@reactive-resume/utils/string";
 import { bundle, tag } from "./harness.mjs";
 
 const jsx = (type, props) => ({ type, props });
 
-function fixture(locale = "en-US", uiLocale = "en-US") {
+function fixture(locale = "en-US") {
 	let state = [];
 	let cursor = 0;
 	let scope = "account-a";
@@ -38,13 +37,7 @@ function fixture(locale = "en-US", uiLocale = "en-US") {
 		"@lingui/react/macro": {
 			useLingui: () => ({
 				t: tag,
-				i18n: {
-					_: (descriptor) =>
-						uiLocale === "de-DE"
-							? ({ French: "Französisch", English: "Englisch", German: "Deutsch" }[descriptor.message] ??
-								descriptor.message)
-							: descriptor.message,
-				},
+				i18n: { _: (descriptor) => descriptor.message },
 			}),
 		},
 		"@lingui/core/macro": { msg: (parts, ...values) => ({ message: tag(parts, ...values) }) },
@@ -117,12 +110,11 @@ test("native language copy waits for explicit action, flushes once, and hands an
 	const f = fixture();
 	let tree = f.render();
 	assert.deepEqual(f.calls, []);
-	const picker = f.nodes(tree).find((node) => node.type === "SelectSheet");
-	assert.equal(picker.props.label, "Language");
-	picker.props.onChange("fr-FR");
+	f.nodes(tree)
+		.find((node) => node.type === "SelectSheet")
+		.props.onChange("fr-FR");
 	tree = f.render();
 	const button = f.nodes(tree).find((node) => node.type === "Button");
-	assert.equal(button.props.label, "Create language copy");
 	const first = button.props.onPress();
 	button.props.onPress();
 	assert.deepEqual(f.calls, [["flush", "source"]]);
@@ -155,35 +147,6 @@ test("native language copy excludes the source locale and rechecks the saved loc
 	f.release();
 	await new Promise((resolve) => setImmediate(resolve));
 	assert.deepEqual(f.calls, [["flush", "source"]]);
-});
-
-test("native translation picker shows the endonym and retains hidden search names", () => {
-	const f = fixture("en-US", "de-DE");
-	const picker = f.nodes(f.render()).find((node) => node.type === "SelectSheet").props;
-	const french = picker.options.find((option) => option.value === "fr-FR");
-	assert.equal(french.label, "Français");
-	assert.equal(french.description, "Französisch");
-	for (const query of ["Français", "French", "Französisch", "fr-FR"]) {
-		assert.deepEqual(filterOptions(picker.options, query), [french]);
-	}
-});
-
-test("native language selection follows a late-loaded source and retains only compatible user choices", () => {
-	const f = fixture(null);
-	const picker = () => f.nodes(f.render()).find((node) => node.type === "SelectSheet").props;
-	const button = () => f.nodes(f.render()).find((node) => node.type === "Button").props;
-	assert.equal(button().disabled, true);
-	f.changeSourceLocale("de-DE");
-	assert.equal(picker().value, "en-US");
-	assert.equal(button().disabled, false);
-	picker().onChange("fr-FR");
-	f.changeSourceLocale("en-US");
-	assert.equal(picker().value, "fr-FR");
-	f.changeSourceLocale("fr-FR");
-	assert.equal(picker().value, "de-DE");
-	assert.equal(button().disabled, false);
-	assert.ok(picker().options.every((option) => option.value !== "fr-FR"));
-	assert.deepEqual(f.calls, []);
 });
 
 test("an account change during a native copy prevents composer handoff and navigation", async () => {

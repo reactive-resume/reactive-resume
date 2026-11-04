@@ -7,8 +7,6 @@ const schedule = load("../src/features/reminders/schedule.ts", {
 const scheduled = new Map();
 let fail = false;
 let failSchedule = false;
-let failChannel = false;
-const platform = { OS: "ios" };
 let hold;
 let entered = () => {};
 let readHold;
@@ -16,10 +14,6 @@ let readEntered = () => {};
 const notifications = {
 	getPermissionsAsync: async () => ({ granted: true }),
 	SchedulableTriggerInputTypes: { DATE: "date" },
-	AndroidImportance: { HIGH: "high" },
-	setNotificationChannelAsync: async () => {
-		if (failChannel) throw new Error("Channel unavailable");
-	},
 	scheduleNotificationAsync: async (request) => {
 		if (hold) {
 			entered();
@@ -51,7 +45,7 @@ const { useReminders, syncReminders } = load("../src/features/reminders/index.ts
 	"expo-file-system": {},
 	"expo-notifications": notifications,
 	"expo-sharing": {},
-	"react-native": { Platform: platform },
+	"react-native": { Platform: { OS: "ios" } },
 	"./ics": {},
 	"./schedule": schedule,
 });
@@ -66,8 +60,6 @@ beforeEach(() => {
 	scheduled.clear();
 	fail = false;
 	failSchedule = false;
-	failChannel = false;
-	platform.OS = "ios";
 	hold = undefined;
 	entered = () => {};
 	readHold = undefined;
@@ -141,21 +133,17 @@ test("unchanged reconciliation still moves and cancels the observed reminder", a
 	assert.equal(scheduled.has(schedule.reminderId(old.kind, old.applicationId)), false);
 });
 
-for (const failure of ["channel", "schedule"]) {
-	test(`failed ${failure} replacement cannot invalidate captured cancellation of the old reminder`, async () => {
-		const old = target(`failed-${failure}`);
-		const reminders = useReminders(old.applicationId);
-		await reminders.turnOn(old, 5);
-		const cancel = reminders.captureTurnOff(old);
-		platform.OS = "android";
-		failChannel = failure === "channel";
-		failSchedule = failure === "schedule";
-		await assert.rejects(reminders.turnOn(target(old.applicationId, "2035-01-06T10:00:00Z"), 10));
-		assert.equal(scheduled.has(schedule.reminderId(old.kind, old.applicationId)), true);
-		await cancel();
-		assert.equal(scheduled.has(schedule.reminderId(old.kind, old.applicationId)), false);
-	});
-}
+test("failed replacement cannot invalidate captured cancellation of the old reminder", async () => {
+	const old = target("failed-schedule");
+	const reminders = useReminders(old.applicationId);
+	await reminders.turnOn(old, 5);
+	const cancel = reminders.captureTurnOff(old);
+	failSchedule = true;
+	await assert.rejects(reminders.turnOn(target(old.applicationId, "2035-01-06T10:00:00Z"), 10));
+	assert.equal(scheduled.has(schedule.reminderId(old.kind, old.applicationId)), true);
+	await cancel();
+	assert.equal(scheduled.has(schedule.reminderId(old.kind, old.applicationId)), false);
+});
 test("captured cancellation Retry cannot remove a newer scheduled follow-up", async () => {
 	const old = target("replacement");
 	const reminders = useReminders(old.applicationId);

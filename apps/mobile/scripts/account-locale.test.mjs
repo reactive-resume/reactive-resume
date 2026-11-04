@@ -103,27 +103,25 @@ test("account replacement, cleanup and an explicit choice each fence derived cat
 	}
 });
 
-test("missing, unsupported and old-server account languages follow the device without a write", () => {
-	for (const data of [{}, { locale: null }, { locale: "unsupported" }]) {
+test("missing, unsupported and old-server account languages, and sign-out, follow the device without a write", () => {
+	for (const [data, signedOut] of [
+		[{}, false],
+		[{ locale: null }, false],
+		[{ locale: "unsupported" }, false],
+		[{ locale: "ar-SA" }, true],
+	]) {
 		const h = harness();
 		h.state.data = data;
 		h.state.explicit = false;
+		if (signedOut) {
+			h.state.scope = null;
+			h.state.session = { ...h.state.session, status: "signed-out" };
+		}
 		h.render();
 		h.effect();
 		assert.equal(h.activations[0].locale, "en-US");
 		assert.deepEqual(h.writes, []);
 	}
-});
-
-test("sign-out returns an unconfigured device to its language", () => {
-	const h = harness("ar-SA");
-	h.state.explicit = false;
-	h.state.scope = null;
-	h.state.session = { ...h.state.session, status: "signed-out" };
-	h.render();
-	h.effect();
-	assert.equal(h.activations[0].locale, "en-US");
-	assert.deepEqual(h.writes, []);
 });
 
 test("account replaced between render and effect sends no old account language", () => {
