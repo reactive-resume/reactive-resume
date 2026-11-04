@@ -124,3 +124,43 @@ for (const width of [1440, 390]) {
 		expect(overflow).toBe(false);
 	});
 }
+
+for (const layout of ["empty", "explicit"] as const) {
+	test(`L3-15 JSON import recovers missing sections and preserves ${layout} layout choices`, async ({
+		authPage: page,
+	}) => {
+		const source = await create(page, "Fictional import source", true);
+		const original = await read(page, source);
+		const data = structuredClone(original.data);
+		data.basics.name = "Fictional imported narrative";
+		data.metadata.layout.pages =
+			layout === "empty" ? [] : [{ fullWidth: false, main: ["education"], sidebar: ["skills"] }];
+		await page.goto("/dashboard");
+		await page.getByRole("button", { name: "New", exact: true }).click();
+		await page
+			.getByRole("dialog", { name: "New", exact: true })
+			.getByLabel("Choose a file to import")
+			.setInputFiles({
+				name: "fictional.json",
+				mimeType: "application/json",
+				buffer: Buffer.from(JSON.stringify(data)),
+			});
+		await page.getByRole("button", { name: "Open in editor", exact: true }).click();
+		await page.waitForURL(/\/builder\/[^/]+$/);
+		const id = new URL(page.url()).pathname.split("/").at(-1);
+		if (!id) throw new Error("Missing imported resume");
+		expect(id).not.toBe(source);
+		const imported = await read(page, id);
+		expect(imported.data.basics.name).toBe(data.basics.name);
+		const first = imported.data.metadata.layout.pages[0];
+		if (layout === "empty") expect(first.main.slice(0, 3)).toEqual(["summary", "experience", "education"]);
+		else {
+			expect(first.main[0]).toBe("education");
+			expect(first.sidebar).toEqual(["skills"]);
+		}
+		expect(first.main.indexOf("profiles")).toBeGreaterThan(first.main.indexOf("experience"));
+		for (const section of ["profiles", "experience", "education"])
+			expect(imported.data.sections[section].items).toEqual(data.sections[section].items);
+		expect((await read(page, source)).data).toEqual(original.data);
+	});
+}

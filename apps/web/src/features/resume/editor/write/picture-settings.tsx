@@ -718,6 +718,7 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 			onSuccess: ({ url }) => {
 				toast.close(toastId);
 				if (!current()) return;
+				form.setFieldValue("url", url);
 				updateResumeData(
 					(draft) => {
 						draft.picture.url = url;

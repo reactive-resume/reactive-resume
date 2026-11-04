@@ -47,6 +47,21 @@ describe("FormControl", () => {
 		expect(sliderInput.getAttribute("aria-labelledby")).toBe(labelId);
 	});
 
+	it("bridges generated slider description and errors to the real input", () => {
+		render(
+			<FormItem hasError>
+				<FormLabel>Sidebar Width</FormLabel>
+				<FormControl render={<Slider defaultValue={[30]} />} />
+				<FormMessage errors={["Choose a valid width"]} />
+			</FormItem>,
+		);
+		const input = document.querySelector('input[type="range"]');
+		const message = screen.getByText("Choose a valid width").closest('[data-slot="form-message"]');
+		expect(input).toHaveAttribute("aria-invalid", "true");
+		expect(message?.id).toBeTruthy();
+		expect(input?.getAttribute("aria-describedby")).toContain(message?.id);
+	});
+
 	it("includes message in aria-describedby when hasError=true", () => {
 		render(
 			<FormItem hasError>

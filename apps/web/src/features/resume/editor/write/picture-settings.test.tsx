@@ -245,6 +245,8 @@ it.each(["current", "resume", "locked", "account"])(
 				size: 144,
 			});
 		else expect(useResumeStore.getState().resume).toBe(before);
+		expect(mocks.toast).toHaveBeenCalledTimes(1);
+		if (scenario !== "resume") expect(mocks.closeToast).toHaveBeenCalledWith("photo-toast");
 		client.clear();
 	},
 );
