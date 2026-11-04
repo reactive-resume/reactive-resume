@@ -43,4 +43,4 @@ function ariaShortcut(shortcut: string, apple = isApple()): string {
 	return [...new Set(chars.filter((char) => char in names).map((char) => names[char] ?? ""))].concat(key).join("+");
 }
 
-export { ariaShortcut, formatShortcut, Kbd };
+export { ariaShortcut, formatShortcut, isApple, Kbd };
