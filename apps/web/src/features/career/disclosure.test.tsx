@@ -90,5 +90,5 @@ it("keeps Knowledge in the notice while its presence lookup is unresolved", () =
 			</I18nProvider>
 		</QueryClientProvider>,
 	);
-	expect(screen.getByText(/^Sends /).textContent).toContain("Knowledge that's switched on");
+	expect(screen.getByText(/^Sends /).textContent).toContain("enabled Knowledge");
 });

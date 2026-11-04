@@ -245,7 +245,7 @@ const itemLabel = (item: DisclosureItem, task: GenerateTask["task"]): string => 
 		case "letter":
 			return t`the cover letter for this job`;
 		case "knowledge":
-			return t`Knowledge that's switched on`;
+			return t`enabled Knowledge`;
 		case "interview":
 			return t`the interview details`;
 		case "answers":
