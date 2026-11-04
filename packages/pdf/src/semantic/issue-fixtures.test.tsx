@@ -110,12 +110,10 @@ describe("semantic issue fixtures", () => {
 		const contact = semanticNodeKeys.contactItem(semanticNodeKeys.contactList(headerKey), "email");
 		const field = semanticNodeKeys.field(sectionItemKey("experience"), "description");
 
-		const resolve = (text: string) =>
-			resolveResumeRuntime({
-				data,
-				template: "onyx",
-				source: source(`@version 1;${text}`),
-			}).presentation;
+		const resolve = (text: string) => {
+			data.metadata.stylesheet = { mode: "semantic", source: source(`@version 1;${text}`) };
+			return resolveResumeRuntime({ data, template: "onyx" }).presentation;
+		};
 
 		expect(resolve("contact-item { color: red; } link { color: blue; }")[contact]?.style?.color).toBe("blue");
 		expect(resolve("link { color: blue; } contact-item { color: red; }")[contact]?.style?.color).toBe("red");
@@ -230,6 +228,7 @@ describe("semantic issue fixtures", () => {
 		await vi.waitFor(() => expect(instance.container.document).not.toBeNull());
 		const runs = textRuns(instance.container.document as HostNode);
 
+		expect(runs.indexOf("Last")).toBeGreaterThanOrEqual(0);
 		expect(runs.indexOf("Last")).toBeLessThan(runs.indexOf("First"));
 		expect(runs).not.toContain("Hidden");
 	});

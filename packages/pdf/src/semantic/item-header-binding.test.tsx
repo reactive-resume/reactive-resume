@@ -6,7 +6,6 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { ResumeDocument } from "../document";
 import { pdf } from "../forme/testing";
-import { resolveResumeRuntime } from "./resolve";
 
 type HostNode = { type: string; style?: unknown; value?: string; children?: HostNode[] };
 
@@ -55,14 +54,8 @@ const buildFixture = (): ResumeData => {
 
 const renderHeaderBoxes = async (template: Template): Promise<string[]> => {
 	const data = buildFixture();
-	const semanticRuntime = resolveResumeRuntime({
-		data,
-		template,
-		source: { languageVersion: 1, text: STYLESHEET },
-	});
-	const element = createElement(ResumeDocument, { data, template, semanticRuntime }) as unknown as Parameters<
-		typeof pdf
-	>[0];
+	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: STYLESHEET } };
+	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
 	const document = instance.container.document as unknown as HostNode;

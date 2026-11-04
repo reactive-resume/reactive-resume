@@ -11,12 +11,13 @@ import longResume from "./fixtures/long.json";
 import { renderResume } from "./render";
 import { FIXED_SOURCE, LIST_ROLE } from "./to-forme";
 
+// A larger case repeats a smaller one's roles as its prefix, so one long size per shape covers the shorter ones.
 const cases = [
 	...templateSchema.options.map((template) => ({ template, roles: 16, lines: 0 })),
-	...(["porygon", "azurill"] as const).flatMap((template) => [48, 96].map((roles) => ({ template, roles, lines: 0 }))),
-	...(["porygon", "azurill"] as const).flatMap((template) =>
-		[24, 48].map((bullets) => ({ template, roles: bullets / 6, lines: 25 })),
-	),
+	...(["porygon", "azurill"] as const).flatMap((template) => [
+		{ template, roles: 96, lines: 0 },
+		{ template, roles: 8, lines: 25 },
+	]),
 ];
 
 it.each(cases)(

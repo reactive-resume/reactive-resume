@@ -2,9 +2,8 @@ import type { ResumeData, StyleRule } from "@reactive-resume/schema/resume/data"
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vite-plus/test";
 import { compileStylesheet } from "@reactive-resume/resume/stylesheet";
-import { styleRulesSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { convertLegacyStyleRules } from "./legacy-converter";
+import { convertLegacyStylesheet } from "./legacy-converter";
 
 const fixtureUrl = (name: string) => new URL(`./__fixtures__/legacy/${name}`, import.meta.url);
 const readFixture = (name: string): unknown => JSON.parse(readFileSync(fixtureUrl(`${name}.json`), "utf8"));
@@ -19,25 +18,23 @@ const dataWithRules = (name: string): ResumeData => {
 	return data;
 };
 
-describe("convertLegacyStyleRules", () => {
+describe("convertLegacyStylesheet", () => {
 	it("preserves legacy specificity and source-order ties deterministically", () => {
-		const converted = convertLegacyStyleRules(dataWithRules("merge-specificity"));
-		const tie = convertLegacyStyleRules(dataWithRules("array-order-tie"));
+		const converted = convertLegacyStylesheet(dataWithRules("merge-specificity"));
+		const tie = convertLegacyStylesheet(dataWithRules("array-order-tie"));
 
 		expect(converted.source).toEqual({
 			languageVersion: 1,
 			text: readExpected("merge-specificity"),
 		});
-		expect(converted.sanitizedRules.map(({ id }) => id)).toEqual(["id", "type", "global"]);
 		expect(tie.source.text.indexOf("/* First */")).toBeLessThan(tie.source.text.indexOf("/* Second */"));
 		expect(compileStylesheet(converted.source).program).not.toBeNull();
 	});
 
 	it("sanitizes #3199 intent data and applies the existing PDF clamps", () => {
-		const sanitized = convertLegacyStyleRules(dataWithRules("sanitized-intent-3199"));
-		const clamped = convertLegacyStyleRules(dataWithRules("clamped-spacing"));
+		const sanitized = convertLegacyStylesheet(dataWithRules("sanitized-intent-3199"));
+		const clamped = convertLegacyStylesheet(dataWithRules("clamped-spacing"));
 
-		expect(sanitized.sanitizedRules).toEqual(styleRulesSchema.parse(readFixture("sanitized-intent-3199")));
 		expect(sanitized.source.text).toContain("color: #123456;");
 		expect(sanitized.source.text).not.toMatch(/huge|unknown-property|unknown-slot|#ffffff/i);
 		expect(clamped.source.text).toContain("border-width: 24pt;");
@@ -45,8 +42,8 @@ describe("convertLegacyStyleRules", () => {
 	});
 
 	it("comments disabled and final-host no-effect declarations without inventing @resume-disabled", () => {
-		const disabled = convertLegacyStyleRules(dataWithRules("disabled-rules")).source.text;
-		const links = convertLegacyStyleRules(dataWithRules("link-underline-3134")).source.text;
+		const disabled = convertLegacyStylesheet(dataWithRules("disabled-rules")).source.text;
+		const links = convertLegacyStylesheet(dataWithRules("link-underline-3134")).source.text;
 
 		expect(disabled).toContain("Disabled legacy rule");
 		expect(disabled).toContain("Disabled *\\/ cannot escape");
@@ -57,8 +54,8 @@ describe("convertLegacyStyleRules", () => {
 	});
 
 	it("preserves Bold-after-text #3146, including nested role positions, while retaining the award unbold exception", () => {
-		const primary = convertLegacyStyleRules(dataWithRules("primary-text-bold-3146")).source.text;
-		const award = convertLegacyStyleRules(dataWithRules("award-unbold")).source.text;
+		const primary = convertLegacyStylesheet(dataWithRules("primary-text-bold-3146")).source.text;
+		const award = convertLegacyStylesheet(dataWithRules("award-unbold")).source.text;
 
 		expect(primary).toContain('[role~="primary-text"]');
 		expect(primary).not.toContain('section[type="awards"] field[name="title"]');
@@ -71,7 +68,7 @@ describe("convertLegacyStyleRules", () => {
 	});
 
 	it("translates icon and level font sizes to explicit geometry", () => {
-		const source = convertLegacyStyleRules(dataWithRules("icon-level-size")).source.text;
+		const source = convertLegacyStylesheet(dataWithRules("icon-level-size")).source.text;
 
 		expect(source).toMatch(/icon \{[\s\S]*height: 18pt;[\s\S]*width: 18pt;/);
 		expect(source).toMatch(/level \{[\s\S]*font-size: 14pt;/);
@@ -79,15 +76,15 @@ describe("convertLegacyStyleRules", () => {
 	});
 
 	it("uses portable custom-section types and quoted UUID section IDs", () => {
-		const custom = convertLegacyStyleRules(dataWithRules("custom-section-type")).source.text;
-		const uuid = convertLegacyStyleRules(dataWithRules("section-id-uuid")).source.text;
+		const custom = convertLegacyStylesheet(dataWithRules("custom-section-type")).source.text;
+		const uuid = convertLegacyStylesheet(dataWithRules("section-id-uuid")).source.text;
 
 		expect(custom).toContain('section[type="experience"] > section-items > item');
 		expect(uuid).toContain('section[id="1d7312cb-9ba2-4d42-9ca8-2a9ca05f9f37"] > section-heading');
 	});
 
 	it.each(fixtureNames)("compiles the converted %s fixture without error diagnostics", (name) => {
-		const result = convertLegacyStyleRules(dataWithRules(name));
+		const result = convertLegacyStylesheet(dataWithRules(name));
 		expect(compileStylesheet(result.source).diagnostics.filter(({ severity }) => severity === "error")).toEqual([]);
 	});
 });

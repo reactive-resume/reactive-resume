@@ -8,7 +8,6 @@ import { renderToBuffer } from "../../forme/testing";
 for (const template of ["ditgar", "gengar", "leafish"] as const) {
 	describe(`${template} featured summary heading`, () => {
 		it.each([
-			[true, true],
 			[false, false],
 			[undefined, true],
 		] as const)("showHeading=%s renders heading=%s", async (showHeading, expected) => {

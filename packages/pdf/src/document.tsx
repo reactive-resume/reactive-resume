@@ -1,5 +1,4 @@
 import type { ResumeRenderOptions } from "./context";
-import type { ResolvedResumeRuntime } from "./semantic/resolve";
 import type { LayoutPage, ResumeData, Typography } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { Locale } from "@reactive-resume/utils/locale";
@@ -28,13 +27,12 @@ type ResumeDocumentProps = {
 	data: ResumeData;
 	template: Template;
 	renderOptions?: ResumeRenderOptions | undefined;
-	semanticRuntime?: ResolvedResumeRuntime | undefined;
 };
 
 const getLayoutPageKey = (page: LayoutPage, pageIndex: number) =>
 	`${page.fullWidth ? "full" : "split"}:${page.main.join(",")}:${page.sidebar.join(",")}:${pageIndex}`;
 
-export const ResumeDocument = ({ data, template, renderOptions, semanticRuntime }: ResumeDocumentProps) => {
+export const ResumeDocument = ({ data, template, renderOptions }: ResumeDocumentProps) => {
 	const TemplatePageComponent = getTemplatePage(template);
 	const scripts = useMemo(() => resumeContentScripts(data), [data]);
 	const typography = useMemo(
@@ -55,8 +53,8 @@ export const ResumeDocument = ({ data, template, renderOptions, semanticRuntime 
 	);
 	// The tree is built with the render options, so a letter printed with its header keeps it.
 	const runtime = useMemo(
-		() => semanticRuntime ?? resolveResumeRuntime({ data: headerResumeData, template }),
-		[headerResumeData, semanticRuntime, template],
+		() => resolveResumeRuntime({ data: headerResumeData, template }),
+		[headerResumeData, template],
 	);
 	return (
 		<SemanticRenderProvider

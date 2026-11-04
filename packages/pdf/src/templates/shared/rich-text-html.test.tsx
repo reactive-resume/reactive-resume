@@ -50,6 +50,10 @@ describe("normalizeRichTextHtml", () => {
 		expect(normalizeRichTextHtml("<ul><li><p>a</p></li><li><p><strong>b</strong></p></li></ul>")).toBe(
 			"<ul><li>a</li><li><strong>b</strong></li></ul>",
 		);
+		// The editor's nested bullets: a paragraph followed by a list keeps both.
+		expect(normalizeRichTextHtml("<ul><li><p>a</p><ul><li><p>b</p></li></ul></li></ul>")).toBe(
+			"<ul><li><p>a</p><ul><li>b</li></ul></li></ul>",
+		);
 	});
 
 	it("flushes accumulated inlines before block-level tags", () => {

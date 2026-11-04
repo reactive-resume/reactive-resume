@@ -15,7 +15,8 @@ function paragraphXml(html: string) {
 describe("htmlToParagraphs", () => {
 	it("converts plain text nodes at the body root into a paragraph", () => {
 		const result = htmlToParagraphs("Just some plain text");
-		expect(result.length).toBe(1);
+		expect(result).toHaveLength(1);
+		expect(JSON.stringify(result[0])).toContain("Just some plain text");
 	});
 
 	it("reads custom background-color from <mark> style for shading fill", () => {

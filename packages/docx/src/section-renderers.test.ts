@@ -46,7 +46,7 @@ describe("renderSummary", () => {
 		};
 		const paragraphs = renderSummary(summary, HEX);
 		// One heading + the htmlToParagraphs output for one <p>.
-		expect(paragraphs.length).toBeGreaterThanOrEqual(2);
+		expect(paragraphs).toHaveLength(2);
 	});
 
 	it("omits a disabled heading while retaining summary content", () => {
@@ -81,7 +81,7 @@ describe("renderCustomSection", () => {
 		items: [],
 	};
 
-	it("returns [] when all items are hidden or empty", () => {
+	it("returns [] when every item is hidden", () => {
 		const section: CustomSection = {
 			...baseCustom,
 			items: [{ id: "x", hidden: true } as never],

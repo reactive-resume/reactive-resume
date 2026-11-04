@@ -105,27 +105,25 @@ it(
 	},
 );
 
-it.each([
-	["अमित शर्मा", "hi-IN"],
-	["अमित शर्मा हिन्दी", "en-US"],
-	["অমিত শর্মা", "bn-BD"],
-	["அமித் சர்மா", "en-US"],
-	["అమిత్ శర్మ", "te-IN"],
-	["അമിത് ശർമ്മ", "ml-IN"],
-	["ಅಮಿತ್ ಶರ್ಮಾ", "kn-IN"],
-	["ଅମିତ ଶର୍ମା", "or-IN"],
-	["ਅਮਿਤ ਸ਼ਰਮਾ", "en-US"],
-	["અમિત શર્મા", "en-US"],
-	["අමිත් ශර්මා", "en-US"],
-	["አሚት ሻርማ", "am-ET"],
-	["អមិត ស្រម៉ា", "km-KH"],
-	["Designer 👩🏽‍💻 coder", "en-US"],
-] as const)(
-	"draws %s through a script fallback for the default font (%s)",
-	{ timeout: 60_000 },
-	async (text, locale) => {
-		const data = summaryResume(`<p>${text}</p>`, "IBM Plex Serif", locale);
-		const result = await act(() => renderResume(forme, { data }));
-		expect(lostCharacters(result.warnings)).toBeNull();
-	},
-);
+// One document: content detection must find a covering fallback for every script. The page language only reorders
+// fallbacks, which packages/fonts covers per locale.
+it("draws every supported script through a fallback for the default font", { timeout: 60_000 }, async () => {
+	const texts = [
+		"अमित शर्मा हिन्दी",
+		"অমিত শর্মা",
+		"அமித் சர்மா",
+		"అమిత్ శర్మ",
+		"അമിത് ശർമ്മ",
+		"ಅಮಿತ್ ಶರ್ಮಾ",
+		"ଅମିତ ଶର୍ମା",
+		"ਅਮਿਤ ਸ਼ਰਮਾ",
+		"અમિત શર્મા",
+		"අමිත් ශර්මා",
+		"አሚት ሻርማ",
+		"អមិត ស្រម៉ា",
+		"Designer 👩🏽‍💻 coder",
+	];
+	const data = summaryResume(texts.map((text) => `<p>${text}</p>`).join(""), "IBM Plex Serif");
+	const result = await act(() => renderResume(forme, { data }));
+	expect(lostCharacters(result.warnings)).toBeNull();
+});

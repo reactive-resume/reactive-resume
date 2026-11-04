@@ -21,7 +21,7 @@ function fixture() {
 }
 
 describe("skill keyword lists", () => {
-	it("emits real bullet paragraphs for custom=true", () => {
+	it("emits real bullet paragraphs in a custom skills section", () => {
 		const section = fixture();
 		const paragraphs = renderCustomSection({ ...section, id: "custom", type: "skills" }, "000000");
 		const xml = JSON.stringify(paragraphs.map((paragraph) => paragraph.prepForXml({ stack: [] } as never)));

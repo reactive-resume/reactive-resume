@@ -3,7 +3,6 @@ import { describe, expect, it } from "vite-plus/test";
 import { createCanvas } from "@napi-rs/canvas";
 import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { templateSchema } from "@reactive-resume/schema/templates";
 import { ResumeDocument } from "../../document";
 import { renderToBuffer } from "../../forme/testing";
 import { rasterizePdf } from "../../semantic/test/rasterize-pdf";
@@ -180,7 +179,8 @@ function expectedContainBounds(orientation: Orientation, borderWidth: number): B
 }
 
 describe("picture fit geometry (#2782)", () => {
-	it.each(templateSchema.options)("uses the picture aspect ratio for the frame in %s", async (template) => {
+	// Every template draws the shared base picture style; Ditto is the only one that extends it.
+	it.each(["onyx", "ditto"] as const)("uses the picture aspect ratio for the frame in %s", async (template) => {
 		const page = await rasterPicture("landscape", "contain", template, 2);
 		const frame = requiredColorBounds(page, frameColor, "frame");
 		expect(Math.abs(frame.right - frame.left + 1 - 150)).toBeLessThanOrEqual(1);

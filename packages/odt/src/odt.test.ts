@@ -1,9 +1,7 @@
-import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it } from "vite-plus/test";
 import { strFromU8, unzipSync } from "fflate";
 import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
-import { templateLayouts } from "@reactive-resume/schema/templates";
 import { buildOdtFiles, ODT_MIME_TYPE } from "./builder";
 import { htmlToOdtBlocks } from "./html-to-odt";
 import { buildOdt } from "./index";
@@ -30,9 +28,9 @@ describe("buildOdt", () => {
 });
 
 describe("buildOdtFiles", () => {
-	it.each(Object.keys(templateLayouts) as Template[])("puts the header first, once, on %s", (template) => {
+	// The builder lays out every template the same way, so one document covers them all.
+	it("puts the header first, once", () => {
 		const data = structuredClone(sampleResumeData);
-		data.metadata.template = template;
 		const text = contentText(data);
 
 		expect(text.startsWith(data.basics.name)).toBe(true);
