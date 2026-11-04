@@ -9,7 +9,15 @@ describe("parseReactiveResumeJSON", () => {
 
 		const result = parseReactiveResumeJSON(JSON.stringify(data));
 		expect(result.metadata.layout.pages.length).toBe(1);
-		expect(result.metadata.layout.pages[0]?.main.length).toBeGreaterThan(0);
+		expect(result.metadata.layout.pages[0]?.main.slice(0, 4)).toEqual([
+			"summary",
+			"experience",
+			"education",
+			"projects",
+		]);
+		expect(result.metadata.layout.pages[0]?.main.indexOf("profiles")).toBeGreaterThan(
+			result.metadata.layout.pages[0]?.main.indexOf("references") ?? -1,
+		);
 	});
 
 	it("recovers missing built-in sections by appending them to the first page", () => {
@@ -34,5 +42,7 @@ describe("parseReactiveResumeJSON", () => {
 		// The originally-placed sections remain where the user put them.
 		expect(firstPage?.sidebar).toContain("skills");
 		expect(firstPage?.main[0]).toBe("experience");
+		expect(firstPage?.sidebar).toEqual(["skills"]);
+		expect(firstPage?.main.indexOf("profiles")).toBeGreaterThan(firstPage?.main.indexOf("education") ?? -1);
 	});
 });

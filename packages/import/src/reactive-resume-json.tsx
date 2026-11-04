@@ -1,8 +1,12 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { resumeDataSchema, sectionTypeSchema } from "@reactive-resume/schema/resume/data";
+import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { rethrowAsImportError } from "./error";
 
-const BUILT_IN_LAYOUT_SECTION_IDS = sectionTypeSchema.options.filter((section) => section !== "cover-letter");
+const BUILT_IN_LAYOUT_SECTION_IDS = defaultResumeData.metadata.layout.pages.flatMap(({ main, sidebar }) => [
+	...main,
+	...sidebar,
+]);
 
 /** Recovers built-in sections missing from the layout (or a layout with no pages) without reordering it. */
 function normalizeBuiltInSectionsInLayout(data: ResumeData): ResumeData {

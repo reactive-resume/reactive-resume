@@ -19,6 +19,14 @@ type RecoveryRequest = {
 
 function resumeWithName(name: string) {
 	const resume = structuredClone(defaultResumeData);
+	// Manifest hashes cover the full snapshot; retain the hand-checked historical layout.
+	resume.metadata.layout.pages = [
+		{
+			fullWidth: false,
+			main: ["summary", "profiles", "experience", "education", "projects", "volunteer", "references"],
+			sidebar: ["skills", "certifications", "awards", "languages", "interests", "publications"],
+		},
+	];
 	resume.basics.name = name;
 	return resume;
 }

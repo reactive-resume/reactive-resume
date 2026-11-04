@@ -21,6 +21,7 @@ import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { InputGroup, InputGroupAddon, InputGroupText } from "@reactive-resume/ui/components/input-group";
+import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { toast } from "@reactive-resume/ui/components/toast";
 import "react-easy-crop/react-easy-crop.css";
@@ -29,42 +30,30 @@ import { NumberInput } from "@/components/input/number-input";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
 type PicturePreviewControlsProps = {
-	fileInputRef: React.RefObject<HTMLInputElement | null>;
 	form: PictureSettingsForm;
 	normalizedPictureUrl: string;
 	picture: PictureValues;
 	onAutoSave: () => void;
 	onDeletePicture: () => void;
 	onSelectPicture: () => void;
-	onUploadPicture: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 function PicturePreviewControls({
-	fileInputRef,
 	form,
 	normalizedPictureUrl,
 	picture,
 	onAutoSave,
 	onDeletePicture,
 	onSelectPicture,
-	onUploadPicture,
 }: PicturePreviewControlsProps) {
 	return (
 		<div className="flex items-center gap-x-4">
-			<input
-				ref={fileInputRef}
-				type="file"
-				accept="image/*"
-				aria-label={t`Upload photo`}
-				className="hidden"
-				onChange={onUploadPicture}
-			/>
-
 			<button
 				type="button"
 				onClick={picture.url ? onDeletePicture : onSelectPicture}
@@ -648,7 +637,9 @@ function ColorWidthFields(props: ColorWidthFieldsProps) {
 }
 
 /** Every photo option: upload with crop, address, show or hide, delete, fit, size, shape, border and shadow. */
-export function PictureSettings() {
+type PictureSettingsProps = { locked: boolean };
+
+export function PictureSettings({ locked }: PictureSettingsProps) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const appOrigin = window.location.origin;
 
@@ -657,6 +648,11 @@ export function PictureSettings() {
 	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const picture = useCurrentBuilderResumeSelector((resume) => resume.data.picture);
 	const normalizedPictureUrl = normalizePictureUrl(picture.url, appOrigin);
+	const generation = getAccountGeneration();
+	const current = () => {
+		const resume = useResumeStore.getState().resume;
+		return generation === getAccountGeneration() && resume?.id === resumeId && !resume.isLocked;
+	};
 	const updateResumeData = useUpdateResumeData();
 
 	const { mutate: uploadFile } = useMutation(orpc.storage.uploadFile.mutationOptions({ meta: { noInvalidate: true } }));
@@ -711,19 +707,28 @@ export function PictureSettings() {
 	};
 
 	const uploadPictureFile = (file: File) => {
+		if (!current()) return;
 		if (file.size > 10 * 1024 * 1024) {
 			toast.add({ type: "error", description: t`This photo is larger than 10 MB. Use Crop and upload to shrink it.` });
 			return;
 		}
+		const originalUrl = useResumeStore.getState().resume?.data.picture.url;
 		const toastId = toast.add({ type: "loading", description: t`Uploading photo…` });
 
 		uploadFile(file, {
 			onSuccess: ({ url }) => {
-				form.setFieldValue("url", url);
-				handleAutoSave();
 				toast.close(toastId);
+				if (!current() || useResumeStore.getState().resume?.data.picture.url !== originalUrl) return;
+				form.setFieldValue("url", url);
+				updateResumeData(
+					(draft) => {
+						draft.picture.url = url;
+					},
+					{ newStep: true },
+				);
 			},
 			onError: (error) => {
+				if (!current()) return toast.close(toastId);
 				toast.add({
 					type: "error",
 					description: getReadableErrorMessage(
@@ -741,15 +746,21 @@ export function PictureSettings() {
 
 	const onUploadPicture = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
-		if (!file) return;
+		e.target.value = "";
+		if (!file || !current()) return;
 		const imageSrc = URL.createObjectURL(file);
 		const image = new Image();
 		image.src = imageSrc;
 		try {
 			await image.decode();
+			if (!current()) {
+				URL.revokeObjectURL(imageSrc);
+				return;
+			}
 		} catch {
 			URL.revokeObjectURL(imageSrc);
 			e.target.value = "";
+			if (!current()) return;
 			toast.add({
 				type: "error",
 				description: t`This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo.`,
@@ -772,7 +783,31 @@ export function PictureSettings() {
 	};
 
 	return (
-		<>
+		<div id="sidebar-picture" className="col-span-full flex items-center gap-3 rounded-lg bg-bg p-2.5">
+			<input
+				ref={fileInputRef}
+				type="file"
+				accept="image/*"
+				aria-label={t`Upload photo`}
+				className="hidden"
+				onChange={onUploadPicture}
+			/>
+			{picture.url ? (
+				<img src={normalizedPictureUrl} alt="" className="size-10 shrink-0 rounded-md object-cover" />
+			) : (
+				<span className="grid size-10 shrink-0 place-items-center rounded-md bg-sunken text-ink-3">
+					<Icon name="camera-plus" />
+				</span>
+			)}
+			<p className="min-w-0 flex-1 text-xs leading-4 text-ink-2">
+				{!picture.url ? (
+					<Trans>No photo. Most ATS ignore photos; some regions expect one.</Trans>
+				) : picture.hidden ? (
+					<Trans>Photo hidden from the page.</Trans>
+				) : (
+					<Trans>Photo on the page.</Trans>
+				)}
+			</p>
 			<PictureCropDialog
 				cropState={cropState}
 				aspect={Number(form.state.values.aspectRatio) || 1}
@@ -780,59 +815,68 @@ export function PictureSettings() {
 				onUpload={uploadPictureFile}
 			/>
 
-			<form
-				className="space-y-4"
-				onSubmit={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					void form.handleSubmit();
-				}}
-			>
-				<PicturePreviewControls
-					fileInputRef={fileInputRef}
-					form={form}
-					normalizedPictureUrl={normalizedPictureUrl}
-					picture={picture}
-					onAutoSave={handleAutoSave}
-					onDeletePicture={onDeletePicture}
-					onSelectPicture={onSelectPicture}
-					onUploadPicture={onUploadPicture}
+			{!picture.url && (
+				<Button variant="secondary" size="sm" disabled={locked} onClick={onSelectPicture}>
+					<Trans>Add</Trans>
+				</Button>
+			)}
+			<Popover>
+				<PopoverTrigger
+					render={
+						<Button variant="secondary" size="sm" disabled={locked}>
+							{picture.url ? <Trans>Edit</Trans> : <Trans>URL</Trans>}
+						</Button>
+					}
 				/>
+				<PopoverContent align="end" className="max-h-[70svh] w-[360px] overflow-y-auto p-4">
+					<form
+						className="space-y-4"
+						onSubmit={(event) => {
+							event.preventDefault();
+							event.stopPropagation();
+							void form.handleSubmit();
+						}}
+					>
+						<PicturePreviewControls
+							form={form}
+							normalizedPictureUrl={normalizedPictureUrl}
+							picture={picture}
+							onAutoSave={handleAutoSave}
+							onDeletePicture={onDeletePicture}
+							onSelectPicture={onSelectPicture}
+						/>
 
-				{/* The look of a photo is set once there is one: before that, the choice is only which photo. */}
-				{picture.url ? (
-					<>
-						<PictureFitField form={form} onAutoSave={handleAutoSave} />
+						{picture.url && (
+							<>
+								<PictureFitField form={form} onAutoSave={handleAutoSave} />
 
-						<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
-							<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
+								<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
+									<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
 
-							<ColorWidthFields
-								form={form}
-								colorName="borderColor"
-								widthName="borderWidth"
-								colorLabel={t`Border color`}
-								widthLabel={t`Border width`}
-								step={1}
-								onAutoSave={handleAutoSave}
-							/>
-							<ColorWidthFields
-								form={form}
-								colorName="shadowColor"
-								widthName="shadowWidth"
-								colorLabel={t`Shadow color`}
-								widthLabel={t`Shadow width`}
-								step={0.5}
-								onAutoSave={handleAutoSave}
-							/>
-						</div>
-					</>
-				) : (
-					<p className="text-xs leading-4 text-ink-3">
-						<Trans>Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added.</Trans>
-					</p>
-				)}
-			</form>
-		</>
+									<ColorWidthFields
+										form={form}
+										colorName="borderColor"
+										widthName="borderWidth"
+										colorLabel={t`Border color`}
+										widthLabel={t`Border width`}
+										step={1}
+										onAutoSave={handleAutoSave}
+									/>
+									<ColorWidthFields
+										form={form}
+										colorName="shadowColor"
+										widthName="shadowWidth"
+										colorLabel={t`Shadow color`}
+										widthLabel={t`Shadow width`}
+										step={0.5}
+										onAutoSave={handleAutoSave}
+									/>
+								</div>
+							</>
+						)}
+					</form>
+				</PopoverContent>
+			</Popover>
+		</div>
 	);
 }
