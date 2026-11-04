@@ -48,7 +48,7 @@ describe("hyphenation with long unbroken tokens (#3686)", () => {
 		const { pdf, layout } = await renderResume(forme, { data: buildData(), template: template as Template });
 		expect(pdf.length).toBeGreaterThan(0);
 		const text = pageText(layout);
-		expect(text).toContain("example.com/articles");
-		expect(text).toContain(LONG_ALPHA_WORD.slice(0, 40));
+		expect(text).toContain(LONG_URL);
+		expect(text).toContain(LONG_ALPHA_WORD);
 	});
 });
