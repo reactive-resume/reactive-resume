@@ -44,6 +44,8 @@ workflow artifacts. Base64 is encoding, not encryption.
 - `IOS_DISTRIBUTION_P12_PASSWORD`: password for that `.p12`.
 - `IOS_PROVISION_PROFILE_BASE64`: base64 of the App Store profile for `me.rxresu`,
   team `654ASRW868`, covering the current app entitlements and certificate.
+- `IOS_SHARE_PROVISION_PROFILE_BASE64`: base64 of the App Store profile for the share extension,
+  `me.rxresu.expo-sharing-extension`, signed with the same certificate. Every iOS build needs it.
 - `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`: raw service-account JSON with release-to-production
   permission for this app. Required only for Android uploads.
 - `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY`: App Store Connect team API key ID,

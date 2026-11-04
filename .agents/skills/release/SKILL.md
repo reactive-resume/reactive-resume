@@ -32,7 +32,7 @@ One pipeline: version bump → changelog entry → PR → squash-merge → tag �
    Conventions: date is ordinal ("7th July 2026"); every bullet links its commit(s) as `[shortsha](commit url)`; group by theme, Highlights first; write for users of the app and self-hosters, not for contributors. Thank external contributors by handle where relevant.
 
 5. **Run checks**: `pnpm check`, `pnpm typecheck`, `pnpm test`.
-6. **PR**: non-draft, against `main`. Short summary + bullets of changes in the body. **No mention of Claude/Codex/AI anywhere in title, body, or commits.** Squash-merge once CI is green, then wait for the post-merge checks on `main` to pass (`gh pr checks --watch`, then watch the main run).
+6. **PR**: non-draft, against `main`. Before merging, tagging, publishing the release or pushing the Cloudron change, show the user exactly what will run (version, commit SHA, release notes) and wait for an explicit yes. Short summary + bullets of changes in the body. **No mention of Claude/Codex/AI anywhere in title, body, or commits.** Squash-merge once CI is green, then wait for the post-merge checks on `main` to pass (`gh pr checks --watch`, then watch the main run).
 7. **Tag and release** from updated `main`:
 
    ```bash

@@ -7,9 +7,10 @@ The repository is `reactive-resume/reactive-resume`. Docker Hub remains
 ## Builds and release safety
 
 `.github/workflows/docker-publish.yml` builds AMD64 and ARM64 on matching native runners.
-All workflows run on GitHub-hosted runners (`ubuntu-latest`, `ubuntu-24.04-arm`) by default,
-so forks work without setup. Setting the repository variable `USE_BLACKSMITH=true` switches
-every job to Blacksmith runners (32 vCPU for build/test jobs, 2 vCPU for lightweight jobs) and
+Workflows that check `USE_BLACKSMITH` (CI, autofix, Docker publishing, issue maintenance, OTA updates) run on GitHub-hosted runners
+(`ubuntu-latest`, `ubuntu-24.04-arm`) by default, so forks work without setup. `mobile-release.yml` and
+`mobile-forme-build.yml` always run on Blacksmith Linux and macOS runners. Setting `USE_BLACKSMITH=true` switches
+the other workflows' jobs to Blacksmith runners (32 vCPU for build/test jobs, 2 vCPU for lightweight jobs) and
 swaps in `useblacksmith/checkout`, `useblacksmith/setup-docker-builder`, and
 `useblacksmith/build-push-action`. Because `uses:` cannot be an expression, each swapped
 action is a pair of steps gated on the variable; keep both halves in sync when editing.

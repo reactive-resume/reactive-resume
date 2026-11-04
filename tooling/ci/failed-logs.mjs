@@ -2,7 +2,7 @@
 // Usage: pnpm ci:logs [run URL | run ID | job URL] [--full]. Without a target it reads every run for the newest commit
 // on the current branch. --full also writes each cleaned log to a temp file and prints its path.
 import { execFile } from "node:child_process";
-import { writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseArgs, promisify, stripVTControlCharacters } from "node:util";
@@ -92,6 +92,8 @@ async function main() {
 	const logs = await Promise.all(
 		jobs.map((job) => gh("api", "--allow-escape-sequences", `repos/${repo}/actions/jobs/${job.id}/logs`)),
 	);
+	// mkdtemp creates a private (0700) directory; "wx" refuses to follow or overwrite an existing path.
+	const directory = values.full ? await mkdtemp(join(tmpdir(), "ci-logs-")) : "";
 	for (const [index, job] of jobs.entries()) {
 		const steps = (job.steps ?? []).filter((step) => step.conclusion === "failure").map((step) => step.name);
 		console.log(`\n■ ${job.name} (${job.conclusion ?? job.status}) · failed step: ${steps.join(", ") || "none"}`);
@@ -100,8 +102,8 @@ async function main() {
 		console.log(output.slice(0, MAX_LINES).join("\n") || "(no failure blocks found; use --full)");
 		if (output.length > MAX_LINES) console.log(`… ${output.length - MAX_LINES} more lines; use --full`);
 		if (values.full) {
-			const path = join(tmpdir(), `ci-job-${job.id}.log`);
-			await writeFile(path, lines.join("\n"));
+			const path = join(directory, `job-${job.id}.log`);
+			await writeFile(path, lines.join("\n"), { flag: "wx", mode: 0o600 });
 			console.log(`full log: ${path}`);
 		}
 	}
