@@ -30,7 +30,6 @@ export function ApplicationProfileSection() {
 	if (!scope) return null;
 	return (
 		<View style={{ gap: space.s6 }}>
-			<Text color="ink2">{t`Details for your job application forms.`}</Text>
 			{query.isPending ? (
 				<Text>{t`Loading…`}</Text>
 			) : query.isError && query.data === undefined ? (

@@ -4,7 +4,6 @@ import { Trans } from "@lingui/react/macro";
 import { createFileRoute, Link, Outlet, useMatchRoute } from "@tanstack/react-router";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
-import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { PageHeader } from "@/components/layout/page-header";
 import { getPageTitle } from "@/libs/seo";
@@ -46,7 +45,6 @@ function CareerLayout() {
 	];
 	const current = places.find((place) => matchRoute({ to: place.match, fuzzy: place.match !== "/dashboard/career/" }));
 	const coach = current?.match === "/dashboard/career/coach";
-	const phone = useBreakpoint() === "mobile";
 
 	return (
 		<div
@@ -58,14 +56,7 @@ function CareerLayout() {
 					"max-sm:h-[calc(100dvh-53px-env(safe-area-inset-bottom))] max-sm:min-h-0 max-sm:gap-3 max-sm:overflow-hidden max-sm:pt-3 max-sm:pb-3",
 			)}
 		>
-			<PageHeader
-				title={<Trans>Career</Trans>}
-				{...(coach && phone
-					? {}
-					: {
-							description: <Trans>Plan your search, keep your evidence in one place, and decide between offers.</Trans>,
-						})}
-			>
+			<PageHeader title={<Trans>Career</Trans>}>
 				<Tabs
 					value={current?.to ?? null}
 					className="-mx-4 max-w-[100vw] [scrollbar-width:none] overflow-x-auto px-4 max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-24px),transparent)] max-sm:pe-7 sm:mx-0 sm:px-0 max-sm:rtl:[mask-image:linear-gradient(to_left,black_calc(100%-24px),transparent)]"

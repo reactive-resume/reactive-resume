@@ -323,26 +323,10 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5"
 			style={{ paddingBottom: selecting ? selectionBarSpace : undefined }}
 		>
-			<PageHeader title={<Trans>Documents</Trans>}>
-				{!firstRun && (
-					<>
-						<Tabs value={search.type} onValueChange={(type) => onSearchChange({ type: type as DocumentTypeFilter })}>
-							<TabsList variant="line" aria-label={t`Document type`}>
-								<TabsTrigger value="all">
-									<Trans>All</Trans>
-									<TabsCount>{i18n.number(counts.all)}</TabsCount>
-								</TabsTrigger>
-								<TabsTrigger value="resume">
-									<Trans>Resumes</Trans>
-									<TabsCount>{i18n.number(counts.resume)}</TabsCount>
-								</TabsTrigger>
-								<TabsTrigger value="letter">
-									<Trans>Letters</Trans>
-									<TabsCount>{i18n.number(counts.letter)}</TabsCount>
-								</TabsTrigger>
-							</TabsList>
-						</Tabs>
-
+			<PageHeader
+				title={<Trans>Documents</Trans>}
+				actions={
+					!firstRun && (
 						<div className="ms-auto flex flex-wrap items-center gap-2 max-sm:ms-0 max-sm:w-full">
 							<InputGroup className="w-60 max-sm:w-full">
 								<InputGroupAddon>
@@ -408,6 +392,27 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 								</SegmentedControlItem>
 							</SegmentedControl>
 						</div>
+					)
+				}
+			>
+				{!firstRun && (
+					<>
+						<Tabs value={search.type} onValueChange={(type) => onSearchChange({ type: type as DocumentTypeFilter })}>
+							<TabsList variant="line" aria-label={t`Document type`}>
+								<TabsTrigger value="all">
+									<Trans>All</Trans>
+									<TabsCount>{i18n.number(counts.all)}</TabsCount>
+								</TabsTrigger>
+								<TabsTrigger value="resume">
+									<Trans>Resumes</Trans>
+									<TabsCount>{i18n.number(counts.resume)}</TabsCount>
+								</TabsTrigger>
+								<TabsTrigger value="letter">
+									<Trans>Letters</Trans>
+									<TabsCount>{i18n.number(counts.letter)}</TabsCount>
+								</TabsTrigger>
+							</TabsList>
+						</Tabs>
 					</>
 				)}
 			</PageHeader>
