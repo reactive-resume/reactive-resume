@@ -40,14 +40,28 @@ and production build. The runner still uses zero retries, so parallelism cannot 
 
 ## Coverage
 
-- Email/password sign-up, sign-out and sign-in through the UI.
+One journey per severe area, plus contracts only a real browser can prove. UI-only checks (focus, motion, layout,
+viewports, copy) and HTTP-only contracts belong in web unit tests and API integration tests at their owner.
+
+- Email/password sign-up (with and without a username), sign-out and sign-in through the UI; a failed sign-out keeps
+  the session, a successful one clears private browser storage.
 - Guest login, and a guest's resume carried over when they create an account. Skips without `FLAG_ENABLE_GUEST_LOGIN=true`.
 - Builder section editing, with autosave across reloads and a draft kept when saving during navigation fails.
 - JSON export/import through the New dialog, including an older file whose resume still carries a cover letter.
-- Public sharing: an anonymous visitor's PDF download and statistics, a renamed address that keeps redirecting, and
-  a password-protected link.
+- Public sharing: an anonymous visitor's PDF download and statistics, a renamed address that keeps redirecting, a
+  password-protected link, and Word downloads gated by the owner's opt-in.
+- Browser-made PDFs keep shaped scripts as text (checked with `pdftotext`).
+- An application stage move acknowledged in an Undo toast persists when the page reloads or closes.
+- The account ZIP export (with uploaded bytes and history), then account deletion.
+- New API keys default to read-only.
 - OAuth consent for MCP clients: deny, allow with PKCE, and the access token's audience at `/mcp`.
-- The assistant, against a scripted OpenAI-compatible provider (`fixtures/ai-stub.ts`). It needs `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` so the server may call the stub on 127.0.0.1, and skips without it.
+- The assistant, against a scripted OpenAI-compatible provider (`fixtures/ai-stub.ts`): proposals change nothing
+  until accepted, a clarifying question, and Stop. It needs `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` so the server may
+  call the stub on 127.0.0.1, and skips without it. The same spec checks that application create and resume linking
+  refuse another account's resources.
+- The employer-form fill script in Chromium and WebKit leaves hidden or clipped private controls untouched.
+- The capture helper extension (`posting-capture-extension.spec.ts`) runs only with `RUN_CAPTURE_EXTENSION=1` and
+  a headed Chromium.
 
 Visual regression, PDF/DOCX rasterization parity, thumbnail resolution, and import-fixture reproduction are
 intentionally outside the PR gate to keep it fast.

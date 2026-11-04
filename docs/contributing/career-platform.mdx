@@ -37,7 +37,7 @@ Use disposable PostgreSQL and synthetic users for account-backed proof. Follow t
 
 ```sh
 pnpm --filter @reactive-resume/api test src/features/career/service.integration.test.ts src/features/applications/packet-router.test.ts
-pnpm exec playwright test tests/e2e/specs/application-packet.spec.ts tests/e2e/specs/form-fill-engine.spec.ts
+pnpm test:e2e:local --build tests/e2e/specs/form-fill-engine.spec.ts
 ```
 
 Set `RUN_CAPTURE_EXTENSION=1` for the actual Chromium helper case; otherwise that case is intentionally omitted. The shared-engine spec launches Chromium and host WebKit to check the desktop script. The earlier loopback lab under `tooling/autofill/` remains historical experiment evidence and does not verify the new product integration.
@@ -210,7 +210,7 @@ pnpm --filter web test src/features/settings/account/export.test.ts
 
 The deterministic cases cover ownership, submitted-version isolation, correction/forget behavior, practice/debrief separation, stale material, exports/cascades, overlapping ticks, retries/cancellation, recurrence, and endpoint authorization. Also run affected package typechecks, existing assistant regression suites, boundary/lint/format checks, and the production build. Test the deployed endpoint and owner-email flow in a dedicated installation as described in [deployment checks](/contributing/deployment-checks).
 
-Career browser scenarios require `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` for the local synthetic provider. `pnpm test:e2e:local` sets it along with the rest of the [browser test environment](https://github.com/reactive-resume/reactive-resume/blob/main/tests/e2e/README.md): run `pnpm test:e2e:local --build tests/e2e/specs/career.spec.ts`. These cover offline urgent preparation, memory controls, selected submitted snapshots, persistence, and first-send context exclusions.
+Career behavior is covered by the database and unit suites above; the browser suite keeps only cross-system journeys (see the [browser test README](https://github.com/reactive-resume/reactive-resume/blob/main/tests/e2e/README.md)).
 
 ### Opt-in live evaluation
 

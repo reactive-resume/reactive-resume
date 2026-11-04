@@ -1,8 +1,6 @@
 import { loginViaUi, logoutViaUi, registerViaUi } from "../fixtures/auth";
 import { expect, test } from "../fixtures/test";
 
-test.use({ launchOptions: { ignoreDefaultArgs: ["--hide-scrollbars"] } });
-
 test("failed settings sign-out retains the session and drafts; successful sign-out clears private browser data", async ({
 	authPage: page,
 }) => {
@@ -35,34 +33,6 @@ test("failed settings sign-out retains the session and drafts; successful sign-o
 		null,
 		null,
 	]);
-});
-
-test("keeps long auth pages reachable without horizontal overflow", async ({ page }) => {
-	for (const width of [320, 1280]) {
-		await page.setViewportSize({ width, height: 400 });
-		await page.goto("/auth/register");
-		await expect(page.getByRole("button", { name: "Sign up", exact: true })).toBeVisible();
-		// An explicit scrollbar width forces classic scrollbars on macOS too.
-		await page.evaluate(() => {
-			document.styleSheets[0]?.insertRule("::-webkit-scrollbar { width: 16px; }");
-			window.scrollTo(0, 0);
-		});
-		await expect
-			.poll(() => page.evaluate(() => window.innerWidth - document.documentElement.clientWidth))
-			.toBeGreaterThan(0);
-
-		const logo = page.getByRole("img", { name: "Reactive Resume", exact: true });
-		await expect(logo).toBeInViewport();
-		expect(await logo.evaluate((element) => element.getBoundingClientRect().top)).toBeGreaterThanOrEqual(16);
-		expect(
-			await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth),
-		).toBeLessThanOrEqual(0);
-
-		await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-		const submit = page.getByRole("button", { name: "Sign up", exact: true });
-		await expect(submit).toBeInViewport();
-		expect(await submit.evaluate((element) => element.getBoundingClientRect().bottom)).toBeLessThanOrEqual(384);
-	}
 });
 
 test("signs up without a username and lands on the dashboard", async ({ page, account }) => {
