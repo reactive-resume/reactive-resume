@@ -427,7 +427,13 @@ export function ChipInput({
 									message: `Add ${suggestion}`,
 								})}
 								className="inline-flex min-h-7 max-w-full items-center gap-1 rounded-sm border border-line-2 px-2.5 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none pointer-coarse:min-h-11"
-								onClick={() => addChips([suggestion])}
+								onClick={() => {
+									if (editingIndex === null) addChips([suggestion]);
+									else updateChip(editingIndex, suggestion);
+									setInput("");
+									setEditingIndex(null);
+									inputRef.current?.focus();
+								}}
 							>
 								<Icon name="plus" size={12} className="shrink-0 text-ink-3" />
 								<span className="truncate">{suggestion}</span>

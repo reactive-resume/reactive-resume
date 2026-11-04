@@ -46,6 +46,21 @@ function useDocumentMeta(document: DocumentSummary) {
 	return t`${type} · Edited ${formatRelativeTime(document.editedAt, i18n.locale, "short")}`;
 }
 
+type DocumentTagsProps = { tags: readonly string[] };
+
+function DocumentTags({ tags }: DocumentTagsProps) {
+	if (tags.length === 0) return null;
+	return (
+		<ul aria-label={t`Tags`} className="flex min-w-0 flex-wrap gap-x-2 gap-y-0.5 text-xs text-ink-3">
+			{tags.map((tag) => (
+				<li key={tag} dir="auto" className="max-w-full [overflow-wrap:anywhere]">
+					#{tag}
+				</li>
+			))}
+		</ul>
+	);
+}
+
 /** Opens the document in its editor: resumes and letters share the editor shell. */
 function OpenLink({
 	document,
@@ -284,6 +299,7 @@ export function DocumentCard({
 							</h2>
 						)}
 						<span className="truncate text-xs text-ink-3">{meta}</span>
+						<DocumentTags tags={document.tags} />
 						{document.application ? (
 							<span className="flex min-w-0 items-center gap-1 text-xs text-ink-2">
 								<Icon name="briefcase" size={14} />
@@ -418,6 +434,11 @@ export function DocumentRow({
 							</span>
 						)}
 					</span>
+					{document.tags.length > 0 && (
+						<div className="mt-1 ps-6">
+							<DocumentTags tags={document.tags} />
+						</div>
+					)}
 				</td>
 				<td className="px-2 text-sm text-ink-2 max-sm:hidden">
 					{document.type === "resume" ? <Trans>Resume</Trans> : <Trans>Letter</Trans>}
