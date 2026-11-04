@@ -53,7 +53,7 @@ for (const via of ["inline options", "entry screen"]) {
 				name,
 			]),
 		);
-		ui.useTheme = () => ({ space: { s2: 8, s3: 12, s4: 16 } });
+		ui.useTheme = () => ({ space: { s2: 8, s3: 12, s4: 16 }, size: { hit: 44 }, colors: {}, radius: {} });
 		const boundary = {
 			react,
 			"react-native": { Pressable: "Pressable", View: "View" },
@@ -61,12 +61,12 @@ for (const via of ["inline options", "entry screen"]) {
 			"@lingui/core/macro": {
 				plural: (count, forms) => (count === 1 ? forms.one : forms.other).replace("#", String(count)),
 			},
-			"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
+			"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n }) },
 			"expo-image": { Image: "Image" },
 			"expo-router": { useRouter: () => ({ push() {} }) },
 			"@reactive-resume/utils/string": { getInitials: () => "FE" },
 			"./entry-sheet": { EntrySheet: "EntrySheet" },
-			"./fields": { ADD_LABELS: {}, SECTION_ICONS: {}, SECTION_TITLES: {} },
+			"./fields": { ADD_LABELS: {}, SECTION_ICONS: {}, SECTION_TITLES: { experience: "Experience" } },
 			"./hooks": {
 				useWriteData: (select) => select(data),
 				edit: (write) => write(data),
@@ -118,7 +118,16 @@ for (const via of ["inline options", "entry screen"]) {
 			assert.ok(item, `Missing ${kind}`);
 			return current.renderItem({ item, drag() {}, isActive: false });
 		};
-		row("section").props.onToggle();
+		const section = row("section");
+		const renderedSection = section.type(section.props);
+		const handle = nodes(renderedSection).find((node) => node.type?.name === "Handle");
+		assert.ok(handle, "actual section exposes its reorder handle");
+		const target = handle.type(handle.props);
+		assert.ok(
+			target.props.style.width >= 44 && target.props.style.height >= 44,
+			"native reorder target is at least 44 by 44",
+		);
+		section.props.onToggle();
 		if (via === "entry screen") row("entry").props.onOpen();
 		else {
 			row("entry").props.onOptions();

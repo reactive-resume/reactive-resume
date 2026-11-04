@@ -128,17 +128,24 @@ export const PikachuPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 
 const Header = ({ styles, colors }: PikachuHeaderProps) => {
 	const { basics } = useRender();
+	const hasContacts = hasContactDetails(basics);
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			<SemanticTemplatePartView partKeys={["header-divider"]} style={styles.headerDivider}>
+			<SemanticTemplatePartView
+				partKeys={["header-divider"]}
+				style={composeStyles(
+					styles.headerDivider,
+					hasContacts ? undefined : { borderBottomWidth: 0, paddingBottom: 0 },
+				)}
+			>
 				<View style={styles.headerIdentity}>
 					<Heading style={styles.headerName}>{basics.name}</Heading>
 					<Text style={styles.headerText}>{basics.headline}</Text>
 				</View>
 			</SemanticTemplatePartView>
 
-			{hasContactDetails(basics) && (
+			{hasContacts && (
 				<SemanticContactListView style={styles.contactList}>
 					<EmailContactItem
 						email={basics.email}

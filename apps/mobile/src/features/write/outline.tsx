@@ -272,7 +272,7 @@ function Handle({ label, disabled, onDrag }: HandleProps) {
 			delayLongPress={250}
 			onLongPress={onDrag}
 			style={{
-				width: size.hit * 0.7,
+				width: size.hit,
 				height: size.hit,
 				alignItems: "center",
 				justifyContent: "center",
