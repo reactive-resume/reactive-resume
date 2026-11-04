@@ -2,7 +2,6 @@ import type { Basics, CustomField } from "@reactive-resume/schema/resume/data";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { Button } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
@@ -30,6 +29,7 @@ function useBasicsWriter() {
  */
 export function BasicsCard({ locked }: { locked: boolean }) {
 	const basics = useCurrentBuilderResumeSelector((resume) => resume.data.basics);
+	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const open = useEditorStore((state) => state.basicsOpen);
 	const selected = useEditorStore((state) => state.selection?.kind === "header");
 	const write = useBasicsWriter();
@@ -84,7 +84,7 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 						disabled={locked}
 						className="m-0 grid min-w-0 grid-cols-2 items-start gap-x-3 gap-y-2.5 border-0 border-t border-line px-3 pt-3 pb-3.5"
 					>
-						<PhotoRow locked={locked} />
+						<PictureSettings key={resumeId} locked={locked} />
 						<TextField
 							label={<Trans>Full name</Trans>}
 							wide
@@ -128,44 +128,6 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 				</CollapsibleContent>
 			</Collapsible>
 		</section>
-	);
-}
-
-function PhotoRow({ locked }: { locked: boolean }) {
-	const picture = useCurrentBuilderResumeSelector((resume) => resume.data.picture);
-	const hasPhoto = Boolean(picture.url);
-
-	return (
-		<div id="sidebar-picture" className="col-span-full flex items-center gap-3 rounded-lg bg-bg p-2.5">
-			{hasPhoto ? (
-				<img src={picture.url} alt="" className="size-10 shrink-0 rounded-md object-cover" />
-			) : (
-				<span className="grid size-10 shrink-0 place-items-center rounded-md bg-sunken text-ink-3">
-					<Icon name="camera-plus" />
-				</span>
-			)}
-			<p className="min-w-0 flex-1 text-xs leading-4 text-ink-2">
-				{!hasPhoto ? (
-					<Trans>No photo. Most ATS ignore photos; some regions expect one.</Trans>
-				) : picture.hidden ? (
-					<Trans>Photo hidden from the page.</Trans>
-				) : (
-					<Trans>Photo on the page.</Trans>
-				)}
-			</p>
-			<Popover>
-				<PopoverTrigger
-					render={
-						<Button variant="secondary" size="sm" disabled={locked}>
-							{hasPhoto ? <Trans>Edit</Trans> : <Trans>Add</Trans>}
-						</Button>
-					}
-				/>
-				<PopoverContent align="end" className="max-h-[70svh] w-[360px] overflow-y-auto p-4">
-					<PictureSettings />
-				</PopoverContent>
-			</Popover>
-		</div>
 	);
 }
 

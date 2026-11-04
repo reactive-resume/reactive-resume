@@ -2295,6 +2295,17 @@ const { PictureScreen } = load("features/write/picture-screen.tsx", {
 	"@/draft/native": { nativeEnvironment: {} },
 });
 const photoView = () => render(PictureScreen);
+assert.equal(
+	nodes(photoView()).some((node) => node.props?.label === "Rotation"),
+	false,
+	"unsupported rotation is not offered",
+);
+assert.equal(
+	nodes(photoView()).some((node) => node.props?.label === "Size"),
+	true,
+	"existing photo offers appearance controls",
+);
+
 // Undo removal must retain the edit immediately before it.
 photoStore.getState().update((draft) => {
 	draft.picture.size = 123;
@@ -2304,6 +2315,12 @@ const photoConfirm = nodes(photoView()).find((node) => node.type === "ConfirmDia
 if (photoConfirm) photoConfirm.props.onConfirm();
 assert.equal(photoStore.getState().data.picture.url, "");
 assert.equal(photoBytes.get(photoUrl), "photo bytes");
+assert.equal(
+	nodes(photoView()).some((node) => ["Fit", "Size", "Border color", "Shadow color"].includes(node.props?.label)),
+	false,
+	"empty photo offers upload before appearance controls",
+);
+
 assert.equal(
 	nodes(photoView()).some((node) => node.type === "ConfirmDialog"),
 	false,
