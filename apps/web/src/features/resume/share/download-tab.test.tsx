@@ -34,8 +34,10 @@ it("offers peer feedback only after a successful export and clears it for a new 
 	);
 	const invite = () => screen.queryByRole("link", { name: "Get resume feedback on Discord" });
 	expect(invite()).toBeNull();
+	expect(screen.queryByRole("link", { name: "Donate" })).toBeNull();
 	fireEvent.click(screen.getByRole("button", { name: "Download PDF" }));
 	expect(invite()).toBeNull();
+	expect(screen.queryByRole("link", { name: "Donate" })).toBeNull();
 	finish(file);
 	const link = await screen.findByRole("link", { name: "Get resume feedback on Discord" });
 	expect(link.getAttribute("href")).toBe("https://discord.gg/9kAqrGcwn5");
@@ -44,10 +46,12 @@ it("offers peer feedback only after a successful export and clears it for a new 
 
 	fireEvent.click(screen.getByRole("radio", { name: /Word/ }));
 	expect(invite()).toBeNull();
+	expect(screen.queryByRole("link", { name: "Donate" })).toBeNull();
 	mocks.generate.mockRejectedValueOnce(new Error("Export unavailable"));
 	fireEvent.click(screen.getByRole("button", { name: "Download Word" }));
 	await screen.findByRole("alert");
 	expect(invite()).toBeNull();
+	expect(screen.queryByRole("link", { name: "Donate" })).toBeNull();
 	expect(mocks.download).toHaveBeenCalledTimes(1);
 	mocks.generate.mockResolvedValueOnce(file);
 	fireEvent.click(screen.getByRole("button", { name: "Download PDF instead" }));
