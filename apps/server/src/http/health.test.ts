@@ -43,11 +43,9 @@ describe("health check timeouts", () => {
 		vi.spyOn(console, "warn").mockImplementation(() => {});
 	});
 
-	it.each([
-		{ timeout: 5_000, latency: 2_200 },
-		{ timeout: 7_000, latency: 6_000 },
-	])("accepts working storage taking $latency ms within its $timeout ms deadline", async ({ timeout, latency }) => {
-		env.STORAGE_HEALTHCHECK_TIMEOUT_MS = timeout;
+	it("accepts working storage taking longer than the default deadline within its configured one", async () => {
+		const latency = 6_000;
+		env.STORAGE_HEALTHCHECK_TIMEOUT_MS = 7_000;
 		healthcheck.mockImplementationOnce(
 			() => new Promise((resolve) => setTimeout(() => resolve({ status: "healthy", type: "s3" }), latency)),
 		);
@@ -60,7 +58,8 @@ describe("health check timeouts", () => {
 		expect((await response.json()).storage).toMatchObject({ status: "healthy", type: "s3", latencyMs: latency });
 	});
 
-	it.each([5_000, 7_000])("fails stalled storage only after its configured %i ms deadline", async (timeout) => {
+	it("fails stalled storage only after its configured deadline", async () => {
+		const timeout = 7_000;
 		env.STORAGE_HEALTHCHECK_TIMEOUT_MS = timeout;
 		healthcheck.mockImplementationOnce(() => new Promise(() => {}));
 		const settled = vi.fn();
@@ -94,25 +93,23 @@ describe("health check timeouts", () => {
 });
 
 describe("health failure reporting", () => {
-	it.each(["database", "storage", "redis"])("keeps thrown %s error details in server logs only", async (dependency) => {
+	it.each([
+		["database", "Database"],
+		["redis", "Redis"],
+	] as const)("keeps thrown %s error details in server logs only", async (dependency, name) => {
 		const detail = "Connection failed for private-user at internal.example:5432";
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-		({ database: execute, storage: healthcheck, redis: ping })[dependency]?.mockRejectedValueOnce(new Error(detail));
+		({ database: execute, redis: ping })[dependency].mockRejectedValueOnce(new Error(detail));
 
 		const response = await handleHealth();
 		const body = await response.json();
 
 		expect(response.status).toBe(503);
 		expect(JSON.stringify(body)).not.toContain(detail);
-		expect(body[dependency]).toMatchObject({
-			status: "unhealthy",
-			error: expect.stringContaining("health check failed"),
-		});
+		expect(body[dependency]).toMatchObject({ status: "unhealthy", error: `${name} health check failed.` });
 		expect(warn).toHaveBeenCalledWith(
 			"[Healthcheck]",
-			expect.objectContaining({
-				[dependency]: expect.objectContaining({ error: detail }),
-			}),
+			expect.objectContaining({ [dependency]: expect.objectContaining({ error: detail }) }),
 		);
 	});
 

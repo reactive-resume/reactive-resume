@@ -1,123 +1,13 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import * as harness from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
-
-function load(path, mocks, development = true) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8"), {
+const load = (path, mocks, development = true) =>
+	harness.load(`../src/${path}`, mocks, {
 		loader: "ts",
-		format: "cjs",
 		supported: { "dynamic-import": false },
-	}).code;
-	new Function("require", "module", "exports", "__DEV__", code)(
-		(name) => {
-			assert.ok(name in mocks, `Unexpected dependency: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-		development,
-	);
-	return module.exports;
-}
-
-test("AI imports retain the selecting account through parsing", async () => {
-	let scope = "original-account";
-	const parsed = Promise.withResolvers();
-	const started = Promise.withResolvers();
-	let saved = 0;
-	class SessionChangedError extends Error {}
-	const { importDocument } = load("features/documents/import-file.ts", {
-		"@lingui/core": { i18n: { locale: "en-US" } },
-		"@reactive-resume/utils/locale": { localeSchema: { parse: (locale) => locale } },
-		"@lingui/core/macro": { t: tag },
-		"expo-file-system": {
-			File: class {
-				size = 12;
-				base64 = async () => "file";
-			},
-		},
-		"@reactive-resume/schema/cover-letter/data": {},
-		"@reactive-resume/import/docx-text": { extractDocxText: () => "" },
-		"@reactive-resume/import/review": {
-			reviewImport: () => ({ sections: [], notImported: [], missingContact: false }),
-			withLeftoverSection: (data) => data,
-		},
-		"@/auth/session": { getAccountScope: () => scope },
-		"@/api/client": {
-			SessionChangedError,
-			client: {
-				ai: {
-					parsePdf: (_input, options) => {
-						assert.equal(options.context.scope, "original-account");
-						started.resolve();
-						return parsed.promise;
-					},
-				},
-				resume: {
-					import: async () => {
-						saved++;
-						return "id";
-					},
-				},
-			},
-		},
+		globals: { __DEV__: development },
 	});
-	const result = importDocument({ name: "private.pdf", uri: "fixture" }, true, true, new AbortController().signal);
-	await started.promise;
-	scope = "different-account";
-	parsed.resolve({ basics: { name: "Private" } });
-	await assert.rejects(result, SessionChangedError);
-	assert.equal(saved, 0);
-});
-
-test("AI imports wait for the user's review before anything is saved", async () => {
-	let saved = 0;
-	const { importDocument, createReviewedResume } = load("features/documents/import-file.ts", {
-		"@lingui/core": { i18n: { locale: "en-US" } },
-		"@reactive-resume/utils/locale": { localeSchema: { parse: (locale) => locale } },
-		"@lingui/core/macro": { t: tag },
-		"expo-file-system": {
-			File: class {
-				size = 12;
-				base64 = async () => "file";
-				bytes = async () => new Uint8Array();
-			},
-		},
-		"@reactive-resume/schema/cover-letter/data": {},
-		"@reactive-resume/import/docx-text": { extractDocxText: () => "Priya Raman\nPatents: US 11,234,567" },
-		"@reactive-resume/import/review": {
-			reviewImport: (_data, lines) => ({ sections: [], notImported: lines ?? [], missingContact: false }),
-			withLeftoverSection: (data, lines) => ({ ...data, kept: lines }),
-		},
-		"@/auth/session": { getAccountScope: () => "account" },
-		"@/api/client": {
-			SessionChangedError: class extends Error {},
-			client: {
-				ai: { parseDocx: async () => ({ basics: { name: "Priya Raman" }, metadata: { page: { locale: "en-US" } } }) },
-				resume: {
-					import: async ({ data }) => {
-						saved++;
-						assert.deepEqual(data.kept, ["Priya Raman", "Patents: US 11,234,567"]);
-						return "id";
-					},
-				},
-			},
-		},
-	});
-	const signal = new AbortController().signal;
-	const pending = await importDocument({ name: "resume.docx", uri: "fixture" }, true, false, signal);
-	assert.equal(pending.type, "review");
-	assert.equal(pending.compared, true);
-	assert.equal(saved, 0);
-	assert.deepEqual(await createReviewedResume(pending, true, signal), { id: "id", type: "resume" });
-	assert.equal(saved, 1);
-});
 
 function previewSession(values = [], development = true, clearAccountExportCache = () => {}) {
 	const store = new Map(values);

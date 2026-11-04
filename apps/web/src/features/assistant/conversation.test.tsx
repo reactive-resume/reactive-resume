@@ -48,7 +48,6 @@ vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn(), useSearch
 vi.mock("./use-assistant-chat", () => ({ useAssistantChat: mocks.chat }));
 vi.mock("./chat", async (importOriginal) => ({
 	...(await importOriginal<typeof import("./chat")>()),
-	fileToBase64: async () => "Zm9v",
 	attachmentPart: (file: { id: string; filename: string; mediaType: string }) => ({
 		type: "file",
 		url: `agent-attachment:${file.id}`,
@@ -187,6 +186,34 @@ it("uploads a file in the initial composer before sending its first message", as
 	expect(send).toHaveBeenCalledWith("Review this posting", [
 		{ id: "file-1", filename: "posting.txt", mediaType: "text/plain" },
 	]);
+});
+
+// A long paste moves into message.txt and the composer then reads "Read the attachment": the file must hold all of it.
+it("attaches a long paste as a file holding the exact text", async () => {
+	const pasted = `${"Fictional posting line.\n".repeat(200)}Ends here.`;
+	render(
+		<I18nProvider i18n={i18n}>
+			<Composer
+				document={document}
+				context={{ document: false, posting: false }}
+				onContextChange={() => {}}
+				providerLabel="Local"
+				streaming={false}
+				disabled={false}
+				threadId={null}
+				ensureThread={async () => "draft-thread"}
+				onSend={vi.fn()}
+				onStop={() => {}}
+			/>
+		</I18nProvider>,
+	);
+	fireEvent.change(screen.getByRole("textbox"), { target: { value: pasted } });
+	fireEvent.click(screen.getByRole("button", { name: "Attach a file instead" }));
+	await waitFor(() => expect(screen.getByRole("textbox")).toHaveValue("Read the attachment"));
+	expect(mocks.attach).toHaveBeenLastCalledWith(
+		expect.objectContaining({ filename: "message.txt", data: Buffer.from(pasted).toString("base64") }),
+		expect.anything(),
+	);
 });
 
 it("preserves first-message context exclusions, selected application and attachment IDs", async () => {

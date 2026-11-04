@@ -1,11 +1,8 @@
 // Host boundary proof; native layout and caret movement still need device QA.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { load } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const react = {
 	createElement: (type, props, ...children) => ({ type, props: { ...props, children: children.flat(Infinity) } }),
 	useRef: (current) => ({ current }),
@@ -33,21 +30,7 @@ const mocks = {
 	"./text": { Text: "Text" },
 	"./theme": { useTheme: () => theme },
 };
-const module = { exports: {} };
-const code = transformSync(readFileSync(new URL("../src/ui/fields.tsx", import.meta.url), "utf8"), {
-	loader: "tsx",
-	format: "cjs",
-	jsx: "transform",
-}).code;
-new Function("React", "require", "module", "exports", code)(
-	react,
-	(name) => {
-		assert.ok(name in mocks, `Missing boundary: ${name}`);
-		return mocks[name];
-	},
-	module,
-	module.exports,
-);
+const fields = load("../src/ui/fields.tsx", mocks, { jsx: "transform", globals: { React: react } });
 function render(node) {
 	if (typeof node?.type === "function") return render(node.type(node.props));
 	if (!node?.props) return node;
@@ -72,7 +55,7 @@ test("typed addresses stay LTR within an RTL native interface; ordinary text fol
 		{},
 	]) {
 		const tree = render(
-			react.createElement(module.exports.TextField, {
+			react.createElement(fields.TextField, {
 				label: "Contact",
 				value: "example.test",
 				onChangeText() {},

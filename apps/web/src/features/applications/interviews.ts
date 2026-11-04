@@ -62,8 +62,6 @@ export function formatDuration(minutes: number, locale?: string) {
 		.join(" ");
 }
 
-const pad = (value: number) => String(value).padStart(2, "0");
-
 // Calendar day key (YYYY-MM-DD). Pass the account timezone when bucketing interview instants.
 export function dayKey(date: Date, timeZone?: string) {
 	const parts = Object.fromEntries(
@@ -72,20 +70,6 @@ export function dayKey(date: Date, timeZone?: string) {
 			.map(({ type, value }) => [type, value]),
 	);
 	return `${parts.year}-${parts.month}-${parts.day}`;
-}
-
-// Value for <input type="datetime-local"> in the viewer's timezone.
-export function toDateTimeLocal(value: Date | string) {
-	const date = new Date(value);
-	if (Number.isNaN(date.getTime())) return "";
-	return `${dayKey(date)}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-// A datetime-local value is interpreted in the viewer's timezone and sent as an absolute ISO timestamp.
-export function fromDateTimeLocal(value: string) {
-	if (!value) return null;
-	const date = new Date(value);
-	return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
 // Six full weeks of UTC calendar dates, for arithmetic/labels independent of any clock or DST change.

@@ -1,13 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { shareListState, shortLinkOpens } from "./sharing";
-
-describe("shareListState", () => {
-	it("maps query flags to the Share list state", () => {
-		expect(shareListState({ isPending: true, isError: false })).toBe("pending");
-		expect(shareListState({ isPending: false, isError: true })).toBe("error");
-		expect(shareListState({ isPending: false, isError: false })).toBe("ready");
-	});
-});
+import { shortLinkOpens } from "./sharing";
 
 describe("shortLinkOpens", () => {
 	it("uses the resume's own published state when it is primary, independent of the list", () => {

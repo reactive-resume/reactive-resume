@@ -1,4 +1,5 @@
 import { once } from "node:events";
+import { get } from "node:http";
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import { serve } from "@hono/node-server";
 
@@ -46,7 +47,7 @@ describe("server startup", () => {
 		expect(events).toEqual(["migrations complete", "auth imported", "auth ready", "app created", "server listening"]);
 	});
 
-	it.each(["SIGTERM", "SIGINT"])("drains active requests before exiting on %s", async (signal) => {
+	it("drains active requests before exiting on SIGTERM", async () => {
 		vi.spyOn(process, "on").mockReturnValue(process);
 		const signals = vi.spyOn(process, "once").mockReturnValue(process);
 		const exit = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
@@ -70,9 +71,17 @@ describe("server startup", () => {
 			const address = server.address();
 			if (!address || typeof address === "string") throw new Error("Missing HTTP address");
 			const url = `http://127.0.0.1:${address.port}`;
-			const response = fetch(url);
+			// Without keep-alive the drained connection closes with its response, so "close" never waits on an idle-socket timer.
+			const response = new Promise<string>((resolve, reject) => {
+				get(url, { agent: false }, (res) => {
+					let body = "";
+					res.setEncoding("utf8");
+					res.on("data", (chunk: string) => (body += chunk));
+					res.on("end", () => resolve(body));
+				}).on("error", reject);
+			});
 			await started.promise;
-			const shutdown = signals.mock.calls.find(([name]) => name === signal)?.[1];
+			const shutdown = signals.mock.calls.find(([name]) => name === "SIGTERM")?.[1];
 			expect(shutdown).toBeTypeOf("function");
 			const closed = once(server, "close");
 			shutdown?.();
@@ -80,7 +89,7 @@ describe("server startup", () => {
 			expect(exit).not.toHaveBeenCalled();
 			await expect(fetch(url)).rejects.toThrow();
 			finished.resolve(new Response("drained"));
-			expect(await (await response).text()).toBe("drained");
+			expect(await response).toBe("drained");
 			await closed;
 			// Exit waits for the HTTP drain and the scheduler's stop together, a few microtasks after "close".
 			await vi.waitFor(() => expect(exit).toHaveBeenCalledExactlyOnceWith(0));

@@ -124,12 +124,30 @@ jobs:
           fi
           pnpm docs:check
 
+      - name: Check translation catalogs match source
+        if: matrix.suite == 'Unit'
+        run: pnpm lingui:check || { echo "::error::Catalogs are out of sync. Run pnpm lingui:extract and commit apps/web/locales and apps/mobile/locales."; exit 1; }
+
+      - name: Review translation changes
+        if: matrix.suite == 'Unit' && github.event_name == 'pull_request'
+        env:
+          LOCALES_BASE_REF: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if git diff --quiet "$LOCALES_BASE_REF" HEAD -- apps/web/locales/ apps/mobile/locales/; then
+            exit 0
+          fi
+          pnpm locales:diff --base "$LOCALES_BASE_REF"
+
       - name: Install PDF text extraction tools
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
 
       - name: Check package boundaries
         if: matrix.suite == 'Unit'
         run: pnpm exec turbo boundaries
+
+      - name: Check agent docs
+        if: matrix.suite == 'Unit'
+        run: pnpm check:agent-docs
 
       - name: Typecheck affected packages
         if: matrix.suite == 'Unit'
@@ -156,6 +174,9 @@ jobs:
       # keep smaller GitHub runners serial to avoid PDF/rate-limit timeouts.
       - name: Run unit tests
         if: matrix.suite == 'Unit'
+        env:
+          # A missing test database URL fails the run instead of skipping the real-database suites.
+          REQUIRE_DB_TESTS: "1"
         run: pnpm exec turbo run test:ci --concurrency=${{ vars.USE_BLACKSMITH == 'true' && 4 || 1 }}
 
       - name: Build application
@@ -179,6 +200,53 @@ jobs:
             test-results
           if-no-files-found: ignore
           retention-days: 7
+
+  check-mobile-bundle:
+    name: Check mobile Hermes bundle
+    if: ${{ !inputs.live_smoke }}
+    runs-on: ${{ vars.USE_BLACKSMITH == 'true' && 'blacksmith-32vcpu-ubuntu-2404' || 'ubuntu-latest' }}
+    timeout-minutes: 20
+    env:
+      EXPO_NO_TELEMETRY: "1"
+    steps:
+      - name: Check out source
+        if: ${{ vars.USE_BLACKSMITH != 'true' }}
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Check out source (Blacksmith)
+        if: ${{ vars.USE_BLACKSMITH == 'true' }}
+        uses: useblacksmith/checkout@v1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      # App, shared-package and dependency-resolution changes can alter the bundle.
+      - name: Detect mobile changes
+        id: changes
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
+        run: |
+          if git diff --quiet "$BASE_REF" HEAD -- apps/mobile/ packages/ pnpm-lock.yaml pnpm-workspace.yaml patches/; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install pnpm
+        if: steps.changes.outputs.changed == 'true'
+        uses: pnpm/action-setup@v6
+      - name: Set up Node.js
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies
+        if: steps.changes.outputs.changed == 'true'
+        run: pnpm install --frozen-lockfile
+      - name: Export iOS and Android Hermes bundles
+        if: steps.changes.outputs.changed == 'true'
+        run: pnpm --filter mobile check:bundle
 
   check-cloudflare:
     name: Check Cloudflare compatibility

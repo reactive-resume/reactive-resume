@@ -18,11 +18,6 @@ import { getSectionStyleRuleContext } from "@reactive-resume/schema/resume/style
 import { rgbaStringToHex } from "@reactive-resume/utils/color";
 import { resolveStyleRuleSlot } from "../templates/shared/style-rules";
 
-export type LegacyStyleConversion = {
-	source: StylesheetSource;
-	sanitizedRules: readonly StyleRule[];
-};
-
 const styleSlots = [
 	"section",
 	"heading",
@@ -257,7 +252,7 @@ const disabledRuleChunk = (data: ResumeData, rule: StyleRule, sectionTypes: Sect
 	return `/* Disabled legacy rule: ${label}${body ? `\n${body}` : ""}\n*/`;
 };
 
-export function convertLegacyStyleRules(data: ResumeData): LegacyStyleConversion {
+function convertLegacyStyleRules(data: ResumeData): StylesheetSource {
 	const sectionTypes = new Map(data.customSections.map((section) => [section.id, section.type]));
 	const sanitizedRules = styleRulesSchema.parse(data.metadata.styleRules ?? []);
 	const sanitizedData = {
@@ -280,10 +275,7 @@ export function convertLegacyStyleRules(data: ResumeData): LegacyStyleConversion
 	});
 	const text = chunks.length > 0 ? `${chunks.join("\n\n")}\n` : "";
 
-	return {
-		source: { languageVersion: 1, text },
-		sanitizedRules,
-	};
+	return { languageVersion: 1, text };
 }
 
 /**
@@ -305,7 +297,7 @@ export function needsLegacyStyleConversion(
  * out, unless that would push the stylesheet over its size limit. The rules themselves are left in the data.
  */
 export function convertLegacyStylesheet(data: ResumeData): SemanticStylesheet {
-	const converted = convertLegacyStyleRules(data).source;
+	const converted = convertLegacyStyleRules(data);
 	const draft = data.metadata.stylesheet?.source.text.replace(/^\s*@version\s+\d+\s*;\s*/, "").trim();
 	const withDraft =
 		draft && draft !== converted.text.trim()

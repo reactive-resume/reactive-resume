@@ -55,7 +55,7 @@ function resumeGroups(data: ResumeData) {
  * "18%" is a loss). Headings and other short lines are skipped unless they carry a number the resume lacks, such as
  * a date range: what matters is the content under them.
  */
-export function notImportedLines(data: ResumeData, lines: readonly string[]) {
+function notImportedLines(data: ResumeData, lines: readonly string[]) {
 	const groups = resumeGroups(data);
 	const all = groups.map((group) => group.text).join("\n");
 	const allWords = new Set(all.split(/\s+/));

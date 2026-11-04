@@ -4700,10 +4700,6 @@ msgstr "வடிவமைப்பு இயல்புநிலைக்க�
 msgid "Details"
 msgstr "விவரங்கள்"
 
-#: src/features/settings/application-profile.tsx
-msgid "Details for your job application forms."
-msgstr ""
-
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
 msgstr "எடுபடவில்லை"
@@ -5244,6 +5240,10 @@ msgstr "குப்பையைக் காலியாக்கு"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "enabled Knowledge"
+msgstr "இயக்கப்பட்ட அறிவு"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -9955,6 +9955,11 @@ msgstr ""
 msgid "Raise the design sheet"
 msgstr "வடிவமைப்பு தாளை உயர்த்தவும்"
 
+#. placeholder {0}: time.when(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Ran {0} · done for this interview"
+msgstr "{0} அன்று இயக்கப்பட்டது · இந்த நேர்காணலுக்காக முடிந்தது"
+
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
 msgstr "ஒற்றை நெடுவரிசை தளவமைப்பிலிருந்து மீண்டும் ஏற்றுமதி செய்து, உரையை நகலெடுத்து அது மேலிருந்து கீழாகப் படிக்கப்படுகிறதா எனச் சரிபார்க்கவும்."
@@ -11096,14 +11101,6 @@ msgstr "ரோமேனியன்"
 msgid "Roomy"
 msgstr "அறையான"
 
-#: src/features/write/picture-screen.tsx
-msgid "Rotation"
-msgstr "சுழற்சி"
-
-#: src/features/write/picture-screen.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "PDF ரெண்டரிங் மூலம் சுழற்சி ஆதரிக்கப்படவில்லை."
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/import-sheet.tsx
 msgid "Row {row}, {0}: couldn't read “{value}”."
@@ -11749,6 +11746,14 @@ msgstr ""
 #: src/features/workspace/coach-sheet.tsx
 msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 msgstr ""
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "உங்கள் செய்தி, இங்குள்ள முந்தைய செய்திகள், இந்த விண்ணப்பம் (வேலை அறிவிப்பு, குறிப்புகள், ஆவணங்கள், படிவத்தில் உங்கள் பதில்கள், சேமித்த வேலை வாய்ப்பு மற்றும் சமீபத்திய செய்திகள்) மற்றும் இயக்கப்பட்ட அறிவை {label}க்கு அனுப்புகிறது."
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "உங்கள் செய்தி, இந்த விண்ணப்பம் (வேலை அறிவிப்பு, குறிப்புகள், ஆவணங்கள், படிவத்தில் உங்கள் பதில்கள், சேமித்த வேலை வாய்ப்பு மற்றும் சமீபத்திய செய்திகள்) மற்றும் இயக்கப்பட்ட அறிவை {label}க்கு அனுப்புகிறது."
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -15638,20 +15643,3 @@ msgstr "சிறிதாக்கு"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ஜூலு"
-
-#. placeholder {0}: time.when(row.nextRunAt)
-#: src/features/career/today.tsx
-msgid "Ran {0} · done for this interview"
-msgstr "{0} அன்று இயக்கப்பட்டது · இந்த நேர்காணலுக்காக முடிந்தது"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "உங்கள் செய்தி, இங்குள்ள முந்தைய செய்திகள், இந்த விண்ணப்பம் (வேலை அறிவிப்பு, குறிப்புகள், ஆவணங்கள், படிவத்தில் உங்கள் பதில்கள், சேமித்த வேலை வாய்ப்பு மற்றும் சமீபத்திய செய்திகள்) மற்றும் இயக்கப்பட்ட அறிவை {label}க்கு அனுப்புகிறது."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "உங்கள் செய்தி, இந்த விண்ணப்பம் (வேலை அறிவிப்பு, குறிப்புகள், ஆவணங்கள், படிவத்தில் உங்கள் பதில்கள், சேமித்த வேலை வாய்ப்பு மற்றும் சமீபத்திய செய்திகள்) மற்றும் இயக்கப்பட்ட அறிவை {label}க்கு அனுப்புகிறது."
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "இயக்கப்பட்ட அறிவு"

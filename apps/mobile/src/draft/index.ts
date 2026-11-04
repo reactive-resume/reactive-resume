@@ -61,4 +61,4 @@ export const resumeFieldFocus = { onFocus: resume.focus, onBlur: () => void resu
 export const letterFieldFocus = { onFocus: letter.focus, onBlur: () => void letter.blur() };
 
 export type { ResumeDraftStore, LetterDraftStore, SaveStatus, ConflictChoice, UpdateOptions } from "./types";
-export { DraftConflictSheet, ResumeConflictSheet, LetterConflictSheet } from "./conflict-sheet";
+export { ResumeConflictSheet, LetterConflictSheet } from "./conflict-sheet";

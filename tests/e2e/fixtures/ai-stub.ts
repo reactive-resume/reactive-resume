@@ -1,7 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { createServer } from "node:http";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 /**
  * A scripted OpenAI-compatible provider for the assistant spec. It answers the connection test, and plays a small
@@ -12,7 +11,6 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 type ChatMessage = { role: string; content?: unknown; tool_call_id?: string; tool_calls?: unknown[] };
 type ChatRequest = {
 	messages: ChatMessage[];
-	model?: string;
 	tools?: Array<{ function: { name: string; parameters?: { properties?: Record<string, unknown> } } }>;
 	stream?: boolean;
 };
@@ -36,77 +34,6 @@ function chunk(response: ServerResponse, delta: Record<string, unknown>, finish:
 }
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/** The Fit check a workspace asks for: one requirement with no evidence yet, so the spec can add some. */
-const FIT = {
-	headline: "A relevant role, with one question to resolve",
-	summary: "Each requirement from the posting, checked against your Knowledge.",
-	requirements: [
-		{
-			text: "Enterprise onboarding",
-			origin: "posting",
-			status: "missing",
-			evidence: "Your Knowledge doesn't say this yet.",
-			factIds: [],
-		},
-	],
-	checks: [],
-	ask: null,
-	factIds: [],
-};
-
-/** An employer's offer, read: a follow-up for the reply that's due, and the terms to compare. */
-const REPLY = {
-	title: "They're making an offer",
-	asks: ["Reply with your decision by 20 November."],
-	unconfirmed: [],
-	reply: "Thank you for the offer. I'll reply by 20 November.",
-	changes: [
-		{ type: "follow-up", at: "2030-11-18T09:00:00+00:00", note: "Reply with your decision" },
-		{ type: "offer" },
-	],
-	offer: {
-		version: "written",
-		currency: "EUR",
-		period: "year",
-		base: 90000,
-		variable: null,
-		variableConditions: "Target annual bonus of 10%, depending on company performance",
-		equity: "",
-		location: "Berlin",
-		officeDays: null,
-		leave: "",
-		learning: null,
-		other: "",
-		respondBy: "2030-11-20T17:00:00Z",
-	},
-};
-
-/** A tightened form answer that drops one of the user's own sentences. */
-const TIGHTENED = { text: "I led the checkout audit and fixed 48 issues.", factIds: [] };
-
-const BRIEFING = {
-	title: "Fictional Cedar interview preparation",
-	headline: "A focused plan for the fictional round",
-	summary: "Review your own evidence before the conversation.",
-	plan: [
-		{ minutes: 10, title: "Practice your opening", detail: "Use a real example.", action: "practise", storyId: null },
-	],
-	questions: [{ text: "How does the fictional team review reliability?", origin: "Briefing" }],
-	focus: "Explain your contribution clearly.",
-	opening: "I build reliable services and document what I learn.",
-	stories: [],
-	honesty: "Keep unknown results unknown.",
-	storyIds: [],
-	missingStory: null,
-	practiceQuestions: [
-		"Fictional round question one?",
-		"Fictional round question two?",
-		"Fictional round question three?",
-		"Fictional round question four?",
-		"Fictional round question five?",
-	],
-};
 
 async function streamText(response: ServerResponse, words: string[], delayMs = 0) {
 	chunk(response, { role: "assistant", content: "" });
@@ -145,76 +72,13 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	const lastTool = [...sinceUser].reverse().find((message) => message.role === "tool");
 	const readTool = tools.has("read_letter") ? "read_letter" : "read_resume";
 
-	// A provider refusing the request: its own English text and a body that names the key.
-	if (said.includes("rate limit")) {
-		response.writeHead(429, { "content-type": "application/json" });
-		response.end(
-			JSON.stringify({
-				error: { message: "You exceeded your current quota for key stub-key.", type: "insufficient_quota" },
-			}),
-		);
-		return;
-	}
-
 	response.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-cache" });
-	if (!request.tools?.length && /^(write the body|shorter:|more personal:)/.test(said))
-		return streamText(response, [
-			said.startsWith("write")
-				? "I build reliable services and would welcome the chance to discuss your team."
-				: "I build reliable services.",
-		]);
-
-	// A realistic coaching answer for documentation captures; the people and companies are fictional.
-	if (said.includes("follow up on this week"))
-		return streamText(
-			response,
-			[
-				"### Follow up with Brightpath first\n\n",
-				"**Brightpath:** You interviewed on Tuesday and haven't heard back. A short note on Friday morning is reasonable; ",
-				"thank them for the conversation and ask about the timeline.\n\n",
-				"**Canopy Systems:** They asked for two references. Send those before following up, so your note has news.\n\n",
-				"**Your next step:** Draft the Brightpath note now and send it on Friday.",
-			],
-			20,
-		);
-	// A document conversation that shares Knowledge: search it once, then say what it found.
-	if (said.includes("from knowledge") && tools.has("read_knowledge")) {
-		if (!lastTool) return streamToolCall(response, "read_knowledge", { query: "Config" });
-		return streamText(response, ["I found your conference talk in Knowledge. Add it under Speaking?"]);
-	}
-	// Nothing for three seconds, then a slow answer: a Stop in between ends a reply that said nothing.
-	if (said.includes("pause first"))
-		return wait(3000).then(() =>
-			streamText(
-				response,
-				Array.from({ length: 12 }, (_, index) => `late${index} `),
-				50,
-			),
-		);
 	if (said.includes("slowly"))
 		return streamText(
 			response,
 			Array.from({ length: 60 }, (_, index) => `word${index} `),
 			150,
 		);
-	if (said.includes("review a story") && tools.has("save_story")) {
-		if (lastTool) return streamText(response, ["Story decision received."]);
-		const instructions = messages
-			.filter((message) => message.role === "system")
-			.map((message) => text(message.content))
-			.join("\n");
-		const factId = instructions.match(/"facts":\[\{"id":"([^"]+)"/)?.[1];
-		return streamToolCall(response, "save_story", {
-			title: "Improving customer onboarding",
-			situation: "New customers needed clearer setup guidance.",
-			task: "Make onboarding easier to follow.",
-			action: "I wrote a setup checklist and reviewed it with support.",
-			result: "",
-			reflection: "Involve support early.",
-			tags: ["onboarding"],
-			factIds: factId ? [factId] : [],
-		});
-	}
 	const asked = sinceUser.some((message) =>
 		(message.tool_calls as Array<{ function?: { name?: string } }> | undefined)?.some(
 			(call) => call.function?.name === "ask_user_question",
@@ -237,14 +101,7 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	const lastToolName = calls.find((call) => call.id === lastTool?.tool_call_id)?.function.name;
 	if (!lastTool || lastToolName === "ask_user_question") return streamToolCall(response, readTool, {});
 
-	let result: {
-		data?: {
-			pageLocale?: string;
-			translationFields?: Array<{ id: string; text: string }>;
-			passages?: Array<{ id: string; sectionId?: string; text: string }>;
-			entryTemplates?: Record<string, Record<string, unknown>>;
-		};
-	} = {};
+	let result: { data?: { passages?: Array<{ id: string; sectionId?: string; text: string }> } } = {};
 	try {
 		result = JSON.parse(text(lastTool.content) || "{}");
 	} catch {
@@ -252,85 +109,13 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	}
 	const passage =
 		lastToolName === readTool ? result.data?.passages?.find((item) => item.text && item.text !== "(empty)") : undefined;
-	if (lastToolName === readTool && said.includes("language copy") && result.data?.translationFields) {
-		const translations: Record<string, string> = {
-			"Priya Raman": said.includes("name warning") ? "Anna Müller" : "Priya Raman",
-			"Product designer": "Produktdesignerin",
-			"Build accessible tools.": "Barrierefreie Werkzeuge entwickeln.",
-			Research: "Forschung",
-			Advanced: "Fortgeschritten",
-			Interviews: "Interviews",
-			"Work permit": "Arbeitserlaubnis",
-		};
-		return streamToolCall(response, "propose_edits", {
-			title: "Review German translation",
-			changes: [
-				{
-					kind: "translation",
-					locale: result.data.pageLocale,
-					why: "Check the translation before accepting.",
-					fields: result.data.translationFields.map(({ id, text }) => ({
-						id,
-						before: text,
-						text: translations[text] ?? text,
-					})),
-				},
-			],
-		});
-	}
-	if (passage && said.includes("structural"))
-		return streamToolCall(response, "propose_edits", {
-			title: "Add reviewed certification section",
-			changes: [
-				{
-					kind: "section",
-					type: "certifications",
-					title: "Training",
-					entriesJson: JSON.stringify([
-						{
-							...result.data?.entryTemplates?.certifications,
-							title: "CPACC",
-							issuer: "IAAP",
-							date: "2024",
-						},
-					]),
-					why: "The user supplied this certification.",
-				},
-			],
-		});
 	if (passage) {
 		const structured = request.tools?.find((tool) => tool.function.name === "propose_edits")?.function.parameters
 			?.properties?.changes;
-		const overlapping = said.includes("overlapping");
-		const edits = overlapping
-			? [
-					{ passageId: passage.id, text: "Rewritten audit passage.", why: "Clarify the original." },
-					{
-						passageId: passage.id,
-						text: "Mentored two junior designers.",
-						why: "Retain the first addition.",
-						add: true,
-					},
-					{
-						passageId: passage.id,
-						text: "Introduced accessibility reviews.",
-						why: "Retain the second addition.",
-						add: true,
-					},
-					{ passageId: passage.id, text: "A conflicting rewrite.", why: "Conflicts with the first rewrite." },
-				]
-			: [
-					{
-						passageId: passage.id,
-						text: said.includes("propose truthful edits")
-							? passage.text.replace(/^Passionate /, "")
-							: `${passage.text} (tightened by the stub)`,
-						why: said.includes("propose truthful edits")
-							? "Removes a generic opening without changing the experience."
-							: "Leads with the outcome.",
-					},
-				];
-		const title = overlapping ? "Overlapping passage edits" : "Tighten the first passage";
+		const edits = [
+			{ passageId: passage.id, text: `${passage.text} (tightened by the stub)`, why: "Leads with the outcome." },
+		];
+		const title = "Tighten the first passage";
 		return streamToolCall(
 			response,
 			"propose_edits",
@@ -366,109 +151,8 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 		}
 		const parsed = JSON.parse(body || "{}") as ChatRequest;
 		requests.push(parsed);
-		if (request.headers.authorization === "Bearer invalid-stub-key") {
-			response.writeHead(401, { "content-type": "application/json" });
-			response.end(JSON.stringify({ error: { message: "Synthetic invalid API key" } }));
-			return;
-		}
-		// The connection test asks for a single character, without streaming; a workspace tab asks for its JSON.
+		// The connection test asks for a single character, without streaming.
 		if (!parsed.stream) {
-			const asksForFit = parsed.messages.some((message) =>
-				text(message.content).includes("Check the posting's requirements"),
-			);
-			const prompt = parsed.messages.map((message) => text(message.content)).join("\n");
-			const importedResume = prompt.includes("Use the following JSON as a template")
-				? {
-						...defaultResumeData,
-						basics: { ...defaultResumeData.basics, name: "Avery Morgan", headline: "Fictional reliability engineer" },
-						summary: { ...defaultResumeData.summary, content: "<p>Built fictional reliable services.</p>" },
-					}
-				: null;
-			const structured = prompt.includes("Give feedback on the user's practice answer to the question.")
-				? {
-						title: "Fictional story feedback",
-						works: "Your contribution is clear.",
-						strengthen: "Explain the documented handoff.",
-						opening: "I restored service and documented the handoff.",
-						note: "Keep the evidence accurate.",
-						factIds: [],
-					}
-				: prompt.includes("Plan the user's preparation for the selected interview round.")
-					? BRIEFING
-					: parsed.model === "offer-fixture" && prompt.includes("Read the employer's message")
-						? REPLY
-						: prompt.includes("Write the user's answer to the application form question")
-							? TIGHTENED
-							: null;
-			const asksForRoles = parsed.messages.some((message) =>
-				text(message.content).includes("Suggest up to five plausible target job titles"),
-			);
-			const context = asksForRoles
-				? (JSON.parse(text(parsed.messages.find((message) => message.role === "user")?.content)) as {
-						facts: Array<{ id: string }>;
-						resume: string | null;
-					})
-				: null;
-			const roles = {
-				suggestions: [
-					{
-						role: "Reliability engineer",
-						factIds: context?.facts.slice(0, 1).map((fact) => fact.id) ?? [],
-						resumeQuote: context?.resume?.slice(0, 60) ?? null,
-					},
-				],
-			};
-			const asksForWriting = parsed.messages.some((message) =>
-				text(message.content).includes("experienced resume reviewer"),
-			);
-			const asksForImprove = parsed.messages.some((message) => text(message.content).includes("You improve one line"));
-			// Reading an employer's message: an invitation to interview, which proposes moving the application there.
-			const asksForReply = parsed.messages.some((message) =>
-				text(message.content).includes("Read the employer's message."),
-			);
-			const everything = parsed.messages.map((message) => text(message.content)).join("\n");
-			const asksForAnswer = everything.includes("Write the user's answer to the application form question");
-			const content = asksForRoles
-				? JSON.stringify(roles)
-				: asksForFit
-					? JSON.stringify(FIT)
-					: asksForWriting
-						? JSON.stringify({
-								summary: "Fictional writing review retained after reload.",
-								suggestions: [
-									{
-										section: "Summary",
-										passageId:
-											parsed.messages
-												.map((message) => text(message.content))
-												.join("\n")
-												.match(/\[([^\]\n]+)\] Summary[^\n]*:/)?.[1] ?? null,
-										issue: "Use a specific verb.",
-										rewrite: "Led fictional delivery work.",
-										impact: "medium",
-									},
-								],
-								strengths: ["Clear fictional experience."],
-								jdAlignment: null,
-							})
-						: asksForImprove
-							? JSON.stringify({ text: "Led fictional delivery work.", why: "Uses a direct verb.", addsFacts: false })
-							: asksForReply
-								? JSON.stringify({
-										title: "They're inviting you to interview",
-										asks: [],
-										unconfirmed: [],
-										reply: "Thank you, I'd be glad to.",
-										changes: [{ type: "stage", stage: "interview" }],
-										offer: null,
-									})
-								: asksForAnswer
-									? JSON.stringify({
-											text: "I ran SLO burn reviews and cut noisy alerts.",
-											factIds: [],
-											note: "The 40% figure isn't in the supplied evidence; check it.",
-										})
-									: "1";
 			response.writeHead(200, { "content-type": "application/json" });
 			response.end(
 				JSON.stringify({
@@ -479,14 +163,7 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 					choices: [
 						{
 							index: 0,
-							message: {
-								role: "assistant",
-								content: importedResume
-									? JSON.stringify(importedResume)
-									: structured
-										? JSON.stringify(structured)
-										: content,
-							},
+							message: { role: "assistant", content: "1" },
 							finish_reason: "stop",
 						},
 					],

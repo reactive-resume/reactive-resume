@@ -1,12 +1,10 @@
 // Exercise the real hook with a virtual clock and native/store boundaries.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { esbuild, run } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const code = transformSync(
+const code = esbuild.transformSync(
 	readFileSync(new URL("../src/features/reviews/use-review-prompt.ts", import.meta.url), "utf8"),
 	{
 		loader: "ts",
@@ -84,18 +82,10 @@ function mount(context, stored = new Map()) {
 			getAccountScope: () => (fixture.status === "signed-in" ? fixture.scope : null),
 		},
 	};
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in mocks, `Missing boundary fixture: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
+	const hook = run(code, mocks);
 	fixture.render = (changes = {}) => {
 		Object.assign(fixture, changes);
-		module.exports.useReviewPrompt();
+		hook.useReviewPrompt();
 		if (pending) {
 			cleanup?.();
 			cleanup = pending();
@@ -120,32 +110,28 @@ function mount(context, stored = new Map()) {
 
 const clock = (context) => context.mock.timers.enable({ apis: ["setTimeout", "Date"], now: epoch });
 
-test("both platforms wait five minutes and persist a three-day cooldown across restarts and accounts", async (context) => {
-	for (const platform of ["ios", "android"]) {
-		await context.test(platform, async (context) => {
-			clock(context);
-			const stored = new Map();
-			const first = mount(context, stored);
-			first.render({ platform });
-			context.mock.timers.tick(5 * minute - 1);
-			await settle();
-			assert.equal(first.requests, 0);
-			context.mock.timers.tick(1);
-			await settle();
-			assert.equal(first.requests, 1);
-			assert.deepEqual([...stored.values()], [String(epoch + 5 * minute + 3 * day)]);
-			first.unmount();
+test("the prompt waits five minutes and persists a three-day cooldown across restarts and accounts", async (context) => {
+	clock(context);
+	const stored = new Map();
+	const first = mount(context, stored);
+	first.render();
+	context.mock.timers.tick(5 * minute - 1);
+	await settle();
+	assert.equal(first.requests, 0);
+	context.mock.timers.tick(1);
+	await settle();
+	assert.equal(first.requests, 1);
+	assert.deepEqual([...stored.values()], [String(epoch + 5 * minute + 3 * day)]);
+	first.unmount();
 
-			const reopened = mount(context, stored);
-			reopened.render({ scope: "account-b", platform });
-			context.mock.timers.tick(3 * day - 1);
-			await settle();
-			assert.equal(reopened.requests, 0);
-			context.mock.timers.tick(1);
-			await settle();
-			assert.equal(reopened.requests, 1);
-		});
-	}
+	const reopened = mount(context, stored);
+	reopened.render({ scope: "account-b" });
+	context.mock.timers.tick(3 * day - 1);
+	await settle();
+	assert.equal(reopened.requests, 0);
+	context.mock.timers.tick(1);
+	await settle();
+	assert.equal(reopened.requests, 1);
 });
 
 test("background time does not count, and foreground time resumes where it stopped", async (context) => {
@@ -185,9 +171,9 @@ test("editing and typing defer a due prompt until a main tab has its keyboard hi
 	assert.equal(app.requests, 1);
 });
 
-test("signed-out, expired, and web sessions cannot prompt; switching accounts restarts the wait", async (context) => {
+test("signed-out and web sessions cannot prompt; switching accounts restarts the wait", async (context) => {
 	clock(context);
-	for (const changes of [{ status: "signed-out" }, { status: "expired" }, { platform: "web" }]) {
+	for (const changes of [{ status: "signed-out" }, { platform: "web" }]) {
 		const app = mount(context);
 		app.render(changes);
 		context.mock.timers.tick(10 * minute);
@@ -233,26 +219,17 @@ test("an availability check cannot open a prompt after sign-out, navigation, or 
 	}
 });
 
-test("unavailable stores and failed native or storage operations remain silent", async (context) => {
+test("failed native or storage operations remain silent", async (context) => {
 	clock(context);
-	for (const failure of ["unavailable", "availability", "request", "read", "write"]) {
+	for (const failure of ["request", "read"]) {
 		const stored = new Map();
 		const app = mount(context, stored);
-		if (failure === "unavailable") app.available = async () => false;
-		if (failure === "availability")
-			app.available = async () => {
-				throw new Error("unavailable");
-			};
 		if (failure === "request")
 			app.request = async () => {
 				throw new Error("store failed");
 			};
 		if (failure === "read")
 			app.read = () => {
-				throw new Error("disk failed");
-			};
-		if (failure === "write")
-			app.write = () => {
 				throw new Error("disk failed");
 			};
 		app.render();

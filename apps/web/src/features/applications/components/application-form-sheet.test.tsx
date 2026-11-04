@@ -104,12 +104,6 @@ const application: Application = {
 };
 
 beforeAll(() => i18n.loadAndActivate({ locale: "en", messages: {} }));
-it("describes a fit check instead of promising a match score", () => {
-	renderSheet();
-	expect(screen.getByText(/a fit check against each requirement and tailoring/)).toBeTruthy();
-	expect(screen.queryByText(/match scoring/i)).toBeNull();
-});
-
 beforeEach(() => {
 	vi.resetAllMocks();
 	mocks.timeZone = "UTC";

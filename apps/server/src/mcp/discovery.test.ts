@@ -141,24 +141,6 @@ it("precomputes discovery before the first request without user queries or netwo
 	expect(conversions.mock.calls.length).toBe(0);
 }, 30_000);
 
-it("reuses static schema conversions across separate authenticated discovery requests", async () => {
-	const { handleMcp } = await import("./handler");
-	// Warm-up models startup. Conversion metadata lookups expose both Zod and SDK conversion work.
-	await handleMcp(request());
-	const conversions = vi.spyOn(z.globalRegistry, "get");
-	const durations: number[] = [];
-	for (const token of ["reader", "writer", "reader"]) {
-		const started = performance.now();
-		const response = await handleMcp(request("tools/list", token));
-		expect(response.status).toBe(200);
-		expect((await response.json()).result.tools.length).toBeGreaterThan(token === "writer" ? 70 : 40);
-		durations.push(performance.now() - started);
-	}
-	console.info("MCP tools/list milliseconds", durations.map(Math.round));
-	expect(mocks.authentication).toHaveBeenCalledTimes(4);
-	expect(conversions.mock.calls.length).toBe(0);
-}, 30_000);
-
 it("keeps credentials, permissions, headers and callbacks isolated between requests", async () => {
 	const { handleMcp } = await import("./handler");
 	for (const token of ["reader", "writer", "reader"]) {

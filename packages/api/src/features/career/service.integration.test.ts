@@ -17,6 +17,7 @@ import {
 	savedItemDataSchema,
 } from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { truncateCascade } from "../../test-database";
 import { reviewedAnswers } from "./answers";
 
 const fixture = vi.hoisted(() => {
@@ -204,7 +205,7 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		fixture.packetRender.mockReset().mockImplementation(async (_data, name) => ({
 			body: new File([`EXACT-SYNTHETIC-${name}`], `${name}.pdf`, { type: "application/pdf" }),
 		}));
-		await pool.query('TRUNCATE "user", "released_username" CASCADE');
+		await truncateCascade(pool, ["user", "released_username"]);
 		await getDb()
 			.insert(tables.user)
 			.values(
@@ -849,6 +850,8 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			code: "NOT_FOUND",
 		});
 		await expect(service.forgetFact("bob", privateFact.id)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		// Resume fact review reads only the caller's resume.
+		await expect(service.proposeResumeFacts("bob", "shared-resume")).rejects.toMatchObject({ code: "NOT_FOUND" });
 		await service.deleteStory("bob", privateStory.id);
 		expect((await service.stories({ userId: "alice", applicationId: "alice-app" })).map((item) => item.id)).toEqual([
 			privateStory.id,

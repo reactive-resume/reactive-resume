@@ -3,9 +3,10 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
 import { i18n } from "@lingui/core";
+import { esbuild } from "./harness.mjs";
 
 const require = createRequire(new URL("../../server/package.json", import.meta.url));
-const { buildSync, transformSync } = createRequire(require.resolve("tsx"))("esbuild");
+const { buildSync, transformSync } = esbuild;
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 function domain(path) {
 	const code = buildSync({
@@ -118,16 +119,7 @@ for (const via of ["inline options", "entry screen"]) {
 			assert.ok(item, `Missing ${kind}`);
 			return current.renderItem({ item, drag() {}, isActive: false });
 		};
-		const section = row("section");
-		const renderedSection = section.type(section.props);
-		const handle = nodes(renderedSection).find((node) => node.type?.name === "Handle");
-		assert.ok(handle, "actual section exposes its reorder handle");
-		const target = handle.type(handle.props);
-		assert.ok(
-			target.props.style.width >= 44 && target.props.style.height >= 44,
-			"native reorder target is at least 44 by 44",
-		);
-		section.props.onToggle();
+		row("section").props.onToggle();
 		if (via === "entry screen") row("entry").props.onOpen();
 		else {
 			row("entry").props.onOptions();

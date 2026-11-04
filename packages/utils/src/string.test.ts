@@ -67,14 +67,10 @@ describe("slugify", () => {
 });
 
 describe("toUsername", () => {
-	it("removes characters outside [a-z0-9._-]", () => {
+	it("removes characters outside [a-z0-9._-] and truncates to 64 characters", () => {
 		expect(toUsername("  John!@#Doe$%^  ")).toBe("johndoe");
 		expect(toUsername("john.doe_test-123")).toBe("john.doe_test-123");
-	});
-
-	it("truncates to 64 characters max", () => {
-		const longName = "a".repeat(100);
-		expect(toUsername(longName)).toHaveLength(64);
+		expect(toUsername("a".repeat(100))).toHaveLength(64);
 	});
 });
 

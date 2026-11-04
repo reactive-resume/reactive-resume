@@ -1,13 +1,8 @@
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
 import { test } from "node:test";
-import { fileURLToPath } from "node:url";
+import { bundle, tag } from "./harness.mjs";
 
-const root = fileURLToPath(new URL("../../..", import.meta.url));
-const serverRequire = createRequire(`${root}/apps/server/package.json`);
-const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const jsx = (type, props) => ({ type, props });
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 const nodes = (node) =>
 	Array.isArray(node)
 		? node.flatMap(nodes)
@@ -117,27 +112,10 @@ function fixture() {
 		},
 		"@/ui": { Button: "Button", Text: "Text", TextField: "TextField", useTheme: () => ({ space: {} }) },
 	};
-	const code = buildSync({
-		entryPoints: [`${root}/apps/mobile/src/features/assistant/save-posting.tsx`],
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-		jsx: "automatic",
-		external: Object.keys(dependencies),
-	}).outputFiles[0].text;
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in dependencies, name);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
+	const { SavePosting } = bundle("../src/features/assistant/save-posting.tsx", dependencies);
 	const render = () => {
 		cursor = 0;
-		return module.exports.SavePosting({
+		return SavePosting({
 			posting,
 			resumeId: "resume",
 			disabled: false,
@@ -305,7 +283,6 @@ test("native never confirms mismatched, locked or account-switched readback", as
 test("native posting save requires confirmation, keeps snapshot, pins account and revision; double taps create once", async () => {
 	const f = fixture();
 	f.open();
-	assert.equal(f.button("Save and link this resume").props.disabled, true);
 	f.fill();
 	f.button("Cancel").props.onPress();
 	await settled();

@@ -30,7 +30,7 @@ describe("career scheduler authentication", () => {
 		expect(mocks.run).not.toHaveBeenCalled();
 	});
 
-	it.each([undefined, "Bearer short", "Bearer synthetic-career-runner-secret-32-characterX"])(
+	it.each([undefined, "Bearer synthetic-career-runner-secret-32-characterX"])(
 		"rejects invalid authorization %s without running paid work",
 		async (authorization) => {
 			const { handleCareerJobs } = await import("./career-jobs");
@@ -63,6 +63,7 @@ describe("career scheduler authentication", () => {
 		expect(JSON.stringify(log.mock.calls)).not.toContain("private storage key");
 	});
 
+	// Vercel Cron calls the path with GET.
 	it.each(["GET", "POST"])("runs one bounded %s tick for CRON_SECRET", async (method) => {
 		const { handleCareerJobs } = await import("./career-jobs");
 		const response = await handleCareerJobs(

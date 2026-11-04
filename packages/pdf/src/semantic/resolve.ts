@@ -1,7 +1,6 @@
 import type { ResolvedResumePresentation } from "./context";
 import type { ResolveStylesheetResult, SemanticCssDiagnostic, SemanticNode } from "@reactive-resume/resume/stylesheet";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
 import type { Template } from "@reactive-resume/schema/templates";
 import { compileStylesheet, isFatalStylesheetDiagnostic, resolveStylesheet } from "@reactive-resume/resume/stylesheet";
 import { assertResumeRenderBudget } from "@reactive-resume/schema/resume/limits";
@@ -18,7 +17,6 @@ import { buildSemanticTree } from "./tree";
 export type ResolveResumePresentationInput = {
 	data: ResumeData;
 	template: Template;
-	source?: StylesheetSource;
 };
 
 export type ResolvedResumeRuntime = {
@@ -78,19 +76,14 @@ const toPresentation = (
 	) as ResolvedResumePresentation;
 };
 
-export function resolveResumeRuntime({
-	data,
-	template,
-	source,
-}: ResolveResumePresentationInput): ResolvedResumeRuntime {
+export function resolveResumeRuntime({ data, template }: ResolveResumePresentationInput): ResolvedResumeRuntime {
 	assertResumeRenderBudget(data);
 	const sourceTree = mergeAuthoredPageTrees(data, template);
 
-	const stylesheetSource = source ??
-		data.metadata.stylesheet?.source ?? {
-			languageVersion: 1,
-			text: EMPTY_SEMANTIC_CSS_SOURCE,
-		};
+	const stylesheetSource = data.metadata.stylesheet?.source ?? {
+		languageVersion: 1,
+		text: EMPTY_SEMANTIC_CSS_SOURCE,
+	};
 	const compiled = compileStylesheet(stylesheetSource);
 	if (!compiled.program) {
 		return { presentation: EMPTY_PRESENTATION, sourceTree, renderTree: sourceTree, diagnostics: compiled.diagnostics };

@@ -1,7 +1,23 @@
+import type { Template } from "@reactive-resume/schema/templates";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { generateId } from "@reactive-resume/utils/string";
+
+/**
+ * Templates for heuristic edge cases. Run against every template, mutations of the PDF parser's heading, link,
+ * column and Education rules failed each such case in at least one of these: the default, heading rules, the
+ * sidebar rails and letter-spaced headings. Per-template fidelity stays on all 18 templates in import-layouts and
+ * imports.
+ */
+export const edgeCaseTemplates = [
+	"azurill",
+	"bronzor",
+	"chikorita",
+	"glalie",
+	"onyx",
+	"smeargle",
+] as const satisfies readonly Template[];
 
 export const pdfImportCases = templateSchema.options.flatMap((template) => [
 	...["2018", "Jan 2020", ""].flatMap((period) =>

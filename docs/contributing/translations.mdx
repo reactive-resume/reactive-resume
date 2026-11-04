@@ -97,14 +97,13 @@ Once a maintainer adds the locale configuration and extracts its catalogs, you c
 
 This section is for developers working in the repository.
 
-After you add or change user-facing strings with Lingui macros, extract the web catalogs first, then the native catalogs:
+After you add or change user-facing strings with Lingui macros, extract the catalogs from the repository root:
 
 ```bash
-pnpm --filter web lingui:extract
-pnpm --filter mobile lingui:extract
+pnpm lingui:extract
 ```
 
-The web command updates `apps/web/locales/*.po`. The native command updates `apps/mobile/locales/*.po` and seeds empty matching messages from the web catalogs. The root `pnpm lingui:extract` shortcut extracts web strings and regenerates PDF translations; it does not extract native strings.
+This updates `apps/web/locales/*.po`, then `apps/mobile/locales/*.po`, seeds empty native messages from matching web translations, and regenerates the PDF translations. Extract before you build or run a production build: production bundles drop the English source text, so a message missing from the catalogs shows its raw message ID. CI runs `pnpm lingui:check` and fails when either app's catalogs differ from what extraction would write.
 
 Fill the empty active translations in the affected target catalogs and review any changed wording. If you update web translations after native extraction, run `pnpm --filter mobile exec node scripts/seed-locales.mjs` again to copy them into matching empty native entries. It does not replace existing native translations, so review those separately when wording needs to change.
 
@@ -116,6 +115,14 @@ pnpm --filter mobile exec lingui check missing --mode catalog
 ```
 
 A successful compile or an English fallback does not prove that a target catalog is complete. Follow the placeholder and plural rules above when resolving missing messages.
+
+Before you open a pull request, compare your catalogs with the main branch:
+
+```bash
+pnpm locales:diff
+```
+
+It fails when a translation was emptied or when a new or changed translation drops or renames a placeholder, plural argument or numbered tag such as `<0>…</0>`. It also lists changed translations for review and counts new untranslated and removed messages. Pass `--base <ref>` to compare with a branch other than `origin/main`. CI runs the same check on pull requests that change catalogs.
 
 Then regenerate the PDF translations:
 

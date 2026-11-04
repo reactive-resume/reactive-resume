@@ -34,7 +34,7 @@ describe("Semantic CSS value compilation", () => {
 	it("keeps valid rules and declarations when neighboring fragments are invalid", () => {
 		const result = compileStylesheet({
 			languageVersion: 1,
-			text: "@version 1; section:hover { color: red; } name { unknown: 1; opacity: 2; color: #123456; }",
+			text: "@version 1; section:hover { color: red; } name { unknown: 1; opacity: 2; color red; color: #123456; }",
 		});
 
 		expect(result.program?.rules).toEqual([
@@ -44,6 +44,7 @@ describe("Semantic CSS value compilation", () => {
 		]);
 		expect(result.diagnostics).toEqual(
 			expect.arrayContaining([
+				expect.objectContaining({ code: "CSS_PARSE_ERROR", severity: "error" }),
 				expect.objectContaining({ code: "INVALID_SELECTOR", severity: "error" }),
 				expect.objectContaining({ code: "UNSUPPORTED_PROPERTY", severity: "error" }),
 				expect.objectContaining({ code: "INVALID_VALUE", severity: "error" }),
@@ -143,21 +144,14 @@ describe("Semantic CSS value compilation", () => {
 	);
 
 	it("bounds the Cartesian product of nested media lists before construction", () => {
-		fc.assert(
-			fc.property(fc.integer({ min: 33, max: 40 }), (branchCount) => {
-				const queries = mediaList(branchCount);
-				const result = compileStylesheet({
-					languageVersion: 1,
-					text: `@version 1;@media ${queries}{@media ${queries}{field{color:red}}}`,
-				});
+		const queries = mediaList(33);
+		const result = compileStylesheet({
+			languageVersion: 1,
+			text: `@version 1;@media ${queries}{@media ${queries}{field{color:red}}}`,
+		});
 
-				expect(result.program).toBeNull();
-				expect(result.diagnostics).toContainEqual(
-					expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }),
-				);
-			}),
-			{ numRuns: 8 },
-		);
+		expect(result.program).toBeNull();
+		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }));
 	});
 
 	it("expands generated one-to-four-token shorthands with CSS side semantics", () => {

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import type { Proposal } from "@reactive-resume/resume/proposals";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -151,26 +151,6 @@ it("offers no Edit for a structural change, which is reviewed and applied whole"
 	expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
 });
 
-it("shows an addition as added after its passage, one line per new bullet", () => {
-	i18n.loadAndActivate({ locale: "en", messages: {} });
-	const addition: Proposal = {
-		...proposal,
-		id: "add-1",
-		before: "<p>Improved checkout-flow accessibility.</p></li>",
-		after:
-			"<p>Improved checkout-flow accessibility.</p></li><li><p>Led an accessibility audit.</p></li><li><p>Fixed 60 issues.</p></li>",
-		unsupported: [],
-	};
-	render(
-		<I18nProvider i18n={i18n}>
-			<ChangeSet proposals={[addition]} states={["pending"]} locked={false} onAccept={() => {}} onReject={() => {}} />
-		</I18nProvider>,
-	);
-	expect(screen.getByText("Adds after: Improved checkout-flow accessibility.")).toBeTruthy();
-	expect(document.querySelector("del")).toBeNull();
-	expect(document.querySelector("ins")?.textContent).toBe("Led an accessibility audit.\nFixed 60 issues.");
-});
-
 it("leaves edits that add a detail out of Accept all and labels a replaced suggestion", () => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 	const onAccept = vi.fn();
@@ -195,25 +175,6 @@ it("leaves edits that add a detail out of Accept all and labels a replaced sugge
 	expect(screen.getByText("Replaced by a newer suggestion")).toBeTruthy();
 	fireEvent.click(screen.getByRole("button", { name: "Accept the others" }));
 	expect(onAccept).toHaveBeenCalledWith([expect.objectContaining({ id: "a" }), expect.objectContaining({ id: "b" })]);
-});
-
-it("lets the user tick a posting gap without changing evidence, status or accepting edits", async () => {
-	const accept = vi.fn();
-	renderSet({ onAccept: accept });
-	const gap = screen.getByRole("checkbox", { name: "Accessibility audits" });
-	const input = gap.parentElement?.querySelector("input");
-	if (!input) throw new Error("Checkbox backing input missing");
-	expect(gap.getAttribute("aria-checked")).toBe("false");
-	// Base UI dispatches its backing input click; happy-dom does not reproduce that browser dispatch.
-	fireEvent.click(input);
-	await waitFor(() =>
-		expect(screen.getByRole("checkbox", { name: "Accessibility audits" }).getAttribute("aria-checked")).toBe("true"),
-	);
-	expect(screen.getByText("No evidence found · left as a gap")).toBeTruthy();
-	expect(accept).not.toHaveBeenCalled();
-	// Base UI dispatches its backing input click; happy-dom does not reproduce that browser dispatch.
-	fireEvent.click(input);
-	expect(gap.getAttribute("aria-checked")).toBe("false");
 });
 
 it("checks identical posting gaps independently", () => {

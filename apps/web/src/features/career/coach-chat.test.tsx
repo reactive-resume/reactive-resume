@@ -1,7 +1,6 @@
 // @vitest-environment happy-dom
 import type { UIMessage } from "ai";
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -174,13 +173,13 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-it.each([null, "application-1"])("answers, continues, persists and restores a choice in scope %s", async (scope) => {
+it("answers, continues, persists and restores a choice", async () => {
 	let persisted = assistant();
 	mocks.send.mockImplementation(async ({ message }: { message: UIMessage }) => {
 		persisted = answer(persisted, message);
 		return reply();
 	});
-	const view = mount([persisted], scope);
+	const view = mount([persisted]);
 	fireEvent.click(screen.getByRole("button", { name: "London" }));
 	await screen.findByText("Continued with your answer.");
 	expect(mocks.send).toHaveBeenCalledTimes(1);
@@ -188,7 +187,7 @@ it.each([null, "application-1"])("answers, continues, persists and restores a ch
 	expect(screen.getByText("You answered: London")).toBeDefined();
 	expect(persisted.parts[0]).toMatchObject({ state: "output-available", output: "London" });
 	view.unmount();
-	mount([persisted], scope);
+	mount([persisted]);
 	expect(screen.getByText("You answered: London")).toBeDefined();
 	expect(screen.queryByRole("button", { name: "London" })).toBeNull();
 });
@@ -202,6 +201,8 @@ it("trims a custom answer before sending it", async () => {
 	expect(mocks.send.mock.calls[0]?.[0].message.parts[0].output).toBe("Munich");
 });
 
+// Was flaky on CI: another test file's account switch reached this worker through Node's process-wide BroadcastChannel
+// and fenced the account mid-test. apps/web/vitest.setup.ts now keeps each file's account scope to itself.
 it.each(["finished", "account changed"])("refreshes saved web status after a reply: %s", async (outcome) => {
 	setAccountScope("web-search-owner");
 	const queryClient = new QueryClient();
@@ -235,7 +236,9 @@ it.each(["finished", "account changed"])("refreshes saved web status after a rep
 		release?.();
 		await sending;
 	});
-	expect(queryClient.getQueryState(["web-access"])?.isInvalidated).toBe(outcome === "finished");
+	if (outcome === "finished")
+		await waitFor(() => expect(queryClient.getQueryState(["web-access"])?.isInvalidated).toBe(true));
+	else expect(queryClient.getQueryState(["web-access"])?.isInvalidated).toBe(false);
 	queryClient.clear();
 	setAccountScope(null);
 });
@@ -404,21 +407,6 @@ it("retries a failed continuation with the same persisted answer", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
 	await screen.findByText("Continued with your answer.");
 	expect(mocks.send).toHaveBeenCalledTimes(2);
-});
-
-it("keeps choice and custom-answer accessible names", async () => {
-	const user = userEvent.setup();
-	const view = mount([assistant()]);
-	screen.getByRole("button", { name: "London" }).focus();
-	await user.keyboard("{Enter}");
-	await screen.findByText("You answered: London");
-	view.unmount();
-	mocks.send.mockClear();
-	mount([assistant()]);
-	const textbox = screen.getByRole("textbox", { name: "Answer in your own words" });
-	await user.type(textbox, "  Munich  {Enter}");
-	await screen.findByText("You answered: Munich");
-	expect(mocks.send.mock.calls[0]?.[0].message.parts[0].output).toBe("Munich");
 });
 
 it("keeps the card visible but inert while busy or read-only", () => {

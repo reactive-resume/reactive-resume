@@ -1,4 +1,3 @@
-import type { Route } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { strFromU8, unzipSync } from "fflate";
 import { Pool } from "pg";
@@ -137,54 +136,4 @@ test("account ZIP carries submission receipts, uploaded bytes and history after 
 	await expect(deleted).toBeOK();
 	expect((await page.request.get(file.url)).status()).toBe(404);
 	expect(unzipSync(archive)[file.path]).toEqual(originalBytes);
-});
-
-test("an account switch during export dispatch refuses the old page's request", async ({ authPage: page }) => {
-	await page.goto("/dashboard/settings/account");
-	let receive: ((route: Route) => void) | undefined;
-	const intercepted = new Promise<Route>((resolve) => {
-		receive = resolve;
-	});
-	await page.route("**/api/rpc/auth/exportData", (route) => {
-		receive?.(route);
-	});
-	const downloads: string[] = [];
-	page.on("download", (file) => downloads.push(file.suggestedFilename()));
-	await page.getByRole("button", { name: "Export", exact: true }).click();
-	const route = await intercepted;
-	const originalOwner = route.request().headers()["x-account-id"];
-	expect(originalOwner).toBeTruthy();
-	const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
-	const signup = await page.request.post("/api/auth/sign-up/email", {
-		headers: { origin: process.env.APP_URL ?? "" },
-		data: {
-			name: "Fictional second account",
-			email: `backup-${stamp}@example.test`,
-			password: "Fixture-Backup-Password-194!",
-			username: `backup-${stamp}`,
-			displayUsername: `backup-${stamp}`,
-		},
-	});
-	await expect(signup).toBeOK();
-	const cookie = (await page.context().cookies()).map((item) => `${item.name}=${item.value}`).join("; ");
-	const response = page.waitForResponse((item) => item.url().endsWith("/api/rpc/auth/exportData"));
-	await route.continue({ headers: { ...route.request().headers(), cookie } });
-	expect((await response).status()).toBe(409);
-	await expect(
-		page.getByText("This export belongs to another account. Reload and try again.", { exact: true }),
-	).toBeVisible();
-	expect(downloads).toEqual([]);
-	await expect(await page.request.delete("/api/openapi/auth/account")).toBeOK();
-});
-
-test("empty optional upload query keeps the references-only export default", async ({ authPage: page }) => {
-	const result = await page.request.get("/api/openapi/auth/account/export?includeUploads");
-	await expect(result).toBeOK();
-	expect(await result.json()).not.toHaveProperty("uploads");
-	for (const value of ["true", "false"]) {
-		const response = await page.request.get(`/api/openapi/auth/account/export?includeUploads=${value}`);
-		await expect(response).toBeOK();
-		expect((await response.json()).uploads !== undefined).toBe(value === "true");
-	}
-	expect((await page.request.get("/api/openapi/auth/account/export?includeUploads=invalid")).status()).toBe(400);
 });

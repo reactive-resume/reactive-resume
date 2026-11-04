@@ -2732,7 +2732,7 @@ msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
-msgstr "'{name}'에 대한 변경사항이 다른 기기에 저장되었습니다. 수정사항이 아직 이 기기에 남아 있습니다. 유지할 버전을 선택하세요."
+msgstr "“{name}”에 대한 변경사항이 다른 기기에 저장되었습니다. 수정사항이 아직 이 기기에 남아 있습니다. 유지할 버전을 선택하세요."
 
 #: src/features/ai/provider-editor.tsx
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
@@ -4700,10 +4700,6 @@ msgstr "디자인을 기본값으로 재설정"
 msgid "Details"
 msgstr "세부"
 
-#: src/features/settings/application-profile.tsx
-msgid "Details for your job application forms."
-msgstr ""
-
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
 msgstr "잘 전달되지 않음"
@@ -5244,6 +5240,10 @@ msgstr "휴지통 비우기"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "enabled Knowledge"
+msgstr "활성화된 지식"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -9955,6 +9955,11 @@ msgstr ""
 msgid "Raise the design sheet"
 msgstr "디자인 시트를 올려보세요"
 
+#. placeholder {0}: time.when(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Ran {0} · done for this interview"
+msgstr "{0} 실행 · 이 면접 준비 완료"
+
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
 msgstr "단일 열 레이아웃으로 다시 내보낸 뒤, 텍스트를 복사해 위에서 아래로 순서대로 읽히는지 확인하세요."
@@ -11096,14 +11101,6 @@ msgstr "루마니아어"
 msgid "Roomy"
 msgstr "넓은"
 
-#: src/features/write/picture-screen.tsx
-msgid "Rotation"
-msgstr "회전"
-
-#: src/features/write/picture-screen.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "PDF 렌더링에서는 회전이 지원되지 않습니다."
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/import-sheet.tsx
 msgid "Row {row}, {0}: couldn't read “{value}”."
@@ -11749,6 +11746,14 @@ msgstr ""
 #: src/features/workspace/coach-sheet.tsx
 msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 msgstr ""
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "내 메시지, 여기서 나눈 이전 메시지, 이 지원 정보(채용 공고, 메모, 문서, 양식 답변, 저장된 제안 및 최근 메시지), 활성화된 지식을 {label}에 보냅니다."
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "내 메시지, 이 지원 정보(채용 공고, 메모, 문서, 양식 답변, 저장된 제안 및 최근 메시지), 활성화된 지식을 {label}에 보냅니다."
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -12909,7 +12914,7 @@ msgstr "기술"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about “{storyTitle}”. What was your part, what did you do, and what changed?"
-msgstr "'{storyTitle}'에 대해 알려주세요. 당신의 역할은 무엇이고, 어떤 일을 했으며, 무엇이 바뀌었나요?"
+msgstr "“{storyTitle}”에 대해 알려주세요. 당신의 역할은 무엇이고, 어떤 일을 했으며, 무엇이 바뀌었나요?"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Tell me about a piece of work you're proud of."
@@ -15638,20 +15643,3 @@ msgstr "축소"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "줄루어"
-
-#. placeholder {0}: time.when(row.nextRunAt)
-#: src/features/career/today.tsx
-msgid "Ran {0} · done for this interview"
-msgstr "{0} 실행 · 이 면접 준비 완료"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "내 메시지, 여기서 나눈 이전 메시지, 이 지원 정보(채용 공고, 메모, 문서, 양식 답변, 저장된 제안 및 최근 메시지), 활성화된 지식을 {label}에 보냅니다."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "내 메시지, 이 지원 정보(채용 공고, 메모, 문서, 양식 답변, 저장된 제안 및 최근 메시지), 활성화된 지식을 {label}에 보냅니다."
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "활성화된 지식"

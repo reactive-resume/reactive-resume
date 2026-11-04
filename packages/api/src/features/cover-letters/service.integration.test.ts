@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { createRouterClient } from "@orpc/server";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { truncateCascade } from "../../test-database";
 import { coverLettersRouter } from "./router";
 import { coverLetterService as service } from "./service";
 
@@ -42,69 +43,39 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			options: `-c search_path=${schemaName}`,
 		});
 		fixture.db = drizzle({ client: fixture.pool });
-		await fixture.pool.query(
-			`CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text, data jsonb,
-			name text NOT NULL DEFAULT 'Resume', slug text NOT NULL DEFAULT 'resume', tags text[] NOT NULL DEFAULT '{}',
-			is_public boolean NOT NULL DEFAULT false, show_download_buttons boolean NOT NULL DEFAULT true,
-			allow_word_download boolean NOT NULL DEFAULT false,
-			show_in_search_engines boolean NOT NULL DEFAULT false, hide_contact_details boolean NOT NULL DEFAULT false,
-			is_primary boolean NOT NULL DEFAULT false, is_locked boolean NOT NULL DEFAULT false, auto_name boolean NOT NULL DEFAULT false,
-			auto_slug boolean NOT NULL DEFAULT false,
-			trashed_at timestamptz, password text, application_id text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), edited_at timestamptz DEFAULT now());
-			CREATE TABLE resume_version (id text PRIMARY KEY, resume_id text, user_id text, data jsonb, kind text, session_id text, name text, created_at timestamptz NOT NULL DEFAULT now());
-			CREATE UNIQUE INDEX resume_version_session_unique ON resume_version(resume_id,session_id) WHERE kind='auto'; CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz, resume_id text, status text DEFAULT 'saved', sent_resume_version_id text, posting_source jsonb, trashed_at timestamptz);`,
-		);
-		await fixture.pool.query(
-			await readFile(
-				new URL("../../../../../migrations/20261103134258_red_korg/migration.sql", import.meta.url),
-				"utf8",
-			),
-		);
-		// The migrations that shape the letter tables, in order.
-		for (const name of [
-			"20260905121445_cover_letter_library",
-			"20261001042749_v6_release",
-			"20261009132123_left_proteus",
-			"20261101050044_rx114_content_edited_at",
-			"20261103112850_magenta_shadow_king",
-		]) {
-			const migration = await readFile(
-				new URL(`../../../../../migrations/${name}/migration.sql`, import.meta.url),
-				"utf8",
+		const migrations = new URL("../../../../../migrations/", import.meta.url);
+		for (const name of (await readdir(migrations)).filter((name) => /^\d+_/.test(name)).sort()) {
+			await fixture.pool.query(
+				(await readFile(new URL(`${name}/migration.sql`, migrations), "utf8")).replaceAll('"public".', ""),
 			);
-			// This fixture owns only the letter tables; full upgrade coverage lives in the DB package.
-			for (const statement of migration.split("--> statement-breakpoint")) {
-				const sql = statement.trim().replace(/^(?:--[^\n]*\n)+/, "");
-				if (
-					/^(?:CREATE TABLE|ALTER TABLE) "cover_letter(?:_version)?"|^CREATE (?:UNIQUE )?INDEX .* ON "cover_letter(?:_version)?"/.test(
-						sql,
-					) ||
-					/^CREATE FUNCTION "touch_edited_at"|^CREATE TRIGGER "cover_letter_edited_at"/.test(sql) ||
-					/^ALTER TABLE "application" .*"sent_cover_letter_version_id"/.test(sql)
-				) {
-					await fixture.pool.query(sql.replaceAll('"public".', ""));
-				}
-			}
 		}
-		await fixture.pool
-			.query(`CREATE TABLE agent_threads (id text PRIMARY KEY, user_id text, working_resume_id text, cover_letter_id text, edits_accepted integer DEFAULT 0, updated_at timestamptz DEFAULT now());
-		CREATE TABLE agent_messages (id text PRIMARY KEY, user_id text, thread_id text, role text DEFAULT 'assistant', status text DEFAULT 'streaming', sequence integer DEFAULT 0, error text, ui_message jsonb, created_at timestamptz DEFAULT now(), updated_at timestamptz DEFAULT now());`);
-	});
+	}, 30_000);
 	afterAll(async () => {
 		await fixture.pool?.end();
 		await admin?.query(`DROP SCHEMA IF EXISTS ${schemaName} CASCADE`);
 		await admin?.end();
 	});
 	beforeEach(async () => {
+		await truncateCascade(getPool(), [
+			"user",
+			"released_username",
+			"resume",
+			"resume_version",
+			"application",
+			"cover_letter",
+			"agent_threads",
+			"agent_messages",
+		]);
 		await getPool().query(
-			'TRUNCATE "user",resume,resume_version,application,cover_letter,agent_threads,agent_messages CASCADE',
+			"INSERT INTO \"user\" (id,name,email,username,display_username) VALUES ('alice','alice','alice@example.test','alice','alice'),('bob','bob','bob@example.test','bob','bob')",
 		);
-		await getPool().query("INSERT INTO \"user\" VALUES ('alice'),('bob')");
 		await getPool().query(
-			"INSERT INTO resume (id,user_id,data) VALUES ('alice-resume','alice',$1),('bob-resume','bob',$1)",
+			"INSERT INTO resume (id,user_id,name,slug,data) VALUES ('alice-resume','alice','Resume','resume',$1),('bob-resume','bob','Resume','resume',$1)",
 			[defaultResumeData],
 		);
-		await getPool().query("INSERT INTO application VALUES ('alice-app','alice'),('bob-app','bob')");
+		await getPool().query(
+			"INSERT INTO application (id,user_id,company,role) VALUES ('alice-app','alice','',''),('bob-app','bob','','')",
+		);
 	});
 
 	// A real proposal: an accepted receipt needs its current wording in the saved document, and a resume set records
@@ -143,15 +114,13 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		after = kind === "letter" ? "<p>Rewritten</p>" : "<p>Original</p><p>Added</p>",
 	) {
 		await getPool().query(
-			`INSERT INTO agent_threads (id,user_id,working_resume_id,cover_letter_id) VALUES ($1,$2,$3,$4)`,
+			`INSERT INTO agent_threads (id,user_id,title,working_resume_id,cover_letter_id) VALUES ($1,$2,'Proposal',$3,$4)`,
 			[id, owner, kind === "resume" ? documentId : null, kind === "letter" ? documentId : null],
 		);
-		await getPool().query(`INSERT INTO agent_messages (id,user_id,thread_id,ui_message) VALUES ($1,$2,$3,$4)`, [
-			id,
-			owner,
-			id,
-			proposing(status, kind, after),
-		]);
+		await getPool().query(
+			`INSERT INTO agent_messages (id,user_id,thread_id,role,sequence,ui_message) VALUES ($1,$2,$3,'assistant',0,$4)`,
+			[id, owner, id, proposing(status, kind, after)],
+		);
 	}
 	async function outcomes() {
 		return (
@@ -162,9 +131,6 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 	}
 
 	it("serializes streamed message rewrites with document receipts at the actual PostgreSQL read barrier", async () => {
-		await getPool().query(
-			"ALTER TABLE agent_messages ADD COLUMN IF NOT EXISTS status text; ALTER TABLE agent_threads ADD COLUMN IF NOT EXISTS last_message_at timestamptz;",
-		);
 		const letter = await service.create({ userId: "alice", name: "Concurrent receipt", content: "<p>Old</p>" });
 		await proposalThread("streaming", "alice", "letter", letter.id, "pending", "<p>New</p>");
 		const { upsertAssistantUiMessage } = await import("../agent/messages-persistence");
@@ -249,8 +215,14 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 
 	it("atomically saves letter acceptance/Undo/Redo while isolating users, documents and explicit rejection", async () => {
 		const letter = await service.create({ userId: "alice", name: "Assistant letter", content: "<p>Original</p>" });
+		const other = await service.create({ userId: "alice", name: "Other letter" });
+		// A resume that shares the letter's id: only the thread's document kind tells them apart.
+		await getPool().query("INSERT INTO resume (id,user_id,name,slug,data) VALUES ($1,'alice','Same id','same-id',$2)", [
+			letter.id,
+			defaultResumeData,
+		]);
 		await proposalThread("own", "alice", "letter", letter.id);
-		await proposalThread("other-document", "alice", "letter", "other");
+		await proposalThread("other-document", "alice", "letter", other.id);
 		await proposalThread("other-user", "bob", "letter", letter.id);
 		await proposalThread("resume", "alice", "resume", letter.id);
 		await proposalThread("rejected", "alice", "letter", letter.id, "rejected");
@@ -536,6 +508,14 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 
 	it("synchronizes only the owned resume's threads inside the caller transaction", async () => {
 		const { saveProposalApplications } = await import("../agent/proposal-applications");
+		// Decoys: another resume, and a letter that shares the resume's id.
+		await getPool().query(
+			"INSERT INTO resume (id,user_id,name,slug,data) VALUES ('other-resume','alice','Other','other',$1)",
+			[defaultResumeData],
+		);
+		await getPool().query(
+			"INSERT INTO cover_letter (id,user_id,name,style) VALUES ('alice-resume','alice','Same id','{}')",
+		);
 		await proposalThread("own", "alice", "resume", "alice-resume");
 		await proposalThread("bob", "bob", "resume", "alice-resume");
 		await proposalThread("different", "alice", "resume", "other-resume");
@@ -777,7 +757,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 
 	it("serializes relinking before the letter lock so an application submission can finish", async () => {
 		const letter = await service.create({ userId: "alice", name: "For application", applicationId: "alice-app" });
-		await getPool().query("INSERT INTO application (id, user_id) VALUES ('alice-next','alice')");
+		await getPool().query("INSERT INTO application (id, user_id, company, role) VALUES ('alice-next','alice','','')");
 		const editor = await getPool().connect();
 		let completion: Promise<{ error: unknown }> | undefined;
 		try {
@@ -873,7 +853,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		});
 
 		// Moving the letter to another application takes it along.
-		await getPool().query("INSERT INTO application (id, user_id) VALUES ('alice-app-2','alice')");
+		await getPool().query("INSERT INTO application (id, user_id, company, role) VALUES ('alice-app-2','alice','','')");
 		await service.update({ userId: "alice", id: created.id, expectedRevision: 1, applicationId: "alice-app-2" });
 		const moved = await getPool().query(
 			"SELECT id, cover_letter_id FROM application WHERE user_id='alice' ORDER BY id",
@@ -889,7 +869,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			`UPDATE application SET company='Northwind Labs', contacts='[{"name":"Dana Reyes"}]' WHERE id='alice-app'`,
 		);
 		await getPool().query(
-			`INSERT INTO application (id, user_id, company, contacts) VALUES ('alice-app-2','alice','Fieldnote','[{"name":"Morgan Lee"}]')`,
+			`INSERT INTO application (id, user_id, company, role, contacts) VALUES ('alice-app-2','alice','Fieldnote','','[{"name":"Morgan Lee"}]')`,
 		);
 		const source = await service.create({
 			userId: "alice",

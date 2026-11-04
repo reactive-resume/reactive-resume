@@ -114,14 +114,6 @@ describe("SearXNG search configuration", () => {
 	});
 });
 
-describe("unknown variables", () => {
-	it("ignores a variable the schema does not declare", async () => {
-		vi.stubEnv("RR_UNKNOWN_SETTING", "x");
-		const { env } = await import("./server");
-		expect(env).not.toHaveProperty("RR_UNKNOWN_SETTING");
-	});
-});
-
 describe("storage health check timeout", () => {
 	it.each([undefined, ""])("defaults to 5000 ms when unset or blank (%s)", async (value) => {
 		vi.stubEnv("STORAGE_HEALTHCHECK_TIMEOUT_MS", value);

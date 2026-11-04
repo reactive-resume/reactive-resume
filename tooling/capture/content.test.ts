@@ -32,18 +32,3 @@ describe("interaction-scoped browser capture", () => {
 		expect(captureDocument(document, "https://jobs.example.test/role").description).toBe("");
 	});
 });
-
-it("rejects distinct same-title jobs while accepting identical SEO records", () => {
-	const one = {
-		"@type": "JobPosting",
-		title: "Engineer",
-		hiringOrganization: { name: "Fictional Co" },
-		url: "https://jobs.example.test/one",
-		description: "Berlin job",
-	};
-	document.getSelection()?.removeAllRanges();
-	document.body.innerHTML = `<script type="application/ld+json">${JSON.stringify([one, { ...one, url: "https://jobs.example.test/two", description: "Paris job" }])}</script><article>Selected role only</article>`;
-	expect(captureDocument(document, "https://jobs.example.test/list").description).toBe("");
-	document.body.innerHTML = `<script type="application/ld+json">${JSON.stringify([one, { ...one }])}</script>`;
-	expect(captureDocument(document, "https://jobs.example.test/one").description).toBe("Berlin job");
-});

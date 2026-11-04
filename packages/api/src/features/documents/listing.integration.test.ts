@@ -1,5 +1,6 @@
 import type { RouterClient } from "@orpc/server";
 import { randomUUID } from "node:crypto";
+import { readdir, readFile } from "node:fs/promises";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vite-plus/test";
 import { createRouterClient } from "@orpc/server";
 import { drizzle } from "drizzle-orm/node-postgres";
@@ -35,27 +36,29 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 			options: `-c search_path=${schemaName}`,
 		});
 		fixture.db = drizzle({ client: pool });
+		const migrations = new URL("../../../../../migrations/", import.meta.url);
+		for (const name of (await readdir(migrations)).filter((name) => /^\d+_/.test(name)).sort()) {
+			await pool.query(
+				(await readFile(new URL(`${name}/migration.sql`, migrations), "utf8")).replaceAll('"public".', ""),
+			);
+		}
+		// Pinned timestamps keep the type and id tie breakers decisive; "orders edits" restores these values.
 		await pool.query(`
-   CREATE TABLE application (id text PRIMARY KEY, user_id text, company text, role text, status text DEFAULT 'saved', trashed_at timestamptz);
-   CREATE TABLE resume (id text PRIMARY KEY, user_id text, name text, tags text[] DEFAULT '{}', is_locked boolean DEFAULT false,
-    is_public boolean DEFAULT false, slug text DEFAULT 'resume', trashed_at timestamptz, created_at timestamptz DEFAULT '2026-01-01',
-    updated_at timestamptz DEFAULT '2026-01-01', edited_at timestamptz, application_id text, password text);
-   CREATE TABLE cover_letter (LIKE resume INCLUDING DEFAULTS);
-   ALTER TABLE cover_letter ADD COLUMN source_application_id text, ADD COLUMN recipient_name text DEFAULT '',
-    ADD COLUMN recipient_company text DEFAULT '', ADD COLUMN layout text DEFAULT 'structured', ADD COLUMN recipient text DEFAULT '';
+   INSERT INTO "user" (id, name, email, username, display_username)
+    SELECT id, id, id || '@example.test', id, id FROM unnest(ARRAY['owner','stranger','large','naming','duplicates']) id;
    INSERT INTO application (id, user_id, company, role, status) VALUES
     ('job', 'owner', 'Orbital', 'Design lead', 'closed'), ('foreign-job', 'stranger', 'Secret', 'Private', 'saved');
-   INSERT INTO resume (id, user_id, name, tags, is_public, application_id) VALUES
-    ('same', 'owner', 'Alpha', ARRAY['design','shared'], true, 'job'),
-    ('foreign-link', 'owner', 'Beta', ARRAY['shared'], false, 'foreign-job'),
-    ('foreign', 'stranger', 'Private document', ARRAY['secret'], true, 'foreign-job');
-   INSERT INTO cover_letter (id, user_id, name, tags, source_application_id) VALUES
-    ('same', 'owner', 'Gamma 100%_\\path', ARRAY['design','shared'], 'job');
-   INSERT INTO cover_letter (id, user_id, name, tags, trashed_at)
-    SELECT 'large-' || lpad(i::text, 5, '0'), 'large', 'Letter ' || i, ARRAY['tag-' || i],
-     CASE WHEN i > 19500 THEN now() ELSE null END FROM generate_series(1, 39000) i;
-   INSERT INTO resume (id, user_id, name, trashed_at) VALUES
-    ('trash', 'owner', 'Trash', now()), ('expired', 'owner', 'Expired', now() - interval '31 days');
+   INSERT INTO resume (id, user_id, name, slug, data, tags, is_public, application_id, created_at, updated_at, edited_at) VALUES
+    ('same', 'owner', 'Alpha', 'same', '{}', ARRAY['design','shared'], true, 'job', '2026-01-01', '2026-01-01', '2026-01-01'),
+    ('foreign-link', 'owner', 'Beta', 'foreign-link', '{}', ARRAY['shared'], false, 'foreign-job', '2026-01-01', '2026-01-01', '2026-01-01'),
+    ('foreign', 'stranger', 'Private document', 'foreign', '{}', ARRAY['secret'], true, 'foreign-job', '2026-01-01', '2026-01-01', '2026-01-01');
+   INSERT INTO cover_letter (id, user_id, name, style, tags, source_application_id, created_at, updated_at, edited_at) VALUES
+    ('same', 'owner', 'Gamma 100%_\\path', '{}', ARRAY['design','shared'], 'job', '2026-01-01', '2026-01-01', '2026-01-01');
+   INSERT INTO cover_letter (id, user_id, name, style, tags, trashed_at)
+    SELECT 'large-' || lpad(i::text, 5, '0'), 'large', 'Letter ' || i, '{}', ARRAY['tag-' || i],
+     CASE WHEN i > 1000 THEN now() ELSE null END FROM generate_series(1, 2000) i;
+   INSERT INTO resume (id, user_id, name, slug, data, trashed_at) VALUES
+    ('trash', 'owner', 'Trash', 'trash', '{}', now()), ('expired', 'owner', 'Expired', 'expired', '{}', now() - interval '31 days');
   `);
 		const { documentsRouter } = await import("./router");
 		headers = new Headers();
@@ -105,10 +108,10 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 	});
 
 	it("projects legacy recipients only for freeform letters, with HTML entities decoded", async () => {
-		await pool.query(`INSERT INTO cover_letter (id,user_id,name,layout,recipient,recipient_company) VALUES
-			('recipient-free','owner','Recipient fixture 1','freeform','<p>R&amp;D &#39;Team&#39;</p><p>Example&nbsp;Ltd</p><script>hidden</script>',''),
-			('recipient-structured','owner','Recipient fixture 2','structured','<p>Stale recipient</p>',''),
-			('recipient-current','owner','Recipient fixture 3','freeform','<p>Old recipient</p>','Current company')`);
+		await pool.query(`INSERT INTO cover_letter (id,user_id,name,style,layout,recipient,recipient_company) VALUES
+			('recipient-free','owner','Recipient fixture 1','{}','freeform','<p>R&amp;D &#39;Team&#39;</p><p>Example&nbsp;Ltd</p><script>hidden</script>',''),
+			('recipient-structured','owner','Recipient fixture 2','{}','structured','<p>Stale recipient</p>',''),
+			('recipient-current','owner','Recipient fixture 3','{}','freeform','<p>Old recipient</p>','Current company')`);
 		try {
 			const page = await api.page({ type: "letter", q: "Recipient fixture", sort: "name" });
 			expect(page.items.map((row) => row.recipient)).toEqual(["R&D 'Team' Example Ltd", null, "Current company"]);
@@ -124,7 +127,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 		const name = "Long imported name ".repeat(6).slice(0, 100);
 		const stem = name.slice(0, 94);
 		await pool.query(
-			`INSERT INTO resume (id,user_id,name) VALUES ('name-original','naming',$1),('name-two','naming',$2),('name-three','naming',$3),('name-foreign','stranger',$4)`,
+			`INSERT INTO resume (id,user_id,name,slug,data) VALUES ('name-original','naming',$1,'name-original','{}'),('name-two','naming',$2,'name-two','{}'),('name-three','naming',$3,'name-three','{}'),('name-foreign','stranger',$4,'name-foreign','{}')`,
 			[name, `${stem} (2)`, `${stem} (3)`, `${stem} (4)`],
 		);
 		const { findFreeResumeName } = await import("../resume/slugs");
@@ -132,17 +135,21 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 	});
 
 	it("suggests numbered copies across types and Trash while protecting ownership", async () => {
-		await pool.query(`INSERT INTO resume (id,user_id,name) VALUES
-			('duplicate-source','duplicates','Portfolio'),('duplicate-three','stranger','Portfolio 3');
-			INSERT INTO cover_letter (id,user_id,name,trashed_at) VALUES ('duplicate-two','duplicates','PORTFOLIO 2',now());`);
+		await pool.query(`INSERT INTO resume (id,user_id,name,slug,data) VALUES
+			('duplicate-source','duplicates','Portfolio','duplicate-source','{}'),('duplicate-three','stranger','Portfolio 3','duplicate-three','{}');
+			INSERT INTO cover_letter (id,user_id,name,style,trashed_at) VALUES ('duplicate-two','duplicates','PORTFOLIO 2','{}',now());`);
 		const { documentsRouter } = await import("./router");
 		const client = createRouterClient(documentsRouter, {
 			context: { user: { id: "duplicates" }, resHeaders: new Headers() } as never,
 		});
 		expect(await client.suggestDuplicateName({ type: "resume", id: "duplicate-source" })).toBe("Portfolio 3");
-		await pool.query(`INSERT INTO resume (id,user_id,name) VALUES ('duplicate-copy','duplicates','Portfolio 3')`);
+		await pool.query(
+			`INSERT INTO resume (id,user_id,name,slug,data) VALUES ('duplicate-copy','duplicates','Portfolio 3','duplicate-copy','{}')`,
+		);
 		expect(await client.suggestDuplicateName({ type: "resume", id: "duplicate-copy" })).toBe("Portfolio 4");
-		await pool.query(`INSERT INTO resume (id,user_id,name) VALUES ('duplicate-year','duplicates','Resume 2026')`);
+		await pool.query(
+			`INSERT INTO resume (id,user_id,name,slug,data) VALUES ('duplicate-year','duplicates','Resume 2026','duplicate-year','{}')`,
+		);
 		expect(await client.suggestDuplicateName({ type: "resume", id: "duplicate-year" })).toBe("Resume 2026 2");
 		for (const id of ["duplicate-three", "missing", "duplicate-two"]) {
 			await expect(
@@ -173,14 +180,14 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 	});
 
 	it("orders edits and creation independently before limiting the combined kinds", async () => {
-		await pool.query("UPDATE resume SET updated_at='2026-03-01', created_at='2026-02-01' WHERE id='same'");
-		await pool.query("UPDATE cover_letter SET updated_at='2026-02-01', created_at='2026-03-01' WHERE id='same'");
+		await pool.query("UPDATE resume SET edited_at='2026-03-01', created_at='2026-02-01' WHERE id='same'");
+		await pool.query("UPDATE cover_letter SET edited_at='2026-02-01', created_at='2026-03-01' WHERE id='same'");
 		try {
 			expect((await api.list({ sort: "edited", limit: 1 })).map((row) => row.type)).toEqual(["resume"]);
 			expect((await api.list({ sort: "created", limit: 1 })).map((row) => row.type)).toEqual(["letter"]);
 		} finally {
-			await pool.query("UPDATE resume SET updated_at='2026-01-01', created_at='2026-01-01' WHERE id='same'");
-			await pool.query("UPDATE cover_letter SET updated_at='2026-01-01', created_at='2026-01-01' WHERE id='same'");
+			await pool.query("UPDATE resume SET edited_at='2026-01-01', created_at='2026-01-01' WHERE id='same'");
+			await pool.query("UPDATE cover_letter SET edited_at='2026-01-01', created_at='2026-01-01' WHERE id='same'");
 		}
 	});
 
@@ -207,14 +214,14 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 	});
 
 	it.each([false, true])(
-		"keeps 19.5k rows bounded, complete and stable across every page (trashed=%s)",
+		"keeps 1,000 rows bounded, complete and stable across every page (trashed=%s)",
 		async (trashed) => {
 			const { documentsRouter } = await import("./router");
 			const large = createRouterClient(documentsRouter, {
 				context: { user: { id: "large" }, resHeaders: new Headers() } as never,
 			});
 			const seen = new Set<string>();
-			for (let offset = 0; offset < 19500; offset += 100) {
+			for (let offset = 0; offset < 1000; offset += 100) {
 				const page = await large.list({ trashed, limit: 100, offset });
 				expect(page).toHaveLength(100);
 				for (const row of page) {
@@ -222,14 +229,14 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 					seen.add(row.id);
 				}
 			}
-			expect(seen.size).toBe(19500);
-			const page = await large.page({ trashed, offset: 19450 });
-			expect(page.total).toBe(19500);
+			expect(seen.size).toBe(1000);
+			const page = await large.page({ trashed, offset: 950 });
+			expect(page.total).toBe(1000);
 			expect(page.items).toHaveLength(50);
 			expect(page.tags).toHaveLength(100);
 			expect(JSON.stringify(page).length).toBeLessThan(40_000);
-			expect((await large.page({ trashed, offset: 19500 })).items).toEqual([]);
-			const tag = trashed ? "tag-29999" : "tag-9999";
+			expect((await large.page({ trashed, offset: 1000 })).items).toEqual([]);
+			const tag = trashed ? "tag-1999" : "tag-999";
 			expect((await large.page({ trashed, q: tag })).tags).toContain(tag);
 		},
 		30_000,

@@ -11,6 +11,10 @@ import { NewDocumentDialog } from "./new-document-dialog";
 import { applicationsListQueryKey } from "@/features/applications/queries";
 import { orpc } from "@/libs/orpc/client";
 
+// Unmocked queries must fail like an offline browser, not reach whatever listens on the test origin.
+vi.stubGlobal("fetch", async () => {
+	throw new TypeError("Failed to fetch");
+});
 const navigate = vi.hoisted(() => vi.fn());
 const loadJobs = vi.hoisted(() => vi.fn());
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => navigate }));
@@ -66,13 +70,6 @@ it("explains a missing source resume and offers import or creation when copying 
 
 	fireEvent.click(screen.getByRole("button", { name: /^Copy a resume for a job/ }));
 	expect(screen.getByRole("button", { name: "ABOUT YOU" })).toHaveAttribute("aria-pressed", "true");
-});
-
-it("leads the Letters tab with a new letter", () => {
-	mountDialog("letters");
-	const letter = screen.getByRole("button", { name: /^New cover letter/ });
-	expect(letter).toHaveAccessibleName(/Start a letter for a job/);
-	expect(screen.queryByRole("button", { name: "New cover letter instead" })).toBeNull();
 });
 
 it("waits for a newly selected job to load before offering an unlinked copy", async () => {

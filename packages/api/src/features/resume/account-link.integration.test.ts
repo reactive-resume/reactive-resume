@@ -6,6 +6,7 @@ import { and, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as tables from "@reactive-resume/db/schema";
+import { truncateCascade } from "../../test-database";
 
 const fixture = vi.hoisted(() => ({ db: undefined as ReturnType<typeof drizzle> | undefined }));
 
@@ -70,7 +71,7 @@ describe.skipIf(!databaseUrl)("moving a guest's work into an existing account", 
 	});
 
 	beforeEach(async () => {
-		await pool.query('TRUNCATE released_username, storage_cleanup_job, "user" CASCADE');
+		await truncateCascade(pool, ["released_username", "storage_cleanup_job", "user"]);
 		await db()
 			.insert(tables.user)
 			.values(

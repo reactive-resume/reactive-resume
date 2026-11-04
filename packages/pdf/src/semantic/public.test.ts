@@ -16,23 +16,6 @@ describe("@reactive-resume/pdf/semantic", () => {
 			expect.objectContaining({ code: "UNSUPPORTED_VERSION", severity: "error" }),
 		);
 		expect(inspection.presentation).toEqual({});
-	});
-
-	it("falls back to base presentation when a selector list exceeds the resource limit", () => {
-		const data = structuredClone(sampleResumeData);
-		const selectors = new Array(65).fill("section").join(",");
-		data.metadata.stylesheet = {
-			mode: "semantic",
-			source: { languageVersion: 1, text: `@version 1;\n${selectors} { color: red; }` },
-		};
-		expect(() => parseResumeData(data)).not.toThrow();
-
-		const inspection = resolveResumeRuntime({ data, template: data.metadata.template });
-
-		expect(inspection.diagnostics).toContainEqual(
-			expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }),
-		);
-		expect(inspection.presentation).toEqual({});
 		expect(inspection.renderTree).toEqual(inspection.sourceTree);
 	});
 

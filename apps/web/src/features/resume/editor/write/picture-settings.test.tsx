@@ -69,46 +69,44 @@ function renderPhoto(url = "/api/uploads/owner/pictures/shared.jpeg", fit: "cove
 	return { initial, client };
 }
 
-it.each(["/api/uploads/owner/pictures/shared.jpeg", "https://photos.example.test/shared.jpeg"])(
-	"removes only this resume's photo reference and offers undo: %s",
-	async (url) => {
-		const { client } = renderPhoto(url);
-		const sharedUpload = new Map([[url, "photo bytes"]]);
-		mocks.removeFile.mockImplementation(async () => sharedUpload.delete(url));
-		// A preceding edit must survive Undo of the removal.
-		act(() =>
-			useResumeStore.getState().updateResumeData((draft) => {
-				draft.picture.size = 123;
-			}),
-		);
-		await act(async () => fireEvent.click(screen.getByRole("button", { name: "Remove photo" })));
-		expect(useResumeStore.getState().resume?.data.picture).toMatchObject({ url: "", size: 123 });
-		expect(sharedUpload.get(url)).toBe("photo bytes");
-		expect(mocks.removeFile).not.toHaveBeenCalled();
-		expect(mocks.confirm).not.toHaveBeenCalled();
-		expect(screen.getByRole("button", { name: "Add" })).toBeInTheDocument();
-		const action = mocks.toast.mock.lastCall?.[0].actionProps;
-		expect(action?.children).toBe("Undo");
-		act(() =>
-			useResumeStore.getState().updateResumeData((draft) => {
-				draft.basics.name = "Later edit";
-			}),
-		);
-		act(() => action.onClick());
-		expect(useResumeStore.getState().resume?.data.picture).toMatchObject({ url, size: 123 });
-		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Later edit");
-		expect(mocks.closeToast).toHaveBeenCalledWith("photo-toast");
-		act(() =>
-			useResumeStore.getState().updateResumeData((draft) => {
-				draft.basics.name = "After restoration";
-			}),
-		);
-		act(() => action.onClick());
-		expect(useResumeStore.getState().resume?.data.basics.name).toBe("After restoration");
-		expect(screen.getByRole("button", { name: "Edit" })).toBeInTheDocument();
-		client.clear();
-	},
-);
+it("removes only this resume's photo reference and offers undo", async () => {
+	const url = "/api/uploads/owner/pictures/shared.jpeg";
+	const { client } = renderPhoto(url);
+	const sharedUpload = new Map([[url, "photo bytes"]]);
+	mocks.removeFile.mockImplementation(async () => sharedUpload.delete(url));
+	// A preceding edit must survive Undo of the removal.
+	act(() =>
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.picture.size = 123;
+		}),
+	);
+	await act(async () => fireEvent.click(screen.getByRole("button", { name: "Remove photo" })));
+	expect(useResumeStore.getState().resume?.data.picture).toMatchObject({ url: "", size: 123 });
+	expect(sharedUpload.get(url)).toBe("photo bytes");
+	expect(mocks.removeFile).not.toHaveBeenCalled();
+	expect(mocks.confirm).not.toHaveBeenCalled();
+	expect(screen.getByRole("button", { name: "Add" })).toBeInTheDocument();
+	const action = mocks.toast.mock.lastCall?.[0].actionProps;
+	expect(action?.children).toBe("Undo");
+	act(() =>
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Later edit";
+		}),
+	);
+	act(() => action.onClick());
+	expect(useResumeStore.getState().resume?.data.picture).toMatchObject({ url, size: 123 });
+	expect(useResumeStore.getState().resume?.data.basics.name).toBe("Later edit");
+	expect(mocks.closeToast).toHaveBeenCalledWith("photo-toast");
+	act(() =>
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "After restoration";
+		}),
+	);
+	act(() => action.onClick());
+	expect(useResumeStore.getState().resume?.data.basics.name).toBe("After restoration");
+	expect(screen.getByRole("button", { name: "Edit" })).toBeInTheDocument();
+	client.clear();
+});
 
 it("does not restore a photo into another resume", async () => {
 	const { initial, client } = renderPhoto();

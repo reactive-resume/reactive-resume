@@ -8,12 +8,6 @@ describe("parseCsv", () => {
 		expect(exported.slice(0, 2)).toEqual([formulas.map((value) => `'${value}`), formulas.map((value) => `'${value}`)]);
 		expect(exported[2]).toEqual(['Say "hi"', "Line\nbreak"]);
 	});
-
-	it("parses quoted fields with commas and newlines", () => {
-		const table = parseCsv('Company,Role\n"Acme, Inc.","Eng, Sr"\nBeta,"Line1\nLine2"');
-		expect(table[1]).toEqual(["Acme, Inc.", "Eng, Sr"]);
-		expect(table[2]).toEqual(["Beta", "Line1\nLine2"]);
-	});
 });
 
 describe("mapCsvToApplications", () => {

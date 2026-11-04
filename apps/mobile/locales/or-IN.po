@@ -4711,10 +4711,6 @@ msgstr "ଡିଫଲ୍ଟକୁ ଡିଜାଇନ୍ ପୁନ res ସେଟ�
 msgid "Details"
 msgstr "ବିବରଣୀଗୁଡିକ"
 
-#: src/features/settings/application-profile.tsx
-msgid "Details for your job application forms."
-msgstr ""
-
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
 msgstr "ପ୍ରଭାବ ପକାଇଲା ନାହିଁ"
@@ -5257,6 +5253,10 @@ msgstr "ଆବର୍ଜନା ଖାଲି କରନ୍ତୁ"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "enabled Knowledge"
+msgstr "ସକ୍ରିୟ ଜ୍ଞାନ"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -9981,6 +9981,11 @@ msgstr ""
 msgid "Raise the design sheet"
 msgstr "ଡିଜାଇନ୍ ସିଟ୍ ଉଠାନ୍ତୁ |"
 
+#. placeholder {0}: time.when(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Ran {0} · done for this interview"
+msgstr "{0} ରେ ଚଲାଗଲା · ଏହି ସାକ୍ଷାତକାର ପାଇଁ ସମ୍ପୂର୍ଣ୍ଣ"
+
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
 msgstr "ଏକକ-କଲମ୍ ଲେଆଉଟ୍‌ରୁ ପୁନଃ-ରପ୍ତାନି କରନ୍ତୁ, ତାପରେ ଟେକ୍ସଟ୍ କପି କରି ଏହା ଉପରୁ ତଳକୁ ପଢ଼ୁଛି କି ଯାଞ୍ଚ କରନ୍ତୁ।"
@@ -11125,14 +11130,6 @@ msgstr "ରୋମାନିଆନ୍"
 msgid "Roomy"
 msgstr "ରୁମି"
 
-#: src/features/write/picture-screen.tsx
-msgid "Rotation"
-msgstr "ଘୁର୍ଣ୍ଣନ"
-
-#: src/features/write/picture-screen.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "PDF ରେଣ୍ଡରିଂ ଦ୍ୱାରା ଘୂର୍ଣ୍ଣନ ସମର୍ଥିତ ନୁହେଁ |"
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/import-sheet.tsx
 msgid "Row {row}, {0}: couldn't read “{value}”."
@@ -11781,6 +11778,14 @@ msgstr ""
 #: src/features/workspace/coach-sheet.tsx
 msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 msgstr ""
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "ଆପଣଙ୍କ ବାର୍ତ୍ତା, ଏଠାକାର ପୂର୍ବ ବାର୍ତ୍ତା, ଏହି ଆବେଦନ (ଚାକିରି ବିଜ୍ଞାପନ, ଟିପ୍ପଣୀ, ଦଲିଲ, ଫର୍ମରେ ଆପଣଙ୍କ ଉତ୍ତର, ସଞ୍ଚିତ ପ୍ରସ୍ତାବ ଏବଂ ସାମ୍ପ୍ରତିକ ବାର୍ତ୍ତା) ଏବଂ ସକ୍ରିୟ ଜ୍ଞାନକୁ {label} କୁ ପଠାଏ।"
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
+msgstr "ଆପଣଙ୍କ ବାର୍ତ୍ତା, ଏହି ଆବେଦନ (ଚାକିରି ବିଜ୍ଞାପନ, ଟିପ୍ପଣୀ, ଦଲିଲ, ଫର୍ମରେ ଆପଣଙ୍କ ଉତ୍ତର, ସଞ୍ଚିତ ପ୍ରସ୍ତାବ ଏବଂ ସାମ୍ପ୍ରତିକ ବାର୍ତ୍ତା) ଏବଂ ସକ୍ରିୟ ଜ୍ଞାନକୁ {label} କୁ ପଠାଏ।"
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -15686,20 +15691,3 @@ msgstr "ଜୁମ୍ ଆଉଟ୍ କରନ୍ତୁ"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ଜୁଲୁ"
-
-#. placeholder {0}: time.when(row.nextRunAt)
-#: src/features/career/today.tsx
-msgid "Ran {0} · done for this interview"
-msgstr "{0} ରେ ଚଲାଗଲା · ଏହି ସାକ୍ଷାତକାର ପାଇଁ ସମ୍ପୂର୍ଣ୍ଣ"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "ଆପଣଙ୍କ ବାର୍ତ୍ତା, ଏଠାକାର ପୂର୍ବ ବାର୍ତ୍ତା, ଏହି ଆବେଦନ (ଚାକିରି ବିଜ୍ଞାପନ, ଟିପ୍ପଣୀ, ଦଲିଲ, ଫର୍ମରେ ଆପଣଙ୍କ ଉତ୍ତର, ସଞ୍ଚିତ ପ୍ରସ୍ତାବ ଏବଂ ସାମ୍ପ୍ରତିକ ବାର୍ତ୍ତା) ଏବଂ ସକ୍ରିୟ ଜ୍ଞାନକୁ {label} କୁ ପଠାଏ।"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "ଆପଣଙ୍କ ବାର୍ତ୍ତା, ଏହି ଆବେଦନ (ଚାକିରି ବିଜ୍ଞାପନ, ଟିପ୍ପଣୀ, ଦଲିଲ, ଫର୍ମରେ ଆପଣଙ୍କ ଉତ୍ତର, ସଞ୍ଚିତ ପ୍ରସ୍ତାବ ଏବଂ ସାମ୍ପ୍ରତିକ ବାର୍ତ୍ତା) ଏବଂ ସକ୍ରିୟ ଜ୍ଞାନକୁ {label} କୁ ପଠାଏ।"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "ସକ୍ରିୟ ଜ୍ଞାନ"

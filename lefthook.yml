@@ -23,6 +23,9 @@ pre-commit:
         fi
         echo 'Error: merge conflict markers found in staged files'
         exit 1
+    - name: agent docs
+      # Paths named in AGENTS.md and .agents/docs must exist, so renames update the docs in the same commit.
+      run: node tooling/agents/check-docs.mjs
     - name: lint and format
       # Keep fixes and formatting sequential, then fail on any remaining diagnostics.
       glob: "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,css,scss,less,md,mdx,yml,yaml,html,toml,graphql}"

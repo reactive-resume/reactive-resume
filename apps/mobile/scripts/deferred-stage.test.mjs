@@ -1,30 +1,11 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+import { load as loadSource, mobileRequire, tag } from "./harness.mjs";
 const { MutationObserver, QueryClient } = mobileRequire("@tanstack/react-query");
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
-function load(file, mocks, timers = {}) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(file, import.meta.url), "utf8"), {
-		loader: "ts",
-		format: "cjs",
-	}).code;
-	new Function("require", "module", "exports", "setTimeout", "clearTimeout", code)(
-		(name) => {
-			assert.ok(name in mocks, `Missing boundary: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-		timers.set,
-		timers.clear,
-	);
-	return module.exports;
-}
+const load = (file, mocks, timers = {}) =>
+	loadSource(file, mocks, { globals: { setTimeout: timers.set, clearTimeout: timers.clear } });
 const { prepareRequest } = load("../../../packages/utils/src/deferred-request.ts", {});
 const data = load("../../../packages/schema/src/applications/data.ts", {
 	zod,
@@ -44,7 +25,6 @@ const deferred = () => {
 	return { promise, resolve };
 };
 const drain = () => new Promise((resolve) => setImmediate(resolve));
-const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 async function until(predicate) {
 	for (let attempt = 0; attempt < 100; attempt++) {
 		if (predicate()) return;

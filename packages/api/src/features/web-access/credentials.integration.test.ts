@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
+import { truncateCascade } from "../../test-database";
 
 const fixture = vi.hoisted(() => ({ db: undefined as ReturnType<typeof drizzle> | undefined }));
 const env = vi.hoisted(() => ({
@@ -41,55 +42,15 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 			options: `-c search_path=${schemaName}`,
 		});
 		fixture.db = drizzle({ client: pool });
-		await pool.query(
-			'CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text REFERENCES "user"(id) ON DELETE CASCADE, trashed_at timestamptz, updated_at timestamptz NOT NULL DEFAULT now()); CREATE TABLE application (id text PRIMARY KEY); CREATE TABLE career_schedule (id text PRIMARY KEY DEFAULT gen_random_uuid()::text, user_id text, ai_provider_id text, ai_provider_version text, enabled boolean, updated_at timestamptz); CREATE TABLE career_job (id text PRIMARY KEY, user_id text, schedule_id text REFERENCES career_schedule(id), status text, lease text, lease_until timestamptz, updated_at timestamptz)',
-		);
-		for (const name of [
-			"20260513181752_bent_human_cannonball",
-			"20261001042749_v6_release",
-			"20261007205051_career_platform",
-		]) {
-			const sql = await readFile(new URL(`../../../../../migrations/${name}/migration.sql`, import.meta.url), "utf8");
-			// The fixture owns the AI tables and web credentials, not the rest of the later upgrades.
-			const owned = {
-				"20261001042749_v6_release": /^(?:CREATE TABLE|ALTER TABLE) "web_access_credentials"/,
-				"20261007205051_career_platform":
-					/^(?:ALTER TABLE|CREATE UNIQUE INDEX "ai_providers_[a-z_]+" ON) "ai_providers"/,
-			}[name];
-			const statements = sql
-				.split("--> statement-breakpoint")
-				.filter((statement) => !owned || owned.test(statement.trim()));
-			await pool.query(statements.join("\n").replaceAll('"public".', ""));
-		}
-		const upgrade = await readFile(
-			new URL("../../../../../migrations/20261031125221_thankful_outlaw_kid/migration.sql", import.meta.url),
-			"utf8",
-		);
-		for (const statement of upgrade.split("--> statement-breakpoint")) {
-			if (
-				/^(?:CREATE TABLE|ALTER TABLE) "(?:ai_providers|web_access_credentials|resume_writing_review)"|^UPDATE "ai_providers"/.test(
-					statement.trim(),
-				)
-			)
-				await pool.query(statement);
-		}
-		const taskModels = await readFile(
-			new URL("../../../../../migrations/20261103031821_wooden_skullbuster/migration.sql", import.meta.url),
-			"utf8",
-		);
-		for (const statement of taskModels.split("--> statement-breakpoint")) {
-			if (statement.trim().startsWith('ALTER TABLE "ai_providers"')) await pool.query(statement);
-		}
-		const usage = await readFile(
-			new URL("../../../../../migrations/20261103093306_conscious_titanium_man/migration.sql", import.meta.url),
-			"utf8",
-		);
-		for (const statement of usage.split("--> statement-breakpoint")) {
-			if (statement.trim().startsWith('ALTER TABLE "resume_writing_review"')) await pool.query(statement);
+		const migrations = new URL("../../../../../migrations/", import.meta.url);
+		for (const name of (await readdir(migrations)).filter((name) => /^\d+_/.test(name)).sort()) {
+			await pool.query(
+				(await readFile(new URL(`${name}/migration.sql`, migrations), "utf8")).replaceAll('"public".', ""),
+			);
 		}
 		web = (await import("./credentials")).webAccessService;
 		ai = (await import("../ai-providers/service")).aiProvidersService;
-	});
+	}, 30_000);
 	afterAll(async () => {
 		await pool?.end();
 		await admin?.query(`DROP SCHEMA IF EXISTS ${schemaName} CASCADE`);
@@ -107,7 +68,10 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 			AI_API_KEY: "",
 			AI_BASE_URL: "",
 		});
-		await pool.query("TRUNCATE \"user\" CASCADE; INSERT INTO \"user\" VALUES ('alice'),('bob')");
+		await truncateCascade(pool, ["user", "released_username"]);
+		await pool.query(
+			"INSERT INTO \"user\" (id,name,email,username,display_username) VALUES ('alice','alice','alice@example.test','alice','alice'),('bob','bob','bob@example.test','bob','bob')",
+		);
 	});
 
 	it("encrypts personal keys, isolates accounts, and replaces or removes one selected connection", async () => {
@@ -250,9 +214,10 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 			testStatus: "success",
 			isDefault: true,
 		});
-		await pool.query("INSERT INTO career_schedule (user_id,ai_provider_id,enabled) VALUES ('alice',$1,true)", [
-			chosen.id,
-		]);
+		await pool.query(
+			"INSERT INTO career_schedule (id,user_id,kind,next_run_at,ai_provider_id,enabled) VALUES ('schedule','alice','discovery',now(),$1,true)",
+			[chosen.id],
+		);
 		await ai.update({ userId: "alice", id: chosen.id, apiKey: "replacement-key" });
 		expect(
 			(await pool.query("SELECT enabled FROM career_schedule WHERE ai_provider_id=$1", [chosen.id])).rows[0]?.enabled,
@@ -287,7 +252,9 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 
 	it("keeps paid writing reviews with their input version, isolates owners, and discards a late older result", async () => {
 		const { beginWritingReview, saveWritingReview, readWritingReview } = await import("../ai/writing-review");
-		await pool.query(`INSERT INTO resume(id,user_id) VALUES ('resume-alice','alice'),('resume-bob','bob')`);
+		await pool.query(
+			`INSERT INTO resume (id,user_id,name,slug,data) VALUES ('resume-alice','alice','Resume','resume','{}'),('resume-bob','bob','Resume','resume','{}')`,
+		);
 		const input = {
 			resumeId: "resume-alice",
 			userId: "alice",

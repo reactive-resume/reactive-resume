@@ -11,16 +11,15 @@ Run from the Reactive Resume checkout root. Follow its `AGENTS.md`, command wrap
 
 ## Establish the baseline
 
-1. Read `GLOSSARY.md`, both apps' `lingui.config.ts`, relevant package scripts, and `apps/mobile/scripts/seed-locales.mjs`. Derive locales, source locale, and pseudo-locale from current config rather than a fixed locale count. Currently `zu-ZA` is a generated pseudo-locale, not Zulu translation work.
+1. Read `GLOSSARY.md` at the repository root (it is not in this skill folder), both apps' `lingui.config.ts`, relevant package scripts, and `apps/mobile/scripts/seed-locales.mjs`. Derive locales, source locale, and pseudo-locale from current config rather than a fixed locale count. Currently `zu-ZA` is a generated pseudo-locale, not Zulu translation work.
 2. Capture `git status --short` and the initial diff. Save copies of catalog bytes outside the checkout so preservation checks compare against current work, not `HEAD`. Record pre-existing compiled locale files too. Keep staged/unstaged changes intact; no reset, checkout, clean, commit, push, or release unless separately requested.
-3. Extract all source strings in both apps, sequentially, before dispatching workers:
+3. Extract all source strings in both apps before dispatching workers, and before any build: production bundles drop source text, so a build from stale catalogs shows raw message IDs.
 
    ```sh
-   pnpm --filter web lingui:extract
-   pnpm --filter mobile lingui:extract
+   pnpm lingui:extract
    ```
 
-   The root `lingui:extract` currently covers web only. Web's script cleans obsolete entries and overwrites the source locale from source messages; mobile's script also seeds empty entries from web. These extraction changes are expected. Compare preservation of active nonempty target translations against the post-extraction baseline.
+   It runs web, then mobile, then `pdf:translations`. Web's script cleans obsolete entries and overwrites the source locale from source messages; mobile's script also seeds empty entries from web. These extraction changes are expected. Compare preservation of active nonempty target translations against the post-extraction baseline.
 
 4. Run both missing checks, capturing each exit code and verbose findings even when one fails:
 
@@ -29,7 +28,7 @@ Run from the Reactive Resume checkout root. Follow its `AGENTS.md`, command wrap
    pnpm --filter mobile exec lingui check missing --mode catalog --verbose
    ```
 
-   Inventory **all** missing entries by app and locale. Use installed `@lingui/format-po` through the owning workspace for structured inventory/edits; empty-line regexes misread multiline messages, headers, contexts, and obsolete entries. Keep msgid, context, translator comments, and source references with each work item. If no entries are missing, continue to verification without spawning translation workers.
+   Redirect verbose output to a file and read counts or one locale at a time; the full log can exceed a million tokens. Inventory **all** missing entries by app and locale. Use installed `@lingui/format-po` through the owning workspace for structured inventory/edits; empty-line regexes misread multiline messages, headers, contexts, and obsolete entries. Keep msgid, context, translator comments, and source references with each work item. If no entries are missing, continue to verification without spawning translation workers.
 
 ## Translate in parallel
 
@@ -41,7 +40,7 @@ Use the environment's delegated-task tools. In T3 Code, inspect `orchestrator_ca
 
 Give each worker this brief, substituting exact paths and entries:
 
-> Fill only empty active target translations in these owned files: [paths]. Work from this post-extraction inventory: [entries/counts]. Read `GLOSSARY.md`, existing locale terminology, comments, and referenced UI when meaning is ambiguous. Translate natural interface language for each locale. Preserve IDs, contexts, source messages, existing nonempty translations, headers, references, and unrelated edits. Preserve named placeholders, ICU variable names/types, select keys, exact-number branches, `other` branches, plural `#`, numbered rich-text tag indexes/pairing, literal URLs/config identifiers, and brands. Adapt plural categories to the target language. Keep tags attached to their corresponding meaning when word order changes. Use the installed PO parser/serializer; review round-trip diffs. English copying is acceptable only for genuine shared words, brands, and literals, never to conceal a gap. You own translation edits only: no extraction, seeding, global formatting, compilation, commits, or cleanup. Other workers share this checkout. Return paths, filled counts, unresolved IDs, uncertainties, and checks actually run. Finish every assigned entry or identify the blocker; do not claim global completion.
+> Fill only empty active target translations in these owned files: [paths]. Work from this post-extraction inventory: [entries/counts]. Read the repository-root `GLOSSARY.md`, existing locale terminology, comments, and referenced UI when meaning is ambiguous. Translate natural interface language for each locale. Preserve IDs, contexts, source messages, existing nonempty translations, headers, references, and unrelated edits. Preserve named placeholders, ICU variable names/types, select keys, exact-number branches, `other` branches, plural `#`, numbered rich-text tag indexes/pairing, literal URLs/config identifiers, and brands. Adapt plural categories to the target language. Keep tags attached to their corresponding meaning when word order changes. Use the installed PO parser/serializer; review round-trip diffs. English copying is acceptable only for genuine shared words, brands, and literals, never to conceal a gap. You own translation edits only: no extraction, seeding, global formatting, compilation, commits, or cleanup. Other workers share this checkout. Return paths, filled counts, unresolved IDs, uncertainties, and checks actually run. Finish every assigned entry or identify the blocker; do not claim global completion.
 
 The parent tracks completion against the inventory, reviews returned diffs/counts, and resolves failures. Worker summaries alone are insufficient evidence. Retry only failed files/entries; do not rerun successful batches.
 
@@ -56,13 +55,13 @@ Partition remaining mobile gaps into disjoint files and apply the same workflow.
 
 ## Verify completion
 
-First compare parsed catalog changes with the post-extraction baseline: active IDs/contexts/source messages stay intact, existing nonempty target translations stay intact, and only missing translations are filled. Review newly added messages against original source. Compare placeholder and numbered-tag structure for every filled entry using parsed ICU/message structure, not brace regexes. Inspect installed Lingui parser utilities before using them; locale plural categories may legitimately differ. A syntactically valid message can still omit a variable, so compilation alone is insufficient. Review glossary-sensitive wording and suspicious source-identical translations.
+First run `pnpm locales:diff` (add `--base <ref>` for a base other than `origin/main`; it compares with the merge base). It parses every web and mobile catalog and fails on lost translations (nonempty became empty) and on placeholder, ICU argument or numbered-tag mismatches in new or changed translations, allowing plural forms the target language omits; it lists changed translations and counts new untranslated and removed messages. Do not write a one-off PO comparison script. Its base is committed history, so also confirm no extraction-era translation you saved in the baseline went missing. Review newly added messages against original source. A syntactically valid message can still omit a variable, so compilation alone is insufficient. Review glossary-sensitive wording and suspicious source-identical translations.
 
 Run every gate below and record each result. These commands are for the **whole catalog**, not changed locales or changed source files:
 
 ```sh
-pnpm --filter web exec lingui check sync --clean --overwrite
-pnpm --filter mobile exec lingui check sync --clean
+pnpm lingui:check
+pnpm locales:diff
 pnpm --filter web exec lingui check missing --mode catalog --verbose
 pnpm --filter mobile exec lingui check missing --mode catalog --verbose
 pnpm --filter web exec lingui compile --strict
@@ -74,7 +73,7 @@ pnpm format:check
 git diff --check
 ```
 
-`check sync` proves catalogs reflect current source; an old but fully filled catalog is insufficient. `--mode catalog` proves each target catalog is filled **before fallback**. Default missing checks and `compile --strict` allow fallback and cannot replace it. Compilation adds ICU syntax/bundle validation. The tooling test must actually execute its tests; zero tests is not proof.
+`lingui:check` (both apps' `check sync`, also run in CI) proves catalogs reflect current source; an old but fully filled catalog is insufficient. `--mode catalog` proves each target catalog is filled **before fallback**. Default missing checks and `compile --strict` allow fallback and cannot replace it. Compilation adds ICU syntax/bundle validation. The tooling test must actually execute its tests; zero tests is not proof.
 
 Compilation writes locale `.js` files. Before compiling, back up existing output bytes and record absent output paths. After checking, restore pre-existing outputs to those exact bytes and remove only files created by this invocation. Preserve outputs that were already untracked. If another process changes an output during verification, preserve its change and report the conflict instead of overwriting it. Retain generated PDF section-title and Present-label changes, since those are maintained artifacts. Inspect final status/diff against the initial baseline.
 

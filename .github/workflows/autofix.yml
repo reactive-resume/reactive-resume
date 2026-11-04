@@ -52,6 +52,10 @@ jobs:
       - name: Apply Knip fixes
         run: pnpm knip --fix
 
+      # Re-extract catalogs so strings merged without extraction (here or on main) are fixed, not left to fail CI.
+      - name: Extract translation catalogs
+        run: pnpm lingui:extract
+
       - name: Generate PDF translations, lint, and format
         run: pnpm check
 

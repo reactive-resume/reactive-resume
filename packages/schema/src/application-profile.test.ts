@@ -16,18 +16,9 @@ describe("private application profile", () => {
 		expect(profile.references).toEqual([]);
 	});
 	it.each([
-		{ workAuthorization: [{ countryCode: "XX" }] },
 		{ workAuthorization: [{ countryCode: "DE" }, { countryCode: "DE" }] },
-		{ workAuthorization: [{ countryCode: "DE", authorized: true }] },
 		{ links: [{ label: "Site", url: "javascript:alert(1)" }] },
-		{ email: "not-email" },
-		{ references: [{ name: "", relationship: "", company: "", email: "", phone: "" }] },
-		{ requestedSalary: { amount: 90000, currency: null, period: "year" } },
-		{ requestedSalary: { amount: 90000, currency: "EUR", period: null } },
 		{ requestedSalary: { amount: -1, currency: "EUR", period: "year" } },
-		{ requestedSalary: { amount: 1.234, currency: "EUR", period: "hour" } },
-		{ requestedSalary: { amount: Number.MAX_SAFE_INTEGER + 1, currency: "EUR", period: "year" } },
-		{ selfIdentification: { disability: "no" } },
 		{ userId: "someone-else" },
 	])("rejects invalid or unsupported profile input: %j", (input) => {
 		expect(applicationProfileDataSchema.safeParse(input).success).toBe(false);

@@ -7,7 +7,7 @@ import { CustomDomainField } from "./custom-domain-field";
 import { WebAccessSection } from "@/features/settings/ai/web-access";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 
-const state = vi.hoisted(() => ({ remove: vi.fn(), failure: false }));
+const state = vi.hoisted(() => ({ remove: vi.fn() }));
 vi.mock("@/libs/orpc/client", () => {
 	const endpoint = (name: string) => ({
 		queryOptions: () => ({ name }),
@@ -43,7 +43,7 @@ vi.mock("@tanstack/react-query", () => ({
 	useMutation: ({ name }: { name: string }) => ({
 		mutate: (...args: unknown[]) => state.remove(name, ...args),
 		isPending: false,
-		error: name === "delete" && state.failure ? new Error("Synthetic removal failed") : null,
+		error: null,
 	}),
 }));
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
@@ -53,7 +53,6 @@ vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () 
 beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	state.remove.mockClear();
-	state.failure = false;
 });
 afterEach(cleanup);
 

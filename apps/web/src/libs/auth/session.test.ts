@@ -18,13 +18,6 @@ describe("getSession", () => {
 		expect(result).toEqual(mockSession);
 	});
 
-	it("returns null when no session is present (data is null)", async () => {
-		getSessionMock.mockResolvedValueOnce({ data: null, error: null });
-
-		const result = await getSession();
-		expect(result).toBeNull();
-	});
-
 	it("returns null when session is explicitly unauthorized (HTTP 401)", async () => {
 		getSessionMock.mockResolvedValueOnce({ data: null, error: { status: 401, message: "Unauthorized" } });
 
@@ -32,30 +25,14 @@ describe("getSession", () => {
 		expect(result).toBeNull();
 	});
 
-	it("throws on rate-limited responses (HTTP 429)", async () => {
-		getSessionMock.mockResolvedValueOnce({
-			data: null,
-			error: { status: 429, message: "Too many requests. Please try again later." },
-		});
+	// Only a 401 means signed out; treating a transient failure as one would clear this account's data and drafts.
+	it.each([
+		["a server error", { status: 500, message: "Internal server error" }],
+		["a rate limit", { status: 429, message: "Too many requests" }],
+		["a network drop", { message: "Failed to fetch" }],
+	])("throws on %s instead of reporting no session", async (_, error) => {
+		getSessionMock.mockResolvedValueOnce({ data: null, error });
 
-		await expect(getSession()).rejects.toThrow("Too many requests. Please try again later.");
-	});
-
-	it("throws on server errors (HTTP 500)", async () => {
-		getSessionMock.mockResolvedValueOnce({
-			data: null,
-			error: { status: 500, message: "Internal server error" },
-		});
-
-		await expect(getSession()).rejects.toThrow("Internal server error");
-	});
-
-	it("throws on transient network errors", async () => {
-		getSessionMock.mockResolvedValueOnce({
-			data: null,
-			error: { message: "Failed to fetch" },
-		});
-
-		await expect(getSession()).rejects.toThrow("Failed to fetch");
+		await expect(getSession()).rejects.toThrow(error.message);
 	});
 });

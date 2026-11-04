@@ -37,12 +37,12 @@ Use disposable PostgreSQL and synthetic users for account-backed proof. Follow t
 
 ```sh
 pnpm --filter @reactive-resume/api test src/features/career/service.integration.test.ts src/features/applications/packet-router.test.ts
-pnpm exec playwright test tests/e2e/specs/application-packet.spec.ts tests/e2e/specs/form-fill-engine.spec.ts
+pnpm test:e2e:local --build tests/e2e/specs/form-fill-engine.spec.ts
 ```
 
 Set `RUN_CAPTURE_EXTENSION=1` for the actual Chromium helper case; otherwise that case is intentionally omitted. The shared-engine spec launches Chromium and host WebKit to check the desktop script. The earlier loopback lab under `tooling/autofill/` remains historical experiment evidence and does not verify the new product integration.
 
-Mobile packet changes use JavaScript, copy and existing native dependencies, so they are OTA eligible by source inspection. Compare the installed native fingerprint during release verification. Deploy the additive backend first; old mobile APIs stay compatible. The owner-approved native-autofill exception is recorded in `.agents/docs/rx-75-native-release-handoff.md`.
+Mobile packet changes use JavaScript, copy and existing native dependencies, so they are OTA eligible by source inspection. Compare the installed native fingerprint during release verification. Deploy the additive backend first; old mobile APIs stay compatible. The owner-approved native-autofill exception is listed under "Parity exceptions" in `apps/mobile/AGENTS.md`.
 
 Refresh `writing-application-answers`, `career-workspace-reference` and `exporting-your-data` with packet changes. `employer-form-packet-v2.png` is an actual fictional-account product screenshot; it makes no native-device claim. Keep the original `employer-form-prototype.png` as historical lab evidence.
 
@@ -201,17 +201,16 @@ Account export retains usage and writing reviews within the existing Career back
 Use a disposable PostgreSQL database and synthetic users. These integration suites create an isolated schema, apply the complete migration chain, and remove their schema afterward. Never point test environment variables at production data.
 
 ```sh
-export INTEGRATIONS_TEST_DATABASE_URL='postgresql://postgres:postgres@127.0.0.1:5432/career_test'
-pnpm --filter @reactive-resume/api test src/features/career
+pnpm test:db exec -- pnpm --filter @reactive-resume/api test src/features/career
 pnpm --filter server test src/http/career-jobs.test.ts src/startup/career-scheduler.test.ts src/cloudflare/index.test.ts
 pnpm --filter web test src/features/settings/account/export.test.ts
 ```
 
-Use credentials for your disposable database in the first command. Without `INTEGRATIONS_TEST_DATABASE_URL` or the supported `COVER_LETTER_TEST_DATABASE_URL` fallback, the career database suites skip; a green run with skipped suites is not verification. Follow [development setup](/contributing/development) for the remaining environment and package prerequisites.
+`pnpm test:db exec` creates and migrates disposable databases for your checkout on the local PostgreSQL from `compose.dev.yml`, then runs the command with the test database variables set. It also sets `REQUIRE_DB_TESTS=1`, so the career database suites fail instead of skipping when a database variable is missing; a green run with skipped suites is not verification. Follow [development setup](/contributing/development#database-integration-suites) for details and the remaining package prerequisites.
 
 The deterministic cases cover ownership, submitted-version isolation, correction/forget behavior, practice/debrief separation, stale material, exports/cascades, overlapping ticks, retries/cancellation, recurrence, and endpoint authorization. Also run affected package typechecks, existing assistant regression suites, boundary/lint/format checks, and the production build. Test the deployed endpoint and owner-email flow in a dedicated installation as described in [deployment checks](/contributing/deployment-checks).
 
-Career browser scenarios require `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` for the local synthetic provider. With the [browser test environment](https://github.com/reactive-resume/reactive-resume/blob/main/tests/e2e/README.md) configured, run `pnpm test:e2e tests/e2e/specs/career.spec.ts`. These cover offline urgent preparation, memory controls, selected submitted snapshots, persistence, and first-send context exclusions.
+Career behavior is covered by the database and unit suites above; the browser suite keeps only cross-system journeys (see the [browser test README](https://github.com/reactive-resume/reactive-resume/blob/main/tests/e2e/README.md)).
 
 ### Opt-in live evaluation
 

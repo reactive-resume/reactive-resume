@@ -2,7 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { zipSync } from "fflate";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { extractDocxText } from "./docx-text";
-import { notImportedLines, reviewImport, withLeftoverSection, withLinkTargets } from "./review";
+import { reviewImport, withLeftoverSection, withLinkTargets } from "./review";
 
 const resume = () => {
 	const data = structuredClone(defaultResumeData);
@@ -24,9 +24,9 @@ const resume = () => {
 	return data;
 };
 
-describe("notImportedLines", () => {
+describe("reviewImport lines not imported", () => {
 	it("lists a line whose number didn't come through, even when its words did", () => {
-		expect(notImportedLines(resume(), ["Improved checkout-flow accessibility by 18%."])).toEqual([
+		expect(reviewImport(resume(), ["Improved checkout-flow accessibility by 18%."]).notImported).toEqual([
 			"Improved checkout-flow accessibility by 18%.",
 		]);
 	});
@@ -41,16 +41,16 @@ describe("notImportedLines", () => {
 			"References",
 			"Dana Lee, Head of Design at Northwind, dana@example.com",
 		];
-		expect(notImportedLines(resume(), lines)).toEqual([
+		expect(reviewImport(resume(), lines).notImported).toEqual([
 			"US 11,234,567 · Accessible payment form validation, 2023",
 			"Dana Lee, Head of Design at Northwind, dana@example.com",
 		]);
 	});
 });
 
-describe("notImportedLines across entries", () => {
+describe("reviewImport lines not imported across entries", () => {
 	it("lists a date range or number line the resume lacks", () => {
-		expect(notImportedLines(resume(), ["2016 – 2019", "2021 – Present"])).toEqual(["2016 – 2019"]);
+		expect(reviewImport(resume(), ["2016 – 2019", "2021 – Present"]).notImported).toEqual(["2016 – 2019"]);
 	});
 
 	it("doesn't count a bullet as imported because its words are scattered over other entries", () => {
@@ -65,7 +65,7 @@ describe("notImportedLines across entries", () => {
 				description: "<p>Managed designers across Berlin teams.</p>",
 			} as never,
 		];
-		expect(notImportedLines(data, ["Managed 18 designers across Berlin teams"])).toEqual([]);
+		expect(reviewImport(data, ["Managed 18 designers across Berlin teams"]).notImported).toEqual([]);
 		data.sections.projects.items = [
 			{
 				id: "2",
@@ -79,7 +79,7 @@ describe("notImportedLines across entries", () => {
 		data.sections.awards.items = [
 			{ id: "3", hidden: false, title: "Managed designers across teams", awarder: "", date: "" } as never,
 		];
-		expect(notImportedLines(data, ["Managed 18 designers across Berlin teams"])).toEqual([
+		expect(reviewImport(data, ["Managed 18 designers across Berlin teams"]).notImported).toEqual([
 			"Managed 18 designers across Berlin teams",
 		]);
 	});

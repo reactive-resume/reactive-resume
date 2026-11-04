@@ -1,14 +1,15 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { esbuild, run } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const source = transformSync(readFileSync(new URL("../src/features/workspace/share.ts", import.meta.url), "utf8"), {
-	loader: "ts",
-	format: "cjs",
-}).code;
+const source = esbuild.transformSync(
+	readFileSync(new URL("../src/features/workspace/share.ts", import.meta.url), "utf8"),
+	{
+		loader: "ts",
+		format: "cjs",
+	},
+).code;
 
 test("workspace packet sharing stays account-bound through availability and file writing", async () => {
 	for (const change of ["availability", "write", null]) {
@@ -16,7 +17,6 @@ test("workspace packet sharing stays account-bound through availability and file
 		let writes = 0;
 		let shares = 0;
 		let deletes = 0;
-		const module = { exports: {} };
 		const dependencies = {
 			"@/auth/session": { getAccountScope: () => scope },
 			"expo-file-system": {
@@ -41,15 +41,7 @@ test("workspace packet sharing stays account-bound through availability and file
 				},
 			},
 		};
-		new Function("require", "module", "exports", source)(
-			(name) => {
-				assert.ok(name in dependencies, `Unexpected native boundary: ${name}`);
-				return dependencies[name];
-			},
-			module,
-			module.exports,
-		);
-		await module.exports.shareText(
+		await run(source, dependencies).shareText(
 			"application-packet.json",
 			"PRIVATE REVIEWED PACKET",
 			"application/json",

@@ -1,10 +1,7 @@
 // Execute collection search and modal lifetimes through the shipped hardware-command owner. Host proof only.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
+import * as harness from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
 let current;
 let cursor;
@@ -75,24 +72,7 @@ const mocks = {
 	"./text": { Text: "Text" },
 	"./theme": { useTheme: () => theme },
 };
-function load(path) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8"), {
-		loader: path.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(name) => {
-			assert.ok(name in mocks, `Missing native boundary: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (path) => harness.load(`../src/${path}`, mocks, { jsx: "transform", globals: { React: react } });
 const keyCommands = load("shell/key-commands.ts");
 mocks["@/shell/key-commands"] = keyCommands;
 const { CollectionHeader } = load("components/collection-header.tsx");

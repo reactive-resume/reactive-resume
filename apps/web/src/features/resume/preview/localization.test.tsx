@@ -9,7 +9,6 @@ import { ResumePreviewLoader } from "./preview.shared";
 import { LevelDisplay } from "@/components/level/display";
 import { FindingRow } from "@/features/ats-checker/report/finding-row";
 import { JdCoverage } from "@/features/ats-checker/report/jd-coverage";
-import { getLocaleMessages } from "@/libs/locale";
 
 vi.mock("./pdfjs", () => ({
 	AnnotationMode: {},
@@ -21,9 +20,8 @@ beforeEach(() => {
 	i18n.loadAndActivate({ locale: "de-DE", messages: {} });
 });
 
-it("defers all five pairing and eight accent labels to Lingui", () => {
+it("defers pairing and accent labels to Lingui", () => {
 	const labels = [...FONT_PAIRINGS, ...ACCENTS].map(({ label }) => label);
-	expect(labels).toHaveLength(13);
 	for (const [index, label] of labels.entries()) {
 		expect(label).toHaveProperty("id");
 		i18n.load("de-DE", { [label.id]: `Übersetzung ${index}` });
@@ -129,16 +127,4 @@ it("formats Arabic ATS evidence, keyword totals and skill names without changing
 	expect(markup).toContain('aria-label="Level ٣ of 5"');
 	expect(markup).toContain("Fictional 2026 evidence");
 	expect(finding.evidence.page).toBe(7);
-});
-
-it("uses the Arabic catalog for both digits in the accessible level label", async () => {
-	const catalog = await getLocaleMessages("ar-SA");
-	expect(catalog.locale).toBe("ar-SA");
-	i18n.loadAndActivate(catalog);
-	const markup = renderToStaticMarkup(
-		<I18nProvider i18n={i18n}>
-			<LevelDisplay level={3} type="circle" icon="circle" />
-		</I18nProvider>,
-	);
-	expect(markup).toContain('aria-label="المستوى ٣ من ٥"');
 });

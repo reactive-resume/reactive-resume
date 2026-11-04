@@ -2,6 +2,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 const fetchMock = vi.fn<typeof fetch>();
+const reportSessionLoss = vi.hoisted(() => vi.fn());
+vi.mock("@/libs/auth/session-recovery", () => ({ reportSessionLoss }));
 
 beforeEach(() => {
 	fetchMock.mockReset();
@@ -50,4 +52,19 @@ describe("RPC account binding", () => {
 		expect(bound?.headers.get("x-orpc-batch")).toBeNull();
 		expect(bound?.url).not.toContain("__batch__");
 	});
+});
+
+// An expired session must offer "sign in again" instead of failing every save silently.
+it("reports a lost session when a call comes back unauthorized, for the account that made it", async () => {
+	const { setAccountScope } = await import("@/libs/auth/account-scope");
+	const { client } = await import("./client");
+	setAccountScope("alice");
+	fetchMock.mockResolvedValue(
+		Response.json(
+			{ json: { defined: false, code: "UNAUTHORIZED", status: 401, message: "Unauthorized" }, meta: [] },
+			{ status: 401 },
+		),
+	);
+	await expect(client.career.saveProfile({} as never, { context: { accountId: "alice" } })).rejects.toThrow();
+	expect(reportSessionLoss).toHaveBeenCalledWith("alice");
 });

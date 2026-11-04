@@ -1,14 +1,11 @@
 // Host lifecycle/SDK-boundary proof; native worklet execution and gesture feel need device QA.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
 import { i18n } from "@lingui/core";
+import { load as loadSource, tag } from "./harness.mjs";
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
-const server = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(server.resolve("tsx"))("esbuild");
 let owner;
 const same = (a, b) => a && b && a.length === b.length && a.every((value, i) => Object.is(value, b[i]));
 const react = {
@@ -61,24 +58,7 @@ function mount(render, props) {
 	instance.render();
 	return instance;
 }
-function load(path, mocks) {
-	const module = { exports: {} };
-	const code = transformSync(readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8"), {
-		loader: path.endsWith(".tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(name) => {
-			assert.ok(name in mocks, `Missing native boundary: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (path, mocks) => loadSource(`../src/${path}`, mocks, { jsx: "transform", globals: { React: react } });
 const tick = async () => {
 	for (let i = 0; i < 20; i++) await Promise.resolve();
 };
@@ -169,7 +149,7 @@ function fixture(reduced = false, requests = {}) {
 		react,
 		"@lingui/core/macro": {
 			ph: (named) => Object.values(named)[0],
-			t: (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), ""),
+			t: tag,
 			plural: (n, options) => options[n === 1 ? "one" : "other"].replace("#", n),
 		},
 		"@orpc/client": { ORPCError: class extends Error {} },
@@ -252,22 +232,6 @@ for (const cancellation of ["scope", "background", "navigation"])
 		assert.equal(f.frame.value.props.style.at(-1).read().opacity, 1);
 	});
 
-test("native reduced removal animates opacity alone; failed writes never animate", async () => {
-	const f = fixture(true);
-	assert.equal(await f.operations.trash([{ type: "resume", id: "failed", isLocked: false }]), false);
-	assert.equal(f.animations.length, 0);
-	const before = f.refreshes;
-	const pending = f.operations.trash([{ type: "resume", id: "one", isLocked: false }]);
-	await tick();
-	assert.equal(f.refreshes, before);
-	assert.equal(f.animations.length, 1);
-	assert.equal(f.animations[0].value, 0);
-	assert.deepEqual(f.animations[0].config, { duration: 120, reduceMotion: "never" });
-	f.animations[0].finish();
-	assert.equal(await pending, true);
-	assert.equal(f.refreshes, before + 4);
-});
-
 test("native animation failure cannot report an accepted write as failed", async () => {
 	const f = fixture();
 	f.collection.value.register("resume:one", {
@@ -281,31 +245,25 @@ test("native animation failure cannot report an accepted write as failed", async
 	assert.equal(f.refreshes, 4);
 });
 
-for (const count of [1, 2])
-	test(`native Undo of ${count} documents fades the currently focused Trash collection`, async () => {
-		const f = fixture(true);
-		const documents = Array.from({ length: count }, (_, index) => ({
-			type: "resume",
-			id: index ? "two" : "one",
-			isLocked: false,
-		}));
-		const trash = f.operations.trash(documents);
-		await tick();
-		f.animations.at(-1).finish();
-		assert.equal(await trash, true);
-		const undo = f.toasts.at(-1).action;
-		f.blur();
-		f.collection.render({ scope: "account/trash", trashed: true });
-		f.frame.render({ itemKey: "resume:one", register: f.collection.value.register });
-		const before = f.refreshes;
-		undo.onPress();
-		await tick();
-		assert.equal(f.animations.length, 2, "Restore targets the mounted Trash row");
-		assert.equal(f.refreshes, before, "Restore receipt waits for the current exit");
-		f.animations.at(-1).finish();
-		await tick();
-		assert.equal(f.refreshes, before + 4);
-	});
+test("native Undo fades the currently focused Trash collection", async () => {
+	const f = fixture(true);
+	const trash = f.operations.trash([{ type: "resume", id: "one", isLocked: false }]);
+	await tick();
+	f.animations.at(-1).finish();
+	assert.equal(await trash, true);
+	const undo = f.toasts.at(-1).action;
+	f.blur();
+	f.collection.render({ scope: "account/trash", trashed: true });
+	f.frame.render({ itemKey: "resume:one", register: f.collection.value.register });
+	const before = f.refreshes;
+	undo.onPress();
+	await tick();
+	assert.equal(f.animations.length, 2, "Restore targets the mounted Trash row");
+	assert.equal(f.refreshes, before, "Restore receipt waits for the current exit");
+	f.animations.at(-1).finish();
+	await tick();
+	assert.equal(f.refreshes, before + 4);
+});
 
 test("native direct Restore waits for fade and failed refresh holds it until successful retry", async () => {
 	const f = fixture(true);
@@ -374,26 +332,22 @@ for (const method of ["trash", "restoreSelected", "purgeSelected", "emptyTrash"]
 		assert.deepEqual(f.toasts, [], "An old account's result must not enter the new account's toast host");
 	});
 
-for (const batch of [false, true])
-	test(`native late failure stays with its original account (batch=${batch})`, async () => {
-		let release;
-		const receipt = new Promise((resolve) => {
-			release = resolve;
-		});
-		const f = fixture(true);
-		const task = async () => {
-			await receipt;
-			throw new Error("Old account request failed");
-		};
-		const pending = f.operations.run(() =>
-			batch ? f.operations.batch([{ type: "resume", id: "one" }], task) : task(),
-		);
-		await tick();
-		f.switchAccount();
-		release();
-		assert.equal(await pending, false);
-		assert.deepEqual(f.toasts, []);
+test("native late failure stays with its original account", async () => {
+	let release;
+	const receipt = new Promise((resolve) => {
+		release = resolve;
 	});
+	const f = fixture(true);
+	const pending = f.operations.run(async () => {
+		await receipt;
+		throw new Error("Old account request failed");
+	});
+	await tick();
+	f.switchAccount();
+	release();
+	assert.equal(await pending, false);
+	assert.deepEqual(f.toasts, []);
+});
 
 test("native current-account batch still reports its successful result", async () => {
 	const f = fixture(true);

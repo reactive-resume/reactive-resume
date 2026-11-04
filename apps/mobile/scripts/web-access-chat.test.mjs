@@ -1,31 +1,8 @@
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
 import { test } from "node:test";
-import { fileURLToPath } from "node:url";
-const root = fileURLToPath(new URL("../../..", import.meta.url));
-const req = createRequire(`${root}/apps/server/package.json`);
-const { buildSync } = createRequire(req.resolve("tsx"))("esbuild");
-const { QueryClient } = createRequire(`${root}/apps/mobile/package.json`)("@tanstack/react-query");
-function load(deps) {
-	const code = buildSync({
-		entryPoints: [`${root}/apps/mobile/src/features/assistant/chat.ts`],
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-		external: Object.keys(deps),
-	}).outputFiles[0].text;
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in deps, `Unexpected dependency ${name}`);
-			return deps[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+import { bundle, mobileRequire } from "./harness.mjs";
+const { QueryClient } = mobileRequire("@tanstack/react-query");
+const load = (deps) => bundle("../src/features/assistant/chat.ts", deps);
 test("native finished or failed web replies refresh status only for their own account", () => {
 	const client = new QueryClient();
 	let account = "server/account-a";

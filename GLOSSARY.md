@@ -79,8 +79,7 @@ transliterated; never translated as "snail".
 
 ### Resume section names
 
-These are the built-in section presets, defined in `apps/web/src/libs/resume/section.tsx` and
-`apps/web/src/dialogs/resume/sections/custom.tsx`. Translate them the way a resume in the target
+These are the built-in section presets, defined in `apps/web/src/libs/resume/section.tsx`. Translate them the way a resume in the target
 language would label them:
 
 **Basics** — name, contact details, and headline. Not "fundamentals" or "basic settings".

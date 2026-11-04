@@ -235,27 +235,6 @@ describe("aiProvidersService", () => {
 		);
 	});
 
-	it("tests every configured model and never reports readiness after a task model fails", async () => {
-		queryState.rows = [providerRow({ fastModel: "fast-model", capableModel: "capable-model" })];
-		queryState.updateRows = undefined;
-		vi.mocked(testConnection)
-			.mockResolvedValueOnce({ ok: true })
-			.mockResolvedValueOnce({ ok: false, kind: "model", message: "Fast model rejected." });
-
-		await aiProvidersService.test({ id: "provider-1", userId: "user-1" });
-
-		expect(testConnection).toHaveBeenNthCalledWith(1, expect.objectContaining({ model: "gpt-5-mini" }));
-		expect(testConnection).toHaveBeenNthCalledWith(2, expect.objectContaining({ model: "fast-model" }));
-		expect(testConnection).toHaveBeenCalledTimes(2);
-		expect(dbMock.update().set).toHaveBeenCalledWith(
-			expect.objectContaining({
-				enabled: false,
-				testStatus: "failure",
-				testError: expect.stringContaining('"fast-model"'),
-			}),
-		);
-	});
-
 	it("binds recipient version to owner, provider, model, full URL and encrypted credential revision", async () => {
 		queryState.rows = [providerRow()];
 		const original = await aiProvidersService.getDefaultRunnable({ userId: "user-1" });

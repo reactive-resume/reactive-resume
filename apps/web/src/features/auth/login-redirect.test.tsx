@@ -206,6 +206,25 @@ describe("OAuth callback after two-factor verification", () => {
 		);
 	});
 
+	// Older backup codes mix cases; a lower-case entry that didn't match gets one retry in capitals, not a lockout.
+	it("retries a lower-case backup code once in capitals", async () => {
+		mocks.verifyBackupCode.mockResolvedValueOnce({ data: null, error: { code: "INVALID_BACKUP_CODE" } });
+		const { container } = render(
+			<I18nProvider i18n={i18n}>
+				<VerifyTwoFactorBackupPage />
+			</I18nProvider>,
+		);
+		const input = container.querySelector<HTMLInputElement>('input[name="code"]');
+		const form = container.querySelector("form");
+		if (!input || !form) throw new Error("Verification form is missing");
+		fireEvent.change(input, { target: { value: "abcde12345" } });
+		fireEvent.submit(form);
+		await waitFor(() =>
+			expect(mocks.navigate).toHaveBeenCalledWith({ href: mocks.callbackURL, reloadDocument: true, replace: true }),
+		);
+		expect(mocks.verifyBackupCode.mock.calls.map(([options]) => options.code)).toEqual(["abcde-12345", "ABCDE-12345"]);
+	});
+
 	it.each([false, true])("trusts the device only when selected (backup: %s)", async (backup) => {
 		const { container } = render(
 			<I18nProvider i18n={i18n}>{backup ? <VerifyTwoFactorBackupPage /> : <VerifyTwoFactorPage />}</I18nProvider>,

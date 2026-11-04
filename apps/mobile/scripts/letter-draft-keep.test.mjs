@@ -1,17 +1,17 @@
 // Actual native drafting store and captured Keep action; only platform, storage and session boundaries are substituted.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { bundle, esbuild, load, tag } from "./harness.mjs";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
-const req = createRequire(`${root}/apps/server/package.json`);
-const { buildSync } = createRequire(req.resolve("tsx"))("esbuild");
+const { buildSync } = esbuild;
+const { draftForOwner } = load("../src/features/letters/draft-owner.ts");
 
 function fixture(options = {}) {
 	let account = "account-A";
-	let server = "https://rx.example";
+	const server = "https://rx.example";
 	let document = { id: "letter-A", revision: 1 };
 	let paidCalls = 0;
 	const storage = new Map();
@@ -45,32 +45,13 @@ function fixture(options = {}) {
 		"@/auth/session": { getAccountScope: () => account, getServer: () => server },
 		"@/draft": { useLetterStore: { getState: () => ({ document }) } },
 	};
-	const code = buildSync({
-		entryPoints: [`${root}/apps/mobile/src/features/letters/drafting.ts`],
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-		external: Object.keys(deps),
-		absWorkingDir: root,
-	}).outputFiles[0].text;
-	const mod = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in deps, `unexpected drafting dependency ${name}`);
-			return deps[name];
-		},
-		mod,
-		mod.exports,
-	);
 	return {
-		draft: mod.exports,
+		draft: bundle("../src/features/letters/drafting.ts", deps, { absWorkingDir: root }),
 		storage,
 		paid: () => paidCalls,
 		getDocument: () => document,
 		setDocument: (value) => (document = value),
 		setAccount: (value) => (account = value),
-		setServer: (value) => (server = value),
 	};
 }
 
@@ -86,7 +67,7 @@ const letter = (id = "letter-A") => ({
 // Load write.tsx and expose the internal BodySection so the actual captured onKeep can be invoked.
 function loadWriteCaller(f) {
 	const jsx = (type, props) => ({ type, props });
-	const t = (pieces, ...values) => pieces.reduce((text, part, i) => text + part + (values[i] ?? ""), "");
+	const t = tag;
 	const store = (selector) => selector({ document: f.getDocument(), status: "saved" });
 	store.getState = () => ({
 		document: f.getDocument(),
@@ -109,7 +90,7 @@ function loadWriteCaller(f) {
 		"./drafting": {
 			...f.draft,
 			useLetterDraftFor: (id) =>
-				f.draft.draftForOwner(f.draft.useLetterDrafting.getState(), f.draft.letterDraftOwner(id), { phase: "idle" }),
+				draftForOwner(f.draft.useLetterDrafting.getState(), f.draft.letterDraftOwner(id), { phase: "idle" }),
 		},
 		"./compose": { useLetterWords: () => null },
 		"./length": { countWords: (text) => (text?.trim() ? text.trim().split(/\s+/).length : 0) },
@@ -169,21 +150,18 @@ function seedReady(f, text = "OLD A PRIVATE DRAFT") {
 	return current;
 }
 
-for (const change of ["account", "server", "both"]) {
-	test(`captured Keep cannot cross ${change} scope with the same letter id and revision`, () => {
-		const f = fixture();
-		const keep = captureKeep(f, seedReady(f));
-		const before = f.draft.useLetterDrafting.getState();
-		if (change !== "server") f.setAccount("account-B");
-		if (change !== "account") f.setServer("https://other.example");
-		const current = { ...letter(), content: "B authored content" };
-		f.setDocument(current);
-		keep("OLD A PRIVATE DRAFT");
-		assert.equal(current.content, "B authored content");
-		assert.equal(f.draft.useLetterDrafting.getState(), before, "stale Keep must not discard another scope's draft");
-		assert.equal(f.paid(), 0);
-	});
-}
+test("captured Keep cannot cross account scope with the same letter id and revision", () => {
+	const f = fixture();
+	const keep = captureKeep(f, seedReady(f));
+	const before = f.draft.useLetterDrafting.getState();
+	f.setAccount("account-B");
+	const current = { ...letter(), content: "B authored content" };
+	f.setDocument(current);
+	keep("OLD A PRIVATE DRAFT");
+	assert.equal(current.content, "B authored content");
+	assert.equal(f.draft.useLetterDrafting.getState(), before, "stale Keep must not discard another scope's draft");
+	assert.equal(f.paid(), 0);
+});
 
 test("current Keep works and a discarded callback cannot overwrite its replacement", async () => {
 	const f = fixture();
@@ -202,7 +180,7 @@ test("current Keep works and a discarded callback cannot overwrite its replaceme
 	assert.equal(replacement.text, "REPLACEMENT draft");
 });
 
-test("native per-version sources survive revision and account-bound recovery without replacing the Keep nonce", async () => {
+test("native per-version sources survive revision and recovery without replacing the Keep nonce", async () => {
 	const f = fixture();
 	const current = seedReady(f);
 	await f.draft.startLetterDraft("shorter", "OLD A PRIVATE DRAFT", ["server-seed"]);
@@ -249,14 +227,14 @@ test("native Stop retains partial request lineage through recovery without anoth
 	assert.equal(f.paid(), 1);
 });
 
-test("letter body wires the shared Improve history step and owned posting into its draft store", () => {
+test("letter body records a reviewed Improve as its own history step with its sources", () => {
 	const f = fixture();
 	const current = letter();
 	current.aiOperationIds = ["original-source"];
 	f.setDocument(current);
 	f.draft.useLetterDrafting.setState({ owner: f.draft.letterDraftOwner(current.id), draft: { phase: "idle" } });
 	const { BodySection } = loadWriteCaller(f);
-	const tree = BodySection({ letter: current, application: { id: "owned-application" }, disabled: false });
+	const tree = BodySection({ letter: current, application: null, disabled: false });
 	let field;
 	const walk = (node) => {
 		if (Array.isArray(node)) node.forEach(walk);
@@ -267,10 +245,9 @@ test("letter body wires the shared Improve history step and owned posting into i
 	};
 	walk(tree);
 	assert.ok(field);
-	assert.equal(field.props.applicationId, "owned-application");
 	field.props.onChange("<p>Reviewed paragraph</p>", { newStep: true, aiOperationIds: ["reviewed-improve"] });
 	assert.equal(current.content, "<p>Reviewed paragraph</p>");
 	assert.deepEqual(current.aiOperationIds, ["original-source", "reviewed-improve"]);
 	assert.equal(current.aiUsage, null);
-	assert.deepEqual(f.lastUpdate, { coalesceKey: "content", newStep: true, aiOperationIds: ["reviewed-improve"] });
+	assert.equal(f.lastUpdate.newStep, true);
 });

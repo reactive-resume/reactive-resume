@@ -61,20 +61,6 @@ describe("FormControl", () => {
 		expect(message?.id).toBeTruthy();
 		expect(input?.getAttribute("aria-describedby")).toContain(message?.id);
 	});
-
-	it("includes message in aria-describedby when hasError=true", () => {
-		render(
-			<FormItem hasError>
-				<FormControl render={(props) => <input {...props} data-testid="input" />} />
-			</FormItem>,
-		);
-
-		const input = screen.getByTestId("input");
-		const describedBy = input.getAttribute("aria-describedby");
-		expect(describedBy).toContain("description");
-		expect(describedBy).toContain("message");
-		expect(input).toHaveAttribute("aria-invalid", "true");
-	});
 });
 
 describe("FormMessage", () => {

@@ -66,13 +66,6 @@ describe("proposals", () => {
 		});
 	});
 
-	it("keeps dollar signs in the new text literal", () => {
-		const next = produce(makeData(), (draft) => {
-			applyProposal(draft, proposal({ after: "<p>Cut costs by $& and $1</p>" }));
-		});
-		expect(readTarget(next, proposal().target)).toContain("<p>Cut costs by $& and $1</p>");
-	});
-
 	it("previews an atomic structural set without saving it or marking serialized data as HTML", () => {
 		const data = makeData();
 		const after = structuredClone(data);

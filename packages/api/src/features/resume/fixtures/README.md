@@ -1,13 +1,13 @@
 # PDF import regressions
 
-These fictional resumes were exported by Reactive Resume during the October 2026 product audit. Original files were recovered from `.agents/docs/product-audit-evidence/` in the main checkout.
+These fictional resumes were exported by Reactive Resume during the October 2026 product audit. Original files came from the audit's evidence set, which is archived outside the repository.
 
 - `senior.pdf`: RX-93's original three-page, single-column source. Ten roles, three wrapped bullets per role. Company/location occupy the first header row; position/dates occupy the second.
 - `freelancer-azurill.pdf`: two-column Azurill export from the same audit. Four roles, three wrapped bullets per role. A full-width contact header precedes Skills/Languages in the sidebar and Summary/Education/Experience in the main column. The last role continues on page two.
 
 `imports.test.ts` reads the actual bytes through PDF.js, the shared layout/text parser, schema validation, authenticated import, and the create-service boundary. Only authentication/database lookups and persistence are mocked; PDF extraction and parsing are real. Web adapter coverage lives in `apps/web/src/features/resume/import/pdf-text.test.ts` and supplies raw extraction at the worker boundary.
 
-The expanded suite also renders ten diverse roles through all 18 current templates and imports every shipped template PDF through the same authenticated handler. It checks experience company, position, location, dates and every bullet's full text; both audit fixtures additionally assert all skill text values, including Research. It does not claim exact education, language or grouped-skill reconstruction. Those existing defects and concrete follow-up acceptance are recorded in `.agents/docs/rx-93-import-followups.md`.
+The expanded suite also renders ten diverse roles through all 18 current templates; `import-layouts.test.ts` imports every shipped template PDF through the same authenticated handler. It checks experience company, position, location, dates and every bullet's full text; both audit fixtures additionally assert all skill text values, including Research. It does not claim exact education, language or grouped-skill reconstruction. Those existing defects and concrete follow-up acceptance are recorded on the RX-93 Linear issue.
 
 V4 adds three frozen fictional PDFs from independent review:
 
@@ -43,8 +43,8 @@ V8 is an integration-only refresh onto main `385271cd3ecefbeb1fe0af9b898a50989a9
 
 ## V10 Education record ownership
 
-`pdf-education.ts` uses reviewer-authored Berkeley/Imperial source values, not parser output. The 54 core cases put a month-year, year-only or empty first period before a ranged second record on all 18 templates. Another 126 cases cover reverse ordering, two single periods, three mixed/reverse records loose wrapped-header layouts and linked recovered headers. `import-education.test.ts` compares whole Education items including dates/degree/area/grade/location/website/complete description, plus every source word. The same assertion fails on v9 before repair.
+`pdf-education.ts` uses reviewer-authored Berkeley/Imperial source values, not parser output. The core cases put a month-year, year-only or empty first period before a ranged second record. Further cases cover reverse ordering, two single periods, three mixed/reverse records loose wrapped-header layouts and linked recovered headers. These Education cases and the heading/annotation edge cases in `import-annotations.test.ts` run on `edgeCaseTemplates` in `pdf-import.ts`: across all 18 templates, every parser mutation tried failed in at least one of those six. `import-education.test.ts` compares whole Education items including dates/degree/area/grade/location/website/complete description, plus every source word. The same assertion fails on v9 before repair.
 
 `packages/import/src/pdf-lines.test.ts` checks external geometry: unassigned right-hand body text survives; a later uncorroborated title pair declines projection; identical typography keeps generic parsing. These guards keep ambiguous chunks from losing fields when precise reconstruction is unsupported. No dependency, template/company/degree vocabulary or migration was added. Original 180 all-section source assertions remain unchanged.
 
-Exact archived reviewer PDFs/source reconstruction, fresh base/v9/current per-field comparison, protected SQL/owner GET, failed-before/passing-after multipart and real built browser reader receipts: `/tmp/rx93-rework-v10/proof.md`. The no-website/custom-link slot ambiguity and intentional Summary duplication on bounded fallback are documented in `.agents/docs/rx-93-import-followups.md`.
+Exact archived reviewer PDFs/source reconstruction, fresh base/v9/current per-field comparison, protected SQL/owner GET, failed-before/passing-after multipart and real built browser reader receipts: `/tmp/rx93-rework-v10/proof.md`. The no-website/custom-link slot ambiguity and intentional Summary duplication on bounded fallback are documented on the RX-93 Linear issue.

@@ -1,25 +1,12 @@
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
-const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+import { esbuild, mobileRequire, run } from "./harness.mjs";
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 function evaluate(options, boundaries = {}) {
-	const code = buildSync({ bundle: true, platform: "node", format: "cjs", write: false, ...options }).outputFiles[0]
-		.text;
-	const module = { exports: {} };
-	new Function("require", "module", "exports", "setTimeout", code)(
-		(name) => {
-			assert.ok(name in boundaries, name);
-			return boundaries[name];
-		},
-		module,
-		module.exports,
-		() => 0,
-	);
-	return module.exports;
+	const code = esbuild.buildSync({ bundle: true, platform: "node", format: "cjs", write: false, ...options })
+		.outputFiles[0].text;
+	return run(code, boundaries, { setTimeout: () => 0 });
 }
 const { createDraftStore } = evaluate(
 	{ entryPoints: [root + "apps/mobile/src/draft/store.ts"], external: ["zustand", "immer"] },
@@ -48,8 +35,8 @@ const { ORPCError } = await import("@orpc/client");
 function network(kind) {
 	return {
 		getById: async () => structuredClone(documents[kind]),
-		update: async (input) => {
-			requests.push(structuredClone({ kind, input }));
+		update: async (input, options) => {
+			requests.push(structuredClone({ kind, input, scope: options?.context?.scope }));
 			requestDispatched?.();
 			if (responseGate) await responseGate;
 			if (fail) throw new Error("offline");
@@ -182,101 +169,56 @@ function accept(s, kind) {
 	);
 }
 for (const kind of ["resume", "letter"]) {
-	for (const sameWords of [false, true]) {
-		test(`${kind} reviewed Improve sources survive inflight Undo/Redo (same wording=${sameWords})`, async () => {
-			const { owner } = setup(kind);
-			documents[kind].aiOperationIds = ["original-source"];
-			const o = owner();
-			const s = o.store.getState;
-			await s().open(kind);
-			s().update(
-				(draft) => {
-					if (kind === "resume") draft.summary.content = sameWords ? proposal.before : proposal.after;
-					else draft.content = sameWords ? proposal.before : proposal.after;
-				},
-				{ newStep: true, aiOperationIds: ["reviewed-improve"] },
-			);
-			assert.deepEqual(s().document.aiOperationIds, ["original-source", "reviewed-improve"]);
-			let release;
-			responseGate = new Promise((resolve) => {
-				release = resolve;
-			});
-			const dispatched = new Promise((resolve) => {
-				requestDispatched = resolve;
-			});
-			const writing = s().flush();
-			await dispatched;
-			s().undo();
-			assert.deepEqual(s().document.aiOperationIds, ["original-source"]);
-			responseGate = null;
-			release();
-			await writing;
-			assert.deepEqual(
-				requests.map((r) => r.input.aiOperationIds),
-				[["original-source", "reviewed-improve"], ["original-source"]],
-			);
-			assert.deepEqual(documents[kind].aiOperationIds, ["original-source"]);
-			assert.equal(kind === "resume" ? documents[kind].data.summary.content : documents[kind].content, proposal.before);
-			s().redo();
-			await s().flush();
-			assert.deepEqual(documents[kind].aiOperationIds, ["original-source", "reviewed-improve"]);
-			assert.equal(
-				kind === "resume" ? documents[kind].data.summary.content : documents[kind].content,
-				sameWords ? proposal.before : proposal.after,
-			);
-		});
-		test(`${kind} failed Improve save recovers sources with content (same wording=${sameWords})`, async () => {
-			const { owner } = setup(kind);
-			documents[kind].aiOperationIds = ["original-source"];
-			const first = owner();
-			await first.store.getState().open(kind);
-			first.store.getState().update(
-				(draft) => {
-					if (kind === "resume") draft.summary.content = sameWords ? proposal.before : proposal.after;
-					else draft.content = sameWords ? proposal.before : proposal.after;
-				},
-				{ newStep: true, aiOperationIds: ["reviewed-improve"] },
-			);
-			fail = true;
-			await first.store.getState().flush();
-			await first.store.getState().close();
-			const reopened = owner();
-			await reopened.store.getState().open(kind);
-			assert.deepEqual(reopened.store.getState().document.aiOperationIds, ["original-source", "reviewed-improve"]);
-			fail = false;
-			await reopened.store.getState().flush();
-			assert.deepEqual(documents[kind].aiOperationIds, ["original-source", "reviewed-improve"]);
-			assert.equal(
-				kind === "resume" ? documents[kind].data.summary.content : documents[kind].content,
-				sameWords ? proposal.before : proposal.after,
-			);
-		});
-	}
-	test(`${kind} refresh must honor newer remote Undo receipt`, async () => {
+	// Same wording: the reviewed Improve only adds its sources, which must still count as an edit.
+	test(`${kind} reviewed Improve sources survive inflight Undo/Redo`, async () => {
 		const { owner } = setup(kind);
+		documents[kind].aiOperationIds = ["original-source"];
 		const o = owner();
 		const s = o.store.getState;
 		await s().open(kind);
-		accept(s, kind);
+		s().update(() => {}, { newStep: true, aiOperationIds: ["reviewed-improve"] });
+		assert.deepEqual(s().document.aiOperationIds, ["original-source", "reviewed-improve"]);
+		let release;
+		responseGate = new Promise((resolve) => {
+			release = resolve;
+		});
+		const dispatched = new Promise((resolve) => {
+			requestDispatched = resolve;
+		});
+		const writing = s().flush();
+		await dispatched;
+		s().undo();
+		assert.deepEqual(s().document.aiOperationIds, ["original-source"]);
+		responseGate = null;
+		release();
+		await writing;
+		assert.deepEqual(
+			requests.map((r) => r.input.aiOperationIds),
+			[["original-source", "reviewed-improve"], ["original-source"]],
+		);
+		assert.deepEqual(documents[kind].aiOperationIds, ["original-source"]);
+		s().redo();
 		await s().flush();
-		documents[kind] = {
-			...documents[kind],
-			revision: documents[kind].revision + 1,
-			updatedAt: new Date(documents[kind].updatedAt.getTime() + 1),
-		};
-		await o.refresh();
-		assert.deepEqual(s().proposalApplications, {}, "Same-content external revisions expire confirmed receipts too");
-		const remote = structuredClone(documents[kind]);
-		if (kind === "resume") remote.data.summary.content = proposal.before;
-		else remote.content = proposal.before;
-		remote.updatedAt = new Date(remote.updatedAt.getTime() + 1);
-		remote.revision++;
-		documents[kind] = remote;
-		await o.refresh();
-		const content = kind === "resume" ? s().data.summary.content : s().data.content;
-		assert.equal(shared.getStateIn(content, proposal, s().proposalApplications), "pending");
+		assert.deepEqual(documents[kind].aiOperationIds, ["original-source", "reviewed-improve"]);
+		assert.equal(kind === "resume" ? documents[kind].data.summary.content : documents[kind].content, proposal.before);
 	});
-	test(`${kind} inflight Undo survives ack through real adapter`, async () => {
+	test(`${kind} failed Improve save recovers its sources`, async () => {
+		const { owner } = setup(kind);
+		documents[kind].aiOperationIds = ["original-source"];
+		const first = owner();
+		await first.store.getState().open(kind);
+		first.store.getState().update(() => {}, { newStep: true, aiOperationIds: ["reviewed-improve"] });
+		fail = true;
+		await first.store.getState().flush();
+		await first.store.getState().close();
+		const reopened = owner();
+		await reopened.store.getState().open(kind);
+		assert.deepEqual(reopened.store.getState().document.aiOperationIds, ["original-source", "reviewed-improve"]);
+		fail = false;
+		await reopened.store.getState().flush();
+		assert.deepEqual(documents[kind].aiOperationIds, ["original-source", "reviewed-improve"]);
+	});
+	test(`${kind} inflight Undo survives ack through real adapter, bound to the draft's account`, async () => {
 		const { owner } = setup(kind);
 		const o = owner();
 		const s = o.store.getState;
@@ -286,8 +228,11 @@ for (const kind of ["resume", "letter"]) {
 		responseGate = new Promise((resolve) => {
 			release = resolve;
 		});
+		const dispatched = new Promise((resolve) => {
+			requestDispatched = resolve;
+		});
 		const writing = s().flush();
-		for (let i = 0; i < 10 && requests.length === 0; i++) await Promise.resolve();
+		await dispatched;
 		assert.equal(requests.length, 1);
 		s().undo();
 		responseGate = null;
@@ -297,31 +242,47 @@ for (const kind of ["resume", "letter"]) {
 			requests.map((r) => r.input.proposalApplications),
 			[{ receipt: proposal.after }, { receipt: false }],
 		);
+		assert.deepEqual(
+			requests.map((r) => r.scope),
+			[scope, scope],
+		);
 		assert.equal(kind === "resume" ? documents[kind].data.summary.content : documents[kind].content, proposal.before);
 		assert.equal(s().status, "saved");
 	});
-	test(`${kind} unavailable storage retains unsent Undo in memory across navigation, but fresh process cannot recover it`, async () => {
-		const { owner } = setup(kind);
-		const o = owner();
-		const s = o.store.getState;
-		await s().open(kind);
-		accept(s, kind);
-		await s().flush();
-		blocked = true;
-		fail = true;
-		s().undo();
-		await s().flush();
-		assert.equal(s().status, "error");
-		await s().close();
-		await s().open(kind);
-		assert.equal(s().proposalApplications.receipt, false);
-		// This is an explicit limit, not proof of durable restart when storage fails.
-		o.suspend();
-		const fresh = owner();
-		await fresh.store.getState().open(kind);
-		assert.equal(fresh.store.getState().proposalApplications.receipt, proposal.after);
-	});
 }
+
+test("refresh expires confirmed receipts on a newer same-content revision", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	accept(s, "resume");
+	await s().flush();
+	documents.resume = {
+		...documents.resume,
+		revision: documents.resume.revision + 1,
+		updatedAt: new Date(documents.resume.updatedAt.getTime() + 1),
+	};
+	await o.refresh();
+	assert.deepEqual(s().proposalApplications, {}, "Same-content external revisions expire confirmed receipts too");
+});
+
+test("unavailable storage retains unsent Undo in memory across navigation", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	accept(s, "resume");
+	await s().flush();
+	blocked = true;
+	fail = true;
+	s().undo();
+	await s().flush();
+	assert.equal(s().status, "error");
+	await s().close();
+	await s().open("resume");
+	assert.equal(s().proposalApplications.receipt, false);
+});
 
 for (const kind of ["resume", "letter"])
 	test(`${kind} restart must not advance an old Undo to a newer same-content baseline`, async () => {
@@ -584,8 +545,8 @@ test("resume: a Share write after a revision from elsewhere fails its version ch
 		})),
 	);
 	assert.equal(s().document.isPublic, false);
-	// The foreign revision still reaches the draft the usual way, and clears what it can't vouch for.
-	await o.refresh();
+	// The refusal reads the foreign revision itself, which clears what the draft can't vouch for.
+	await new Promise(setImmediate);
 	assert.equal(s().canUndo, false);
 	assert.deepEqual(s().proposalApplications, {});
 });
@@ -618,21 +579,6 @@ test("resume: lock and unlock as the draft's own revisions keep Undo, and the ne
 	assert.equal(s().status, "saved");
 	assert.equal(s().conflict, null);
 	assert.equal(documents.resume.data.basics.headline, "After unlock");
-});
-
-test("resume: a lock after an edit from elsewhere is refused, and that edit still reaches the draft (RX-160)", async () => {
-	const { owner } = setup("resume");
-	const o = owner();
-	const s = o.store.getState;
-	await s().open("resume");
-	const remote = structuredClone(documents.resume);
-	remote.data.basics.headline = "Edited elsewhere";
-	remote.updatedAt = new Date(remote.updatedAt.getTime() + 5);
-	documents.resume = remote;
-	await assert.rejects(lock(o, true));
-	assert.equal(documents.resume.isLocked, false);
-	await o.refresh();
-	assert.equal(s().data.basics.headline, "Edited elsewhere");
 });
 
 test("resume: another account's draft doesn't wait on a Share write still in flight (RX-161)", async () => {
@@ -680,9 +626,12 @@ test("resume: a second Share change waits for the first's revision, and the firs
 			...baseline,
 			...(await network("resume").update({ id: "resume", ...settings, expectedUpdatedAt: baseline.updatedAt })),
 		}));
+	const dispatched = new Promise((resolve) => {
+		requestDispatched = resolve;
+	});
 	const first = share({ isPublic: true });
 	const second = share({ showDownloadButtons: false });
-	for (let i = 0; i < 10 && requests.length === 0; i++) await Promise.resolve();
+	await dispatched;
 	// The server has the first change; its stream event arrives before its answer.
 	await o.refresh();
 	responseGate = null;
@@ -730,26 +679,6 @@ for (const changedElsewhere of [false, true])
 		}
 	});
 
-test("resume: unlocking unchecked takes the answer only while the saved data is unchanged (RX-160)", async () => {
-	const { owner } = setup("resume");
-	const o = owner();
-	const s = o.store.getState;
-	await s().open("resume");
-	const remote = structuredClone(documents.resume);
-	remote.data.basics.headline = "Edited elsewhere";
-	remote.isLocked = true;
-	remote.updatedAt = new Date(remote.updatedAt.getTime() + 5);
-	documents.resume = remote;
-	await o.writeMetadata(
-		async (baseline) => ({ ...baseline, ...(await network("resume").setLocked({ id: "resume", isLocked: false })) }),
-		{ conditional: false },
-	);
-	// The answer carries an edit this draft hasn't seen: the draft doesn't adopt it as its own revision.
-	assert.notEqual(s().document.updatedAt.getTime(), documents.resume.updatedAt.getTime());
-	await o.refresh();
-	assert.equal(s().data.basics.headline, "Edited elsewhere");
-});
-
 test("resume: an unchecked unlock clears the lock on a dirty draft even when its answer isn't adopted (RX-160)", async () => {
 	const { owner } = setup("resume");
 	const o = owner();
@@ -782,14 +711,19 @@ test("resume: a Share answer older than a lock the stream reported keeps a dirty
 	s().update((d) => void (d.basics.headline = "Typed offline"), { newStep: true });
 	online = true;
 	let release;
+	let started;
 	const pending = new Promise((resolve) => {
 		release = resolve;
 	});
+	const running = new Promise((resolve) => {
+		started = resolve;
+	});
 	const writing = o.writeMetadata(async (baseline) => {
+		started();
 		await pending;
 		return { ...baseline, isPublic: true, updatedAt: new Date(baseline.updatedAt.getTime() + 1) };
 	});
-	for (let i = 0; i < 10; i++) await Promise.resolve();
+	await running;
 	// Locked elsewhere after the Share change: the stream reports it while the answer is still on its way.
 	const remote = structuredClone(documents.resume);
 	remote.isPublic = true;

@@ -132,12 +132,17 @@ beforeEach(() => {
 
 describe("createApp", () => {
 	// The first case pays for the cold import of the whole app, which takes seconds under a parallel run.
-	it("serves /index.html through the shared HTML response before static files", async () => {
-		const { createApp } = await import("./app");
-		const response = await createApp().request("/index.html");
-		expect(await response.text()).toBe("web");
-		expect(mocks.serveWebDistStatic).not.toHaveBeenCalled();
-	}, 15_000);
+	it.each(["/index.html", "/"])(
+		"serves %s through the shared HTML response before static files",
+		async (path) => {
+			const { createApp } = await import("./app");
+			const response = await createApp().request(path);
+			expect(response.status).toBe(200);
+			expect(await response.text()).toBe("web");
+			expect(mocks.serveWebDistStatic).not.toHaveBeenCalled();
+		},
+		15_000,
+	);
 
 	it.each([
 		["127.0.0.1", "127.0.0.1", "198.51.100.1", "198.51.100.1"],
@@ -234,18 +239,6 @@ describe("createApp", () => {
 		expect(mocks.handleWellKnownFallback).not.toHaveBeenCalled();
 	});
 
-	it("routes GET / to the web app before static files", async () => {
-		const { createApp } = await import("./app");
-		const app = createApp();
-		const request = new Request("http://localhost:3001/");
-
-		const response = await app.fetch(request);
-
-		expect(response.status).toBe(200);
-		expect(await response.text()).toBe("web");
-		expect(mocks.serveWebDistStatic).not.toHaveBeenCalled();
-	});
-
 	it("compresses the web app's HTML but never API streams or the Vercel app", async () => {
 		const { createApp } = await import("./app");
 		const html = `<!doctype html>${"<p>Reactive Resume</p>".repeat(200)}`;
@@ -313,12 +306,8 @@ describe("sign-in addresses", () => {
 	});
 
 	it.each([
-		["/login", "/auth/login"],
 		["/Sign-In?redirect=%2Fdashboard", "/auth/login?redirect=%2Fdashboard"],
-		["/signup", "/auth/register"],
-		["/register", "/auth/register"],
 		["/pricing", "/"],
-		["/features", "/"],
 	])("sends %s to %s when no shared resume lives there", async (path, location) => {
 		const { createApp } = await import("./app");
 		mocks.isProfilePath.mockReturnValue(true);

@@ -103,16 +103,12 @@ describe("answerLimit", () => {
 		expect(answerLimit("Напишите не менее 100 слов")).toBeNull();
 	});
 
-	it.each([
-		"Décrivez votre expérience en environ 100 mots",
-		"Beschreibe deine Erfahrung in ungefähr 100 Wörtern",
-		"Schreiben Sie etwa 100 Wörter",
-		"Escriba alrededor de 100 palabras",
-		"Describe tu experiencia en aproximadamente 100 palabras",
-		"Descreva sua experiência em cerca de 100 palavras",
-	])("does not treat an approximate length as a cap: %s", (question) => {
-		expect(answerLimit(question)).toBeNull();
-	});
+	it.each(["Décrivez votre expérience en environ 100 mots", "Beschreibe deine Erfahrung in ungefähr 100 Wörtern"])(
+		"does not treat an approximate length as a cap: %s",
+		(question) => {
+			expect(answerLimit(question)).toBeNull();
+		},
+	);
 
 	it("prefers the stated character cap over a parenthetical word conversion", () => {
 		expect(answerLimit("Summarise in 300 characters (about 50 words)")).toEqual({

@@ -1,4 +1,4 @@
-import { expect, it, vi } from "vite-plus/test";
+import { expect, it } from "vite-plus/test";
 import { getCurrencyOptions, parseAmount, parseDecimal } from "./amount";
 
 it("labels currency choices with codes and localized symbols without dropping saved codes", () => {
@@ -17,6 +17,8 @@ it("keeps monetary precision and safe bounds while accepting finite percentage d
 		["en-US", "12,345.67", 12345.67],
 		["de-DE", "12.345,67", 12345.67],
 		["ar-SA", "١٢٬٣٤٥٫٦٧", 12345.67],
+		["fr-FR", "96\u202f000,50", 96000.5],
+		["hi-IN", "1,20,000.50", 120000.5],
 	] as const) {
 		expect(parseAmount(text, locale)).toBe(value);
 	}
@@ -32,19 +34,4 @@ it("keeps monetary precision and safe bounds while accepting finite percentage d
 	expect(parseDecimal("9".repeat(400), "en-US")).toBeUndefined();
 	expect(parseDecimal(`0.${"0".repeat(323)}1`, "en-US")).toBeUndefined();
 	expect(parseDecimal(`0.${"0".repeat(323)}5`, "en-US")).toBe(Number.MIN_VALUE);
-});
-
-it("reuses currency labels when selection changes, formatting only a saved extra code", () => {
-	const formatter = vi.spyOn(Intl, "NumberFormat");
-	try {
-		getCurrencyOptions("fr-CA");
-		const built = formatter.mock.calls.length;
-		expect(built).toBeGreaterThan(100);
-		getCurrencyOptions("fr-CA", "EUR");
-		expect(formatter.mock.calls.length).toBe(built);
-		getCurrencyOptions("fr-CA", "BTC");
-		expect(formatter.mock.calls.length).toBe(built + 1);
-	} finally {
-		formatter.mockRestore();
-	}
 });

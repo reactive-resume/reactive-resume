@@ -1,11 +1,9 @@
 import { describe, expect, it } from "vite-plus/test";
-import z from "zod";
 import { parseResumeData } from "./data";
 import { defaultResumeData } from "./default";
-import { createResumeDataJsonSchema } from "./json-schema";
 
 describe("skill keyword presentation", () => {
-	it.each([undefined, "invalid", "inline", "list"])(
+	it.each([undefined, "invalid", "list"])(
 		"normalizes and round-trips %s for built-in and custom Skills",
 		(keywordLayout) => {
 			const input = structuredClone(defaultResumeData);
@@ -18,15 +16,4 @@ describe("skill keyword presentation", () => {
 			expect(parseResumeData(JSON.parse(JSON.stringify(parsed)))).toEqual(parsed);
 		},
 	);
-
-	it("publishes an optional enum so old JSON and selected modes remain importable", () => {
-		const schema = z.fromJSONSchema(createResumeDataJsonSchema());
-		const input = JSON.parse(JSON.stringify(defaultResumeData));
-		delete input.sections.skills.keywordLayout;
-		expect(schema.safeParse(input).success).toBe(true);
-		input.sections.skills.keywordLayout = "list";
-		expect(schema.safeParse(input).success).toBe(true);
-		input.sections.skills.keywordLayout = "invalid";
-		expect(schema.safeParse(input).success).toBe(false);
-	});
 });

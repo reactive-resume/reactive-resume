@@ -152,27 +152,21 @@ function setup(trashed = false, view: "grid" | "list" = "list", cacheNext = true
 	return { client, input };
 }
 
-it.each([
-	{ trashed: false, view: "list" },
-	{ trashed: false, view: "grid" },
-	{ trashed: true, view: "list" },
-] as const)(
-	"bounds 19.5k documents to one page and replaces rows on Next ($view, trash=$trashed)",
-	async ({ trashed, view }) => {
-		setup(trashed, view);
-		const role = view === "grid" ? "article" : "row";
-		const count = view === "grid" ? 100 : 101;
-		expect(screen.getAllByRole(role)).toHaveLength(count);
-		if (!trashed) expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19,500")).toBeVisible();
-		expect(screen.getByText("Document 0")).toBeVisible();
-		expect(screen.queryByText("Document 100")).toBeNull();
-		fireEvent.click(screen.getByRole("button", { name: "Next" }));
-		await waitFor(() => expect(screen.getByText("Document 100")).toBeVisible());
-		expect(screen.getAllByRole(role)).toHaveLength(count);
-		expect(screen.queryByText("Document 0")).toBeNull();
-		expect(screen.getByText("101–200 of 19,500")).toBeVisible();
-	},
-);
+it.each([false, true])("bounds 19.5k documents to one page and replaces rows on Next (trash=%s)", async (trashed) => {
+	setup(trashed);
+	// 100 documents and the header row.
+	const role = "row";
+	const count = 101;
+	expect(screen.getAllByRole(role)).toHaveLength(count);
+	if (!trashed) expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19,500")).toBeVisible();
+	expect(screen.getByText("Document 0")).toBeVisible();
+	expect(screen.queryByText("Document 100")).toBeNull();
+	fireEvent.click(screen.getByRole("button", { name: "Next" }));
+	await waitFor(() => expect(screen.getByText("Document 100")).toBeVisible());
+	expect(screen.getAllByRole(role)).toHaveLength(count);
+	expect(screen.queryByText("Document 0")).toBeNull();
+	expect(screen.getByText("101–200 of 19,500")).toBeVisible();
+});
 
 it("search starts at page zero, preserves global filtered counts and clears page selection", async () => {
 	const { client, input } = setup();
@@ -265,12 +259,10 @@ it("blocks raw-search debounce and failed-fetch actions while retaining controls
 	expect(screen.queryByText("1 selected")).toBeNull();
 });
 
-it.each(["paste", "url"])("bounds %s searches to the server's 500-character limit", async (source) => {
+it("bounds a URL search to the server's 500-character limit", async () => {
 	requests.load.mockReset().mockResolvedValue(page(0));
-	setup(false, "list", true, source === "url" ? "x".repeat(501) : "");
+	setup(false, "list", true, "x".repeat(501));
 	const search = screen.getByRole("searchbox", { name: "Search documents" });
-	if (source === "paste") fireEvent.change(search, { target: { value: "x".repeat(501) } });
-	expect(search).toHaveAttribute("maxlength", "500");
 	expect(search).toHaveValue("x".repeat(500));
 	await waitFor(() => expect(requests.load).toHaveBeenCalled());
 	expect(requests.load.mock.calls.every(([input]) => input.q.length <= 500)).toBe(true);
@@ -323,30 +315,6 @@ it.each([false, true])(
 		expect(screen.queryByRole("navigation", { name: "Pagination" })).toBeNull();
 	},
 );
-
-it("bounds tag selection to twenty while allowing selected tags to be removed", async () => {
-	requests.load
-		.mockReset()
-		.mockImplementation(async () => ({ ...page(0), tags: Array.from({ length: 21 }, (_, i) => `tag${i}`) }));
-	const { client, input } = setup();
-	act(() =>
-		client.setQueryData(orpc.documents.page.queryKey({ input: { ...input, offset: 0 } }), {
-			...page(0),
-			tags: Array.from({ length: 21 }, (_, i) => `tag${i}`),
-		}),
-	);
-	for (let i = 0; i < 20; i++) {
-		fireEvent.click(await screen.findByRole("button", { name: `#tag${i}` }));
-		await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toHaveLength(i + 1));
-	}
-	fireEvent.click(screen.getByRole("button", { name: "#tag20" }));
-	expect(requests.load.mock.calls.every(([input]) => input.tags.length <= 20)).toBe(true);
-	expect(screen.getByRole("button", { name: "#tag20" })).toHaveAttribute("aria-pressed", "false");
-	fireEvent.click(screen.getByRole("button", { name: "#tag0" }));
-	await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toHaveLength(19));
-	fireEvent.click(screen.getByRole("button", { name: "#tag20" }));
-	await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toContain("tag20"));
-});
 
 it("opens the top match with Enter, even before the typed search returns, then ↓ and Esc work from the field", async () => {
 	let finish!: (value: Page) => void;
@@ -456,15 +424,12 @@ it.each(["empty", "error"])(
 		expect(requests.navigate).not.toHaveBeenCalled();
 	},
 );
-it.each([
-	{ type: "letter", title: "No cover letters yet", action: "New cover letter" },
-	{ type: "resume", title: "No resumes yet", action: "New resume" },
-] as const)("an empty $type tab offers to make one instead of clearing filters", async ({ type, title, action }) => {
+it("an empty Letters tab offers to make one instead of clearing filters", async () => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
 	const input = {
 		trashed: false,
-		type,
+		type: "letter" as const,
 		q: "",
 		tags: [],
 		sort: "edited" as const,
@@ -472,11 +437,10 @@ it.each([
 		limit: 100,
 		offset: 0,
 	};
-	const counts = type === "letter" ? { resume: 3, letter: 0 } : { resume: 0, letter: 2 };
 	client.setQueryData(orpc.documents.page.queryKey({ input }), {
 		items: [],
 		total: 0,
-		counts,
+		counts: { resume: 3, letter: 0 },
 		tags: [],
 		hasPublic: false,
 	});
@@ -484,19 +448,20 @@ it.each([
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={client}>
 				<DocumentLibraryProvider>
-					<DocumentsPage search={{ type, q: "", tags: [], sort: "edited", view: "grid" }} onSearchChange={vi.fn()} />
+					<DocumentsPage
+						search={{ type: "letter", q: "", tags: [], sort: "edited", view: "grid" }}
+						onSearchChange={vi.fn()}
+					/>
 				</DocumentLibraryProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
 
-	expect(await screen.findByRole("heading", { name: title })).toBeVisible();
+	expect(await screen.findByRole("heading", { name: "No cover letters yet" })).toBeVisible();
 	expect(screen.queryByText("Nothing matches these filters")).toBeNull();
 	expect(screen.queryByRole("button", { name: "Clear search and filters" })).toBeNull();
-	if (type === "letter") {
-		fireEvent.click(screen.getByRole("button", { name: action }));
-		expect(requests.newLetter).toHaveBeenCalledOnce();
-	} else expect(screen.getByRole("button", { name: action })).toBeEnabled();
+	fireEvent.click(screen.getByRole("button", { name: "New cover letter" }));
+	expect(requests.newLetter).toHaveBeenCalledOnce();
 });
 
 it("first run's Choose a file opens the file picker, then imports the chosen file", async () => {

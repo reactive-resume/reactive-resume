@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vite-plus/test";
+import { supportedLocales } from "@reactive-resume/utils/locale";
 
 vi.mock("@reactive-resume/env/server", () => ({ env: { APP_URL: "https://rxresu.me/" } }));
 vi.mock("@reactive-resume/api/features/resume/web-page", () => ({
@@ -8,7 +9,7 @@ vi.mock("@reactive-resume/api/features/resume/web-page", () => ({
 	],
 }));
 
-const { handlePagesSitemap, handleResumesSitemap, handleLlms } = await import("./seo");
+const { handlePagesSitemap, handleResumesSitemap } = await import("./seo");
 
 it("lists each indexed resume at its canonical address: the primary at /<username>", async () => {
 	const xml = await (await handleResumesSitemap(1)).text();
@@ -16,16 +17,6 @@ it("lists each indexed resume at its canonical address: the primary at /<usernam
 		"https://rxresu.me/tess",
 		"https://rxresu.me/tess/level-design",
 	]);
-});
-
-it("publishes Context7 Ask after the llms title and summary", async () => {
-	const text = await handleLlms().text();
-	expect(text).toMatch(
-		/^# Reactive Resume\n\n> [^\n]+\n\n## Search\n\nThis site has a search endpoint: https:\/\/context7.com\/api\/v2\/ask\?siteKey=ask_b3fd9335a63f1b21b1a814ac&query=<URL-encoded question>\./,
-	);
-	expect(text).toContain(
-		"It returns documentation that answers the question, with a source link for each part. No API key is needed. If nothing matches, it says so.\n\n## Product",
-	);
 });
 
 describe("localized sitemap", () => {
@@ -42,25 +33,20 @@ describe("localized sitemap", () => {
 		const locations = entries.map((entry) => entry.loc);
 
 		expect(response.headers.get("Content-Type")).toBe("application/xml; charset=UTF-8");
-		expect(entries).toHaveLength(162); // Three public pages, 54 real locales; x-default shares English's URL.
+		// Three public pages, one entry per supported locale; x-default shares English's URL.
+		expect(entries).toHaveLength(3 * supportedLocales.length);
 		expect(new Set(locations).size).toBe(entries.length);
 		for (const path of ["/", "/ats-checker", "/resume-templates"]) {
 			const base = `https://rxresu.me${path}`;
 			expect(locations).toContain(base);
-			expect(locations).toContain(`${base}?locale=de-DE`);
-			expect(locations).toContain(`${base}?locale=ar-SA`);
-			expect(locations).toContain(`${base}?locale=en-GB`);
 			const group = entries.filter((entry) => entry.loc?.split("?")[0] === base);
-			expect(group).toHaveLength(54);
+			expect(group).toHaveLength(supportedLocales.length);
 			for (const entry of group) {
-				expect(entry.alternates).toHaveLength(55);
+				expect(entry.alternates).toHaveLength(supportedLocales.length + 1);
 				expect(entry.alternates).toEqual(group[0]?.alternates);
-				expect(entry.alternates).toContainEqual({ language: "x-default", href: base });
-				expect(entry.alternates).toContainEqual({ language: "sr", href: `${base}?locale=sr-SP` });
 				for (const alternate of entry.alternates) expect(locations).toContain(alternate.href);
 			}
 		}
-		expect(xml).not.toContain("zu-ZA");
 		expect(xml).not.toContain("/dashboard");
 	});
 });

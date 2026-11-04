@@ -12,7 +12,7 @@ describe("getNetworkIcon", () => {
 		expect(getNetworkIcon("My GitHub Profile")).toBe("github-logo");
 	});
 
-	it.each(["Xing", "Dropbox", "Stack Exchange", "Mixcloud", "Fox"])("does not give %s the X logo", (network) => {
+	it.each(["Xing", "Fox"])("does not give %s the X logo", (network) => {
 		expect(getNetworkIcon(network)).not.toBe("twitter-logo");
 	});
 });

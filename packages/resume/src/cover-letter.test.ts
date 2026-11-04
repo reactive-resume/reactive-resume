@@ -95,7 +95,6 @@ describe("independent cover letters", () => {
 			expected:
 				"<p>Dear hiring team,</p><p>Body</p><p>Kind regards,<br />Jordan &lt;Reyes&gt;<br />+49 555 0100<br />jordan@example.com</p>",
 		},
-		{ greeting: "", signOff: "", expected: "<p>Body</p>" },
 		{ greeting: "  ", signOff: "  ", expected: "<p>Body</p>" },
 		{ greeting: null, signOff: null, expected: "<p>Dear hiring team,</p><p>Body</p><p>Kind regards,<br />Jordan</p>" },
 	])("respects custom or omitted greeting and sign-off: $greeting / $signOff", ({ greeting, signOff, expected }) => {

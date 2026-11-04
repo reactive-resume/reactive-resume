@@ -66,9 +66,6 @@ const defaultLast: LastDraft = { variant: "draft" };
 /** Storage and in-memory identity are scoped by server, account and letter so drafts cannot cross either boundary. */
 export const letterDraftOwner = (id: string) => letterDraftOwnerKey(getServer(), getAccountScope(), id);
 
-/** The draft a screen may render: only when the store belongs to this exact server/account/letter. */
-export { draftForOwner };
-
 export const useLetterDrafting = create<DraftingState>()(() => ({ owner: null, draft: idle, last: defaultLast }));
 
 /** The visible draft for one letter; another letter's ready/streaming draft is never returned. */

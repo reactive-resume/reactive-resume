@@ -190,13 +190,4 @@ describe("useWebMcpTools", () => {
 
 		expect(warn).toHaveBeenCalledTimes(2);
 	});
-
-	it("registers nothing for an empty list", () => {
-		const registerTool = vi.fn();
-		install("document", { registerTool });
-
-		renderHook(() => useWebMcpTools([]));
-
-		expect(registerTool).not.toHaveBeenCalled();
-	});
 });

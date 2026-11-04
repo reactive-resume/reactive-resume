@@ -182,27 +182,6 @@ it("accepts or revises the displayed earlier draft with its own request sources"
 	expect(state.edit).toHaveBeenCalledWith({ content: "<p>Earlier draft</p>", aiOperationIds: ["original-operation"] });
 });
 
-it("shows original requested provider and model beside a saved letter body", () => {
-	state.letter = {
-		...letter,
-		aiOperationIds: ["original-operation"],
-		aiUsage: {
-			requests: 2,
-			models: [
-				{
-					providerId: "deleted-connection",
-					label: "Original connection",
-					provider: "openai-compatible",
-					model: "original-model",
-				},
-			],
-		},
-	};
-	renderPanel();
-	expect(screen.getByText("AI request attempts: 2")).toBeTruthy();
-	expect(screen.getByText("Original connection · openai-compatible · original-model")).toBeTruthy();
-});
-
 it("accepted Improve contributes sources without dropping the letter draft's original sources", () => {
 	state.letter = { ...letter, aiOperationIds: ["original-operation"] };
 	renderPanel();

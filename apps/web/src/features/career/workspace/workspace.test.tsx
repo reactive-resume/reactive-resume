@@ -110,6 +110,23 @@ vi.mock("../shared", async (importOriginal) => ({
 	Swap: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn(), close: vi.fn() } }));
+// The library's own review flow is proven in answer-library.test.tsx; here it only hands back a reviewed answer.
+vi.mock("./answer-library", () => ({
+	AnswerLibrary: ({
+		current,
+		onUse,
+	}: {
+		current?: { id: string };
+		onUse: (value: { question: string; answer: string; factIds: string[] }) => void;
+	}) => (
+		<button
+			type="button"
+			onClick={() => onUse({ question: "Describe your project", answer: "Reviewed answer", factIds: [] })}
+		>
+			Use a saved answer for {current?.id ?? "a new question"}
+		</button>
+	),
+}));
 
 const application: Application = {
 	id: "workspace-application",
@@ -614,7 +631,7 @@ it("stops question playback and releases its audio when leaving Practise", async
 	expect(revoke).toHaveBeenCalledWith("blob:question");
 });
 
-it("keeps Saved offer provenance neutral for both manual and older offer shapes", async () => {
+it("keeps Saved offer provenance neutral", async () => {
 	api.data.savedItems = [
 		item("Written offer", {
 			kind: "offer",
@@ -948,4 +965,50 @@ it("keeps approved practice generation running when its tab unmounts", async () 
 	view.unmount();
 	expect(signal.aborted).toBe(false);
 	await act(async () => pending.resolve({ item: null }));
+});
+
+// J2-18: a bulk move chosen while a message's stage change is on its way starts from the stage that change saved.
+it("makes a later bulk move wait for a message's stage change and start from what it saved", async () => {
+	const { stageBaselinesFor } = await import("@reactive-resume/schema/applications/stage-baselines");
+	const { STAGE_SCOPE } = await import("@/features/applications/use-application-actions");
+	const answer = deferred<unknown>();
+	api.apply.mockReturnValueOnce(answer.promise);
+	const message = reply();
+	if (message.data.kind !== "reply") throw new Error("Expected a reply");
+	message.data.changes = [{ type: "stage", stage: "interview" }];
+	api.data.savedItems = [message];
+	const applied = { ...application, status: "applied" as const };
+	const { queryClient } = mount(<MessagesTab {...props} application={applied} />);
+	fireEvent.click(screen.getByRole("button", { name: "Apply 1 change" }));
+	await waitFor(() => expect(api.apply).toHaveBeenCalled());
+	const bulk = stageBaselinesFor(queryClient).begin(STAGE_SCOPE, new Map([[application.id, applied]]));
+	const saved = { status: "interview", laneId: null, closedReason: null, stageEntryId: "message-stage" } as const;
+	answer.resolve({ stages: [{ id: application.id, ...saved }] });
+	expect(await bulk.baselines.get(application.id)).toEqual(saved);
+});
+
+// A recovered draft pauses autosave until the user chooses; using a reviewed answer is that choice.
+it("resumes autosave after a reviewed answer replaces a recovered draft", async () => {
+	const answer = { id: "project", question: "Describe your project", answer: "I wrote a checklist.", factIds: [] };
+	api.data.workspace = { ...EMPTY_WORKSPACE, answers: [answer] };
+	api.save.mockImplementation(async (input: { answers: unknown[] }) => ({
+		...EMPTY_WORKSPACE,
+		answers: input.answers,
+	}));
+	localStorage.setItem(
+		`career-draft:workspace-user:answer:${application.id}:project`,
+		JSON.stringify("Recovered answer"),
+	);
+	mount(<ApplyTab {...props} />);
+	expect(screen.getByRole("button", { name: "Save recovered draft" })).toBeVisible();
+	fireEvent.click(screen.getByRole("button", { name: "Use a saved answer for project" }));
+	await waitFor(() => expect(api.save).toHaveBeenCalled());
+	await waitFor(() => expect(screen.queryByRole("button", { name: "Save recovered draft" })).toBeNull());
+	api.save.mockClear();
+	const field = screen.getByRole("textbox", { name: "Describe your project" });
+	fireEvent.change(field, { target: { value: "A later edit" } });
+	fireEvent.blur(field);
+	await waitFor(() =>
+		expect(api.save.mock.lastCall?.[0]).toMatchObject({ answers: [{ id: "project", answer: "A later edit" }] }),
+	);
 });

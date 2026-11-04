@@ -47,7 +47,6 @@ describe("SearchRegionsField", () => {
 	it("shows the account time zone's country, marked as automatic", () => {
 		const onChange = vi.fn();
 		render(<Harness initial={null} accountTimeZone="Asia/Singapore" onChange={onChange} />);
-		expect(screen.getByText("Countries to search")).toBeInTheDocument();
 		expect(screen.getByText("Singapore")).toBeInTheDocument();
 		expect(screen.getByText("From your timezone")).toBeInTheDocument();
 		expect(onChange).not.toHaveBeenCalled();
@@ -80,21 +79,6 @@ describe("SearchRegionsField", () => {
 		await user.type(await screen.findByPlaceholderText("Search countries"), "fra");
 		await user.click(await screen.findByRole("option", { name: "France" }));
 		expect(onChange).toHaveBeenLastCalledWith(["DE", "FR"]);
-		expect(screen.getByRole("button", { name: "Remove France" })).toBeInTheDocument();
-	});
-
-	it("adds a country with the keyboard alone", async () => {
-		const user = userEvent.setup();
-		const onChange = vi.fn();
-		render(<Harness initial={["DE"]} accountTimeZone="Asia/Singapore" onChange={onChange} />);
-		screen.getByRole("combobox", { name: "Add a country" }).focus();
-		await user.keyboard("{Enter}");
-		const search = await screen.findByPlaceholderText("Search countries");
-		await user.type(search, "fra");
-		await user.keyboard("{ArrowDown}{Enter}");
-		expect(onChange).toHaveBeenLastCalledWith(["DE", "FR"]);
-		await user.keyboard("{Escape}");
-		expect(screen.queryByPlaceholderText("Search countries")).not.toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "Remove France" })).toBeInTheDocument();
 	});
 

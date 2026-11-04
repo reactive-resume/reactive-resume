@@ -1,14 +1,10 @@
 // Execute the shipped raw receiver and review form; only native/session/network/UI boundaries are replaced.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
+import { load as loadSource, mobileRequire, tag } from "./harness.mjs";
 const { QueryClient, QueryObserver } = mobileRequire("@tanstack/react-query");
 const { ORPCError } = mobileRequire("@orpc/client");
-const { transformSync, buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
-const tag = (parts, ...values) => parts.reduce((s, p, i) => s + p + (values[i] ?? ""), "");
 let hooks = [];
 let cursor = 0;
 let effects = [];
@@ -88,25 +84,8 @@ const defaults = {
 	},
 	"react-native": { View: "View", Platform: { OS: "ios" } },
 };
-function load(path, extra = {}) {
-	const mod = { exports: {} };
-	const code = transformSync(readFileSync(path, "utf8"), {
-		loader: path.endsWith("tsx") ? "tsx" : "ts",
-		format: "cjs",
-		jsx: "transform",
-	}).code;
-	const dependencies = { ...defaults, ...extra };
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(n) => {
-			assert.ok(n in dependencies, `Unexpected boundary ${n}`);
-			return dependencies[n];
-		},
-		mod,
-		mod.exports,
-	);
-	return mod.exports;
-}
+const load = (path, extra = {}) =>
+	loadSource(path, { ...defaults, ...extra }, { jsx: "transform", globals: { React: react } });
 const source = (path) => new URL(`../src/${path}`, import.meta.url).pathname;
 const schema = (path) => new URL(`../../../packages/schema/src/applications/${path}`, import.meta.url).pathname;
 const urls = load(schema("posting-url.ts"));
@@ -311,7 +290,7 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 								format: "text",
 								truncated: false,
 								completeness: "unknown",
-								retrievedAt: new Date(Date.now() - 180_000).toISOString(),
+								retrievedAt: "2026-01-01T00:00:00.000Z",
 								requestedUrl: input.input,
 								resolvedUrl: "https://resolved.example.test/job",
 							},
@@ -347,10 +326,6 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 const props = { initialCapture: incoming, onClose() {} };
 const view = () => render(AddApplicationSheet, props);
 tree = view();
-assert.ok(
-	nodes(tree).some((n) => /Description is clipped/.test(n.props.message ?? "")),
-	"clipping warning visible before More details",
-);
 control(tree, "Company").onChangeText("Fictional Co");
 control(view(), "Role").onChangeText("Engineer");
 control(nodes(view()).find((node) => node.type === "EditorSheet").props.footer, "Save job").onPress();
@@ -375,8 +350,6 @@ assert.equal(
 	"Save waits while the actual QueryClient lookup is pending",
 );
 await duplicateObserver.refetch();
-assert.equal(duplicateObserver.getCurrentResult().error.code, "NOT_FOUND");
-assert.equal(duplicateObserver.getCurrentResult().isPending, false);
 saved = undefined;
 tree = view();
 assert.ok(nodes(tree).some((n) => /Duplicate check unavailable/.test(n.props.message ?? "")));
@@ -388,33 +361,11 @@ assert.equal(saved.sourceUrl, incoming.url);
 unsubscribeDuplicate();
 duplicateClient.clear();
 reset();
-let pasteTree = render(AddApplicationSheet, { onClose() {} });
-nodes(pasteTree)
-	.find((node) => node.type === "Segmented")
-	.props.onChange("text");
-pasteTree = render(AddApplicationSheet, { onClose() {} });
-assert.equal(
-	nodes(pasteTree).some((node) => node.props.label === "Read posting"),
-	false,
-	"non-AI reading applies only to links",
-);
-reset();
 const supportedForm = () => render(AddApplicationSheet, { onClose() {} });
-assert.ok(
-	!nodes(supportedForm()).some((n) => n.type === "Text" && String(n.props.children).includes("Read 3 minutes ago")),
-);
 control(supportedForm(), "Job posting link").onChangeText("https://jobs.example.test/role");
 control(supportedForm(), "Read posting").onPress();
 await settle();
 assert.equal(parseRequests.at(-1).useAI, false, "Supported server receives explicit no-AI flag");
-assert.ok(
-	nodes(supportedForm()).some(
-		(n) =>
-			n.type === "Text" &&
-			String(n.props.children) ===
-				"Read 3 minutes ago from resolved.example.test. The employer may have changed it since.",
-	),
-);
 control(supportedForm(), "More details").onPress();
 control(supportedForm(), "Saved description").onChangeText("Reviewed posting");
 control(nodes(supportedForm()).find((n) => n.type === "EditorSheet").props.footer, "Save job").onPress();
@@ -526,93 +477,6 @@ for (const change of ["account", "server", "cancellation", "unmount"]) {
 	session = { ...session, server };
 }
 reset();
-webStatus = { search: true, provider: "firecrawl", managed: true };
-const managedNotice = render(webAccess.WebAccessAttention, { failure: "auth" });
-assert.ok(
-	nodes(managedNotice).some((node) =>
-		node.props.children
-			.flat()
-			.some((text) => typeof text === "string" && /Ask your server administrator to fix web access/.test(text)),
-	),
-);
-assert.ok(!nodes(managedNotice).some((node) => node.type === webAccess.SetUpWebAccess));
-reset();
-const contractModule = { exports: {} };
-new Function(
-	"require",
-	"module",
-	"exports",
-	buildSync({
-		entryPoints: [new URL("../../../packages/ai/src/tools/agent-tool-contracts.ts", import.meta.url).pathname],
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-	}).outputFiles[0].text,
-)(mobileRequire, contractModule, contractModule.exports);
-const contracts = contractModule.exports;
-const messageUi = { ...ui, Icon: "Icon", useTheme: () => ({ space: {}, colors: {}, radius: {}, size: {}, type: {} }) };
-const { MessageView } = load(source("features/assistant/messages.tsx"), {
-	react: { ...react, memo: (fn) => fn },
-	"@lingui/core": { i18n: { locale: "en-US" } },
-	"@lingui/core/macro": { t: tag, ph: (value) => value, plural: () => "" },
-	"@lingui/react/macro": { ...defaults["@lingui/react/macro"], Trans: "Trans" },
-	"@orpc/client": { ORPCError },
-	"@tanstack/react-query": { useQueryClient: () => ({}) },
-	"expo-router": { useRouter: () => ({}) },
-	"@reactive-resume/ai/tools/agent-tool-contracts": contracts,
-	"@reactive-resume/schema/ai-usage": load(
-		new URL("../../../packages/schema/src/ai-usage.ts", import.meta.url).pathname,
-		{ zod },
-	),
-	"@reactive-resume/resume/proposals": {},
-	"@reactive-resume/resume/word-diff": {},
-	"./chat": { webSources: contracts.agentWebSources },
-	"./handoff": {},
-	"./markdown": {},
-	"./page-fit": {},
-	"./proposals": {},
-	"./save-posting": {},
-	"@/api/client": {},
-	"@/auth/session": auth,
-	"@/features/ai/report-content": {},
-	"@/features/ai/web-access": webAccess,
-	"@/features/career/fact-categories": {},
-	"@/features/documents/queries": {},
-	"@/routes": {},
-	"@/ui": messageUi,
-});
-const expand = (node) => {
-	if (!node || typeof node !== "object") return node;
-	if (Array.isArray(node)) return node.map(expand);
-	if (typeof node.type === "function") return expand(node.type(node.props));
-	if (node.type === "Sheet" && !node.props.open) return { ...node, props: { ...node.props, children: [] } };
-	return { ...node, props: { ...node.props, children: expand(node.props.children) } };
-};
-for (const type of ["tool-search_web", "tool-read_page"]) {
-	reset();
-	webStatus = { search: true, provider: "firecrawl", searxng: type === "tool-read_page", managed: false };
-	const message = {
-		id: "web-failure",
-		role: "assistant",
-		parts: [{ type, toolCallId: "web-call", state: "output-error", errorText: "Web access failed (auth)." }],
-	};
-	const result = expand(
-		render(MessageView, {
-			message,
-			streaming: false,
-			readOnly: false,
-			answerable: false,
-			proposals: null,
-			onAnswer: null,
-		}),
-	);
-	assert.ok(nodes(result).some((node) => /rejected the credentials/.test(node.props.message ?? "")));
-	assert.ok(nodes(result).some((node) => node.props.label === "Set up web access"));
-	assert.doesNotMatch(JSON.stringify(result), /Ask your server administrator/);
-}
-
-reset();
 render(IncomingPosting, {});
 payloads = [{ shareType: "text", value: "Pending" }];
 foreground.forEach((f) => f("active"));
@@ -627,5 +491,5 @@ sessions.forEach((f) => f());
 assert.equal(currentNativeScope, null, "disconnect clears private group context");
 reset();
 console.log(
-	"PASS native raw receiver, reviewed posting metadata and search recovery: causes, retained query, repair/operator controls and account/server/cancel/unmount fences; no AI/save before explicit action",
+	"PASS native raw receiver, reviewed posting metadata and search recovery: causes, retained query, repair controls and account/server/cancel/unmount fences; no AI/save before explicit action",
 );

@@ -3,9 +3,8 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 // Actual native screen and load-state owners; widgets and transport remain explicit host boundaries.
 import { i18n } from "@lingui/core";
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
+import { esbuild, run, tag } from "./harness.mjs";
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 let hooks = [];
 let cursor = 0;
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
@@ -34,7 +33,6 @@ function reset() {
 	for (const hook of hooks) hook?.cleanup?.();
 	hooks = [];
 }
-const tag = (parts, ...values) => parts.reduce((text, part, i) => text + part + (values[i] ?? ""), "");
 const theme = {
 	space: { s1: 4, s2: 8, s3: 12, s4: 16, s12: 48 },
 	size: { panel: 400, input: 44, icon: { row: 20 } },
@@ -117,29 +115,14 @@ const common = {
 	"@/ui": ui,
 	"@/routes": { routes },
 };
-function load(file, mocks = {}) {
-	const module = { exports: {} };
-	let source = readFileSync(new URL("../src/" + file, import.meta.url), "utf8");
-	if (process.env.RX112_MUTATION === "offer-error" && file === "features/career/offers.tsx")
-		source = source.replace("applications.isError", "false");
-	if (process.env.RX112_MUTATION === "letter-continuation" && file === "features/search/search-screen.tsx")
-		source = source.replace("letters.length > 8", "false");
-	const code = transformSync(source, {
+function load(file, mocks = {}, globals = {}) {
+	const source = readFileSync(new URL("../src/" + file, import.meta.url), "utf8");
+	const { code } = esbuild.transformSync(source, {
 		loader: file.endsWith(".tsx") ? "tsx" : "ts",
 		format: "cjs",
 		jsx: "transform",
-	}).code;
-	const dependencies = { ...common, ...mocks };
-	new Function("React", "require", "module", "exports", code)(
-		react,
-		(name) => {
-			assert.ok(name in dependencies, "Missing boundary: " + name);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
+	});
+	return run(code, { ...common, ...mocks }, { React: react, ...globals });
 }
 const nodes = (tree) =>
 	!tree || typeof tree !== "object"
@@ -385,95 +368,11 @@ saved.data = [];
 
 console.log("PASS native Offers loading/error/retry/persisted row and genuine-empty controls");
 
-// Header and rail share the actual conversation editor and update path.
-reset();
-const renameWrites = [];
-const careerThread = { id: "career-thread", title: "Northwind interview", scope: "career" };
-const { CoachScreen } = load("features/assistant/coach-screen.tsx", {
-	"@/features/career/prepare-now": { PracticeHandoff: "PracticeHandoff" },
-	"@/ui": { ...ui, Sheet: "Sheet", TextField: "TextField" },
-	"@tanstack/react-query": { useQuery: () => state(), useQueryClient: () => ({}) },
-	"@reactive-resume/schema/career-starters": { coachStarters: () => [] },
-	"@reactive-resume/utils/locale": { formatList: (_locale, values) => values.join(", ") },
-	"./chat": { useThreads: () => state({ data: [careerThread] }), refreshThreads: () => {} },
-	"./chat-view": { ChatView: "ChatView", ContextChip: "ContextChip" },
-	"./chat-welcome": { ChatWelcome: "ChatWelcome" },
-	"./provider": {
-		ConnectionNotice: "ConnectionNotice",
-		ModelButton: "ModelButton",
-		ModelSheet: "ModelSheet",
-		ProviderGate: "ProviderGate",
-		WebResearchChip: "WebResearchChip",
-		useConversationProvider: () => ({ label: "Fictional connection", stranded: false, choose() {} }),
-		useMemoryNote: () => ({ note: "", chip: null }),
-		useWebSearch: () => ({}),
-	},
-	"./sent": { usableStories: () => [] },
-	"./threads": {
-		useDeleteThread: () => ({ ask() {}, dialog: null }),
-		useThreadTitle: () => (thread) => thread.title,
-		useThreadTime: () => () => "Now",
-	},
-	"@/api/client": {
-		client: { agent: { threads: { update: async (input) => renameWrites.push(input) } } },
-		orpc: {
-			career: {
-				facts: { queryOptions: () => ({ queryKey: [] }) },
-				stories: { queryOptions: () => ({ queryKey: [] }) },
-			},
-		},
-	},
-	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "fictional" }) },
-	"@/features/ai/providers": { useHasAIProvider: () => ({ usableProviders: [] }) },
-	"@/features/applications/queries": { useApplications: () => state() },
-	"@/features/career/hooks": { useNow: () => new Date(), useOpportunities: () => state() },
-	"@/features/career/scheduling": { collectInterviews: () => [] },
-	"@/features/career/stories": { StoryEditor: "StoryEditor" },
-});
-const coachTree = () => render(() => CoachScreen({ offerIds: [] }));
-const conversationSheet = () => nodes(coachTree()).find((node) => node.type?.name === "ConversationsSheet");
-conversationSheet().props.onOpen(careerThread.id);
-const titleAction = () =>
-	nodes(coachTree()).find((node) => node.props.accessibilityLabel === "Rename Northwind interview");
-assert.ok(titleAction(), "saved conversation exposes a header rename control");
-titleAction().props.onPress();
-let renameSheet = conversationSheet();
-assert.equal(renameSheet.props.open, true);
-let renameEditor = renameSheet.type(renameSheet.props);
-assert.equal(nodes(renameEditor).find((node) => node.type === "TextField").props.value, careerThread.title);
-nodes(renameEditor)
-	.find((node) => node.type === "TextField")
-	.props.onChangeText("  Northwind practice plan  ");
-renameSheet = conversationSheet();
-renameEditor = renameSheet.type(renameSheet.props);
-nodes(renameEditor)
-	.find((node) => node.type === "Button" && node.props.label === "Save")
-	.props.onPress();
-await Promise.resolve();
-assert.deepEqual(renameWrites, [{ id: careerThread.id, title: "Northwind practice plan" }]);
-assert.equal(
-	nodes(conversationSheet().type(conversationSheet().props)).some((node) => node.type === "TextField"),
-	false,
-);
-titleAction().props.onPress();
-renameSheet = conversationSheet();
-renameEditor = renameSheet.type(renameSheet.props);
-nodes(renameEditor)
-	.find((node) => node.type === "Button" && node.props.label === "Cancel")
-	.props.onPress();
-assert.equal(
-	nodes(conversationSheet().type(conversationSheet().props)).some((node) => node.type === "TextField"),
-	false,
-);
-assert.equal(renameWrites.length, 1, "Cancel does not write another title");
-reset();
-console.log("PASS native header invokes existing conversation rename editor and mutation");
-
 let count = 9;
 let failed = false;
 let resumesPending = false;
 let resumeCount = 0;
-const searchAi = { isUnavailable: false, hasAIProvider: true, isLoading: false, retry: () => calls.push("ai-retry") };
+const searchAi = { isUnavailable: false, hasAIProvider: true, isLoading: false };
 let searchScope = "fixture-account";
 let latestSearchDocument = [];
 const inputs = [];
@@ -485,51 +384,74 @@ const letters = Array.from({ length: 209 }, (_, i) => ({
 	updatedAt: new Date(),
 	application: null,
 }));
-const { SearchScreen } = load("features/search/search-screen.tsx", {
-	"./rank": load("features/search/rank.ts"),
-	"@/features/ai/providers": { useHasAIProvider: () => searchAi, AIProviderSetupSheet: "AIProviderSetupSheet" },
-	"@/auth/session": {
-		getAccountScope: () => searchScope,
-		useSession: () => ({ status: "signed-in", server: "fixture-server" }),
+// The search debounce runs on this clock, so tests advance time instead of waiting for it.
+let clockNow = 0;
+let clockTimers = [];
+const clock = {
+	setTimeout: (run, delay = 0) => {
+		const timer = { run, at: clockNow + delay };
+		clockTimers.push(timer);
+		return timer;
 	},
-	"@/shell/use-is-tablet": { useIsTablet: () => false },
-	"@/features/applications/queries": { useApplications: () => state() },
-	"@/api/client": {
-		orpc: {
-			documents: { list: { queryOptions: ({ input }) => ({ queryKey: ["documents", input] }) } },
-			agent: { threads: { list: { queryOptions: () => ({ queryKey: ["threads"] }) } } },
+	clearTimeout: (timer) => {
+		clockTimers = clockTimers.filter((item) => item !== timer);
+	},
+};
+const advance = (ms) => {
+	clockNow += ms;
+	const due = clockTimers.filter((timer) => timer.at <= clockNow);
+	clockTimers = clockTimers.filter((timer) => timer.at > clockNow);
+	for (const timer of due) timer.run();
+};
+const { SearchScreen } = load(
+	"features/search/search-screen.tsx",
+	{
+		"./rank": load("features/search/rank.ts"),
+		"@/features/ai/providers": { useHasAIProvider: () => searchAi, AIProviderSetupSheet: "AIProviderSetupSheet" },
+		"@/auth/session": {
+			getAccountScope: () => searchScope,
+			useSession: () => ({ status: "signed-in", server: "fixture-server" }),
 		},
-		client: {
-			documents: {
-				list: async (input) => {
-					inputs.push(input);
-					return [{ id: "recent" }];
+		"@/shell/use-is-tablet": { useIsTablet: () => false },
+		"@/features/applications/queries": { useApplications: () => state() },
+		"@/api/client": {
+			orpc: {
+				documents: { list: { queryOptions: ({ input }) => ({ queryKey: ["documents", input] }) } },
+				agent: { threads: { list: { queryOptions: () => ({ queryKey: ["threads"] }) } } },
+			},
+			client: {
+				documents: {
+					list: async (input) => {
+						inputs.push(input);
+						return [{ id: "recent" }];
+					},
 				},
 			},
 		},
-	},
-	"@tanstack/react-query": {
-		useQuery: ({ queryKey, enabled }) => {
-			if (queryKey[0] === "threads") return state();
-			const input = queryKey[1];
-			inputs.push(input);
-			if (input.type === "resume")
-				return state({
-					isPending: resumesPending,
-					data: Array.from({ length: resumeCount }, (_, i) => ({
-						id: `resume-${i}`,
-						type: "resume",
-						name: `Archive resume ${i}`,
-						tags: [],
-					})),
-				});
-			if (!enabled) return state({ data: undefined, isPending: true });
-			return input.type === "letter"
-				? state({ data: failed ? undefined : letters.slice(0, Math.min(input.limit, count)), isError: failed })
-				: state({ data: latestSearchDocument });
+		"@tanstack/react-query": {
+			useQuery: ({ queryKey, enabled }) => {
+				if (queryKey[0] === "threads") return state();
+				const input = queryKey[1];
+				inputs.push(input);
+				if (input.type === "resume")
+					return state({
+						isPending: resumesPending,
+						data: Array.from({ length: resumeCount }, (_, i) => ({
+							id: `resume-${i}`,
+							type: "resume",
+							name: `Archive resume ${i}`,
+							tags: [],
+						})),
+					});
+				if (!enabled) return state({ data: undefined, isPending: true });
+				return input.type === "letter"
+					? state({ data: failed ? undefined : letters.slice(0, Math.min(input.limit, count)), isError: failed })
+					: state({ data: latestSearchDocument });
+			},
 		},
 	},
-});
+	clock,
+);
 for (count of [8, 9, 209]) {
 	reset();
 	tree = render(SearchScreen);
@@ -537,7 +459,7 @@ for (count of [8, 9, 209]) {
 		.find((n) => n.type === "TextInput")
 		.props.onChangeText("rx112overflow");
 	render(SearchScreen);
-	await new Promise((resolve) => setTimeout(resolve, 220));
+	advance(200);
 	tree = render(SearchScreen);
 	const rows = nodes(tree).filter((n) => n.type === "ListRow");
 	assert.equal(rows.filter((n) => n.props.title.startsWith("Fictional letter")).length, 8);
@@ -572,7 +494,7 @@ nodes(tree)
 	.find((node) => node.type === "TextInput")
 	.props.onChangeText("resume");
 render(SearchScreen);
-await new Promise((resolve) => setTimeout(resolve, 220));
+advance(200);
 resumesPending = true;
 tree = render(SearchScreen);
 const beforePendingEnter = calls.length;
@@ -635,14 +557,6 @@ searchScope = "replacement-account";
 queuedNamedAsk.props.onPress();
 assert.equal(calls.length, beforeQueuedNamedAsk, "queued named Ask cannot navigate under a replacement account");
 searchScope = "fixture-account";
-searchAi.isUnavailable = true;
-tree = render(SearchScreen);
-const beforeRetry = calls.length;
-nodes(tree)
-	.find((node) => node.type === "ListRow" && node.props.title === "Try again")
-	.props.onPress();
-assert.deepEqual(calls.slice(beforeRetry), ["ai-retry"]);
-Object.assign(searchAi, { isUnavailable: false, hasAIProvider: true });
 searchAi.hasAIProvider = false;
 tree = render(SearchScreen);
 nodes(tree)

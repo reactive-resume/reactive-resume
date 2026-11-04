@@ -179,7 +179,7 @@ function resetHistoryRuntime() {
 	historyCanCoalesce = false;
 }
 
-/** Whether the next edit merges into the current undo step. Exported for tests. */
+/** Whether the next edit merges into the current undo step. */
 function shouldCoalesceEdit(
 	previous: { at: number; key: string | undefined; canCoalesce: boolean },
 	next: { at: number; key: string | undefined; newStep: boolean },

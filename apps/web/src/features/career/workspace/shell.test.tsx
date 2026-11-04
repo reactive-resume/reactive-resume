@@ -254,6 +254,8 @@ it("retains a typed answer if a background workspace refresh fails", async () =>
 	api.workspace.mockRejectedValue(new Error("Offline"));
 	await act(async () => {
 		await view.client.refetchQueries({ queryKey: ["workspace"] });
+		// Query observers hear about the failure on a later macrotask; let it reach the page before checking.
+		await new Promise((resolve) => setTimeout(resolve, 0));
 	});
 	expect(screen.getByRole("textbox", { name: "Why this role?" })).toBe(field);
 	expect(field).toHaveValue("My unsaved draft");
@@ -284,9 +286,11 @@ it("keeps an unsaved posting scoped to its application", async () => {
 	fireEvent.change(screen.getByRole("textbox", { name: "Job description" }), {
 		target: { value: "Only for Harbor" },
 	});
-	await act(async () => {
+	act(() => {
 		client.setQueryData(["application"], { ...application, id: "other-application", company: "Tidewater" });
 	});
+	// Query observers render the new application on a later macrotask; wait for it instead of racing it.
+	await screen.findAllByText(/Tidewater/);
 	expect(screen.getByRole("textbox", { name: "Job description" })).toHaveValue("");
 	expect(screen.getByRole("button", { name: "Save posting" })).toBeDisabled();
 });
@@ -313,7 +317,8 @@ it("gates contextual Compare offers during cold or failed saved-item reads and r
 	expect(screen.queryByRole("link", { name: "Compare offers" })).toBeNull();
 	expect((screen.getByRole("button", { name: "Compare offers" }) as HTMLButtonElement).disabled).toBe(true);
 	await act(async () => fail(new Error("Synthetic saved-items failure")));
-	expect(((await screen.findByRole("button", { name: "Compare offers" })) as HTMLButtonElement).disabled).toBe(true);
+	await screen.findAllByText(/Your saved data hasn't changed/);
+	expect((screen.getByRole("button", { name: "Compare offers" }) as HTMLButtonElement).disabled).toBe(true);
 	expect(screen.queryByRole("link", { name: "Compare offers" })).toBeNull();
 	const alert = screen
 		.getAllByRole("alert")

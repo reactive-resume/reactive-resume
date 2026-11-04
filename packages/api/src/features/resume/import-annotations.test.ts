@@ -1,8 +1,9 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { Template } from "@reactive-resume/schema/templates";
 import { expect, it, vi } from "vite-plus/test";
 import { call } from "@orpc/server";
 import { createResumePdfFile } from "@reactive-resume/pdf/server";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { edgeCaseTemplates } from "./fixtures/pdf-import";
 import { ownershipSource } from "./fixtures/pdf-ownership";
 
 const create = vi.hoisted(() => vi.fn().mockResolvedValue("imported"));
@@ -34,7 +35,7 @@ const plain = (html: string) =>
 		.replace(/<[^>]+>/g, " ")
 		.replace(/\s+/g, " ")
 		.trim();
-const cases = templateSchema.options.flatMap((template) =>
+const cases = edgeCaseTemplates.flatMap((template) =>
 	["full-before", "two-before"].flatMap((layout) =>
 		[
 			"leading-link",
@@ -61,7 +62,7 @@ function keepShortResume(source: ResumeData) {
 	}
 }
 
-async function save(data: ResumeData, template: (typeof templateSchema.options)[number]) {
+async function save(data: ResumeData, template: Template) {
 	const file = await createResumePdfFile({ data, template, filename: "annotations.pdf" });
 	create.mockClear();
 	await call(importResumeFile, { file, format: "PDF" }, { context: { locale: "en-US", reqHeaders: new Headers() } });
@@ -161,7 +162,7 @@ const subLabels = [
 	["SKILLS", "Led platform reviews."],
 	["LANGUAGES", "Spoke at regional meetups."],
 ] as const;
-const subLabelCases = templateSchema.options.flatMap((template) =>
+const subLabelCases = edgeCaseTemplates.flatMap((template) =>
 	["full-before", "two-before"].flatMap((layout) =>
 		[
 			{ heading: 9.5, labels: 4, emphasis: "" },
@@ -207,9 +208,7 @@ it.each(subLabelCases)(
 	60000,
 );
 
-it.each(
-	templateSchema.options.flatMap((template) => ["full-before", "two-before"].map((layout) => ({ template, layout }))),
-)(
+it.each(edgeCaseTemplates.flatMap((template) => ["full-before", "two-before"].map((layout) => ({ template, layout }))))(
 	"keeps body words when every section title is hidden / $template / $layout",
 	async ({ template, layout }) => {
 		// Word retention only: without printed titles the sections cannot be recovered as structure.
@@ -233,7 +232,7 @@ it.each(
 
 const longBullet = (role: number, label: number, bullet: number) =>
 	`Delivered careful fictional platform outcome ${role}-${label}-${bullet} for regional partners while keeping every accessible workflow available`;
-const roleLabelCases = templateSchema.options.flatMap((template) =>
+const roleLabelCases = edgeCaseTemplates.flatMap((template) =>
 	["full-before", "two-before"].flatMap((layout) =>
 		[
 			{ trigger: "blank line", heading: 10, roles: 1, bullets: 1, emphasis: "" },
@@ -292,7 +291,7 @@ it.each(roleLabelCases)(
 	60000,
 );
 
-const headingStyleCases = templateSchema.options.flatMap((template) =>
+const headingStyleCases = edgeCaseTemplates.flatMap((template) =>
 	["full-before", "two-before"].flatMap((layout) =>
 		["body font", "body size", "sub-labels 10.5"].map((style) => ({ template, layout, style })),
 	),
@@ -326,9 +325,7 @@ it.each(headingStyleCases)(
 	60000,
 );
 
-it.each(
-	templateSchema.options.flatMap((template) => ["full-before", "two-before"].map((layout) => ({ template, layout }))),
-)(
+it.each(edgeCaseTemplates.flatMap((template) => ["full-before", "two-before"].map((layout) => ({ template, layout }))))(
 	"keeps a header-only PDF with linked custom fields out of Summary / $template / $layout",
 	async ({ template, layout }) => {
 		const source = ownershipSource({ template, kind: layout });
@@ -344,9 +341,7 @@ it.each(
 	60000,
 );
 
-it.each(
-	templateSchema.options.flatMap((template) => ["full-before", "two-before"].map((layout) => ({ template, layout }))),
-)(
+it.each(edgeCaseTemplates.flatMap((template) => ["full-before", "two-before"].map((layout) => ({ template, layout }))))(
 	"keeps body words but not identity in Summary when Summary and Experience titles are hidden / $template / $layout",
 	async ({ template, layout }) => {
 		// Word retention only: with no printed title the role cannot be recovered as an entry.
@@ -377,7 +372,7 @@ it.each(
 	60000,
 );
 
-const isolatedLabelCases = templateSchema.options.flatMap((template) =>
+const isolatedLabelCases = edgeCaseTemplates.flatMap((template) =>
 	["full-before", "two-before"].flatMap((layout) =>
 		[
 			"bold labels once after blank lines / heading 10.5",

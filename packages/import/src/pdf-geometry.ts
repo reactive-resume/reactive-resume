@@ -7,9 +7,6 @@ export class GeometryLimit extends Error {}
 /** Counts candidate visits, not elapsed time: synchronous work cannot be interrupted by an abort timer. */
 export class GeometryIndex {
 	private readonly pages = new Map<number, Line[]>();
-	get visits() {
-		return this.budget.visits;
-	}
 
 	constructor(
 		readonly fields: readonly Line[],

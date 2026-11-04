@@ -9,245 +9,226 @@ const databaseURL = process.env.OAUTH_TEST_DATABASE_URL;
 if (databaseURL) process.env.FLAG_ENABLE_GUEST_LOGIN = "true";
 
 describe.skipIf(!databaseURL)("MCP OAuth flow with PostgreSQL", () => {
-	it.each(["none", "client_secret_post"])(
-		"registers %s clients, resumes login, and exchanges a resource-bound PKCE code",
-		async (method) => {
-			if (!databaseURL) return;
-			process.env.DATABASE_URL = databaseURL;
-			process.env.APP_URL = "http://localhost:33920";
-			process.env.AUTH_SECRET = "oauth-integration-test-secret-only";
-			const { handleAuth, handleOAuth } = await import("./auth");
-			// Better Auth disables origin checks by default in test mode; exercise production behavior.
-			const { auth } = await import("@reactive-resume/auth/config");
-			(await auth.$context).skipOriginCheck = false;
-			const origin = process.env.APP_URL;
-			const redirectURI = "http://127.0.0.1:33921/callback";
-			const request = (path: string, body: object, cookie = "") =>
-				new Request(`${origin}/api/auth/${path}`, {
-					method: "POST",
-					headers: { "content-type": "application/json", origin, cookie },
-					body: JSON.stringify(body),
-				});
-			const registration = await handleAuth(
-				request("oauth2/register", {
-					client_name: "OAuth integration",
-					redirect_uris: [redirectURI],
-					token_endpoint_auth_method: method,
-				}),
-			);
-			expect(registration.status, await registration.clone().text()).toBe(201);
-			const client = await registration.json();
-			expect(client.token_endpoint_auth_method).toBe(method);
-			for (const [uri, status] of [
-				["http://localhost:8787/callback", 201],
-				["https://www.cursor.com/agents/mcp/oauth/callback", 201],
-				["cursor://anysphere.cursor-mcp/oauth/callback", 201],
-				["com.example.arbitrary:/callback", 201],
-				["cursor://anysphere.cursor-mcp", 400],
-				["javascript:alert(1)", 400],
-				["https://10.0.0.1/callback", 400],
-			] as const) {
-				const registered = await handleAuth(
-					request("oauth2/register", { client_name: "Local callback policy check", redirect_uris: [uri] }),
-				);
-				expect(registered.status, `${uri}: ${await registered.clone().text()}`).toBe(status);
-			}
-
-			const deniedRegistration = await handleAuth(
-				request("oauth2/register", {
-					client_name: "Denied resource",
-					redirect_uris: [redirectURI],
-					resources: ["https://untrusted.example/mcp"],
-				}),
-			);
-			expect(deniedRegistration.status).toBe(400);
-			await expect(deniedRegistration.json()).resolves.toMatchObject({ error: "invalid_target" });
-
-			const verifier = randomBytes(32).toString("base64url");
-			const query = new URLSearchParams({
-				client_id: client.client_id,
-				redirect_uri: redirectURI,
-				response_type: "code",
-				scope: "openid profile offline_access",
-				code_challenge: createHash("sha256").update(verifier).digest("base64url"),
-				code_challenge_method: "S256",
-				resource: `${origin}/mcp`,
-				state: "opaque-state",
+	// Public (`none`) clients' exchange and refresh are covered by the desktop-client test below.
+	it("registers client_secret_post clients, resumes login, and exchanges a resource-bound PKCE code", async () => {
+		const method = "client_secret_post";
+		if (!databaseURL) return;
+		process.env.DATABASE_URL = databaseURL;
+		process.env.APP_URL = "http://localhost:33920";
+		process.env.AUTH_SECRET = "oauth-integration-test-secret-only";
+		const { handleAuth, handleOAuth } = await import("./auth");
+		// Better Auth disables origin checks by default in test mode; exercise production behavior.
+		const { auth } = await import("@reactive-resume/auth/config");
+		(await auth.$context).skipOriginCheck = false;
+		const origin = process.env.APP_URL;
+		const redirectURI = "http://127.0.0.1:33921/callback";
+		const request = (path: string, body: object, cookie = "") =>
+			new Request(`${origin}/api/auth/${path}`, {
+				method: "POST",
+				headers: { "content-type": "application/json", origin, cookie },
+				body: JSON.stringify(body),
 			});
-			const authorize = await handleAuth(new Request(`${origin}/api/auth/oauth2/authorize?${query}`));
-			expect(authorize.status, await authorize.clone().text()).toBe(302);
-			const bridgeURL = authorize.headers.get("location");
-			expect(bridgeURL).toBeTruthy();
-			const login = await handleOAuth(new Request(new URL(bridgeURL ?? "", origin)));
-			const loginURL = new URL(login.headers.get("location") ?? "", origin);
-			const callbackURL = loginURL.searchParams.get("callbackURL");
-			expect(callbackURL).toContain("sig=");
-			expect(callbackURL).toContain("resource=");
+		const registration = await handleAuth(
+			request("oauth2/register", {
+				client_name: "OAuth integration",
+				redirect_uris: [redirectURI],
+				token_endpoint_auth_method: method,
+			}),
+		);
+		expect(registration.status, await registration.clone().text()).toBe(201);
+		const client = await registration.json();
+		expect(client.token_endpoint_auth_method).toBe(method);
+		const deniedRegistration = await handleAuth(
+			request("oauth2/register", {
+				client_name: "Denied resource",
+				redirect_uris: [redirectURI],
+				resources: ["https://untrusted.example/mcp"],
+			}),
+		);
+		expect(deniedRegistration.status).toBe(400);
+		await expect(deniedRegistration.json()).resolves.toMatchObject({ error: "invalid_target" });
 
-			const unique = randomBytes(6).toString("hex");
-			const signup = await handleAuth(
-				request("sign-up/email", {
-					name: "OAuth Test",
-					email: `oauth-${unique}@example.com`,
-					username: `oauth-${unique}`,
-					password: "password123",
+		const verifier = randomBytes(32).toString("base64url");
+		const query = new URLSearchParams({
+			client_id: client.client_id,
+			redirect_uri: redirectURI,
+			response_type: "code",
+			scope: "openid profile offline_access",
+			code_challenge: createHash("sha256").update(verifier).digest("base64url"),
+			code_challenge_method: "S256",
+			resource: `${origin}/mcp`,
+			state: "opaque-state",
+		});
+		const authorize = await handleAuth(new Request(`${origin}/api/auth/oauth2/authorize?${query}`));
+		expect(authorize.status, await authorize.clone().text()).toBe(302);
+		const bridgeURL = authorize.headers.get("location");
+		expect(bridgeURL).toBeTruthy();
+		const login = await handleOAuth(new Request(new URL(bridgeURL ?? "", origin)));
+		const loginURL = new URL(login.headers.get("location") ?? "", origin);
+		const callbackURL = loginURL.searchParams.get("callbackURL");
+		expect(callbackURL).toContain("sig=");
+		expect(callbackURL).toContain("resource=");
+
+		const unique = randomBytes(6).toString("hex");
+		const signup = await handleAuth(
+			request("sign-up/email", {
+				name: "OAuth Test",
+				email: `oauth-${unique}@example.com`,
+				username: `oauth-${unique}`,
+				password: "password123",
+			}),
+		);
+		expect(signup.status, await signup.clone().text()).toBe(200);
+		const cookie = signup.headers
+			.getSetCookie()
+			.map((value) => value.split(";", 1)[0])
+			.join("; ");
+		const tamperedURL = new URL(`${origin}${callbackURL}`);
+		tamperedURL.searchParams.set("state", "tampered");
+		const tampered = await handleOAuth(new Request(tamperedURL, { headers: { cookie } }));
+		expect(tampered.status).toBe(400);
+		await expect(tampered.json()).resolves.toMatchObject({ error: "invalid_signature" });
+		const callback = await handleOAuth(new Request(`${origin}${callbackURL}`, { headers: { cookie } }));
+		expect(callback.status, await callback.clone().text()).toBe(302);
+		const consentURL = new URL(callback.headers.get("location") ?? "", origin);
+		expect(consentURL.pathname).toBe("/auth/consent");
+		expect(consentURL.searchParams.has("code")).toBe(false);
+		const oauth_query = consentURL.search.slice(1);
+		const consents = async () => {
+			const response = await handleAuth(new Request(`${origin}/api/auth/oauth2/get-consents`, { headers: { cookie } }));
+			expect(response.status).toBe(200);
+			return response.json();
+		};
+		expect(await consents()).toEqual([]);
+		const silent = await handleAuth(
+			new Request(`${origin}/api/auth/oauth2/authorize?${query}&prompt=none`, { headers: { cookie } }),
+		);
+		expect(new URL(silent.headers.get("location") ?? "").searchParams.get("error")).toBe("consent_required");
+		const tamperedConsentQuery = new URLSearchParams(oauth_query);
+		tamperedConsentQuery.set("scope", "openid profile email offline_access");
+		const tamperedConsent = await handleAuth(
+			request(
+				"oauth2/consent",
+				{
+					accept: true,
+					oauth_query: tamperedConsentQuery.toString(),
+				},
+				cookie,
+			),
+		);
+		expect(tamperedConsent.status).toBe(400);
+		expect(await consents()).toEqual([]);
+		const csrf = await handleAuth(
+			new Request(`${origin}/api/auth/oauth2/consent`, {
+				method: "POST",
+				headers: { cookie, origin: "https://untrusted.example", "content-type": "application/json" },
+				body: JSON.stringify({ accept: true, oauth_query }),
+			}),
+		);
+		expect(csrf.status).toBe(403);
+		const denied = await handleAuth(request("oauth2/consent", { accept: false, oauth_query }, cookie));
+		expect(denied.status, await denied.clone().text()).toBe(200);
+		const deniedURL = new URL((await denied.json()).url);
+		expect(deniedURL.searchParams.get("error")).toBe("access_denied");
+		expect(deniedURL.searchParams.get("state")).toBe("opaque-state");
+		expect(deniedURL.searchParams.has("code")).toBe(false);
+		expect(await consents()).toEqual([]);
+		const accepted = await handleAuth(request("oauth2/consent", { accept: true, oauth_query }, cookie));
+		expect(accepted.status, await accepted.clone().text()).toBe(200);
+		expect(await consents()).toHaveLength(1);
+		const codeURL = new URL((await accepted.json()).url);
+		expect(codeURL.origin).toBe(new URL(redirectURI).origin);
+		expect(codeURL.searchParams.get("state")).toBe("opaque-state");
+		const code = codeURL.searchParams.get("code");
+		expect(code).toBeTruthy();
+		const tokenRequest = () =>
+			new Request(`${origin}/api/auth/oauth2/token`, {
+				method: "POST",
+				headers: { "content-type": "application/x-www-form-urlencoded" },
+				body: new URLSearchParams({
+					grant_type: "authorization_code",
+					client_id: client.client_id,
+					...(client.client_secret ? { client_secret: client.client_secret } : {}),
+					code: code ?? "",
+					redirect_uri: redirectURI,
+					code_verifier: verifier,
+					resource: `${origin}/mcp`,
+				}),
+			});
+		const tokenResponse = await handleAuth(tokenRequest());
+		expect(tokenResponse.status, await tokenResponse.clone().text()).toBe(200);
+		const token = await tokenResponse.json();
+		expect(token.access_token).toBeTruthy();
+		expect(token.refresh_token).toBeTruthy();
+		const claims = JSON.parse(Buffer.from(token.access_token.split(".")[1], "base64url").toString());
+		expect([claims.aud].flat()).toContain(`${origin}/mcp`);
+		expect((await handleAuth(tokenRequest())).status).toBe(400);
+		const userinfo = () =>
+			handleAuth(
+				new Request(`${origin}/api/auth/oauth2/userinfo`, {
+					headers: { authorization: `Bearer ${token.access_token}` },
 				}),
 			);
-			expect(signup.status, await signup.clone().text()).toBe(200);
-			const cookie = signup.headers
-				.getSetCookie()
-				.map((value) => value.split(";", 1)[0])
-				.join("; ");
-			const tamperedURL = new URL(`${origin}${callbackURL}`);
-			tamperedURL.searchParams.set("state", "tampered");
-			const tampered = await handleOAuth(new Request(tamperedURL, { headers: { cookie } }));
-			expect(tampered.status).toBe(400);
-			await expect(tampered.json()).resolves.toMatchObject({ error: "invalid_signature" });
-			const callback = await handleOAuth(new Request(`${origin}${callbackURL}`, { headers: { cookie } }));
-			expect(callback.status, await callback.clone().text()).toBe(302);
-			const consentURL = new URL(callback.headers.get("location") ?? "", origin);
-			expect(consentURL.pathname).toBe("/auth/consent");
-			expect(consentURL.searchParams.has("code")).toBe(false);
-			const oauth_query = consentURL.search.slice(1);
-			const consents = async () => {
-				const response = await handleAuth(
-					new Request(`${origin}/api/auth/oauth2/get-consents`, { headers: { cookie } }),
-				);
-				expect(response.status).toBe(200);
-				return response.json();
-			};
-			expect(await consents()).toEqual([]);
-			const silent = await handleAuth(
-				new Request(`${origin}/api/auth/oauth2/authorize?${query}&prompt=none`, { headers: { cookie } }),
-			);
-			expect(new URL(silent.headers.get("location") ?? "").searchParams.get("error")).toBe("consent_required");
-			const tamperedConsentQuery = new URLSearchParams(oauth_query);
-			tamperedConsentQuery.set("scope", "openid profile email offline_access");
-			const tamperedConsent = await handleAuth(
-				request(
-					"oauth2/consent",
-					{
-						accept: true,
-						oauth_query: tamperedConsentQuery.toString(),
-					},
-					cookie,
-				),
-			);
-			expect(tamperedConsent.status).toBe(400);
-			expect(await consents()).toEqual([]);
-			const csrf = await handleAuth(
-				new Request(`${origin}/api/auth/oauth2/consent`, {
-					method: "POST",
-					headers: { cookie, origin: "https://untrusted.example", "content-type": "application/json" },
-					body: JSON.stringify({ accept: true, oauth_query }),
-				}),
-			);
-			expect(csrf.status).toBe(403);
-			const denied = await handleAuth(request("oauth2/consent", { accept: false, oauth_query }, cookie));
-			expect(denied.status, await denied.clone().text()).toBe(200);
-			const deniedURL = new URL((await denied.json()).url);
-			expect(deniedURL.searchParams.get("error")).toBe("access_denied");
-			expect(deniedURL.searchParams.get("state")).toBe("opaque-state");
-			expect(deniedURL.searchParams.has("code")).toBe(false);
-			expect(await consents()).toEqual([]);
-			const accepted = await handleAuth(request("oauth2/consent", { accept: true, oauth_query }, cookie));
-			expect(accepted.status, await accepted.clone().text()).toBe(200);
-			expect(await consents()).toHaveLength(1);
-			const codeURL = new URL((await accepted.json()).url);
-			expect(codeURL.origin).toBe(new URL(redirectURI).origin);
-			expect(codeURL.searchParams.get("state")).toBe("opaque-state");
-			const code = codeURL.searchParams.get("code");
-			expect(code).toBeTruthy();
-			const tokenRequest = () =>
-				new Request(`${origin}/api/auth/oauth2/token`, {
+		expect((await userinfo()).status).toBe(200);
+		const introspect = () =>
+			handleAuth(
+				new Request(`${origin}/api/auth/oauth2/introspect`, {
 					method: "POST",
 					headers: { "content-type": "application/x-www-form-urlencoded" },
 					body: new URLSearchParams({
-						grant_type: "authorization_code",
+						token: token.access_token,
 						client_id: client.client_id,
-						...(client.client_secret ? { client_secret: client.client_secret } : {}),
-						code: code ?? "",
-						redirect_uri: redirectURI,
-						code_verifier: verifier,
-						resource: `${origin}/mcp`,
-					}),
-				});
-			const tokenResponse = await handleAuth(tokenRequest());
-			expect(tokenResponse.status, await tokenResponse.clone().text()).toBe(200);
-			const token = await tokenResponse.json();
-			expect(token.access_token).toBeTruthy();
-			expect(token.refresh_token).toBeTruthy();
-			const claims = JSON.parse(Buffer.from(token.access_token.split(".")[1], "base64url").toString());
-			expect([claims.aud].flat()).toContain(`${origin}/mcp`);
-			expect((await handleAuth(tokenRequest())).status).toBe(400);
-			const userinfo = () =>
-				handleAuth(
-					new Request(`${origin}/api/auth/oauth2/userinfo`, {
-						headers: { authorization: `Bearer ${token.access_token}` },
-					}),
-				);
-			expect((await userinfo()).status).toBe(200);
-			const introspect = () =>
-				handleAuth(
-					new Request(`${origin}/api/auth/oauth2/introspect`, {
-						method: "POST",
-						headers: { "content-type": "application/x-www-form-urlencoded" },
-						body: new URLSearchParams({
-							token: token.access_token,
-							client_id: client.client_id,
-							client_secret: client.client_secret ?? "",
-						}),
-					}),
-				);
-			if (client.client_secret) {
-				const active = await introspect();
-				expect(active.status).toBe(200);
-				await expect(active.json()).resolves.toMatchObject({ active: true });
-			}
-			const { db } = await import("@reactive-resume/db/client");
-			const schema = await import("@reactive-resume/db/schema");
-			const select = db.select.bind(db);
-			const lookup = vi.spyOn(db, "select").mockImplementation(() => {
-				const query = select();
-				const from = query.from.bind(query);
-				vi.spyOn(query, "from").mockImplementation((table) => {
-					if (table === schema.oauthConsent) throw new APIError("INTERNAL_SERVER_ERROR");
-					return from(table);
-				});
-				return query;
-			});
-			try {
-				expect.soft((await userinfo()).status).toBe(500);
-				if (client.client_secret) expect.soft((await introspect()).status).toBe(500);
-			} finally {
-				lookup.mockRestore();
-			}
-			expect((await userinfo()).status).toBe(200);
-			const [consent] = await consents();
-			const disconnected = await handleAuth(request("oauth2/delete-consent", { id: consent.id }, cookie));
-			expect(disconnected.status).toBe(200);
-			if (client.client_secret) {
-				const inactive = await introspect();
-				expect.soft(await inactive.json()).toEqual({ active: false });
-			}
-			expect.soft((await userinfo()).status).toBe(401);
-			const refreshed = await handleAuth(
-				new Request(`${origin}/api/auth/oauth2/token`, {
-					method: "POST",
-					headers: { "content-type": "application/x-www-form-urlencoded" },
-					body: new URLSearchParams({
-						grant_type: "refresh_token",
-						refresh_token: token.refresh_token,
-						client_id: client.client_id,
-						...(client.client_secret ? { client_secret: client.client_secret } : {}),
-						resource: `${origin}/mcp`,
+						client_secret: client.client_secret ?? "",
 					}),
 				}),
 			);
-			expect(refreshed.status).toBe(400);
-		},
-		30_000,
-	);
+		if (client.client_secret) {
+			const active = await introspect();
+			expect(active.status).toBe(200);
+			await expect(active.json()).resolves.toMatchObject({ active: true });
+		}
+		const { db } = await import("@reactive-resume/db/client");
+		const schema = await import("@reactive-resume/db/schema");
+		const select = db.select.bind(db);
+		const lookup = vi.spyOn(db, "select").mockImplementation(() => {
+			const query = select();
+			const from = query.from.bind(query);
+			vi.spyOn(query, "from").mockImplementation((table) => {
+				if (table === schema.oauthConsent) throw new APIError("INTERNAL_SERVER_ERROR");
+				return from(table);
+			});
+			return query;
+		});
+		try {
+			expect.soft((await userinfo()).status).toBe(500);
+			if (client.client_secret) expect.soft((await introspect()).status).toBe(500);
+		} finally {
+			lookup.mockRestore();
+		}
+		expect((await userinfo()).status).toBe(200);
+		const [consent] = await consents();
+		const disconnected = await handleAuth(request("oauth2/delete-consent", { id: consent.id }, cookie));
+		expect(disconnected.status).toBe(200);
+		if (client.client_secret) {
+			const inactive = await introspect();
+			expect.soft(await inactive.json()).toEqual({ active: false });
+		}
+		expect.soft((await userinfo()).status).toBe(401);
+		const refreshed = await handleAuth(
+			new Request(`${origin}/api/auth/oauth2/token`, {
+				method: "POST",
+				headers: { "content-type": "application/x-www-form-urlencoded" },
+				body: new URLSearchParams({
+					grant_type: "refresh_token",
+					refresh_token: token.refresh_token,
+					client_id: client.client_id,
+					...(client.client_secret ? { client_secret: client.client_secret } : {}),
+					resource: `${origin}/mcp`,
+				}),
+			}),
+		);
+		expect(refreshed.status).toBe(400);
+	}, 30_000);
 	it("refuses authorization without a resource, reporting to the registered callback only", async () => {
 		if (!databaseURL) return;
 		process.env.DATABASE_URL = databaseURL;

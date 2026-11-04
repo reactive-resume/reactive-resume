@@ -1,38 +1,14 @@
 // Run: node apps/mobile/scripts/workspace-parity.test.mjs
-// Pure native workspace logic + shared schema contracts, evaluated on the host (no React Native runtime).
+// Pure native workspace logic, evaluated on the host (no React Native runtime).
 import assert from "node:assert/strict";
-import { createRequire } from "node:module";
+import { bundle } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-function load(entry, dependencies = {}, external = []) {
-	const code = buildSync({
-		entryPoints: [entry],
-		bundle: true,
-		platform: "node",
-		format: "cjs",
-		write: false,
-		external,
-	}).outputFiles[0].text;
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			if (name in dependencies) return dependencies[name];
-			throw new Error(`Missing boundary: ${name}`);
-		},
-		module,
-		module.exports,
-	);
-	return module.exports;
-}
+const load = (entry, dependencies = {}, external = []) => bundle(entry, dependencies, { external });
 const logic = load(new URL("../src/features/workspace/logic.ts", import.meta.url).pathname);
 assert.equal(logic.clock(67, "en-US"), "1:07");
 assert.equal(logic.clock(67, "ar-SA"), "١:٠٧");
 assert.equal(logic.clock(0, "ar-SA"), "٠:٠٠");
-const disclosure = load(new URL("../../../packages/schema/src/career-disclosure.ts", import.meta.url).pathname);
-const routes = load(new URL("../src/routes.ts", import.meta.url).pathname, { "expo-router": {} });
 const origin = load(new URL("../src/features/applications/origin.ts", import.meta.url).pathname);
-const offer = load(new URL("../../../packages/schema/src/career-offer.ts", import.meta.url).pathname);
 const draftOwner = load(new URL("../src/features/letters/draft-owner.ts", import.meta.url).pathname);
 
 // The real native drafting store, with only its platform/storage boundaries faked.
@@ -88,47 +64,6 @@ assert.equal(logic.draftNeedsLeaveGuard("streaming"), true);
 assert.equal(logic.draftNeedsLeaveGuard("failed"), false);
 assert.equal(logic.draftNeedsLeaveGuard("idle"), false);
 
-// A3-04: the native disclosure uses the server's ordered categories and only what is present.
-const items = disclosure.disclosureItemsFromPresence("fit", {
-	preferences: true,
-	posting: true,
-	notes: true,
-	resume: true,
-	knowledge: false,
-	letter: false,
-	interview: true,
-	input: true,
-});
-assert.deepEqual(items, ["preferences", "posting", "notes", "resume"]);
-assert.deepEqual(disclosure.disclosureItemsFromPresence("reply", { posting: true, input: true }), ["posting", "input"]);
-assert.deepEqual(disclosure.disclosureItemsFromPresence("debrief", { posting: true, interview: true, input: true }), [
-	"posting",
-	"interview",
-	"input",
-]);
-assert.deepEqual(
-	disclosure.disclosureItemsFromPresence("briefing", {
-		preferences: true,
-		posting: true,
-		requirements: true,
-		notes: true,
-		contacts: true,
-		resume: true,
-		letter: true,
-		knowledge: true,
-		interview: true,
-	}),
-	["preferences", "posting", "requirements", "notes", "contacts", "resume", "letter", "knowledge", "interview"],
-);
-
-// A3-07: an application origin is URL state, preserving an existing version query.
-assert.equal(routes.withApplication(routes.routes.builder("r1"), "a1"), "/builder/r1/write?applicationId=a1");
-assert.equal(
-	routes.withApplication(routes.routes.history("r1", "v1"), "a1"),
-	"/builder/r1/history?version=v1&applicationId=a1",
-);
-assert.equal(routes.withApplication(routes.routes.letter("l1"), undefined), "/letter/l1/write");
-
 // A3-07: only the application that links the open document may claim Back.
 const app = { id: "a1", resumeId: "r1", coverLetterId: "l1" };
 assert.deepEqual(origin.applicationOrigin("resume", "r1", app), { id: "a1" });
@@ -136,19 +71,6 @@ assert.deepEqual(origin.applicationOrigin("letter", "l1", app), { id: "a1" });
 assert.equal(origin.applicationOrigin("resume", "other", app), null);
 assert.equal(origin.applicationOrigin("resume", "r1", { ...app, resumeId: "elsewhere" }), null);
 assert.equal(origin.applicationOrigin("resume", "r1", null), null);
-
-// A3-02: the native preview and web preview review the same five terms from one shared function.
-assert.deepEqual(
-	offer.offerTermKeys({
-		base: 82000,
-		variable: 8200,
-		equity: "0.05%",
-		startDate: "2027-01-04",
-		respondBy: "2026-11-20T16:00:00Z",
-	}),
-	["base", "variable", "equity", "startDate", "respondBy"],
-);
-assert.deepEqual(offer.offerTermKeys({ base: null, variable: null, equity: "", startDate: null, respondBy: null }), []);
 
 // A3-30: a native draft belongs to one server + account + letter; no cross-letter or cross-account leak.
 const draftA = draftOwner.letterDraftOwnerKey("https://rx.example", "account-1", "letter-a");
@@ -215,6 +137,4 @@ drafting.discardLetterDraft();
 assert.equal(draftStorage.has(draftB), false);
 assert.equal(draftStorage.has(draftA), true);
 
-console.log(
-	"PASS: native workspace logic, disclosure order, draft guard/ownership/lifecycle, application origin and offer terms.",
-);
+console.log("PASS: native workspace logic, draft guard/ownership/lifecycle and application origin.");

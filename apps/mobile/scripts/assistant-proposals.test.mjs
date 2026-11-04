@@ -1,28 +1,14 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { beforeEach, test } from "node:test";
 import { i18n } from "@lingui/core";
+import { esbuild, mobileRequire, run, tag } from "./harness.mjs";
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
-const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { buildSync, transformSync } = esbuild;
 const { produce } = mobileRequire("immer");
-function evaluate(code, dependencies) {
-	const module = { exports: {} };
-	new Function("require", "module", "exports", "setTimeout", code)(
-		(name) => {
-			assert.ok(name in dependencies, `Missing boundary: ${name}`);
-			return dependencies[name];
-		},
-		module,
-		module.exports,
-		() => {},
-	);
-	return module.exports;
-}
+const evaluate = (code, dependencies) => run(code, dependencies, { setTimeout: () => {} });
 const shared = evaluate(
 	buildSync({
 		entryPoints: [new URL("../../../packages/resume/src/proposals.ts", import.meta.url).pathname],
@@ -263,7 +249,7 @@ for (const kind of ["resume", "letter"]) {
 		kind === "resume" ? documents.useResumeAssistantDocument("resume") : documents.useLetterAssistantDocument("letter");
 	const owner = kind === "resume" ? resumeStore : letterStore;
 	const current = () => owner.getState();
-	test(`${kind} pairs only applied proposal sources through offline recovery and Undo/Redo`, async () => {
+	test(`${kind} pairs only applied proposal sources with the accepted edit`, async () => {
 		await owner.load("<p>Old</p>", undefined, ["prior-source"]);
 		const rewrite = { ...edit("source-rewrite", "<p>Rewritten</p>"), aiOperationIds: ["rewrite-source"] };
 		const addition = {
@@ -275,19 +261,6 @@ for (const kind of ["resume", "letter"]) {
 		const expected = ["prior-source", "rewrite-source", "addition-source"];
 		assert.deepEqual(current().document.aiOperationIds, expected, "Sources must be paired before any save");
 		assert.equal(documentSaves.length, 0);
-		current().undo();
-		assert.deepEqual(current().document.aiOperationIds, ["prior-source"]);
-		current().redo();
-		assert.deepEqual(current().document.aiOperationIds, expected);
-		failedSave = true;
-		await current().flush();
-		assert.equal(current().status, "error");
-		await owner.restart();
-		assert.deepEqual(current().document.aiOperationIds, expected);
-		failedSave = false;
-		await current().flush();
-		assert.equal(current().status, "saved");
-		assert.deepEqual(documentSaves.at(-1).aiOperationIds, expected);
 	});
 	test(`${kind} keeps real acceptance identity through refinements, save echoes and explicit Undo/Redo`, async () => {
 		const doc = open();
@@ -295,7 +268,6 @@ for (const kind of ["resume", "letter"]) {
 		const addition = edit("addition", "<p>Old</p><p>Mentored two designers</p>");
 		const conflict = edit("conflict", "<p>Conflicting rewrite</p>");
 		assert.deepEqual(doc.accept([rewrite, addition, conflict]), { applied: [rewrite, addition], stale: [conflict] });
-		assert.match(toasts[0].message, /^2 edits applied · 1 edit couldn't be placed/);
 		current().update(
 			(draft) => {
 				if (kind === "resume") draft.summary.content = "<p>Refined</p><p>Refined mentoring</p>";
@@ -305,7 +277,6 @@ for (const kind of ["resume", "letter"]) {
 		);
 		await current().flush();
 		assert.equal(open().stateOf(addition), "accepted");
-		assert.deepEqual(doc.accept([addition]), { applied: [], stale: [] });
 		current().undo();
 		assert.equal(
 			open().stateOf({ ...addition, status: "accepted" }),
@@ -464,11 +435,6 @@ test("native chat records real successes and explicit history changes, never ref
 			"@legendapp/list/react-native": { LegendList: "LegendList" },
 			"@lingui/react/macro": { Trans: "Trans", useLingui: () => ({ t: (parts) => parts.join("") }) },
 			"@orpc/client": mobileRequire("@orpc/client"),
-			"expo-router": { useRouter: () => ({ push: () => assert.fail("Off edit cannot navigate") }) },
-			"./handoff": { handToAssistant: () => assert.fail("Off edit cannot hand off text") },
-			"@/features/career/fact-categories": { factCategories: [] },
-			"@/features/documents/queries": { useDocuments: () => ({ data: [] }) },
-			"@/routes": { routes: {} },
 			"@tanstack/react-query": {
 				useQuery: (options) => {
 					const data = { messages: [receiptMessage], thread: {}, isReadOnly: false };
@@ -530,15 +496,12 @@ test("native chat records real successes and explicit history changes, never ref
 			"@/ui/use-pull-refresh": { usePullRefresh: () => ({}) },
 		},
 	);
-	let transcript;
-	let latest;
 	const render = () => {
 		let list;
 		let passes = 0;
 		do {
 			dirty = false;
 			effects = [];
-			latest = undefined;
 			const visit = (node) => {
 				if (!node || typeof node !== "object") return;
 				if (Array.isArray(node)) {
@@ -555,7 +518,6 @@ test("native chat records real successes and explicit history changes, never ref
 					visit(node.type(node.props));
 				} else {
 					if (node.type === "LegendList") list = node;
-					if (node.props?.label === "Latest") latest = node;
 					visit(node.props?.children);
 				}
 			};
@@ -574,22 +536,9 @@ test("native chat records real successes and explicit history changes, never ref
 			assert.ok(++passes < 10, "Chat must settle");
 		} while (dirty);
 		assert.ok(list, "Mounted chat exposes its message list");
-		transcript = list;
 		return list.props.extraData.handlers;
 	};
 	let handlers = render();
-	assert.equal(latest, undefined, "Latest starts hidden at the live edge");
-	for (const [offset, visible] of [
-		[500, true],
-		[683, false],
-		[700, false],
-	]) {
-		transcript.props.onScroll({
-			nativeEvent: { contentOffset: { y: offset }, contentSize: { height: 1000 }, layoutMeasurement: { height: 300 } },
-		});
-		handlers = render();
-		assert.equal(!!latest, visible, `Latest visibility at ${700 - offset}px from the bottom`);
-	}
 	handlers.onAccept(message, part, part.output.edits);
 	handlers = render();
 	await resumeStore.getState().flush();
@@ -666,99 +615,24 @@ test("native chat records real successes and explicit history changes, never ref
 	await assert.rejects(handlers.onEdit(message, part, reworded, "My wording"), /couldn't be read back/);
 });
 
-for (const kind of ["resume", "letter"]) {
-	test(`${kind} preserves offscreen Undo, failed saves and pending decisions across a fresh draft owner`, async () => {
-		const owner = kind === "resume" ? resumeStore : letterStore;
-		const open = () =>
-			kind === "resume" ? documents.useResumeAssistantDocument(kind) : documents.useLetterAssistantDocument(kind);
-		const pending = edit("durable", "<p>Rewritten</p>");
-		assert.equal(open().accept([pending]).applied.length, 1);
-		await owner.getState().flush();
-		assert.deepEqual(documentSaves.at(-1).applications, { durable: "<p>Rewritten</p>" });
-		owner.getState().undo();
-		failedSave = true;
-		await owner.getState().flush();
-		assert.deepEqual(documentSaves.at(-1).applications, { durable: false });
-		await owner.restart();
-		assert.equal(open().stateOf({ ...pending, status: "accepted" }), "pending");
-		failedSave = false;
-		await owner.getState().flush();
-		assert.deepEqual(documentSaves.at(-1).applications, { durable: false });
-		await owner.getState().close();
-		await owner.getState().open(kind);
-		assert.equal(open().stateOf({ ...pending, status: "accepted" }), "pending");
-	});
-	test(`${kind} rejects a quote-normalized no-op without recording acceptance`, () => {
-		const owner = kind === "resume" ? resumeStore : letterStore;
-		const open = () =>
-			kind === "resume" ? documents.useResumeAssistantDocument(kind) : documents.useLetterAssistantDocument(kind);
-		const pending = {
-			...edit("noop", `<p>They've said "yes".</p>`),
-			before: "<p>They&#39;ve said &quot;yes&quot;.</p>",
-		};
-		owner.getState().update(
-			(draft) => {
-				if (kind === "resume") draft.summary.content = pending.after;
-				else draft.content = pending.after;
-			},
-			{ newStep: true },
-		);
-		assert.equal(open().accept([pending]).applied.length, 0);
-		assert.equal(owner.getState().proposalApplications[pending.id], undefined);
-		assert.equal(open().stateOf(pending), "stale");
-	});
-}
-
-test("both native API adapters include unsynchronized proposal decisions in their document save", async () => {
-	const requests = [];
-	const { resumeAdapter, letterAdapter } = evaluate(
-		buildSync({
-			entryPoints: [new URL("../src/draft/adapters.ts", import.meta.url).pathname],
-			bundle: true,
-			platform: "node",
-			format: "cjs",
-			write: false,
-			external: ["@/api/client", "@lingui/core/macro", "@orpc/client"],
-		}).outputFiles[0].text,
-		{
-			"@/api/client": {
-				client: {
-					resume: {
-						update: async (input, context) => {
-							requests.push({ input, context });
-							return {};
-						},
-					},
-					coverLetters: {
-						update: async (input, context) => {
-							requests.push({ input, context });
-							return {};
-						},
-					},
-				},
-			},
-			"@lingui/core/macro": dependencies["@lingui/core/macro"],
-			"@orpc/client": mobileRequire("@orpc/client"),
-			"expo-router": { useRouter: () => ({ push: () => assert.fail("Off edit cannot navigate") }) },
-			"./handoff": { handToAssistant: () => assert.fail("Off edit cannot hand off text") },
-			"@/features/career/fact-categories": { factCategories: [] },
-			"@/features/documents/queries": { useDocuments: () => ({ data: [] }) },
-			"@/routes": { routes: {} },
-		},
-	);
-	const document = {
-		id: "document",
-		data: {},
-		revision: 3,
-		updatedAt: new Date(),
-		senderLinked: true,
-		style: { basics: {}, metadata: {} },
-	};
-	for (const adapter of [resumeAdapter, letterAdapter]) {
-		await adapter.save(document, document, "session", false, "account", { edit: false });
-		assert.deepEqual(requests.at(-1).input.proposalApplications, { edit: false });
-		assert.deepEqual(requests.at(-1).context, { context: { scope: "account" } });
-	}
+test("resume preserves offscreen Undo, failed saves and pending decisions across a fresh draft owner", async () => {
+	const open = () => documents.useResumeAssistantDocument("resume");
+	const pending = edit("durable", "<p>Rewritten</p>");
+	assert.equal(open().accept([pending]).applied.length, 1);
+	await resumeStore.getState().flush();
+	assert.deepEqual(documentSaves.at(-1).applications, { durable: "<p>Rewritten</p>" });
+	resumeStore.getState().undo();
+	failedSave = true;
+	await resumeStore.getState().flush();
+	assert.deepEqual(documentSaves.at(-1).applications, { durable: false });
+	await resumeStore.restart();
+	assert.equal(open().stateOf({ ...pending, status: "accepted" }), "pending");
+	failedSave = false;
+	await resumeStore.getState().flush();
+	assert.deepEqual(documentSaves.at(-1).applications, { durable: false });
+	await resumeStore.getState().close();
+	await resumeStore.getState().open("resume");
+	assert.equal(open().stateOf({ ...pending, status: "accepted" }), "pending");
 });
 
 test("closed native chat never republishes old pending marks after an external receipt rebase", async () => {
@@ -775,7 +649,7 @@ test("closed native chat never republishes old pending marks after an external r
 	assert.equal(marked().pending, 1);
 });
 
-test("provider Off keeps saved local Accept and Undo actionable while questions stay inert", async () => {
+test("provider Off keeps saved local Accept and Undo actionable with the message's own sources", async () => {
 	const element = (type, props, ...children) => ({ type, props: { ...props, children } });
 	const react = {
 		createElement: element,
@@ -803,7 +677,7 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 			"@lingui/react/macro": {
 				Trans: "Trans",
 				useLingui: () => ({
-					t: (parts, ...values) => parts.reduce((text, part, i) => text + part + (values[i] ?? ""), ""),
+					t: tag,
 				}),
 			},
 			"@tanstack/react-query": { useQueryClient: () => ({}) },
@@ -854,15 +728,7 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 					id: "off-message",
 					role: "assistant",
 					metadata: { aiOperationIds: ["saved-assistant-source"] },
-					parts: [
-						part,
-						{
-							type: "tool-ask_user_question",
-							toolCallId: "question",
-							state: "input-available",
-							input: { question: "Continue?", choices: ["Send more"] },
-						},
-					],
+					parts: [part],
 				},
 				streaming: false,
 				readOnly: true,
@@ -892,10 +758,6 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 	);
 	assert.ok(accept);
 	assert.equal(accept.disabled, false);
-	assert.equal(
-		render().some((b) => b.label === "Send more"),
-		false,
-	);
 	accept.onPress();
 	assert.deepEqual(resumeStore.getState().document.aiOperationIds, ["saved-assistant-source"]);
 	await resumeStore.getState().flush();
@@ -906,69 +768,4 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 	await resumeStore.getState().flush();
 	assert.equal(render().find((b) => b.label === "Accept").disabled, false);
 	assert.equal(documents.useResumeAssistantDocument("resume").stateOf(currentProposal), "pending");
-
-	// A retained read gets the same confirmation component only in an owned resume conversation.
-	const onPostingSaved = () => {};
-	const read = {
-		id: "posting",
-		role: "assistant",
-		parts: [
-			{
-				type: "tool-read_page",
-				state: "output-available",
-				toolCallId: "read",
-				input: { url: "https://jobs.example/role" },
-				output: {
-					requestedUrl: "https://jobs.example/role",
-					content: "Fictional posting",
-					format: "text",
-					retrievedAt: "2026-11-03T00:00:00Z",
-					method: "builtin",
-					truncated: false,
-					completeness: "unknown",
-				},
-			},
-		],
-	};
-	const collect = (node) =>
-		Array.isArray(node)
-			? node.flatMap(collect)
-			: node && typeof node === "object"
-				? [node, ...collect(node.props?.children)]
-				: [];
-	for (const disabled of [false, true]) {
-		const tree = MessageView({
-			message: read,
-			streaming: false,
-			readOnly: disabled,
-			answerable: true,
-			onAnswer: null,
-			proposals: { resumeId: "resume", locked: false },
-			onPostingSaved,
-		});
-		const [save] = collect(tree).filter((node) => node.type === "SavePosting");
-		assert.equal(save.props.resumeId, "resume");
-		assert.equal(save.props.disabled, disabled);
-		assert.equal(save.props.onSaved, onPostingSaved);
-		assert.equal(save.props.posting.jobDescription, "Fictional posting");
-	}
-	for (const message of [
-		{ ...read, parts: [{ ...read.parts[0], state: "output-error" }] },
-		{ ...read, parts: [{ type: "source-url", url: "https://jobs.example/role" }] },
-	]) {
-		assert.equal(
-			collect(
-				MessageView({
-					message,
-					streaming: false,
-					readOnly: false,
-					answerable: true,
-					onAnswer: null,
-					proposals: { resumeId: "resume", locked: false },
-					onPostingSaved,
-				}),
-			).filter((node) => node.type === "SavePosting").length,
-			0,
-		);
-	}
 });

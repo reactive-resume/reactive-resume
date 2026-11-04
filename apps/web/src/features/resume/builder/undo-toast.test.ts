@@ -78,6 +78,15 @@ it("says to use Undo when the change can't be put back", () => {
 	expect(mocks.toasts.at(-1)?.description).toBe("You've made changes since. Use Undo to step back through them.");
 });
 
+it("leaves a later edit in place when nothing can put the change back (R8)", () => {
+	mocks.store.update((draft) => void (draft.headline = "Merged"));
+	undoToast("Merged");
+	mocks.store.update((draft) => void (draft.headline = "Typed after"));
+	mocks.toasts[0]?.actionProps?.onClick();
+	expect(mocks.store.resume.data.headline).toBe("Typed after");
+	expect(mocks.toasts.at(-1)?.description).toBe("You've made changes since. Use Undo to step back through them.");
+});
+
 it("leaves another resume alone", () => {
 	deleteFirst();
 	mocks.store.update((draft) => void (draft.headline = "Later"));

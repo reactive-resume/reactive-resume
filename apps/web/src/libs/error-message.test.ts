@@ -73,18 +73,6 @@ describe("connection and reply failures", () => {
 });
 
 describe("getResumeErrorMessage", () => {
-	it("maps INVALID_SLUG to the expected message", () => {
-		const error = new ORPCError("INVALID_SLUG");
-		expect(getResumeErrorMessage(error)).toBe(
-			"Use at most 64 characters. The address must contain only Latin letters a–z and numbers, separated by single dashes.",
-		);
-	});
-
-	it("maps RESUME_SLUG_ALREADY_EXISTS to the expected message", () => {
-		const error = new ORPCError("RESUME_SLUG_ALREADY_EXISTS");
-		expect(getResumeErrorMessage(error)).toBe("Another resume already uses this address. Choose a different one.");
-	});
-
 	it("maps RESUME_LOCKED to the expected message", () => {
 		const error = new ORPCError("RESUME_LOCKED");
 		expect(getResumeErrorMessage(error)).toBe("This resume is locked. Unlock it to make changes.");

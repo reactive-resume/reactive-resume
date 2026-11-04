@@ -120,43 +120,42 @@ describe("documentToLines", () => {
 	});
 });
 
-it.each(["Remote", "Reykjavík", "Singapore"])(
-	"reads a PDF without AI through the web import adapter and shared parser (%s)",
-	async (location) => {
-		extract.mockResolvedValue(
-			rawExtraction([
-				[
-					{ text: "Ada Lovelace", x: 260, y: 20 },
-					{ text: "ada@example.com", x: 40, y: 40, width: 500 },
-					{ text: "SKILLS", x: 40, y: 80 },
-					{ text: "Rust", x: 40, y: 100 },
-					{ text: "TypeScript", x: 40, y: 120 },
-					{ text: "SUMMARY", x: 250, y: 80 },
-					{ text: "Builds reliable products.", x: 250, y: 100 },
-					{ text: "EXPERIENCE", x: 250, y: 140 },
-					{ text: "Example Labs", x: 250, y: 160, fontRef: "bold" },
-					{ text: location, x: 500, y: 160, width: 50 },
-					{ text: "Director, Product", x: 250, y: 180, width: 100 },
-					{ text: "2020 – Present", x: 480, y: 180 },
-					{ text: "•", x: 250, y: 200 },
-					{ text: "Built services for", x: 260, y: 200 },
-					{ text: "Global Customers.", x: 260, y: 215 },
-				],
-			]),
-		);
-		const data = await readResumeFile(new File(["%PDF-fixture"], "resume.pdf"), "pdf", { aiAvailable: false });
-		expect(data.basics.name).toBe("Ada Lovelace");
-		expect(data.sections.skills.items.map((item) => item.name)).toEqual(["Rust", "TypeScript"]);
-		expect(data.sections.experience.items).toHaveLength(1);
-		expect(data.sections.experience.items[0]).toMatchObject({
-			company: "Example Labs",
-			position: "Director, Product",
-			location,
-			period: "2020 – Present",
-			description: "<ul><li>Built services for Global Customers.</li></ul>",
-		});
-	},
-);
+it("reads a PDF without AI through the web import adapter and shared parser", async () => {
+	// Placed by position, not a word list; a non-ASCII place name proves the text survives intact.
+	const location = "Reykjavík";
+	extract.mockResolvedValue(
+		rawExtraction([
+			[
+				{ text: "Ada Lovelace", x: 260, y: 20 },
+				{ text: "ada@example.com", x: 40, y: 40, width: 500 },
+				{ text: "SKILLS", x: 40, y: 80 },
+				{ text: "Rust", x: 40, y: 100 },
+				{ text: "TypeScript", x: 40, y: 120 },
+				{ text: "SUMMARY", x: 250, y: 80 },
+				{ text: "Builds reliable products.", x: 250, y: 100 },
+				{ text: "EXPERIENCE", x: 250, y: 140 },
+				{ text: "Example Labs", x: 250, y: 160, fontRef: "bold" },
+				{ text: location, x: 500, y: 160, width: 50 },
+				{ text: "Director, Product", x: 250, y: 180, width: 100 },
+				{ text: "2020 – Present", x: 480, y: 180 },
+				{ text: "•", x: 250, y: 200 },
+				{ text: "Built services for", x: 260, y: 200 },
+				{ text: "Global Customers.", x: 260, y: 215 },
+			],
+		]),
+	);
+	const data = await readResumeFile(new File(["%PDF-fixture"], "resume.pdf"), "pdf", { aiAvailable: false });
+	expect(data.basics.name).toBe("Ada Lovelace");
+	expect(data.sections.skills.items.map((item) => item.name)).toEqual(["Rust", "TypeScript"]);
+	expect(data.sections.experience.items).toHaveLength(1);
+	expect(data.sections.experience.items[0]).toMatchObject({
+		company: "Example Labs",
+		position: "Director, Product",
+		location,
+		period: "2020 – Present",
+		description: "<ul><li>Built services for Global Customers.</li></ul>",
+	});
+});
 
 it("does not split tabbed headings when body text crosses the proposed column boundary", () => {
 	expect(

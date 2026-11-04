@@ -18,6 +18,7 @@ import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { aiOperationIds } from "@reactive-resume/schema/ai-usage";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { buildAccountZip } from "@reactive-resume/utils/account-zip";
+import { truncateCascade } from "../../test-database";
 import { loadDocument } from "../agent/document";
 import { upsertAssistantUiMessage } from "../agent/messages-persistence";
 import { agentRouter } from "../agent/router";
@@ -812,7 +813,7 @@ describe.skipIf(!databaseUrl)("AI request metering through installed SDK, protec
 		agentChanges = [];
 		mode = "text";
 		failLetter = false;
-		await pool.query('truncate "user" cascade');
+		await truncateCascade(pool, ["user"]);
 		await withDatabasePool(pool, async () => {
 			const nonce = randomUUID().slice(0, 8);
 			const users = await db

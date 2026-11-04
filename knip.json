@@ -1,10 +1,10 @@
 {
 	"$schema": "https://unpkg.com/knip@6/schema.json",
 	"tags": ["-lintignore"],
-	"ignoreBinaries": ["pdftotext"],
+	"ignoreBinaries": ["pdftotext", "mktemp"],
 	"workspaces": {
 		".": {
-			"entry": ["tests/e2e/fixtures/application-order.cjs", "tests/e2e/autofill-prototype.mjs"]
+			"entry": ["tests/e2e/autofill-prototype.mjs"]
 		},
 		"apps/mobile": {
 			"ignoreExportsUsedInFile": true,
@@ -30,6 +30,7 @@
 			"entry": [
 				"lingui.config.ts",
 				"vitest.config.ts",
+				"vitest.setup.ts",
 				"src/features/homepage/prerender.tsx",
 				"src/features/auth/email-text.ts"
 			],

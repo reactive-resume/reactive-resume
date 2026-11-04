@@ -72,7 +72,7 @@ new Function("require", "module", "exports", code)(
 const { StoryPracticeButton } = mod.exports;
 const fact = { id: "shared", status: "active", applicationId: null, updatedAt: "2030-11-01", revisions: [] };
 const story = { id: "story", applicationId: null, updatedAt: "2030-11-02", data: { factIds: [fact.id] } };
-const ready = (data) => ({ data, isPending: false, isError: false, refetch: () => calls.push("retry") });
+const ready = (data) => ({ data, isPending: false, isError: false });
 function reset() {
 	calls = [];
 	facts = ready([fact]);
@@ -95,61 +95,32 @@ test("no interview opens shared story practice without a fabricated application"
 	assert.deepEqual(calls, [{ params: { practice: "story" } }]);
 });
 
-test("one named interview preserves the selected story and exact round", () => {
+test("practice for an interview opens its exact round, directly for one and by explicit choice for several", () => {
 	reset();
-	applications.data = [
-		{
-			id: "job",
-			company: "Fictional Cedar",
-			status: "interview",
-			activity: [{ id: "round", at: "2030-11-04T10:00:00Z" }],
-		},
-	];
-	const tree = StoryPracticeButton({ story });
-	assert.equal(tree.props.label, "Practice for Fictional Cedar");
-	tree.props.onPress();
-	assert.deepEqual(calls, [{ id: "job", tab: "practise", search: { speak: true, story: "story", round: "round" } }]);
-});
-
-test("several interviews offer an explicit round choice", () => {
-	reset();
-	applications.data = ["first", "second"].map((id) => ({
+	const interview = (id) => ({
 		id,
 		company: id,
 		status: "interview",
 		activity: [{ id: `${id}-round`, at: "2030-11-04T10:00:00Z" }],
-	}));
-	const tree = StoryPracticeButton({ story });
-	assert.equal(tree.type, "SelectSheet");
-	assert.equal(tree.props.options.length, 2);
-	tree.props.onChange("second-round");
-	assert.equal(calls[0].id, "second");
-	assert.equal(calls[0].search.round, "second-round");
-});
-
-test("missing, private, excluded and changed backing facts fail closed", () => {
-	for (const data of [
-		[],
-		[{ ...fact, applicationId: "private-job" }],
-		[{ ...fact, status: "excluded" }],
-		[{ ...fact, revisions: [{}], updatedAt: "2030-11-03" }],
-	]) {
-		reset();
-		facts.data = data;
-		const tree = StoryPracticeButton({ story });
-		assert.equal(find(tree, "Button").props.disabled, true);
-		assert.deepEqual(calls, []);
-	}
-});
-
-test("failed or loading reads do not offer a misleading practice action", () => {
+	});
+	applications.data = [interview("job")];
+	StoryPracticeButton({ story }).props.onPress();
+	assert.deepEqual(calls, [
+		{ id: "job", tab: "practise", search: { speak: true, story: "story", round: "job-round" } },
+	]);
 	reset();
-	applications.isPending = true;
-	assert.equal(StoryPracticeButton({ story }).props.disabled, true);
-	applications.isPending = false;
-	facts.isError = true;
+	applications.data = [interview("first"), interview("second")];
+	StoryPracticeButton({ story }).props.onChange("second-round");
+	assert.deepEqual(calls, [
+		{ id: "second", tab: "practise", search: { speak: true, story: "story", round: "second-round" } },
+	]);
+});
+
+// canUseCareerStory's cases live in packages/schema/src/career-practice.test.ts; this proves the button uses it.
+test("a story whose backing fact is switched off fails closed", () => {
+	reset();
+	facts.data = [{ ...fact, status: "excluded" }];
 	const tree = StoryPracticeButton({ story });
-	assert.equal(tree.type, "Banner");
-	tree.props.action.onPress();
-	assert.deepEqual(calls, ["retry", "retry"]);
+	assert.equal(find(tree, "Button").props.disabled, true);
+	assert.deepEqual(calls, []);
 });

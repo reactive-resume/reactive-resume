@@ -124,7 +124,7 @@ describe("parseJSONResume", () => {
 
 		expect(skill.name).toBe("TypeScript");
 		expect(skill.keywords).toEqual(["node", "react"]);
-		expect(skill.level).toBeGreaterThan(0);
+		expect(skill.level).toBe(5);
 	});
 
 	it("maps profiles from basics.profiles into the profiles section", () => {

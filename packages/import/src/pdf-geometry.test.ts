@@ -16,7 +16,7 @@ it("indexes page-local y windows rather than scanning other pages", () => {
 	const fields = Array.from({ length: 8000 }, (_, i) => line((i % 100) * 10, Math.floor(i / 100) + 1));
 	const index = new GeometryIndex(fields);
 	expect(index.near(line(100, 4), 10, 10).map((row) => row.y)).toEqual([90, 100, 110]);
-	expect(index.visits).toBe(3);
+	expect(index.budget.visits).toBe(3);
 });
 it("bounds nested candidate work deterministically across shared indexes", () => {
 	const index = new GeometryIndex(Array.from({ length: 100 }, (_, i) => line(i)));
@@ -30,5 +30,5 @@ it("bounds nested candidate work deterministically across shared indexes", () =>
 		}
 	}).toThrow(GeometryLimit);
 	expect(queries).toBe(2000);
-	expect(index.visits).toBe(400100);
+	expect(index.budget.visits).toBe(400100);
 });

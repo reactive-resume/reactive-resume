@@ -20,4 +20,4 @@ The final local set contains 165 opaque PNGs plus matching editable SVGs across 
 
 The seven runtime icon/splash PNGs under `../assets` remain the supplied artwork used in iOS build 4 and Android build 5. Configuration uses those paths directly. PWA derivatives use the same artwork and need a normal web deployment before users receive changes. Listing archives and editable design exports remain excluded from Git.
 
-Validate copy after changes: app name and Apple subtitle 30 characters, Google short description 80, full description 4,000, Apple keywords 100, and Apple promotional text 170. Runtime, live-provider, physical-device, and store-review gates remain separate from artwork uploads; see `.agents/docs/mobile-release-handoff.md`.
+Validate copy after changes: app name and Apple subtitle 30 characters, Google short description 80, full description 4,000, Apple keywords 100, and Apple promotional text 170. Runtime, live-provider, physical-device, and store-review gates remain separate from artwork uploads; see `.agents/docs/runbooks/mobile-releases.md`.

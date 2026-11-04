@@ -1,12 +1,10 @@
 // Host proof of account lifetime; native rendering remains device QA.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
+import { esbuild, run } from "./harness.mjs";
 
-const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
-const code = transformSync(
+const code = esbuild.transformSync(
 	readFileSync(new URL("../src/features/settings/account-locale.ts", import.meta.url), "utf8"),
 	{ loader: "ts", format: "cjs" },
 ).code;
@@ -53,15 +51,6 @@ function harness(saved = "en-US") {
 			},
 		},
 	};
-	const module = { exports: {} };
-	new Function("require", "module", "exports", code)(
-		(name) => {
-			assert.ok(name in mocks, `Missing boundary: ${name}`);
-			return mocks[name];
-		},
-		module,
-		module.exports,
-	);
 	return {
 		state,
 		writes,
@@ -69,7 +58,7 @@ function harness(saved = "en-US") {
 		activations,
 		restarts,
 		finish,
-		render: module.exports.useAccountLocale,
+		render: run(code, mocks).useAccountLocale,
 		effect: () => effects.shift()(),
 	};
 }
@@ -114,27 +103,25 @@ test("account replacement, cleanup and an explicit choice each fence derived cat
 	}
 });
 
-test("missing, unsupported and old-server account languages follow the device without a write", () => {
-	for (const data of [{}, { locale: null }, { locale: "unsupported" }]) {
+test("missing, unsupported and old-server account languages, and sign-out, follow the device without a write", () => {
+	for (const [data, signedOut] of [
+		[{}, false],
+		[{ locale: null }, false],
+		[{ locale: "unsupported" }, false],
+		[{ locale: "ar-SA" }, true],
+	]) {
 		const h = harness();
 		h.state.data = data;
 		h.state.explicit = false;
+		if (signedOut) {
+			h.state.scope = null;
+			h.state.session = { ...h.state.session, status: "signed-out" };
+		}
 		h.render();
 		h.effect();
 		assert.equal(h.activations[0].locale, "en-US");
 		assert.deepEqual(h.writes, []);
 	}
-});
-
-test("sign-out returns an unconfigured device to its language", () => {
-	const h = harness("ar-SA");
-	h.state.explicit = false;
-	h.state.scope = null;
-	h.state.session = { ...h.state.session, status: "signed-out" };
-	h.render();
-	h.effect();
-	assert.equal(h.activations[0].locale, "en-US");
-	assert.deepEqual(h.writes, []);
 });
 
 test("account replaced between render and effect sends no old account language", () => {

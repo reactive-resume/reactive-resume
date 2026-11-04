@@ -5,7 +5,6 @@ import { createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../document";
 import { pdf } from "../forme/testing";
-import { resolveResumeRuntime } from "./resolve";
 
 type HostNode = { type: string; style?: unknown; value?: string; children?: HostNode[] };
 
@@ -60,12 +59,8 @@ const buildFixture = (): ResumeData => {
 
 const renderTitleRowStyles = async (template: Template, stylesheet?: string) => {
 	const data = buildFixture();
-	const semanticRuntime = stylesheet
-		? resolveResumeRuntime({ data, template, source: { languageVersion: 1, text: stylesheet } })
-		: undefined;
-	const element = createElement(ResumeDocument, { data, template, semanticRuntime }) as unknown as Parameters<
-		typeof pdf
-	>[0];
+	if (stylesheet) data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: stylesheet } };
+	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
 	const document = instance.container.document as unknown as HostNode;

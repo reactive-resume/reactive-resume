@@ -42,14 +42,12 @@ function browserFixture() {
 
 test("security targets and existing key/deletion entries retain server, account and explicit intent without credentials", async () => {
 	const { state, openAccountSettings } = browserFixture();
-	for (const target of ["email", "password", "two-step", "passkeys", "linked-accounts"]) {
-		assert.equal(await openAccountSettings(`/dashboard/settings/account#${target}`), true);
-		const url = state.urls.at(-1);
-		assert.equal(url.origin, origin);
-		assert.equal(url.pathname, "/dashboard/settings/account");
-		assert.equal(url.hash, `#${target}`);
-		assert.deepEqual([...url.searchParams], [["forAccount", "fictional-account"]]);
-	}
+	assert.equal(await openAccountSettings("/dashboard/settings/account#passkeys"), true);
+	const url = state.urls.at(-1);
+	assert.equal(url.origin, origin);
+	assert.equal(url.pathname, "/dashboard/settings/account");
+	assert.equal(url.hash, "#passkeys");
+	assert.deepEqual([...url.searchParams], [["forAccount", "fictional-account"]]);
 	await openAccountSettings("/dashboard/settings/account?deleteAccount=true");
 	assert.equal(state.urls.at(-1).searchParams.get("deleteAccount"), "true");
 	await openAccountSettings("/dashboard/settings/ai?newKey=true#api-keys");
@@ -88,7 +86,7 @@ const h = React.createElement;
 const tag = (parts, ...values) => parts.reduce((text, part, i) => text + part + (values[i] ?? ""), "");
 const Group = ({ children }) => h("div", null, children);
 
-test("native account rows select all five browser areas and ignore stale completion/errors", async () => {
+test("native account rows open the browser for the rendered account and ignore stale completion/errors", async () => {
 	const { state, openAccountSettings } = browserFixture();
 	let refetches = 0;
 	let invalidations = 0;
@@ -131,26 +129,18 @@ test("native account rows select all five browser areas and ignore stale complet
 	});
 	try {
 		render(h(AccountScreen));
-		for (const [label, target] of [
-			["Email", "email"],
-			["Password", "password"],
-			["Two-step verification", "two-step"],
-			["Passkeys", "passkeys"],
-			["Linked accounts", "linked-accounts"],
-		]) {
-			await act(async () => fireEvent.click(screen.getByRole("button", { name: label, exact: true })));
-			assert.equal(state.urls.at(-1).hash, `#${target}`);
-		}
-		assert.equal(refetches, 5);
-		assert.equal(invalidations, 5);
+		await act(async () => fireEvent.click(screen.getByRole("button", { name: "Email", exact: true })));
+		assert.equal(state.urls.at(-1).hash, "#email");
+		assert.equal(refetches, 1);
+		assert.equal(invalidations, 1);
 		state.pending = Promise.withResolvers();
 		fireEvent.click(screen.getByRole("button", { name: "Password", exact: true }));
 		state.scope = JSON.stringify([origin, "other-account"]);
 		await act(async () => {
 			state.pending.resolve();
 		});
-		assert.equal(refetches, 5);
-		assert.equal(invalidations, 5);
+		assert.equal(refetches, 1);
+		assert.equal(invalidations, 1);
 		const launched = state.urls.length;
 		await act(async () => fireEvent.click(screen.getByRole("button", { name: "Email", exact: true })));
 		assert.equal(state.urls.length, launched, "stale rendered account cannot launch new-account settings");

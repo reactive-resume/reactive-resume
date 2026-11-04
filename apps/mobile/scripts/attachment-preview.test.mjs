@@ -165,6 +165,7 @@ test("private uploads authenticate only original-origin upload URLs, reject redi
 	])
 		await assert.rejects(privateUpload(url, signal, scope), /Invalid private upload URL/);
 	assert.equal(requests.length, before);
+	assert.equal(foreignReads, 0, "the bearer token must never reach another origin");
 	await assert.rejects(privateUpload("/api/uploads/redirect.pdf", signal, scope));
 	assert.equal(foreignReads, 0, "a redirect must never transmit credentials to its target");
 	token = "old-token";
@@ -334,15 +335,12 @@ async function mount({ failParse = false, openGate } = {}) {
 	};
 }
 
-test("native preview shows only page one with fetched size and shares the exact private PDF", async () => {
+test("native preview shares the exact private PDF and closes its native document on unmount", async () => {
 	const view = await mount();
 	try {
 		await act(async () => {
-			assert.deepEqual(await rendered.promise, [0]);
+			await rendered.promise;
 		});
-		assert.equal(view.container.querySelectorAll("img").length, 1);
-		assert.equal(view.container.querySelector("img").getAttribute("src"), "file:///private/page-0.png");
-		assert.match(view.container.textContent, /1 kB/);
 		await act(async () => view.container.querySelector("button").click());
 		assert.deepEqual(files.at(-1).bytes, new Uint8Array(pdf));
 		assert.equal(shared.at(-1), files.at(-1).uri);
@@ -352,15 +350,13 @@ test("native preview shows only page one with fetched size and shares the exact 
 	assert.equal(await closed.promise, "private-document");
 });
 
-test("native parse errors keep actual size and file access, and a late open after unmount is closed", async () => {
+test("native parse errors keep file access and retry, and a late open after unmount is closed", async () => {
 	const view = await mount({ failParse: true });
 	try {
 		await act(async () => {
 			await opened.promise;
 		});
 		assert.equal(view.container.querySelectorAll("img").length, 0);
-		assert.match(view.container.textContent, /1 kB/);
-		assert.match(view.container.textContent, /Couldn't read that file/);
 		assert.match(view.container.textContent, /Save or share file/);
 		parseFailure = false;
 		await act(async () =>

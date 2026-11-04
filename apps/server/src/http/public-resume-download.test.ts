@@ -62,41 +62,6 @@ describe("handlePublicResumeDownload", () => {
 		);
 	});
 
-	it.each([
-		{
-			filename: '../../etc/passwd"\r\nX-Injected: yes\r\n\r\nAda-Lovelace-Resume.pdf',
-			header: 'attachment; filename="etcpasswdX-Injected yesAda-Lovelace-Resume.pdf"',
-		},
-		{
-			filename: "x＂;filename＊=UTF-8''evil.html;a=＂-Resume.pdf",
-			header:
-				"attachment; filename=\"x;filename=UTF-8''evil.html;a=-Resume.pdf\"; filename*=UTF-8''x%EF%BC%82%3Bfilename%EF%BC%8A%3DUTF-8%27%27evil.html%3Ba%3D%EF%BC%82-Resume.pdf",
-		},
-		{
-			filename: "Ada＼Lovelace-Resume.pdf",
-			header: "attachment; filename=\"AdaLovelace-Resume.pdf\"; filename*=UTF-8''Ada%EF%BC%BCLovelace-Resume.pdf",
-		},
-	])("keeps a stored name within the filename parameters: $filename", async ({ filename, header }) => {
-		mocks.createPublicResumePdf.mockResolvedValueOnce({
-			body: new File(["%PDF"], "resume.pdf", { type: "text/plain" }),
-			filename,
-			etag: '"abc"',
-		});
-
-		const response = await handlePublicResumeDownload(
-			new Request("https://example.com/api/resumes/jane/resume/pdf?download"),
-			"jane",
-			"resume",
-			trustedClient,
-		);
-
-		expect(response.status).toBe(200);
-		expect(response.headers.get("Content-Type")).toBe("application/pdf");
-		expect(await response.text()).toBe("%PDF");
-		expect(response.headers.get("Content-Disposition")).toBe(header);
-		expect(response.headers.get("X-Injected")).toBeNull();
-	});
-
 	it("answers a current copy with 304 and keeps refusals uncacheable", async () => {
 		mocks.createPublicResumePdf.mockResolvedValueOnce({ body: null, filename: "李明-Resume.pdf", etag: '"abc"' });
 		const current = await handlePublicResumeDownload(

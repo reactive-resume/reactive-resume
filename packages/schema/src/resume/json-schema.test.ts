@@ -4,18 +4,20 @@ import { defaultResumeData } from "./default";
 import { createResumeDataJsonSchema } from "./json-schema";
 
 describe("createResumeDataJsonSchema", () => {
-	it("accepts legacy input with omitted picture fit", () => {
-		const schema = createResumeDataJsonSchema();
+	const generatedSchema = z.fromJSONSchema(createResumeDataJsonSchema());
 
-		expect(schema).toMatchObject({
-			properties: {
-				picture: { required: expect.not.arrayContaining(["fit"]) },
-			},
-		});
+	it("accepts legacy input with omitted picture fit and skill keyword layout, rejecting an unknown layout", () => {
+		const input = JSON.parse(JSON.stringify(defaultResumeData));
+		delete input.picture.fit;
+		delete input.sections.skills.keywordLayout;
+		expect(generatedSchema.safeParse(input).success).toBe(true);
+		input.sections.skills.keywordLayout = "list";
+		expect(generatedSchema.safeParse(input).success).toBe(true);
+		input.sections.skills.keywordLayout = "invalid";
+		expect(generatedSchema.safeParse(input).success).toBe(false);
 	});
 
 	it("enforces the custom-section type and item correlation", () => {
-		const generatedSchema = z.fromJSONSchema(createResumeDataJsonSchema());
 		const valid = {
 			...defaultResumeData,
 			customSections: [

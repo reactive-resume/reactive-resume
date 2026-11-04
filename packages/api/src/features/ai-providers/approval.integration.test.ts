@@ -17,6 +17,7 @@ import { env } from "@reactive-resume/env/server";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
 import { careerScheduleInputSchema } from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { truncateCascade } from "../../test-database";
 
 vi.mock("@reactive-resume/env/server", async (original) => {
 	const module = await original<typeof import("@reactive-resume/env/server")>();
@@ -246,7 +247,7 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)(
 				AI_API_KEY: undefined,
 				AI_BASE_URL: undefined,
 			});
-			await pool.query('TRUNCATE "user", released_username, storage_cleanup_job CASCADE');
+			await truncateCascade(pool, ["user", "released_username", "storage_cleanup_job"]);
 			await getDb()
 				.insert(tables.user)
 				.values(
