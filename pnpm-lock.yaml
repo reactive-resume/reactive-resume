@@ -766,11 +766,11 @@ importers:
         specifier: ^2.4.3
         version: 2.4.3
       '@formepdf/core':
-        specifier: 0.29.0
-        version: 0.29.0(react@19.3.1)
+        specifier: 0.30.0
+        version: 0.30.0(react@19.3.1)
       '@formepdf/react':
-        specifier: 0.29.0
-        version: 0.29.0(react@19.3.1)
+        specifier: 0.30.0
+        version: 0.30.0(react@19.3.1)
       '@hono/node-server':
         specifier: ^2.1.5
         version: 2.1.5(hono@4.13.14)
@@ -1850,11 +1850,11 @@ importers:
   packages/pdf:
     dependencies:
       '@formepdf/core':
-        specifier: 0.29.0
-        version: 0.29.0(react@19.3.1)
+        specifier: 0.30.0
+        version: 0.30.0(react@19.3.1)
       '@formepdf/react':
-        specifier: 0.29.0
-        version: 0.29.0(react@19.3.1)
+        specifier: 0.30.0
+        version: 0.30.0(react@19.3.1)
       '@reactive-resume/fonts':
         specifier: workspace:*
         version: link:../fonts
@@ -3756,13 +3756,26 @@ packages:
     peerDependencies:
       react: ^18 || ^19
 
+  '@formepdf/core@0.30.0':
+    resolution: {integrity: sha512-XIjXYirep3uRjXb7Royafqmi4mYn3SObGxr94oTv/0mDnso495iTN04PnJhzenuHAHIiStgPX0vNZv8zFOKT1g==}
+    peerDependencies:
+      react: ^18 || ^19
+
   '@formepdf/react@0.29.0':
     resolution: {integrity: sha512-Zk9FjYOzHz3UybAEIfwn+fSsWmrn6baWgnEQJTbveWzdGoUvn+57NIxJNy3MaDz4vQhjBD9O86zv2hGrrjH4lA==}
     peerDependencies:
       react: ^18 || ^19
 
+  '@formepdf/react@0.30.0':
+    resolution: {integrity: sha512-iYTTPyQpEbvtdyi3rWBHBMZg707IhUt1MxXtMmW9QqJAMitujJKIj2KPexYkdzc2BDPMl1MTx7vXOc8Vv6JfeA==}
+    peerDependencies:
+      react: ^18 || ^19
+
   '@formepdf/shared@0.29.0':
     resolution: {integrity: sha512-0f88og4D9XCmwVZ3+/lheM7NsEl3PTLEjZQe01etC1YFMdFB65oy+W7465Ab4oD3+odqZfjEORqiwHHzo4dIbA==}
+
+  '@formepdf/shared@0.30.0':
+    resolution: {integrity: sha512-HwOdS3mHfyJW24JJgpu7QcTQuSXNYHl8vOKPgbqrG7SMZy2hey/lRjFY1k4ou6VgTtXXw1fLFgjYhuWj8uEF2g==}
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
@@ -14125,12 +14138,26 @@ snapshots:
       '@formepdf/react': 0.29.0(react@19.3.1)
       react: 19.3.1
 
+  '@formepdf/core@0.30.0(react@19.3.1)':
+    dependencies:
+      '@formepdf/react': 0.30.0(react@19.3.1)
+      react: 19.3.1
+
   '@formepdf/react@0.29.0(react@19.3.1)':
     dependencies:
       '@formepdf/shared': 0.29.0
       react: 19.3.1
 
+  '@formepdf/react@0.30.0(react@19.3.1)':
+    dependencies:
+      '@formepdf/shared': 0.30.0
+      react: 19.3.1
+
   '@formepdf/shared@0.29.0':
+    dependencies:
+      parse5: 7.3.0
+
+  '@formepdf/shared@0.30.0':
     dependencies:
       parse5: 7.3.0
 
