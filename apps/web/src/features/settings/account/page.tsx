@@ -8,6 +8,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { DataSection } from "./data";
 import { ProfileSection } from "./profile";
 import { SecuritySection } from "./security";
+import { SessionsSection } from "./sessions";
 import { PageHeader } from "@/components/layout/page-header";
 import { clearAccountData } from "@/libs/auth/clear-account-data";
 import { authClient } from "@/libs/auth/client";
@@ -21,6 +22,7 @@ export function AccountSettings() {
 			<PageHeader title={<Trans>Account</Trans>} />
 			<ProfileSection session={session} />
 			<SecuritySection />
+			<SessionsSection />
 			<DataSection openDeletion={deleteAccount ?? false} />
 			<div className="border-t border-line pt-6">
 				<SignOutButton />

@@ -436,7 +436,7 @@ export function AppSidebar(props: BottomTabBarProps) {
 				>
 					<Icon name="magnifying-glass" size={size.icon.meta} color={colors.ink3} />
 					<Text variant="callout" color="ink3" numberOfLines={1} style={{ flex: 1 }}>
-						{t`Search or run…`}
+						{t`Search`}
 					</Text>
 					<Text variant="caption" color="ink3">
 						⌘K

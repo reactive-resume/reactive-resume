@@ -16,7 +16,8 @@ import { CharacterShortcutSetting } from "./character-shortcuts";
 import { useShortcutSettings } from "./settings";
 import { showKeyboardShortcuts, useShortcutHelp } from "./store";
 
-export function KeyboardShortcuts() {
+/** `showTrigger` hides the floating button (marketing pages); the `?` shortcut and dialog stay. */
+export function KeyboardShortcuts({ showTrigger = true }: { showTrigger?: boolean }) {
 	const { t } = useLingui();
 	const { shortcuts, opener, close } = useShortcutHelp();
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
@@ -39,16 +40,18 @@ export function KeyboardShortcuts() {
 
 	return (
 		<>
-			<Button
-				id="keyboard-shortcuts-trigger"
-				variant="secondary"
-				className="fixed end-3 bottom-[max(5rem,var(--floating-toolbar-clearance,0px))] z-30 gap-2 sm:bottom-[max(0.75rem,var(--floating-toolbar-clearance,0px))] print:hidden"
-				onClick={() => showKeyboardShortcuts()}
-				aria-keyshortcuts={characterShortcuts ? "?" : undefined}
-			>
-				<Icon name="keyboard" />
-				<Trans>Keyboard shortcuts</Trans>
-			</Button>
+			{showTrigger && (
+				<Button
+					id="keyboard-shortcuts-trigger"
+					variant="secondary"
+					className="fixed end-3 bottom-[max(5rem,var(--floating-toolbar-clearance,0px))] z-30 gap-2 sm:bottom-[max(0.75rem,var(--floating-toolbar-clearance,0px))] print:hidden"
+					onClick={() => showKeyboardShortcuts()}
+					aria-keyshortcuts={characterShortcuts ? "?" : undefined}
+				>
+					<Icon name="keyboard" />
+					<Trans>Keyboard shortcuts</Trans>
+				</Button>
+			)}
 			<Dialog
 				open={shortcuts !== null}
 				onOpenChange={(value) => {

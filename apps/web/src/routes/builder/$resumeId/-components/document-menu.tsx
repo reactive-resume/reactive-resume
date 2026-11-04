@@ -48,6 +48,7 @@ type DocumentDialog = "rename" | "tags" | "notes" | "details" | "translate" | nu
  */
 export function DocumentMenu() {
 	const helpRequested = useRef(false);
+	const renameRequested = useRef(false);
 	const menuTrigger = useRef<HTMLButtonElement>(null);
 	const resume = useCurrentResume();
 	const { id, name, isLocked } = resume;
@@ -70,15 +71,24 @@ export function DocumentMenu() {
 			) : (
 				<DropdownMenu
 					onOpenChangeComplete={(open) => {
-						if (!open && helpRequested.current) {
+						if (open) return;
+						// Both wait for the menu to finish closing, so its focus return can't land after them.
+						if (helpRequested.current) {
 							helpRequested.current = false;
 							showKeyboardShortcuts(menuTrigger.current);
+						}
+						if (renameRequested.current) {
+							renameRequested.current = false;
+							setDialog("rename");
 						}
 					}}
 				>
 					<DropdownMenuTrigger ref={menuTrigger} render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
 					<DocumentMenuItems
-						onOpenDialog={setDialog}
+						onOpenDialog={(next) => {
+							if (next === "rename") renameRequested.current = true;
+							else setDialog(next);
+						}}
 						onHelp={() => {
 							helpRequested.current = true;
 						}}

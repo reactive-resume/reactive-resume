@@ -4,7 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@reactive-resume/ui/components/button";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { SettingsRow } from "../section";
+import { SettingsRow, SettingsSection } from "../section";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 
@@ -38,7 +38,7 @@ function describeAgent(agent: string | null | undefined): string | null {
 }
 
 /** Where this account is signed in, newest first, each but this one with Sign out. */
-export function SessionsRows() {
+export function SessionsSection() {
 	const { i18n } = useLingui();
 	const queryClient = useQueryClient();
 	const { data: current } = authClient.useSession();
@@ -67,7 +67,11 @@ export function SessionsRows() {
 
 	if (sessions.length === 0) return null;
 	return (
-		<>
+		<SettingsSection
+			id="sessions"
+			title={<Trans>Sessions</Trans>}
+			description={<Trans>Devices signed in to your account.</Trans>}
+		>
 			{sessions.map((session) => {
 				const here = session.token === current?.session.token;
 				const name = describeAgent(session.userAgent) ?? t`Unknown device`;
@@ -92,6 +96,6 @@ export function SessionsRows() {
 					</SettingsRow>
 				);
 			})}
-		</>
+		</SettingsSection>
 	);
 }

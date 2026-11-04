@@ -202,7 +202,7 @@ function Sidebar() {
 			>
 				<Icon name="magnifying-glass" size={18} />
 				<span className="flex-1 text-start">
-					<Trans>Search or run a command…</Trans>
+					<Trans>Search</Trans>
 				</span>
 				<Kbd>{formatShortcut("⌘K")}</Kbd>
 			</button>

@@ -30,6 +30,9 @@ export function ApplicationProfileSection() {
 	if (!scope) return null;
 	return (
 		<View style={{ gap: space.s6 }}>
+			<Text variant="callout" color="ink2">
+				{t`Contact details and standard answers for job application forms, kept apart from your resumes. They're added to an application only when you choose to include them.`}
+			</Text>
 			{query.isPending ? (
 				<Text>{t`Loading…`}</Text>
 			) : query.isError && query.data === undefined ? (

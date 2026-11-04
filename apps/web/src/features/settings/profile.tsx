@@ -34,7 +34,15 @@ export function ProfileSettings() {
 	const query = useQuery(orpc.applicationProfile.get.queryOptions());
 	return (
 		<>
-			<PageHeader title={<Trans>Profile</Trans>} />
+			<PageHeader
+				title={<Trans>Profile</Trans>}
+				description={
+					<Trans>
+						Contact details and standard answers for job application forms, kept apart from your resumes. They're added
+						to an application only when you choose to include them.
+					</Trans>
+				}
+			/>
 			{query.isPending ? (
 				<p role="status">
 					<Trans>Loading…</Trans>

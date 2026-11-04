@@ -301,7 +301,8 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 							) : (
 								<Trans>Changing it sends a confirmation to the new address.</Trans>
 							)}{" "}
-							{user.emailVerified ? null : smtpEnabled ? (
+							{/* Without email delivery the hint above already says why; no verification link can be sent. */}
+							{!user.emailVerified && smtpEnabled && (
 								<button
 									type="button"
 									className="underline underline-offset-2"
@@ -309,8 +310,6 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 								>
 									<Trans>Not verified yet. Resend the link</Trans>
 								</button>
-							) : (
-								<Trans>Email delivery isn't set up on this server, so the address isn't verified.</Trans>
 							)}
 						</>
 					}

@@ -364,7 +364,8 @@ export function RichTextEditor({
 		setImproving(lineAtCaret(editor));
 	};
 
-	const buttonSize = mobile ? "size-11" : "size-8";
+	// Smaller buttons in a narrow field (the builder sidebar), so the toolbar stays one row under the text.
+	const buttonSize = mobile ? "size-11" : "size-8 @max-[24rem]:size-7";
 	const toolbarButtons = (
 		<>
 			{actions.map((action, index) => (

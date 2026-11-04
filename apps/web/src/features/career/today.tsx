@@ -90,7 +90,8 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 					className="order-3 scroll-mt-6 lg:order-none"
 				/>
 			</div>
-			<div className="contents lg:flex lg:flex-col lg:gap-[18px]">
+			{/* Starts level with the first card on the left, below the "Needs you" heading (24px line + 10px gap). */}
+			<div className="contents lg:flex lg:flex-col lg:gap-[18px] lg:pt-[34px]">
 				<ComingUp now={now} className="order-1 lg:order-none" />
 				<Schedules deleted={deleted} onOpenSchedule={onScheduleChange} className="order-4 lg:order-none" />
 			</div>
@@ -151,7 +152,7 @@ type SectionHeadingProps = { id: string; title: string; count: number | undefine
 function SectionHeading({ id, title, count, note }: SectionHeadingProps) {
 	return (
 		<div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-			<h2 id={id} className="text-[17px] font-semibold">
+			<h2 id={id} className="text-[17px] leading-6 font-semibold">
 				{title}
 			</h2>
 			{count !== undefined && <span className="font-mono text-xs font-medium text-ink-3">{i18n.number(count)}</span>}

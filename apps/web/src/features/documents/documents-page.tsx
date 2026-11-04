@@ -701,7 +701,7 @@ function FirstRun({ onFile, trashCount }: FirstRunProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	return (
-		<section className="max-w-xl pt-4 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
+		<section className="pt-4 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
 			<input
 				ref={inputRef}
 				type="file"

@@ -241,7 +241,7 @@ function LanguageIndex() {
 	const { i18n } = useLingui();
 
 	return (
-		<nav aria-labelledby="languages-title" className="max-w-[46em]">
+		<nav aria-labelledby="languages-title" className="max-w-[46em] min-[1280px]:max-w-[68em]">
 			<ul className="font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-balance text-ink-2">
 				{supportedLocales.map((locale, index) => {
 					const name = getLanguageName(locale);
