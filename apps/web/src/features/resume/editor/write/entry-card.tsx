@@ -259,6 +259,7 @@ function deleteEntry(section: WriteSection, entryId: string) {
 	const index = entries.findIndex((entry) => entry.id === entryId);
 	const deleted = entries[index];
 	if (!deleted) return;
+	if (entries.length === 1) useEditorStore.getState().markSectionAdded(section.id);
 	updateResumeData(
 		(draft) => {
 			const items = getEntries(draft, section);

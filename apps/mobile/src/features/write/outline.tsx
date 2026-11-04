@@ -71,7 +71,9 @@ export function Outline({ resumeId, imported, initialSection }: OutlineProps) {
 			if (!next.delete(id)) next.add(id);
 			return next;
 		});
+	const retainSection = (id: string) => setAdded((current) => (current.has(id) ? current : new Set(current).add(id)));
 	const openEntry = (sectionId: string, entryId: string, focus = false) => {
+		retainSection(sectionId);
 		if (focus) requestFocus(entryId);
 		router.push(routes.entry(resumeId, sectionId, entryId));
 	};
@@ -220,6 +222,7 @@ export function Outline({ resumeId, imported, initialSection }: OutlineProps) {
 					entryId={sheet.entryId}
 					open
 					onClose={() => setSheet(null)}
+					onGone={() => retainSection(entrySection.id)}
 				/>
 			) : null}
 			<AddSectionSheet
