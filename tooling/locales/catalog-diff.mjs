@@ -18,6 +18,7 @@ const TAG = /<\/?\d+\s*\/?>/y;
 function signature(text) {
 	const tokens = new Map();
 	const plurals = new Map();
+	const selects = new Set();
 	let i = 0;
 	const add = (token, branch) => tokens.set(token, (tokens.get(token) ?? new Set()).add(branch));
 	const skipSpace = () => {
@@ -76,9 +77,10 @@ function signature(text) {
 			const key = readUntil(" \t\n{}");
 			skipSpace();
 			if (text[i] !== "{") continue; // offset:n
-			if (type !== "select") plurals.set(name, (plurals.get(name) ?? new Set()).add(key));
+			plurals.set(name, (plurals.get(name) ?? new Set()).add(key));
+			if (type === "select") selects.add(name);
 			i++;
-			message(type === "select" ? branch : `${name}:${key}`, type !== "select");
+			message(`${name}:${key}`, type !== "select");
 			i++;
 		}
 		i++;
@@ -87,7 +89,7 @@ function signature(text) {
 		message("", false);
 		i++;
 	}
-	return { tokens, plurals };
+	return { tokens, plurals, selects };
 }
 
 /** Whether the translation lacks `token` in `branch`, the plural form (or "" = every form) where the source uses it. */
@@ -105,8 +107,9 @@ function lacks(translation, token, branch) {
 	const keys = translation.plurals.get(plural);
 	// A renamed plural is reported on its own; don't also report every argument inside it.
 	if (!keys) return found.size === 0;
-	// Forms the language doesn't have are legitimately omitted, but ICU requires `other`.
-	if (!keys.has(key)) return key === "other";
+	// Plural forms the language doesn't have are legitimately omitted, but ICU requires `other`. A select option is
+	// the same in every language, so a missing one drops the token.
+	if (!keys.has(key)) return key === "other" || translation.selects.has(plural);
 	if (found.has(branch)) return false;
 	// Languages whose `one` also covers 21, 31… move the singular text to an exact `=1` form.
 	return !(key === "one" && found.has(`${plural}:=1`));
@@ -128,7 +131,7 @@ export function mismatch(source, translation) {
 	return [
 		...missing.map((token) => `missing ${token}`),
 		...extra.map((token) => `extra ${token}`),
-		...noOther.map((plural) => `missing other form in {${plural}, plural}`),
+		...noOther.map((name) => `missing other form in {${name}, ${actual.selects.has(name) ? "select" : "plural"}}`),
 	].join(", ");
 }
 

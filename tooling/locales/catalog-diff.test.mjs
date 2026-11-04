@@ -21,6 +21,12 @@ test.each([
 	["{0, plural, one {{1} item} other {# items}}", "{0, plural, one {Element} other {{1} # Elemente}}", "missing {1}"],
 	["{0, plural, one {# item} other {# items}}", "{0, plural, one {ein Element} other {Elemente}}", "missing #"],
 	[
+		"{0, select, mine {{1} is yours} other {{1} is shared}}",
+		"{0, select, mine {{1} gehört dir} other {Geteilt}}",
+		"missing {1}",
+	],
+	["{0, select, mine {Yours} other {Shared}}", "{0, select, mine {Deins}}", "missing other form in {0, select}"],
+	[
 		"{0, plural, one {{1} once} other {{2} # times}}",
 		"{0, plural, =1 {{1} jednom} one {{2} # put} other {{2} # puta}}",
 		"",

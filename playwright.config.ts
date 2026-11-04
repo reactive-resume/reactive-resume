@@ -37,7 +37,8 @@ export default defineConfig({
 		// so Playwright's group kill misses the server and the job hangs after the tests finish.
 		command: "node apps/server/dist/index.mjs",
 		url: `${baseURL}/api/health`,
-		reuseExistingServer: !isCI,
+		// `pnpm test:e2e:local` sets E2E_NO_REUSE: its port must be this checkout's server, or the run fails.
+		reuseExistingServer: !isCI && process.env.E2E_NO_REUSE !== "1",
 		timeout: 120_000,
 		env: {
 			...process.env,

@@ -24,6 +24,8 @@ const database = databaseName("e2e");
 const storage = resolve(tmpdir(), `reactive-resume-e2e-${checkout}`);
 const env = {
 	...process.env,
+	// Fail if another process took the chosen port, instead of testing against it.
+	E2E_NO_REUSE: "1",
 	...ciEnv,
 	APP_URL: `http://localhost:${port}`,
 	PORT: String(port),
