@@ -14,6 +14,7 @@ import { LetterBar, useDownloadLetter } from "./letter-bar";
 import { LetterPage } from "./letter-page";
 import { LetterWritePanel } from "./write-panel";
 import { LetterAssistant } from "@/features/assistant/dock";
+import { useAssistantShortcutEnabled } from "@/features/assistant/shortcut";
 import { useMarkDocumentOpened } from "@/features/documents/new-documents";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { useLetterEditorStore } from "@/features/letters/store";
@@ -119,6 +120,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 
 /** 1 and 2 switch modes outside fields, ⌘P downloads the PDF, ⌘⇧E opens Download. Saving is automatic. */
 function LetterHotkeys({ onModeChange }: { onModeChange: (mode: LetterMode) => void }) {
+	const assistantShortcutEnabled = useAssistantShortcutEnabled();
 	const { t } = useLingui();
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const download = useDownloadLetter();
@@ -135,6 +137,7 @@ function LetterHotkeys({ onModeChange }: { onModeChange: (mode: LetterMode) => v
 	useHotkey("Mod+P", () => void download.run(), { meta: { name: t`Download PDF` } });
 	useHotkey("Mod+Shift+E", () => setSheetTab("download"), { meta: { name: t`Download & history` } });
 	useHotkey("Mod+J", () => useEditorStore.getState().setAssistantOpen(!useEditorStore.getState().assistantOpen, true), {
+		enabled: assistantShortcutEnabled,
 		meta: { name: t`Assistant` },
 	});
 	useHotkey(

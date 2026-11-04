@@ -129,8 +129,7 @@ export function useUserTime() {
 	const timeZone = preferred && isTimeZone(preferred) ? preferred : deviceTimeZone();
 	const format = (value: Date | string, options: Intl.DateTimeFormatOptions, zone = timeZone) =>
 		new Intl.DateTimeFormat(i18n.locale, { timeZone: zone, ...options }).format(new Date(value));
-	const time = (value: Date | string, zone?: string) =>
-		format(value, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }, zone);
+	const time = (value: Date | string, zone?: string) => format(value, { hour: "2-digit", minute: "2-digit" }, zone);
 	const day = (value: Date | string, zone?: string) =>
 		format(value, { weekday: "short", day: "numeric", month: "short" }, zone);
 	return {
