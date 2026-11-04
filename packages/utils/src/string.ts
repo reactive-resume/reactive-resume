@@ -8,6 +8,17 @@ export function generateId() {
 	return uuidv7();
 }
 
+/** One title rule for optimistic conversation lists and the saved transcript. */
+export function buildConversationTitle(input: string, fallback: string, max = 60) {
+	const text = input.replace(/\s+/g, " ").trim();
+	if (!text) return fallback;
+	if (text.length <= max) return text;
+	const cut = text.slice(0, max - 1);
+	const space = cut.lastIndexOf(" ");
+	const bounded = (space > max / 2 ? cut.slice(0, space) : cut).trimEnd();
+	return `${bounded.replace(/[\uD800-\uDBFF]$/u, "")}…`;
+}
+
 const pendingRequestIds = new Map<string, string>();
 
 type RequestIdStorage = {

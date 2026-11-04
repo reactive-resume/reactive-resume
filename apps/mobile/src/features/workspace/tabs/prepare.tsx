@@ -31,6 +31,7 @@ import { orpc } from "@/api/client";
 import { useFlags } from "@/api/flags";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { interviewTypeLabel, useNow, useUserTime } from "@/features/application-detail/hooks";
+import { LoadState } from "@/features/career/shared";
 import { StoryEditor } from "@/features/career/stories";
 import { routes } from "@/routes";
 import { Banner, Button, EmptyState, ListRow, Sheet, Skeleton, Switch, Text, showToast, useTheme } from "@/ui";
@@ -124,7 +125,9 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 	const ticks = useTicks(application.id, `plan:${briefing.id}`);
 	const workspace = useWorkspace(application.id);
 	const [reading, setReading] = useState(false);
-	const [drafting, setDrafting] = useState<{ title: string; note: string } | null>(null);
+	const [drafting, setDrafting] = useState<{ title: string; note: string; factIds?: string[] | undefined } | null>(
+		null,
+	);
 	const facts = useFacts(application.id, drafting !== null);
 	const provider = useHasAIProvider().defaultProvider;
 	const generate = useGenerate(application.id);
@@ -142,7 +145,10 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 				return { label: t`Open story`, onPress: () => router.push(routes.career("knowledge")) };
 			case "draft-story":
 				// The new story starts from this step: its title, and its detail as a note above the parts.
-				return { label: t`Draft story`, onPress: () => setDrafting({ title: row.title, note: row.detail }) };
+				return {
+					label: t`Draft story`,
+					onPress: () => setDrafting({ title: row.title, note: row.detail, factIds: row.factIds }),
+				};
 			case "practise":
 				return { label: t`Practice`, onPress: () => go("practise", { speak: true }) };
 			case "questions":
@@ -242,7 +248,11 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 			<StoriesToBring application={application} briefing={briefing} />
 			<BriefingSheet briefing={briefing} open={reading} onClose={() => setReading(false)} />
 			{drafting ? (
-				<StoryEditor story={null} facts={facts.data ?? []} start={drafting} onClose={() => setDrafting(null)} />
+				facts.data ? (
+					<StoryEditor story={null} facts={facts.data} start={drafting} onClose={() => setDrafting(null)} />
+				) : (
+					<LoadState query={facts} />
+				)
 			) : null}
 		</View>
 	);

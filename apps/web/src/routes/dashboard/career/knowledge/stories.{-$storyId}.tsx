@@ -15,19 +15,20 @@ export const Route = createFileRoute("/dashboard/career/knowledge/stories/{-$sto
 		note: z.string().max(400).optional().catch(undefined),
 		/** The briefing the step belongs to, so its unsaved draft never shows under another plan. */
 		plan: z.string().max(100).optional().catch(undefined),
+		factIds: z.array(z.string().min(1).max(100)).max(20).optional().catch(undefined),
 	}),
 	component: RouteComponent,
 });
 
 function RouteComponent() {
 	const { storyId } = Route.useParams();
-	const { edit, practice, title, note, plan } = Route.useSearch();
+	const { edit, practice, title, note, plan, factIds } = Route.useSearch();
 	return (
 		<StoriesPage
 			storyId={storyId}
 			edit={edit ?? false}
 			practice={practice ?? false}
-			start={!storyId && title ? { title, note: note ?? "", plan: plan ?? "" } : undefined}
+			start={!storyId && title ? { title, note: note ?? "", plan: plan ?? "", factIds } : undefined}
 		/>
 	);
 }

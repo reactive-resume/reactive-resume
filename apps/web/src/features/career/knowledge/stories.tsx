@@ -8,6 +8,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import { memo, useId, useState } from "react";
 import * as z from "zod";
+import { storyDraftFactIds } from "@reactive-resume/schema/career-practice";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
@@ -62,7 +63,7 @@ const factChanged = (story: Story, facts: Map<string, Fact>) =>
 	});
 
 /** A new story started from an interview plan's step: its title, and the step's detail shown as a note. */
-type StoryStart = { title: string; note: string; plan: string };
+type StoryStart = { title: string; note: string; plan: string; factIds?: string[] | undefined };
 
 type StoriesPageProps = {
 	storyId: string | undefined;
@@ -530,7 +531,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 			result: start?.result ?? "",
 			reflection: start?.reflection ?? "",
 			tags: start?.tags.join(", ") ?? "",
-			factIds: start?.factIds ?? [],
+			factIds: start?.factIds ?? (plan ? storyDraftFactIds({ detail: plan.note, factIds: plan.factIds }, facts) : []),
 		},
 		(value) => {
 			const result = storyDraftSchema.safeParse(value);

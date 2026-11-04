@@ -49,7 +49,7 @@ function CareerLayout() {
 	return (
 		<div
 			className={cn(
-				"mx-auto flex min-h-svh w-full max-w-[1180px] flex-col gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5",
+				"mx-auto flex min-h-svh w-full max-w-[1180px] flex-col gap-5 px-8 py-8 max-sm:px-4 max-sm:pt-5 max-sm:pb-[calc(8rem+env(safe-area-inset-bottom))]",
 				// On a phone the coach gets the whole screen above the tab bar (52px and the home indicator), and scrolls
 				// inside its transcript only: the page itself stays put.
 				coach &&

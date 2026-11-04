@@ -1,6 +1,27 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import { slugify } from "./slug";
-import { filterOptions, fitLabel, getInitials, isolate, rewriteSummary, toUsername } from "./string";
+import {
+	buildConversationTitle,
+	filterOptions,
+	fitLabel,
+	getInitials,
+	isolate,
+	rewriteSummary,
+	toUsername,
+} from "./string";
+
+it("keeps optimistic and saved conversation titles on one normalized word-boundary rule", () => {
+	expect(buildConversationTitle(" \n ", "New conversation", 47)).toBe("New conversation");
+	expect(buildConversationTitle("  A   short\nrequest ", "", 47)).toBe("A short request");
+	expect(
+		buildConversationTitle(
+			"Please help me summarize my accomplishments for the fictional Cedar interview next week",
+			"",
+			47,
+		),
+	).toBe("Please help me summarize my accomplishments…");
+	expect(buildConversationTitle("ab😀c", "", 4)).toBe("ab…");
+});
 
 it("retains opaque pending request IDs across module restart until acknowledgement", async () => {
 	const values = new Map<string, string>();

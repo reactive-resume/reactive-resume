@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import { type TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
+import { storyDraftFactIds } from "@reactive-resume/schema/career-practice";
 import { client, prepareRpc, useCareerAction, useCareerQueries, useUndoRows } from "./hooks";
 import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
 import { StoryPracticeButton } from "./story-practice-button";
@@ -131,7 +132,7 @@ type StoryEditorProps = {
 	 */
 	proposal?: { story: CareerStoryData; onChange: (story: CareerStoryData) => void; onSaved: () => void };
 	/** A new story from an interview plan's "Draft story" step: its title, and the step's detail shown as a note. */
-	start?: { title: string; note: string } | undefined;
+	start?: { title: string; note: string; factIds?: string[] | undefined } | undefined;
 };
 export function StoryEditor({ story, facts, onClose, proposal, start }: StoryEditorProps) {
 	const { t } = useLingui();
@@ -147,7 +148,7 @@ export function StoryEditor({ story, facts, onClose, proposal, start }: StoryEdi
 				action: "",
 				result: "",
 				reflection: "",
-				factIds: [],
+				factIds: start ? storyDraftFactIds({ detail: start.note, factIds: start.factIds }, facts) : [],
 				tags: [],
 			},
 	);
@@ -183,7 +184,7 @@ export function StoryEditor({ story, facts, onClose, proposal, start }: StoryEdi
 				action: "",
 				result: "",
 				reflection: "",
-				factIds: [],
+				factIds: start ? storyDraftFactIds({ detail: start.note, factIds: start.factIds }, facts) : [],
 				tags: [],
 			},
 		);

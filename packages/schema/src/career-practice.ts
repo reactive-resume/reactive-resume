@@ -1,5 +1,23 @@
 export type PracticeQuestion = { text: string; origin: "simulated" | "recalled" };
 
+type StoryDraftStep = { detail: string; factIds?: readonly string[] | undefined };
+type StoryDraftFact = { id: string; text: string; status: string; applicationId: string | null };
+
+/** Old steps can cite a fact verbatim; new steps carry IDs. A shared story only accepts active shared facts. */
+export function storyDraftFactIds(step: StoryDraftStep, facts: readonly StoryDraftFact[]) {
+	const detail = step.detail.replace(/\s+/g, " ").trim();
+	return facts
+		.filter((fact) => {
+			if (fact.status !== "active" || fact.applicationId !== null || !fact.text.trim()) return false;
+			if (step.factIds !== undefined) return step.factIds.includes(fact.id);
+			const quote = fact.text.replace(/\s+/g, " ").trim();
+			const literal = quote.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+			return new RegExp(`(^|[^\\p{L}\\p{N}])${literal}($|[^\\p{L}\\p{N}])`, "u").test(detail);
+		})
+		.map((fact) => fact.id)
+		.slice(0, 30);
+}
+
 /** Eligibility for Today's immediate preparation actions; existing calendar/event ordering stays with its owner. */
 export function interviewPreparationDue(at: Date | string, now: Date) {
 	const remaining = new Date(at).getTime() - now.getTime();
