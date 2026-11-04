@@ -167,16 +167,17 @@ export function goToScene(index: number, at: number) {
  * Renders a pinned scene and decodes its images while it's still a screen or two away, so its first frame on screen
  * isn't the one that pays for them. Scenes further off go back to skipping their rendering (landing.css).
  */
-function warmScenes(sections: HTMLElement[], nearby: Set<number>, decoded: WeakSet<HTMLElement>) {
+function warmScenes(sections: HTMLElement[], nearby: Set<number>, decoded: WeakSet<HTMLImageElement>) {
 	for (const section of sections) {
 		const near = nearby.has(Number(section.dataset.scene));
 		if (section.dataset.pin !== undefined && near !== (section.dataset.warm !== undefined))
 			section.toggleAttribute("data-warm", near);
-		if (!near || decoded.has(section)) continue;
-		decoded.add(section);
+		if (!near) continue;
 		for (const image of section.querySelectorAll("img")) {
+			if (decoded.has(image)) continue;
 			// Only the drawing for the current theme: the other one is display: none.
 			if (typeof image.checkVisibility === "function" && !image.checkVisibility()) continue;
+			decoded.add(image);
 			image.loading = "eager";
 			void image.decode().catch(() => undefined);
 		}
@@ -236,7 +237,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 		// Where Check's lens comes to rest, as a share of its page: over the date line it flags.
 		let lensPark = { x: 60, y: 50 };
 
-		const decodedScenes = new WeakSet<HTMLElement>();
+		const decodedImages = new WeakSet<HTMLImageElement>();
 
 		// Values that only change with the viewport, not with scrolling.
 		const measuredScenes = new Set<number>();
@@ -310,7 +311,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 				}
 				if (rect.top <= viewportHeight / 2 && rect.bottom > viewportHeight / 2) activeScene = index;
 			}
-			warmScenes(sections, nearby, decodedScenes);
+			warmScenes(sections, nearby, decodedImages);
 			// Descendant geometry would force content-visibility to render an offscreen scene.
 			layout(nearby);
 			// The footer's desk paints itself in as it scrolls up, finishing exactly when the page ends.
