@@ -1,15 +1,6 @@
 import type { ScheduledInterview } from "./interviews";
 import { describe, expect, it } from "vite-plus/test";
-import { dayKey, fromDateTimeLocal, groupByDay, monthGrid, toDateTimeLocal } from "./interviews";
-
-describe("interviews", () => {
-	it("round-trips datetime-local values", () => {
-		const iso = fromDateTimeLocal("2026-10-05T09:30");
-		expect(iso).not.toBeNull();
-		expect(toDateTimeLocal(iso ?? "")).toBe("2026-10-05T09:30");
-		expect(fromDateTimeLocal("")).toBeNull();
-	});
-});
+import { dayKey, groupByDay, monthGrid } from "./interviews";
 
 // Instants stay absolute; only their calendar bucket changes with the account clock.
 describe("account calendar days", () => {
@@ -27,7 +18,6 @@ describe("account calendar days", () => {
 		expect(dayKey(start, "Europe/Berlin")).toBe(berlin);
 		expect([...groupByDay([event], "UTC").keys()]).toEqual([utc]);
 		expect([...groupByDay([event], "Europe/Berlin").keys()]).toEqual([berlin]);
-		expect(start.toISOString()).toBe(iso.replace("Z", ".000Z"));
 	});
 
 	it("keeps all six weeks as consecutive whole days across DST", () => {

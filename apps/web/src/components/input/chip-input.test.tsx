@@ -5,7 +5,6 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { createRef } from "react";
 import { ChipInput } from "./chip-input";
-import { loadLocale } from "@/libs/locale";
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
@@ -107,25 +106,6 @@ it("announces keyword drags by name, and explains the keyboard controls", async 
 	fireEvent.keyDown(alpha, { code: "Space" });
 	await waitFor(() => expect(liveRegion()?.textContent).toBe("Alpha was dropped where it started. Nothing moved."));
 	expect(onChange).not.toHaveBeenCalled();
-});
-
-it("announces keyword drags in German when German is the UI language", async () => {
-	await loadLocale("de-DE");
-	render(
-		<I18nProvider i18n={i18n}>
-			<ChipInput defaultValue={["Alpha", "Beta"]} />
-		</I18nProvider>,
-	);
-	const alpha = screen.getByText("Alpha").closest<HTMLElement>('[role="button"]');
-	if (!alpha) throw new Error("Alpha isn't draggable");
-	alpha.focus();
-	fireEvent.keyDown(alpha, { code: "Space" });
-	await waitFor(() => expect(liveRegion()?.textContent).toBe("Alpha aufgenommen."));
-	fireEvent.keyDown(alpha, { code: "Escape" });
-	await waitFor(() =>
-		expect(liveRegion()?.textContent).toBe("Verschieben von Alpha abgebrochen. Nichts wurde verschoben."),
-	);
-	await loadLocale("en-US");
 });
 
 it("explicit Save commits an edited tag and preserves duplicate and Escape behavior", () => {

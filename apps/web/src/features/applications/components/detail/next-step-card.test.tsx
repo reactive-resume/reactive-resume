@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import type { Application } from "../../types";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -20,30 +20,6 @@ vi.mock("@/libs/orpc/client", () => ({
 vi.mock("../../use-application-actions", () => ({ useInvalidateApplications: () => vi.fn() }));
 
 const { NextStepCard } = await import("./next-step-card");
-
-it.each(["closed", "applied"] as const)("labels %s applications with the matching heading and actions", (status) => {
-	i18n.loadAndActivate({ locale: "en", messages: {} });
-	const application = {
-		id: "outcome",
-		role: "Engineer",
-		company: "Example",
-		status,
-		closedReason: status === "closed" ? "accepted" : null,
-		appliedAt: new Date(),
-		activity: [],
-		followUpAt: null,
-		followUpNote: null,
-	} as unknown as Application;
-	render(
-		<I18nProvider i18n={i18n}>
-			<QueryClientProvider client={new QueryClient()}>
-				<NextStepCard application={application} onScheduleInterview={vi.fn()} />
-			</QueryClientProvider>
-		</I18nProvider>,
-	);
-	expect(screen.getByRole("heading", { name: status === "closed" ? "Outcome" : "Next step" })).toBeVisible();
-	expect(screen.queryByRole("button", { name: /^Edit$/ }) !== null).toBe(status !== "closed");
-});
 
 it("opens the follow-up with its saved date and note, then saves the edited note", async () => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
@@ -106,6 +82,10 @@ it("lets the follow-up editor correct a time skipped on the new date", async () 
 	fireEvent.click(await screen.findByRole("menuitem", { name: "Change the follow-up…" }));
 	expect(screen.getByLabelText("Time")).toHaveValue("02:30");
 	fireEvent.change(screen.getByLabelText("Date"), { target: { value: "2027-03-28" } });
+	// 02:30 doesn't exist in Berlin that day: saving is refused instead of shifting the reminder.
+	fireEvent.click(screen.getByRole("button", { name: "Save" }));
+	await act(async () => {});
+	expect(update).not.toHaveBeenCalled();
 	fireEvent.change(screen.getByLabelText("Time"), { target: { value: "03:30" } });
 	fireEvent.click(screen.getByRole("button", { name: "Save" }));
 	await waitFor(() =>

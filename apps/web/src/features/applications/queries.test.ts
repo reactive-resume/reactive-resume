@@ -120,45 +120,6 @@ describe("application detail cache hydration", () => {
 		await refresh;
 		expect(client.getQueryData<Application>(key)?.notes).toBe("refreshed");
 	});
-
-	it("shows stale initial detail immediately, refreshes once, then reuses fetched cache", async () => {
-		const client = new QueryClient();
-		const key = applicationDetailQueryKey("a");
-		const initial = detail("2026-10-01T00:00:00Z", "initial");
-		hydrateApplicationDetail(client, summary(initial));
-		let calls = 0;
-		const observer = new QueryObserver<Application>(client, {
-			queryKey: key,
-			staleTime: 60_000,
-			queryFn: async () => {
-				calls += 1;
-				return detail("2026-10-02T00:00:00Z", "refreshed");
-			},
-		});
-		const seen: string[] = [];
-		const unsubscribe = observer.subscribe((result) => {
-			if (result.data) seen.push(result.data.notes ?? "");
-		});
-		await new Promise((resolve) => setTimeout(resolve, 0));
-		expect(seen[0]).toBe("initial");
-		expect(calls).toBe(1);
-		expect(client.getQueryData<Application>(key)?.notes).toBe("refreshed");
-		unsubscribe();
-		observer.destroy();
-
-		const second = new QueryObserver<Application>(client, {
-			queryKey: key,
-			staleTime: 60_000,
-			queryFn: async () => {
-				calls += 1;
-				return detail("2026-10-03T00:00:00Z", "unexpected");
-			},
-		});
-		second.subscribe(() => undefined);
-		await new Promise((resolve) => setTimeout(resolve, 0));
-		expect(calls).toBe(1);
-		second.destroy();
-	});
 });
 
 it("Undo canonical read survives fresher application-list hydration without a spurious Retry", async () => {

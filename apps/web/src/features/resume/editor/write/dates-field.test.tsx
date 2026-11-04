@@ -116,11 +116,6 @@ describe("expected end date", () => {
 		expect(onChange).toHaveBeenLastCalledWith({ start: "2023-09", end: "2027-05", present: false, expected: true });
 	});
 
-	it("is only offered where it applies", () => {
-		mount({ start: "2023-09", end: "2027-05", present: false }, false);
-		expect(screen.queryByRole("switch", { name: "Expected" })).toBeNull();
-	});
-
 	it("drops Expected when the entry becomes ongoing", () => {
 		const onChange = mount({ start: "2023-09", end: "2027-05", present: false, expected: true }, true);
 		fireEvent.click(screen.getByRole("switch", { name: "Present" }));

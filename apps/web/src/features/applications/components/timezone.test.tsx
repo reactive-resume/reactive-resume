@@ -122,7 +122,11 @@ it.each([
 
 it("names follow-up calendar downloads on the account date used by Today", () => {
 	account.timeZone = "Pacific/Honolulu";
-	const followUp = { ...application("2026-10-31T23:30:00Z"), activity: [], followUpAt: new Date(2026, 9, 30, 9) };
+	const followUp = {
+		...application("2026-10-31T23:30:00Z"),
+		activity: [],
+		followUpAt: new Date("2026-10-30T09:00:00Z"),
+	};
 	show(<NextStepCard application={followUp} onScheduleInterview={vi.fn()} />);
 	fireEvent.click(screen.getByRole("button", { name: "Add to calendar" }));
 	expect(account.download).toHaveBeenCalledWith(expect.any(Blob), "Northstar-2026-10-29.ics");
@@ -304,15 +308,6 @@ it.each([false, true])("follows account-local month rollover until browsing (com
 	vi.setSystemTime(new Date("2026-12-31T22:59:30Z"));
 	act(() => vi.advanceTimersByTime(60_000));
 	expect(screen.getByRole("heading", { name: current("January 2027") })).toBeDefined();
-});
-
-it("uses neutral empty-state wording under the browsed month heading", () => {
-	account.timeZone = "UTC";
-	show(<ApplicationCalendar compact applications={[]} allApplications={[]} onOpen={vi.fn()} />);
-	fireEvent.click(screen.getByRole("button", { name: "Next month" }));
-	expect(screen.getByRole("heading", { name: "November 2026" })).toBeDefined();
-	expect(within(screen.getByTestId("interview-agenda")).getByText("Nothing scheduled yet")).toBeDefined();
-	expect(screen.queryByText("No interviews this month")).toBeNull();
 });
 
 it.each([

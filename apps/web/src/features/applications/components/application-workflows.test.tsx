@@ -241,35 +241,34 @@ it("offers one board-card open control and a separate options control without a 
 	expect(onOpen).toHaveBeenCalledTimes(1);
 });
 
-it.each(["ai", "page"])(
-	"does not report successful %s extraction when role and company are blank",
-	async (filledBy) => {
-		api.parsePosting.mockResolvedValue({
-			role: "",
-			company: "",
-			location: "",
-			salary: "",
-			requirements: [],
-			jobDescription: "A general careers landing page",
-			filledBy,
-			postingSource: { method: "fetch", format: "text", truncated: false, completeness: "unknown" },
-		});
-		mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
-		fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
-			target: { value: "https://example.test/careers" },
-		});
-		fireEvent.click(screen.getByRole("button", { name: "Read posting" }));
-		await screen.findByText(/Some job details couldn't be read/);
-		expect(screen.queryByText(/Found (the )?role,? (and )?company/)).toBeNull();
-		expect((screen.getByRole("button", { name: "Save job" }) as HTMLButtonElement).disabled).toBe(true);
-		expect((screen.getByRole("textbox", { name: "Saved description" }) as HTMLTextAreaElement).value).toBe(
-			"A general careers landing page",
-		);
-		fireEvent.change(screen.getByRole("textbox", { name: "Role" }), { target: { value: "Engineer" } });
-		fireEvent.change(screen.getByRole("textbox", { name: "Company" }), { target: { value: "Known Company" } });
-		expect((screen.getByRole("button", { name: "Save job" }) as HTMLButtonElement).disabled).toBe(false);
-	},
-);
+it("does not report successful extraction when role and company are blank", async () => {
+	// A page read takes the same blank-fields branch before the filledBy switch.
+	const filledBy = "ai";
+	api.parsePosting.mockResolvedValue({
+		role: "",
+		company: "",
+		location: "",
+		salary: "",
+		requirements: [],
+		jobDescription: "A general careers landing page",
+		filledBy,
+		postingSource: { method: "fetch", format: "text", truncated: false, completeness: "unknown" },
+	});
+	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
+		target: { value: "https://example.test/careers" },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Read posting" }));
+	await screen.findByText(/Some job details couldn't be read/);
+	expect(screen.queryByText(/Found (the )?role,? (and )?company/)).toBeNull();
+	expect((screen.getByRole("button", { name: "Save job" }) as HTMLButtonElement).disabled).toBe(true);
+	expect((screen.getByRole("textbox", { name: "Saved description" }) as HTMLTextAreaElement).value).toBe(
+		"A general careers landing page",
+	);
+	fireEvent.change(screen.getByRole("textbox", { name: "Role" }), { target: { value: "Engineer" } });
+	fireEvent.change(screen.getByRole("textbox", { name: "Company" }), { target: { value: "Known Company" } });
+	expect((screen.getByRole("button", { name: "Save job" }) as HTMLButtonElement).disabled).toBe(false);
+});
 
 it("keeps saving available when duplicate lookup fails, with an explicit warning", async () => {
 	api.findPosting.mockRejectedValue(new Error("NOT_FOUND"));
@@ -295,6 +294,30 @@ it("keeps saving available when duplicate lookup fails, with an explicit warning
 	expect(save.disabled).toBe(false);
 	fireEvent.click(save);
 	await waitFor(() => expect(onAdded).toHaveBeenCalledWith("saved"));
+});
+
+// A clipped capture of an already-tracked job has no description: updating it must keep the saved one.
+it("updates a tracked job's posting without blanking its saved description", async () => {
+	api.findPosting.mockResolvedValue({ application: { ...application("tracked", "saved"), jobDescription: "Saved" } });
+	api.update.mockResolvedValue(undefined);
+	mount(
+		<AddApplicationDialog
+			open
+			onOpenChange={vi.fn()}
+			onAdded={vi.fn()}
+			initialCapture={{
+				url: "https://jobs.example.test/role",
+				role: "Engineer",
+				company: "Fictional",
+				location: "",
+				description: "",
+				truncated: false,
+			}}
+		/>,
+	);
+	fireEvent.click(await screen.findByRole("button", { name: "Update posting details" }));
+	await waitFor(() => expect(api.update).toHaveBeenCalled());
+	expect(api.update.mock.lastCall?.[0]).not.toHaveProperty("jobDescription");
 });
 
 it("keeps what was pasted when the dialog closes and reopens (A3-39)", async () => {

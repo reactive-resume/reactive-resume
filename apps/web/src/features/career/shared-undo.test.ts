@@ -113,8 +113,8 @@ it("a departed account cannot reveal rows after a pending canonical read", async
 	await vi.waitFor(() => expect(h.client.invalidateQueries).toHaveBeenCalled());
 	setAccountScope("bob");
 	release();
-	await wait;
-	await Promise.resolve();
+	// Let every continuation of the pending read settle, not just the next microtask or two.
+	await new Promise((resolve) => setTimeout(resolve, 0));
 	expect(h.state.hidden).toBe(true);
 	expect(h.state.sent).toBe(0);
 });

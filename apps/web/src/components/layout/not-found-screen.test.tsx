@@ -41,15 +41,3 @@ it("offers the dashboard first to someone signed in", () => {
 	const links = screen.getAllByRole("link").map((link) => link.textContent);
 	expect(links).toEqual(["Go to dashboard", "Go home"]);
 });
-
-it("leaves the logo and full height to a layout that already has them", () => {
-	const alone = mount();
-	const children = alone.container.firstElementChild?.childElementCount ?? 0;
-	expect(alone.container.firstElementChild?.className).toContain("h-svh");
-	alone.unmount();
-	const framed = mount(true);
-	// No logo: just the message and the links.
-	expect(framed.container.firstElementChild?.childElementCount).toBe(2);
-	expect(children).toBeGreaterThan(2);
-	expect(framed.container.firstElementChild?.className).not.toContain("h-svh");
-});

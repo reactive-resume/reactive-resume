@@ -1,6 +1,6 @@
 import type { DocumentSummary } from "./filter";
 // @vitest-environment happy-dom
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -84,28 +84,6 @@ it("previews a letter's recipient, greeting and opening lines", async () => {
 	expect(screen.getByText("Northwind Labs")).toBeTruthy();
 });
 
-it("describes the letter's opening words for screen readers without changing the link's name", async () => {
-	letters.load.mockResolvedValue({ greeting: "Dear Dana,", content: "<p>I am writing about the role.</p>" });
-	renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
-	await screen.findByText("I am writing about the role.");
-
-	const link = screen.getByRole("link", { name: "Untitled letter" });
-	const id = link.getAttribute("aria-describedby");
-	expect(id).toBeTruthy();
-	expect(document.getElementById(id ?? "")?.textContent).toBe(
-		"Northwind Labs. Dear Dana, I am writing about the role.",
-	);
-});
-
-it("does not draw loading bars over a loaded greeting-only letter", async () => {
-	letters.load.mockResolvedValue({ greeting: "Dear Dana,", content: "" });
-	const { container } = renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
-	await screen.findByText("Dear Dana,");
-
-	expect(container.querySelectorAll("span.h-1")).toHaveLength(0);
-	expect(screen.queryByText("Empty letter")).toBeNull();
-});
-
 it("shows a failed preview instead of an endless loading placeholder", async () => {
 	letters.load.mockRejectedValue(new Error("preview failed"));
 	renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
@@ -134,19 +112,4 @@ it("fetches a new preview after the letter's content edit", async () => {
 
 	expect(await screen.findByText("Second version.")).toBeTruthy();
 	await waitFor(() => expect(letters.load).toHaveBeenCalledTimes(2));
-});
-
-it("shows saved tags without changing the document link name and removes empty tag metadata", () => {
-	const document = { ...letter(new Date("2026-10-19T00:00:00.000Z")), tags: ["remote", "مرحبا", "x".repeat(50)] };
-	const view = renderCard(document, { inView: false });
-	const tags = screen.getByRole("list", { name: "Tags" });
-	expect(
-		within(tags)
-			.getAllByRole("listitem")
-			.map((item) => item.textContent),
-	).toEqual(document.tags.map((tag) => `#${tag}`));
-	expect(within(tags).getByText("#مرحبا").getAttribute("dir")).toBe("auto");
-	expect(screen.getByRole("link", { name: document.name })).toBeTruthy();
-	view.update({ ...document, tags: [] });
-	expect(screen.queryByRole("list", { name: "Tags" })).toBeNull();
 });

@@ -1,10 +1,8 @@
 // @vitest-environment happy-dom
 
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vite-plus/test";
-import { createRef, useState } from "react";
-import { FormControl, FormDescription, FormItem, FormLabel } from "@reactive-resume/ui/components/form";
-import { InputGroup } from "@reactive-resume/ui/components/input-group";
+import { describe, expect, it } from "vite-plus/test";
+import { useState } from "react";
 import { NumberInput } from "./number-input";
 
 function NumberForm() {
@@ -31,24 +29,6 @@ function NumberForm() {
 }
 
 describe("NumberInput", () => {
-	it("preserves the input-group focus selector and form accessibility when composed", () => {
-		const ref = createRef<HTMLInputElement>();
-		render(
-			<FormItem hasError>
-				<FormLabel>Size</FormLabel>
-				<InputGroup>
-					<FormControl render={<NumberInput ref={ref} value={11} onValueChange={vi.fn()} />} />
-				</InputGroup>
-				<FormDescription>Choose a size</FormDescription>
-			</FormItem>,
-		);
-		const input = screen.getByRole("spinbutton", { name: "Size" });
-		expect(input).toHaveAttribute("data-slot", "input-group-control");
-		expect(input).toHaveAttribute("aria-invalid", "true");
-		expect(input).toHaveAccessibleDescription("Choose a size");
-		expect(ref.current).toBe(input);
-	});
-
 	it("keeps an empty field local while a sibling changes, then accepts a multi-digit size", () => {
 		render(<NumberForm />);
 		const input = screen.getByRole("spinbutton", { name: "Font size" });

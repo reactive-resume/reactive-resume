@@ -618,7 +618,7 @@ describe("moves with Undo beside later edits (J2-18)", () => {
 		expect(mocks.bulkUpdate.mock.calls[0]?.[0].expectedStages[0].stageEntryId).toBe("morning");
 	});
 
-	it("still leaves a row changed elsewhere after a single move, but not one only given a note", async () => {
+	it("still leaves a row changed elsewhere after a single move, and moves the untouched one", async () => {
 		const { stages, order } = server();
 		const { result } = setupBoth();
 		result.current.actions.moveTo({ id: "a" }, lane("interview"));

@@ -128,3 +128,15 @@ it("removes the default row and shows the provider the server promoted", async (
 	await waitFor(() => expect(screen.queryByText("Fictional working connection")).toBeNull());
 	expect(screen.getByText("Fictional backup connection")).toBeTruthy();
 });
+
+// A key typed for one vendor must not be sent to the vendor picked next.
+it("clears the typed key when the provider changes", async () => {
+	api.list.mockResolvedValue([provider("p1", "Fictional working connection", { isDefault: true })]);
+	renderSection();
+	fireEvent.click(await screen.findByRole("button", { name: /^Add AI provider/ }));
+	const key = await screen.findByLabelText("API key");
+	fireEvent.change(key, { target: { value: "sk-openai-secret" } });
+	fireEvent.click(screen.getByRole("combobox", { name: "Provider" }));
+	fireEvent.click(await screen.findByRole("option", { name: /Anthropic/ }));
+	await waitFor(() => expect(screen.getByLabelText("API key")).toHaveValue(""));
+});

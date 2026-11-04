@@ -177,7 +177,7 @@ it("Delete then Undo restores the existing round without deleting or recreating 
 	expect(api.update).not.toHaveBeenCalled();
 });
 
-it("offers Update your calendar only after a successful reschedule", async () => {
+it("offers Update your calendar after a successful reschedule", async () => {
 	mount(true);
 	fireEvent.change(await screen.findByLabelText("Time · Europe/Berlin"), { target: { value: "13:00" } });
 	fireEvent.click(screen.getByRole("button", { name: "Save interview" }));

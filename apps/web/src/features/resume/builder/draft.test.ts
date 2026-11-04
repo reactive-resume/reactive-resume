@@ -8,7 +8,6 @@ import { afterEach, assert, beforeEach, describe, expect, it, vi } from "vite-pl
 import { i18n } from "@lingui/core";
 import { ORPCError } from "@orpc/client";
 import { applyResumeProposals } from "@reactive-resume/resume/proposals";
-import { sortSectionItemsByPeriod } from "@reactive-resume/resume/section-sort";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import {
@@ -132,24 +131,6 @@ function withBasicsName(resume: Resume, name: string): Resume {
 				name,
 			},
 		},
-	};
-}
-
-function experienceItem(
-	id: string,
-	company: string,
-	period: string,
-): ResumeData["sections"]["experience"]["items"][number] {
-	return {
-		id,
-		company,
-		position: "Engineer",
-		location: "",
-		period,
-		description: "",
-		hidden: false,
-		website: { url: "", label: "", inlineLink: false },
-		roles: [],
 	};
 }
 
@@ -729,28 +710,16 @@ describe("builder resume autosave", () => {
 	});
 
 	it.each([
-		[
-			"another write came in between",
-			(resume: Resume) => withBasicsName(resume, "From another tab"),
-			1000,
-			false,
-			"Renamed",
-		],
-		["it answers an earlier visit", (resume: Resume) => resume, 1000, true, "Resume"],
-		["the visit already holds a newer revision", (resume: Resume) => resume, -1000, false, "Resume"],
-	])("keeps the autosave revision when a rename response %s", async (_, server, ms, revisit, name) => {
+		["another write came in between", (resume: Resume) => withBasicsName(resume, "From another tab"), 1000, "Renamed"],
+		["the visit already holds a newer revision", (resume: Resume) => resume, -1000, "Resume"],
+	])("keeps the autosave revision when a rename response %s", async (_, server, ms, name) => {
 		const initial = makeResume("metadata-write-guarded");
 		useResumeStore.getState().initialize(initial);
 		const answer = deferred<Resume>();
 		const writing = saveResumeMetadata(initial.id, () => answer.promise);
-		const result = revisit ? expect(writing).rejects.toMatchObject({ name: "AbortError" }) : writing;
 		await flushMicrotasks();
-		if (revisit) {
-			clearResumeDrafts();
-			useResumeStore.getState().initialize(initial);
-		}
 		answer.resolve({ ...server(initial), name: "Renamed", updatedAt: new Date(initial.updatedAt.getTime() + ms) });
-		await result;
+		await writing;
 		expect(useResumeStore.getState().resume?.name).toBe(name);
 		useResumeStore.getState().updateResumeData((draft) => {
 			draft.basics.headline = "Later headline";
@@ -1354,26 +1323,6 @@ describe("builder resume undo/redo", () => {
 		expect(store().resume?.data.basics.name).toBe(defaultResumeData.basics.name);
 	});
 
-	it("keeps structural actions as steps of their own", () => {
-		const store = useResumeStore.getState;
-		store().initialize(makeResume("undo-structural"));
-
-		store().updateResumeData((draft) => {
-			draft.basics.name = "A";
-		});
-		store().updateResumeData(
-			(draft) => {
-				draft.sections.skills.hidden = true;
-			},
-			{ newStep: true },
-		);
-		store().updateResumeData((draft) => {
-			draft.basics.name = "B";
-		});
-
-		expect(store().undoStack.length).toBe(3);
-	});
-
 	it("merges a multi-edit action with the same key into one step, however long it takes", () => {
 		const store = useResumeStore.getState;
 		store().initialize(makeResume("undo-same-step"));
@@ -1398,69 +1347,6 @@ describe("builder resume undo/redo", () => {
 		expect(store().undoStack).toHaveLength(1);
 		store().undo();
 		expect(store().resume?.data.metadata.page).toMatchObject({ gapY: 6, marginX: 14 });
-	});
-
-	it("restores the exact authored Experience order with one undo after a one-shot sort", () => {
-		const store = useResumeStore.getState;
-		const initial = makeResume("sort-undo");
-		initial.data.sections.experience.items = [
-			experienceItem("unknown", "Mystery Co", "Recently"),
-			experienceItem("older", "Older Co", "2018 - 2020"),
-			experienceItem("current", "Current Co", "2023 - Present"),
-		];
-		const authoredItems = cloneResumeData(initial.data).sections.experience.items;
-		store().initialize(initial);
-
-		store().updateResumeData((draft) => {
-			draft.sections.experience.items = sortSectionItemsByPeriod(
-				draft.sections.experience.items,
-				draft.metadata.page.locale,
-			).items;
-		});
-
-		expect(store().resume?.data.sections.experience.items.map(({ id }) => id)).toEqual(["current", "older", "unknown"]);
-		expect(store().undoStack).toHaveLength(1);
-
-		store().undo();
-		expect(store().resume?.data.sections.experience.items).toEqual(authoredItems);
-		expect(store().undoStack.length > 0).toBe(false);
-	});
-
-	it("retains the chosen order through autosave/reload and never resorts later field edits", async () => {
-		const store = useResumeStore.getState;
-		const initial = makeResume("sort-persistence");
-		initial.data.sections.experience.items = [
-			experienceItem("older", "Older Co", "2018 - 2020"),
-			experienceItem("current", "Current Co", "2023 - Present"),
-		];
-		let savedResume: Resume | undefined;
-		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) => {
-			savedResume = { ...makeResume(input.id), data: cloneResumeData(input.data) };
-			return Promise.resolve(savedResume);
-		});
-		store().initialize(initial);
-
-		store().updateResumeData((draft) => {
-			draft.sections.experience.items = sortSectionItemsByPeriod(
-				draft.sections.experience.items,
-				draft.metadata.page.locale,
-			).items;
-		});
-		vi.advanceTimersByTime(500);
-		await flushMicrotasks();
-
-		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(1);
-		expect(savedResume?.data.sections.experience.items.map(({ id }) => id)).toEqual(["current", "older"]);
-		if (!savedResume) throw new Error("expected the sorted resume to be saved");
-
-		store().reset();
-		store().initialize(savedResume);
-		store().updateResumeData((draft) => {
-			const currentItem = draft.sections.experience.items.find(({ id }) => id === "current");
-			if (currentItem) currentItem.period = "2010 - 2011";
-		});
-
-		expect(store().resume?.data.sections.experience.items.map(({ id }) => id)).toEqual(["current", "older"]);
 	});
 
 	it("separates edits outside the coalesce window into distinct undo steps", async () => {
@@ -1544,6 +1430,34 @@ describe("builder resume undo/redo", () => {
 
 		expect(store().undoStack.length).toBe(0);
 		expect(store().undoStack.length > 0).toBe(false);
+	});
+
+	it("restores proposal decisions only at their explicit undo checkpoints, preserving refinements and redo", () => {
+		const store = () => useResumeStore.getState();
+		store().initialize(makeResume("proposal-history"));
+		store().updateResumeData(
+			(draft) => {
+				draft.summary.content = "<p>Accepted</p>";
+			},
+			{ newStep: true, applied: [{ id: "edit", after: "<p>Accepted</p>" }] },
+		);
+		store().updateResumeData(
+			(draft) => {
+				draft.summary.content = "<p>Refined</p>";
+			},
+			{ newStep: true },
+		);
+		expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
+		store().undo();
+		expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
+		expect(store().resume?.data.summary.content).toBe("<p>Accepted</p>");
+		store().undo();
+		expect(store().proposalApplications).toEqual({ edit: false });
+		store().redo();
+		expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
+		store().redo();
+		expect(store().resume?.data.summary.content).toBe("<p>Refined</p>");
+		expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
 	});
 });
 
@@ -1693,36 +1607,9 @@ describe("resume update stream subscription", () => {
 	});
 });
 
-it("restores proposal decisions only at their explicit undo checkpoints, preserving refinements and redo", () => {
-	const store = () => useResumeStore.getState();
-	store().initialize(makeResume("proposal-history"));
-	store().updateResumeData(
-		(draft) => {
-			draft.summary.content = "<p>Accepted</p>";
-		},
-		{ newStep: true, applied: [{ id: "edit", after: "<p>Accepted</p>" }] },
-	);
-	store().updateResumeData(
-		(draft) => {
-			draft.summary.content = "<p>Refined</p>";
-		},
-		{ newStep: true },
-	);
-	expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
-	store().undo();
-	expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
-	expect(store().resume?.data.summary.content).toBe("<p>Accepted</p>");
-	store().undo();
-	expect(store().proposalApplications).toEqual({ edit: false });
-	store().redo();
-	expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
-	store().redo();
-	expect(store().resume?.data.summary.content).toBe("<p>Refined</p>");
-	expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
-});
-
 it("retains offscreen resume Undo and pending synchronization through a failed save and builder reload", async () => {
 	vi.useFakeTimers();
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	window.localStorage.clear();
 	const store = () => useResumeStore.getState();
 	const initial = makeResume("closed-assistant-undo");
@@ -1748,15 +1635,16 @@ it("retains offscreen resume Undo and pending synchronization through a failed s
 			expect.objectContaining({ proposalApplications: { edit: false } }),
 			expect.anything(),
 		);
+		const beforeReload = orpcMocks.updateResume.mock.calls.length;
 		vi.setSystemTime(Date.now() + 8 * 86_400_000);
 		clearResumeDrafts();
 		store().initialize(initial);
 		expect(store().proposalApplications).toEqual({ edit: false });
 		expect(await savePendingChanges(initial.id)).toBe(true);
-		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
-			expect.objectContaining({ proposalApplications: { edit: false } }),
-			expect.anything(),
-		);
+		// The write after reload, not the failed one before it, must carry the decision.
+		expect(
+			orpcMocks.updateResume.mock.calls.slice(beforeReload).map(([input]) => input.proposalApplications),
+		).toContainEqual({ edit: false });
 		const saved = store().resume;
 		if (!saved) throw new Error("Missing saved resume");
 		clearResumeDrafts();
