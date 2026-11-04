@@ -13,6 +13,9 @@ const BUDGETS = { "AGENTS.md": 16_000, nested: 12_000 };
 // Historical records may name files that have since moved or gone.
 const HISTORICAL = [".agents/docs/decisions/", ".agents/docs/research/"];
 const TICKET_ID = /(^|[^a-z])rx-?\d+/i;
+// Build and test outputs the docs name on purpose; they only exist after a build or test run. Any other missing
+// path fails, even when git ignores it.
+const GENERATED = new Set(["apps/server/dist/index.mjs", "apps/mobile/reports/node-junit.xml", "node_modules/.bin"]);
 
 const tracked = git("ls-files", "-z").split("\0").filter(Boolean);
 const topLevel = new Set(tracked.map((path) => path.split("/")[0]));
@@ -68,8 +71,7 @@ for (const doc of docs) {
 	const missing = new Set();
 	for (const path of [...candidatePaths(markdown), ...relativeLinks(markdown, doc)]) {
 		const found = existsSync(join(root, path)) || existsSync(join(root, dirname(doc), path));
-		// Ignored and generated paths get no pass: a doc that names a build output would hide a stale reference.
-		if (!found) missing.add(path);
+		if (!found && !GENERATED.has(path)) missing.add(path);
 	}
 	for (const path of missing) problems.push(`${doc}: names \`${path}\`, which doesn't exist`);
 }
