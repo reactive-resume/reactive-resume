@@ -2104,7 +2104,7 @@ console.log("PASS native percentage entry and immutable offer-version action");
 
 // Native Save must stay reachable for validation, then focus the actual missing input.
 let storyReadState = {};
-const { Stories } = load("features/career/stories.tsx", {
+const { Stories, StoryEditor } = load("features/career/stories.tsx", {
 	"@reactive-resume/schema/career": careerSchema,
 	"./hooks": {
 		useCareerQueries: () => ({ stories: { data: [], ...storyReadState }, facts: { data: [] } }),
@@ -5445,3 +5445,115 @@ assert.deepEqual(calls, []);
 nativeOfferMessages.props.onChange("fictional-role");
 assert.deepEqual(calls, ["/applications/fictional-role/messages"]);
 console.log("PASS native Offers Messages names its empty chooser and only navigates after selection");
+
+// The actual editor initializes citations once; later renders must not undo an explicit untick.
+const citedFact = {
+	id: "draft-shared",
+	text: "I rebuilt the fictional design system.",
+	applicationId: null,
+	status: "active",
+};
+const storyFacts = [
+	citedFact,
+	{ ...citedFact, id: "draft-excluded", status: "excluded" },
+	{ ...citedFact, id: "draft-private", applicationId: "job" },
+];
+for (const start of [
+	{ title: "Draft the project story", note: `Use “${citedFact.text}” as evidence.` },
+	{
+		title: "Draft the project story",
+		note: "Explain your contribution.",
+		factIds: storyFacts.map((f) => f.id).concat("foreign"),
+	},
+]) {
+	reset();
+	const draftView = () => render(StoryEditor, { story: null, facts: storyFacts, start, onClose() {} });
+	assert.equal(control(draftView(), "Title").value, start.title);
+	assert.equal(control(draftView(), citedFact.text).value, true);
+	assert.equal(nodes(draftView()).filter((n) => n.type === "SwitchRow").length, 1);
+	control(draftView(), citedFact.text).onValueChange(false);
+	assert.equal(control(draftView(), citedFact.text).value, false, "rerender preserves the user's explicit choice");
+}
+console.log("PASS native actual story citation initialization and reviewed deselection");
+
+// Preparation waits for owned facts before mounting an editor whose initialization runs once.
+let planFactsQuery = { data: undefined, isPending: true, isError: false, refetch() {} };
+const { TestPlan } = load(
+	"features/workspace/tabs/prepare.tsx",
+	{
+		"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: null }) },
+		"@tanstack/react-query": {},
+		"@/api/flags": {},
+		"@reactive-resume/utils/locale": { formatList: (items) => items.join(", ") },
+		"@reactive-resume/schema/career-schedule": loadDomain("packages/schema/src/career-schedule.ts"),
+		"../hooks": {
+			useFacts: () => planFactsQuery,
+			useTicks: () => ({ ticked: [] }),
+			useWorkspace: () => ({ data: { questions: [] } }),
+			useGenerate: () => ({ isPending: false }),
+		},
+		"../logic": {},
+		"../parts": {
+			useWorking: () => "Plan again",
+			workingSteps: () => [],
+			Actions: "Actions",
+			AiNotice: "AiNotice",
+			Block: "Block",
+			CheckRow: "CheckRow",
+			Pill: "Pill",
+			GenerateNotice: "GenerateNotice",
+		},
+		"../shell": { WorkspaceScreen: "WorkspaceScreen" },
+		"@/features/career/shared": { LoadState: "LoadState" },
+		"@/features/career/stories": { StoryEditor: "StoryEditor" },
+		"@/features/application-detail/hooks": {},
+	},
+	";module.exports.TestPlan = Plan;",
+);
+reset();
+const planStep = {
+	minutes: 10,
+	title: "Draft the project story",
+	detail: "Explain the project.",
+	action: "draft-story",
+	storyId: null,
+	factIds: [citedFact.id],
+};
+const planView = () =>
+	render(TestPlan, {
+		application: { id: "story-job" },
+		briefing: {
+			id: "story-plan",
+			data: {
+				plan: [planStep],
+				questions: [],
+				stories: [],
+				storyIds: [],
+				headline: "Plan",
+				summary: "",
+				focus: "",
+				opening: "",
+				honesty: "",
+			},
+		},
+		readOnly: true,
+		go() {},
+	});
+const stepAction = nodes(planView()).find((n) => n.type === "Button" && n.props.label === "Draft story");
+assert.ok(stepAction, "actual plan exposes the Draft story action");
+stepAction.props.onPress();
+assert.equal(
+	nodes(planView()).some((n) => n.type === "StoryEditor"),
+	false,
+);
+assert.equal(nodes(planView()).find((n) => n.type === "LoadState").props.query, planFactsQuery);
+planFactsQuery = { ...planFactsQuery, isPending: false, isError: true };
+assert.equal(
+	nodes(planView()).some((n) => n.type === "StoryEditor"),
+	false,
+);
+planFactsQuery = { ...planFactsQuery, isError: false, data: storyFacts };
+const readyStory = nodes(planView()).find((n) => n.type === "StoryEditor");
+assert.equal(readyStory.props.facts, storyFacts);
+assert.deepEqual(readyStory.props.start.factIds, [citedFact.id]);
+console.log("PASS native actual plan keeps citation initialization behind fact loading and failure");

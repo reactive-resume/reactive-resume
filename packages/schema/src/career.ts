@@ -228,6 +228,8 @@ export const savedItemDataSchema = z.discriminatedUnion("kind", [
 					detail: text(400),
 					action: z.enum(["story", "draft-story", "questions", "practise", "none"]),
 					storyId: z.string().nullable().default(null),
+					/** Explicit supporting facts for this step; older briefings omit the field. */
+					factIds: z.array(z.string().min(1)).max(20).optional(),
 				}),
 			)
 			.max(8),

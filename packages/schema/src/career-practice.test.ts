@@ -1,5 +1,32 @@
 import { expect, it } from "vite-plus/test";
-import { canUseCareerStory, interviewPreparationDue, threePracticeQuestions } from "./career-practice";
+import {
+	canUseCareerStory,
+	interviewPreparationDue,
+	storyDraftFactIds,
+	threePracticeQuestions,
+} from "./career-practice";
+
+it("starts a shared story only with its cited active shared facts", () => {
+	const fact = { id: "shared", text: "I rebuilt the design system.", applicationId: null, status: "active" };
+	const facts = [
+		fact,
+		{ ...fact, id: "excluded", status: "excluded" },
+		{ ...fact, id: "forgotten", status: "forgotten" },
+		{ ...fact, id: "private", applicationId: "job" },
+		{ ...fact, id: "other", text: "An unrelated fact." },
+		{ ...fact, id: "blank", text: "" },
+	];
+	expect(storyDraftFactIds({ detail: "Use “I rebuilt the\n design system.” as evidence." }, facts)).toEqual(["shared"]);
+	expect(
+		storyDraftFactIds({ detail: "Design systems", factIds: facts.map((item) => item.id).concat("foreign") }, facts),
+	).toEqual(["shared", "other"]);
+	expect(storyDraftFactIds({ detail: fact.text, factIds: [] }, facts)).toEqual([]);
+	expect(storyDraftFactIds({ detail: "A paraphrase is not an explicit citation." }, facts)).toEqual([]);
+	expect(storyDraftFactIds({ detail: "Rustic furniture" }, [{ ...fact, text: "Rust" }])).toEqual([]);
+	expect(storyDraftFactIds({ detail: "Use C++ (advanced)." }, [{ ...fact, text: "C++ (advanced)." }])).toEqual([
+		"shared",
+	]);
+});
 
 it("offers immediate preparation only from the start of the 24-hour window through interview start", () => {
 	const now = new Date("2026-11-03T10:00:00Z");

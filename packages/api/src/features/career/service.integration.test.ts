@@ -2655,6 +2655,50 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect((await applications.getById({ userId: "alice", id: "alice-app" })).status).toBe("offer");
 	});
 
+	it("keeps per-step briefing citations owned and records them even without top-level citations", async () => {
+		const shared = await fact("alice", "I rebuilt the fictional design system.");
+		const foreign = await fact("bob", "Another account's fact.");
+		const excluded = await fact("alice", "An excluded fact.");
+		await getDb().update(tables.careerFact).set({ status: "excluded" }).where(eq(tables.careerFact.id, excluded.id));
+		fixture.generate.mockResolvedValueOnce({
+			title: "Fictional preparation",
+			headline: "Review the project",
+			summary: "",
+			plan: [
+				{
+					minutes: 10,
+					title: "Draft the design-system story",
+					detail: "Explain your contribution.",
+					action: "draft-story",
+					storyId: null,
+					factIds: [shared.id, foreign.id, excluded.id],
+				},
+			],
+			questions: [],
+			focus: "",
+			opening: "",
+			stories: [],
+			honesty: "",
+			storyIds: [],
+			missingStory: null,
+			practiceQuestions: [],
+			factIds: [],
+		});
+		const { generateCareer } = await import("./generate");
+		const result = await generateCareer({
+			userId: "alice",
+			applicationId: "alice-app",
+			locale: "en-US",
+			task: { task: "briefing", interviewId: "alice-round" },
+		});
+		expect(result.item?.data).toMatchObject({ plan: [{ factIds: [shared.id] }] });
+		expect(result.item?.evidence.factIds).toEqual([shared.id]);
+		const saved = (await service.savedItems({ userId: "alice", applicationId: "alice-app" })).find(
+			(item) => item.id === result.item?.id,
+		);
+		expect(saved?.data).toMatchObject({ plan: [{ factIds: [shared.id] }] });
+	});
+
 	it.each(["paused", "closed"] as const)("discards a briefing when %s while the provider runs", async (state) => {
 		await getDb().insert(tables.aiProvider).values({
 			id: "fixture",

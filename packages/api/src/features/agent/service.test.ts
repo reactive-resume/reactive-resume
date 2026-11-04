@@ -217,7 +217,8 @@ vi.mock("./tools", () => ({
 vi.mock("@reactive-resume/schema/resume/default", () => ({
 	defaultResumeData: {},
 }));
-vi.mock("@reactive-resume/utils/string", () => ({
+vi.mock("@reactive-resume/utils/string", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@reactive-resume/utils/string")>()),
 	generateId: () => "test-id",
 }));
 vi.mock("@orpc/server", () => ({ streamToEventIterator: vi.fn() }));
