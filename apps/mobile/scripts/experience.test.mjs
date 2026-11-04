@@ -2275,6 +2275,7 @@ const photoHooks = load("features/write/hooks.ts", {
 	"./model": {},
 });
 let pictureOptions;
+let photoUploadRequest;
 const { PictureScreen } = load("features/write/picture-screen.tsx", {
 	"@tanstack/react-query": {
 		useMutation: (options) => {
@@ -2282,17 +2283,35 @@ const { PictureScreen } = load("features/write/picture-screen.tsx", {
 			return {};
 		},
 	},
-	"expo-file-system": {},
+	"expo-file-system": {
+		File: class extends Blob {
+			constructor(uri) {
+				super(["fictional image bytes"]);
+				this.uri = uri;
+			}
+		},
+	},
 	"expo-image": { Image: "Image" },
-	"expo-image-picker": {},
+	"expo-image-picker": {
+		launchImageLibraryAsync: async () => ({ canceled: false, assets: [{ uri: "fixture://photo" }] }),
+	},
 	"./entry-screen": { EditorScreen: "EditorScreen" },
 	"./hooks": { ...photoHooks, useWriteData: (select) => select(photoStore.getState().data) },
 	"./pickers": {},
-	"./upload": {},
-	"@/api/client": { client: { storage: { deleteFile: async () => photoBytes.delete(photoUrl) } } },
+	"./upload": load("features/write/upload.ts", {}),
+	"@/api/client": {
+		rest: async (path, init) => {
+			assert.equal(path, "/files");
+			assert.equal(init.method, "POST");
+			assert.ok(init.body instanceof FormData);
+			photoUploadRequest.started();
+			return photoUploadRequest.response;
+		},
+		client: { storage: { deleteFile: async () => photoBytes.delete(photoUrl) } },
+	},
 	"@/auth/session": { useSession: () => ({ server: "https://resume.example.test" }) },
 	"@/draft": { useResumeStore: photoStore, useIsResumeLocked: () => photoStore.getState().locked },
-	"@/draft/native": { nativeEnvironment: {} },
+	"@/draft/native": { nativeEnvironment: { scope: async () => "photo-owner" } },
 });
 const photoView = () => render(PictureScreen);
 assert.equal(
@@ -2305,6 +2324,46 @@ assert.equal(
 	true,
 	"existing photo offers appearance controls",
 );
+
+for (const action of ["unchanged", "edited", "removed"]) {
+	let completeUpload;
+	let enterUpload;
+	const started = new Promise((resolve) => {
+		enterUpload = resolve;
+	});
+	const response = new Promise((resolve) => {
+		completeUpload = resolve;
+	});
+	photoUploadRequest = { started: enterUpload, response };
+	photoStore.getState().update((draft) => {
+		draft.picture.url = photoUrl;
+		draft.picture.size = 80;
+	});
+	photoView();
+	const pending = pictureOptions.mutationFn();
+	await started;
+	assert.equal(photoStore.getState().data.picture.url, photoUrl);
+	const newerUrl = "https://photos.example.test/newer.jpeg";
+	control(photoView(), "Size").onChange(99);
+	if (action === "edited") control(photoView(), "URL").onChangeText(newerUrl);
+	if (action === "removed") control(photoView(), "Remove photo").onPress();
+	const expected =
+		action === "unchanged" ? "https://photos.example.test/uploaded.jpeg" : action === "edited" ? newerUrl : "";
+	completeUpload({ ok: true, json: async () => ({ url: "https://photos.example.test/uploaded.jpeg" }) });
+	await pending;
+	assert.equal(photoStore.getState().data.picture.url, expected, `late upload respects ${action} URL`);
+	assert.equal(photoStore.getState().data.picture.size, 99, "upload preserves newer appearance edits");
+	photoStore.getState().undo();
+	assert.equal(photoStore.getState().data.picture.url, photoUrl, "upload or newer choice is one undo step");
+	assert.equal(photoStore.getState().data.picture.size, 99, "photo Undo preserves newer appearance edits");
+	photoStore.getState().redo();
+	assert.equal(photoStore.getState().data.picture.url, expected, "ignored upload does not replace newer history");
+}
+photoStore.getState().update((draft) => {
+	draft.picture.url = photoUrl;
+	draft.picture.size = 80;
+});
+console.log("PASS native photo upload preserves newer URL or removal and unrelated appearance edits");
 
 // Undo removal must retain the edit immediately before it.
 photoStore.getState().update((draft) => {
