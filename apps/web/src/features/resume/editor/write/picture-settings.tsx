@@ -744,6 +744,7 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 
 	const onUploadPicture = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
+		e.target.value = "";
 		if (!file || !current()) return;
 		const imageSrc = URL.createObjectURL(file);
 		const image = new Image();

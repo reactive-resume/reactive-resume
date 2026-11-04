@@ -248,3 +248,36 @@ it.each(["current", "resume", "locked", "account"])(
 		client.clear();
 	},
 );
+
+it.each(["before", "during"])("clears the file selection when ownership changes %s decode", async (when) => {
+	let finish = () => {};
+	vi.stubGlobal(
+		"Image",
+		class {
+			src = "";
+			decode = () =>
+				new Promise<void>((resolve) => {
+					finish = resolve;
+				});
+		},
+	);
+	const { client } = renderPhoto("");
+	const input = screen.getByLabelText("Upload photo") as HTMLInputElement;
+	Object.defineProperty(input, "value", { value: "photo.png", writable: true });
+	const lock = () =>
+		useResumeStore.getState().patchResume((resume) => {
+			resume.isLocked = true;
+		});
+	if (when === "before") act(lock);
+	act(() => {
+		fireEvent.change(input, { target: { files: [new File(["fictional"], "photo.png", { type: "image/png" })] } });
+	});
+	if (when === "during") act(lock);
+	await act(async () => {
+		finish();
+	});
+	expect(input.value).toBe("");
+	expect(mocks.uploadFile).not.toHaveBeenCalled();
+	expect(screen.queryByRole("dialog", { name: "Crop photo" })).toBeNull();
+	client.clear();
+});
