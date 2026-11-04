@@ -117,7 +117,7 @@ export function SectionRow({ section, locked, dragGroup, onMove, children }: Sec
 					aria-label={t`Reorder ${title}`}
 					disabled={locked || hidden}
 					className={cn(
-						"flex h-11 w-7 shrink-0 cursor-grab items-center justify-center text-ink-3 active:cursor-grabbing disabled:cursor-default",
+						"flex h-11 w-7 shrink-0 cursor-grab items-center justify-center text-ink-3 active:cursor-grabbing disabled:cursor-default pointer-coarse:w-11",
 						hidden && "opacity-40",
 					)}
 					{...attributes}
@@ -132,7 +132,7 @@ export function SectionRow({ section, locked, dragGroup, onMove, children }: Sec
 					onClick={() => setOpen(section.id, !open)}
 					onKeyDown={onTitleKeyDown}
 					className={cn(
-						"min-w-0 flex-1 truncate rounded-md py-1 text-start text-sm font-medium",
+						"min-w-0 flex-1 truncate rounded-md py-1 text-start text-sm font-medium pointer-coarse:h-11",
 						hidden && "text-ink-3 line-through",
 					)}
 				>
