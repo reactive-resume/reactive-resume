@@ -1739,8 +1739,8 @@ importers:
         version: 0.88.1(@babel/core@7.29.7(supports-color@7.2.0))(@react-native/metro-config@0.88.1(@babel/core@7.29.7(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0)
     devDependencies:
       '@formepdf/core':
-        specifier: 0.29.0
-        version: 0.29.0(react@19.3.1)
+        specifier: 0.30.0
+        version: 0.30.0(react@19.3.1)
       '@reactive-resume/config':
         specifier: workspace:*
         version: link:../config
@@ -3751,18 +3751,8 @@ packages:
   '@formatjs/intl-supportedvaluesof@2.3.11':
     resolution: {integrity: sha512-oRzzAbJA08psr6AO0jgXAdx4HZ2vGNeja1fgaio2R2ne8DLtGPV+fa3gxI/t8J2dNPOndrwVAZVVfbH6GDFDwA==}
 
-  '@formepdf/core@0.29.0':
-    resolution: {integrity: sha512-+pNHvHSPlZtJia9gSRlAqh3bY/NuJMN4e/2Abw5WHX6qBvc1PxtqM1QLY9RnAGJ0jo8FKKED2TWtSDb4GcX1uA==}
-    peerDependencies:
-      react: ^18 || ^19
-
   '@formepdf/core@0.30.0':
     resolution: {integrity: sha512-XIjXYirep3uRjXb7Royafqmi4mYn3SObGxr94oTv/0mDnso495iTN04PnJhzenuHAHIiStgPX0vNZv8zFOKT1g==}
-    peerDependencies:
-      react: ^18 || ^19
-
-  '@formepdf/react@0.29.0':
-    resolution: {integrity: sha512-Zk9FjYOzHz3UybAEIfwn+fSsWmrn6baWgnEQJTbveWzdGoUvn+57NIxJNy3MaDz4vQhjBD9O86zv2hGrrjH4lA==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -3770,9 +3760,6 @@ packages:
     resolution: {integrity: sha512-iYTTPyQpEbvtdyi3rWBHBMZg707IhUt1MxXtMmW9QqJAMitujJKIj2KPexYkdzc2BDPMl1MTx7vXOc8Vv6JfeA==}
     peerDependencies:
       react: ^18 || ^19
-
-  '@formepdf/shared@0.29.0':
-    resolution: {integrity: sha512-0f88og4D9XCmwVZ3+/lheM7NsEl3PTLEjZQe01etC1YFMdFB65oy+W7465Ab4oD3+odqZfjEORqiwHHzo4dIbA==}
 
   '@formepdf/shared@0.30.0':
     resolution: {integrity: sha512-HwOdS3mHfyJW24JJgpu7QcTQuSXNYHl8vOKPgbqrG7SMZy2hey/lRjFY1k4ou6VgTtXXw1fLFgjYhuWj8uEF2g==}
@@ -14133,29 +14120,15 @@ snapshots:
     dependencies:
       '@formatjs/fast-memoize': 3.1.7
 
-  '@formepdf/core@0.29.0(react@19.3.1)':
-    dependencies:
-      '@formepdf/react': 0.29.0(react@19.3.1)
-      react: 19.3.1
-
   '@formepdf/core@0.30.0(react@19.3.1)':
     dependencies:
       '@formepdf/react': 0.30.0(react@19.3.1)
-      react: 19.3.1
-
-  '@formepdf/react@0.29.0(react@19.3.1)':
-    dependencies:
-      '@formepdf/shared': 0.29.0
       react: 19.3.1
 
   '@formepdf/react@0.30.0(react@19.3.1)':
     dependencies:
       '@formepdf/shared': 0.30.0
       react: 19.3.1
-
-  '@formepdf/shared@0.29.0':
-    dependencies:
-      parse5: 7.3.0
 
   '@formepdf/shared@0.30.0':
     dependencies:
