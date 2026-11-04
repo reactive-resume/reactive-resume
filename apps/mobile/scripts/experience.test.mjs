@@ -4412,6 +4412,25 @@ control(menuView(), "Back").onPress();
 assert.equal(tagsAction().disabled, true);
 console.log("PASS native builder tags use draft flush, retain body, and respect tag limits and locks");
 
+hooks = [];
+let suggestedTags = ["chosen"];
+const suggestedCommit = { current: null };
+const suggestedView = () =>
+	render(NativeTagInput, {
+		label: "Tags",
+		values: suggestedTags,
+		onChange: (next) => {
+			suggestedTags = next;
+		},
+		suggestions: ["remote"],
+		commitRef: suggestedCommit,
+	});
+control(suggestedView(), "Tags").onChangeText("rem");
+control(suggestedView(), "remote").onPress();
+suggestedView();
+assert.deepEqual(suggestedCommit.current(), ["chosen", "remote"], "suggestion consumes its typed filter before Save");
+console.log("PASS native filtered tag suggestion never saves the filter as another tag");
+
 control(menuView(), "Document options").onPress();
 nodes(menuView())
 	.find((node) => node.type === "ListRow" && node.props.title === "Translate into…")
