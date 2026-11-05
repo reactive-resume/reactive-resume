@@ -120,7 +120,7 @@ it.each([
 ] as const)("waits for published release before cache purge: %s", (_name, responses, status, probes) => {
 	const workflow = readFileSync(new URL("../.github/workflows/docker-publish.yml", import.meta.url), "utf8");
 	const script = workflow.match(
-		/      - name: Deploy production stack[\s\S]*?      - name: Wait for healthy production version[\s\S]*?        run: \|\n([\s\S]*?)(?=\n      - name: Purge production Cloudflare cache)/,
+		/      - name: Deploy production app[\s\S]*?      - name: Wait for healthy production version[\s\S]*?        run: \|\n([\s\S]*?)(?=\n      - name: Purge production Cloudflare cache)/,
 	)?.[1];
 	if (!script) throw new Error("Production readiness check must run between deployment and cache purge");
 	const directory = mkdtempSync(join(tmpdir(), "docker-readiness-"));

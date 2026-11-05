@@ -436,7 +436,8 @@ jobs:
           cosign sign --yes --new-bundle-format=false --use-signing-config=false "$DOCKER_IMAGE@$DIGEST"
           docker buildx imagetools inspect "$DOCKER_IMAGE:${{ steps.published.outputs.final_tag }}"
 
-      - name: Deploy production stack
+      # Updates only the app service. Postgres, Redis and storage keep running; refresh them with a manual `up`.
+      - name: Deploy production app
         id: deploy
         if: ${{ needs.plan.outputs.release == 'true' && steps.version.outputs.prerelease != 'true' && env.DEPLOY == 'true' }}
         uses: appleboy/ssh-action@v1
@@ -446,7 +447,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           script: |
             cd docker
-            ./manage_stack.sh up reactive_resume
+            ./manage_stack.sh app reactive_resume
 
       - name: Wait for healthy production version
         if: ${{ needs.plan.outputs.release == 'true' && steps.version.outputs.prerelease != 'true' && (env.DEPLOY == 'true' || env.PURGE_CLOUDFLARE == 'true') }}
