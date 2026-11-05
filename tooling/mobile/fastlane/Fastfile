@@ -1,14 +1,17 @@
 require "base64"
 require "fileutils"
+require "json"
 require "securerandom"
 require "tmpdir"
 
 ROOT = File.expand_path("../../..", __dir__)
 MOBILE = File.join(ROOT, "apps/mobile")
 OUTPUT = File.join(ENV.fetch("RUNNER_TEMP"), "mobile-release")
-# One English note for both stores. Play caps it at 500 characters; App Store Connect rejects it on an app's first version.
-def release_notes
-  File.read(File.join(MOBILE, "store/release-notes.txt")).strip
+# Translated "What's new" text keyed by store locale ("appleLocale" or "googleLocale"). App Store Connect blocks
+# review while any listing locale lacks it and rejects it on an app's first version; Play caps each at 500 characters.
+def release_notes(store)
+  JSON.parse(File.read(File.join(MOBILE, "store/metadata.json"))).fetch("localizations").values
+    .to_h { |localization| [localization.fetch(store), localization.fetch("releaseNotes").strip] }
 end
 
 def secret_file(directory, name, value, base64: false)
@@ -54,9 +57,11 @@ platform :android do
   lane :upload do
     # supply reads release notes only from a metadata tree; listing text, images and screenshots stay skipped.
     Dir.mktmpdir("play-metadata-", ENV.fetch("RUNNER_TEMP")) do |metadata|
-      changelogs = File.join(metadata, "en-US/changelogs")
-      FileUtils.mkdir_p(changelogs)
-      File.write(File.join(changelogs, "default.txt"), release_notes)
+      release_notes("googleLocale").each do |locale, notes|
+        changelogs = File.join(metadata, locale, "changelogs")
+        FileUtils.mkdir_p(changelogs)
+        File.write(File.join(changelogs, "default.txt"), notes)
+      end
       upload_to_play_store(
         package_name: "me.rxresu",
         json_key_data: ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
@@ -145,7 +150,7 @@ platform :ios do
     upload_to_app_store(
       api_key: api_key, app_identifier: "me.rxresu",
       ipa: File.join(OUTPUT, "ReactiveResume.ipa"),
-      submit_for_review: true, automatic_release: true, release_notes: { "en-US" => release_notes },
+      submit_for_review: true, automatic_release: true, release_notes: release_notes("appleLocale"),
       # Metadata processing also applies automatic_release; existing listing fields stay in App Store Connect.
       skip_metadata: false, skip_screenshots: true, force: true,
       precheck_include_in_app_purchases: false

@@ -1,6 +1,6 @@
 # Store metadata
 
-`metadata.json` contains English and ten translations: Spanish (Spain), French (France), German, Brazilian Portuguese, Simplified Chinese, Japanese, Korean, Hindi, Arabic, and Indonesian. The brand name remains **Reactive Resume** in every locale, as confirmed by the owner. Apple subtitles, descriptions, and keywords are localized; Google uses localized short and full descriptions.
+`metadata.json` contains English and ten translations: Spanish (Spain), French (France), German, Brazilian Portuguese, Simplified Chinese, Japanese, Korean, Hindi, Arabic, and Indonesian. The brand name remains **Reactive Resume** in every locale, as confirmed by the owner. Apple subtitles, descriptions, and keywords are localized; Google uses localized short and full descriptions. Each locale's `releaseNotes` is the translated "What's new" text that the release workflow sends to both stores; update every locale for each release.
 
 Apple uses `zh-Hans`, `ja`, `ko`, `hi`, `ar-SA`, and `id` where Google uses `zh-CN`, `ja-JP`, `ko-KR`, `hi-IN`, `ar`, and `id`. Copy is saved in both stores, not submitted for review or published. Native-language editorial review remains outstanding. Metadata describes the build with AI consent, private safety reporting, and local shared-author blocking; deploy matching backend and policy behavior before review.
 

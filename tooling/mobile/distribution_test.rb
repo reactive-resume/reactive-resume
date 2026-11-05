@@ -1,3 +1,4 @@
+require "json"
 require "tmpdir"
 
 # Exercise the real lanes at the store SDK boundary without credentials or network calls.
@@ -32,7 +33,9 @@ class DistributionContract
   def upload_to_play_store(**options)
     raise "Play must upload only to production" unless options[:track] == "production"
     # The lane removes its metadata tree after upload, so read the release notes while it exists.
-    @uploads << options.merge(changelog: File.read(File.join(options[:metadata_path], "en-US/changelogs/default.txt")))
+    changelogs = Dir[File.join(options[:metadata_path], "*/changelogs/default.txt")]
+      .to_h { |path| [path.split("/")[-3], File.read(path)] }
+    @uploads << options.merge(changelogs: changelogs)
   end
 
   def upload_to_app_store(**options)
@@ -51,10 +54,12 @@ raise "Play must submit a full production release for review" unless
     play[:rescue_changes_not_sent_for_review] == false
 raise "Play must upload this run's signed artifact to the correct app" unless
   play[:package_name] == "me.rxresu" && play[:aab] == File.join(Dir.tmpdir, "mobile-release/ReactiveResume.aab")
-notes = File.read(File.join(__dir__, "../../apps/mobile/store/release-notes.txt")).strip
-raise "Release notes must be present and fit Play's 500-character limit" if notes.empty? || notes.length > 500
-raise "Play must send the release notes without the store listing" unless
-  play[:changelog] == notes && play[:skip_upload_changelogs] == false && play[:skip_upload_metadata]
+localizations = JSON.parse(File.read(File.join(__dir__, "../../apps/mobile/store/metadata.json"))).fetch("localizations").values
+notes = ->(store) { localizations.to_h { |l| [l.fetch(store), l["releaseNotes"].to_s.strip] } }
+raise "Every listing locale needs release notes within Play's 500-character limit" if
+  localizations.any? { |l| l["releaseNotes"].to_s.strip.empty? || l["releaseNotes"].strip.length > 500 }
+raise "Play must send each locale's release notes without the store listing" unless
+  play[:changelogs] == notes.call("googleLocale") && play[:skip_upload_changelogs] == false && play[:skip_upload_metadata]
 
 contract.publish(:ios)
 app_store = contract.uploads.last
@@ -66,7 +71,7 @@ raise "App Store must upload and select this run's signed artifact" unless
   app_store[:app_identifier] == "me.rxresu" &&
     app_store[:ipa] == File.join(Dir.tmpdir, "mobile-release/ReactiveResume.ipa") &&
     !app_store[:skip_binary_upload] && !app_store[:build_number]
-raise "App Store must send the release notes" unless app_store[:release_notes] == { "en-US" => notes }
+raise "App Store must send each listing locale's release notes" unless app_store[:release_notes] == notes.call("appleLocale")
 raise "App Store API-key precheck must exclude unsupported in-app purchase checks" unless
   app_store[:precheck_include_in_app_purchases] == false
 puts "Production distribution contracts passed"
