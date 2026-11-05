@@ -10,7 +10,7 @@ const config: ExpoConfig = {
 	platforms: process.env.EXPO_MOBILE_WEB_PREVIEW === "1" ? ["ios", "android", "web"] : ["ios", "android"],
 	scheme: "me.rxresu",
 	owner: "reactive-resume",
-	version: "1.0.0",
+	version: "1.0.1",
 	runtimeVersion: { policy: "fingerprint" },
 	updates: {
 		url: "https://u.expo.dev/5830280e-e1ba-45b7-b9c9-ba048fa3bd4d",

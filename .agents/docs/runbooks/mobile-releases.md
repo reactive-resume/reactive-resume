@@ -42,7 +42,8 @@ primary purpose or add features that need new store declarations; ship those thr
 2. Optionally bump `version` in `apps/mobile/app.config.ts`. CI supplies increasing iOS build numbers and Android
    version codes. iOS needs a new version string after a version is released; Play needs only a higher `versionCode`.
 3. Finish the signed-device checks, store declarations, listing and reviewer details, and release notes before
-   submission. Play credentials must permit production releases; the App Store Connect key needs App Manager or Admin.
+   submission. Write the release notes in `apps/mobile/store/release-notes.txt`: English, at most 500 characters.
+   Both lanes send them; App Store Connect accepts them only from the app's second released version onwards. Play credentials must permit production releases; the App Store Connect key needs App Manager or Admin.
 4. Dispatch **Mobile release** on `main`, platform `all`, `format=store`, `upload` enabled. Approve `mobile-signing`,
    inspect the run's signed artifacts, then approve `mobile-store` to submit them. The latest main-push CI must have
    passed for the exact source commit before upload begins. Leave `upload` disabled to only check a build.

@@ -6,6 +6,8 @@ require "tmpdir"
 ROOT = File.expand_path("../../..", __dir__)
 MOBILE = File.join(ROOT, "apps/mobile")
 OUTPUT = File.join(ENV.fetch("RUNNER_TEMP"), "mobile-release")
+# One English note for both stores. Play caps it at 500 characters; App Store Connect rejects it on an app's first version.
+RELEASE_NOTES = File.read(File.join(MOBILE, "store/release-notes.txt")).strip
 
 def secret_file(directory, name, value, base64: false)
   path = File.join(directory, name)
@@ -48,15 +50,22 @@ platform :android do
 
   desc "Submit a Google Play production release"
   lane :upload do
-    upload_to_play_store(
-      package_name: "me.rxresu",
-      json_key_data: ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
-      aab: File.join(OUTPUT, "ReactiveResume.aab"),
-      track: "production", release_status: "completed",
-      changes_not_sent_for_review: false, rescue_changes_not_sent_for_review: false,
-      skip_upload_apk: true, skip_upload_metadata: true, skip_upload_changelogs: true,
-      skip_upload_images: true, skip_upload_screenshots: true
-    )
+    # supply reads release notes only from a metadata tree; listing text, images and screenshots stay skipped.
+    Dir.mktmpdir("play-metadata-", ENV.fetch("RUNNER_TEMP")) do |metadata|
+      changelogs = File.join(metadata, "en-US/changelogs")
+      FileUtils.mkdir_p(changelogs)
+      File.write(File.join(changelogs, "default.txt"), RELEASE_NOTES)
+      upload_to_play_store(
+        package_name: "me.rxresu",
+        json_key_data: ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
+        aab: File.join(OUTPUT, "ReactiveResume.aab"),
+        track: "production", release_status: "completed",
+        changes_not_sent_for_review: false, rescue_changes_not_sent_for_review: false,
+        metadata_path: metadata,
+        skip_upload_apk: true, skip_upload_metadata: true, skip_upload_changelogs: false,
+        skip_upload_images: true, skip_upload_screenshots: true
+      )
+    end
   end
 end
 
@@ -134,7 +143,7 @@ platform :ios do
     upload_to_app_store(
       api_key: api_key, app_identifier: "me.rxresu",
       ipa: File.join(OUTPUT, "ReactiveResume.ipa"),
-      submit_for_review: true, automatic_release: true,
+      submit_for_review: true, automatic_release: true, release_notes: { "en-US" => RELEASE_NOTES },
       # Metadata processing also applies automatic_release; existing listing fields stay in App Store Connect.
       skip_metadata: false, skip_screenshots: true, force: true,
       precheck_include_in_app_purchases: false
