@@ -1,6 +1,7 @@
 import { constants, existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { setTimeout as sleep } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
@@ -25,6 +26,21 @@ function resolveWorkspaceFolder(folderName: string): string {
 	throw new Error(`Could not locate ${folderName} folder relative to ${resolveFromCurrentModule(".")}`);
 }
 
+// A rolling deploy migrates while the previous release still serves traffic. Postgres can then abort the migration
+// with a deadlock, or stop waiting at lock_timeout; the whole migration transaction rolls back, so it can run again.
+const LOCK_CONFLICT_CODES = new Set(["40P01", "55P03"]); // deadlock_detected, lock_not_available
+const MIGRATION_ATTEMPTS = 8;
+
+function lockConflictCode(error: unknown): string | undefined {
+	// Drizzle wraps the driver error in `cause`.
+	for (let current = error, depth = 0; current && typeof current === "object" && depth < 5; depth += 1) {
+		const code = (current as { code?: unknown }).code;
+		if (typeof code === "string" && LOCK_CONFLICT_CODES.has(code)) return code;
+		current = (current as { cause?: unknown }).cause;
+	}
+	return undefined;
+}
+
 export async function runDatabaseMigrations() {
 	console.info("Running database migrations...");
 
@@ -38,14 +54,28 @@ export async function runDatabaseMigrations() {
 		const client = await pool.connect();
 		try {
 			await client.query("SELECT pg_advisory_lock(721830451)");
+			// A waiting ALTER queues every later query on its table, so give up quickly and retry instead.
+			await client.query("SET lock_timeout = '5s'");
 			const db = drizzle({ client });
-			try {
-				await migrate(db, { migrationsFolder: resolveWorkspaceFolder("migrations") });
-				console.info("Database migrations completed");
-			} catch (error) {
-				console.error("Database migrations failed", { error });
-				throw error;
+			for (let attempt = 1; ; attempt += 1) {
+				try {
+					await migrate(db, { migrationsFolder: resolveWorkspaceFolder("migrations") });
+					console.info("Database migrations completed");
+					break;
+				} catch (error) {
+					const code = lockConflictCode(error);
+					if (!code || attempt === MIGRATION_ATTEMPTS) {
+						console.error("Database migrations failed", { error });
+						throw error;
+					}
+					const delay = Math.min(1000 * 2 ** (attempt - 1), 15_000);
+					console.warn(
+						`Database migrations hit a lock conflict (${code}); retrying in ${delay} ms (attempt ${attempt} of ${MIGRATION_ATTEMPTS}).`,
+					);
+					await sleep(delay);
+				}
 			}
+			await client.query("RESET lock_timeout");
 
 			// Post-migration verification is not a migration failure, so it gets its own log
 			// message. A drifted schema still lets the server boot; STRICT_SCHEMA_CHECK=true
