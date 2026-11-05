@@ -44,9 +44,9 @@ primary purpose or add features that need new store declarations; ship those thr
 3. Finish the signed-device checks, store declarations, listing and reviewer details, and release notes before
    submission. Write the release notes in `apps/mobile/store/release-notes.txt`: English, at most 500 characters.
    Both lanes send them; App Store Connect accepts them only from the app's second released version onwards. Play credentials must permit production releases; the App Store Connect key needs App Manager or Admin.
-4. Dispatch **Mobile release** on `main`, platform `all`, `format=store`, `upload` enabled. Approve `mobile-signing`,
-   inspect the run's signed artifacts, then approve `mobile-store` to submit them. The latest main-push CI must have
-   passed for the exact source commit before upload begins. Leave `upload` disabled to only check a build.
+4. Dispatch **Mobile release** on `main`, platform `all`, `format=store`, `upload` enabled. The run signs
+   and submits without manual approval. The latest main-push CI must have passed for the exact source commit before
+   upload begins. Leave `upload` disabled to only check a build or inspect the signed artifacts first.
 5. App Store Connect: the workflow uploads the IPA, creates or updates the app version, waits for the processed build,
    submits for review and sets automatic release after approval.
 6. Play Console: the workflow uploads straight to production with a full rollout and sends changes for review. It
@@ -62,7 +62,7 @@ Stable distribution uses the App Store and Play Store. IPA and AAB files are not
 ## Manual Android APKs
 
 Dispatch **Mobile release** on `main` with `platform=android`, `format=apk`, one `abi` (`arm64-v8a` by default) and
-`upload=false`, then approve `mobile-signing`. Download the signed APK from the run's `mobile-android-<build-number>`
+`upload=false`. Download the signed APK from the run's `mobile-android-<build-number>`
 artifact within 14 days; a separate evidence artifact keeps the source SHA and fingerprint for 90 days. No Git tag or
 GitHub Release is created.
 

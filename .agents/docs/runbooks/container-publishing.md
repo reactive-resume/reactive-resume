@@ -43,8 +43,7 @@ GitHub Releases and `v*` tags are created only by an explicit versioned release 
 Docker promotion consumes an existing tag or commit; it does not create either.
 
 For a sideloadable APK, dispatch **Mobile release** on `main` with `platform=android`,
-`format=apk`, the desired `abi`, and `upload=false`. Signing requires approval through
-`mobile-signing`. The preview APK is a downloadable Actions artifact for 14 days;
+`format=apk`, the desired `abi`, and `upload=false`. The preview APK is a downloadable Actions artifact for 14 days;
 release evidence is retained for 90 days. No GitHub tag or release is created.
 See [manual Android APKs](./mobile-releases.md#manual-android-apks).
 

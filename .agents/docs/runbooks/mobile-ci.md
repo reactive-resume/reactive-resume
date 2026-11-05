@@ -9,9 +9,8 @@ existing Docker release workflow.
 Setup verified on **2026-10-21**: the signing/upload secrets were copied from
 existing EAS credentials into repository Actions secrets; the existing `EXPO_TOKEN`
 was retained. The initial `MOBILE_BUILD_NUMBER_BASE` was **100**. Live store counters were iOS **6**
-and Android **8**; workflow run 1, attempt 1 will allocate **100**. Environment
-`mobile-store` requires approval from `amruthpillai`, allows self-review, disallows admin
-bypass, and accepts only branch `main`. The workflow is manually dispatched after its
+and Android **8**; workflow run 1, attempt 1 will allocate **100**. Environments
+`mobile-signing` and `mobile-store` accept only branch `main`; neither requires approval. The workflow is manually dispatched after its
 changes reach `main`; no Blacksmith app build or store upload was run during setup.
 
 ## One-time migration
