@@ -100,7 +100,7 @@ platform :ios do
               data.fetch("TeamIdentifier").include?("654ASRW868")
             UI.user_error!("Use an unexpired App Store distribution profile for #{bundle_id}") if
               data["ProvisionedDevices"] || data["ProvisionsAllDevices"] || entitlements["get-task-allow"] ||
-              !data["ExpirationDate"] || data["ExpirationDate"] <= Time.now
+              !data["ExpirationDate"] || data["ExpirationDate"].to_time <= Time.now
             UI.user_error!("Provisioning profile for #{bundle_id} must include group.me.rxresu") unless
               entitlements.fetch("com.apple.security.application-groups", []).include?("group.me.rxresu")
             installed << install_provisioning_profile(path: profile)

@@ -1,3 +1,4 @@
+require "date"
 require "tmpdir"
 require "fileutils"
 
@@ -12,7 +13,7 @@ module FastlaneCore
       def parse(path)
         bundle = File.basename(path).start_with?("ReactiveResume") ? "me.rxresu" : "me.rxresu.expo-sharing-extension"
         data = {
-          "UUID" => "fixture-#{bundle}", "TeamIdentifier" => ["654ASRW868"], "ExpirationDate" => Time.now + 3600,
+          "UUID" => "fixture-#{bundle}", "TeamIdentifier" => ["654ASRW868"], "ExpirationDate" => DateTime.now + 1,
           "Entitlements" => { "application-identifier" => "654ASRW868.#{bundle}", "com.apple.security.application-groups" => ["group.me.rxresu"] }
         }
         override&.call(bundle, data)
@@ -64,7 +65,7 @@ Dir.mktmpdir do |directory|
     ["development profile", ->(d) { d["Entitlements"]["get-task-allow"] = true }],
     ["ad hoc profile", ->(d) { d["ProvisionedDevices"] = ["fixture"] }],
     ["wrong team", ->(d) { d["TeamIdentifier"] = ["OTHER"] }],
-    ["expired profile", ->(d) { d["ExpirationDate"] = Time.now - 1 }]
+    ["expired profile", ->(d) { d["ExpirationDate"] = DateTime.now - 1 }]
   ]
   failures.each do |name, mutate|
     FastlaneCore::ProvisioningProfile.override = ->(bundle, data) { mutate.call(data) if bundle.end_with?("extension") }
