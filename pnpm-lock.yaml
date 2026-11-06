@@ -167,6 +167,9 @@ catalogs:
     '@babel/plugin-transform-parameters':
       specifier: ^7.29.7
       version: 7.29.7
+    '@babel/plugin-transform-unicode-sets-regex':
+      specifier: ^7.29.7
+      version: 7.29.7
     '@better-auth/api-key':
       specifier: 1.7.12
       version: 1.7.12
@@ -666,6 +669,9 @@ importers:
         version: 5.1.0(@types/react@19.3.0)(immer@11.2.9)(react@19.3.1)(use-sync-external-store@1.7.0(react@19.3.1))
     devDependencies:
       '@babel/plugin-transform-parameters':
+        specifier: 'catalog:'
+        version: 7.29.7(@babel/core@7.29.13(supports-color@7.2.0))
+      '@babel/plugin-transform-unicode-sets-regex':
         specifier: 'catalog:'
         version: 7.29.7(@babel/core@7.29.13(supports-color@7.2.0))
       '@lingui/babel-plugin-lingui-macro':
@@ -2719,6 +2725,12 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-transform-unicode-sets-regex@7.29.7':
+    resolution: {integrity: sha512-BLOhLht9DOJwIxlmp91wHvkXv1lguuHS3/FwUO8HL1H0u8s4hR1gASVFyilu9iGtcTRYqjTZmlsFFeQletntEg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
 
   '@babel/preset-typescript@7.29.7':
     resolution: {integrity: sha512-/Foi8vKY2EVbed/1eZx0gJEEwHAIxogrySI7rULcRIvhZzbvoE/b5qG5Ghc0WKAFKOHA9SD1x7RsFlOYdutIiQ==}
@@ -12947,6 +12959,12 @@ snapshots:
       - supports-color
 
   '@babel/plugin-transform-unicode-regex@7.29.7(@babel/core@7.29.13(supports-color@7.2.0))':
+    dependencies:
+      '@babel/core': 7.29.13(supports-color@7.2.0)
+      '@babel/helper-create-regexp-features-plugin': 7.29.10(@babel/core@7.29.13(supports-color@7.2.0))
+      '@babel/helper-plugin-utils': 7.29.7
+
+  '@babel/plugin-transform-unicode-sets-regex@7.29.7(@babel/core@7.29.13(supports-color@7.2.0))':
     dependencies:
       '@babel/core': 7.29.13(supports-color@7.2.0)
       '@babel/helper-create-regexp-features-plugin': 7.29.10(@babel/core@7.29.13(supports-color@7.2.0))
