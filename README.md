@@ -1,8 +1,3 @@
-> [!IMPORTANT]
-> Reactive Resume now lives at **[`reactive-resume/reactive-resume`](https://github.com/reactive-resume/reactive-resume)** on GitHub.  
-> GHCR images publish to `ghcr.io/reactive-resume/reactive-resume`.  
-> Docker Hub stays at `amruthpillai/reactive-resume`.
-
 <div align="center">
   <a href="https://rxresu.me">
     <img src="apps/web/public/opengraph/banner.jpg" alt="Reactive Resume" />
@@ -16,6 +11,11 @@
     <a href="https://rxresu.me"><strong>Get Started</strong></a>
     ·
     <a href="https://docs.rxresu.me"><strong>Learn More</strong></a>
+  </p>
+
+  <p>
+    <a href="https://go.rx.cv/ios"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" height="40" /></a>
+    <a href="https://go.rx.cv/android"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="60" /></a>
   </p>
 
   <p>
