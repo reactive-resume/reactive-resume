@@ -70,6 +70,12 @@ test("stale configuration is confirmed before rendering, and kept when the serve
 		Date.now = () => now() + 20 * 60_000;
 		offline = true;
 		assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v2");
+		// A failed read backs off, so a fit's many renders don't each wait on the server.
+		offline = false;
+		mirror = "https://fonts.example/v3";
+		assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v2");
+		Date.now = () => now() + 21 * 60_000;
+		assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v3");
 	} finally {
 		Date.now = now;
 	}

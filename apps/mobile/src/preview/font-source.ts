@@ -8,6 +8,8 @@ type Known = { fontMirrorUrl: string | undefined; checkedAt: number };
 const known = new Map<string, Known>();
 const pending = new Map<string, Promise<string | undefined>>();
 const MAX_AGE = 5 * 60_000;
+// After a failed read, wait this long before asking again: a fit runs many renders in a row.
+const RETRY_AFTER = 30_000;
 
 async function savedFile(server: string) {
 	const directory = new Directory(Paths.cache, "font-sources-v1");
@@ -63,5 +65,9 @@ export async function getFontMirrorUrl(server: string): Promise<string | undefin
 		running = refresh(server).finally(() => pending.delete(server));
 		pending.set(server, running);
 	}
-	return running.catch(() => hit?.fontMirrorUrl);
+	return running.catch(() => {
+		const fontMirrorUrl = hit?.fontMirrorUrl;
+		known.set(server, { fontMirrorUrl, checkedAt: Date.now() - MAX_AGE + RETRY_AFTER });
+		return fontMirrorUrl;
+	});
 }
