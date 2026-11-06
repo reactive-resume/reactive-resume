@@ -90,3 +90,58 @@ export function prepareFontBytes(bytes: Uint8Array): Uint8Array {
 	const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 	return view.getUint32(0) === WOFF ? woffToSfnt(bytes) : bytes;
 }
+
+/** Validate the catalog's sfnt/WOFF containers and table checksums, not the semantics of every OpenType table. */
+export function isValidFontFile(input: Uint8Array): boolean {
+	try {
+		const bytes = prepareFontBytes(input);
+		if (bytes.length < 12 || bytes.length > 32 * 1024 * 1024) return false;
+		const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+		const flavor = view.getUint32(0);
+		if (![0x00010000, 0x4f54544f, 0x74727565].includes(flavor)) return false;
+		const count = view.getUint16(4);
+		const end = 12 + count * 16;
+		if (!count || count > 256 || end > bytes.length) return false;
+		const tables = new Map<string, { offset: number; length: number }>();
+		for (let index = 0; index < count; index++) {
+			const record = 12 + index * 16;
+			const tag = String.fromCharCode(...bytes.subarray(record, record + 4));
+			const offset = view.getUint32(record + 8);
+			const length = view.getUint32(record + 12);
+			if (tables.has(tag) || offset < end || offset % 4 || offset + length > bytes.length) return false;
+			let checksum = 0;
+			for (let at = 0; at < length; at += 4) {
+				// head.checkSumAdjustment is zero when computing the table checksum (OpenType table directory).
+				if (tag === "head" && at === 8) continue;
+				let word = 0;
+				for (let byte = 0; byte < 4; byte++)
+					word = (word << 8) | (at + byte < length ? (bytes[offset + at + byte] ?? 0) : 0);
+				checksum = (checksum + (word >>> 0)) >>> 0;
+			}
+			if (checksum !== view.getUint32(record + 4)) return false;
+			tables.set(tag, { offset, length });
+		}
+		let previousEnd = end;
+		for (const { offset, length } of [...tables.values()].sort((a, b) => a.offset - b.offset)) {
+			if (offset < previousEnd) return false;
+			previousEnd = offset + length;
+		}
+		for (const [tag, minimum] of [
+			["head", 54],
+			["hhea", 36],
+			["maxp", 6],
+			["cmap", 4],
+			["name", 6],
+			["hmtx", 4],
+		] as const)
+			if ((tables.get(tag)?.length ?? 0) < minimum) return false;
+		if (flavor === 0x4f54544f ? !tables.has("CFF ") && !tables.has("CFF2") : !tables.has("glyf") || !tables.has("loca"))
+			return false;
+		const head = tables.get("head");
+		const maxp = tables.get("maxp");
+		if (!head || !maxp) return false;
+		return view.getUint32(head.offset + 12) === 0x5f0f3cf5 && view.getUint16(maxp.offset + 4) > 0;
+	} catch {
+		return false;
+	}
+}

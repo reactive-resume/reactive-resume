@@ -85,15 +85,16 @@ For DNS, HTTPS, alias routing and the custom-domain provider endpoint, see
 
 ## Font mirror
 
-| Variable            | Default | Description                                                                                                                                                                                                        |
-| ------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `WEB_FONT_BASE_URL` | unset   | Absolute HTTP(S) base URL for the five Computer Modern families during server-side PDF rendering, for example `https://fonts.example.com/cm`. No query string or fragment. Unset or empty keeps the original URLs. |
+| Variable            | Default | Description                                                                                                                                                                                                                                |
+| ------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `FONT_MIRROR_URL`   | unset   | Public HTTP(S) base URL for all catalog fonts in current web/mobile clients, server PDFs and public resume pages. No credentials, query or fragment. Takes precedence over `WEB_FONT_BASE_URL`; see [Font mirroring](/self-hosting/fonts). |
+| `WEB_FONT_BASE_URL` | unset   | Absolute HTTP(S) base URL for the five Computer Modern families during server-side PDF rendering, for example `https://fonts.example.com/cm`. No query string or fragment. Unset or empty keeps the original URLs.                         |
 
-Preserve the upstream `font/<family>/<file>.woff` paths below this base URL. Set the variable before the server starts;
+For the legacy `WEB_FONT_BASE_URL`, preserve the upstream `font/<family>/<file>.woff` paths below its base URL. Set the variable before the server starts;
 restart or redeploy after changes. No web rebuild is needed for this server-side setting.
 
 <Warning>
-  This server-only variable is not exposed to the Vite browser app. Browser PDF rendering and font-picker previews still
+  `WEB_FONT_BASE_URL` alone is not exposed to the Vite browser app. Browser PDF rendering and font-picker previews still
   use their original URLs. Google-hosted families and fallback fonts are not rewritten, including during server
   rendering. This setting does not provide offline or Google-free font loading.
 </Warning>

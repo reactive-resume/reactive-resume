@@ -202,7 +202,8 @@ export function ResumePreviewClient({
 			} catch (error) {
 				if (stale()) return;
 				// Name the cause the user can fix (a font that didn't load); keep other engine errors generic.
-				const textLoss = error instanceof Error && error.cause === "pdf-text-loss";
+				const textLoss =
+					error instanceof Error && (error.cause === "pdf-text-loss" || error.cause === "pdf-font-mirror");
 				if (!hasPreviewRef.current) {
 					setFailure(textLoss ? getReadableErrorMessage(error, "") : t`Couldn't show the preview.`);
 					return;

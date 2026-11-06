@@ -16,6 +16,7 @@ beforeEach(() => {
 		"AI_BASE_URL",
 		"REDIS_URL",
 		"WEB_FONT_BASE_URL",
+		"FONT_MIRROR_URL",
 		"STORAGE_HEALTHCHECK_TIMEOUT_MS",
 		"AI_AGENT_STEP_TIMEOUT_MS",
 		"AI_AGENT_RUN_TIMEOUT_MS",
@@ -42,6 +43,28 @@ afterEach(() => {
 });
 
 describe("web font mirror configuration", () => {
+	it("normalizes the complete mirror without changing the legacy setting", async () => {
+		vi.stubEnv("FONT_MIRROR_URL", " https://fonts.example.com/resume/// ");
+		vi.stubEnv("WEB_FONT_BASE_URL", "https://old.example.com/cm");
+		const { env } = await import("./server");
+		expect(env.FONT_MIRROR_URL).toBe("https://fonts.example.com/resume");
+		expect(env.WEB_FONT_BASE_URL).toBe("https://old.example.com/cm");
+	});
+	it("accepts an HTTP full mirror", async () => {
+		vi.stubEnv("FONT_MIRROR_URL", "http://fonts.example.com/resume");
+		expect((await import("./server")).env.FONT_MIRROR_URL).toBe("http://fonts.example.com/resume");
+	});
+	it.each([
+		"https://user:password@fonts.example.com",
+		"/fonts",
+		"https://fonts.example.com?token=a",
+		"https://fonts.example.com#fonts",
+		"file:///fonts",
+	])("rejects a full mirror that cannot be shared with clients: %s", async (value) => {
+		vi.stubEnv("FONT_MIRROR_URL", value);
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
 	it.each([undefined, "", "https://fonts.example.com", "https://fonts.example.com/cm/", "http://localhost:8080"])(
 		"accepts %s",
 		async (value) => {

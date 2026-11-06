@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { zlibSync } from "fflate";
-import { prepareFontBytes } from "./font-bytes";
+import { prepareFontBytes } from "./files";
 
 function woff(data: Uint8Array, declared = data.length, count = 1) {
 	const compressed = zlibSync(data);

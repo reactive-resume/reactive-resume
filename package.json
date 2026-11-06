@@ -59,7 +59,8 @@
 		"lint:agent": "vp lint --deny-warnings --format=agent",
 		"format": "vp fmt --write",
 		"format:check": "vp fmt --check",
-		"test:cloudflare": "node tooling/cloudflare/smoke.mjs"
+		"test:cloudflare": "node tooling/cloudflare/smoke.mjs",
+		"fonts:mirror": "pnpm --filter @reactive-resume/tooling exec tsx fonts/mirror.ts"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^21.2.4",

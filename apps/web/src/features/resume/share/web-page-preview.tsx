@@ -11,6 +11,7 @@ import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/comp
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume, useResumeData } from "@/features/resume/builder/draft";
+import { getFontMirrorUrl } from "@/libs/font-source";
 // The page's own text, declared for translators; see the module.
 import "./web-page-text";
 
@@ -23,13 +24,17 @@ type PreviewSettings = {
 };
 
 /** The page a visitor gets, from the draft: same renderer as the server, contact details hidden as they'd be. */
-async function renderPreview(data: ResumeData, settings: PreviewSettings) {
+async function renderPreview(data: ResumeData, settings: PreviewSettings, fontMirrorUrl: string | undefined) {
 	let visible = data;
 	if (settings.hideContactDetails) {
 		visible = structuredClone(data);
 		removeContactDetails(visible);
 	}
-	const page = await renderResumeWebPage({ data: visible, imageUrl: webPageImageUrl(window.location.origin) });
+	const page = await renderResumeWebPage({
+		data: visible,
+		imageUrl: webPageImageUrl(window.location.origin),
+		fontMirrorUrl,
+	});
 	return renderWebPageDocument({
 		page,
 		messages: webPageMessages(visible.metadata.page.locale),
@@ -56,11 +61,12 @@ export function WebPagePreview() {
 
 	// Typing renders once it pauses, not on every keystroke.
 	const [debouncedData] = useDebounceValue(data, 200);
+	const fontMirrorUrl = getFontMirrorUrl();
 
 	useEffect(() => {
 		if (!debouncedData) return;
 		let current = true;
-		void renderPreview(debouncedData, { hideContactDetails, showDownloadButtons, allowWordDownload })
+		void renderPreview(debouncedData, { hideContactDetails, showDownloadButtons, allowWordDownload }, fontMirrorUrl)
 			.then((html) => {
 				if (current) setDocument(html);
 			})
@@ -68,7 +74,7 @@ export function WebPagePreview() {
 		return () => {
 			current = false;
 		};
-	}, [debouncedData, hideContactDetails, showDownloadButtons, allowWordDownload]);
+	}, [debouncedData, hideContactDetails, showDownloadButtons, allowWordDownload, fontMirrorUrl]);
 
 	return (
 		<div className="flex h-full min-h-0 flex-col items-center gap-3 bg-sunken p-4">

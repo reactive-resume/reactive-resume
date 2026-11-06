@@ -78,7 +78,7 @@ const subset: Uint8Array = await subsetFont(fontBytes, documentText);
 
 // Configure once at startup. A disk-cache wrapper must use downloadFont on disk errors.
 const streamingFetch = fetch as unknown as typeof globalThis.fetch;
-configureFontReader((source) => downloadFont(source, streamingFetch));
+configureFontReader((source, options) => downloadFont(source, streamingFetch, options));
 configureImageFetch(streamingFetch);
 const pdf = await renderResumePdf(nativeEngine, { data, onPageMap, onLostCharacters });
 ```

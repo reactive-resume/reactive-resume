@@ -12,6 +12,7 @@ import { assertPdfFonts, lostCharacters, renderResume, resumeFontRequests } from
 
 export type CreateResumePdfBlobOptions = {
 	data: ResumeData;
+	fontMirrorUrl?: string | undefined;
 	template?: Template | undefined;
 	renderOptions?: ResumeRenderOptions | undefined;
 	/** Receives the header, section and item boxes of this render (see `page-map.ts`). */
@@ -46,10 +47,10 @@ const loadEngine = () =>
  * Starts downloading the engine and a resume's fonts, so they arrive while the caller prepares the rest of its
  * render (section titles in its language); the render then finds them cached.
  */
-export const preloadResumePdf = (data: ResumeData) => {
+export const preloadResumePdf = (data: ResumeData, fontMirrorUrl?: string) => {
 	loadEngine().catch(() => undefined);
 	void loadFontPreparer();
-	void loadFonts(resumeFontRequests(parseResumeData(data)));
+	void loadFonts(resumeFontRequests(parseResumeData(data)), undefined, fontMirrorUrl);
 };
 
 export const createResumePdfBlob = async ({
@@ -71,7 +72,7 @@ export const createResumePdfBlob = async ({
 		},
 		{ ...input, data },
 	);
-	assertPdfFonts(result);
+	assertPdfFonts(result, input.fontMirrorUrl);
 	const { pdf, pageMap, warnings } = result;
 	onPageMap?.(pageMap);
 	const lost = lostCharacters(warnings);

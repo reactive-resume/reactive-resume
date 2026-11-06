@@ -31,9 +31,10 @@ export const createResumePdfFile = async ({
 		data: parseResumeData(input.data),
 		readImage: (source) => readServerImage(source, uploadOrigin),
 		webFontBaseUrl: process.env.WEB_FONT_BASE_URL,
+		fontMirrorUrl: process.env.FONT_MIRROR_URL,
 	});
 	// Characters no font can draw print as "?" rather than failing the file; the editor names them.
-	assertPdfFonts(result);
+	assertPdfFonts(result, process.env.FONT_MIRROR_URL);
 	return new File([result.pdf as Uint8Array<ArrayBuffer>], filename, { type: "application/pdf" });
 };
 
@@ -42,7 +43,13 @@ export const createResumePdfFile = async ({
  * data URI (only a picture the server may read; a failed one is left out).
  */
 export async function loadResumeCardAssets(data: ResumeData, uploadOrigin: string) {
-	const { fonts } = await loadFonts(resumeFontRequests(data), process.env.WEB_FONT_BASE_URL);
+	const { fonts, missing } = await loadFonts(
+		resumeFontRequests(data),
+		process.env.WEB_FONT_BASE_URL,
+		process.env.FONT_MIRROR_URL,
+	);
+	// Resvg would draw a missing face in another family; the caller shows its banner and retries next time.
+	if (missing.length > 0) throw new Error(`Fonts could not be loaded: ${missing.join(", ")}`);
 	const source = data.picture.url && !data.picture.hidden ? data.picture.url : undefined;
 	// A relative picture is one of the app's own files.
 	const { images } = await loadImages(source ? [source] : [], (url) =>

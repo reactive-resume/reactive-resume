@@ -173,8 +173,7 @@ Your instance is running. Next, you might want to:
 
 - **Keep it private.** After your own account exists, add `FLAG_DISABLE_SIGNUPS="true"` to `.env` and run
   `docker compose up -d`. Nobody else can sign up; existing accounts keep working.
-- **Mirror Computer Modern fonts for server PDFs.** See [Font mirroring](/self-hosting/fonts) for configuration and
-  current browser and Google-font limitations.
+- **Self-host resume fonts.** Set `FONT_MIRROR_URL` after preparing a static font mirror. See [Font mirroring](/self-hosting/fonts) for Docker setup, client coverage and verification.
 - **Send real emails.** Add the `SMTP_*` settings from the [reference](/self-hosting/environment-variables#email).
 - **Turn on job search and AI.** Connect shared Firecrawl and AI services, or enable personal keys with
   `ENCRYPTION_SECRET`. See [Job search and AI](/self-hosting/job-search-and-ai).

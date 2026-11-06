@@ -8,7 +8,7 @@ import { renderResumePdf } from "./render";
 self.addEventListener("message", async ({ data: request }: MessageEvent<PdfWorkerRequest>) => {
 	const { id, ...input } = request;
 	try {
-		preloadResumePdf(input.data);
+		preloadResumePdf(input.data, input.fontMirrorUrl);
 		self.postMessage({ id, ...(await renderResumePdf(input)) } satisfies PdfWorkerResponse);
 	} catch (error) {
 		const cause = error instanceof Error && typeof error.cause === "string" ? error.cause : undefined;

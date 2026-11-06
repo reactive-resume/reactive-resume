@@ -77,6 +77,18 @@ export const env = createEnv({
 			.string()
 			.regex(/^[a-f0-9]{40}$/)
 			.optional(),
+		FONT_MIRROR_URL: z
+			.string()
+			.trim()
+			.pipe(z.url({ protocol: /^https?$/ }))
+			.refine((value) => {
+				// Zod still runs this refine after `z.url` reports an invalid value.
+				if (!URL.canParse(value)) return true;
+				const url = new URL(value);
+				return !url.username && !url.password && !/[?#]/.test(value);
+			}, "Font mirror URL must not contain credentials, a query string or a fragment")
+			.transform((value) => value.replace(/\/+$/, ""))
+			.optional(),
 		WEB_FONT_BASE_URL: z
 			.url({ protocol: /^https?$/ })
 			.refine((value) => !/[?#]/.test(value), "Font base URL must not contain a query string or fragment")

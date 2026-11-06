@@ -28,6 +28,26 @@ afterEach(() => {
 });
 
 describe("createResumePdfBlob", () => {
+	it("captures the instance mirror in worker messages and preserves it when falling back to the main thread", async () => {
+		const blob = new Blob(["%PDF"], { type: "application/pdf" });
+		mocks.renderHere.mockResolvedValue(blob);
+		const { configureFontMirror } = await import("@/libs/font-source");
+		configureFontMirror("https://fonts.example/first");
+		stubWorker((request, worker) => {
+			expect(request.fontMirrorUrl).toBe("https://fonts.example/first");
+			configureFontMirror("https://fonts.example/second");
+			worker.dispatchEvent(new Event("error"));
+		});
+		const { createResumePdfBlob } = await import("./pdf-document");
+		await createResumePdfBlob(sampleResumeData);
+		expect(mocks.renderHere).toHaveBeenCalledWith(
+			expect.objectContaining({ fontMirrorUrl: "https://fonts.example/first" }),
+		);
+		await createResumePdfBlob(sampleResumeData);
+		expect(mocks.renderHere).toHaveBeenLastCalledWith(
+			expect.objectContaining({ fontMirrorUrl: "https://fonts.example/second" }),
+		);
+	});
 	it("renders on the main thread when the worker can't start", async () => {
 		const blob = new Blob(["%PDF"], { type: "application/pdf" });
 		mocks.renderHere.mockImplementation(({ onPageMap }) => {
