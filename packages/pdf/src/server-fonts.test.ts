@@ -15,6 +15,24 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 });
 
+it("applies the complete mirror to every server font including script and symbol fallbacks", async () => {
+	vi.stubEnv("FONT_MIRROR_URL", "https://self-host.example/fonts");
+	vi.stubEnv("WEB_FONT_BASE_URL", "https://legacy.example/cm");
+	const requested: string[] = [];
+	vi.stubGlobal("fetch", (source: URL | string) => {
+		requested.push(String(source));
+		return Promise.resolve(new Response(new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])));
+	});
+	const data = structuredClone(defaultResumeData);
+	data.basics.name = "字体镜像 → العربية";
+	data.metadata.typography.body.fontFamily = "Computer Modern Bright";
+	await act(() => createResumePdfFile({ data, filename: "mirror.pdf" }));
+	expect(requested.length).toBeGreaterThan(4);
+	expect(requested.every((url) => url.startsWith("https://self-host.example/fonts/"))).toBe(true);
+	expect(requested.some((url) => url.includes("/fonts.gstatic.com/"))).toBe(true);
+	expect(requested.some((url) => url.includes("/cdn.jsdelivr.net/"))).toBe(true);
+});
+
 it.each([
 	[undefined, "https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest"],
 	[" https://fonts.example.com/cm/// ", "https://fonts.example.com/cm"],

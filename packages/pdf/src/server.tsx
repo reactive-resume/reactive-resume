@@ -31,6 +31,7 @@ export const createResumePdfFile = async ({
 		data: parseResumeData(input.data),
 		readImage: (source) => readServerImage(source, uploadOrigin),
 		webFontBaseUrl: process.env.WEB_FONT_BASE_URL,
+		fontMirrorUrl: process.env.FONT_MIRROR_URL,
 	});
 	// Characters no font can draw print as "?" rather than failing the file; the editor names them.
 	assertPdfFonts(result);
@@ -42,7 +43,11 @@ export const createResumePdfFile = async ({
  * data URI (only a picture the server may read; a failed one is left out).
  */
 export async function loadResumeCardAssets(data: ResumeData, uploadOrigin: string) {
-	const { fonts } = await loadFonts(resumeFontRequests(data), process.env.WEB_FONT_BASE_URL);
+	const { fonts } = await loadFonts(
+		resumeFontRequests(data),
+		process.env.WEB_FONT_BASE_URL,
+		process.env.FONT_MIRROR_URL,
+	);
 	const source = data.picture.url && !data.picture.hidden ? data.picture.url : undefined;
 	// A relative picture is one of the app's own files.
 	const { images } = await loadImages(source ? [source] : [], (url) =>

@@ -1,3 +1,4 @@
+import { createServer } from "node:http";
 import { afterEach, expect, it, vi } from "vite-plus/test";
 import { configureFontReader, downloadFont, loadFonts } from "./fonts";
 
@@ -5,7 +6,7 @@ afterEach(() => {
 	vi.useRealTimers();
 	vi.unstubAllGlobals();
 	vi.unstubAllEnvs();
-	configureFontReader(downloadFont);
+	configureFontReader((src, options) => downloadFont(src, fetch, options));
 });
 
 const font = (path: string) => ({
@@ -108,4 +109,57 @@ it("uses the configured font reader and native streaming fetch without the globa
 	expect(loaded.missing).toEqual([]);
 	expect(loaded.fonts.map((face) => face.src)).toEqual([bytes, bytes]);
 	expect(fetcher).toHaveBeenCalledOnce();
+});
+
+it("mirrors Google and Computer Modern together, retains cache isolation and never retries the CDN", async () => {
+	const requested: { url: string; redirect: RequestRedirect | undefined }[] = [];
+	let missing = false;
+	vi.stubGlobal("fetch", (source: URL | string, init: RequestInit) => {
+		requested.push({ url: String(source), redirect: init.redirect });
+		return Promise.resolve(
+			new Response(new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), { status: missing ? 404 : 200 }),
+		);
+	});
+	const requests = [font("/s/full/font.ttf"), { ...font(""), src: `${computerModernBase}/font/Serif/cmunrm.woff` }];
+	for (const mirror of ["https://fonts.example.com/a", "https://fonts.example.com/b"]) {
+		expect((await loadFonts(requests, "https://legacy.example.com/cm", mirror)).missing).toEqual([]);
+		await loadFonts(requests, undefined, mirror);
+	}
+	expect(requested).toHaveLength(4);
+	expect(
+		requested.every(({ url, redirect }) => url.startsWith("https://fonts.example.com/") && redirect === "error"),
+	).toBe(true);
+	expect(requested[0]?.url).toBe("https://fonts.example.com/a/fonts.gstatic.com/s/full/font.ttf");
+	expect(requested[1]?.url).toContain("/cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/font/Serif/cmunrm.woff");
+	missing = true;
+	expect((await loadFonts([font("/s/full/missing.ttf")], undefined, "https://fonts.example.com/a")).missing).toEqual([
+		"Test",
+	]);
+	expect(requested).toHaveLength(5);
+	missing = false;
+	expect((await loadFonts([font("/s/full/missing.ttf")], undefined, "https://fonts.example.com/a")).missing).toEqual(
+		[],
+	);
+	expect(requested).toHaveLength(6);
+});
+
+it("rejects a real HTTP redirect before requesting its destination in mirror mode", async () => {
+	let destinationRequests = 0;
+	const server = createServer((request, response) => {
+		if (request.url === "/font.ttf") response.writeHead(302, { Location: "/unexpected.ttf" });
+		else {
+			destinationRequests++;
+			response.writeHead(200);
+		}
+		response.end();
+	});
+	await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+	try {
+		const address = server.address();
+		if (!address || typeof address === "string") throw new Error("Missing test server address");
+		await expect(downloadFont(`http://127.0.0.1:${address.port}/font.ttf`, fetch, { mirror: true })).rejects.toThrow();
+		expect(destinationRequests).toBe(0);
+	} finally {
+		await new Promise<void>((resolve) => server.close(() => resolve()));
+	}
 });

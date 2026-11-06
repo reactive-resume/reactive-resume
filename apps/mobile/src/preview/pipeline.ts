@@ -3,12 +3,22 @@ import type { RenderRequest, RenderedPages } from "./types";
 import { nativeEngine } from "@reactive-resume/forme-native";
 import { renderResumePdf } from "@reactive-resume/pdf/native";
 import { pdfPages } from "../../modules/pdf-pages";
+import { getFontMirrorUrl } from "./font-source";
 import { configurePreviewResources, readPreviewImage } from "./resources";
+import { getServer } from "@/auth/session";
 
 /** A pipeline belongs to one viewer. Zoom/scroll rasterizes the existing PDF without rerunning templates. */
 export function createPreviewPipeline() {
 	configurePreviewResources();
-	let current: { request: RenderRequest; result: RenderedPages; document: PdfDocument } | undefined;
+	let current:
+		| {
+				request: RenderRequest;
+				result: RenderedPages;
+				document: PdfDocument;
+				server: string;
+				fontMirrorUrl: string | undefined;
+		  }
+		| undefined;
 	let previous: PdfDocument | undefined;
 	let disposed = false;
 	const close = (document: PdfDocument | undefined) => (document ? pdfPages.close(document.id) : Promise.resolve());
@@ -16,8 +26,13 @@ export function createPreviewPipeline() {
 	return {
 		async render(request: RenderRequest): Promise<RenderedPages> {
 			if (disposed) throw new Error("Preview closed");
+			const server = getServer();
+			const fontMirrorUrl = await getFontMirrorUrl(server);
+			if (disposed || server !== getServer()) throw new Error("Preview server changed");
 			if (
 				!current ||
+				current.server !== server ||
+				current.fontMirrorUrl !== fontMirrorUrl ||
 				current.request.data !== request.data ||
 				current.request.template !== request.template ||
 				current.request.renderOptions !== request.renderOptions
@@ -29,7 +44,8 @@ export function createPreviewPipeline() {
 					data: request.data,
 					template: request.template,
 					renderOptions: request.renderOptions,
-					readImage: readPreviewImage,
+					readImage: (source) => readPreviewImage(source, server),
+					fontMirrorUrl,
 					onPageMap: (map) => {
 						pageMap = map;
 					},
@@ -38,9 +54,9 @@ export function createPreviewPipeline() {
 						hasTextLoss = true;
 					},
 				});
-				if (disposed) throw new Error("Preview closed");
+				if (disposed || server !== getServer()) throw new Error("Preview server changed");
 				const document = await pdfPages.open(pdf);
-				if (disposed) {
+				if (disposed || server !== getServer()) {
 					await close(document);
 					throw new Error("Preview closed");
 				}
@@ -48,6 +64,8 @@ export function createPreviewPipeline() {
 				await close(previous);
 				previous = current?.document;
 				current = {
+					server,
+					fontMirrorUrl,
 					request,
 					document,
 					result: {

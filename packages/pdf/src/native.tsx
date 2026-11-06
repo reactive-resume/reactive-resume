@@ -13,11 +13,13 @@ import { assertPdfFonts, lostCharacters, renderResume, resumeFontRequests } from
 export type { ResumeRenderOptions } from "./context";
 export type { FormeEngine } from "./forme/render";
 export type { PageMap } from "./page-map";
+export type { FontReadOptions } from "./forme/fonts";
 export { configureFontReader, downloadFont } from "./forme/fonts";
 export { configureImageFetch } from "./forme/images";
 
 export type RenderResumePdfOptions = {
 	data: ResumeData;
+	fontMirrorUrl?: string | undefined;
 	template?: Template | undefined;
 	renderOptions?: ResumeRenderOptions | undefined;
 	/** Mobile resolves server-relative sources and decodes data URIs before streaming remote images. */
@@ -43,7 +45,7 @@ export const renderResumePdf = async (
 };
 
 /** Warm the persistent/in-memory font caches before opening the Page tab. The native engine is already linked. */
-export async function preloadResumePdf(data: ResumeData): Promise<void> {
-	const { missing } = await loadFonts(resumeFontRequests(parseResumeData(data)));
+export async function preloadResumePdf(data: ResumeData, fontMirrorUrl?: string): Promise<void> {
+	const { missing } = await loadFonts(resumeFontRequests(parseResumeData(data)), undefined, fontMirrorUrl);
 	assertPdfFonts({ missingFonts: missing });
 }

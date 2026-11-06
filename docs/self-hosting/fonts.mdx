@@ -1,7 +1,119 @@
 ---
-title: "Mirror Computer Modern fonts"
-description: "Serve Computer Modern font files from your own host for server-generated PDFs, and understand which font requests remain external."
+title: "Self-host resume fonts"
+description: "Serve resume fonts from your own mirror across previews, exports and public pages."
 ---
+
+Set `FONT_MIRROR_URL` to serve all catalog fonts from your own static host. Current web and mobile clients,
+server-generated PDFs, font-picker previews, public resume HTML, and social preview cards use the same mirror.
+The default deployment continues to use the original font hosts.
+
+The mirror is a directory of prepared files. Rendering never downloads a missing file from Google or jsDelivr.
+PDF export reports missing fonts; font-picker labels and public HTML can fall back to system fonts when files
+cannot load. Responses without a font signature are rejected, including static hosts that return an HTML fallback with HTTP 200.
+The saved resume's typography is not changed.
+
+## Prepare the files
+
+Use a source checkout matching the deployed release (Node 24 and its pinned pnpm). Inspect the complete catalog:
+
+```sh
+pnpm fonts:mirror --all --plan
+```
+
+Prepare a new directory; the tool refuses to overwrite an existing directory:
+
+```sh
+pnpm fonts:mirror --all --out data/font-mirror-v1
+```
+
+The tool downloads every selected family's preview, weights and italics, copies original license notices, and
+writes `manifest.json` with source URLs, sizes and SHA-256 checksums only after every download succeeds. Four
+files download concurrently; each file has a size limit and timeout. Prepare while online, then transfer the
+whole directory, including `licenses/`, to the static host. No font files are added to the application image.
+
+For a smaller installation or a test, select families and resume languages:
+
+```sh
+pnpm fonts:mirror --family "Source Sans 3" --family "Computer Modern Bright" \
+  --locale en-US --locale zh-CN --locale ar-SA --out data/font-mirror-v1
+```
+
+This includes the selected families and the renderer's punctuation, symbol, emoji and requested-language
+fallbacks. A subset does not restrict the font picker: choosing another family, importing an existing resume,
+or adding another writing system can require additional files. Use `--all` for the full catalog. Include all
+families used by your resumes and letters, and repeat preparation after catalog changes on an upgrade.
+
+If a font's original license notice cannot be located, preparation stops. Obtain that font's notice from its
+upstream project and put it in a directory as `<family>.txt`, then pass `--licenses <directory>`. No license is
+inferred or substituted. A failed preparation directory is incomplete; use a new directory for the next attempt.
+
+The source host and path form the mirror path, for example:
+
+```text
+font-mirror-v1/
+├── fonts.gstatic.com/s/roboto/v51/…ttf
+├── cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/font/Bright/cmunbmr.woff
+├── licenses/
+└── manifest.json
+```
+
+Keep filenames and directory case unchanged. Serve bytes directly, with no authentication or redirects.
+
+## Configure the instance
+
+```dotenv
+FONT_MIRROR_URL=https://fonts.example.com/resume
+```
+
+This address must be reachable from **both** browsers/devices and the app server. A Docker service name such as
+`http://fonts` is not reachable from a visitor's browser. Use HTTPS when the application uses HTTPS, and serve the
+mirror with CORS allowing font reads from the application, public/custom resume domains and sandboxed previews.
+Since fonts are public assets, `Access-Control-Allow-Origin: *` is suitable when no credentials are required.
+The setting accepts an absolute HTTP(S) URL with an optional path, without credentials, a query or fragment.
+
+For Docker, add the variable to the app's environment and restart/recreate the app container. No frontend rebuild
+is needed. As one local-development example, expose a static nginx container on port 8080 with the prepared
+folder mounted read-only at `/usr/share/nginx/html`. Use a configuration such as:
+
+```nginx
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    location / {
+        add_header Access-Control-Allow-Origin "*" always;
+        try_files $uri =404;
+    }
+}
+```
+
+Set `FONT_MIRROR_URL` to that server's externally reachable address, for example
+`http://192.168.1.20:8080` on a trusted local HTTP development network. For production, serve the same directory
+through your HTTPS static host. On Vercel, set the backend environment variable and redeploy; the mirror remains
+on the external static host.
+
+`FONT_MIRROR_URL` takes precedence over the legacy `WEB_FONT_BASE_URL`. Remove it and restart to return to the
+previous font behavior. Configuration reaches current clients through the public flags endpoint; it contains no
+credentials. Reload web clients after changing it. Mobile caches configuration per server for five minutes and
+can reuse that server's last known configuration offline. A new server must be contacted before its fonts can
+render. Previously installed mobile versions do not understand this setting and must be updated.
+
+When replacing font bytes, publish a versioned mirror path (for example `/resume/v2`) and update the setting.
+Font caches key by the resolved URL; overwriting a file at the same URL does not invalidate running clients.
+Keep the previous mirror path available during rollout for clients still using the previous configuration.
+
+## Verify delivery
+
+Start with cleared font/browser caches. Block requests to `fonts.gstatic.com`, `fonts.gstatic.cn` and
+`cdn.jsdelivr.net`, then open the font picker, edit a resume, export its PDF and visit its public page. Check
+**attempted** requests, including failures; only your configured mirror should receive font requests. Include
+bold, italics, the resume's languages, arrows and symbols. Test a letter and a mobile client as well.
+
+Temporarily remove a required mirrored file: PDF generation should report a font error, with no retry to an
+original font host. Put the file back and retry. Mirror font fetches refuse redirects; public HTML's font CSP
+restricts font loads to the application and mirror origins. Images and optional AI services have their own
+network behavior: this setting controls catalog fonts, not every external resource on a resume.
+
+## Legacy Computer Modern server mirror
 
 Set `WEB_FONT_BASE_URL` when you want the Node.js server to fetch Computer Modern font files from a
 mirror you control. You need a running Reactive Resume instance and an HTTP(S) server that can serve static files.
@@ -12,7 +124,7 @@ mirror you control. You need a running Reactive Resume instance and an HTTP(S) s
   rendering and font-picker previews keep all their original URLs, even for Computer Modern fonts.
 </Warning>
 
-## 1. Prepare the mirror
+### 1. Prepare the mirror
 
 Copy the `font/` directory from the `bitmaks/cm-web-fonts` source used by your release's
 `packages/fonts/src/webfontlist.json` to your static file server. Keep the directory names, filenames and case:
@@ -47,7 +159,7 @@ Use an absolute HTTP(S) URL without a query string or fragment. Surrounding whit
 the `font/` segment in the base URL: the resolver appends it. Use an address reachable from the app server; inside
 Docker, `localhost` refers to the app container itself. The mirror must serve font bytes without a login page.
 
-## 2. Configure the deployment
+### 2. Configure the deployment
 
 ```dotenv
 WEB_FONT_BASE_URL="https://fonts.example.com/cm"
@@ -68,7 +180,7 @@ catalog does not read environment variables. This setting is not exposed to the 
 web app does not enable browser mirroring.
 The Cloudflare Workers deployment is not covered by this Node.js server setup.
 
-## 3. Check delivery
+### 3. Check delivery
 
 From the app server's network, request a mirrored file:
 
@@ -93,3 +205,17 @@ also expected with the current implementation.
 - [Environment variables](/self-hosting/environment-variables#font-mirror): the setting's default and URL constraints.
 - [Self-hosting with Docker](/self-hosting/docker): configure the application container.
 - [Customizing typography](/guides/customizing-typography): choose heading and body fonts.
+
+## Source-checkout smoke test
+
+With the example multilingual subset prepared and served, run the dedicated browser test against the disposable
+local database. It checks the actual runtime flags, browser PDF download, server PDF export and public HTML while
+blocking browser requests to the original font hosts. It requires Chromium, Poppler's `pdftotext`, and local
+PostgreSQL, as described in [Development setup](/contributing/development):
+
+```sh
+FONT_MIRROR_URL=http://127.0.0.1:8080 pnpm test:e2e:local --build tests/e2e/specs/font-mirror.spec.ts
+```
+
+This operator test skips when `FONT_MIRROR_URL` is unset. Unit tests cover default and mirrored resolution,
+worker/main-thread handoff, native server switching, offline configuration, missing fonts and refused redirects.

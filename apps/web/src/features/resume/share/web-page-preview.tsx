@@ -11,6 +11,7 @@ import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/comp
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume, useResumeData } from "@/features/resume/builder/draft";
+import { getFontMirrorUrl } from "@/libs/font-source";
 // The page's own text, declared for translators; see the module.
 import "./web-page-text";
 
@@ -29,7 +30,11 @@ async function renderPreview(data: ResumeData, settings: PreviewSettings) {
 		visible = structuredClone(data);
 		removeContactDetails(visible);
 	}
-	const page = await renderResumeWebPage({ data: visible, imageUrl: webPageImageUrl(window.location.origin) });
+	const page = await renderResumeWebPage({
+		data: visible,
+		imageUrl: webPageImageUrl(window.location.origin),
+		fontMirrorUrl: getFontMirrorUrl(),
+	});
 	return renderWebPageDocument({
 		page,
 		messages: webPageMessages(visible.metadata.page.locale),

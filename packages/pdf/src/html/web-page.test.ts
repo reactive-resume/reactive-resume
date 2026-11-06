@@ -5,6 +5,16 @@ import { toHtml } from "./to-html";
 import { renderResumeWebPage } from "./web-page";
 
 describe("renderResumeWebPage", () => {
+	it("points all public HTML faces at the explicit mirror, including on another public domain", async () => {
+		const data = structuredClone(sampleResumeData);
+		data.basics.name = "字体镜像 → العربية";
+		data.metadata.typography.heading.fontFamily = "Computer Modern Bright";
+		const { css } = await renderResumeWebPage({ data, fontMirrorUrl: "http://localhost:8080/fonts/" });
+		const sources = [...css.matchAll(/src:url\("([^"]+)"\)/g)].map((match) => match[1]);
+		expect(sources.length).toBeGreaterThan(4);
+		expect(sources.every((source) => source?.startsWith("http://localhost:8080/fonts/"))).toBe(true);
+		expect(sources.some((source) => source?.includes("/fonts.gstatic.com/"))).toBe(true);
+	});
 	it("keeps text and style values from escaping into markup or the stylesheet", () => {
 		const text = (value: string) => ({ type: "#text" as const, text: value });
 		const tree = [

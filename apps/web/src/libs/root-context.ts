@@ -2,6 +2,7 @@ import type { AuthSession } from "@reactive-resume/auth/types";
 import type { QueryClient } from "@tanstack/react-query";
 import { setAccountScope } from "./auth/account-scope";
 import { getSession } from "./auth/session";
+import { configureFontMirror } from "./font-source";
 import { getLocale, hasLocalePreference, loadLocale } from "./locale";
 import { client } from "./orpc/client";
 import { getTheme } from "./theme";
@@ -63,6 +64,7 @@ export async function loadRootContext(queryClient: QueryClient, options: RootLoa
 	// an account scope, because the page on screen still belongs to the session it was rendered for.
 	const current = queryClient.getQueryData<AuthSession | null>(sessionQueryKey);
 	const committed = load === rootLoadSequence && options.commit !== false;
+	if (committed) configureFontMirror(flags.fontMirrorUrl);
 	if (committed) setAccountScope(session?.user.id ?? null);
 	if (committed && !session) accountLocaleCheck = null;
 	if (

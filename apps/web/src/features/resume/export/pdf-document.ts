@@ -1,6 +1,7 @@
 import type { RenderInput, Rendered } from "./render";
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { getFontMirrorUrl } from "@/libs/font-source";
 
 type CreateResumePdfBlobExtras = {
 	/** Receives the page map (header, section and item boxes) of this render; used by the editor canvas. */
@@ -67,7 +68,7 @@ export const createResumePdfBlob = async (
 	renderOptions?: RenderInput["renderOptions"],
 	{ onPageMap, onLostCharacters }: CreateResumePdfBlobExtras = {},
 ) => {
-	const { blob, pageMap, lostCharacters } = await render({ data, renderOptions });
+	const { blob, pageMap, lostCharacters } = await render({ data, renderOptions, fontMirrorUrl: getFontMirrorUrl() });
 	if (pageMap) onPageMap?.(pageMap);
 	if (lostCharacters) onLostCharacters?.(lostCharacters);
 	return blob;
