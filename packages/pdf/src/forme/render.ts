@@ -48,12 +48,18 @@ export type RenderedResume = {
 	warnings: string[];
 };
 
-/** A failed font download would print the resume in other fonts: the file waits for a retry instead. */
-export function assertPdfFonts({ missingFonts }: Pick<RenderedResume, "missingFonts">) {
-	if (missingFonts.length > 0)
-		throw new Error(`Fonts could not be loaded: ${missingFonts.join(", ")}. Retry the export.`, {
-			cause: "pdf-text-loss",
+/**
+ * A failed font download would print the resume in other fonts: the file waits for a retry instead. With a mirror,
+ * a retry rarely helps (the file is usually absent), so the error names the mirror for its administrator.
+ */
+export function assertPdfFonts({ missingFonts }: Pick<RenderedResume, "missingFonts">, fontMirrorUrl?: string) {
+	if (missingFonts.length === 0) return;
+	const families = missingFonts.join(", ");
+	if (fontMirrorUrl)
+		throw new Error(`Fonts could not be loaded from the font mirror: ${families}. Add them to the mirror.`, {
+			cause: "pdf-font-mirror",
 		});
+	throw new Error(`Fonts could not be loaded: ${families}. Retry the export.`, { cause: "pdf-text-loss" });
 }
 
 /**

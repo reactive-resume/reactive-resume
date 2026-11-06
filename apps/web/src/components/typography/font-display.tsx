@@ -17,11 +17,10 @@ export function FontDisplay({ family, label, type, url }: FontDisplayProps) {
 	const fontMirrorUrl = getFontMirrorUrl();
 	const source = url ? resolveFontSource(url, fontMirrorUrl) : undefined;
 	const previewName = type === "standard" ? family : `rr-preview-${encodeURIComponent(`${family}:${source ?? ""}`)}`;
-	const key = previewName;
 
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [loadedKey, setLoadedKey] = useState(() => (loadedFonts.has(key) ? key : undefined));
-	const isLoaded = type === "standard" || loadedKey === key;
+	const [loadedKey, setLoadedKey] = useState(() => (loadedFonts.has(previewName) ? previewName : undefined));
+	const isLoaded = type === "standard" || loadedKey === previewName;
 	const isInView = useInView(containerRef, { once: true, amount: 0.1, margin: "50px" });
 
 	useEffect(() => {
@@ -38,13 +37,13 @@ export function FontDisplay({ family, label, type, url }: FontDisplayProps) {
 			const face = await new FontFace(previewName, bytes, { display: "swap" }).load();
 			if (controller.signal.aborted) return;
 			document.fonts.add(face);
-			loadedFonts.add(key);
-			setLoadedKey(key);
+			loadedFonts.add(previewName);
+			setLoadedKey(previewName);
 		};
 		// An unavailable preview keeps its readable system-font label. Exports report missing fonts separately.
 		void load().catch(() => undefined);
 		return () => controller.abort();
-	}, [isInView, isLoaded, previewName, source, fontMirrorUrl, key]);
+	}, [isInView, isLoaded, previewName, source, fontMirrorUrl]);
 
 	return (
 		<div ref={containerRef} className="inline-flex items-baseline gap-2">

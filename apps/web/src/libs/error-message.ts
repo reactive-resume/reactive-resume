@@ -28,6 +28,8 @@ export function getReadableErrorMessage(error: unknown, fallback: string): strin
 	if (reply) return replyErrorText(reply);
 	// A font download failed (see `assertPdfFonts`).
 	if (error instanceof Error && error.cause === "pdf-text-loss") return t`Fonts could not be loaded. Try again.`;
+	if (error instanceof Error && error.cause === "pdf-font-mirror")
+		return t`Some fonts are missing from this server's font mirror. Ask the administrator to add them.`;
 	if (error instanceof ORPCError && error.code === "BAD_REQUEST") {
 		const data: unknown = error.data;
 		if (typeof data === "object" && data !== null && "issues" in data && Array.isArray(data.issues)) {

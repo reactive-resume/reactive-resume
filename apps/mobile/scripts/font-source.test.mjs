@@ -31,55 +31,43 @@ function configuration(readFlags, files = new Map()) {
 	});
 }
 
-test("font configuration deduplicates concurrent reads and isolates servers, including offline restarts", async () => {
+test("font configuration deduplicates reads, isolates servers and survives offline restarts", async () => {
 	const files = new Map();
 	const calls = [];
 	const first = configuration(async (server) => {
 		calls.push(server);
-		return { fontMirrorUrl: `${server}/fonts/` };
+		return server === "https://old.example" ? {} : { fontMirrorUrl: `${server}/fonts/` };
 	}, files);
 	assert.deepEqual(
 		await Promise.all([first.getFontMirrorUrl("https://a.example"), first.getFontMirrorUrl("https://a.example")]),
 		["https://a.example/fonts", "https://a.example/fonts"],
 	);
 	assert.deepEqual(calls, ["https://a.example"]);
-	assert.equal(await first.getFontMirrorUrl("https://b.example"), "https://b.example/fonts");
+	assert.equal(await first.getFontMirrorUrl("https://old.example"), undefined);
 	const offline = configuration(async () => {
 		throw new Error("Offline");
 	}, files);
 	assert.equal(await offline.getFontMirrorUrl("https://a.example"), "https://a.example/fonts");
-	assert.equal(await offline.getFontMirrorUrl("https://b.example"), "https://b.example/fonts");
-	await assert.rejects(offline.getFontMirrorUrl("https://unseen.example"), /Offline/);
-});
-
-test("older servers explicitly retain CDN defaults; a failed read never invents them", async () => {
-	const files = new Map();
-	await configuration(async () => ({}), files).getFontMirrorUrl("https://old.example");
-	const offline = configuration(async () => {
-		throw new Error("Offline");
-	}, files);
 	assert.equal(await offline.getFontMirrorUrl("https://old.example"), undefined);
-	files.set("https://bad.example", JSON.stringify({ server: "https://old.example", fontMirrorUrl: null }));
-	await assert.rejects(offline.getFontMirrorUrl("https://bad.example"), /Offline/);
+	// Nothing known about this server: the original hosts, so cached fonts still render offline.
+	assert.equal(await offline.getFontMirrorUrl("https://unseen.example"), undefined);
 });
 
-test("invalid new configuration cannot revive a previously saved CDN default", async () => {
-	const server = "https://changed.example";
-	const files = new Map([[server, JSON.stringify({ server, fontMirrorUrl: null })]]);
-	let offline = false;
-	const reader = configuration(async () => {
-		if (offline) throw new Error("Offline");
-		return { fontMirrorUrl: "https://user:secret@fonts.example" };
-	}, files);
-	await assert.rejects(reader.getFontMirrorUrl(server), /without credentials/);
-	offline = true;
-	await assert.rejects(reader.getFontMirrorUrl(server), /Offline/);
-	const restarted = configuration(async () => {
-		throw new Error("Offline");
-	}, files);
-	await assert.rejects(restarted.getFontMirrorUrl(server), /Offline/);
-	const recovered = configuration(async () => ({ fontMirrorUrl: "https://fonts.example/valid" }), files);
-	assert.equal(await recovered.getFontMirrorUrl(server), "https://fonts.example/valid");
+test("stale configuration renders at once and refreshes in the background", async () => {
+	const files = new Map();
+	let mirror = "https://fonts.example/v1";
+	const reader = configuration(async () => ({ fontMirrorUrl: mirror }), files);
+	assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v1");
+	mirror = "https://fonts.example/v2";
+	const now = Date.now;
+	Date.now = () => now() + 10 * 60_000;
+	try {
+		assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v1");
+		await new Promise((resolve) => setImmediate(resolve));
+		assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v2");
+	} finally {
+		Date.now = now;
+	}
 });
 
 test("native renders use the captured server policy and invalidate PDF reuse when it changes", async () => {

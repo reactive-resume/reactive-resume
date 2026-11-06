@@ -57,7 +57,7 @@ export const flagsRouter = {
 			}),
 		)
 		.handler(() => ({
-			...(env.FONT_MIRROR_URL ? { fontMirrorUrl: env.FONT_MIRROR_URL } : {}),
+			fontMirrorUrl: env.FONT_MIRROR_URL,
 			disableSignups: env.FLAG_DISABLE_SIGNUPS,
 			disableEmailAuth: env.FLAG_DISABLE_EMAIL_AUTH,
 			allowGuestLogin: env.FLAG_ENABLE_GUEST_LOGIN && !env.FLAG_DISABLE_SIGNUPS,

@@ -37,7 +37,7 @@ export const renderResumePdf = async (
 ): Promise<Uint8Array> => {
 	const data = parseResumeData(input.data);
 	const result = await renderResume(engine, { ...input, data });
-	assertPdfFonts(result);
+	assertPdfFonts(result, input.fontMirrorUrl);
 	onPageMap?.(result.pageMap);
 	const lost = lostCharacters(result.warnings);
 	if (lost) onLostCharacters?.(lost);
@@ -47,5 +47,5 @@ export const renderResumePdf = async (
 /** Warm the persistent/in-memory font caches before opening the Page tab. The native engine is already linked. */
 export async function preloadResumePdf(data: ResumeData, fontMirrorUrl?: string): Promise<void> {
 	const { missing } = await loadFonts(resumeFontRequests(parseResumeData(data)), undefined, fontMirrorUrl);
-	assertPdfFonts({ missingFonts: missing });
+	assertPdfFonts({ missingFonts: missing }, fontMirrorUrl);
 }

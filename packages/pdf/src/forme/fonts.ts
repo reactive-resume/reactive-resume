@@ -1,8 +1,7 @@
 import type { PdfFontRequest } from "../hooks/use-register-fonts";
 import type { FormeFont } from "@formepdf/react";
-import { isValidFontFile } from "@reactive-resume/fonts/files";
+import { isValidFontFile, prepareFontBytes } from "@reactive-resume/fonts/files";
 import { resolveFontSource } from "@reactive-resume/fonts/sources";
-import { prepareFontBytes } from "./font-bytes";
 
 // One download per font file for the life of the page or server process.
 const cache = new Map<string, Promise<Uint8Array>>();
@@ -111,6 +110,8 @@ export async function downloadFont(
 			bytes.set(chunk, offset);
 			offset += chunk.byteLength;
 		}
+		// A misconfigured static host can answer 200 with HTML or a truncated file; the original hosts are trusted.
+		if (options.mirror && !isValidFontFile(bytes)) throw new Error(`Font ${src}: invalid font data`);
 		return bytes;
 	} finally {
 		clearTimeout(stall);
@@ -126,17 +127,12 @@ export function configureFontReader(reader: (src: string, options: FontReadOptio
 }
 
 const load = (src: string, options: FontReadOptions) => {
-	const key = `${options.mirror ? "mirror:" : ""}${src}`;
-	let bytes = cache.get(key);
+	let bytes = cache.get(src);
 	if (!bytes) {
-		bytes = readFont(src, options).then((data) => {
-			const prepared = prepareFontBytes(data);
-			if (options.mirror && !isValidFontFile(prepared)) throw new Error(`Invalid font data from ${src}`);
-			return prepared;
-		});
+		bytes = readFont(src, options).then(prepareFontBytes);
 		// A failed download may succeed next time.
-		bytes.catch(() => cache.delete(key));
-		cache.set(key, bytes);
+		bytes.catch(() => cache.delete(src));
+		cache.set(src, bytes);
 	}
 	return bytes;
 };

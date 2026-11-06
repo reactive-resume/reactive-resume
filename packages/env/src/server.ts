@@ -78,6 +78,7 @@ export const env = createEnv({
 			.trim()
 			.pipe(z.url({ protocol: /^https?$/ }))
 			.refine((value) => {
+				// Zod still runs this refine after `z.url` reports an invalid value.
 				if (!URL.canParse(value)) return true;
 				const url = new URL(value);
 				return !url.username && !url.password && !/[?#]/.test(value);

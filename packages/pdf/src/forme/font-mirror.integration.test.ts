@@ -31,9 +31,9 @@ it("does not cache a truncated font with a valid signature, so repairing the sam
 	vi.stubGlobal("fetch", fetcher);
 	const data = structuredClone(defaultResumeData);
 	data.basics.name = "Retry restored font";
-	await expect(act(() => createResumePdfFile({ data, filename: "retry.pdf" }))).rejects.toThrow(
-		"Fonts could not be loaded",
-	);
+	await expect(act(() => createResumePdfFile({ data, filename: "retry.pdf" }))).rejects.toMatchObject({
+		cause: "pdf-font-mirror",
+	});
 	const failedRequests = fetcher.mock.calls.length;
 	bytes = new Uint8Array(
 		await readFile(new URL("../../../../apps/web/public/fonts/ibm-plex-serif-400.ttf", import.meta.url)),

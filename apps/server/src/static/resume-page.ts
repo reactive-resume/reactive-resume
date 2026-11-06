@@ -40,9 +40,7 @@ function html(body: string, status: number, headers: Record<string, string> = {}
 const rendered = new Map<string, ResumeWebPage>();
 
 async function renderSheet(data: ResumeData) {
-	const key = createHash("sha256")
-		.update(JSON.stringify([data, env.FONT_MIRROR_URL]))
-		.digest("hex");
+	const key = createHash("sha256").update(JSON.stringify(data)).digest("hex");
 	const hit = rendered.get(key);
 	if (hit) return hit;
 	const page = await renderResumeWebPage({

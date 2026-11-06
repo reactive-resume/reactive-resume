@@ -72,7 +72,7 @@ export const createResumePdfBlob = async ({
 		},
 		{ ...input, data },
 	);
-	assertPdfFonts(result);
+	assertPdfFonts(result, input.fontMirrorUrl);
 	const { pdf, pageMap, warnings } = result;
 	onPageMap?.(pageMap);
 	const lost = lostCharacters(warnings);

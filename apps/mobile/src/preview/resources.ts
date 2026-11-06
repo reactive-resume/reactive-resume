@@ -2,7 +2,6 @@ import type { FontReadOptions } from "@reactive-resume/pdf/native";
 import { CryptoDigestAlgorithm, digestStringAsync } from "expo-crypto";
 import { Directory, File, Paths } from "expo-file-system";
 import { fetch as expoFetch } from "expo/fetch";
-import { isValidFontFile } from "@reactive-resume/fonts/files";
 import { configureFontReader, configureImageFetch, downloadFont } from "@reactive-resume/pdf/native";
 import { createSerialQueue } from "@reactive-resume/utils/queue";
 import { getServer } from "@/auth/session";
@@ -11,6 +10,13 @@ const MAX_IMAGE_BYTES = 12_000_000;
 const MAX_FONT_CACHE_BYTES = 200_000_000;
 let configured = false;
 const inFontCache = createSerialQueue();
+
+/** Cheap signature check: writes are atomic, and `downloadFont` fully validates mirror bytes before they reach here. */
+function isFont(bytes: Uint8Array): boolean {
+	if (bytes.length < 4) return false;
+	if (bytes[0] === 0 && bytes[1] === 1 && bytes[2] === 0 && bytes[3] === 0) return true;
+	return ["OTTO", "true", "ttcf", "wOFF", "wOF2"].includes(String.fromCharCode(...bytes.subarray(0, 4)));
+}
 
 /** FIFO by last write, including interrupted writes. Called only inside the serialized disk queue. */
 function trimFonts(directory: Directory, incoming: number) {
@@ -31,17 +37,14 @@ export async function readCachedFont(source: string, options: FontReadOptions = 
 	const directory = new Directory(Paths.cache, "pdf-fonts-v1");
 	let file: File | undefined;
 	try {
-		file = new File(
-			directory,
-			await digestStringAsync(CryptoDigestAlgorithm.SHA256, `${options.mirror ? "mirror:" : ""}${source}`),
-		);
+		file = new File(directory, await digestStringAsync(CryptoDigestAlgorithm.SHA256, source));
 		const target = file;
 		const cached = await inFontCache(async () => {
 			directory.create({ intermediates: true, idempotent: true });
 			trimFonts(directory, 0);
 			if (!target.exists) return null;
 			const bytes = await target.bytes();
-			if (isValidFontFile(bytes)) return bytes;
+			if (isFont(bytes)) return bytes;
 			target.delete();
 			return null;
 		});
@@ -50,7 +53,7 @@ export async function readCachedFont(source: string, options: FontReadOptions = 
 		file = undefined;
 	}
 	const bytes = await downloadFont(source, expoFetch as unknown as typeof fetch, options);
-	if (!isValidFontFile(bytes)) throw new Error("Invalid font data");
+	if (!isFont(bytes)) throw new Error("Invalid font signature");
 	if (file && bytes.length <= MAX_FONT_CACHE_BYTES) {
 		const target = file;
 		await inFontCache(async () => {

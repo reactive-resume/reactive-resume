@@ -3,79 +3,68 @@ import { Directory, File, Paths } from "expo-file-system";
 import { normalizeFontMirrorUrl } from "@reactive-resume/fonts/sources";
 import { getFlags } from "@/auth/oauth";
 
-type Configuration = { server: string; fontMirrorUrl: string | null };
-type Cached = { value: Configuration; checkedAt: number };
+type Known = { fontMirrorUrl: string | undefined; checkedAt: number };
 
-const cached = new Map<string, Cached>();
+const known = new Map<string, Known>();
 const pending = new Map<string, Promise<string | undefined>>();
-const invalid = new Set<string>();
 const MAX_AGE = 5 * 60_000;
 
-function parse(value: unknown, server: string): Configuration | undefined {
-	if (!value || typeof value !== "object" || !("server" in value) || value.server !== server) return;
-	if (!("fontMirrorUrl" in value)) return;
-	if (value.fontMirrorUrl === null) return { server, fontMirrorUrl: null };
-	if (typeof value.fontMirrorUrl === "string")
-		return { server, fontMirrorUrl: normalizeFontMirrorUrl(value.fontMirrorUrl) };
+async function savedFile(server: string) {
+	const directory = new Directory(Paths.cache, "font-sources-v1");
+	directory.create({ intermediates: true, idempotent: true });
+	return new File(directory, await digestStringAsync(CryptoDigestAlgorithm.SHA256, server));
 }
 
-/** Resolve before rendering. Offline reuse is allowed only for configuration learned from this exact server. */
-export function getFontMirrorUrl(server: string): Promise<string | undefined> {
-	const hit = cached.get(server);
-	if (hit && Date.now() - hit.checkedAt < MAX_AGE) return Promise.resolve(hit.value.fontMirrorUrl ?? undefined);
-	const running = pending.get(server);
-	if (running) return running;
-	const load = async () => {
-		let file: File | undefined;
-		let saved = hit?.value;
-		try {
-			const directory = new Directory(Paths.cache, "font-sources-v1");
-			directory.create({ intermediates: true, idempotent: true });
-			file = new File(directory, await digestStringAsync(CryptoDigestAlgorithm.SHA256, server));
-			if (!saved && !invalid.has(server) && file.exists) saved = parse(JSON.parse(await file.text()), server);
-		} catch {
-			// A corrupt/evicted cache requires a successful configuration read, never a guess at CDN defaults.
-		}
-		let flags: Awaited<ReturnType<typeof getFlags>>;
-		try {
-			flags = await getFlags(server);
-		} catch (error) {
-			if (!saved) throw error;
-			cached.set(server, { value: saved, checkedAt: Date.now() });
-			return saved.fontMirrorUrl ?? undefined;
-		}
-		// A server that answered with invalid configuration must not resurrect an older CDN policy.
-		let value: Configuration;
-		try {
-			value = {
-				server,
-				fontMirrorUrl: flags.fontMirrorUrl === undefined ? null : normalizeFontMirrorUrl(flags.fontMirrorUrl),
-			};
-		} catch (error) {
-			cached.delete(server);
-			invalid.add(server);
-			try {
-				// No fontMirrorUrl: a restarted client must obtain valid configuration before it can render again.
-				await file?.write(JSON.stringify({ server, invalid: true }));
-			} catch {
-				try {
-					file?.delete();
-				} catch {
-					/* Keep the in-memory invalidation if storage is unavailable. */
-				}
-			}
-			throw error;
-		}
-		try {
-			await file?.write(JSON.stringify(value));
-		} catch {
-			// Config remains usable in memory if the cache directory cannot be written.
-		}
-		cached.set(server, { value, checkedAt: Date.now() });
-		invalid.delete(server);
-		return value.fontMirrorUrl ?? undefined;
-	};
-	const result = load().finally(() => pending.delete(server));
-	pending.set(server, result);
-	return result;
+/** The last configuration this exact server sent, from disk; `undefined` when none was saved or it is unreadable. */
+async function readSaved(server: string): Promise<Known | undefined> {
+	try {
+		const file = await savedFile(server);
+		if (!file.exists) return;
+		const saved: unknown = JSON.parse(await file.text());
+		if (!saved || typeof saved !== "object" || !("server" in saved) || saved.server !== server) return;
+		if (!("fontMirrorUrl" in saved) || (saved.fontMirrorUrl !== null && typeof saved.fontMirrorUrl !== "string"))
+			return;
+		return {
+			fontMirrorUrl: saved.fontMirrorUrl ? normalizeFontMirrorUrl(saved.fontMirrorUrl) : undefined,
+			checkedAt: 0,
+		};
+	} catch {
+		return;
+	}
+}
+
+async function refresh(server: string): Promise<string | undefined> {
+	const flags = await getFlags(server);
+	const fontMirrorUrl = flags.fontMirrorUrl === undefined ? undefined : normalizeFontMirrorUrl(flags.fontMirrorUrl);
+	known.set(server, { fontMirrorUrl, checkedAt: Date.now() });
+	try {
+		await (await savedFile(server)).write(JSON.stringify({ server, fontMirrorUrl: fontMirrorUrl ?? null }));
+	} catch {
+		// The configuration stays usable in memory when the cache directory can't be written.
+	}
+	return fontMirrorUrl;
+}
+
+/**
+ * The server's font mirror, read from its public flags. A known configuration renders at once and refreshes in the
+ * background when stale. With none known (first use, or offline right after an update), a failed read means the
+ * original font hosts: offline, those requests can't leave the device, and cached fonts still render.
+ */
+export async function getFontMirrorUrl(server: string): Promise<string | undefined> {
+	let hit = known.get(server);
+	if (!hit) {
+		hit = await readSaved(server);
+		if (hit && !known.has(server)) known.set(server, hit);
+	}
+	if (hit && Date.now() - hit.checkedAt < MAX_AGE) return hit.fontMirrorUrl;
+	let running = pending.get(server);
+	if (!running) {
+		running = refresh(server).finally(() => pending.delete(server));
+		pending.set(server, running);
+	}
+	if (hit) {
+		running.catch(() => undefined);
+		return hit.fontMirrorUrl;
+	}
+	return running.catch(() => undefined);
 }
