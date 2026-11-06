@@ -232,18 +232,33 @@ export type DateFormatOptions = {
 
 const monthFormatters = new Map<string, Intl.DateTimeFormat>();
 
-function formatMonth(year: number, month: number, locale: string, style: "short" | "long") {
+function formatMonth(yearText: string, month: number, locale: string, style: "short" | "long") {
 	const key = `${locale}:${style}`;
 	let formatter = monthFormatters.get(key);
 	if (!formatter) {
 		try {
-			formatter = new Intl.DateTimeFormat(locale, { year: "numeric", month: style, timeZone: "UTC" });
+			formatter = new Intl.DateTimeFormat(locale, {
+				year: "numeric",
+				month: style,
+				timeZone: "UTC",
+				calendar: "gregory",
+			});
 		} catch {
-			formatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month: style, timeZone: "UTC" });
+			formatter = new Intl.DateTimeFormat("en-US", {
+				year: "numeric",
+				month: style,
+				timeZone: "UTC",
+				calendar: "gregory",
+			});
 		}
 		monthFormatters.set(key, formatter);
 	}
-	return formatter.format(Date.UTC(year, month - 1, 1));
+	// The dates are stored as Gregorian year-months, so the month must print in the Gregorian calendar even
+	// where the locale defaults to another one (Persian, Buddhist). Formatting a fixed four-digit year also
+	// keeps years 0-99 out of Date.UTC's 1900+ mapping; the year is then swapped for the stored one, which
+	// keeps its leading zeros.
+	const formatted = formatter.format(Date.UTC(2000, month - 1, 1));
+	return formatted.replace(formatYear("2000", locale), formatYear(yearText, locale));
 }
 
 const yearFormatters = new Map<string, Intl.NumberFormat>();
@@ -271,18 +286,17 @@ function formatYear(yearText: string, locale: string) {
  * same digits as the month formats' years.
  */
 export function formatYearMonth(value: YearMonth, { locale, format = DEFAULT_DATE_FORMAT }: DateFormatOptions) {
-	const [yearText, monthText] = value.split("-");
+	const [yearText = "", monthText] = value.split("-");
 	if (!monthText) {
 		const year = Number(yearText);
 		if (!yearText || !Number.isInteger(year) || format === "iso" || format === "numeric") return yearText ?? value;
 		return formatYear(yearText, locale);
 	}
 
-	const year = Number(yearText);
 	const month = Number(monthText);
 	if (format === "iso") return value;
 	if (format === "numeric") return `${monthText}/${yearText}`;
-	return formatMonth(year, month, locale, format);
+	return formatMonth(yearText, month, locale, format);
 }
 
 /**
