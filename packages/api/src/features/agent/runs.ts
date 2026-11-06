@@ -2,14 +2,16 @@ import type { UIMessage } from "ai";
 import { and, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { env } from "@reactive-resume/env/server";
 import { lockThreadMessages } from "./messages-persistence";
 
 type AgentRunStateDb = Pick<typeof db, "update">;
 type AgentRunReaperDb = Pick<typeof db, "select" | "update" | "transaction">;
 
 // Deliberately TTL-only (no controller-map heuristic) so reaping stays multi-replica-safe. The TTL
-// exceeds the 4-minute run wall clock, so a live run always dies by its own timeout first.
-export const STALE_AGENT_RUN_TTL_MS = 15 * 60_000;
+// exceeds the configured run wall clock (and never drops below the original 15 minutes), so a live
+// run always dies by its own timeout first, however long a self-hosted operator makes that run.
+export const STALE_AGENT_RUN_TTL_MS = Math.max(15 * 60_000, env.AI_AGENT_RUN_TIMEOUT_MS + 60_000);
 
 type StaleRunThreadFields = {
 	activeRunId: string | null;

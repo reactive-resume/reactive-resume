@@ -204,6 +204,9 @@ export const env = createEnv({
 		AI_MODEL: z.string().trim().min(1).optional(),
 		AI_API_KEY: z.string().trim().min(1).optional(),
 		AI_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
+		// The Assistant's per-step and whole-run deadlines; raise them for slow local inference.
+		AI_AGENT_STEP_TIMEOUT_MS: z.coerce.number().int().positive().max(2_147_483_647).default(120_000),
+		AI_AGENT_RUN_TIMEOUT_MS: z.coerce.number().int().positive().max(2_147_483_647).default(240_000),
 
 		// Feature Flags
 		FLAG_DISABLE_SIGNUPS: z.stringbool().default(false),

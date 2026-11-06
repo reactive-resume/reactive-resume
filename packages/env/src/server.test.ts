@@ -17,6 +17,8 @@ beforeEach(() => {
 		"REDIS_URL",
 		"WEB_FONT_BASE_URL",
 		"STORAGE_HEALTHCHECK_TIMEOUT_MS",
+		"AI_AGENT_STEP_TIMEOUT_MS",
+		"AI_AGENT_RUN_TIMEOUT_MS",
 	])
 		vi.stubEnv(name, undefined);
 });
@@ -127,6 +129,39 @@ describe("storage health check timeout", () => {
 
 	it.each(["0", "-1", "1.5", "not-a-number", "2147483648"])("rejects invalid timer duration %s", async (value) => {
 		vi.stubEnv("STORAGE_HEALTHCHECK_TIMEOUT_MS", value);
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
+});
+
+describe("Assistant timeout budgets", () => {
+	it.each([undefined, ""])(
+		"defaults to two minutes per step and four minutes per run when unset or blank (%s)",
+		async (value) => {
+			vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", value);
+			vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", value);
+			const { env } = await import("./server");
+			expect(env.AI_AGENT_STEP_TIMEOUT_MS).toBe(120_000);
+			expect(env.AI_AGENT_RUN_TIMEOUT_MS).toBe(240_000);
+		},
+	);
+
+	it("accepts custom step and run timeouts in milliseconds", async () => {
+		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", "1800000");
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "3600000");
+		const { env } = await import("./server");
+		expect(env.AI_AGENT_STEP_TIMEOUT_MS).toBe(1_800_000);
+		expect(env.AI_AGENT_RUN_TIMEOUT_MS).toBe(3_600_000);
+	});
+
+	it.each(["0", "-1", "1.5", "not-a-number", "2147483648"])("rejects invalid step timeout %s", async (value) => {
+		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", value);
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
+
+	it.each(["0", "-1", "1.5", "not-a-number", "2147483648"])("rejects invalid run timeout %s", async (value) => {
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", value);
 		vi.spyOn(console, "error").mockImplementation(() => {});
 		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
 	});

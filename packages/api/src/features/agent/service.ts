@@ -85,9 +85,6 @@ import { buildAgentInstructions, buildAgentTools } from "./tools";
 
 const MAX_AGENT_STEPS = 30;
 const MAX_AGENT_OUTPUT_TOKENS = 8_192;
-const AGENT_STEP_TIMEOUT_MS = 120_000;
-// Reserve the final minute of the five-minute request budget for persistence and cleanup.
-const AGENT_RUN_TIMEOUT_MS = 240_000;
 const AGENT_TIMEOUT_MESSAGE = "Time limit reached. Your progress is saved. Ask me to continue.";
 const MAX_ATTACHMENTS_PER_MESSAGE = 10;
 const MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024;
@@ -1130,7 +1127,8 @@ function createAgent(input: {
 		stopWhen: isStepCount(MAX_AGENT_STEPS),
 		maxOutputTokens: MAX_AGENT_OUTPUT_TOKENS,
 		maxRetries: 0,
-		timeout: { stepMs: AGENT_STEP_TIMEOUT_MS },
+		// Self-hosted local models can need longer than the two-minute default per step.
+		timeout: { stepMs: env.AI_AGENT_STEP_TIMEOUT_MS },
 		// Runs before every loop step, so an older document snapshot never outlives a newer read.
 		prepareStep: async ({ messages }) => {
 			const pruned = pruneAgentModelContext(messages);
@@ -1522,10 +1520,12 @@ export const agentService = {
 				});
 			}
 
-			// Whole-run wall clock. Must abort with an AbortError (see abortReason) — never AbortSignal.timeout().
+			// Whole-run wall clock whose four-minute default leaves the final minute of the five-minute request
+			// budget for persistence and cleanup. Must abort with an AbortError (see abortReason) — never
+			// AbortSignal.timeout().
 			activeRunTimeouts.set(
 				runId,
-				setTimeout(() => controller.abort(abortReason("RUN_TIMEOUT")), AGENT_RUN_TIMEOUT_MS),
+				setTimeout(() => controller.abort(abortReason("RUN_TIMEOUT")), env.AI_AGENT_RUN_TIMEOUT_MS),
 			);
 
 			// Row + message the run streams into. A continuation reuses the existing assistant
