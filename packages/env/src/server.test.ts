@@ -148,10 +148,10 @@ describe("Assistant timeout budgets", () => {
 	);
 
 	it("accepts custom step and run timeouts in milliseconds", async () => {
-		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", "600000");
+		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", "300000");
 		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "600000");
 		const { env } = await import("./server");
-		expect(env.AI_AGENT_STEP_TIMEOUT_MS).toBe(600_000);
+		expect(env.AI_AGENT_STEP_TIMEOUT_MS).toBe(300_000);
 		expect(env.AI_AGENT_RUN_TIMEOUT_MS).toBe(600_000);
 	});
 
@@ -165,6 +165,13 @@ describe("Assistant timeout budgets", () => {
 		// Padded like deploymentEnvironment accepts, so the cap can't miss a Vercel deployment.
 		vi.stubEnv("VERCEL", " 1 ");
 		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "240001");
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
+
+	it("rejects a step timeout above Node's 300-second fetch limit", async () => {
+		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", "300001");
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "600000");
 		vi.spyOn(console, "error").mockImplementation(() => {});
 		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
 	});

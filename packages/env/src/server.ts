@@ -208,8 +208,9 @@ export const env = createEnv({
 		AI_MODEL: z.string().trim().min(1).optional(),
 		AI_API_KEY: z.string().trim().min(1).optional(),
 		AI_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
-		// The Assistant's per-step and whole-run deadlines; raise them for slow local inference.
-		AI_AGENT_STEP_TIMEOUT_MS: z.coerce.number().int().positive().default(120_000),
+		// The Assistant's per-step and whole-run deadlines; raise them for slow local inference. Node's fetch gives up on a
+		// provider that sends nothing for 300 seconds, and the documented proxies wait as long, so a step can't usefully exceed it.
+		AI_AGENT_STEP_TIMEOUT_MS: z.coerce.number().int().positive().max(300_000).default(120_000),
 		AI_AGENT_RUN_TIMEOUT_MS: z.coerce.number().int().positive().max(MAX_AGENT_RUN_TIMEOUT_MS).default(240_000),
 
 		// Feature Flags
