@@ -97,7 +97,7 @@ previous font behavior. Configuration reaches current clients through the public
 credentials. Reload web clients after changing it. Mobile saves each server's configuration and reuses it for five
 minutes; after that, it confirms the configuration before the next render, and keeps the saved one if the server
 can't be reached. A device that has never read the configuration (first use, or offline right after updating the
-app) uses the original font hosts until it can; offline, those requests cannot leave the device. Previously
+app) renders only fonts it already has and downloads none until it can read the configuration. Previously
 installed mobile versions do not understand this setting and must be updated.
 
 When replacing font bytes, publish a versioned mirror path (for example `/resume/v2`) and update the setting.

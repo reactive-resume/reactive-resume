@@ -49,8 +49,10 @@ test("font configuration deduplicates reads, isolates servers and survives offli
 	}, files);
 	assert.equal(await offline.getFontMirrorUrl("https://a.example"), "https://a.example/fonts");
 	assert.equal(await offline.getFontMirrorUrl("https://old.example"), undefined);
-	// Nothing known about this server: the original hosts, so cached fonts still render offline.
+	// Nothing known about this server: no mirror, and no downloads either, so cached fonts still render offline.
 	assert.equal(await offline.getFontMirrorUrl("https://unseen.example"), undefined);
+	assert.equal(offline.isFontSourceUnknown("https://unseen.example"), true);
+	assert.equal(offline.isFontSourceUnknown("https://a.example"), false);
 });
 
 test("stale configuration is confirmed before rendering, and kept when the server can't be reached", async () => {

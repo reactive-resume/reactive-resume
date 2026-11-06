@@ -3,7 +3,8 @@ import { Directory, File, Paths } from "expo-file-system";
 import { normalizeFontMirrorUrl } from "@reactive-resume/fonts/sources";
 import { getFlags } from "@/auth/oauth";
 
-type Known = { fontMirrorUrl: string | undefined; checkedAt: number };
+/** `unknown`: the server was never read, so no font host is known to be allowed. */
+type Known = { fontMirrorUrl: string | undefined; checkedAt: number; unknown?: true };
 
 const known = new Map<string, Known>();
 const pending = new Map<string, Promise<string | undefined>>();
@@ -50,8 +51,8 @@ async function refresh(server: string): Promise<string | undefined> {
 /**
  * The server's font mirror, read from its public flags. A configuration younger than five minutes renders at once;
  * an older one is confirmed first, so a newly enabled mirror is never bypassed. A failed read keeps the saved
- * configuration, or with none saved (first use, or offline right after an update) the original font hosts: offline,
- * those requests can't leave the device, and cached fonts still render.
+ * configuration. With none saved (first use, or offline right after an update), fonts already on the device render
+ * and none are downloaded (`isFontSourceUnknown`): a failed read doesn't prove the original hosts are allowed.
  */
 export async function getFontMirrorUrl(server: string): Promise<string | undefined> {
 	let hit = known.get(server);
@@ -66,8 +67,13 @@ export async function getFontMirrorUrl(server: string): Promise<string | undefin
 		pending.set(server, running);
 	}
 	return running.catch(() => {
-		const fontMirrorUrl = hit?.fontMirrorUrl;
-		known.set(server, { fontMirrorUrl, checkedAt: Date.now() - MAX_AGE + RETRY_AFTER });
-		return fontMirrorUrl;
+		const retry = { ...(hit ?? { fontMirrorUrl: undefined, unknown: true as const }) };
+		known.set(server, { ...retry, checkedAt: Date.now() - MAX_AGE + RETRY_AFTER });
+		return retry.fontMirrorUrl;
 	});
+}
+
+/** True until this server's font configuration has been read once; font downloads wait for it. */
+export function isFontSourceUnknown(server: string) {
+	return known.get(server)?.unknown === true;
 }

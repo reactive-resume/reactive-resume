@@ -4,6 +4,7 @@ import { Directory, File, Paths } from "expo-file-system";
 import { fetch as expoFetch } from "expo/fetch";
 import { configureFontReader, configureImageFetch, downloadFont } from "@reactive-resume/pdf/native";
 import { createSerialQueue } from "@reactive-resume/utils/queue";
+import { isFontSourceUnknown } from "./font-source";
 import { getServer } from "@/auth/session";
 
 const MAX_IMAGE_BYTES = 12_000_000;
@@ -52,6 +53,8 @@ export async function readCachedFont(source: string, options: FontReadOptions = 
 	} catch {
 		file = undefined;
 	}
+	// Until the server says which host serves its fonts, only fonts already on the device render.
+	if (isFontSourceUnknown(getServer())) throw new Error("Font source not known yet");
 	const bytes = await downloadFont(source, expoFetch as unknown as typeof fetch, options);
 	if (!isFont(bytes)) throw new Error("Invalid font signature");
 	if (file && bytes.length <= MAX_FONT_CACHE_BYTES) {
