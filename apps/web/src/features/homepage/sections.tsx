@@ -442,13 +442,13 @@ export function Closing() {
 		{
 			name: "App Store",
 			lead: t`Download on the`,
-			href: "https://apps.apple.com/app/reactive-resume/id6823975835",
+			href: "https://go.rx.cv/ios",
 			icon: AppleLogoIcon,
 		},
 		{
 			name: "Google Play",
 			lead: t`Get it on`,
-			href: "https://play.google.com/store/apps/details?id=me.rxresu",
+			href: "https://go.rx.cv/android",
 			icon: GooglePlayLogoIcon,
 		},
 	];
