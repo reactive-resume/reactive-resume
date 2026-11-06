@@ -5,7 +5,8 @@ import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { fontList, getFont, getPdfFallbackFontFamilies } from "@reactive-resume/fonts";
-import { fontMirrorPath, hasFontSignature } from "@reactive-resume/fonts/sources";
+import { isValidFontFile } from "@reactive-resume/fonts/files";
+import { fontMirrorPath } from "@reactive-resume/fonts/sources";
 import { localeSchema } from "@reactive-resume/utils/locale";
 
 type MirrorFile = { source: string; path: string };
@@ -138,7 +139,7 @@ export async function prepareMirror(plan: MirrorPlan, output: string, licenses?:
 				try {
 					const bytes = await download(entry.source, 32 * 1024 * 1024);
 					if (!bytes || bytes.length < 12) throw new Error(`Missing font: ${entry.source}`);
-					if (!hasFontSignature(bytes)) throw new Error(`Invalid font signature: ${entry.source}`);
+					if (!isValidFontFile(bytes)) throw new Error(`Invalid font data: ${entry.source}`);
 					await atomicWrite(join(output, entry.path), bytes);
 					files.push({ ...entry, sha256: sha256(bytes), bytes: bytes.length });
 				} catch (error) {

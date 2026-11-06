@@ -27,7 +27,7 @@ vi.mock("@reactive-resume/env/server", () => ({
 
 const { handleWebApp, isPublicResumePath, contentSecurityPolicy } = await import("./web");
 
-it("limits CSS font fetches to the configured mirror, including redirected public-page fonts", () => {
+it("builds font-src with the application and configured mirror origins", () => {
 	mocks.env.FONT_MIRROR_URL = "http://fonts.example.test:8080/resume";
 	try {
 		const policy = contentSecurityPolicy();

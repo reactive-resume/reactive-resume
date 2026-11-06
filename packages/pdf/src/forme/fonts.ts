@@ -1,6 +1,7 @@
 import type { PdfFontRequest } from "../hooks/use-register-fonts";
 import type { FormeFont } from "@formepdf/react";
-import { hasFontSignature, resolveFontSource } from "@reactive-resume/fonts/sources";
+import { isValidFontFile } from "@reactive-resume/fonts/files";
+import { resolveFontSource } from "@reactive-resume/fonts/sources";
 import { prepareFontBytes } from "./font-bytes";
 
 // One download per font file for the life of the page or server process.
@@ -129,8 +130,9 @@ const load = (src: string, options: FontReadOptions) => {
 	let bytes = cache.get(key);
 	if (!bytes) {
 		bytes = readFont(src, options).then((data) => {
-			if (options.mirror && !hasFontSignature(data)) throw new Error(`Invalid font data from ${src}`);
-			return prepareFontBytes(data);
+			const prepared = prepareFontBytes(data);
+			if (options.mirror && !isValidFontFile(prepared)) throw new Error(`Invalid font data from ${src}`);
+			return prepared;
 		});
 		// A failed download may succeed next time.
 		bytes.catch(() => cache.delete(key));

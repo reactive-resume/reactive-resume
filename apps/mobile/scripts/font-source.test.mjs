@@ -66,8 +66,20 @@ test("older servers explicitly retain CDN defaults; a failed read never invents 
 test("invalid new configuration cannot revive a previously saved CDN default", async () => {
 	const server = "https://changed.example";
 	const files = new Map([[server, JSON.stringify({ server, fontMirrorUrl: null })]]);
-	const reader = configuration(async () => ({ fontMirrorUrl: "https://user:secret@fonts.example" }), files);
+	let offline = false;
+	const reader = configuration(async () => {
+		if (offline) throw new Error("Offline");
+		return { fontMirrorUrl: "https://user:secret@fonts.example" };
+	}, files);
 	await assert.rejects(reader.getFontMirrorUrl(server), /without credentials/);
+	offline = true;
+	await assert.rejects(reader.getFontMirrorUrl(server), /Offline/);
+	const restarted = configuration(async () => {
+		throw new Error("Offline");
+	}, files);
+	await assert.rejects(restarted.getFontMirrorUrl(server), /Offline/);
+	const recovered = configuration(async () => ({ fontMirrorUrl: "https://fonts.example/valid" }), files);
+	assert.equal(await recovered.getFontMirrorUrl(server), "https://fonts.example/valid");
 });
 
 test("native renders use the captured server policy and invalidate PDF reuse when it changes", async () => {

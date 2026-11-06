@@ -25,9 +25,3 @@ export function fontMirrorPath(source: string): string {
 export function resolveFontSource(source: string, mirrorUrl?: string): string {
 	return mirrorUrl ? `${normalizeFontMirrorUrl(mirrorUrl)}/${fontMirrorPath(source)}` : source;
 }
-
-/** Reject HTML/login pages and truncated headers before a renderer silently substitutes another font. */
-export function hasFontSignature(bytes: Uint8Array): boolean {
-	if (bytes.length < 12) return false;
-	return ["\0\x01\0\0", "OTTO", "true", "ttcf", "wOFF", "wOF2"].includes(String.fromCharCode(...bytes.subarray(0, 4)));
-}

@@ -5,6 +5,16 @@ import { toHtml } from "./to-html";
 import { renderResumeWebPage } from "./web-page";
 
 describe("renderResumeWebPage", () => {
+	it.each(["https://fonts.example/resume%20fonts", "https://fonts.example/简历字体"])(
+		"preserves an already encoded mirror path: %s",
+		async (fontMirrorUrl) => {
+			const { css } = await renderResumeWebPage({ data: structuredClone(sampleResumeData), fontMirrorUrl });
+			const sources = [...css.matchAll(/src:url\("([^"]+)"\)/g)].map((match) => match[1]);
+			expect(sources.length).toBeGreaterThan(0);
+			expect(sources.every((source) => source?.startsWith(`${new URL(fontMirrorUrl).href}/`))).toBe(true);
+			expect(css).not.toContain("%25");
+		},
+	);
 	it("points all public HTML faces at the explicit mirror, including on another public domain", async () => {
 		const data = structuredClone(sampleResumeData);
 		data.basics.name = "字体镜像 → العربية";

@@ -29,6 +29,9 @@ it("publishes a checksummed manifest only after fonts and original notices are w
 		families: ["Source Sans 3"],
 		files: [{ source: "https://fonts.gstatic.com/s/test/a.ttf", path: "fonts.gstatic.com/s/test/a.ttf" }],
 	};
+	const valid = new Uint8Array(
+		await readFile(new URL("../../apps/web/public/fonts/ibm-plex-serif-400.ttf", import.meta.url)),
+	);
 	let broken = false;
 	vi.stubGlobal("fetch", (source: string) =>
 		Promise.resolve(
@@ -36,8 +39,8 @@ it("publishes a checksummed manifest only after fonts and original notices are w
 				source.includes("OFL.txt")
 					? "Original copyright and license"
 					: broken
-						? "<html>Unavailable</html>"
-						: new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+						? new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+						: valid,
 			),
 		),
 	);

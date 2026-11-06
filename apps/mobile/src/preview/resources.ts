@@ -2,7 +2,7 @@ import type { FontReadOptions } from "@reactive-resume/pdf/native";
 import { CryptoDigestAlgorithm, digestStringAsync } from "expo-crypto";
 import { Directory, File, Paths } from "expo-file-system";
 import { fetch as expoFetch } from "expo/fetch";
-import { hasFontSignature } from "@reactive-resume/fonts/sources";
+import { isValidFontFile } from "@reactive-resume/fonts/files";
 import { configureFontReader, configureImageFetch, downloadFont } from "@reactive-resume/pdf/native";
 import { createSerialQueue } from "@reactive-resume/utils/queue";
 import { getServer } from "@/auth/session";
@@ -41,7 +41,7 @@ export async function readCachedFont(source: string, options: FontReadOptions = 
 			trimFonts(directory, 0);
 			if (!target.exists) return null;
 			const bytes = await target.bytes();
-			if (hasFontSignature(bytes)) return bytes;
+			if (isValidFontFile(bytes)) return bytes;
 			target.delete();
 			return null;
 		});
@@ -50,7 +50,7 @@ export async function readCachedFont(source: string, options: FontReadOptions = 
 		file = undefined;
 	}
 	const bytes = await downloadFont(source, expoFetch as unknown as typeof fetch, options);
-	if (!hasFontSignature(bytes)) throw new Error("Invalid font signature");
+	if (!isValidFontFile(bytes)) throw new Error("Invalid font data");
 	if (file && bytes.length <= MAX_FONT_CACHE_BYTES) {
 		const target = file;
 		await inFontCache(async () => {

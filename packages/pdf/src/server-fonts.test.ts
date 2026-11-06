@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { afterEach, expect, it, vi } from "vite-plus/test";
 import { act } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
@@ -21,7 +22,11 @@ it("applies the complete mirror to every server font including script and symbol
 	const requested: string[] = [];
 	vi.stubGlobal("fetch", (source: URL | string) => {
 		requested.push(String(source));
-		return Promise.resolve(new Response(new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])));
+		return Promise.resolve(
+			new Response(
+				new Uint8Array(readFileSync(new URL("../../../apps/web/public/fonts/ibm-plex-serif-400.ttf", import.meta.url))),
+			),
+		);
 	});
 	const data = structuredClone(defaultResumeData);
 	data.basics.name = "字体镜像 → العربية";

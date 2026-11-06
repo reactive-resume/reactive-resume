@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { afterEach, expect, it, vi } from "vite-plus/test";
 import { configureFontReader, downloadFont, loadFonts } from "./fonts";
@@ -117,7 +118,12 @@ it("mirrors Google and Computer Modern together, retains cache isolation and nev
 	vi.stubGlobal("fetch", (source: URL | string, init: RequestInit) => {
 		requested.push({ url: String(source), redirect: init.redirect });
 		return Promise.resolve(
-			new Response(new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), { status: missing ? 404 : 200 }),
+			new Response(
+				new Uint8Array(
+					readFileSync(new URL("../../../../apps/web/public/fonts/ibm-plex-serif-400.ttf", import.meta.url)),
+				),
+				{ status: missing ? 404 : 200 },
+			),
 		);
 	});
 	const requests = [font("/s/full/font.ttf"), { ...font(""), src: `${computerModernBase}/font/Serif/cmunrm.woff` }];

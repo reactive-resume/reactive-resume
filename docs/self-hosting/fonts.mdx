@@ -9,7 +9,8 @@ The default deployment continues to use the original font hosts.
 
 The mirror is a directory of prepared files. Rendering never downloads a missing file from Google or jsDelivr.
 PDF export reports missing fonts; font-picker labels and public HTML can fall back to system fonts when files
-cannot load. Responses without a font signature are rejected, including static hosts that return an HTML fallback with HTTP 200.
+cannot load. Catalog font containers are checked for required tables, valid offsets and table checksums before caching. This rejects
+truncated files and HTML fallbacks returned with HTTP 200; it does not certify every OpenType table or glyph.
 The saved resume's typography is not changed.
 
 ## Prepare the files

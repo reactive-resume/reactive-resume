@@ -50,7 +50,7 @@ const fontFaces = (requests: readonly PdfFontRequest[], fontMirrorUrl?: string) 
 		.filter((request) => request.src.startsWith("https://"))
 		.map(
 			(request) =>
-				`@font-face{font-family:"${request.family.replace(/["\\<>{};]/g, "")}";font-weight:${Number(request.weight) || 400};font-style:${request.italic ? "italic" : "normal"};font-display:swap;src:url("${encodeURI(resolveFontSource(request.src, fontMirrorUrl)).replaceAll('"', "%22")}")}`,
+				`@font-face{font-family:"${request.family.replace(/["\\<>{};]/g, "")}";font-weight:${Number(request.weight) || 400};font-style:${request.italic ? "italic" : "normal"};font-display:swap;src:url("${new URL(resolveFontSource(request.src, fontMirrorUrl)).href.replace(/["<>\\]/g, (character) => `%${character.charCodeAt(0).toString(16)}`)}")}`,
 		)
 		.join("\n");
 

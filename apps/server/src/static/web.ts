@@ -72,9 +72,9 @@ export function isProfilePath(pathname: string): boolean {
 
 /**
  * Scripts run only from the app's own files and the inline scripts of the page served, allowed by hash; `wasm-unsafe-eval`
- * lets the PDF engine (Forme, WebAssembly) start. Pictures, avatars and fonts can live on any https host (a resume's
- * picture URL, a sign-in provider's avatar) and the PDF engine fetches them, so images, fonts and connections stay open
- * to https. Recordings, previews and workers use blob: URLs. Cloudflare Web Analytics, when turned on for the zone, injects
+ * lets the PDF engine (Forme, WebAssembly) start. Images and connections allow HTTPS resources. Configured mirrors
+ * restrict CSS fonts to the app, data URLs and the mirror origin. Recordings, previews and workers use blob: URLs.
+ * Cloudflare Web Analytics, when turned on for the zone, injects
  * its real-user metrics beacon from static.cloudflareinsights.com.
  */
 export function contentSecurityPolicy(html = "") {
