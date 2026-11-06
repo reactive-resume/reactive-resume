@@ -162,7 +162,8 @@ describe("Assistant timeout budgets", () => {
 	});
 
 	it("rejects a run timeout that leaves no cleanup minute inside the Vercel function limit", async () => {
-		vi.stubEnv("VERCEL", "1");
+		// Padded like deploymentEnvironment accepts, so the cap can't miss a Vercel deployment.
+		vi.stubEnv("VERCEL", " 1 ");
 		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "240001");
 		vi.spyOn(console, "error").mockImplementation(() => {});
 		await expect(import("./server")).rejects.toThrow("Invalid environment variables");

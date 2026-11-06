@@ -66,7 +66,7 @@ function hasCompleteUserinfo(raw: string): boolean {
 
 // vercel.json caps the function at 300 seconds; the run must end a minute earlier so the reply can still be saved.
 // Self-hosted runs stay well inside the 15-minute stale-run TTL.
-const MAX_AGENT_RUN_TIMEOUT_MS = process.env.VERCEL === "1" ? 240_000 : 600_000;
+const MAX_AGENT_RUN_TIMEOUT_MS = process.env.VERCEL?.trim() === "1" ? 240_000 : 600_000;
 
 export const env = createEnv({
 	server: {
