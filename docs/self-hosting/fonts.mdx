@@ -98,6 +98,11 @@ credentials. Reload web clients after changing it. Mobile caches configuration p
 can reuse that server's last known configuration offline. A new server must be contacted before its fonts can
 render. Previously installed mobile versions do not understand this setting and must be updated.
 
+An invalid server response blocks the current mobile render and invalidates saved configuration. If the device
+cannot write the invalidation or remove its old cache, that invalidation lasts only until the app restarts;
+subsequent offline use can restore the previous configuration. Restore storage access and connect to the server
+to refresh it before relying on a changed font policy.
+
 When replacing font bytes, publish a versioned mirror path (for example `/resume/v2`) and update the setting.
 Font caches key by the resolved URL; overwriting a file at the same URL does not invalidate running clients.
 Keep the previous mirror path available during rollout for clients still using the previous configuration.
