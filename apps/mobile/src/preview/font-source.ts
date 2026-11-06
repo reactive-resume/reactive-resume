@@ -46,9 +46,10 @@ async function refresh(server: string): Promise<string | undefined> {
 }
 
 /**
- * The server's font mirror, read from its public flags. A known configuration renders at once and refreshes in the
- * background when stale. With none known (first use, or offline right after an update), a failed read means the
- * original font hosts: offline, those requests can't leave the device, and cached fonts still render.
+ * The server's font mirror, read from its public flags. A configuration younger than five minutes renders at once;
+ * an older one is confirmed first, so a newly enabled mirror is never bypassed. A failed read keeps the saved
+ * configuration, or with none saved (first use, or offline right after an update) the original font hosts: offline,
+ * those requests can't leave the device, and cached fonts still render.
  */
 export async function getFontMirrorUrl(server: string): Promise<string | undefined> {
 	let hit = known.get(server);
@@ -62,9 +63,5 @@ export async function getFontMirrorUrl(server: string): Promise<string | undefin
 		running = refresh(server).finally(() => pending.delete(server));
 		pending.set(server, running);
 	}
-	if (hit) {
-		running.catch(() => undefined);
-		return hit.fontMirrorUrl;
-	}
-	return running.catch(() => undefined);
+	return running.catch(() => hit?.fontMirrorUrl);
 }

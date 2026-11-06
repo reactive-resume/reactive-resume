@@ -94,11 +94,11 @@ on the external static host.
 
 `FONT_MIRROR_URL` takes precedence over the legacy `WEB_FONT_BASE_URL`. Remove it and restart to return to the
 previous font behavior. Configuration reaches current clients through the public flags endpoint; it contains no
-credentials. Reload web clients after changing it. Mobile saves each server's configuration, uses it straight away and
-refreshes it in the background after five minutes, so a change reaches devices within a render or two. A device
-that has never read the configuration (first use, or offline right after updating the app) uses the original font
-hosts until it can; offline, those requests cannot leave the device. Previously installed mobile versions do not
-understand this setting and must be updated.
+credentials. Reload web clients after changing it. Mobile saves each server's configuration and reuses it for five
+minutes; after that, it confirms the configuration before the next render, and keeps the saved one if the server
+can't be reached. A device that has never read the configuration (first use, or offline right after updating the
+app) uses the original font hosts until it can; offline, those requests cannot leave the device. Previously
+installed mobile versions do not understand this setting and must be updated.
 
 When replacing font bytes, publish a versioned mirror path (for example `/resume/v2`) and update the setting.
 Font caches key by the resolved URL; overwriting a file at the same URL does not invalidate running clients.

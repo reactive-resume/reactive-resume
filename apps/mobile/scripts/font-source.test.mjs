@@ -53,17 +53,22 @@ test("font configuration deduplicates reads, isolates servers and survives offli
 	assert.equal(await offline.getFontMirrorUrl("https://unseen.example"), undefined);
 });
 
-test("stale configuration renders at once and refreshes in the background", async () => {
+test("stale configuration is confirmed before rendering, and kept when the server can't be reached", async () => {
 	const files = new Map();
 	let mirror = "https://fonts.example/v1";
-	const reader = configuration(async () => ({ fontMirrorUrl: mirror }), files);
+	let offline = false;
+	const reader = configuration(async () => {
+		if (offline) throw new Error("Offline");
+		return { fontMirrorUrl: mirror };
+	}, files);
 	assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v1");
 	mirror = "https://fonts.example/v2";
 	const now = Date.now;
 	Date.now = () => now() + 10 * 60_000;
 	try {
-		assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v1");
-		await new Promise((resolve) => setImmediate(resolve));
+		assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v2");
+		Date.now = () => now() + 20 * 60_000;
+		offline = true;
 		assert.equal(await reader.getFontMirrorUrl("https://a.example"), "https://fonts.example/v2");
 	} finally {
 		Date.now = now;
