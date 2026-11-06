@@ -112,11 +112,18 @@ async function license(family: string, directory?: string): Promise<Uint8Array> 
 				`https://raw.githubusercontent.com/google/fonts/main/apache/${slug}/LICENSE.txt`,
 				`https://raw.githubusercontent.com/google/fonts/main/ufl/${slug}/UFL.txt`,
 			];
+	const errors: unknown[] = [];
 	for (const source of candidates) {
-		const bytes = await download(source, 200_000);
-		if (bytes?.length) return bytes;
+		try {
+			const bytes = await download(source, 200_000);
+			if (bytes?.length) return bytes;
+		} catch (error) {
+			// A failing candidate (network, rate limit) must not hide a notice at a later path.
+			errors.push(error);
+		}
 	}
-	throw new Error(
+	throw new AggregateError(
+		errors,
 		`License not found for ${family}. Supply its original notice as --licenses '<directory>/${family}.txt' (pass the directory only).`,
 	);
 }

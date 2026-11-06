@@ -14,6 +14,8 @@ const STALL_TIMEOUT_MS = 30_000;
 // within FALLBACK_AFTER_MS, the other host starts too and the first to answer wins.
 const GSTATIC_HOSTS = ["fonts.gstatic.com", "fonts.gstatic.cn"];
 const FALLBACK_AFTER_MS = 3000;
+// The largest catalog face is about 15 MB; a host that keeps streaming past this is refused, not buffered.
+const MAX_FONT_BYTES = 32 * 1024 * 1024;
 let preferredHost = GSTATIC_HOSTS[0] ?? "";
 
 export type FontReadOptions = { mirror?: boolean | undefined };
@@ -98,8 +100,9 @@ export async function downloadFont(
 				const { value, done } = await reader.read();
 				if (done) break;
 				progress();
-				chunks.push(value);
 				size += value.byteLength;
+				if (size > MAX_FONT_BYTES) throw new Error(`Font ${src}: larger than ${MAX_FONT_BYTES} bytes`);
+				chunks.push(value);
 			}
 		} finally {
 			await reader.cancel();

@@ -12,6 +12,32 @@ interface FontDisplayProps {
 }
 
 const loadedFonts = new Set<string>();
+const MAX_PREVIEW_BYTES = 32 * 1024 * 1024;
+const PREVIEW_TIMEOUT_MS = 20_000;
+
+/** A mirror is an operator's static host: bound how long and how much one preview may take. */
+async function readPreview(source: string, signal: AbortSignal): Promise<ArrayBuffer> {
+	const response = await fetch(source, {
+		signal: AbortSignal.any([signal, AbortSignal.timeout(PREVIEW_TIMEOUT_MS)]),
+		redirect: "error",
+	});
+	const reader = response.ok ? response.body?.getReader() : undefined;
+	if (!reader) throw new Error("Font preview unavailable");
+	const chunks: Uint8Array[] = [];
+	let size = 0;
+	try {
+		for (;;) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			size += value.byteLength;
+			if (size > MAX_PREVIEW_BYTES) throw new Error("Font preview too large");
+			chunks.push(value);
+		}
+	} finally {
+		await reader.cancel();
+	}
+	return new Blob(chunks as BlobPart[]).arrayBuffer();
+}
 
 export function FontDisplay({ family, label, type, url }: FontDisplayProps) {
 	const fontMirrorUrl = getFontMirrorUrl();
@@ -20,20 +46,18 @@ export function FontDisplay({ family, label, type, url }: FontDisplayProps) {
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [loadedKey, setLoadedKey] = useState(() => (loadedFonts.has(previewName) ? previewName : undefined));
+	const [failedKey, setFailedKey] = useState<string>();
 	const isLoaded = type === "standard" || loadedKey === previewName;
+	// A failed preview shows its label in the system font at full strength, not as if still loading.
+	const isSettled = isLoaded || failedKey === previewName;
 	const isInView = useInView(containerRef, { once: true, amount: 0.1, margin: "50px" });
 
 	useEffect(() => {
-		if (!isInView || isLoaded || !source) return;
+		if (!isInView || isSettled || !source) return;
 		const controller = new AbortController();
 		const load = async () => {
 			// Loading bytes explicitly lets mirror mode refuse redirects to a third-party font host.
-			let bytes: ArrayBuffer | string = `url(${source})`;
-			if (fontMirrorUrl) {
-				const response = await fetch(source, { signal: controller.signal, redirect: "error" });
-				if (!response.ok) throw new Error("Font preview unavailable");
-				bytes = await response.arrayBuffer();
-			}
+			const bytes = fontMirrorUrl ? await readPreview(source, controller.signal) : `url(${source})`;
 			const face = await new FontFace(previewName, bytes, { display: "swap" }).load();
 			if (controller.signal.aborted) return;
 			document.fonts.add(face);
@@ -41,15 +65,17 @@ export function FontDisplay({ family, label, type, url }: FontDisplayProps) {
 			setLoadedKey(previewName);
 		};
 		// An unavailable preview keeps its readable system-font label. Exports report missing fonts separately.
-		void load().catch(() => undefined);
+		void load().catch(() => {
+			if (!controller.signal.aborted) setFailedKey(previewName);
+		});
 		return () => controller.abort();
-	}, [isInView, isLoaded, previewName, source, fontMirrorUrl]);
+	}, [isInView, isSettled, previewName, source, fontMirrorUrl]);
 
 	return (
 		<div ref={containerRef} className="inline-flex items-baseline gap-2">
 			<span
 				style={{ fontFamily: isLoaded ? `${JSON.stringify(previewName)}, sans-serif` : "sans-serif" }}
-				className={cn(isLoaded ? "opacity-100" : "opacity-50", "transition-opacity duration-quick ease-enter")}
+				className={cn(isSettled ? "opacity-100" : "opacity-50", "transition-opacity duration-quick ease-enter")}
 			>
 				{label}
 			</span>

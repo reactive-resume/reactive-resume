@@ -35,7 +35,12 @@ export const flagsRouter = {
 		.input(z.object({}).optional())
 		.output(
 			z.object({
-				fontMirrorUrl: z.string().optional().describe("Operator-configured mirror for all catalog font requests."),
+				fontMirrorUrl: z
+					.string()
+					.optional()
+					.describe(
+						"Operator-configured mirror for catalog font requests in current clients; older mobile apps ignore it.",
+					),
 				disableSignups: z.boolean().describe("Whether new user signups are disabled on this instance."),
 				disableEmailAuth: z.boolean().describe("Whether email-based authentication is disabled on this instance."),
 				allowGuestLogin: z.boolean().describe("Whether visitors can continue as a guest on this instance."),

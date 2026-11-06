@@ -84,6 +84,7 @@ export function createPreviewPipeline() {
 				request.pages?.filter((index) => index >= 0 && index < pageCount) ??
 				current.document.pages.map((_, index) => index);
 			const rendered = await pdfPages.rasterize(current.document.id, [...new Set(pages)], request.scale);
+			if (disposed || server !== getServer()) throw new Error("Preview server changed");
 			return { ...current.result, requestId: request.id, pages: rendered };
 		},
 		async dispose() {

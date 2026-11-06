@@ -47,6 +47,10 @@ describe("web font mirror configuration", () => {
 		expect(env.FONT_MIRROR_URL).toBe("https://fonts.example.com/resume");
 		expect(env.WEB_FONT_BASE_URL).toBe("https://old.example.com/cm");
 	});
+	it("accepts an HTTP full mirror", async () => {
+		vi.stubEnv("FONT_MIRROR_URL", "http://fonts.example.com/resume");
+		expect((await import("./server")).env.FONT_MIRROR_URL).toBe("http://fonts.example.com/resume");
+	});
 	it.each([
 		"https://user:password@fonts.example.com",
 		"/fonts",

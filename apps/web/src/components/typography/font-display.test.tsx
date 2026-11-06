@@ -47,3 +47,18 @@ it("loads mirror preview bytes with redirects disabled and isolates CSS faces by
 	await waitFor(() => expect(faces).toHaveLength(2));
 	expect(faces[0]?.family).not.toBe(faces[1]?.family);
 });
+
+it("shows a failed mirror preview as settled instead of still loading", async () => {
+	const FontFaceStub = vi.fn();
+	vi.stubGlobal("FontFace", FontFaceStub);
+	vi.stubGlobal(
+		"fetch",
+		vi.fn(async () => new Response(null, { status: 404 })),
+	);
+	configureFontMirror("https://fonts.example/missing");
+	const view = render(
+		<FontDisplay family="Missing" label="Missing" type="web" url="https://fonts.gstatic.com/s/test/missing.ttf" />,
+	);
+	await waitFor(() => expect(view.getByText("Missing").className).toContain("opacity-100"));
+	expect(FontFaceStub).not.toHaveBeenCalled();
+});
