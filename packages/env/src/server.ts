@@ -64,8 +64,9 @@ function hasCompleteUserinfo(raw: string): boolean {
 	return authority.slice(0, userinfoEnd).includes(":");
 }
 
-// Vercel functions are capped at 300 seconds, so a longer run budget would be cut off by the platform.
-const MAX_AGENT_RUN_TIMEOUT_MS = process.env.VERCEL === "1" ? 300_000 : 600_000;
+// vercel.json caps the function at 300 seconds; the run must end a minute earlier so the reply can still be saved.
+// Self-hosted runs stay well inside the 15-minute stale-run TTL.
+const MAX_AGENT_RUN_TIMEOUT_MS = process.env.VERCEL === "1" ? 240_000 : 600_000;
 
 export const env = createEnv({
 	server: {
@@ -208,7 +209,7 @@ export const env = createEnv({
 		AI_API_KEY: z.string().trim().min(1).optional(),
 		AI_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
 		// The Assistant's per-step and whole-run deadlines; raise them for slow local inference.
-		AI_AGENT_STEP_TIMEOUT_MS: z.coerce.number().int().positive().max(2_147_483_647).default(120_000),
+		AI_AGENT_STEP_TIMEOUT_MS: z.coerce.number().int().positive().default(120_000),
 		AI_AGENT_RUN_TIMEOUT_MS: z.coerce.number().int().positive().max(MAX_AGENT_RUN_TIMEOUT_MS).default(240_000),
 
 		// Feature Flags
@@ -253,6 +254,13 @@ if (process.env.NODE_ENV === "production") {
 		if (value?.startsWith("change-me-to-a-secure-"))
 			throw new Error(`${name} still has the example value from .env.example. Set a random one: openssl rand -hex 32`);
 	}
+}
+
+// The run deadline would always end a longer step first, so the step timeout would never apply.
+if (env.AI_AGENT_STEP_TIMEOUT_MS > env.AI_AGENT_RUN_TIMEOUT_MS) {
+	throw new Error(
+		"AI_AGENT_STEP_TIMEOUT_MS must not exceed AI_AGENT_RUN_TIMEOUT_MS. Raise both for slow local models.",
+	);
 }
 
 if (env.AI_PROVIDER === "openai-compatible" && !env.AI_BASE_URL) {
