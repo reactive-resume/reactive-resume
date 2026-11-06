@@ -64,6 +64,9 @@ function hasCompleteUserinfo(raw: string): boolean {
 	return authority.slice(0, userinfoEnd).includes(":");
 }
 
+// Vercel functions are capped at 300 seconds, so a longer run budget would be cut off by the platform.
+const MAX_AGENT_RUN_TIMEOUT_MS = process.env.VERCEL === "1" ? 300_000 : 600_000;
+
 export const env = createEnv({
 	server: {
 		// Application
@@ -206,7 +209,7 @@ export const env = createEnv({
 		AI_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
 		// The Assistant's per-step and whole-run deadlines; raise them for slow local inference.
 		AI_AGENT_STEP_TIMEOUT_MS: z.coerce.number().int().positive().max(2_147_483_647).default(120_000),
-		AI_AGENT_RUN_TIMEOUT_MS: z.coerce.number().int().positive().max(2_147_483_647).default(240_000),
+		AI_AGENT_RUN_TIMEOUT_MS: z.coerce.number().int().positive().max(MAX_AGENT_RUN_TIMEOUT_MS).default(240_000),
 
 		// Feature Flags
 		FLAG_DISABLE_SIGNUPS: z.stringbool().default(false),

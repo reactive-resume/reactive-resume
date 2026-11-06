@@ -19,6 +19,7 @@ beforeEach(() => {
 		"STORAGE_HEALTHCHECK_TIMEOUT_MS",
 		"AI_AGENT_STEP_TIMEOUT_MS",
 		"AI_AGENT_RUN_TIMEOUT_MS",
+		"VERCEL",
 	])
 		vi.stubEnv(name, undefined);
 });
@@ -147,11 +148,31 @@ describe("Assistant timeout budgets", () => {
 	);
 
 	it("accepts custom step and run timeouts in milliseconds", async () => {
-		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", "1800000");
-		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "3600000");
+		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", "600000");
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "600000");
 		const { env } = await import("./server");
-		expect(env.AI_AGENT_STEP_TIMEOUT_MS).toBe(1_800_000);
-		expect(env.AI_AGENT_RUN_TIMEOUT_MS).toBe(3_600_000);
+		expect(env.AI_AGENT_STEP_TIMEOUT_MS).toBe(600_000);
+		expect(env.AI_AGENT_RUN_TIMEOUT_MS).toBe(600_000);
+	});
+
+	it("rejects a run timeout above the self-hosted maximum", async () => {
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "600001");
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
+
+	it("rejects a run timeout above the Vercel function limit", async () => {
+		vi.stubEnv("VERCEL", "1");
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "300001");
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
+
+	it("accepts a run timeout at the Vercel function limit", async () => {
+		vi.stubEnv("VERCEL", "1");
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "300000");
+		const { env } = await import("./server");
+		expect(env.AI_AGENT_RUN_TIMEOUT_MS).toBe(300_000);
 	});
 
 	it.each(["0", "-1", "1.5", "not-a-number", "2147483648"])("rejects invalid step timeout %s", async (value) => {

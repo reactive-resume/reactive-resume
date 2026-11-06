@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 
-// A 30-minute run budget (the slow-inference workaround from the report) must keep a live run from
-// being reaped at the old 15-minute mark.
+// The stale-run TTL must stay independent of the Assistant configuration: even if a replica is
+// misconfigured with a 30-minute run budget, the 15-minute TTL leaves five minutes for persistence
+// after the capped 10-minute run.
 vi.mock("@reactive-resume/env/server", () => ({ env: { AI_AGENT_RUN_TIMEOUT_MS: 30 * 60_000 } }));
 vi.mock("@reactive-resume/db/client", () => ({ db: {} }));
 vi.mock("@reactive-resume/db/schema", () => ({
@@ -25,10 +26,10 @@ function minutesBefore(minutes: number) {
 	return new Date(NOW.getTime() - minutes * 60_000);
 }
 
-describe("configured Assistant run timeout", () => {
-	it("keeps the stale-run TTL above the configured run deadline", () => {
-		expect(STALE_AGENT_RUN_TTL_MS).toBe(31 * 60_000);
-		expect(isStaleAgentRun({ activeRunId: "run-1", activeRunStartedAt: minutesBefore(29) }, NOW)).toBe(false);
-		expect(isStaleAgentRun({ activeRunId: "run-1", activeRunStartedAt: minutesBefore(32) }, NOW)).toBe(true);
+describe("stale-run TTL", () => {
+	it("stays five minutes above the maximum Assistant run budget", () => {
+		expect(STALE_AGENT_RUN_TTL_MS).toBe(15 * 60_000);
+		expect(isStaleAgentRun({ activeRunId: "run-1", activeRunStartedAt: minutesBefore(14) }, NOW)).toBe(false);
+		expect(isStaleAgentRun({ activeRunId: "run-1", activeRunStartedAt: minutesBefore(16) }, NOW)).toBe(true);
 	});
 });
