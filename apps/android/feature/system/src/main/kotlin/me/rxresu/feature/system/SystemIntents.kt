@@ -18,7 +18,7 @@ internal const val EXTRA_TAB = "me.rxresu.extra.TAB"
 /** Pure routing only. The shell calls [prepareSystemIntent] before consuming a PDF route. */
 fun systemRouteFor(intent: Intent): Any? = when (intent.action) {
     ACTION_SAVE_JOB -> SaveJob()
-    ACTION_NEW_RESUME -> NewDocument
+    ACTION_NEW_RESUME -> NewDocument()
     ACTION_SEARCH -> Search()
     ACTION_ROUTE -> when (intent.getStringExtra(EXTRA_TARGET)) {
         "today" -> TodayTab

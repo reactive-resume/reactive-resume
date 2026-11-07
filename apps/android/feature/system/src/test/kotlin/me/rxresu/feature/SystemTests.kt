@@ -62,7 +62,7 @@ class SystemTests {
         val shortcuts = ShortcutManagerCompat.getDynamicShortcuts(context)
         assertEquals(3, shortcuts.size)
         assertTrue(shortcuts.all { it.intent.component?.packageName == context.packageName })
-        assertEquals(NewDocument, systemRouteFor(shortcuts.first { it.id == "new-resume" }.intent))
+        assertEquals(NewDocument(), systemRouteFor(shortcuts.first { it.id == "new-resume" }.intent))
         assertEquals(Search(), systemRouteFor(shortcuts.first { it.id == "search" }.intent))
     }
     @Test fun notificationTargetsHaveCorrectWorkspaceAndCategories() = runTest {

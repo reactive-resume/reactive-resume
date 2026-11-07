@@ -1,10 +1,33 @@
 package me.rxresu
 
-import android.content.Intent
-import me.rxresu.core.navigation.routeForLink
+import me.rxresu.core.navigation.Application
+import me.rxresu.core.navigation.ApplicationsTab
+import me.rxresu.core.navigation.Builder
+import me.rxresu.core.navigation.CareerTab
+import me.rxresu.core.navigation.Coach
+import me.rxresu.core.navigation.DocumentsTab
+import me.rxresu.core.navigation.Import
+import me.rxresu.core.navigation.InterviewSheet
+import me.rxresu.core.navigation.Knowledge
+import me.rxresu.core.navigation.Letter
+import me.rxresu.core.navigation.MoveApplication
+import me.rxresu.core.navigation.NewDocument
+import me.rxresu.core.navigation.Offers
+import me.rxresu.core.navigation.SaveJob
+import me.rxresu.core.navigation.Story
+import me.rxresu.core.navigation.TodayTab
+import me.rxresu.core.navigation.Versions
+import me.rxresu.core.navigation.Visitors
+import me.rxresu.core.navigation.WebPageSettings
 
-/** The route an incoming intent opens: App Links and public links. Share targets and shortcuts join in :feature:system. */
-fun routeFor(intent: Intent?): Any? {
-    if (intent?.action != Intent.ACTION_VIEW) return null
-    return intent.data?.toString()?.let(::routeForLink)
+/**
+ * The tab a route from outside the app (notification, shortcut, share sheet, link) belongs under, so Back from it
+ * lands on that tab's root. Null: open over whatever is on screen (search, public pages, the ATS checker).
+ */
+fun tabFor(route: Any): Any? = when (route) {
+    is Application, is MoveApplication, is InterviewSheet, is SaveJob -> ApplicationsTab()
+    is Offers, is Coach, is Knowledge, is Story -> CareerTab
+    is Builder, is Letter, is Import, is NewDocument, is Visitors, is WebPageSettings, is Versions -> DocumentsTab
+    TodayTab, DocumentsTab, CareerTab, is ApplicationsTab -> route
+    else -> null
 }

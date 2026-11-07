@@ -94,7 +94,7 @@ fun NavGraphBuilder.publicGraph(nav: NavController, motion: RrNavMotion) {
                 vm.choose(uri.toString())
             } catch (_: Exception) { toasts.show(resources.getString(R.string.public_this_file_could_not_be_read_try_another_pdf_148f35)) }
         }
-    }, vm::posting, vm::check, { openImport(state.selected?.uri) }, { nav.navigate(NewDocument) }, {
+    }, vm::posting, vm::check, { openImport(state.selected?.uri) }, { nav.navigate(NewDocument()) }, {
         CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(repositories.authSession.origin.value + "/ats-checker"))
     }, { openImport(null) })
 }

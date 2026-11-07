@@ -46,6 +46,7 @@ import me.rxresu.core.navigation.LocalToasts
 import me.rxresu.core.navigation.LocalWorkspaceTab
 import me.rxresu.core.navigation.RrNavMotion
 import me.rxresu.core.navigation.TodayTab
+import me.rxresu.core.navigation.Import
 import me.rxresu.core.navigation.ResetPassword
 import me.rxresu.core.navigation.SignIn
 import me.rxresu.core.navigation.TwoStep
@@ -94,7 +95,13 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         SessionRouting(nav, signedIn)
         // Pages belong to one account; the next account starts with an empty cache.
         LaunchedEffect(session) { if (session == SessionState.SignedOut) graph.pagesDir.deleteRecursively() }
-        LaunchedEffect(nav) { incoming.collect { nav.navigate(it) } }
+        LaunchedEffect(nav) {
+            incoming.collect { route ->
+                val tab = tabFor(route)
+                if (tab != null && signedIn) nav.switchTab(tab)
+                if (tab != route) nav.navigate(route)
+            }
+        }
 
         CompositionLocalProvider(
             LocalRepositories provides graph.repositories,
@@ -155,7 +162,12 @@ private fun SessionRouting(nav: NavController, signedIn: Boolean) {
     LaunchedEffect(signedIn) {
         val dest = nav.currentBackStackEntry?.destination ?: return@LaunchedEffect
         val onAuth = dest.hasRoute<Welcome>() || dest.hasRoute<SignIn>() || dest.hasRoute<TwoStep>() || dest.hasRoute<ResetPassword>()
-        if (signedIn && onAuth) nav.resetTo(TodayTab)
+        // The ATS checker sends a signed-out person to sign in before importing; pick that import back up.
+        val pendingImport = nav.currentBackStack.value.firstNotNullOfOrNull { it.savedStateHandle.get<String>("ats-import") }
+        if (signedIn && onAuth) {
+            nav.resetTo(TodayTab)
+            if (pendingImport != null) nav.navigate(Import(pendingImport.ifEmpty { null }))
+        }
         if (!signedIn && !onAuth) nav.resetTo(Welcome)
     }
 }

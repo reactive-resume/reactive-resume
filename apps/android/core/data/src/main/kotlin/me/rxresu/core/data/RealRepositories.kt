@@ -53,20 +53,29 @@ fun realRepositories(
             override fun pending()=authSession.state.map { it.scope() }.distinctUntilChanged().flatMapLatest { owner ->
                 if(owner==null) flowOf(emptyList()) else queue.pending(owner).map { rows -> rows.map { PendingDraft(it.documentId,it.kind,it.name,it.saveStatus()) } }
             }
-        },workerFactory) { connectivity.close();scope.cancel();database.close() }
+        },workerFactory,forgetAccount={ owner -> database.drafts().deleteAccount(owner);database.cache().deleteAccount(owner) }) { connectivity.close();scope.cancel();database.close() }
 }
 
 internal fun createRepositories(
     store: RepositoryStore,auth: AuthSession,pages: PageRenderer,preferences: PreferencesRepository,
     open: suspend(String,String)->DocumentDraft<*>,drafts: DraftsRepository,
-    workerFactory: WorkerFactory? = null,securityInfo: (() -> AccountSecurityInfo)? = null,dispose: ()->Unit = {},
+    workerFactory: WorkerFactory? = null,securityInfo: (() -> AccountSecurityInfo)? = null,
+    forgetAccount: suspend (scope: String) -> Unit = {},dispose: ()->Unit = {},
 ): RrRepositories {
     val docsApi=DocumentsApi(store);val resumesApi=ResumesApi(store);val lettersApi=CoverLettersApi(store)
     val appsApi=ApplicationsApi(store);val careerApi=CareerApi(store)
     val account=object:AccountRepository,AuthenticationApiOperations by AuthenticationApi(store),ApplicationProfileApiOperations by ApplicationProfileApi(store),FilesApiOperations by FilesApi(store) {
         override val session=auth.state
         override fun observeProfile()=store.observe("account-profile",AccountProfile.serializer()) { getProfile() }
-        override suspend fun signOut()=auth.signOut()
+        /**
+         * Signs out, then removes the departing account's data on this device (drafts, cached lists), as the Expo app
+         * does. Credentials always go; a cleanup step that fails is reported afterwards as [SignOutCleanupException].
+         */
+        override suspend fun signOut() {
+            val departing=auth.state.value.scope()
+            auth.signOut()
+            if(departing!=null) runCatching { forgetAccount(departing) }.onFailure { throw SignOutCleanupException(it) }
+        }
         override fun securityInfo()=securityInfo?.invoke() ?: AccountSecurityInfo.BrowserRequired(auth.origin.value.trimEnd('/')+"/dashboard/settings/account")
     }
     val docs=object:DocumentsRepository,DocumentsApiOperations by docsApi {
@@ -136,3 +145,6 @@ private fun scheduleDraftSync(context: Context,owner: String) {
         OneTimeWorkRequestBuilder<DraftSyncWorker>().setInputData(workDataOf("accountScope" to owner))
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build())
 }
+
+/** Signed out, but some of the account's data on this device could not be removed. */
+class SignOutCleanupException(cause: Throwable) : Exception("Signed out, but some local data could not be removed.", cause)
