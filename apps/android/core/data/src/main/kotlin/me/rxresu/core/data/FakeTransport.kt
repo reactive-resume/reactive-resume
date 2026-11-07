@@ -20,6 +20,8 @@ class FakeControls(initial: FakeMode = FakeMode.Ready) {
     /** Per-operation server-shaped values for focused screen states beyond the common storyboard seed. */
     val responses=MutableStateFlow<Map<String,JsonElement>>(emptyMap())
     val online=MutableStateFlow(true)
+    /** Resume update stream events ({"mutation":"patch"} is an AI agent); emit after changing the fake server. */
+    val resumeUpdates=MutableSharedFlow<me.rxresu.core.network.ServerEvent>(extraBufferCapacity=8)
     fun set(operation: String,mode: FakeMode) { operations.update { it+(operation to mode) } }
     fun reset() { mode.value=FakeMode.Ready;operations.value=emptyMap();responses.value=emptyMap();online.value=true }
     internal suspend fun before(operation: String): FakeMode {

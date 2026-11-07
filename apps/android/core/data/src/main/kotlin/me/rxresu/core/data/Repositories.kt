@@ -6,6 +6,7 @@ import java.time.Instant
 import java.time.ZoneId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import me.rxresu.core.auth.AuthSession
 import me.rxresu.core.auth.SessionState
 import me.rxresu.core.database.SaveStatus
@@ -78,8 +79,17 @@ data class ApplicationInsights(val total: Int, val heardBack: Int, val medianDay
 
 interface DocumentDraft<T> {
     val state: StateFlow<DraftState<T>>
-    /** Persist before scheduling autosave. Retain UI's authored value if storage throws. */
-    suspend fun update(value: T, proposalApplications: JsonObject? = null)
+    /**
+     * Someone else's change (an AI agent, another device) replaced the clean document after a refetch or a resume
+     * update event. The draft records it as one undo step, so [undo] takes it back.
+     */
+    val outsideChanges: Flow<OutsideChange> get() = emptyFlow()
+    /**
+     * Persist before scheduling autosave. Retain UI's authored value if storage throws. An update passing the same
+     * non-null [undoStep] as the update before it joins that update's undo step (the web's `coalesceKey` with
+     * `sameStep`), so a multi-step action such as Fit to one page is undone at once.
+     */
+    suspend fun update(value: T, proposalApplications: JsonObject? = null, undoStep: String? = null)
     suspend fun undo()
     suspend fun redo()
     suspend fun flush()
@@ -89,6 +99,8 @@ interface DocumentDraft<T> {
     suspend fun writeMetadata(write: suspend (T) -> T): T
     suspend fun close()
 }
+/** [mutation] is the resume update stream's kind ("patch" is an AI agent, "lock"/"password" sharing), null after a refetch. */
+data class OutsideChange(val mutation: String?)
 data class DraftState<T>(val document: T?, val status: SaveStatus = SaveStatus.Saved, val locked: Boolean = false, val canUndo: Boolean = false, val canRedo: Boolean = false, val recoveredCopyId: String? = null, val recoveredCopyName: String? = null, val error: Throwable? = null, val proposalApplications: JsonObject = JsonObject(emptyMap()))
 interface DraftsRepository {
     suspend fun sync(): Boolean

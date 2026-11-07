@@ -27,6 +27,12 @@ internal class PersistentDocumentDraft<T>(
     internal val isClosed get()=closed
     private var generation=initial.generation
     private var unpersistedDecisions=JsonObject(emptyMap())
+    /** The undo step key of the last recorded update; reset by undo, redo and outside changes. */
+    private var lastStep: String?=null
+    /** The newest resume update event's mutation, kept until a refresh takes the change it announced. */
+    private var streamMutation: String?=null
+    private val outside=MutableSharedFlow<OutsideChange>(extraBufferCapacity=8)
+    override val outsideChanges: Flow<OutsideChange> = outside.asSharedFlow()
     private var retained=from(initial)
     private val mutable=MutableStateFlow(retained)
     override val state=mutable.asStateFlow()
@@ -54,7 +60,7 @@ internal class PersistentDocumentDraft<T>(
             auth.state.collectLatest { session ->
                 if(session !is me.rxresu.core.auth.SessionState.SignedIn || session.accountScope!=owner) return@collectLatest
                 while(isActive) {
-                    try { updates.invoke().collect { queue.refresh(owner,kind,id,deferClean=editing) } }
+                    try { updates.invoke().collect { event -> streamMutation=mutationOf(event) ?: streamMutation;refreshFromServer() } }
                     catch(e: CancellationException) { throw e }
                     catch(_: java.io.IOException) { /* Reconnect without logging authored event payloads. */ }
                     delay(2500)
@@ -62,12 +68,35 @@ internal class PersistentDocumentDraft<T>(
             }
         }
     }
-    override suspend fun update(value: T,proposalApplications: JsonObject?) = mutex.withLock {
+    override suspend fun update(value: T,proposalApplications: JsonObject?,undoStep: String?) = mutex.withLock {
         guard();check(!state.value.locked) { "Document is locked." }
         val before=mutable.value.document
         if(before==value && proposalApplications==null) return@withLock
-        if(before!=null) { undo.addLast(Checkpoint(before,retained.proposalApplications));if(undo.size>200) undo.removeFirst() }
+        val joins=undoStep!=null && undoStep==lastStep && undo.isNotEmpty()
+        if(before!=null && !joins) record(Checkpoint(before,retained.proposalApplications))
+        lastStep=undoStep
         redo.clear();persist(value,proposalApplications)
+    }
+    /** Resumes compare `data` as the web does (#53): a rename or a sharing change elsewhere isn't a content change. */
+    private fun sameAuthoredContent(left: String,right: String)=if(kind=="resume") parseObject(left)["data"]==parseObject(right)["data"] else remote.sameContent(kind,left,right)
+    private fun record(checkpoint: Checkpoint<T>) { undo.addLast(checkpoint);if(undo.size>200) undo.removeFirst() }
+    private fun mutationOf(event: ServerEvent)=runCatching { (event.json() as? JsonObject)?.get("mutation")?.jsonPrimitive?.contentOrNull }.getOrNull()
+    /**
+     * Refetches; when that replaces the clean document with different content, the replaced document becomes an undo
+     * step and [outsideChanges] says so. Own-save echoes carry the same content and dirty rows are never replaced.
+     */
+    private suspend fun refreshFromServer() {
+        val before=dao.get(owner,kind,id)
+        queue.refresh(owner,kind,id,deferClean=editing)
+        val after=dao.get(owner,kind,id) ?: return
+        if(before==null || before.dirty || after.dirty || after.status!="saved" || sameAuthoredContent(before.document,after.document)) return
+        val mutation=streamMutation;streamMutation=null
+        mutex.withLock {
+            record(Checkpoint(ApiJson.decodeFromString(serializer,before.document),parseObject(before.applications)))
+            redo.clear();lastStep=null
+            publish(retained.copy(canUndo=true,canRedo=false))
+        }
+        outside.emit(OutsideChange(mutation))
     }
     private suspend fun persist(value: T,decisions: JsonObject? = null) {
         fun keepCleared(next: JsonElement,before: JsonElement?): JsonElement = when {
@@ -99,13 +128,13 @@ internal class PersistentDocumentDraft<T>(
     override suspend fun undo() = mutex.withLock {
         guard();if(undo.isEmpty() || state.value.locked) return@withLock
         mutable.value.document?.let { redo.addLast(Checkpoint(it,retained.proposalApplications)) }
-        val checkpoint=undo.removeLast()
+        val checkpoint=undo.removeLast();lastStep=null
         persist(checkpoint.document,JsonObject(retained.proposalApplications.keys.associateWith { JsonPrimitive(false) }+checkpoint.applications))
     }
     override suspend fun redo() = mutex.withLock {
         guard();if(redo.isEmpty() || state.value.locked) return@withLock
         mutable.value.document?.let { undo.addLast(Checkpoint(it,retained.proposalApplications)) }
-        val checkpoint=redo.removeLast()
+        val checkpoint=redo.removeLast();lastStep=null
         persist(checkpoint.document,JsonObject(retained.proposalApplications.keys.associateWith { JsonPrimitive(false) }+checkpoint.applications))
     }
     override suspend fun flush() {
@@ -117,7 +146,7 @@ internal class PersistentDocumentDraft<T>(
         }
         queue.flush(owner,kind,id)
     }
-    override suspend fun refresh() { guard();queue.refresh(owner,kind,id,deferClean=editing) }
+    override suspend fun refresh() { guard();refreshFromServer() }
     override suspend fun setEditing(editing: Boolean) {
         guard();this.editing=editing
         if(!editing) { flush();refresh() }

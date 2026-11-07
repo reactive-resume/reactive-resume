@@ -34,7 +34,7 @@ fun FakeRepositories(
     val queue=DraftQueue(dao,remote,{authSession.state.value.scope()}, {controls.online.value})
     val registry=DraftRegistry { owner,kind,id ->
         val row=queue.open(owner,kind,id)
-        if(kind=="resume") PersistentDocumentDraft(owner,kind,id,queue,dao,remote,authSession,Resume.serializer(),scope,row)
+        if(kind=="resume") PersistentDocumentDraft(owner,kind,id,queue,dao,remote,authSession,Resume.serializer(),scope,row,updates={ controls.resumeUpdates })
         else PersistentDocumentDraft(owner,kind,id,queue,dao,remote,authSession,CoverLetter.serializer(),scope,row)
     }
     val open: suspend(String,String)->DocumentDraft<*> = { kind,id ->
