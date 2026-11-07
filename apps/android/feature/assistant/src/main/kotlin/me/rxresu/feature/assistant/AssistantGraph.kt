@@ -22,9 +22,9 @@ fun NavGraphBuilder.assistantGraph(nav: NavController, motion: RrNavMotion) {
         val route = entry.toRoute<Assistant>(); val repositories = LocalRepositories.current
         val owner = remember(entry) { assistantOwner(nav, entry) }
         val vm: AssistantViewModel = viewModel(viewModelStoreOwner = owner, key = "assistant-${route.resumeId}") { AssistantViewModel(repositories, route.resumeId, route.threadId) }; val state by vm.state.collectAsStateWithLifecycle()
-        LaunchedEffect(vm, route.threadId) {
+        LaunchedEffect(vm, route.threadId, route.prompt) {
             route.threadId?.let { if (it != vm.state.value.threadId) vm.thread(it) }
-            takeAssistantPrompt(owner)?.let(vm::input)
+            route.prompt?.let(vm::input)
         }
         val resources = androidx.compose.ui.platform.LocalResources.current; val context = LocalContext.current; val scope = rememberCoroutineScope(); val toasts = LocalToasts.current
         var picker by remember { mutableStateOf<String?>(null) }
@@ -94,6 +94,3 @@ private fun assistantOwner(nav: NavController, entry: NavBackStackEntry): NavBac
     val route = previous.destination.route.orEmpty()
     return if (listOf(Builder::class, Letter::class).any { route.startsWith(it.qualifiedName!!) }) previous else entry
 }
-
-// TODO(lead): replace saved-state hand-off with Assistant.prompt once shared route lands.
-private fun takeAssistantPrompt(owner: NavBackStackEntry): String? = owner.savedStateHandle.remove<String>("rr.assistant.prompt")

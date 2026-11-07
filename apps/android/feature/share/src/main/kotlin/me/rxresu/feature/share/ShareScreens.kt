@@ -2,19 +2,13 @@ package me.rxresu.feature.share
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,10 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -139,24 +130,15 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
 }
 
 @Composable internal fun DownloadContent(state: ExportState, kind: me.rxresu.core.navigation.DocumentKind, onFormat: (FileFormat) -> Unit, onName: (String) -> Unit) {
-    val haptics = rememberRrHaptics()
     Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        RrListGroup {
+        RrListGroup(Modifier.selectableGroup()) {
             val formats = listOfNotNull(FileFormat.Pair.takeIf { kind == me.rxresu.core.navigation.DocumentKind.Letter && state.paired }) + FileFormat.entries.filter { it != FileFormat.Pair }
             formats.forEach { format ->
                 val label = when (format) { FileFormat.Pair -> stringResource(R.string.p4_resume_letter_2_files); FileFormat.Pdf -> stringResource(R.string.p4_pdf); FileFormat.Word -> stringResource(CoreR.string.word); FileFormat.OpenDocument -> stringResource(CoreR.string.opendocument); FileFormat.Text -> stringResource(CoreR.string.markdown); FileFormat.Json -> stringResource(CoreR.string.json) }
                 val helper = when (format) { FileFormat.Pair -> stringResource(R.string.p4_two_pdfs_named_to_match); FileFormat.Pdf -> stringResource(CoreR.string.looks_exactly_like_the_page_use_it_for_applications_and_email); FileFormat.Word -> stringResource(CoreR.string.for_portals_or_recruiters_who_ask_for_word_layout_is_simplified); FileFormat.OpenDocument -> stringResource(CoreR.string.for_libreoffice_and_other_open_source_editors_layout_is_simplified); FileFormat.Text -> stringResource(CoreR.string.plain_text_with_headings_paste_into_application_forms_and_notes); FileFormat.Json -> stringResource(CoreR.string.complete_data_backup_imports_back_into_reactive_resume) }
-                // TODO(lead): move choice rows with inline badges to designsystem.
-                Row(Modifier.fillMaxWidth().background(if (state.format == format) RrTheme.colors.accentSoft else RrTheme.colors.surface)
-                    .selectable(state.format == format, enabled = !state.busy, role = Role.RadioButton) { haptics(RrHaptic.Selection); onFormat(format) }.padding(14.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
-                    RrRadio(state.format == format, null)
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { RrText(label, style = RrType.label); if (format == FileFormat.Pdf) RrBadge(stringResource(R.string.p4_best_for_applying), tone = RrBadgeTone.Accent) }
-                        if (state.offline) RrText(stringResource(when (format) { FileFormat.Json -> R.string.p4_offline_json; FileFormat.Pdf, FileFormat.Pair -> R.string.p4_offline_pdf; else -> R.string.p4_offline_server_format }), style = RrType.caption, color = RrTheme.colors.warnText)
-                        RrText(helper, style = RrType.small, color = RrTheme.colors.ink3)
-                    }
-                }
+                val offline = if (state.offline) stringResource(when (format) { FileFormat.Json -> R.string.p4_offline_json; FileFormat.Pdf, FileFormat.Pair -> R.string.p4_offline_pdf; else -> R.string.p4_offline_server_format }) else null
+                RrOptionRow(label, state.format == format, { onFormat(format) }, helper = listOfNotNull(offline, helper).joinToString("\n"), enabled = !state.busy,
+                    badge = if (format == FileFormat.Pdf) ({ RrBadge(stringResource(R.string.p4_best_for_applying), tone = RrBadgeTone.Accent) }) else null)
             }
         }
         RrTextField(state.name, onName, label = stringResource(CoreR.string.file_name), enabled = !state.busy, trailing = { RrText(".${state.format.extension}", style = RrType.mono, color = RrTheme.colors.ink3) }, helper = stringResource(CoreR.string.recruiters_see_this_name_your_name_plus_resume_works_well))
@@ -234,30 +216,25 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
     }
 }
 
-// TODO(lead): move interactive visitor chart to designsystem.
-@Composable private fun VisitorChart(days: List<GetResumeDailyStatisticsResponseItem>, selected: Int?, onSelect: (Int) -> Unit) {
-    val c = RrTheme.colors
-    val haptics = rememberRrHaptics()
+@Composable internal fun VisitorChart(days: List<GetResumeDailyStatisticsResponseItem>, selected: Int?, onSelect: (Int) -> Unit) {
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val still = LocalInspectionMode.current || RrTheme.reducedMotion
-    var shown by remember { mutableStateOf(still) }
-    LaunchedEffect(Unit) { shown = true }
-    val progress by animateFloatAsState(if (shown) 1f else 0f, tween(if (still) 0 else RrMotion.D3 + 8 * days.lastIndex, easing = RrMotion.ease), label = "views")
+    val select by rememberUpdatedState(onSelect)
+    val haptics = rememberRrHaptics()
     val peak = days.maxOf { it.views }.coerceAtLeast(1.0)
     val summary = stringResource(CoreR.string.daily_views_over_30_days_peak_0, peak.toLong().toString())
-    val previous = stringResource(R.string.p4_previous_day); val next = stringResource(R.string.p4_next_day)
-    fun choose(index: Int) { haptics(RrHaptic.Selection); onSelect(index.coerceIn(days.indices)) }
-    Canvas(Modifier.fillMaxWidth().height(48.dp).pointerInput(days, rtl) { detectTapGestures { position -> choose(visitorDayAt(position.x, size.width.toFloat(), days.size, rtl)) } }
-        .pointerInput(days, rtl) { detectHorizontalDragGestures(onDragStart = { point -> onSelect(visitorDayAt(point.x, size.width.toFloat(), days.size, rtl)) }) { change, _ -> change.consume(); onSelect(visitorDayAt(change.position.x, size.width.toFloat(), days.size, rtl)) } }
-        .clearAndSetSemantics { contentDescription = summary; stateDescription = selected?.let { days.getOrNull(it)?.let { day -> "${day.date}: ${day.views.toLong()}" } }.orEmpty(); customActions = listOf(CustomAccessibilityAction(previous) { choose((selected ?: days.size) - 1); true }, CustomAccessibilityAction(next) { choose((selected ?: -1) + 1); true }) }) {
-        val gap = 3.dp.toPx(); val width = (size.width - gap * (days.size - 1)) / days.size
-        days.forEachIndexed { index, day ->
-            val localProgress = if (still) 1f else ((progress * (RrMotion.D3 + 8 * days.lastIndex) - 8 * index) / RrMotion.D3).coerceIn(0f, 1f)
-            val height = (size.height * day.views / peak * localProgress).toFloat().coerceAtLeast(1f)
-            val x = (if (rtl) days.lastIndex - index else index) * (width + gap)
-            drawRect((if (selected == index) c.accentText else c.accent).copy(alpha = 0.85f), Offset(x, size.height - height), Size(width, height))
-        }
-    }
+    val value = selected?.let { days.getOrNull(it) }?.let { stringResource(R.string.p4_1_s_2_s_views, it.date, it.views.toLong().toString()) }
+    // RrBarChart owns drawing, taps and TalkBack actions; this adapter keeps date values and drag scrubbing.
+    RrBarChart(days.map { it.views.toFloat() }, listOfNotNull(summary, value).joinToString(". "),
+        Modifier.pointerInput(days, rtl) {
+            detectHorizontalDragGestures(onDragStart = { point ->
+                haptics(RrHaptic.Selection)
+                select(visitorDayAt(point.x, size.width.toFloat(), days.size, rtl))
+            }) { change, _ ->
+                change.consume()
+                select(visitorDayAt(change.position.x, size.width.toFloat(), days.size, rtl))
+            }
+        }, selected = selected, onSelect = onSelect,
+        previousLabel = stringResource(R.string.p4_previous_day), nextLabel = stringResource(R.string.p4_next_day))
 }
 
 internal fun visitorDayAt(x: Float, width: Float, count: Int, rtl: Boolean): Int {
