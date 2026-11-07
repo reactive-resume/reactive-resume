@@ -1,0 +1,196 @@
+package me.rxresu.core.designsystem
+
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
+
+/**
+ * One segment of [RrSegmentedControl] or [RrModeBar].
+ *
+ * @param selectedIcon the filled icon shown while selected (mode bar only; segments keep the regular weight).
+ * @param count a mono count after the label ("Issues 2").
+ * @param warn a 6 dp warn mark beside the icon (Check with open issues); say the count in [contentDescription].
+ * @param contentDescription replaces the label for TalkBack when the segment carries more than its words.
+ */
+data class RrSegment(
+    val label: String,
+    @DrawableRes val icon: Int? = null,
+    @DrawableRes val selectedIcon: Int? = icon,
+    val count: String? = null,
+    val warn: Boolean = false,
+    val contentDescription: String? = null,
+)
+
+/**
+ * Segmented control: sunken track, the selected segment raised with shadow-1. The selection slides with
+ * ease-in-out-strong d2 (instant under reduced motion) and plays `selection`.
+ *
+ * @param fillWidth segments share the available width equally; false sizes every segment to the widest label.
+ */
+@Composable
+fun RrSegmentedControl(
+    segments: List<RrSegment>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    fillWidth: Boolean = true,
+) {
+    SegmentTrack(segments, selectedIndex, onSelect, modifier, itemHeight = 32.dp, stacked = false, fillWidth = fillWidth)
+}
+
+private val SegmentText = RrType.small.copy(fontWeight = FontWeight.Medium)
+private val ModeText = RrType.small.copy(fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 14.sp)
+
+@Composable
+internal fun SegmentTrack(
+    segments: List<RrSegment>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+    modifier: Modifier,
+    itemHeight: Dp,
+    stacked: Boolean,
+    fillWidth: Boolean,
+) {
+    val c = RrTheme.colors
+    val reduced = LocalReducedMotion.current
+    val haptics = rememberRrHaptics()
+    val position = remember { Animatable(selectedIndex.toFloat()) }
+    LaunchedEffect(selectedIndex, reduced) {
+        position.animateTo(selectedIndex.toFloat(), RrMotion.spec(RrMotion.D2, reduced, RrMotion.easeInOutStrong))
+    }
+    Layout(
+        modifier = modifier.clip(RrShape.lg).background(c.sunken).padding(2.dp).selectableGroup(),
+        content = {
+            Box(Modifier.rrShadow(RrElevation.Level1, RrShape.md).clip(RrShape.md).background(c.raised))
+            segments.forEachIndexed { i, s ->
+                val selected = i == selectedIndex
+                val fg = if (selected) c.ink else c.ink2
+                val content: @Composable () -> Unit = {
+                    val iconId = if (selected) s.selectedIcon else s.icon
+                    if (iconId != null) {
+                        val iconSize = if (stacked) 20.dp else 18.dp
+                        Box {
+                            RrIcon(iconId, null, size = iconSize, tint = fg)
+                            // Beside the icon, outside its bounds, so the label stays centred.
+                            if (s.warn) Box(Modifier.offset(x = iconSize + 3.dp, y = iconSize / 2 - 5.dp).size(6.dp).clip(RrShape.xs).background(c.warn))
+                        }
+                    }
+                    RrText(s.label, style = if (stacked) ModeText else SegmentText, color = fg, maxLines = 1)
+                    if (s.count != null) RrText(s.count, style = RrType.mono, color = c.ink3)
+                }
+                val itemModifier = Modifier
+                    .clip(RrShape.md)
+                    .selectable(selected, role = Role.Tab) {
+                        if (!selected) haptics(RrHaptic.Selection)
+                        onSelect(i)
+                    }
+                    .then(if (s.contentDescription != null) Modifier.semantics(mergeDescendants = true) { contentDescription = s.contentDescription } else Modifier)
+                    .padding(horizontal = 2.dp)
+                if (stacked) {
+                    Column(itemModifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) { content() }
+                } else {
+                    Row(itemModifier, horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) { content() }
+                }
+            }
+        },
+    ) { measurables, constraints ->
+        val gap = 2.dp.roundToPx()
+        val n = segments.size.coerceAtLeast(1)
+        val minH = itemHeight.roundToPx()
+        val items = measurables.drop(1)
+        val natural = items.map { it.maxIntrinsicWidth(minH) }
+        val widths = if (fillWidth && constraints.hasBoundedWidth) {
+            segmentWidths(natural, constraints.maxWidth - gap * (n - 1))
+        } else {
+            val widest = natural.maxOrNull() ?: 0
+            natural.map { widest }
+        }
+        val starts = widths.runningFold(0) { x, w -> x + w + gap }
+        val h = maxOf(minH, items.indices.maxOfOrNull { items[it].minIntrinsicHeight(widths[it]) } ?: 0)
+        val placeables = items.mapIndexed { i, m -> m.measure(Constraints.fixed(widths[i], h)) }
+        // The indicator follows the animated index between neighbouring segments' bounds.
+        val pos = position.value.coerceIn(0f, (widths.size - 1).coerceAtLeast(0).toFloat())
+        val lo = pos.toInt()
+        val hi = minOf(lo + 1, widths.lastIndex.coerceAtLeast(0))
+        val t = pos - lo
+        val indicatorX = starts.getOrElse(lo) { 0 } + (starts.getOrElse(hi) { 0 } - starts.getOrElse(lo) { 0 }) * t
+        val indicatorW = widths.getOrElse(lo) { 0 } + (widths.getOrElse(hi) { 0 } - widths.getOrElse(lo) { 0 }) * t
+        val indicator = measurables.first().measure(Constraints.fixed(indicatorW.roundToInt().coerceAtLeast(0), h))
+        layout((starts.lastOrNull() ?: gap) - gap, h) {
+            indicator.placeRelative(indicatorX.roundToInt(), 0)
+            placeables.forEachIndexed { i, p -> p.placeRelative(starts[i], 0) }
+        }
+    }
+}
+
+/**
+ * Widths for segments that share [available] like CSS `flex: 1` with `min-width: auto`: equal shares, except that a
+ * segment never gets less than its content; the others split what remains.
+ */
+internal fun segmentWidths(natural: List<Int>, available: Int): List<Int> {
+    val widths = IntArray(natural.size)
+    val fixed = BooleanArray(natural.size)
+    var remaining = available
+    var open = natural.size
+    while (open > 0) {
+        val share = remaining / open
+        val grown = natural.indices.filter { !fixed[it] && natural[it] > share }
+        if (grown.isEmpty()) {
+            natural.indices.filter { !fixed[it] }.forEach { widths[it] = share.coerceAtLeast(0) }
+            break
+        }
+        grown.forEach { fixed[it] = true; widths[it] = natural[it]; remaining -= natural[it]; open-- }
+    }
+    return widths.toList()
+}
+
+@RrPreviews
+@Composable
+internal fun RrSegmentedControlPreview() = RrPreviewSurface {
+    RrSegmentedControl(
+        listOf(
+            RrSegment("List", R.drawable.ic_ph_list),
+            RrSegment("Board", R.drawable.ic_ph_kanban),
+            RrSegment("Calendar", R.drawable.ic_ph_calendar_blank),
+            RrSegment("Insights", R.drawable.ic_ph_chart_bar),
+        ),
+        selectedIndex = 0,
+        onSelect = {},
+    )
+    RrSegmentedControl(
+        listOf(RrSegment("Issues", count = "2"), RrSegment("Job match"), RrSegment("Writing")),
+        selectedIndex = 0,
+        onSelect = {},
+    )
+    RrSegmentedControl(
+        listOf(RrSegment("Page", R.drawable.ic_ph_file_text), RrSegment("Outline", R.drawable.ic_ph_list_bullets)),
+        selectedIndex = 0,
+        onSelect = {},
+        fillWidth = false,
+    )
+}
