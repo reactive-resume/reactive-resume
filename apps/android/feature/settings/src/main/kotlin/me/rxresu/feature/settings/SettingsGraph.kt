@@ -21,6 +21,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.*
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
 import me.rxresu.core.auth.AuthService
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.designsystem.*
@@ -188,6 +190,9 @@ fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth:
         val detail by developer.state.collectAsStateWithLifecycle()
         var section by remember { mutableStateOf<String?>(null) }
         val browser = rememberBrowser(auth)
+        val steps: NextStepsViewModel = viewModel { NextStepsViewModel(repositories) }
+        val step by steps.state.collectAsStateWithLifecycle()
+        var ready by rememberJustConnected(s)
         AiScreen(
             s,
             { nav.popBackStack() },
@@ -195,10 +200,27 @@ fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth:
             vm::reloadProviders,
             browser,
             server,
+            nextSteps = {
+                if (ready) NextStepsCard({ ready = false }, steps::choose, { nav.navigate(NewDocument()) }, { nav.navigate(Coach()) },
+                    androidx.compose.ui.Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp))
+            },
         ) {
             section = it
             developer.load(it)
         }
+        NextStepSheet(step, { steps.choose(null) }, steps::retry, { id ->
+            val chosen = step.step
+            steps.choose(null)
+            nav.navigate(when (chosen) {
+                NextStep.Fit -> Application(id, WorkspaceTab.Fit)
+                NextStep.Writing -> Builder(id, mode = BuilderMode.Check)
+                else -> Builder(id)
+            })
+        }, {
+            val fit = step.step == NextStep.Fit
+            steps.choose(null)
+            if (fit) nav.navigate(SaveJob()) else nav.navigate(NewDocument())
+        })
         if (section != null)
             DeveloperScreen(
                 detail,

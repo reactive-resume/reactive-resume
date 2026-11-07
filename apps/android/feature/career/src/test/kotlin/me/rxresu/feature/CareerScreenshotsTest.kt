@@ -21,7 +21,7 @@ class CareerScreenshotsTest : RrScreenshotTest() {
     }
     private fun career(dark: Boolean, empty: Boolean = false) {
         val fakes = FakeRepositories(); val data = runBlocking {
-            CareerState(loading = false, facts = fakes.career.listCareerFacts(), stories = fakes.career.listCareerStories(), threads = fakes.assistant.listAgentThreads(), offers = fakes.career.listCareerSavedItems(kind = ListCareerSavedItemsKind.Offer), schedules = fakes.career.listCareerSchedules(), providers = fakes.ai.listAiProviders(), scheduling = true, initials = "AM")
+            CareerState(loading = false, facts = fakes.career.listCareerFacts(), stories = fakes.career.listCareerStories(), threads = fakes.assistant.listAgentThreads().map { it.copy(lastMessageAt = "2026-11-06T18:20:00Z") }, offers = fakes.career.listCareerSavedItems(kind = ListCareerSavedItemsKind.Offer), schedules = fakes.career.listCareerSchedules(), providers = fakes.ai.listAiProviders(), scheduling = true, initials = "AM")
         }; fakes.close()
         capture(if (empty) "C1-Career-empty" else "C1-Career", dark) { Column(Modifier.fillMaxSize()) {
             Box(Modifier.weight(1f)) { CareerScreen(if (empty) data.copy(facts = emptyList(), stories = emptyList(), threads = emptyList(), offers = emptyList(), schedules = emptyList()) else data, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) }
@@ -32,16 +32,16 @@ class CareerScreenshotsTest : RrScreenshotTest() {
         val provider = runBlocking { fakes.ai.listAiProviders().first() }
         CoachScreen(CoachState(loading = false, providers = listOf(provider), selected = provider.id, knowledgeReady = true, pendingFacts = listOf(CoachFact("remember-office", SaveCareerFactRequest(category = SaveCareerFactRequestCategory.Preference, source = SaveCareerFactRequestSource("question", ExportAccountDataResponseCareerFactsItemSourceKind.UserMessage, "At most 2 office days a week"), text = "At most 2 office days a week"))), server = "https://example.invalid", messages = listOf(
             CoachMessage("question", "Which opportunities best match my priorities?", true, used = buildJsonObject { put("preferences", true); put("applications", true) }),
-            CoachMessage("reply", "Two of your open roles meet your must-haves:\n\n1. Lumen: hybrid in Lisbon, design systems focus. Interview Tuesday.\n\n2. Kiln Studio: remote-friendly, but the posting doesn't state pay. Worth asking before you apply.\nParcel & Co. asks for 3 office days, above your limit of 2.", false)
+            CoachMessage("reply", "Two of your open roles meet your must-haves:\n\n1. **Lumen**: hybrid in Lisbon, design systems focus. Interview Tuesday.\n2. **Kiln Studio**: remote-friendly, but the posting doesn't state pay. Worth asking before you apply.\n\nParcel & Co. asks for 3 office days, above your limit of 2.", false)
         )), {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
     }
     private fun facts(dark: Boolean) = capture("C3-Facts", dark) { fakes ->
         val facts = runBlocking { fakes.career.listCareerFacts() }.take(4)
-        KnowledgeScreen(FactsState(loading = false, facts = facts), KnowledgeTab.Facts, {}, "", {}, null, {}, false, {}, "", {}, {}, {}, {}, {}, {}, {}, {}, {})
+        KnowledgeScreen(FactsState(loading = false, facts = facts, stories = runBlocking { fakes.career.listCareerStories() }), KnowledgeTab.Facts, {}, "", {}, null, {}, false, {}, "", {}, {}, {}, {}, {}, {}, {}, {}, {})
     }
     private fun story(dark: Boolean) = capture("C4-Story", dark) { fakes ->
         val s = runBlocking { fakes.career.listCareerStories().first() }
-        StoryScreen(StoryState(false, SaveCareerStoryRequest(s.data.action, s.applicationId, s.data.factIds, s.id, s.data.reflection, s.data.result, s.data.situation, s.data.tags, s.data.task, s.data.title)), {}, {}, {}, {}, {}, {})
+        StoryScreen(StoryState(false, SaveCareerStoryRequest(s.data.action, s.applicationId, s.data.factIds, s.id, s.data.reflection, s.data.result, s.data.situation, s.data.tags, s.data.task, s.data.title), usedFor = "Lumen"), {}, {}, {}, {}, {}, {})
     }
     private fun preferences(dark: Boolean, fontScale: Float = 1f) = capture("C5-Preferences", dark, fontScale) { fakes ->
         val p = runBlocking { fakes.career.getCareerProfile() }

@@ -19,7 +19,9 @@ internal data class CoachState(val loading: Boolean = true, val draft: String = 
     val selected: String? = null, val messages: List<CoachMessage> = emptyList(), val memory: Boolean = true, val applications: Boolean = true,
     val knowledgeReady: Boolean = false, val error: Boolean = false, val thread: StartAgentThreadResponse? = null, val readOnly: Boolean = false,
     val facts: List<CareerFact> = emptyList(), val stories: List<Story> = emptyList(),
-    val busy: Boolean = false, val pendingFacts: List<CoachFact> = emptyList(), val sources: List<Pair<String, String>> = emptyList(), val server: String = "")
+    val busy: Boolean = false, val pendingFacts: List<CoachFact> = emptyList(), val sources: List<Pair<String, String>> = emptyList(), val server: String = "",
+    /** Scoped to one application: its context always goes with the message, so there is no Applications chip. */
+    val scoped: Boolean = false)
 
 /** UIMessage parts are open JSON in the published contract. The generator currently erases their text/tool fields. */
 internal fun coachMessages(raw: JsonObject): List<CoachMessage> = (raw["messages"] as? JsonArray).orEmpty().mapNotNull { item ->
@@ -40,11 +42,16 @@ internal fun coachChunks(data: String): List<JsonObject> {
 }
 internal fun aiApproval(provider: TestAiProviderResponse): Map<String, String> = mapOf("x-ai-destination" to JsonArray(listOf(JsonPrimitive(provider.id), JsonPrimitive(provider.recipientVersion))).toString())
 
+/**
+ * One coach conversation. [applicationId] scopes it to a job like the web's workspace coach: it opens that job's newest
+ * conversation, or starts an application conversation on the first send.
+ */
 internal class CoachViewModel(repositories: RrRepositories, private val drafts: CareerDrafts, private val id: String?, starter: String?,
     private val transport: ApiTransport = ApiClient(repositories.authSession, repositories.authSession, timezone = repositories.time.timezone, accountScope = { repositories.owner() }),
+    private val applicationId: String? = null,
 ) : CareerModel(repositories) {
-    private val key = "coach:${id ?: "new"}"
-    private val mutable = MutableStateFlow(CoachState(draft = starter.orEmpty(), server = repositories.authSession.origin.value)); val state = mutable.asStateFlow()
+    private val key = "coach:${id ?: applicationId?.let { "application:$it" } ?: "new"}"
+    private val mutable = MutableStateFlow(CoachState(draft = starter.orEmpty(), server = repositories.authSession.origin.value, scoped = applicationId != null)); val state = mutable.asStateFlow()
     private var streaming: Job? = null
     private var starterPending: String? = starter
     init { load() }
@@ -61,7 +68,10 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
         }
         drafts.read(key)?.let { recovered -> mutable.update { it.copy(draft = recovered) } }
         val providers = repositories.ai.listAiProviders(options = options).filter { it.enabled && it.testStatus == "success" }
-        val recoveredId = id ?: drafts.read("$key:thread")
+        val recoveredId = id ?: drafts.read("$key:thread") ?: applicationId?.let { scope ->
+            repositories.assistant.listAgentThreads(options = options).filter { it.scope == StartAgentThreadRequestScope.Application && it.applicationId == scope && it.deletedAt == null }
+                .maxByOrNull { it.lastMessageAt }?.id
+        }
         val raw = recoveredId?.let { history(it) }
         val thread = raw?.get("thread")?.let { ApiJson.decodeFromJsonElement(StartAgentThreadResponse.serializer(), it) }
         checkOwner()
@@ -72,8 +82,8 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
     }
     fun loadKnowledge() = run({ mutable.update { it.copy(knowledgeReady = false, error = true) } }) {
         repositories.career.getCareerProfile(options)
-        val facts = repositories.career.listCareerFacts(options = options).filter { it.status == "active" && it.applicationId == null }
-        val stories = repositories.career.listCareerStories(options = options).filter { it.applicationId == null && it.data.factIds.orEmpty().all { id -> facts.any { fact -> fact.id == id } } }
+        val facts = repositories.career.listCareerFacts(options = options).filter { it.status == "active" && (it.applicationId == null || it.applicationId == applicationId) }
+        val stories = repositories.career.listCareerStories(options = options).filter { (it.applicationId == null || it.applicationId == applicationId) && it.data.factIds.orEmpty().all { id -> facts.any { fact -> fact.id == id } } }
         checkOwner(); mutable.update { it.copy(knowledgeReady = true, error = false, facts = facts, stories = stories) }
     }
     fun adoptThread(): Boolean {
@@ -105,7 +115,9 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
             mutable.update { it.copy(busy = true, error = false) }
             val fresh = repositories.ai.listAiProviders(options = options).firstOrNull { it.id == provider.id }
             require(fresh?.recipientVersion == provider.recipientVersion && fresh.enabled && fresh.testStatus == "success")
-            val thread = before.thread ?: repositories.assistant.startAgentThread(StartAgentThreadRequest(aiProviderId = provider.id, scope = StartAgentThreadRequestScope.Career), options)
+            val thread = before.thread ?: repositories.assistant.startAgentThread(
+                if (applicationId != null) StartAgentThreadRequest(aiProviderId = provider.id, applicationId = applicationId, scope = StartAgentThreadRequestScope.Application)
+                else StartAgentThreadRequest(aiProviderId = provider.id, scope = StartAgentThreadRequestScope.Career), options)
             checkOwner(); drafts.write("$key:thread", thread.id)
             mutable.update { it.copy(thread = thread) }
             val messageId = drafts.read("$key:message") ?: UUID.randomUUID().toString().also { drafts.write("$key:message", it) }
@@ -122,7 +134,7 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
                 val message = buildJsonObject { put("id", messageId); put("role", "user"); putJsonObject("metadata") { put("context", used) }; putJsonArray("parts") { add(buildJsonObject { put("type", "text"); put("text", before.draft) }) } }
                 val body = buildJsonObject {
                     put("threadId", thread.id); put("message", message)
-                    putJsonObject("context") { put("document", true); put("posting", true); put("application", before.applications); put("memory", before.memory); put("web", false) }
+                    putJsonObject("context") { put("document", true); put("posting", true); put("application", applicationId != null || before.applications); put("memory", before.memory); put("web", false) }
                 }
                 mutable.update { it.copy(messages = previous + CoachMessage(messageId, before.draft, true, used = used)) }
                 collectReply(transport.events(ApiRequest("sendAgentMessage", "POST", "/agent/messages/send", body = body, options = options.copy(headers = aiApproval(provider)))))

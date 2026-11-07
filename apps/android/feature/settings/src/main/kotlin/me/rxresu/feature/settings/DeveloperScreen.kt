@@ -212,6 +212,9 @@ internal fun DeveloperScreen(
                 }
                 "keys" ->
                     if (!s.loading) {
+                        val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
+                        val zone = me.rxresu.core.data.LocalRepositories.current.time.timezone()
+                        val dates = remember(locale, zone) { SettingsDates(locale, zone, true) }
                         if (s.keys.isEmpty()) RrText(stringResource(CR.string.no_keys_yet))
                         RrListGroup {
                             s.keys.forEach { k ->
@@ -225,7 +228,7 @@ internal fun DeveloperScreen(
                                         (if (readOnly) stringResource(CR.string.read_only)
                                         else stringResource(CR.string.full_access)) +
                                             " · " +
-                                            (k.expiresAt ?: stringResource(CR.string.never)),
+                                            (k.expiresAt?.let { dates.date(it) ?: it } ?: stringResource(CR.string.never)),
                                 )
                             }
                         }

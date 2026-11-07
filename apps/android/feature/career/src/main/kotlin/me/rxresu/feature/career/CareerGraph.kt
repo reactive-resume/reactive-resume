@@ -37,11 +37,17 @@ import me.rxresu.core.designsystem.R as Icons
 import me.rxresu.core.navigation.*
 import me.rxresu.core.network.generated.*
 import me.rxresu.core.network.generated.Offer
+import me.rxresu.core.strings.CatalogPlurals
 
 /** Registers career destinations without changing the shell's route contract. */
 fun NavGraphBuilder.careerGraph(nav: NavController, motion: RrNavMotion) {
     tabRoot<CareerTab>(motion) { CareerRoute(nav) }
-    screen<Coach> { CoachRoute(nav, it.toRoute<Coach>().conversationId) }
+    screen<Coach> { entry ->
+        val route = entry.toRoute<Coach>()
+        // Coach(prompt) is being added to the route by another change. Type-safe routes keep each field in the arguments
+        // bundle under its name, so this reads it once it exists and is null until then.
+        CoachRoute(nav, route.conversationId, route.applicationId, entry.arguments?.getString("prompt"))
+    }
     screen<Knowledge> { KnowledgeRoute(nav, it.toRoute<Knowledge>().tab) }
     screen<me.rxresu.core.navigation.Story> { StoryRoute(nav, it.toRoute<me.rxresu.core.navigation.Story>().id) }
     screen<Offers> { OffersRoute(nav) }
@@ -83,20 +89,22 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
         }
     }
     if (schedules) RrBottomSheet({ schedules = false }, title = stringResource(R.string.career_schedules_26d9d0), fitContent = true) {
-        state.schedules.forEach { schedule -> RrListRow(schedule.query.ifBlank { schedule.kind }, subtitle = schedule.nextRunAt, onClick = { schedules = false; nav.navigate(ScheduleSheet(schedule.id)) }, trailing = { RrRowCaret() }) }
+        val time = rememberCareerTime()
+        state.schedules.forEach { schedule -> RrListRow(scheduleTitle(schedule.kind) + schedule.query.takeIf { it.isNotBlank() }?.let { " · $it" }.orEmpty(), subtitle = scheduleStatus(schedule, time), onClick = { schedules = false; nav.navigate(ScheduleSheet(schedule.id)) }, trailing = { RrRowCaret() }) }
         RrButton(stringResource(R.string.career_new_schedule_3e70c3), { schedules = false; nav.navigate(ScheduleSheet()) }, Modifier.fillMaxWidth().padding(16.dp), icon = Icons.drawable.ic_ph_plus)
     }
 }
-@Composable private fun CoachRoute(nav: NavController, id: String?) {
+@Composable private fun CoachRoute(nav: NavController, id: String?, applicationId: String?, prompt: String?) {
     val repositories = LocalRepositories.current; val context = LocalContext.current; val resources = LocalResources.current; val drafts = recovery(repositories)
-    val starter = remember(id) { nav.previousBackStackEntry?.savedStateHandle?.remove<String>("coach-starter") }
-    val vm = viewModel(key = "coach:${accountKey(repositories)}:$id") { CoachViewModel(repositories, drafts, id, starter) }; val state by vm.state.collectAsStateWithLifecycle()
+    // Starters arrive as the route's prompt or, from this module's own screens, through the previous entry.
+    val starter = remember(id) { prompt ?: nav.previousBackStackEntry?.savedStateHandle?.remove<String>("coach-starter") }
+    val vm = viewModel(key = "coach:${accountKey(repositories)}:$id:$applicationId") { CoachViewModel(repositories, drafts, id, starter, applicationId = applicationId) }; val state by vm.state.collectAsStateWithLifecycle()
     val haptic = rememberRrHaptics(); val scope = rememberCoroutineScope(); val toasts = LocalToasts.current
     LaunchedEffect(state.error) { if (state.error) haptic(RrHaptic.Error) }
     LaunchedEffect(state.thread?.id, state.busy, state.error) {
         val thread = state.thread
         if (id == null && thread != null && !state.busy && !state.loading && !state.error && state.messages.isNotEmpty()) {
-            if (vm.adoptThread()) nav.navigate(Coach(thread.id)) { popUpTo(nav.currentBackStackEntry!!.destination.id) { inclusive = true } }
+            if (vm.adoptThread()) nav.navigate(Coach(thread.id, applicationId)) { popUpTo(nav.currentBackStackEntry!!.destination.id) { inclusive = true } }
         }
     }
     var used by remember { mutableStateOf<JsonObject?>(null) }
@@ -125,9 +133,9 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
         state.providers.forEach { provider -> RrChoiceRow(provider.label + " · " + provider.model, selected?.id == provider.id, { selected = provider }) }
         RrButton(stringResource(R.string.career_use_connection_e48414), { selected?.let { vm.provider(it) }; providers = false }, Modifier.fillMaxWidth().padding(16.dp), enabled = selected != null)
     }
-    if (approveSend) RrBottomSheet({ approveSend = false }, title = stringResource(R.string.career_share_data_with_this_connection_628aab), fitContent = true, footer = {
+    if (approveSend) RrBottomSheet({ approveSend = false }, title = stringResource(R.string.career_share_data_with_this_connection_628aab), fitContent = true, footer = { SheetFooter {
         RrButton(stringResource(R.string.career_allow_this_operation_6d2eb6), { approveSend = false; haptic(RrHaptic.Light); vm.send() }, Modifier.fillMaxWidth())
-    }) {
+    } }) {
         val provider = state.providers.firstOrNull { it.id == state.selected }
         RrText(stringResource(R.string.career_server_1_s_1d7e0c, state.server), Modifier.padding(16.dp), style = RrType.small)
         RrText(stringResource(R.string.career_provider_1_s_08687d, provider?.let { it.label + " · " + listOfNotNull(it.model, it.fastModel, it.capableModel).distinct().joinToString(", ") + " · " + (it.baseURL ?: it.provider.wireValue) }.orEmpty()), Modifier.padding(16.dp), style = RrType.small)
@@ -147,7 +155,7 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
 }
 @Composable private fun RenameSheet(initial: String, close: () -> Unit, save: (String) -> Unit) {
     var title by rememberSaveable { mutableStateOf(initial) }
-    RrBottomSheet(close, title = stringResource(R.string.career_rename_d3f4cb), fitContent = true, confirmDiscard = title != initial, footer = { RrButton(stringResource(R.string.career_save_efc007), { save(title.trim()) }, Modifier.fillMaxWidth(), enabled = title.isNotBlank()) }) { RrTextField(title, { title = it }, Modifier.padding(16.dp), label = stringResource(R.string.career_title_768e0c)) }
+    RrBottomSheet(close, title = stringResource(R.string.career_rename_d3f4cb), fitContent = true, confirmDiscard = title != initial, footer = { SheetFooter { RrButton(stringResource(R.string.career_save_efc007), { save(title.trim()) }, Modifier.fillMaxWidth(), enabled = title.isNotBlank()) } }) { RrTextField(title, { title = it }, Modifier.padding(16.dp), label = stringResource(R.string.career_title_768e0c)) }
 }
 
 @Composable private fun KnowledgeRoute(nav: NavController, initial: KnowledgeTab) {
@@ -164,14 +172,19 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
     KnowledgeScreen(state, tab, { if (it == KnowledgeTab.Preferences) nav.navigate(Knowledge(it)) else tab = it }, query, { query = it }, type, { type = it }, forgotten, { forgotten = it }, newFact, { newFact = it },
         { adding = true }, { selected = it }, forget,
         { nav.navigate(me.rxresu.core.navigation.Story(it)) }, { pull = true; vm.chooseResume() }, { vm.memory(it) }, { nav.popBackStack() }, { vm.refresh() })
-    selected?.let { fact -> FactSheet(fact, state.applications, state.busy, { selected = null }, { text, category, application -> vm.correct(fact, text, category, application) { selected = null } }, { selected = null; forget(fact) }, { selected = null }) }
+    selected?.let { fact -> FactSheet(fact, state.applications, state.busy, { selected = null }, { text, category, application -> vm.correct(fact, text, category, application) { selected = null } }, { selected = null; forget(fact) }, { selected = null }, {
+        // Fact to story: the coach drafts the five parts from this fact; the prompt is left in the composer, not sent.
+        selected = null
+        nav.currentBackStackEntry?.savedStateHandle?.set("coach-starter", resources.getString(R.string.career_help_me_turn_an_accomplishment_into_a_situation_task_action__b4a1b4) + "\n\n" + fact.text)
+        nav.navigate(Coach())
+    }) }
     if (adding) {
         var text by rememberSaveable { mutableStateOf(newFact) }
         var category by remember { mutableStateOf(type ?: SaveCareerFactRequestCategory.Experience) }
         var application by remember { mutableStateOf<String?>(null) }
-        RrBottomSheet({ adding = false }, title = stringResource(R.string.career_add_a_fact_6c1785), confirmDiscard = text != newFact, initialDetent = 1, footer = {
+        RrBottomSheet({ adding = false }, title = stringResource(R.string.career_add_a_fact_6c1785), confirmDiscard = text != newFact, initialDetent = 1, footer = { SheetFooter {
             RrButton(stringResource(R.string.career_add_a_fact_6c1785), { vm.add(text, category, application) { newFact = ""; adding = false; haptic(RrHaptic.Success) } }, Modifier.fillMaxWidth(), enabled = text.isNotBlank() && text.length <= 2000 && !state.busy, loading = state.busy)
-        }) {
+        } }) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 RrTextField(text, { text = it }, label = stringResource(R.string.career_fact_e09300), minLines = 3)
                 ChoicePicker(categoryLabel(category.wireValue), stringResource(R.string.career_type_3deb74), SaveCareerFactRequestCategory.entries.filter { it != SaveCareerFactRequestCategory.Unknown }.map { it.wireValue to categoryLabel(it.wireValue) }, { value -> category = SaveCareerFactRequestCategory.entries.first { it.wireValue == value } })
@@ -194,18 +207,25 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
         }
     }
 }
-@Composable private fun FactSheet(fact: CareerFact, applications: List<ApplicationSummary>, busy: Boolean, close: () -> Unit, save: (String, SaveCareerFactRequestCategory, String?) -> Unit, forget: () -> Unit, restore: () -> Unit) {
+@Composable private fun FactSheet(fact: CareerFact, applications: List<ApplicationSummary>, busy: Boolean, close: () -> Unit, save: (String, SaveCareerFactRequestCategory, String?) -> Unit, forget: () -> Unit, restore: () -> Unit, draftStory: () -> Unit) {
     var text by rememberSaveable(fact.id) { mutableStateOf(fact.text) }; var application by remember { mutableStateOf(fact.applicationId) }; var category by remember { mutableStateOf(SaveCareerFactRequestCategory.entries.firstOrNull { it.wireValue == fact.category } ?: SaveCareerFactRequestCategory.Experience) }
-    RrBottomSheet(close, title = stringResource(R.string.career_correct_this_fact_0cbfa5), initialDetent = 1, confirmDiscard = text != fact.text, footer = {
+    RrBottomSheet(close, title = stringResource(R.string.career_correct_this_fact_0cbfa5), initialDetent = 1, confirmDiscard = text != fact.text, footer = { SheetFooter {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { RrButton(if (fact.status == "forgotten") stringResource(R.string.career_remember_281f30) else stringResource(R.string.career_forget_03d5d8), if (fact.status == "forgotten") restore else forget, variant = RrButtonVariant.DangerGhost); RrButton(stringResource(R.string.career_save_efc007), { save(text, category, application) }, Modifier.weight(1f), enabled = text.isNotBlank() && text.length <= 2000 && !busy) }
-    }) {
+    } }) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             RrTextField(text, { text = it }, label = stringResource(R.string.career_fact_e09300), singleLine = false, minLines = 3)
             RrText(stringResource(R.string.career_the_original_stays_in_the_history_38c5ee), style = RrType.small, color = RrTheme.colors.ink3)
             ChoicePicker(categoryLabel(category.wireValue), stringResource(R.string.career_type_3deb74), SaveCareerFactRequestCategory.entries.filter { it != SaveCareerFactRequestCategory.Unknown }.map { it.wireValue to categoryLabel(it.wireValue) }, { value -> category = SaveCareerFactRequestCategory.entries.first { it.wireValue == value } })
             ChoicePicker(applications.firstOrNull { it.id == application }?.company ?: stringResource(R.string.career_all_applications_5bba47), stringResource(R.string.career_scope_4651a3), listOf("" to stringResource(R.string.career_all_applications_5bba47)) + applications.map { it.id to it.company }, { application = it.ifEmpty { null } })
 
-            fact.revisions.forEach { revision -> RrText(revision.text, style = RrType.small, color = RrTheme.colors.ink3) }
+            val resources = LocalResources.current
+            val stories = fact.usedBy.stories.toInt(); val saved = fact.usedBy.savedItems.toInt()
+            RrText(if (stories + saved == 0) stringResource(CoreStrings.string.not_used_in_a_story_or_saved_item_yet) else
+                CatalogPlurals.get(resources, CoreStrings.plurals.message_0_plural_one_backs_story_other_backs_stories, stories, stories.toString()) + " · " +
+                    CatalogPlurals.get(resources, CoreStrings.plurals.message_0_plural_one_used_in_saved_item_other_used_in_saved_items, saved, saved.toString()), style = RrType.small, color = RrTheme.colors.ink3)
+            if (fact.status != "forgotten") RrButton(stringResource(R.string.career_draft_a_story), draftStory, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small, icon = Icons.drawable.ic_ph_sparkle)
+            val time = rememberCareerTime()
+            fact.revisions.forEach { revision -> RrText(listOfNotNull(time.day(revision.at), revision.text).joinToString(" · "), style = RrType.small, color = RrTheme.colors.ink3) }
         }
     }
 }

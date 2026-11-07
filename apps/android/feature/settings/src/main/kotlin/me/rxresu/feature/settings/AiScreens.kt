@@ -12,6 +12,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import me.rxresu.core.designsystem.*
 import me.rxresu.core.designsystem.R as D
@@ -26,9 +36,11 @@ internal fun AiScreen(
     reload: () -> Unit = {},
     browser: (String) -> Unit = {},
     server: String = "https://rxresu.me",
+    nextSteps: @Composable () -> Unit = {},
     developer: (String) -> Unit = {},
 ) {
     SettingsFrame(stringResource(CR.string.ai_developer), back) {
+        nextSteps()
         RrSectionHeader(
             stringResource(CR.string.ai_providers),
             actionLabel = stringResource(CR.string.add_ai_provider),
@@ -253,17 +265,17 @@ internal fun ProviderScreen(
                     label = stringResource(CR.string.name),
                     enabled = !s.busy,
                 )
+                val keyHelper =
+                    if (s.original != null) stringResource(CR.string.leave_empty_to_keep_the_saved_key)
+                    else if (s.provider == Provider.Ollama) stringResource(CR.string.optional_for_local_ollama)
+                    else stringResource(R.string.screen_stored_encrypted_on_your_server)
+                val keyUrl = providerKeyUrls[s.provider]?.takeIf { it.isNotEmpty() }
                 RrTextField(
                     s.key,
                     { v -> edit { it.copy(key = v) } },
                     label = stringResource(CR.string.api_key),
                     enabled = !s.busy,
-                    helper =
-                        if (s.original != null)
-                            stringResource(CR.string.leave_empty_to_keep_the_saved_key)
-                        else if (s.provider == Provider.Ollama)
-                            stringResource(CR.string.optional_for_local_ollama)
-                        else stringResource(R.string.screen_stored_encrypted_on_your_server),
+                    helper = keyHelper.takeIf { keyUrl == null },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions =
                         KeyboardOptions(
@@ -272,35 +284,34 @@ internal fun ProviderScreen(
                         ),
                     leadingIcon = D.drawable.ic_ph_lock_simple,
                 )
-                providerKeyUrls[s.provider]
-                    ?.takeIf { it.isNotEmpty() }
-                    ?.let { url ->
-                        RrButton(
-                            stringResource(CR.string.get_an_api_key),
-                            { browser(url) },
-                            variant = RrButtonVariant.GhostAccent,
-                        )
-                    }
+                // The helper line ends with the provider's key page, as on S6.
+                if (keyUrl != null) {
+                    val link = stringResource(CR.string.get_an_api_key)
+                    val accent = RrTheme.colors.accentText
+                    RrText(
+                        buildAnnotatedString {
+                            append("$keyHelper ")
+                            withLink(LinkAnnotation.Clickable("key", TextLinkStyles(SpanStyle(color = accent, fontWeight = FontWeight.SemiBold))) { browser(keyUrl) }) { append(link) }
+                        },
+                        Modifier.offset(y = (-6).dp),
+                        style = RrType.caption.copy(fontWeight = FontWeight.Normal),
+                        color = RrTheme.colors.ink3,
+                    )
+                }
                 Crossfade(
                     s.provider,
                     animationSpec = tween(if (RrTheme.reducedMotion) RrMotion.D1 else RrMotion.D2),
                     label = "provider fields",
                 ) { type ->
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        RrListRow(
-                            stringResource(CR.string.model),
-                            subtitle =
-                                stringResource(R.string.screen_recommended_for_this_provider),
-                            onClick = { modelEditor = true },
-                            trailing = {
-                                RrButton(
-                                    stringResource(CR.string.choose_model),
-                                    { modelEditor = true },
-                                    variant = RrButtonVariant.Secondary,
-                                    size = RrButtonSize.Small,
-                                )
-                            },
-                        )
+                        FlatRow(stringResource(CR.string.model), stringResource(R.string.screen_recommended_for_this_provider), { modelEditor = true }) {
+                            RrButton(
+                                stringResource(CR.string.choose_model),
+                                { modelEditor = true },
+                                variant = RrButtonVariant.Secondary,
+                                size = RrButtonSize.Small,
+                            )
+                        }
                         if (type in listOf(Provider.Ollama, Provider.OpenaiCompatible) || tasks)
                             RrTextField(
                                 s.baseURL,
@@ -312,12 +323,10 @@ internal fun ProviderScreen(
                             )
                     }
                 }
-                RrListRow(
-                    stringResource(CR.string.task_models_optional),
-                    subtitle = stringResource(R.string.screen_fast_model_capable_model),
-                    onClick = { tasks = !tasks },
-                    trailing = { RrRowCaret() },
-                )
+                Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
+                FlatRow(stringResource(CR.string.task_models_optional), stringResource(R.string.screen_fast_model_capable_model), { tasks = !tasks }) {
+                    RrIcon(D.drawable.ic_ph_caret_down, null, size = 20.dp, tint = RrTheme.colors.ink2, modifier = Modifier.rotate(if (tasks) 180f else 0f))
+                }
                 if (tasks) {
                     RrTextField(
                         s.fastModel,
@@ -448,4 +457,19 @@ private fun providerError(kind: String?): String =
             stringResource(
                 CR.string.the_connection_test_failed_check_the_key_model_and_address_then_try_again
             )
+    }
+
+/** A setting on the sheet itself, not in a list: title and subtitle on the start side, a control on the end (S6). */
+@Composable
+private fun FlatRow(title: String, subtitle: String, onClick: () -> Unit, trailing: @Composable () -> Unit) =
+    Row(
+        Modifier.fillMaxWidth().heightIn(min = 44.dp).clickable(onClick = onClick).padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            RrText(title, style = RrType.body)
+            RrText(subtitle, style = RrType.small, color = RrTheme.colors.ink3)
+        }
+        trailing()
     }

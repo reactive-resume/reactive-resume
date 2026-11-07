@@ -414,14 +414,14 @@ internal fun PreferencesScreen(
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val view = androidx.compose.ui.platform.LocalView.current
+    val activity = androidx.activity.compose.LocalActivity.current
+    val inspection = androidx.compose.ui.platform.LocalInspectionMode.current
     LaunchedEffect(s.account?.locale) {
-        if (Build.VERSION.SDK_INT >= 33)
-            s.account?.locale?.wireValue?.let { language ->
-                context.getSystemService(android.app.LocaleManager::class.java).applicationLocales =
-                    android.os.LocaleList.forLanguageTags(language)
-            }
+        // The account's interface language: LocaleManager on 13+, the stored choice and a recreate on 8–12.
+        if (!inspection) s.account?.locale?.wireValue?.let { language -> activity?.applyInterfaceLocale(language) }
     }
     var picker by remember { mutableStateOf<String?>(null) }
+    var shortcuts by remember { mutableStateOf(false) }
     var pendingCategory by remember { mutableStateOf<NotificationCategory?>(null) }
     var permitted by remember {
         mutableStateOf(
@@ -575,9 +575,11 @@ internal fun PreferencesScreen(
         if (configuration.keyboard != Configuration.KEYBOARD_NOKEYS)
             RrListRow(
                 stringResource(CR.string.keyboard_shortcuts),
-                onClick = { browser("https://docs.rxresu.me") },
+                onClick = { shortcuts = true },
+                trailing = { RrRowCaret() },
             )
     }
+    if (shortcuts) ShortcutsSheet { shortcuts = false }
     if (picker != null) {
         val timezone = picker == "timezone"
         val options =
