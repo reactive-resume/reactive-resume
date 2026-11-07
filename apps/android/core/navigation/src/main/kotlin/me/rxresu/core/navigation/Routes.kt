@@ -34,8 +34,8 @@ enum class DocumentKind { Resume, Letter }
 // Documents (owner: :feature:documents, search: :feature:search)
 /** D2 sheet. */
 @Serializable data class DocumentActions(val id: String, val kind: DocumentKind)
-/** D3 sheet. */
-@Serializable data object NewDocument
+/** D3 sheet. `copyForApplicationId` starts a copy of a resume for that application ("Save and prepare resume"). */
+@Serializable data class NewDocument(val copyForApplicationId: String? = null)
 /** D4. `fileUri` is set when a PDF or DOCX arrives from the share sheet. */
 @Serializable data class Import(val fileUri: String? = null)
 /** D5. `scope` narrows the results (documents, applications, career, settings). */
@@ -75,8 +75,8 @@ enum class CheckTab { Issues, JobMatch }
 @Serializable data class Download(val id: String, val kind: DocumentKind)
 /** B15 (owner: :feature:share). */
 @Serializable data class Versions(val resumeId: String)
-/** B16 full-height sheet (owner: :feature:assistant). */
-@Serializable data class Assistant(val resumeId: String, val threadId: String? = null)
+/** B16 full-height sheet (owner: :feature:assistant). `prompt` pre-fills the composer (not sent). */
+@Serializable data class Assistant(val resumeId: String, val threadId: String? = null, val prompt: String? = null)
 /** B17 (owner: :feature:assistant). */
 @Serializable data class AssistantProposals(val resumeId: String, val threadId: String)
 
@@ -90,8 +90,8 @@ enum class LetterMode { Write, Design }
 enum class WorkspaceTab { Overview, Fit, Apply, Prepare, Practise, Debrief, Messages, Saved }
 /** J5 sheet. `url` is set when a link arrives from the share sheet. */
 @Serializable data class SaveJob(val url: String? = null)
-/** J6, W1–W5. */
-@Serializable data class Application(val id: String, val tab: WorkspaceTab = WorkspaceTab.Overview)
+/** J6, W1–W5. `practiceQuestion` opens the Practice tab on that question (from Interview prep). */
+@Serializable data class Application(val id: String, val tab: WorkspaceTab = WorkspaceTab.Overview, val practiceQuestion: String? = null)
 /** J7 sheet. */
 @Serializable data class MoveApplication(val id: String)
 /** J8 sheet. `interviewId` null = new interview. */
@@ -99,8 +99,8 @@ enum class WorkspaceTab { Overview, Fit, Apply, Prepare, Practise, Debrief, Mess
 
 // Career (owner: :feature:career)
 enum class KnowledgeTab { Facts, Stories, Preferences }
-/** C2. */
-@Serializable data class Coach(val conversationId: String? = null)
+/** C2. `applicationId` scopes a new conversation to that job (the sparkle on J6). */
+@Serializable data class Coach(val conversationId: String? = null, val applicationId: String? = null)
 /** C3, C5. */
 @Serializable data class Knowledge(val tab: KnowledgeTab = KnowledgeTab.Facts)
 /** C4. `id` null = new story. */

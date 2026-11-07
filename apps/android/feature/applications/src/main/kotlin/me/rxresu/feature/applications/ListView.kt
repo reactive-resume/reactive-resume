@@ -32,6 +32,7 @@ import me.rxresu.core.designsystem.RrBadgeTone
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCheckbox
+import me.rxresu.core.designsystem.RrCompanyTile
 import me.rxresu.core.designsystem.RrEmptyState
 import me.rxresu.core.designsystem.RrLargeTitleState
 import me.rxresu.core.designsystem.RrListGroup
@@ -160,7 +161,7 @@ private fun ApplicationRow(row: Row, state: ApplicationsState, dates: Dates, sel
             selected = selected?.contains(app.id) == true,
             leading = {
                 if (selected != null) RrCheckbox(app.id in selected, { actions.toggleSelect(app.id) })
-                else CompanyTile(app.company)
+                else RrCompanyTile(app.company)
             },
             trailing = { RowTrailing(row, dates, state.now) },
         )
@@ -171,16 +172,6 @@ private fun ApplicationRow(row: Row, state: ApplicationsState, dates: Dates, sel
         endAction = if (nextStageValue != null && moveLabel != null) RrSwipeAction(moveLabel, D.drawable.ic_ph_check) { actions.advance(row, next, nextStageValue) } else null,
         content = content,
     )
-}
-
-/** The company's initial on a sunken tile (36 dp). */
-// TODO(lead): move to designsystem — a "company tile" (RrAvatar variant on sunken, 36 dp, ink-2).
-@Composable
-internal fun CompanyTile(company: String) {
-    val c = RrTheme.colors
-    Box(Modifier.size(36.dp).clip(RrShape.sm).background(c.sunken), contentAlignment = Alignment.Center) {
-        RrText(initial(company), style = RrType.ui.copy(fontWeight = FontWeight.SemiBold), color = c.ink2)
-    }
 }
 
 /** The one next step a row shows: an offer deadline badge, a due follow-up with its warn dot, a date, or a time. */

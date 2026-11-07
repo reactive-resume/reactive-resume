@@ -85,6 +85,16 @@ object RrSheetMath {
         }
     }
 
+    /**
+     * Scrim opacity (before the reduced-motion fade): rises with the sheet up to its lowest detent and stays full
+     * above it. [settled] is the height the sheet last came to rest at; while a fit-content sheet grows to follow its
+     * content (the lowest detent jumps up), the scrim stays full instead of dropping to old height ÷ new height.
+     */
+    fun scrimAlpha(height: Float, lowest: Float, settled: Float): Float {
+        val base = min(lowest, settled)
+        return if (base <= 0f) 1f else (height / base).coerceIn(0f, 1f)
+    }
+
     /** Release animation length: scales with the remaining distance over [travel], d1 at least, d3 at most. */
     fun settleDurationMs(distance: Float, travel: Float): Int =
         if (travel <= 0f) RrMotion.D1 else (RrMotion.D3 * abs(distance) / travel).toInt().coerceIn(RrMotion.D1, RrMotion.D3)
@@ -104,6 +114,8 @@ class RrBottomSheetState internal constructor() {
     internal var target by mutableFloatStateOf(-1f)
     internal var hiding by mutableStateOf(false)
     internal var exit: (suspend () -> Unit)? = null
+    /** Height the sheet last came to rest at (scrim reference); unbounded until the first rise ends. */
+    internal var settled by mutableFloatStateOf(Float.MAX_VALUE)
 
     /** Index of the detent the sheet rests on or is heading to; -1 while closed or closing. */
     val detentIndex: Int get() = if (hiding) -1 else anchors.indexOfFirst { abs(it - target) < 1f }
@@ -166,6 +178,7 @@ fun RrBottomSheet(
     suspend fun animateHeight(to: Float, durationMs: Int, easing: androidx.compose.animation.core.Easing) {
         state.target = to
         if (reduced) state.height.snapTo(to) else state.height.animateTo(to, tween(durationMs, easing = easing))
+        if (to > 0f) state.settled = to
     }
 
     suspend fun close() {
@@ -265,7 +278,7 @@ fun RrBottomSheet(
                 .fillMaxSize()
                 .graphicsLayer {
                     val lowest = state.anchors.firstOrNull() ?: 1f
-                    alpha = fade.value * (state.height.value / lowest).coerceIn(0f, 1f)
+                    alpha = fade.value * RrSheetMath.scrimAlpha(state.height.value, lowest, state.settled)
                 }
                 .background(c.scrimSheet)
                 .clickable(remember { MutableInteractionSource() }, null) { requestDismiss() },
@@ -279,6 +292,21 @@ fun RrBottomSheet(
                 scope.launch {
                     state.target = to
                     if (reduced || still) state.height.snapTo(to) else state.height.animateTo(to, tween(RrMotion.D3, easing = RrMotion.ease))
+                    state.settled = to
+                }
+            },
+            // The resting height no longer matches a detent: a fit-content sheet whose content loaded or changed, a
+            // switch between fit-content and detents, or a resized window. Move to the nearest detent (d3; instant
+            // under reduced motion and in captures).
+            onAnchorsChanged = { to ->
+                scope.launch {
+                    if (reduced || still) {
+                        state.target = to
+                        state.height.snapTo(to)
+                        state.settled = to
+                    } else {
+                        animateHeight(to, RrMotion.D3, RrMotion.ease)
+                    }
                 }
             },
             modifier = Modifier
@@ -349,10 +377,12 @@ private fun SheetLayout(
     fitContent: Boolean,
     initialDetent: Int,
     onFirstLayout: (Float) -> Unit,
+    onAnchorsChanged: (Float) -> Unit,
     modifier: Modifier,
     content: @Composable () -> Unit,
 ) {
     var started by remember { mutableStateOf(false) }
+    val following = remember { floatArrayOf(-1f) }
     Layout(content = { Box(modifier) { content() } }) { measurables, constraints ->
         val windowH = constraints.maxHeight.toFloat()
         val cap = (0.92f * windowH).toInt()
@@ -367,10 +397,16 @@ private fun SheetLayout(
             val layoutH = max(visible, state.target).coerceIn(0f, windowH).toInt()
             sheet.measure(Constraints.fixed(constraints.maxWidth, layoutH))
         }
+        val anchors = state.anchors
         if (!started) {
             started = true
-            val anchors = state.anchors
             onFirstLayout(anchors[min(initialDetent, anchors.lastIndex)])
+        } else if (!state.hiding && state.target > 0f && anchors.none { abs(it - state.target) < 1f }) {
+            val to = anchors.minBy { abs(it - state.target) }
+            if (abs(to - following[0]) >= 1f) {
+                following[0] = to
+                onAnchorsChanged(to)
+            }
         }
         layout(constraints.maxWidth, constraints.maxHeight) {
             val y = (windowH - state.height.value).toInt()

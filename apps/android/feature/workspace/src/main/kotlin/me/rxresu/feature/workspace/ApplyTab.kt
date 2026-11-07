@@ -3,7 +3,6 @@
 package me.rxresu.feature.workspace
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,7 +18,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -48,18 +46,17 @@ import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrChoiceRow
 import me.rxresu.core.designsystem.RrHaptic
-import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrIconButton
 import me.rxresu.core.designsystem.RrIconButtonSize
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrRowCaret
 import me.rxresu.core.designsystem.RrSheetDetents
-import me.rxresu.core.designsystem.RrShape
+import me.rxresu.core.designsystem.RrStepMarker
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTextField
 import me.rxresu.core.designsystem.RrTheme
-import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrToastResult
+import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.Builder
@@ -323,19 +320,9 @@ internal fun ApplyScreen(
 private fun StepHeader(number: Int, done: Boolean, title: String, modifier: Modifier = Modifier, action: (@Composable () -> Unit)? = null) {
     val c = RrTheme.colors
     Row(modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = if (number == 1) 14.dp else 20.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-        StepMarker(number, done)
+        RrStepMarker(number, done)
         RrText(title, Modifier.weight(1f).padding(start = 8.dp), style = RrType.eyebrow, color = c.ink3)
         action?.invoke()
-    }
-}
-
-/** 24 dp step marker. TODO(lead): move to designsystem (numbered step marker, W2 and the Apply sheet). */
-@Composable
-private fun StepMarker(number: Int, done: Boolean) {
-    val c = RrTheme.colors
-    Box(Modifier.size(24.dp).clip(RrShape.sm).background(if (done) c.accentSoft else c.sunken), contentAlignment = Alignment.Center) {
-        if (done) RrIcon(DsR.drawable.ic_ph_check, stringResource(R.string.workspace_step_done), size = 14.dp, tint = c.accentText)
-        else RrText(number.toString(), style = RrType.mono.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold), color = c.ink2)
     }
 }
 

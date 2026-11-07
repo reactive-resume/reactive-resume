@@ -93,9 +93,6 @@ internal fun stageBeforeClosed(app: Application): ApplicationStage =
         .filter { it.stage != ApplicationStage.Closed && it.stage in Pipeline }
         .maxByOrNull { it.at }?.stage ?: ApplicationStage.Applied
 
-/** One application's company initial, for the row tile. */
-internal fun initial(company: String): String = company.trim().firstOrNull()?.uppercase() ?: "?"
-
 /** Two initials from a person's name ("Priya Shah" → "PS"). */
 internal fun initials(name: String): String =
     name.split(' ', '-').filter { it.isNotBlank() }.take(2).joinToString("") { it.first().uppercase() }.ifEmpty { "?" }

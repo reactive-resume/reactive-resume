@@ -35,6 +35,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
@@ -43,8 +47,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
-/** How a toast ended. */
-enum class RrToastResult { Dismissed, ActionPerformed }
+/** How a toast ended. [SecondaryActionPerformed] only comes from toasts shown with a second action. */
+enum class RrToastResult { Dismissed, ActionPerformed, SecondaryActionPerformed }
 
 /** Neutral toasts use the ink fill; danger toasts ("Download failed. Try again.") use danger-soft. */
 enum class RrToastTone { Neutral, Danger }
@@ -57,10 +61,17 @@ class RrToastData internal constructor(
     val tone: RrToastTone,
     val durationMs: Long,
     private val continuation: CancellableContinuation<RrToastResult>,
+    /** A second action beside [actionLabel] ("Schedule it" beside Undo), or null. */
+    val secondaryActionLabel: String? = null,
 ) {
     /** Runs the action (Undo) and closes the toast. */
     fun performAction() {
         if (continuation.isActive) continuation.resume(RrToastResult.ActionPerformed)
+    }
+
+    /** Runs the second action and closes the toast. */
+    fun performSecondaryAction() {
+        if (continuation.isActive) continuation.resume(RrToastResult.SecondaryActionPerformed)
     }
 
     /** Closes the toast early. */
@@ -70,17 +81,22 @@ class RrToastData internal constructor(
 }
 
 /**
- * Toast queue. [show] suspends until the toast ends and returns whether its action ran. One toast at a time; later
- * ones wait their turn. Life: 5 s, or 8 s with an action (longer when the accessibility service asks for it).
+ * Toast queue. [show] suspends until the toast ends and returns which action ran. One toast at a time; later ones
+ * wait their turn. Life: 5 s, or 8 s with an action (longer when the accessibility service asks for it).
  *
  * ```
  * scope.launch {
  *     if (toasts.show("“Lumen letter” moved to Trash", actionLabel = undo) == RrToastResult.ActionPerformed) restore()
  * }
  * ```
+ *
+ * A toast raised by a sheet or row that is about to leave the screen uses [post]: it runs in [scope], which lives as
+ * long as this state (the app's), so its Undo still works after the caller's composition is gone.
+ *
+ * @param scope where [post] runs; the main thread by default.
  */
 @Stable
-class RrToastHostState {
+class RrToastHostState(private val scope: CoroutineScope = MainScope()) {
     private val mutex = Mutex()
 
     /** The toast on screen, or null. */
@@ -90,12 +106,23 @@ class RrToastHostState {
     /** Adjusts a duration for accessibility (set by [RrToastHost]); identity by default. */
     internal var timeout: (Long, Boolean) -> Long = { ms, _ -> ms }
 
-    suspend fun show(message: String, actionLabel: String? = null, tone: RrToastTone = RrToastTone.Neutral): RrToastResult = mutex.withLock {
+    /**
+     * Shows a toast and suspends until it ends.
+     *
+     * @param secondaryActionLabel a second action drawn before [actionLabel] ("Schedule it" · "Undo"); returns
+     *   [RrToastResult.SecondaryActionPerformed] when pressed.
+     */
+    suspend fun show(
+        message: String,
+        actionLabel: String? = null,
+        tone: RrToastTone = RrToastTone.Neutral,
+        secondaryActionLabel: String? = null,
+    ): RrToastResult = mutex.withLock {
         try {
-            val base = if (actionLabel != null) WITH_ACTION_MS else PLAIN_MS
-            val life = timeout(base, actionLabel != null)
+            val actions = actionLabel != null || secondaryActionLabel != null
+            val life = timeout(if (actions) WITH_ACTION_MS else PLAIN_MS, actions)
             withTimeoutOrNull(life) {
-                suspendCancellableCoroutine { cont -> current = RrToastData(message, actionLabel, tone, life, cont) }
+                suspendCancellableCoroutine { cont -> current = RrToastData(message, actionLabel, tone, life, cont, secondaryActionLabel) }
             } ?: RrToastResult.Dismissed
         } finally {
             current = null
@@ -103,6 +130,18 @@ class RrToastHostState {
             delay(RrMotion.D2.toLong())
         }
     }
+
+    /**
+     * Shows a toast without suspending: queues it in this state's own scope and hands its result to [onResult], which
+     * runs in that scope too (it may [show] a follow-up toast). Use it when the caller closes right after.
+     */
+    fun post(
+        message: String,
+        actionLabel: String? = null,
+        tone: RrToastTone = RrToastTone.Neutral,
+        secondaryActionLabel: String? = null,
+        onResult: suspend (RrToastResult) -> Unit = {},
+    ): Job = scope.launch { onResult(show(message, actionLabel, tone, secondaryActionLabel)) }
 
     companion object {
         const val PLAIN_MS = 5_000L
@@ -148,6 +187,8 @@ fun RrToastHost(state: RrToastHostState, modifier: Modifier = Modifier) {
         onAction = data::performAction,
         tone = data.tone,
         fuse = fuse.value,
+        secondaryActionLabel = data.secondaryActionLabel,
+        onSecondaryAction = data::performSecondaryAction,
         modifier = modifier.padding(horizontal = 12.dp).graphicsLayer {
             alpha = enter.value
             translationY = if (reduced) 0f else (1f - enter.value) * 8.dp.toPx()
@@ -156,9 +197,10 @@ fun RrToastHost(state: RrToastHostState, modifier: Modifier = Modifier) {
 }
 
 /**
- * The toast surface: message, optional action, fuse. [RrToastHost] drives it; use directly only for static layouts.
+ * The toast surface: message, optional actions, fuse. [RrToastHost] drives it; use directly only for static layouts.
  *
  * @param fuse remaining share of the toast's life, 1 to 0.
+ * @param secondaryActionLabel a second action drawn before [actionLabel].
  */
 @Composable
 fun RrToast(
@@ -168,6 +210,8 @@ fun RrToast(
     onAction: () -> Unit = {},
     tone: RrToastTone = RrToastTone.Neutral,
     fuse: Float = 1f,
+    secondaryActionLabel: String? = null,
+    onSecondaryAction: () -> Unit = {},
 ) {
     val c = RrTheme.colors
     val (bg, fg) = if (tone == RrToastTone.Danger) c.dangerSoft to c.dangerText else c.ink to c.bg
@@ -193,14 +237,22 @@ fun RrToast(
     ) {
         if (tone == RrToastTone.Danger) RrIcon(R.drawable.ic_ph_warning_circle, null, size = 20.dp, tint = fg)
         RrText(message, style = RrType.ui, color = fg, modifier = Modifier.weight(1f))
-        if (actionLabel != null) {
-            Box(
-                Modifier.height(28.dp).clip(RrShape.md).clickable(role = Role.Button, onClick = onAction).padding(horizontal = 8.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                RrText(actionLabel, style = RrType.ui.copy(fontWeight = FontWeight.SemiBold), color = fg)
+        if (secondaryActionLabel != null || actionLabel != null) {
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                if (secondaryActionLabel != null) ToastAction(secondaryActionLabel, fg, onSecondaryAction)
+                if (actionLabel != null) ToastAction(actionLabel, fg, onAction)
             }
         }
+    }
+}
+
+@Composable
+private fun ToastAction(label: String, color: androidx.compose.ui.graphics.Color, onClick: () -> Unit) {
+    Box(
+        Modifier.height(28.dp).clip(RrShape.md).clickable(role = Role.Button, onClick = onClick).padding(horizontal = 8.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        RrText(label, style = RrType.ui.copy(fontWeight = FontWeight.SemiBold), color = color)
     }
 }
 
@@ -208,5 +260,6 @@ fun RrToast(
 @Composable
 internal fun RrToastPreview() = RrPreviewSurface {
     RrToast("“Lumen letter” moved to Trash", actionLabel = "Undo", fuse = 0.62f)
+    RrToast("Moved to Interview.", actionLabel = "Undo", secondaryActionLabel = "Schedule it", fuse = 0.8f)
     RrToast("Download failed. Try again.", actionLabel = "Try again", tone = RrToastTone.Danger, fuse = 0.4f)
 }

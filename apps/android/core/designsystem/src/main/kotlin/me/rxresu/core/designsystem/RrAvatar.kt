@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -19,11 +21,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 /**
  * Avatar with 2 dp corners: initials on accent-soft (or a photo). 32 dp in headers inside a 44 dp target; 56 dp in
- * Settings. With [onClick] it is a button whose [contentDescription] names the destination ("Settings").
+ * Settings. With [onClick] it is a button whose [contentDescription] names the destination ("Settings"). Initials keep
+ * their size at every font scale.
  */
 @Composable
 fun RrAvatar(
@@ -40,10 +42,13 @@ fun RrAvatar(
             if (image != null) {
                 Image(image, null, Modifier.size(size), contentScale = ContentScale.Crop)
             } else {
+                // Initials are part of a fixed-size mark: they keep their size at large font scales instead of
+                // overflowing the tile. The name they stand for is in the row beside them or in contentDescription.
                 RrText(
                     initials,
-                    style = RrType.caption.copy(fontWeight = FontWeight.SemiBold, fontSize = if (size >= 56.dp) 18.sp else 12.sp),
+                    style = fixedSizeText(RrType.caption.copy(fontWeight = FontWeight.SemiBold), if (size >= 56.dp) 18.dp else 12.dp, 16.dp),
                     color = c.accentText,
+                    maxLines = 1,
                 )
             }
         }
@@ -57,6 +62,12 @@ fun RrAvatar(
     } else {
         Box(modifier.semantics { if (contentDescription != null) this.contentDescription = contentDescription }) { face() }
     }
+}
+
+/** [style] at a size in dp, so text inside a fixed-size mark ignores the font scale. */
+@Composable
+internal fun fixedSizeText(style: TextStyle, size: Dp, lineHeight: Dp): TextStyle = with(LocalDensity.current) {
+    style.copy(fontSize = size.toSp(), lineHeight = lineHeight.toSp())
 }
 
 @RrPreviews

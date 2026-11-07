@@ -2,16 +2,13 @@ package me.rxresu.feature.applications
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +16,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,14 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -57,7 +50,6 @@ import me.rxresu.core.designsystem.RrBadge
 import me.rxresu.core.designsystem.RrBadgeTone
 import me.rxresu.core.designsystem.RrBottomSheet
 import me.rxresu.core.designsystem.RrButton
-import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrDatePicker
 import me.rxresu.core.designsystem.RrEmptyState
@@ -74,6 +66,8 @@ import me.rxresu.core.designsystem.RrStageDot
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrType
+import me.rxresu.core.designsystem.RrWeekDay
+import me.rxresu.core.designsystem.RrWeekStrip
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.designsystem.rrLargeTitleScroll
 import me.rxresu.core.network.generated.AddApplicationInterviewRequestKind
@@ -159,7 +153,7 @@ internal fun CalendarView(
                 },
                 label = "week",
             ) { start ->
-                WeekStrip((0L until 7L).map { start.plusDays(it) }, selected, today, dates, byDay, appsById, ::select)
+                WeekStrip((0L until 7L).map { start.plusDays(it) }, selected, today, dates, byDay, appsById, onTap = { selected = it }, onWeek = ::select)
             }
         }
         item {
@@ -204,8 +198,7 @@ private fun markerColor(item: CalendarItem, app: Application?, warn: Color): Col
     else -> warn
 }
 
-/** Seven 56 dp day cells; swipe sideways for weeks. */
-// TODO(lead): move to designsystem — a week strip (RrDatePicker's week row with event markers).
+/** Seven day cells with markers for the day's interviews, follow-ups and offer deadlines; swipe sideways for weeks. */
 @Composable
 private fun WeekStrip(
     days: List<LocalDate>,
@@ -214,47 +207,22 @@ private fun WeekStrip(
     dates: Dates,
     byDay: Map<LocalDate, List<CalendarItem>>,
     apps: Map<String, Application>,
-    onSelect: (LocalDate) -> Unit,
+    onTap: (LocalDate) -> Unit,
+    onWeek: (LocalDate) -> Unit,
 ) {
-    val c = RrTheme.colors
-    val reduced = LocalReducedMotion.current
-    var dragged by remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
-    Row(
-        Modifier.fillMaxWidth().padding(horizontal = 16.dp).pointerInput(selected) {
-            detectHorizontalDragGestures(
-                onDragEnd = {
-                    if (dragged < -80f) onSelect(selected.plusWeeks(1)) else if (dragged > 80f) onSelect(selected.minusWeeks(1))
-                    dragged = 0f
-                },
-            ) { _, amount -> dragged += amount }
+    // The strip plays `selection` for taps itself; week swipes go through onWeek, which plays it.
+    val warn = RrTheme.colors.warn
+    RrWeekStrip(
+        days = days.map { day ->
+            val markers = byDay[day].orEmpty().distinctBy { it.kind + (apps[it.applicationId]?.status) }.map { markerColor(it, apps[it.applicationId], warn) }
+            RrWeekDay(day, dates.weekday(day), markers, contentDescription = dates.fullDate(day))
         },
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        days.forEach { day ->
-            val on = day == selected
-            val fill by animateFloatAsState(if (on) 1f else 0f, RrMotion.spec(RrMotion.D2, reduced), label = "day")
-            val items = byDay[day].orEmpty()
-            Column(
-                Modifier.weight(1f).height(56.dp).clip(RrShape.md)
-                    .background(c.accent.copy(alpha = fill))
-                    .selectable(on, role = Role.Tab) { onSelect(day) },
-                verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                RrText(dates.weekday(day), style = RrType.caption, color = if (on) c.onAccent else c.ink3)
-                RrText(
-                    day.dayOfMonth.toString(),
-                    style = RrType.ui.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
-                    color = if (on) c.onAccent else if (day == today) c.accentText else c.ink,
-                )
-                Row(Modifier.height(4.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                    items.distinctBy { it.kind + (apps[it.applicationId]?.status) }.take(3).forEach { item ->
-                        Box(Modifier.size(4.dp).clip(RrShape.xs).background(if (on) c.onAccent else markerColor(item, apps[item.applicationId], c.warn)))
-                    }
-                }
-            }
-        }
-    }
+        selected = selected,
+        onSelect = onTap,
+        modifier = Modifier.padding(horizontal = 16.dp),
+        today = today,
+        onWeekChange = { onWeek(selected.plusWeeks(it.toLong())) },
+    )
 }
 
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)

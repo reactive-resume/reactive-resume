@@ -123,14 +123,6 @@ internal class PrepareViewModel(private val repos: RrRepositories, private val i
     private fun edit(change: (PrepareState) -> PrepareState) = state.update { if (it is Load.Ready) Load.Ready(change(it.value)) else it }
 }
 
-/**
- * The question a Practice button hands to the Practice tab, by application.
- * ponytail: process-wide map; a route argument on `Application` would survive process death (lead request).
- */
-internal object PracticeHandoff {
-    val question = mutableMapOf<String, String>()
-}
-
 @Composable
 internal fun PrepareTab(applicationId: String, nav: NavController) {
     val repos = LocalRepositories.current
@@ -149,10 +141,7 @@ internal fun PrepareTab(applicationId: String, nav: NavController) {
             dates = rememberDates(repos.time.timezone()),
             onGenerate = { vm.generate(locale) },
             onStop = vm::stop,
-            onPractise = { question ->
-                if (question != null) PracticeHandoff.question[applicationId] = question
-                nav.openTab(applicationId, WorkspaceTab.Practise)
-            },
+            onPractise = { question -> nav.openTab(applicationId, WorkspaceTab.Practise, practiceQuestion = question) },
             onAddStory = { nav.navigate(Story()) },
             onCopyQuestion = {
                 context.copyToClipboard(it, it)

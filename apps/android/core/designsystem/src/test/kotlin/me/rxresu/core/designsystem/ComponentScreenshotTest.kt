@@ -32,6 +32,7 @@ class ComponentScreenshotTest : RrScreenshotTest() {
         "RrCallout" to { RrCalloutPreview() },
         "RrCard" to { RrCardPreview() },
         "RrChip" to { RrChipPreview() },
+        "RrCompanyTile" to { RrCompanyTilePreview() },
         "RrControls" to { RrControlsPreview() },
         "RrDatePicker" to { RrDatePickerPreview() },
         "RrDisclosureLine" to { RrDisclosureLinePreview() },
@@ -45,6 +46,7 @@ class ComponentScreenshotTest : RrScreenshotTest() {
         "RrModeBar" to { RrModeBarPreview() },
         "RrPaperPage" to { RrPaperPagePreview() },
         "RrProposalCard" to { RrProposalCardPreview() },
+        "RrRecorder" to { RrRecorderPreview() },
         "RrPullToRefresh" to { RrPullToRefreshPreview() },
         "RrScoreRing" to { RrScoreRingPreview() },
         "RrSegmentedControl" to { RrSegmentedControlPreview() },
@@ -53,6 +55,7 @@ class ComponentScreenshotTest : RrScreenshotTest() {
         "RrSpinner" to { RrSpinnerPreview() },
         "RrStage" to { RrStagePreview() },
         "RrStepper" to { RrStepperPreview() },
+        "RrStepMarker" to { RrStepMarkerPreview() },
         "RrSwipeRow" to { RrSwipeRowPreview() },
         "RrTabBar" to { RrTabBarPreview() },
         "RrTextField" to { RrTextFieldPreview() },
@@ -62,6 +65,7 @@ class ComponentScreenshotTest : RrScreenshotTest() {
         "RrTraceSteps" to { RrTraceStepsPreview() },
         "RrUnderlineTabs" to { RrUnderlineTabsPreview() },
         "RrUsedChip" to { RrUsedChipPreview() },
+        "RrWeekStrip" to { RrWeekStripPreview() },
         "RrWorkingLabel" to { RrWorkingLabelPreview() },
     )
 
@@ -71,6 +75,20 @@ class ComponentScreenshotTest : RrScreenshotTest() {
 
     /** Rows, buttons and fields at 200% font scale: text wraps instead of clipping. */
     @Test fun fontScale200() = captureScreen("Harness-Mixed", dark = false, fontScale = 2f) { Mixed() }
+
+    /** Root-tab headers at 200%: a title that no longer fits beside the actions moves below them, unbroken. */
+    @Test fun largeTitleFontScale200() = captureScreen("Harness-LargeTitle", dark = false, fontScale = 2f) {
+        Column(Modifier.windowInsetsPadding(WindowInsets.systemBars)) {
+            RrLargeTitleHeader("Applications", rememberRrLargeTitleState(), applyStatusBarInset = false) {
+                RrIconButton(R.drawable.ic_ph_magnifying_glass, "Search", {})
+                RrButton("Save job", {}, size = RrButtonSize.Small, icon = R.drawable.ic_ph_plus)
+                RrAvatar("AM", onClick = {}, contentDescription = "Settings")
+            }
+            RrLargeTitleHeader("Today", rememberRrLargeTitleState(), subtitle = "Saturday, 7 November", applyStatusBarInset = false) {
+                RrAvatar("AM", onClick = {}, contentDescription = "Settings")
+            }
+        }
+    }
 
     /** Right-to-left: carets, the segment indicator, swipe side and fuse mirror; the email stays left-to-right. */
     @Test fun rtl() = captureScreen("Harness-Mixed-rtl", dark = true, wrap = { content ->

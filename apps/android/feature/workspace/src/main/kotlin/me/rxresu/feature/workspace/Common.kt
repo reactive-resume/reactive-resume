@@ -7,7 +7,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.icu.text.ListFormatter
 import android.text.format.DateFormat
-import androidx.annotation.DrawableRes
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
@@ -54,14 +53,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import me.rxresu.core.data.RrRepositories
 import me.rxresu.core.designsystem.LocalReducedMotion
-import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrBottomSheet
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrColors
-import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrOfflineStrip
@@ -69,10 +66,8 @@ import me.rxresu.core.designsystem.RrSectionHeader
 import me.rxresu.core.designsystem.RrSheetDetents
 import me.rxresu.core.designsystem.RrSkeleton
 import me.rxresu.core.designsystem.RrSkeletonText
-import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrTone
-import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.RrWorkingLabel
 import me.rxresu.core.navigation.Application as ApplicationRoute
 import me.rxresu.core.navigation.WorkspaceTab
@@ -226,19 +221,6 @@ internal fun Eyebrow(text: String, modifier: Modifier = Modifier) = RrSectionHea
 internal fun Group(modifier: Modifier = Modifier, content: @Composable () -> Unit) =
     RrListGroup(modifier.padding(horizontal = 16.dp), content)
 
-/**
- * 12 sp ink-3 note with an info icon (W1's "An AI reading…" line). [RrDisclosureLine] is lock-only, for what AI sends.
- * TODO(lead): move to designsystem as an `icon` parameter on RrDisclosureLine.
- */
-@Composable
-internal fun InfoLine(text: String, modifier: Modifier = Modifier, @DrawableRes icon: Int = DsR.drawable.ic_ph_info) {
-    val c = RrTheme.colors
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        RrIcon(icon, null, size = 14.dp, tint = c.ink3, modifier = Modifier.padding(top = 1.dp))
-        RrText(text, style = RrType.caption.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Normal), color = c.ink3)
-    }
-}
-
 /** Working label with Stop beside it, for every AI request while it runs. */
 @Composable
 internal fun Working(labels: List<Int>, onStop: () -> Unit, modifier: Modifier = Modifier) {
@@ -295,7 +277,7 @@ internal fun Context.openInBrowser(url: String, colors: RrColors) {
 internal fun displayUrl(url: String) = url.substringAfter("://").removePrefix("www.").trimEnd('/')
 
 /** Switches the Application screen to another workspace tab, replacing the current entry. */
-internal fun NavController.openTab(applicationId: String, tab: WorkspaceTab) = navigate(ApplicationRoute(applicationId, tab)) {
+internal fun NavController.openTab(applicationId: String, tab: WorkspaceTab, practiceQuestion: String? = null) = navigate(ApplicationRoute(applicationId, tab, practiceQuestion)) {
     launchSingleTop = true
     popUpTo<ApplicationRoute> { inclusive = true }
 }

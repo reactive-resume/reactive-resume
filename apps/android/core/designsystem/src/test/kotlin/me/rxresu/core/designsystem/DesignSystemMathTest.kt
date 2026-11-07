@@ -37,6 +37,15 @@ class DesignSystemMathTest {
         assertEquals(RrMotion.D1, RrSheetMath.settleDurationMs(10f, 920f))
     }
 
+    @Test fun sheetScrimStaysFullWhileAFitContentSheetGrowsToItsLoadedContent() {
+        // Rising to the first resting height: the scrim follows the sheet.
+        assertEquals(0.5f, RrSheetMath.scrimAlpha(height = 150f, lowest = 300f, settled = Float.MAX_VALUE), 0.001f)
+        // Content loaded: the detent jumps to 1200 while the sheet still rests at 300. Full, not 300 ÷ 1200.
+        assertEquals(1f, RrSheetMath.scrimAlpha(height = 300f, lowest = 1200f, settled = 300f), 0.001f)
+        // Dragged below the lowest detent: the scrim thins.
+        assertEquals(0.5f, RrSheetMath.scrimAlpha(height = 600f, lowest = 1200f, settled = 1200f), 0.001f)
+    }
+
     @Test fun swipeArmsAt40PercentAndCommitsTowardTheSwipe() {
         assertFalse(RrSwipeMath.armed(-150f, 400f))
         assertTrue(RrSwipeMath.armed(-160f, 400f))

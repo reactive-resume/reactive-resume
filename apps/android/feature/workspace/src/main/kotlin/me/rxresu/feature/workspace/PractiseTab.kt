@@ -9,11 +9,8 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -37,16 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,8 +48,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.toRoute
 import java.time.Instant
 import java.util.Locale
 import kotlinx.coroutines.CancellationException
@@ -70,7 +64,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
-import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
@@ -78,19 +71,19 @@ import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCard
 import me.rxresu.core.designsystem.RrDisclosureLine
-import me.rxresu.core.designsystem.RrFixedColors
 import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrListRow
-import me.rxresu.core.designsystem.RrMotion
-import me.rxresu.core.designsystem.RrShape
+import me.rxresu.core.designsystem.RrRecordButton
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTextField
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
+import me.rxresu.core.designsystem.RrWaveform
 import me.rxresu.core.designsystem.RrWorkingLabel
 import me.rxresu.core.designsystem.rememberRrHaptics
+import me.rxresu.core.navigation.Application as ApplicationRoute
 import me.rxresu.core.navigation.SettingsAi
 import me.rxresu.core.network.UploadPart
 import me.rxresu.core.network.generated.Briefing
@@ -143,6 +136,8 @@ internal class PractiseViewModel(
     private val fallbackQuestions: (company: String) -> List<String>,
     recorder: VoiceRecorder,
     now: () -> Long,
+    /** The question Interview prep handed over (the route's `practiceQuestion`), asked first. */
+    private val handed: String? = null,
 ) : ViewModel() {
     val state = MutableStateFlow<Load<PractiseState>>(Load.Loading)
     private val outcomes = Channel<VoiceOutcome>(Channel.BUFFERED)
@@ -163,7 +158,6 @@ internal class PractiseViewModel(
                 val storyTitles = runCatching { repos.workspace.listCareerStories() }.getOrDefault(emptyList()).associate { it.id to it.data.title }
                 val fromPlan = briefing?.plan.orEmpty().filter { it.storyId != null }.associate { it.title to it.storyId!! }
                 var questions = briefing?.practiceQuestions?.takeIf { it.isNotEmpty() } ?: fallbackQuestions(context.app.company)
-                val handed = PracticeHandoff.question.remove(id)
                 if (handed != null && handed !in questions) questions = listOf(handed) + questions
                 PractiseState(
                     context, interview, questions, questions.indexOf(handed).coerceAtLeast(0),
@@ -269,8 +263,11 @@ internal fun PractiseTab(applicationId: String, nav: NavController) {
             res.getString(S.string.why_do_you_want_this_role_at_company, company),
         )
     }
+    // The Application entry hosting this tab carries the question Interview prep handed over, if any.
+    val entry = LocalViewModelStoreOwner.current as? NavBackStackEntry
+    val handed = remember(entry) { entry?.let { runCatching { it.toRoute<ApplicationRoute>().practiceQuestion }.getOrNull() } }
     val vm = viewModel(key = "practise-$applicationId") {
-        PractiseViewModel(repos, applicationId, fallback, MediaVoiceRecorder(context.applicationContext), { android.os.SystemClock.elapsedRealtime() })
+        PractiseViewModel(repos, applicationId, fallback, MediaVoiceRecorder(context.applicationContext), { android.os.SystemClock.elapsedRealtime() }, handed)
     }
     val load by vm.state.collectAsStateWithLifecycle()
     val recording by vm.recording.state.collectAsStateWithLifecycle()
@@ -425,61 +422,18 @@ private fun RecorderCard(state: PractiseState, recording: RecordingState, onReco
                 RrButton(stringResource(S.string.stop), onStop, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
                 return@Column
             }
-            Waveform(recording)
+            RrWaveform(recording.levels, bars = Recording.BARS)
             Row(Modifier.semantics(mergeDescendants = true) {}) {
                 RrText(clock(recording.elapsedMs), style = RrType.mono.copy(fontSize = 16.sp, lineHeight = 20.sp, fontWeight = FontWeight.Medium), color = c.ink)
                 RrText(" / ${clock(Recording.MAX_MS)}", style = RrType.mono.copy(fontSize = 16.sp, lineHeight = 20.sp, fontWeight = FontWeight.Medium), color = c.ink3)
             }
-            RecordButton(recording.recording, onRecord)
+            RrRecordButton(recording.recording, onRecord)
             RrText(
                 stringResource(if (recording.recording) R.string.workspace_recording_tap_to_stop else S.string.up_to_2_minutes_2_mb_maximum),
                 style = RrType.small,
                 color = c.ink2,
             )
         }
-    }
-}
-
-/**
- * Live mic level as 20 bars (4 dp, 3 dp apart, up to 56 dp), about 15 fps; unrecorded bars sit dim at 8 dp. Reduced
- * motion: one static level meter. TODO(lead): move to designsystem (waveform / level meter).
- */
-@Composable
-private fun Waveform(recording: RecordingState) {
-    val c = RrTheme.colors
-    val reduced = LocalReducedMotion.current
-    val levels = recording.levels
-    if (reduced) {
-        Box(Modifier.width(200.dp).height(4.dp).clip(RrShape.xs).background(c.sunken)) {
-            Box(Modifier.fillMaxWidth(levels.lastOrNull() ?: 0f).height(4.dp).background(c.accent))
-        }
-        return
-    }
-    Row(Modifier.height(56.dp), horizontalArrangement = Arrangement.spacedBy(3.dp), verticalAlignment = Alignment.CenterVertically) {
-        repeat(Recording.BARS) { i ->
-            val level = levels.getOrNull(i)
-            Box(
-                Modifier.width(4.dp).height(if (level == null) 8.dp else (8 + 48 * level).dp)
-                    .then(if (level == null) Modifier.alpha(0.4f) else Modifier).clip(RrShape.xs).background(c.accent),
-            )
-        }
-    }
-}
-
-/** The 72 dp square record control (4 dp corners): accent with a microphone, danger with stop while recording (d1). */
-@Composable
-internal fun RecordButton(recording: Boolean, onClick: () -> Unit, size: androidx.compose.ui.unit.Dp = 72.dp) {
-    val c = RrTheme.colors
-    val reduced = LocalReducedMotion.current
-    val fill by animateColorAsState(if (recording) c.danger else c.accent, RrMotion.spec(RrMotion.D1, reduced), label = "record")
-    val label = stringResource(if (recording) S.string.stop_recording else S.string.record_your_answer)
-    Box(
-        Modifier.size(size).clip(RrShape.lg).background(fill).clickable(role = Role.Button, onClickLabel = label, onClick = onClick)
-            .semantics { contentDescription = label },
-        contentAlignment = Alignment.Center,
-    ) {
-        if (recording) RrIcon(DsR.drawable.ic_ph_stop_fill, null, size = size * 4 / 9, tint = RrFixedColors.onDanger)
-        else RrIcon(DsR.drawable.ic_ph_microphone, null, size = size * 4 / 9, tint = c.onAccent)
     }
 }
 
