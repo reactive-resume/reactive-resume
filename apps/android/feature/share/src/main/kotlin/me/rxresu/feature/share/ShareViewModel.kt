@@ -15,7 +15,7 @@ internal data class ShareState(
     val loading: Boolean = true, val busy: Boolean = false, val failed: Boolean = false,
     val username: String = "", val origin: String = "", val slug: String = "", val slugTaken: Boolean = false,
     val checking: Boolean = false, val slugInvalid: Boolean = false,
-    val primaryLoaded: Boolean = false, val otherPrimary: ResumeSummary? = null,
+    val customDomains: Boolean = false, val olacvSuggestion: Boolean = false, val primaryLoaded: Boolean = false, val otherPrimary: ResumeSummary? = null,
     val daily: List<GetResumeDailyStatisticsResponseItem> = emptyList(),
     val links: List<CreateFeedbackLinkResponse> = emptyList(),
     val versions: List<ResumeVersionSummary> = emptyList(),
@@ -58,12 +58,11 @@ internal class ShareViewModel(private val repositories: RrRepositories, private 
         supervisorScope {
             suspend fun attempt(action: suspend () -> Unit) { try { action() } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(failed = true) } } }
             listOf(
-                launch { attempt { val flags = repositories.platform.getFeatureFlags(); flags.aliasUrl?.let { alias -> mutable.update { it.copy(origin = alias) } } } },
+                launch { attempt { val flags = repositories.platform.getFeatureFlags(); mutable.update { it.copy(origin = flags.aliasUrl ?: it.origin, customDomains = flags.customDomains, olacvSuggestion = flags.olacvSuggestion) }; if (flags.customDomains) { val domain = repositories.resumes.getCustomDomain(); mutable.update { it.copy(domain = domain) } } } },
                 launch { attempt { val resumes = repositories.resumes.listResumes(); mutable.update { it.copy(primaryLoaded = true, otherPrimary = resumes.firstOrNull { other -> other.isPrimary && other.id != id }) } } },
                 launch { attempt { val v = repositories.resumes.getResumeDailyStatistics(id, 30); mutable.update { it.copy(daily = v) } } },
                 launch { attempt { val v = repositories.resumes.listFeedbackLinks(id); mutable.update { it.copy(links = v) } } },
                 launch { attempt { val v = repositories.resumes.listResumeVersions(id); mutable.update { it.copy(versions = v) } } },
-                launch { attempt { val v = repositories.resumes.getCustomDomain(); mutable.update { it.copy(domain = v) } } },
                 launch { attempt { val v = repositories.applications.listApplications(); mutable.update { it.copy(applications = v) } } },
             ).joinAll()
         }
@@ -100,15 +99,21 @@ internal class ShareViewModel(private val repositories: RrRepositories, private 
         draft!!.writeMetadata { before -> before.withWriteResult(if (value == null) repositories.resumes.removeResumePassword(id, RemoveResumePasswordRequest(JsonPrimitive(before.updatedAt))) else repositories.resumes.setResumePassword(id, SetResumePasswordRequest(JsonPrimitive(before.updatedAt), value))) }
         done()
     }
-    fun domain(host: String) = action { val result = repositories.resumes.setCustomDomain(SetCustomDomainRequest(host)); mutable.update { it.copy(domain = result) } }
-    fun verifyDomain() = action { val result = repositories.resumes.verifyCustomDomain(); mutable.update { it.copy(domain = result) } }
-    fun removeDomain() = action { repositories.resumes.removeCustomDomain(); mutable.update { it.copy(domain = null) } }
+    fun domain(host: String) = action { check(state.value.customDomains); val result = repositories.resumes.setCustomDomain(SetCustomDomainRequest(host)); mutable.update { it.copy(domain = result) } }
+    fun verifyDomain() = action { check(state.value.customDomains); val result = repositories.resumes.verifyCustomDomain(); mutable.update { it.copy(domain = result) } }
+    fun removeDomain() = action { check(state.value.customDomains); repositories.resumes.removeCustomDomain(); mutable.update { it.copy(domain = null) } }
     fun feedback(label: String, comments: Boolean, days: Int, applications: List<String>, done: (String) -> Unit) = action {
         val expiry = if (days == 0) null else repositories.time.now().plusSeconds(days * 86400L).toString()
         val link = repositories.resumes.createFeedbackLink(CreateFeedbackLinkRequest(comments, applications, expiry, label, id))
         mutable.update { it.copy(links = listOf(link) + it.links) }; done(link.url)
     }
     fun link(id: String) = action { val value = repositories.resumes.getFeedbackLink(id); mutable.update { it.copy(link = value) } }
+    fun resolveComment(commentId: String, resolved: Boolean) = action {
+        val before = requireNotNull(state.value.link)
+        val saved = repositories.resumes.resolveFeedbackComment(before.id, commentId, ResolveFeedbackCommentRequest(resolved))
+        mutable.update { it.copy(link = before.copy(comments = before.comments.map { comment -> if (comment.id == commentId) saved else comment })) }
+        val fresh = repositories.resumes.getFeedbackLink(before.id); mutable.update { it.copy(link = fresh) }
+    }
     fun closeLink() { mutable.update { it.copy(link = null) } }
     fun revoke(id: String, done: () -> Unit) = action { repositories.resumes.revokeFeedbackLink(id); mutable.update { it.copy(link = null) }; refresh(); done() }
     fun nameVersion(name: String, version: String? = null, done: () -> Unit) = action {
@@ -134,6 +139,16 @@ internal class ShareViewModel(private val repositories: RrRepositories, private 
         handle.update(before.copy(data = before.data.copy(metadata = before.data.metadata.copy(notes = value)))); handle.flush(); done()
     }
     fun duplicate(done: (String) -> Unit) = action { draft!!.flush(); check(draft!!.state.value.status == me.rxresu.core.database.SaveStatus.Saved); done(repositories.resumes.duplicateResume(id)) }
+    fun languageCopy(locale: ImportResumeFileLocale, done: (String, String) -> Unit) = action {
+        check(locale != ImportResumeFileLocale.Unknown)
+        val handle = requireNotNull(draft); handle.flush()
+        check(handle.state.first { it.status != me.rxresu.core.database.SaveStatus.Saving }.status == me.rxresu.core.database.SaveStatus.Saved)
+        val source = requireNotNull(handle.state.value.document)
+        check(source.data.metadata.page.locale != locale.wireValue)
+        val language = java.util.Locale.forLanguageTag(locale.wireValue).displayName
+        val copy = repositories.resumes.duplicateResume(id, DuplicateResumeRequest(name = source.name + " — " + language, pageLocale = locale))
+        done(copy, languageCopyPrompt(locale.wireValue))
+    }
     fun trash(done: () -> Unit) = action { draft!!.flush(); check(state.value.resume?.isLocked == false); repositories.documents.trashDocument(PurgeDocumentRequest(id, DocumentType.Resume)); done() }
     fun untrash() = action { repositories.documents.restoreDocument(PurgeDocumentRequest(id, DocumentType.Resume)) }
     private fun action(block: suspend () -> Unit) = viewModelScope.launch {
@@ -145,3 +160,5 @@ internal class ShareViewModel(private val repositories: RrRepositories, private 
     }
 }
 internal fun validSlug(value: String) = value.length in 1..64 && Regex("[a-z0-9]+(?:-[a-z0-9]+)*").matches(value)
+
+internal fun languageCopyPrompt(locale: String) = "Translate every visible text field of this language copy into $locale. Read the resume and propose one complete translation set for review. Preserve proper names, figures, meaning and facts. Keep hidden content unchanged. Do not tailor to a posting."

@@ -8,6 +8,7 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.print.*
 import androidx.core.content.FileProvider
+import androidx.core.graphics.createBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import java.io.File
@@ -30,7 +31,7 @@ internal enum class FileFormat(val extension: String, val mime: String) {
     OpenDocument("odt", "application/vnd.oasis.opendocument.text"), Text("md", "text/markdown"), Json("json", "application/json")
 }
 internal data class ExportFile(val name: String, val mime: String, val bytes: ByteArray)
-internal data class ExportState(val name: String = "", val format: FileFormat = FileFormat.Pdf, val paired: Boolean = false, val busy: Boolean = false, val failed: Boolean = false)
+internal data class ExportState(val name: String = "", val format: FileFormat = FileFormat.Pdf, val paired: Boolean = false, val busy: Boolean = false, val failed: Boolean = false, val offline: Boolean = false)
 internal data class Delivery(val files: List<ExportFile>, val save: Boolean)
 internal class ExportViewModel(private val repositories: RrRepositories, private val id: String, private val kind: DocumentKind) : ViewModel() {
     private val mutable = MutableStateFlow(ExportState())
@@ -42,6 +43,7 @@ internal class ExportViewModel(private val repositories: RrRepositories, private
         val name = if (letter != null) letter.style.basics.name + " Cover Letter" else repositories.resumes.openDraft(id).state.value.document?.data?.basics?.name.orEmpty() + " Resume"
         mutable.update { it.copy(name = name, paired = letter?.sourceResumeId != null, format = if (letter?.sourceResumeId != null) FileFormat.Pair else FileFormat.Pdf) }
     } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(failed = true) } } } }
+    fun offline(value: Boolean) { mutable.update { it.copy(offline = value) } }
     fun name(value: String) { mutable.update { it.copy(name = value) } }
     fun format(value: FileFormat) { mutable.update { it.copy(format = value) } }
     fun export(save: Boolean) = viewModelScope.launch {
@@ -105,18 +107,47 @@ internal suspend fun shareFiles(context: Context, files: List<ExportFile>, title
     context.startActivity(Intent.createChooser(intent, title))
 }
 internal fun shareLink(context: Context, value: String, title: String) { context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_TEXT, value) }, title)) }
-internal fun printPdf(context: Context, file: File, name: String) {
+internal fun selectedPrintPages(ranges: Array<out PageRange>, count: Int): List<Int> = (0 until count).filter { page -> ranges.any { page in it.start..it.end } }
+internal fun printPdf(context: Context, file: File, name: String, pageCount: Int) {
     val manager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     manager.print(name, object : PrintDocumentAdapter() {
         override fun onLayout(old: PrintAttributes?, new: PrintAttributes?, signal: CancellationSignal, callback: LayoutResultCallback, extras: android.os.Bundle?) {
-            if (signal.isCanceled) callback.onLayoutCancelled() else callback.onLayoutFinished(PrintDocumentInfo.Builder(name).setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT).build(), old != new)
+            if (signal.isCanceled) callback.onLayoutCancelled() else callback.onLayoutFinished(PrintDocumentInfo.Builder(name).setPageCount(pageCount).setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT).build(), old != new)
         }
         override fun onWrite(pages: Array<out PageRange>, destination: ParcelFileDescriptor, signal: CancellationSignal, callback: WriteResultCallback) {
-            try {
-                if (signal.isCanceled) { callback.onWriteCancelled(); return }
-                FileOutputStream(destination.fileDescriptor).use { output -> file.inputStream().use { it.copyTo(output) } }
-                if (signal.isCanceled) callback.onWriteCancelled() else callback.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
-            } catch (_: Exception) { callback.onWriteFailed(null) }
+            scope.launch {
+                try {
+                    val selected = selectedPrintPages(pages, pageCount); check(selected.isNotEmpty())
+                    destination.use { target -> FileOutputStream(target.fileDescriptor).use { output ->
+                        signal.throwIfCanceled()
+                        if (selected.size == pageCount) file.inputStream().use { it.copyTo(output) }
+                        else android.os.ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY).use { source -> android.graphics.pdf.PdfRenderer(source).use { pdf ->
+                            val printed = android.graphics.pdf.PdfDocument()
+                            try {
+                                selected.forEach { index ->
+                                    signal.throwIfCanceled()
+                                    pdf.openPage(index).use { page ->
+                                        // shortcut: selected pages rasterize at 300 dpi; use a PDF page-copy API when core supplies one.
+                                        val bitmap = createBitmap((page.width * 300f / 72).toInt(), (page.height * 300f / 72).toInt(), android.graphics.Bitmap.Config.ARGB_8888)
+                                        try {
+                                            bitmap.eraseColor(android.graphics.Color.WHITE)
+                                            page.render(bitmap, null, null, android.graphics.pdf.PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
+                                            val outputPage = printed.startPage(android.graphics.pdf.PdfDocument.PageInfo.Builder(page.width, page.height, index + 1).create())
+                                            outputPage.canvas.drawBitmap(bitmap, null, android.graphics.Rect(0, 0, page.width, page.height), android.graphics.Paint(android.graphics.Paint.FILTER_BITMAP_FLAG))
+                                            printed.finishPage(outputPage)
+                                        } finally { bitmap.recycle() }
+                                    }
+                                }
+                                signal.throwIfCanceled(); printed.writeTo(output)
+                            } finally { printed.close() }
+                        } }
+                    } }
+                    if (signal.isCanceled) callback.onWriteCancelled() else callback.onWriteFinished(selected.map { PageRange(it, it) }.toTypedArray())
+                } catch (_: android.os.OperationCanceledException) { callback.onWriteCancelled() }
+                catch (_: Exception) { callback.onWriteFailed(null) }
+            }
         }
+        override fun onFinish() { scope.cancel() }
     }, null)
 }

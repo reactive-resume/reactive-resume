@@ -3,6 +3,7 @@ package me.rxresu.feature.assistant
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,11 @@ import me.rxresu.core.strings.R as CoreR
 
 @Composable internal fun AssistantScreen(state: AssistantState, dismiss: () -> Unit, input: (String) -> Unit, send: () -> Unit, stop: () -> Unit,
     context: (Boolean?, Boolean?) -> Unit, action: (String) -> Unit) {
+    val scroll = rememberScrollState()
+    var following by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(scroll.isScrollInProgress) { if (scroll.isScrollInProgress) following = false else if (scroll.value >= scroll.maxValue - 32) following = true }
+    LaunchedEffect(scroll.maxValue, state.streaming) { if (following && state.streaming) scroll.scrollTo(scroll.maxValue) }
     val c = RrTheme.colors; val haptics = rememberRrHaptics()
     LaunchedEffect(state.failed) { if (state.failed) haptics(RrHaptic.Error) }
     RrBottomSheet(dismiss, detents = listOf(0.935f), footer = {
@@ -40,26 +46,46 @@ import me.rxresu.core.strings.R as CoreR
             RrIconButton(DsR.drawable.ic_ph_clock_counter_clockwise, stringResource(CoreR.string.past_conversations), { action("history") }, size = RrIconButtonSize.Small)
             RrIconButton(DsR.drawable.ic_ph_x, stringResource(CoreR.string.close_the_assistant), dismiss, size = RrIconButtonSize.Small)
         }
-        Column(Modifier.padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        Column(Modifier.weight(1f).verticalScroll(scroll).padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             if (state.loading) RrSkeletonText(lines = 6)
             if (state.locked) RrCallout(stringResource(CoreR.string.this_resume_is_locked_unlock_it_to_make_changes))
             if (state.provider == null && !state.loading) RrCallout(stringResource(R.string.p4_choose_a_connection_before_sending_anything), actionLabel = stringResource(R.string.p4_add_connection), onAction = { action("setup") })
-            if (state.content.reply.isEmpty() && !state.streaming) {
+            if (state.content.messages.isEmpty() && state.content.reply.isEmpty() && !state.streaming) {
                 RrText(stringResource(CoreR.string.what_should_we_work_on), style = RrType.sheetTitle)
                 RrText(state.documentName, style = RrType.small, color = c.ink3)
                 RrListGroup {
                     listOf(stringResource(CoreR.string.tighten_to_one_page), stringResource(R.string.p4_tailor_to_the_posting), stringResource(CoreR.string.find_weak_bullets), stringResource(CoreR.string.draft_a_summary), stringResource(CoreR.string.translate_into)).forEach { starter -> RrListRow(starter, subtitle = stringResource(R.string.p4_proposes_edits_for_you_to_review), icon = DsR.drawable.ic_ph_sparkle, onClick = { input(starter) }, enabled = !state.locked) }
                 }
             }
-            if (state.content.trace.isNotEmpty()) RrTraceSteps(state.content.trace.map { RrTraceStep(it, true) })
+            if (state.content.messages.isEmpty() && state.content.trace.isNotEmpty()) RrTraceSteps(state.content.trace.map { RrTraceStep(it, true) })
             if (state.streaming) RrWorkingLabel(listOf(stringResource(R.string.p4_reading_your_request), stringResource(R.string.p4_reviewing_your_words), stringResource(CoreR.string.still_working)))
-            if (state.content.reply.isNotEmpty()) RrText(state.content.reply, style = RrType.body)
+            state.content.messages.forEach { message ->
+                val text = message.parts.filter { it.type == "text" }.joinToString("") { it.extraFields.text("text").orEmpty() }
+                val user = message.role == me.rxresu.core.network.generated.AiTailorResumeForApplicationResponseConversationMessagesItemRole.User
+                if (text.isNotEmpty()) {
+                    if (user) Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) { RrText(text, Modifier.background(c.sunken, RrShape.lg).padding(12.dp), style = RrType.body) }
+                    else {
+                        if (message.id == state.content.messages.lastOrNull()?.id && state.content.trace.isNotEmpty()) RrTraceSteps(state.content.trace.map { RrTraceStep(it, true) })
+                        RrText(text, style = RrType.body)
+                    }
+                }
+                message.parts.filter { it.type == "source-url" }.forEach { source -> source.extraFields.text("url")?.let { url -> RrButton(source.extraFields.text("title") ?: url, { action("source:" + url) }, variant = RrButtonVariant.GhostAccent) } }
+                if (message.id == state.content.messages.lastOrNull()?.id) message.parts.filter { it.extraFields.text("state") == "approval-requested" }.forEach { tool ->
+                    RrCallout(tool.type.removePrefix("tool-").replace('_', ' '))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        RrButton(stringResource(R.string.p4_allow), { action("approve:" + tool.extraFields.text("toolCallId")) }, enabled = !state.streaming && !state.locked)
+                        RrButton(stringResource(CoreR.string.reject), { action("deny:" + tool.extraFields.text("toolCallId")) }, variant = RrButtonVariant.Secondary, enabled = !state.streaming && !state.locked)
+                    }
+                }
+            }
+            if (state.content.messages.isEmpty() && state.content.reply.isNotEmpty()) RrText(state.content.reply, style = RrType.body)
             state.content.question?.let { question ->
-                // TODO(lead): move assistant question card to designsystem.
+                // TODO(lead): move to designsystem: assistant question card.
                 Column(Modifier.fillMaxWidth().clip(RrShape.lg).background(c.infoSoft).padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     RrText(question.text, style = RrType.label)
-                    question.answers.forEach { answer -> RrButton(answer, { input(answer) }, Modifier.fillMaxWidth(), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large) }
-                    RrButton(stringResource(CoreR.string.or_in_your_own_words), { input("") }, variant = RrButtonVariant.Secondary)
+                    question.answers.forEach { answer -> Box(Modifier.fillMaxWidth().heightIn(min = 44.dp).border(1.dp, c.line2, RrShape.sm).background(c.raised).clickable(enabled = !state.streaming && !state.locked) { action("answer:" + question.toolCallId + ":" + answer) }.padding(horizontal = 12.dp, vertical = 8.dp), contentAlignment = Alignment.CenterStart) { RrText(answer, style = RrType.body) } }
+                    var ownAnswer by remember(question.toolCallId) { mutableStateOf("") }
+                    RrTextField(ownAnswer, { ownAnswer = it }, placeholder = stringResource(CoreR.string.or_in_your_own_words), enabled = !state.streaming && !state.locked, trailing = if (ownAnswer.isNotBlank()) ({ RrIconButton(DsR.drawable.ic_ph_arrow_up, stringResource(CoreR.string.send), { action("answer:" + question.toolCallId + ":" + ownAnswer) }, size = RrIconButtonSize.Small) }) else null)
                 }
             }
             if (state.proposals.isNotEmpty()) RrButton(stringResource(R.string.p4_review_1_s_edits, state.proposals.size.toString()), { action("proposals") }, variant = RrButtonVariant.Secondary)
@@ -68,14 +94,16 @@ import me.rxresu.core.strings.R as CoreR
             if (state.failed) RrButton(stringResource(CoreR.string.switch_model), { action("providers") }, variant = RrButtonVariant.Secondary)
             if (state.stopped) RrCallout(if (state.proposals.isEmpty()) stringResource(CoreR.string.stopped_no_edits_were_proposed) else stringResource(R.string.p4_stopped), actionLabel = stringResource(CoreR.string.message_continue), onAction = { action("continue") })
         }
+        if (!following) RrButton(stringResource(R.string.p4_latest), { following = true; scope.launch { scroll.scrollTo(scroll.maxValue) } }, variant = RrButtonVariant.Secondary)
     }
 }
 
-@Composable internal fun ProposalsScreen(state: AssistantState, dismiss: () -> Unit, decide: (List<String>, Decision, String?) -> Unit, suggest: () -> Unit) {
+@Composable internal fun ProposalsScreen(state: AssistantState, dismiss: () -> Unit, decide: (List<String>, Decision, String?) -> Unit, suggest: () -> Unit, location: (Proposal) -> Unit = {}, saveWording: (Proposal, String) -> Unit = { proposal, text -> decide(listOf(proposal.id), Decision.Pending, text) }) {
     val c = RrTheme.colors
-    var editing by remember { mutableStateOf<String?>(null) }; var wording by remember { mutableStateOf("") }
+    var editing by remember { mutableStateOf<String?>(null) }; var wording by remember { mutableStateOf("") }; var baseline by remember { mutableStateOf<Proposal?>(null) }
     val haptics = rememberRrHaptics()
     val open = state.proposals.filter { it.decision == Decision.Pending }
+    LaunchedEffect(state.wordingSavedId) { if (state.wordingSavedId == editing) editing = null }
     var previousOpen by remember { mutableIntStateOf(open.size) }
     LaunchedEffect(open.size, state.deciding, state.failed) { if (!state.deciding) { if (!state.failed && previousOpen > 0 && open.isEmpty() && state.proposals.all { it.decision in setOf(Decision.Accepted, Decision.Rejected) } && state.proposals.any { it.decision == Decision.Accepted }) haptics(RrHaptic.Success); previousOpen = open.size } }
     RrBottomSheet(dismiss, detents = listOf(0.935f), footer = {
@@ -87,9 +115,10 @@ import me.rxresu.core.strings.R as CoreR
         Row(Modifier.fillMaxWidth().padding(horizontal = 6.dp), verticalAlignment = Alignment.CenterVertically) {
             RrIconButton(DsR.drawable.ic_ph_caret_left, stringResource(CoreR.string.back), dismiss, mirrorInRtl = true)
             RrText(stringResource(R.string.p4_proposed_edits), style = RrType.label, modifier = Modifier.weight(1f))
+            RrText(stringResource(R.string.p4_1_s_of_2_s_open, open.size.toString(), state.proposals.size.toString()), Modifier.padding(end = 10.dp), style = RrType.mono, color = c.ink3)
         }
-        Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            RrText(stringResource(R.string.p4_1_s_of_2_s_open, open.size.toString(), state.proposals.size.toString()), style = RrType.mono, color = c.ink3)
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            state.content.requirements.distinct().forEach { (text, status) -> RrText(text + " · " + status, style = RrType.small, color = c.ink2) }
             if (state.proposals.isEmpty()) RrEmptyState(stringResource(R.string.p4_proposed_edits), stringResource(R.string.p4_no_edits_were_proposed))
             state.proposals.forEachIndexed { index, proposal ->
                 key(proposal.id) {
@@ -100,18 +129,22 @@ import me.rxresu.core.strings.R as CoreR
                             Decision.Pending -> if (editing == proposal.id) {
                                 RrCard {
                                     RrTextField(wording, { wording = it }, label = stringResource(CoreR.string.your_wording), singleLine = false, minLines = 4)
-                                    RrButton(stringResource(CoreR.string.save_wording), { decide(listOf(proposal.id), Decision.Pending, wording) }, enabled = wording.isNotBlank() && !state.deciding && !state.locked)
+                                    RrButton(stringResource(CoreR.string.save_wording), { baseline?.let { saveWording(it, wording) } }, enabled = wording.isNotBlank() && !state.deciding && !state.locked && baseline?.after == proposal.after)
+                                    if (baseline?.after != proposal.after) RrCallout(stringResource(R.string.p4_wording_changed), tone = RrTone.Warn)
                                     RrButton(stringResource(CoreR.string.cancel), { editing = null }, variant = RrButtonVariant.Secondary)
                                     if (state.failed) RrCallout(stringResource(CoreR.string.couldn_t_save_your_wording_your_text_is_still_here_try_again), tone = RrTone.Danger)
                                 }
                             } else RrSwipeRow(startAction = RrSwipeAction(stringResource(CoreR.string.reject), DsR.drawable.ic_ph_x, onCommit = { if (!state.deciding && !state.locked) decide(listOf(proposal.id), Decision.Rejected, null) }), endAction = RrSwipeAction(stringResource(CoreR.string.accept), DsR.drawable.ic_ph_check, onCommit = { if (!state.deciding && !state.locked) decide(listOf(proposal.id), Decision.Accepted, null) })) { RrProposalCard(index + 1, proposal.location, editRuns(plain(proposal.before), plain(proposal.after)),
                                 { if (!state.deciding && !state.locked) decide(listOf(proposal.id), Decision.Accepted, null) }, { if (!state.deciding && !state.locked) decide(listOf(proposal.id), Decision.Rejected, null) },
-                                onEdit = { editing = proposal.id; wording = plain(proposal.after) }, acceptPrimary = !proposal.newDetail && index == state.proposals.indexOfFirst { it.decision == Decision.Pending },
+                                modifier = if (proposal.id == open.firstOrNull()?.id) Modifier.border(2.dp, c.accent, RrShape.lg) else Modifier,
+                                onEdit = { editing = proposal.id; baseline = proposal; wording = plain(proposal.after) }, acceptPrimary = !proposal.newDetail && index == state.proposals.indexOfFirst { it.decision == Decision.Pending },
                                 badge = if (proposal.newDetail || proposal.unsupported.isNotEmpty()) ({ RrBadge(stringResource(CoreR.string.new_detail_check_it_s_true), tone = RrBadgeTone.Warn) }) else null) {
+                                RrButton(proposal.location, { location(proposal) }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small)
                                 if (proposal.why.isNotBlank()) RrText(proposal.why, style = RrType.caption, color = c.ink2)
                                 proposal.evidence.forEach { RrUsedChip(it, DsR.drawable.ic_ph_book_open) }
+                                proposal.factIds.forEach { id -> RrUsedChip(state.facts[id] ?: stringResource(R.string.p4_fact_unavailable), DsR.drawable.ic_ph_book_open) }
                                 if (proposal.unsupported.isNotEmpty()) RrCallout(stringResource(R.string.p4_nothing_checked_backs_these_confirm_each_before_accepting_1_s, proposal.unsupported.joinToString()), tone = RrTone.Warn)
-                                if (proposal.snapshot) RrCallout(stringResource(R.string.p4_this_edit_needs_structural_review_in_the_web_app), tone = RrTone.Warn)
+                                if (proposal.snapshot) RrText(stringResource(R.string.p4_structure_review), style = RrType.caption)
                             } }
                         }
                     }

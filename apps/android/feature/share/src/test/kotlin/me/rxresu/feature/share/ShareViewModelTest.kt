@@ -1,6 +1,9 @@
 package me.rxresu.feature.share
 
 import kotlinx.coroutines.*
+import kotlinx.serialization.json.*
+import me.rxresu.core.network.ApiJson
+import android.print.PageRange
 import kotlinx.coroutines.test.*
 import me.rxresu.core.data.*
 import me.rxresu.core.navigation.DocumentKind
@@ -75,5 +78,27 @@ class ShareViewModelTest {
             vm.export(true); runCurrent()
             assertTrue(result!!.files.single().bytes.decodeToString().contains("Kept offline"))
         } finally { repositories.close() }
+    }
+    @Test fun scrubbingClampsAndMirrorsDays() {
+        assertEquals(0, visitorDayAt(-20f, 300f, 30, false)); assertEquals(29, visitorDayAt(300f, 300f, 30, false)); assertEquals(0, visitorDayAt(300f, 300f, 30, true)); assertEquals(14, visitorDayAt(150f, 300f, 30, true))
+    }
+    @Test fun printingIncludesOnlyRequestedPagesWithoutDuplicates() {
+        assertEquals(listOf(1, 2, 4), selectedPrintPages(arrayOf(PageRange(1, 2), PageRange(2, 2), PageRange(4, 9)), 5))
+        assertEquals(listOf(0, 1, 2), selectedPrintPages(arrayOf(PageRange.ALL_PAGES), 3)); assertTrue(selectedPrintPages(arrayOf(PageRange(9, 10)), 2).isEmpty())
+    }
+    @Test fun domainFlagBlocksMutationsOnUnsupportedServer() = runTest {
+        val controls = FakeControls(); val flags = ApiSamples.response("getFeatureFlags").jsonObject
+        controls.responses.value = mapOf("getFeatureFlags" to JsonObject(flags + ("customDomains" to JsonPrimitive(false))))
+        val base = FakeRepositories(controls, coroutineScope = backgroundScope)
+        try { val vm = ShareViewModel(base, StoryboardIds.resume); runCurrent(); assertFalse(vm.state.value.customDomains); vm.domain("resume.example.invalid"); runCurrent(); assertTrue(vm.state.value.failed); assertNull(vm.state.value.domain) } finally { base.close() }
+    }
+    @Test fun translationCopiesDocumentAndPrefillsWithoutSending() = runTest {
+        val base = FakeRepositories(coroutineScope = backgroundScope)
+        try {
+            val vm = ShareViewModel(base, StoryboardIds.resume); runCurrent(); val original = base.resumes.getResume(StoryboardIds.resume)
+            val locale = ImportResumeFileLocale.entries.first { it != ImportResumeFileLocale.Unknown && it.wireValue != original.data.metadata.page.locale }
+            var copy: String? = null; var prompt = ""; vm.languageCopy(locale) { id, text -> copy = id; prompt = text }; runCurrent()
+            assertNotNull(copy); assertNotEquals(original.id, copy); assertEquals(original, base.resumes.getResume(original.id)); assertTrue(prompt.contains(locale.wireValue)); assertTrue(prompt.contains("Keep hidden content unchanged")); assertEquals(original.data.summary, base.resumes.getResume(copy!!).data.summary)
+        } finally { base.close() }
     }
 }
