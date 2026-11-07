@@ -17,4 +17,5 @@ class DetailScreenshotTest : RrScreenshotTest() {
     @Test fun dark() = j6(true)
     @Test fun closed() = j6(false, "application-closed-0", "J6-Detail-closed")
     @Test fun followUp() = j6(false, StoryboardIds.fieldnote, "J6-Detail-follow-up")
+    @Test fun fitTab() = captureScreen("J6-Detail-fit-tab", false, wrap = fakeWrap()) { ApplicationRoute(StoryboardIds.lumen, WorkspaceTab.Fit, rememberNavController()) }
 }

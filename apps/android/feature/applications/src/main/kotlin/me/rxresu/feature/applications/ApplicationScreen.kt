@@ -226,7 +226,7 @@ internal fun ApplicationScreen(
     var menu by remember { mutableStateOf(false) }
     var sheet by remember { mutableStateOf<DetailSheet?>(null) }
     // A sideways swipe is a tab change too: `selection` once it settles on a new tab (taps play it in the strip).
-    var tapped by remember { mutableStateOf(-1) }
+    var tapped by remember { androidx.compose.runtime.mutableIntStateOf(-1) }
     LaunchedEffect(pager) {
         var last = pager.settledPage
         snapshotFlow { pager.settledPage }.collect { page ->

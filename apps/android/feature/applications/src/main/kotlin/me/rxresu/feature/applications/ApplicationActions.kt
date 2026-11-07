@@ -38,6 +38,8 @@ internal class ApplicationMoves(private val apps: ApplicationsRepository) {
         if (to.closedReason == null) RequestOptions(nullFields = setOf("/closedReason")) else RequestOptions(),
     )
 
+    suspend fun bulk(body: me.rxresu.core.network.generated.PatchApplicationsRequest) = apps.bulkUpdateApplications(body)
+
     /** Moves to Trash and returns what Undo needs. */
     suspend fun trash(id: String): String? {
         apps.trashApplication(id)

@@ -1,32 +1,23 @@
 package me.rxresu.feature.applications
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.toRoute
-import me.rxresu.core.designsystem.RrText
+import me.rxresu.core.navigation.Application
+import me.rxresu.core.navigation.ApplicationsTab
+import me.rxresu.core.navigation.InterviewSheet
+import me.rxresu.core.navigation.MoveApplication
 import me.rxresu.core.navigation.RrNavMotion
+import me.rxresu.core.navigation.SaveJob
 import me.rxresu.core.navigation.screen
 import me.rxresu.core.navigation.sheet
 import me.rxresu.core.navigation.tabRoot
-import me.rxresu.core.navigation.ApplicationsTab
-import me.rxresu.core.navigation.SaveJob
-import me.rxresu.core.navigation.Application
-import me.rxresu.core.navigation.MoveApplication
-import me.rxresu.core.navigation.InterviewSheet
 
-/** Registers this module's destinations. Placeholder screens until the feature lands. */
+/** Registers J1–J8: the Applications tab root, Save a job, the Application screen and its sheets. */
 fun NavGraphBuilder.applicationsGraph(nav: NavController, motion: RrNavMotion) {
-    tabRoot<ApplicationsTab>(motion) { Placeholder("J1") }
-    sheet<SaveJob> { Placeholder("J5") }
+    tabRoot<ApplicationsTab>(motion) { entry -> ApplicationsRoute(entry.toRoute<ApplicationsTab>().view, nav) }
+    sheet<SaveJob> { entry -> SaveJobRoute(entry.toRoute<SaveJob>().url, nav) }
     screen<Application> { entry -> val r = entry.toRoute<Application>(); ApplicationRoute(r.id, r.tab, nav) }
-    sheet<MoveApplication> { Placeholder("J7") }
-    sheet<InterviewSheet> { Placeholder("J8") }
+    sheet<MoveApplication> { entry -> MoveRoute(entry.toRoute<MoveApplication>().id, nav) }
+    sheet<InterviewSheet> { entry -> val r = entry.toRoute<InterviewSheet>(); InterviewRoute(r.applicationId, r.interviewId, nav) }
 }
-
-@Composable
-private fun Placeholder(id: String) = Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { RrText(id) }

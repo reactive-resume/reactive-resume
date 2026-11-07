@@ -54,7 +54,7 @@ internal fun rememberDates(zone: ZoneId): Dates {
 @Composable
 @ReadOnlyComposable
 internal fun plural(id: Int, count: Int, vararg args: Any): String =
-    CatalogPlurals.get(LocalContext.current.resources, id, count, *args)
+    CatalogPlurals.get(androidx.compose.ui.platform.LocalResources.current, id, count, *args)
 
 internal fun plural(resources: Resources, id: Int, count: Int, vararg args: Any): String = CatalogPlurals.get(resources, id, count, *args)
 
