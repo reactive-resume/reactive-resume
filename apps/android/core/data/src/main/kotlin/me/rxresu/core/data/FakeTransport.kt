@@ -134,7 +134,7 @@ internal class FakeTransport(val controls: FakeControls,private val time: TimeSo
             "updateAgentThread" -> { val thread=patch(find("threads",id!!),b).jsonObject;put("threads",thread);return thread }
             "deleteAgentThread" -> { remove("threads",id!!);return JsonNull }
             "setDefaultAiProvider" -> { setRows("providers",rows("providers").map { it.with("isDefault" to JsonPrimitive(it.text("id")==id)) });return find("providers",id!!) }
-            "testAiProvider","createAiProviderTest" -> { val provider=find("providers",id!!).with("testStatus" to JsonPrimitive("passed"),"testError" to JsonNull);put("providers",provider);return patch(sample(op),provider) }
+            "testAiProvider","createAiProviderTest" -> { val provider=find("providers",id!!).with("testStatus" to JsonPrimitive("success"),"testError" to JsonNull);put("providers",provider);return patch(sample(op),provider) }
             "getResumeStatistics" -> return patch(sample(op),buildJsonObject { put("isPublic",true);put("views",128);put("downloads",14) })
             "getResumeDailyStatistics" -> return JsonArray((0 until 30).map { day -> buildJsonObject { put("date",time.today().minusDays((29-day).toLong()).toString());put("views",if(day<8) 5 else 4);put("downloads",if(day<14) 1 else 0) } })
             "getApplicationStats" -> return buildJsonObject {
@@ -242,7 +242,7 @@ internal class FakeTransport(val controls: FakeControls,private val time: TimeSo
         }
         if(request.path.startsWith("/applications/")) return applicationOperation(request,op,id,b)
         if(op=="generateCareerWork") {
-            val kind=b.text("kind") ?: "fit"
+            val kind=(b["task"] as? JsonObject)?.text("task") ?: b.text("task") ?: "fit"
             val saved=rows("saved").firstOrNull { it["data"]?.jsonObject?.text("kind")==kind }
             return patch(sample(op),buildJsonObject { put("item",saved ?: JsonNull) })
         }
