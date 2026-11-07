@@ -10,6 +10,7 @@ dependencies {
 
 gradlePlugin {
     plugins {
+        register("apiClient") { id = "rr.android.api-client"; implementationClass = "ApiClientConventionPlugin" }
         register("library") { id = "rr.android.library"; implementationClass = "LibraryConventionPlugin" }
         register("compose") { id = "rr.android.compose"; implementationClass = "ComposeConventionPlugin" }
         register("feature") { id = "rr.android.feature"; implementationClass = "FeatureConventionPlugin" }
