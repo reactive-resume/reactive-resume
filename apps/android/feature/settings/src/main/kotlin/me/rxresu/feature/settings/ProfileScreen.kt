@@ -52,15 +52,12 @@ internal fun ProfileScreen(
     val leave = { if (s.dirty) discard = true else back() }
     BackHandler(s.dirty) { leave() }
     val locale = LocalConfiguration.current.locales[0]
+    val is24 = android.text.format.DateFormat.is24HourFormat(androidx.compose.ui.platform.LocalContext.current)
     val updated =
-        remember(s.record, locale, timezone) {
+        remember(s.record, locale, timezone, is24) {
             s.record?.reviewedAt?.let { value ->
-                runCatching {
-                        java.time.format.DateTimeFormatter.ofPattern("d MMM, HH:mm", locale)
-                            .withZone(java.time.ZoneId.of(timezone))
-                            .format(java.time.Instant.parse(value))
-                    }
-                    .getOrDefault(value)
+                val zone = runCatching { java.time.ZoneId.of(timezone) }.getOrDefault(java.time.ZoneOffset.UTC)
+                SettingsDates(locale, zone, is24).dayTime(value) ?: value
             }
         }
     SettingsFrame(
@@ -219,9 +216,9 @@ internal fun ProfileScreen(
                     NavRow(stringResource(CR.string.address)) { section = "address" }
                     NavRow(stringResource(CR.string.links)) { section = "links" }
                 }
-                s.record?.let {
+                updated?.let {
                     RrText(
-                        stringResource(R.string.screen_last_updated) + " " + it.reviewedAt,
+                        stringResource(R.string.screen_last_updated) + " " + it,
                         style = RrType.small,
                         color = RrTheme.colors.ink3,
                     )

@@ -146,7 +146,7 @@ internal class KnowledgeViewModel(repositories: RrRepositories) : CareerModel(re
 }
 
 internal enum class SaveState { Saved, Saving, KeptOnDevice, Failed }
-internal data class StoryState(val loading: Boolean = true, val draft: SaveCareerStoryRequest? = null, val status: SaveState = SaveState.Saved, val error: Boolean = false, val facts: List<CareerFact> = emptyList())
+internal data class StoryState(val loading: Boolean = true, val draft: SaveCareerStoryRequest? = null, val status: SaveState = SaveState.Saved, val error: Boolean = false, val facts: List<CareerFact> = emptyList(), val usedFor: String? = null)
 internal class StoryViewModel(repositories: RrRepositories, private val drafts: CareerDrafts, private val id: String?) : CareerModel(repositories) {
     private val key = "story:${id ?: "new"}"
     private val mutable = MutableStateFlow(StoryState())
@@ -162,7 +162,9 @@ internal class StoryViewModel(repositories: RrRepositories, private val drafts: 
         val draft = recovered ?: story?.let { SaveCareerStoryRequest(it.data.action, it.applicationId, it.data.factIds, it.id, it.data.reflection, it.data.result, it.data.situation, it.data.tags, it.data.task, it.data.title) }
             ?: if (id == null) SaveCareerStoryRequest("", id = UUID.randomUUID().toString(), situation = "", task = "", title = "") else null
         val facts = repositories.career.listCareerFacts(options = options)
-        checkOwner(); mutable.value = StoryState(false, draft, if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, draft == null, facts)
+        // Where the story is used: the application it is kept with.
+        val usedFor = (draft?.applicationId ?: story?.applicationId)?.let { scope -> repositories.applications.listApplicationSummaries(options = options).firstOrNull { it.id == scope }?.company }
+        checkOwner(); mutable.value = StoryState(false, draft, if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, draft == null, facts, usedFor)
     }
     fun change(next: SaveCareerStoryRequest) {
         generation++; mutable.update { it.copy(draft = next, status = SaveState.Saving, error = false) }

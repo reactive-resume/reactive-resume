@@ -1,7 +1,12 @@
 package me.rxresu.feature.auth
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -19,7 +24,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.graphicsLayer
@@ -32,6 +42,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import me.rxresu.core.designsystem.*
 import me.rxresu.core.designsystem.R as D
@@ -123,6 +134,7 @@ internal fun WelcomeScreen(
                     color = RrTheme.colors.ink2,
                 )
             }
+            Spacer(Modifier.height(24.dp))
             Spacer(Modifier.weight(1f))
             Column(
                 Modifier.padding(horizontal = 16.dp),
@@ -455,30 +467,7 @@ internal fun TwoStepScreen(
                         ),
                     keyboardActions = KeyboardActions(onDone = { verify() }),
                 )
-                Row(
-                    Modifier.background(RrTheme.colors.bg).clearAndSetSemantics {},
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    repeat(6) { i ->
-                        Box(
-                            Modifier.weight(1f)
-                                .height(56.dp)
-                                .background(RrTheme.colors.raised, RrShape.md)
-                                .border(
-                                    1.dp,
-                                    if (i == s.code.length) RrTheme.colors.accent
-                                    else RrTheme.colors.controlBorder,
-                                    RrShape.md,
-                                ),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            RrText(
-                                s.code.getOrNull(i)?.toString().orEmpty(),
-                                style = RrType.heading.copy(fontFamily = RrType.mono.fontFamily),
-                            )
-                        }
-                    }
-                }
+                OtpBoxes(s.code, Modifier.background(RrTheme.colors.bg).clearAndSetSemantics {})
             }
         }
         AuthError(s.error)
@@ -497,6 +486,47 @@ internal fun TwoStepScreen(
             Modifier.align(Alignment.CenterHorizontally),
             variant = RrButtonVariant.GhostAccent,
         )
+    }
+}
+
+// TODO(lead): move to designsystem with the one-time-code input (see the TODO in TwoStepScreen).
+/**
+ * Six code boxes in Geist Mono. One accent ring marks the box the next digit goes in and slides to it at `d1`; a caret
+ * blinks inside it. Reduced motion and screenshots hold both still.
+ */
+@Composable
+private fun OtpBoxes(code: String, modifier: Modifier = Modifier) {
+    val c = RrTheme.colors
+    val still = RrTheme.reducedMotion || LocalInspectionMode.current
+    val current = code.length.coerceAtMost(5)
+    BoxWithConstraints(modifier) {
+        val gap = 8.dp
+        val box = (maxWidth - gap * 5) / 6
+        Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
+            repeat(6) { i ->
+                Box(
+                    Modifier.weight(1f).height(56.dp).background(c.raised, RrShape.md).border(1.dp, c.controlBorder, RrShape.md),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    RrText(code.getOrNull(i)?.toString().orEmpty(), style = RrType.heading.copy(fontFamily = RrType.mono.fontFamily))
+                }
+            }
+        }
+        if (code.length < 6) {
+            val x by animateDpAsState((box + gap) * current, tween(if (still) 0 else RrMotion.D1, easing = RrMotion.ease), label = "otp-ring")
+            val caret = if (still) 1f else rememberInfiniteTransition(label = "otp-caret").animateFloat(
+                1f, 0f, infiniteRepeatable(keyframes { durationMillis = 1060; 1f at 0; 1f at 529; 0f at 530; 0f at 1060 }), label = "otp-blink",
+            ).value
+            Box(
+                Modifier.offset { IntOffset(x.roundToPx(), 0) }.size(box, 56.dp)
+                    .drawBehind {
+                        val w = 3.dp.toPx()
+                        drawRoundRect(c.accentSoft, Offset(-w / 2, -w / 2), Size(size.width + w, size.height + w), CornerRadius(RrRadius.md.toPx() + w / 2), Stroke(w))
+                    }
+                    .border(1.dp, c.accent, RrShape.md),
+                contentAlignment = Alignment.Center,
+            ) { Box(Modifier.size(1.5.dp, 24.dp).graphicsLayer { alpha = caret }.background(c.accent)) }
+        }
     }
 }
 

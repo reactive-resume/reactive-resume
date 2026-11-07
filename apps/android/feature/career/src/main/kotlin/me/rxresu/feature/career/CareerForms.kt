@@ -6,6 +6,12 @@ import androidx.compose.ui.res.stringResource
 import me.rxresu.core.strings.R as CoreStrings
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.Animatable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,12 +76,36 @@ import me.rxresu.core.network.generated.*
         }
     }
 }
-@Composable private fun ChipList(label: String, values: List<String>, addLabel: String, change: (List<String>) -> Unit, max: Int = 20) {
+// TODO(lead): move to designsystem. Removable chip on accent-soft (C5 lists, C7 "Look for"): 32 dp like RrAddChip,
+// the × names what it removes, and it fades in at d1 when added.
+@Composable internal fun AccentChip(text: String, remove: () -> Unit) {
+    val c = RrTheme.colors; val haptic = rememberRrHaptics()
+    val reduced = RrTheme.reducedMotion
+    val alpha = remember { Animatable(if (reduced) 1f else 0f) }
+    LaunchedEffect(Unit) { alpha.animateTo(1f, tween(RrMotion.D1)) }
+    val label = stringResource(Icons.string.ds_remove_item, text)
+    Row(Modifier.graphicsLayer { this.alpha = alpha.value }.defaultMinSize(minHeight = 32.dp).clip(RrShape.sm).background(c.accentSoft).padding(start = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically) {
+        RrText(text, Modifier.padding(vertical = 6.dp), style = RrType.ui, color = c.accentText)
+        Box(Modifier.size(32.dp).clickable(role = Role.Button, onClickLabel = label) { haptic(RrHaptic.Light); remove() }.semantics { contentDescription = label }, contentAlignment = Alignment.Center) {
+            RrIcon(Icons.drawable.ic_ph_x, null, size = 16.dp, tint = c.accentText)
+        }
+    }
+}
+
+/** Sheet actions under a hairline, inset like the boards. */
+@Composable internal fun SheetFooter(content: @Composable ColumnScope.() -> Unit) = Column {
+    Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
+    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), content = content)
+}
+
+/** Chips for a list of words with an inline field behind "Add" (Return adds). */
+@Composable internal fun ChipList(label: String?, values: List<String>, addLabel: String, change: (List<String>) -> Unit, max: Int = 20, helper: String? = null) {
     var adding by remember { mutableStateOf(false) }; var text by rememberSaveable { mutableStateOf("") }
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        RrText(label, style = RrType.fieldLabel, color = RrTheme.colors.ink2)
+        if (label != null) RrText(label, style = RrType.fieldLabel, color = RrTheme.colors.ink2)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            values.forEach { value -> RrContextChip(value, onRemove = { change(values - value) }) }
+            values.forEach { value -> key(value) { AccentChip(value) { change(values - value) } } }
             if (values.size < max) RrAddChip(addLabel, { adding = true })
         }
         if (adding) {
@@ -84,6 +114,7 @@ import me.rxresu.core.network.generated.*
                 RrIconButton(Icons.drawable.ic_ph_plus, addLabel, submit, size = RrIconButtonSize.Small, enabled = text.isNotBlank())
             })
         }
+        if (helper != null) RrText(helper, style = RrType.small, color = RrTheme.colors.ink3)
     }
 }
 @Composable private fun RequirementStepper(label: String, value: Long?, max: Long, change: (Long?) -> Unit, suffix: String = "") = Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -96,9 +127,9 @@ import me.rxresu.core.network.generated.*
 @Composable internal fun RoleSuggestionsSheet(state: PreferencesState, close: () -> Unit, generate: (TestAiProviderResponse, String?, Boolean) -> Unit, apply: (List<String>) -> Unit) {
     var provider by remember { mutableStateOf<String?>(null) }; var resume by remember { mutableStateOf<String?>(null) }; var knowledge by remember { mutableStateOf(true) }
     var selected by remember(state.suggestions) { mutableStateOf(state.suggestions.toSet()) }
-    RrBottomSheet(close, title = stringResource(R.string.career_suggest_target_roles_15ef23), initialDetent = 1, footer = {
+    RrBottomSheet(close, title = stringResource(R.string.career_suggest_target_roles_15ef23), initialDetent = 1, footer = { SheetFooter {
         if (state.suggestions.isNotEmpty()) RrButton(stringResource(R.string.career_use_reviewed_roles_in_preferences_9c179a), { apply(state.suggestions.filter { it in selected }) }, Modifier.fillMaxWidth(), enabled = selected.isNotEmpty(), size = RrButtonSize.Large)
-    }) {
+    } }) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             ChoicePicker(state.providers.firstOrNull { it.id == provider }?.label ?: stringResource(R.string.career_choose_a_connection_428239), stringResource(R.string.career_ai_connection_6497f8), state.providers.map { it.id to it.label }, { provider = it })
             ChoicePicker(state.resumes.firstOrNull { it.id == resume }?.name ?: stringResource(R.string.career_none_6eef66), stringResource(R.string.career_resume_to_share_f54e59), listOf("" to stringResource(R.string.career_none_6eef66)) + state.resumes.map { it.id to it.name }, { resume = it.ifEmpty { null } })
@@ -120,7 +151,7 @@ import me.rxresu.core.network.generated.*
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         RrText(stringResource(R.string.career_countries_to_search_a05336), style = RrType.fieldLabel, color = RrTheme.colors.ink2)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            values.forEach { code -> RrContextChip(countries.firstOrNull { it.first == code }?.second ?: code, onRemove = { change(values - code) }) }
+            values.forEach { code -> key(code) { AccentChip(countries.firstOrNull { it.first == code }?.second ?: code) { change(values - code) } } }
             if (values.size < 3) RrAddChip(stringResource(R.string.career_add_a_country_3c7a6e), { open = true })
         }
     }

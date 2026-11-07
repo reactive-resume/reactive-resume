@@ -5,6 +5,7 @@ import me.rxresu.core.strings.R as CoreStrings
 
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,6 +24,7 @@ import me.rxresu.core.network.generated.*
 
 @Composable internal fun ScheduleScreen(state: ScheduleState, today: LocalDate, zone: ZoneId, close: () -> Unit, retry: () -> Unit, save: (SaveCareerScheduleRequest) -> Unit, delete: () -> Unit) {
     val interfaceLocale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
+    val format = rememberCareerTime()
     val existing = state.existing
     var kind by remember(existing) { mutableStateOf(SaveCareerScheduleRequestKind.entries.firstOrNull { it.wireValue == existing?.kind } ?: SaveCareerScheduleRequestKind.Discovery) }
     var query by remember(state.profile, existing) { mutableStateOf(existing?.query ?: (state.profile?.targetRoles.orEmpty() + state.profile?.locations.orEmpty()).joinToString(", ")) }
@@ -42,7 +44,7 @@ import me.rxresu.core.network.generated.*
     val instant = zonedScheduleInstant(date, time, zone)
     val valid = (kind != SaveCareerScheduleRequestKind.Discovery || !enabled || state.web?.search == true) && instant != null && (!enabled || !needsAi || chosen != null) &&
         (kind == SaveCareerScheduleRequestKind.Discovery && query.isNotBlank() || kind == SaveCareerScheduleRequestKind.FollowUp && application != null || kind == SaveCareerScheduleRequestKind.Prepare && interview != null)
-    RrBottomSheet(close, title = if (existing == null) stringResource(R.string.career_new_schedule_3e70c3) else stringResource(R.string.career_edit_schedule_9850bc), initialDetent = 1, confirmDiscard = dirty, footer = {
+    RrBottomSheet(close, title = if (existing == null) stringResource(R.string.career_new_schedule_3e70c3) else stringResource(R.string.career_edit_schedule_9850bc), initialDetent = 1, confirmDiscard = dirty, footer = { SheetFooter {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (existing != null) RrButton(stringResource(R.string.career_delete_f6fdbe), delete, variant = RrButtonVariant.DangerGhost, size = RrButtonSize.Large)
             RrButton(stringResource(R.string.career_save_schedule_f22020), {
@@ -52,24 +54,26 @@ import me.rxresu.core.network.generated.*
                     locale = interfaceLocale.toLanguageTag(), nextRunAt = requireNotNull(instant), query = query, timezone = zone.id))
             }, Modifier.weight(1f), size = RrButtonSize.Large, enabled = valid && state.available && !state.busy, loading = state.busy)
         }
-    }) {
+    } }) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             if (state.loading) CareerLoading() else if (!state.available) RrCallout(stringResource(R.string.career_scheduled_work_is_not_available_on_this_server_ask_your_serv_89dc73), tone = RrTone.Warn) else {
                 if (state.error) CareerError(retry)
                 RrText(stringResource(R.string.career_what_should_run_936709), style = RrType.fieldLabel, color = RrTheme.colors.ink2)
                 val modes = listOf(SaveCareerScheduleRequestKind.Discovery, SaveCareerScheduleRequestKind.Prepare, SaveCareerScheduleRequestKind.FollowUp)
                 RrSegmentedControl(listOf(RrSegment(stringResource(R.string.career_find_roles_48a2e1)), RrSegment(stringResource(R.string.career_interview_prep_8a58c6)), RrSegment(stringResource(R.string.career_remind_me_25df3f))), modes.indexOf(kind), { kind = modes[it]; dirty = true })
-                Crossfade(kind, animationSpec = tween(if (RrTheme.reducedMotion) 0 else RrMotion.D2), label = "schedule-mode") { mode ->
+                // Fields crossfade (d2) while everything below follows the new height with ease-drawer.
+                Crossfade(kind, Modifier.animateContentSize(tween(if (RrTheme.reducedMotion) 0 else RrMotion.D3, easing = RrMotion.easeDrawer)), animationSpec = tween(if (RrTheme.reducedMotion) 0 else RrMotion.D2), label = "schedule-mode") { mode ->
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         when (mode) {
                             SaveCareerScheduleRequestKind.Discovery -> {
-                                RrTextField(query, { query = it; dirty = true }, label = stringResource(R.string.career_look_for_394162), helper = stringResource(R.string.career_roles_places_and_companies_starts_from_your_preferences_1c6aa4), singleLine = false)
+                                // One query string on the wire; terms read as chips like the storyboard.
+                                ChipList(stringResource(R.string.career_look_for_394162), queryTerms(query), stringResource(CoreStrings.string.add), { query = it.joinToString(", "); dirty = true }, helper = stringResource(R.string.career_roles_places_and_companies_starts_from_your_preferences_1c6aa4))
                                 RrText(stringResource(R.string.career_how_often_bd8848), style = RrType.fieldLabel, color = RrTheme.colors.ink2)
                                 RrSegmentedControl(listOf(RrSegment(stringResource(R.string.career_every_day_3b2eb5)), RrSegment(stringResource(R.string.career_every_3_days_8c5bdf)), RrSegment(stringResource(R.string.career_every_week_043058))), listOf(1, 3, 7).indexOf(interval).coerceAtLeast(0), { interval = listOf(1, 3, 7)[it]; dirty = true })
                             }
                             SaveCareerScheduleRequestKind.Prepare -> {
                                 val interviews = state.applications.flatMap { app -> app.activity.filterIsInstance<Interview>().map { app to it } }
-                                ChoicePicker(interviews.firstOrNull { it.second.id == interview }?.let { it.first.company + " · " + it.second.at } ?: stringResource(R.string.career_choose_interview_56ae59), stringResource(R.string.career_interview_19ad8e), interviews.map { it.second.id to (it.first.company + " · " + it.second.at) }, { id -> interview = id; application = interviews.first { it.second.id == id }.first.id; dirty = true })
+                                ChoicePicker(interviews.firstOrNull { it.second.id == interview }?.let { it.first.company + " · " + format.dayTime(it.second.at) } ?: stringResource(R.string.career_choose_interview_56ae59), stringResource(R.string.career_interview_19ad8e), interviews.map { it.second.id to (it.first.company + " · " + format.dayTime(it.second.at)) }, { id -> interview = id; application = interviews.first { it.second.id == id }.first.id; dirty = true })
                                 ChoicePicker(when (lead) { SaveCareerScheduleRequestLead.Value2h -> stringResource(R.string.career_2_hours_before_3f722f); SaveCareerScheduleRequestLead.Morning -> stringResource(R.string.career_morning_of_af4500); else -> stringResource(R.string.career_24_hours_before_d90471) }, stringResource(R.string.career_prepare_a_briefing_a8598c), listOf("24h" to stringResource(R.string.career_24_hours_before_d90471), "2h" to stringResource(R.string.career_2_hours_before_3f722f), "morning" to stringResource(R.string.career_morning_of_af4500)), { value -> lead = SaveCareerScheduleRequestLead.entries.first { it.wireValue == value }; dirty = true })
                             }
                             else -> {
@@ -81,7 +85,7 @@ import me.rxresu.core.network.generated.*
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Box(Modifier.weight(1f)) { DateEntry(if (kind == SaveCareerScheduleRequestKind.FollowUp) stringResource(R.string.career_remind_me_on_e99267) else stringResource(R.string.career_first_run_23ea05), date.toString(), { date = LocalDate.parse(it); dirty = true }) }
-                    RrPickerField(time.toString(), { timePicker = true }, Modifier.weight(1f), label = stringResource(R.string.career_time_1_s_549524, zone.id.substringAfter('/').replace('_', ' ')))
+                    RrPickerField(format.time(time), { timePicker = true }, Modifier.weight(1f), label = stringResource(R.string.career_time_1_s_549524, zone.id.substringAfter('/').replace('_', ' ')))
                 }
                 if (instant == null) RrCallout(stringResource(R.string.career_choose_another_time_this_time_changes_with_daylight_saving_0c004a), tone = RrTone.Warn)
                 if (needsAi) {
@@ -102,3 +106,46 @@ import me.rxresu.core.network.generated.*
     }
     if (timePicker) RrBottomSheet({ timePicker = false }, title = stringResource(R.string.career_time_6c82e6), fitContent = true) { RrTimePicker(time, { time = it; dirty = true; timePicker = false }, Modifier.padding(16.dp)) }
 }
+
+@Composable internal fun scheduleTitle(kind: String): String = stringResource(when (kind) {
+    "discovery" -> R.string.career_find_roles_48a2e1
+    "follow-up" -> R.string.career_remind_me_25df3f
+    else -> R.string.career_interview_prep_8a58c6
+})
+@Composable private fun leadLabel(lead: String?): String = stringResource(when (lead) {
+    "2h" -> R.string.career_2_hours_before_3f722f
+    "morning" -> R.string.career_morning_of_af4500
+    else -> R.string.career_24_hours_before_d90471
+})
+
+/** The web's schedule status line (career/today.tsx): "Daily at 07:00 · next Mon 9 Nov", "Paused · …", a one-off's outcome. */
+@Composable internal fun scheduleStatus(row: CareerSchedule, time: CareerTime): String {
+    val day = time.day(row.nextRunAt).orEmpty()
+    if (row.intervalDays == null && row.lastQueuedAt != null) return when (row.lastRun?.status) {
+        ListCareerSchedulesResponseItemLastRunStatus.Failed -> stringResource(R.string.career_run_failed_on, day)
+        ListCareerSchedulesResponseItemLastRunStatus.Queued, ListCareerSchedulesResponseItemLastRunStatus.Running -> stringResource(R.string.career_running_on, day)
+        else -> if (row.kind == "discovery" || row.kind == "follow-up") stringResource(R.string.career_done_on, day) else stringResource(R.string.career_ran_on, day)
+    }
+    if (row.lastRun?.status == ListCareerSchedulesResponseItemLastRunStatus.Failed) return stringResource(R.string.career_last_run_failed)
+    val line = when (row.kind) {
+        "discovery" -> {
+            val clock = time.time(row.nextRunAt).orEmpty()
+            when (val days = row.intervalDays ?: 1L) {
+                1L -> stringResource(R.string.career_daily_at, clock, day)
+                7L -> stringResource(R.string.career_weekly_at, clock, day)
+                else -> stringResource(R.string.career_every_days_at, days.toString(), clock, day)
+            }
+        }
+        "follow-up" -> time.dayTime(row.nextRunAt).orEmpty()
+        else -> leadLabel(row.lead) + " · " + time.dayTime(row.nextRunAt).orEmpty()
+    }
+    return if (row.enabled) line else stringResource(R.string.career_paused_line, line)
+}
+
+/** C1's one-line summary: "Find roles is on · next Mon 9 Nov, 07:00", or "Paused" when none run. */
+@Composable internal fun scheduleSummary(rows: List<CareerSchedule>, time: CareerTime): String? =
+    rows.firstOrNull { it.enabled }?.let { stringResource(R.string.career_schedule_is_on, scheduleTitle(it.kind), time.dayTime(it.nextRunAt).orEmpty()) }
+        ?: rows.firstOrNull()?.let { stringResource(CoreStrings.string.paused) }
+
+/** "Senior product designer, Lisbon" → its terms, for chips. */
+internal fun queryTerms(query: String): List<String> = query.split(',').map { it.trim() }.filter { it.isNotEmpty() }.distinct()

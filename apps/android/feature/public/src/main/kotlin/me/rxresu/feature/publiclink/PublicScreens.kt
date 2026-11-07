@@ -36,8 +36,9 @@ import me.rxresu.core.page.PageRenderer
 import me.rxresu.core.page.RenderedDocument
 
 @Composable internal fun PublicScreen(state: PublicState, link: String, renderer: PageRenderer, password: (String) -> Unit, retry: () -> Unit, back: () -> Unit, share: () -> Unit, download: () -> Unit, word: () -> Unit, edit: () -> Unit, browser: () -> Unit, comments: () -> Unit) {
-    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).windowInsetsPadding(WindowInsets.navigationBars).imePadding()) {
-        RrTopBar(state.feedback?.ownerName ?: state.resume?.data?.basics?.name ?: stringResource(R.string.public_resume_b3bd0b), onBack = back, status = { RrText(link.removePrefix("https://"), style = RrType.mono.copy(textDirection = TextDirection.Ltr), maxLines = 1) }, actions = {
+    // The bottom bar's surface runs under the gesture area; its content stays above it.
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).imePadding()) {
+        RrTopBar(state.feedback?.ownerName ?: state.resume?.data?.basics?.name ?: stringResource(R.string.public_resume_b3bd0b), onBack = back, status = { RrText(link.removePrefix("https://"), style = RrType.small.copy(textDirection = TextDirection.Ltr), maxLines = 1) }, actions = {
             if (state.owner) RrButton(stringResource(R.string.public_edit_530164), edit, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small)
             if (state.feedback != null) RrIconButton(Icons.drawable.ic_ph_chat_circle, stringResource(R.string.public_comments_fce06e), comments)
             RrIconButton(Icons.drawable.ic_ph_share_network, stringResource(R.string.public_share_link_3c1362), share)
@@ -61,7 +62,8 @@ import me.rxresu.core.page.RenderedDocument
                 }
             }
         }
-        Row(Modifier.fillMaxWidth().background(RrTheme.colors.surface).padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
+        Row(Modifier.fillMaxWidth().background(RrTheme.colors.surface).windowInsetsPadding(WindowInsets.navigationBars).padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             RrText(stringResource(R.string.public_made_with_reactive_resume_21751a), Modifier.weight(1f), style = RrType.small, color = RrTheme.colors.ink3)
             if (state.resume?.allowWordDownload == true) RrButton(stringResource(R.string.public_word_44363c), word, variant = RrButtonVariant.Secondary, size = RrButtonSize.Large)
             if (state.resume?.showDownloadButtons == true && state.document != null) RrButton(stringResource(R.string.public_download_pdf_98e5ef), download, size = RrButtonSize.Large, icon = Icons.drawable.ic_ph_download_simple)
@@ -172,12 +174,13 @@ internal fun pdfMarkers(findings: List<CreatePdfCheckResponseTipsItem>, page: In
                     RrScoreRing(result.score.toInt())
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         RrText(when { result.score >= 80 -> stringResource(R.string.public_reads_cleanly_8b490c); result.score >= 60 -> stringResource(R.string.public_mostly_readable_47ef7c); else -> stringResource(R.string.public_hard_for_software_to_read_154936) }, style = RrType.label)
-                        RrText(result.file.name, style = RrType.mono, color = RrTheme.colors.ink3)
+                        val context = androidx.compose.ui.platform.LocalContext.current
+                        RrText(result.file.name + " · " + android.text.format.Formatter.formatShortFileSize(context, result.file.sizeBytes.toLong()), style = RrType.mono, color = RrTheme.colors.ink3)
                     }
                 }
                 RrSegmentedControl(listOf(RrSegment(stringResource(R.string.public_what_a_person_sees_0b5c22)), RrSegment(stringResource(R.string.public_what_a_parser_reads_58404d))), if (parser) 1 else 0, { parser = it == 1 }, Modifier.padding(horizontal = 16.dp))
                 Crossfade(parser, animationSpec = tween(if (RrTheme.reducedMotion) 0 else RrMotion.D2), label = "ats-view") { showParser ->
-                    if (showParser) SelectionContainer { RrCard(Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp), contentPadding = PaddingValues(12.dp)) { RrText(result.fullText, style = RrType.mono, color = RrTheme.colors.ink2) } }
+                    if (showParser) SelectionContainer { Box(Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp).fillMaxWidth().background(RrTheme.colors.sunken, RrShape.lg).padding(12.dp)) { RrText(result.fullText, style = RrType.mono, color = RrTheme.colors.ink2) } }
                     else if (localDocument != null) Box(Modifier.fillMaxWidth().height(400.dp)) { DocumentPages(localDocument, renderer, result.findings) }
                 }
                 if (result.findings.any { it.code.wireValue in setOf("NO_TEXT_LAYER", "IMAGE_ONLY_DOCUMENT") }) Column(Modifier.padding(16.dp)) {
@@ -187,13 +190,20 @@ internal fun pdfMarkers(findings: List<CreatePdfCheckResponseTipsItem>, page: In
                 RrSectionHeader(stringResource(R.string.public_fix_these_in_a_few_minutes_fd9f00))
                 RrListGroup(Modifier.padding(horizontal = 16.dp)) { result.findings.forEachIndexed { index, finding ->
                     val message = findingMessage(finding.code.wireValue)
-                    RrListRow(message.first, subtitle = message.second, leading = { RrBadge((index + 1).toString(), tone = RrBadgeTone.Warn) })
+                    RrListRow(message.first, subtitle = message.second, leading = { IssueMarker(index + 1) })
                 } }
                 RrText(stringResource(R.string.public_the_server_checked_this_pdf_without_storing_it_the_score_ref_1b76d6), Modifier.padding(16.dp), style = RrType.small, color = RrTheme.colors.ink3)
-                RrText(stringResource(R.string.public_1_s_skipped_checks_0e7943, result.skippedChecks.toInt().toString()), Modifier.padding(horizontal = 16.dp), style = RrType.small, color = RrTheme.colors.ink3)
+                if (result.skippedChecks > 0) RrText(stringResource(R.string.public_1_s_skipped_checks_0e7943, result.skippedChecks.toInt().toString()), Modifier.padding(horizontal = 16.dp), style = RrType.small, color = RrTheme.colors.ink3)
                 result.jd?.let { jd -> RrCard(Modifier.padding(16.dp)) { RrText(stringResource(R.string.public_posting_terms_bf4a60), style = RrType.label); RrText(stringResource(R.string.public_matched_terms_822688), style = RrType.small); RrText(jd.matchedTerms.joinToString(", "), style = RrType.small); RrText(stringResource(R.string.public_missing_terms_e30eec), style = RrType.small); RrText(jd.missingTerms.joinToString(", "), style = RrType.small) } }
             }
         }
+        if (state.result != null) Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
         if (state.result != null) RrButton(stringResource(R.string.public_edit_it_in_reactive_resume_de0fbf), edit, Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), size = RrButtonSize.Large)
     }
+}
+
+// TODO(lead): move to designsystem. Check issue marker: the number in warn-ink on a solid warn square (Tokens: warn is
+// for marks, warn-ink for their numbers), as on B9 and P2.
+@Composable private fun IssueMarker(number: Int) = Box(Modifier.size(16.dp).background(RrTheme.colors.warn, RrShape.sm), contentAlignment = Alignment.Center) {
+    RrText(number.toString(), style = RrType.mono.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold), color = RrTheme.colors.warnInk, maxLines = 1)
 }

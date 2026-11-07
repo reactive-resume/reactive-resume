@@ -6,7 +6,13 @@ import androidx.compose.ui.res.stringResource
 import me.rxresu.core.strings.R as CoreStrings
 
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +26,28 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import me.rxresu.core.designsystem.*
 import me.rxresu.core.designsystem.R as Icons
 import me.rxresu.core.navigation.KnowledgeTab
@@ -39,6 +66,7 @@ import kotlinx.coroutines.launch
     practice: () -> Unit, setupAi: () -> Unit, all: () -> Unit,
 ) {
     val header = rememberRrLargeTitleState()
+    val time = rememberCareerTime()
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
         RrLargeTitleHeader(stringResource(R.string.career_career_348f0b), header, actions = {
             RrIconButton(Icons.drawable.ic_ph_magnifying_glass, stringResource(R.string.career_search_bce064), search)
@@ -68,7 +96,7 @@ import kotlinx.coroutines.launch
                     }
                     RrSectionHeader(stringResource(R.string.career_recent_conversations_2eff3a), actionLabel = stringResource(R.string.career_all_6a7208), onAction = all)
                     if (state.threads.isEmpty()) RrEmptyState(stringResource(R.string.career_no_conversations_yet_f58811), stringResource(R.string.career_ask_about_your_next_career_step_ba2404), Modifier.padding(horizontal = 16.dp))
-                    else RrListGroup(Modifier.padding(horizontal = 16.dp)) { state.threads.take(1).forEach { t -> RrListRow(t.title, subtitle = t.lastMessageAt.take(10), icon = Icons.drawable.ic_ph_chat_circle, onClick = { thread(t.id) }) } }
+                    else RrListGroup(Modifier.padding(horizontal = 16.dp)) { state.threads.take(1).forEach { t -> RrListRow(t.title, subtitle = time.relativeDay(t.lastMessageAt), icon = Icons.drawable.ic_ph_chat_circle, onClick = { thread(t.id) }) } }
                     RrSectionHeader(stringResource(R.string.career_knowledge_dec1fc))
                     RrListGroup(Modifier.padding(horizontal = 16.dp)) {
                         RrListRow(stringResource(R.string.career_facts_aeff1b), icon = Icons.drawable.ic_ph_book_open, onClick = { knowledge(KnowledgeTab.Facts) }, trailing = { RrRowValue(state.facts.size.toString()) })
@@ -77,8 +105,8 @@ import kotlinx.coroutines.launch
                     }
                     RrSectionHeader(stringResource(R.string.career_decide_and_plan_167ea4))
                     RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                        RrListRow(stringResource(R.string.career_offers_43c943), subtitle = state.offers.firstOrNull()?.let { listOfNotNull(it.application?.company, (it.data as? Offer)?.respondBy).joinToString(" · ") }, icon = Icons.drawable.ic_ph_scales, onClick = offers, trailing = { RrRowCaret() })
-                        RrListRow(stringResource(R.string.career_schedules_26d9d0), subtitle = if (!state.scheduling) stringResource(R.string.career_not_available_on_this_server_911d05) else state.schedules.joinToString(" · ") { it.query.ifBlank { it.kind } }, icon = Icons.drawable.ic_ph_timer, onClick = schedules, trailing = { RrRowCaret() })
+                        RrListRow(stringResource(R.string.career_offers_43c943), subtitle = state.offers.firstOrNull()?.let { offer -> listOfNotNull(offer.application?.company, time.day((offer.data as? Offer)?.respondBy)?.let { stringResource(CoreStrings.string.respond_by_respondby, it) }).joinToString(" · ") }, icon = Icons.drawable.ic_ph_scales, onClick = offers, trailing = { RrRowCaret() })
+                        RrListRow(stringResource(R.string.career_schedules_26d9d0), subtitle = if (!state.scheduling) stringResource(R.string.career_not_available_on_this_server_911d05) else scheduleSummary(state.schedules, time), icon = Icons.drawable.ic_ph_timer, onClick = schedules, trailing = { RrRowCaret() })
                         RrListRow(stringResource(R.string.career_practice_without_an_application_bfa55d), icon = Icons.drawable.ic_ph_microphone, onClick = practice, trailing = { RrRowCaret() })
                     }
                     Spacer(Modifier.height(16.dp))
@@ -95,25 +123,48 @@ import kotlinx.coroutines.launch
     back: () -> Unit, chooseProvider: () -> Unit, more: () -> Unit, retry: () -> Unit, knowledge: () -> Unit, setup: () -> Unit,
     send: () -> Unit, stop: () -> Unit, rememberFact: (CoachFact) -> Unit, dismissFact: (String) -> Unit, copyReply: (String) -> Unit, shareReply: (String) -> Unit = {}, contextUsed: (kotlinx.serialization.json.JsonObject) -> Unit = {},
 ) {
+    val c = RrTheme.colors
     val scroll = rememberScrollState()
     val dragging by scroll.interactionSource.collectIsDraggedAsState()
     var follow by remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
-    LaunchedEffect(dragging, scroll.value) { if (dragging) follow = scroll.value >= scroll.maxValue }
+    val density = LocalDensity.current
+    val reduced = RrTheme.reducedMotion
+    // MessageScroller rules: a sent question settles near the top, the reply streams in below it, and the view follows
+    // the stream only while it is at the bottom. Leaving the bottom shows "Latest".
+    val tops = remember { mutableStateMapOf<String, Int>() }
+    var end by remember { mutableIntStateOf(0) }
+    var viewport by remember { mutableIntStateOf(0) }
+    var settled by remember { mutableStateOf<String?>(null) }
+    val lastQuestion = state.messages.lastOrNull { it.mine }?.id
+    LaunchedEffect(lastQuestion, state.busy) { if (state.busy && lastQuestion != null && lastQuestion != settled) { settled = lastQuestion; follow = true } }
+    LaunchedEffect(settled) {
+        val id = settled ?: return@LaunchedEffect
+        val target = snapshotFlow { tops[id] }.filterNotNull().first()
+        snapshotFlow { scroll.maxValue }.first { it >= target }
+        if (reduced) scroll.scrollTo(target) else scroll.animateScrollTo(target, tween(RrMotion.D2, easing = RrMotion.ease))
+    }
+    LaunchedEffect(dragging) { if (dragging) snapshotFlow { scroll.value >= scroll.maxValue }.collect { follow = it } }
     LaunchedEffect(state.messages.lastOrNull()?.text) { if (follow) scroll.scrollTo(scroll.maxValue) }
-    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).windowInsetsPadding(WindowInsets.navigationBars).imePadding()) {
+    val gutters = with(density) { 28.dp.roundToPx() }
+    val room = settled?.let { tops[it] }?.let { top -> (viewport - (end - top) - gutters).coerceAtLeast(0) } ?: 0
+    Column(Modifier.fillMaxSize().background(c.bg).windowInsetsPadding(WindowInsets.navigationBars).imePadding()) {
         RrTopBar(stringResource(R.string.career_coach_b32c9a), onBack = back, actions = {
             RrContextChip(state.providers.firstOrNull { it.id == state.selected }?.let { it.label + " · " + it.model } ?: stringResource(R.string.career_choose_a_connection_428239), onClick = chooseProvider)
             RrIconButton(Icons.drawable.ic_ph_dots_three, stringResource(R.string.career_more_for_this_conversation_f3f947), more)
         })
-        Column(Modifier.weight(1f).verticalScroll(scroll).padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.weight(1f).onSizeChanged { viewport = it.height }.verticalScroll(scroll).padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (state.loading) CareerLoading() else {
                 if (state.error) CareerError(retry)
                 state.messages.forEachIndexed { index, m ->
-                    if (m.mine) Row(Modifier.fillMaxWidth()) { Spacer(Modifier.weight(1f)); RrCard(Modifier.fillMaxWidth(.84f), contentPadding = PaddingValues(12.dp)) { RrText(m.text, style = RrType.body) } }
+                    if (m.mine) Row(Modifier.fillMaxWidth().onGloballyPositioned { tops[m.id] = it.positionInParent().y.toInt() }) {
+                        Spacer(Modifier.weight(1f))
+                        // User bubble: sunken, no edge, at most 84% of the column (C2).
+                        Box(Modifier.fillMaxWidth(.84f).background(c.sunken, RrShape.lg).padding(horizontal = 12.dp, vertical = 10.dp)) { RrText(m.text, style = RrType.body) }
+                    }
                     else {
                         var actions by remember(m.id) { mutableStateOf(false) }
-                        RrText(m.text, Modifier.combinedClickable(onClick = {}, onLongClick = { actions = true }, onLongClickLabel = stringResource(R.string.career_reply_options_101219)), style = RrType.body)
+                        CoachMarkdown(m.text, Modifier.fillMaxWidth().combinedClickable(onClick = {}, onLongClick = { actions = true }, onLongClickLabel = stringResource(R.string.career_reply_options_101219)))
                         RrMenu(actions, { actions = false }) {
                             RrMenuItem(stringResource(R.string.career_copy_af74f7), { copyReply(m.text); actions = false })
                             RrMenuItem(stringResource(R.string.career_share_09ca55), { shareReply(m.text); actions = false })
@@ -132,29 +183,40 @@ import kotlinx.coroutines.launch
                         part["type"].toString().trim('"') == "tool-ask_user_question" && part["state"].toString().trim('"') == "input-available"
                 } }) RrCallout(stringResource(R.string.career_continue_browser), tone = RrTone.Info,
                     actionLabel = stringResource(R.string.career_open_in_browser_052269), onAction = more)
-                state.pendingFacts.forEach { proposal ->
-                    RrCard {
-                        RrText(proposal.fact.text, style = RrType.small)
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            RrButton(if (proposal.savedId == null) stringResource(R.string.career_remember_281f30) else stringResource(R.string.career_view_fact_b34722), { if (proposal.savedId == null) rememberFact(proposal) else knowledge() }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
-                            RrButton(stringResource(R.string.career_not_now_e45714), { dismissFact(proposal.callId) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
-                        }
-                    }
-                }
+                state.pendingFacts.forEach { proposal -> key(proposal.callId) { Folding(visible = true, appear = true) { RememberPrompt(proposal, rememberFact, dismissFact, knowledge) } } }
                 if (state.providers.isEmpty() && !state.loading) RrEmptyState(stringResource(R.string.career_connect_an_ai_provider_to_use_the_coach_cd023a), stringResource(R.string.career_nothing_is_sent_until_you_choose_a_connection_for_this_conve_4fe026), actionLabel = stringResource(R.string.career_add_ai_provider_9ce5e6), onAction = setup)
             }
+            Box(Modifier.onGloballyPositioned { end = it.positionInParent().y.toInt() })
+            if (room > 0) Spacer(Modifier.height(with(density) { room.toDp() }))
         }
+        Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
         Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (state.memory && !state.knowledgeReady) RrText(if (state.loading) stringResource(R.string.career_loading_knowledge_before_you_send_266b01) else stringResource(R.string.career_knowledge_couldn_t_load_try_again_or_switch_knowledge_off_be_38aa66), style = RrType.small, color = RrTheme.colors.ink3)
+            if (state.memory && !state.knowledgeReady) RrText(if (state.loading) stringResource(R.string.career_loading_knowledge_before_you_send_266b01) else stringResource(R.string.career_knowledge_couldn_t_load_try_again_or_switch_knowledge_off_be_38aa66), style = RrType.small, color = c.ink3)
             RrAiComposer(state.draft, onDraft, send, stringResource(R.string.career_ask_about_your_next_career_step_ba2404), enabled = !state.readOnly && state.selected != null && (!state.memory || state.knowledgeReady), sending = state.busy, onStop = stop, contextChips = {
-                RrContextChip(if (state.memory) stringResource(R.string.career_knowledge_on_4bf78f) else stringResource(R.string.career_knowledge_off_3697f7), icon = Icons.drawable.ic_ph_book_open, leftOut = !state.memory, onClick = { memory(!state.memory) })
-                RrContextChip(stringResource(R.string.career_applications_76c74b), icon = Icons.drawable.ic_ph_briefcase, leftOut = !state.applications, onClick = { applications(!state.applications) })
+                // On: × leaves it out of the next message. Left out: dashed; tap brings it back.
+                if (state.memory) RrContextChip(stringResource(R.string.career_knowledge_on_4bf78f), icon = Icons.drawable.ic_ph_book_open, onRemove = { memory(false) })
+                else RrContextChip(stringResource(R.string.career_knowledge_off_3697f7), icon = Icons.drawable.ic_ph_book_open, leftOut = true, onClick = { memory(true) })
+                if (!state.scoped) {
+                    if (state.applications) RrContextChip(stringResource(R.string.career_applications_76c74b), icon = Icons.drawable.ic_ph_briefcase, onRemove = { applications(false) })
+                    else RrContextChip(stringResource(R.string.career_applications_76c74b), icon = Icons.drawable.ic_ph_briefcase, leftOut = true, onClick = { applications(true) })
+                }
             })
             if (!follow) RrButton(stringResource(R.string.career_latest_decd7c), { follow = true; scope.launch { scroll.animateScrollTo(scroll.maxValue) } }, variant = RrButtonVariant.Secondary)
             if (state.busy) RrWorkingLabel(listOf(stringResource(R.string.career_working_13b7bf)))
-            RrDisclosureLine(stringResource(R.string.career_when_you_press_send_your_message_and_conversation_history_go_e24f7e, state.server, state.providers.firstOrNull { it.id == state.selected }?.let { it.label + " · " + it.model } ?: stringResource(R.string.career_the_connection_you_choose_462a19), if (state.applications) stringResource(R.string.career_on_e0049a) else stringResource(R.string.career_off_e3de5a), if (state.memory) stringResource(R.string.career_on_e0049a) else stringResource(R.string.career_off_e3de5a)))
-            if (!state.memory) RrDisclosureLine(if (!state.memory) stringResource(R.string.career_knowledge_is_off_for_this_message_the_coach_doesn_t_read_it__73f271) else stringResource(R.string.career_nothing_is_sent_until_you_choose_a_connection_for_this_conve_4fe026))
+            RrDisclosureLine(stringResource(R.string.career_when_you_press_send_your_message_and_conversation_history_go_e24f7e, state.server, state.providers.firstOrNull { it.id == state.selected }?.let { it.label + " · " + it.model } ?: stringResource(R.string.career_the_connection_you_choose_462a19), if (state.applications || state.scoped) stringResource(R.string.career_on_e0049a) else stringResource(R.string.career_off_e3de5a), if (state.memory) stringResource(R.string.career_on_e0049a) else stringResource(R.string.career_off_e3de5a)))
+            if (!state.memory) RrDisclosureLine(stringResource(R.string.career_knowledge_is_off_for_this_message_the_coach_doesn_t_read_it__73f271))
         }
+    }
+}
+
+/** "Remember “…”?" on info-soft with Remember and Not now; once saved it links to the fact. */
+@Composable private fun RememberPrompt(proposal: CoachFact, remember: (CoachFact) -> Unit, dismiss: (String) -> Unit, knowledge: () -> Unit) {
+    val c = RrTheme.colors
+    Row(Modifier.fillMaxWidth().background(c.infoSoft, RrShape.lg).padding(12.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+        RrIcon(Icons.drawable.ic_ph_lightbulb, null, size = 20.dp, tint = c.infoText)
+        RrText(stringResource(R.string.career_remember_quoted, proposal.fact.text), Modifier.weight(1f), style = RrType.ui, color = c.ink)
+        RrButton(if (proposal.savedId == null) stringResource(R.string.career_remember_281f30) else stringResource(R.string.career_view_fact_b34722), { if (proposal.savedId == null) remember(proposal) else knowledge() }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
+        RrButton(stringResource(R.string.career_not_now_e45714), { dismiss(proposal.callId) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
     }
 }
 
@@ -163,6 +225,7 @@ import kotlinx.coroutines.launch
     newFact: String, onNewFact: (String) -> Unit, add: () -> Unit, fact: (CareerFact) -> Unit, forget: (CareerFact) -> Unit,
     story: (String?) -> Unit, pull: () -> Unit, memory: (SaveCareerProfileRequestMemoryMode) -> Unit, back: () -> Unit, retry: () -> Unit,
 ) {
+    val time = rememberCareerTime()
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).windowInsetsPadding(WindowInsets.navigationBars).imePadding()) {
         RrTopBar(stringResource(R.string.career_knowledge_dec1fc), onBack = back, actions = { RrIconButton(Icons.drawable.ic_ph_file_arrow_up, stringResource(R.string.career_pull_facts_from_my_resume_6bd5a2), pull) })
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -170,22 +233,28 @@ import kotlinx.coroutines.launch
             if (tab == KnowledgeTab.Facts) RrSearchField(query, onQuery, stringResource(R.string.career_search_facts_f4ad2d))
         }
         if (tab == KnowledgeTab.Facts) Row(Modifier.horizontalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            RrFilterChip(stringResource(R.string.career_all_6a7208) + " " + state.facts.count { it.status != "forgotten" }, category == null, { onCategory(null) })
+            RrFilterChip(stringResource(R.string.career_all_6a7208), category == null, { onCategory(null) }, count = state.facts.count { it.status != "forgotten" }.toString())
             SaveCareerFactRequestCategory.entries.filter { it != SaveCareerFactRequestCategory.Unknown }.forEach { type -> RrFilterChip(categoryLabel(type.wireValue), category == type, { onCategory(type) }) }
         }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (state.loading) CareerLoading() else {
                 if (state.error) CareerError(retry)
                 if (tab == KnowledgeTab.Facts) {
-                    val rows = state.facts.filter { it.status != "forgotten" && it.id !in state.pendingForget && (category == null || it.category == category.wireValue) && (query.isBlank() || it.text.contains(query, true)) }
-                    if (rows.isEmpty()) RrEmptyState(if (state.facts.isEmpty()) stringResource(R.string.career_no_facts_yet_8f3622) else stringResource(R.string.career_no_facts_match_try_another_word_or_type_fac4bf), stringResource(R.string.career_add_a_fact_6c1785), Modifier.padding(horizontal = 16.dp), actionLabel = stringResource(R.string.career_pull_facts_from_my_resume_6bd5a2), onAction = pull)
-                    else RrListGroup(Modifier.padding(horizontal = 16.dp)) { rows.forEach { row ->
-                        RrSwipeRow(endAction = if (row.status == "forgotten") null else RrSwipeAction(stringResource(R.string.career_forget_03d5d8), Icons.drawable.ic_ph_trash, onCommit = { forget(row) })) { FactRow(row) { fact(row) } }
-                    } }
+                    // Facts being forgotten stay composed so they fold away (and unfold on Undo); new ones grow in.
+                    val rows = state.facts.filter { it.status != "forgotten" && (category == null || it.category == category.wireValue) && (query.isBlank() || it.text.contains(query, true)) }
+                    val loaded = remember(state.loading) { state.facts.map { it.id }.toSet() }
+                    if (rows.none { it.id !in state.pendingForget }) RrEmptyState(if (state.facts.isEmpty()) stringResource(R.string.career_no_facts_yet_8f3622) else stringResource(R.string.career_no_facts_match_try_another_word_or_type_fac4bf), stringResource(R.string.career_add_a_fact_6c1785), Modifier.padding(horizontal = 16.dp), actionLabel = stringResource(R.string.career_pull_facts_from_my_resume_6bd5a2), onAction = pull)
+                    else RrListGroup(Modifier.padding(horizontal = 16.dp)) { rows.forEach { row -> key(row.id) {
+                        Folding(visible = row.id !in state.pendingForget, appear = row.id !in loaded) {
+                            RrSwipeRow(endAction = if (row.status == "forgotten") null else RrSwipeAction(stringResource(R.string.career_forget_03d5d8), Icons.drawable.ic_ph_trash, onCommit = { forget(row) })) {
+                                FactRow(row, used = row.usedBy.stories + row.usedBy.savedItems > 0 || state.stories.any { row.id in it.data.factIds.orEmpty() }) { fact(row) }
+                            }
+                        }
+                    } } }
                     RrSwitchRow(stringResource(R.string.career_show_forgotten_3a0025), forgotten, showForgotten, Modifier.padding(horizontal = 16.dp))
                     if (forgotten) RrCard(Modifier.padding(horizontal = 16.dp)) {
                         if (state.forgotten.isEmpty()) RrText(stringResource(R.string.career_no_forgotten_facts), style = RrType.small, color = RrTheme.colors.ink3)
-                        state.forgotten.forEach { row -> RrText(stringResource(R.string.career_forgotten_count, row.count.toString(), row.at.take(10)), style = RrType.small, color = RrTheme.colors.ink3) }
+                        state.forgotten.forEach { row -> RrText(stringResource(R.string.career_forgotten_count, row.count.toString(), time.day(row.at) ?: row.at), style = RrType.small, color = RrTheme.colors.ink3) }
                     }
                     Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         RrText(stringResource(R.string.career_remember_facts_from_my_messages_323c02), style = RrType.fieldLabel, color = RrTheme.colors.ink2)
@@ -195,22 +264,36 @@ import kotlinx.coroutines.launch
                 } else {
                     RrButton(stringResource(R.string.career_add_story_7d30ba), { story(null) }, Modifier.padding(horizontal = 16.dp), variant = RrButtonVariant.GhostAccent, icon = Icons.drawable.ic_ph_plus)
                     if (state.stories.isEmpty()) RrEmptyState(stringResource(R.string.career_no_stories_yet_d7ed09), stringResource(R.string.career_build_a_story_from_something_you_did_4ff3b8), Modifier.padding(horizontal = 16.dp))
-                    else RrListGroup(Modifier.padding(horizontal = 16.dp)) { state.stories.forEach { row -> RrListRow(row.data.title, subtitle = row.data.result, onClick = { story(row.id) }, trailing = { RrRowCaret() }) } }
+                    else RrListGroup(Modifier.padding(horizontal = 16.dp)) { state.stories.forEach { row ->
+                        val usedFor = state.applications.firstOrNull { it.id == row.applicationId }?.company?.let { stringResource(R.string.career_used_for, it) }
+                        val result = row.data.result?.lineSequence()?.firstOrNull { it.isNotBlank() }
+                        RrListRow(row.data.title, subtitle = listOfNotNull(result, usedFor).joinToString(" · ").ifEmpty { null }, onClick = { story(row.id) }, trailing = { RrRowCaret() })
+                    } }
                 }
                 Spacer(Modifier.height(16.dp))
             }
         }
+        if (tab == KnowledgeTab.Facts) Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
         if (tab == KnowledgeTab.Facts) Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) { RrTextField(newFact, onNewFact, placeholder = stringResource(R.string.career_add_a_fact_for_example_i_mentored_two_associate_pms_in_2025_6b23d4), trailing = {
             RrIconButton(Icons.drawable.ic_ph_plus, stringResource(R.string.career_add_a_fact_6c1785), add, size = RrIconButtonSize.Small, enabled = newFact.isNotBlank() && !state.busy, tint = RrTheme.colors.accentText)
         }) }
     }
 }
-@Composable private fun FactRow(fact: CareerFact, onClick: () -> Unit) = Column(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 14.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+/** Grows in (`d2`) when [appear], folds away when not [visible]; instant with reduced motion. */
+@Composable internal fun Folding(visible: Boolean, appear: Boolean = false, content: @Composable () -> Unit) {
+    val duration = if (RrTheme.reducedMotion) 0 else RrMotion.D2
+    val state = remember { MutableTransitionState(!appear) }
+    state.targetState = visible
+    AnimatedVisibility(state,
+        enter = expandVertically(tween(duration, easing = RrMotion.ease), expandFrom = Alignment.Top) + fadeIn(tween(duration)),
+        exit = shrinkVertically(tween(duration, easing = RrMotion.ease), shrinkTowards = Alignment.Top) + fadeOut(tween(duration))) { content() }
+}
+@Composable private fun FactRow(fact: CareerFact, used: Boolean, onClick: () -> Unit) = Column(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 14.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
     RrText(fact.text, style = RrType.ui)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         RrBadge(categoryLabel(fact.category)); RrBadge(sourceLabel(fact.source.kind), tone = RrBadgeTone.Outline)
         if (fact.company != null) RrBadge(stringResource(R.string.career_1_s_only_d3e9b1, fact.company.orEmpty()), tone = RrBadgeTone.Info)
-        if (fact.usedBy.savedItems > 0) RrBadge(stringResource(R.string.career_used_in_coaching_ab569c), tone = RrBadgeTone.Accent)
+        if (used) RrBadge(stringResource(R.string.career_used_in_coaching_ab569c), tone = RrBadgeTone.Accent)
         if (fact.status == "forgotten") RrBadge(stringResource(R.string.career_forgotten_c35b3b), tone = RrBadgeTone.Warn)
     }
 }
@@ -224,6 +307,30 @@ import kotlinx.coroutines.launch
 }
 @Composable internal fun memoryLabel(value: String) = when (value) { "auto" -> stringResource(R.string.career_automatically_1a9dfc); "off" -> stringResource(R.string.career_never_80c305); else -> stringResource(R.string.career_ask_first_1aeb84) }
 
+// TODO(lead): move to designsystem. RrTextField's multiline mode starts at 96 dp, and its single-line mode loses its
+// vertical padding once text wraps. A story part starts one line tall and grows with its text, so Reflection stays above
+// the fold (C4).
+@Composable private fun StoryField(value: String, change: (String) -> Unit, label: String, placeholder: String) {
+    val c = RrTheme.colors
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    val style = RrType.input.copy(color = c.ink)
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        RrText(label, style = RrType.fieldLabel, color = c.ink2)
+        BasicTextField(value, change, Modifier.fillMaxWidth().semantics { contentDescription = label }, textStyle = style, interactionSource = interaction,
+            cursorBrush = SolidColor(c.accent), keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+            decorationBox = { inner ->
+                Box(Modifier.fillMaxWidth()
+                    .drawBehind { if (focused) { val w = 3.dp.toPx(); drawRoundRect(c.accentSoft, Offset(-w / 2, -w / 2), Size(size.width + w, size.height + w), CornerRadius(RrRadius.md.toPx() + w / 2), Stroke(w)) } }
+                    .defaultMinSize(minHeight = 44.dp).clip(RrShape.md).background(c.raised).border(1.dp, if (focused) c.accent else c.controlBorder, RrShape.md)
+                    .padding(horizontal = 12.dp, vertical = 10.dp), contentAlignment = Alignment.CenterStart) {
+                    if (value.isEmpty()) RrText(placeholder, style = style.copy(color = c.ink3))
+                    inner()
+                }
+            })
+    }
+}
+
 @Composable internal fun StoryScreen(state: StoryState, change: (SaveCareerStoryRequest) -> Unit, back: () -> Unit, retry: () -> Unit, more: () -> Unit, practice: () -> Unit, facts: () -> Unit) {
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).windowInsetsPadding(WindowInsets.navigationBars).imePadding()) {
         RrTopBar(stringResource(R.string.career_story_86b4ba), onBack = back, status = { SaveStatus(state.status) }, actions = {
@@ -233,15 +340,19 @@ import kotlinx.coroutines.launch
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (state.loading) CareerLoading() else state.draft?.let { d ->
                 RrTextField(d.title, { change(d.copy(title = it)) }, label = stringResource(R.string.career_title_768e0c))
-                RrTextField(d.situation, { change(d.copy(situation = it)) }, label = stringResource(R.string.career_situation_30f6fe), placeholder = stringResource(R.string.career_what_was_happening_before_you_started_2c3ccf), singleLine = false, minLines = 2)
-                RrTextField(d.task, { change(d.copy(task = it)) }, label = stringResource(R.string.career_task_7bb0dd), placeholder = stringResource(R.string.career_what_were_you_responsible_for_8cf568), singleLine = false, minLines = 2)
-                RrTextField(d.action, { change(d.copy(action = it)) }, label = stringResource(R.string.career_action_97c89a), placeholder = stringResource(R.string.career_what_did_you_do_341410), singleLine = false, minLines = 2)
-                RrTextField(d.result.orEmpty(), { change(d.copy(result = it)) }, label = stringResource(R.string.career_result_5faa59), placeholder = stringResource(R.string.career_what_changed_because_of_your_work_a4fcbd), singleLine = false, minLines = 2)
-                RrTextField(d.reflection.orEmpty(), { change(d.copy(reflection = it)) }, label = stringResource(R.string.career_reflection_fda05a), placeholder = stringResource(R.string.career_what_would_you_do_differently_next_time_53a004), singleLine = false, minLines = 2)
-                RrUsedChip(stringResource(R.string.career_1_s_facts_67a5cd, d.factIds.orEmpty().size.toString()), Icons.drawable.ic_ph_book_open, onClick = facts)
+                StoryField(d.situation, { change(d.copy(situation = it)) }, stringResource(R.string.career_situation_30f6fe), stringResource(R.string.career_what_was_happening_before_you_started_2c3ccf))
+                StoryField(d.task, { change(d.copy(task = it)) }, stringResource(R.string.career_task_7bb0dd), stringResource(R.string.career_what_were_you_responsible_for_8cf568))
+                StoryField(d.action, { change(d.copy(action = it)) }, stringResource(R.string.career_action_97c89a), stringResource(R.string.career_what_did_you_do_341410))
+                StoryField(d.result.orEmpty(), { change(d.copy(result = it)) }, stringResource(R.string.career_result_5faa59), stringResource(R.string.career_what_changed_because_of_your_work_a4fcbd))
+                StoryField(d.reflection.orEmpty(), { change(d.copy(reflection = it)) }, stringResource(R.string.career_reflection_fda05a), stringResource(R.string.career_what_would_you_do_differently_next_time_53a004))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    RrUsedChip(stringResource(R.string.career_1_s_facts_67a5cd, d.factIds.orEmpty().size.toString()), Icons.drawable.ic_ph_book_open, onClick = facts)
+                    state.usedFor?.let { RrUsedChip(stringResource(R.string.career_used_for, it), Icons.drawable.ic_ph_briefcase) }
+                }
                 if (state.status == SaveState.KeptOnDevice) RrCallout(stringResource(R.string.career_your_changes_are_kept_on_this_device_try_again_when_you_re_o_35ff35), tone = RrTone.Warn, actionLabel = stringResource(R.string.career_retry_9f5cd8), onAction = retry)
             } ?: RrEmptyState(stringResource(R.string.career_this_story_is_unavailable_or_uses_facts_that_are_switched_of_ab5011), "")
         }
+        Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
         RrButton(stringResource(R.string.career_practice_this_story_8b37ea), practice, Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), size = RrButtonSize.Large, icon = Icons.drawable.ic_ph_microphone, enabled = state.draft?.title?.isNotBlank() == true)
     }
 }

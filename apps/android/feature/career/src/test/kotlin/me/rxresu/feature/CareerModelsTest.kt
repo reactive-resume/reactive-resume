@@ -145,13 +145,30 @@ class CareerModelsTest {
         assertEquals("A new unsent thought", model.state.value.draft)
         repositories.close()
     }
-
+    @Test fun applicationCoachStartsThenReopensThatJobsConversation() = runTest {
+        val controls = FakeControls()
+        val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
+        controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(repositories.ai.listAiProviders().map { it.copy(testStatus = "success") }))
+        val drafts = CareerDrafts(context, "test")
+        val model = CoachViewModel(repositories, drafts, null, null, RecordingCoachTransport(), applicationId = "application-lumen"); advanceUntilIdle()
+        assertNull(model.state.value.thread); assertTrue(model.state.value.scoped)
+        model.provider(model.state.value.providers.first()); advanceUntilIdle()
+        model.draft("How do I prepare for Lumen?"); model.send(); advanceUntilIdle()
+        val started = repositories.assistant.listAgentThreads().first { it.applicationId == "application-lumen" && it.scope == StartAgentThreadRequestScope.Application }
+        val transport = RecordingCoachTransport()
+        // Another device (no local drafts) finds the job's conversation from the thread list.
+        CoachViewModel(repositories, CareerDrafts(context, "another-device"), null, null, transport, applicationId = "application-lumen"); advanceUntilIdle()
+        assertEquals(started.id, transport.executed.first { it.operation == "getAgentThread" }.pathParams["id"])
+        repositories.close()
+    }
 }
 
 private class RecordingCoachTransport : ApiTransport {
     var sent: ApiRequest? = null; var fail = false
+    val executed = mutableListOf<ApiRequest>()
     private val messages = mutableListOf<JsonElement>()
     override suspend fun execute(request: ApiRequest): JsonElement = buildJsonObject {
+        executed += request
         put("thread", ApiSamples.response("startAgentThread")); put("isReadOnly", false); put("messages", JsonArray(messages)); putJsonArray("attachments") {}
     }
     override suspend fun download(request: ApiRequest): BinaryFile = error("No downloads")
