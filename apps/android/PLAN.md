@@ -91,3 +91,7 @@ reference/Tokens.kt, icons). Branch `feat/android-app`; nothing is pushed.
 - App wiring: "New resume" quick action (with :feature:system); `POST_NOTIFICATIONS` declared by :feature:today.
 - Copy to confirm with the owner: D4 reader "Read on your server (free) / Reads the text layer, without AI" (the
   Android reader can't read on the device like the storyboard's "Nothing leaves your phone").
+- Builder requests (P3): docked `RrBottomSheet` mode (no scrim, two heights), selectable choice card, container colour
+  on `RrSegmentedControl`, title colour on `RrListRow`, sheet header wrapping at large fonts, month picker, rich text
+  editor (or one approved library), photo crop. Route `Assistant(prompt)` (D1 adds it). Draft: outside-change event
+  (agent update strip) and grouped undo steps (Fit to one page).
