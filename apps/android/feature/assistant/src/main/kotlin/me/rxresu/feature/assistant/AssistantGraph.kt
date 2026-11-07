@@ -1,6 +1,7 @@
 package me.rxresu.feature.assistant
 
 import android.provider.OpenableColumns
+import androidx.core.net.toUri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -23,7 +24,7 @@ fun NavGraphBuilder.assistantGraph(nav: NavController, motion: RrNavMotion) {
         val vm: AssistantViewModel = viewModel(viewModelStoreOwner = owner, key = "assistant-${route.resumeId}") { AssistantViewModel(repositories, route.resumeId, route.threadId) }; val state by vm.state.collectAsStateWithLifecycle()
         LaunchedEffect(vm, route.threadId) {
             route.threadId?.let { if (it != vm.state.value.threadId) vm.thread(it) }
-            owner.savedStateHandle.remove<String>("rr.assistant.prompt")?.let(vm::input)
+            takeAssistantPrompt(owner)?.let(vm::input)
         }
         val resources = androidx.compose.ui.platform.LocalResources.current; val context = LocalContext.current; val scope = rememberCoroutineScope(); val toasts = LocalToasts.current
         var picker by remember { mutableStateOf<String?>(null) }
@@ -46,7 +47,11 @@ fun NavGraphBuilder.assistantGraph(nav: NavController, motion: RrNavMotion) {
                 action == "providers" || action == "history" -> picker = action
                 action == "setup" -> nav.navigate(AiProviderSheet())
                 action == "proposals" -> state.threadId?.let { thread -> nav.navigate(AssistantProposals(route.resumeId, thread)) }
-                action == "continue" -> vm.resumeStream()
+                action == "continue" -> vm.continueReply()
+                action.startsWith("answer:") -> action.removePrefix("answer:").split(":", limit = 2).let { if (it.size == 2) vm.answer(it[0], it[1]) }
+                action.startsWith("approve:") -> vm.approve(action.removePrefix("approve:"), true)
+                action.startsWith("deny:") -> vm.approve(action.removePrefix("deny:"), false)
+                action.startsWith("source:") -> runCatching { val uri = action.removePrefix("source:").toUri(); require(uri.scheme in setOf("https", "http") && !uri.host.isNullOrBlank()); context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, uri)) }
                 action.startsWith("remove:") -> vm.removeAttachment(action.removePrefix("remove:"))
             } }
             when (picker) {
@@ -60,7 +65,14 @@ fun NavGraphBuilder.assistantGraph(nav: NavController, motion: RrNavMotion) {
         val owner = remember(entry) { assistantOwner(nav, entry) }
         val vm: AssistantViewModel = viewModel(viewModelStoreOwner = owner, key = "assistant-${route.resumeId}") { AssistantViewModel(repositories, route.resumeId, route.threadId) }
         val state by vm.state.collectAsStateWithLifecycle()
-        ProposalsScreen(state, { nav.popBackStack() }, { ids, decision, wording -> vm.decide(ids, decision, wording) }, { nav.popBackStack() })
+        ProposalsScreen(state, { nav.popBackStack() }, { ids, decision, wording -> vm.decide(ids, decision, wording) }, { nav.popBackStack() }, { proposal ->
+            if (state.letterId != null) {
+                val existing = runCatching { nav.getBackStackEntry<Letter>() }.getOrNull()
+                if (existing?.toRoute<Letter>()?.letterId == state.letterId) nav.popBackStack<Letter>(inclusive = false) else nav.navigate(Letter(requireNotNull(state.letterId)))
+            }
+            else if (!proposal.snapshot && proposal.role == null) nav.navigate(BuilderRichText(state.documentId.ifEmpty { route.resumeId }, proposal.section, proposal.item.orEmpty(), proposal.field))
+            else nav.navigate(Builder(state.documentId.ifEmpty { route.resumeId }, view = WriteView.Outline))
+        }, { proposal, text -> vm.decide(listOf(proposal.id), Decision.Pending, text, proposal.after) })
     }
 }
 
@@ -82,3 +94,6 @@ private fun assistantOwner(nav: NavController, entry: NavBackStackEntry): NavBac
     val route = previous.destination.route.orEmpty()
     return if (listOf(Builder::class, Letter::class).any { route.startsWith(it.qualifiedName!!) }) previous else entry
 }
+
+// TODO(lead): replace saved-state hand-off with Assistant.prompt once shared route lands.
+private fun takeAssistantPrompt(owner: NavBackStackEntry): String? = owner.savedStateHandle.remove<String>("rr.assistant.prompt")

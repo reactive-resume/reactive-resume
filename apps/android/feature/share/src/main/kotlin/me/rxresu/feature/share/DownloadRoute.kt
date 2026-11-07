@@ -21,6 +21,18 @@ import me.rxresu.core.navigation.*
 
 @Composable internal fun DownloadRoute(route: Download, dismiss: () -> Unit) {
     val repositories = LocalRepositories.current; val vm: ExportViewModel = viewModel { ExportViewModel(repositories, route.id, route.kind) }; val state by vm.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    DisposableEffect(context, vm) {
+        val manager = context.getSystemService(android.net.ConnectivityManager::class.java)
+        fun update() { vm.offline(manager.getNetworkCapabilities(manager.activeNetwork)?.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED) != true) }
+        val callback = object : android.net.ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: android.net.Network) = update()
+            override fun onLost(network: android.net.Network) = update()
+            override fun onCapabilitiesChanged(network: android.net.Network, capabilities: android.net.NetworkCapabilities) = update()
+        }
+        update(); manager.registerDefaultNetworkCallback(callback)
+        onDispose { manager.unregisterNetworkCallback(callback) }
+    }
     val delivering = fileDeliveries(vm.deliveries)
     RrBottomSheet(dismiss, title = stringResource(CoreR.string.download), initialDetent = 1, footer = {
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {

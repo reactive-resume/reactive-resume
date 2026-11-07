@@ -4,6 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import me.rxresu.core.auth.SessionState
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,7 +20,11 @@ import me.rxresu.core.network.generated.*
 fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
     screen<Letter> { entry ->
         val route = entry.toRoute<Letter>(); val repositories = LocalRepositories.current
-        val vm: LetterViewModel = viewModel { LetterViewModel(repositories, route.letterId) }; val state by vm.state.collectAsStateWithLifecycle()
+        val context = LocalContext.current
+        val session by repositories.authSession.state.collectAsStateWithLifecycle()
+        val account = session as? SessionState.SignedIn
+        val recovery = remember(entry, account) { account?.let { LetterDraftRecovery(context.applicationContext, it.server + ":" + it.accountScope + ":" + route.letterId) } }
+        val vm: LetterViewModel = viewModel { LetterViewModel(repositories, route.letterId, recovery) }; val state by vm.state.collectAsStateWithLifecycle()
         var mode by remember { mutableStateOf(route.mode) }; var details by remember { mutableStateOf(false) }; var form by remember { mutableStateOf<String?>(null) }
         val haptics = rememberRrHaptics()
         val back = { vm.leave { nav.popBackStack() }; Unit }
@@ -26,6 +32,16 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
         Box {
             LetterScreen(state, mode, details, { action -> when (action) {
                 "undo" -> vm.undo()
+                "draft" -> form = "draft"
+                "generate" -> vm.generate()
+                "retry-draft" -> vm.retryDraft()
+                "shorter" -> vm.generate(CreateCoverLetterDraftRequestVariant.Shorter)
+                "personal" -> vm.generate(CreateCoverLetterDraftRequestVariant.Personal)
+                "stop-draft" -> vm.stopDraft()
+                "keep-draft" -> vm.keepDraft()
+                "discard-draft" -> vm.discardDraft()
+                "copy-draft" -> vm.draftCopy { nav.navigate(Letter(it)) }
+                "recovery" -> state.draft.recoveredCopyId?.let { nav.navigate(Letter(it)) }
                 "retry" -> vm.retry()
                 "write" -> mode = LetterMode.Write
                 "design" -> mode = LetterMode.Design
@@ -37,7 +53,7 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
                 else -> if (action.startsWith("assistant:")) {
                     entry.savedStateHandle["rr.assistant.prompt"] = action.removePrefix("assistant:")
                     vm.assistant(null) { thread -> nav.navigate(Assistant(state.letter?.sourceResumeId.orEmpty(), thread)) }
-                } else { form = action; if (action in listOf("recipient", "body")) vm.focus(true) }
+                } else if (action.startsWith("draft-version:")) vm.previousDraft(action.removePrefix("draft-version:").toInt()) else { form = action; if (action in listOf("recipient", "body")) vm.focus(true) }
             } }, { linked -> vm.designLinked(linked) { haptics(RrHaptic.Success) } }, { vm.pageFormat(it) }, back)
             val dismiss = { form = null; vm.focus(false); Unit }
             when (form) {
@@ -48,12 +64,15 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
                 }
                 "rename" -> LetterTextSheet(stringResource(CoreR.string.rename), state.letter?.name.orEmpty(), state, { text -> vm.metadata({ PatchCoverLetterRequest(expectedRevision = it.revision, name = text) }, dismiss) }, dismiss)
                 "recipient" -> RecipientSheet(state, { recipient, date, greeting, signoff -> vm.edit({ it.copy(recipient = recipient, letterDate = date.ifBlank { null }, greeting = greeting, signOff = signoff) }, dismiss) }, dismiss)
+                "greeting", "signoff" -> RecipientSheet(state, { recipient, date, greeting, signoff -> vm.edit({ it.copy(recipient = recipient, letterDate = date.ifBlank { null }, greeting = greeting, signOff = signoff) }, dismiss) }, dismiss)
+                "draft" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.draft_from_the_posting), fitContent = true) { RrDisclosureLine(stringResource(R.string.p4_draft_disclosure)); RrButton(stringResource(CoreR.string.draft_from_the_posting), { vm.generate(); dismiss() }, Modifier.padding(16.dp), enabled = state.editable) }
                 "body" -> LetterBodySheet(state, { content -> vm.edit({ it.copy(content = content) }, dismiss) }, dismiss)
                 "resume" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.resume), initialDetent = 1) { state.resumes.forEach { resume -> RrListRow(resume.name, onClick = { vm.linkResume(resume.id, dismiss) }) }; RrListRow(stringResource(CoreR.string.entry_header_accent_none), onClick = { vm.edit({ it.copy(sourceResumeId = null, designLinked = false) }, dismiss) }) }
                 "application" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.application), initialDetent = 1) { state.applications.forEach { app -> RrListRow(app.company, subtitle = app.role, onClick = { vm.linkApplication(app.id, dismiss) }) } }
                 "template" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.template), initialDetent = 1) { CreateResumeRequestTemplate.entries.filter { it != CreateResumeRequestTemplate.Unknown }.forEach { template -> RrListRow(template.wireValue.replaceFirstChar(Char::uppercase), selected = state.letter?.style?.metadata?.template == template, onClick = { vm.template(template); dismiss() }) } }
-                "type" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.type), fitContent = true) { val size = state.letter?.style?.metadata?.typography?.body?.fontSize ?: 10.5; RrStepper(size.toString(), { vm.font((size - 0.5).coerceAtLeast(6.0)) }, { vm.font((size + 0.5).coerceAtMost(24.0)) }, stringResource(CoreR.string.font_size), Modifier.padding(16.dp)) }
-                "color" -> LetterTextSheet(stringResource(CoreR.string.color), state.letter?.style?.metadata?.design?.colors?.primary.orEmpty(), state, { value -> if (Regex("#[0-9a-fA-F]{6}").matches(value)) { vm.color(value); dismiss() } }, dismiss)
+                "type" -> LetterTypeSheet(state, { vm.design(it) }, { vm.font(it) }, dismiss)
+                "page" -> LetterPageSheet(state, { vm.design(it) }, dismiss)
+                "color" -> LetterColorSheet(state, { vm.color(it) }, dismiss)
                 "language" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.language), initialDetent = 1) { java.util.Locale.getAvailableLocales().filter { it.toLanguageTag() != "und" }.distinctBy { it.toLanguageTag() }.sortedBy { it.displayName }.forEach { locale -> RrListRow(locale.displayName, onClick = { vm.locale(locale.toLanguageTag()); dismiss() }) } }
                 "versions" -> RrBottomSheet(dismiss, title = stringResource(R.string.p4_versions), initialDetent = 1) { RrButton(stringResource(CoreR.string.name_this_version), { form = "version-name" }, Modifier.padding(16.dp), enabled = state.editable); state.versions.forEach { version -> RrListRow(version.name ?: version.kind.wireValue, subtitle = version.createdAt, onClick = { form = "restore:" + version.id }) } }
                 "version-name" -> LetterTextSheet(stringResource(CoreR.string.name_this_version), "", state, { vm.createVersion(it, dismiss) }, dismiss)

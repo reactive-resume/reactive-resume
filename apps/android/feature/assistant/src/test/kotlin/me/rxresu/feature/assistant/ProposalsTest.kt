@@ -47,4 +47,39 @@ class ProposalsTest {
         val after = applyResume(json, proposal())!!; assertEquals("kept", after["other"]!!.jsonPrimitive.content); assertEquals("<p>After</p>", after["summary"]!!.jsonObject["content"]!!.jsonPrimitive.content)
     }
     @Test fun wordingEscapesHtmlAndKeepsBlock() { assertEquals("<p class=\"intro\">&lt;new&gt; &amp; true</p>", reviewedWording("<p class=\"intro\">old</p>", "<new> & true")) }
+    @Test fun nestedSseFramesCanSplitAtEveryByteBoundary() {
+        val text = "data: {\"type\":\"start\",\"messageId\":\"reply\"}\r\n\r\ndata: {\"type\":\"text-delta\",\"delta\":\"Hello\"}\n\ndata: [DONE]\n\n"
+        val decoder = AssistantStreamDecoder(); var state = ConversationContent()
+        text.forEach { char -> decoder.accept(ServerEvent(null, "message", JsonPrimitive(char.toString()).toString())).forEach { state = reduceEvent(state, it) } }
+        assertEquals("Hello", state.reply); assertTrue(state.done)
+    }
+    @Test fun outerErrorCannotMasqueradeAsSuccessfulDone() { assertTrue(runCatching { AssistantStreamDecoder().accept(ServerEvent(null, "error", "{}")) }.isFailure) }
+    @Test fun truncatedInnerFrameFailsWhenTransportFinishes() {
+        val decoder = AssistantStreamDecoder(); decoder.accept(ServerEvent(null, "message", JsonPrimitive("data: {").toString()))
+        assertTrue(runCatching { decoder.accept(ServerEvent(null, "done", "null")) }.isFailure)
+    }
+    @Test fun resumedContinuationKeepsAnsweredQuestionAndEarlierParts() {
+        val message = me.rxresu.core.network.generated.SendAgentMessageRequestMessage("reply", parts = listOf(
+            part("step-start", buildJsonObject {}), part("text", buildJsonObject { put("text", "Before question") }),
+            part("tool-ask_user_question", buildJsonObject { put("state", "output-available"); put("toolCallId", "question"); put("output", "Answer") }),
+            part("step-start", buildJsonObject {}), part("text", buildJsonObject { put("text", "Partial") })), role = me.rxresu.core.network.generated.AiTailorResumeForApplicationResponseConversationMessagesItemRole.Assistant)
+        val current = conversationContent(listOf(message)); val next = reduceEvent(current, ServerEvent(null, "message", "{\"type\":\"start\",\"messageId\":\"reply\"}"))
+        assertEquals("Before question", next.reply); assertEquals(3, next.messages.single().parts.size)
+    }
+    @Test fun reviewedAdditionKeepsAnchorAndOuterList() { assertEquals("<p>Anchor</p><ul><li><p>My words</p></li></ul>", reviewedWording("<p>Anchor</p><ul><li><p>Old</p></li></ul>", "My  words", "<p>Anchor</p>")) }
+    @Test fun structuralProposalChangesOnlyReviewedContentAndLayout() {
+        val data = buildJsonObject { put("basics", buildJsonObject { put("name", "Person") }); put("summary", buildJsonObject { put("content", "Before") }); put("sections", buildJsonObject {}); put("customSections", JsonArray(emptyList())); put("metadata", buildJsonObject { put("layout", buildJsonObject { put("pages", JsonArray(emptyList())) }); put("page", buildJsonObject { put("locale", "en-US") }); put("notes", "private"); put("future", "kept") }); put("picture", "keep-picture") }
+        val before = JsonObject(data.filterKeys { it in setOf("basics", "summary", "sections", "customSections") } + ("layout" to data["metadata"]!!.jsonObject.getValue("layout")))
+        val after = JsonObject(before + ("summary" to buildJsonObject { put("content", "After") }))
+        val change = proposal().copy(snapshot = true, section = "resume", field = "data", structure = buildJsonObject { put("before", before.toString()); put("after", after.toString()) })
+        val result = applyResume(data, change)!!; assertEquals(data["picture"], result["picture"]); assertEquals(data["metadata"], result["metadata"]); assertEquals("After", result["summary"]!!.jsonObject["content"]!!.jsonPrimitive.content)
+        assertNull(applyResume(result, change))
+        assertNull(applyResume(data, change.copy(structure = buildJsonObject { put("before", JsonObject(before + ("locale" to JsonPrimitive("de-DE"))).toString()); put("after", after.toString()) })))
+    }
+    @Test fun finishMetadataKeepsOperationProvenanceAndContext() {
+        var content = reduceEvent(ConversationContent(), ServerEvent(null, "message", "{\"type\":\"start\",\"messageId\":\"reply\",\"messageMetadata\":{\"contextScope\":\"[true,true]\"}}"))
+        content = reduceEvent(content, ServerEvent(null, "message", "{\"type\":\"finish\",\"messageMetadata\":{\"aiOperationIds\":[\"operation\"]}}"))
+        val metadata = content.messages.single().metadata!!.jsonObject
+        assertEquals("[true,true]", metadata.text("contextScope")); assertEquals(listOf("operation"), metadata.strings("aiOperationIds")); assertTrue(content.done)
+    }
 }

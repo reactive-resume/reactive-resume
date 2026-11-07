@@ -1,6 +1,12 @@
 package me.rxresu.feature.letters
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import kotlinx.serialization.json.*
+import me.rxresu.core.network.*
+import me.rxresu.core.network.generated.*
 import kotlinx.coroutines.test.*
 import me.rxresu.core.data.*
 import org.junit.*
@@ -45,5 +51,69 @@ class LetterViewModelTest {
             vm.linkResume(null) {}; runCurrent(); advanceTimeBy(801); runCurrent()
             assertNull(repositories.letters.getCoverLetter(StoryboardIds.lumenLetter).sourceResumeId)
         } finally { repositories.close() }
+    }
+    private fun streamed(base: RrRepositories, fail: Boolean = false, onRequest: (DraftCoverLetterRequest?) -> Unit = {}): RrRepositories {
+        val letters = object : LettersRepository by base.letters {
+            override fun draftCoverLetter(id: String, body: DraftCoverLetterRequest?, options: RequestOptions): Flow<ServerEvent> = flow {
+                assertEquals(true, body?.includeProvenance); onRequest(body)
+                emit(ServerEvent(null, "message", "{\"aiOperationId\":\"operation\"}")); delay(100)
+                emit(ServerEvent(null, "message", JsonPrimitive("My draft & ").toString())); delay(100)
+                check(!fail)
+                emit(ServerEvent(null, "message", JsonPrimitive("my facts").toString())); emit(ServerEvent(null, "done", "null"))
+            }
+        }
+        return RrRepositories(base.account, base.documents, base.resumes, letters, base.applications, base.checks, base.ai, base.assistant, base.workspace, base.career, base.search, base.publicResume, base.platform, base.preferences, base.today, base.drafts, base.pages, base.authSession, base.time)
+    }
+    @Test fun generatedDraftNeverAppliesSilentlyAndKeepIsUndoable() = runTest {
+        val base = FakeRepositories(coroutineScope = backgroundScope)
+        try {
+            val vm = LetterViewModel(streamed(base), StoryboardIds.lumenLetter, io = StandardTestDispatcher(testScheduler)); runCurrent(); val before = vm.state.value.letter!!.content
+            vm.generate(); runCurrent(); assertTrue(vm.state.value.aiDraft!!.generating); advanceTimeBy(201); runCurrent()
+            assertEquals(before, vm.state.value.letter!!.content); assertEquals("My draft & my facts", vm.state.value.aiDraft!!.text)
+            vm.keepDraft(); runCurrent(); assertNull(vm.state.value.aiDraft); assertEquals("<p>My draft &amp; my facts</p>", vm.state.value.letter!!.content)
+            assertTrue(vm.state.value.letter!!.aiOperationIds!!.contains("operation")); vm.undo(); runCurrent(); assertEquals(before, vm.state.value.letter!!.content)
+        } finally { base.close() }
+    }
+    @Test fun streamFailureAndDiscardKeepAuthoredLetter() = runTest {
+        val base = FakeRepositories(coroutineScope = backgroundScope)
+        try {
+            val vm = LetterViewModel(streamed(base, fail = true), StoryboardIds.lumenLetter, io = StandardTestDispatcher(testScheduler)); runCurrent(); val before = vm.state.value.letter!!.content
+            vm.generate(); advanceTimeBy(201); runCurrent(); assertTrue(vm.state.value.aiDraft!!.failed); assertEquals("My draft & ", vm.state.value.aiDraft!!.text); assertEquals(before, vm.state.value.letter!!.content)
+            vm.discardDraft(); runCurrent(); assertNull(vm.state.value.aiDraft); assertEquals(before, vm.state.value.letter!!.content)
+        } finally { base.close() }
+    }
+    @Test fun changedLetterBlocksKeepAndRecoverySurvivesRecreation() = runTest {
+        val base = FakeRepositories(coroutineScope = backgroundScope)
+        val context = ApplicationProvider.getApplicationContext<Context>(); val recovery = LetterDraftRecovery(context, "test-recovery")
+        try {
+            recovery.write(null)
+            val vm = LetterViewModel(streamed(base), StoryboardIds.lumenLetter, recovery, StandardTestDispatcher(testScheduler)); runCurrent(); vm.generate(); advanceTimeBy(201); runCurrent()
+            vm.edit({ it.copy(content = "Words typed meanwhile") }); runCurrent(); vm.keepDraft(); runCurrent()
+            assertTrue(vm.state.value.failed); assertEquals("Words typed meanwhile", vm.state.value.letter!!.content); assertNotNull(vm.state.value.aiDraft)
+            val restored = LetterViewModel(streamed(base), StoryboardIds.lumenLetter, recovery, StandardTestDispatcher(testScheduler)); runCurrent()
+            assertEquals("My draft & my facts", restored.state.value.aiDraft!!.text); assertEquals(listOf("operation"), restored.state.value.aiDraft!!.operationIds)
+        } finally { recovery.write(null); base.close() }
+    }
+    @Test fun blockHitRegionsUseOnlyUnambiguousActualText() = runTest {
+        val base = FakeRepositories(coroutineScope = backgroundScope)
+        try {
+            val letter = base.letters.getCoverLetter(StoryboardIds.lumenLetter).copy(content = "<p>Body text</p>", greeting = "Hello", signOff = "Bye", recipient = "Team")
+            val blocks = letterBlocks(letter, listOf(listOf(LetterRun("Body text", .1f, .3f, .9f, .4f), LetterRun("Hello", .1f, .2f, .4f, .25f), LetterRun("Not in the letter", .1f, .8f, .4f, .9f))))
+            assertEquals(listOf("body", "greeting"), blocks.map { it.field }); assertTrue(blocks.first().contains(.5f, .35f)); assertFalse(blocks.first().contains(.5f, .7f))
+            assertTrue(letterBlocks(letter.copy(greeting = "Body text"), listOf(listOf(LetterRun("Body text", 0f, 0f, 1f, 1f)))).isEmpty())
+        } finally { base.close() }
+    }
+    @Test fun colorFormatsAndContrastStayReadable() {
+        assertEquals("#AABBCC", letterHex("#abc")); assertEquals("#2F5A8A", letterHex("rgba(47, 90, 138, 1)")); assertNull(letterHex("rgba(999, 0, 0, 1)")); assertNull(letterHex("#nothex"))
+        assertEquals(21.0, letterContrast("#000000"), 0.01); assertTrue(letterContrast(darkerLetterColor("#FFFFFF")) >= 4.6)
+    }
+    @Test fun retryRepeatsFailedDraftVariant() = runTest {
+        val base = FakeRepositories(coroutineScope = backgroundScope)
+        try {
+            val requests = mutableListOf<CreateCoverLetterDraftRequestVariant?>()
+            val vm = LetterViewModel(streamed(base, true) { requests += it?.variant }, StoryboardIds.lumenLetter, io = StandardTestDispatcher(testScheduler)); runCurrent()
+            vm.generate(CreateCoverLetterDraftRequestVariant.Personal); advanceTimeBy(201); runCurrent(); vm.retryDraft(); advanceTimeBy(201); runCurrent()
+            assertEquals(listOf(CreateCoverLetterDraftRequestVariant.Personal, CreateCoverLetterDraftRequestVariant.Personal), requests)
+        } finally { base.close() }
     }
 }

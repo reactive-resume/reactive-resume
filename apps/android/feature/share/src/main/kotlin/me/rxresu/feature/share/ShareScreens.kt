@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -79,13 +80,11 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding().padding(bottom = 16.dp)) {
             if (state.loading) { RrSkeletonText(Modifier.padding(16.dp), lines = 8); return@Column }
             val resume = state.resume ?: return@Column
-            RrTextField(state.slug, onSlug, Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp), label = stringResource(CoreR.string.address), mono = true, ltr = true, enabled = state.editable,
-                helper = if (state.checking) stringResource(CoreR.string.checking_copy_is_available_after_saving) else state.url,
-                error = if (state.slugInvalid) stringResource(CoreR.string.use_latin_letters_az_numbers_and_single_dashes) else if (state.slugTaken) stringResource(CoreR.string.another_of_your_resumes_uses_this_address) else null)
-            RrSectionHeader(stringResource(CoreR.string.short_link_and_domain))
+            AddressField(state, onSlug)
+            RrSectionHeader(stringResource(if (state.customDomains) CoreR.string.short_link_and_domain else CoreR.string.short_link))
             RrListGroup(Modifier.padding(horizontal = 16.dp)) {
                 RrSwitchRow(stringResource(CoreR.string.primary_resume), resume.isPrimary, { onSetting("primary", it) }, subtitle = if (!resume.isPublic && resume.isPrimary) stringResource(CoreR.string.your_short_link_says_this_resume_isn_t_shared_until_you_publish_it_again) else if (resume.isPrimary) stringResource(CoreR.string.your_short_link_opens_this_resume) else stringResource(CoreR.string.turn_this_on_to_open_this_resume_at_your_short_link), enabled = state.editable && (resume.isPublic || resume.isPrimary) && (state.primaryLoaded || resume.isPrimary))
-                RrListRow(stringResource(CoreR.string.your_domain), subtitle = state.domain?.hostname ?: stringResource(R.string.p4_not_connected), onClick = onDomain, trailing = { RrButton(stringResource(CoreR.string.connect), onDomain, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small) })
+                if (state.customDomains) RrListRow(stringResource(CoreR.string.your_domain), subtitle = state.domain?.hostname ?: stringResource(R.string.p4_not_connected), onClick = onDomain, trailing = { RrButton(stringResource(CoreR.string.connect), onDomain, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small) })
             }
             RrSectionHeader(stringResource(CoreR.string.privacy))
             RrListGroup(Modifier.padding(horizontal = 16.dp)) {
@@ -118,7 +117,7 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
                     if (state.daily.isEmpty()) RrText(stringResource(R.string.p4_no_visitors_yet_share_your_link_to_see_views_here), style = RrType.small)
                     else {
                         VisitorChart(state.daily.takeLast(30), selected) { selected = it }
-                        selected?.let { index -> state.daily.getOrNull(index)?.let { RrText(stringResource(R.string.p4_1_s_2_s_views, it.date, it.views.toLong().toString()), style = RrType.mono) } }
+                        selected?.let { index -> state.daily.takeLast(30).getOrNull(index)?.let { RrText(stringResource(R.string.p4_1_s_2_s_views, it.date, it.views.toLong().toString()), style = RrType.mono) } }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) { RrIcon(DsR.drawable.ic_ph_lock_simple, null, size = 14.dp, tint = c.ink3); RrText(stringResource(CoreR.string.only_you_see_these), style = RrType.small, color = c.ink3) }
                 }
@@ -127,8 +126,8 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
             RrListGroup(Modifier.padding(horizontal = 16.dp)) {
                 state.links.forEach { link ->
                     val active = link.status == GetFeedbackLinkResponseStatus.Active
-                    RrListRow(link.label, subtitle = if (!active) link.status.wireValue else if (link.allowComments) stringResource(R.string.p4_comments_on) else stringResource(R.string.p4_read_only), icon = if (link.allowComments) DsR.drawable.ic_ph_chat_circle_text else DsR.drawable.ic_ph_eye, onClick = { open(link.id) }, trailing = {
-                        RrBadge(if (link.openCommentCount > 0) stringResource(R.string.p4_1_s_new, link.openCommentCount.toString()) else if (active) stringResource(CoreR.string.active) else stringResource(R.string.p4_expired), tone = if (link.openCommentCount > 0) RrBadgeTone.Info else if (active) RrBadgeTone.Accent else RrBadgeTone.Neutral); RrRowCaret()
+                    RrListRow(link.label, subtitle = listOf(if (link.allowComments) stringResource(R.string.p4_comments_on) else stringResource(R.string.p4_read_only), link.lastViewedAt?.let { stringResource(R.string.p4_opened, feedbackDate(it)) } ?: stringResource(CoreR.string.not_opened_yet), link.expiresAt?.let { stringResource(R.string.p4_expires, feedbackDate(it)) } ?: stringResource(CoreR.string.never)).joinToString(" · "), icon = if (link.allowComments) DsR.drawable.ic_ph_chat_circle_text else DsR.drawable.ic_ph_eye, onClick = { open(link.id) }, trailing = {
+                        RrBadge(if (link.openCommentCount > 0) stringResource(R.string.p4_1_s_new, link.openCommentCount.toString()) else if (active) stringResource(CoreR.string.active) else if (link.status == GetFeedbackLinkResponseStatus.Revoked) stringResource(R.string.p4_revoked) else stringResource(R.string.p4_expired), tone = if (link.openCommentCount > 0) RrBadgeTone.Info else if (active) RrBadgeTone.Accent else RrBadgeTone.Neutral); RrRowCaret()
                     })
                 }
             }
@@ -154,6 +153,7 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
                     RrRadio(state.format == format, null)
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { RrText(label, style = RrType.label); if (format == FileFormat.Pdf) RrBadge(stringResource(R.string.p4_best_for_applying), tone = RrBadgeTone.Accent) }
+                        if (state.offline) RrText(stringResource(when (format) { FileFormat.Json -> R.string.p4_offline_json; FileFormat.Pdf, FileFormat.Pair -> R.string.p4_offline_pdf; else -> R.string.p4_offline_server_format }), style = RrType.caption, color = RrTheme.colors.warnText)
                         RrText(helper, style = RrType.small, color = RrTheme.colors.ink3)
                     }
                 }
@@ -242,18 +242,27 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
     val still = LocalInspectionMode.current || RrTheme.reducedMotion
     var shown by remember { mutableStateOf(still) }
     LaunchedEffect(Unit) { shown = true }
-    val progress by animateFloatAsState(if (shown) 1f else 0f, tween(if (still) 0 else RrMotion.D3, easing = RrMotion.ease), label = "views")
+    val progress by animateFloatAsState(if (shown) 1f else 0f, tween(if (still) 0 else RrMotion.D3 + 8 * days.lastIndex, easing = RrMotion.ease), label = "views")
     val peak = days.maxOf { it.views }.coerceAtLeast(1.0)
     val summary = stringResource(CoreR.string.daily_views_over_30_days_peak_0, peak.toLong().toString())
     val previous = stringResource(R.string.p4_previous_day); val next = stringResource(R.string.p4_next_day)
     fun choose(index: Int) { haptics(RrHaptic.Selection); onSelect(index.coerceIn(days.indices)) }
-    Canvas(Modifier.fillMaxWidth().height(48.dp).pointerInput(days, rtl) { detectTapGestures { position -> val index = (position.x / size.width * days.size).toInt().coerceIn(days.indices); choose(if (rtl) days.lastIndex - index else index) } }
-        .clearAndSetSemantics { contentDescription = summary; customActions = listOf(CustomAccessibilityAction(previous) { choose((selected ?: days.size) - 1); true }, CustomAccessibilityAction(next) { choose((selected ?: -1) + 1); true }) }) {
+    Canvas(Modifier.fillMaxWidth().height(48.dp).pointerInput(days, rtl) { detectTapGestures { position -> choose(visitorDayAt(position.x, size.width.toFloat(), days.size, rtl)) } }
+        .pointerInput(days, rtl) { detectHorizontalDragGestures(onDragStart = { point -> onSelect(visitorDayAt(point.x, size.width.toFloat(), days.size, rtl)) }) { change, _ -> change.consume(); onSelect(visitorDayAt(change.position.x, size.width.toFloat(), days.size, rtl)) } }
+        .clearAndSetSemantics { contentDescription = summary; stateDescription = selected?.let { days.getOrNull(it)?.let { day -> "${day.date}: ${day.views.toLong()}" } }.orEmpty(); customActions = listOf(CustomAccessibilityAction(previous) { choose((selected ?: days.size) - 1); true }, CustomAccessibilityAction(next) { choose((selected ?: -1) + 1); true }) }) {
         val gap = 3.dp.toPx(); val width = (size.width - gap * (days.size - 1)) / days.size
         days.forEachIndexed { index, day ->
-            val height = (size.height * day.views / peak * progress).toFloat().coerceAtLeast(1f)
+            val localProgress = if (still) 1f else ((progress * (RrMotion.D3 + 8 * days.lastIndex) - 8 * index) / RrMotion.D3).coerceIn(0f, 1f)
+            val height = (size.height * day.views / peak * localProgress).toFloat().coerceAtLeast(1f)
             val x = (if (rtl) days.lastIndex - index else index) * (width + gap)
-            drawRect(c.accent.copy(alpha = 0.85f), Offset(x, size.height - height), Size(width, height))
+            drawRect((if (selected == index) c.accentText else c.accent).copy(alpha = 0.85f), Offset(x, size.height - height), Size(width, height))
         }
     }
 }
+
+internal fun visitorDayAt(x: Float, width: Float, count: Int, rtl: Boolean): Int {
+    require(count > 0 && width > 0)
+    val index = (x / width * count).toInt().coerceIn(0, count - 1)
+    return if (rtl) count - 1 - index else index
+}
+internal fun feedbackDate(value: String): String = runCatching { java.time.Instant.parse(value).atZone(java.time.ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)) }.getOrDefault(value)

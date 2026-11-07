@@ -76,7 +76,11 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
                     if (link == null) { if (state.failed) Failure { vm.link(route.linkId) } else RrSkeletonText(Modifier.padding(16.dp), lines = 6) }
                     else {
                         RrSectionHeader(stringResource(CoreR.string.comments))
-                        link.comments.sortedByDescending { it.createdAt }.forEach { comment -> RrListRow(comment.authorName, subtitle = comment.body) }
+                        link.comments.sortedByDescending { it.createdAt }.forEach { comment ->
+                            RrListRow(comment.authorName, subtitle = comment.body)
+                            RrSwitchRow(stringResource(R.string.p4_resolved), comment.resolvedAt != null, { vm.resolveComment(comment.id, it) }, enabled = !state.busy)
+                        }
+                        if (state.failed) Failure { vm.link(route.linkId) }
                         RrSectionHeader(stringResource(CoreR.string.activity))
                         link.events.sortedByDescending { it.createdAt }.forEach { event -> RrListRow(event.type.wireValue, subtitle = event.createdAt) }
                         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -114,7 +118,7 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
                 "lock" -> vm.lock {}
                 "rename", "notes", "tags", "translate", "job" -> form = action
                 "duplicate" -> vm.duplicate { nav.navigate(Builder(it)) }
-                "print" -> scope.launch { try { val draft = repositories.resumes.openDraft(id); draft.flush(); check(draft.state.value.status == me.rxresu.core.database.SaveStatus.Saved); val value = requireNotNull(draft.state.value.document); val pdf = repositories.pages.render(me.rxresu.core.page.PageSource.Resume(id, value.updatedAt)); printPdf(context, pdf.file, value.name) } catch (e: CancellationException) { throw e } catch (_: Exception) { toasts.show(resources.getString(CoreR.string.download_failed_try_again), tone = RrToastTone.Danger) } }
+                "print" -> scope.launch { try { val draft = repositories.resumes.openDraft(id); draft.flush(); check(draft.state.value.status == me.rxresu.core.database.SaveStatus.Saved); val value = requireNotNull(draft.state.value.document); val pdf = repositories.pages.render(me.rxresu.core.page.PageSource.Resume(id, value.updatedAt)); printPdf(context, pdf.file, value.name, pdf.pageCount) } catch (e: CancellationException) { throw e } catch (_: Exception) { toasts.show(resources.getString(CoreR.string.download_failed_try_again), tone = RrToastTone.Danger) } }
                 "trash" -> vm.trash { scope.launch { if (toasts.show(resources.getString(CoreR.string.moved_to_trash), resources.getString(CoreR.string.reconsider_a_rejected_edit_undo)) == RrToastResult.ActionPerformed) vm.untrash() else nav.popBackStack() } }
                 "retry" -> vm.retry()
             } }
@@ -123,7 +127,12 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
             "rename" -> TextSheet(stringResource(CoreR.string.rename), state.resume?.name.orEmpty(), stringResource(CoreR.string.save), state.busy, state.failed, { value -> vm.write({ UpdateResumeRequest(name = value) }) { form = null } }, { form = null })
             "tags" -> TextSheet(stringResource(CoreR.string.tags), state.resume?.tags?.joinToString(", ").orEmpty(), stringResource(CoreR.string.save), state.busy, state.failed, { value -> vm.write({ UpdateResumeRequest(tags = value.split(',').map { it.trim() }.filter { it.isNotEmpty() }) }) { form = null } }, { form = null })
             "notes" -> TextSheet(stringResource(CoreR.string.notes), state.resume?.data?.metadata?.notes.orEmpty(), stringResource(CoreR.string.save), state.busy, state.failed, { value -> vm.notes(value) { form = null } }, { form = null }, multiline = true)
-            "translate" -> ConfirmSheet(stringResource(CoreR.string.translate_into), stringResource(R.string.p4_choose_a_connection_in_the_assistant_nothing_is_sent_until_you_press_send), stringResource(CoreR.string.assistant), { form = null; nav.navigate(Assistant(id)) }, { form = null })
+            "translate" -> LanguageCopySheet(state, { locale -> vm.languageCopy(locale) { copy, prompt ->
+                nav.navigate(Builder(copy))
+                nav.getBackStackEntry<Builder>().savedStateHandle["rr.assistant.prompt"] = prompt
+                nav.navigate(Assistant(copy))
+                form = null
+            } }, { form = null })
             "job" -> RrBottomSheet({ form = null }, title = stringResource(CoreR.string.copy_for_a_job), initialDetent = 1) {
                 state.applications.forEach { app -> RrListRow(app.company, subtitle = app.role, onClick = { scope.launch { try { val draft = repositories.resumes.openDraft(id); draft.flush(); check(draft.state.value.status == me.rxresu.core.database.SaveStatus.Saved); val copy = repositories.documents.copyResumeForJob(CopyResumeForJobRequest(applicationId = app.id, resumeId = id)); nav.navigate(Builder(copy)); form = null } catch (e: CancellationException) { throw e } catch (_: Exception) { toasts.show(resources.getString(CoreR.string.couldn_t_save_your_changes_try_again_before_continuing), tone = RrToastTone.Danger) } } }) }
             }
@@ -151,12 +160,21 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
 }
 @Composable private fun DomainScreen(state: ShareState, vm: ShareViewModel, dismiss: () -> Unit) {
     val resources = androidx.compose.ui.platform.LocalResources.current; val context = LocalContext.current
+    val haptics = rememberRrHaptics(); val toasts = LocalToasts.current
+    var previouslyVerified by remember { mutableStateOf<Boolean?>(null) }
+    LaunchedEffect(state.domain?.verified) { if (previouslyVerified == false && state.domain?.verified == true) { haptics(RrHaptic.Success); toasts.show(resources.getString(R.string.p4_domain_connected)) }; previouslyVerified = state.domain?.verified }
     var hostname by remember { mutableStateOf(state.domain?.hostname.orEmpty()) }; var remove by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
         RrTopBar(stringResource(CoreR.string.your_domain), onBack = dismiss)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (!state.customDomains) { RrCallout(stringResource(R.string.p4_domains_unavailable), actionLabel = if (state.failed) stringResource(CoreR.string.try_again) else null, onAction = if (state.failed) ({ vm.retry() }) else null); return@Column }
             RrTextField(hostname, { hostname = it }, label = stringResource(R.string.p4_domain), mono = true, ltr = true)
             RrButton(stringResource(CoreR.string.connect), { vm.domain(hostname.trim()) }, enabled = hostname.isNotBlank() && !state.busy)
+            if (state.olacvSuggestion && state.domain == null) {
+                RrText(stringResource(R.string.p4_ola_disclosure), style = RrType.small)
+                RrButton(stringResource(R.string.p4_register_ola), { CustomTabsIntent.Builder().build().launchUrl(context, ("https://ola.cv/?domain=" + android.net.Uri.encode(hostname.trim())).toUri()) }, variant = RrButtonVariant.Secondary, enabled = hostname.trim().endsWith(".cv", ignoreCase = true))
+                RrButton(stringResource(R.string.p4_copy_code), { copy(context, "RX") }, variant = RrButtonVariant.Secondary)
+            }
             state.domain?.let { domain ->
                 RrText(if (domain.verified) stringResource(R.string.p4_connected) else stringResource(R.string.p4_add_these_dns_records_at_your_domain_provider))
                 domain.records.forEach { record -> RrListRow(record.type.wireValue + " " + record.name, subtitle = record.value, onClick = { copy(context, record.value) }) }
@@ -188,3 +206,18 @@ internal fun copy(context: Context, text: String) { (context.getSystemService(Co
 @Serializable private data class ResumeDomainSettings(val resumeId: String)
 
 @Serializable private data class ResumeFeedbackDetail(val resumeId: String, val linkId: String)
+
+@Composable private fun LanguageCopySheet(state: ShareState, create: (ImportResumeFileLocale) -> Unit, dismiss: () -> Unit) {
+    var selected by remember { mutableStateOf<ImportResumeFileLocale?>(null) }
+    RrBottomSheet(dismiss, title = stringResource(CoreR.string.translate_into), initialDetent = 1, footer = {
+        RrButton(stringResource(R.string.p4_create_language_copy), { selected?.let(create) }, Modifier.fillMaxWidth().padding(16.dp), enabled = selected != null && !state.busy, loading = state.busy)
+    }) {
+        Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
+            RrText(stringResource(R.string.p4_language_copy_disclosure), style = RrType.small)
+            ImportResumeFileLocale.entries.filter { it != ImportResumeFileLocale.Unknown && it.wireValue != state.resume?.data?.metadata?.page?.locale }.forEach { locale ->
+                RrListRow(java.util.Locale.forLanguageTag(locale.wireValue).displayName, selected = selected == locale, enabled = !state.busy, onClick = { selected = locale })
+            }
+            if (state.failed) Failure {}
+        }
+    }
+}
