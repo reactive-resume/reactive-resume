@@ -152,6 +152,7 @@ private fun BuilderRoute(route: Builder, entry: NavBackStackEntry, nav: NavContr
         onRetrySave = vm::flush,
         onAssistant = { nav.navigate(Assistant(route.resumeId)) },
         onMore = { nav.navigate(BuilderMore(route.resumeId)) },
+        onDismissOutsideChange = vm::dismissOutsideChange,
     ) { shown ->
         when (shown) {
             BuilderMode.Write -> Box(Modifier.fillMaxSize()) {

@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,16 +54,15 @@ import me.rxresu.core.designsystem.RrBottomSheetState
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrContextChip
-import me.rxresu.core.designsystem.RrFilterChip
 import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrIconButton
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrMotion
+import me.rxresu.core.designsystem.RrMonthPicker
 import me.rxresu.core.designsystem.RrPickerField
 import me.rxresu.core.designsystem.RrRowCaret
 import me.rxresu.core.designsystem.RrSlider
-import me.rxresu.core.designsystem.RrStepper
 import me.rxresu.core.designsystem.RrStrip
 import me.rxresu.core.designsystem.RrSwitchRow
 import me.rxresu.core.designsystem.RrText
@@ -335,40 +333,38 @@ private fun DatesField(doc: ResumeDoc, kind: SectionKind, item: JsonObject, sing
 }
 
 /**
- * The month picker sheet (same on both platforms): year stepper, twelve months, Present for end dates, and
- * Custom date text, which is saved as written.
+ * The month picker sheet (same on both platforms): [RrMonthPicker] with Present for end dates, and Custom date text,
+ * which is saved as written. Done keeps the stored value (a year-only date too) unless a month was picked.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MonthPickerSheet(initial: YearMonth?, present: Boolean?, raw: String?, onDismiss: () -> Unit, onPick: (YearMonth?, Boolean, String?) -> Unit) {
-    val haptics = rememberRrHaptics()
-    var year by rememberSaveable { mutableIntStateOf(initial?.year ?: java.time.Year.now().value) }
-    var month by rememberSaveable { mutableStateOf(initial?.month) }
+    var picked by rememberSaveable { mutableStateOf(initial?.month?.let { java.time.YearMonth.of(initial.year, it) }) }
+    var changed by rememberSaveable { mutableStateOf(false) }
     var isPresent by rememberSaveable { mutableStateOf(present == true) }
     var custom by rememberSaveable { mutableStateOf(raw != null) }
     var text by rememberSaveable { mutableStateOf(raw.orEmpty()) }
-    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     RrBottomSheet(
         onDismissRequest = onDismiss,
         fitContent = true,
         title = stringResource(S.string.dates),
         footer = {
             RrButton(stringResource(S.string.done), {
-                onPick(if (custom || isPresent) initial else YearMonth(year, month), isPresent && !custom, if (custom) text.ifBlank { null } else null)
+                val value = if (changed && !custom && !isPresent) picked?.let { YearMonth(it.year, it.monthValue) } else initial
+                onPick(value, isPresent && !custom, if (custom) text.ifBlank { null } else null)
             }, Modifier.fillMaxWidth().padding(16.dp))
         },
     ) {
         Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            if (present != null) RrSwitchRow(stringResource(S.string.present), isPresent, { isPresent = it })
             RrSwitchRow(stringResource(S.string.custom_date_text), custom, { custom = it })
-            if (custom) RrTextField(text, { text = it }, Modifier.fillMaxWidth(), placeholder = stringResource(S.string.mar_2022))
-            else if (!isPresent) {
-                RrStepper("$year", { year-- }, { year++ }, stringResource(S.string.year))
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Month.entries.forEach { m ->
-                        RrFilterChip(m.getDisplayName(TextStyle.SHORT, locale), month == m.value, { haptics(RrHaptic.Selection); month = if (month == m.value) null else m.value })
-                    }
-                }
+            if (custom) {
+                RrTextField(text, { text = it }, Modifier.fillMaxWidth(), placeholder = stringResource(S.string.mar_2022))
+            } else {
+                RrMonthPicker(
+                    picked,
+                    { picked = it; changed = true; isPresent = false },
+                    present = isPresent,
+                    onPresent = if (present != null) ({ isPresent = !isPresent }) else null,
+                )
             }
             Spacer(Modifier.height(4.dp))
         }

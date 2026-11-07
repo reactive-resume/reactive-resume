@@ -188,6 +188,7 @@ internal class BuilderViewModel(
     override fun set(path: Path, value: kotlinx.serialization.json.JsonElement) = edit { it.set(path, value) as JsonObject }
 
     override fun undo() { mutable.update { it.copy(outsideChange = null) }; viewModelScope.launch { runCatching { draft?.undo() } } }
+    fun dismissOutsideChange() = mutable.update { it.copy(outsideChange = null) }
     override fun redo() { mutable.update { it.copy(outsideChange = null) }; viewModelScope.launch { runCatching { draft?.redo() } } }
     override fun flush() { viewModelScope.launch { runCatching { draft?.flush() } } }
     override fun setEditing(editing: Boolean) { viewModelScope.launch { runCatching { draft?.setEditing(editing) } } }

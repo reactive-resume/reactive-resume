@@ -97,6 +97,7 @@ internal fun WriteMode(
                 selectedIndex = view.ordinal,
                 onSelect = { haptics(RrHaptic.Selection); onView(WriteView.entries[it]) },
                 modifier = Modifier.width(184.dp),
+                containerColor = RrTheme.colors.bg,
             )
             Spacer(Modifier.weight(1f))
             val count = state.pages.size.coerceAtLeast(doc.pages.size).coerceAtLeast(1)

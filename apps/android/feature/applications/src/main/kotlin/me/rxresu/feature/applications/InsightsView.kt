@@ -41,6 +41,7 @@ import java.time.LocalDate
 import me.rxresu.core.data.ApplicationInsights
 import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as D
+import me.rxresu.core.designsystem.RrBarChart
 import me.rxresu.core.designsystem.RrBottomSheet
 import me.rxresu.core.designsystem.RrCard
 import me.rxresu.core.designsystem.RrEmptyState
@@ -243,23 +244,19 @@ private fun BarRow(label: String, count: Int, fraction: Float, color: androidx.c
 @Composable
 private fun WeekBars(insights: ApplicationInsights, dates: Dates) {
     val c = RrTheme.colors
-    val haptics = rememberRrHaptics()
     val weeks = insights.byWeek.entries.sortedBy { it.key }
-    val max = (weeks.maxOfOrNull { it.value } ?: 1).coerceAtLeast(1)
     var picked by rememberSaveable { androidx.compose.runtime.mutableIntStateOf(weeks.lastIndex) }
-    val summary = weeks.joinToString(", ") { (week, n) -> "${dates.dayMonth(LocalDate.parse(week).atStartOfDay(dates.zone).toInstant())} $n" }
+    fun label(week: String) = dates.dayMonth(LocalDate.parse(week).atStartOfDay(dates.zone).toInstant())
+    val summary = weeks.joinToString(", ") { (week, n) -> "${label(week)} $n" }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        weeks.getOrNull(picked)?.let { (week, n) ->
-            RrText("${dates.dayMonth(LocalDate.parse(week).atStartOfDay(dates.zone).toInstant())} · $n", style = RrType.mono, color = c.ink2)
-        }
-        Row(Modifier.fillMaxWidth().height(96.dp).clearAndSetSemantics { contentDescription = summary }, horizontalArrangement = Arrangement.spacedBy(3.dp), verticalAlignment = Alignment.Bottom) {
-            weeks.forEachIndexed { i, (_, n) ->
-                Box(
-                    Modifier.weight(1f).fillMaxHeight((n / max.toFloat()).coerceAtLeast(0.03f)).clip(RrShape.xs)
-                        .background(if (i == picked) c.accent else c.accent.copy(alpha = 0.55f))
-                        .selectable(i == picked) { if (i != picked) haptics(RrHaptic.Selection); picked = i },
-                )
-            }
-        }
+        weeks.getOrNull(picked)?.let { (week, n) -> RrText("${label(week)} · $n", style = RrType.mono, color = c.ink2) }
+        RrBarChart(
+            weeks.map { it.value.toFloat() },
+            summary,
+            selected = picked,
+            onSelect = { picked = it },
+            previousLabel = stringResource(D.string.ds_previous_week),
+            nextLabel = stringResource(D.string.ds_next_week),
+        )
     }
 }

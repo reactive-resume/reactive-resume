@@ -58,6 +58,7 @@ internal fun BuilderScreen(
     onAssistant: () -> Unit,
     onMore: () -> Unit,
     modifier: Modifier = Modifier,
+    onDismissOutsideChange: () -> Unit = {},
     content: @Composable (BuilderMode) -> Unit,
 ) {
     val haptics = rememberRrHaptics()
@@ -85,6 +86,7 @@ internal fun BuilderScreen(
                 icon = if (agent) D.drawable.ic_ph_sparkle else null,
                 actionLabel = stringResource(S.string.undo),
                 onAction = onUndo,
+                onDismiss = onDismissOutsideChange,
             )
         }
         Box(Modifier.weight(1f).fillMaxWidth()) {
