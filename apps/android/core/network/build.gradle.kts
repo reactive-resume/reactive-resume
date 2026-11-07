@@ -1,4 +1,4 @@
-plugins { alias(libs.plugins.rr.android.library); alias(libs.plugins.kotlin.serialization) }
+plugins { alias(libs.plugins.rr.android.library); alias(libs.plugins.kotlin.serialization); id("rr.android.api-client") }
 
 dependencies {
     api(libs.okhttp)

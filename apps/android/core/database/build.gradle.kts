@@ -7,3 +7,5 @@ dependencies {
     testImplementation(libs.room.testing)
     testImplementation(libs.robolectric)
 }
+
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
