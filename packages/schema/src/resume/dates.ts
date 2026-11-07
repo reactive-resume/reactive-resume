@@ -300,6 +300,16 @@ export function formatYearMonth(value: YearMonth, { locale, format = DEFAULT_DAT
 }
 
 /**
+ * The text to edit one date in: its printed form when that reads back as the same date, otherwise the stored form.
+ * Many locales print text the date reader can't parse ("2024年3月", "mar. de 2024"), but every locale reads "2024-03".
+ */
+export function formatEditableYearMonth(value: YearMonth, options: DateFormatOptions) {
+	const text = formatYearMonth(value, options);
+	const reading = readSingleDate(text, options.locale);
+	return reading && toYearMonth(reading.endpoint) === value ? text : value;
+}
+
+/**
  * Dates as they print: "Mar 2022 – Present", "2014 – 2018" or one date. Dates carrying `raw` (custom or imported text) print that text verbatim, regardless of the selected format.
  */
 export function formatResumeDates(dates: ResumeDates, options: DateFormatOptions): string {

@@ -1,6 +1,6 @@
 // Typed month-year dates, as web's dates-field.tsx reads them. Pure, so Node can check it.
 import type { DateFormat, ResumeDates, YearMonth } from "@reactive-resume/schema/resume/dates";
-import { formatYearMonth, toYearMonth } from "@reactive-resume/schema/resume/dates";
+import { formatEditableYearMonth, formatYearMonth, toYearMonth } from "@reactive-resume/schema/resume/dates";
 import { readSingleDate } from "@reactive-resume/schema/resume/period";
 
 /** What someone typed ("Mar 2022", "03/2022", "2022-03", "2022"): a year-month, null when cleared, undefined if unreadable. */
@@ -19,6 +19,9 @@ export const isReversed = (dates: ResumeDates) =>
 
 export const showYearMonth = (value: YearMonth | null, locale: string, format?: DateFormat) =>
 	value ? formatYearMonth(value, { locale, format }) : "";
+
+export const showEditableYearMonth = (value: YearMonth | null, locale: string, format?: DateFormat) =>
+	value ? formatEditableYearMonth(value, { locale, format }) : "";
 
 /** The picker's day for a year-month (the 1st), or today. Months are local, as the picker shows them. */
 export function pickerDate(value: YearMonth | null): Date {
