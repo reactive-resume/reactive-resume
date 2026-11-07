@@ -12,6 +12,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.filter
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavBackStackEntry
@@ -23,6 +29,17 @@ import androidx.navigation.compose.dialog
 import androidx.compose.ui.window.DialogProperties
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrToastHostState
+
+/** Re-taps of the selected tab (0 Today … 3 Career), emitted by the tab bar. Collect with [OnTabReselected]. */
+val LocalTabReselects = staticCompositionLocalOf<SharedFlow<Int>> { MutableSharedFlow() }
+
+/** Runs [action] (usually scroll to top) when the person re-taps tab [index] while it is selected. */
+@Composable
+fun OnTabReselected(index: Int, action: suspend () -> Unit) {
+    val reselects = LocalTabReselects.current
+    val current by rememberUpdatedState(action)
+    LaunchedEffect(reselects, index) { reselects.filter { it == index }.collect { current() } }
+}
 
 /** App-wide toast host. Features call `LocalToasts.current.show(...)` from a coroutine. */
 val LocalToasts = staticCompositionLocalOf<RrToastHostState> { error("LocalToasts not provided") }

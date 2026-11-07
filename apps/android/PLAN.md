@@ -78,3 +78,16 @@ reference/Tokens.kt, icons). Branch `feat/android-app`; nothing is pushed.
   bearer callers.
 - App Links: `MOBILE_ANDROID_PACKAGES` and `MOBILE_ANDROID_CERT_SHA256` must list `me.rxresu`, `me.rxresu.debug` and
   their signing fingerprints; assetlinks lacks `delegate_permission/common.get_login_creds` for passkeys.
+
+## Lead backlog (requests from feature agents)
+
+- Design system round 2 (after D1 lands): `RrBottomSheet` fit-content height must follow content and detent changes;
+  `RrSectionHeader` top padding; `RrListRow` AnnotatedString title and top-aligned 40 dp tile layout; quick-action
+  tile (D2); vertical step list (D4); link-style `RrCallout` action; close (×) leading icon on `RrTopBar`;
+  `RrAvatar` icon fallback and 200% initials. Replace the `TODO(lead)` stand-ins in today/documents/search.
+- One app-level undo/toast service in `:core:navigation` to replace `rememberAppScope` (today, documents) and
+  `ToastScope` (workspace).
+- Routes: query on `Coach` and `Assistant` for search "Ask" rows.
+- App wiring: "New resume" quick action (with :feature:system); `POST_NOTIFICATIONS` declared by :feature:today.
+- Copy to confirm with the owner: D4 reader "Read on your server (free) / Reads the text layer, without AI" (the
+  Android reader can't read on the device like the storyboard's "Nothing leaves your phone").

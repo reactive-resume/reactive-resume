@@ -9,6 +9,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.lazy.rememberLazyListState
+import me.rxresu.core.navigation.OnTabReselected
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,6 +73,7 @@ internal fun TodayRoute(nav: NavController) {
     val context = LocalContext.current
     val res = LocalResources.current
     val listState = rememberLazyListState()
+    OnTabReselected(0) { listState.animateScrollToItem(0) }
 
     var denied by rememberSaveable { mutableStateOf(false) }
     LifecycleResumeEffect(Unit) {

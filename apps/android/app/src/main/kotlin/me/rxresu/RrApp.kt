@@ -25,6 +25,9 @@ import kotlinx.coroutines.flow.Flow
 import me.rxresu.core.auth.SessionState
 import me.rxresu.core.data.AppPreferences
 import me.rxresu.core.data.LocalRepositories
+import me.rxresu.core.data.Resource
+import kotlinx.coroutines.flow.MutableSharedFlow
+import androidx.compose.ui.res.pluralStringResource
 import me.rxresu.core.data.ThemePreference
 import me.rxresu.core.designsystem.rememberSystemReducedMotion
 import me.rxresu.core.designsystem.RrLayout
@@ -38,6 +41,7 @@ import me.rxresu.core.navigation.CareerTab
 import me.rxresu.core.navigation.DocumentsTab
 import me.rxresu.core.navigation.LocalBuilderShareMode
 import me.rxresu.core.navigation.LocalNavMotion
+import me.rxresu.core.navigation.LocalTabReselects
 import me.rxresu.core.navigation.LocalToasts
 import me.rxresu.core.navigation.LocalWorkspaceTab
 import me.rxresu.core.navigation.RrNavMotion
@@ -83,6 +87,7 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         val motion = RrNavMotion(RrTheme.reducedMotion)
         val entry by nav.currentBackStackEntryAsState()
         val tab = entry?.tabIndex()
+        val reselects = remember { MutableSharedFlow<Int>(extraBufferCapacity = 1) }
 
         if (session == SessionState.Loading) return@RrTheme
         val signedIn = session is SessionState.SignedIn || session is SessionState.Expired
@@ -94,6 +99,7 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         CompositionLocalProvider(
             LocalRepositories provides graph.repositories,
             LocalToasts provides toasts,
+            LocalTabReselects provides reselects,
             LocalNavMotion provides motion,
             LocalBuilderShareMode provides { id, n -> BuilderShareMode(id, n) },
             LocalWorkspaceTab provides { id, t, n -> WorkspaceTabContent(id, t, n) },
@@ -125,10 +131,17 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
                     RrToastHost(toasts, Modifier.align(Alignment.BottomCenter).padding(bottom = if (tab == null) RrLayout.tabBar else 0.dp))
                 }
                 if (tab != null) {
+                    // T1: the Today tab shows the Needs-you count while another tab is open.
+                    val today by remember(signedIn) { graph.repositories.today.observe() }.collectAsStateWithLifecycle(Resource())
+                    val needsYou = today.data?.needsYou?.size?.takeIf { it > 0 && tab != 0 }
+                    val tabs = rrAppTabs(stringResource(S.string.today), stringResource(S.string.documents), stringResource(S.string.applications), stringResource(S.string.career))
                     RrTabBar(
-                        tabs = rrAppTabs(stringResource(S.string.today), stringResource(S.string.documents), stringResource(S.string.applications), stringResource(S.string.career)),
+                        tabs = tabs.mapIndexed { i, t ->
+                            if (i == 0 && needsYou != null) t.copy(badge = "$needsYou", badgeDescription = pluralStringResource(R.plurals.needs_you_badge, needsYou, needsYou)) else t
+                        },
                         selectedIndex = tab,
                         onSelect = { nav.switchTab(tabRoutes[it]) },
+                        onReselect = { reselects.tryEmit(it) },
                     )
                 }
             }
