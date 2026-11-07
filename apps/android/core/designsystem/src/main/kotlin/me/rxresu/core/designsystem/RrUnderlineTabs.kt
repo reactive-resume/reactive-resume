@@ -96,7 +96,8 @@ fun RrUnderlineTabs(
                     Modifier
                         .heightIn(min = 44.dp)
                         .onPlaced { coords ->
-                            val parentX = coords.parentCoordinates?.let { p -> p.localPositionOf(coords, Offset.Zero).x } ?: 0f
+                            // The Row's content space (after its padding), the same space drawBehind paints in.
+                            val parentX = coords.parentLayoutCoordinates?.localPositionOf(coords, Offset.Zero)?.x ?: 0f
                             bounds[i] = parentX to coords.size.width.toFloat()
                         }
                         .selectable(selected, role = Role.Tab) {
@@ -122,7 +123,7 @@ fun RrUnderlineTabs(
 internal fun RrUnderlineTabsPreview() = RrPreviewSurface {
     RrUnderlineTabs(
         listOf(RrUnderlineTab("Overview"), RrUnderlineTab("Fit"), RrUnderlineTab("Apply", "2"), RrUnderlineTab("Interview prep"), RrUnderlineTab("Practice"), RrUnderlineTab("Debrief")),
-        selectedIndex = 0,
+        selectedIndex = 2,
         onSelect = {},
         contentPadding = PaddingValues(0.dp),
     )

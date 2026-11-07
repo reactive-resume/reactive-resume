@@ -34,11 +34,15 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
 
-/** Phone screen at the storyboard size: 390×844 dp at 2x, captures 780×1688 px like `screens/<ID>-<theme>.png`. */
-const val RR_SCREEN_QUALIFIERS = "w390dp-h844dp-xhdpi"
+/**
+ * Phone screen at the storyboard size: 390×844 dp at 2x, captures 780×1688 px like `screens/<ID>-<theme>.png`.
+ * Locale English (Portugal): the default (US) catalog with day-month dates, like the storyboard's Lisbon sample data,
+ * and the same on every machine whatever the host locale.
+ */
+const val RR_SCREEN_QUALIFIERS = "en-rPT-w390dp-h844dp-xhdpi"
 
 /** [RR_SCREEN_QUALIFIERS] in night mode, for test classes that pin the theme with `@Config`. */
-const val RR_SCREEN_QUALIFIERS_NIGHT = "w390dp-h844dp-xhdpi-night"
+const val RR_SCREEN_QUALIFIERS_NIGHT = "en-rPT-w390dp-h844dp-xhdpi-night"
 
 /** The storyboard's safe areas: 47 dp status bar and 34 dp gesture bar. */
 val RR_STORYBOARD_TOP_INSET: Dp = 47.dp

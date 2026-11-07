@@ -32,7 +32,7 @@ import org.junit.Test
 import org.robolectric.annotation.Config
 
 /** W1–W5 and the extra workspace states, drawn inside the Application screen (J6 frame) as the app does. */
-@Config(qualifiers = "en-rGB-w390dp-h844dp-xhdpi")
+@Config(qualifiers = me.rxresu.core.testing.RR_SCREEN_QUALIFIERS)
 class WorkspaceScreenshotTest : RrScreenshotTest() {
     private fun wrap(repos: RrRepositories, tab: (@Composable (String, WorkspaceTab, androidx.navigation.NavController) -> Unit)? = null): @Composable (@Composable () -> Unit) -> Unit = { content ->
         CompositionLocalProvider(
