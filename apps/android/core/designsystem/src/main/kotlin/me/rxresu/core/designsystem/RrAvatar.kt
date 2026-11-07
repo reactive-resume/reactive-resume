@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 /**
  * Avatar with 2 dp corners: initials on accent-soft (or a photo). 32 dp in headers inside a 44 dp target; 56 dp in
  * Settings. With [onClick] it is a button whose [contentDescription] names the destination ("Settings"). Initials keep
- * their size at every font scale.
+ * their size at every font scale. Blank [initials] (an account without a name) show a person icon instead.
  */
 @Composable
 fun RrAvatar(
@@ -41,6 +41,8 @@ fun RrAvatar(
         Box(Modifier.size(size).clip(RrShape.sm).background(c.accentSoft), contentAlignment = Alignment.Center) {
             if (image != null) {
                 Image(image, null, Modifier.size(size), contentScale = ContentScale.Crop)
+            } else if (initials.isBlank()) {
+                RrIcon(R.drawable.ic_ph_user, null, size = size / 2, tint = c.accentText)
             } else {
                 // Initials are part of a fixed-size mark: they keep their size at large font scales instead of
                 // overflowing the tile. The name they stand for is in the row beside them or in contentDescription.
@@ -77,5 +79,7 @@ internal fun RrAvatarPreview() = RrPreviewSurface {
         RrAvatar("AM", onClick = {}, contentDescription = "Settings")
         RrAvatar("PS", size = 32.dp)
         RrAvatar("AM", size = 56.dp)
+        RrAvatar("", onClick = {}, contentDescription = "Settings")
+        RrAvatar(" ", size = 56.dp)
     }
 }

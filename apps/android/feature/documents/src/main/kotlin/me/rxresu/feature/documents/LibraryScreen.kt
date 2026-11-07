@@ -301,7 +301,7 @@ private fun ListView(docs: List<DocumentSummary>, state: LibraryUiState, now: In
 @Composable
 private fun SortAndView(filters: LibraryFilters, actions: LibraryActions, onOpenTrash: () -> Unit) {
     Column(Modifier.padding(bottom = 16.dp)) {
-        RrSectionHeader(stringResource(S.string.sort), Modifier.padding(top = 0.dp))
+        RrSectionHeader(stringResource(S.string.sort), topPadding = 0.dp)
         RrListGroup(Modifier.padding(horizontal = 16.dp)) {
             listOf(
                 ListDocumentsSort.Edited to stringResource(S.string.last_edited),

@@ -4,6 +4,10 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.layout.layout
+import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +45,8 @@ internal fun RrTone.colors(): ToneColors {
  * [RrTone.Warn] with the `key` icon. Danger callouts are announced as they appear.
  *
  * @param icon overrides the tone's default icon (info, warning, warning-circle, check-circle).
+ * @param actionLink draws the action as a semibold text link in the tone's colour, 6 dp under the text (T2 "Create
+ *   account"), instead of a small secondary button. Its touch target is 44 dp tall without adding that height.
  */
 @Composable
 fun RrCallout(
@@ -51,8 +57,10 @@ fun RrCallout(
     title: String? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
+    actionLink: Boolean = false,
 ) {
     val t = tone.colors()
+    val link = actionLink && actionLabel != null && onAction != null
     Row(
         modifier
             .fillMaxWidth()
@@ -63,13 +71,40 @@ fun RrCallout(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         RrIcon(icon ?: t.icon, null, size = 20.dp, tint = t.content)
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(if (link) 6.dp else 8.dp)) {
             if (title != null) RrText(title, style = RrType.small.copy(fontWeight = FontWeight.SemiBold), color = t.content)
             RrText(text, style = RrType.small, color = t.content)
             if (actionLabel != null && onAction != null) {
-                RrButton(actionLabel, onAction, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
+                if (link) CalloutLink(actionLabel, t.content, onAction)
+                else RrButton(actionLabel, onAction, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
             }
         }
+    }
+}
+
+private val LinkText = RrType.small.copy(fontWeight = FontWeight.SemiBold)
+
+/**
+ * A text link whose tap area is 44 dp tall: the clickable box is centred on the text and reports only the text's height
+ * to the layout, so the callout keeps the board's spacing.
+ */
+@Composable
+private fun CalloutLink(label: String, color: Color, onClick: () -> Unit) {
+    val target = 44.dp
+    Box(
+        Modifier
+            .layout { measurable, constraints ->
+                val p = measurable.measure(constraints.copy(minHeight = 0))
+                val line = LinkText.lineHeight.toPx().roundToInt()
+                val inset = if (p.height > target.roundToPx()) 0 else ((p.height - line) / 2).coerceAtLeast(0)
+                layout(p.width, p.height - 2 * inset) { p.place(0, -inset) }
+            }
+            .clip(RrShape.md)
+            .clickable(role = Role.Button, onClick = onClick)
+            .heightIn(min = target),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        RrText(label, style = LinkText, color = color)
     }
 }
 
@@ -121,6 +156,12 @@ internal fun RrCalloutPreview() = RrPreviewSurface {
     RrCallout("Your provider may charge your account for requests made with your API key.", tone = RrTone.Warn, icon = R.drawable.ic_ph_key)
     RrCallout("Couldn't send. Your message is kept.", tone = RrTone.Danger, actionLabel = "Try again", onAction = {})
     RrCallout("Template changed to Onyx.", tone = RrTone.Accent)
+    RrCallout(
+        "You're using a guest account. Create an account to keep your work on other devices.",
+        actionLabel = "Create account",
+        onAction = {},
+        actionLink = true,
+    )
     RrStrip("This resume is locked. Unlock it from its menu to edit.", icon = R.drawable.ic_ph_lock_simple)
     RrOfflineStrip()
 }

@@ -29,6 +29,8 @@ private val BarTitle = RrType.label.copy(fontWeight = FontWeight.SemiBold, lineH
  * line ("Saved", "Saving…" with a spinner), trailing icon buttons. A line under it unless [flat].
  *
  * @param onBack shows the back caret ("Back"); null hides it.
+ * @param onClose shows a close (×) button in the back caret's place, for screens presented as modals (D4 Import,
+ *   full-screen editors); [onBack] is then ignored.
  * @param status the second line; put a spinner or icon beside its words there.
  * @param applyStatusBarInset pad for the status bar (false when a parent already did).
  */
@@ -41,6 +43,8 @@ fun RrTopBar(
     status: (@Composable RowScope.() -> Unit)? = null,
     flat: Boolean = false,
     applyStatusBarInset: Boolean = true,
+    onClose: (() -> Unit)? = null,
+    closeLabel: String = stringResource(R.string.ds_close),
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val c = RrTheme.colors
@@ -50,7 +54,10 @@ fun RrTopBar(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (onBack != null) RrIconButton(R.drawable.ic_ph_caret_left, backLabel, onBack, mirrorInRtl = true)
+            when {
+                onClose != null -> RrIconButton(R.drawable.ic_ph_x, closeLabel, onClose)
+                onBack != null -> RrIconButton(R.drawable.ic_ph_caret_left, backLabel, onBack, mirrorInRtl = true)
+            }
             Column(Modifier.weight(1f).padding(horizontal = 4.dp)) {
                 RrText(title, style = BarTitle, color = c.ink, maxLines = 1, modifier = Modifier.semantics { heading() })
                 if (status != null) {
@@ -80,4 +87,5 @@ internal fun RrTopBarPreview() = RrPreviewSurface {
         RrIconButton(R.drawable.ic_ph_dots_three, "More", {})
     }
     RrTopBar("Trash", onBack = {}, applyStatusBarInset = false, status = { RrIcon(R.drawable.ic_ph_cloud_check, null, size = 14.dp); RrText("Saved") })
+    RrTopBar("Import a resume", onClose = {}, applyStatusBarInset = false)
 }

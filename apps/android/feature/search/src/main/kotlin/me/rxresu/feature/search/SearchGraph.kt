@@ -67,14 +67,14 @@ private fun SearchRoute(nav: NavController, route: Search) {
             "thread" -> if (hit.documentId != null) Assistant(hit.documentId!!, hit.id) else Coach(hit.id)
             "fact" -> Knowledge(KnowledgeTab.Facts)
             "story" -> Story(hit.id)
-            ASK -> Coach()
+            ASK -> Coach(prompt = hit.title)
             else -> when (hit.id) {
                 "settings" -> Settings
                 "knowledge" -> Knowledge()
                 "offers" -> Offers
                 "ats-checker" -> AtsChecker()
                 "trash" -> Trash()
-                "new-letter" -> NewDocument
+                "new-letter" -> NewDocument()
                 "save-job" -> SaveJob()
                 "theme", "language" -> SettingsPreferences
                 else -> null

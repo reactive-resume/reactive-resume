@@ -52,6 +52,9 @@ import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrTopBar
+import me.rxresu.core.designsystem.RrStep
+import me.rxresu.core.designsystem.RrStepList
+import me.rxresu.core.designsystem.RrStepState
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.network.generated.ImportResumeFileLocale
 import me.rxresu.core.strings.R as S
@@ -74,7 +77,7 @@ fun ImportScreen(state: ImportUiState, callbacks: ImportCallbacks, modifier: Mod
     var languages by rememberSaveable { mutableStateOf(false) }
     Box(modifier.fillMaxSize().background(c.bg)) {
         Column(Modifier.fillMaxSize()) {
-            RrTopBar(stringResource(R.string.import_title), onBack = callbacks.onClose, backLabel = stringResource(S.string.close))
+            RrTopBar(stringResource(R.string.import_title), onClose = callbacks.onClose)
             Column(
                 Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -189,32 +192,23 @@ private fun MethodRow(title: String, subtitle: String, selected: Boolean, ai: Bo
     )
 }
 
-/**
- * Reading the file · Finding sections · Filling in entries. Each spinner swaps to a check when its work is done.
- * TODO(lead): RrTraceSteps lays steps out in a row at 13 sp; the board stacks them at 14 sp with an 18 dp check-circle.
- */
+/** Reading the file · Finding sections · Filling in entries. Each spinner swaps to a check when its work is done. */
 @Composable
 private fun Steps(state: ImportUiState) {
-    val c = RrTheme.colors
     val labels = listOf(R.string.import_reading, R.string.import_finding, R.string.import_filling)
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        labels.forEachIndexed { i, label ->
-            val done = state.progress > i && !(state.running && state.progress == i + 1)
-            val text = stringResource(label)
-            Row(
-                Modifier.semantics(mergeDescendants = true) { contentDescription = text },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
+    RrStepList(
+        labels.mapIndexed { i, label ->
+            val running = state.running && state.progress == i + 1
+            RrStep(
+                stringResource(label),
                 when {
-                    done -> RrIcon(DS.drawable.ic_ph_check_circle, null, size = 18.dp, tint = c.accentText)
-                    state.running && state.progress == i + 1 -> RrSpinner(size = 18.dp, tint = c.ink3)
-                    else -> RrIcon(DS.drawable.ic_ph_circle_notch, null, size = 18.dp, tint = c.line2)
-                }
-                RrText(text, style = RrType.ui, color = c.ink2)
-            }
-        }
-    }
+                    state.progress > i && !running -> RrStepState.Done
+                    running -> RrStepState.Running
+                    else -> RrStepState.Pending
+                },
+            )
+        },
+    )
 }
 
 @Composable

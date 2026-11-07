@@ -7,8 +7,6 @@ import android.content.Intent
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.provider.OpenableColumns
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -24,14 +22,12 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.core.net.toUri
 import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.toRoute
 import java.io.File
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -82,7 +78,7 @@ private val ImportTypes = arrayOf(
 fun NavGraphBuilder.documentsGraph(nav: NavController, motion: RrNavMotion) {
     tabRoot<DocumentsTab>(motion) { entry -> LibraryRoute(nav, entry) }
     sheet<DocumentActions> { entry -> DocumentActionsRoute(nav, entry.toRoute()) }
-    sheet<NewDocument> { NewDocumentRoute(nav) }
+    sheet<NewDocument> { entry -> NewDocumentRoute(nav, entry.toRoute()) }
     modal<Import>(motion) { entry -> ImportRoute(nav, entry.toRoute()) }
     screen<Trash> { entry -> TrashRoute(nav, entry.toRoute()) }
 }
@@ -96,7 +92,7 @@ private fun LibraryRoute(nav: NavController, entry: NavBackStackEntry) {
     val vm = viewModel { LibraryViewModel(repos.documents, repos.account) }
     val state by vm.state.collectAsStateWithLifecycle()
     val toasts = LocalToasts.current
-    val scope = rememberAppScope()
+    val scope = rememberCoroutineScope()
     val res = LocalResources.current
 
     val select by entry.savedStateHandle.getStateFlow<String?>(SELECT_KEY, null).collectAsStateWithLifecycle()
@@ -129,14 +125,14 @@ private fun LibraryRoute(nav: NavController, entry: NavBackStackEntry) {
                     val moved = vm.trashSelection()
                     val message = if (moved.size < wanted) res.getString(R.string.docs_moved_some, moved.size.toString(), wanted.toString())
                     else res.getString(R.string.docs_moved_many, moved.size.toString())
-                    if (moved.isNotEmpty() && toasts.show(message, res.getString(R.string.docs_undo)) == RrToastResult.ActionPerformed) {
-                        moved.forEach { runCatching { vm.restore(it) } }
+                    if (moved.isNotEmpty()) toasts.post(message, res.getString(R.string.docs_undo)) {
+                        if (it == RrToastResult.ActionPerformed) moved.forEach { doc -> runCatching { vm.restore(doc) } }
                     }
                 }
             },
             onTagSelection = { add, remove ->
                 scope.launch {
-                    runCatching { vm.setTags(state.selected, add, remove) }.onFailure { toasts.show(res.getString(R.string.docs_tags_failed), tone = RrToastTone.Danger) }
+                    runCatching { vm.setTags(state.selected, add, remove) }.onFailure { toasts.post(res.getString(R.string.docs_tags_failed), tone = RrToastTone.Danger) }
                 }
             },
             onOpenTrash = { nav.navigate(Trash()) },
@@ -144,7 +140,7 @@ private fun LibraryRoute(nav: NavController, entry: NavBackStackEntry) {
     )
 }
 
-/** Moves to Trash and offers Undo ("“Product designer” moved to Trash"). */
+/** Moves to Trash and offers Undo ("“Product designer” moved to Trash"); the toast outlives the caller. */
 private suspend fun trashWithUndo(
     doc: DocumentSummary,
     toasts: RrToastHostState,
@@ -155,11 +151,11 @@ private suspend fun trashWithUndo(
     try {
         trash()
     } catch (e: Exception) {
-        toasts.show(res.getString(R.string.docs_trash_failed), tone = RrToastTone.Danger)
+        toasts.post(res.getString(R.string.docs_trash_failed), tone = RrToastTone.Danger)
         return
     }
-    if (toasts.show(res.getString(R.string.docs_moved_to_trash, doc.name), res.getString(R.string.docs_undo)) == RrToastResult.ActionPerformed) {
-        runCatching { restore() }.onFailure { toasts.show(res.getString(R.string.docs_nothing_to_undo)) }
+    toasts.post(res.getString(R.string.docs_moved_to_trash, doc.name), res.getString(R.string.docs_undo)) {
+        if (it == RrToastResult.ActionPerformed) runCatching { restore() }.onFailure { toasts.show(res.getString(R.string.docs_nothing_to_undo)) }
     }
 }
 
@@ -169,14 +165,14 @@ private fun DocumentActionsRoute(nav: NavController, route: DocumentActions) {
     val vm = viewModel { DocumentActionsViewModel(repos, route.id) }
     val state by vm.state.collectAsStateWithLifecycle()
     val toasts = LocalToasts.current
-    val scope = rememberAppScope()
+    val scope = rememberCoroutineScope()
     val haptics = rememberRrHaptics()
     val context = LocalContext.current
     val res = LocalResources.current
     var preparing by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
 
-    fun failed(message: Int) = scope.launch { toasts.show(res.getString(message), tone = RrToastTone.Danger) }
+    fun failed(message: Int) = toasts.post(res.getString(message), tone = RrToastTone.Danger)
     fun withDoc(block: (DocumentSummary) -> Unit) { state.document?.let(block) }
 
     DocumentActionsSheet(
@@ -202,7 +198,7 @@ private fun DocumentActionsRoute(nav: NavController, route: DocumentActions) {
                 state.publicUrl?.let { url ->
                     context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(state.document?.name, url))
                     haptics(RrHaptic.Success)
-                    scope.launch { toasts.show(res.getString(R.string.docs_link_copied)) }
+                    toasts.post(res.getString(R.string.docs_link_copied))
                 }
             },
             onDuplicate = {
@@ -210,8 +206,8 @@ private fun DocumentActionsRoute(nav: NavController, route: DocumentActions) {
                     scope.launch {
                         val id = try { vm.duplicate(doc) } catch (e: Exception) { failed(R.string.docs_duplicate_failed); return@launch }
                         nav.popBackStack()
-                        if (toasts.show(res.getString(R.string.docs_duplicated, doc.name), res.getString(R.string.docs_open)) == RrToastResult.ActionPerformed) {
-                            nav.navigate(if (doc.isLetter) Letter(id) else Builder(id))
+                        toasts.post(res.getString(R.string.docs_duplicated, doc.name), res.getString(R.string.docs_open)) {
+                            if (it == RrToastResult.ActionPerformed) nav.navigate(if (doc.isLetter) Letter(id) else Builder(id))
                         }
                     }
                 }
@@ -243,10 +239,8 @@ private fun DocumentActionsRoute(nav: NavController, route: DocumentActions) {
                 nav.popBackStack()
             },
             onTrash = {
-                withDoc { doc ->
-                    nav.popBackStack()
-                    scope.launch { trashWithUndo(doc, toasts, res, { vm.trash(doc) }, { vm.restore(doc) }) }
-                }
+                // Trash first, then close: a failure keeps the sheet open under its toast.
+                withDoc { doc -> scope.launch { trashWithUndo(doc, toasts, res, { vm.trash(doc); nav.popBackStack() }, { vm.restore(doc) }) } }
             },
             onCopyForJob = { resumeId, job, name -> scope.launch { copyForJob(vm, state, resumeId, job, name, nav, toasts, res, haptics) { busy = it } } },
         ),
@@ -272,7 +266,7 @@ private suspend fun copyForJob(
     val id = try {
         vm.copyForJob(resumeId, job, name)
     } catch (e: Exception) {
-        toasts.show(res.getString(R.string.docs_copy_failed), tone = RrToastTone.Danger)
+        toasts.post(res.getString(R.string.docs_copy_failed), tone = RrToastTone.Danger)
         return
     } finally {
         busy(false)
@@ -284,7 +278,7 @@ private suspend fun copyForJob(
         is JobChoice.Existing -> state.applications.firstOrNull { it.id == job.id }?.company
         is JobChoice.New -> job.company.trim()
     }
-    if (company != null) toasts.show(res.getString(R.string.docs_copy_made, company))
+    if (company != null) toasts.post(res.getString(R.string.docs_copy_made, company))
 }
 
 /** Writes the PDF where the share sheet can read it and opens the system share sheet. */
@@ -299,12 +293,12 @@ private suspend fun sharePdf(context: Context, name: String, pdf: File) {
 }
 
 @Composable
-private fun NewDocumentRoute(nav: NavController) {
+private fun NewDocumentRoute(nav: NavController, route: NewDocument) {
     val repos = LocalRepositories.current
     val vm = viewModel { DocumentActionsViewModel(repos, null) }
     val state by vm.state.collectAsStateWithLifecycle()
     val toasts = LocalToasts.current
-    val scope = rememberAppScope()
+    val scope = rememberCoroutineScope()
     val haptics = rememberRrHaptics()
     val res = LocalResources.current
     var busy by remember { mutableStateOf(false) }
@@ -323,7 +317,7 @@ private fun NewDocumentRoute(nav: NavController) {
             onImport = { picker.launch(ImportTypes) },
             onBlank = {
                 scope.launch {
-                    val id = createResume(repos, res.getString(R.string.docs_untitled_resume), sample = false) ?: run { toasts.show(res.getString(R.string.docs_create_failed), tone = RrToastTone.Danger); return@launch }
+                    val id = createResume(repos, res.getString(R.string.docs_untitled_resume), sample = false) ?: run { toasts.post(res.getString(R.string.docs_create_failed), tone = RrToastTone.Danger); return@launch }
                     haptics(RrHaptic.Success)
                     nav.popBackStack()
                     nav.navigate(BuilderBasics(id))
@@ -332,11 +326,11 @@ private fun NewDocumentRoute(nav: NavController) {
             onSaveJob = { nav.popBackStack(); nav.navigate(SaveJob()) },
             onSample = {
                 scope.launch {
-                    val id = createResume(repos, res.getString(R.string.docs_sample_name), sample = true) ?: run { toasts.show(res.getString(R.string.docs_create_failed), tone = RrToastTone.Danger); return@launch }
+                    val id = createResume(repos, res.getString(R.string.docs_sample_name), sample = true) ?: run { toasts.post(res.getString(R.string.docs_create_failed), tone = RrToastTone.Danger); return@launch }
                     haptics(RrHaptic.Success)
                     nav.popBackStack()
                     nav.navigate(Builder(id))
-                    toasts.show(res.getString(R.string.docs_sample_added))
+                    toasts.post(res.getString(R.string.docs_sample_added))
                 }
             },
             onCopyForJob = { resumeId, job, name -> scope.launch { copyForJob(vm, state, resumeId, job, name, nav, toasts, res, haptics) { busy = it } } },
@@ -345,7 +339,7 @@ private fun NewDocumentRoute(nav: NavController) {
                     val id = try {
                         vm.newLetter(res.getString(R.string.docs_untitled_letter), resumeId = resumeId, sourceLetterId = letterId)
                     } catch (e: Exception) {
-                        toasts.show(res.getString(R.string.docs_create_failed), tone = RrToastTone.Danger)
+                        toasts.post(res.getString(R.string.docs_create_failed), tone = RrToastTone.Danger)
                         return@launch
                     }
                     haptics(RrHaptic.Success)
@@ -355,6 +349,8 @@ private fun NewDocumentRoute(nav: NavController) {
             },
         ),
         busy = busy,
+        initialStep = if (route.copyForApplicationId != null) NewStep.CopyForJob else NewStep.Main,
+        initialApplicationId = route.copyForApplicationId,
     )
 }
 
@@ -445,13 +441,13 @@ private fun TrashRoute(nav: NavController, route: Trash) {
     val vm = viewModel { TrashViewModel(repos.documents, repos.applications) }
     val state by vm.state.collectAsStateWithLifecycle()
     val toasts = LocalToasts.current
-    val scope = rememberAppScope()
+    val scope = rememberCoroutineScope()
     val haptics = rememberRrHaptics()
     val res = LocalResources.current
     var tab by rememberSaveable { mutableStateOf(route.tab) }
     var confirm by remember { mutableStateOf<TrashConfirm?>(null) }
 
-    fun failed(message: Int) = scope.launch { toasts.show(res.getString(message), tone = RrToastTone.Danger) }
+    fun failed(message: Int) = toasts.post(res.getString(message), tone = RrToastTone.Danger)
 
     TrashScreen(
         state,
@@ -465,14 +461,14 @@ private fun TrashRoute(nav: NavController, route: Trash) {
                 scope.launch {
                     try { vm.restore(doc) } catch (e: Exception) { failed(R.string.trash_restore_failed); return@launch }
                     haptics(RrHaptic.Success)
-                    if (toasts.show(res.getString(R.string.trash_restored, doc.name), res.getString(R.string.docs_open)) == RrToastResult.ActionPerformed) nav.open(doc)
+                    toasts.post(res.getString(R.string.trash_restored, doc.name), res.getString(R.string.docs_open)) { if (it == RrToastResult.ActionPerformed) nav.open(doc) }
                 }
             },
             onRestoreApplication = { app ->
                 scope.launch {
                     try { vm.restore(app) } catch (e: Exception) { failed(R.string.trash_restore_failed); return@launch }
                     haptics(RrHaptic.Success)
-                    toasts.show(res.getString(R.string.trash_restored, app.company))
+                    toasts.post(res.getString(R.string.trash_restored, app.company))
                 }
             },
             onConfirm = { confirm = it },
@@ -482,10 +478,10 @@ private fun TrashRoute(nav: NavController, route: Trash) {
                 scope.launch {
                     try {
                         when (what) {
-                            is TrashConfirm.Document -> { vm.purge(what.doc); toasts.show(res.getString(R.string.trash_deleted, what.doc.name)) }
-                            is TrashConfirm.Application -> { vm.purge(what.app); toasts.show(res.getString(R.string.trash_deleted, what.app.company)) }
+                            is TrashConfirm.Document -> { vm.purge(what.doc); toasts.post(res.getString(R.string.trash_deleted, what.doc.name)) }
+                            is TrashConfirm.Application -> { vm.purge(what.app); toasts.post(res.getString(R.string.trash_deleted, what.app.company)) }
                             is TrashConfirm.Selection -> vm.applyToSelection(restore = false)
-                            TrashConfirm.Empty -> { vm.empty(); toasts.show(res.getString(R.string.trash_emptied)) }
+                            TrashConfirm.Empty -> { vm.empty(); toasts.post(res.getString(R.string.trash_emptied)) }
                         }
                     } catch (e: Exception) {
                         failed(if (what == TrashConfirm.Empty) R.string.trash_empty_failed else R.string.trash_delete_failed)
@@ -501,15 +497,4 @@ private fun TrashRoute(nav: NavController, route: Trash) {
             },
         ),
     )
-}
-
-/**
- * The activity's scope, so a toast with Undo outlives the screen that started it (a closing sheet, a tab switch).
- * ponytail: activity-wide scope; move to an app-level toast/undo service if one appears in :core:navigation.
- */
-@Composable
-internal fun rememberAppScope(): CoroutineScope {
-    val activity = LocalActivity.current as? ComponentActivity
-    val fallback = rememberCoroutineScope()
-    return activity?.lifecycleScope ?: fallback
 }

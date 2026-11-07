@@ -26,7 +26,8 @@ private const val NEW_JOB = "new"
 
 /**
  * "Copy a resume for a job": Start from (a resume), For which job (an application or Add a job), Name (suggested).
- * Pushed inside D2 and D3. The fields survive a failed copy so nothing typed is lost.
+ * Pushed inside D2 and D3. The fields survive a failed copy so nothing typed is lost. [initialApplicationId] picks the
+ * job up front (D3 opened from an application's "Copy a resume for this job").
  */
 @Composable
 internal fun CopyForJobForm(
@@ -36,10 +37,11 @@ internal fun CopyForJobForm(
     busy: Boolean,
     onSubmit: (resumeId: String, job: JobChoice, name: String) -> Unit,
     modifier: Modifier = Modifier,
+    initialApplicationId: String? = null,
 ) {
     val resumes = library.filter { it.type == DocumentType.Resume && it.trashedAt == null }
     var resumeId by rememberSaveable { mutableStateOf(initialResumeId ?: resumes.firstOrNull()?.id) }
-    var job by rememberSaveable { mutableStateOf(applications.firstOrNull()?.id ?: NEW_JOB) }
+    var job by rememberSaveable { mutableStateOf(initialApplicationId ?: applications.firstOrNull()?.id ?: NEW_JOB) }
     var company by rememberSaveable { mutableStateOf("") }
     var role by rememberSaveable { mutableStateOf("") }
     var posting by rememberSaveable { mutableStateOf("") }
@@ -52,7 +54,7 @@ internal fun CopyForJobForm(
     val ready = source != null && (!newJob || (company.isNotBlank() && role.isNotBlank()))
 
     Column(modifier.padding(bottom = 16.dp)) {
-        RrSectionHeader(stringResource(R.string.docs_start_from), Modifier.padding(top = 0.dp))
+        RrSectionHeader(stringResource(R.string.docs_start_from), topPadding = 0.dp)
         RrListGroup(Modifier.padding(horizontal = 16.dp)) {
             resumes.forEach { RrChoiceRow(it.name, it.id == resumeId, { resumeId = it.id }) }
         }
