@@ -158,7 +158,11 @@ class RrSpecGenerator(private val spec: Map<String, Any?>, private val output: F
                         "    @SerialName(${quote(k)}) val ${field(k)}: $t$default"
                     }
                     val parent=parents[key]?.joinToString(", "," : ") ?: ""
-                    write(name,"@Serializable\ndata class $name(\n"+fields.joinToString(",\n")+"\n)$parent\n")
+                    // Open objects (`additionalProperties: {}`) keep the keys the spec doesn't name, so a read-modify-write
+                    // never drops them (resume items, agent message parts).
+                    val open=s["additionalProperties"].let { it == true || (it is Map<*, *> && it.isEmpty()) }
+                    if(open) write(name,"@OptIn(ExperimentalSerializationApi::class)\n@KeepGeneratedSerializer\n@Serializable(with = ${name}Serializer::class)\ndata class $name(\n"+fields.joinToString(",\n")+",\n    /** Keys the spec allows but doesn't name, kept as sent. */\n    @Transient val extraFields: JsonObject = JsonObject(emptyMap()),\n)$parent\n\nobject ${name}Serializer : OpenObjectSerializer<$name>($name.generatedSerializer(), { it.extraFields }, { value, extra -> value.copy(extraFields = extra) })\n")
+                    else write(name,"@Serializable\ndata class $name(\n"+fields.joinToString(",\n")+"\n)$parent\n")
                 }
             }
         }
