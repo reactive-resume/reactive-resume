@@ -1,24 +1,84 @@
 package me.rxresu.feature.assistant
 
+import android.provider.OpenableColumns
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import me.rxresu.core.designsystem.RrText
-import me.rxresu.core.navigation.RrNavMotion
-import me.rxresu.core.navigation.screen
-import me.rxresu.core.navigation.sheet
-import me.rxresu.core.navigation.Assistant
-import me.rxresu.core.navigation.AssistantProposals
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.*
+import kotlinx.coroutines.*
+import me.rxresu.core.data.LocalRepositories
+import me.rxresu.core.designsystem.*
+import me.rxresu.core.strings.R as CoreR
+import me.rxresu.core.navigation.*
 
-/** Registers this module's destinations. Placeholder screens until the feature lands. */
 fun NavGraphBuilder.assistantGraph(nav: NavController, motion: RrNavMotion) {
-    sheet<Assistant> { Placeholder("B16") }
-    screen<AssistantProposals> { Placeholder("B17") }
+    sheet<Assistant> { entry ->
+        val route = entry.toRoute<Assistant>(); val repositories = LocalRepositories.current
+        val owner = remember(entry) { assistantOwner(nav, entry) }
+        val vm: AssistantViewModel = viewModel(viewModelStoreOwner = owner, key = "assistant-${route.resumeId}") { AssistantViewModel(repositories, route.resumeId, route.threadId) }; val state by vm.state.collectAsStateWithLifecycle()
+        LaunchedEffect(vm, route.threadId) {
+            route.threadId?.let { if (it != vm.state.value.threadId) vm.thread(it) }
+            owner.savedStateHandle.remove<String>("rr.assistant.prompt")?.let(vm::input)
+        }
+        val resources = androidx.compose.ui.platform.LocalResources.current; val context = LocalContext.current; val scope = rememberCoroutineScope(); val toasts = LocalToasts.current
+        var picker by remember { mutableStateOf<String?>(null) }
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if (uri != null) scope.launch {
+            try {
+                val file = withContext(Dispatchers.IO) {
+                    val name = context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null)?.use { cursor ->
+                        check(cursor.moveToFirst()); val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE); if (sizeIndex >= 0 && !cursor.isNull(sizeIndex)) check(cursor.getLong(sizeIndex) <= 25L * 1024 * 1024)
+                        cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+                    } ?: "Attachment"
+                    val bytes = requireNotNull(context.contentResolver.openInputStream(uri)).use { readAttachment(it) }; check(bytes.size <= 25 * 1024 * 1024)
+                    Triple(name, context.contentResolver.getType(uri) ?: "application/octet-stream", bytes)
+                }
+                vm.attach(file.first, file.second, file.third)
+            } catch (e: CancellationException) { throw e } catch (_: Exception) { toasts.show(resources.getString(R.string.p4_files_can_be_up_to_25_mb), tone = RrToastTone.Danger) }
+        } }
+        Box {
+            AssistantScreen(state, { nav.popBackStack() }, vm::input, vm::send, { vm.stop() }, { doc, posting -> vm.context(doc, posting) }) { action -> when {
+                action == "attach" -> launcher.launch(arrayOf("application/pdf", "text/plain", "image/*", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+                action == "providers" || action == "history" -> picker = action
+                action == "setup" -> nav.navigate(AiProviderSheet())
+                action == "proposals" -> state.threadId?.let { thread -> nav.navigate(AssistantProposals(route.resumeId, thread)) }
+                action == "continue" -> vm.resumeStream()
+                action.startsWith("remove:") -> vm.removeAttachment(action.removePrefix("remove:"))
+            } }
+            when (picker) {
+                "providers" -> RrBottomSheet({ picker = null }, title = stringResource(CoreR.string.choose_a_connection), fitContent = true) { state.providers.forEach { provider -> RrListRow(provider.label, subtitle = provider.model, onClick = { vm.provider(provider.id); picker = null }) }; RrListRow(stringResource(R.string.p4_add_connection), onClick = { nav.navigate(AiProviderSheet()) }) }
+                "history" -> RrBottomSheet({ picker = null }, title = stringResource(CoreR.string.past_conversations), initialDetent = 1) { state.threads.filter { it.coverLetterId == state.letterId && (state.letterId != null || it.workingResumeId == route.resumeId || it.sourceResumeId == route.resumeId) }.forEach { thread -> RrListRow(thread.title, subtitle = thread.lastMessageAt, onClick = { vm.thread(thread.id); picker = null }) } }
+            }
+        }
+    }
+    screen<AssistantProposals> { entry ->
+        val route = entry.toRoute<AssistantProposals>(); val repositories = LocalRepositories.current
+        val owner = remember(entry) { assistantOwner(nav, entry) }
+        val vm: AssistantViewModel = viewModel(viewModelStoreOwner = owner, key = "assistant-${route.resumeId}") { AssistantViewModel(repositories, route.resumeId, route.threadId) }
+        val state by vm.state.collectAsStateWithLifecycle()
+        ProposalsScreen(state, { nav.popBackStack() }, { ids, decision, wording -> vm.decide(ids, decision, wording) }, { nav.popBackStack() })
+    }
 }
 
-@Composable
-private fun Placeholder(id: String) = Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { RrText(id) }
+internal fun readAttachment(input: java.io.InputStream): ByteArray {
+    val output = java.io.ByteArrayOutputStream()
+    val buffer = ByteArray(8192)
+    while (true) {
+        val count = input.read(buffer)
+        if (count < 0) break
+        check(output.size() + count <= 25 * 1024 * 1024)
+        output.write(buffer, 0, count)
+    }
+    return output.toByteArray()
+}
+
+/** Floating-window destinations are removed on a screen push; document entry keeps review state alive. */
+private fun assistantOwner(nav: NavController, entry: NavBackStackEntry): NavBackStackEntry {
+    val previous = nav.previousBackStackEntry ?: return entry
+    val route = previous.destination.route.orEmpty()
+    return if (listOf(Builder::class, Letter::class).any { route.startsWith(it.qualifiedName!!) }) previous else entry
+}
