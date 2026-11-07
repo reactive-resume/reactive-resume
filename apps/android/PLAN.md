@@ -65,7 +65,9 @@ reference/Tokens.kt, icons). Branch `feat/android-app`; nothing is pushed.
 - [x] Phase 0: scaffold, contracts, plan (3a9091160).
 - [x] Phase 1: F1 design system + harness, F2 network/data/database, F3 auth/page/strings merged; navigation shell, app
       NavHost, repositories, preferences and draft-sync wiring (through 3d6dcc099).
-- [ ] Phase 2: P1–P6 running in parallel worktrees from 3d6dcc099.
+- [x] Phase 2: P1–P6 merged; follow-ups D1 (design system) merged; system intents, tab routing, sign-out cleanup,
+      open-object generator fix wired by the lead (through e3cd0a17b).
+- [ ] Phase 2b: D2 (design system round 2), B-R2 (builder completion), P4-R2 (assistant/letters completion) running.
 - [ ] Phase 3: integrate, emulator smoke, independent review, report.
 
 ## Known backend gaps (from foundation agents)
@@ -95,3 +97,8 @@ reference/Tokens.kt, icons). Branch `feat/android-app`; nothing is pushed.
   on `RrSegmentedControl`, title colour on `RrListRow`, sheet header wrapping at large fonts, month picker, rich text
   editor (or one approved library), photo crop. Route `Assistant(prompt)` (D1 adds it). Draft: outside-change event
   (agent update strip) and grouped undo steps (Fit to one page).
+- Career (P6): dates render as ISO ("2026-11-07"); format like the web. Rich chat bubbles, accent removable chips,
+  multiline minimum height, native story practice route.
+- Settings (P1): OTP caret/ring motion, locale on API 26–32 (needs attachBaseContext), hardware-keyboard shortcut help.
+- Smoke server: `node <scratchpad>/smoke-server.mjs` (per-checkout DB `rr_reactive_resume_eff82d41_android_smoke` on
+  the :5432 Postgres, origin `http://10.0.2.2:4710`, `FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI=true`).
