@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.LibraryExtension
+import io.github.takahirom.roborazzi.RoborazziExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
@@ -23,12 +24,25 @@ class LibraryConventionPlugin : Plugin<Project> {
             namespace = "me.rxresu." + path.removePrefix(":").replace(':', '.').replace("-", "")
                 .replace(Regex("\\.public$"), ".publiclink")
             compileSdk = COMPILE_SDK
-            defaultConfig { minSdk = MIN_SDK }
+            defaultConfig {
+                minSdk = MIN_SDK
+                // AppAuth's manifest needs this wherever it is merged, including library unit-test manifests.
+                manifestPlaceholders["appAuthRedirectScheme"] = "me.rxresu"
+            }
             compileOptions {
                 sourceCompatibility = JavaVersion.VERSION_17
                 targetCompatibility = JavaVersion.VERSION_17
             }
-            testOptions { unitTests { isIncludeAndroidResources = true } }
+            testOptions {
+                unitTests {
+                    isIncludeAndroidResources = true
+                    all {
+                        // Robolectric on SDK 36 reaches into FileDescriptor internals, closed by default on JDK 17+.
+                        it.jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED", "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
+                        it.maxHeapSize = "2g"
+                    }
+                }
+            }
             lint { warningsAsErrors = false; abortOnError = true; checkDependencies = false }
         }
         dependencies {
@@ -65,6 +79,8 @@ class FeatureConventionPlugin : Plugin<Project> {
         pluginManager.apply("rr.android.compose")
         pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
         pluginManager.apply("io.github.takahirom.roborazzi")
+        // Goldens live beside the tests so `verifyRoborazziDebug` gates regressions.
+        extensions.configure<RoborazziExtension> { outputDir.set(file("src/test/screenshots")) }
         dependencies {
             add("implementation", project(":core:designsystem"))
             add("implementation", project(":core:navigation"))

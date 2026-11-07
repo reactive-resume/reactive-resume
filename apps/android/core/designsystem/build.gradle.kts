@@ -19,13 +19,3 @@ dependencies {
 
 // Goldens live beside the tests so `verifyRoborazziDebug` can gate regressions.
 roborazzi { outputDir.set(file("src/test/screenshots")) }
-
-android {
-    testOptions {
-        unitTests.all {
-            // Robolectric on SDK 36 reaches into FileDescriptor internals, closed by default on JDK 17+.
-            it.jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED", "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
-            it.maxHeapSize = "2g"
-        }
-    }
-}
