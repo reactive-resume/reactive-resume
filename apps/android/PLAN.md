@@ -62,4 +62,19 @@ reference/Tokens.kt, icons). Branch `feat/android-app`; nothing is pushed.
 
 ## Status
 
-- [x] Phase 0 scaffold builds (`./gradlew assembleDebug`).
+- [x] Phase 0: scaffold, contracts, plan (3a9091160).
+- [x] Phase 1: F1 design system + harness, F2 network/data/database, F3 auth/page/strings merged; navigation shell, app
+      NavHost, repositories, preferences and draft-sync wiring (through 3d6dcc099).
+- [ ] Phase 2: P1–P6 running in parallel worktrees from 3d6dcc099.
+- [ ] Phase 3: integrate, emulator smoke, independent review, report.
+
+## Known backend gaps (from foundation agents)
+
+- External-app consent (A4): app bearer can't satisfy Better Auth's cookie-session consent endpoint; web fallback.
+- No native guest accounts: server refuses OAuth tokens for anonymous users.
+- Saved versions and feedback snapshots have no PDF endpoint; public PDF requires downloads enabled.
+- REST PDF check requires authentication (signed-out P2).
+- Two-step, passkey and session management, API key creation, password set and account deletion are browser-only for
+  bearer callers.
+- App Links: `MOBILE_ANDROID_PACKAGES` and `MOBILE_ANDROID_CERT_SHA256` must list `me.rxresu`, `me.rxresu.debug` and
+  their signing fingerprints; assetlinks lacks `delegate_permission/common.get_login_creds` for passkeys.
