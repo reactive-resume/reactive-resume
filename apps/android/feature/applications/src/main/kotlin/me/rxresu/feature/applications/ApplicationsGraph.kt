@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.toRoute
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.navigation.RrNavMotion
 import me.rxresu.core.navigation.screen
@@ -22,7 +23,7 @@ import me.rxresu.core.navigation.InterviewSheet
 fun NavGraphBuilder.applicationsGraph(nav: NavController, motion: RrNavMotion) {
     tabRoot<ApplicationsTab>(motion) { Placeholder("J1") }
     sheet<SaveJob> { Placeholder("J5") }
-    screen<Application> { Placeholder("J6") }
+    screen<Application> { entry -> val r = entry.toRoute<Application>(); ApplicationRoute(r.id, r.tab, nav) }
     sheet<MoveApplication> { Placeholder("J7") }
     sheet<InterviewSheet> { Placeholder("J8") }
 }
