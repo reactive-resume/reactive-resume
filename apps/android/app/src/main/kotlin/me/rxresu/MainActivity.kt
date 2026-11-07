@@ -1,5 +1,6 @@
 package me.rxresu
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,6 +12,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import me.rxresu.core.auth.SessionState
+import me.rxresu.feature.settings.InterfaceLocale
 import me.rxresu.feature.system.prepareSystemIntent
 import me.rxresu.feature.system.systemRouteFor
 
@@ -29,6 +31,9 @@ class MainActivity : ComponentActivity() {
         if (savedInstanceState == null) handle(intent)
         setContent { RrApp(graph = graph, incoming = incoming.receiveAsFlow()) }
     }
+
+    // In-app language on API 26–32 (API 33+ uses the system per-app language).
+    override fun attachBaseContext(newBase: Context) = super.attachBaseContext(InterfaceLocale.wrap(newBase))
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)

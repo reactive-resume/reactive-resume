@@ -13,6 +13,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,8 +52,10 @@ import me.rxresu.core.navigation.LocalToasts
 import me.rxresu.core.navigation.LocalWorkspaceTab
 import me.rxresu.core.navigation.RrNavMotion
 import me.rxresu.core.navigation.TodayTab
+import me.rxresu.core.navigation.AtsChecker
 import me.rxresu.core.navigation.Import
 import me.rxresu.core.navigation.ResetPassword
+import me.rxresu.core.navigation.Search
 import me.rxresu.core.navigation.SignIn
 import me.rxresu.core.navigation.TwoStep
 import me.rxresu.core.navigation.Welcome
@@ -111,7 +119,18 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
             LocalBuilderShareMode provides { id, n -> BuilderShareMode(id, n) },
             LocalWorkspaceTab provides { id, t, n -> WorkspaceTabContent(id, t, n) },
         ) {
-            Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .background(RrTheme.colors.bg)
+                    // Hardware keyboard: Ctrl+K or / opens Search from anywhere signed in, as on the web.
+                    .onPreviewKeyEvent { event ->
+                        val search = event.type == KeyEventType.KeyDown && signedIn &&
+                            ((event.isCtrlPressed && event.key == Key.K) || (!event.isCtrlPressed && event.key == Key.Slash && tab != null))
+                        if (search) nav.navigate(Search())
+                        search
+                    },
+            ) {
                 Box(Modifier.weight(1f)) {
                     NavHost(
                         navController = nav,
@@ -163,7 +182,7 @@ private fun SessionRouting(nav: NavController, signedIn: Boolean) {
         val dest = nav.currentBackStackEntry?.destination ?: return@LaunchedEffect
         val onAuth = dest.hasRoute<Welcome>() || dest.hasRoute<SignIn>() || dest.hasRoute<TwoStep>() || dest.hasRoute<ResetPassword>()
         // The ATS checker sends a signed-out person to sign in before importing; pick that import back up.
-        val pendingImport = nav.currentBackStack.value.firstNotNullOfOrNull { it.savedStateHandle.get<String>("ats-import") }
+        val pendingImport = runCatching { nav.getBackStackEntry<AtsChecker>() }.getOrNull()?.savedStateHandle?.get<String>("ats-import")
         if (signedIn && onAuth) {
             nav.resetTo(TodayTab)
             if (pendingImport != null) nav.navigate(Import(pendingImport.ifEmpty { null }))

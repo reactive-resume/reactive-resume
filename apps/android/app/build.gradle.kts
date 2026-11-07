@@ -29,6 +29,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures { compose = true }
+    // Every language ships in the base APK so the in-app language picker works on API 26–32 after a Play install.
+    bundle { language { enableSplit = false } }
     testOptions { unitTests { isIncludeAndroidResources = true } }
 }
 
