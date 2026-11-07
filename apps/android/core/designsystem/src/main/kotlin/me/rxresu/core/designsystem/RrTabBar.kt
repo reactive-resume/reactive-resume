@@ -1,5 +1,9 @@
 package me.rxresu.core.designsystem
 
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -92,7 +96,12 @@ fun RrTabBar(
                             )
                         }
                     }
-                    RrText(tab.label, style = TabLabel, color = fg, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    // Four labels share the width: never break a word. Labels grow up to 1.3× and then truncate;
+                    // TalkBack still reads the whole label.
+                    val density = LocalDensity.current
+                    CompositionLocalProvider(LocalDensity provides Density(density.density, density.fontScale.coerceAtMost(1.3f))) {
+                        RrText(tab.label, style = TabLabel, color = fg, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
                 }
             }
         }

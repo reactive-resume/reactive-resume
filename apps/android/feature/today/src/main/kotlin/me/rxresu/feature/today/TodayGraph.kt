@@ -155,7 +155,7 @@ internal fun TodayRoute(nav: NavController) {
         },
         onOpenSchedule = { id -> nav.navigate(ScheduleSheet(id)) },
         onOpenDocument = { doc -> nav.navigate(if (doc.type == DocumentType.Letter) Letter(doc.id) else Builder(doc.id)) },
-        onNew = { nav.navigate(NewDocument) },
+        onNew = { nav.navigate(NewDocument()) },
         onSaveJob = { nav.navigate(SaveJob()) },
         onPreferences = { nav.navigate(Knowledge(KnowledgeTab.Preferences)) },
         onTurnOnReminders = {

@@ -104,7 +104,7 @@ fun RrTextField(
                 keyboardActions = keyboardActions,
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
-                cursorBrush = SolidColor(c.accent),
+                cursorBrush = rrCursorBrush(c.accent),
                 modifier = Modifier
                     .fillMaxWidth()
                     .semantics {

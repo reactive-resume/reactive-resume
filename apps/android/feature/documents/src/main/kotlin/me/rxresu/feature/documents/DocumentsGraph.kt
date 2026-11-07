@@ -109,7 +109,7 @@ private fun LibraryRoute(nav: NavController, entry: NavBackStackEntry) {
         repos.time.now(),
         LibraryActions(
             onSearch = { nav.navigate(Search("documents")) },
-            onNew = { nav.navigate(NewDocument) },
+            onNew = { nav.navigate(NewDocument()) },
             onSettings = { nav.navigate(Settings) },
             onRefresh = { scope.launch { runCatching { vm.refresh() } } },
             onRetry = { scope.launch { runCatching { vm.refresh() } } },

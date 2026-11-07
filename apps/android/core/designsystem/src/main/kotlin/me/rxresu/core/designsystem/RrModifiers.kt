@@ -23,3 +23,10 @@ fun Modifier.rrDashedBorder(color: Color, radius: Dp, width: Dp = 1.dp): Modifie
         style = Stroke(width = w, pathEffect = PathEffect.dashPathEffect(floatArrayOf(d, d))),
     )
 }
+
+/** The text cursor: accent, hidden in previews and screenshot captures, where its blink would make goldens flaky. */
+@androidx.compose.runtime.Composable
+internal fun rrCursorBrush(color: androidx.compose.ui.graphics.Color): androidx.compose.ui.graphics.Brush =
+    androidx.compose.ui.graphics.SolidColor(
+        if (androidx.compose.ui.platform.LocalInspectionMode.current) androidx.compose.ui.graphics.Color.Transparent else color,
+    )

@@ -69,7 +69,7 @@ fun RrAiComposer(
             onValueChange = onValueChange,
             enabled = enabled,
             textStyle = style,
-            cursorBrush = SolidColor(c.accent),
+            cursorBrush = rrCursorBrush(c.accent),
             interactionSource = interaction,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
             modifier = Modifier.fillMaxWidth().heightIn(min = 22.dp, max = 160.dp).semantics { contentDescription = placeholder },
