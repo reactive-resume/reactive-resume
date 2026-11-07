@@ -9,7 +9,7 @@ reference/Tokens.kt, icons). Branch `feat/android-app`; nothing is pushed.
 - JDK 21 (Homebrew): `export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home`
 - Android SDK `~/Library/Android/sdk` (platform 37), `local.properties` holds `sdk.dir` (gitignored; create it in new
   checkouts).
-- Gradle 9.6.0 wrapper, AGP 9.2.1 (newest the installed Android Studio supports), Kotlin 2.4.21 (AGP built-in Kotlin),
+- Gradle 9.6.0 wrapper, AGP 9.5.1, Kotlin 2.4.21 (AGP built-in Kotlin),
   Compose BOM 2026.09.00. Versions live in `gradle/libs.versions.toml`.
 - One emulator at a time on this machine (limited RAM). Only the lead runs the emulator, in Phase 3.
 
