@@ -129,8 +129,7 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
             "notes" -> TextSheet(stringResource(CoreR.string.notes), state.resume?.data?.metadata?.notes.orEmpty(), stringResource(CoreR.string.save), state.busy, state.failed, { value -> vm.notes(value) { form = null } }, { form = null }, multiline = true)
             "translate" -> LanguageCopySheet(state, { locale -> vm.languageCopy(locale) { copy, prompt ->
                 nav.navigate(Builder(copy))
-                nav.getBackStackEntry<Builder>().savedStateHandle["rr.assistant.prompt"] = prompt
-                nav.navigate(Assistant(copy))
+                nav.navigate(Assistant(copy, prompt = prompt))
                 form = null
             } }, { form = null })
             "job" -> RrBottomSheet({ form = null }, title = stringResource(CoreR.string.copy_for_a_job), initialDetent = 1) {

@@ -1,6 +1,8 @@
 package me.rxresu.feature.letters
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
@@ -49,7 +51,16 @@ internal fun darkerLetterColor(hex: String): String {
     val m = state.letter?.style?.metadata ?: return
     RrBottomSheet(dismiss, title = stringResource(CoreR.string.type), initialDetent = 1) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            letterPairings.forEach { pairing -> RrListRow(stringResource(pairing.label), subtitle = if (pairing.heading == pairing.body) pairing.body else pairing.heading + " + " + pairing.body, selected = m.typography.heading.fontFamily == pairing.heading && m.typography.body.fontFamily == pairing.body, enabled = state.editable, onClick = { design { metadata -> metadata.copy(typography = metadata.typography.copy(heading = metadata.typography.heading.copy(fontFamily = pairing.heading, fontWeights = listOf(pairing.weight)), body = metadata.typography.body.copy(fontFamily = pairing.body, fontWeights = listOf(CreateCoverLetterResponseStyleMetadataTypographyBodyFontWeightsItem.Value400, CreateCoverLetterResponseStyleMetadataTypographyBodyFontWeightsItem.Value700)))) } }) }
+            Row(Modifier.horizontalScroll(rememberScrollState()).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                letterPairings.forEach { pairing ->
+                    RrChoiceCard(m.typography.heading.fontFamily == pairing.heading && m.typography.body.fontFamily == pairing.body,
+                        onClick = { design { metadata -> metadata.copy(typography = metadata.typography.copy(heading = metadata.typography.heading.copy(fontFamily = pairing.heading, fontWeights = listOf(pairing.weight)), body = metadata.typography.body.copy(fontFamily = pairing.body, fontWeights = listOf(CreateCoverLetterResponseStyleMetadataTypographyBodyFontWeightsItem.Value400, CreateCoverLetterResponseStyleMetadataTypographyBodyFontWeightsItem.Value700)))) } },
+                        modifier = Modifier.width(114.dp), enabled = state.editable) {
+                        RrText(pairing.heading + if (pairing.heading == pairing.body) "" else " + " + pairing.body, style = RrType.small)
+                        RrText(stringResource(pairing.label))
+                    }
+                }
+            }
             RrText(stringResource(CoreR.string.font_size), style = RrType.label)
             RrStepper(m.typography.body.fontSize.toString(), { size((m.typography.body.fontSize - 0.5).coerceAtLeast(9.0)) }, { size((m.typography.body.fontSize + 0.5).coerceAtMost(12.5)) }, stringResource(CoreR.string.font_size))
             RrText(stringResource(CoreR.string.density), style = RrType.label)

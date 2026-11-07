@@ -51,8 +51,7 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
                 "resume-design" -> state.letter?.sourceResumeId?.let { nav.navigate(Builder(it, mode = BuilderMode.Design)) }
                 "assistant" -> vm.assistant(null) { thread -> nav.navigate(Assistant(state.letter?.sourceResumeId.orEmpty(), thread)) }
                 else -> if (action.startsWith("assistant:")) {
-                    entry.savedStateHandle["rr.assistant.prompt"] = action.removePrefix("assistant:")
-                    vm.assistant(null) { thread -> nav.navigate(Assistant(state.letter?.sourceResumeId.orEmpty(), thread)) }
+                    vm.assistant(null) { thread -> nav.navigate(Assistant(state.letter?.sourceResumeId.orEmpty(), thread, prompt = action.removePrefix("assistant:"))) }
                 } else if (action.startsWith("draft-version:")) vm.previousDraft(action.removePrefix("draft-version:").toInt()) else { form = action; if (action in listOf("recipient", "body")) vm.focus(true) }
             } }, { linked -> vm.designLinked(linked) { haptics(RrHaptic.Success) } }, { vm.pageFormat(it) }, back)
             val dismiss = { form = null; vm.focus(false); Unit }

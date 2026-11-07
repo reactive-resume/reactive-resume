@@ -3,9 +3,7 @@ package me.rxresu.feature.assistant
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -28,7 +26,10 @@ import me.rxresu.core.strings.R as CoreR
     LaunchedEffect(scroll.maxValue, state.streaming) { if (following && state.streaming) scroll.scrollTo(scroll.maxValue) }
     val c = RrTheme.colors; val haptics = rememberRrHaptics()
     LaunchedEffect(state.failed) { if (state.failed) haptics(RrHaptic.Error) }
-    RrBottomSheet(dismiss, detents = listOf(0.935f), footer = {
+    RrBottomSheet(dismiss, detents = listOf(0.935f), title = stringResource(CoreR.string.assistant), headerActions = {
+        RrButton(state.provider?.let { it.label + " · " + it.model } ?: stringResource(CoreR.string.choose_a_connection), { action("providers") }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
+        RrIconButton(DsR.drawable.ic_ph_clock_counter_clockwise, stringResource(CoreR.string.past_conversations), { action("history") }, size = RrIconButtonSize.Small)
+    }, footer = {
         Column(Modifier.fillMaxWidth().background(c.bg).padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             state.attachments.forEach { file -> RrContextChip(file.filename, onRemove = { action("remove:" + file.id) }) }
             RrAiComposer(state.input, input, { haptics(RrHaptic.Light); send() }, stringResource(R.string.p4_ask_about_this_resume), enabled = state.provider != null && !state.locked, sending = state.streaming, onStop = { haptics(RrHaptic.Light); stop() }, contextChips = {
@@ -40,12 +41,6 @@ import me.rxresu.core.strings.R as CoreR
             RrDisclosureLine(stringResource(R.string.p4_when_you_press_send_selected_context_attachments_and_earlier_messages_go_to_1_s_with_, state.provider?.label ?: stringResource(R.string.p4_your_connection)))
         }
     }) {
-        Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 6.dp, bottom = 8.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-            RrIcon(DsR.drawable.ic_ph_sparkle, null, size = 20.dp, tint = c.accentText); RrText(stringResource(CoreR.string.assistant), style = RrType.label, modifier = Modifier.weight(1f))
-            RrButton(state.provider?.let { it.label + " · " + it.model } ?: stringResource(CoreR.string.choose_a_connection), { action("providers") }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
-            RrIconButton(DsR.drawable.ic_ph_clock_counter_clockwise, stringResource(CoreR.string.past_conversations), { action("history") }, size = RrIconButtonSize.Small)
-            RrIconButton(DsR.drawable.ic_ph_x, stringResource(CoreR.string.close_the_assistant), dismiss, size = RrIconButtonSize.Small)
-        }
         Column(Modifier.weight(1f).verticalScroll(scroll).padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             if (state.loading) RrSkeletonText(lines = 6)
             if (state.locked) RrCallout(stringResource(CoreR.string.this_resume_is_locked_unlock_it_to_make_changes))
@@ -80,13 +75,14 @@ import me.rxresu.core.strings.R as CoreR
             }
             if (state.content.messages.isEmpty() && state.content.reply.isNotEmpty()) RrText(state.content.reply, style = RrType.body)
             state.content.question?.let { question ->
-                // TODO(lead): move to designsystem: assistant question card.
-                Column(Modifier.fillMaxWidth().clip(RrShape.lg).background(c.infoSoft).padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    RrText(question.text, style = RrType.label)
-                    question.answers.forEach { answer -> Box(Modifier.fillMaxWidth().heightIn(min = 44.dp).border(1.dp, c.line2, RrShape.sm).background(c.raised).clickable(enabled = !state.streaming && !state.locked) { action("answer:" + question.toolCallId + ":" + answer) }.padding(horizontal = 12.dp, vertical = 8.dp), contentAlignment = Alignment.CenterStart) { RrText(answer, style = RrType.body) } }
-                    var ownAnswer by remember(question.toolCallId) { mutableStateOf("") }
-                    RrTextField(ownAnswer, { ownAnswer = it }, placeholder = stringResource(CoreR.string.or_in_your_own_words), enabled = !state.streaming && !state.locked, trailing = if (ownAnswer.isNotBlank()) ({ RrIconButton(DsR.drawable.ic_ph_arrow_up, stringResource(CoreR.string.send), { action("answer:" + question.toolCallId + ":" + ownAnswer) }, size = RrIconButtonSize.Small) }) else null)
-                }
+                var ownWords by remember(question.toolCallId) { mutableStateOf(false) }
+                var ownAnswer by remember(question.toolCallId) { mutableStateOf("") }
+                RrQuestionCard(question.text, question.answers,
+                    onAnswer = { answer -> action("answer:" + question.toolCallId + ":" + answer) },
+                    ownWordsLabel = stringResource(CoreR.string.or_in_your_own_words), onOwnWords = { ownWords = true },
+                    enabled = !state.streaming && !state.locked)
+                if (ownWords) RrTextField(ownAnswer, { ownAnswer = it }, label = stringResource(CoreR.string.or_in_your_own_words), enabled = !state.streaming && !state.locked,
+                    trailing = if (ownAnswer.isNotBlank()) ({ RrIconButton(DsR.drawable.ic_ph_arrow_up, stringResource(CoreR.string.send), { action("answer:" + question.toolCallId + ":" + ownAnswer) }, size = RrIconButtonSize.Small, enabled = !state.streaming && !state.locked) }) else null)
             }
             if (state.proposals.isNotEmpty()) RrButton(stringResource(R.string.p4_review_1_s_edits, state.proposals.size.toString()), { action("proposals") }, variant = RrButtonVariant.Secondary)
             if (state.historyUnavailable) RrCallout(stringResource(R.string.p4_saved_conversation_content_is_unavailable_your_document_is_unchanged))

@@ -65,13 +65,17 @@ import me.rxresu.core.network.generated.*
                 if (state.pageFailed) RrCallout(stringResource(R.string.p4_couldn_t_update_the_preview_your_words_are_kept), actionLabel = stringResource(CoreR.string.try_again), onAction = { action("retry") })
             }
             if (details) RrBottomSheet({ action("hide-details") }, modifier = Modifier.consumeWindowInsets(WindowInsets.navigationBars), detents = listOf(0.6f, 0.92f), title = stringResource(R.string.p4_letter_details), showClose = false, headerActions = { RrButton(stringResource(CoreR.string.done), { action("hide-details") }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small) }) { LetterDetails(state, action) }
-        } else if (letter != null) Column(Modifier.weight(1f)) {
-            Row(Modifier.weight(1f).fillMaxWidth().background(c.sunken).padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.Top) {
-                if (letter.sourceResumeId != null) RrPageThumbnail(state.resumePage, Modifier.width(120.dp), contentDescription = stringResource(CoreR.string.linked_resume))
-                RrPageThumbnail(state.page, Modifier.width(120.dp), letter = true, contentDescription = stringResource(CoreR.string.letter_page))
+        } else if (letter != null) Box(Modifier.weight(1f).fillMaxWidth().background(c.sunken)) {
+            Column(Modifier.fillMaxWidth()) {
+                Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.Top) {
+                    if (letter.sourceResumeId != null) RrPageThumbnail(state.resumePage, Modifier.width(120.dp), contentDescription = stringResource(CoreR.string.linked_resume))
+                    RrPageThumbnail(state.page, Modifier.width(120.dp), letter = true, contentDescription = stringResource(CoreR.string.letter_page))
+                }
+                if (state.resumePageFailed) RrText(stringResource(R.string.p4_resume_preview_failed), Modifier.padding(12.dp), style = RrType.caption)
             }
-            if (state.resumePageFailed) RrText(stringResource(R.string.p4_resume_preview_failed), Modifier.padding(12.dp), style = RrType.caption)
-            LetterDesign(state, action, match, paper, Modifier.heightIn(max = 440.dp))
+            RrBottomSheet({}, detents = listOf(0.6f, 0.92f), docked = true, containerColor = c.surface, navigationBarInset = false) {
+                LetterDesign(state, action, match, paper, Modifier.weight(1f))
+            }
         } else RrEmptyState(stringResource(CoreR.string.cover_letter_7264deefc0), stringResource(CoreR.string.couldn_t_load_try_again), Modifier.weight(1f).padding(16.dp), stringResource(CoreR.string.try_again), { action("retry") })
         RrModeBar(listOf(RrSegment(stringResource(CoreR.string.write), DsR.drawable.ic_ph_pencil_simple, DsR.drawable.ic_ph_pencil_simple_fill), RrSegment(stringResource(CoreR.string.design), DsR.drawable.ic_ph_palette, DsR.drawable.ic_ph_palette_fill), RrSegment(stringResource(R.string.p4_export), DsR.drawable.ic_ph_export)), if (mode == LetterMode.Write) 0 else 1, { action(when (it) { 0 -> "write"; 1 -> "design"; else -> "export" }) })
     }
@@ -103,8 +107,8 @@ import me.rxresu.core.network.generated.*
 
 @Composable private fun LetterDesign(state: LetterState, action: (String) -> Unit, match: (Boolean) -> Unit, paper: (CreateCoverLetterResponseStyleMetadataPageFormat) -> Unit, modifier: Modifier = Modifier) {
     val letter = state.letter ?: return; val metadata = letter.style.metadata
-    Column(modifier.fillMaxWidth().background(RrTheme.colors.raised).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (letter.sourceResumeId != null) RrSwitchRow(stringResource(CoreR.string.matching_the_resume), letter.designLinked, match, subtitle = if (letter.designLinked) stringResource(CoreR.string.template_type_and_colors_follow_the_resume_so_the_pair_always_matches) else stringResource(CoreR.string.the_letter_keeps_a_design_of_its_own), enabled = state.editable)
+    Column(modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (letter.sourceResumeId != null) RrSwitchRow(stringResource(CoreR.string.matching_the_resume), letter.designLinked, match, subtitle = if (letter.designLinked) stringResource(CoreR.string.template_type_and_colors_follow_the_resume_so_the_pair_always_matches) else stringResource(CoreR.string.the_letter_keeps_a_design_of_its_own), enabled = state.editable, containerColor = RrTheme.colors.surface)
         else RrText(stringResource(CoreR.string.choose_a_resume_in_write_to_match_its_design_until_then_the_letter_has_its_own), style = RrType.small)
         RrListGroup(Modifier.alpha(if (letter.designLinked) 0.55f else 1f)) {
             RrListRow(stringResource(CoreR.string.template), enabled = !letter.designLinked && state.editable, onClick = { action("template") }, trailing = { RrRowValue(metadata.template.wireValue.replaceFirstChar(Char::uppercase), caret = !letter.designLinked) })
