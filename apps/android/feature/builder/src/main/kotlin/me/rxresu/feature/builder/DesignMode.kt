@@ -1,6 +1,21 @@
 package me.rxresu.feature.builder
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -99,7 +114,6 @@ import me.rxresu.core.designsystem.RrSegmentedControl
 import me.rxresu.core.designsystem.RrShape
 import me.rxresu.core.designsystem.RrSlider
 import me.rxresu.core.designsystem.RrSpinner
-import me.rxresu.core.designsystem.RrStepper
 import me.rxresu.core.designsystem.RrSwitchRow
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTextField
@@ -450,10 +464,15 @@ private fun TypeGroup(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean)
     val size = doc.metadata["typography"].obj()["body"].obj()["fontSize"].num() ?: 10.0
     Spacer(Modifier.height(12.dp))
     ControlRow(stringResource(S.string.text_size), stringResource(S.string.message_1011_recommended), controlWidth = 144.dp) {
-        RrStepper(
+        // Held steps read the newest size and join one undo step per press.
+        fun step(delta: Double, press: String) = actions.edit(undoStep = press) { json ->
+            val current = json.at(listOf("data", "metadata", "typography", "body", "fontSize")).num() ?: size
+            TextSize.apply(json, (current + delta).coerceIn(TextSize.MIN, TextSize.MAX))
+        }
+        HoldStepper(
             stringResource(S.string.textsize_pt, size.toString().removeSuffix(".0")),
-            onDecrease = { actions.edit { TextSize.apply(it, (size - 0.5).coerceAtLeast(TextSize.MIN)) } },
-            onIncrease = { actions.edit { TextSize.apply(it, (size + 0.5).coerceAtMost(TextSize.MAX)) } },
+            onDecrease = { press -> step(-0.5, press) },
+            onIncrease = { press -> step(0.5, press) },
             label = stringResource(S.string.text_size),
             canDecrease = enabled && size > TextSize.MIN, canIncrease = enabled && size < TextSize.MAX,
         )
@@ -667,4 +686,79 @@ private fun SectionChip(title: String, lifted: Boolean, enabled: Boolean, onClic
         RrIcon(D.drawable.ic_ph_dots_six_vertical, null, size = 16.dp, tint = c.ink3)
         RrText(title, style = RrType.body)
     }
+}
+
+/**
+ * [RrStepper] with press-and-hold repeat (B7): a step on press, then every 120 ms after 400 ms, `selection` per step.
+ * Each callback gets the press's key, so a held press can be one undo step.
+ */
+// TODO(lead): move to designsystem as RrStepper's hold-to-repeat.
+@Composable
+private fun HoldStepper(
+    value: String,
+    onDecrease: (press: String) -> Unit,
+    onIncrease: (press: String) -> Unit,
+    label: String,
+    canDecrease: Boolean,
+    canIncrease: Boolean,
+) {
+    val c = RrTheme.colors
+    Row(
+        Modifier.height(36.dp).clip(RrShape.md).background(c.raised).border(1.dp, c.controlBorder, RrShape.md),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        HoldStepButton(D.drawable.ic_ph_minus, "${stringResource(D.string.ds_decrease)} $label", canDecrease, onDecrease)
+        RrText(
+            value,
+            style = RrType.mono.copy(fontSize = 14.sp, lineHeight = 20.sp, fontWeight = FontWeight.Medium),
+            color = c.ink,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.defaultMinSize(minWidth = 64.dp).semantics {
+                contentDescription = "$label, $value"
+                liveRegion = LiveRegionMode.Polite
+            },
+        )
+        HoldStepButton(D.drawable.ic_ph_plus, "${stringResource(D.string.ds_increase)} $label", canIncrease, onIncrease)
+    }
+}
+
+@Composable
+private fun HoldStepButton(icon: Int, description: String, enabled: Boolean, onStep: (press: String) -> Unit) {
+    val c = RrTheme.colors
+    val haptics = rememberRrHaptics()
+    val canStep by rememberUpdatedState(enabled)
+    val step by rememberUpdatedState(onStep)
+    Box(
+        Modifier
+            .size(40.dp, 36.dp)
+            .pointerInput(Unit) {
+                coroutineScope {
+                    awaitEachGesture {
+                        awaitFirstDown()
+                        if (!canStep) return@awaitEachGesture
+                        val press = "stepper:${System.nanoTime()}"
+                        val repeat = launch {
+                            var wait = HoldRepeat.FIRST_MS
+                            while (canStep) { haptics(RrHaptic.Selection); step(press); delay(wait); wait = HoldRepeat.NEXT_MS }
+                        }
+                        waitForUpOrCancellation()
+                        repeat.cancel()
+                    }
+                }
+            }
+            .semantics {
+                role = Role.Button
+                contentDescription = description
+                if (!enabled) disabled()
+                onClick { if (enabled) { step("stepper:${System.nanoTime()}"); true } else false }
+            }
+            .alpha(if (enabled) 1f else 0.4f),
+        contentAlignment = Alignment.Center,
+    ) { RrIcon(icon, null, size = 20.dp, tint = c.ink2) }
+}
+
+/** Press-and-hold timing (B7 Haptics: repeated steps tick at most every 120 ms). */
+internal object HoldRepeat {
+    const val FIRST_MS = 400L
+    const val NEXT_MS = 120L
 }

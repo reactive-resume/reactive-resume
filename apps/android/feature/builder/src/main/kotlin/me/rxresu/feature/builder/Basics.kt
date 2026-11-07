@@ -94,6 +94,7 @@ internal fun BasicsScreen(state: BuilderUiState, actions: BuilderActions, onBack
     val locked = state.locked
     val write = { key: String, value: String -> actions.set(listOf("data", "basics", key), JsonPrimitive(value)) }
     var emailTouched by rememberSaveable { mutableStateOf(false) }
+    Box(Modifier.fillMaxSize()) {
     Column(Modifier.fillMaxSize().background(c.bg)) {
         RrTopBar(stringResource(S.string.basics), onBack = onBack, status = { RrText(doc.name) })
         if (locked) RrStrip(stringResource(S.string.locked_unlock_to_edit), tone = RrTone.Warn, icon = D.drawable.ic_ph_lock_simple)
@@ -120,6 +121,11 @@ internal fun BasicsScreen(state: BuilderUiState, actions: BuilderActions, onBack
             }
             Links(doc, actions, locked)
         }
+    }
+    state.crop?.let { crop ->
+        val aspect = (doc.data["picture"].obj()["aspectRatio"].num() ?: 1.0).toFloat().takeIf { it > 0f } ?: 1f
+        PhotoCropScreen(crop, aspect, onCancel = actions::cancelCrop, onCrop = actions::cropAndUpload)
+    }
     }
 }
 

@@ -10,7 +10,7 @@ import me.rxresu.core.network.generated.CreateImprovementRequestAction
  * [NoBuilderActions]. Screens stay stateless: state in, these calls out.
  */
 internal interface BuilderActions {
-    fun edit(toast: BuilderToast? = null, change: (JsonObject) -> JsonObject) {}
+    fun edit(toast: BuilderToast? = null, undoStep: String? = null, change: (JsonObject) -> JsonObject) {}
     fun set(path: Path, value: JsonElement) {}
     fun undo() {}
     fun redo() {}
@@ -44,6 +44,12 @@ internal interface BuilderActions {
     fun showHiddenTerms() {}
     fun matchPosting(text: String?) {}
     fun checkExportedPdf() {}
+    fun loadApplications() {}
+    fun linkApplication(applicationId: String?) {}
+    fun copyForJob(applicationId: String?, job: NewJob? = null) {}
+    fun saveJobAndLink(job: NewJob) {}
+    fun savePostingToApplication(text: String) {}
+    fun reviewWriting() {}
 
     fun improve(line: String, context: String, where: String, action: CreateImprovementRequestAction, request: String? = null) {}
     fun clearImprovement() {}
@@ -53,6 +59,8 @@ internal interface BuilderActions {
     fun uploadPhoto(uri: Uri) {}
     fun uploadCameraPhoto(bitmap: android.graphics.Bitmap) {}
     fun removePhoto() {}
+    fun cancelCrop() {}
+    fun cropAndUpload(area: android.graphics.Rect) {}
 }
 
 internal object NoBuilderActions : BuilderActions

@@ -77,6 +77,16 @@ internal fun BuilderScreen(
         }
         if (state.locked) RrStrip(stringResource(S.string.locked_unlock_to_edit), tone = RrTone.Warn, icon = D.drawable.ic_ph_lock_simple)
         if (state.status == SaveStatus.Offline) RrOfflineStrip(text = stringResource(R.string.builder_offline_banner))
+        // B1 "Changed elsewhere": someone else's change landed as one undo step.
+        state.outsideChange?.takeUnless { state.locked }?.let { change ->
+            val agent = change.mutation == "patch"
+            RrStrip(
+                stringResource(outsideChangeText(change.mutation)),
+                icon = if (agent) D.drawable.ic_ph_sparkle else null,
+                actionLabel = stringResource(S.string.undo),
+                onAction = onUndo,
+            )
+        }
         Box(Modifier.weight(1f).fillMaxWidth()) {
             when {
                 state.loadFailed -> RrEmptyState(stringResource(R.string.builder_load_failed), "", Modifier, stringResource(S.string.try_again), onBack)
@@ -96,6 +106,13 @@ internal fun BuilderScreen(
             onSelect = { i -> if (i != mode.ordinal) { haptics(RrHaptic.Selection); onMode(BuilderMode.entries[i]) } },
         )
     }
+}
+
+/** The web's attribution for a change made elsewhere (draft.ts `externalUpdateMessage`). */
+internal fun outsideChangeText(mutation: String?) = when (mutation) {
+    "patch" -> R.string.builder_outside_agent
+    "lock", "password" -> R.string.builder_outside_sharing
+    else -> R.string.builder_outside_synced
 }
 
 /** "Saved", "Saving…", "Offline · saved on this device", "Not saved · Retry" (web save-status.tsx). */
