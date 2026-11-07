@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.core.splashscreen)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.navigation.compose)
+    implementation(libs.work.runtime)
     listOf("auth", "settings", "today", "documents", "search", "builder", "share", "assistant", "letters",
         "applications", "workspace", "career", "public", "system").forEach { implementation(project(":feature:$it")) }
     testImplementation(project(":core:testing"))

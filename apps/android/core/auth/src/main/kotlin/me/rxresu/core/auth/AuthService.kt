@@ -28,6 +28,11 @@ sealed interface AuthResult {
 interface AuthService : AuthSession {
     /** Restore encrypted session before routing; idempotent and serialized with session mutations. */
     suspend fun restore()
+    /**
+     * The API rejected [rejected] even after a refresh: expire the session (drafts and account scope stay) when that
+     * token is still the current one. A stale token from an earlier session changes nothing.
+     */
+    suspend fun expire(rejected: String)
     /** Check origin policy, service health, OAuth discovery and enabled sign-in methods. Throws [ServerError]. */
     suspend fun checkServer(input: String): ServerInfo
     /** Start a new isolated native sign-in; username and email use different Better Auth endpoints. */

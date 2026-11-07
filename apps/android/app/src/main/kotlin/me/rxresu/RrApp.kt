@@ -23,6 +23,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.Flow
 import me.rxresu.core.auth.SessionState
+import me.rxresu.core.data.AppPreferences
+import me.rxresu.core.data.LocalRepositories
+import me.rxresu.core.data.ThemePreference
+import me.rxresu.core.designsystem.rememberSystemReducedMotion
 import me.rxresu.core.designsystem.RrLayout
 import me.rxresu.core.designsystem.RrTabBar
 import me.rxresu.core.designsystem.RrTheme
@@ -66,7 +70,14 @@ private val tabRoutes: List<Any> = listOf(TodayTab, DocumentsTab, ApplicationsTa
 @Composable
 fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
     val session by graph.auth.state.collectAsStateWithLifecycle()
-    RrTheme(darkTheme = isSystemInDarkTheme()) {
+    val prefs by graph.repositories.preferences.values.collectAsStateWithLifecycle(AppPreferences())
+    val dark = when (prefs.theme) {
+        ThemePreference.Light -> false
+        ThemePreference.Dark -> true
+        ThemePreference.MatchSystem -> isSystemInDarkTheme()
+    }
+    val systemReduced = rememberSystemReducedMotion()
+    RrTheme(darkTheme = dark, hapticsEnabled = prefs.haptics, reducedMotion = prefs.reducedMotion ?: systemReduced) {
         val nav = rememberNavController()
         val toasts = remember { RrToastHostState() }
         val motion = RrNavMotion(RrTheme.reducedMotion)
@@ -76,9 +87,12 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         if (session == SessionState.Loading) return@RrTheme
         val signedIn = session is SessionState.SignedIn || session is SessionState.Expired
         SessionRouting(nav, signedIn)
+        // Pages belong to one account; the next account starts with an empty cache.
+        LaunchedEffect(session) { if (session == SessionState.SignedOut) graph.pagesDir.deleteRecursively() }
         LaunchedEffect(nav) { incoming.collect { nav.navigate(it) } }
 
         CompositionLocalProvider(
+            LocalRepositories provides graph.repositories,
             LocalToasts provides toasts,
             LocalNavMotion provides motion,
             LocalBuilderShareMode provides { id, n -> BuilderShareMode(id, n) },

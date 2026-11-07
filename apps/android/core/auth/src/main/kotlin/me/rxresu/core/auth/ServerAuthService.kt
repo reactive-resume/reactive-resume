@@ -418,6 +418,11 @@ class ServerAuthService internal constructor(
         }
     }
 
+    override suspend fun expire(rejected: String) {
+        restore()
+        transition.withLock { if (session?.tokens?.access == rejected) expireLocked() }
+    }
+
     private suspend fun expireLocked() {
         val saved = session ?: return
         session = SavedSession(saved.server, saved.scope)

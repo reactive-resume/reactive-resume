@@ -29,6 +29,7 @@ class FakeAuthService(private val context: Context) : AuthService {
     override suspend fun loadConsent(uri: Uri) = nextResult
     override suspend fun consent(request: ConsentRequest, accept: Boolean) = if (accept) finish(request.server) else authError("access_denied", resources = context.resources)
     override suspend fun cancelSignIn() = Unit
+    override suspend fun expire(rejected: String) = Unit
     override suspend fun accessToken(): String? = null
     override suspend fun refresh(rejected: String): String? = null
     override suspend fun signOut() { mutableState.value = SessionState.SignedOut }
