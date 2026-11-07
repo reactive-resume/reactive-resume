@@ -1,6 +1,7 @@
 plugins { alias(libs.plugins.rr.android.feature) }
 
 dependencies {
+    implementation(libs.exifinterface)
     implementation(project(":core:page"))
     // System photo picker and camera for the Basics photo.
     implementation(libs.activity.compose)

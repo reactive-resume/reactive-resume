@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.graphics.Rect
-import android.media.ExifInterface
+import androidx.exifinterface.media.ExifInterface
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -107,7 +107,6 @@ internal object PhotoCrops {
 
     /** Decodes [bytes] upright (EXIF orientation), sampled down to at most 4096 px a side; null when unreadable. */
     // androidx.exifinterface isn't a dependency of this module (requested from the lead); this only reads orientation.
-    @android.annotation.SuppressLint("ExifInterface")
     fun decode(bytes: ByteArray): Bitmap? {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)

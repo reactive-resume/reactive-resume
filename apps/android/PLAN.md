@@ -93,10 +93,9 @@ reference/Tokens.kt, icons). Branch `feat/android-app`; nothing is pushed.
 - App wiring: "New resume" quick action (with :feature:system); `POST_NOTIFICATIONS` declared by :feature:today.
 - Copy to confirm with the owner: D4 reader "Read on your server (free) / Reads the text layer, without AI" (the
   Android reader can't read on the device like the storyboard's "Nothing leaves your phone").
-- Builder requests (P3): docked `RrBottomSheet` mode (no scrim, two heights), selectable choice card, container colour
-  on `RrSegmentedControl`, title colour on `RrListRow`, sheet header wrapping at large fonts, month picker, rich text
-  editor (or one approved library), photo crop. Route `Assistant(prompt)` (D1 adds it). Draft: outside-change event
-  (agent update strip) and grouped undo steps (Fit to one page).
+- Builder requests (P3, after B-R2): docked `RrBottomSheet` mode, selectable choice card, container colour on
+  `RrSegmentedControl`, title colour on `RrListRow`, sheet header wrapping, month picker (D2 is building these);
+  hold-to-repeat in `RrStepper` (private `HoldStepper` in builder); optional dismiss on `RrStrip`.
 - Career (P6): dates render as ISO ("2026-11-07"); format like the web. Rich chat bubbles, accent removable chips,
   multiline minimum height, native story practice route.
 - Settings (P1): OTP caret/ring motion, locale on API 26–32 (needs attachBaseContext), hardware-keyboard shortcut help.
