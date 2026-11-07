@@ -128,6 +128,8 @@ private fun BuilderRoute(route: Builder, entry: NavBackStackEntry, nav: NavContr
     val toasts = LocalToasts.current
     val resources = LocalResources.current
     BuilderToasts(vm)
+    // A copy made for a job opens on Job match; this resume stays underneath, as it was.
+    LaunchedEffect(vm) { vm.openCopyEvents.collect { id -> nav.navigate(Builder(id, mode = BuilderMode.Check, check = CheckTab.JobMatch)) } }
     LaunchedEffect(state.recoveredCopyName) {
         state.recoveredCopyName?.let { toasts.show(resources.getString(R.string.builder_changes_kept_in, it)) }
     }

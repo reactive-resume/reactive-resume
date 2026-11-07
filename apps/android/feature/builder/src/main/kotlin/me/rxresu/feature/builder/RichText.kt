@@ -20,6 +20,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -80,52 +83,149 @@ import me.rxresu.core.designsystem.R as D
 /** How the field's lines print: bullets, numbers, or paragraphs. */
 internal enum class ListKind { Bullets, Numbers, Paragraphs }
 
-/** A rich-text field as lines of inner HTML ("Led the <strong>redesign</strong>…") plus their list kind. */
-internal data class RichDoc(val kind: ListKind, val lines: List<String>) {
-    val plain: List<String> get() = lines.map(::innerText)
+/** Inline marks on one character: tags from [RichDoc.TAGS] and a link target. */
+internal data class Marks(val tags: Set<String> = emptySet(), val href: String? = null)
+
+/**
+ * A rich-text field as its plain text (lines split by `\n`) with each character's inline marks, plus the list kind.
+ * Bold, italic and links apply to a selection range; lines nobody touched keep the exact HTML they came with, so
+ * markup the editor doesn't draw (highlights, colours) survives.
+ */
+internal class RichDoc private constructor(val kind: ListKind, val text: String, private val marks: List<Marks>, private val originals: Map<String, String>) {
+    val plain: List<String> get() = text.split('\n')
+
+    /** Each line's inner HTML. */
+    val lines: List<String> get() = lineRanges().map { r -> serialize(r).let { originals[it] ?: it } }
+
+    fun copy(kind: ListKind = this.kind) = RichDoc(kind, text, marks, originals)
 
     fun toHtml(): String = when (kind) {
         ListKind.Paragraphs -> lines.joinToString("") { "<p>$it</p>" }
         ListKind.Bullets -> "<ul>" + lines.joinToString("") { "<li>$it</li>" } + "</ul>"
         ListKind.Numbers -> "<ol>" + lines.joinToString("") { "<li>$it</li>" } + "</ol>"
-    }.let { if (lines.all { l -> l.isBlank() }) "" else it }
+    }.let { if (plain.all { l -> l.isBlank() }) "" else it }
 
-    /** New plain text from the editor: unchanged lines keep their markup, changed lines become plain text. */
-    fun withText(text: String): RichDoc {
-        val byPlain = lines.groupBy(::innerText)
-        return copy(lines = text.split('\n').map { line -> byPlain[line]?.first() ?: escapeHtml(line) })
+    fun marksAt(index: Int): Marks = marks.getOrElse(index) { Marks() }
+
+    /**
+     * New text from the editor. Characters kept around the edit keep their marks; typed ones take the marks of the
+     * character before (the one after at a line start), never extending a link past its end.
+     */
+    fun withText(next: String): RichDoc {
+        if (next == text) return this
+        var prefix = 0
+        while (prefix < text.length && prefix < next.length && text[prefix] == next[prefix]) prefix++
+        var suffix = 0
+        while (suffix < text.length - prefix && suffix < next.length - prefix && text[text.length - 1 - suffix] == next[next.length - 1 - suffix]) suffix++
+        val before = marks.getOrNull(prefix - 1)?.takeIf { text[prefix - 1] != '\n' }
+        val after = marks.getOrNull(text.length - suffix)?.takeIf { text[text.length - suffix] != '\n' }
+        val typed = (before ?: after ?: Marks()).let { m -> m.copy(href = m.href?.takeIf { before?.href == it && after?.href == it }) }
+        val inserted = next.substring(prefix, next.length - suffix).map { if (it == '\n') Marks() else typed }
+        return RichDoc(kind, next, marks.take(prefix) + inserted + marks.takeLast(suffix), originals)
     }
 
-    /** Bold or italic on a whole line, toggled. */
-    fun toggle(index: Int, tag: String): RichDoc {
-        val line = lines.getOrNull(index) ?: return this
-        val open = "<$tag>"; val close = "</$tag>"
-        val next = if (line.startsWith(open) && line.endsWith(close)) line.removePrefix(open).removeSuffix(close) else "$open$line$close"
-        return copy(lines = lines.toMutableList().also { it[index] = next })
+    /** The range a toolbar action applies to: the selection, or the caret's whole line when nothing is selected. */
+    fun target(selection: TextRange): IntRange {
+        if (!selection.collapsed) return selection.min until selection.max
+        val line = text.take(selection.start).count { it == '\n' }
+        return lineRanges()[line]
     }
 
-    fun link(index: Int, url: String): RichDoc {
-        val line = lines.getOrNull(index) ?: return this
-        val inner = Regex("^<a [^>]*>(.*)</a>$").find(line)?.groupValues?.get(1) ?: line
-        val next = if (url.isBlank()) inner else "<a href=\"${escapeHtml(url).replace("\"", "&quot;")}\">$inner</a>"
-        return copy(lines = lines.toMutableList().also { it[index] = next })
+    /** Whether every character of [range] (newlines aside) carries [tag]. */
+    fun has(range: IntRange, tag: String) = range.filter { text[it] != '\n' }.let { chars -> chars.isNotEmpty() && chars.all { tag in marks[it].tags } }
+
+    /** Bold ("strong") or italic ("em") on [range]: removed when all of it has the mark, added otherwise. */
+    fun toggle(range: IntRange, tag: String): RichDoc {
+        val on = !has(range, tag)
+        return RichDoc(kind, text, marks.mapIndexed { i, m -> if (i in range && text[i] != '\n') m.copy(tags = if (on) m.tags + tag else m.tags - tag) else m }, originals)
     }
+
+    /** Links [range] to [url]; a blank url removes the link. */
+    fun link(range: IntRange, url: String): RichDoc =
+        RichDoc(kind, text, marks.mapIndexed { i, m -> if (i in range && text[i] != '\n') m.copy(href = url.trim().ifBlank { null }) else m }, originals)
 
     /** Replace swaps only the line whose text is [original]; null when that line changed meanwhile. */
     fun replace(original: String, replacement: String): RichDoc? {
         val index = plain.indexOf(original).takeIf { it >= 0 } ?: return null
-        return copy(lines = lines.toMutableList().also { it[index] = escapeHtml(replacement) })
+        val range = lineRanges()[index]
+        val text = this.text.replaceRange(range.first, range.last + 1, replacement)
+        return RichDoc(kind, text, marks.take(range.first) + List(replacement.length) { Marks() } + marks.drop(range.last + 1), originals)
+    }
+
+    fun lineRanges(): List<IntRange> {
+        var start = 0
+        return plain.map { line -> (start until start + line.length).also { start += line.length + 1 } }
+    }
+
+    /**
+     * Inner HTML for [range]: tags nest so marks spanning several runs stay open (`<em>Led the <strong>redesign
+     * </strong>.</em>`); a link is closed and reopened when its target changes.
+     */
+    private fun serialize(range: IntRange): String {
+        val out = StringBuilder()
+        val open = ArrayList<String>() // "a" or a tag, outermost first
+        var openHref: String? = null
+        fun closeTo(size: Int) { while (open.size > size) out.append("</").append(open.removeAt(open.lastIndex)).append('>') }
+        var i = range.first
+        while (i <= range.last) {
+            val m = marks[i]
+            var j = i
+            while (j + 1 <= range.last && marks[j + 1] == m) j++
+            val wanted = m.tags + listOfNotNull(m.href?.let { "a" })
+            var keep = 0
+            while (keep < open.size && open[keep] in wanted && (open[keep] != "a" || openHref == m.href)) keep++
+            closeTo(keep)
+            if ("a" !in open) openHref = null
+            for (tag in listOf("a") + TAGS) if (tag in wanted && tag !in open) {
+                if (tag == "a") { out.append("<a href=\"").append(escapeHtml(m.href!!).replace("\"", "&quot;")).append("\">"); openHref = m.href }
+                else out.append('<').append(tag).append('>')
+                open += tag
+            }
+            out.append(escapeHtml(text.substring(i, j + 1)))
+            i = j + 1
+        }
+        closeTo(0)
+        return out.toString()
     }
 
     companion object {
+        /** Inline tags the editor keeps as marks, in nesting order; `b`, `i` and `strike` read as their equivalents. */
+        val TAGS = listOf("strong", "em", "u", "s", "code")
+        private val aliases = mapOf("b" to "strong", "i" to "em", "strike" to "s")
+
         fun parse(html: String): RichDoc {
             val kind = when {
                 Regex("(?i)<ol[ >]").containsMatchIn(html) -> ListKind.Numbers
                 Regex("(?i)<ul[ >]").containsMatchIn(html) -> ListKind.Bullets
                 else -> ListKind.Paragraphs
             }
-            val lines = Regex("(?is)<(li|p)[^>]*>(.*?)</\\1>").findAll(html).map { it.groupValues[2].trim() }.toList()
-            return RichDoc(kind, lines.ifEmpty { if (html.isBlank()) listOf("") else htmlText(html).map(::escapeHtml) })
+            val inners = Regex("(?is)<(li|p)[^>]*>(.*?)</\\1>").findAll(html).map { it.groupValues[2].trim() }.toList()
+                .ifEmpty { if (html.isBlank()) listOf("") else htmlText(html).map(::escapeHtml) }
+            val text = StringBuilder(); val marks = ArrayList<Marks>(); val originals = HashMap<String, String>()
+            inners.forEachIndexed { index, inner ->
+                if (index > 0) { text.append('\n'); marks += Marks() }
+                val start = text.length
+                readInner(inner, text, marks)
+                val parsed = RichDoc(kind, text.toString(), marks.toList(), emptyMap())
+                originals[parsed.serialize(start until text.length)] = inner
+            }
+            return RichDoc(kind, text.toString(), marks, originals)
+        }
+
+        private fun readInner(inner: String, text: StringBuilder, marks: MutableList<Marks>) {
+            val stack = ArrayList<Pair<String, String?>>() // tag, href
+            Regex("<(/?)([a-zA-Z0-9]+)([^>]*)>|([^<]+)").findAll(inner).forEach { m ->
+                val chunk = m.groupValues[4]
+                if (chunk.isNotEmpty()) {
+                    val decoded = innerText(chunk)
+                    val current = Marks(stack.mapNotNull { (t, _) -> t.takeIf { it in TAGS } }.toSet(), stack.lastOrNull { it.first == "a" }?.second)
+                    text.append(decoded); repeat(decoded.length) { marks += current }
+                    return@forEach
+                }
+                val tag = m.groupValues[2].lowercase().let { aliases[it] ?: it }
+                if (m.groupValues[1] == "/") { stack.indexOfLast { it.first == tag }.takeIf { it >= 0 }?.let { stack.removeAt(it) } }
+                else if (tag != "br") stack += tag to Regex("href=\"([^\"]*)\"").find(m.groupValues[3])?.groupValues?.get(1)?.let(::innerText)
+            }
         }
 
         fun innerText(inner: String) = inner.replace(Regex("<[^>]+>"), "")
@@ -133,23 +233,54 @@ internal data class RichDoc(val kind: ListKind, val lines: List<String>) {
     }
 }
 
-/** Draws each line's bold, italic and link spans and its bullet or number, without changing the edited text. */
-internal class RichTransformation(private val doc: RichDoc, private val hanging: androidx.compose.ui.unit.TextUnit, private val linkColor: androidx.compose.ui.graphics.Color) : VisualTransformation {
+/**
+ * Draws each line's bold, italic and link marks and its bullet or number, without changing the edited text, and
+ * tints [highlight] (the line Improve is asking about) as the board does.
+ */
+internal class RichTransformation(
+    private val doc: RichDoc,
+    private val hanging: androidx.compose.ui.unit.TextUnit,
+    private val linkColor: androidx.compose.ui.graphics.Color,
+    private val highlight: IntRange? = null,
+    private val highlightColor: androidx.compose.ui.graphics.Color = androidx.compose.ui.graphics.Color.Unspecified,
+) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val lines = text.text.split('\n')
         val prefixes = lines.indices.map { i -> when (doc.kind) { ListKind.Bullets -> "•  "; ListKind.Numbers -> "${i + 1}.  "; ListKind.Paragraphs -> "" } }
+        val styled = text.text == doc.text
+        val starts = lines.runningFold(0) { acc, l -> acc + l.length + 1 }
+        val offsets = prefixes.runningFold(0) { acc, p -> acc + p.length }
         val out = buildAnnotatedString {
             lines.forEachIndexed { i, line ->
                 append(prefixes[i])
-                val inner = doc.lines.getOrNull(i)?.takeIf { RichDoc.innerText(it) == line }
-                if (inner == null) append(line) else appendInner(inner)
+                val base = length
+                append(line)
+                if (styled) line.indices.forEach { k ->
+                    val m = doc.marksAt(starts[i] + k)
+                    if (m.tags.isEmpty() && m.href == null) return@forEach
+                    addStyle(
+                        SpanStyle(
+                            fontWeight = if ("strong" in m.tags) FontWeight.Bold else null,
+                            fontStyle = if ("em" in m.tags) FontStyle.Italic else null,
+                            textDecoration = when {
+                                m.href != null || "u" in m.tags -> TextDecoration.Underline
+                                "s" in m.tags -> TextDecoration.LineThrough
+                                else -> null
+                            },
+                            color = if (m.href != null) linkColor else androidx.compose.ui.graphics.Color.Unspecified,
+                        ),
+                        base + k, base + k + 1,
+                    )
+                }
                 if (i < lines.lastIndex) append('\n')
+            }
+            if (highlight != null && styled && !highlight.isEmpty()) {
+                val line = starts.indexOfLast { it <= highlight.first }.coerceIn(0, lines.lastIndex)
+                addStyle(SpanStyle(background = highlightColor), highlight.first + offsets[line + 1], highlight.last + 1 + offsets[line + 1])
             }
             // One paragraph style over the whole text: each line is its own paragraph and wraps under its text.
             if (doc.kind != ListKind.Paragraphs) addStyle(ParagraphStyle(textIndent = TextIndent(firstLine = 0.sp, restLine = hanging)), 0, length)
         }
-        val starts = lines.runningFold(0) { acc, l -> acc + l.length + 1 }
-        val offsets = prefixes.runningFold(0) { acc, p -> acc + p.length }
         val mapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
                 val line = starts.indexOfLast { it <= offset }.coerceIn(0, lines.lastIndex)
@@ -162,25 +293,6 @@ internal class RichTransformation(private val doc: RichDoc, private val hanging:
             }
         }
         return TransformedText(out, mapping)
-    }
-
-    private fun AnnotatedString.Builder.appendInner(inner: String) {
-        var bold = 0; var italic = 0; var link = 0
-        Regex("<(/?)(strong|b|em|i|a)[^>]*>|([^<]+)").findAll(inner).forEach { m ->
-            val text = m.groupValues[3]
-            if (text.isNotEmpty()) {
-                val style = SpanStyle(
-                    fontWeight = if (bold > 0) FontWeight.Bold else null,
-                    fontStyle = if (italic > 0) FontStyle.Italic else null,
-                    textDecoration = if (link > 0) TextDecoration.Underline else null,
-                    color = if (link > 0) linkColor else androidx.compose.ui.graphics.Color.Unspecified,
-                )
-                val start = length; append(RichDoc.innerText(text)); addStyle(style, start, length)
-            } else {
-                val delta = if (m.groupValues[1] == "/") -1 else 1
-                when (m.groupValues[2]) { "strong", "b" -> bold += delta; "em", "i" -> italic += delta; "a" -> link += delta }
-            }
-        }
     }
 }
 
@@ -215,6 +327,7 @@ internal fun RichTextScreen(
     onBack: () -> Unit,
     onSetUpAi: () -> Unit,
     initialCaretLine: Int? = null,
+    initialSelection: TextRange? = null,
 ) {
     val doc = state.doc ?: return
     val ref = doc.section(section) ?: return
@@ -224,21 +337,25 @@ internal fun RichTextScreen(
     val reduced = LocalReducedMotion.current
     val stored = doc.json.at(path).str()
     var rich by remember { mutableStateOf(RichDoc.parse(stored)) }
-    var value by remember { mutableStateOf(TextFieldValue(rich.plain.joinToString("\n"), initialCaretLine?.let { line -> TextRange(rich.plain.take(line).sumOf { it.length + 1 }) } ?: TextRange.Zero)) }
+    var value by remember { mutableStateOf(TextFieldValue(rich.text, initialSelection ?: initialCaretLine?.let { line -> TextRange(rich.plain.take(line).sumOf { it.length + 1 }) } ?: TextRange.Zero)) }
     var pending by remember { mutableStateOf(false) }
     var menu by remember { mutableStateOf(false) }
     var ask by remember { mutableStateOf<ImproveAction?>(null) }
-    var linking by remember { mutableStateOf(false) }
+    var linking by remember { mutableStateOf<IntRange?>(null) }
     val caretLine = value.text.take(value.selection.start).count { it == '\n' }
     val currentLine = rich.plain.getOrNull(caretLine).orEmpty()
     val title = ref.kind.itemTitle(doc.items(ref).firstOrNull { it["id"].str() == itemId } ?: JsonObject(emptyMap()))
     val write = { next: RichDoc -> actions.edit { it.set(path, JsonPrimitive(next.toHtml())) as JsonObject } }
     // Keep the newest stored text unless the person is mid-edit; write after a short pause and when leaving.
-    LaunchedEffect(stored) { if (!pending) { rich = RichDoc.parse(stored); if (rich.plain.joinToString("\n") != value.text) value = value.copy(text = rich.plain.joinToString("\n")) } }
+    LaunchedEffect(stored) { if (!pending) { rich = RichDoc.parse(stored); if (rich.text != value.text) value = value.copy(text = rich.text) } }
     LaunchedEffect(value.text, pending) { if (pending) { delay(400); write(rich); pending = false } }
     DisposableEffect(Unit) { onDispose { if (pending) write(rich); actions.clearImprovement(); actions.setEditing(false) } }
     fun change(next: RichDoc) { rich = next; write(next) }
     val improve = state.improve
+    // The line Improve is asking about is tinted while its card is open (B4 board).
+    val askedLine = when (improve) { is ImproveState.Working -> improve.asked.line; is ImproveState.Ready -> improve.asked.line; is ImproveState.Failed -> improve.asked.line; else -> null }
+    val askedRange = askedLine?.let { line -> rich.plain.indexOf(line).takeIf { it >= 0 }?.let { rich.lineRanges()[it] } }
+    val target = rich.target(value.selection)
     val where = stringResource(fieldLabel(field))
     val done = { if (pending) { write(rich); pending = false }; onBack() }
 
@@ -249,6 +366,8 @@ internal fun RichTextScreen(
             status = if (title.isNotBlank() && ref.kind != SectionKind.Summary) ({ RrText(title) }) else null,
         ) { RrButton(stringResource(S.string.done), done, Modifier.padding(end = 10.dp), RrButtonVariant.Secondary) }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            // Selection draws in the accent's soft fill with accent handles.
+            CompositionLocalProvider(LocalTextSelectionColors provides TextSelectionColors(handleColor = c.accent, backgroundColor = c.accentSoft)) {
             BasicTextField(
                 value = value,
                 onValueChange = { next -> if (next.text != value.text) { rich = rich.withText(next.text); pending = true }; value = next },
@@ -256,8 +375,9 @@ internal fun RichTextScreen(
                 readOnly = state.locked,
                 textStyle = RrType.input.copy(fontSize = 17.sp, lineHeight = 24.sp, color = c.ink),
                 cursorBrush = SolidColor(c.accent),
-                visualTransformation = RichTransformation(rich, 22.sp, c.accentText),
+                visualTransformation = RichTransformation(rich, 22.sp, c.accentText, highlight = askedRange, highlightColor = c.sunken),
             )
+            }
             AnimatedVisibility(improve !is ImproveState.Idle && improve !is ImproveState.NoProvider, enter = expandVertically(tween(if (reduced) 0 else RrMotion.D2, easing = RrMotion.ease)) + fadeIn(), exit = shrinkVertically(tween(if (reduced) 0 else RrMotion.exit(RrMotion.D2))) + fadeOut()) {
                 ImproveCard(
                     improve,
@@ -266,9 +386,9 @@ internal fun RichTextScreen(
                         haptics(RrHaptic.Light)
                         val next = rich.replace(ready.asked.line, ready.text)
                         if (next == null) actions.toastError(S.string.the_line_changed_since_you_asked_so_it_wasn_t_replaced)
-                        else { rich = next; value = value.copy(text = next.plain.joinToString("\n")); actions.replaceField(path, next.toHtml(), ready.operations) }
+                        else { rich = next; value = value.copy(text = next.text); actions.replaceField(path, next.toHtml(), ready.operations) }
                     },
-                    onTryAnother = { asked -> actions.improve(asked.line, rich.plain.joinToString("\n"), where, asked.action, asked.request) },
+                    onTryAnother = { asked -> actions.improve(asked.line, rich.text, where, asked.action, asked.request) },
                 )
             }
         }
@@ -279,11 +399,12 @@ internal fun RichTextScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val enabled = !state.locked
-            RrIconButton(D.drawable.ic_ph_text_b, stringResource(S.string.bold), { change(rich.toggle(caretLine, "strong")) }, enabled = enabled)
-            RrIconButton(D.drawable.ic_ph_text_italic, stringResource(S.string.italic), { change(rich.toggle(caretLine, "em")) }, enabled = enabled)
+            // Bold, italic and link act on the selection, or on the caret's line when nothing is selected.
+            RrIconButton(D.drawable.ic_ph_text_b, stringResource(S.string.bold), { change(rich.toggle(target, "strong")) }, enabled = enabled, selected = rich.has(target, "strong"))
+            RrIconButton(D.drawable.ic_ph_text_italic, stringResource(S.string.italic), { change(rich.toggle(target, "em")) }, enabled = enabled, selected = rich.has(target, "em"))
             RrIconButton(D.drawable.ic_ph_list_bullets, stringResource(S.string.bulleted_list), { change(rich.copy(kind = if (rich.kind == ListKind.Bullets) ListKind.Paragraphs else ListKind.Bullets)) }, enabled = enabled, selected = rich.kind == ListKind.Bullets)
             RrIconButton(D.drawable.ic_ph_list_numbers, stringResource(S.string.numbered_list), { change(rich.copy(kind = if (rich.kind == ListKind.Numbers) ListKind.Paragraphs else ListKind.Numbers)) }, enabled = enabled, selected = rich.kind == ListKind.Numbers)
-            RrIconButton(D.drawable.ic_ph_link_simple, stringResource(S.string.link), { linking = true }, enabled = enabled && currentLine.isNotBlank())
+            RrIconButton(D.drawable.ic_ph_link_simple, stringResource(S.string.link), { linking = target }, enabled = enabled && !target.isEmpty(), selected = !target.isEmpty() && rich.marksAt(target.first).href != null)
             Spacer(Modifier.weight(1f))
             RrButton(
                 stringResource(S.string.improve),
@@ -304,14 +425,14 @@ internal fun RichTextScreen(
                 menu = false
                 when (a) {
                     ImproveAction.Result, ImproveAction.Custom -> ask = a
-                    else -> actions.improve(currentLine, rich.plain.joinToString("\n"), where, a.wire, null)
+                    else -> actions.improve(currentLine, rich.text, where, a.wire, null)
                 }
             }, icon = D.drawable.ic_ph_sparkle)
         }
         state.aiProvider?.let { RrDisclosureLine(stringResource(S.string.sends_this_line_surrounding_field_text_and_your_instructions_to_0_1, it.label, it.model), Modifier.padding(16.dp)) }
     }
-    ask?.let { a -> AskSheet(a, onDismiss = { ask = null }) { words -> ask = null; actions.improve(currentLine, rich.plain.joinToString("\n"), where, a.wire, words) } }
-    if (linking) LinkSheet(onDismiss = { linking = false }) { url -> linking = false; change(rich.link(caretLine, url)) }
+    ask?.let { a -> AskSheet(a, onDismiss = { ask = null }) { words -> ask = null; actions.improve(currentLine, rich.text, where, a.wire, words) } }
+    linking?.let { range -> LinkSheet(rich.marksAt(range.first).href, onDismiss = { linking = null }) { url -> linking = null; change(rich.link(range, url)) } }
     LaunchedEffect(Unit) { actions.loadAiProvider() }
     if (improve is ImproveState.NoProvider) LaunchedEffect(improve) { onSetUpAi(); actions.clearImprovement() }
 }
@@ -375,8 +496,8 @@ private fun AskSheet(action: ImproveAction, onDismiss: () -> Unit, onAsk: (Strin
 }
 
 @Composable
-private fun LinkSheet(onDismiss: () -> Unit, onLink: (String) -> Unit) {
-    var url by rememberSaveable { mutableStateOf("https://") }
+private fun LinkSheet(current: String?, onDismiss: () -> Unit, onLink: (String) -> Unit) {
+    var url by rememberSaveable { mutableStateOf(current ?: "https://") }
     RrBottomSheet(onDismissRequest = onDismiss, fitContent = true, title = stringResource(S.string.link)) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             RrTextField(url, { url = it }, Modifier.fillMaxWidth(), label = stringResource(S.string.link_address), ltr = true)

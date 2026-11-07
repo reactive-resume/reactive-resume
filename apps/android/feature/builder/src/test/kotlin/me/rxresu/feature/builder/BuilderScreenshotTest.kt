@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.runBlocking
@@ -170,5 +171,52 @@ class BuilderScreenshotTest : RrScreenshotTest() {
     @Test fun entryFont200() = captureScreen("B2-Entry", false, fontScale = 2f) {
         val state = Fixtures.state()
         Box(Modifier.fillMaxSize()) { EntrySheet(state, "experience", "experience-northwind", NoBuilderActions, {}, {}, { _, _ -> }) }
+    }
+
+    // Finished in the follow-up: changed elsewhere, linking and copying for a job, Crop photo, Review writing.
+    @Test fun changedElsewhere() = captureScreen("B1-Page-agent", false) {
+        val state = Fixtures.state().copy(outsideChange = me.rxresu.core.data.OutsideChange("patch"))
+        Shell(state, BuilderMode.Write) { WriteMode(state, WriteView.Page, {}, NoBuilderActions, WriteNav()) }
+    }
+
+    @Test fun changedElsewhereDark() = captureScreen("B1-Page-agent", true) {
+        val state = Fixtures.state().copy(outsideChange = me.rxresu.core.data.OutsideChange("patch"))
+        Shell(state, BuilderMode.Write) { WriteMode(state, WriteView.Page, {}, NoBuilderActions, WriteNav()) }
+    }
+
+    private fun lumenMatch(pasted: String? = null) = MatchState.Ready(
+        found = listOf("Design systems", "Figma").map { MatchTerm(it.lowercase(), it, 1) },
+        missing = listOf(MatchTerm("accessibility audits", "Accessibility audits", 3)),
+        pasted = pasted,
+    )
+
+    @Test fun jobMatchChange() = captureScreen("B10-JobMatch-change", false) {
+        val state = Fixtures.state(Fixtures.lumen).copy(match = lumenMatch(), application = Fixtures.lumenApplication)
+        Shell(state, BuilderMode.Check) { CheckMode(state, CheckTab.JobMatch, {}, NoBuilderActions, {}, {}, {}, {}, jobMatchChanging = true) }
+    }
+
+    @Test fun jobMatchSaveAsJob() = captureScreen("B10-JobMatch-save-job", false) {
+        val state = Fixtures.state().copy(match = lumenMatch(pasted = "Senior product designer at Lumen. Accessibility audits, Figma, design systems."))
+        Shell(state, BuilderMode.Check) { CheckMode(state, CheckTab.JobMatch, {}, NoBuilderActions, {}, {}, {}, {}, saveJobOpen = true) }
+    }
+
+    @Test fun jobMatchNotLinked() = captureScreen("B10-JobMatch-not-linked", false) {
+        val state = Fixtures.state().copy(match = MatchState.NoPosting)
+        Shell(state, BuilderMode.Check) { CheckMode(state, CheckTab.JobMatch, {}, NoBuilderActions, {}, {}, {}, {}) }
+    }
+
+    @Test fun cropPhoto() = captureScreen("B5-Basics-crop", false) {
+        val photo = Fixtures.page.asAndroidBitmap().copy(android.graphics.Bitmap.Config.ARGB_8888, false)
+        BasicsScreen(Fixtures.state().copy(crop = PhotoCrop(photo, "photo.png", "image/png")), NoBuilderActions, {})
+    }
+
+    @Test fun cropPhotoDark() = captureScreen("B5-Basics-crop", true) {
+        val photo = Fixtures.page.asAndroidBitmap().copy(android.graphics.Bitmap.Config.ARGB_8888, false)
+        BasicsScreen(Fixtures.state().copy(crop = PhotoCrop(photo, "photo.png", "image/png")), NoBuilderActions, {})
+    }
+
+    @Test fun writingReview() = captureScreen("B9-Writing", false) {
+        val state = Fixtures.state().copy(aiProvider = AiProvider("p", "Work OpenAI", "gpt-5-mini"))
+        Shell(state, BuilderMode.Check) { CheckMode(state, CheckTab.Issues, {}, NoBuilderActions, {}, {}, {}, {}, writingTab = true) }
     }
 }

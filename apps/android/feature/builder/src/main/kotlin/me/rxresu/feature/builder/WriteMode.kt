@@ -146,7 +146,9 @@ private fun Outline(state: BuilderUiState, doc: ResumeDoc, actions: BuilderActio
     val locked = state.locked
     Box(modifier.fillMaxWidth().background(RrTheme.colors.bg)) {
         Column(Modifier.fillMaxSize()) {
-            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 16.dp)) {
+            val scroll = rememberScrollState()
+            val autoScroll = remember(scroll) { ReorderAutoScroll(scroll) }
+            Column(Modifier.weight(1f).reorderViewport(autoScroll).verticalScroll(scroll).padding(bottom = 16.dp)) {
                 doc.pages.forEachIndexed { pageIndex, page ->
                     val columns = if (twoColumns && !page.fullWidth) listOf(page.main to false, page.sidebar to true) else listOf(page.main + page.sidebar to false)
                     columns.forEach { (keys, sidebar) ->
@@ -167,13 +169,14 @@ private fun Outline(state: BuilderUiState, doc: ResumeDoc, actions: BuilderActio
                                     items = refs,
                                     key = { it.key },
                                     enabled = !locked,
+                                    autoScroll = autoScroll,
                                     onActions = { menu = OutlineMenu.Section(it) },
                                     onMove = { from, to ->
                                         val moved = refs.moved(from, to).map { it.key }
                                         actions.setLayout { pages -> pages.mapIndexed { i, p -> if (i != pageIndex) p else if (sidebar) p.copy(sidebar = mergeOrder(p.sidebar, moved)) else p.copy(main = mergeOrder(p.main, moved)) } }
                                         announce(view, view.context.getString(R.string.builder_section_moved, doc.title(refs[from]).ifBlank { view.context.getString(refs[from].kind.defaultTitle) }, to + 1, refs.size))
                                     },
-                                ) { ref, _ -> SectionRow(doc, ref, expanded == ref.key, locked, actions, nav, onToggle = { expanded = if (expanded == ref.key) null else ref.key }, onMenu = { menu = it }) }
+                                ) { ref, _ -> SectionRow(doc, ref, expanded == ref.key, locked, actions, nav, autoScroll, onToggle = { expanded = if (expanded == ref.key) null else ref.key }, onMenu = { menu = it }) }
                             }
                         }
                     }
@@ -227,7 +230,7 @@ internal fun mergeOrder(existing: List<String>, order: List<String>): List<Strin
 }
 
 @Composable
-private fun SectionRow(doc: ResumeDoc, ref: SectionRef, open: Boolean, locked: Boolean, actions: BuilderActions, nav: WriteNav, onToggle: () -> Unit, onMenu: (OutlineMenu) -> Unit) {
+private fun SectionRow(doc: ResumeDoc, ref: SectionRef, open: Boolean, locked: Boolean, actions: BuilderActions, nav: WriteNav, autoScroll: ReorderAutoScroll?, onToggle: () -> Unit, onMenu: (OutlineMenu) -> Unit) {
     val title = doc.displayTitle(ref)
     val items = doc.items(ref)
     val c = RrTheme.colors
@@ -259,6 +262,7 @@ private fun SectionRow(doc: ResumeDoc, ref: SectionRef, open: Boolean, locked: B
                 items = items,
                 key = { it["id"].str() },
                 enabled = !locked,
+                autoScroll = autoScroll,
                 onActions = { onMenu(OutlineMenu.Entry(ref, it["id"].str())) },
                 onMove = { from, to -> actions.reorderItem(ref.key, items[from]["id"].str(), to - from) },
             ) { item, _ ->

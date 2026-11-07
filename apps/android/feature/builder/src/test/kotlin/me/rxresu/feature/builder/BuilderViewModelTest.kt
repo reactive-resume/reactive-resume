@@ -25,6 +25,15 @@ import me.rxresu.core.page.RenderedDocument
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import kotlinx.serialization.json.addJsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import me.rxresu.core.data.OutsideChange
+import me.rxresu.core.network.ApiJson
+import me.rxresu.core.network.ServerEvent
+import me.rxresu.core.network.generated.PatchResumeRequest
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -49,7 +58,7 @@ class BuilderViewModelTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         Dispatchers.setMain(dispatcher)
         val repositories = FakeRepositories(controls, pageRenderer = renderer, coroutineScope = backgroundScope)
-        return BuilderViewModel(id, repositories, readText = { listOf(emptyList()) }, io = dispatcher)
+        return BuilderViewModel(id, repositories, readText = { listOf(emptyList()) }, io = dispatcher).also { repositoriesByVm[it] = repositories }
     }
 
     @After fun tearDown() = Dispatchers.resetMain()
@@ -154,4 +163,75 @@ class BuilderViewModelTest {
         val skills = vm.state.value.doc!!.let { it.items(it.section("skills")!!) }
         assertEquals("Accessibility audits", skills.last()["name"].str())
     }
+
+    @Test fun fitIsOneUndoStep() = runTest {
+        val vm = builder(Renderer { n -> if (n < 4) 2 else 1 })
+        settle()
+        val before = vm.state.value.doc!!.json
+        vm.fitToOnePage()
+        settle()
+        assertEquals(Margins.Narrow, Margins.of(vm.state.value.doc!!.json))
+        vm.undo(); settle()
+        val after = vm.state.value.doc!!.json
+        assertEquals(before.at(listOf("data", "metadata")), after.at(listOf("data", "metadata")))
+        assertFalse(vm.state.value.canUndo)
+    }
+
+    @Test fun fitThatCannotFitPutsTheDesignBack() = runTest {
+        val vm = builder(Renderer { 2 })
+        val toasts = mutableListOf<BuilderToast>()
+        backgroundScope.launch { vm.toastEvents.collect { toasts += it } }
+        settle()
+        val before = vm.state.value.doc!!.json.at(listOf("data", "metadata"))
+        vm.fitToOnePage()
+        repeat(20) { settle() }
+        assertEquals(R.string.builder_fit_failed, toasts.last().text)
+        assertEquals(before, vm.state.value.doc!!.json.at(listOf("data", "metadata")))
+    }
+
+    @Test fun anAgentsChangeShowsTheStripAndUndoTakesItBack() = runTest {
+        val controls = FakeControls()
+        val vm = builder(controls = controls)
+        settle()
+        val repositories = repositoriesOf(vm)
+        val body = buildJsonObject { putJsonArray("operations") { addJsonObject { put("op", "replace"); put("path", "/data/basics/name"); put("value", "Agent Alex") } } }
+        repositories.resumes.patchResume(StoryboardIds.resume, ApiJson.decodeFromJsonElement(PatchResumeRequest.serializer(), body))
+        controls.resumeUpdates.emit(ServerEvent(null, null, """{"mutation":"patch"}"""))
+        settle()
+        assertEquals(OutsideChange("patch"), vm.state.value.outsideChange)
+        assertEquals("Agent Alex", vm.state.value.resume!!.data.basics.name)
+        vm.undo(); settle()
+        assertNull(vm.state.value.outsideChange)
+        assertEquals("Alex Morgan", vm.state.value.resume!!.data.basics.name)
+    }
+
+    @Test fun linkingAnApplicationTakesTheNewRevisionAndMatchesItsPosting() = runTest {
+        val vm = builder()
+        settle()
+        vm.linkApplication(StoryboardIds.lumen)
+        settle()
+        assertEquals(StoryboardIds.lumen, vm.state.value.resume!!.applicationId)
+        assertEquals(StoryboardIds.lumen, vm.state.value.application!!.id)
+        // The next autosave builds on the linked revision instead of conflicting with it.
+        vm.edit { it.set(name, JsonPrimitive("Alex L.")) as JsonObject }
+        settle()
+        assertEquals(SaveStatus.Saved, vm.state.value.status)
+        assertNull(vm.state.value.recoveredCopyName)
+        assertEquals(StoryboardIds.lumen, repositoriesOf(vm).resumes.getResume(StoryboardIds.resume).applicationId)
+    }
+
+    @Test fun aCopyForAJobOpensTheCopy() = runTest {
+        val controls = FakeControls()
+        controls.responses.value = mapOf("copyResumeForJob" to JsonPrimitive(StoryboardIds.lumenResume))
+        val vm = builder(controls = controls)
+        val opened = mutableListOf<String>()
+        backgroundScope.launch { vm.openCopyEvents.collect { opened += it } }
+        settle()
+        vm.copyForJob(StoryboardIds.lumen)
+        settle()
+        assertEquals(listOf(StoryboardIds.lumenResume), opened)
+    }
+
+    private val repositoriesByVm = mutableMapOf<BuilderViewModel, me.rxresu.core.data.RrRepositories>()
+    private fun repositoriesOf(vm: BuilderViewModel) = repositoriesByVm.getValue(vm)
 }

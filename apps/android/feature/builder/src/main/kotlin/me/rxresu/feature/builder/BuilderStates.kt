@@ -7,6 +7,9 @@ import me.rxresu.core.network.generated.CreateResumeJobMatchResponseFoundItem
 
 internal class PickedPhoto(val bytes: ByteArray, val name: String, val type: String)
 
+/** A job saved from a pasted posting ("Save as a job…"): company and role are required. */
+internal data class NewJob(val company: String, val role: String, val posting: String)
+
 /** What Improve was asked, and who it was sent to (for the disclosure line). */
 internal data class ImproveRequest(val line: String, val action: CreateImprovementRequestAction, val request: String?, val provider: String, val model: String)
 

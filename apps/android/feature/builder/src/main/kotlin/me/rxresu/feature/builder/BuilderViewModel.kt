@@ -25,6 +25,8 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import me.rxresu.core.data.DocumentDraft
+import me.rxresu.core.data.OutsideChange
+import me.rxresu.core.data.withWriteResult
 import me.rxresu.core.data.RrRepositories
 import me.rxresu.core.database.SaveStatus
 import me.rxresu.core.network.generated.Application
@@ -71,6 +73,16 @@ internal data class BuilderUiState(
     val writingNotes: List<WritingNote> = emptyList(),
     /** Bumps on every finished render, so Fit can wait for the page count after each step. */
     val renderCount: Int = 0,
+    /** Someone else's change the draft just took (B1 strip with Undo); cleared by the next edit, Undo or Redo. */
+    val outsideChange: OutsideChange? = null,
+    /** Open applications for "Link an application…"; null until asked for. */
+    val applications: List<Application>? = null,
+    /** Linking, copying or saving a job is in flight. */
+    val jobBusy: Boolean = false,
+    /** A picked photo waiting in Crop photo (B5). */
+    val crop: PhotoCrop? = null,
+    /** A writing review is running. */
+    val reviewing: Boolean = false,
 ) {
     val doc: ResumeDoc? = resume?.let { ResumeDoc(it.toJson()) }
     val issueCount get() = checks?.findings?.size ?: 0
@@ -94,6 +106,11 @@ internal class BuilderViewModel(
     val state: StateFlow<BuilderUiState> = mutable.asStateFlow()
     private val toasts = Channel<BuilderToast>(Channel.BUFFERED)
     val toastEvents = toasts.receiveAsFlow()
+    private val opened = Channel<String>(Channel.BUFFERED)
+    /** Resume ids to open on Job match: a copy made for a job. */
+    val openCopyEvents = opened.receiveAsFlow()
+    /** The newest rendered page text, sent as the writing review's extracted text. */
+    private var pageText: String = ""
 
     private var draft: DocumentDraft<Resume>? = null
     private val editLock = Mutex()
@@ -106,6 +123,7 @@ internal class BuilderViewModel(
                 mutable.update { it.copy(loadFailed = true) }; return@launch
             }
             draft = handle
+            launch { handle.outsideChanges.collect { change -> mutable.update { it.copy(outsideChange = change) } } }
             handle.state.collect { s ->
                 val resume = s.document
                 mutable.update {
@@ -129,6 +147,7 @@ internal class BuilderViewModel(
         if (document == null) { mutable.update { it.copy(renderFailed = true) }; return }
         val bitmaps = (0 until document.pageCount).map { pages.page(document, it, pageWidthPx).asImageBitmap() }
         val runs = withContext(io) { readText(document.file) }
+        pageText = runs?.joinToString("\n\n") { page -> page.joinToString(" ") { it.text } }.orEmpty()
         val doc = state.value.doc
         val blocks = if (runs == null || doc == null) null else PageBlocks.build(doc, runs, templateColumns(doc.template) == 2)
         mutable.update { it.copy(pages = bitmaps, blocks = blocks, renderFailed = false, renderCount = it.renderCount + 1) }
@@ -149,23 +168,27 @@ internal class BuilderViewModel(
 
     // Edits ----------------------------------------------------------------------------------------------------------
 
-    /** Applies [change] to the newest document. Every change is one undo step and autosaves. */
-    override fun edit(toast: BuilderToast?, change: (JsonObject) -> JsonObject) {
-        viewModelScope.launch { if (editNow(change) && toast != null) toasts.send(toast) }
+    /**
+     * Applies [change] to the newest document and autosaves. Each change is one undo step; consecutive changes passing
+     * the same [undoStep] share one (a held stepper, Fit).
+     */
+    override fun edit(toast: BuilderToast?, undoStep: String?, change: (JsonObject) -> JsonObject) {
+        viewModelScope.launch { if (editNow(undoStep, change) && toast != null) toasts.send(toast) }
     }
 
-    suspend fun editNow(change: (JsonObject) -> JsonObject): Boolean = editLock.withLock {
+    suspend fun editNow(undoStep: String? = null, change: (JsonObject) -> JsonObject): Boolean = editLock.withLock {
         val handle = draft ?: return false
         val current = handle.state.value.document ?: return false
         if (state.value.locked) return false
         val next = try { change(current.toJson()).toResume() } catch (e: CancellationException) { throw e } catch (_: Exception) { return false }
-        try { handle.update(next); true } catch (e: CancellationException) { throw e } catch (_: Exception) { false }
+        mutable.update { it.copy(outsideChange = null) }
+        try { handle.update(next, undoStep = undoStep); true } catch (e: CancellationException) { throw e } catch (_: Exception) { false }
     }
 
     override fun set(path: Path, value: kotlinx.serialization.json.JsonElement) = edit { it.set(path, value) as JsonObject }
 
-    override fun undo() { viewModelScope.launch { runCatching { draft?.undo() } } }
-    override fun redo() { viewModelScope.launch { runCatching { draft?.redo() } } }
+    override fun undo() { mutable.update { it.copy(outsideChange = null) }; viewModelScope.launch { runCatching { draft?.undo() } } }
+    override fun redo() { mutable.update { it.copy(outsideChange = null) }; viewModelScope.launch { runCatching { draft?.redo() } } }
     override fun flush() { viewModelScope.launch { runCatching { draft?.flush() } } }
     override fun setEditing(editing: Boolean) { viewModelScope.launch { runCatching { draft?.setEditing(editing) } } }
     override fun highlight(target: BlockTarget?, aboveSheet: Boolean) = mutable.update { it.copy(highlight = target, highlightAboveSheet = target != null && aboveSheet) }
@@ -354,12 +377,24 @@ internal class BuilderViewModel(
         if (state.value.fitting) return
         viewModelScope.launch {
             mutable.update { it.copy(fitting = true) }
+            // The whole run is one undo step (web fit.ts coalesceKey + sameStep).
+            val key = "design.fit:${System.nanoTime()}"
+            var fitted: Resume? = null // the document after Fit's last step; another edit since means no revert
             try {
                 repeat(16) {
-                    if (state.value.pages.size <= 1) { toasts.send(BuilderToast(R.string.builder_fit_done, undo = true, success = true)); return@launch }
-                    val step = state.value.doc?.let { FitSteps.next(it.json) } ?: run { toasts.send(BuilderToast(R.string.builder_fit_failed, danger = true)); return@launch }
+                    if (state.value.pages.size <= 1) {
+                        if (fitted != null) toasts.send(BuilderToast(R.string.builder_fit_done, undo = true, success = true))
+                        return@launch
+                    }
+                    val step = state.value.doc?.let { FitSteps.next(it.json) }
+                    if (step == null) {
+                        // Nothing gained: put the design back, unless something else was edited meanwhile.
+                        if (fitted != null && draft?.state?.value?.document?.data == fitted.data) draft?.undo()
+                        toasts.send(BuilderToast(R.string.builder_fit_failed, danger = true)); return@launch
+                    }
                     val before = state.value.renderCount
-                    if (!editNow(step)) return@launch
+                    if (!editNow(key, step)) return@launch
+                    fitted = draft?.state?.value?.document
                     withTimeoutOrNull(8_000) { state.first { it.renderCount > before } }
                         ?: run { toasts.send(BuilderToast(R.string.builder_fit_timeout, undo = true)); return@launch }
                 }
@@ -387,6 +422,99 @@ internal class BuilderViewModel(
 
     override fun showHiddenTerms() = edit(BuilderToast(S.string.hidden_terms_are_back, undo = true)) { json ->
         json.update(listOf("data", "metadata", "check")) { check -> JsonObject(mapOf("ignored" to JsonArray(check.obj()["ignored"].arr()), "hiddenTerms" to JsonArray(emptyList()))) } as JsonObject
+    }
+
+    /** The open applications "Link an application…" lists (closed ones are left out, as on the web). */
+    override fun loadApplications() {
+        if (state.value.applications != null) return
+        viewModelScope.launch {
+            val apps = try { repositories.applications.listApplications() } catch (e: CancellationException) { throw e } catch (_: Exception) { emptyList() }
+            mutable.update { it.copy(applications = apps.filter { a -> a.status != me.rxresu.core.network.generated.ApplicationStage.Closed }) }
+        }
+    }
+
+    /**
+     * Links this resume to [applicationId] (null unlinks) through the draft's metadata write, so the next autosave builds
+     * on the linked revision, then matches against the new posting.
+     */
+    override fun linkApplication(applicationId: String?) { viewModelScope.launch { link(applicationId) } }
+
+    private suspend fun link(applicationId: String?): Boolean {
+        val handle = draft ?: return false
+        mutable.update { it.copy(jobBusy = true) }
+        return try {
+            handle.writeMetadata { baseline ->
+                val result = repositories.documents.putDocumentApplication(
+                    me.rxresu.core.network.generated.DocumentType.Resume, resumeId,
+                    me.rxresu.core.network.generated.PutDocumentApplicationRequest(applicationId, JsonPrimitive(baseline.updatedAt)),
+                    me.rxresu.core.network.RequestOptions(nullFields = if (applicationId == null) setOf("/applicationId") else emptySet()),
+                ) ?: error("No resume returned")
+                baseline.withWriteResult(result).copy(applicationId = applicationId)
+            }
+            val app = applicationId?.let { id -> state.value.applications?.firstOrNull { it.id == id } ?: repositories.applications.getApplication(id) }
+            mutable.update { it.copy(application = app, match = MatchState.Idle) }
+            if (app != null) matchPosting(null) else mutable.update { it.copy(match = MatchState.NoPosting) }
+            true
+        } catch (e: CancellationException) { throw e } catch (_: Exception) {
+            toasts.send(BuilderToast(S.string.couldn_t_link_the_application_try_again, danger = true))
+            false
+        } finally { mutable.update { it.copy(jobBusy = false) } }
+    }
+
+    /**
+     * Copies this resume for an existing job ([applicationId]) or a new one saved with it ([job]), leaving this resume as
+     * it was, and opens the copy on Job match. Pending edits are saved first so the copy has what's on screen.
+     */
+    override fun copyForJob(applicationId: String?, job: NewJob?) {
+        val company = job?.company ?: state.value.applications?.firstOrNull { it.id == applicationId }?.company ?: state.value.application?.company.orEmpty()
+        viewModelScope.launch {
+            mutable.update { it.copy(jobBusy = true) }
+            try {
+                val handle = draft ?: return@launch
+                handle.flush()
+                // The web waits up to 10 s for pending edits (SAVE_WAIT_MS); offline or a failed save refuses the copy.
+                val settled = withTimeoutOrNull(10_000) { handle.state.first { it.status != SaveStatus.Saving } }
+                if (settled?.status != SaveStatus.Saved) { toasts.send(BuilderToast(R.string.builder_save_before_copy, danger = true)); return@launch }
+                val copyId = repositories.documents.copyResumeForJob(me.rxresu.core.network.generated.CopyResumeForJobRequest(
+                    resumeId = resumeId, applicationId = applicationId, newId = newId(),
+                    application = job?.let { me.rxresu.core.network.generated.CopyResumeForJobRequestApplication(company = it.company, role = it.role, jobDescription = it.posting) },
+                ))
+                toasts.send(BuilderToast(S.string.copy_made_for_company_this_resume_is_unchanged, listOf(company)))
+                opened.send(copyId)
+            } catch (e: CancellationException) { throw e } catch (_: Exception) {
+                toasts.send(BuilderToast(if (job != null) S.string.couldn_t_save_the_job_and_its_copy_your_edits_are_kept_try_again else R.string.builder_copy_failed, danger = true))
+            } finally { mutable.update { it.copy(jobBusy = false) } }
+        }
+    }
+
+    /** "Save and link this resume": saves the pasted posting as a job linked to this resume. */
+    override fun saveJobAndLink(job: NewJob) {
+        viewModelScope.launch {
+            mutable.update { it.copy(jobBusy = true) }
+            val id = try {
+                repositories.applications.createApplication(me.rxresu.core.network.generated.CreateApplicationRequest(company = job.company, role = job.role, jobDescription = job.posting, resumeId = resumeId, newId = newId()))
+            } catch (e: CancellationException) { throw e } catch (_: Exception) {
+                mutable.update { it.copy(jobBusy = false) }
+                toasts.send(BuilderToast(R.string.builder_save_job_failed, danger = true)); return@launch
+            }
+            mutable.update { it.copy(jobBusy = false, applications = null) }
+            if (link(id)) toasts.send(BuilderToast(S.string.saved_as_a_job_and_linked_to_this_resume))
+        }
+    }
+
+    /** A linked application without a posting takes the pasted one ("Save to the application"), then matches it. */
+    override fun savePostingToApplication(text: String) {
+        val app = state.value.application ?: return
+        viewModelScope.launch {
+            mutable.update { it.copy(jobBusy = true) }
+            try {
+                val saved = repositories.applications.patchApplication(app.id, me.rxresu.core.network.generated.PatchApplicationRequest(jobDescription = text.trim()))
+                mutable.update { it.copy(application = saved) }
+                matchPosting(null)
+            } catch (e: CancellationException) { throw e } catch (_: Exception) {
+                toasts.send(BuilderToast(R.string.builder_save_posting_failed, danger = true))
+            } finally { mutable.update { it.copy(jobBusy = false) } }
+        }
     }
 
     // Improve -------------------------------------------------------------------------------------------------------------
@@ -431,14 +559,28 @@ internal class BuilderViewModel(
 
     // Photo -------------------------------------------------------------------------------------------------------------
 
+    /** A picked photo opens Crop photo (B5) at the photo's aspect ratio; nothing uploads until Crop and upload. */
     override fun uploadPhoto(uri: Uri) {
-        viewModelScope.launch { upload(withContext(io) { readPhoto(uri) }) }
+        viewModelScope.launch {
+            val photo = withContext(io) { readPhoto(uri) }
+            val bitmap = photo?.let { withContext(io) { PhotoCrops.decode(it.bytes) } }
+            if (photo == null || bitmap == null) { toasts.send(BuilderToast(R.string.builder_photo_unreadable, danger = true)); return@launch }
+            mutable.update { it.copy(crop = PhotoCrop(bitmap, photo.name, photo.type)) }
+        }
     }
 
-    override fun uploadCameraPhoto(bitmap: android.graphics.Bitmap) {
+    override fun uploadCameraPhoto(bitmap: android.graphics.Bitmap) = mutable.update { it.copy(crop = PhotoCrop(bitmap, "photo.jpg", "image/jpeg")) }
+
+    override fun cancelCrop() = mutable.update { it.copy(crop = null) }
+
+    /** Crops [area] (photo pixels) and uploads it, shrunk until it fits the 10 MB limit (web picture-settings.tsx). */
+    override fun cropAndUpload(area: android.graphics.Rect) {
+        val crop = state.value.crop ?: return
+        mutable.update { it.copy(crop = null) }
         viewModelScope.launch {
-            val bytes = withContext(io) { java.io.ByteArrayOutputStream().also { bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, it) }.toByteArray() }
-            upload(PickedPhoto(bytes, "photo.jpg", "image/jpeg"))
+            val photo = try { withContext(io) { PhotoCrops.encode(crop.bitmap, area, crop.type, crop.name) } } catch (e: CancellationException) { throw e } catch (_: Exception) { null }
+            if (photo == null) { toasts.send(BuilderToast(R.string.builder_crop_failed, danger = true)); return@launch }
+            upload(photo)
         }
     }
 
@@ -479,6 +621,25 @@ internal class BuilderViewModel(
         }
     }
 
+    /**
+     * "Review writing": asks the first usable AI provider about the page's wording (POST /ai/ats-review), which saves
+     * the review, then shows its notes. Without a provider, Set up AI opens instead (the screen checks [aiProvider]).
+     */
+    override fun reviewWriting() {
+        if (state.value.reviewing) return
+        viewModelScope.launch {
+            val provider = state.value.aiProvider ?: provider()
+            if (provider == null) { mutable.update { it.copy(improve = ImproveState.NoProvider) }; return@launch }
+            mutable.update { it.copy(reviewing = true, aiProvider = provider) }
+            try {
+                repositories.ai.atsReview(me.rxresu.core.network.generated.AtsReviewRequest(aiProviderId = provider.id, extractedText = pageText.take(MAX_REVIEW_CHARS), resumeId = resumeId))
+                loadWritingNotes()
+            } catch (e: CancellationException) { throw e } catch (_: Exception) {
+                toasts.send(BuilderToast(R.string.builder_review_failed, danger = true))
+            } finally { mutable.update { it.copy(reviewing = false) } }
+        }
+    }
+
     private suspend fun loadWritingNotes() {
         val review = try { repositories.ai.getWritingReview(resumeId) } catch (e: CancellationException) { throw e } catch (_: Exception) { return } ?: return
         val json = me.rxresu.core.network.ApiJson.encodeToJsonElement(me.rxresu.core.network.generated.GetWritingReviewResponse.serializer(), review)
@@ -494,6 +655,8 @@ internal class BuilderViewModel(
     }
 
     private companion object {
+        /** The web's MAX_TEXT_CHARS for the writing review's extracted text. */
+        const val MAX_REVIEW_CHARS = 50_000
         val closeScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     }
 }

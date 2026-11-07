@@ -17,6 +17,16 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.zIndex
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.RrElevation
 import me.rxresu.core.designsystem.RrHaptic
@@ -32,7 +42,29 @@ internal object ReorderMath {
         else while (index > 0 && -rest > heights[index - 1] / 2f) { rest += heights[index - 1]; index-- }
         return index
     }
+
+    /**
+     * Auto-scroll speed while a lifted row's touch point [y] sits in the outer 8% of the viewport [top]..[bottom] (B3
+     * Motion): up to [max] pixels a frame, faster the deeper it goes; 0 elsewhere. Negative scrolls up.
+     */
+    fun autoScrollStep(y: Float, top: Float, bottom: Float, max: Float): Float {
+        val edge = (bottom - top) * 0.08f
+        if (edge <= 0f) return 0f
+        return when {
+            y < top + edge -> -max * ((top + edge - y) / edge).coerceIn(0f, 1f)
+            y > bottom - edge -> max * ((y - (bottom - edge)) / edge).coerceIn(0f, 1f)
+            else -> 0f
+        }
+    }
 }
+
+/** The scrolling container a [ReorderColumn] scrolls while a row is dragged near its edges. */
+internal class ReorderAutoScroll(val state: ScrollState) {
+    var viewport: Rect = Rect.Zero
+}
+
+/** Marks the scroll container [auto] scrolls; put it before `verticalScroll`. */
+internal fun Modifier.reorderViewport(auto: ReorderAutoScroll) = onGloballyPositioned { auto.viewport = it.boundsInWindow() }
 
 /**
  * A column whose rows lift on long-press and drag to reorder (`medium` on lift, `selection` per slot, `rigid` on
@@ -47,6 +79,7 @@ internal fun <T> ReorderColumn(
     onActions: (T) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    autoScroll: ReorderAutoScroll? = null,
     row: @Composable (item: T, lifted: Boolean) -> Unit,
 ) {
     val haptics = rememberRrHaptics()
@@ -55,6 +88,22 @@ internal fun <T> ReorderColumn(
     var dragging by remember { mutableIntStateOf(-1) }
     var offset by remember { mutableFloatStateOf(0f) }
     var slot by remember { mutableIntStateOf(-1) }
+    val tops = remember(items.size) { mutableStateListOf(*Array(items.size) { 0f }) }
+    var touchY by remember { mutableFloatStateOf(0f) }
+    val maxStep = with(LocalDensity.current) { 12.dp.toPx() }
+    // Near the viewport's edges the list scrolls under the lifted row, which stays under the finger.
+    if (autoScroll != null && dragging >= 0) LaunchedEffect(dragging) {
+        while (true) {
+            withFrameNanos { }
+            val viewport = autoScroll.viewport
+            val step = ReorderMath.autoScrollStep(tops.getOrElse(dragging) { 0f } + offset + touchY, viewport.top, viewport.bottom, maxStep)
+            if (step == 0f) continue
+            val used = autoScroll.state.scrollBy(step)
+            offset += used
+            val next = ReorderMath.target(dragging, offset, heights)
+            if (next != slot) { slot = next; haptics(RrHaptic.Selection) }
+        }
+    }
     Column(modifier) {
         items.forEachIndexed { index, item ->
             val lifted = index == dragging
@@ -71,14 +120,15 @@ internal fun <T> ReorderColumn(
                 Modifier
                     .zIndex(if (lifted) 1f else 0f)
                     .onSizeChanged { if (index < heights.size) heights[index] = it.height }
+                    .onGloballyPositioned { if (index < tops.size) tops[index] = it.positionInWindow().y }
                     .graphicsLayer { translationY = if (lifted) offset else animatedShift; scaleX = scale; scaleY = scale }
                     .then(if (lifted) Modifier.rrShadow(RrElevation.Level2) else Modifier)
                     .then(if (!enabled) Modifier else Modifier.pointerInput(key(item), items.size) {
                         var moved = false
                         detectDragGesturesAfterLongPress(
-                            onDragStart = { dragging = index; slot = index; offset = 0f; moved = false; haptics(RrHaptic.Medium) },
+                            onDragStart = { at -> dragging = index; slot = index; offset = 0f; touchY = at.y; moved = false; haptics(RrHaptic.Medium) },
                             onDrag = { change, amount ->
-                                change.consume(); offset += amount.y; moved = true
+                                change.consume(); offset += amount.y; touchY = change.position.y; moved = true
                                 val next = ReorderMath.target(dragging, offset, heights)
                                 if (next != slot) { slot = next; haptics(RrHaptic.Selection) }
                             },

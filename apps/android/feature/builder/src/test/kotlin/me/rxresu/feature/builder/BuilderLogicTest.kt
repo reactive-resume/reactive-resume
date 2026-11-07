@@ -1,5 +1,9 @@
 package me.rxresu.feature.builder
 
+import android.graphics.Rect
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.text.TextRange
 import java.util.Locale
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -132,9 +136,75 @@ class BuilderLogicTest {
         assertEquals(listOf("Led the redesign.", "Ran interviews."), rich.plain)
         val edited = rich.withText("Led the redesign.\nRan 40+ interviews.")
         assertEquals("<ul><li>Led the <strong>redesign</strong>.</li><li>Ran 40+ interviews.</li></ul>", edited.toHtml())
-        assertEquals("<ol><li><em>Led the <strong>redesign</strong>.</em></li><li>Ran 40+ interviews.</li></ol>", edited.toggle(0, "em").copy(kind = ListKind.Numbers).toHtml())
+        assertEquals("<ol><li><em>Led the <strong>redesign</strong>.</em></li><li>Ran 40+ interviews.</li></ol>", edited.toggle(edited.target(TextRange(0)), "em").copy(kind = ListKind.Numbers).toHtml())
         assertNull(rich.replace("Not there", "x"))
         assertEquals("Ran &lt;10 interviews.", rich.replace("Ran interviews.", "Ran <10 interviews.")!!.lines[1])
+    }
+
+    @Test fun boldItalicAndLinksApplyToTheSelectionRange() {
+        val rich = RichDoc.parse("<ul><li>Led the redesign of onboarding.</li><li>Ran interviews.</li></ul>")
+        val redesign = rich.text.indexOf("redesign")
+        val bold = rich.toggle(rich.target(TextRange(redesign, redesign + 8)), "strong")
+        assertEquals("Led the <strong>redesign</strong> of onboarding.", bold.lines[0])
+        assertTrue(bold.has(redesign until redesign + 8, "strong"))
+        // Toggling a range that's partly bold makes all of it bold; toggling it again clears it.
+        val wider = bold.toggle(rich.target(TextRange(redesign - 4, redesign + 8)), "strong")
+        assertEquals("Led <strong>the redesign</strong> of onboarding.", wider.lines[0])
+        assertEquals("Led the redesign of onboarding.", wider.toggle(redesign - 4 until redesign + 8, "strong").lines[0])
+        val linked = bold.toggle(redesign until redesign + 8, "em").link(redesign until redesign + 8, "https://example.com/a?b=\"c\"")
+        assertEquals("Led the <a href=\"https://example.com/a?b=&quot;c&quot;\"><strong><em>redesign</em></strong></a> of onboarding.", linked.lines[0])
+        assertEquals("Led the redesign of onboarding.", linked.link(redesign until redesign + 8, "").toggle(redesign until redesign + 8, "strong").toggle(redesign until redesign + 8, "em").lines[0])
+        // A selection across lines formats both lines and keeps the newline plain.
+        val both = rich.toggle(rich.target(TextRange(20, 35)), "em")
+        assertEquals(listOf("Led the redesign of <em>onboarding.</em>", "<em>Ran</em> interviews."), both.lines)
+    }
+
+    @Test fun typingKeepsMarksAroundTheEditAndUntouchedMarkup() {
+        val rich = RichDoc.parse("<p>Led the <strong>redesign</strong>.</p><p>Kept <mark data-color=\"yellow\">this</mark>.</p>")
+        // Typing inside a bold word stays bold; typing after the plain full stop doesn't.
+        val typed = rich.withText(rich.text.replace("redesign.", "redesigns.")).let { it.withText(it.text.replace("redesigns.", "redesigns. Now")) }
+        assertEquals("Led the <strong>redesigns</strong>. Now", typed.lines[0])
+        // The untouched line keeps the highlight the editor doesn't draw.
+        assertEquals("Kept <mark data-color=\"yellow\">this</mark>.", typed.lines[1])
+        assertEquals("<p>Led the <strong>redesigns</strong>. Now</p><p>Kept <mark data-color=\"yellow\">this</mark>.</p>", typed.toHtml())
+        // Typing at the end of a link doesn't extend it.
+        val link = RichDoc.parse("<p>See <a href=\"https://a.b\">site</a></p>")
+        assertEquals("See <a href=\"https://a.b\">site</a> now", link.withText("See site now").lines[0])
+        // A new line splits marks cleanly.
+        assertEquals(listOf("<strong>Led</strong>", "<strong>the</strong>"), RichDoc.parse("<p><b>Led the</b></p>").withText("Led\nthe").lines)
+    }
+
+    @Test fun cropFrameCoversAndClampsLikeTheWeb() {
+        val photo = Size(4000f, 3000f)
+        val frame = CropMath.frame(Size(1000f, 1200f), aspect = 1f, inset = 50f)
+        assertEquals(Size(900f, 900f), frame)
+        assertEquals(Size(500f, 1000f), CropMath.frame(Size(1100f, 1100f), aspect = 0.5f, inset = 50f))
+        // Zoom 1 covers the frame by its short side: a centred 3000 × 3000 square.
+        assertEquals(Rect(500, 0, 3500, 3000), CropMath.area(photo, frame, 1f, Offset.Zero))
+        // Panning past the photo's edge stops at the edge.
+        assertEquals(Rect(0, 0, 3000, 3000), CropMath.area(photo, frame, 1f, Offset(10_000f, 0f)))
+        CropMath.clamp(Offset(10_000f, 10_000f), photo, frame, 1f).let { assertEquals(150f, it.x, 0.01f); assertEquals(0f, it.y, 0.01f) }
+        // Zoom 2 halves the area; dragging right shows more of the left.
+        assertEquals(Rect(1250, 750, 2750, 2250), CropMath.area(photo, frame, 2f, Offset.Zero))
+        assertEquals(Rect(1125, 750, 2625, 2250), CropMath.area(photo, frame, 2f, Offset(75f, 0f)))
+        // Over the limit, each pass shrinks by at most 0.9.
+        assertEquals(0.9, CropMath.shrink(11, 10), 0.0)
+        assertEquals(0.475, CropMath.shrink(40, 10), 1e-9)
+    }
+
+    @Test fun outlineAutoScrollsOnlyInTheOuterEightPercent() {
+        assertEquals(0f, ReorderMath.autoScrollStep(500f, 0f, 1000f, 12f), 0f)
+        assertEquals(0f, ReorderMath.autoScrollStep(80f, 0f, 1000f, 12f), 0f)
+        assertEquals(-6f, ReorderMath.autoScrollStep(40f, 0f, 1000f, 12f), 1e-4f)
+        assertEquals(-12f, ReorderMath.autoScrollStep(-30f, 0f, 1000f, 12f), 0f)
+        assertEquals(12f, ReorderMath.autoScrollStep(1000f, 0f, 1000f, 12f), 0f)
+        assertEquals(3f, ReorderMath.autoScrollStep(940f, 0f, 1000f, 12f), 1e-4f)
+    }
+
+    @Test fun outsideChangesUseTheWebsAttribution() {
+        assertEquals(R.string.builder_outside_agent, outsideChangeText("patch"))
+        assertEquals(R.string.builder_outside_sharing, outsideChangeText("lock"))
+        assertEquals(R.string.builder_outside_synced, outsideChangeText(null))
     }
 
     @Test fun reorderSwapsPastHalfANeighbour() {
