@@ -94,6 +94,7 @@ import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.RrBottomSheet
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonVariant
+import me.rxresu.core.designsystem.RrChoiceCard
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrElevation
 import me.rxresu.core.designsystem.RrFilterChip
@@ -114,6 +115,8 @@ import me.rxresu.core.designsystem.RrSegmentedControl
 import me.rxresu.core.designsystem.RrShape
 import me.rxresu.core.designsystem.RrSlider
 import me.rxresu.core.designsystem.RrSpinner
+import me.rxresu.core.designsystem.RrStepper
+import me.rxresu.core.designsystem.rememberRrBottomSheetState
 import me.rxresu.core.designsystem.RrSwitchRow
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTextField
@@ -225,28 +228,23 @@ internal fun DesignMode(
     val reduced = LocalReducedMotion.current
     val scope = rememberCoroutineScope()
     var panel by rememberSaveable { mutableStateOf(DesignPanel.of(group)) }
+    val sheet = rememberRrBottomSheetState()
+    val density = LocalDensity.current
     BoxWithConstraints(modifier.fillMaxSize().background(RrTheme.colors.sunken)) {
-        val total = maxHeight
-        val lowered = total * 0.55f
-        val raised = total * 0.76f
-        val height = remember { Animatable((if (panel.raised) raised else lowered).value) }
-        fun snap(up: Boolean) = scope.launch {
-            haptics(RrHaptic.Selection)
-            height.animateTo((if (up) raised else lowered).value, tween(if (reduced) 0 else RrMotion.D3, easing = RrMotion.easeDrawer))
-        }
-        val sheetHeight = height.value.dp
-        val pageArea = total - sheetHeight
+        val raised = sheet.detentIndex == 1
         // The page shrinks with the sheet and stays live; tap it to lower the sheet.
-        val pageHeight = (pageArea + 8.dp).coerceAtLeast(80.dp)
-        Box(Modifier.fillMaxWidth().padding(top = 12.dp).clickable(enabled = height.value > lowered.value + 1, onClickLabel = stringResource(S.string.lower_the_design_sheet)) { snap(false) }, contentAlignment = Alignment.TopCenter) {
+        val pageHeight = (maxHeight - with(density) { sheet.visibleHeight.toDp() } + 8.dp).coerceAtLeast(80.dp)
+        Box(Modifier.fillMaxWidth().padding(top = 12.dp).clickable(enabled = raised, onClickLabel = stringResource(S.string.lower_the_design_sheet)) { scope.launch { sheet.animateTo(0) } }, contentAlignment = Alignment.TopCenter) {
             RrPaperPage(state.pages.firstOrNull(), stringResource(S.string.page_0_of_1, "1", "${state.pages.size.coerceAtLeast(1)}"), Modifier.height(pageHeight).aspectRatio(me.rxresu.core.designsystem.RrLayout.PAGE_ASPECT))
         }
-        DockedSheet(
-            height = sheetHeight,
-            raised = height.value > (lowered.value + raised.value) / 2,
-            onDrag = { delta -> scope.launch { height.snapTo((height.value - delta).coerceIn(lowered.value, raised.value)) } },
-            onSettle = { velocityUp -> snap(velocityUp ?: (height.value > (lowered.value + raised.value) / 2)) },
-            modifier = Modifier.align(Alignment.BottomCenter),
+        RrBottomSheet(
+            onDismissRequest = {},
+            state = sheet,
+            detents = DesignDetents,
+            initialDetent = if (panel.raised) 1 else 0,
+            showClose = false,
+            docked = true,
+            navigationBarInset = false,
         ) {
             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 DesignPanel.entries.forEach { p ->
@@ -254,7 +252,7 @@ internal fun DesignMode(
                         if (p != panel) {
                             haptics(RrHaptic.Selection); panel = p
                             when (p) { DesignPanel.Template -> onGroup(DesignGroup.Template); DesignPanel.Type -> onGroup(DesignGroup.Type); DesignPanel.Layout -> onGroup(DesignGroup.Layout); else -> Unit }
-                            if (p.raised != (height.value > (lowered.value + raised.value) / 2)) snap(p.raised)
+                            if (p.raised != raised) scope.launch { sheet.animateTo(if (p.raised) 1 else 0) }
                         }
                     })
                 }
@@ -264,7 +262,7 @@ internal fun DesignMode(
                     val enabled = !state.locked
                     when (shown) {
                         DesignPanel.Template -> { TemplatePicker(doc, actions, enabled); AccentRow(doc, actions, enabled) }
-                        DesignPanel.Type -> { TypeGroup(doc, actions, enabled); Divider(); PageGroup(doc, actions, enabled) }
+                        DesignPanel.Type -> { TypeGroup(doc, actions, enabled) { panel = DesignPanel.Advanced }; Divider(); PageGroup(doc, actions, enabled) }
                         DesignPanel.Color -> { AccentRow(doc, actions, enabled); CustomColor(doc, actions, enabled) }
                         DesignPanel.Page -> PageGroup(doc, actions, enabled)
                         DesignPanel.Layout -> LayoutGroup(state, doc, actions, enabled)
@@ -276,33 +274,8 @@ internal fun DesignMode(
     }
 }
 
-/**
- * A sheet docked above the mode bar: no scrim, never dismissed, two heights. Drag the grabber area between them;
- * screen readers get Raise / Lower actions.
- */
-// TODO(lead): move to designsystem as a docked mode of RrBottomSheet (no scrim, not dismissable, two detents).
-@Composable
-private fun DockedSheet(height: Dp, raised: Boolean, onDrag: (Float) -> Unit, onSettle: (Boolean?) -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    val c = RrTheme.colors
-    val density = LocalDensity.current
-    val raise = stringResource(S.string.raise_the_design_sheet)
-    val lower = stringResource(S.string.lower_the_design_sheet)
-    Column(
-        modifier.fillMaxWidth().height(height)
-            .rrShadow(RrElevation.Level3, RrShape.sheetTop).clip(RrShape.sheetTop).background(c.raised)
-            .semantics { customActions = listOf(if (raised) CustomAccessibilityAction(lower) { onSettle(false); true } else CustomAccessibilityAction(raise) { onSettle(true); true }) },
-    ) {
-        Box(
-            Modifier.fillMaxWidth().height(20.dp).draggable(
-                rememberDraggableState { onDrag(with(density) { it.toDp().value }) },
-                Orientation.Vertical,
-                onDragStopped = { velocity -> onSettle(if (kotlin.math.abs(velocity) > 600f) velocity < 0 else null) },
-            ),
-            contentAlignment = Alignment.TopCenter,
-        ) { Box(Modifier.padding(top = 8.dp).size(36.dp, 4.dp).clip(RrShape.sm).background(c.line2)) }
-        content()
-    }
-}
+/** The design sheet's heights (B1): lowered keeps the page big, raised fits the denser groups. */
+private val DesignDetents = listOf(0.55f, 0.76f)
 
 @Composable
 private fun Eyebrow(text: String, modifier: Modifier = Modifier, trailing: String? = null) {
@@ -434,7 +407,7 @@ private fun ControlRow(label: String, hint: String? = null, controlWidth: Dp = 2
 }
 
 @Composable
-private fun TypeGroup(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean) {
+private fun TypeGroup(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean, onCustom: () -> Unit) {
     val haptics = rememberRrHaptics()
     val c = RrTheme.colors
     val pairing = Pairing.of(doc.json)
@@ -442,22 +415,14 @@ private fun TypeGroup(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean)
     Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Pairing.entries.forEach { p ->
             val selected = p == pairing
-            // TODO(lead): a selectable "choice card" component (B7 font pairings) would replace this token-built card.
-            Column(
-                Modifier.width(114.dp).heightIn(min = 56.dp).clip(RrShape.md)
-                    .background(if (selected) c.accentSoft else c.raised)
-                    .border(1.dp, if (selected) c.accent else c.line2, RrShape.md)
-                    .clickable(enabled = enabled, role = Role.RadioButton) { haptics(RrHaptic.Selection); actions.edit { p.apply(it) } }
-                    .semantics { this.selected = selected }
-                    .padding(vertical = 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
+            RrChoiceCard(selected, { actions.edit { p.apply(it) } }, Modifier.width(114.dp), enabled = enabled) {
                 RrText("Aa", style = RrType.title.copy(fontFamily = if (p.serif) FontFamily.Serif else FontFamily.SansSerif, fontWeight = if (p.weight == "700") FontWeight.Bold else FontWeight.Normal, fontSize = RrType.sheetTitle.fontSize), color = if (selected) c.accentText else c.ink)
                 RrText(stringResource(p.label), style = RrType.body, color = if (selected) c.accentText else c.ink2)
             }
         }
-        Column(Modifier.width(114.dp).clip(RrShape.md).border(1.dp, c.line2, RrShape.md).padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            RrText(stringResource(S.string.custom), style = RrType.body)
+        // Fonts outside the pairings: tap to pick any font in Advanced.
+        RrChoiceCard(pairing == null, onCustom, Modifier.width(114.dp), enabled = enabled) {
+            RrText(stringResource(S.string.custom), style = RrType.body, color = if (pairing == null) c.accentText else c.ink)
             RrText(stringResource(S.string.any_font_in_advanced), style = RrType.small, color = c.ink3)
         }
     }
@@ -469,12 +434,15 @@ private fun TypeGroup(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean)
             val current = json.at(listOf("data", "metadata", "typography", "body", "fontSize")).num() ?: size
             TextSize.apply(json, (current + delta).coerceIn(TextSize.MIN, TextSize.MAX))
         }
-        HoldStepper(
+        var press by remember { mutableStateOf("") }
+        RrStepper(
             stringResource(S.string.textsize_pt, size.toString().removeSuffix(".0")),
-            onDecrease = { press -> step(-0.5, press) },
-            onIncrease = { press -> step(0.5, press) },
+            onDecrease = { step(-0.5, press) },
+            onIncrease = { step(0.5, press) },
             label = stringResource(S.string.text_size),
             canDecrease = enabled && size > TextSize.MIN, canIncrease = enabled && size < TextSize.MAX,
+            repeatOnHold = true,
+            onPressStart = { press = "stepper:${System.nanoTime()}" },
         )
     }
     if (size < 9) RrText(stringResource(S.string.body_text_is_very_small), color = c.warnText, modifier = Modifier.padding(horizontal = 16.dp))
@@ -686,79 +654,4 @@ private fun SectionChip(title: String, lifted: Boolean, enabled: Boolean, onClic
         RrIcon(D.drawable.ic_ph_dots_six_vertical, null, size = 16.dp, tint = c.ink3)
         RrText(title, style = RrType.body)
     }
-}
-
-/**
- * [RrStepper] with press-and-hold repeat (B7): a step on press, then every 120 ms after 400 ms, `selection` per step.
- * Each callback gets the press's key, so a held press can be one undo step.
- */
-// TODO(lead): move to designsystem as RrStepper's hold-to-repeat.
-@Composable
-private fun HoldStepper(
-    value: String,
-    onDecrease: (press: String) -> Unit,
-    onIncrease: (press: String) -> Unit,
-    label: String,
-    canDecrease: Boolean,
-    canIncrease: Boolean,
-) {
-    val c = RrTheme.colors
-    Row(
-        Modifier.height(36.dp).clip(RrShape.md).background(c.raised).border(1.dp, c.controlBorder, RrShape.md),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        HoldStepButton(D.drawable.ic_ph_minus, "${stringResource(D.string.ds_decrease)} $label", canDecrease, onDecrease)
-        RrText(
-            value,
-            style = RrType.mono.copy(fontSize = 14.sp, lineHeight = 20.sp, fontWeight = FontWeight.Medium),
-            color = c.ink,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.defaultMinSize(minWidth = 64.dp).semantics {
-                contentDescription = "$label, $value"
-                liveRegion = LiveRegionMode.Polite
-            },
-        )
-        HoldStepButton(D.drawable.ic_ph_plus, "${stringResource(D.string.ds_increase)} $label", canIncrease, onIncrease)
-    }
-}
-
-@Composable
-private fun HoldStepButton(icon: Int, description: String, enabled: Boolean, onStep: (press: String) -> Unit) {
-    val c = RrTheme.colors
-    val haptics = rememberRrHaptics()
-    val canStep by rememberUpdatedState(enabled)
-    val step by rememberUpdatedState(onStep)
-    Box(
-        Modifier
-            .size(40.dp, 36.dp)
-            .pointerInput(Unit) {
-                coroutineScope {
-                    awaitEachGesture {
-                        awaitFirstDown()
-                        if (!canStep) return@awaitEachGesture
-                        val press = "stepper:${System.nanoTime()}"
-                        val repeat = launch {
-                            var wait = HoldRepeat.FIRST_MS
-                            while (canStep) { haptics(RrHaptic.Selection); step(press); delay(wait); wait = HoldRepeat.NEXT_MS }
-                        }
-                        waitForUpOrCancellation()
-                        repeat.cancel()
-                    }
-                }
-            }
-            .semantics {
-                role = Role.Button
-                contentDescription = description
-                if (!enabled) disabled()
-                onClick { if (enabled) { step("stepper:${System.nanoTime()}"); true } else false }
-            }
-            .alpha(if (enabled) 1f else 0.4f),
-        contentAlignment = Alignment.Center,
-    ) { RrIcon(icon, null, size = 20.dp, tint = c.ink2) }
-}
-
-/** Press-and-hold timing (B7 Haptics: repeated steps tick at most every 120 ms). */
-internal object HoldRepeat {
-    const val FIRST_MS = 400L
-    const val NEXT_MS = 120L
 }

@@ -85,6 +85,7 @@ import me.rxresu.core.navigation.Builder
 import me.rxresu.core.navigation.Coach
 import me.rxresu.core.navigation.InterviewSheet
 import me.rxresu.core.navigation.Letter
+import me.rxresu.core.navigation.NewDocument
 import me.rxresu.core.navigation.LocalToasts
 import me.rxresu.core.navigation.LocalWorkspaceTab
 import me.rxresu.core.navigation.MoveApplication
@@ -141,6 +142,7 @@ fun ApplicationRoute(id: String, tab: WorkspaceTab, nav: NavController) {
         },
         onOpenResume = { nav.navigate(Builder(it)) },
         onOpenLetter = { nav.navigate(Letter(it)) },
+        onPrepareResume = { nav.navigate(NewDocument(copyForApplicationId = id)) },
         onOffers = { nav.navigate(Offers) },
         onEmail = { email -> runCatching { context.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$email"))) } },
         onOpenLink = { url -> runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) } },
@@ -202,6 +204,7 @@ internal fun ApplicationScreen(
     onAddToCalendar: (Interview) -> Unit,
     onOpenResume: (String) -> Unit,
     onOpenLetter: (String) -> Unit,
+    onPrepareResume: () -> Unit,
     onOffers: () -> Unit,
     onEmail: (String) -> Unit,
     onOpenLink: (String) -> Unit,
@@ -278,6 +281,7 @@ internal fun ApplicationScreen(
                             onAddToCalendar = onAddToCalendar,
                             onOpenResume = onOpenResume,
                             onOpenLetter = onOpenLetter,
+                            onPrepareResume = onPrepareResume,
                             onOffers = onOffers,
                             onEmail = onEmail,
                             onLogFollowUp = onLogFollowUp,
@@ -378,6 +382,7 @@ private fun Overview(
     onAddToCalendar: (Interview) -> Unit,
     onOpenResume: (String) -> Unit,
     onOpenLetter: (String) -> Unit,
+    onPrepareResume: () -> Unit,
     onOffers: () -> Unit,
     onEmail: (String) -> Unit,
     onLogFollowUp: () -> Unit,
@@ -405,8 +410,10 @@ private fun Overview(
 
         val sentOn = app.activity.filterIsInstance<StageTimelineEntry>().firstOrNull { it.stage == ApplicationStage.Applied }?.at
             ?.let { dates.dayMonth(Instant.parse(it)) }
-        if (app.resumeId != null || app.coverLetterId != null) {
-            RrSectionHeader(stringResource(S.string.what_you_sent))
+        // The web's sent-documents: an open application without a resume offers a copy made for this job.
+        val canPrepare = app.resumeId == null && app.status != ApplicationStage.Closed && app.status != ApplicationStage.Offer
+        if (app.resumeId != null || app.coverLetterId != null || canPrepare) {
+            RrSectionHeader(stringResource(if (app.status == ApplicationStage.Saved) S.string.documents_for_this_job else S.string.what_you_sent))
             RrListGroup(Modifier.padding(horizontal = 16.dp)) {
                 app.resumeId?.let { rid ->
                     RrListRow(
@@ -430,6 +437,12 @@ private fun Overview(
                         trailing = { RrRowCaret() },
                     )
                 }
+                if (canPrepare) RrListRow(
+                    title = stringResource(S.string.prepare_a_resume),
+                    icon = D.drawable.ic_ph_copy,
+                    onClick = onPrepareResume,
+                    trailing = { RrRowCaret() },
+                )
             }
         }
 

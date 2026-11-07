@@ -110,7 +110,7 @@ private fun CalloutLink(label: String, color: Color, onClick: () -> Unit) {
 
 /**
  * Full-width strip under a top bar (`.strip`): locked resume, "updated by an AI agent" with Undo, offline. 13 sp text,
- * 18 dp icon, the tone's soft fill, an optional trailing action.
+ * 18 dp icon, the tone's soft fill, an optional trailing action and an optional dismiss button ([onDismiss]).
  */
 @Composable
 fun RrStrip(
@@ -120,10 +120,13 @@ fun RrStrip(
     @DrawableRes icon: Int? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null,
 ) {
     val t = tone.colors()
     Row(
-        modifier.fillMaxWidth().background(t.container).semantics { liveRegion = LiveRegionMode.Polite }.padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier.fillMaxWidth().background(t.container).semantics { liveRegion = LiveRegionMode.Polite }
+                        // The 36 dp dismiss button sets the row height (44 dp with the padding); the end inset lines its icon up.
+            .then(if (onDismiss != null) Modifier.padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 4.dp) else Modifier.padding(horizontal = 16.dp, vertical = 8.dp)),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -136,6 +139,9 @@ fun RrStrip(
                 color = t.content,
                 modifier = Modifier.clip(RrShape.md).clickable(role = Role.Button, onClick = onAction).padding(horizontal = 8.dp, vertical = 4.dp),
             )
+        }
+        if (onDismiss != null) {
+            RrIconButton(R.drawable.ic_ph_x, androidx.compose.ui.res.stringResource(R.string.ds_dismiss), onDismiss, size = RrIconButtonSize.Small, tint = t.content)
         }
     }
 }
@@ -163,5 +169,6 @@ internal fun RrCalloutPreview() = RrPreviewSurface {
         actionLink = true,
     )
     RrStrip("This resume is locked. Unlock it from its menu to edit.", icon = R.drawable.ic_ph_lock_simple)
+    RrStrip("This resume was updated by an AI agent.", icon = R.drawable.ic_ph_sparkle, actionLabel = "Undo", onAction = {}, onDismiss = {})
     RrOfflineStrip()
 }

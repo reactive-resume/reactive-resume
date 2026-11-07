@@ -50,6 +50,7 @@ import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.Assistant
+import me.rxresu.core.navigation.NewDocument
 import me.rxresu.core.navigation.Knowledge
 import me.rxresu.core.navigation.KnowledgeTab
 import me.rxresu.core.navigation.SettingsAi
@@ -131,6 +132,7 @@ internal fun FitTab(applicationId: String, nav: NavController) {
     val haptics = rememberRrHaptics()
     LaunchedEffect(vm) { vm.outcome.collect { haptics(if (it == Outcome.Success) RrHaptic.Success else RrHaptic.Error) } }
     val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
+    val res = androidx.compose.ui.platform.LocalResources.current
     Loaded(load, vm::load) { state ->
         FitScreen(
             state,
@@ -138,7 +140,11 @@ internal fun FitTab(applicationId: String, nav: NavController) {
             onStop = vm::stop,
             onAddFact = { nav.navigate(Knowledge(KnowledgeTab.Facts)) },
             onWriteStory = { nav.navigate(Story()) },
-            onTailor = { state.context.app.resumeId?.let { nav.navigate(Assistant(it)) } },
+            // W1: the linked resume opens the assistant with the tailoring prompt; without one, copy a resume for this job.
+            onTailor = {
+                val app = state.context.app
+                nav.navigate(app.resumeId?.let { Assistant(it, prompt = res.getString(S.string.tailor_to_the_company_posting, app.company)) } ?: NewDocument(copyForApplicationId = applicationId))
+            },
             onSetUpAi = { nav.navigate(SettingsAi) },
         )
     }
@@ -159,7 +165,7 @@ internal fun FitScreen(
     val fit = state.fit
     var sources by remember { mutableStateOf<CreateCareerOfferResponseDataFitRequirementsItem?>(null) }
     TabBody(
-        footer = if (fit != null && app.resumeId != null) {
+        footer = if (fit != null) {
             {
                 RrButton(stringResource(S.string.tailor_resume_for_this_job), onTailor, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_sparkle)
                 RrDisclosureLine(stringResource(S.string.an_ai_reading_to_help_you_edit_not_a_prediction_of_how_an_employer_or_screening_system_will_respond), icon = DsR.drawable.ic_ph_info)

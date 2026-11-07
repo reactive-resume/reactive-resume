@@ -61,6 +61,7 @@ import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.Builder
 import me.rxresu.core.navigation.Letter
+import me.rxresu.core.navigation.NewDocument
 import me.rxresu.core.navigation.LocalToasts
 import me.rxresu.core.network.generated.ApplicationStage
 import me.rxresu.core.network.generated.CareerWorkspace
@@ -211,6 +212,7 @@ internal fun ApplyTab(applicationId: String, nav: NavController) {
             dates = dates,
             onOpenResume = { nav.navigate(Builder(it)) },
             onOpenLetter = { nav.navigate(Letter(it)) },
+            onPrepareResume = { nav.navigate(NewDocument(copyForApplicationId = applicationId)) },
             onCopy = { answer ->
                 context.copyToClipboard(answer.question, answer.answer)
                 haptics(RrHaptic.Success)
@@ -248,6 +250,7 @@ internal fun ApplyScreen(
     dates: Dates,
     onOpenResume: (String) -> Unit,
     onOpenLetter: (String) -> Unit,
+    onPrepareResume: () -> Unit,
     onCopy: (SaveCareerWorkspaceRequestAnswersItem) -> Unit,
     onSave: (answerId: String?, question: String, answer: String, library: Boolean) -> Unit,
     onRemove: (String) -> Unit,
@@ -268,7 +271,10 @@ internal fun ApplyScreen(
     ) {
         StepHeader(1, state.resume != null, stringResource(S.string.documents), Modifier.padding(top = 0.dp))
         Group {
-            if (state.resume == null && state.letter == null) RrListRow(stringResource(S.string.no_documents_88069aadea), icon = DsR.drawable.ic_ph_file_text)
+            // The web's sent-documents: an open application without a resume offers a copy made for this job.
+            val canPrepare = app.resumeId == null && app.status != ApplicationStage.Closed && app.status != ApplicationStage.Offer
+            if (state.resume == null && state.letter == null && !canPrepare) RrListRow(stringResource(S.string.no_documents_88069aadea), icon = DsR.drawable.ic_ph_file_text)
+            if (canPrepare) RrListRow(stringResource(S.string.prepare_a_resume), icon = DsR.drawable.ic_ph_copy, onClick = onPrepareResume, trailing = { RrRowCaret() })
             state.resume?.let { doc ->
                 RrListRow(doc.name, subtitle = listOfNotNull(stringResource(S.string.resume), edited(doc.updatedAt) ?: stringResource(S.string.today)).joinToString(" · "), icon = DsR.drawable.ic_ph_file_text, onClick = { onOpenResume(doc.id) }, trailing = { RrRowCaret() })
             }
