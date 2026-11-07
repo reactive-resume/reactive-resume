@@ -13,6 +13,7 @@ import me.rxresu.core.navigation.screen
 import me.rxresu.core.navigation.sheet
 import me.rxresu.core.navigation.WebPageSettings
 import me.rxresu.core.navigation.Visitors
+import me.rxresu.core.navigation.BuilderMore
 import me.rxresu.core.navigation.Download
 import me.rxresu.core.navigation.Versions
 
@@ -21,6 +22,7 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
     screen<WebPageSettings> { Placeholder("B12") }
     screen<Visitors> { Placeholder("B13") }
     sheet<Download> { Placeholder("B14") }
+    sheet<BuilderMore> { Placeholder("B18") }
     screen<Versions> { Placeholder("B15") }
 }
 

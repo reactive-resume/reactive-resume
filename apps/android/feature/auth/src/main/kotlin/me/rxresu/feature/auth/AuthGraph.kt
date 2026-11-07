@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import me.rxresu.core.auth.AuthService
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.navigation.RrNavMotion
 import me.rxresu.core.navigation.modal
@@ -20,7 +21,7 @@ import me.rxresu.core.navigation.TwoStep
 import me.rxresu.core.navigation.Consent
 
 /** Registers this module's destinations. Placeholder screens until the feature lands. */
-fun NavGraphBuilder.authGraph(nav: NavController, motion: RrNavMotion) {
+fun NavGraphBuilder.authGraph(nav: NavController, motion: RrNavMotion, auth: AuthService) {
     screen<Welcome> { Placeholder("A1") }
     screen<SignIn> { Placeholder("A2") }
     sheet<ForgotPassword> { Placeholder("A2 forgot") }

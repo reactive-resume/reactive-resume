@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import me.rxresu.core.auth.AuthService
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.navigation.RrNavMotion
 import me.rxresu.core.navigation.modal
@@ -20,7 +21,7 @@ import me.rxresu.core.navigation.SettingsAi
 import me.rxresu.core.navigation.AiProviderSheet
 
 /** Registers this module's destinations. Placeholder screens until the feature lands. */
-fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion) {
+fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth: AuthService) {
     modal<Settings>(motion) { Placeholder("S1") }
     screen<SettingsAccount> { Placeholder("S2") }
     screen<SettingsPreferences> { Placeholder("S3") }

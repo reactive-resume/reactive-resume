@@ -108,7 +108,7 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
                         popEnterTransition = motion.popEnter,
                         popExitTransition = motion.popExit,
                     ) {
-                        authGraph(nav, motion)
+                        authGraph(nav, motion, graph.auth)
                         todayGraph(nav, motion)
                         documentsGraph(nav, motion)
                         searchGraph(nav, motion)
@@ -118,7 +118,7 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
                         lettersGraph(nav, motion)
                         applicationsGraph(nav, motion)
                         careerGraph(nav, motion)
-                        settingsGraph(nav, motion)
+                        settingsGraph(nav, motion, graph.auth)
                         publicGraph(nav, motion)
                     }
                     // Toasts sit above the tab bar or a screen's own mode bar; screens with a mode bar pad via insets.

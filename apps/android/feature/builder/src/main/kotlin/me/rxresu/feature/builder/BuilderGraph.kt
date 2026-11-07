@@ -15,7 +15,6 @@ import me.rxresu.core.navigation.Builder
 import me.rxresu.core.navigation.BuilderEntry
 import me.rxresu.core.navigation.BuilderRichText
 import me.rxresu.core.navigation.BuilderBasics
-import me.rxresu.core.navigation.BuilderMore
 
 /** Registers this module's destinations. Placeholder screens until the feature lands. */
 fun NavGraphBuilder.builderGraph(nav: NavController, motion: RrNavMotion) {
@@ -23,7 +22,6 @@ fun NavGraphBuilder.builderGraph(nav: NavController, motion: RrNavMotion) {
     sheet<BuilderEntry> { Placeholder("B2") }
     screen<BuilderRichText> { Placeholder("B4") }
     screen<BuilderBasics> { Placeholder("B5") }
-    sheet<BuilderMore> { Placeholder("B18") }
 }
 
 @Composable

@@ -134,3 +134,11 @@ val LocalRepositories = staticCompositionLocalOf<RrRepositories> { error("Provid
 fun Resume.withWriteResult(result: PatchResumeResponse): Resume = ApiJson.decodeFromJsonElement(
     JsonObject(ApiJson.encodeToJsonElement(Resume.serializer(),this).let { it as JsonObject }+ApiJson.encodeToJsonElement(PatchResumeResponse.serializer(),result).let { it as JsonObject })
 )
+
+/**
+ * Implemented by the Application, for code that runs outside composition (widget, notification workers, share
+ * targets): `(context.applicationContext as RepositoriesProvider).repositories`.
+ */
+interface RepositoriesProvider {
+    val repositories: RrRepositories
+}

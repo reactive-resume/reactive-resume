@@ -65,7 +65,7 @@ enum class CheckTab { Issues, JobMatch }
 @Serializable data class BuilderRichText(val resumeId: String, val section: String, val itemId: String, val field: String = "description")
 /** B5. */
 @Serializable data class BuilderBasics(val resumeId: String)
-/** B18 sheet. */
+/** B18 sheet (owner: :feature:share). */
 @Serializable data class BuilderMore(val resumeId: String)
 /** B12 (owner: :feature:share). */
 @Serializable data class WebPageSettings(val resumeId: String)
