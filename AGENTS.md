@@ -1,7 +1,7 @@
 # Reactive Resume: agent instructions
 
-This is the index for coding agents. It holds hard rules and pointers; detail lives in the linked files. The only other
-area guide is `apps/mobile/AGENTS.md`, read it before mobile work. Agent reference docs are in `.agents/docs/` (start at
+This is the index for coding agents. It holds hard rules and pointers; detail lives in the linked files. The other area
+guides are `apps/mobile/AGENTS.md` (read it before Expo work) and `apps/android/AGENTS.md` (native Android app). Agent reference docs are in `.agents/docs/` (start at
 its `README.md`); contributor docs are in `docs/contributing/`. Scripts and config win when a doc disagrees with them.
 
 <!-- caveman-begin -->

@@ -33,9 +33,7 @@ class TodayScreenshotTest : RrScreenshotTest() {
 ./gradlew :feature:today:verifyRoborazziDebug   # fail on any change (the regression gate)
 ```
 
-Modules need, in their unit-test options, `jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED",
-"--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")` (Robolectric SDK 36 on JDK 17+) and
-`roborazzi { outputDir.set(file("src/test/screenshots")) }`; see `core/designsystem/build.gradle.kts`.
+The `rr.android.*` convention plugins already set the Robolectric JVM flags and the Roborazzi output directory.
 
 ## Storyboard diff
 
