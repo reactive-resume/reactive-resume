@@ -14,7 +14,7 @@ There are three apps and a set of shared packages:
 - **`apps/mobile`** is an Expo / React Native app for iOS and Android, with Expo Router navigation and a native Forme PDF renderer.
 - **`packages/*`** hold everything the apps share: API business logic, authentication, database access, schemas, document rendering and export, and UI primitives.
 
-The browser and native app talk to the same server through [oRPC](https://orpc.unnoq.com/) at `/api/rpc`. The browser sends session cookies; the native client sends the signed-in server's bearer token. [Better Auth](https://www.better-auth.com/) handles sign-in, sessions, passkeys, two-factor authentication, API keys, and the OAuth provider used by MCP clients. [Drizzle](https://orm.drizzle.team/) talks to PostgreSQL.
+The browser and native app talk to the same server through [oRPC](https://orpc.dev/) at `/api/rpc`. The browser sends session cookies; the native client sends the signed-in server's bearer token. [Better Auth](https://www.better-auth.com/) handles sign-in, sessions, passkeys, two-factor authentication, API keys, and the OAuth provider used by MCP clients. [Drizzle](https://orm.drizzle.team/) talks to PostgreSQL.
 
 ```mermaid
 flowchart TD
