@@ -99,8 +99,11 @@ enum class WorkspaceTab { Overview, Fit, Apply, Prepare, Practise, Debrief, Mess
 
 // Career (owner: :feature:career)
 enum class KnowledgeTab { Facts, Stories, Preferences }
-/** C2. `applicationId` scopes a new conversation to that job (the sparkle on J6). */
-@Serializable data class Coach(val conversationId: String? = null, val applicationId: String? = null)
+/**
+ * C2. `applicationId` scopes a new conversation to that job (the sparkle on J6); `prompt` pre-fills the composer (not
+ * sent), e.g. D5's "Ask the coach".
+ */
+@Serializable data class Coach(val conversationId: String? = null, val applicationId: String? = null, val prompt: String? = null)
 /** C3, C5. */
 @Serializable data class Knowledge(val tab: KnowledgeTab = KnowledgeTab.Facts)
 /** C4. `id` null = new story. */

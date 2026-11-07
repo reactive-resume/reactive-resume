@@ -1,39 +1,29 @@
 package me.rxresu.feature.documents
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import java.time.Instant
@@ -47,17 +37,15 @@ import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrIconButton
 import me.rxresu.core.designsystem.RrIconButtonSize
 import me.rxresu.core.designsystem.RrListGroup
+import me.rxresu.core.designsystem.RrQuickActionTile
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrRowValue
-import me.rxresu.core.designsystem.RrShape
-import me.rxresu.core.designsystem.RrSpinner
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTextField
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
-import me.rxresu.core.designsystem.rrPressScale
 import me.rxresu.core.network.generated.DocumentSummary
 import me.rxresu.core.network.generated.DocumentType
 import me.rxresu.core.strings.R as S
@@ -96,49 +84,47 @@ fun DocumentActionsSheet(
     val doc = state.document
     var step by rememberSaveable { mutableStateOf(initialStep) }
     var renaming by rememberSaveable { mutableStateOf(false) }
-    // RrBottomSheet sizes a fit-content sheet once, on its first layout, so it appears only when the document is
-    // loaded, and pushed steps get their own full-height sheet. TODO(lead): let fit-content sheets follow their content.
+    // Nothing to show until the document loads. The fit-content Main step and the full-height pushed steps share one
+    // sheet: it follows its content's height as the step changes.
     if (doc == null) return
-    key(step == ActionsStep.Main) {
-        RrBottomSheet(
-            onDismissRequest = callbacks.onClose,
-            fitContent = step == ActionsStep.Main,
-            detents = listOf(0.92f),
-            confirmDiscard = renaming,
-        ) {
-            val reduced = RrTheme.reducedMotion
-            AnimatedContent(
-                step,
-                transitionSpec = {
-                    val forward = targetState.ordinal > initialState.ordinal
-                    val spec = tween<androidx.compose.ui.unit.IntOffset>(if (reduced) 0 else RrMotion.D3, easing = RrMotion.ease)
-                    slideInHorizontally(spec) { if (forward) it else -it } togetherWith slideOutHorizontally(spec) { if (forward) -it else it }
-                },
-                label = "step",
-            ) { current ->
-                Column {
-                    when (current) {
-                        ActionsStep.Main -> {
-                            Header(doc, now, renaming, callbacks, onRenamingChange = { renaming = it })
-                            Main(doc, state, preparing, callbacks, onStep = { step = it }, onRename = { renaming = true })
-                        }
-                        ActionsStep.Tags -> {
-                            StepHeader(stringResource(R.string.docs_tags_title)) { step = ActionsStep.Main }
-                            TagsEditor(state.tags, doc.tags.toSet(), { add, remove -> callbacks.onTags(add, remove); step = ActionsStep.Main }, saving = busy)
-                        }
-                        ActionsStep.Link -> {
-                            StepHeader(stringResource(R.string.docs_application_title)) { step = ActionsStep.Main }
-                            RrListGroup(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
-                                RrChoiceRow(stringResource(S.string.not_linked_to_a_job), doc.application == null, { callbacks.onLink(null) })
-                                state.applications.forEach { app ->
-                                    RrChoiceRow(stringResource(R.string.docs_copy_for_company, app.company, app.role), doc.application?.id == app.id, { callbacks.onLink(app.id) })
-                                }
+    RrBottomSheet(
+        onDismissRequest = callbacks.onClose,
+        fitContent = step == ActionsStep.Main,
+        detents = listOf(0.92f),
+        confirmDiscard = renaming,
+    ) {
+        val reduced = RrTheme.reducedMotion
+        AnimatedContent(
+            step,
+            transitionSpec = {
+                val forward = targetState.ordinal > initialState.ordinal
+                val spec = tween<androidx.compose.ui.unit.IntOffset>(if (reduced) 0 else RrMotion.D3, easing = RrMotion.ease)
+                slideInHorizontally(spec) { if (forward) it else -it } togetherWith slideOutHorizontally(spec) { if (forward) -it else it }
+            },
+            label = "step",
+        ) { current ->
+            Column {
+                when (current) {
+                    ActionsStep.Main -> {
+                        Header(doc, now, renaming, callbacks, onRenamingChange = { renaming = it })
+                        Main(doc, state, preparing, callbacks, onStep = { step = it }, onRename = { renaming = true })
+                    }
+                    ActionsStep.Tags -> {
+                        StepHeader(stringResource(R.string.docs_tags_title)) { step = ActionsStep.Main }
+                        TagsEditor(state.tags, doc.tags.toSet(), { add, remove -> callbacks.onTags(add, remove); step = ActionsStep.Main }, saving = busy)
+                    }
+                    ActionsStep.Link -> {
+                        StepHeader(stringResource(R.string.docs_application_title)) { step = ActionsStep.Main }
+                        RrListGroup(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
+                            RrChoiceRow(stringResource(S.string.not_linked_to_a_job), doc.application == null, { callbacks.onLink(null) })
+                            state.applications.forEach { app ->
+                                RrChoiceRow(stringResource(R.string.docs_copy_for_company, app.company, app.role), doc.application?.id == app.id, { callbacks.onLink(app.id) })
                             }
                         }
-                        ActionsStep.CopyForJob -> {
-                            StepHeader(stringResource(R.string.docs_copy_title)) { step = ActionsStep.Main }
-                            CopyForJobForm(state.library, state.applications, doc.id, busy, callbacks.onCopyForJob)
-                        }
+                    }
+                    ActionsStep.CopyForJob -> {
+                        StepHeader(stringResource(R.string.docs_copy_title)) { step = ActionsStep.Main }
+                        CopyForJobForm(state.library, state.applications, doc.id, busy, callbacks.onCopyForJob)
                     }
                 }
             }
@@ -197,10 +183,10 @@ private fun Main(doc: DocumentSummary, state: DocumentActionsUiState, preparing:
     Column(Modifier.padding(bottom = 16.dp)) {
         Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             val tile = Modifier.weight(1f)
-            QuickTile(if (preparing) stringResource(R.string.docs_preparing) else stringResource(R.string.docs_share_pdf), DS.drawable.ic_ph_share_network, callbacks.onSharePdf, tile, busy = preparing)
-            if (state.publicUrl != null) QuickTile(stringResource(R.string.docs_copy_link), DS.drawable.ic_ph_link_simple, callbacks.onCopyLink, tile)
-            QuickTile(stringResource(R.string.docs_duplicate), DS.drawable.ic_ph_copy, callbacks.onDuplicate, tile)
-            QuickTile(stringResource(R.string.docs_rename), DS.drawable.ic_ph_pencil_simple, onRename, tile, enabled = !locked)
+            RrQuickActionTile(if (preparing) stringResource(R.string.docs_preparing) else stringResource(R.string.docs_share_pdf), DS.drawable.ic_ph_share_network, callbacks.onSharePdf, tile, busy = preparing)
+            if (state.publicUrl != null) RrQuickActionTile(stringResource(R.string.docs_copy_link), DS.drawable.ic_ph_link_simple, callbacks.onCopyLink, tile)
+            RrQuickActionTile(stringResource(R.string.docs_duplicate), DS.drawable.ic_ph_copy, callbacks.onDuplicate, tile)
+            RrQuickActionTile(stringResource(R.string.docs_rename), DS.drawable.ic_ph_pencil_simple, onRename, tile, enabled = !locked)
         }
         if (locked) RrCallout(stringResource(R.string.docs_locked_note), Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp), tone = RrTone.Warn, icon = DS.drawable.ic_ph_lock_simple)
         RrListGroup(Modifier.padding(horizontal = 16.dp)) {
@@ -240,30 +226,4 @@ private fun Main(doc: DocumentSummary, state: DocumentActionsUiState, preparing:
 @Composable
 private fun Disabled(disabled: Boolean, content: @Composable () -> Unit) {
     Box(Modifier.alpha(if (disabled) 0.45f else 1f)) { content() }
-}
-
-/**
- * A quick action tile (68 dp, surface, line edge, icon over a 12 sp label).
- * TODO(lead): move to designsystem as a quick-action tile; the Kit has no component for it.
- */
-@Composable
-private fun QuickTile(label: String, @DrawableRes icon: Int, onClick: () -> Unit, modifier: Modifier, enabled: Boolean = true, busy: Boolean = false) {
-    val c = RrTheme.colors
-    val interaction = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-    Column(
-        modifier
-            .rrPressScale(interaction)
-            .heightIn(min = 68.dp)
-            .clip(RrShape.lg)
-            .background(c.surface)
-            .border(1.dp, c.line, RrShape.lg)
-            .clickable(interaction, androidx.compose.foundation.LocalIndication.current, enabled = enabled && !busy, role = Role.Button, onClick = onClick)
-            .alpha(if (enabled) 1f else 0.45f)
-            .padding(horizontal = 4.dp, vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
-    ) {
-        if (busy) RrSpinner(size = 24.dp, tint = c.ink2) else RrIcon(icon, null, tint = c.ink2)
-        RrText(label, style = RrType.caption, color = c.ink2, textAlign = TextAlign.Center)
-    }
 }

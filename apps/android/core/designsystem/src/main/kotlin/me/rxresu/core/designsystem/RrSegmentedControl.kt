@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -51,6 +52,8 @@ data class RrSegment(
  * ease-in-out-strong d2 (instant under reduced motion) and plays `selection`.
  *
  * @param fillWidth segments share the available width equally; false sizes every segment to the widest label.
+ * @param containerColor the track: `sunken` by default; `bg` where the control sits on the sunken page canvas (B1
+ *   Page · Outline).
  */
 @Composable
 fun RrSegmentedControl(
@@ -59,8 +62,9 @@ fun RrSegmentedControl(
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
     fillWidth: Boolean = true,
+    containerColor: Color = RrTheme.colors.sunken,
 ) {
-    SegmentTrack(segments, selectedIndex, onSelect, modifier, itemHeight = 32.dp, stacked = false, fillWidth = fillWidth)
+    SegmentTrack(segments, selectedIndex, onSelect, modifier, itemHeight = 32.dp, stacked = false, fillWidth = fillWidth, containerColor = containerColor)
 }
 
 private val SegmentText = RrType.small.copy(fontWeight = FontWeight.Medium)
@@ -75,6 +79,7 @@ internal fun SegmentTrack(
     itemHeight: Dp,
     stacked: Boolean,
     fillWidth: Boolean,
+    containerColor: Color = RrTheme.colors.sunken,
 ) {
     val c = RrTheme.colors
     val reduced = LocalReducedMotion.current
@@ -84,7 +89,7 @@ internal fun SegmentTrack(
         position.animateTo(selectedIndex.toFloat(), RrMotion.spec(RrMotion.D2, reduced, RrMotion.easeInOutStrong))
     }
     Layout(
-        modifier = modifier.clip(RrShape.lg).background(c.sunken).padding(2.dp).selectableGroup(),
+        modifier = modifier.clip(RrShape.lg).background(containerColor).padding(2.dp).selectableGroup(),
         content = {
             Box(Modifier.rrShadow(RrElevation.Level1, RrShape.md).clip(RrShape.md).background(c.raised))
             segments.forEachIndexed { i, s ->
@@ -193,4 +198,13 @@ internal fun RrSegmentedControlPreview() = RrPreviewSurface {
         onSelect = {},
         fillWidth = false,
     )
+    Box(Modifier.background(RrTheme.colors.sunken).padding(8.dp)) {
+        RrSegmentedControl(
+            listOf(RrSegment("Page", R.drawable.ic_ph_file_text), RrSegment("Outline", R.drawable.ic_ph_list_bullets)),
+            selectedIndex = 1,
+            onSelect = {},
+            fillWidth = false,
+            containerColor = RrTheme.colors.bg,
+        )
+    }
 }

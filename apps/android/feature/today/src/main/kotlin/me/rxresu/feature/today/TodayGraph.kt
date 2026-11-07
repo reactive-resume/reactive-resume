@@ -4,8 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings as AndroidSettings
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -23,11 +21,9 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.NotificationCategory
@@ -68,7 +64,7 @@ internal fun TodayRoute(nav: NavController) {
     val vm = viewModel { TodayViewModel(repos.today, repos.applications, repos.account) }
     val state by vm.state.collectAsStateWithLifecycle()
     val toasts = LocalToasts.current
-    val scope = rememberAppScope()
+    val scope = rememberCoroutineScope()
     val haptics = rememberRrHaptics()
     val context = LocalContext.current
     val res = LocalResources.current
@@ -101,7 +97,7 @@ internal fun TodayRoute(nav: NavController) {
         if (ticked != null) lastTicked = ticked
     }
 
-    fun failed(message: Int) = scope.launch { toasts.show(res.getString(message), tone = RrToastTone.Danger) }
+    fun failed(message: Int) = toasts.post(res.getString(message), tone = RrToastTone.Danger)
 
     val actions = TodayActions(
         onSearch = { nav.navigate(Search()) },
@@ -120,11 +116,11 @@ internal fun TodayRoute(nav: NavController) {
                 try {
                     vm.dismiss(item)
                 } catch (e: Exception) {
-                    toasts.show(res.getString(R.string.today_mark_read_failed), tone = RrToastTone.Danger)
+                    failed(R.string.today_mark_read_failed)
                     return@launch
                 }
-                if (toasts.show(res.getString(R.string.today_marked_read), res.getString(R.string.today_undo)) == RrToastResult.ActionPerformed) {
-                    runCatching { vm.undoDismiss(item) }
+                toasts.post(res.getString(R.string.today_marked_read), res.getString(R.string.today_undo)) {
+                    if (it == RrToastResult.ActionPerformed) runCatching { vm.undoDismiss(item) }
                 }
             }
         },
@@ -133,15 +129,15 @@ internal fun TodayRoute(nav: NavController) {
             scope.launch {
                 val id = try { vm.track(role) } catch (e: Exception) { failed(R.string.today_track_failed); return@launch }
                 haptics(RrHaptic.Success)
-                if (toasts.show(res.getString(R.string.today_saved_role, role.company), res.getString(R.string.today_open)) == RrToastResult.ActionPerformed) {
-                    nav.navigate(Application(id))
+                toasts.post(res.getString(R.string.today_saved_role, role.company), res.getString(R.string.today_open)) {
+                    if (it == RrToastResult.ActionPerformed) nav.navigate(Application(id))
                 }
             }
         },
         onNotForMe = { role ->
             scope.launch {
                 try { vm.dismissRole(role) } catch (e: Exception) { failed(R.string.today_hide_failed); return@launch }
-                toasts.show(res.getString(R.string.today_hidden_role))
+                toasts.post(res.getString(R.string.today_hidden_role))
             }
         },
         onToggleRole = vm::toggleRole,
@@ -150,7 +146,7 @@ internal fun TodayRoute(nav: NavController) {
             scope.launch {
                 val (done, failed) = vm.applyToSelection(track)
                 if (track && done > 0) haptics(RrHaptic.Success)
-                if (failed > 0) toasts.show(res.getString(R.string.today_selection_partial, done.toString(), failed.toString()), tone = RrToastTone.Danger)
+                if (failed > 0) toasts.post(res.getString(R.string.today_selection_partial, done.toString(), failed.toString()), tone = RrToastTone.Danger)
             }
         },
         onOpenSchedule = { id -> nav.navigate(ScheduleSheet(id)) },
@@ -172,15 +168,4 @@ private fun openNotificationSettings(context: android.content.Context) {
         Intent(AndroidSettings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(AndroidSettings.EXTRA_APP_PACKAGE, context.packageName)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
     )
-}
-
-/**
- * The activity's scope, so a toast with Undo outlives the screen that started it (a closing sheet, a tab switch).
- * ponytail: activity-wide scope; move to an app-level toast/undo service if one appears in :core:navigation.
- */
-@Composable
-internal fun rememberAppScope(): CoroutineScope {
-    val activity = LocalActivity.current as? ComponentActivity
-    val fallback = rememberCoroutineScope()
-    return activity?.lifecycleScope ?: fallback
 }

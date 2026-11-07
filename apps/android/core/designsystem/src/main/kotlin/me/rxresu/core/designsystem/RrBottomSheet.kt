@@ -51,6 +51,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.dismiss
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Constraints
@@ -117,12 +119,25 @@ class RrBottomSheetState internal constructor() {
     /** Height the sheet last came to rest at (scrim reference); unbounded until the first rise ends. */
     internal var settled by mutableFloatStateOf(Float.MAX_VALUE)
 
+    internal var mover: (suspend (Int) -> Unit)? = null
+
     /** Index of the detent the sheet rests on or is heading to; -1 while closed or closing. */
     val detentIndex: Int get() = if (hiding) -1 else anchors.indexOfFirst { abs(it - target) < 1f }
+
+    /**
+     * The sheet's visible height in px, read during layout or drawing (it changes every frame while the sheet moves).
+     * A docked sheet's screen sizes what is above it from this (B1 Design: the page shrinks as the sheet rises).
+     */
+    val visibleHeight: Float get() = height.value
 
     /** Animates the sheet out. Call [onDismissRequest] (or navigate back) afterwards. */
     suspend fun hide() {
         exit?.invoke()
+    }
+
+    /** Moves the sheet to detent [index] (d3, instant under reduced motion), e.g. lowering a docked sheet on a tap. */
+    suspend fun animateTo(index: Int) {
+        mover?.invoke(index)
     }
 }
 
@@ -143,6 +158,13 @@ fun rememberRrBottomSheetState(): RrBottomSheetState = remember { RrBottomSheetS
  *   first (Keep editing · Discard changes).
  *
  * @param footer pinned under the scrolling content (sheet actions such as "Delete · Save interview").
+ * @param docked a sheet that is part of its screen (B1 Design over the live page): no scrim, never dismissed (back,
+ *   drags and TalkBack leave it open, [onDismissRequest] is never called), it rests on [detents] (usually two
+ *   heights) and appears without rising. TalkBack gets Raise and Lower actions. Pair it with [showClose] false.
+ * @param containerColor the sheet's fill (`raised` by default).
+ * @param scrim draw the scrim and close on taps outside; false leaves what is behind the sheet visible and usable.
+ * @param navigationBarInset pad the content above the navigation bar; false when the screen already reserves that
+ *   space (a sheet inside a screen with its own mode bar).
  */
 @Composable
 fun RrBottomSheet(
@@ -157,6 +179,10 @@ fun RrBottomSheet(
     showClose: Boolean = title != null,
     headerActions: (@Composable RowScope.() -> Unit)? = null,
     footer: (@Composable ColumnScope.() -> Unit)? = null,
+    docked: Boolean = false,
+    containerColor: Color = RrTheme.colors.raised,
+    scrim: Boolean = !docked,
+    navigationBarInset: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val c = RrTheme.colors
@@ -191,8 +217,15 @@ fun RrBottomSheet(
         dismiss()
     }
     state.exit = { close() }
+    state.mover = { index ->
+        state.anchors.getOrNull(index)?.let { to ->
+            if (abs(to - state.target) > 1f) haptics(RrHaptic.Selection)
+            animateHeight(to, RrMotion.D3, RrMotion.easeDrawer)
+        }
+    }
 
     fun requestDismiss() {
+        if (docked) return
         if (dirty) {
             askDiscard = true
             scope.launch { if (state.target > 0f) animateHeight(state.target, RrMotion.D2, RrMotion.easeDrawer) }
@@ -205,7 +238,7 @@ fun RrBottomSheet(
         val anchors = state.anchors
         val from = state.height.value
         val previous = state.target
-        val index = RrSheetMath.settle(from, velocity, anchors, flingThreshold)
+        val index = RrSheetMath.settle(from, velocity, anchors, flingThreshold).let { if (docked && it == -1) 0 else it }
         if (index == -1) {
             requestDismiss()
             return
@@ -219,7 +252,8 @@ fun RrBottomSheet(
         // delta: finger movement in px, + = down. Returns the part the sheet used.
         val top = state.anchors.lastOrNull() ?: return 0f
         val now = state.height.value
-        val next = (now - delta).coerceIn(0f, top)
+        // A docked sheet stops at its lowest height.
+        val next = (now - delta).coerceIn(if (docked) state.anchors.first() else 0f, top)
         scope.launch { state.height.snapTo(next) }
         return now - next
     }
@@ -267,13 +301,17 @@ fun RrBottomSheet(
     LaunchedEffect(reduced) {
         if (reduced && !still) withContext(RrMotion.Unscaled) { fade.animateTo(1f, tween(RrMotion.D1)) }
     }
-    BackHandler(enabled = !state.hiding) { requestDismiss() }
+    BackHandler(enabled = !state.hiding && !docked) { requestDismiss() }
 
     val sheetTitle = title
     val closeLabel = stringResource(R.string.ds_close)
+    val raiseLabel = stringResource(R.string.ds_raise_sheet)
+    val lowerLabel = stringResource(R.string.ds_lower_sheet)
+    // Read in composition so the Raise and Lower actions follow the detent.
+    val dockedIndex = if (docked) state.detentIndex else -1
     Box(modifier.fillMaxSize()) {
         // Scrim: fades with the sheet's rise (d2 of the d3 rise reads as the board's timing).
-        Box(
+        if (scrim) Box(
             Modifier
                 .fillMaxSize()
                 .graphicsLayer {
@@ -291,7 +329,7 @@ fun RrBottomSheet(
             onFirstLayout = { to ->
                 scope.launch {
                     state.target = to
-                    if (reduced || still) state.height.snapTo(to) else state.height.animateTo(to, tween(RrMotion.D3, easing = RrMotion.ease))
+                    if (reduced || still || docked) state.height.snapTo(to) else state.height.animateTo(to, tween(RrMotion.D3, easing = RrMotion.ease))
                     state.settled = to
                 }
             },
@@ -313,13 +351,20 @@ fun RrBottomSheet(
                 .graphicsLayer { alpha = fade.value }
                 .rrShadow(RrElevation.Level3, RrShape.sheetTop)
                 .clip(RrShape.sheetTop)
-                .background(c.raised)
+                .background(containerColor)
                 .semantics {
                     if (sheetTitle != null) paneTitle = sheetTitle
-                    dismiss { requestDismiss(); true }
-                    customActions = listOf(
-                        CustomAccessibilityAction(closeLabel) { requestDismiss(); true },
-                    )
+                    if (docked) {
+                        customActions = listOfNotNull(
+                            if (dockedIndex < detents.lastIndex) CustomAccessibilityAction(raiseLabel) { scope.launch { state.animateTo(dockedIndex + 1) }; true } else null,
+                            if (dockedIndex > 0) CustomAccessibilityAction(lowerLabel) { scope.launch { state.animateTo(dockedIndex - 1) }; true } else null,
+                        )
+                    } else {
+                        dismiss { requestDismiss(); true }
+                        customActions = listOf(
+                            CustomAccessibilityAction(closeLabel) { requestDismiss(); true },
+                        )
+                    }
                 }
                 .nestedScroll(nested)
                 .draggable(
@@ -328,17 +373,12 @@ fun RrBottomSheet(
                     onDragStopped = { velocity -> settle(-velocity) },
                 ),
         ) {
-            Column(Modifier.windowInsetsPadding(WindowInsets.ime.union(WindowInsets.navigationBars))) {
+            Column(Modifier.windowInsetsPadding(if (navigationBarInset) WindowInsets.ime.union(WindowInsets.navigationBars) else WindowInsets.ime)) {
                 Box(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp), contentAlignment = Alignment.Center) {
                     Box(Modifier.size(36.dp, 4.dp).clip(RrShape.sm).background(c.line2))
                 }
                 if (title != null || headerActions != null || showClose) {
-                    Row(
-                        Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RrText(title.orEmpty(), style = RrType.sheetTitle, color = c.ink, modifier = Modifier.weight(1f))
+                    RrSheetHeader(title.orEmpty()) {
                         headerActions?.invoke(this)
                         if (showClose) RrIconButton(R.drawable.ic_ph_x, closeLabel, { requestDismiss() }, size = RrIconButtonSize.Small)
                     }
@@ -362,6 +402,43 @@ fun RrBottomSheet(
             dismissLabel = stringResource(R.string.ds_keep_editing),
             confirm = RrDialogConfirm.Danger,
         )
+    }
+}
+
+/**
+ * Sheet header: [title] in Instrument Serif 22 with [actions] (Close, Done, steppers) at the end. The title wraps at
+ * word boundaries beside the actions; when its longest word no longer fits there (large font scales, long names) the
+ * actions move to their own row under the title, at the end, so a word never breaks mid-way ("Northw/ind"). TalkBack
+ * reads the title first either way. [RrBottomSheet] draws one from its `title`; use it directly for pushed steps.
+ */
+@Composable
+fun RrSheetHeader(title: String, modifier: Modifier = Modifier, actions: @Composable RowScope.() -> Unit = {}) {
+    val c = RrTheme.colors
+    Layout(
+        contents = listOf(
+            { RrText(title, style = RrType.sheetTitle, color = c.ink, modifier = Modifier.semantics { heading() }) },
+            { Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically, content = actions) },
+        ),
+        modifier = modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 8.dp),
+    ) { (titleM, actionsM), constraints ->
+        val width = constraints.maxWidth
+        val gap = 8.dp.roundToPx()
+        val actionsP = actionsM.first().measure(Constraints(maxWidth = width))
+        val beside = (width - actionsP.width - if (actionsP.width > 0) gap else 0).coerceAtLeast(0)
+        val stacked = actionsP.width > 0 && titleM.first().minIntrinsicWidth(Constraints.Infinity) > beside
+        val titleP = titleM.first().measure(Constraints(minWidth = 0, maxWidth = if (stacked) width else beside))
+        if (stacked) {
+            layout(width, titleP.height + gap + actionsP.height) {
+                titleP.placeRelative(0, 0)
+                actionsP.placeRelative(width - actionsP.width, titleP.height + gap)
+            }
+        } else {
+            val h = maxOf(titleP.height, actionsP.height)
+            layout(width, h) {
+                titleP.placeRelative(0, (h - titleP.height) / 2)
+                actionsP.placeRelative(width - actionsP.width, (h - actionsP.height) / 2)
+            }
+        }
     }
 }
 
@@ -428,6 +505,20 @@ internal fun RrBottomSheetPreview() = RrPreviewSurface {
             Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 RrTextField("60", {}, label = "Length · minutes")
                 RrTextField("Lumen office, Rua do Alecrim 12", {}, label = "Location", leadingIcon = R.drawable.ic_ph_map_pin)
+            }
+        }
+    }
+}
+
+/** Docked (B1 Design over the page): no scrim, two heights, raised by default here. */
+@RrPreviews
+@Composable
+internal fun RrBottomSheetDockedPreview() = RrPreviewSurface {
+    Box(Modifier.fillMaxWidth().size(358.dp, 420.dp).background(RrTheme.colors.sunken)) {
+        RrBottomSheet(onDismissRequest = {}, docked = true, detents = listOf(0.55f, 0.76f), initialDetent = 1, showClose = false, navigationBarInset = false) {
+            Column {
+                RrSectionHeader("Font pairing", topPadding = 0.dp)
+                RrSwitchRow("Show page numbers", checked = true, onCheckedChange = {}, containerColor = androidx.compose.ui.graphics.Color.Transparent)
             }
         }
     }

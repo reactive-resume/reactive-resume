@@ -170,12 +170,8 @@ internal fun highlight(text: String, query: String): AnnotatedString = buildAnno
     }
 }
 
-private val RowTitle = RrType.label.copy(fontWeight = FontWeight.Medium, lineHeight = RrType.ui.lineHeight)
-
-/** TODO(lead): RrListRow takes a String title; bold matches need an AnnotatedString title, so the text rides in `leading`. */
 @Composable
 private fun ResultRow(row: SearchRow, query: String, now: Instant, zone: ZoneId, callbacks: SearchCallbacks) {
-    val c = RrTheme.colors
     val hit = row.hit
     val locale = LocalConfiguration.current.locales[0]
     val title: AnnotatedString = when (hit.kind) {
@@ -201,20 +197,7 @@ private fun ResultRow(row: SearchRow, query: String, now: Instant, zone: ZoneId,
         "thread" -> stringResource(R.string.search_conversation)
         else -> hit.subtitle.ifBlank { null }
     }
-    RrListRow(
-        title = "",
-        subtitle = null,
-        onClick = { callbacks.onOpen(row) },
-        leading = {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Leading(row)
-                Column {
-                    RrText(title, style = RowTitle, color = c.ink)
-                    if (subtitle != null) RrText(subtitle, style = RrType.small, color = c.ink3)
-                }
-            }
-        },
-    )
+    RrListRow(title, subtitle = subtitle, onClick = { callbacks.onOpen(row) }, leading = { Leading(row) })
 }
 
 @Composable

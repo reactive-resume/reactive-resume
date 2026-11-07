@@ -3,8 +3,6 @@ package me.rxresu.feature.today
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.layout.layout
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -186,6 +184,7 @@ private fun LazyListScope.content(state: TodayUiState, now: Instant, format: Tod
                 Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
                 actionLabel = stringResource(R.string.today_create_account),
                 onAction = actions.onCreateAccount,
+                actionLink = true,
             )
         }
         if (state.newAccount) item("hero") {
@@ -209,7 +208,7 @@ private fun LazyListScope.content(state: TodayUiState, now: Instant, format: Tod
     }
 
     item("needs-header") {
-        RrSectionHeader(stringResource(S.string.needs_you), Modifier.trimTop(16.dp), count = state.needsYou.size.takeIf { it > 0 }?.toString())
+        RrSectionHeader(stringResource(S.string.needs_you), topPadding = 4.dp, count = state.needsYou.size.takeIf { it > 0 }?.toString())
     }
     item("needs") {
         if (state.needsYou.isEmpty()) {
@@ -299,16 +298,6 @@ private fun kindLabel(kind: String): String = stringResource(
         else -> R.string.today_kind_other
     },
 )
-
-/**
- * The first eyebrow under the header sits 4 dp below it (board: `padding-top:4px`) where RrSectionHeader pads 20.
- * TODO(lead): move to designsystem as an RrSectionHeader top-padding parameter.
- */
-private fun Modifier.trimTop(by: Dp) = layout { measurable, constraints ->
-    val p = measurable.measure(constraints)
-    val trim = by.roundToPx()
-    layout(p.width, (p.height - trim).coerceAtLeast(0)) { p.place(0, -trim) }
-}
 
 /** A dismissed row folds its height (d2 ease); instant under reduced motion. */
 @Composable

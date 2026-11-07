@@ -57,6 +57,8 @@ import androidx.compose.ui.unit.sp
  * @param contentType autofill hint, e.g. `ContentType.EmailAddress`.
  * @param minLines > 1 makes a multiline field (96 dp min, 24 sp lines); [singleLine] is then ignored.
  * @param trailing e.g. an [RrIconButton] (show password) or a static icon.
+ * @param prefix fixed ink-3 text before the input, part of the value people see but not of [value] (`rxresu.me/alex/`
+ *   before a slug, B12). The prefix and the input always run left to right, in every locale.
  */
 @Composable
 fun RrTextField(
@@ -80,6 +82,7 @@ fun RrTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     contentType: ContentType? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    prefix: String? = null,
 ) {
     val c = RrTheme.colors
     val focused by interactionSource.collectIsFocusedAsState()
@@ -88,7 +91,7 @@ fun RrTextField(
     val style = base.copy(
         color = c.ink,
         lineHeight = if (multiline) 24.sp else base.lineHeight,
-        textDirection = if (ltr) TextDirection.Ltr else TextDirection.Content,
+        textDirection = if (ltr || prefix != null) TextDirection.Ltr else TextDirection.Content,
     )
     FieldFrame(label, helper, error, modifier, enabled) {
         val field: @Composable () -> Unit = {
@@ -115,9 +118,21 @@ fun RrTextField(
                 decorationBox = { inner ->
                     FieldBox(focused, error != null, multiline) {
                         if (leadingIcon != null) RrIcon(leadingIcon, null, size = 20.dp, tint = c.ink3)
-                        Box(Modifier.weight(1f), contentAlignment = if (multiline) Alignment.TopStart else Alignment.CenterStart) {
-                            if (value.isEmpty() && placeholder != null) RrText(placeholder, style = style.copy(color = c.ink3), maxLines = if (multiline) Int.MAX_VALUE else 1)
-                            inner()
+                        val input: @Composable () -> Unit = {
+                            Box(contentAlignment = if (multiline) Alignment.TopStart else Alignment.CenterStart) {
+                                if (value.isEmpty() && placeholder != null) RrText(placeholder, style = style.copy(color = c.ink3), maxLines = if (multiline) Int.MAX_VALUE else 1)
+                                inner()
+                            }
+                        }
+                        if (prefix == null) {
+                            Box(Modifier.weight(1f)) { input() }
+                        } else {
+                            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                                Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                                    RrText(prefix, style = style.copy(color = c.ink3), maxLines = 1)
+                                    Box(Modifier.weight(1f)) { input() }
+                                }
+                            }
                         }
                         trailing?.invoke(this)
                     }
@@ -261,4 +276,5 @@ internal fun RrTextFieldPreview() = RrPreviewSurface {
     RrPickerField("Tue 10 Nov 2026", {}, label = "Date", trailingIcon = R.drawable.ic_ph_calendar_blank)
     RrTextField("Walk through one design system decision and its trade-offs.", {}, label = "What they asked you to prepare", minLines = 3)
     RrSearchField("Lumen", {}, placeholder = "Search")
+    RrTextField("product-designer", {}, label = "Address", prefix = "rxresu.me/alex/", mono = true, helper = "Live at rxresu.me/alex/product-designer")
 }

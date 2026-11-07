@@ -27,11 +27,14 @@ class ComponentScreenshotTest : RrScreenshotTest() {
         "RrAlertDialog" to { RrAlertDialogPreview() },
         "RrAvatar" to { RrAvatarPreview() },
         "RrBadge" to { RrBadgePreview() },
+        "RrBarChart" to { RrBarChartPreview() },
         "RrBottomSheet" to { RrBottomSheetPreview() },
+        "RrBottomSheetDocked" to { RrBottomSheetDockedPreview() },
         "RrButton" to { RrButtonPreview() },
         "RrCallout" to { RrCalloutPreview() },
         "RrCard" to { RrCardPreview() },
         "RrChip" to { RrChipPreview() },
+        "RrChoiceCard" to { RrChoiceCardPreview() },
         "RrCompanyTile" to { RrCompanyTilePreview() },
         "RrControls" to { RrControlsPreview() },
         "RrDatePicker" to { RrDatePickerPreview() },
@@ -43,9 +46,13 @@ class ComponentScreenshotTest : RrScreenshotTest() {
         "RrLargeTitleHeader" to { RrLargeTitleHeaderPreview() },
         "RrList" to { RrListPreview() },
         "RrMenu" to { RrMenuPreview() },
+        "RrMonthPicker" to { RrMonthPickerPreview() },
         "RrModeBar" to { RrModeBarPreview() },
+        "RrOptionRow" to { RrOptionRowPreview() },
         "RrPaperPage" to { RrPaperPagePreview() },
         "RrProposalCard" to { RrProposalCardPreview() },
+        "RrQuestionCard" to { RrQuestionCardPreview() },
+        "RrQuickActionTile" to { RrQuickActionTilePreview() },
         "RrRecorder" to { RrRecorderPreview() },
         "RrPullToRefresh" to { RrPullToRefreshPreview() },
         "RrScoreRing" to { RrScoreRingPreview() },
@@ -55,6 +62,7 @@ class ComponentScreenshotTest : RrScreenshotTest() {
         "RrSpinner" to { RrSpinnerPreview() },
         "RrStage" to { RrStagePreview() },
         "RrStepper" to { RrStepperPreview() },
+        "RrStepList" to { RrStepListPreview() },
         "RrStepMarker" to { RrStepMarkerPreview() },
         "RrSwipeRow" to { RrSwipeRowPreview() },
         "RrTabBar" to { RrTabBarPreview() },
@@ -87,6 +95,21 @@ class ComponentScreenshotTest : RrScreenshotTest() {
             RrLargeTitleHeader("Today", rememberRrLargeTitleState(), subtitle = "Saturday, 7 November", applyStatusBarInset = false) {
                 RrAvatar("AM", onClick = {}, contentDescription = "Settings")
             }
+        }
+    }
+
+    /** Sheet headers at 200%: the title wraps between words, or the actions move under it ("Northwind Labs", B2). */
+    @Test fun sheetHeaderFontScale200() = captureScreen("Harness-SheetHeader", dark = false, fontScale = 2f) {
+        Column(Modifier.windowInsetsPadding(WindowInsets.systemBars).background(RrTheme.colors.raised)) {
+            RrSheetHeader("Northwind Labs") {
+                RrIconButton(R.drawable.ic_ph_caret_up, "Previous entry", {})
+                RrIconButton(R.drawable.ic_ph_caret_down, "Next entry", {})
+                RrIconButton(R.drawable.ic_ph_dots_three, "Entry options", {})
+                RrButton("Done", {}, variant = RrButtonVariant.Secondary)
+            }
+            RrSheetHeader("Edit interview") { RrIconButton(R.drawable.ic_ph_x, "Close", {}, size = RrIconButtonSize.Small) }
+            RrTopBar("Import a resume", onClose = {}, applyStatusBarInset = false)
+            RrAvatar("", onClick = {}, contentDescription = "Settings")
         }
     }
 
