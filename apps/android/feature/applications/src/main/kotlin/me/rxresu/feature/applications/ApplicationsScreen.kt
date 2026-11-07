@@ -87,7 +87,7 @@ internal fun ApplicationsRoute(initialView: ApplicationsView, nav: NavController
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val res = androidx.compose.ui.platform.LocalResources.current
-    val texts = MoveTexts(stringResource(S.string.undo), stringResource(S.string.application_closed), stringResource(S.string.closed_as_accepted_offer), stringResource(S.string.add_the_offer_s_terms))
+    val texts = MoveTexts(stringResource(S.string.undo), stringResource(S.string.application_closed), stringResource(S.string.closed_as_accepted_offer), stringResource(S.string.add_the_offer_s_terms), stringResource(S.string.schedule_it))
     val undo = stringResource(S.string.undo)
     val failed = stringResource(R.string.app_couldnt_update)
     var view by rememberSaveable { mutableStateOf(initialView) }
@@ -103,7 +103,11 @@ internal fun ApplicationsRoute(initialView: ApplicationsView, nav: NavController
             vm.attempt { vm.moves.move(row.app.id, lane, stage) }
                 .onSuccess {
                     haptics(RrHaptic.Success)
-                    ToastScope.launch { announceMove(toasts, vm.moves, row.app.id, MoveChoice(lane, stage), label, before, emptyList(), texts, res) { nav.navigate(ApplicationDest(row.app.id, WorkspaceTab.Messages)) } }
+                    announceMove(
+                        toasts, vm.moves, row.app.id, MoveChoice(lane, stage), label, before, emptyList(), texts, res,
+                        onOfferTerms = { nav.navigate(ApplicationDest(row.app.id, WorkspaceTab.Messages)) },
+                        onSchedule = if (offersScheduling(row.app, stage, vm.time.now())) ({ nav.navigate(InterviewSheet(row.app.id)) }) else null,
+                    )
                 }
                 .onFailure { haptics(RrHaptic.Error); toasts.show(failed, tone = RrToastTone.Danger) }
         }
@@ -113,8 +117,8 @@ internal fun ApplicationsRoute(initialView: ApplicationsView, nav: NavController
         scope.launch {
             vm.attempt { vm.moves.trash(row.app.id) }
                 .onSuccess { stamp ->
-                    ToastScope.launch {
-                        if (toasts.show(res.getString(R.string.app_trashed, "${row.app.role} · ${row.app.company}"), undo) == RrToastResult.ActionPerformed) runCatching { vm.moves.untrash(row.app.id, stamp) }
+                    toasts.post(res.getString(R.string.app_trashed, "${row.app.role} · ${row.app.company}"), undo) {
+                        if (it == RrToastResult.ActionPerformed) runCatching { vm.moves.untrash(row.app.id, stamp) }
                     }
                 }
                 .onFailure { toasts.show(failed, tone = RrToastTone.Danger) }
@@ -290,7 +294,7 @@ private fun FilterChips(state: ApplicationsState, all: Boolean, onFilters: (Appl
     Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         f.stage?.let { stage -> RrFilterChip(stageLabel(stage), true, { onFilters(f.copy(stage = null)) }) }
         if (all) {
-            RrFilterChip("${stringResource(S.string.needs_you)} ${state.needsYouCount}", f.needsYou, { onFilters(f.copy(needsYou = it)) })
+            RrFilterChip(stringResource(S.string.needs_you), f.needsYou, { onFilters(f.copy(needsYou = it)) }, count = state.needsYouCount.toString())
             RrFilterChip(stringResource(R.string.app_show_closed), f.showClosed, { onFilters(f.copy(showClosed = it)) })
         }
         (if (all) state.tags else f.tags.toList()).forEach { tag ->

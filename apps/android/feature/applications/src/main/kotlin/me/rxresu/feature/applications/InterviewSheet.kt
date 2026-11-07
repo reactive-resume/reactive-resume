@@ -54,7 +54,6 @@ import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCheckbox
-import me.rxresu.core.designsystem.RrChoiceRow
 import me.rxresu.core.designsystem.RrDatePicker
 import me.rxresu.core.designsystem.RrDialogConfirm
 import me.rxresu.core.designsystem.RrFilterChip
@@ -249,8 +248,8 @@ internal fun InterviewRoute(applicationId: String, interviewId: String?, nav: Na
                 sheet.hide()
                 nav.popBackStack()
                 val message = saved.briefingAt?.let { savedText + " · " + briefingMoves.format(dates.whenWithTime(it)) } ?: savedText
-                ToastScope.launch {
-                    if (toasts.show(message, saved.event?.let { addToCalendar }) == RrToastResult.ActionPerformed) saved.event?.let { addToCalendar(context, it, vm.time.now()) }
+                toasts.post(message, saved.event?.let { addToCalendar }) {
+                    if (it == RrToastResult.ActionPerformed) saved.event?.let { event -> addToCalendar(context, event, vm.time.now()) }
                 }
             }
         },
@@ -261,8 +260,8 @@ internal fun InterviewRoute(applicationId: String, interviewId: String?, nav: Na
                 haptics(RrHaptic.Warning)
                 sheet.hide()
                 nav.popBackStack()
-                ToastScope.launch {
-                    if (toasts.show(deletedText, event?.let { cancellation }) == RrToastResult.ActionPerformed) event?.let { shareIcs(context, it, vm.time.now(), cancel = true) }
+                toasts.post(deletedText, event?.let { cancellation }) {
+                    if (it == RrToastResult.ActionPerformed) event?.let { e -> shareIcs(context, e, vm.time.now(), cancel = true) }
                 }
             }
         },

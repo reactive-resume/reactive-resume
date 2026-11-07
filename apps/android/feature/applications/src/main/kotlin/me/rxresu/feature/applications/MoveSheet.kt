@@ -3,7 +3,6 @@ package me.rxresu.feature.applications
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -12,9 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -22,12 +19,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -53,13 +48,12 @@ import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrPickerField
-import me.rxresu.core.designsystem.RrSectionHeader
 import me.rxresu.core.designsystem.RrStageDot
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
-import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrToastHostState
 import me.rxresu.core.designsystem.RrToastResult
+import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrBottomSheetState
 import me.rxresu.core.designsystem.rememberRrHaptics
@@ -71,16 +65,11 @@ import me.rxresu.core.network.generated.Application
 import me.rxresu.core.network.generated.ApplicationStage
 import me.rxresu.core.network.generated.DocumentSummary
 import me.rxresu.core.network.generated.DocumentType
+import me.rxresu.core.network.generated.Interview
 import me.rxresu.core.network.generated.PatchApplicationClosedReason
 import me.rxresu.core.network.generated.PatchApplicationRequest
 import me.rxresu.core.network.generated.PatchApplicationsRequest
 import me.rxresu.core.strings.R as S
-
-/**
- * Toasts that outlive the sheet or row that raised them (the sheet closes before its toast's Undo can run).
- * ponytail: one app-lifetime scope; move to an app-provided scope if the shell ever offers one.
- */
-internal val ToastScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
 /** One choice in the Move sheet: an open lane or a closing reason. */
 internal data class MoveChoice(val lane: Lane?, val stage: ApplicationStage, val reason: PatchApplicationClosedReason? = null)
@@ -151,6 +140,7 @@ internal fun MoveRoute(id: String, nav: NavController) {
         closed = stringResource(S.string.application_closed),
         acceptedAlone = stringResource(S.string.closed_as_accepted_offer),
         offerTerms = stringResource(S.string.add_the_offer_s_terms),
+        scheduleIt = stringResource(S.string.schedule_it),
     )
     val app = state.app
     MoveSheet(
@@ -166,17 +156,30 @@ internal fun MoveRoute(id: String, nav: NavController) {
                 delay(RrMotion.D1.toLong())
                 sheet.hide()
                 nav.popBackStack()
-                ToastScope.launch { announceMove(toasts, vm.moves, id, choice, label, before, state.others, texts, res, onOfferTerms = { nav.navigate(ApplicationRoute(id, WorkspaceTab.Messages)) }) }
+                announceMove(
+                    toasts, vm.moves, id, choice, label, before, state.others, texts, res,
+                    onOfferTerms = { nav.navigate(ApplicationRoute(id, WorkspaceTab.Messages)) },
+                    onSchedule = if (offersScheduling(app, choice.stage, vm.time.now())) ({ nav.navigate(me.rxresu.core.navigation.InterviewSheet(id)) }) else null,
+                )
             }
         },
         sheetState = sheet,
     )
 }
 
-internal data class MoveTexts(val undo: String, val closed: String, val acceptedAlone: String, val offerTerms: String)
+internal data class MoveTexts(val undo: String, val closed: String, val acceptedAlone: String, val offerTerms: String, val scheduleIt: String)
 
-/** The toast after a move (web use-application-actions): Offer offers its terms, Accepted offers to close the rest, others Undo. */
-internal suspend fun announceMove(
+/** Moving to Interview usually means one is being set up: offer to schedule it unless one is already ahead (web J6). */
+internal fun offersScheduling(app: Application?, stage: ApplicationStage, now: Instant): Boolean =
+    stage == ApplicationStage.Interview && app != null &&
+        app.activity.filterIsInstance<Interview>().none { runCatching { Instant.parse(it.at) }.getOrNull()?.isAfter(now) == true }
+
+/**
+ * The toast after a move (web use-application-actions): Offer offers its terms, Accepted offers to close the rest,
+ * others Undo, plus "Schedule it" when [onSchedule] is set. Posted to the app-lifetime toast queue, so the sheet or row
+ * that raised it may close at once.
+ */
+internal fun announceMove(
     toasts: RrToastHostState,
     moves: ApplicationMoves,
     id: String,
@@ -187,25 +190,35 @@ internal suspend fun announceMove(
     texts: MoveTexts,
     res: android.content.res.Resources,
     onOfferTerms: () -> Unit,
+    onSchedule: (() -> Unit)? = null,
 ) {
     when {
         choice.stage == ApplicationStage.Offer ->
-            if (toasts.show(res.getString(S.string.moved_to_0, label), texts.offerTerms) == RrToastResult.ActionPerformed) onOfferTerms()
+            toasts.post(res.getString(S.string.moved_to_0, label), texts.offerTerms) { if (it == RrToastResult.ActionPerformed) onOfferTerms() }
         choice.reason == PatchApplicationClosedReason.Accepted -> {
-            if (others.isEmpty()) { toasts.show(texts.acceptedAlone); return }
+            if (others.isEmpty()) { toasts.post(texts.acceptedAlone); return }
             val n = others.size
             val ask = plural(res, S.plurals.message_0_plural_one_closed_as_accepted_offer_close_your_other_open_application_as_accepted_another_offer_ot, n, n.toString())
             val action = plural(res, S.plurals.message_0_plural_one_close_it_other_close_all, n, n.toString())
-            if (toasts.show(ask, action) == RrToastResult.ActionPerformed) {
-                runCatching { moves.closeAll(others.map { it.id }) }
-                toasts.show(plural(res, S.plurals.message_0_plural_one_application_closed_as_accepted_another_offer_other_applications_closed_as_accepted_anot, n, n.toString()))
+            val done = plural(res, S.plurals.message_0_plural_one_application_closed_as_accepted_another_offer_other_applications_closed_as_accepted_anot, n, n.toString())
+            toasts.post(ask, action) {
+                if (it == RrToastResult.ActionPerformed) {
+                    runCatching { moves.closeAll(others.map { o -> o.id }) }
+                    toasts.show(done)
+                }
             }
         }
         else -> {
             val message = if (choice.stage != ApplicationStage.Closed) res.getString(S.string.moved_to_0, label)
             else if (choice.lane?.systemKey != null || choice.lane == null) texts.closed else res.getString(R.string.app_closed_as, label)
             val changed = before != null && (before.status != choice.stage || before.laneId != choice.lane?.id || before.closedReason != choice.reason)
-            if (toasts.show(message, if (changed) texts.undo else null) == RrToastResult.ActionPerformed && before != null) runCatching { moves.restore(id, before) }
+            toasts.post(message, if (changed) texts.undo else null, secondaryActionLabel = onSchedule?.let { texts.scheduleIt }) {
+                when (it) {
+                    RrToastResult.ActionPerformed -> if (before != null) runCatching { moves.restore(id, before) }
+                    RrToastResult.SecondaryActionPerformed -> onSchedule?.invoke()
+                    RrToastResult.Dismissed -> Unit
+                }
+            }
         }
     }
 }

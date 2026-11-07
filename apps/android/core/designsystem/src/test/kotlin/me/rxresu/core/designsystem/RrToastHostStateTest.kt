@@ -44,4 +44,17 @@ class RrToastHostStateTest {
         advanceTimeBy(1_001)
         assertEquals(RrToastResult.Dismissed, toast.await())
     }
+
+    @Test fun postedToastOutlivesItsCallerAndReportsTheSecondAction() = runTest {
+        val state = RrToastHostState(backgroundScope)
+        var result: RrToastResult? = null
+        state.post("Moved to Interview.", actionLabel = "Undo", secondaryActionLabel = "Schedule it") { result = it }
+        runCurrent()
+        assertEquals("Schedule it", state.current?.secondaryActionLabel)
+        assertEquals(8_000L, state.current?.durationMs)
+        state.current!!.performSecondaryAction()
+        // The result arrives once the toast's d2 exit has run.
+        advanceTimeBy(RrMotion.D2 + 1L)
+        assertEquals(RrToastResult.SecondaryActionPerformed, result)
+    }
 }

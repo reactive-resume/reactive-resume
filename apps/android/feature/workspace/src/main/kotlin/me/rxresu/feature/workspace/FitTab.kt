@@ -162,7 +162,7 @@ internal fun FitScreen(
         footer = if (fit != null && app.resumeId != null) {
             {
                 RrButton(stringResource(S.string.tailor_resume_for_this_job), onTailor, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_sparkle)
-                InfoLine(stringResource(S.string.an_ai_reading_to_help_you_edit_not_a_prediction_of_how_an_employer_or_screening_system_will_respond))
+                RrDisclosureLine(stringResource(S.string.an_ai_reading_to_help_you_edit_not_a_prediction_of_how_an_employer_or_screening_system_will_respond), icon = DsR.drawable.ic_ph_info)
             }
         } else null,
     ) {
@@ -197,7 +197,7 @@ internal fun FitScreen(
                 RrText(stringResource(S.string.supporting_knowledge_facts_and_stories), style = RrType.eyebrow, color = c.ink3)
                 me.rxresu.core.designsystem.RrListGroup { cited.forEach { RrListRow(it, icon = DsR.drawable.ic_ph_quotes) } }
             }
-            InfoLine(stringResource(R.string.workspace_check_sources))
+            RrDisclosureLine(stringResource(R.string.workspace_check_sources), icon = DsR.drawable.ic_ph_info)
         }
     }
 }

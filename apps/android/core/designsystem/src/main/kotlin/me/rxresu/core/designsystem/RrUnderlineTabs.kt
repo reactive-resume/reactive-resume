@@ -35,8 +35,15 @@ import kotlinx.coroutines.launch
  * One tab of [RrUnderlineTabs].
  *
  * @param trailing a mono count ("3") or short badge text after the label; [warn] draws it as a warn badge.
+ * @param tone draws [trailing] as a badge in this tone ("Ready" in accent on Interview prep); wins over [warn].
  */
-data class RrUnderlineTab(val label: String, val trailing: String? = null, val warn: Boolean = false, val contentDescription: String? = null)
+data class RrUnderlineTab(
+    val label: String,
+    val trailing: String? = null,
+    val warn: Boolean = false,
+    val contentDescription: String? = null,
+    val tone: RrBadgeTone? = null,
+)
 
 private val TabText = RrType.ui.copy(fontWeight = FontWeight.Medium)
 
@@ -110,7 +117,8 @@ fun RrUnderlineTabs(
                 ) {
                     RrText(tab.label, style = TabText, color = if (selected) c.ink else c.ink2, maxLines = 1)
                     if (tab.trailing != null) {
-                        if (tab.warn) RrBadge(tab.trailing, tone = RrBadgeTone.Warn) else RrText(tab.trailing, style = RrType.mono, color = c.ink3)
+                        val tone = tab.tone ?: if (tab.warn) RrBadgeTone.Warn else null
+                        if (tone != null) RrBadge(tab.trailing, tone = tone) else RrText(tab.trailing, style = RrType.mono, color = c.ink3)
                     }
                 }
             }
@@ -122,7 +130,7 @@ fun RrUnderlineTabs(
 @Composable
 internal fun RrUnderlineTabsPreview() = RrPreviewSurface {
     RrUnderlineTabs(
-        listOf(RrUnderlineTab("Overview"), RrUnderlineTab("Fit"), RrUnderlineTab("Apply", "2"), RrUnderlineTab("Interview prep"), RrUnderlineTab("Practice"), RrUnderlineTab("Debrief")),
+        listOf(RrUnderlineTab("Overview"), RrUnderlineTab("Fit"), RrUnderlineTab("Apply", "2"), RrUnderlineTab("Interview prep", "Ready", tone = RrBadgeTone.Accent), RrUnderlineTab("Practice"), RrUnderlineTab("Debrief")),
         selectedIndex = 2,
         onSelect = {},
         contentPadding = PaddingValues(0.dp),

@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -114,13 +116,11 @@ fun RrLargeTitleHeader(
                     .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Row(Modifier.fillMaxWidth().heightIn(min = 44.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        RrText(title, style = RrType.title, color = c.ink, modifier = Modifier.semantics { heading() })
-                        if (subtitle != null) RrText(subtitle, style = RrType.small, color = c.ink3)
-                    }
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically, content = actions)
-                }
+                TitleAndActions(
+                    title = { RrText(title, style = RrType.title, color = c.ink, modifier = Modifier.semantics { heading() }) },
+                    subtitle = subtitle?.let { { RrText(it, style = RrType.small, color = c.ink3) } },
+                    actions = { Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically, content = actions) },
+                )
                 bottom?.invoke()
             }
         }
@@ -136,6 +136,50 @@ fun RrLargeTitleHeader(
                 }
                 if (bottom != null) Box(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)) { bottom() }
                 Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
+            }
+        }
+    }
+}
+
+/**
+ * Title beside the actions while the title fits on one line there; otherwise (long titles, large font scales) the
+ * actions sit on their own row above, at the end, and the title takes the full width below them, so a word never
+ * breaks mid-way ("Applicat/ions"). Traversal order stays title, subtitle, actions.
+ */
+@Composable
+private fun TitleAndActions(title: @Composable () -> Unit, subtitle: (@Composable () -> Unit)?, actions: @Composable () -> Unit) {
+    Layout(
+        contents = listOf(title, subtitle ?: {}, actions),
+        modifier = Modifier.fillMaxWidth(),
+    ) { (titleM, subtitleM, actionsM), constraints ->
+        val width = constraints.maxWidth
+        val loose = Constraints(maxWidth = width)
+        val gap = 8.dp.roundToPx()
+        val minRow = 44.dp.roundToPx()
+        val actionsP = actionsM.firstOrNull()?.measure(loose)
+        val actionsW = actionsP?.width ?: 0
+        val actionsH = actionsP?.height ?: 0
+        val besideW = (width - actionsW - if (actionsW > 0) gap else 0).coerceAtLeast(0)
+        val titleW = titleM.firstOrNull()?.maxIntrinsicWidth(Constraints.Infinity) ?: 0
+        val stacked = actionsW > 0 && titleW > besideW
+        val textW = if (stacked) width else besideW
+        val titleP = titleM.firstOrNull()?.measure(Constraints(maxWidth = textW))
+        val subtitleP = subtitleM.firstOrNull()?.measure(Constraints(maxWidth = textW))
+        val textH = (titleP?.height ?: 0) + (subtitleP?.height ?: 0)
+        if (stacked) {
+            val actionsRowH = maxOf(actionsH, minRow)
+            layout(width, actionsRowH + textH) {
+                actionsP?.placeRelative(width - actionsW, (actionsRowH - actionsH) / 2)
+                titleP?.placeRelative(0, actionsRowH)
+                subtitleP?.placeRelative(0, actionsRowH + (titleP?.height ?: 0))
+            }
+        } else {
+            val h = maxOf(textH, actionsH, minRow)
+            layout(width, h) {
+                val top = (h - textH) / 2
+                titleP?.placeRelative(0, top)
+                subtitleP?.placeRelative(0, top + (titleP?.height ?: 0))
+                actionsP?.placeRelative(width - actionsW, (h - actionsH) / 2)
             }
         }
     }

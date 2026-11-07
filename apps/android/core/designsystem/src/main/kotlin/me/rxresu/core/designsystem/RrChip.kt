@@ -33,6 +33,8 @@ private val ContextChipText = RrType.small.copy(fontWeight = FontWeight.Medium, 
 
 /**
  * Filter chip (32 dp): line-2 edge, accent-soft fill when selected. Plays `selection` when toggled.
+ *
+ * @param count a Geist Mono count after the label ("Needs you 3"), ink-3 (accent-text when selected).
  */
 @Composable
 fun RrFilterChip(
@@ -41,6 +43,7 @@ fun RrFilterChip(
     onSelectedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int? = null,
+    count: String? = null,
 ) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
@@ -59,6 +62,7 @@ fun RrFilterChip(
         val fg = if (selected) c.accentText else c.ink2
         if (icon != null) RrIcon(icon, null, size = 16.dp, tint = fg)
         RrText(text, style = ChipText, color = fg)
+        if (count != null) RrText(count, style = RrType.mono, color = if (selected) c.accentText else c.ink3)
     }
 }
 
@@ -135,7 +139,8 @@ fun RrContextChip(
 @Composable
 internal fun RrChipPreview() = RrPreviewSurface {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        RrFilterChip("All", selected = true, onSelectedChange = {})
+        RrFilterChip("Needs you", selected = false, onSelectedChange = {}, count = "3")
+        RrFilterChip("All", selected = true, onSelectedChange = {}, count = "12")
         RrFilterChip("Resumes", selected = false, onSelectedChange = {})
         RrFilterChip("Letters", selected = false, onSelectedChange = {})
         RrFilterChip("Design", selected = false, onSelectedChange = {}, icon = R.drawable.ic_ph_tag)

@@ -48,6 +48,7 @@ import me.rxresu.core.designsystem.RrCard
 import me.rxresu.core.designsystem.RrDisclosureLine
 import me.rxresu.core.designsystem.RrFilterChip
 import me.rxresu.core.designsystem.RrHaptic
+import me.rxresu.core.designsystem.RrRecordButton
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTextField
 import me.rxresu.core.designsystem.RrTheme
@@ -278,7 +279,7 @@ internal fun DebriefScreen(
                     RrTextField(state.answer, onAnswer, label = stringResource(S.string.what_did_you_say_as_close_as_you_remember), singleLine = false, minLines = 5)
                     if (state.transcriber != null && !micDenied) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                            RecordButton(recording.recording, onRecord, size = 44.dp)
+                            RrRecordButton(recording.recording, onRecord, size = 44.dp)
                             when {
                                 state.transcribing -> me.rxresu.core.designsystem.RrWorkingLabel(listOf(stringResource(S.string.transcribing_with_model, state.transcriber.model)))
                                 recording.recording -> RrText(stringResource(S.string.recording_elapsed, clock(recording.elapsedMs)), style = RrType.small, color = c.ink2)
@@ -343,7 +344,7 @@ private fun ReviewResult(state: DebriefState, onRemember: () -> Unit, onNotNow: 
                     }
                 }
             }
-            me.rxresu.feature.workspace.InfoLine(stringResource(S.string.practice_priorities_not_conclusions_about_why_an_employer_decided_anything))
+            RrDisclosureLine(icon = DsR.drawable.ic_ph_info, text = stringResource(S.string.practice_priorities_not_conclusions_about_why_an_employer_decided_anything))
             RrButton(stringResource(S.string.start_a_debrief), onStartOver, variant = RrButtonVariant.Secondary)
         }
     }

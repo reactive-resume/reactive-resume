@@ -254,8 +254,8 @@ internal fun SaveJobRoute(url: String?, nav: NavController) {
                 haptics(RrHaptic.Success)
                 sheet.hide()
                 nav.popBackStack()
-                nav.navigate(if (prepare) NewDocument else ApplicationDest(id))
-                ToastScope.launch { toasts.show(added) }
+                nav.navigate(if (prepare) NewDocument(copyForApplicationId = id) else ApplicationDest(id))
+                toasts.post(added)
             }
         },
     )
@@ -367,7 +367,7 @@ internal fun SaveJobSheet(
                     )
                 }
                 if (state.saveFailed) RrCallout(stringResource(R.string.app_couldnt_add), tone = RrTone.Danger)
-                InfoLine(stringResource(R.string.app_capture_no_ai))
+                RrDisclosureLine(stringResource(R.string.app_capture_no_ai), icon = D.drawable.ic_ph_info)
             }
         }
         if (requirements) RrBottomSheet(onDismissRequest = { requirements = false }, title = stringResource(S.string.what_it_asks_for), fitContent = true) {
@@ -419,17 +419,6 @@ private fun StatusLine(text: String, color: androidx.compose.ui.graphics.Color) 
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         RrIcon(D.drawable.ic_ph_check_circle, null, size = 18.dp, tint = color)
         RrText(text, style = RrType.small, color = color)
-    }
-}
-
-/** 12 sp ink-3 note with an info mark. */
-// TODO(lead): RrDisclosureLine with an icon parameter (info instead of lock) would replace this.
-@Composable
-internal fun InfoLine(text: String) {
-    val c = RrTheme.colors
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        RrIcon(D.drawable.ic_ph_info, null, size = 16.dp, tint = c.ink3)
-        RrText(text, style = RrType.caption.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Normal), color = c.ink3)
     }
 }
 

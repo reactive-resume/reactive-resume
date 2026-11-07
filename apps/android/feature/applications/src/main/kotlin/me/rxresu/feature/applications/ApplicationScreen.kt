@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,8 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -70,11 +67,11 @@ import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrOfflineStrip
 import me.rxresu.core.designsystem.RrRowCaret
 import me.rxresu.core.designsystem.RrSectionHeader
-import me.rxresu.core.designsystem.RrShape
 import me.rxresu.core.designsystem.RrSkeleton
 import me.rxresu.core.designsystem.RrSkeletonText
-import me.rxresu.core.designsystem.RrStage
+import me.rxresu.core.designsystem.RrBadgeTone
 import me.rxresu.core.designsystem.RrStageLabel
+import me.rxresu.core.designsystem.RrStageStepper
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrToastTone
@@ -135,7 +132,7 @@ fun ApplicationRoute(id: String, tab: WorkspaceTab, nav: NavController) {
         time = vm.time,
         initialTab = tab,
         onBack = { nav.popBackStack() },
-        onCoach = { nav.navigate(Coach()) },
+        onCoach = { nav.navigate(Coach(applicationId = id)) },
         onMove = { nav.navigate(MoveApplication(id)) },
         onInterview = { interviewId -> nav.navigate(InterviewSheet(id, interviewId)) },
         onAddToCalendar = { interview ->
@@ -316,10 +313,10 @@ private fun tabWithBadge(tab: WorkspaceTab, state: ApplicationState): RrUnderlin
                     minutes < 48 * 60 -> stringResource(R.string.app_hours_short, Math.round(minutes / 60.0).toInt())
                     else -> pluralStringResource(R.plurals.app_days_short, Math.round(minutes / 1440.0).toInt(), Math.round(minutes / 1440.0).toInt())
                 }
-                RrUnderlineTab(label, text, warn = minutes <= 60)
+                RrUnderlineTab(label, text, tone = if (minutes <= 60) RrBadgeTone.Warn else RrBadgeTone.Accent)
             }
         }
-        WorkspaceTab.Messages -> if (state.unreadMessages > 0) RrUnderlineTab(label, state.unreadMessages.toString()) else RrUnderlineTab(label)
+        WorkspaceTab.Messages -> if (state.unreadMessages > 0) RrUnderlineTab(label, state.unreadMessages.toString(), tone = RrBadgeTone.Info) else RrUnderlineTab(label)
         WorkspaceTab.Saved -> if (state.saved.isNotEmpty()) RrUnderlineTab(label, state.saved.size.toString()) else RrUnderlineTab(label)
         else -> RrUnderlineTab(label)
     }
@@ -337,28 +334,14 @@ private fun StageRow(app: Application, lanes: List<Lane>, onMove: () -> Unit, on
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        RrStageLabel(app.status.rr(), label, style = RrType.label)
-        if (!closed) PipelineStepper(app.status, Modifier.weight(1f)) else Spacer(Modifier.weight(1f))
+        if (closed) {
+            RrStageLabel(app.status.rr(), label, style = RrType.label)
+            Spacer(Modifier.weight(1f))
+        } else {
+            RrStageStepper(app.status.rr(), label, Modifier.weight(1f), stages = Pipeline.map { it.rr() }, inline = true, labelStyle = RrType.label)
+        }
         if (closed) RrButton(stringResource(S.string.reopen), onReopen, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
         else RrButton(stringResource(S.string.move_to_6ffcfca36b), onMove, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
-    }
-}
-
-/**
- * Pipeline stepper bar: one 4 dp segment per open stage, each reached stage in its own colour (as the web header draws
- * it), the rest `line`. Decorative beside the stage name.
- */
-// TODO(lead): move to designsystem — RrStageStepper with an inline layout and per-stage segment colours.
-@Composable
-private fun PipelineStepper(current: ApplicationStage, modifier: Modifier = Modifier) {
-    val c = RrTheme.colors
-    val reached = Pipeline.indexOf(current)
-    val reduced = LocalReducedMotion.current
-    Row(modifier.semantics { contentDescription = "" }, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        Pipeline.forEachIndexed { i, stage ->
-            val color by androidx.compose.animation.animateColorAsState(if (i <= reached) stage.rr().color else c.line, RrMotion.spec(RrMotion.D2, reduced), label = "segment")
-            Box(Modifier.weight(1f).height(4.dp).clip(RrShape.sm).background(color))
-        }
     }
 }
 
