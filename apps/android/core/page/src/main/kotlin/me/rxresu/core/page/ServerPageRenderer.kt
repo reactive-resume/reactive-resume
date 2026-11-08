@@ -95,6 +95,7 @@ class ServerPageRenderer(
                 if (!it.isSuccessful) throw PageHttpException(it.code)
                 if (it.body.contentType()?.let { type -> type.type == "application" && type.subtype == "pdf" } != true)
                     throw IOException("Server returned no PDF")
+                directory.mkdirs() // Sign-out clears the cache; never assume the folder survived.
                 val temp = File.createTempFile("page-", ".part", directory)
                 try {
                     it.body.byteStream().use { input -> temp.outputStream().use { output ->

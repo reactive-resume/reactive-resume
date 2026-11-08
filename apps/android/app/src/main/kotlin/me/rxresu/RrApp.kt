@@ -102,7 +102,7 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         val signedIn = session is SessionState.SignedIn || session is SessionState.Expired
         SessionRouting(nav, signedIn)
         // Pages belong to one account; the next account starts with an empty cache.
-        LaunchedEffect(session) { if (session == SessionState.SignedOut) graph.pagesDir.deleteRecursively() }
+        LaunchedEffect(session) { if (session == SessionState.SignedOut) graph.pagesDir.listFiles()?.forEach { it.deleteRecursively() } }
         LaunchedEffect(nav) {
             incoming.collect { route ->
                 val tab = tabFor(route)

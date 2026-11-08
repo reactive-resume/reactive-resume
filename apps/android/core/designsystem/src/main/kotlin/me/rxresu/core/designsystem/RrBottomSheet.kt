@@ -1,5 +1,6 @@
 package me.rxresu.core.designsystem
 
+import kotlinx.coroutines.isActive
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -212,7 +213,14 @@ fun RrBottomSheet(
         if (reduced) {
             withContext(RrMotion.Unscaled) { fade.animateTo(0f, tween(RrMotion.D1)) }
         } else {
-            animateHeight(0f, RrMotion.exit(RrMotion.D3), RrMotion.ease)
+            // Another height animation (keyboard closing, content resizing) can interrupt the exit; the sheet still
+            // closes, so callers awaiting hide() always get to navigate.
+            try {
+                animateHeight(0f, RrMotion.exit(RrMotion.D3), RrMotion.ease)
+            } catch (interrupted: kotlinx.coroutines.CancellationException) {
+                if (!kotlinx.coroutines.currentCoroutineContext().isActive) throw interrupted // the caller itself was cancelled
+                state.height.snapTo(0f)
+            }
         }
         dismiss()
     }
@@ -294,7 +302,7 @@ fun RrBottomSheet(
 
     val ime = WindowInsets.ime.getBottom(density)
     LaunchedEffect(ime > 0) {
-        if (ime > 0 && state.anchors.isNotEmpty() && state.target > 0f && state.target < state.anchors.last()) {
+        if (ime > 0 && !state.hiding && state.anchors.isNotEmpty() && state.target > 0f && state.target < state.anchors.last()) {
             animateHeight(state.anchors.last(), RrMotion.D3, RrMotion.ease)
         }
     }
