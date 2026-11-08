@@ -36,7 +36,20 @@ primary purpose or add features that need new store declarations; ship those thr
 - Rollback: `eas update:rollback <LATEST_UPDATE_GROUP_ID>` from `apps/mobile`. It changes the mobile app only;
   coordinate any backend rollback separately and keep the API compatible in both directions.
 
-## Fingerprint changed: store build
+## Automatic native Android Internal Testing
+
+Every push to `main` builds the Kotlin app in `apps/android`, runs its lint/unit tests,
+and signs/publishes its AAB to Google Play **Internal Testing** (`internal`, `completed`).
+It uses the existing `me.rxresu` listing, upload key, service-account secret and shared
+version counter. Existing internal testers can receive the build after Play processing.
+Runs queue instead of canceling earlier pending releases. See [mobile CI](./mobile-ci.md)
+for credentials, environment restrictions and queue limits.
+
+This is the native Android binary, not an Expo OTA update. Testers installing it replace
+the Expo Android app under the same package. Production and iOS uploads remain explicitly
+selected through the manual workflow below.
+
+## Fingerprint changed: manual production store build
 
 1. Deploy the backend first. Keep the API backward compatible: older binaries and OTA bundles stay in use for weeks.
 2. Optionally bump `version` in `apps/mobile/app.config.ts`. CI supplies increasing iOS build numbers and Android
@@ -50,8 +63,9 @@ primary purpose or add features that need new store declarations; ship those thr
    upload begins. Leave `upload` disabled to only check a build or inspect the signed artifacts first.
 5. App Store Connect: the workflow uploads the IPA, creates or updates the app version, waits for the processed build,
    submits for review and sets automatic release after approval.
-6. Play Console: the workflow uploads straight to production with a full rollout and sends changes for review. It
-   does not publish to testing tracks. With Managed Publishing on, publish approved changes in the console.
+6. Play Console: a manual store upload goes to production with a full rollout and sends changes for review.
+   Automatic main-push uploads go to Internal Testing instead. With Managed Publishing on, publish approved
+   production changes in the console.
 7. Verify both public store versions and smoke-test store-installed builds. Workflow success proves submission, not
    approval. Confirm a later OTA update reaches each new binary, because its runtime version changed.
 
@@ -75,7 +89,8 @@ retention expires.
 ## Native Android app
 
 The Kotlin app in `apps/android` uses the same package (`me.rxresu`), Play listing, upload key and version counter as
-the Expo app, so a native store build replaces the Expo app for every Play user. Dispatch **Mobile release** with
+the Expo app, so a native production build replaces the Expo app for every Play user. Main pushes first publish
+the native app to Internal Testing. Dispatch **Mobile release** with
 `platform=android-native`:
 
 - `format=preview`, from any branch: a minified APK, package `me.rxresu.preview`, signed with the committed

@@ -10,8 +10,9 @@ Setup verified on **2026-10-21**: the signing/upload secrets were copied from
 existing EAS credentials into repository Actions secrets; the existing `EXPO_TOKEN`
 was retained. The initial `MOBILE_BUILD_NUMBER_BASE` was **100**. Live store counters were iOS **6**
 and Android **8**; workflow run 1, attempt 1 will allocate **100**. Environments
-`mobile-signing` and `mobile-store` accept only branch `main`; neither requires approval. The workflow is manually dispatched after its
-changes reach `main`; no Blacksmith app build or store upload was run during setup.
+`mobile-signing` and `mobile-store` accept only branch `main`; neither requires approval.
+Every push to `main` builds the Kotlin app and publishes it to Google Play Internal Testing.
+Manual dispatch remains available for preview/APK builds and production submissions.
 
 ## One-time migration
 
@@ -45,8 +46,9 @@ workflow artifacts. Base64 is encoding, not encryption.
   team `654ASRW868`, covering the current app entitlements and certificate.
 - `IOS_SHARE_PROVISION_PROFILE_BASE64`: base64 of the App Store profile for the share extension,
   `me.rxresu.expo-sharing-extension`, signed with the same certificate. Every iOS build needs it.
-- `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`: raw service-account JSON with release-to-production
-  permission for this app. Required only for Android uploads.
+- `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`: raw service-account JSON with release-to-testing-track
+  permission for Internal Testing and release-to-production permission for manual production submissions.
+  Required only for Android uploads.
 - `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY`: App Store Connect team API key ID,
   issuer UUID, and raw `.p8` private key with App Manager or Admin access.
   Required only for iOS uploads and App Review submission.
@@ -66,7 +68,7 @@ The workflow allocates both platforms' versions as:
 MOBILE_BUILD_NUMBER_BASE + (GITHUB_RUN_NUMBER - 1)
 ```
 
-Each new workflow run, including a manual APK request, increments by one. Retries reuse the same build number;
+Each new workflow run, including every main push and manual APK request, increments by one. Retries reuse the same build number;
 if an upload already used that number, dispatch a fresh run instead of rebuilding
 and uploading it again. The October 21 migration from the old 100-number stride
 uses base **298**: run 3 already allocated 300, so run 4 allocates 301, then run 5
@@ -78,13 +80,34 @@ systems do not allocate competing versions. `eas.json` remains legacy configurat
 its remote counters and auto-increment do not govern this workflow.
 
 Create separate GitHub environments **`mobile-signing`** and **`mobile-store`**.
-Restrict both to branch `main`, require approval from `amruthpillai`, allow self-review,
-and disallow admin bypass. The signing environment gates every job that reads signing
-credentials; the store environment separately gates jobs that read upload credentials.
+Restrict both to branch `main`. Do not add required reviewers to these environments:
+the main-push Internal Testing pipeline publishes automatically. The signing environment
+restricts every job that reads signing credentials; the store environment separately
+restricts jobs that read upload credentials.
 The preparation job validates inputs and allocates versions without any secrets.
 Merely naming an environment does not configure these protection rules.
 
 ## Build and upload
+
+### Automatic Internal Testing
+
+Every `main` push runs **Mobile release** with the native Android store build selected.
+It installs workspace dependencies for the bundled local import reader, runs Android lint
+and unit tests, builds/signs the release AAB, then publishes to Play track `internal` with
+release status `completed`. This publishes a tester release rather than leaving a draft.
+It retains the current Play listing and screenshots and sends the existing localized release notes.
+Play processing and tester enrollment still govern when an eligible tester can install it.
+
+The same workflow and build-number counter serve automatic and manual releases. Runs are
+serialized with `queue: max` and `cancel-in-progress: false`, so a later push does not replace
+an earlier pending build. GitHub permits up to 100 pending runs in this queue. Failed or
+canceled builds do not upload. Internal Testing uses the native Android checks; manual
+production submissions retain the exact-source successful main-CI gate below.
+
+Both native store and preview builds install the Node dependencies used by the import reader.
+No new signing key, package, service account or Actions secret is required.
+
+### Manual production and artifact builds
 
 1. Deploy backward-compatible backend changes first. Complete device QA and store
    declarations before enabling uploads. Prepare listing/reviewer details and release

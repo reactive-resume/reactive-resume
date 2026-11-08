@@ -53,8 +53,10 @@ platform :android do
     end
   end
 
-  desc "Submit a Google Play production release"
+  desc "Publish to Google Play Internal Testing or production"
   lane :upload do
+    track = ENV.fetch("GOOGLE_PLAY_TRACK", "production")
+    raise "Unsupported Google Play track" unless %w[internal production].include?(track)
     # supply reads release notes only from a metadata tree; listing text, images and screenshots stay skipped.
     Dir.mktmpdir("play-metadata-", ENV.fetch("RUNNER_TEMP")) do |metadata|
       release_notes("googleLocale").each do |locale, notes|
@@ -66,7 +68,7 @@ platform :android do
         package_name: "me.rxresu",
         json_key_data: ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
         aab: File.join(OUTPUT, "ReactiveResume.aab"),
-        track: "production", release_status: "completed",
+        track: track, release_status: "completed",
         changes_not_sent_for_review: false, rescue_changes_not_sent_for_review: false,
         metadata_path: metadata,
         skip_upload_apk: true, skip_upload_metadata: true, skip_upload_changelogs: false,

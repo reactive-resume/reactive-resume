@@ -1,7 +1,9 @@
 name: Mobile release
-run-name: Mobile ${{ inputs.upload && 'submit' || 'build' }} · ${{ inputs.platform }} · ${{ inputs.format }} · ${{ github.ref_name }}
+run-name: Mobile ${{ github.event_name == 'push' && 'internal testing' || (inputs.upload && 'submit' || 'build') }} · ${{ inputs.platform || 'android-native' }} · ${{ inputs.format || 'store' }} · ${{ github.ref_name }}
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       platform:
@@ -30,9 +32,10 @@ permissions:
 concurrency:
   group: mobile-release
   cancel-in-progress: false
+  queue: max
 
 env:
-  FORMAT: ${{ inputs.format }}
+  FORMAT: ${{ inputs.format || 'store' }}
   ABI: ${{ inputs.abi }}
   MOBILE_UPDATE_CHANNEL: ${{ inputs.format == 'apk' && 'preview' || 'production' }}
   CI: "1"
@@ -63,15 +66,15 @@ jobs:
       - name: Validate release inputs and allocate build number
         id: release
         env:
-          PLATFORM: ${{ inputs.platform }}
-          UPLOAD: ${{ inputs.upload }}
+          PLATFORM: ${{ github.event_name == 'push' && 'android-native' || inputs.platform }}
+          UPLOAD: ${{ github.event_name == 'push' && 'true' || inputs.upload }}
           MOBILE_BUILD_NUMBER_BASE: ${{ vars.MOBILE_BUILD_NUMBER_BASE }}
         run: node tooling/mobile/release.ts --prepare
 
   build:
     name: Build ${{ matrix.platform }} (${{ inputs.format }})
     needs: prepare
-    if: inputs.platform != 'android-native'
+    if: github.event_name != 'push' && inputs.platform != 'android-native'
     environment: mobile-signing
     strategy:
       fail-fast: false
@@ -218,9 +221,9 @@ jobs:
           echo "Commit: $GITHUB_SHA. Format: $FORMAT. OTA channel: $MOBILE_UPDATE_CHANNEL. Release evidence retained for 90 days." >> "$GITHUB_STEP_SUMMARY"
 
   build-native:
-    name: Build native Android (${{ inputs.format }})
+    name: Build native Android (${{ inputs.format || 'store' }})
     needs: prepare
-    if: inputs.platform == 'android-native' && inputs.format != 'preview'
+    if: github.event_name == 'push' || (inputs.platform == 'android-native' && inputs.format != 'preview')
     environment: mobile-signing
     runs-on: blacksmith-32vcpu-ubuntu-2404
     timeout-minutes: 60
@@ -235,10 +238,16 @@ jobs:
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies for the bundled local import reader
+        working-directory: .
+        run: pnpm install --frozen-lockfile
       - name: Validate signing credentials
         working-directory: .
         env:
@@ -260,8 +269,8 @@ jobs:
           packages: platform-tools platforms;android-37.0 build-tools;37.0.0
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
-      - name: Run unit tests (screenshots render; goldens are compared on macOS only)
-        run: ./gradlew testDebugUnitTest
+      - name: Run lint and unit tests (screenshots render; goldens are compared on macOS only)
+        run: ./gradlew lint testDebugUnitTest
       - name: Build signed binary
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -328,6 +337,16 @@ jobs:
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies for the bundled local import reader
+        working-directory: .
+        run: pnpm install --frozen-lockfile
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
@@ -362,10 +381,10 @@ jobs:
           echo "Commit: $GITHUB_SHA on ${GITHUB_REF_NAME}. Installs beside the Play app as me.rxresu.preview." >> "$GITHUB_STEP_SUMMARY"
 
   submit:
-    name: Submit ${{ matrix.platform }} for production review
+    name: Publish ${{ matrix.platform }} to ${{ github.event_name == 'push' && 'Internal Testing' || 'production review' }}
     needs: [prepare, build, build-native]
     # One of the two build jobs is skipped; submit when the other succeeded.
-    if: ${{ !cancelled() && !failure() && inputs.upload && inputs.format == 'store' }}
+    if: ${{ !cancelled() && !failure() && (github.event_name == 'push' || (inputs.upload && inputs.format == 'store')) }}
     permissions:
       actions: read
       contents: read
@@ -383,7 +402,8 @@ jobs:
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
-      - name: Require successful main CI for source commit
+      - name: Require successful main CI for production source commit
+        if: github.event_name != 'push'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         with:
           script: |
@@ -404,10 +424,11 @@ jobs:
         with:
           name: mobile-${{ matrix.platform }}-${{ needs.prepare.outputs.build_number }}
           path: ${{ runner.temp }}/mobile-release
-      - name: Submit binary for production review
+      - name: Publish signed binary
         working-directory: tooling/mobile
         env:
           PLATFORM: ${{ matrix.platform }}
+          GOOGLE_PLAY_TRACK: ${{ github.event_name == 'push' && 'internal' || 'production' }}
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ matrix.platform == 'android' && secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON || '' }}
           ASC_KEY_ID: ${{ matrix.platform == 'ios' && secrets.ASC_KEY_ID || '' }}
           ASC_ISSUER_ID: ${{ matrix.platform == 'ios' && secrets.ASC_ISSUER_ID || '' }}
