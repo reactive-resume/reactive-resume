@@ -87,15 +87,14 @@ this job".
 
 ## Server changes needed
 
-1. **App Links**: set `MOBILE_ANDROID_PACKAGES=me.rxresu,me.rxresu.debug` and add the signing-certificate SHA-256 of
-   each build to `MOBILE_ANDROID_CERT_SHA256` (`apps/server/src/http/app-links.ts`). Debug keystore on this Mac:
-   `26:4C:C2:D7:3D:0A:23:9F:AC:AD:94:96:41:53:F0:BA:0B:DE:03:FD:EA:B3:FA:E1:67:A2:8B:4E:10:29:B6:0E`.
-   The release key isn't set up yet: add the Play App Signing fingerprint when it is. Serve the same
-   `assetlinks.json` on `rx.cv` (the alias host) so public links there verify.
+1. **App Links**: nothing to change for Play builds. The app keeps package `me.rxresu`, and production already lists
+   the Play App Signing fingerprint (`3E:8A:…:81`) in `MOBILE_ANDROID_CERT_SHA256`; rx.cv serves the same file.
+   Optional: append the upload-key fingerprint (Play Console → App integrity) so links open CI-built release APKs.
 2. **Native passkeys** (follow-up): add `delegate_permission/common.get_login_creds` to `assetlinks.json`.
-3. **Optional, smoother first sign-in**: the app's own dynamically registered client gets the consent screen on first
-   sign-in. Marking first-party native clients (redirect `https://rxresu.me/auth/native-callback` or
-   `me.rxresu:/auth/native-callback`, name "Reactive Resume for Android") as trusted would skip it.
+3. **Done: first sign-in skips the consent screen.** A client registered with exactly
+   `https://rxresu.me/auth/native-callback` (the Android and iOS apps) is marked trusted, and its first token records
+   the grant, so Connected apps still lists and disconnects it (`packages/auth/src/config.ts`). Deploy the server first;
+   existing installs keep their cached client and their earlier consent.
 4. **API gaps** found while building (each screen degrades honestly today):
    - No PDF endpoint for saved versions or feedback snapshots; the public PDF requires downloads to be enabled.
    - External-app consent (A4) needs a bearer-token consent endpoint; the app falls back to the web page.
@@ -106,8 +105,11 @@ this job".
      `FitResult` has no must-have/nice-to-have field; lanes have no colour; custom-domain availability and price aren't
      exposed; `DocumentSummary` has no primary-resume flag; no preview endpoint for JSON Resume or LinkedIn imports.
 5. **Copy to confirm**: D4's reader option "Read on your server (free) / Reads the text layer, without AI" (the
-   storyboard's "Nothing leaves your phone" isn't true when the server reads the PDF); "Synced changes made in another
-   tab." (web wording) on a phone.
+   storyboard's "Nothing leaves your phone" isn't true when the server reads the PDF). The builder's sync notice now
+   reads "Synced changes made elsewhere." on web and Android.
+6. **CI**: Mobile release builds the native app with `platform=android-native`: `format=preview` from any branch (a
+   minified APK, `me.rxresu.preview`, beside the Play app), `apk` or `store` on `main` with the upload key, and
+   `upload` submits through the existing Play lane. See `.agents/docs/runbooks/mobile-releases.md`.
 
 ## Known gaps
 

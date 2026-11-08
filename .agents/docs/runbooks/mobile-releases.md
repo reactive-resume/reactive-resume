@@ -71,3 +71,20 @@ APKs keep package `me.rxresu`, but their upload signing certificate may differ f
 install and an APK install may not upgrade each other. For verified App Links, add the APK certificate fingerprint to
 `MOBILE_ANDROID_CERT_SHA256` next to the Play fingerprint. Export release evidence to permanent records before Actions
 retention expires.
+
+## Native Android app
+
+The Kotlin app in `apps/android` uses the same package (`me.rxresu`), Play listing, upload key and version counter as
+the Expo app, so a native store build replaces the Expo app for every Play user. Dispatch **Mobile release** with
+`platform=android-native`:
+
+- `format=preview`, from any branch: a minified APK, package `me.rxresu.preview`, signed with the committed
+  `apps/android/app/preview.jks`. It installs beside the Play app and over earlier previews. Download it from the
+  `android-preview-<build-number>` artifact within 14 days. It uses no secrets. Its links and social sign-in return to
+  the Play app, so test with password sign-in.
+- `format=apk`, on `main`: a release APK signed with the upload key, like the Expo manual APK above.
+- `format=store`, on `main`: an AAB. With `upload` enabled, the same Play lane submits it to production with a full
+  rollout. The first upload ships the native app to every Play user.
+
+Store builds use the Play App Signing key, which `MOBILE_ANDROID_CERT_SHA256` already lists, so App Links need no
+server change.

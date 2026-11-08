@@ -11,10 +11,20 @@ android {
         applicationId = "me.rxresu"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0.0"
+        // CI passes the Play version code (shared with the Expo app's counter); local builds use 1.
+        versionCode = providers.gradleProperty("rr.versionCode").orNull?.toInt() ?: 1
+        versionName = "2.0.0"
         // AppAuth's redirect receiver: the private-use scheme debug builds use against a local http server.
         manifestPlaceholders["appAuthRedirectScheme"] = "me.rxresu"
+    }
+    signingConfigs {
+        // Not secret: a fixed key so each CI preview APK installs over the last one.
+        create("preview") {
+            storeFile = file("preview.jks")
+            storePassword = "android"
+            keyAlias = "preview"
+            keyPassword = "android"
+        }
     }
     buildTypes {
         debug { applicationIdSuffix = ".debug" }
@@ -22,6 +32,13 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        // The release build (minified) under its own package, so it installs beside the Play app for testing.
+        create("preview") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".preview"
+            signingConfig = signingConfigs.getByName("preview")
+            matchingFallbacks += "release"
         }
     }
     compileOptions {

@@ -20,20 +20,26 @@ export function buildNumber(env: NodeJS.ProcessEnv) {
 	return number;
 }
 
+// "android-native" is the Kotlin app in apps/android. It shares the Play listing, so it shares the version counter and
+// the "android" store lane. "preview" is its side-by-side test APK, signed with a committed key and no secrets.
 export function prepareRelease(env: NodeJS.ProcessEnv) {
-	if (!["all", "android", "ios"].includes(env.PLATFORM ?? "")) throw new Error("Invalid release platform");
+	if (!["all", "android", "android-native", "ios"].includes(env.PLATFORM ?? ""))
+		throw new Error("Invalid release platform");
 	if (!["true", "false"].includes(env.UPLOAD ?? "")) throw new Error("UPLOAD must be true or false");
 	const format = env.FORMAT ?? "store";
-	if (!["store", "apk"].includes(format)) throw new Error("Invalid release format");
+	if (!["store", "apk", "preview"].includes(format)) throw new Error("Invalid release format");
 	if (format === "apk") {
-		if (env.PLATFORM !== "android" || env.UPLOAD !== "false") {
+		if (!["android", "android-native"].includes(env.PLATFORM ?? "") || env.UPLOAD !== "false") {
 			throw new Error("APK builds require Android and cannot upload to stores");
 		}
 		if (!["arm64-v8a", "armeabi-v7a", "x86_64"].includes(env.ABI ?? "")) throw new Error("Invalid APK ABI");
 	}
+	if (format === "preview" && (env.PLATFORM !== "android-native" || env.UPLOAD !== "false")) {
+		throw new Error("Preview builds require the native Android app and cannot upload to stores");
+	}
 	return {
 		buildNumber: buildNumber(env),
-		platforms: env.PLATFORM === "all" ? ["android", "ios"] : [env.PLATFORM],
+		platforms: env.PLATFORM === "all" ? ["android", "ios"] : env.PLATFORM === "ios" ? ["ios"] : ["android"],
 	};
 }
 
@@ -49,11 +55,11 @@ export function validateUpload(env: NodeJS.ProcessEnv) {
 
 export function validateRelease(env: NodeJS.ProcessEnv) {
 	const plan = prepareRelease(env);
-	const required = ["EXPO_TOKEN"];
+	const required = env.PLATFORM === "android-native" ? [] : ["EXPO_TOKEN"];
 	if (env.PLATFORM !== "ios") {
 		required.push("ANDROID_KEYSTORE_BASE64", "ANDROID_KEYSTORE_PASSWORD", "ANDROID_KEY_ALIAS", "ANDROID_KEY_PASSWORD");
 	}
-	if (env.PLATFORM !== "android") {
+	if (env.PLATFORM === "all" || env.PLATFORM === "ios") {
 		required.push(
 			"IOS_DISTRIBUTION_P12_BASE64",
 			"IOS_DISTRIBUTION_P12_PASSWORD",
