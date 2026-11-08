@@ -525,7 +525,9 @@ private fun SheetLayout(
         } else {
             state.anchors = if (fixedHeight != null) floatArrayOf(fixedHeight.toPx().coerceIn(0f, windowH)) else detents.map { it * windowH }.toFloatArray()
             val visible = state.height.value
-            val layoutH = max(visible, state.target).coerceIn(0f, windowH).toInt()
+            // The first layout must measure the resting sheet before its entry coroutine updates target/height.
+            val resting = if (state.target > 0f) state.target else state.anchors[min(initialDetent, state.anchors.lastIndex)]
+            val layoutH = max(visible, resting).coerceIn(0f, windowH).toInt()
             sheet.measure(Constraints.fixed(constraints.maxWidth, layoutH))
         }
         val anchors = state.anchors

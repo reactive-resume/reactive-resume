@@ -155,6 +155,14 @@ private fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boo
     RuntimeEnvironment.setQualifiers(if (dark) "+night" else "+notnight")
     RuntimeEnvironment.setFontScale(fontScale)
     try {
+        fidelityFile?.let { actual ->
+            // Targeted reruns must not inherit an end frame from a screen whose content now fits.
+            listOf(actual, File(actual.parentFile, "${actual.nameWithoutExtension}.json"),
+                File(actual.parentFile, "${actual.nameWithoutExtension}-end.png"),
+                File(actual.parentFile, "${actual.nameWithoutExtension}-end.json")).forEach {
+                check(!it.exists() || it.delete()) { "Could not remove stale capture $it" }
+            }
+        }
         ActivityScenario.launch(ComponentActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
                 WindowCompat.setDecorFitsSystemWindows(activity.window, false)

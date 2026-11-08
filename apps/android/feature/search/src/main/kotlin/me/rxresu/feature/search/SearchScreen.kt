@@ -184,7 +184,7 @@ private fun Leading(row: SearchRow) {
     val c = RrTheme.colors
     val hit = row.hit
     if (hit.kind == "application") {
-        RrCompanyTile(hit.title)
+        RrCompanyTile(hit.title, content = hit.title.take(2).uppercase())
         return
     }
     if (hit.kind in listOf("resume", "letter")) { RrDocumentThumbnail(letter = hit.kind == "letter"); return }

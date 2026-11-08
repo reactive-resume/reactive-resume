@@ -97,3 +97,22 @@
   No assertions skipped/weakened. Parent tracing first-layout/animation geometry before retest.
 - D4 desired local PDF read agrees with web. Existing Android quick read uploads raw PDF to server, so truthful
   server copy remains while actual local parser is implemented. No owner direction question is needed.
+
+## 2026-11-08 — Today/documents/search measured fix round
+
+- Shared fixes: exact white DocThumb metadata/outer ring/rounded bars; supported two-letter monograms and
+  Instrument Serif18/16 step numerals; search usesLU, Today role usesKS. Defaults preserved.
+- Reduced-motion root cause: fixed-height sheet first measured0height before entry coroutine ran. Measure resting
+  anchor immediately; unchanged formerly failing Open callback regression now passes (targeted19s run).
+- Capture hygiene regression proves a fitting screen deletes its own old endPNG/JSON without touching sibling
+  screens. Core testing17, designsystem47, data30, today17, search13, documents60:184 tests, zero failures/skips.
+- T1 had2missing New roles/count nodes beneath dock because LazyColumn had not composed that section. Today now
+  lays out its dashboard as one scroll page, retaining native coordinates for all headings and tab-reselect behavior.
+  Today17 tests passed after this change; no synthetic/invisible measurement nodes were added.
+- Selected strict scoreboard: **8/8 pass**, T1/T2/D1–D6, both themes, zero layout failures/bands; pixels0.04–0.15%.
+  Independent8-screen visual review in progress. Together with auth/settings,18 screens have measured acceptance.
+- Kit capture SHA remains e2c4cf76d33a6b0fd1c691bb557c481435f806d8dc22b11b8a5e51fd80db8a26.
+- Production search now includes persisted MessageDraft title/incoming/reply with application identity, using existing
+  store/cache and account guards. Six owner-path tests passed; no fictional note type or API/schema change.
+- Actual local import engine/browser/native-host tests passed; independent review found mixed scanned/text PDF
+  silent partial extraction. That finding is being fixed before local-reader acceptance or device proof.

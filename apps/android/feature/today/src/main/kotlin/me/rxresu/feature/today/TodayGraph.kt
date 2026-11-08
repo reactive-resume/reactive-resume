@@ -6,7 +6,7 @@ import android.os.Build
 import android.provider.Settings as AndroidSettings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import me.rxresu.core.navigation.OnTabReselected
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -69,8 +69,8 @@ internal fun TodayRoute(nav: NavController) {
     val haptics = rememberRrHaptics()
     val context = LocalContext.current
     val res = LocalResources.current
-    val listState = rememberLazyListState()
-    OnTabReselected(0) { listState.animateScrollToItem(0) }
+    val scrollState = rememberScrollState()
+    OnTabReselected(0) { scrollState.animateScrollTo(0) }
 
     var denied by rememberSaveable { mutableStateOf(false) }
     LifecycleResumeEffect(Unit) {
@@ -164,7 +164,7 @@ internal fun TodayRoute(nav: NavController) {
         onOpenSystemSettings = { openNotificationSettings(context) },
         onCreateAccount = { nav.navigate(SignIn(register = true)) },
     )
-    TodayScreen(state, repos.time.now(), repos.time.timezone(), actions, remindersDenied = denied, listState = listState)
+    TodayScreen(state, repos.time.now(), repos.time.timezone(), actions, remindersDenied = denied, scrollState = scrollState)
 }
 
 private fun openNotificationSettings(context: android.content.Context) {

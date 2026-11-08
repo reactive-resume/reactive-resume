@@ -13,10 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +40,7 @@ import me.rxresu.core.data.TodayKind
 import me.rxresu.core.designsystem.R as DS
 import me.rxresu.core.designsystem.RrHeroCard
 import me.rxresu.core.designsystem.RrCompanyTile
+import me.rxresu.core.designsystem.InstrumentSerif
 import me.rxresu.core.designsystem.RrDocumentThumbnail
 import me.rxresu.core.designsystem.RrBottomSheet
 import androidx.compose.foundation.clickable
@@ -73,6 +73,7 @@ import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrLargeTitleState
 import me.rxresu.core.designsystem.rrLargeTitleScroll
 import me.rxresu.core.navigation.WorkspaceTab
+import androidx.compose.ui.unit.sp
 import me.rxresu.core.network.generated.AddApplicationInterviewRequestKind
 import me.rxresu.core.network.generated.ApplicationStage
 import me.rxresu.core.network.generated.CareerSchedule
@@ -124,7 +125,7 @@ fun TodayScreen(
     actions: TodayActions,
     modifier: Modifier = Modifier,
     remindersDenied: Boolean = false,
-    listState: LazyListState = rememberLazyListState(),
+    scrollState: ScrollState = rememberScrollState(),
 ) {
     val context = LocalContext.current
     val locale = LocalConfiguration.current.locales[0]
@@ -143,14 +144,13 @@ fun TodayScreen(
             }
             if (state.offline) RrOfflineStrip()
             RrPullToRefresh(state.refreshing, actions.onRefresh, Modifier.weight(1f)) {
-                LazyColumn(
-                    Modifier.fillMaxSize().rrLargeTitleScroll(header),
-                    state = listState,
-                    contentPadding = PaddingValues(bottom = if (state.selectedRoles.isEmpty()) 24.dp else 80.dp),
+                Column(
+                    Modifier.fillMaxSize().rrLargeTitleScroll(header).verticalScroll(scrollState)
+                        .padding(bottom = if (state.selectedRoles.isEmpty()) 24.dp else 80.dp),
                 ) {
                     when {
-                        state.loading -> item("loading") { Loading() }
-                        state.error -> item("error") {
+                        state.loading -> Loading()
+                        state.error -> {
                             RrCallout(
                                 stringResource(R.string.today_load_failed),
                                 Modifier.padding(16.dp),
@@ -159,7 +159,7 @@ fun TodayScreen(
                                 onAction = actions.onRetry,
                             )
                         }
-                        else -> content(state, now, format, actions, remindersDenied)
+                        else -> TodayContent(state, now, format, actions, remindersDenied)
                     }
                 }
             }
@@ -168,46 +168,44 @@ fun TodayScreen(
     }
 }
 
-private fun LazyListScope.content(state: TodayUiState, now: Instant, format: TodayFormat, actions: TodayActions, remindersDenied: Boolean) {
+/** A bounded dashboard page: all section headings keep real layout positions beneath the shared dock. */
+@Composable
+private fun TodayContent(state: TodayUiState, now: Instant, format: TodayFormat, actions: TodayActions, remindersDenied: Boolean) {
     if (state.newAccount) {
-        item("hero") { FirstResumeHero(actions) }
-        item("steps") { Checklist(requireNotNull(state.firstRun), remindersDenied, actions) }
+        FirstResumeHero(actions)
+        Checklist(requireNotNull(state.firstRun), remindersDenied, actions)
         return
     }
     val hero = todayHero(state.needsYou, state.comingUp, now)
-    if (hero != null) item("hero") {
+    if (hero != null) {
         Crossfade(hero, animationSpec = tween(if (RrTheme.reducedMotion) 0 else RrMotion.D3), label = "hero") { entry ->
             TodayHero(entry, format, actions)
         }
     }
     val needs = state.needsYou.filter { it.item.id != hero?.item?.id }
-    item("needs-header") { RrSectionHeader(stringResource(S.string.needs_you)) }
-    item("needs") {
-        if (needs.isEmpty()) RrEmptyState(stringResource(S.string.you_re_up_to_date), stringResource(R.string.today_up_to_date_body), Modifier.padding(horizontal = 24.dp))
-        else RrListGroup(Modifier.animateContentSize(fold())) {
-            needs.forEachIndexed { index, entry -> NeedsRow(entry, format, actions, divider = index < needs.lastIndex) }
-        }
+    RrSectionHeader(stringResource(S.string.needs_you))
+    if (needs.isEmpty()) RrEmptyState(stringResource(S.string.you_re_up_to_date), stringResource(R.string.today_up_to_date_body), Modifier.padding(horizontal = 24.dp))
+    else RrListGroup(Modifier.animateContentSize(fold())) {
+        needs.forEachIndexed { index, entry -> NeedsRow(entry, format, actions, divider = index < needs.lastIndex) }
     }
     val coming = (state.comingUp + listOfNotNull(hero).filter { it.item.kind == TodayKind.Briefing || it.item.kind == TodayKind.Interview })
         .distinctBy { it.item.id }.sortedBy { it.item.at }
     if (coming.isNotEmpty()) {
-        item("coming-header") { RrSectionHeader(stringResource(S.string.coming_up), actionLabel = stringResource(S.string.calendar), onAction = actions.onCalendar) }
-        item("coming") { RrListGroup { coming.forEachIndexed { index, entry -> ComingRow(entry, format, actions, index < coming.lastIndex) } } }
+        RrSectionHeader(stringResource(S.string.coming_up), actionLabel = stringResource(S.string.calendar), onAction = actions.onCalendar)
+        RrListGroup { coming.forEachIndexed { index, entry -> ComingRow(entry, format, actions, index < coming.lastIndex) } }
     }
-    item("roles-header") { RrSectionHeader(stringResource(R.string.today_new_roles), count = state.newRoles.size.takeIf { it > 0 }?.let { stringResource(R.string.today_roles_today, it.toString()) }) }
-    item("roles") {
-        if (state.newRoles.isEmpty()) NoNewRoles(state.discovery, now, format, actions)
-        else RrListGroup(Modifier.animateContentSize(fold())) {
-            state.newRoles.forEachIndexed { index, role -> RoleRow(role, role.id in state.selectedRoles, state.selectedRoles.isNotEmpty(), actions, index < state.newRoles.lastIndex) }
-        }
+    RrSectionHeader(stringResource(R.string.today_new_roles), count = state.newRoles.size.takeIf { it > 0 }?.let { stringResource(R.string.today_roles_today, it.toString()) })
+    if (state.newRoles.isEmpty()) NoNewRoles(state.discovery, now, format, actions)
+    else RrListGroup(Modifier.animateContentSize(fold())) {
+        state.newRoles.forEachIndexed { index, role -> RoleRow(role, role.id in state.selectedRoles, state.selectedRoles.isNotEmpty(), actions, index < state.newRoles.lastIndex) }
     }
     if (state.recent.isNotEmpty()) {
-        item("recent-header") { RrSectionHeader(stringResource(R.string.today_recent)) }
-        item("recent") { RrListGroup {
+        RrSectionHeader(stringResource(R.string.today_recent))
+        RrListGroup {
             state.recent.take(3).forEachIndexed { index, doc ->
                 RrListRow(doc.name, subtitle = stringResource(if (doc.type == DocumentType.Letter) R.string.today_letter_meta else R.string.today_resume_meta, format.relative(doc.editedAt, now)), leading = { RrDocumentThumbnail(letter = doc.type == DocumentType.Letter) }, onClick = { actions.onOpenDocument(doc) }, divider = index < state.recent.take(3).lastIndex, trailing = { RrRowCaret() })
             }
-        } }
+        }
     }
 }
 
@@ -326,7 +324,7 @@ private fun ComingRow(entry: TodayEntry, format: TodayFormat, actions: TodayActi
 @Composable
 private fun RoleRow(role: Opportunity, selected: Boolean, selecting: Boolean, actions: TodayActions, divider: Boolean) {
     var open by remember { mutableStateOf(false) }
-    RrListRow(role.role, modifier = Modifier.semantics { if (selecting) this.selected = selected }, subtitle = listOfNotNull(role.company, role.location).joinToString(" · "), leading = { RrCompanyTile(role.company) }, selected = selected,
+    RrListRow(role.role, modifier = Modifier.semantics { if (selecting) this.selected = selected }, subtitle = listOfNotNull(role.company, role.location).joinToString(" · "), leading = { RrCompanyTile(role.company, content = role.company.take(2).uppercase()) }, selected = selected,
         onClick = { if (selecting) actions.onToggleRole(role.id) else open = true }, onLongClick = { actions.onToggleRole(role.id) }, onLongClickLabel = stringResource(R.string.today_select_role, role.role), divider = divider, trailing = { RrRowCaret() })
     if (open) RrBottomSheet({ open = false }, title = role.role, fitContent = true) {
         RrListRow(role.company, subtitle = role.location)
@@ -364,12 +362,13 @@ private fun NoNewRoles(discovery: CareerSchedule?, now: Instant, format: TodayFo
 
 @Composable
 private fun Checklist(firstRun: FirstRun, remindersDenied: Boolean, actions: TodayActions) {
+    val numberStyle = RrType.ui.copy(fontFamily = InstrumentSerif, fontSize = 18.sp, lineHeight = 16.sp)
     Column {
         RrSectionHeader(stringResource(R.string.today_how_it_works))
         RrListGroup {
-            RrListRow(stringResource(R.string.today_step_resume), subtitle = stringResource(R.string.today_step_resume_body), leading = { RrCompanyTile("1") }, divider = true)
-            RrListRow(stringResource(R.string.today_step_job), subtitle = stringResource(R.string.today_step_job_body), leading = { RrCompanyTile("2") }, onClick = if (firstRun.hasDocument) actions.onSaveJob else null, divider = true)
-            RrListRow(stringResource(R.string.today_step_apply), subtitle = stringResource(R.string.today_step_apply_body), leading = { RrCompanyTile("3") }, onClick = if (firstRun.hasApplication) actions.onApplications else null)
+            RrListRow(stringResource(R.string.today_step_resume), subtitle = stringResource(R.string.today_step_resume_body), leading = { RrCompanyTile("1", textStyle = numberStyle) }, divider = true)
+            RrListRow(stringResource(R.string.today_step_job), subtitle = stringResource(R.string.today_step_job_body), leading = { RrCompanyTile("2", textStyle = numberStyle) }, onClick = if (firstRun.hasDocument) actions.onSaveJob else null, divider = true)
+            RrListRow(stringResource(R.string.today_step_apply), subtitle = stringResource(R.string.today_step_apply_body), leading = { RrCompanyTile("3", textStyle = numberStyle) }, onClick = if (firstRun.hasApplication) actions.onApplications else null)
         }
     }
 }

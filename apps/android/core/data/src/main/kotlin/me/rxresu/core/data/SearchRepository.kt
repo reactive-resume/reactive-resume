@@ -22,6 +22,7 @@ internal class RealSearchRepository(private val store: RepositoryStore):SearchRe
         val owner=store.auth.state.value.scope()
         recent.value=owner to owner?.let { store.cache.get(it,"recent-searches")?.let { json -> ApiJson.decodeFromString(ListSerializer(String.serializer()),json) } }.orEmpty()
         if(query.isBlank()) { emit(Resource(shortcuts(scope)));return@flow }
+        val offlineGeneration=store.offlineGeneration.get()
         val hits=mutableListOf<SearchHit>();var failed:Throwable?=null
         suspend fun attempt(block: suspend()->Unit) { try { block() } catch(e: kotlinx.coroutines.CancellationException) { throw e } catch(e: Exception) { failed=e } }
         if(scope in setOf(SearchScope.All,SearchScope.Documents)) attempt {
@@ -34,10 +35,18 @@ internal class RealSearchRepository(private val store: RepositoryStore):SearchRe
             attempt { CareerApi(store).listCareerFacts(query=query).forEach { hits+=SearchHit(it.id,it.text,it.category,"fact",applicationId=it.applicationId) } }
             attempt { CareerApi(store).listCareerStories().filter { ApiJson.encodeToJsonElement(it).toString().contains(query,true) }.forEach { hits+=SearchHit(it.id,it.data.title,it.data.result.orEmpty(),"story",applicationId=it.applicationId) } }
             attempt { AgentApi(store).listAgentThreads().filter { it.title?.contains(query,true)==true || it.firstMessage?.contains(query,true)==true }.forEach { hits+=SearchHit(it.id,it.title ?: it.firstMessage.orEmpty(),"Conversation","thread",it.sourceResumeId,it.applicationId) } }
+            attempt {
+                CareerApi(store).listCareerSavedItems().forEach { item ->
+                    val message=item.data as? MessageDraft ?: return@forEach
+                    if(listOf(item.title,message.title,message.message,message.reply).any { it.contains(query,true) }) {
+                        hits+=SearchHit(item.id,item.title,message.reply,"message",applicationId=item.applicationId)
+                    }
+                }
+            }
         }
         hits+=shortcuts(scope).filter { it.title.contains(query,true) }
         if(store.auth.state.value.scope()!=owner) throw AccountChangedException()
-        emit(Resource(hits,offline=failed is java.io.IOException,error=failed))
+        emit(Resource(hits,offline=failed is java.io.IOException || store.offlineGeneration.get()!=offlineGeneration,error=failed))
     }
     private fun shortcuts(scope: SearchScope): List<SearchHit> = if(scope !in setOf(SearchScope.All,SearchScope.Settings)) emptyList() else listOf(
         SearchHit("settings","Settings","","destination"),SearchHit("knowledge","Knowledge","","destination"),SearchHit("offers","Offers","","destination"),SearchHit("ats-checker","ATS checker","","destination"),SearchHit("trash","Trash","","destination"),

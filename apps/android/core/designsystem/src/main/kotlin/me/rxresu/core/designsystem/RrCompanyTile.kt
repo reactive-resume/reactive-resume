@@ -9,19 +9,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/** Size of [RrCompanyTile]: 36 dp beside list rows (J1), 28 dp in board cards and compact rows. */
+/** Size of [RrCompanyTile]: 40 dp beside list rows, 28 dp in board cards and compact rows. */
 enum class RrCompanyTileSize(internal val size: Dp, internal val text: Dp) { Regular(40.dp, 14.dp), Small(28.dp, 12.dp) }
 
 /**
- * A company's mark: its first letter in 600 ink-2 on a sunken tile with 2 dp corners ("L" for Lumen). Decorative and
- * hidden from TalkBack: the row beside it names the company. The letter keeps its size at every font scale.
+ * A company's first letter, or explicit monogram/step content, on a sunken tile. Decorative and hidden from
+ * TalkBack: the row beside it names the company or step.
  */
 @Composable
-fun RrCompanyTile(company: String, modifier: Modifier = Modifier, size: RrCompanyTileSize = RrCompanyTileSize.Regular) {
+fun RrCompanyTile(
+    company: String,
+    modifier: Modifier = Modifier,
+    size: RrCompanyTileSize = RrCompanyTileSize.Regular,
+    content: String? = null,
+    textStyle: TextStyle? = null,
+) {
     val c = RrTheme.colors
     val trimmed = company.trim()
     val initial = if (trimmed.isEmpty()) "?" else String(Character.toChars(trimmed.codePointAt(0))).uppercase()
@@ -29,7 +36,7 @@ fun RrCompanyTile(company: String, modifier: Modifier = Modifier, size: RrCompan
         modifier.size(size.size).rrDesignTag(DesignTag(component = "Monogram", radius = RrRadius.md, bgName = "sunken")).clip(RrShape.md).background(c.sunken).rrClearAndSetSemantics {},
         contentAlignment = Alignment.Center,
     ) {
-        RrText(initial, style = fixedSizeText(RrType.ui.copy(fontWeight = FontWeight.SemiBold), size.text, 16.dp), color = c.ink2, maxLines = 1)
+        RrText(content ?: initial, style = textStyle ?: fixedSizeText(RrType.ui.copy(fontWeight = FontWeight.SemiBold), size.text, 16.dp), color = c.ink2, maxLines = 1)
     }
 }
 

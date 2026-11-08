@@ -15,10 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -93,10 +96,16 @@ fun RrPageThumbnail(
 @Composable
 fun RrDocumentThumbnail(modifier: Modifier = Modifier, letter: Boolean = false) {
     val shape = androidx.compose.foundation.shape.RoundedCornerShape(3.dp)
-    Canvas(modifier.size(36.dp, 50.dp).rrDesignTag(DesignTag(component = "DocThumb", radius = 3.dp, bgName = "paper")).clip(shape).background(RrFixedColors.paper).border(1.dp, RrTheme.colors.line2, shape).padding(horizontal = 6.dp, vertical = 7.dp)) {
-        drawRect(if (letter) RrFixedColors.thumbLetterHeading else RrFixedColors.thumbHeading, size = Size(size.width * if (letter) 0.35f else 0.55f, 4.dp.toPx()))
+    val outline = RrTheme.colors.line2
+    Canvas(modifier.size(36.dp, 50.dp).rrDesignTag(DesignTag(component = "DocThumb", radius = 3.dp, bgName = "#ffffff")).drawBehind {
+        // CSS box-shadow spreads the ring outside the paper without changing its measured box.
+        val ring = 1.dp.toPx()
+        drawRoundRect(outline, Offset(-ring / 2, -ring / 2), Size(size.width + ring, size.height + ring), CornerRadius(3.dp.toPx() + ring / 2), style = Stroke(ring))
+    }.clip(shape).background(RrFixedColors.paper).padding(horizontal = 6.dp, vertical = 7.dp)) {
+        val radius = CornerRadius(1.dp.toPx())
+        drawRoundRect(if (letter) RrFixedColors.thumbLetterHeading else RrFixedColors.thumbHeading, size = Size(size.width * if (letter) 0.35f else 0.55f, 4.dp.toPx()), cornerRadius = radius)
         listOf(1f, 0.8f, 1f, 0.65f).forEachIndexed { i, width ->
-            drawRect(RrFixedColors.thumbLine, topLeft = Offset(0f, (9 + i * 5).dp.toPx()), size = Size(size.width * width, 2.dp.toPx()))
+            drawRoundRect(RrFixedColors.thumbLine, topLeft = Offset(0f, (9 + i * 5).dp.toPx()), size = Size(size.width * width, 2.dp.toPx()), cornerRadius = radius)
         }
     }
 }
