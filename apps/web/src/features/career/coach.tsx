@@ -363,7 +363,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 								setRenaming(summary.id);
 								setRailOpen(true);
 							}}
-							className="touch-target block max-w-full truncate rounded-md text-start outline-none hover:text-accent-text focus-visible:ring-2 focus-visible:ring-accent"
+							className="touch-target relative block max-w-full truncate rounded-md text-start outline-none hover:text-accent-text focus-visible:ring-2 focus-visible:ring-accent"
 						>
 							{titleFor(summary)}
 						</button>

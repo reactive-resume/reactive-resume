@@ -330,7 +330,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 									],
 								})
 							}
-							className="touch-target flex h-9 items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-2 text-[13px] font-medium text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink"
+							className="touch-target relative flex h-9 items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-2 text-[13px] font-medium text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink"
 						>
 							<Icon name="plus" size={16} />
 							<Trans>Add a question from the form</Trans>

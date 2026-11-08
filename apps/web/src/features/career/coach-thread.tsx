@@ -523,7 +523,7 @@ export function WebResearchChip({ status, pressed, onPressedChange, fallbackLabe
 			/>
 		);
 	const chip =
-		"touch-target inline-flex h-7 items-center gap-1 rounded-sm border border-dashed border-line px-[9px] text-xs font-medium text-ink-3";
+		"touch-target relative inline-flex h-7 items-center gap-1 rounded-sm border border-dashed border-line px-[9px] text-xs font-medium text-ink-3";
 	if (status.isPending || status.isError)
 		return (
 			<Tooltip>
