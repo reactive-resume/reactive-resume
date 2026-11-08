@@ -1,5 +1,7 @@
 package me.rxresu.core.designsystem
 
+import androidx.compose.ui.graphics.graphicsLayer
+
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
@@ -30,3 +32,10 @@ internal fun rrCursorBrush(color: androidx.compose.ui.graphics.Color): androidx.
     androidx.compose.ui.graphics.SolidColor(
         if (androidx.compose.ui.platform.LocalInspectionMode.current) androidx.compose.ui.graphics.Color.Transparent else color,
     )
+
+/**
+ * Fades a control while [enabled] is false. One layer in both states, never `Modifier.alpha`: that drops its layer at
+ * 1f, and on devices the changed chain could stop drawing the control's fill once it was enabled again.
+ */
+fun Modifier.rrEnabledAlpha(enabled: Boolean, disabledAlpha: Float = 0.45f): Modifier =
+    graphicsLayer { alpha = if (enabled) 1f else disabledAlpha }

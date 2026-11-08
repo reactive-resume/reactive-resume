@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
@@ -199,7 +198,7 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
             RrListRow(stringResource(CoreR.string.copy_for_a_job), icon = DsR.drawable.ic_ph_briefcase, onClick = { action("job") }, enabled = state.editable)
             RrListRow(stringResource(CoreR.string.notes), subtitle = stringResource(R.string.p4_only_you_can_see_these), icon = DsR.drawable.ic_ph_note, onClick = { action("notes") }, enabled = state.editable)
             RrListRow(stringResource(CoreR.string.print), icon = DsR.drawable.ic_ph_printer, onClick = { action("print") })
-            RrListRow(stringResource(CoreR.string.move_to_trash), icon = DsR.drawable.ic_ph_trash, danger = true, modifier = Modifier.alpha(if (state.editable) 1f else 0.45f), enabled = state.editable, onClick = { haptics(RrHaptic.Light); action("trash") })
+            RrListRow(stringResource(CoreR.string.move_to_trash), icon = DsR.drawable.ic_ph_trash, danger = true, modifier = Modifier.rrEnabledAlpha(state.editable, 0.45f), enabled = state.editable, onClick = { haptics(RrHaptic.Light); action("trash") })
         }
         if (state.failed) Failure { action("retry") }
     }

@@ -146,6 +146,30 @@ class CareerModelsTest {
         assertEquals("A new unsent thought", model.state.value.draft)
         repositories.close()
     }
+    @Test fun newConversationStartsOnTheFirstConnectionAndAnswersTheCoachsQuestionInPlace() = runTest {
+        val controls = FakeControls()
+        val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
+        controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(repositories.ai.listAiProviders().map { it.copy(testStatus = "success") }))
+        val transport = RecordingCoachTransport().apply { askQuestion = true }
+        val model = CoachViewModel(repositories, CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler)), null, null, transport); advanceUntilIdle()
+        // As on the web, a new conversation is ready to send on the default connection.
+        val provider = model.state.value.providers.first()
+        assertEquals(provider.id, model.state.value.selected)
+        model.draft("Help me prepare"); model.send(); advanceUntilIdle()
+        val question = requireNotNull(model.state.value.pendingQuestion())
+        assertEquals("Which interview?", question.text); assertEquals(listOf("Northwind", "Lumen"), question.answers)
+        transport.askQuestion = false
+        model.answer(question, "Northwind"); advanceUntilIdle()
+        val sent = requireNotNull(transport.sent)
+        val part = sent.body!!.jsonObject["message"]!!.jsonObject["parts"]!!.jsonArray.single().jsonObject
+        assertEquals("question", sent.body!!.jsonObject["message"]!!.jsonObject["id"]!!.jsonPrimitive.content)
+        assertEquals("output-available", part["state"]!!.jsonPrimitive.content)
+        assertEquals("Northwind", part["output"]!!.jsonPrimitive.content)
+        assertEquals(aiApproval(provider), sent.options.headers)
+        assertNull(model.state.value.pendingQuestion())
+        assertEquals("A reply", model.state.value.messages.last().text)
+        repositories.close()
+    }
     @Test fun changedCoachRecipientRejectsBeforeDispatchAndRetainsWords() = runTest {
         val controls = FakeControls()
         val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
@@ -183,6 +207,8 @@ class CareerModelsTest {
 
 private class RecordingCoachTransport : ApiTransport {
     var sent: ApiRequest? = null; var fail = false
+    /** The next reply asks the user a question (an `ask_user_question` tool call) instead of answering. */
+    var askQuestion = false
     val executed = mutableListOf<ApiRequest>()
     private val messages = mutableListOf<JsonElement>()
     override suspend fun execute(request: ApiRequest): JsonElement = buildJsonObject {
@@ -196,6 +222,11 @@ private class RecordingCoachTransport : ApiTransport {
         messages += message
         if (fail) throw IOException("Lost stream")
         emit(ServerEvent(null, null, """{"type":"text-delta","delta":"A reply"}"""))
-        messages += buildJsonObject { put("id", "reply"); put("role", "assistant"); putJsonArray("parts") { add(buildJsonObject { put("type", "text"); put("text", "A reply") }) } }
+        if (message.jsonObject["role"]?.jsonPrimitive?.content == "assistant") { messages.removeAll { it.jsonObject["id"] == message.jsonObject["id"] }; messages += message }
+        if (askQuestion) messages += buildJsonObject { put("id", "question"); put("role", "assistant"); putJsonArray("parts") { add(buildJsonObject {
+            put("type", "tool-ask_user_question"); put("toolCallId", "q1"); put("state", "input-available")
+            putJsonObject("input") { put("question", "Which interview?"); putJsonArray("options") { add(JsonPrimitive("Northwind")); add(JsonPrimitive("Lumen")) } }
+        }) } }
+        else messages += buildJsonObject { put("id", "reply"); put("role", "assistant"); putJsonArray("parts") { add(buildJsonObject { put("type", "text"); put("text", "A reply") }) } }
     }
 }

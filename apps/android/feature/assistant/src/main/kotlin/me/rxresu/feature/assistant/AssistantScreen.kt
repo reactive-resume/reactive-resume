@@ -1,5 +1,6 @@
 package me.rxresu.feature.assistant
 
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -84,7 +85,7 @@ import me.rxresu.core.strings.R as CoreR
                 if (ownWords) RrTextField(ownAnswer, { ownAnswer = it }, label = stringResource(CoreR.string.or_in_your_own_words), enabled = !state.streaming && !state.locked,
                     trailing = if (ownAnswer.isNotBlank()) ({ RrIconButton(DsR.drawable.ic_ph_arrow_up, stringResource(CoreR.string.send), { action("answer:" + question.toolCallId + ":" + ownAnswer) }, size = RrIconButtonSize.Small, enabled = !state.streaming && !state.locked) }) else null)
             }
-            if (state.proposals.isNotEmpty()) RrButton(stringResource(R.string.p4_review_1_s_edits, state.proposals.size.toString()), { action("proposals") }, variant = RrButtonVariant.Secondary)
+            if (state.proposals.isNotEmpty()) RrButton(pluralStringResource(R.plurals.p4_review_edits, state.proposals.size, state.proposals.size), { action("proposals") }, variant = RrButtonVariant.Secondary)
             if (state.historyUnavailable) RrCallout(stringResource(R.string.p4_saved_conversation_content_is_unavailable_your_document_is_unchanged))
             // A changed connection says so; the disclosure line below already names the renewed destination.
             if (state.failed) RrCallout(stringResource(if (state.destinationChanged) DsR.string.ds_ai_destination_changed else R.string.p4_couldn_t_send_your_message_is_kept), tone = RrTone.Danger, actionLabel = stringResource(CoreR.string.retry), onAction = send)
@@ -113,12 +114,16 @@ import me.rxresu.core.strings.R as CoreR
     if (askDiscard) RrAlertDialog(stringResource(DsR.string.ds_discard_changes_title), stringResource(DsR.string.ds_discard_changes_body), stringResource(DsR.string.ds_discard),
         onConfirm = { askDiscard = false; cancelWording(); dismiss() }, onDismissRequest = { askDiscard = false }, dismissLabel = stringResource(DsR.string.ds_keep_editing), confirm = RrDialogConfirm.Danger)
     // Discard from the sheet's own guard (Back, swipe, scrim) drops the draft too.
-    RrBottomSheet({ cancelWording(); dismiss() }, detents = listOf(0.935f), confirmDiscard = dirty, footer = {
+    // As on the web: bulk actions only when there's more than one edit to act on; "the others" only when some must
+    // be confirmed one by one.
+    val checked = bulkEligible(state.proposals)
+    val bulk = open.size > 1 || checked.size > 1
+    RrBottomSheet({ cancelWording(); dismiss() }, detents = listOf(0.935f), confirmDiscard = dirty, footer = if (!bulk) null else ({
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            RrButton(stringResource(CoreR.string.reject_all), { decide(open.map { it.id }, Decision.Rejected, null) }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, enabled = !state.deciding && !state.locked)
-            RrButton(stringResource(CoreR.string.accept_the_others), { decide(bulkEligible(state.proposals).map { it.id }, Decision.Accepted, null) }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, enabled = !state.deciding && !state.locked)
+            if (open.size > 1) RrButton(stringResource(CoreR.string.reject_all), { decide(open.map { it.id }, Decision.Rejected, null) }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, enabled = !state.deciding && !state.locked)
+            if (checked.size > 1) RrButton(stringResource(if (checked.size < open.size) CoreR.string.accept_the_others else CoreR.string.accept_all), { decide(checked.map { it.id }, Decision.Accepted, null) }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, enabled = !state.deciding && !state.locked)
         }
-    }) {
+    })) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 6.dp), verticalAlignment = Alignment.CenterVertically) {
             RrIconButton(DsR.drawable.ic_ph_caret_left, stringResource(CoreR.string.back), close, mirrorInRtl = true)
             RrText(stringResource(R.string.p4_proposed_edits), style = RrType.label, modifier = Modifier.weight(1f))

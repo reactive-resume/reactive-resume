@@ -122,6 +122,7 @@ import kotlinx.coroutines.launch
 @Composable internal fun CoachScreen(state: CoachState, onDraft: (String) -> Unit, memory: (Boolean) -> Unit, applications: (Boolean) -> Unit,
     back: () -> Unit, chooseProvider: () -> Unit, more: () -> Unit, retry: () -> Unit, knowledge: () -> Unit, setup: () -> Unit,
     send: () -> Unit, stop: () -> Unit, rememberFact: (CoachFact) -> Unit, dismissFact: (String) -> Unit, copyReply: (String) -> Unit, shareReply: (String) -> Unit = {}, contextUsed: (kotlinx.serialization.json.JsonObject) -> Unit = {},
+    answer: (CoachQuestion, String) -> Unit = { _, _ -> },
 ) {
     val c = RrTheme.colors
     val scroll = rememberScrollState()
@@ -178,9 +179,18 @@ import kotlinx.coroutines.launch
                         }
                     }
                 }
+                // The coach's question is answered here, like the builder's assistant; tool approvals still go to the browser.
+                state.pendingQuestion()?.let { question ->
+                    var ownWords by remember(question.toolCallId) { mutableStateOf(false) }
+                    var ownAnswer by remember(question.toolCallId) { mutableStateOf("") }
+                    val canAnswer = !state.busy && !state.readOnly
+                    RrQuestionCard(question.text, question.answers, { answer(question, it) },
+                        ownWordsLabel = stringResource(CoreStrings.string.or_in_your_own_words), onOwnWords = { ownWords = true }, enabled = canAnswer)
+                    if (ownWords) RrTextField(ownAnswer, { ownAnswer = it }, label = stringResource(CoreStrings.string.or_in_your_own_words), enabled = canAnswer,
+                        trailing = if (ownAnswer.isNotBlank()) ({ RrIconButton(Icons.drawable.ic_ph_arrow_up, stringResource(CoreStrings.string.send), { answer(question, ownAnswer) }, size = RrIconButtonSize.Small, enabled = canAnswer) }) else null)
+                }
                 if (state.messages.any { message -> message.parts.any { part ->
-                    part["state"].toString().trim('"') in setOf("approval-requested", "approval-responded") ||
-                        part["type"].toString().trim('"') == "tool-ask_user_question" && part["state"].toString().trim('"') == "input-available"
+                    part["state"].toString().trim('"') in setOf("approval-requested", "approval-responded")
                 } }) RrCallout(stringResource(R.string.career_continue_browser), tone = RrTone.Info,
                     actionLabel = stringResource(R.string.career_open_in_browser_052269), onAction = more)
                 state.pendingFacts.forEach { proposal -> key(proposal.callId) { Folding(visible = true, appear = true) { RememberPrompt(proposal, rememberFact, dismissFact, knowledge) } } }

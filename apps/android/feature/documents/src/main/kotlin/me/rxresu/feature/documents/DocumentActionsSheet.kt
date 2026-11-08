@@ -1,5 +1,6 @@
 package me.rxresu.feature.documents
 
+import me.rxresu.core.designsystem.rrEnabledAlpha
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -22,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -232,5 +232,5 @@ private fun Main(doc: DocumentSummary, state: DocumentActionsUiState, preparing:
 
 @Composable
 private fun Disabled(disabled: Boolean, content: @Composable () -> Unit) {
-    Box(Modifier.alpha(if (disabled) 0.45f else 1f)) { content() }
+    Box(Modifier.rrEnabledAlpha(!disabled)) { content() }
 }

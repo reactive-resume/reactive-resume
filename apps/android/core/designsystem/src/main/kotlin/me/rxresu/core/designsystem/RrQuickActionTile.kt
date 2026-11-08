@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -42,11 +41,11 @@ fun RrQuickActionTile(
         modifier
             .rrPressScale(interaction)
             .heightIn(min = 68.dp)
+            .rrEnabledAlpha(enabled, 0.45f)
             .clip(RrShape.lg)
             .background(c.surface)
             .border(1.dp, c.line, RrShape.lg)
             .clickable(interaction, LocalIndication.current, enabled = enabled && !busy, role = Role.Button, onClick = onClick)
-            .alpha(if (enabled) 1f else 0.45f)
             .padding(horizontal = 4.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),

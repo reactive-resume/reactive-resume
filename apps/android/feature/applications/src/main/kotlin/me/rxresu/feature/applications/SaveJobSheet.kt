@@ -120,6 +120,8 @@ internal data class SaveJobState(
     val searching: Boolean = false,
     val results: List<CreatePostingSearchResponseItem>? = null,
     val searchFailed: Boolean = false,
+    /** Opened from the share sheet with a link: the web's "capture". */
+    val captured: Boolean = false,
 ) {
     val isLink get() = input.trim().let { it.startsWith("https://") || it.startsWith("http://") } && !input.trim().contains(' ')
     val clipped get() = parsed?.postingSource?.let { it.truncated || it.completeness == AddApplicationInterviewResponsePostingSourceCompleteness.Incomplete } == true
@@ -140,7 +142,7 @@ internal class SaveJobViewModel(
     init {
         if (signedIn) viewModelScope.launch { runCatching { documents.listDocuments(trashed = false) }.onSuccess { d -> _state.update { it.copy(documents = d) } } }
         // From the share sheet: the link is filled in and reading starts at once.
-        if (signedIn && !initialUrl.isNullOrBlank()) { setInput(initialUrl); read(useAi = false) }
+        if (signedIn && !initialUrl.isNullOrBlank()) { _state.update { it.copy(captured = true) }; setInput(initialUrl); read(useAi = false) }
     }
 
     fun update(block: (SaveJobState) -> SaveJobState) = _state.update(block)
@@ -367,7 +369,8 @@ internal fun SaveJobSheet(
                     )
                 }
                 if (state.saveFailed) RrCallout(stringResource(R.string.app_couldnt_add), tone = RrTone.Danger)
-                RrDisclosureLine(stringResource(R.string.app_capture_no_ai), icon = D.drawable.ic_ph_info)
+                // As on the web: only for a shared link, and never after the user chose to read it with AI.
+                if (state.captured && state.outcome != ReadOutcome.Ai) RrDisclosureLine(stringResource(R.string.app_capture_no_ai), icon = D.drawable.ic_ph_info)
             }
         }
         if (requirements) RrBottomSheet(onDismissRequest = { requirements = false }, title = stringResource(S.string.what_it_asks_for), fitContent = true) {
@@ -408,6 +411,9 @@ private fun ReadStatus(state: SaveJobState, onRead: (Boolean) -> Unit) {
             RrButton(stringResource(S.string.read_with_ai), { onRead(true) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small, icon = D.drawable.ic_ph_sparkle)
             RrDisclosureLine(stringResource(R.string.app_read_ai_disclosure))
         }
+        // As on the web: a read that left the role or company empty says so instead of "Found".
+        (state.outcome == ReadOutcome.Page || state.outcome == ReadOutcome.Ai) && (state.parsed?.role.isNullOrBlank() || state.parsed?.company.isNullOrBlank()) ->
+            StatusLine(stringResource(R.string.app_some_details_unread), c.warnText, D.drawable.ic_ph_warning_circle)
         state.outcome == ReadOutcome.Page || state.outcome == ReadOutcome.Ai -> StatusLine(stringResource(R.string.app_found_role_company), c.accentText)
         state.outcome == ReadOutcome.Guessed -> StatusLine(stringResource(R.string.app_filled_first_line), c.ink2)
     }
@@ -415,9 +421,9 @@ private fun ReadStatus(state: SaveJobState, onRead: (Boolean) -> Unit) {
 }
 
 @Composable
-private fun StatusLine(text: String, color: androidx.compose.ui.graphics.Color) {
+private fun StatusLine(text: String, color: androidx.compose.ui.graphics.Color, icon: Int = D.drawable.ic_ph_check_circle) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        RrIcon(D.drawable.ic_ph_check_circle, null, size = 18.dp, tint = color)
+        RrIcon(icon, null, size = 18.dp, tint = color)
         RrText(text, style = RrType.small, color = color)
     }
 }

@@ -1,5 +1,6 @@
 package me.rxresu.core.designsystem
 
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -106,13 +106,15 @@ fun RrButton(
     Row(
         modifier = modifier
             .rrPressScale(interaction)
+            // Disabled fades the whole button, fill included. A layer whose alpha changes, never Modifier.alpha: that
+            // removes its layer at 1f, and on devices the changed chain could drop the fill once a button was enabled.
+            .graphicsLayer { alpha = if (enabled) 1f else 0.45f }
             .defaultMinSize(minHeight = size.height)
             .clip(size.shape)
             .background(colors.container)
             .then(if (colors.border != null) Modifier.border(1.dp, colors.border, size.shape) else Modifier)
             .clickable(interaction, androidx.compose.foundation.LocalIndication.current, enabled = enabled && !loading, role = Role.Button, onClick = onClick)
             .then(if (loading) Modifier.semantics { stateDescription = busy } else Modifier)
-            .alpha(if (enabled) 1f else 0.45f)
             .padding(horizontal = size.horizontalPadding, vertical = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,

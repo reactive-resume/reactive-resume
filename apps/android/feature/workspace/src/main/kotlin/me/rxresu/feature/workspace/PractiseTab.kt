@@ -478,7 +478,7 @@ private fun ReviewAnswer(
     } else {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             RrButton(stringResource(S.string.get_feedback), onFeedback, enabled = review.text.isNotBlank() && state.context.provider != null, icon = DsR.drawable.ic_ph_sparkle)
-            if (state.transcriber != null && !micDenied) RrButton(stringResource(S.string.record_again), onRecordAgain, variant = RrButtonVariant.Secondary, icon = DsR.drawable.ic_ph_microphone)
+            if (state.transcriber != null && !micDenied) RrButton(stringResource(if (review.spokenMs != null) S.string.record_again else S.string.record_your_answer), onRecordAgain, variant = RrButtonVariant.Secondary, icon = DsR.drawable.ic_ph_microphone)
         }
     }
     state.context.provider?.let { RrDisclosureLine(sendsLine(it, S.string.the_question_and_your_answer, S.string.enabled_knowledge)) }

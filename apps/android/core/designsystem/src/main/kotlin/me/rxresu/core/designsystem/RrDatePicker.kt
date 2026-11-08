@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -122,7 +121,7 @@ fun RrDatePicker(
                                         onSelect(day)
                                     }
                                     .semantics { contentDescription = label }
-                                    .alpha(if (allowed) 1f else 0.35f),
+                                    .rrEnabledAlpha(allowed, 0.35f),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 RrText(

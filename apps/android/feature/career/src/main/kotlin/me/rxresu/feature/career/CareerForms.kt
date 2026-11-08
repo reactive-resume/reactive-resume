@@ -39,7 +39,7 @@ import me.rxresu.core.network.generated.*
     var open by remember { mutableStateOf(false) }
     RrPickerField(value, { open = true }, modifier, label = label, enabled = enabled)
     if (open) RrBottomSheet({ open = false }, title = label, fitContent = true) {
-        choices.forEach { (key, text) -> RrChoiceRow(text, value == text, { onSelect(key); open = false }, Modifier.fillMaxWidth()) }
+        choices.forEach { (key, text) -> RrChoiceRow(text, value == text, { onSelect(key); open = false }, Modifier.fillMaxWidth().padding(horizontal = 12.dp)) }
     }
 }
 

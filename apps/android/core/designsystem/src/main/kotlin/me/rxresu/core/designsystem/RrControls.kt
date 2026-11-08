@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -46,7 +45,7 @@ fun RrSwitch(checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?, modifier: 
             haptics(if (it) RrHaptic.ToggleOn else RrHaptic.ToggleOff)
             onCheckedChange(it)
         }
-    Box(modifier.then(toggle).alpha(if (enabled) 1f else 0.45f), contentAlignment = Alignment.Center) {
+    Box(modifier.then(toggle).rrEnabledAlpha(enabled, 0.45f), contentAlignment = Alignment.Center) {
         Box(
             Modifier
                 .size(40.dp, 24.dp)
@@ -77,7 +76,7 @@ fun RrCheckbox(checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?, modifier
             haptics(if (it) RrHaptic.ToggleOn else RrHaptic.ToggleOff)
             onCheckedChange(it)
         }
-    Box(modifier.then(toggle).alpha(if (enabled) 1f else 0.45f), contentAlignment = Alignment.Center) {
+    Box(modifier.then(toggle).rrEnabledAlpha(enabled, 0.45f), contentAlignment = Alignment.Center) {
         Box(
             Modifier
                 .size(20.dp)
@@ -102,7 +101,7 @@ fun RrRadio(selected: Boolean, onClick: (() -> Unit)?, modifier: Modifier = Modi
             if (!selected) haptics(RrHaptic.Selection)
             onClick()
         }
-    Box(modifier.then(select).alpha(if (enabled) 1f else 0.45f), contentAlignment = Alignment.Center) {
+    Box(modifier.then(select).rrEnabledAlpha(enabled, 0.45f), contentAlignment = Alignment.Center) {
         Box(
             Modifier.size(20.dp).clip(RrShape.full).background(c.raised).border(1.dp, if (selected) c.accent else c.controlBorder, RrShape.full),
             contentAlignment = Alignment.Center,

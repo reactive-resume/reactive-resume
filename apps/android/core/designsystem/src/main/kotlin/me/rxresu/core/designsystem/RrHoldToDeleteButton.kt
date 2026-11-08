@@ -23,7 +23,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
@@ -119,10 +118,10 @@ internal fun HoldToDeleteSurface(progress: Float, text: String, enabled: Boolean
         modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 44.dp)
+            .rrEnabledAlpha(enabled, 0.45f)
             .clip(RrShape.lg)
             .background(c.dangerSoft)
-            .border(1.dp, c.danger, RrShape.lg)
-            .alpha(if (enabled) 1f else 0.45f),
+            .border(1.dp, c.danger, RrShape.lg),
         contentAlignment = Alignment.Center,
     ) {
         // Fill from the leading edge (start in RTL too); danger at 25% over danger-soft.

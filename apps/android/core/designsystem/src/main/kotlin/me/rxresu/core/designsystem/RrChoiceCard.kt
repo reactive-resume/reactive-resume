@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -41,6 +40,7 @@ fun RrChoiceCard(
     Column(
         modifier
             .heightIn(min = 56.dp)
+            .rrEnabledAlpha(enabled, 0.45f)
             .clip(RrShape.md)
             .background(if (selected) c.accentSoft else c.raised)
             .border(1.dp, if (selected) c.accent else c.line2, RrShape.md)
@@ -48,7 +48,6 @@ fun RrChoiceCard(
                 if (!selected) haptics(RrHaptic.Selection)
                 onClick()
             }
-            .alpha(if (enabled) 1f else 0.45f)
             .padding(horizontal = 8.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),

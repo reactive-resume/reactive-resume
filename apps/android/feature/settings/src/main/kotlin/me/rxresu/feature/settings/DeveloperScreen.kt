@@ -84,18 +84,14 @@ internal fun DeveloperScreen(
                                 )
                             )
                         if (status.configured)
-                            RrText(status.provider?.wireValue.orEmpty(), style = RrType.label)
+                            RrText(status.provider?.let(::webProviderName).orEmpty(), style = RrType.label)
                         if (status.canSave && !status.managed) {
                             RrSegmentedControl(
-                                listOf(
-                                    RrSegment("Firecrawl"),
-                                    RrSegment("Tavily"),
-                                    RrSegment("Exa"),
-                                ),
-                                s.provider.ordinal,
+                                webProviders.map { RrSegment(webProviderName(it)) },
+                                webProviders.indexOf(s.provider).coerceAtLeast(0),
                                 {
                                     if (!s.busy)
-                                        provider(SaveWebAccessKeyRequestProvider.entries[it])
+                                        provider(webProviders[it])
                                 },
                             )
                             RrTextField(
@@ -165,7 +161,7 @@ internal fun DeveloperScreen(
                                 RrSegment(stringResource(CR.string.automatically)),
                                 RrSegment(stringResource(CR.string.off)),
                             ),
-                            s.memory?.ordinal ?: 0,
+                            (s.memory?.ordinal ?: 0).coerceAtMost(2),
                             { if (!s.busy) memory(SaveCareerProfileRequestMemoryMode.entries[it]) },
                         )
                     }
@@ -307,3 +303,13 @@ private fun webError(kind: String?): String =
                 R.string.screen_the_service_is_unavailable_or_doesn_t_support_this_try_again_later
             )
     }
+
+/** Product names, not the wire values ("firecrawl"). */
+private fun webProviderName(provider: SaveWebAccessKeyRequestProvider) = when (provider) {
+    SaveWebAccessKeyRequestProvider.Firecrawl -> "Firecrawl"
+    SaveWebAccessKeyRequestProvider.Tavily -> "Tavily"
+    SaveWebAccessKeyRequestProvider.Exa -> "Exa"
+    SaveWebAccessKeyRequestProvider.Unknown -> ""
+}
+
+private val webProviders = listOf(SaveWebAccessKeyRequestProvider.Firecrawl, SaveWebAccessKeyRequestProvider.Tavily, SaveWebAccessKeyRequestProvider.Exa)

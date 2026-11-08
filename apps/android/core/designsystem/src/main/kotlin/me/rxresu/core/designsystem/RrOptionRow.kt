@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 
@@ -38,12 +37,12 @@ fun RrOptionRow(
     Row(
         modifier
             .fillMaxWidth()
+            .rrEnabledAlpha(enabled, 0.45f)
             .background(if (selected) c.accentSoft else c.surface)
             .selectable(selected, remember { MutableInteractionSource() }, LocalIndication.current, enabled, Role.RadioButton) {
                 if (!selected) haptics(RrHaptic.Selection)
                 onClick()
             }
-            .alpha(if (enabled) 1f else 0.45f)
             .padding(14.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.Top,

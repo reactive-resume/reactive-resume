@@ -25,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
@@ -213,7 +212,7 @@ fun RrSearchField(
 @Composable
 private fun FieldFrame(label: String?, helper: String?, error: String?, modifier: Modifier, enabled: Boolean, field: @Composable () -> Unit) {
     val c = RrTheme.colors
-    Column(modifier.alpha(if (enabled) 1f else 0.45f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Column(modifier.rrEnabledAlpha(enabled, 0.45f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (label != null) RrText(label, style = RrType.fieldLabel, color = c.ink2)
         field()
         when {

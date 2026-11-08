@@ -14,7 +14,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.foundation.border
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.rxresu.core.database.SaveStatus
@@ -113,7 +112,7 @@ import me.rxresu.core.network.generated.*
     Column(modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (letter.sourceResumeId != null) RrSwitchRow(stringResource(CoreR.string.matching_the_resume), letter.designLinked, match, subtitle = if (letter.designLinked) stringResource(CoreR.string.template_type_and_colors_follow_the_resume_so_the_pair_always_matches) else stringResource(CoreR.string.the_letter_keeps_a_design_of_its_own), enabled = state.editable, containerColor = RrTheme.colors.surface)
         else RrText(stringResource(CoreR.string.choose_a_resume_in_write_to_match_its_design_until_then_the_letter_has_its_own), style = RrType.small)
-        RrListGroup(Modifier.alpha(if (letter.designLinked) 0.55f else 1f)) {
+        RrListGroup(Modifier.rrEnabledAlpha(!letter.designLinked, 0.55f)) {
             RrListRow(stringResource(CoreR.string.template), enabled = !letter.designLinked && state.editable, onClick = { action("template") }, trailing = { RrRowValue(metadata.template.wireValue.replaceFirstChar(Char::uppercase), caret = !letter.designLinked) })
             RrListRow(stringResource(CoreR.string.type), enabled = !letter.designLinked && state.editable, onClick = { action("type") }, trailing = { RrRowValue(metadata.typography.body.fontFamily + " · " + metadata.typography.body.fontSize, caret = !letter.designLinked) })
             RrListRow(stringResource(CoreR.string.color), enabled = !letter.designLinked && state.editable, onClick = { action("color") }, trailing = { RrRowValue(stringResource(R.string.p4_custom_color), caret = !letter.designLinked) })

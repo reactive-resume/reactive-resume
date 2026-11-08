@@ -24,7 +24,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -95,7 +94,7 @@ private fun StepButton(icon: Int, description: String, enabled: Boolean, onClick
             .size(40.dp, 36.dp)
             .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
             .semantics { contentDescription = description }
-            .alpha(if (enabled) 1f else 0.4f),
+            .rrEnabledAlpha(enabled, 0.4f),
         contentAlignment = Alignment.Center,
     ) { RrIcon(icon, null, size = 20.dp, tint = RrTheme.colors.ink2) }
 }
@@ -130,7 +129,7 @@ private fun HoldStepButton(icon: Int, description: String, enabled: Boolean, onP
                 if (!enabled) disabled()
                 onClick { if (enabled) { start(); step(); true } else false }
             }
-            .alpha(if (enabled) 1f else 0.4f),
+            .rrEnabledAlpha(enabled, 0.4f),
         contentAlignment = Alignment.Center,
     ) { RrIcon(icon, null, size = 20.dp, tint = RrTheme.colors.ink2) }
 }

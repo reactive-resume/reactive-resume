@@ -114,7 +114,7 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
     var used by remember { mutableStateOf<JsonObject?>(null) }
     var providers by remember { mutableStateOf(false) }; var approveSend by remember { mutableStateOf(false) }; var menu by remember { mutableStateOf(false) }; var rename by remember { mutableStateOf(false) }
     CoachScreen(state, vm::draft, vm::memory, vm::applications, { nav.popBackStack() }, { providers = true }, { menu = true }, { vm.load() }, { nav.navigate(Knowledge()) }, { nav.navigate(AiProviderSheet()) },
-        { approveSend = true }, { vm.stop() }, { proposal -> vm.remember(proposal) { haptic(RrHaptic.Success) } }, vm::dismiss, { copy(context, it) }, { text -> context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text), null)) }, { used = it })
+        { approveSend = true }, { vm.stop() }, { proposal -> vm.remember(proposal) { haptic(RrHaptic.Success) } }, vm::dismiss, { copy(context, it) }, { text -> context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text), null)) }, { used = it }, answer = vm::answer)
     used?.let { shared -> RrBottomSheet({ used = null }, title = stringResource(R.string.career_shared_context), initialDetent = 1) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             (shared["facts"] as? JsonArray).orEmpty().forEach { value ->
@@ -133,17 +133,21 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
     } }
     if (providers) RrBottomSheet({ providers = false }, title = stringResource(R.string.career_ai_connection_6497f8), fitContent = true) {
         var selected by remember { mutableStateOf(state.providers.firstOrNull { it.id == state.selected }) }
-        RrText(stringResource(R.string.career_earlier_messages_and_attachments_in_this_conversation_will_b_256ec2), Modifier.padding(16.dp), style = RrType.small)
-        state.providers.forEach { provider -> RrChoiceRow(provider.label + " · " + provider.model, selected?.id == provider.id, { selected = provider }) }
+        // Only true once there is a conversation to send.
+        if (state.messages.isNotEmpty()) RrText(stringResource(R.string.career_earlier_messages_and_attachments_in_this_conversation_will_b_256ec2), Modifier.padding(16.dp), style = RrType.small)
+        state.providers.forEach { provider -> RrChoiceRow(provider.label + " · " + provider.model, selected?.id == provider.id, { selected = provider }, Modifier.fillMaxWidth().padding(horizontal = 12.dp)) }
         RrButton(stringResource(R.string.career_use_connection_e48414), { selected?.let { vm.provider(it) }; providers = false }, Modifier.fillMaxWidth().padding(16.dp), enabled = selected != null)
     }
     if (approveSend) RrBottomSheet({ approveSend = false }, title = stringResource(R.string.career_share_data_with_this_connection_628aab), fitContent = true, footer = { SheetFooter {
         RrButton(stringResource(R.string.career_allow_this_operation_6d2eb6), { approveSend = false; haptic(RrHaptic.Light); vm.send() }, Modifier.fillMaxWidth())
     } }) {
         val provider = state.providers.firstOrNull { it.id == state.selected }
-        RrText(stringResource(R.string.career_server_1_s_1d7e0c, state.server), Modifier.padding(16.dp), style = RrType.small)
-        RrText(stringResource(R.string.career_provider_1_s_08687d, provider?.let { it.label + " · " + listOfNotNull(it.model, it.fastModel, it.capableModel).distinct().joinToString(", ") + " · " + (it.baseURL ?: it.provider.wireValue) }.orEmpty()), Modifier.padding(16.dp), style = RrType.small)
-        RrText(stringResource(R.string.career_your_message_conversation_history_and_selected_context_are_s_978784), Modifier.padding(16.dp), style = RrType.small)
+        // One block (where it goes, then what goes), 8 dp between lines, not three spaced-out paragraphs.
+        Column(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        RrText(stringResource(R.string.career_server_1_s_1d7e0c, state.server), style = RrType.small)
+        RrText(stringResource(R.string.career_provider_1_s_08687d, provider?.let { it.label + " · " + listOfNotNull(it.model, it.fastModel, it.capableModel).distinct().joinToString(", ") + " · " + (it.baseURL ?: it.provider.wireValue) }.orEmpty()), style = RrType.small)
+        RrText(stringResource(R.string.career_your_message_conversation_history_and_selected_context_are_s_978784), style = RrType.small)
+        }
     }
 
     if (menu) RrBottomSheet({ menu = false }, title = stringResource(R.string.career_conversation_options_db62f1), fitContent = true) {
@@ -252,7 +256,7 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
     if (link) RrBottomSheet({ link = false }, title = stringResource(R.string.career_link_facts_d38459), initialDetent = 1) {
         Column(Modifier.verticalScroll(rememberScrollState())) { state.facts.forEach { fact ->
             val d = state.draft
-            RrChoiceRow(fact.text, fact.id in d?.factIds.orEmpty(), { if (d != null) vm.change(d.copy(factIds = if (fact.id in d.factIds.orEmpty()) d.factIds.orEmpty() - fact.id else d.factIds.orEmpty() + fact.id)) }, radio = false)
+            RrChoiceRow(fact.text, fact.id in d?.factIds.orEmpty(), { if (d != null) vm.change(d.copy(factIds = if (fact.id in d.factIds.orEmpty()) d.factIds.orEmpty() - fact.id else d.factIds.orEmpty() + fact.id)) }, Modifier.fillMaxWidth().padding(horizontal = 12.dp), radio = false)
         } }
     }
 }

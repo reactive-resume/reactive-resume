@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
@@ -56,10 +55,10 @@ fun RrIconButton(
         modifier = modifier
             .size(box)
             .rrPressScale(interaction)
+            .rrEnabledAlpha(enabled, 0.4f)
             .clip(RrShape.md)
             .background(fill)
             .clickable(interaction, LocalIndication.current, enabled = enabled, role = Role.Button, onClick = onClick)
-            .alpha(if (enabled) 1f else 0.4f)
             .semantics(mergeDescendants = true) { this.contentDescription = contentDescription },
         contentAlignment = Alignment.Center,
     ) {

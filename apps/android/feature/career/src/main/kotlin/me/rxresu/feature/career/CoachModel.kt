@@ -15,7 +15,19 @@ import me.rxresu.core.data.RrRepositories
 import me.rxresu.core.network.*
 import me.rxresu.core.network.generated.*
 
-internal data class CoachMessage(val id: String, val text: String, val mine: Boolean, val parts: List<JsonObject> = emptyList(), val used: JsonObject? = null)
+internal data class CoachMessage(val id: String, val text: String, val mine: Boolean, val parts: List<JsonObject> = emptyList(), val used: JsonObject? = null, val raw: JsonObject? = null)
+
+/** A question the coach is waiting on (an `ask_user_question` tool call), answered in the conversation. */
+internal data class CoachQuestion(val messageId: String, val toolCallId: String, val text: String, val answers: List<String>)
+
+internal fun CoachState.pendingQuestion(): CoachQuestion? {
+    val last = messages.lastOrNull()?.takeIf { !it.mine } ?: return null
+    val part = last.parts.lastOrNull { it["type"]?.jsonPrimitive?.contentOrNull == "tool-ask_user_question" && it["state"]?.jsonPrimitive?.contentOrNull == "input-available" } ?: return null
+    val input = part["input"] as? JsonObject ?: return null
+    val text = input["question"]?.jsonPrimitive?.contentOrNull ?: return null
+    val answers = (input["options"] as? JsonArray).orEmpty().mapNotNull { (it as? JsonPrimitive)?.contentOrNull }
+    return CoachQuestion(last.id, part["toolCallId"]?.jsonPrimitive?.contentOrNull ?: return null, text, answers)
+}
 internal data class CoachFact(val callId: String, val fact: SaveCareerFactRequest, val savedId: String? = null)
 internal data class CoachState(val loading: Boolean = true, val draft: String = "", val providers: List<TestAiProviderResponse> = emptyList(),
     val selected: String? = null, val messages: List<CoachMessage> = emptyList(), val memory: Boolean = true, val applications: Boolean = true,
@@ -30,7 +42,7 @@ internal fun coachMessages(raw: JsonObject): List<CoachMessage> = (raw["messages
     val row = item as? JsonObject ?: return@mapNotNull null
     val id = row["id"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
     val parts = (row["parts"] as? JsonArray).orEmpty().filterIsInstance<JsonObject>()
-    CoachMessage(id, parts.filter { it["type"]?.jsonPrimitive?.contentOrNull == "text" }.joinToString("\n\n") { it["text"]?.jsonPrimitive?.contentOrNull.orEmpty() }, row["role"]?.jsonPrimitive?.contentOrNull == "user", parts, (row["metadata"] as? JsonObject)?.get("context") as? JsonObject)
+    CoachMessage(id, parts.filter { it["type"]?.jsonPrimitive?.contentOrNull == "text" }.joinToString("\n\n") { it["text"]?.jsonPrimitive?.contentOrNull.orEmpty() }, row["role"]?.jsonPrimitive?.contentOrNull == "user", parts, (row["metadata"] as? JsonObject)?.get("context") as? JsonObject, row)
 }
 internal fun coachChunks(data: String): List<JsonObject> {
     if (data.trim() == "[DONE]") return emptyList()
@@ -77,7 +89,8 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
         val raw = recoveredId?.let { history(it) }
         val thread = raw?.get("thread")?.let { ApiJson.decodeFromJsonElement(StartAgentThreadResponse.serializer(), it) }
         checkOwner()
-        mutable.update { it.copy(loading = false, providers = providers, selected = thread?.aiProviderId, thread = thread,
+        // As on the web: a conversation keeps its own connection; a new one starts on the default (listed first).
+        mutable.update { it.copy(loading = false, providers = providers, selected = if (thread != null) thread.aiProviderId else providers.firstOrNull()?.id, thread = thread,
             readOnly = raw?.get("isReadOnly")?.jsonPrimitive?.booleanOrNull == true, messages = raw?.let(::coachMessages).orEmpty(), error = false) }
         refreshProposals(); loadKnowledge()
         if (thread?.activeRunId != null) resume(thread.id)
@@ -146,6 +159,32 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
             mutable.update { it.copy(messages = coachMessages(raw), busy = false, draft = if (it.draft == sentText) "" else it.draft) }
             savedState["draft"] = state.value.draft
             drafts.write(key, state.value.draft); drafts.remove("$key:message"); refreshProposals()
+        }
+    }
+    /**
+     * Answers the coach's question in place, as the builder's assistant does: its tool call gets the answer as output and
+     * the conversation continues with the same connection and context.
+     */
+    fun answer(question: CoachQuestion, answer: String) {
+        val before = state.value
+        val provider = before.providers.firstOrNull { it.id == before.selected } ?: return
+        val thread = before.thread ?: return
+        val last = before.messages.lastOrNull()?.takeIf { !it.mine && it.id == question.messageId } ?: return
+        val raw = last.raw ?: return
+        if (before.busy || before.readOnly || answer.isBlank()) return
+        streaming = run({ mutable.update { it.copy(busy = false, error = true) } }) {
+            mutable.update { it.copy(busy = true, error = false) }
+            val parts = JsonArray(last.parts.map { part ->
+                if (part["toolCallId"]?.jsonPrimitive?.contentOrNull != question.toolCallId) part
+                else JsonObject(part + mapOf("state" to JsonPrimitive("output-available"), "output" to JsonPrimitive(answer.trim())))
+            })
+            val body = buildJsonObject {
+                put("threadId", thread.id); put("message", JsonObject(raw + ("parts" to parts)))
+                putJsonObject("context") { put("document", true); put("posting", true); put("application", applicationId != null || before.applications); put("memory", before.memory); put("web", false) }
+            }
+            collectReply(transport.events(ApiRequest("sendAgentMessage", "POST", "/agent/messages/send", body = body, options = options.copy(headers = aiApproval(provider)))))
+            val history = history(thread.id); checkOwner()
+            mutable.update { it.copy(messages = coachMessages(history), busy = false) }; refreshProposals()
         }
     }
     private fun resume(threadId: String) {
