@@ -36,3 +36,15 @@
 - Fresh final independent Kit reviewer inspected all components in both themes and six enlarged paired regions:
   no remaining visible findings within the 1 dp/glyph-antialiasing contract. Verdict applies only to pinned Kit;
   feature-screen fidelity and device behavior remain unverified.
+
+## 2026-11-08 — Navigation registration proof
+
+- Added typed section/design/preview/workspace destinations and pushed/modal registration. Preserved legacy
+  application link arguments; consumed forwarding once so Back returns to J6 without reopening a workspace.
+- Four tests execute the same `appDestinations` registration boundary as production with real feature graphs:
+  section/entry/design Back behavior; all seven workspace tools and question identity; legacy-link Back;
+  full-screen assistant/preview/provider versus the formats sheet. All four passed.
+- Initial app test execution exposed missing JDK module-open flags; applied existing library-test JVM flags
+  to the app test task, then reran successfully. No assertion or tolerance changed.
+- These tests establish registration/argument/back-stack behavior. Full 210-edge callback coverage and
+  remaining v1 UI removal stay open through feature integration.

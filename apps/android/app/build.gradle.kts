@@ -48,7 +48,15 @@ android {
     buildFeatures { compose = true }
     // Every language ships in the base APK so the in-app language picker works on API 26–32 after a Play install.
     bundle { language { enableSplit = false } }
-    testOptions { unitTests { isIncludeAndroidResources = true } }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all {
+                it.jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED", "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
+                it.maxHeapSize = "1536m"
+            }
+        }
+    }
 }
 
 dependencies {
