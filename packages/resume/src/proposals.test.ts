@@ -374,10 +374,13 @@ describe("review checks", () => {
 		expect(claims).toEqual([
 			{ kind: "figure", text: "40 dollars" },
 			{ kind: "date", text: "2023" },
-			{ kind: "term", text: "by" },
 			{ kind: "term", text: "dollars" },
 			{ kind: "term", text: "using" },
 			{ kind: "term", text: "Kubernetes" },
+		]);
+		// Grammar words are never claims, even when the document doesn't use them; new verbs still are.
+		expect(unverifiedClaims("A designer who increased that", { entry: "", document: "Designer" })).toEqual([
+			{ kind: "term", text: "increased" },
 		]);
 		// The entry's own claim, with its unit and year in one clause, passes.
 		expect(
