@@ -142,7 +142,7 @@ export function deleteConversation(queryClient: QueryClient, id: string, hide: (
 // ---- The thread ----
 
 /** `attached` counts the files in the composer, which go with the message. */
-export type ChatHistory = { earlier: number; withheld: number; attached: number };
+type ChatHistory = { earlier: number; withheld: number; attached: number };
 
 export type Prompt = { text: string; attachments: ChatAttachment[]; used: Used };
 

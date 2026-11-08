@@ -221,7 +221,7 @@ function ForgottenFacts() {
 
 // ---- Memory mode ----
 
-export function MemoryCard() {
+function MemoryCard() {
 	const { profile, save, isError, retry } = useProfile();
 	const labelId = useId();
 	const mode = profile?.memoryMode;
