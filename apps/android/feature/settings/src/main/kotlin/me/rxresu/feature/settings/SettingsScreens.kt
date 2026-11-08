@@ -572,9 +572,9 @@ internal fun PreferencesScreen(
             val categories =
                 listOf(
                     NotificationCategory.InterviewsAndBriefings,
-                    NotificationCategory.FollowUpsAndOfferDeadlines,
+                    NotificationCategory.FollowUps,
                     NotificationCategory.NewRoles,
-                    NotificationCategory.FollowUpsAndOfferDeadlines,
+                    NotificationCategory.OfferDeadlines,
                 )
             val labels =
                 listOf(
@@ -742,6 +742,8 @@ private fun notificationTitle(category: NotificationCategory): String =
             stringResource(R.string.screen_interviews_and_briefings)
         NotificationCategory.FollowUpsAndOfferDeadlines ->
             stringResource(R.string.screen_follow_ups_and_offer_deadlines)
+        NotificationCategory.FollowUps -> stringResource(R.string.v2_follow_ups)
+        NotificationCategory.OfferDeadlines -> stringResource(R.string.v2_offer_deadlines)
         NotificationCategory.NewRoles -> stringResource(CR.string.new_roles_from_your_search)
         NotificationCategory.FeedbackComments -> stringResource(R.string.screen_feedback_comments)
     }

@@ -71,6 +71,6 @@
 - A4 untinted logo32 in tile56 and two-line row73; S5 truthful icon16×36 slot with16dp top glyph.
 - Core testing16, designsystem44 (including native raster hash/chunk proof), data24, auth28, settings56 and today14
   tests passed. System suite initially found omitted legacy channel; retained channel for old supported callers,
-  preserving notification privacy assertions. System rerun pending. No tests skipped/weakened to obtain acceptance.
+  preserving notification privacy assertions. Final data24/system30/settings56 rerun passed, zero failures/errors/skips. No tests skipped/weakened to obtain acceptance.
 - Follow-ups and Offer deadlines now independent persisted categories; legacy combined membership expands to both.
   Migration preserves unknown stored categories, and tests prove independent toggles after migration.

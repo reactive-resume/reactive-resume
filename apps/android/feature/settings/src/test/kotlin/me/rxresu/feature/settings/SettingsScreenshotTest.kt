@@ -36,7 +36,8 @@ class SettingsScreenshotTest : RrScreenshotTest() {
                             notifications =
                                 setOf(
                                     NotificationCategory.InterviewsAndBriefings,
-                                    NotificationCategory.FollowUpsAndOfferDeadlines,
+                                    NotificationCategory.FollowUps,
+                                    NotificationCategory.OfferDeadlines,
                                     NotificationCategory.NewRoles,
                                 )
                         ),

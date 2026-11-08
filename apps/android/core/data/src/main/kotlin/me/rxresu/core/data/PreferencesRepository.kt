@@ -11,7 +11,19 @@ import kotlinx.coroutines.sync.withLock
 
 private val Context.rrPreferences by preferencesDataStore(name="preferences")
 enum class ThemePreference { Light, Dark, MatchSystem }
-enum class NotificationCategory { InterviewsAndBriefings, FollowUpsAndOfferDeadlines, NewRoles, FeedbackComments }
+enum class NotificationCategory {
+    InterviewsAndBriefings, FollowUps, OfferDeadlines, NewRoles, FeedbackComments,
+    // Retained for installed preferences and older callers; reads/writes expand to both independent categories.
+    FollowUpsAndOfferDeadlines,
+}
+internal fun migrateNotificationNames(names: Set<String>): Set<String> =
+    if (NotificationCategory.FollowUpsAndOfferDeadlines.name in names)
+        names - NotificationCategory.FollowUpsAndOfferDeadlines.name + NotificationCategory.FollowUps.name + NotificationCategory.OfferDeadlines.name
+    else names
+
+private fun notificationCategories(names: Set<String>): Set<NotificationCategory> =
+    NotificationCategory.entries.filter { it.name in migrateNotificationNames(names) }.toSet()
+private fun notificationNames(category: NotificationCategory): Set<String> = migrateNotificationNames(setOf(category.name))
 data class AppPreferences(
     val theme: ThemePreference = ThemePreference.MatchSystem,
     val haptics: Boolean = true,
@@ -38,21 +50,21 @@ class DataStorePreferencesRepository(context: Context) : PreferencesRepository {
     override val values=store.data.map { p -> AppPreferences(
         theme=ThemePreference.entries.firstOrNull { it.name==p[theme] } ?: ThemePreference.MatchSystem,
         haptics=p[haptics] ?: true,reducedMotion=p[motion],lastTab=p[tab] ?: "today",
-        notifications=NotificationCategory.entries.filter { it.name in p[notifications].orEmpty() }.toSet(),
+        notifications=notificationCategories(p[notifications].orEmpty()),
     ) }
     override suspend fun setTheme(theme: ThemePreference) { store.edit { it[this.theme]=theme.name } }
     override suspend fun setHaptics(enabled: Boolean) { store.edit { it[haptics]=enabled } }
     override suspend fun setReducedMotion(override: Boolean?) { store.edit { if(override==null) it.remove(motion) else it[motion]=override } }
     override suspend fun setLastTab(tab: String) { require(tab in setOf("today","documents","applications","career")); store.edit { it[this.tab]=tab } }
-    override suspend fun setNotification(category: NotificationCategory, enabled: Boolean) { store.edit { it[notifications]=if(enabled) it[notifications].orEmpty()+category.name else it[notifications].orEmpty()-category.name } }
+    override suspend fun setNotification(category: NotificationCategory, enabled: Boolean) { store.edit { val current=migrateNotificationNames(it[notifications].orEmpty()); it[notifications]=if(enabled) current+notificationNames(category) else current-notificationNames(category) } }
 }
 class FakePreferencesRepository(initial: AppPreferences = AppPreferences()) : PreferencesRepository {
-    override val values=MutableStateFlow(initial)
+    override val values=MutableStateFlow(initial.copy(notifications=notificationCategories(initial.notifications.map { it.name }.toSet())))
     private val mutex=Mutex()
     private suspend fun change(update: (AppPreferences)->AppPreferences) = mutex.withLock { values.value=update(values.value) }
     override suspend fun setTheme(theme: ThemePreference)=change { it.copy(theme=theme) }
     override suspend fun setHaptics(enabled: Boolean)=change { it.copy(haptics=enabled) }
     override suspend fun setReducedMotion(override: Boolean?)=change { it.copy(reducedMotion=override) }
     override suspend fun setLastTab(tab: String) { require(tab in setOf("today","documents","applications","career")); change { it.copy(lastTab=tab) } }
-    override suspend fun setNotification(category: NotificationCategory, enabled: Boolean)=change { it.copy(notifications=if(enabled) it.notifications+category else it.notifications-category) }
+    override suspend fun setNotification(category: NotificationCategory, enabled: Boolean)=change { val names=it.notifications.map { it.name }.toSet(); it.copy(notifications=notificationCategories(if(enabled) names+notificationNames(category) else names-notificationNames(category))) }
 }

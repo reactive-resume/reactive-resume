@@ -170,7 +170,7 @@ class LogFollowUpWorker(context: Context, parameters: WorkerParameters) : Corout
             Result.success()
         } catch (e: CancellationException) { throw e } catch (_: Exception) {
             if (repositories.signedInOwner() == owner && repositories.authSession.origin.value == origin) {
-                postNotification(applicationContext, NotificationSpec("log-failed:$key", NotificationCategory.FollowUpsAndOfferDeadlines,
+                postNotification(applicationContext, NotificationSpec("log-failed:$key", NotificationCategory.FollowUps,
                     contextMessage(applicationContext), applicationContext.getString(R.string.system_open_the_application_to_check_its_timeline_before_trying_aga_7d37f3), SystemTarget("application", application, me.rxresu.core.navigation.WorkspaceTab.Messages)), owner)
             }
             Result.failure()

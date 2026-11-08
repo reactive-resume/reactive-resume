@@ -71,9 +71,10 @@ class SystemTests {
         val feedback = FeedbackUpdate(StoryboardIds.resume, listOf(ResolveFeedbackCommentResponse("Reviewer", "Looks good", "2026-11-07T10:00:00Z", "comment-1", "link-1")))
         val specs = notificationSpecs(context, today, emptyList(), listOf(feedback))
         assertTrue(specs.any { it.category == NotificationCategory.InterviewsAndBriefings && it.target.tab == WorkspaceTab.Prepare })
-        assertTrue(specs.any { it.category == NotificationCategory.FollowUpsAndOfferDeadlines && it.target.kind == "offers" })
+        assertTrue(specs.any { it.category == NotificationCategory.OfferDeadlines && it.target.kind == "offers" })
         assertEquals(Visitors(StoryboardIds.resume), systemRouteFor(targetIntent(context, specs.first { it.category == NotificationCategory.FeedbackComments }.target)))
         assertTrue(specs.first { it.target.tab == WorkspaceTab.Messages }.actions.any { it.logFollowUp })
+        assertEquals(NotificationCategory.FollowUps, specs.first { it.target.tab == WorkspaceTab.Messages }.category)
         assertEquals(specs.size, specs.distinctBy { it.key }.size); repositories.close()
     }
     @Test fun channelsMatchPreferencesAndNotificationsHideLockscreenDetails() = runTest {

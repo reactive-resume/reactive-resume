@@ -81,7 +81,8 @@ internal fun TodayRoute(nav: NavController) {
             vm.setRemindersEnabled(true)
             scope.launch {
                 repos.preferences.setNotification(NotificationCategory.InterviewsAndBriefings, true)
-                repos.preferences.setNotification(NotificationCategory.FollowUpsAndOfferDeadlines, true)
+                repos.preferences.setNotification(NotificationCategory.FollowUps, true)
+                repos.preferences.setNotification(NotificationCategory.OfferDeadlines, true)
             }
         } else {
             denied = true

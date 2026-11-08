@@ -56,7 +56,7 @@ internal fun notificationSpecs(context: Context, today: TodaySnapshot, notices: 
             "opportunities" -> SystemTarget("today")
             else -> SystemTarget("today")
         } ?: SystemTarget("today")
-        val category = when (type) { "opportunities" -> NotificationCategory.NewRoles; "briefing", "briefing-paused" -> NotificationCategory.InterviewsAndBriefings; else -> NotificationCategory.FollowUpsAndOfferDeadlines }
+        val category = when (type) { "opportunities" -> NotificationCategory.NewRoles; "briefing", "briefing-paused" -> NotificationCategory.InterviewsAndBriefings; "offer" -> NotificationCategory.OfferDeadlines; else -> NotificationCategory.FollowUps }
         add(NotificationSpec("notice:${notice.id}", category, notice.title, notice.body, target, notificationActions(context, type, target)))
         notice.applicationId?.let { seen += "$type:$it" }
     }
@@ -65,8 +65,8 @@ internal fun notificationSpecs(context: Context, today: TodaySnapshot, notices: 
         when (item.kind) {
             TodayKind.Briefing -> { type = "briefing"; category = NotificationCategory.InterviewsAndBriefings; title = context.getString(R.string.system_briefing_ready_for_1_s_afbb73, item.company); target = SystemTarget("application", item.applicationId, WorkspaceTab.Prepare) }
             TodayKind.Interview -> { type = "interview"; category = NotificationCategory.InterviewsAndBriefings; title = context.getString(R.string.system_upcoming_interview_with_1_s_c05c80, item.company); target = SystemTarget("application", item.applicationId, WorkspaceTab.Prepare) }
-            TodayKind.Offer -> { type = "offer"; category = NotificationCategory.FollowUpsAndOfferDeadlines; title = context.getString(R.string.system_reply_to_the_offer_from_1_s_6eed69, item.company); target = SystemTarget("offers") }
-            TodayKind.FollowUp -> { type = "followup"; category = NotificationCategory.FollowUpsAndOfferDeadlines; title = context.getString(R.string.system_follow_up_with_1_s_35e9a9, item.company); target = SystemTarget("application", item.applicationId, WorkspaceTab.Messages) }
+            TodayKind.Offer -> { type = "offer"; category = NotificationCategory.OfferDeadlines; title = context.getString(R.string.system_reply_to_the_offer_from_1_s_6eed69, item.company); target = SystemTarget("offers") }
+            TodayKind.FollowUp -> { type = "followup"; category = NotificationCategory.FollowUps; title = context.getString(R.string.system_follow_up_with_1_s_35e9a9, item.company); target = SystemTarget("application", item.applicationId, WorkspaceTab.Messages) }
             TodayKind.Notification -> return@forEach
         }
         if ("$type:${item.applicationId}" in seen || item.notificationId != null) return@forEach
@@ -90,6 +90,8 @@ private fun notificationActions(context: Context, type: String?, target: SystemT
 internal fun channelName(context: Context, category: NotificationCategory): String = when (category) {
     NotificationCategory.InterviewsAndBriefings -> context.getString(R.string.system_interviews_and_briefings_cac9e0)
     NotificationCategory.FollowUpsAndOfferDeadlines -> context.getString(R.string.system_follow_ups_and_offer_deadlines_92ed7f)
+    NotificationCategory.FollowUps -> context.getString(R.string.system_follow_ups_c0e67b)
+    NotificationCategory.OfferDeadlines -> context.getString(R.string.system_offer_deadlines)
     NotificationCategory.NewRoles -> context.getString(R.string.system_new_roles_43b8bc)
     NotificationCategory.FeedbackComments -> context.getString(R.string.system_feedback_comments_723073)
 }
