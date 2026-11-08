@@ -351,6 +351,7 @@ fun RrRichTextField(
     readOnly: Boolean = false,
     textStyle: TextStyle = RrType.input.copy(fontSize = 17.sp, lineHeight = 24.sp),
     highlight: IntRange? = null,
+    placeholder: String? = null,
 ) {
     val c = RrTheme.colors
     CompositionLocalProvider(LocalTextSelectionColors provides TextSelectionColors(handleColor = c.accent, backgroundColor = c.accentSoft)) {
@@ -362,6 +363,11 @@ fun RrRichTextField(
             textStyle = textStyle.copy(color = c.ink),
             cursorBrush = SolidColor(c.accent),
             visualTransformation = RrRichTransformation(doc, 22.sp, c.accentText, highlight = highlight, highlightColor = c.sunken),
+            decorationBox = { field ->
+                // An empty editor otherwise shows nothing at all, not even where to type.
+                if (placeholder != null && value.text.isEmpty()) RrText(placeholder, style = textStyle, color = c.ink3)
+                field()
+            },
         )
     }
 }

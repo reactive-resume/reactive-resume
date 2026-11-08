@@ -199,9 +199,9 @@ private fun IssuesTab(state: BuilderUiState, doc: ResumeDoc, issues: List<IssueV
     var open by rememberSaveable { mutableStateOf(false) }
     val failing = issues.map { it.category }.toSet()
     val passing = CheckCategory.entries.filter { it !in failing && (checks.categories[it.key]?.total ?: 1.0) > 0 }
+    // Each row is the group's own child, so the group draws the divider between them.
     RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-        Column {
-            if (passing.isNotEmpty()) {
+        if (passing.isNotEmpty()) Column {
                 RrListRow(
                     passing.map { stringResource(it.title) }.joinToString(" · "),
                     subtitle = stringResource(R.string.builder_nothing_to_review),
@@ -210,11 +210,10 @@ private fun IssuesTab(state: BuilderUiState, doc: ResumeDoc, issues: List<IssueV
                     trailing = { RrIcon(if (open) D.drawable.ic_ph_caret_up else D.drawable.ic_ph_caret_down, null, size = 20.dp, tint = c.ink2) },
                 )
                 if (open) passing.forEach { RrText(stringResource(it.description), color = c.ink2, modifier = Modifier.padding(start = 52.dp, end = 16.dp, bottom = 12.dp)) }
-            }
-            when (val pdf = state.pdfCheck) {
-                PdfCheckState.Checking -> RrListRow(stringResource(R.string.builder_checking_pdf), icon = D.drawable.ic_ph_file_pdf, trailing = { RrSpinner() })
-                else -> RrListRow(stringResource(S.string.also_check_the_exported_pdf), icon = D.drawable.ic_ph_file_pdf, onClick = actions::checkExportedPdf, trailing = { RrRowCaret() }, subtitle = (pdf as? PdfCheckState.Done)?.let { if (it.findings == 0) stringResource(R.string.builder_pdf_clean) else null })
-            }
+        }
+        when (val pdf = state.pdfCheck) {
+            PdfCheckState.Checking -> RrListRow(stringResource(R.string.builder_checking_pdf), icon = D.drawable.ic_ph_file_pdf, trailing = { RrSpinner() })
+            else -> RrListRow(stringResource(S.string.also_check_the_exported_pdf), icon = D.drawable.ic_ph_file_pdf, onClick = actions::checkExportedPdf, trailing = { RrRowCaret() }, subtitle = (pdf as? PdfCheckState.Done)?.let { if (it.findings == 0) stringResource(R.string.builder_pdf_clean) else null })
         }
     }
 }
@@ -293,7 +292,6 @@ private fun JobMatchTab(
                 RrSectionHeader(stringResource(S.string.not_in_your_resume_add_only_if_true))
                 var open by rememberSaveable(m.missing.size) { mutableStateOf(m.missing.first().term) }
                 RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                    Column {
                         m.missing.forEach { term ->
                             if (open == term.term) Column(Modifier.background(c.surface).padding(16.dp).sizeMotion(reduced), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 RrText(term.label, style = RrType.label)
@@ -305,7 +303,6 @@ private fun JobMatchTab(
                                 }
                             } else RrListRow(term.label, onClick = { open = term.term }, trailing = { RrIcon(D.drawable.ic_ph_caret_down, null, size = 20.dp, tint = c.ink2) })
                         }
-                    }
                 }
             }
             if (m.found.isNotEmpty()) {

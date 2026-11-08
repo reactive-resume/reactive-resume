@@ -1,6 +1,7 @@
 // W5 · Messages: pick a kind, get a draft, edit it in place, send it from your own mail app. The app never sends email.
 package me.rxresu.feature.workspace
 
+import me.rxresu.core.navigation.SettingsAi
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
@@ -218,6 +219,7 @@ internal fun MessagesTab(applicationId: String, nav: NavController) {
                     if (vm.logReply()) { haptics(RrHaptic.Success); toasts.show(replyLogged) } else toasts.show(replyNotLogged)
                 }
             },
+            onSetUpAi = { nav.navigate(SettingsAi) },
         )
     }
 }
@@ -237,6 +239,7 @@ internal fun MessagesScreen(
     onOffers: () -> Unit,
     onLogFollowUp: () -> Unit,
     onCopyAndLogReply: () -> Unit,
+    onSetUpAi: () -> Unit = {},
 ) {
     val c = RrTheme.colors
     val provider = state.context.provider
@@ -291,7 +294,7 @@ internal fun MessagesScreen(
             }
             when {
                 state.drafting -> Working(if (state.kind == MessageKind.Reply) listOf(S.string.reading_the_message, S.string.spotting_what_changed, S.string.drafting_a_reply) else listOf(S.string.drafting), onStop)
-                provider == null -> RrCallout(stringResource(S.string.connect_an_ai_provider))
+                provider == null -> RrCallout(stringResource(S.string.connect_an_ai_provider), actionLabel = stringResource(S.string.set_up_ai), onAction = onSetUpAi)
                 !hasDraft -> RrButton(
                     stringResource(if (state.kind == MessageKind.Reply) S.string.read_it_for_me else R.string.workspace_draft_follow_up),
                     onDraft,

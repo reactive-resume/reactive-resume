@@ -91,7 +91,8 @@ enum class WorkspaceTab { Overview, Fit, Apply, Prepare, Practise, Debrief, Mess
 /** J5 sheet. `url` is set when a link arrives from the share sheet. */
 @Serializable data class SaveJob(val url: String? = null)
 /** J6, W1–W5. `practiceQuestion` opens the Practice tab on that question (from Interview prep). */
-@Serializable data class Application(val id: String, val tab: WorkspaceTab = WorkspaceTab.Overview, val practiceQuestion: String? = null)
+/** [posting] opens the posting sheet on Overview (the Fit tab's "Add posting"). */
+@Serializable data class Application(val id: String, val tab: WorkspaceTab = WorkspaceTab.Overview, val practiceQuestion: String? = null, val posting: Boolean = false)
 /** J7 sheet. */
 @Serializable data class MoveApplication(val id: String)
 /** J8 sheet. `interviewId` null = new interview. */

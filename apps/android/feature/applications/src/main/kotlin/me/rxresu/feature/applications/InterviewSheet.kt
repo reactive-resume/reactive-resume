@@ -1,5 +1,8 @@
 package me.rxresu.feature.applications
 
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -350,8 +353,16 @@ internal fun InterviewSheet(
                     )
                 }
                 if (gap) RrText(stringResource(S.string.this_time_does_not_exist_in_the_selected_timezone_choose_another_time), style = RrType.small, color = c.dangerText)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                    RrCheckbox(draft.otherZone, { on -> onDraft(draft.copy(otherZone = on, zone = if (on) draft.zone else home, zoneText = if (on) draft.zone.id else "")) })
+                // The whole row toggles, so the box lines up with the fields above instead of sitting in a 44 dp target.
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 44.dp).toggleable(draft.otherZone, role = Role.Checkbox) { on ->
+                        haptics(if (on) RrHaptic.ToggleOn else RrHaptic.ToggleOff)
+                        onDraft(draft.copy(otherZone = on, zone = if (on) draft.zone else home, zoneText = if (on) draft.zone.id else ""))
+                    },
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                ) {
+                    RrCheckbox(draft.otherZone, null)
                     RrText(stringResource(S.string.interview_is_in_another_timezone), style = RrType.ui)
                 }
                 if (draft.otherZone) {

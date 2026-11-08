@@ -1,5 +1,7 @@
 package me.rxresu
 
+import androidx.core.view.WindowCompat
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -88,6 +90,15 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         ThemePreference.Light -> false
         ThemePreference.Dark -> true
         ThemePreference.MatchSystem -> isSystemInDarkTheme()
+    }
+    // Status and navigation bar icons follow the app's theme, not only the system's (Dark chosen on a light phone).
+    val activity = LocalActivity.current
+    LaunchedEffect(dark, activity) {
+        val window = activity?.window ?: return@LaunchedEffect
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = !dark
+            isAppearanceLightNavigationBars = !dark
+        }
     }
     val systemReduced = rememberSystemReducedMotion()
     // The system "Remove animations" always wins; the in-app setting can only reduce motion further.

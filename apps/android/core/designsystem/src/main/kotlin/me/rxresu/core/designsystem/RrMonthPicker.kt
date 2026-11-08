@@ -106,7 +106,7 @@ fun RrMonthPicker(
             RrButton(
                 stringResource(S.string.present),
                 { if (!present) haptics(RrHaptic.Selection); onPresent() },
-                Modifier.fillMaxWidth().padding(top = 4.dp).semantics { this.selected = present },
+                Modifier.fillMaxWidth().padding(top = 12.dp).semantics { this.selected = present },
                 variant = if (present) RrButtonVariant.Primary else RrButtonVariant.Secondary,
                 size = RrButtonSize.Large,
             )

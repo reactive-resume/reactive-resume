@@ -208,7 +208,8 @@ private fun LazyListScope.content(state: TodayUiState, now: Instant, format: Tod
     }
 
     item("needs-header") {
-        RrSectionHeader(stringResource(S.string.needs_you), topPadding = 4.dp, count = state.needsYou.size.takeIf { it > 0 }?.toString())
+        // First under the title it sits close; below the setup checklist it takes a section gap.
+        RrSectionHeader(stringResource(S.string.needs_you), topPadding = if (state.showChecklist && state.firstRun != null) 20.dp else 4.dp, count = state.needsYou.size.takeIf { it > 0 }?.toString())
     }
     item("needs") {
         if (state.needsYou.isEmpty()) {

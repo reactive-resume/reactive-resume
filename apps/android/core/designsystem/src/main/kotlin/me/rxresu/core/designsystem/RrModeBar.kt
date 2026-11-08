@@ -1,5 +1,8 @@
 package me.rxresu.core.designsystem
 
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -30,15 +33,20 @@ fun RrModeBar(
     val c = RrTheme.colors
     Column(modifier.fillMaxWidth().background(c.surface)) {
         Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
-        SegmentTrack(
-            segments = modes,
-            selectedIndex = selectedIndex,
-            onSelect = onSelect,
-            modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, top = 8.dp),
-            itemHeight = 36.dp,
-            stacked = true,
-            fillWidth = true,
-        )
+        // Like the tab bar: four stacked labels share the width, so they grow to 1.3x and no further (200% text cut
+        // them off at the bottom). TalkBack still reads the whole label.
+        val density = LocalDensity.current
+        CompositionLocalProvider(LocalDensity provides Density(density.density, density.fontScale.coerceAtMost(1.3f))) {
+            SegmentTrack(
+                segments = modes,
+                selectedIndex = selectedIndex,
+                onSelect = onSelect,
+                modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, top = 8.dp),
+                itemHeight = 36.dp,
+                stacked = true,
+                fillWidth = true,
+            )
+        }
         Box(Modifier.windowInsetsPadding(WindowInsets.navigationBars))
     }
 }

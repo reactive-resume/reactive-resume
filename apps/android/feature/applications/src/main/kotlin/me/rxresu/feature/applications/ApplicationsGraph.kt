@@ -17,7 +17,7 @@ import me.rxresu.core.navigation.tabRoot
 fun NavGraphBuilder.applicationsGraph(nav: NavController, motion: RrNavMotion) {
     tabRoot<ApplicationsTab>(motion) { entry -> ApplicationsRoute(entry.toRoute<ApplicationsTab>().view, nav) }
     sheet<SaveJob> { entry -> SaveJobRoute(entry.toRoute<SaveJob>().url, nav) }
-    screen<Application> { entry -> val r = entry.toRoute<Application>(); ApplicationRoute(r.id, r.tab, nav) }
+    screen<Application> { entry -> val r = entry.toRoute<Application>(); ApplicationRoute(r.id, r.tab, nav, r.posting) }
     sheet<MoveApplication> { entry -> MoveRoute(entry.toRoute<MoveApplication>().id, nav) }
     sheet<InterviewSheet> { entry -> val r = entry.toRoute<InterviewSheet>(); InterviewRoute(r.applicationId, r.interviewId, nav) }
 }

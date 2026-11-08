@@ -2,6 +2,7 @@
 // eyebrows, AI disclosure lines, working labels, dates and small platform helpers (copy, browser, tab switching).
 package me.rxresu.feature.workspace
 
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -193,7 +194,15 @@ internal fun TabBody(
 
 /** Draws [load]: still skeletons while loading, the web's copy with Try again on failure (plus the offline strip). */
 @Composable
-internal fun <T> Loaded(load: Load<T>, onRetry: () -> Unit, content: @Composable (T) -> Unit) {
+internal fun <T> Loaded(load: Load<T>, onRetry: () -> Unit, onResume: (() -> Unit)? = null, content: @Composable (T) -> Unit) {
+    // Back from a sheet or screen this tab opened (an interview, a fact): reload quietly, not on the first showing.
+    if (onResume != null) {
+        val first = remember { booleanArrayOf(true) }
+        LifecycleResumeEffect(Unit) {
+            if (first[0]) first[0] = false else onResume()
+            onPauseOrDispose { }
+        }
+    }
     when (load) {
         Load.Loading -> Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             RrSkeleton(Modifier.fillMaxWidth(0.7f).height(28.dp))

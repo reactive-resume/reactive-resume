@@ -73,7 +73,8 @@ fun RrPageThumbnail(
             .semantics { if (contentDescription != null) this.contentDescription = contentDescription },
     ) {
         if (page != null) {
-            Image(page, null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+            // Full width, top aligned: a Letter page is wider than the A4 frame, and cropping it would cut the margins and text.
+            Image(page, null, Modifier.fillMaxSize(), alignment = Alignment.TopCenter, contentScale = ContentScale.FillWidth)
         } else {
             Canvas(Modifier.fillMaxSize()) { thumbLines(letter) }
         }

@@ -278,10 +278,12 @@ internal fun DesignMode(
 private val DesignDetents = listOf(0.55f, 0.76f)
 
 @Composable
-private fun Eyebrow(text: String, modifier: Modifier = Modifier, trailing: String? = null) {
+private fun Eyebrow(text: String, modifier: Modifier = Modifier, trailing: String? = null, onTrailing: (() -> Unit)? = null) {
     Row(modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
         RrText(text, style = RrType.eyebrow.copy(fontSize = RrType.ui.fontSize, lineHeight = RrType.ui.lineHeight), color = RrTheme.colors.ink3, modifier = Modifier.weight(1f))
-        if (trailing != null) RrText(trailing, color = RrTheme.colors.ink3)
+        if (trailing != null && onTrailing != null) {
+            RrText(trailing, color = RrTheme.colors.accentText, modifier = Modifier.clip(RrShape.md).clickable(role = Role.Button, onClick = onTrailing).padding(vertical = 2.dp))
+        } else if (trailing != null) RrText(trailing, color = RrTheme.colors.ink3)
     }
 }
 
@@ -296,7 +298,8 @@ private fun TemplatePicker(doc: ResumeDoc, actions: BuilderActions, enabled: Boo
     var grid by remember { mutableStateOf(false) }
     val haptics = rememberRrHaptics()
     val shown = TemplateInfo.entries.filter { t -> when (filter) { TemplateFilter.All -> true; TemplateFilter.One -> t.columns == 1; TemplateFilter.Two -> t.columns == 2; TemplateFilter.Ats -> t.atsSafe } }
-    Eyebrow(stringResource(S.string.template), trailing = stringResource(S.string.message_0_of_1_shown, "${shown.size}", "${TemplateInfo.entries.size}"))
+    // The full grid opens from the header, so the cards' row is the only one between the filters and Accent color.
+    Eyebrow(stringResource(S.string.template), trailing = stringResource(S.string.show_all), onTrailing = { grid = true })
     Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         TemplateFilter.entries.forEach { f -> RrFilterChip(stringResource(f.label), f == filter, { filter = f }) }
     }
@@ -309,7 +312,6 @@ private fun TemplatePicker(doc: ResumeDoc, actions: BuilderActions, enabled: Boo
     Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         shown.sortedByDescending { it.id == doc.template }.forEach { t -> TemplateCard(t, t.id == doc.template, enabled) { pick(t) } }
     }
-    RrButton(stringResource(R.string.builder_show_templates), { grid = true }, Modifier.padding(horizontal = 8.dp), RrButtonVariant.Ghost)
     if (grid) RrBottomSheet(onDismissRequest = { grid = false }, title = stringResource(S.string.template)) {
         @OptIn(ExperimentalLayoutApi::class)
         FlowRow(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -347,7 +349,8 @@ private fun AccentRow(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean)
     val haptics = rememberRrHaptics()
     val current = Rgba.toHex(doc.metadata["design"].obj()["colors"].obj()["primary"].str())
     Eyebrow(stringResource(S.string.accent_color))
-    Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    // 44 dp targets whose 4 dp inset already leaves an 8 dp gap: all eight fit a 390 dp phone, left aligned (B6).
+    Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp)) {
         Accent.entries.forEach { a ->
             val label = stringResource(a.label)
             val selected = current.equals(a.hex, ignoreCase = true)

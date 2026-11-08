@@ -91,6 +91,9 @@ internal class PrepareViewModel(private val repos: RrRepositories, private val i
 
     init { load() }
 
+    /** Reload after returning to the tab, unless a briefing is being written. */
+    fun refresh() { if (job?.isActive != true) load() }
+
     fun load() {
         viewModelScope.launch {
             state.value = runCatching {
@@ -170,7 +173,7 @@ internal fun PrepareTab(applicationId: String, nav: NavController) {
     val toasts = LocalToasts.current
     val scope = rememberCoroutineScope()
     val copied = stringResource(R.string.workspace_question_copied)
-    Loaded(load, vm::load) { state ->
+    Loaded(load, vm::load, onResume = vm::refresh) { state ->
         PrepareScreen(
             state,
             dates = rememberDates(repos.time.timezone()),

@@ -201,21 +201,32 @@ internal fun NoteSheet(onDismiss: () -> Unit, onSave: (String) -> Unit) {
     }
 }
 
-/** The saved posting, read-only, with its link. */
+/** The saved posting with its link; with none saved yet, a field to paste it (Fit reads it). */
 @Composable
-internal fun PostingSheet(app: Application, onDismiss: () -> Unit, onOpenLink: (String) -> Unit) {
+internal fun PostingSheet(app: Application, onDismiss: () -> Unit, onOpenLink: (String) -> Unit, onSave: (String) -> Unit) {
+    val saved = !app.jobDescription.isNullOrBlank() || app.requirements.isNotEmpty()
+    var text by rememberSaveable { mutableStateOf("") }
     RrBottomSheet(
         onDismissRequest = onDismiss,
         title = stringResource(S.string.posting),
-        footer = app.sourceUrl?.takeIf(String::isNotBlank)?.let { url ->
-            { SheetFooter { RrButton(stringResource(S.string.view_posting), { onOpenLink(url) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, icon = D.drawable.ic_ph_arrow_square_out) } }
+        detents = if (saved) RrSheetDetents.HalfAndFull else RrSheetDetents.Full,
+        confirmDiscard = text.isNotBlank(),
+        footer = when {
+            !saved -> { { SheetFooter { RrButton(stringResource(S.string.save), { onSave(text.trim()) }, size = RrButtonSize.Large, enabled = text.isNotBlank()) } } }
+            else -> app.sourceUrl?.takeIf(String::isNotBlank)?.let { url ->
+                { SheetFooter { RrButton(stringResource(S.string.view_posting), { onOpenLink(url) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, icon = D.drawable.ic_ph_arrow_square_out) } }
+            }
         },
     ) {
         SheetBody {
-            if (app.requirements.isNotEmpty()) Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                app.requirements.forEach { RrText("· $it", style = RrType.ui) }
+            if (!saved) {
+                RrTextField(text, { text = it }, Modifier.fillMaxWidth(), placeholder = stringResource(S.string.paste_a_job_posting), singleLine = false, minLines = 8)
+            } else {
+                if (app.requirements.isNotEmpty()) Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    app.requirements.forEach { RrText("· $it", style = RrType.ui) }
+                }
+                RrText(app.jobDescription?.takeIf(String::isNotBlank) ?: stringResource(R.string.app_no_posting), style = RrType.body)
             }
-            RrText(app.jobDescription?.takeIf(String::isNotBlank) ?: stringResource(R.string.app_no_posting), style = RrType.body)
         }
     }
 }

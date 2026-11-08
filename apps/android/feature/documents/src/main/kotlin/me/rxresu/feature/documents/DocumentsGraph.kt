@@ -320,6 +320,8 @@ private fun NewDocumentRoute(nav: NavController, route: NewDocument) {
                     val id = createResume(repos, res.getString(R.string.docs_untitled_resume), sample = false) ?: run { toasts.post(res.getString(R.string.docs_create_failed), tone = RrToastTone.Danger); return@launch }
                     haptics(RrHaptic.Success)
                     nav.popBackStack()
+                    // Basics over the builder, so Back from the name lands in the editor ("Opens the editor on your name").
+                    nav.navigate(Builder(id))
                     nav.navigate(BuilderBasics(id))
                 }
             },
@@ -408,7 +410,8 @@ private fun ImportRoute(nav: NavController, route: Import) {
             onStartBlank = {
                 scope.launch {
                     val id = createResume(repos, res.getString(R.string.docs_untitled_resume), sample = false) ?: return@launch
-                    nav.navigate(BuilderBasics(id)) { popUpTo<Import> { inclusive = true } }
+                    nav.navigate(Builder(id)) { popUpTo<Import> { inclusive = true } }
+                    nav.navigate(BuilderBasics(id))
                 }
             },
             onSetUpAi = { nav.navigate(SettingsAi) },

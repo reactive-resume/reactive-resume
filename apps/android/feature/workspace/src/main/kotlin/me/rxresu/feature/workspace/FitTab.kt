@@ -1,6 +1,7 @@
 // W1 · Fit: each posting requirement against the evidence in the resume and Knowledge. A count with words, never a score.
 package me.rxresu.feature.workspace
 
+import me.rxresu.core.navigation.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -90,6 +91,13 @@ internal class FitViewModel(private val repos: RrRepositories, private val id: S
 
     fun load() {
         state.value = Load.Loading
+        fetch()
+    }
+
+    /** Reload after returning to the tab (a fact added), keeping what shows meanwhile; never during a check. */
+    fun refresh() { if (job?.isActive != true) fetch() }
+
+    private fun fetch() {
         viewModelScope.launch {
             state.value = runCatching {
                 val context = repos.workspaceContext(id)
@@ -142,7 +150,7 @@ internal fun FitTab(applicationId: String, nav: NavController) {
     LaunchedEffect(vm) { vm.outcome.collect { haptics(if (it == Outcome.Success) RrHaptic.Success else RrHaptic.Error) } }
     val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val res = androidx.compose.ui.platform.LocalResources.current
-    Loaded(load, vm::load) { state ->
+    Loaded(load, vm::load, onResume = vm::refresh) { state ->
         FitScreen(
             state,
             onCheck = { vm.check(locale) },
@@ -155,6 +163,8 @@ internal fun FitTab(applicationId: String, nav: NavController) {
                 nav.navigate(app.resumeId?.let { Assistant(it, prompt = res.getString(S.string.tailor_to_the_company_posting, app.company)) } ?: NewDocument(copyForApplicationId = applicationId))
             },
             onSetUpAi = { nav.navigate(SettingsAi) },
+            // The posting sheet lives on Overview: replace this entry with Overview and the sheet open.
+            onAddPosting = { nav.navigate(Application(applicationId, posting = true)) { popUpTo<Application> { inclusive = true } } },
         )
     }
 }
@@ -168,6 +178,7 @@ internal fun FitScreen(
     onWriteStory: () -> Unit,
     onTailor: () -> Unit,
     onSetUpAi: () -> Unit,
+    onAddPosting: () -> Unit = {},
 ) {
     val c = RrTheme.colors
     val app = state.context.app
@@ -201,7 +212,7 @@ internal fun FitScreen(
                 }
             }
         } else {
-            FirstRun(state, onCheck, onStop, onAddFact, onSetUpAi)
+            FirstRun(state, onCheck, onStop, onAddFact, onSetUpAi, onAddPosting)
         }
     }
     sources?.let { requirement ->
@@ -270,14 +281,14 @@ private fun EvidencePill(status: CreateCareerOfferResponseDataFitRequirementsIte
 }
 
 @Composable
-private fun FirstRun(state: FitState, onCheck: () -> Unit, onStop: () -> Unit, onAddFact: () -> Unit, onSetUpAi: () -> Unit) {
+private fun FirstRun(state: FitState, onCheck: () -> Unit, onStop: () -> Unit, onAddFact: () -> Unit, onSetUpAi: () -> Unit, onAddPosting: () -> Unit) {
     val c = RrTheme.colors
     val app = state.context.app
     val provider = state.context.provider
     Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         when {
             app.jobDescription.isNullOrBlank() && app.requirements.isEmpty() ->
-                RrCallout(stringResource(R.string.workspace_no_posting_fit))
+                RrCallout(stringResource(R.string.workspace_no_posting_fit), actionLabel = stringResource(S.string.add_posting), onAction = onAddPosting)
             !state.evidenceUsable -> RrCallout(
                 stringResource(S.string.fit_needs_evidence_add_facts_to_knowledge_or_choose_a_resume_to_link_before_sending_a_request),
                 actionLabel = stringResource(S.string.add_facts),

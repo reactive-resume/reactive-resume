@@ -172,6 +172,8 @@ private fun Outline(state: BuilderUiState, doc: ResumeDoc, actions: BuilderActio
                                     key = { it.key },
                                     enabled = !locked,
                                     autoScroll = autoScroll,
+                                    dividers = true,
+                                    dividerAboveFirst = pageIndex == 0 && !sidebar,
                                     onActions = { menu = OutlineMenu.Section(it) },
                                     onMove = { from, to ->
                                         val moved = refs.moved(from, to).map { it.key }
@@ -186,7 +188,6 @@ private fun Outline(state: BuilderUiState, doc: ResumeDoc, actions: BuilderActio
                 if (hiddenOrUnplaced.isNotEmpty()) {
                     RrSectionHeader(stringResource(S.string.hidden_sections))
                     RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                        Column {
                             hiddenOrUnplaced.forEach { ref ->
                                 val title = doc.displayTitle(ref)
                                 RrListRow(
@@ -197,7 +198,6 @@ private fun Outline(state: BuilderUiState, doc: ResumeDoc, actions: BuilderActio
                                     trailing = { RrText(pluralStringResource(S.plurals.entries_plural_one_entry_other_entries, doc.items(ref).size, doc.items(ref).size), color = RrTheme.colors.ink3) },
                                 )
                             }
-                        }
                     }
                     hiddenOrUnplaced.firstOrNull { !doc.hidden(it) && doc.items(it).isNotEmpty() }?.let { ref ->
                         RrCallout(

@@ -1,5 +1,6 @@
 package me.rxresu.feature.letters
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -53,7 +54,10 @@ import me.rxresu.core.network.generated.*
                 }, Modifier.weight(1f), pageCount = state.pageCount ?: 1) { page ->
                     selected?.takeIf { it.page == page }?.let { block -> Canvas(Modifier.matchParentSize()) { drawRect(c.accent, Offset(block.left * size.width, block.top * size.height), Size((block.right - block.left) * size.width, (block.bottom - block.top) * size.height), style = Stroke(2.dp.toPx())) } }
                 }
-                Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                // A toolbar under the page viewport (line, surface), so the page reads as scrolling behind it rather than
+                // cut off, with the actions off the canvas.
+                Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
+                Column(Modifier.weight(1f, fill = false).background(c.surface).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     state.aiDraft?.let { ai -> LetterAiCard(ai, state, action) }
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (state.aiDraft == null) RrButton(stringResource(CoreR.string.draft_from_the_posting), { action("draft") }, variant = RrButtonVariant.Secondary, enabled = state.editable)
@@ -88,7 +92,7 @@ import me.rxresu.core.network.generated.*
             RrListRow(state.resumes.firstOrNull { it.id == letter.sourceResumeId }?.name ?: stringResource(CoreR.string.choose_a_resume), subtitle = stringResource(CoreR.string.resume), icon = DsR.drawable.ic_ph_file_text, onClick = { action("resume") }, enabled = state.editable, trailing = { RrRowCaret() })
             val app = state.applications.firstOrNull { it.id == letter.sourceApplicationId }
             RrListRow(app?.let { it.company + " · " + it.role } ?: stringResource(CoreR.string.choose_an_application), subtitle = stringResource(CoreR.string.application), icon = DsR.drawable.ic_ph_briefcase, onClick = { action("application") }, enabled = state.editable, trailing = { RrRowCaret() })
-            RrListRow(letter.recipient.ifEmpty { stringResource(CoreR.string.recipient) }, subtitle = stringResource(CoreR.string.recipient), icon = DsR.drawable.ic_ph_buildings, onClick = { action("recipient") }, enabled = state.editable, trailing = { RrRowCaret() })
+            RrListRow(letter.recipient.ifEmpty { stringResource(CoreR.string.who_is_it_for) }, subtitle = stringResource(CoreR.string.recipient), icon = DsR.drawable.ic_ph_buildings, onClick = { action("recipient") }, enabled = state.editable, trailing = { RrRowCaret() })
         }
         val redraft = stringResource(CoreR.string.redraft_from_the_posting)
         val opening = stringResource(CoreR.string.make_the_opening_stronger)

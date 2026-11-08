@@ -1,5 +1,8 @@
 package me.rxresu.feature.builder
 
+import me.rxresu.core.designsystem.RrTheme
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
@@ -82,9 +85,13 @@ internal fun <T> ReorderColumn(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     autoScroll: ReorderAutoScroll? = null,
+    // List-group rows: a 1 dp line above each row (and above the first when [dividerAboveFirst]), moving with it.
+    dividers: Boolean = false,
+    dividerAboveFirst: Boolean = false,
     row: @Composable (item: T, lifted: Boolean) -> Unit,
 ) {
     val haptics = rememberRrHaptics()
+    val line = RrTheme.colors.line
     val reduced = LocalReducedMotion.current
     val heights = remember(items.size) { mutableStateListOf(*Array(items.size) { 0 }) }
     var dragging by remember { mutableIntStateOf(-1) }
@@ -126,6 +133,10 @@ internal fun <T> ReorderColumn(
                     .onGloballyPositioned { if (index < tops.size) tops[index] = it.positionInWindow().y }
                     .graphicsLayer { translationY = if (lifted) offset else animatedShift; scaleX = scale; scaleY = scale }
                     .then(if (lifted) Modifier.rrShadow(RrElevation.Level2) else Modifier)
+                    .then(if (dividers && (index > 0 || dividerAboveFirst)) Modifier.drawWithContent {
+                        drawContent()
+                        drawLine(line, Offset(0f, 0f), Offset(size.width, 0f), 1.dp.toPx())
+                    } else Modifier)
                     .then(if (!enabled) Modifier else Modifier.pointerInput(key(item), items.size) {
                         var moved = false
                         detectDragGesturesAfterLongPress(

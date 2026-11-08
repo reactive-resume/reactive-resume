@@ -148,6 +148,7 @@ internal fun RichTextScreen(
                 modifier = Modifier.fillMaxWidth().padding(16.dp).onFocusChanged { actions.setEditing(it.isFocused) },
                 readOnly = state.locked,
                 highlight = askedRange,
+                placeholder = if (ref.kind == SectionKind.Summary) null else stringResource(S.string.describe_the_role),
             )
             AnimatedVisibility(improve !is ImproveState.Idle && improve !is ImproveState.NoProvider, enter = expandVertically(tween(if (reduced) 0 else RrMotion.D2, easing = RrMotion.ease)) + fadeIn(), exit = shrinkVertically(tween(if (reduced) 0 else RrMotion.exit(RrMotion.D2))) + fadeOut()) {
                 ImproveCard(

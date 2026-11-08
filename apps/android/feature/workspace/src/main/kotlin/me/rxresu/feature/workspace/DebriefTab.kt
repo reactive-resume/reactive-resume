@@ -2,6 +2,7 @@
 // the evidence supports from observations, and proposes one thing to remember (Remember / Not now).
 package me.rxresu.feature.workspace
 
+import me.rxresu.core.navigation.SettingsAi
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -250,6 +251,7 @@ internal fun DebriefTab(applicationId: String, nav: NavController) {
             onNotNow = vm::notNow,
             onStartOver = vm::startOver,
             onOpenPrepare = { nav.openTab(applicationId, WorkspaceTab.Prepare) },
+            onSetUpAi = { nav.navigate(SettingsAi) },
         )
     }
 }
@@ -271,6 +273,7 @@ internal fun DebriefScreen(
     onNotNow: () -> Unit,
     onStartOver: () -> Unit,
     onOpenPrepare: () -> Unit,
+    onSetUpAi: () -> Unit = {},
 ) {
     val c = RrTheme.colors
     val interview = state.interview
@@ -320,7 +323,7 @@ internal fun DebriefScreen(
                         ).forEach { (value, label) -> RrFilterChip(stringResource(label), state.landed == value, { onLanded(value) }) }
                     }
                     state.context.provider?.let { RrDisclosureLine(sendsLine(it, S.string.the_question_and_what_you_said, S.string.enabled_knowledge, S.string.the_interview_details)) }
-                        ?: RrCallout(stringResource(S.string.connect_an_ai_provider))
+                        ?: RrCallout(stringResource(S.string.connect_an_ai_provider), actionLabel = stringResource(S.string.set_up_ai), onAction = onSetUpAi)
                 }
             }
         }

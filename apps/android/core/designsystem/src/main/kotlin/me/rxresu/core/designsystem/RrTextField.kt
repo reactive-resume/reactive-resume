@@ -167,7 +167,8 @@ fun RrPickerField(
         ) {
             FieldBox(focused = false, isError = error != null, multiline = false) {
                 if (leadingIcon != null) RrIcon(leadingIcon, null, size = 20.dp, tint = c.ink3)
-                RrText(value.ifEmpty { placeholder.orEmpty() }, style = RrType.input, color = if (value.isEmpty()) c.ink3 else c.ink, modifier = Modifier.weight(1f))
+                // One line like the text field it sits beside; a long value (a language name) ends in an ellipsis.
+                RrText(value.ifEmpty { placeholder.orEmpty() }, style = RrType.input, color = if (value.isEmpty()) c.ink3 else c.ink, modifier = Modifier.weight(1f), maxLines = 1)
                 if (trailingIcon != null) RrIcon(trailingIcon, null, size = 20.dp, tint = c.ink3)
             }
         }

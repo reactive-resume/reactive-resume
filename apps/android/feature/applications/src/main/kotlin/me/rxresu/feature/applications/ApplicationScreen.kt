@@ -105,7 +105,7 @@ import me.rxresu.core.strings.R as S
  * Overview is drawn here; every other tab is `LocalWorkspaceTab` (filled by :feature:workspace).
  */
 @Composable
-fun ApplicationRoute(id: String, tab: WorkspaceTab, nav: NavController) {
+fun ApplicationRoute(id: String, tab: WorkspaceTab, nav: NavController, openPosting: Boolean = false) {
     val repos = LocalRepositories.current
     val vm = viewModel(key = "application:$id") {
         ApplicationViewModel(repos.applications, repos.career, repos.resumes, repos.documents, repos.time, id)
@@ -174,6 +174,7 @@ fun ApplicationRoute(id: String, tab: WorkspaceTab, nav: NavController) {
         onAddNote = { text -> scope.launch { saved(vm.addNote(text)) } },
         onRetry = vm::retry,
         workspaceTab = { t -> workspaceTab(id, t, nav) },
+        openPosting = openPosting,
     )
 }
 
@@ -219,6 +220,7 @@ internal fun ApplicationScreen(
     onAddNote: (String) -> Unit,
     onRetry: () -> Unit,
     workspaceTab: @Composable (WorkspaceTab) -> Unit,
+    openPosting: Boolean = false,
 ) {
     val c = RrTheme.colors
     val app = state.app
@@ -228,7 +230,7 @@ internal fun ApplicationScreen(
     val reduced = LocalReducedMotion.current
     val haptics = rememberRrHaptics()
     var menu by remember { mutableStateOf(false) }
-    var sheet by remember { mutableStateOf<DetailSheet?>(null) }
+    var sheet by remember { mutableStateOf(if (openPosting) DetailSheet.Posting else null) }
     // A sideways swipe is a tab change too: `selection` once it settles on a new tab (taps play it in the strip).
     var tapped by remember { androidx.compose.runtime.mutableIntStateOf(-1) }
     LaunchedEffect(pager) {
@@ -301,7 +303,7 @@ internal fun ApplicationScreen(
             DetailSheet.Tags -> TagsSheet(app.tags, onDismiss = { sheet = null }, onSave = { onPatch(PatchApplicationRequest(tags = it), emptySet()); sheet = null })
             DetailSheet.FollowUp -> FollowUpSheet(app, time, onDismiss = { sheet = null }, onSave = { body, clear -> onPatch(body, clear); sheet = null })
             DetailSheet.Note -> NoteSheet(onDismiss = { sheet = null }, onSave = { onAddNote(it); sheet = null })
-            DetailSheet.Posting -> PostingSheet(app, onDismiss = { sheet = null }, onOpenLink = onOpenLink)
+            DetailSheet.Posting -> PostingSheet(app, onDismiss = { sheet = null }, onOpenLink = onOpenLink, onSave = { onPatch(PatchApplicationRequest(jobDescription = it), emptySet()); sheet = null })
             null -> Unit
         }
     }

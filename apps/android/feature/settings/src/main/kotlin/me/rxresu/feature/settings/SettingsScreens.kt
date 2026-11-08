@@ -503,7 +503,7 @@ internal fun PreferencesScreen(
         if (!permitted)
             RrCallout(
                 stringResource(R.string.screen_off_in_system_settings),
-                Modifier.padding(horizontal = 16.dp),
+                Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
                 actionLabel = stringResource(CR.string.open_settings),
                 onAction = {
                     context.startActivity(
