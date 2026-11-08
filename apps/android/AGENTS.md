@@ -41,6 +41,8 @@ echo "sdk.dir=$HOME/Library/Android/sdk" > local.properties                     
 - Strings: `me.rxresu.core.strings.R.string.*` (search the English text in `core/strings/src/main/res/values/strings.xml`).
   Copy missing from the catalogs goes in the feature's own string resources (`src/main/res/values/`), in English, copied from the web
   app (`apps/web/src`); terms follow `GLOSSARY.md`. Sentence case, no exclamation marks, no emoji.
+- Release builds are minified: compare routes with `destination.hasRoute<T>()`, never `KClass.qualifiedName` (R8
+  renames classes; routes keep their serial names). Route enums are kept by `core/navigation/consumer-rules.pro`.
 - Screens take state and callbacks (stateless) and a `ViewModel` owns loading. Create view models with
   `viewModel { XViewModel(LocalRepositories.current.x) }`; previews and tests pass fake repositories.
 - Accessibility: TalkBack labels on icon-only controls, 44 dp targets, start/end layout (RTL), font scale 200%, a menu

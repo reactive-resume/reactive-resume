@@ -2,6 +2,7 @@
 // read (toasts, the slots other modules fill). :app builds the NavHost; features register into it.
 package me.rxresu.core.navigation
 
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
@@ -139,11 +140,11 @@ private val tabRoutes = listOf(TodayTab::class, DocumentsTab::class, Application
 /** True when the entry is one of the four tab roots (the tab bar shows only there). */
 fun NavBackStackEntry.isTabRoot(): Boolean = tabIndex() != null
 
-/** 0 Today, 1 Documents, 2 Applications, 3 Career, or null. */
-fun NavBackStackEntry.tabIndex(): Int? {
-    val route = destination.route ?: return null
-    return tabRoutes.indexOfFirst { route.startsWith(it.qualifiedName!!) }.takeIf { it >= 0 }
-}
+/**
+ * 0 Today, 1 Documents, 2 Applications, 3 Career, or null. Compare routes with `hasRoute`, never `qualifiedName`:
+ * routes keep their serial names, but R8 renames the classes in release builds.
+ */
+fun NavBackStackEntry.tabIndex(): Int? = tabRoutes.indexOfFirst { destination.hasRoute(it) }.takeIf { it >= 0 }
 
 /** Switches tabs the standard way: one copy of each tab root, state saved and restored. */
 fun NavController.switchTab(route: Any) = navigate(route) {

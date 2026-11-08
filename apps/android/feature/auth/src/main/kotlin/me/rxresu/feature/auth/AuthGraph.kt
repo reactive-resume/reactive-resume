@@ -1,5 +1,6 @@
 package me.rxresu.feature.auth
 
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.*
@@ -139,10 +140,7 @@ private fun AuthRoute(
                             haptic(RrHaptic.Success)
                             nav.resetTo(TodayTab)
                         } else if (
-                            nav.currentBackStackEntry
-                                ?.destination
-                                ?.route
-                                ?.startsWith(Consent::class.qualifiedName!!) == true
+                            nav.currentBackStackEntry?.destination?.hasRoute<Consent>() == true
                         )
                             nav.popBackStack()
                     }

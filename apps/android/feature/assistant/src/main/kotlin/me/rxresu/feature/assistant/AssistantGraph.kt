@@ -1,5 +1,6 @@
 package me.rxresu.feature.assistant
 
+import androidx.navigation.NavDestination.Companion.hasRoute
 import android.provider.OpenableColumns
 import androidx.core.net.toUri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -93,6 +94,5 @@ internal fun readAttachment(input: java.io.InputStream): ByteArray {
 /** Floating-window destinations are removed on a screen push; document entry keeps review state alive. */
 private fun assistantOwner(nav: NavController, entry: NavBackStackEntry): NavBackStackEntry {
     val previous = nav.previousBackStackEntry ?: return entry
-    val route = previous.destination.route.orEmpty()
-    return if (listOf(Builder::class, Letter::class).any { route.startsWith(it.qualifiedName!!) }) previous else entry
+    return if (previous.destination.hasRoute<Builder>() || previous.destination.hasRoute<Letter>()) previous else entry
 }
