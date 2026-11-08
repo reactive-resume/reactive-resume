@@ -1,5 +1,9 @@
 package me.rxresu.core.designsystem
 
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Animatable
 import android.animation.ValueAnimator
 import android.database.ContentObserver
 import android.os.Handler
@@ -71,7 +75,18 @@ fun RrTheme(
     reducedMotion: Boolean = rememberSystemReducedMotion(),
     content: @Composable () -> Unit,
 ) {
-    val colors = if (darkTheme) DarkRrColors else LightRrColors
+    // Theme switches cross-fade the palette over d2 (instant under reduced motion and in previews).
+    val still = LocalInspectionMode.current
+    val dark = remember { Animatable(if (darkTheme) 1f else 0f) }
+    LaunchedEffect(darkTheme, reducedMotion) {
+        val target = if (darkTheme) 1f else 0f
+        if (reducedMotion || still) dark.snapTo(target) else dark.animateTo(target, tween(RrMotion.D2, easing = RrMotion.ease))
+    }
+    val colors = when (dark.value) {
+        0f -> LightRrColors
+        1f -> DarkRrColors
+        else -> lerpColors(LightRrColors, DarkRrColors, dark.value)
+    }
     val selection = remember(colors) { TextSelectionColors(handleColor = colors.accent, backgroundColor = colors.accentSoft) }
     val indication = remember(colors) { RrPressIndication(colors.press, colors.hover, colors.accent) }
     CompositionLocalProvider(
@@ -174,3 +189,36 @@ private class RrPressIndication(val press: Color, val hover: Color, val focus: C
         }
     }
 }
+
+/** The palette part-way between two themes (theme cross-fade). */
+internal fun lerpColors(a: RrColors, b: RrColors, t: Float) = RrColors(
+    bg = androidx.compose.ui.graphics.lerp(a.bg, b.bg, t),
+    surface = androidx.compose.ui.graphics.lerp(a.surface, b.surface, t),
+    raised = androidx.compose.ui.graphics.lerp(a.raised, b.raised, t),
+    sunken = androidx.compose.ui.graphics.lerp(a.sunken, b.sunken, t),
+    line = androidx.compose.ui.graphics.lerp(a.line, b.line, t),
+    line2 = androidx.compose.ui.graphics.lerp(a.line2, b.line2, t),
+    controlBorder = androidx.compose.ui.graphics.lerp(a.controlBorder, b.controlBorder, t),
+    ink = androidx.compose.ui.graphics.lerp(a.ink, b.ink, t),
+    ink2 = androidx.compose.ui.graphics.lerp(a.ink2, b.ink2, t),
+    ink3 = androidx.compose.ui.graphics.lerp(a.ink3, b.ink3, t),
+    accent = androidx.compose.ui.graphics.lerp(a.accent, b.accent, t),
+    accentHover = androidx.compose.ui.graphics.lerp(a.accentHover, b.accentHover, t),
+    onAccent = androidx.compose.ui.graphics.lerp(a.onAccent, b.onAccent, t),
+    accentSoft = androidx.compose.ui.graphics.lerp(a.accentSoft, b.accentSoft, t),
+    accentText = androidx.compose.ui.graphics.lerp(a.accentText, b.accentText, t),
+    danger = androidx.compose.ui.graphics.lerp(a.danger, b.danger, t),
+    dangerSoft = androidx.compose.ui.graphics.lerp(a.dangerSoft, b.dangerSoft, t),
+    dangerText = androidx.compose.ui.graphics.lerp(a.dangerText, b.dangerText, t),
+    warn = androidx.compose.ui.graphics.lerp(a.warn, b.warn, t),
+    warnSoft = androidx.compose.ui.graphics.lerp(a.warnSoft, b.warnSoft, t),
+    warnText = androidx.compose.ui.graphics.lerp(a.warnText, b.warnText, t),
+    warnInk = androidx.compose.ui.graphics.lerp(a.warnInk, b.warnInk, t),
+    infoSoft = androidx.compose.ui.graphics.lerp(a.infoSoft, b.infoSoft, t),
+    infoText = androidx.compose.ui.graphics.lerp(a.infoText, b.infoText, t),
+    hover = androidx.compose.ui.graphics.lerp(a.hover, b.hover, t),
+    press = androidx.compose.ui.graphics.lerp(a.press, b.press, t),
+    scrim = androidx.compose.ui.graphics.lerp(a.scrim, b.scrim, t),
+    scrimSheet = androidx.compose.ui.graphics.lerp(a.scrimSheet, b.scrimSheet, t),
+    isDark = t >= 0.5f,
+)

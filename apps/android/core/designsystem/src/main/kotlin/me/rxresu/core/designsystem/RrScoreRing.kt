@@ -21,10 +21,14 @@ import androidx.compose.ui.unit.sp
  * [warnBelow]), the number in Instrument Serif 26 on `bg`. Always pair it with a words label ("Mostly readable").
  */
 @Composable
-fun RrScoreRing(score: Int, modifier: Modifier = Modifier, size: Dp = 64.dp, warnBelow: Int = 70) {
+/**
+ * [warnBelow] turns the arc warn; [dangerBelow] (optional) turns it danger below that score. The ATS checker uses the
+ * web's bands: 80 and up accent, 50–79 warn, under 50 danger.
+ */
+fun RrScoreRing(score: Int, modifier: Modifier = Modifier, size: Dp = 64.dp, warnBelow: Int = 70, dangerBelow: Int? = null) {
     val c = RrTheme.colors
     val value = score.coerceIn(0, 100)
-    val arc = if (value < warnBelow) c.warn else c.accent
+    val arc = if (dangerBelow != null && value < dangerBelow) c.danger else if (value < warnBelow) c.warn else c.accent
     val description = stringResource(R.string.ds_score, value)
     Box(modifier.size(size).semantics { contentDescription = description }, contentAlignment = Alignment.Center) {
         Canvas(Modifier.size(size).clearAndSetSemantics { }) {

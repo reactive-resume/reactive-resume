@@ -171,7 +171,7 @@ internal fun pdfMarkers(findings: List<CreatePdfCheckResponseTipsItem>, page: In
                 RrButton(stringResource(R.string.public_import_word), wordImport, variant = RrButtonVariant.Ghost)
             } else {
                 Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                    RrScoreRing(result.score.toInt())
+                    RrScoreRing(result.score.toInt(), warnBelow = 80, dangerBelow = 50)
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         RrText(when (atsVerdict(result)) { AtsVerdict.Clean -> stringResource(R.string.public_reads_cleanly_8b490c); AtsVerdict.Mostly -> stringResource(R.string.public_mostly_readable_47ef7c); else -> stringResource(R.string.public_hard_for_software_to_read_154936) }, style = RrType.label)
                         val context = androidx.compose.ui.platform.LocalContext.current
