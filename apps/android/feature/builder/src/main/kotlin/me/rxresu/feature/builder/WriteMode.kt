@@ -83,7 +83,7 @@ internal fun WriteMode(
     actions: BuilderActions,
     nav: WriteNav,
     modifier: Modifier = Modifier,
-    zoom: PageZoomState = remember { PageZoomState() },
+    zoom: me.rxresu.core.designsystem.RrPageZoomState = remember { me.rxresu.core.designsystem.RrPageZoomState() },
     markers: List<Pair<BlockTarget, Int>> = emptyList(),
     initiallyExpanded: String? = null,
     /** The entry sheet's live height in px (see [PageCanvas]); the picked block stays clear of it. */

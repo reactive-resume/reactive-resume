@@ -126,7 +126,7 @@ class BuilderInteractionTest : RrScreenshotTest() {
     }
 
     @Test fun pickedBlockFollowsTheSheetsLiveTop() {
-        val zoom = PageZoomState()
+        val zoom = me.rxresu.core.designsystem.RrPageZoomState()
         var cover by mutableFloatStateOf(0f)
         val state = Fixtures.state().copy(highlight = BlockTarget.Item("experience", "experience-harbour"), highlightAboveSheet = true)
         content { Box { WriteMode(state, WriteView.Page, {}, NoBuilderActions, WriteNav(), zoom = zoom, sheetCover = { cover }) } }
