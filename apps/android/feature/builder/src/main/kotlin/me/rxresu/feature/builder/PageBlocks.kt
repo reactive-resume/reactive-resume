@@ -126,16 +126,40 @@ internal object PdfTextReader {
             ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY).use { fd ->
                 if (Build.VERSION.SDK_INT >= 35) {
                     PdfRenderer(fd).use { pdf ->
-                        (0 until pdf.pageCount).map { i -> pdf.openPage(i).use { page -> runs(page.textContents.map { it.text to it.bounds }, page.width, page.height) } }
+                        (0 until pdf.pageCount).map { i -> pdf.openPage(i).use { page ->
+                            val contents = page.textContents.map { it.text to it.bounds }
+                            runs(contents, page.width, page.height).ifEmpty {
+                                located(contents, page.width, page.height) { line -> page.searchText(line).map { it.bounds } }
+                            }
+                        } }
                     }
                 } else {
                     @Suppress("NewApi")
                     PdfRendererPreV(fd).use { pdf ->
-                        (0 until pdf.pageCount).map { i -> pdf.openPage(i).use { page -> runs(page.textContents.map { it.text to it.bounds }, page.width, page.height) } }
+                        (0 until pdf.pageCount).map { i -> pdf.openPage(i).use { page ->
+                            val contents = page.textContents.map { it.text to it.bounds }
+                            runs(contents, page.width, page.height).ifEmpty {
+                                located(contents, page.width, page.height) { line -> page.searchText(line).map { it.bounds } }
+                            }
+                        } }
                     }
                 }
             }
         }.getOrNull()
+    }
+
+    /**
+     * Some PDFs (the server's Forme output) come back as one text content per page with no bounds. Each line is then
+     * found with the page's text search: the n-th occurrence of a repeated line takes the n-th match, in reading order.
+     */
+    internal fun located(contents: List<Pair<String, List<RectF>>>, width: Int, height: Int, search: (String) -> List<List<RectF>>): List<TextRun> {
+        val seen = HashMap<String, Int>()
+        return contents.flatMap { (text, _) -> text.split('\n').map { it.trim() } }.filter { it.length >= 2 }.mapNotNull { line ->
+            val n = seen.merge(line, 1, Int::plus)!! - 1
+            search(line).getOrNull(n)?.takeIf { it.isNotEmpty() }?.let { rects ->
+                TextRun(line, rects.minOf { it.left } / width, rects.minOf { it.top } / height, rects.maxOf { it.right } / width, rects.maxOf { it.bottom } / height)
+            }
+        }
     }
 
     /** One run per line: a content's text splits on line breaks and pairs with its per-line bounds when they agree. */
